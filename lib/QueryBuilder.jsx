@@ -10,7 +10,18 @@ export default class QueryBuilder extends React.Component {
             rules: [],
             fields: [],
             operators: QueryBuilder.defaultOperators,
-            combinators: QueryBuilder.defaultCombinators
+            combinators: QueryBuilder.defaultCombinators,
+            getEditor: null
+        };
+    }
+
+    static get propTypes() {
+        return {
+            rules: React.PropTypes.array,
+            fields: React.PropTypes.array,
+            operators: React.PropTypes.array,
+            combinators: React.PropTypes.array,
+            getEditor: React.PropTypes.func
         };
     }
 
@@ -51,18 +62,19 @@ export default class QueryBuilder extends React.Component {
         const {fields, operators, combinators} = this.props;
 
         this.setState({
-            root: this._createRuleGroup(),
+            root: this.createRuleGroup(),
             schema: {
                 fields,
                 operators,
                 combinators,
-                createRule: this._createRule.bind(this),
-                createRuleGroup: this._createRuleGroup.bind(this),
+                createRule: this.createRule.bind(this),
+                createRuleGroup: this.createRuleGroup.bind(this),
                 onRuleAdd: (...args)=>this.onRuleAdd(...args),
                 onGroupAdd: (...args)=>this.onGroupAdd(...args),
                 onRuleRemove: (...args)=>this.onRuleRemove(...args),
                 onGroupRemove: (...args)=>this.onGroupRemove(...args),
                 onPropChange: (...args)=>this.onPropChange(...args),
+                getEditor: (...args)=>this.prepareEditor(...args),
             }
         });
     }
@@ -80,7 +92,7 @@ export default class QueryBuilder extends React.Component {
     }
 
 
-    _createRule() {
+    createRule() {
         const {fields, operators} = this.state.schema;
 
         return {
@@ -92,13 +104,33 @@ export default class QueryBuilder extends React.Component {
         };
     }
 
-    _createRuleGroup() {
+    createRuleGroup() {
         return {
             id: uniqueId('g-'),
             type: 'ruleGroup',
             rules: [],
-            combinator: this.props.combinators[0],
+            combinator: this.props.combinators[0].name,
         };
+    }
+
+
+    prepareEditor(config) {
+        const {field, value, operator, onChange} = config;
+
+        const editor = this.props.getEditor && this.props.getEditor(config);
+        if (editor) {
+            return editor;
+        }
+
+        if (operator === 'null' || operator === 'notNull') {
+            return null;
+        }
+
+        return (
+            <input type="text"
+                   value={value}
+                   onChange={event=>onChange(event.target.value)}/>
+        );
     }
 
     onRuleAdd(rule, parentId) {

@@ -46,6 +46,7 @@ export default class RuleGroup extends React.Component {
                                               id={r.id}
                                               schema={this.props.schema}
                                               parentId={this.props.id}
+                                              combinator={r.combinator}
                                               rules={r.rules}/>
                          );
                      })

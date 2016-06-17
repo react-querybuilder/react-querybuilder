@@ -11,7 +11,7 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, operators}} = this.props;
+        const {field, operator, value, schema: {fields, operators, getEditor}} = this.props;
 
         return (
             <div className="QueryBuilder-rule">
@@ -35,9 +35,15 @@ export default class Rule extends React.Component {
                             })
                         }
                 </select>
-                <input type="text"
-                       value={value}
-                       onChange={event=>this.onValueChanged('value', event.target.value)}/>
+
+                 {
+                     getEditor({
+                         field,
+                         value,
+                         operator,
+                         onChange: value=>this.onValueChanged('value', value)
+                     })
+                 }
 
                 <button onClick={()=>this.removeRule()}>x</button>
             </div>
@@ -45,6 +51,9 @@ export default class Rule extends React.Component {
     }
 
     onValueChanged(field, value) {
+        const {id, schema: {onPropChange}} = this.props;
+
+        onPropChange(field, value, id);
     }
 
     removeRule() {

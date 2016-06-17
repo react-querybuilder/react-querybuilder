@@ -9,6 +9,7 @@ const fields = [
     {name: 'phone', label: 'Phone'},
     {name: 'email', label: 'Email'},
     {name: 'twitter', label: 'Twitter'},
+    {name: 'isDev', label: 'Is a Developer?'},
 ];
 
 const root = (
