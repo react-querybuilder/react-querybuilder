@@ -1,4 +1,4 @@
-import QueryBuilder from '../lib/QueryBuilder';
+import {QueryBuilder} from 'react-query-builder';
 import {render} from 'react-dom';
 
 const fields = [

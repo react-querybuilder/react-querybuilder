@@ -20,6 +20,7 @@
     "react-dom": "^15.1.0"
   },
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "dist": "webpack --config webpack-dist.config.js --optimize-occurence-order"
   }
 }
