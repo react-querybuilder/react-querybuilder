@@ -24,14 +24,10 @@ class RootView extends React.Component {
     render() {
         return (
             <div>
-                <div>
-                    <QueryBuilder fields={this.props.fields}
-                                  getEditor={this.getEditor}
-                                  onQueryChange={this.logQuery.bind(this)}/>
-                </div>
-            <pre>
-                {JSON.stringify(this.state.query, null, 2)}
-            </pre>
+                <QueryBuilder fields={this.props.fields}
+                              getEditor={this.getEditor}
+                              onQueryChange={this.logQuery.bind(this)}/>
+                <pre>{JSON.stringify(this.state.query, null, 2)}</pre>
             </div>
         );
     }

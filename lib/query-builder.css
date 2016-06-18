@@ -1,11 +1,10 @@
 .QueryBuilder-rule,
-.QueryBuilder-ruleGroup {
-    margin-top: 0.5rem;
-    margin-left: 1rem;
+.QueryBuilder-ruleGroup .QueryBuilder-ruleGroup {
+    margin-top: 0.25rem;
+    margin-left: 0.5rem;
 }
 
 .QueryBuilder-ruleGroup {
+    padding: 0.25rem;
     border: 1px solid #CCC;
-    border-radius: 4px;
-    padding: 0.5rem;
 }
