@@ -40,7 +40,7 @@ module.exports = [
         resolve: {
             extensions: ['', '.js', '.jsx'],
             alias: {
-                'react-query-builder': __dirname + '/lib/index.js'
+                'react-query-builder': __dirname + '/lib'
             }
         },
 

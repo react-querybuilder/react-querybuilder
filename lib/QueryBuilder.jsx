@@ -1,4 +1,3 @@
-import './query-builder.css';
 import uniqueId from 'lodash/uniqueId';
 
 import RuleGroup from './RuleGroup';
@@ -11,7 +10,8 @@ export default class QueryBuilder extends React.Component {
             fields: [],
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
-            getEditor: null
+            getEditor: null,
+            onQueryChange: null,
         };
     }
 
@@ -21,7 +21,8 @@ export default class QueryBuilder extends React.Component {
             fields: React.PropTypes.array,
             operators: React.PropTypes.array,
             combinators: React.PropTypes.array,
-            getEditor: React.PropTypes.func
+            getEditor: React.PropTypes.func,
+            onQueryChange: React.PropTypes.func
         };
     }
 
@@ -69,14 +70,19 @@ export default class QueryBuilder extends React.Component {
                 combinators,
                 createRule: this.createRule.bind(this),
                 createRuleGroup: this.createRuleGroup.bind(this),
-                onRuleAdd: (...args)=>this.onRuleAdd(...args),
-                onGroupAdd: (...args)=>this.onGroupAdd(...args),
-                onRuleRemove: (...args)=>this.onRuleRemove(...args),
-                onGroupRemove: (...args)=>this.onGroupRemove(...args),
-                onPropChange: (...args)=>this.onPropChange(...args),
+                onRuleAdd: this._notifyQueryChange.bind(this, this.onRuleAdd),
+                onGroupAdd: this._notifyQueryChange.bind(this, this.onGroupAdd),
+                onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
+                onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
+                onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
                 getEditor: (...args)=>this.prepareEditor(...args),
             }
         });
+
+    }
+
+    componentDidMount() {
+        this._notifyQueryChange(null);
     }
 
     render() {
@@ -99,7 +105,7 @@ export default class QueryBuilder extends React.Component {
             id: uniqueId('r-'),
             type: 'rule',
             field: fields[0].name,
-            value: 'some value',
+            value: null,
             operator: operators[0].name
         };
     }
@@ -115,7 +121,7 @@ export default class QueryBuilder extends React.Component {
 
 
     prepareEditor(config) {
-        const {field, value, operator, onChange} = config;
+        const {value, operator, onChange} = config;
 
         const editor = this.props.getEditor && this.props.getEditor(config);
         if (editor) {
@@ -186,6 +192,37 @@ export default class QueryBuilder extends React.Component {
             }
         }
 
+    }
+
+    _notifyQueryChange(fn, ...args) {
+        if (fn) {
+            fn.call(this, ...args);
+        }
+
+        const {onQueryChange} = this.props;
+        if (onQueryChange) {
+            const query = this._constructQuery(this.state.root);
+            onQueryChange(query);
+        }
+    }
+
+    _constructQuery(node) {
+        let query;
+
+        if (node.type === 'rule') {
+            const {field, operator, value} = node;
+            query = {field, operator, value};
+        }
+
+        if (node.type === 'ruleGroup') {
+            const {combinator, rules} = node;
+            query = {
+                combinator,
+                rules: rules.map(r=> this._constructQuery(r, {}))
+            };
+        }
+
+        return query;
     }
 }
 

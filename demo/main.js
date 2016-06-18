@@ -1,5 +1,6 @@
-import {QueryBuilder} from 'react-query-builder';
-import {render} from 'react-dom';
+import "react-query-builder/query-builder.css";
+import {QueryBuilder} from "react-query-builder";
+import {render} from "react-dom";
 
 const fields = [
     {name: 'firstName', label: 'First Name'},
@@ -9,11 +10,52 @@ const fields = [
     {name: 'phone', label: 'Phone'},
     {name: 'email', label: 'Email'},
     {name: 'twitter', label: 'Twitter'},
-    {name: 'isDev', label: 'Is a Developer?'},
+    {name: 'isDev', label: 'Is a Developer?', value: false},
 ];
 
-const root = (
-    <QueryBuilder fields={fields}/>
-);
+class RootView extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            query: {}
+        };
+    }
 
-render(root, document.querySelector('.container'));
+    render() {
+        return (
+            <div>
+                <div>
+                    <QueryBuilder fields={this.props.fields}
+                                  getEditor={this.getEditor}
+                                  onQueryChange={this.logQuery.bind(this)}/>
+                </div>
+            <pre>
+                {JSON.stringify(this.state.query, null, 2)}
+            </pre>
+            </div>
+        );
+    }
+
+    getEditor({field, operator, value, onChange}) {
+        if (field !== 'isDev' || operator !== '=') {
+            return null;
+        }
+
+        const hasValue = !!value;
+        return (
+            <span>
+            <input type="checkbox"
+                   value={hasValue}
+                   onChange={event=>onChange(event.target.checked)}/>
+        </span>
+        );
+    }
+
+    logQuery(query) {
+        this.setState({query});
+    }
+
+}
+
+render(<RootView fields={fields}/>, document.querySelector('.container'));
+

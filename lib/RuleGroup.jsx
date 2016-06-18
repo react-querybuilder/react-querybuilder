@@ -23,7 +23,7 @@ export default class RuleGroup extends React.Component {
                         }
                 </select>
 
-                <button onClick={()=>this.addRule()}>+Condition</button>
+                <button onClick={()=>this.addRule()}>+Rule</button>
                 <button onClick={()=>this.addGroup()}>+Group</button>
                  {
                      (this.props.parentId)
