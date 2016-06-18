@@ -1,4 +1,4 @@
-import "react-query-builder/query-builder.css";
+import "react-query-builder/query-builder.scss";
 import {QueryBuilder} from "react-query-builder";
 import {render} from "react-dom";
 
@@ -23,11 +23,16 @@ class RootView extends React.Component {
 
     render() {
         return (
-            <div>
-                <QueryBuilder fields={this.props.fields}
-                              getEditor={this.getEditor}
-                              onQueryChange={this.logQuery.bind(this)}/>
-                <pre>{JSON.stringify(this.state.query, null, 2)}</pre>
+            <div className="flex-box">
+                <div className="scroll">
+                    <QueryBuilder fields={this.props.fields}
+                                  getEditor={this.getEditor}
+                                  onQueryChange={this.logQuery.bind(this)}/>
+                </div>
+                <div className="shrink query-log scroll">
+                    <h4>Query</h4>
+                    <pre>{JSON.stringify(this.state.query, null, 2)}</pre>
+                </div>
             </div>
         );
     }

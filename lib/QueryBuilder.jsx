@@ -11,6 +11,7 @@ export default class QueryBuilder extends React.Component {
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
             getEditor: null,
+            getOperators: null,
             onQueryChange: null,
         };
     }
@@ -22,6 +23,7 @@ export default class QueryBuilder extends React.Component {
             operators: React.PropTypes.array,
             combinators: React.PropTypes.array,
             getEditor: React.PropTypes.func,
+            getOperators: React.PropTypes.func,
             onQueryChange: React.PropTypes.func
         };
     }
@@ -76,6 +78,7 @@ export default class QueryBuilder extends React.Component {
                 onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
                 onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
                 getEditor: (...args)=>this.prepareEditor(...args),
+                getOperators: (...args)=>this.getOperators(...args),
             }
         });
 
@@ -137,6 +140,18 @@ export default class QueryBuilder extends React.Component {
                    value={value}
                    onChange={event=>onChange(event.target.value)}/>
         );
+    }
+
+    getOperators(field) {
+        if (this.props.getOperators) {
+            const ops = this.props.getOperators(field);
+            if (ops) {
+                return ops;
+            }
+        }
+
+
+        return QueryBuilder.defaultOperators;
     }
 
     onRuleAdd(rule, parentId) {

@@ -11,7 +11,7 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, operators, getEditor}} = this.props;
+        const {field, operator, value, schema: {fields, operators, getEditor, getOperators}} = this.props;
 
         return (
             <div className="QueryBuilder-rule">
@@ -28,7 +28,7 @@ export default class Rule extends React.Component {
                 <select value={operator}
                         onChange={event=>this.onValueChanged('operator', event.target.value)}>
                         {
-                            operators.map(op=> {
+                            getOperators().map(op=> {
                                 return (
                                     <option value={op.name} key={op.name}>{op.label}</option>
                                 );
