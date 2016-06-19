@@ -45,4 +45,8 @@ function logQuery(query) {
 
 ### Demo
 
-Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your browser
+Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your browser.
+
+OR
+
+[See live Demo](http://www.webpackbin.com/41LfnfeBb).
