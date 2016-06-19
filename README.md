@@ -16,8 +16,16 @@ A QueryBuilder component for React
 ```shell
 npm install react-querybuilder --save
 ```
+### Demo
 
-**Basic Usage**
+Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your browser.
+
+OR
+
+[See live Demo](http://www.webpackbin.com/41LfnfeBb).
+
+
+### Usage
 
 ```jsx
 import {QueryBuilder} from 'react-querybuilder';
@@ -43,10 +51,3 @@ function logQuery(query) {
 
 ```
 
-### Demo
-
-Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your browser.
-
-OR
-
-[See live Demo](http://www.webpackbin.com/41LfnfeBb).
