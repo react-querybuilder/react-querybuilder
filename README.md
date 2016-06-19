@@ -1,7 +1,7 @@
 # react-querybuilder
 A QueryBuilder component for React
 
-[![npm version](https://badge.fury.io/js/react-querybuilder.svg)](https://badge.fury.io/js/react-querybuilder)
+[![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)]()
 
 **Credits**: This component was inspired by prior work from:
 
