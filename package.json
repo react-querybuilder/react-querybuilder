@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
   "repository": {
