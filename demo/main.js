@@ -1,5 +1,5 @@
-import 'react-querybuilder/query-builder.scss';
-import {QueryBuilder} from 'react-querybuilder';
+import '../lib/query-builder.scss';
+import {QueryBuilder} from '../lib/index';
 import {render} from "react-dom";
 
 const fields = [

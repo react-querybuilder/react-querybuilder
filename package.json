@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
   "repository": {
@@ -25,6 +25,7 @@
     "babel-preset-react": "^6.5.0",
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.23.1",
+    "del-cli": "^0.2.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.21.0",
     "node-sass": "^3.8.0",
@@ -34,12 +35,14 @@
     "webpack-merge": "^0.14.0"
   },
   "dependencies": {
-    "lodash": "^4.13.1",
+    "lodash": "^4.13.1"
+  },
+  "peerDependencies": {
     "react": "^15.1.0",
     "react-dom": "^15.1.0"
   },
   "scripts": {
     "start": "webpack-dev-server --config webpack-dev.config.js",
-    "dist": "webpack --config webpack-dist.config.js"
+    "dist": "del dist; webpack --config webpack-dev.config.js"
   }
 }

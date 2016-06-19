@@ -7,7 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = merge(webpackCommon, {
     entry: {
-        'index': './lib/index.js'
+        index: './lib/index.js'
     },
     output: {
         filename: '[name].js',
@@ -20,7 +20,7 @@ module.exports = merge(webpackCommon, {
         'react-dom',
     ],
 
-    devtool: 'source-map',
+    devtool: 'none',
 
     plugins: [
         new CopyPlugin([

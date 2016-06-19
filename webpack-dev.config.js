@@ -8,10 +8,11 @@ const webpackCommon = require('./webpack-common.config');
 module.exports = [
     merge(webpackCommon, {
         entry: {
-            main: './demo/main.js'
+            demo: './demo/main.js'
         },
         output: {
-            filename: '[name].js'
+            filename: '[name].bundle.js',
+            path: __dirname + '/dist/demo'
         },
 
         devtool: 'cheap-module-source-map',
@@ -21,15 +22,9 @@ module.exports = [
             stats: 'minimal'
         },
 
-        resolve: {
-            alias: {
-                'react-querybuilder': __dirname + '/dist'
-            }
-        },
-
         plugins: [
             new HtmlPlugin({
-                title: 'react-query-builder',
+                title: 'react-querybuilder (DEMO)',
                 template: './demo/index.html'
             }),
             new DefinePlugin({

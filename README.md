@@ -9,7 +9,7 @@ A QueryBuilder component for React
 
 ### Getting Started
 
-![Screenshot](https://github.com/sapientglobalmarkets/react-querybuilder/blob/master/_assets/screenshot.png)
+![Screenshot](_assets/screenshot.png)
 
 ```shell
 npm install react-querybuilder --save
@@ -39,4 +39,10 @@ function logQuery(query) {
     console.log(query);
 }
 
+```
+
+### To run the demo
+
+```shell
+git clone
 ```

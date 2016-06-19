@@ -2,41 +2,41 @@ module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-/******/
+
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-/******/
+
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/
+
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/
+
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-/******/
+
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
-/******/
+
+
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-/******/
+
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
+
 /******/ 	// identity function for calling harmory imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
+
 /******/ 	// define getter function for harmory exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		Object.defineProperty(exports, name, {
@@ -45,13 +45,13 @@ module.exports =
 /******/ 			get: getter
 /******/ 		});
 /******/ 	};
-/******/
+
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
+
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
+
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
@@ -72,22 +72,22 @@ module.exports =
 	/* harmony import */ __webpack_require__.d(__WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default, 'a', __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default);
 	/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__RuleGroup__ = __webpack_require__(3);
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
+
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
+
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
+
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	
-	
-	
-	
+
+
+
+
+
 	var QueryBuilder = function (_React$Component) {
 	    _inherits(QueryBuilder, _React$Component);
-	
+
 	    _createClass(QueryBuilder, null, [{
 	        key: 'defaultProps',
 	        get: function get() {
@@ -115,36 +115,36 @@ module.exports =
 	            };
 	        }
 	    }]);
-	
+
 	    function QueryBuilder() {
 	        var _Object$getPrototypeO;
-	
+
 	        _classCallCheck(this, QueryBuilder);
-	
+
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	            args[_key] = arguments[_key];
 	        }
-	
+
 	        var _this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(QueryBuilder)).call.apply(_Object$getPrototypeO, [this].concat(args)));
-	
+
 	        _this.state = {
 	            root: {},
 	            schema: {}
 	        };
 	        return _this;
 	    }
-	
+
 	    _createClass(QueryBuilder, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            var _this2 = this;
-	
+
 	            var _props = this.props;
 	            var fields = _props.fields;
 	            var operators = _props.operators;
 	            var combinators = _props.combinators;
-	
-	
+
+
 	            this.setState({
 	                root: this.createRuleGroup(),
 	                schema: {
@@ -181,8 +181,8 @@ module.exports =
 	            var rules = _state$root.rules;
 	            var combinator = _state$root.combinator;
 	            var schema = _state.schema;
-	
-	
+
+
 	            return React.createElement(__WEBPACK_IMPORTED_MODULE_1__RuleGroup__["a" /* default */], { rules: rules,
 	                combinator: combinator,
 	                schema: schema,
@@ -195,8 +195,8 @@ module.exports =
 	            var _state$schema = this.state.schema;
 	            var fields = _state$schema.fields;
 	            var operators = _state$schema.operators;
-	
-	
+
+
 	            return {
 	                id: __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default()('r-'),
 	                type: 'rule',
@@ -221,17 +221,17 @@ module.exports =
 	            var value = config.value;
 	            var operator = config.operator;
 	            var _onChange = config.onChange;
-	
-	
+
+
 	            var editor = this.props.getEditor && this.props.getEditor(config);
 	            if (editor) {
 	                return editor;
 	            }
-	
+
 	            if (operator === 'null' || operator === 'notNull') {
 	                return null;
 	            }
-	
+
 	            return React.createElement('input', { type: 'text',
 	                value: value,
 	                onChange: function onChange(event) {
@@ -247,7 +247,7 @@ module.exports =
 	                    return ops;
 	                }
 	            }
-	
+
 	            return QueryBuilder.defaultOperators;
 	        }
 	    }, {
@@ -255,7 +255,7 @@ module.exports =
 	        value: function onRuleAdd(rule, parentId) {
 	            var parent = this._findRule(parentId, this.state.root);
 	            parent.rules.push(rule);
-	
+
 	            this.setState({ root: this.state.root });
 	        }
 	    }, {
@@ -263,7 +263,7 @@ module.exports =
 	        value: function onGroupAdd(group, parentId) {
 	            var parent = this._findRule(parentId, this.state.root);
 	            parent.rules.push(group);
-	
+
 	            this.setState({ root: this.state.root });
 	        }
 	    }, {
@@ -271,7 +271,7 @@ module.exports =
 	        value: function onPropChange(prop, value, ruleId) {
 	            var rule = this._findRule(ruleId, this.state.root);
 	            Object.assign(rule, _defineProperty({}, prop, value));
-	
+
 	            this.setState({ root: this.state.root });
 	        }
 	    }, {
@@ -281,7 +281,7 @@ module.exports =
 	            var index = parent.rules.findIndex(function (x) {
 	                return x.id === ruleId;
 	            });
-	
+
 	            parent.rules.splice(index, 1);
 	            this.setState({ root: this.state.root });
 	        }
@@ -292,7 +292,7 @@ module.exports =
 	            var index = parent.rules.findIndex(function (x) {
 	                return x.id === groupId;
 	            });
-	
+
 	            parent.rules.splice(index, 1);
 	            this.setState({ root: this.state.root });
 	        }
@@ -302,15 +302,15 @@ module.exports =
 	            if (parent.id === id) {
 	                return parent;
 	            }
-	
+
 	            var _iteratorNormalCompletion = true;
 	            var _didIteratorError = false;
 	            var _iteratorError = undefined;
-	
+
 	            try {
 	                for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	                    var rule = _step.value;
-	
+
 	                    if (rule.id === id) {
 	                        return rule;
 	                    } else if (rule.type === 'ruleGroup') {
@@ -342,12 +342,12 @@ module.exports =
 	                for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
 	                    args[_key2 - 1] = arguments[_key2];
 	                }
-	
+
 	                fn.call.apply(fn, [this].concat(args));
 	            }
-	
+
 	            var onQueryChange = this.props.onQueryChange;
-	
+
 	            if (onQueryChange) {
 	                var query = this._constructQuery(this.state.root);
 	                onQueryChange(query);
@@ -357,21 +357,21 @@ module.exports =
 	        key: '_constructQuery',
 	        value: function _constructQuery(node) {
 	            var _this3 = this;
-	
+
 	            var query = void 0;
-	
+
 	            if (node.type === 'rule') {
 	                var field = node.field;
 	                var operator = node.operator;
 	                var value = node.value;
-	
+
 	                query = { field: field, operator: operator, value: value };
 	            }
-	
+
 	            if (node.type === 'ruleGroup') {
 	                var combinator = node.combinator;
 	                var rules = node.rules;
-	
+
 	                query = {
 	                    combinator: combinator,
 	                    rules: rules.map(function (r) {
@@ -379,26 +379,26 @@ module.exports =
 	                    })
 	                };
 	            }
-	
+
 	            return query;
 	        }
 	    }], [{
 	        key: 'defaultOperators',
 	        get: function get() {
-	
+
 	            return [{ name: 'null', label: 'Is Null' }, { name: 'notNull', label: 'Is Not Null' }, { name: 'in', label: 'In' }, { name: 'notIn', label: 'Not In' }, { name: '=', label: '=' }, { name: '!=', label: '!=' }, { name: '<', label: '<' }, { name: '>', label: '>' }, { name: '<=', label: '<=' }, { name: '>=', label: '>=' }];
 	        }
 	    }, {
 	        key: 'defaultCombinators',
 	        get: function get() {
-	
+
 	            return [{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];
 	        }
 	    }]);
-	
+
 	    return QueryBuilder;
 	}(React.Component);
-	
+
 	/* harmony default export */ exports["a"] = QueryBuilder;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
@@ -408,27 +408,27 @@ module.exports =
 
 	"use strict";
 	/* WEBPACK VAR INJECTION */(function(React) {var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
+
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
+
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
+
 	var Rule = function (_React$Component) {
 	    _inherits(Rule, _React$Component);
-	
+
 	    function Rule() {
 	        _classCallCheck(this, Rule);
-	
+
 	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Rule).apply(this, arguments));
 	    }
-	
+
 	    _createClass(Rule, [{
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
-	
+
 	            var _props = this.props;
 	            var field = _props.field;
 	            var operator = _props.operator;
@@ -438,8 +438,8 @@ module.exports =
 	            var operators = _props$schema.operators;
 	            var getEditor = _props$schema.getEditor;
 	            var getOperators = _props$schema.getOperators;
-	
-	
+
+
 	            return React.createElement(
 	                'div',
 	                { className: 'QueryBuilder-rule' },
@@ -494,8 +494,8 @@ module.exports =
 	            var _props2 = this.props;
 	            var id = _props2.id;
 	            var onPropChange = _props2.schema.onPropChange;
-	
-	
+
+
 	            onPropChange(field, value, id);
 	        }
 	    }, {
@@ -516,10 +516,10 @@ module.exports =
 	            };
 	        }
 	    }]);
-	
+
 	    return Rule;
 	}(React.Component);
-	
+
 	/* harmony default export */ exports["a"] = Rule;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
@@ -530,36 +530,36 @@ module.exports =
 	"use strict";
 	/* WEBPACK VAR INJECTION */(function(React) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Rule__ = __webpack_require__(2);
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
+
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
+
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	
-	
+
+
+
 	var RuleGroup = function (_React$Component) {
 	    _inherits(RuleGroup, _React$Component);
-	
+
 	    function RuleGroup() {
 	        _classCallCheck(this, RuleGroup);
-	
+
 	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RuleGroup).apply(this, arguments));
 	    }
-	
+
 	    _createClass(RuleGroup, [{
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
-	
+
 	            var _props = this.props;
 	            var combinator = _props.combinator;
 	            var rules = _props.rules;
 	            var _props$schema = _props.schema;
 	            var combinators = _props$schema.combinators;
 	            var onRuleRemove = _props$schema.onRuleRemove;
-	
+
 	            return React.createElement(
 	                'div',
 	                { className: 'QueryBuilder-ruleGroup' },
@@ -618,8 +618,8 @@ module.exports =
 	        key: 'onCombinatorChange',
 	        value: function onCombinatorChange(value) {
 	            var onPropChange = this.props.schema.onPropChange;
-	
-	
+
+
 	            onPropChange('combinator', value, this.props.id);
 	        }
 	    }, {
@@ -628,8 +628,8 @@ module.exports =
 	            var _props$schema2 = this.props.schema;
 	            var createRule = _props$schema2.createRule;
 	            var onRuleAdd = _props$schema2.onRuleAdd;
-	
-	
+
+
 	            var newRule = createRule();
 	            onRuleAdd(newRule, this.props.id);
 	        }
@@ -639,7 +639,7 @@ module.exports =
 	            var _props$schema3 = this.props.schema;
 	            var createRuleGroup = _props$schema3.createRuleGroup;
 	            var onGroupAdd = _props$schema3.onGroupAdd;
-	
+
 	            var newGroup = createRuleGroup();
 	            onGroupAdd(newGroup, this.props.id);
 	        }
@@ -660,10 +660,10 @@ module.exports =
 	            };
 	        }
 	    }]);
-	
+
 	    return RuleGroup;
 	}(React.Component);
-	
+
 	/* harmony default export */ exports["a"] = RuleGroup;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
@@ -681,10 +681,10 @@ module.exports =
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(8);
-	
+
 	/** Built-in value references. */
 	var Symbol = root.Symbol;
-	
+
 	module.exports = Symbol;
 
 
@@ -694,14 +694,14 @@ module.exports =
 
 	var Symbol = __webpack_require__(5),
 	    isSymbol = __webpack_require__(10);
-	
+
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0;
-	
+
 	/** Used to convert symbols to primitives and strings. */
 	var symbolProto = Symbol ? Symbol.prototype : undefined,
 	    symbolToString = symbolProto ? symbolProto.toString : undefined;
-	
+
 	/**
 	 * The base implementation of `_.toString` which doesn't convert nullish
 	 * values to empty strings.
@@ -721,7 +721,7 @@ module.exports =
 	  var result = (value + '');
 	  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 	}
-	
+
 	module.exports = baseToString;
 
 
@@ -739,7 +739,7 @@ module.exports =
 	function checkGlobal(value) {
 	  return (value && value.Object === Object) ? value : null;
 	}
-	
+
 	module.exports = checkGlobal;
 
 
@@ -748,21 +748,21 @@ module.exports =
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var checkGlobal = __webpack_require__(7);
-	
+
 	/** Detect free variable `global` from Node.js. */
 	var freeGlobal = checkGlobal(typeof global == 'object' && global);
-	
+
 	/** Detect free variable `self`. */
 	var freeSelf = checkGlobal(typeof self == 'object' && self);
-	
+
 	/** Detect `this` as the global object. */
 	var thisGlobal = checkGlobal(typeof this == 'object' && this);
-	
+
 	/** Used as a reference to the global object. */
 	var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
-	
+
 	module.exports = root;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ },
@@ -796,7 +796,7 @@ module.exports =
 	function isObjectLike(value) {
 	  return !!value && typeof value == 'object';
 	}
-	
+
 	module.exports = isObjectLike;
 
 
@@ -805,20 +805,20 @@ module.exports =
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObjectLike = __webpack_require__(9);
-	
+
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
-	
+
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
-	
+
 	/**
 	 * Used to resolve the
 	 * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
 	 * of values.
 	 */
 	var objectToString = objectProto.toString;
-	
+
 	/**
 	 * Checks if `value` is classified as a `Symbol` primitive or object.
 	 *
@@ -841,7 +841,7 @@ module.exports =
 	  return typeof value == 'symbol' ||
 	    (isObjectLike(value) && objectToString.call(value) == symbolTag);
 	}
-	
+
 	module.exports = isSymbol;
 
 
@@ -850,7 +850,7 @@ module.exports =
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseToString = __webpack_require__(6);
-	
+
 	/**
 	 * Converts `value` to a string. An empty string is returned for `null`
 	 * and `undefined` values. The sign of `-0` is preserved.
@@ -875,7 +875,7 @@ module.exports =
 	function toString(value) {
 	  return value == null ? '' : baseToString(value);
 	}
-	
+
 	module.exports = toString;
 
 
@@ -884,10 +884,10 @@ module.exports =
 /***/ function(module, exports, __webpack_require__) {
 
 	var toString = __webpack_require__(11);
-	
+
 	/** Used to generate unique IDs. */
 	var idCounter = 0;
-	
+
 	/**
 	 * Generates a unique ID. If `prefix` is given, the ID is appended to it.
 	 *
@@ -909,7 +909,7 @@ module.exports =
 	  var id = ++idCounter;
 	  return toString(prefix) + id;
 	}
-	
+
 	module.exports = uniqueId;
 
 
@@ -918,10 +918,10 @@ module.exports =
 /***/ function(module, exports) {
 
 	var g;
-	
+
 	// This works in non-strict mode
 	g = (function() { return this; })();
-	
+
 	try {
 		// This works if eval is allowed (see CSP)
 		g = g || Function("return this")() || (1,eval)("this");
@@ -930,14 +930,13 @@ module.exports =
 		if(typeof window === "object")
 			g = window;
 	}
-	
+
 	// g can still be undefined, but nothing to do about it...
 	// We return undefined, instead of nothing here, so it's
 	// easier to handle this case. if(!global) { ...}
-	
+
 	module.exports = g;
 
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=index.js.map
