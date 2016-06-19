@@ -108,7 +108,7 @@ export default class QueryBuilder extends React.Component {
             id: uniqueId('r-'),
             type: 'rule',
             field: fields[0].name,
-            value: null,
+            value: '',
             operator: operators[0].name
         };
     }
