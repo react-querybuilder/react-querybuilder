@@ -40,9 +40,3 @@ function logQuery(query) {
 }
 
 ```
-
-### To run the demo
-
-```shell
-git clone
-```
