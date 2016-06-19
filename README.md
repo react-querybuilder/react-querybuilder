@@ -2,4 +2,6 @@
 A QueryBuilder component for React
 
 
-## How to run
+## Documentation
+
+Pending
