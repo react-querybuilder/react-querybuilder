@@ -23,7 +23,7 @@ module.exports = [
 
         resolve: {
             alias: {
-                'react-query-builder': __dirname + '/lib'
+                'react-querybuilder': __dirname + '/dist'
             }
         },
 

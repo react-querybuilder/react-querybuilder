@@ -21,11 +21,11 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['', '.js', '.jsx']
+        extensions: ['', '.js', '.jsx', '.scss']
     },
 
     plugins: [
-        new ExtractTextPlugin('react-query-builder.css'),
+        new ExtractTextPlugin('query-builder.css'),
         new ProvidePlugin({
             React: 'react'
         })

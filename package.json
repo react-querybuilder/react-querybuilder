@@ -1,44 +1,45 @@
 {
-    "name": "react-querybuilder",
-    "version": "1.0.2",
-    "description": "The React <QueryBuilder /> component for constructing queries",
-    "main": "dist/index.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
-    },
-    "keywords": [
-        "react",
-        "query",
-        "builder",
-        "operators",
-        "ui",
-        "component"
-    ],
-    "author": "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
-    "license": "MIT",
-    "homepage": "https://github.com/sapientglobalmarkets/react-querybuilder",
-    "devDependencies": {
-        "babel-core": "^6.9.1",
-        "babel-loader": "^6.2.4",
-        "babel-preset-es2015-webpack": "^6.4.1",
-        "babel-preset-react": "^6.5.0",
-        "css-loader": "^0.23.1",
-        "extract-text-webpack-plugin": "^1.0.1",
-        "html-webpack-plugin": "^2.21.0",
-        "node-sass": "^3.8.0",
-        "sass-loader": "^3.2.0",
-        "webpack": "^2.1.0-beta.13",
-        "webpack-dev-server": "^1.14.1",
-        "webpack-merge": "^0.14.0"
-    },
-    "dependencies": {
-        "lodash": "^4.13.1",
-        "react": "^15.1.0",
-        "react-dom": "^15.1.0"
-    },
-    "scripts": {
-        "start": "webpack-dev-server --config webpack-dev.config.js",
-        "dist": "webpack --config webpack-dist.config.js"
-    }
+  "name": "react-querybuilder",
+  "version": "1.0.3",
+  "description": "The React <QueryBuilder /> component for constructing queries",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
+  },
+  "keywords": [
+    "react",
+    "query",
+    "builder",
+    "operators",
+    "ui",
+    "component"
+  ],
+  "author": "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
+  "license": "MIT",
+  "homepage": "https://github.com/sapientglobalmarkets/react-querybuilder",
+  "devDependencies": {
+    "babel-core": "^6.9.1",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015-webpack": "^6.4.1",
+    "babel-preset-react": "^6.5.0",
+    "copy-webpack-plugin": "^3.0.1",
+    "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.21.0",
+    "node-sass": "^3.8.0",
+    "sass-loader": "^3.2.0",
+    "webpack": "^2.1.0-beta.13",
+    "webpack-dev-server": "^1.14.1",
+    "webpack-merge": "^0.14.0"
+  },
+  "dependencies": {
+    "lodash": "^4.13.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --config webpack-dev.config.js",
+    "dist": "webpack --config webpack-dist.config.js"
+  }
 }
