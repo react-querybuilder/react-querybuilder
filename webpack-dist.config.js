@@ -6,7 +6,7 @@ const webpackCommon = require('./webpack-common.config');
 
 module.exports = merge(webpackCommon, {
     entry: {
-        'react-query-builder': './lib/index.js'
+        'index': './lib/index.js'
     },
     output: {
         filename: '[name].js',

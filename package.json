@@ -1,8 +1,8 @@
 {
     "name": "react-querybuilder",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "The React <QueryBuilder /> component for constructing queries",
-    "main": "lib/index.js",
+    "main": "dist/index.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
