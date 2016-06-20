@@ -3,7 +3,7 @@
 let HtmlPlugin = require('html-webpack-plugin');
 let DefinePlugin = require('webpack').DefinePlugin;
 const merge = require('webpack-merge');
-const webpackCommon = require('./webpack-common.config');
+const webpackCommon = require('./config/webpack-common.config');
 
 module.exports = [
     merge(webpackCommon, {
@@ -32,5 +32,5 @@ module.exports = [
             })
         ]
     }),
-    require('./webpack-dist.config')
+    require('./config/webpack-dist.config')
 ];
