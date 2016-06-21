@@ -1,6 +1,5 @@
 'use strict';
 
-let DefinePlugin = require('webpack').DefinePlugin;
 const merge = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -27,9 +26,6 @@ module.exports = merge(webpackCommon, {
             {
                 from: './lib/query-builder.scss',
             }
-        ]),
-        new DefinePlugin({
-            DEV: false
-        })
+        ])
     ]
 });

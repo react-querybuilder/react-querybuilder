@@ -1,7 +1,7 @@
 # react-querybuilder
 A QueryBuilder component for React
 
-[![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)]()
+[![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 
 **Credits**: This component was inspired by prior work from:
 

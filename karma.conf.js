@@ -1,5 +1,9 @@
+process.env.BABEL_ENV = 'test'; // Set the proper environment for babel
+const testFileGlob = 'lib/**/*.test.js';
+const sourceFileGlob = 'lib/**/*!(.test).js';
+
+
 module.exports = function (config) {
-    const testFileGlob = 'lib/**/*.test.js';
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -24,7 +28,7 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            [testFileGlob]: ['webpack']
+            [testFileGlob]: ['webpack'],
         },
         webpack: require('./config/webpack-test.config'),
         webpackMiddleware: {noInfo: true},
@@ -33,7 +37,18 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['mocha'],
+        reporters: ['mocha', 'coverage'],
+        coverageReporter: {
+            dir: 'coverage',
+            reporters: [
+                {type: 'html', subdir: 'html'},
+                {type: 'text-summary'},
+            ],
+            includeAllSources: true,
+            instrumenterOptions: {
+                istanbul: {noCompact: true}
+            }
+        },
 
 
         // web server port

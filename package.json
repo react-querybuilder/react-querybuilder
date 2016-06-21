@@ -21,6 +21,7 @@
   "devDependencies": {
     "babel-core": "^6.9.1",
     "babel-loader": "^6.2.4",
+    "babel-plugin-__coverage__": "^11.0.0",
     "babel-preset-es2015-webpack": "^6.4.1",
     "babel-preset-react": "^6.5.0",
     "chai": "^3.5.0",
@@ -32,6 +33,7 @@
     "html-webpack-plugin": "^2.21.0",
     "karma": "^0.13.22",
     "karma-chai": "^0.1.0",
+    "karma-coverage": "^1.0.0",
     "karma-mocha": "^1.0.1",
     "karma-mocha-reporter": "^2.0.4",
     "karma-phantomjs-launcher": "^1.0.0",
@@ -55,9 +57,9 @@
     "react-dom": "^15.1.0"
   },
   "scripts": {
-    "start": "webpack-dev-server",
-    "dist": "del dist; webpack",
+    "start": "webpack-dev-server --env dev",
+    "dist": "del dist; webpack --env prod",
     "test": "karma start",
-    "test:watch": "karma start --no-single-run --auto-watch"
+    "test:watch": "npm test -- --no-single-run --auto-watch"
   }
 }
