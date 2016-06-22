@@ -6,7 +6,7 @@ import RuleGroup from './RuleGroup';
 export default class QueryBuilder extends React.Component {
     static get defaultProps() {
         return {
-            rules: [],
+            query: null,
             fields: [],
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
@@ -18,7 +18,7 @@ export default class QueryBuilder extends React.Component {
 
     static get propTypes() {
         return {
-            rules: React.PropTypes.array,
+            query: React.PropTypes.object,
             fields: React.PropTypes.array,
             operators: React.PropTypes.array,
             combinators: React.PropTypes.array,
@@ -65,7 +65,7 @@ export default class QueryBuilder extends React.Component {
         const {fields, operators, combinators} = this.props;
 
         this.setState({
-            root: this.createRuleGroup(),
+            root: this.props.query || this.createRuleGroup(),
             schema: {
                 fields,
                 operators,
