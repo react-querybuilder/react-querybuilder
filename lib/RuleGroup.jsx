@@ -12,10 +12,12 @@ export default class RuleGroup extends React.Component {
     }
 
     render() {
-        const {combinator, rules, schema: {combinators, onRuleRemove}} = this.props;
+        const {combinator, rules, schema: {combinators, onRuleRemove, isRuleGroup}} = this.props;
         return (
             <div className="QueryBuilder-ruleGroup">
-                <select value={combinator} onChange={event=>this.onCombinatorChange(event.target.value)}>
+                <select className="RuleGroup-combinators"
+                        value={combinator}
+                        onChange={event=>this.onCombinatorChange(event.target.value)}>
                         {
                             combinators.map(c=> {
                                 return (<option key={c.name} value={c.name}>{c.label}</option>);
@@ -23,18 +25,31 @@ export default class RuleGroup extends React.Component {
                         }
                 </select>
 
-                <button onClick={()=>this.addRule()}>+Rule</button>
-                <button onClick={()=>this.addGroup()}>+Group</button>
+                <button className="RuleGroup-addRule"
+                        onClick={()=>this.addRule()}>
+                    +Rule
+                </button>
+                <button className="RuleGroup-addGroup"
+                        onClick={()=>this.addGroup()}>
+                    +Group
+                </button>
                  {
                      (this.props.parentId)
-                         ? <button onClick={()=>this.removeGroup(this.props.id)}>x</button>
+                         ? <button className="RuleGroup-remove"
+                                   onClick={()=>this.removeGroup(this.props.id)}>x</button>
                          : null
                  }
                  {
                      rules.map(r=> {
                          return (
-                             r.type === 'rule'
-                                 ? <Rule key={r.id}
+                             isRuleGroup(r)
+                                 ? <RuleGroup key={r.id}
+                                              id={r.id}
+                                              schema={this.props.schema}
+                                              parentId={this.props.id}
+                                              combinator={r.combinator}
+                                              rules={r.rules}/>
+                                 : <Rule key={r.id}
                                          id={r.id}
                                          field={r.field}
                                          value={r.value}
@@ -42,12 +57,6 @@ export default class RuleGroup extends React.Component {
                                          schema={this.props.schema}
                                          parentId={this.props.id}
                                          onRuleRemove={onRuleRemove}/>
-                                 : <RuleGroup key={r.id}
-                                              id={r.id}
-                                              schema={this.props.schema}
-                                              parentId={this.props.id}
-                                              combinator={r.combinator}
-                                              rules={r.rules}/>
                          );
                      })
                  }

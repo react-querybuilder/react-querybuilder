@@ -15,7 +15,8 @@ export default class Rule extends React.Component {
 
         return (
             <div className="QueryBuilder-rule">
-                <select value={field}
+                <select className="Rule-fields"
+                        value={field}
                         onChange={event=>this.onValueChanged('field', event.target.value)}>
                         {
                             fields.map(field=> {
@@ -25,7 +26,8 @@ export default class Rule extends React.Component {
                             })
                         }
                 </select>
-                <select value={operator}
+                <select className="Rule-operators"
+                        value={operator}
                         onChange={event=>this.onValueChanged('operator', event.target.value)}>
                         {
                             getOperators().map(op=> {
@@ -45,7 +47,9 @@ export default class Rule extends React.Component {
                      })
                  }
 
-                <button onClick={()=>this.removeRule()}>x</button>
+                <button className="Rule-remove"
+                        onClick={()=>this.removeRule()}>x
+                </button>
             </div>
         );
     }

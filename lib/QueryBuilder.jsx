@@ -65,7 +65,7 @@ export default class QueryBuilder extends React.Component {
         const {fields, operators, combinators} = this.props;
 
         this.setState({
-            root: this.props.query || this.createRuleGroup(),
+            root: this.getInitialQuery(),
             schema: {
                 fields,
                 operators,
@@ -77,11 +77,16 @@ export default class QueryBuilder extends React.Component {
                 onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
                 onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
                 onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
+                isRuleGroup: this.isRuleGroup.bind(this),
                 getEditor: (...args)=>this.prepareEditor(...args),
                 getOperators: (...args)=>this.getOperators(...args),
             }
         });
 
+    }
+
+    getInitialQuery() {
+        return this.props.query || this.createRuleGroup();
     }
 
     componentDidMount() {
@@ -101,12 +106,15 @@ export default class QueryBuilder extends React.Component {
     }
 
 
+    isRuleGroup(rule) {
+        return !!(rule.combinator && rule.rules);
+    }
+
     createRule() {
         const {fields, operators} = this.state.schema;
 
         return {
             id: uniqueId('r-'),
-            type: 'rule',
             field: fields[0].name,
             value: '',
             operator: operators[0].name
@@ -116,7 +124,6 @@ export default class QueryBuilder extends React.Component {
     createRuleGroup() {
         return {
             id: uniqueId('g-'),
-            type: 'ruleGroup',
             rules: [],
             combinator: this.props.combinators[0].name,
         };
@@ -192,6 +199,8 @@ export default class QueryBuilder extends React.Component {
     }
 
     _findRule(id, parent) {
+        const {isRuleGroup} = this.state.schema;
+
         if (parent.id === id) {
             return parent;
         }
@@ -199,7 +208,7 @@ export default class QueryBuilder extends React.Component {
         for (const rule of parent.rules) {
             if (rule.id === id) {
                 return rule;
-            } else if (rule.type === 'ruleGroup') {
+            } else if (isRuleGroup(rule)) {
                 const subRule = this._findRule(id, rule);
                 if (subRule) {
                     return subRule;
@@ -223,18 +232,17 @@ export default class QueryBuilder extends React.Component {
 
     _constructQuery(node) {
         let query;
+        const {isRuleGroup} = this.state.schema;
 
-        if (node.type === 'rule') {
-            const {field, operator, value} = node;
-            query = {field, operator, value};
-        }
-
-        if (node.type === 'ruleGroup') {
+        if (isRuleGroup(node)) {
             const {combinator, rules} = node;
             query = {
                 combinator,
                 rules: rules.map(r=> this._constructQuery(r, {}))
             };
+        } else {
+            const {field, operator, value} = node;
+            query = {field, operator, value};
         }
 
         return query;
