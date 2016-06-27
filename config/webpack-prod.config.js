@@ -3,6 +3,7 @@
 const merge = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
 const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path');
 
 module.exports = merge(webpackCommon, {
     entry: {
@@ -10,7 +11,7 @@ module.exports = merge(webpackCommon, {
     },
     output: {
         filename: '[name].js',
-        path: __dirname + '/dist',
+        path: path.resolve(__dirname, '../dist'),
         library: true,
         libraryTarget: 'commonjs2'
     },

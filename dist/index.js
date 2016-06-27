@@ -92,7 +92,7 @@ module.exports =
 	        key: 'defaultProps',
 	        get: function get() {
 	            return {
-	                rules: [],
+	                query: null,
 	                fields: [],
 	                operators: QueryBuilder.defaultOperators,
 	                combinators: QueryBuilder.defaultCombinators,
@@ -105,8 +105,8 @@ module.exports =
 	        key: 'propTypes',
 	        get: function get() {
 	            return {
-	                rules: React.PropTypes.array,
-	                fields: React.PropTypes.array,
+	                query: React.PropTypes.object,
+	                fields: React.PropTypes.array.isRequired,
 	                operators: React.PropTypes.array,
 	                combinators: React.PropTypes.array,
 	                getEditor: React.PropTypes.func,
@@ -146,7 +146,7 @@ module.exports =
 
 
 	            this.setState({
-	                root: this.createRuleGroup(),
+	                root: this.getInitialQuery(),
 	                schema: {
 	                    fields: fields,
 	                    operators: operators,
@@ -158,6 +158,7 @@ module.exports =
 	                    onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
 	                    onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
 	                    onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
+	                    isRuleGroup: this.isRuleGroup.bind(this),
 	                    getEditor: function getEditor() {
 	                        return _this2.prepareEditor.apply(_this2, arguments);
 	                    },
@@ -166,6 +167,11 @@ module.exports =
 	                    }
 	                }
 	            });
+	        }
+	    }, {
+	        key: 'getInitialQuery',
+	        value: function getInitialQuery() {
+	            return this.props.query || this.createRuleGroup();
 	        }
 	    }, {
 	        key: 'componentDidMount',
@@ -190,6 +196,11 @@ module.exports =
 	                parentId: null });
 	        }
 	    }, {
+	        key: 'isRuleGroup',
+	        value: function isRuleGroup(rule) {
+	            return !!(rule.combinator && rule.rules);
+	        }
+	    }, {
 	        key: 'createRule',
 	        value: function createRule() {
 	            var _state$schema = this.state.schema;
@@ -199,7 +210,6 @@ module.exports =
 
 	            return {
 	                id: __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default()('r-'),
-	                type: 'rule',
 	                field: fields[0].name,
 	                value: '',
 	                operator: operators[0].name
@@ -210,7 +220,6 @@ module.exports =
 	        value: function createRuleGroup() {
 	            return {
 	                id: __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default()('g-'),
-	                type: 'ruleGroup',
 	                rules: [],
 	                combinator: this.props.combinators[0].name
 	            };
@@ -299,6 +308,9 @@ module.exports =
 	    }, {
 	        key: '_findRule',
 	        value: function _findRule(id, parent) {
+	            var isRuleGroup = this.state.schema.isRuleGroup;
+
+
 	            if (parent.id === id) {
 	                return parent;
 	            }
@@ -313,7 +325,7 @@ module.exports =
 
 	                    if (rule.id === id) {
 	                        return rule;
-	                    } else if (rule.type === 'ruleGroup') {
+	                    } else if (isRuleGroup(rule)) {
 	                        var subRule = this._findRule(id, rule);
 	                        if (subRule) {
 	                            return subRule;
@@ -359,16 +371,10 @@ module.exports =
 	            var _this3 = this;
 
 	            var query = void 0;
+	            var isRuleGroup = this.state.schema.isRuleGroup;
 
-	            if (node.type === 'rule') {
-	                var field = node.field;
-	                var operator = node.operator;
-	                var value = node.value;
 
-	                query = { field: field, operator: operator, value: value };
-	            }
-
-	            if (node.type === 'ruleGroup') {
+	            if (isRuleGroup(node)) {
 	                var combinator = node.combinator;
 	                var rules = node.rules;
 
@@ -378,6 +384,12 @@ module.exports =
 	                        return _this3._constructQuery(r, {});
 	                    })
 	                };
+	            } else {
+	                var field = node.field;
+	                var operator = node.operator;
+	                var value = node.value;
+
+	                query = { field: field, operator: operator, value: value };
 	            }
 
 	            return query;
@@ -425,7 +437,7 @@ module.exports =
 	    }
 
 	    _createClass(Rule, [{
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
 	            var _this2 = this;
 
@@ -441,31 +453,33 @@ module.exports =
 
 
 	            return React.createElement(
-	                'div',
-	                { className: 'QueryBuilder-rule' },
+	                "div",
+	                { className: "QueryBuilder-rule" },
 	                React.createElement(
-	                    'select',
-	                    { value: field,
+	                    "select",
+	                    { className: "Rule-fields",
+	                        value: field,
 	                        onChange: function onChange(event) {
 	                            return _this2.onValueChanged('field', event.target.value);
 	                        } },
 	                    fields.map(function (field) {
 	                        return React.createElement(
-	                            'option',
+	                            "option",
 	                            { key: field.name, value: field.name },
 	                            field.label
 	                        );
 	                    })
 	                ),
 	                React.createElement(
-	                    'select',
-	                    { value: operator,
+	                    "select",
+	                    { className: "Rule-operators",
+	                        value: operator,
 	                        onChange: function onChange(event) {
 	                            return _this2.onValueChanged('operator', event.target.value);
 	                        } },
 	                    getOperators().map(function (op) {
 	                        return React.createElement(
-	                            'option',
+	                            "option",
 	                            { value: op.name, key: op.name },
 	                            op.label
 	                        );
@@ -480,16 +494,17 @@ module.exports =
 	                    }
 	                }),
 	                React.createElement(
-	                    'button',
-	                    { onClick: function onClick() {
-	                            return _this2.removeRule();
+	                    "button",
+	                    { className: "Rule-remove",
+	                        onClick: function onClick(event) {
+	                            return _this2.removeRule(event);
 	                        } },
-	                    'x'
+	                    "x"
 	                )
 	            );
 	        }
 	    }, {
-	        key: 'onValueChanged',
+	        key: "onValueChanged",
 	        value: function onValueChanged(field, value) {
 	            var _props2 = this.props;
 	            var id = _props2.id;
@@ -499,12 +514,15 @@ module.exports =
 	            onPropChange(field, value, id);
 	        }
 	    }, {
-	        key: 'removeRule',
-	        value: function removeRule() {
+	        key: "removeRule",
+	        value: function removeRule(event) {
+	            event.preventDefault();
+	            event.stopPropagation();
+
 	            this.props.schema.onRuleRemove(this.props.id, this.props.parentId);
 	        }
 	    }], [{
-	        key: 'defaultProps',
+	        key: "defaultProps",
 	        get: function get() {
 	            return {
 	                id: null,
@@ -559,13 +577,16 @@ module.exports =
 	            var _props$schema = _props.schema;
 	            var combinators = _props$schema.combinators;
 	            var onRuleRemove = _props$schema.onRuleRemove;
+	            var isRuleGroup = _props$schema.isRuleGroup;
 
 	            return React.createElement(
 	                'div',
 	                { className: 'QueryBuilder-ruleGroup' },
 	                React.createElement(
 	                    'select',
-	                    { value: combinator, onChange: function onChange(event) {
+	                    { className: 'RuleGroup-combinators',
+	                        value: combinator,
+	                        onChange: function onChange(event) {
 	                            return _this2.onCombinatorChange(event.target.value);
 	                        } },
 	                    combinators.map(function (c) {
@@ -578,39 +599,42 @@ module.exports =
 	                ),
 	                React.createElement(
 	                    'button',
-	                    { onClick: function onClick() {
-	                            return _this2.addRule();
+	                    { className: 'RuleGroup-addRule',
+	                        onClick: function onClick(event) {
+	                            return _this2.addRule(event);
 	                        } },
 	                    '+Rule'
 	                ),
 	                React.createElement(
 	                    'button',
-	                    { onClick: function onClick() {
-	                            return _this2.addGroup();
+	                    { className: 'RuleGroup-addGroup',
+	                        onClick: function onClick(event) {
+	                            return _this2.addGroup(event);
 	                        } },
 	                    '+Group'
 	                ),
 	                this.props.parentId ? React.createElement(
 	                    'button',
-	                    { onClick: function onClick() {
-	                            return _this2.removeGroup(_this2.props.id);
+	                    { className: 'RuleGroup-remove',
+	                        onClick: function onClick(event) {
+	                            return _this2.removeGroup(event, _this2.props.id);
 	                        } },
 	                    'x'
 	                ) : null,
 	                rules.map(function (r) {
-	                    return r.type === 'rule' ? React.createElement(__WEBPACK_IMPORTED_MODULE_0__Rule__["a" /* default */], { key: r.id,
+	                    return isRuleGroup(r) ? React.createElement(RuleGroup, { key: r.id,
+	                        id: r.id,
+	                        schema: _this2.props.schema,
+	                        parentId: _this2.props.id,
+	                        combinator: r.combinator,
+	                        rules: r.rules }) : React.createElement(__WEBPACK_IMPORTED_MODULE_0__Rule__["a" /* default */], { key: r.id,
 	                        id: r.id,
 	                        field: r.field,
 	                        value: r.value,
 	                        operator: r.operator,
 	                        schema: _this2.props.schema,
 	                        parentId: _this2.props.id,
-	                        onRuleRemove: onRuleRemove }) : React.createElement(RuleGroup, { key: r.id,
-	                        id: r.id,
-	                        schema: _this2.props.schema,
-	                        parentId: _this2.props.id,
-	                        combinator: r.combinator,
-	                        rules: r.rules });
+	                        onRuleRemove: onRuleRemove });
 	                })
 	            );
 	        }
@@ -624,7 +648,10 @@ module.exports =
 	        }
 	    }, {
 	        key: 'addRule',
-	        value: function addRule() {
+	        value: function addRule(event) {
+	            event.preventDefault();
+	            event.stopPropagation();
+
 	            var _props$schema2 = this.props.schema;
 	            var createRule = _props$schema2.createRule;
 	            var onRuleAdd = _props$schema2.onRuleAdd;
@@ -635,7 +662,10 @@ module.exports =
 	        }
 	    }, {
 	        key: 'addGroup',
-	        value: function addGroup() {
+	        value: function addGroup(event) {
+	            event.preventDefault();
+	            event.stopPropagation();
+
 	            var _props$schema3 = this.props.schema;
 	            var createRuleGroup = _props$schema3.createRuleGroup;
 	            var onGroupAdd = _props$schema3.onGroupAdd;
@@ -645,7 +675,10 @@ module.exports =
 	        }
 	    }, {
 	        key: 'removeGroup',
-	        value: function removeGroup(groupId) {
+	        value: function removeGroup(event, groupId) {
+	            event.preventDefault();
+	            event.stopPropagation();
+
 	            this.props.schema.onGroupRemove(groupId, this.props.parentId);
 	        }
 	    }], [{

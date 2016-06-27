@@ -48,7 +48,7 @@ export default class Rule extends React.Component {
                  }
 
                 <button className="Rule-remove"
-                        onClick={()=>this.removeRule()}>x
+                        onClick={event=>this.removeRule(event)}>x
                 </button>
             </div>
         );
@@ -60,7 +60,10 @@ export default class Rule extends React.Component {
         onPropChange(field, value, id);
     }
 
-    removeRule() {
+    removeRule(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         this.props.schema.onRuleRemove(this.props.id, this.props.parentId);
     }
 

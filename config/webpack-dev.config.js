@@ -3,6 +3,7 @@
 let HtmlPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
+const path = require('path');
 
 module.exports = merge(webpackCommon, {
     entry: {
@@ -10,7 +11,7 @@ module.exports = merge(webpackCommon, {
     },
     output: {
         filename: '[name].bundle.js',
-        path: __dirname + '/dist/demo'
+        path: path.resolve(__dirname, '../dist/demo')
     },
 
     devtool: 'cheap-module-source-map',

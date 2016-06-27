@@ -26,17 +26,17 @@ export default class RuleGroup extends React.Component {
                 </select>
 
                 <button className="RuleGroup-addRule"
-                        onClick={()=>this.addRule()}>
+                        onClick={event=>this.addRule(event)}>
                     +Rule
                 </button>
                 <button className="RuleGroup-addGroup"
-                        onClick={()=>this.addGroup()}>
+                        onClick={event=>this.addGroup(event)}>
                     +Group
                 </button>
                  {
                      (this.props.parentId)
                          ? <button className="RuleGroup-remove"
-                                   onClick={()=>this.removeGroup(this.props.id)}>x</button>
+                                   onClick={event=>this.removeGroup(event, this.props.id)}>x</button>
                          : null
                  }
                  {
@@ -70,20 +70,29 @@ export default class RuleGroup extends React.Component {
         onPropChange('combinator', value, this.props.id);
     }
 
-    addRule() {
+    addRule(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         const {createRule, onRuleAdd} = this.props.schema;
 
         const newRule = createRule();
         onRuleAdd(newRule, this.props.id)
     }
 
-    addGroup() {
+    addGroup(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         const {createRuleGroup, onGroupAdd} = this.props.schema;
         const newGroup = createRuleGroup();
         onGroupAdd(newGroup, this.props.id)
     }
 
-    removeGroup(groupId) {
+    removeGroup(event, groupId) {
+        event.preventDefault();
+        event.stopPropagation();
+
         this.props.schema.onGroupRemove(groupId, this.props.parentId);
     }
 
