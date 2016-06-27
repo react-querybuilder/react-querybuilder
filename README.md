@@ -1,22 +1,22 @@
 # react-querybuilder
-A QueryBuilder component for React
 
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 
-**Credits**: This component was inspired by prior work from:
+## Credits
+This component was inspired by prior work from:
 
 - [jQuery QueryBuilder](http://querybuilder.js.org/)
 - [Angular QueryBuilder](https://github.com/mfauveau/angular-query-builder)
 
 
-### Getting Started
+## Getting Started
 
 ![Screenshot](_assets/screenshot.png)
 
 ```shell
 npm install react-querybuilder --save
 ```
-### Demo
+## Demo
 
 Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your browser.
 
@@ -25,7 +25,7 @@ OR
 [See live Demo](http://www.webpackbin.com/41LfnfeBb).
 
 
-### Usage
+## Usage
 
 ```jsx
 import {QueryBuilder} from 'react-querybuilder';
@@ -51,7 +51,7 @@ function logQuery(query) {
 
 ```
 
-### API
+## API
 
 `<QueryBuilder />` is the only top-level component exposed from this library. It supports the following properties:
 

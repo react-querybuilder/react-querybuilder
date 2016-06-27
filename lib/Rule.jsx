@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default class Rule extends React.Component {
     static get defaultProps() {
         return {
@@ -11,11 +13,11 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, operators, getEditor, getOperators}} = this.props;
+        const {field, operator, value, schema: {fields, operators, getEditor, getOperators, classNames}} = this.props;
 
         return (
-            <div className="QueryBuilder-rule">
-                <select className="Rule-fields"
+            <div className={`rule ${classNames.rule}`}>
+                <select className={`rule-fields ${classNames.fields}`}
                         value={field}
                         onChange={event=>this.onValueChanged('field', event.target.value)}>
                         {
@@ -26,7 +28,7 @@ export default class Rule extends React.Component {
                             })
                         }
                 </select>
-                <select className="Rule-operators"
+                <select className={`rule-operators ${classNames.operators}`}
                         value={operator}
                         onChange={event=>this.onValueChanged('operator', event.target.value)}>
                         {
@@ -47,7 +49,7 @@ export default class Rule extends React.Component {
                      })
                  }
 
-                <button className="Rule-remove"
+                <button className={`rule-remove ${classNames.removeRule}`}
                         onClick={event=>this.removeRule(event)}>x
                 </button>
             </div>

@@ -1,3 +1,4 @@
+import React from 'react';
 import Rule from './Rule';
 
 export default class RuleGroup extends React.Component {
@@ -12,10 +13,10 @@ export default class RuleGroup extends React.Component {
     }
 
     render() {
-        const {combinator, rules, schema: {combinators, onRuleRemove, isRuleGroup}} = this.props;
+        const {combinator, rules, schema: {combinators, onRuleRemove, isRuleGroup, classNames}} = this.props;
         return (
-            <div className="QueryBuilder-ruleGroup">
-                <select className="RuleGroup-combinators"
+            <div className={`ruleGroup ${classNames.ruleGroup}`}>
+                <select className={`ruleGroup-combinators ${classNames.combinators}`}
                         value={combinator}
                         onChange={event=>this.onCombinatorChange(event.target.value)}>
                         {
@@ -25,17 +26,17 @@ export default class RuleGroup extends React.Component {
                         }
                 </select>
 
-                <button className="RuleGroup-addRule"
+                <button className={`ruleGroup-addRule ${classNames.addRule}`}
                         onClick={event=>this.addRule(event)}>
                     +Rule
                 </button>
-                <button className="RuleGroup-addGroup"
+                <button className={`ruleGroup-addGroup ${classNames.addGroup}`}
                         onClick={event=>this.addGroup(event)}>
                     +Group
                 </button>
                  {
                      (this.props.parentId)
-                         ? <button className="RuleGroup-remove"
+                         ? <button className={`ruleGroup-remove ${classNames.removeGroup}`}
                                    onClick={event=>this.removeGroup(event, this.props.id)}>x</button>
                          : null
                  }

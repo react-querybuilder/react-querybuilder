@@ -1,4 +1,5 @@
 import uniqueId from 'lodash/uniqueId';
+import React from 'react';
 
 import RuleGroup from './RuleGroup';
 
@@ -13,6 +14,7 @@ export default class QueryBuilder extends React.Component {
             getEditor: null,
             getOperators: null,
             onQueryChange: null,
+            controlClassnames: null
         };
     }
 
@@ -24,7 +26,8 @@ export default class QueryBuilder extends React.Component {
             combinators: React.PropTypes.array,
             getEditor: React.PropTypes.func,
             getOperators: React.PropTypes.func,
-            onQueryChange: React.PropTypes.func
+            onQueryChange: React.PropTypes.func,
+            controlClassnames: React.PropTypes.object
         };
     }
 
@@ -61,8 +64,28 @@ export default class QueryBuilder extends React.Component {
         ];
     }
 
+    static get defaultControlClassnames() {
+        return {
+            queryBuilder: '',
+
+            ruleGroup: '',
+            combinators: '',
+            addRule: '',
+            addGroup: '',
+            removeGroup: '',
+
+            rule: '',
+            fields: '',
+            operators: '',
+            value: '',
+            removeRule: '',
+
+        };
+    }
+
     componentWillMount() {
-        const {fields, operators, combinators} = this.props;
+        const {fields, operators, combinators, controlClassnames} = this.props;
+        const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
 
         this.setState({
             root: this.getInitialQuery(),
@@ -70,6 +93,9 @@ export default class QueryBuilder extends React.Component {
                 fields,
                 operators,
                 combinators,
+
+                classNames,
+
                 createRule: this.createRule.bind(this),
                 createRuleGroup: this.createRuleGroup.bind(this),
                 onRuleAdd: this._notifyQueryChange.bind(this, this.onRuleAdd),
@@ -97,11 +123,13 @@ export default class QueryBuilder extends React.Component {
         const {root: {id, rules, combinator}, schema} = this.state;
 
         return (
-            <RuleGroup rules={rules}
-                       combinator={combinator}
-                       schema={schema}
-                       id={id}
-                       parentId={null}/>
+            <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
+                <RuleGroup rules={rules}
+                           combinator={combinator}
+                           schema={schema}
+                           id={id}
+                           parentId={null}/>
+            </div>
         );
     }
 

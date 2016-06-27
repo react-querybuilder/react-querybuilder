@@ -1,6 +1,7 @@
 import '../lib/query-builder.scss';
 import {QueryBuilder} from '../lib/index';
 import {render} from "react-dom";
+import React from 'react';
 
 const fields = [
     {name: 'firstName', label: 'First Name'},
@@ -27,6 +28,7 @@ class RootView extends React.Component {
                 <div className="scroll">
                     <QueryBuilder fields={this.props.fields}
                                   getEditor={this.getEditor}
+                                  controlClassnames={{fields: 'form-control'}}
                                   onQueryChange={this.logQuery.bind(this)}/>
                 </div>
                 <div className="shrink query-log scroll">
@@ -58,5 +60,5 @@ class RootView extends React.Component {
 
 }
 
-render(<RootView fields={fields}/>, document.querySelector('.container'));
+render(<RootView fields={fields} />, document.querySelector('.container'));
 

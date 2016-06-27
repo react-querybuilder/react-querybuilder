@@ -22,9 +22,6 @@ module.exports = {
     },
 
     plugins: [
-        new ExtractTextPlugin('query-builder.css'),
-        new ProvidePlugin({
-            React: 'react'
-        })
+        new ExtractTextPlugin('query-builder.css')
     ]
 };
