@@ -55,12 +55,14 @@ function logQuery(query) {
 
 `<QueryBuilder />` is the only top-level component exposed from this library. It supports the following properties:
 
-*(Required)* **fields** : [ {name:String, label:String} ]
+#### fields *(Required)*
+[ {name:String, label:String} ]
 
 The array of fields that should be used. Each field should be an object with
 `{name:String, label:String}` |
 
-*(Optional)* **operators** : [ {name:String, label:String} ]
+#### operators *(Optional)*
+[ {name:String, label:String} ]
 
 The array of operators that should be used. The default operators include:
 
@@ -79,7 +81,8 @@ The array of operators that should be used. The default operators include:
 ]
 ```
 
-*(Optional)* **combinators** : [ {name:String, label:String} ]
+#### combinators *(Optional)*
+[ {name:String, label:String} ]
 
 The array of combinators that should be used for RuleGroups.
 The default set includes:
@@ -91,17 +94,20 @@ The default set includes:
 ]
 ```
 
-*(Optional)* **getEditor** : function({field, operator, value, onChange}):ReactElement
+#### getEditor *(Optional)*
+function({field, operator, value, onChange}):ReactElement
 
 This is a callback function invoked by the internal `<Rule />` component to determine the
 editor for the field value. By default a `<input type="text" />` is used.
 
-*(Optional)* **getOperators** : function(field):[]
+#### getOperators *(Optional)*
+function(field):[]
 
 This is a callback function invoked to get the list of allowed operators
 for the given field
 
-*(Optional)* **onQueryChange** : function(queryJSON):void
+#### onQueryChange *(Optional)*
+function(queryJSON):void
 
 This is a notification that is invoked anytime the query configuration changes. The
 query is provided as a JSON structure, as shown below:
@@ -131,5 +137,29 @@ query is provided as a JSON structure, as shown below:
       ]
     }
   ]
+}
+```
+
+#### controlClassnames *(Optional)*
+This can be used to assign specific `CSS` classes to various controls
+that are created by the `<QueryBuilder />`. This is an object
+with the following properties:
+
+```js
+{
+    queryBuilder:String, // Root <div> element
+
+    ruleGroup:String, // <div> containing the RuleGroup
+    combinators:String, // <select> control for combinators
+    addRule:String, // <button> to add a Rule
+    addGroup:String, // <button> to add a RuleGroup
+    removeGroup:String, // <button> to remove a RuleGroup
+
+    rule:String, // <div> containing the Rule
+    fields:String, // <select> control for fields
+    operators:String, // <select> control for operators
+    value:String, // <input> for the field value
+    removeRule:String // <button> to remove a Rule
+
 }
 ```
