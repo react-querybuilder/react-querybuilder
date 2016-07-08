@@ -30,7 +30,7 @@ export default class Rule extends React.Component {
                         value={operator}
                         onChange={event=>this.onValueChanged('operator', event.target.value)}>
                         {
-                            getOperators().map(op=> {
+                            getOperators(field).map(op=> {
                                 return (
                                     <option value={op.name} key={op.name}>{op.label}</option>
                                 );
