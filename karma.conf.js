@@ -5,7 +5,7 @@ const testFileGlob = 'lib/**/*.test.js';
 module.exports = function (config) {
     config.set({
         basePath: '',
-        frameworks: ['mocha', 'chai'],
+        frameworks: ['mocha', 'chai', 'es6-shim'],
 
         files: [
             testFileGlob
