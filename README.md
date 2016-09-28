@@ -94,11 +94,25 @@ The default set includes:
 ]
 ```
 
-#### getEditor *(Optional)*
-function({field, operator, value, onChange}):ReactElement
+#### controls *(Optional)*
+```js
+React.PropTypes.shape({
+  valueEditor: React.PropTypes.element
+})
+```
 
-This is a callback function invoked by the internal `<Rule />` component to determine the
-editor for the field value. By default a `<input type="text" />` is used.
+This is a custom controls object invoked by the internal `<Rule />` component
+to determine the components to use.
+The following components are supported:
+- `valueEditor`: By default a `<input type="text" />` is used. The following props are passed:
+
+  ```js
+  {
+    field: React.PropTypes.string, //field name corresponding to this Rule
+    operator: React.PropTypes.string, //operator name corresponding to this Rule
+    handleOnChange: React.PropTypes.func //callback function to update the query representation
+  }
+  ```
 
 #### getOperators *(Optional)*
 function(field):[]

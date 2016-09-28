@@ -23,11 +23,14 @@ class RootView extends React.Component {
     }
 
     render() {
+        let controls = {
+            valueEditor: this.customValueEditor()
+        }
         return (
             <div className="flex-box">
                 <div className="scroll">
                     <QueryBuilder fields={this.props.fields}
-                                  getEditor={this.getEditor}
+                                  controls={controls}
                                   controlClassnames={{fields: 'form-control'}}
                                   onQueryChange={this.logQuery.bind(this)}/>
                 </div>
@@ -39,19 +42,38 @@ class RootView extends React.Component {
         );
     }
 
-    getEditor({field, operator, value, onChange}) {
-        if (field !== 'isDev' || operator !== '=') {
-            return null;
-        }
+    customValueEditor() {
+        class MyCheckbox extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    value: ''
+                }
+            }
 
-        const hasValue = !!value;
-        return (
-            <span>
-            <input type="checkbox"
-                   value={hasValue}
-                   onChange={event=>onChange(event.target.checked)}/>
-        </span>
-        );
+            render() {
+                const hasValue = !!this.state.value;
+                if (this.props.field !== 'isDev' || this.props.operator !== '=') {
+                    return <input type="text"
+                                  value={this.state.value}
+                                  onChange={e=>this._handleOnChange(e.target.value)} />
+                }
+
+                return (
+                    <span>
+                        <input type="checkbox"
+                               value={hasValue}
+                               onChange={e=>this._handleOnChange(e.target.checked)}/>
+                    </span>
+                );
+            }
+
+            _handleOnChange(value) {
+                this.setState({value: value});
+                this.props.handleOnChange(value);
+            }
+        };
+        return (<MyCheckbox />);
     }
 
     logQuery(query) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import ValueEditor from './controls/ValueEditor';
 
 export default class Rule extends React.Component {
     static get defaultProps() {
@@ -13,8 +14,7 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, operators, getEditor, getOperators, classNames}} = this.props;
-
+        const {field, operator, value, schema: {fields, operators, controls, getOperators, classNames}} = this.props;
         return (
             <div className={`rule ${classNames.rule}`}>
                 <select className={`rule-fields ${classNames.fields}`}
@@ -40,14 +40,11 @@ export default class Rule extends React.Component {
                         }
                 </select>
 
-                 {
-                     getEditor({
-                         field,
-                         value,
-                         operator,
-                         onChange: value=>this.onValueChanged('value', value)
-                     })
-                 }
+                <ValueEditor field={field}
+                             operator={operator}
+                             handleOnChange={this.onValueChanged.bind(this, 'value')}>
+                    {controls.valueEditor}
+                </ValueEditor>
 
                 <button className={`rule-remove ${classNames.removeRule}`}
                         onClick={event=>this.removeRule(event)}>x
