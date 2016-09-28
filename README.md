@@ -97,6 +97,8 @@ The default set includes:
 #### controls *(Optional)*
 ```js
 React.PropTypes.shape({
+  fieldSelector: React.PropTypes.element,
+  operatorSelector: React.PropTypes.element,
   valueEditor: React.PropTypes.element
 })
 ```
@@ -104,6 +106,24 @@ React.PropTypes.shape({
 This is a custom controls object invoked by the internal `<Rule />` component
 to determine the components to use.
 The following components are supported:
+- `fieldSelector`: By default a `<select />` is used. The following props are passed:
+
+  ```js
+  {
+    className: React.PropTypes.string, //css classNames to be applied
+    options: React.PropTypes.array, //same as 'fields' passed into QueryBuilder
+    handleOnChange: React.PropTypes.func //callback function to update query representation
+  }
+  ```
+- `operatorSelector`: By default a `<select />` is used. The following props are passed:
+
+  ```js
+  {
+    className: React.PropTypes.string, //css classNames to be applied
+    options: React.PropTypes.array, //return value of getOperators(field)
+    handleOnChange: React.PropTypes.func //callback function to update query representation
+  }
+  ```
 - `valueEditor`: By default a `<input type="text" />` is used. The following props are passed:
 
   ```js

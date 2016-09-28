@@ -1,5 +1,6 @@
 import React from 'react';
 import ValueEditor from './controls/ValueEditor';
+import ValueSelector from './controls/ValueSelector';
 
 export default class Rule extends React.Component {
     static get defaultProps() {
@@ -17,28 +18,17 @@ export default class Rule extends React.Component {
         const {field, operator, value, schema: {fields, operators, controls, getOperators, classNames}} = this.props;
         return (
             <div className={`rule ${classNames.rule}`}>
-                <select className={`rule-fields ${classNames.fields}`}
-                        value={field}
-                        onChange={event=>this.onValueChanged('field', event.target.value)}>
-                        {
-                            fields.map(field=> {
-                                return (
-                                    <option key={field.name} value={field.name}>{field.label}</option>
-                                );
-                            })
-                        }
-                </select>
-                <select className={`rule-operators ${classNames.operators}`}
-                        value={operator}
-                        onChange={event=>this.onValueChanged('operator', event.target.value)}>
-                        {
-                            getOperators(field).map(op=> {
-                                return (
-                                    <option value={op.name} key={op.name}>{op.label}</option>
-                                );
-                            })
-                        }
-                </select>
+
+                <ValueSelector className={`rule-fields ${classNames.fields}`}
+                               handleOnChange={this.onValueChanged.bind(this, 'field')}
+                               options={fields}>
+                    {controls.fieldSelector}
+                </ValueSelector>
+                <ValueSelector className={`rule-operators ${classNames.operators}`}
+                               handleOnChange={this.onValueChanged.bind(this, 'operator')}
+                               options={getOperators(field)}>
+                    {controls.operatorSelector}
+                </ValueSelector>
 
                 <ValueEditor field={field}
                              operator={operator}

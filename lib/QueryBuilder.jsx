@@ -87,6 +87,8 @@ export default class QueryBuilder extends React.Component {
 
     static get defaultControls() {
         return {
+            fieldSelector: null,
+            operatorSelector: null,
             valueEditor: null
         };
     }
