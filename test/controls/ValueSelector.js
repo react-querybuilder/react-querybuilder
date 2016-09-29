@@ -25,6 +25,11 @@ describe('<ValueSelector />', ()=> {
             expect(dom.find('option')).to.have.length(2);
         });
 
+        it('should have the value passed into the <select />', ()=> {
+            const dom = shallow(<ValueSelector options={options} value='foo'/>);
+            expect(dom.find('select').props().value).to.equal('foo');
+        });
+
         it('should have the className passed into the <select />', ()=> {
             const dom = shallow(<ValueSelector options={options} className='foo bar'/>);
             expect(dom.find('select').props().className).to.equal('foo bar');

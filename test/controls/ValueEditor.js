@@ -15,6 +15,11 @@ describe('<ValueEditor />', ()=> {
             expect(dom.find('input')).to.have.length(1);
         });
 
+        it('should have the value passed into the <input />', ()=> {
+            const dom = shallow(<ValueEditor value='test'/>);
+            expect(dom.find('input').props().value).to.equal('test');
+        });
+
         it('should render nothing for operator "null"', ()=> {
             const dom = shallow(<ValueEditor operator="null" />);
             expect(dom.type()).to.be.null;

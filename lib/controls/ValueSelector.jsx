@@ -3,6 +3,7 @@ import React from 'react';
 export default class ValueSelector extends React.Component {
   static get propTypes() {
     return {
+      value: React.PropTypes.string,
       options: React.PropTypes.array.isRequired,
       className: React.PropTypes.string,
       handleOnChange: React.PropTypes.func
@@ -11,17 +12,15 @@ export default class ValueSelector extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      value: ''
-    }
   }
 
   render() {
-    const {options, className, handleOnChange, children} = this.props;
+    const {value, options, className, handleOnChange, children} = this.props;
 
     return (children ?
       React.cloneElement(children,
         {
+          value: value,
           options: options,
           className: className,
           handleOnChange: handleOnChange
@@ -33,8 +32,8 @@ export default class ValueSelector extends React.Component {
   _defaultValueSelector() {
     return (
       <select className={this.props.className}
-              value={this.state.value}
-              onChange={e=>this._handleOnChange(e.target.value)}>
+              value={this.props.value}
+              onChange={e=>this.props.handleOnChange(e.target.value)}>
         {
           this.props.options.map(option=> {
             return (
@@ -44,10 +43,5 @@ export default class ValueSelector extends React.Component {
         }
       </select>
     );
-  }
-
-  _handleOnChange(value) {
-    this.setState({value: value});
-    this.props.handleOnChange(value);
   }
 }

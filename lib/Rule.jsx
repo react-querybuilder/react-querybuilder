@@ -19,19 +19,22 @@ export default class Rule extends React.Component {
         return (
             <div className={`rule ${classNames.rule}`}>
 
-                <ValueSelector className={`rule-fields ${classNames.fields}`}
-                               handleOnChange={this.onValueChanged.bind(this, 'field')}
-                               options={fields}>
+                <ValueSelector options={fields}
+                               value={field}
+                               className={`rule-fields ${classNames.fields}`}
+                               handleOnChange={this.onValueChanged.bind(this, 'field')}>
                     {controls.fieldSelector}
                 </ValueSelector>
-                <ValueSelector className={`rule-operators ${classNames.operators}`}
-                               handleOnChange={this.onValueChanged.bind(this, 'operator')}
-                               options={getOperators(field)}>
+                <ValueSelector options={getOperators(field)}
+                               value={operator}
+                               className={`rule-operators ${classNames.operators}`}
+                               handleOnChange={this.onValueChanged.bind(this, 'operator')}>
                     {controls.operatorSelector}
                 </ValueSelector>
 
                 <ValueEditor field={field}
                              operator={operator}
+                             value={value}
                              handleOnChange={this.onValueChanged.bind(this, 'value')}>
                     {controls.valueEditor}
                 </ValueEditor>

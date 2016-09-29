@@ -110,8 +110,9 @@ The following components are supported:
 
   ```js
   {
+    options: React.PropTypes.array.isRequired, //same as 'fields' passed into QueryBuilder
+    value: React.PropTypes.string, //selected field from the existing query representation, if any
     className: React.PropTypes.string, //css classNames to be applied
-    options: React.PropTypes.array, //same as 'fields' passed into QueryBuilder
     handleOnChange: React.PropTypes.func //callback function to update query representation
   }
   ```
@@ -119,8 +120,9 @@ The following components are supported:
 
   ```js
   {
+    options: React.PropTypes.array.isRequired, //return value of getOperators(field)
+    value: React.PropTypes.string, //selected operator from the existing query representation, if any
     className: React.PropTypes.string, //css classNames to be applied
-    options: React.PropTypes.array, //return value of getOperators(field)
     handleOnChange: React.PropTypes.func //callback function to update query representation
   }
   ```
@@ -130,6 +132,7 @@ The following components are supported:
   {
     field: React.PropTypes.string, //field name corresponding to this Rule
     operator: React.PropTypes.string, //operator name corresponding to this Rule
+    value: React.PropTypes.string, //value from the existing query representation, if any
     handleOnChange: React.PropTypes.func //callback function to update the query representation
   }
   ```

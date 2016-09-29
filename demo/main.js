@@ -46,31 +46,22 @@ class RootView extends React.Component {
         class MyCheckbox extends React.Component {
             constructor(props) {
                 super(props);
-                this.state = {
-                    value: ''
-                }
             }
 
             render() {
-                const hasValue = !!this.state.value;
                 if (this.props.field !== 'isDev' || this.props.operator !== '=') {
                     return <input type="text"
-                                  value={this.state.value}
-                                  onChange={e=>this._handleOnChange(e.target.value)} />
+                                  value={this.props.value}
+                                  onChange={e=>this.props.handleOnChange(e.target.value)} />
                 }
 
                 return (
                     <span>
                         <input type="checkbox"
-                               value={hasValue}
-                               onChange={e=>this._handleOnChange(e.target.checked)}/>
+                               value={!!this.props.value}
+                               onChange={e=>this.props.handleOnChange(e.target.checked)}/>
                     </span>
                 );
-            }
-
-            _handleOnChange(value) {
-                this.setState({value: value});
-                this.props.handleOnChange(value);
             }
         };
         return (<MyCheckbox />);
