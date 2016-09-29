@@ -2,6 +2,7 @@ import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 
 import RuleGroup from './RuleGroup';
+import { ValueEditor, ValueSelector } from './controls/index';
 
 
 export default class QueryBuilder extends React.Component {
@@ -11,7 +12,7 @@ export default class QueryBuilder extends React.Component {
             fields: [],
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
-            controls: QueryBuilder.defaultControls,
+            controlElements: null,
             getOperators: null,
             onQueryChange: null,
             controlClassnames: null
@@ -24,8 +25,10 @@ export default class QueryBuilder extends React.Component {
             fields: React.PropTypes.array.isRequired,
             operators: React.PropTypes.array,
             combinators: React.PropTypes.array,
-            controls: React.PropTypes.shape({
-              valueEditor: React.PropTypes.element
+            controlElements: React.PropTypes.shape({
+                fieldSelector: React.PropTypes.func,
+                operatorSelector: React.PropTypes.func,
+                valueEditor: React.PropTypes.func
             }),
             getOperators: React.PropTypes.func,
             onQueryChange: React.PropTypes.func,
@@ -85,17 +88,18 @@ export default class QueryBuilder extends React.Component {
         };
     }
 
-    static get defaultControls() {
+    static get defaultControlElements() {
         return {
-            fieldSelector: null,
-            operatorSelector: null,
-            valueEditor: null
+            fieldSelector: ValueSelector,
+            operatorSelector: ValueSelector,
+            valueEditor: ValueEditor
         };
     }
 
     componentWillMount() {
-        const {fields, operators, combinators, controls, controlClassnames} = this.props;
+        const {fields, operators, combinators, controlElements, controlClassnames} = this.props;
         const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
+        const controls = Object.assign({}, QueryBuilder.defaultControlElements, controlElements);
         this.setState({
             root: this.getInitialQuery(),
             schema: {

@@ -45,18 +45,4 @@ describe('<ValueSelector />', ()=> {
             expect(count).to.equal(1);
         });
     });
-
-    describe('when a custom component is used', ()=> {
-        class MyComponent extends React.Component {
-            render() {
-                return(<div />);
-            }
-        };
-
-        it('should render the custom component', ()=> {
-            const dom = mount(<ValueSelector options={[]}><MyComponent /></ValueSelector>);
-            expect(dom.find('select')).to.have.length(0);
-            expect(dom.find('div')).to.have.length(1);
-        });
-    });
 });

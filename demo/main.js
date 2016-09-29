@@ -23,14 +23,14 @@ class RootView extends React.Component {
     }
 
     render() {
-        let controls = {
+        let controlElements = {
             valueEditor: this.customValueEditor()
         }
         return (
             <div className="flex-box">
                 <div className="scroll">
                     <QueryBuilder fields={this.props.fields}
-                                  controls={controls}
+                                  controlElements={controlElements}
                                   controlClassnames={{fields: 'form-control'}}
                                   onQueryChange={this.logQuery.bind(this)}/>
                 </div>
@@ -43,7 +43,7 @@ class RootView extends React.Component {
     }
 
     customValueEditor() {
-        class MyCheckbox extends React.Component {
+        let checkbox = class MyCheckbox extends React.Component {
             constructor(props) {
                 super(props);
             }
@@ -64,7 +64,7 @@ class RootView extends React.Component {
                 );
             }
         };
-        return (<MyCheckbox />);
+        return checkbox;
     }
 
     logQuery(query) {

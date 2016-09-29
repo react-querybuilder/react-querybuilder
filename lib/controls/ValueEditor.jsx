@@ -15,28 +15,17 @@ export default class ValueEditor extends React.Component {
   }
 
   render() {
-    const {field, operator, value, children, handleOnChange} = this.props;
+    const {field, operator, value, handleOnChange} = this.props;
 
     if (operator === 'null' || operator === 'notNull') {
       return null;
     }
 
-    return (children ?
-      React.cloneElement(children, {
-        field: field,
-        operator: operator,
-        value: value,
-        handleOnChange: handleOnChange
-      }) : this._defaultValueEditor()
-    );
-
-  }
-
-  _defaultValueEditor() {
     return (
       <input type="text"
-             value={this.props.value}
-             onChange={e=>this.props.handleOnChange(e.target.value)} />
+             value={value}
+             onChange={e=>handleOnChange(e.target.value)} />
     );
+
   }
 }

@@ -94,18 +94,18 @@ The default set includes:
 ]
 ```
 
-#### controls *(Optional)*
+#### controlElements *(Optional)*
 ```js
 React.PropTypes.shape({
-  fieldSelector: React.PropTypes.element,
-  operatorSelector: React.PropTypes.element,
-  valueEditor: React.PropTypes.element
+  fieldSelector: React.PropTypes.func, //returns ReactClass
+  operatorSelector: React.PropTypes.func, //returns ReactClass
+  valueEditor: React.PropTypes.func //returns ReactClass
 })
 ```
 
 This is a custom controls object invoked by the internal `<Rule />` component
 to determine the components to use.
-The following components are supported:
+The following controls are supported:
 - `fieldSelector`: By default a `<select />` is used. The following props are passed:
 
   ```js

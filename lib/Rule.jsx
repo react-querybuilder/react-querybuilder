@@ -18,26 +18,36 @@ export default class Rule extends React.Component {
         const {field, operator, value, schema: {fields, operators, controls, getOperators, classNames}} = this.props;
         return (
             <div className={`rule ${classNames.rule}`}>
-
-                <ValueSelector options={fields}
-                               value={field}
-                               className={`rule-fields ${classNames.fields}`}
-                               handleOnChange={this.onValueChanged.bind(this, 'field')}>
-                    {controls.fieldSelector}
-                </ValueSelector>
-                <ValueSelector options={getOperators(field)}
-                               value={operator}
-                               className={`rule-operators ${classNames.operators}`}
-                               handleOnChange={this.onValueChanged.bind(this, 'operator')}>
-                    {controls.operatorSelector}
-                </ValueSelector>
-
-                <ValueEditor field={field}
-                             operator={operator}
-                             value={value}
-                             handleOnChange={this.onValueChanged.bind(this, 'value')}>
-                    {controls.valueEditor}
-                </ValueEditor>
+                {
+                    React.createElement(controls.fieldSelector,
+                        {
+                            options: fields,
+                            value: field,
+                            className: `rule-fields ${classNames.fields}`,
+                            handleOnChange: this.onValueChanged.bind(this, 'field')
+                        }
+                    )
+                }
+                {
+                    React.createElement(controls.operatorSelector,
+                        {
+                            options: getOperators(field),
+                            value: operator,
+                            className: `rule-operators ${classNames.operators}`,
+                            handleOnChange: this.onValueChanged.bind(this, 'operator')
+                        }
+                    )
+                }
+                {
+                    React.createElement(controls.valueEditor,
+                        {
+                            field: field,
+                            operator: operator,
+                            value: value,
+                            handleOnChange: this.onValueChanged.bind(this, 'value')
+                        }
+                    )
+                }
 
                 <button className={`rule-remove ${classNames.removeRule}`}
                         onClick={event=>this.removeRule(event)}>x
