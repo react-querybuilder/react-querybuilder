@@ -2,6 +2,7 @@ import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 
 import RuleGroup from './RuleGroup';
+import { ValueEditor, ValueSelector } from './controls/index';
 
 
 export default class QueryBuilder extends React.Component {
@@ -11,7 +12,7 @@ export default class QueryBuilder extends React.Component {
             fields: [],
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
-            getEditor: null,
+            controlElements: null,
             getOperators: null,
             onQueryChange: null,
             controlClassnames: null
@@ -24,7 +25,11 @@ export default class QueryBuilder extends React.Component {
             fields: React.PropTypes.array.isRequired,
             operators: React.PropTypes.array,
             combinators: React.PropTypes.array,
-            getEditor: React.PropTypes.func,
+            controlElements: React.PropTypes.shape({
+                fieldSelector: React.PropTypes.func,
+                operatorSelector: React.PropTypes.func,
+                valueEditor: React.PropTypes.func
+            }),
             getOperators: React.PropTypes.func,
             onQueryChange: React.PropTypes.func,
             controlClassnames: React.PropTypes.object
@@ -83,10 +88,18 @@ export default class QueryBuilder extends React.Component {
         };
     }
 
-    componentWillMount() {
-        const {fields, operators, combinators, controlClassnames} = this.props;
-        const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
+    static get defaultControlElements() {
+        return {
+            fieldSelector: ValueSelector,
+            operatorSelector: ValueSelector,
+            valueEditor: ValueEditor
+        };
+    }
 
+    componentWillMount() {
+        const {fields, operators, combinators, controlElements, controlClassnames} = this.props;
+        const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
+        const controls = Object.assign({}, QueryBuilder.defaultControlElements, controlElements);
         this.setState({
             root: this.getInitialQuery(),
             schema: {
@@ -104,7 +117,7 @@ export default class QueryBuilder extends React.Component {
                 onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
                 onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
                 isRuleGroup: this.isRuleGroup.bind(this),
-                getEditor: (...args)=>this.prepareEditor(...args),
+                controls,
                 getOperators: (...args)=>this.getOperators(...args),
             }
         });
@@ -155,26 +168,6 @@ export default class QueryBuilder extends React.Component {
             rules: [],
             combinator: this.props.combinators[0].name,
         };
-    }
-
-
-    prepareEditor(config) {
-        const {value, operator, onChange} = config;
-
-        const editor = this.props.getEditor && this.props.getEditor(config);
-        if (editor) {
-            return editor;
-        }
-
-        if (operator === 'null' || operator === 'notNull') {
-            return null;
-        }
-
-        return (
-            <input type="text"
-                   value={value}
-                   onChange={event=>onChange(event.target.value)}/>
-        );
     }
 
     getOperators(field) {

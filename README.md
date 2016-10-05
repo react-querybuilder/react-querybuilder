@@ -94,11 +94,48 @@ The default set includes:
 ]
 ```
 
-#### getEditor *(Optional)*
-function({field, operator, value, onChange}):ReactElement
+#### controlElements *(Optional)*
+```js
+React.PropTypes.shape({
+  fieldSelector: React.PropTypes.func, //returns ReactClass
+  operatorSelector: React.PropTypes.func, //returns ReactClass
+  valueEditor: React.PropTypes.func //returns ReactClass
+})
+```
 
-This is a callback function invoked by the internal `<Rule />` component to determine the
-editor for the field value. By default a `<input type="text" />` is used.
+This is a custom controls object invoked by the internal `<Rule />` component
+to determine the components to use.
+The following controls are supported:
+- `fieldSelector`: By default a `<select />` is used. The following props are passed:
+
+  ```js
+  {
+    options: React.PropTypes.array.isRequired, //same as 'fields' passed into QueryBuilder
+    value: React.PropTypes.string, //selected field from the existing query representation, if any
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnChange: React.PropTypes.func //callback function to update query representation
+  }
+  ```
+- `operatorSelector`: By default a `<select />` is used. The following props are passed:
+
+  ```js
+  {
+    options: React.PropTypes.array.isRequired, //return value of getOperators(field)
+    value: React.PropTypes.string, //selected operator from the existing query representation, if any
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnChange: React.PropTypes.func //callback function to update query representation
+  }
+  ```
+- `valueEditor`: By default a `<input type="text" />` is used. The following props are passed:
+
+  ```js
+  {
+    field: React.PropTypes.string, //field name corresponding to this Rule
+    operator: React.PropTypes.string, //operator name corresponding to this Rule
+    value: React.PropTypes.string, //value from the existing query representation, if any
+    handleOnChange: React.PropTypes.func //callback function to update the query representation
+  }
+  ```
 
 #### getOperators *(Optional)*
 function(field):[]
