@@ -15,7 +15,7 @@ describe('<ActionElement />', ()=> {
             expect(dom.find('button')).to.have.length(1);
         });
 
-        it('should have the value passed into the <button />', ()=> {
+        it('should have the label passed into the <button />', ()=> {
             const dom = shallow(<ActionElement label='test'/>);
             expect(dom.find('button').text()).to.equal('test');
         });
