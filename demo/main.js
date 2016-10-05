@@ -23,11 +23,14 @@ class RootView extends React.Component {
     }
 
     render() {
+        let controlElements = {
+            valueEditor: this.customValueEditor()
+        }
         return (
             <div className="flex-box">
                 <div className="scroll">
                     <QueryBuilder fields={this.props.fields}
-                                  getEditor={this.getEditor}
+                                  controlElements={controlElements}
                                   controlClassnames={{fields: 'form-control'}}
                                   onQueryChange={this.logQuery.bind(this)}/>
                 </div>
@@ -39,19 +42,29 @@ class RootView extends React.Component {
         );
     }
 
-    getEditor({field, operator, value, onChange}) {
-        if (field !== 'isDev' || operator !== '=') {
-            return null;
-        }
+    customValueEditor() {
+        let checkbox = class MyCheckbox extends React.Component {
+            constructor(props) {
+                super(props);
+            }
 
-        const hasValue = !!value;
-        return (
-            <span>
-            <input type="checkbox"
-                   value={hasValue}
-                   onChange={event=>onChange(event.target.checked)}/>
-        </span>
-        );
+            render() {
+                if (this.props.field !== 'isDev' || this.props.operator !== '=') {
+                    return <input type="text"
+                                  value={this.props.value}
+                                  onChange={e=>this.props.handleOnChange(e.target.value)} />
+                }
+
+                return (
+                    <span>
+                        <input type="checkbox"
+                               value={!!this.props.value}
+                               onChange={e=>this.props.handleOnChange(e.target.checked)}/>
+                    </span>
+                );
+            }
+        };
+        return checkbox;
     }
 
     logQuery(query) {
