@@ -1,4 +1,3 @@
-module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -46,6 +45,15 @@ module.exports =
 /******/ 		});
 /******/ 	};
 
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 
@@ -53,28 +61,195 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ function(module, exports) {
 
-module.exports = require("react");
+module.exports = react;
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default = __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId__ && __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId__.__esModule ? function() { return __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId__['default'] } : function() { return __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId__; };
-/* harmony import */ __webpack_require__.d(__WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default, 'a', __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __WEBPACK_IMPORTED_MODULE_1_react__ && __WEBPACK_IMPORTED_MODULE_1_react__.__esModule ? function() { return __WEBPACK_IMPORTED_MODULE_1_react__['default'] } : function() { return __WEBPACK_IMPORTED_MODULE_1_react__; };
-/* harmony import */ __webpack_require__.d(__WEBPACK_IMPORTED_MODULE_1_react___default, 'a', __WEBPACK_IMPORTED_MODULE_1_react___default);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RuleGroup__ = __webpack_require__(3);
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ValueEditor = function (_React$Component) {
+  _inherits(ValueEditor, _React$Component);
+
+  _createClass(ValueEditor, null, [{
+    key: 'propTypes',
+    get: function get() {
+      return {
+        field: _react2.default.PropTypes.string,
+        operator: _react2.default.PropTypes.string,
+        value: _react2.default.PropTypes.string,
+        handleOnChange: _react2.default.PropTypes.func
+      };
+    }
+  }]);
+
+  function ValueEditor(props) {
+    _classCallCheck(this, ValueEditor);
+
+    return _possibleConstructorReturn(this, (ValueEditor.__proto__ || Object.getPrototypeOf(ValueEditor)).call(this, props));
+  }
+
+  _createClass(ValueEditor, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var field = _props.field;
+      var operator = _props.operator;
+      var value = _props.value;
+      var handleOnChange = _props.handleOnChange;
+
+
+      if (operator === 'null' || operator === 'notNull') {
+        return null;
+      }
+
+      return _react2.default.createElement('input', { type: 'text',
+        value: value,
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.value);
+        } });
+    }
+  }]);
+
+  return ValueEditor;
+}(_react2.default.Component);
+
+exports.default = ValueEditor;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ValueSelector = function (_React$Component) {
+  _inherits(ValueSelector, _React$Component);
+
+  _createClass(ValueSelector, null, [{
+    key: 'propTypes',
+    get: function get() {
+      return {
+        value: _react2.default.PropTypes.string,
+        options: _react2.default.PropTypes.array.isRequired,
+        className: _react2.default.PropTypes.string,
+        handleOnChange: _react2.default.PropTypes.func
+      };
+    }
+  }]);
+
+  function ValueSelector(props) {
+    _classCallCheck(this, ValueSelector);
+
+    return _possibleConstructorReturn(this, (ValueSelector.__proto__ || Object.getPrototypeOf(ValueSelector)).call(this, props));
+  }
+
+  _createClass(ValueSelector, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var value = _props.value;
+      var options = _props.options;
+      var className = _props.className;
+      var handleOnChange = _props.handleOnChange;
+
+
+      return _react2.default.createElement(
+        'select',
+        { className: className,
+          value: value,
+          onChange: function onChange(e) {
+            return handleOnChange(e.target.value);
+          } },
+        options.map(function (option) {
+          return _react2.default.createElement(
+            'option',
+            { key: option.name, value: option.name },
+            option.label
+          );
+        })
+      );
+    }
+  }]);
+
+  return ValueSelector;
+}(_react2.default.Component);
+
+exports.default = ValueSelector;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _uniqueId = __webpack_require__(14);
+
+var _uniqueId2 = _interopRequireDefault(_uniqueId);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _RuleGroup = __webpack_require__(5);
+
+var _RuleGroup2 = _interopRequireDefault(_RuleGroup);
+
+var _index = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -83,11 +258,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
 
 var QueryBuilder = function (_React$Component) {
     _inherits(QueryBuilder, _React$Component);
@@ -100,7 +270,7 @@ var QueryBuilder = function (_React$Component) {
                 fields: [],
                 operators: QueryBuilder.defaultOperators,
                 combinators: QueryBuilder.defaultCombinators,
-                getEditor: null,
+                controlElements: null,
                 getOperators: null,
                 onQueryChange: null,
                 controlClassnames: null
@@ -110,20 +280,24 @@ var QueryBuilder = function (_React$Component) {
         key: 'propTypes',
         get: function get() {
             return {
-                query: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.object,
-                fields: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array.isRequired,
-                operators: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array,
-                combinators: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array,
-                getEditor: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.func,
-                getOperators: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.func,
-                onQueryChange: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.func,
-                controlClassnames: __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.object
+                query: _react2.default.PropTypes.object,
+                fields: _react2.default.PropTypes.array.isRequired,
+                operators: _react2.default.PropTypes.array,
+                combinators: _react2.default.PropTypes.array,
+                controlElements: _react2.default.PropTypes.shape({
+                    fieldSelector: _react2.default.PropTypes.func,
+                    operatorSelector: _react2.default.PropTypes.func,
+                    valueEditor: _react2.default.PropTypes.func
+                }),
+                getOperators: _react2.default.PropTypes.func,
+                onQueryChange: _react2.default.PropTypes.func,
+                controlClassnames: _react2.default.PropTypes.object
             };
         }
     }]);
 
     function QueryBuilder() {
-        var _Object$getPrototypeO;
+        var _ref;
 
         _classCallCheck(this, QueryBuilder);
 
@@ -131,7 +305,7 @@ var QueryBuilder = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        var _this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(QueryBuilder)).call.apply(_Object$getPrototypeO, [this].concat(args)));
+        var _this = _possibleConstructorReturn(this, (_ref = QueryBuilder.__proto__ || Object.getPrototypeOf(QueryBuilder)).call.apply(_ref, [this].concat(args)));
 
         _this.state = {
             root: {},
@@ -149,10 +323,11 @@ var QueryBuilder = function (_React$Component) {
             var fields = _props.fields;
             var operators = _props.operators;
             var combinators = _props.combinators;
+            var controlElements = _props.controlElements;
             var controlClassnames = _props.controlClassnames;
 
             var classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
-
+            var controls = Object.assign({}, QueryBuilder.defaultControlElements, controlElements);
             this.setState({
                 root: this.getInitialQuery(),
                 schema: {
@@ -170,9 +345,7 @@ var QueryBuilder = function (_React$Component) {
                     onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
                     onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
                     isRuleGroup: this.isRuleGroup.bind(this),
-                    getEditor: function getEditor() {
-                        return _this2.prepareEditor.apply(_this2, arguments);
-                    },
+                    controls: controls,
                     getOperators: function getOperators() {
                         return _this2.getOperators.apply(_this2, arguments);
                     }
@@ -200,10 +373,10 @@ var QueryBuilder = function (_React$Component) {
             var schema = _state.schema;
 
 
-            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+            return _react2.default.createElement(
                 'div',
                 { className: 'queryBuilder ' + schema.classNames.queryBuilder },
-                __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__RuleGroup__["a" /* default */], { rules: rules,
+                _react2.default.createElement(_RuleGroup2.default, { rules: rules,
                     combinator: combinator,
                     schema: schema,
                     id: id,
@@ -224,7 +397,7 @@ var QueryBuilder = function (_React$Component) {
 
 
             return {
-                id: __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default()('r-'),
+                id: (0, _uniqueId2.default)('r-'),
                 field: fields[0].name,
                 value: '',
                 operator: operators[0].name
@@ -234,33 +407,10 @@ var QueryBuilder = function (_React$Component) {
         key: 'createRuleGroup',
         value: function createRuleGroup() {
             return {
-                id: __WEBPACK_IMPORTED_MODULE_0_lodash_uniqueId___default()('g-'),
+                id: (0, _uniqueId2.default)('g-'),
                 rules: [],
                 combinator: this.props.combinators[0].name
             };
-        }
-    }, {
-        key: 'prepareEditor',
-        value: function prepareEditor(config) {
-            var value = config.value;
-            var operator = config.operator;
-            var _onChange = config.onChange;
-
-
-            var editor = this.props.getEditor && this.props.getEditor(config);
-            if (editor) {
-                return editor;
-            }
-
-            if (operator === 'null' || operator === 'notNull') {
-                return null;
-            }
-
-            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('input', { type: 'text',
-                value: value,
-                onChange: function onChange(event) {
-                    return _onChange(event.target.value);
-                } });
         }
     }, {
         key: 'getOperators',
@@ -441,22 +591,48 @@ var QueryBuilder = function (_React$Component) {
 
             };
         }
+    }, {
+        key: 'defaultControlElements',
+        get: function get() {
+            return {
+                fieldSelector: _index.ValueSelector,
+                operatorSelector: _index.ValueSelector,
+                valueEditor: _index.ValueEditor
+            };
+        }
     }]);
 
     return QueryBuilder;
-}(__WEBPACK_IMPORTED_MODULE_1_react___default.a.Component);
+}(_react2.default.Component);
 
-/* harmony default export */ exports["a"] = QueryBuilder;
+exports.default = QueryBuilder;
 
 /***/ },
-/* 2 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __WEBPACK_IMPORTED_MODULE_0_react__ && __WEBPACK_IMPORTED_MODULE_0_react__.__esModule ? function() { return __WEBPACK_IMPORTED_MODULE_0_react__['default'] } : function() { return __WEBPACK_IMPORTED_MODULE_0_react__; };
-/* harmony import */ __webpack_require__.d(__WEBPACK_IMPORTED_MODULE_0_react___default, 'a', __WEBPACK_IMPORTED_MODULE_0_react___default);
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _ValueEditor = __webpack_require__(1);
+
+var _ValueEditor2 = _interopRequireDefault(_ValueEditor);
+
+var _ValueSelector = __webpack_require__(2);
+
+var _ValueSelector2 = _interopRequireDefault(_ValueSelector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -464,15 +640,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-
-
 var Rule = function (_React$Component) {
     _inherits(Rule, _React$Component);
 
     function Rule() {
         _classCallCheck(this, Rule);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(Rule).apply(this, arguments));
+        return _possibleConstructorReturn(this, (Rule.__proto__ || Object.getPrototypeOf(Rule)).apply(this, arguments));
     }
 
     _createClass(Rule, [{
@@ -487,53 +661,32 @@ var Rule = function (_React$Component) {
             var _props$schema = _props.schema;
             var fields = _props$schema.fields;
             var operators = _props$schema.operators;
-            var getEditor = _props$schema.getEditor;
+            var controls = _props$schema.controls;
             var getOperators = _props$schema.getOperators;
             var classNames = _props$schema.classNames;
 
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            return _react2.default.createElement(
                 'div',
                 { className: 'rule ' + classNames.rule },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'select',
-                    { className: 'rule-fields ' + classNames.fields,
-                        value: field,
-                        onChange: function onChange(event) {
-                            return _this2.onValueChanged('field', event.target.value);
-                        } },
-                    fields.map(function (field) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'option',
-                            { key: field.name, value: field.name },
-                            field.label
-                        );
-                    })
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'select',
-                    { className: 'rule-operators ' + classNames.operators,
-                        value: operator,
-                        onChange: function onChange(event) {
-                            return _this2.onValueChanged('operator', event.target.value);
-                        } },
-                    getOperators(field).map(function (op) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'option',
-                            { value: op.name, key: op.name },
-                            op.label
-                        );
-                    })
-                ),
-                getEditor({
-                    field: field,
-                    value: value,
-                    operator: operator,
-                    onChange: function onChange(value) {
-                        return _this2.onValueChanged('value', value);
-                    }
+                _react2.default.createElement(controls.fieldSelector, {
+                    options: fields,
+                    value: field,
+                    className: 'rule-fields ' + classNames.fields,
+                    handleOnChange: this.onValueChanged.bind(this, 'field')
                 }),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(controls.operatorSelector, {
+                    options: getOperators(field),
+                    value: operator,
+                    className: 'rule-operators ' + classNames.operators,
+                    handleOnChange: this.onValueChanged.bind(this, 'operator')
+                }),
+                _react2.default.createElement(controls.valueEditor, {
+                    field: field,
+                    operator: operator,
+                    value: value,
+                    handleOnChange: this.onValueChanged.bind(this, 'value')
+                }),
+                _react2.default.createElement(
                     'button',
                     { className: 'rule-remove ' + classNames.removeRule,
                         onClick: function onClick(event) {
@@ -576,20 +729,32 @@ var Rule = function (_React$Component) {
     }]);
 
     return Rule;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+}(_react2.default.Component);
 
-/* harmony default export */ exports["a"] = Rule;
+exports.default = Rule;
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __WEBPACK_IMPORTED_MODULE_0_react__ && __WEBPACK_IMPORTED_MODULE_0_react__.__esModule ? function() { return __WEBPACK_IMPORTED_MODULE_0_react__['default'] } : function() { return __WEBPACK_IMPORTED_MODULE_0_react__; };
-/* harmony import */ __webpack_require__.d(__WEBPACK_IMPORTED_MODULE_0_react___default, 'a', __WEBPACK_IMPORTED_MODULE_0_react___default);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Rule__ = __webpack_require__(2);
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Rule = __webpack_require__(4);
+
+var _Rule2 = _interopRequireDefault(_Rule);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -597,16 +762,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-
-
-
 var RuleGroup = function (_React$Component) {
     _inherits(RuleGroup, _React$Component);
 
     function RuleGroup() {
         _classCallCheck(this, RuleGroup);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(RuleGroup).apply(this, arguments));
+        return _possibleConstructorReturn(this, (RuleGroup.__proto__ || Object.getPrototypeOf(RuleGroup)).apply(this, arguments));
     }
 
     _createClass(RuleGroup, [{
@@ -623,10 +785,10 @@ var RuleGroup = function (_React$Component) {
             var isRuleGroup = _props$schema.isRuleGroup;
             var classNames = _props$schema.classNames;
 
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            return _react2.default.createElement(
                 'div',
                 { className: 'ruleGroup ' + classNames.ruleGroup },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'select',
                     { className: 'ruleGroup-combinators ' + classNames.combinators,
                         value: combinator,
@@ -634,14 +796,14 @@ var RuleGroup = function (_React$Component) {
                             return _this2.onCombinatorChange(event.target.value);
                         } },
                     combinators.map(function (c) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        return _react2.default.createElement(
                             'option',
                             { key: c.name, value: c.name },
                             c.label
                         );
                     })
                 ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'button',
                     { className: 'ruleGroup-addRule ' + classNames.addRule,
                         onClick: function onClick(event) {
@@ -649,7 +811,7 @@ var RuleGroup = function (_React$Component) {
                         } },
                     '+Rule'
                 ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'button',
                     { className: 'ruleGroup-addGroup ' + classNames.addGroup,
                         onClick: function onClick(event) {
@@ -657,7 +819,7 @@ var RuleGroup = function (_React$Component) {
                         } },
                     '+Group'
                 ),
-                this.props.parentId ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                this.props.parentId ? _react2.default.createElement(
                     'button',
                     { className: 'ruleGroup-remove ' + classNames.removeGroup,
                         onClick: function onClick(event) {
@@ -666,12 +828,12 @@ var RuleGroup = function (_React$Component) {
                     'x'
                 ) : null,
                 rules.map(function (r) {
-                    return isRuleGroup(r) ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(RuleGroup, { key: r.id,
+                    return isRuleGroup(r) ? _react2.default.createElement(RuleGroup, { key: r.id,
                         id: r.id,
                         schema: _this2.props.schema,
                         parentId: _this2.props.id,
                         combinator: r.combinator,
-                        rules: r.rules }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__Rule__["a" /* default */], { key: r.id,
+                        rules: r.rules }) : _react2.default.createElement(_Rule2.default, { key: r.id,
                         id: r.id,
                         field: r.field,
                         value: r.value,
@@ -739,24 +901,46 @@ var RuleGroup = function (_React$Component) {
     }]);
 
     return RuleGroup;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+}(_react2.default.Component);
 
-/* harmony default export */ exports["a"] = RuleGroup;
+exports.default = RuleGroup;
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QueryBuilder__ = __webpack_require__(1);
-/* harmony reexport */ if(__webpack_require__.o(__WEBPACK_IMPORTED_MODULE_0__QueryBuilder__, "a")) __webpack_require__.d(exports, "QueryBuilder", function() { return __WEBPACK_IMPORTED_MODULE_0__QueryBuilder__["a"]; });
+'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ValueEditor = __webpack_require__(1);
+
+Object.defineProperty(exports, 'ValueEditor', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ValueEditor).default;
+  }
+});
+
+var _ValueSelector = __webpack_require__(2);
+
+Object.defineProperty(exports, 'ValueSelector', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ValueSelector).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(8);
+var root = __webpack_require__(10);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -765,11 +949,11 @@ module.exports = Symbol;
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(5),
-    isSymbol = __webpack_require__(10);
+var Symbol = __webpack_require__(7),
+    isSymbol = __webpack_require__(12);
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;
@@ -802,47 +986,33 @@ module.exports = baseToString;
 
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-/**
- * Checks if `value` is a global object.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {null|Object} Returns `value` if it's a global object, else `null`.
- */
-function checkGlobal(value) {
-  return (value && value.Object === Object) ? value : null;
-}
-
-module.exports = checkGlobal;
-
-
-/***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var checkGlobal = __webpack_require__(7);
+/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
-/** Detect free variable `global` from Node.js. */
-var freeGlobal = checkGlobal(typeof global == 'object' && global);
+module.exports = freeGlobal;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(9);
 
 /** Detect free variable `self`. */
-var freeSelf = checkGlobal(typeof self == 'object' && self);
-
-/** Detect `this` as the global object. */
-var thisGlobal = checkGlobal(typeof this == 'object' && this);
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
+var root = freeGlobal || freeSelf || Function('return this')();
 
 module.exports = root;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 /**
@@ -870,17 +1040,17 @@ module.exports = root;
  * // => false
  */
 function isObjectLike(value) {
-  return !!value && typeof value == 'object';
+  return value != null && typeof value == 'object';
 }
 
 module.exports = isObjectLike;
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-var isObjectLike = __webpack_require__(9);
+var isObjectLike = __webpack_require__(11);
 
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
@@ -890,7 +1060,7 @@ var objectProto = Object.prototype;
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
@@ -903,8 +1073,7 @@ var objectToString = objectProto.toString;
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -922,10 +1091,10 @@ module.exports = isSymbol;
 
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-var baseToString = __webpack_require__(6);
+var baseToString = __webpack_require__(8);
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -956,10 +1125,10 @@ module.exports = toString;
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-var toString = __webpack_require__(11);
+var toString = __webpack_require__(13);
 
 /** Used to generate unique IDs. */
 var idCounter = 0;
@@ -990,7 +1159,7 @@ module.exports = uniqueId;
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports) {
 
 var g;
@@ -1013,6 +1182,28 @@ try {
 
 module.exports = g;
 
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _QueryBuilder = __webpack_require__(3);
+
+Object.defineProperty(exports, 'QueryBuilder', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_QueryBuilder).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }
 /******/ ]);
