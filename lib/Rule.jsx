@@ -1,6 +1,4 @@
 import React from 'react';
-import ValueEditor from './controls/ValueEditor';
-import ValueSelector from './controls/ValueSelector';
 
 export default class Rule extends React.Component {
     static get defaultProps() {
