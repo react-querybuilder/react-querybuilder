@@ -48,10 +48,14 @@ export default class Rule extends React.Component {
                         }
                     )
                 }
-
-                <button className={`rule-remove ${classNames.removeRule}`}
-                        onClick={event=>this.removeRule(event)}>x
-                </button>
+                {
+                    React.createElement(controls.removeRuleAction,
+                    {
+                        label: 'x',
+                        className: `rule-remove ${classNames.removeRule}`,
+                        handleOnClick: this.removeRule.bind(this)
+                    })
+                }
             </div>
         );
     }

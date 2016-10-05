@@ -97,15 +97,65 @@ The default set includes:
 #### controlElements *(Optional)*
 ```js
 React.PropTypes.shape({
+  addGroupAction: React.PropTypes.func, //returns ReactClass
+  removeGroupAction: React.PropTypes.func, //returns ReactClass
+  addRuleAction: React.PropTypes.func, //returns ReactClass
+  removeRuleAction: React.PropTypes.func, //returns ReactClass
+  combinatorSelector: React.PropTypes.func, //returns ReactClass
   fieldSelector: React.PropTypes.func, //returns ReactClass
   operatorSelector: React.PropTypes.func, //returns ReactClass
   valueEditor: React.PropTypes.func //returns ReactClass
 })
 ```
 
-This is a custom controls object invoked by the internal `<Rule />` component
-to determine the components to use.
-The following controls are supported:
+This is a custom controls object that allows you to override the control elements used.
+The following control overrides are supported:
+- `addGroupAction`: By default a `<button />` is used. The following props are passed:
+
+  ```js
+  {
+    label: React.PropTypes.string, //"+Group"
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnClick: React.PropTypes.func //callback function to invoke adding a <RuleGroup />
+  }
+  ```
+- `removeGroupAction`: By default a `<button />` is used. The following props are passed:
+
+  ```js
+  {
+    label: React.PropTypes.string, //"x"
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnClick: React.PropTypes.func //callback function to invoke removing a <RuleGroup />
+  }
+  ```
+- `addRuleAction`: By default a `<button />` is used. The following props are passed:
+
+  ```js
+  {
+    label: React.PropTypes.string, //"+Rule"
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnClick: React.PropTypes.func //callback function to invoke adding a <Rule />
+  }
+  ```
+- `removeRuleAction`: By default a `<button />` is used. The following props are passed:
+
+  ```js
+  {
+    label: React.PropTypes.string, //"x"
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnClick: React.PropTypes.func //callback function to invoke removing a <Rule />
+  }
+  ```
+- `combinatorSelector`: By default a `<select />` is used. The following props are passed:
+
+  ```js
+  {
+    options: React.PropTypes.array.isRequired, //same as 'combinators' passed into QueryBuilder
+    value: React.PropTypes.string, //selected combinator from the existing query representation, if any
+    className: React.PropTypes.string, //css classNames to be applied
+    handleOnChange: React.PropTypes.func //callback function to update query representation
+  }
+  ```
 - `fieldSelector`: By default a `<select />` is used. The following props are passed:
 
   ```js

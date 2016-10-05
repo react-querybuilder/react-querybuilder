@@ -1,5 +1,5 @@
 import React from 'react';
-import {shallow, mount} from 'enzyme';
+import { shallow } from 'enzyme';
 
 import { ValueSelector } from '../../lib/controls/index';
 
@@ -31,8 +31,8 @@ describe('<ValueSelector />', ()=> {
         });
 
         it('should have the className passed into the <select />', ()=> {
-            const dom = shallow(<ValueSelector options={options} className='foo bar'/>);
-            expect(dom.find('select').props().className).to.equal('foo bar');
+            const dom = shallow(<ValueSelector options={options} className='foo'/>);
+            expect(dom.find('select').hasClass('foo')).to.equal(true);
         });
 
         it('should call the onChange method passed in', ()=> {

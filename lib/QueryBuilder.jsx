@@ -2,7 +2,7 @@ import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 
 import RuleGroup from './RuleGroup';
-import { ValueEditor, ValueSelector } from './controls/index';
+import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
 
 
 export default class QueryBuilder extends React.Component {
@@ -26,6 +26,11 @@ export default class QueryBuilder extends React.Component {
             operators: React.PropTypes.array,
             combinators: React.PropTypes.array,
             controlElements: React.PropTypes.shape({
+                addGroupAction: React.PropTypes.func,
+                removeGroupAction: React.PropTypes.func,
+                addRuleAction: React.PropTypes.func,
+                removeRuleAction: React.PropTypes.func,
+                combinatorSelector: React.PropTypes.func,
                 fieldSelector: React.PropTypes.func,
                 operatorSelector: React.PropTypes.func,
                 valueEditor: React.PropTypes.func
@@ -90,6 +95,11 @@ export default class QueryBuilder extends React.Component {
 
     static get defaultControlElements() {
         return {
+            addGroupAction: ActionElement,
+            removeGroupAction: ActionElement,
+            addRuleAction: ActionElement,
+            removeRuleAction: ActionElement,
+            combinatorSelector: ValueSelector,
             fieldSelector: ValueSelector,
             operatorSelector: ValueSelector,
             valueEditor: ValueEditor
