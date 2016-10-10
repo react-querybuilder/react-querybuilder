@@ -13,33 +13,47 @@ export default class RuleGroup extends React.Component {
     }
 
     render() {
-        const {combinator, rules, schema: {combinators, onRuleRemove, isRuleGroup, classNames}} = this.props;
+        const {combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, classNames}} = this.props;
         return (
             <div className={`ruleGroup ${classNames.ruleGroup}`}>
-                <select className={`ruleGroup-combinators ${classNames.combinators}`}
-                        value={combinator}
-                        onChange={event=>this.onCombinatorChange(event.target.value)}>
+                {
+                    React.createElement(controls.combinatorSelector,
                         {
-                            combinators.map(c=> {
-                                return (<option key={c.name} value={c.name}>{c.label}</option>);
-                            })
+                            options: combinators,
+                            value: combinator,
+                            className: `ruleGroup-combinators ${classNames.combinators}`,
+                            handleOnChange: this.onCombinatorChange.bind(this)
                         }
-                </select>
-
-                <button className={`ruleGroup-addRule ${classNames.addRule}`}
-                        onClick={event=>this.addRule(event)}>
-                    +Rule
-                </button>
-                <button className={`ruleGroup-addGroup ${classNames.addGroup}`}
-                        onClick={event=>this.addGroup(event)}>
-                    +Group
-                </button>
-                 {
-                     (this.props.parentId)
-                         ? <button className={`ruleGroup-remove ${classNames.removeGroup}`}
-                                   onClick={event=>this.removeGroup(event, this.props.id)}>x</button>
-                         : null
-                 }
+                    )
+                }
+                {
+                    React.createElement(controls.addRuleAction,
+                        {
+                            label: '+Rule',
+                            className: `ruleGroup-addRule ${classNames.addRule}`,
+                            handleOnClick: this.addRule.bind(this)
+                        }
+                    )
+                }
+                {
+                    React.createElement(controls.addGroupAction,
+                        {
+                            label: '+Group',
+                            className: `ruleGroup-addGroup ${classNames.addGroup}`,
+                            handleOnClick: this.addGroup.bind(this)
+                        }
+                    )
+                }
+                {
+                    this.hasParentGroup() ?
+                        React.createElement(controls.removeGroupAction,
+                            {
+                                label: 'x',
+                                className: `ruleGroup-remove ${classNames.removeGroup}`,
+                                handleOnClick: this.removeGroup.bind(this)
+                            }
+                        ) : null
+                }
                  {
                      rules.map(r=> {
                          return (
@@ -63,6 +77,10 @@ export default class RuleGroup extends React.Component {
                  }
             </div>
         );
+    }
+
+    hasParentGroup() {
+        return this.props.parentId;
     }
 
     onCombinatorChange(value) {
@@ -90,11 +108,11 @@ export default class RuleGroup extends React.Component {
         onGroupAdd(newGroup, this.props.id)
     }
 
-    removeGroup(event, groupId) {
+    removeGroup(event) {
         event.preventDefault();
         event.stopPropagation();
 
-        this.props.schema.onGroupRemove(groupId, this.props.parentId);
+        this.props.schema.onGroupRemove(this.props.id, this.props.parentId);
     }
 
 
