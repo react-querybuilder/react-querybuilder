@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 
 import Rule from '../lib/Rule';
-import { ValueSelector, ValueEditor } from '../lib/controls/index';
+import { ActionElement, ValueSelector, ValueEditor } from '../lib/controls/index';
 
 describe('<Rule />', ()=> {
     let controls;
@@ -14,7 +14,8 @@ describe('<Rule />', ()=> {
         controls = {
             fieldSelector: React.Component,
             operatorSelector: React.Component,
-            valueEditor: React.Component
+            valueEditor: React.Component,
+            removeRuleAction: React.Component
         }
         classNames = {
             fields: 'custom-fields-class',
@@ -120,6 +121,36 @@ describe('<Rule />', ()=> {
             const dom = shallow(<Rule {...props} />);
 
             expect(dom.find('ValueEditor').props().handleOnChange).to.be.a('function');
+        });
+
+        //TODO spy on value change handler and verify it is triggered
+    });
+
+    describe('rule remove action as <ActionElement />', ()=> {
+        beforeEach(() => {
+            controls.removeRuleAction = ActionElement;
+        });
+
+        it('should have label set to "x"', ()=> {
+            const dom = shallow(<Rule {...props} />);
+
+            expect(dom.find('ActionElement').props().label).to.equal('x');
+        });
+
+        it('should have the default className', ()=> {
+            const dom = shallow(<Rule {...props} />);
+            expect(dom.find('ActionElement').props().className).to.contain('rule-remove');
+        });
+
+        it('should have the custom className', ()=> {
+            const dom = shallow(<Rule {...props} />);
+            expect(dom.find('ActionElement').props().className).to.contain('custom-removeRule-class');
+        });
+
+        it('should have the onChange method handler', ()=> {
+            const dom = shallow(<Rule {...props} />);
+
+            expect(dom.find('ActionElement').props().handleOnClick).to.be.a('function');
         });
 
         //TODO spy on value change handler and verify it is triggered
