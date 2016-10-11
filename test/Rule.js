@@ -26,7 +26,9 @@ describe('<Rule />', ()=> {
             fields: [],
             controls: controls,
             getOperators: (field)=>{return []},
-            classNames: classNames
+            classNames: classNames,
+            onPropChange: (field, value, id)=>{},
+            onRuleRemove: (ruleId, parentId)=>{}
         }
         props = {
             key: 'key',
@@ -35,8 +37,7 @@ describe('<Rule />', ()=> {
             value: 'value',
             operator: 'operator',
             schema: schema,
-            parentId: 'parentId',
-            onRuleRemove: (ruleId, parentId)=>{}
+            parentId: 'parentId'
         }
     });
 
@@ -154,6 +155,42 @@ describe('<Rule />', ()=> {
         });
 
         //TODO spy on value change handler and verify it is triggered
+    });
+
+    describe('onValueChanged', ()=> {
+        it('should call the onPropChange with the rule id', ()=>{
+            let myField, myValue, myId;
+            schema.onPropChange = (field, value, id) => {
+                myField = field;
+                myValue = value;
+                myId = id;
+            }
+            const dom = shallow(<Rule {...props} />);
+            dom.instance().onValueChanged('any_field', 'any_value');
+
+            expect(myField).to.equal('any_field');
+            expect(myValue).to.equal('any_value');
+            expect(myId).to.equal('id');
+        });
+    });
+
+    describe('removeRule', ()=> {
+        it('should call the onRuleRemove with the rule and parent id', ()=>{
+            let myRuleId, myParentId;
+            let anyEvent = {
+                preventDefault: ()=>{},
+                stopPropagation: ()=>{}
+            }
+            schema.onRuleRemove = (ruleId, parentId) => {
+                myRuleId = ruleId;
+                myParentId = parentId;
+            }
+            const dom = shallow(<Rule {...props} />);
+            dom.instance().removeRule(anyEvent);
+
+            expect(myRuleId).to.equal('id');
+            expect(myParentId).to.equal('parentId');
+        });
     });
 
     function behavesLikeASelector(value, defaultClassName, customClassName) {
