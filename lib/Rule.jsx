@@ -12,6 +12,13 @@ export default class Rule extends React.Component {
         };
     }
 
+    componentWillMount() {
+        this.onFieldChanged = this.onFieldChanged.bind(this);
+        this.onOperatorChanged = this.onOperatorChanged.bind(this);
+        this.onValueChanged = this.onValueChanged.bind(this);
+        this.removeRule = this.removeRule.bind(this);
+    }
+
     render() {
         const {field, operator, value, schema: {fields, operators, controls, getOperators, classNames}} = this.props;
         return (
@@ -22,7 +29,7 @@ export default class Rule extends React.Component {
                             options: fields,
                             value: field,
                             className: `rule-fields ${classNames.fields}`,
-                            handleOnChange: this.onValueChanged.bind(this, 'field')
+                            handleOnChange: this.onFieldChanged
                         }
                     )
                 }
@@ -32,7 +39,7 @@ export default class Rule extends React.Component {
                             options: getOperators(field),
                             value: operator,
                             className: `rule-operators ${classNames.operators}`,
-                            handleOnChange: this.onValueChanged.bind(this, 'operator')
+                            handleOnChange: this.onOperatorChanged
                         }
                     )
                 }
@@ -42,7 +49,7 @@ export default class Rule extends React.Component {
                             field: field,
                             operator: operator,
                             value: value,
-                            handleOnChange: this.onValueChanged.bind(this, 'value')
+                            handleOnChange: this.onValueChanged
                         }
                     )
                 }
@@ -51,14 +58,26 @@ export default class Rule extends React.Component {
                     {
                         label: 'x',
                         className: `rule-remove ${classNames.removeRule}`,
-                        handleOnClick: this.removeRule.bind(this)
+                        handleOnClick: this.removeRule
                     })
                 }
             </div>
         );
     }
 
-    onValueChanged(field, value) {
+    onFieldChanged(value) {
+        this.onElementChanged('field', value);
+    }
+
+    onOperatorChanged(value) {
+        this.onElementChanged('operator', value);
+    }
+
+    onValueChanged(value) {
+        this.onElementChanged('value', value);
+    }
+
+    onElementChanged(field, value) {
         const {id, schema: {onPropChange}} = this.props;
 
         onPropChange(field, value, id);

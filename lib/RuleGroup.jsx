@@ -12,6 +12,13 @@ export default class RuleGroup extends React.Component {
         };
     }
 
+    componentWillMount() {
+      this.onCombinatorChange = this.onCombinatorChange.bind(this);
+      this.addRule = this.addRule.bind(this);
+      this.addGroup = this.addGroup.bind(this);
+      this.removeGroup = this.removeGroup.bind(this);
+    }
+
     render() {
         const {combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, classNames}} = this.props;
         return (
@@ -22,7 +29,7 @@ export default class RuleGroup extends React.Component {
                             options: combinators,
                             value: combinator,
                             className: `ruleGroup-combinators ${classNames.combinators}`,
-                            handleOnChange: this.onCombinatorChange.bind(this)
+                            handleOnChange: this.onCombinatorChange
                         }
                     )
                 }
@@ -31,7 +38,7 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Rule',
                             className: `ruleGroup-addRule ${classNames.addRule}`,
-                            handleOnClick: this.addRule.bind(this)
+                            handleOnClick: this.addRule
                         }
                     )
                 }
@@ -40,7 +47,7 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Group',
                             className: `ruleGroup-addGroup ${classNames.addGroup}`,
-                            handleOnClick: this.addGroup.bind(this)
+                            handleOnClick: this.addGroup
                         }
                     )
                 }
@@ -50,7 +57,7 @@ export default class RuleGroup extends React.Component {
                             {
                                 label: 'x',
                                 className: `ruleGroup-remove ${classNames.removeGroup}`,
-                                handleOnClick: this.removeGroup.bind(this)
+                                handleOnClick: this.removeGroup
                             }
                         ) : null
                 }
