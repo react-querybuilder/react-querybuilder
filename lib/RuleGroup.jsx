@@ -22,7 +22,7 @@ export default class RuleGroup extends React.Component {
                             options: combinators,
                             value: combinator,
                             className: `ruleGroup-combinators ${classNames.combinators}`,
-                            handleOnChange: this.onCombinatorChange.bind(this)
+                            handleOnChange: this.onCombinatorChange
                         }
                     )
                 }
@@ -31,7 +31,7 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Rule',
                             className: `ruleGroup-addRule ${classNames.addRule}`,
-                            handleOnClick: this.addRule.bind(this)
+                            handleOnClick: this.addRule
                         }
                     )
                 }
@@ -40,7 +40,7 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Group',
                             className: `ruleGroup-addGroup ${classNames.addGroup}`,
-                            handleOnClick: this.addGroup.bind(this)
+                            handleOnClick: this.addGroup
                         }
                     )
                 }
@@ -50,7 +50,7 @@ export default class RuleGroup extends React.Component {
                             {
                                 label: 'x',
                                 className: `ruleGroup-remove ${classNames.removeGroup}`,
-                                handleOnClick: this.removeGroup.bind(this)
+                                handleOnClick: this.removeGroup
                             }
                         ) : null
                 }
@@ -83,13 +83,13 @@ export default class RuleGroup extends React.Component {
         return this.props.parentId;
     }
 
-    onCombinatorChange(value) {
+    onCombinatorChange = (value) => {
         const {onPropChange} = this.props.schema;
 
         onPropChange('combinator', value, this.props.id);
     }
 
-    addRule(event) {
+    addRule = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -99,7 +99,7 @@ export default class RuleGroup extends React.Component {
         onRuleAdd(newRule, this.props.id)
     }
 
-    addGroup(event) {
+    addGroup = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -108,7 +108,7 @@ export default class RuleGroup extends React.Component {
         onGroupAdd(newGroup, this.props.id)
     }
 
-    removeGroup(event) {
+    removeGroup = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
