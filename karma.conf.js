@@ -1,6 +1,5 @@
 process.env.BABEL_ENV = 'test'; // Set the proper environment for babel
 const testFileGlob = 'lib/**/*.test.js';
-const testDirectoryGlob = 'test/**/*.js';
 
 
 module.exports = function (config) {
@@ -9,15 +8,13 @@ module.exports = function (config) {
         frameworks: ['mocha', 'chai', 'es6-shim'],
 
         files: [
-            testFileGlob,
-            testDirectoryGlob
+            testFileGlob
         ],
         exclude: [],
 
 
         preprocessors: {
-            [testFileGlob]: ['webpack'],
-            [testDirectoryGlob]: ['webpack']
+            [testFileGlob]: ['webpack']
         },
         webpack: require('./config/webpack-test.config'),
         webpackMiddleware: {noInfo: true},

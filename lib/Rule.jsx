@@ -70,10 +70,10 @@ export default class Rule extends React.Component {
         this.onElementChanged('value', value);
     }
 
-    onElementChanged = (field, value) => {
+    onElementChanged = (property, value) => {
         const {id, schema: {onPropChange}} = this.props;
 
-        onPropChange(field, value, id);
+        onPropChange(property, value, id);
     }
 
     removeRule = (event) => {
