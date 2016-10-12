@@ -5,10 +5,7 @@ import Rule from '../lib/Rule';
 import { ActionElement, ValueSelector, ValueEditor } from '../lib/controls/index';
 
 describe('<Rule />', ()=> {
-    let controls;
-    let classNames;
-    let schema;
-    let props;
+    let controls, classNames, schema, props;
     beforeEach(()=>{
         //set defaults
         controls = {
@@ -25,8 +22,8 @@ describe('<Rule />', ()=> {
         schema = {
             fields: [],
             controls: controls,
-            getOperators: (field)=>{return []},
             classNames: classNames,
+            getOperators: (field)=>{return []},
             onPropChange: (field, value, id)=>{},
             onRuleRemove: (ruleId, parentId)=>{}
         }
@@ -48,7 +45,7 @@ describe('<Rule />', ()=> {
     it('should have a className of "rule"', ()=> {
         const dom = shallow(<Rule {...props} />);
 
-        expect(dom.find('div').hasClass('rule')).to.equal(true);
+        expect(dom.find('div').hasClass('rule')).to.be.true;
     });
 
     describe('field selector as <ValueSelector />', ()=> {
@@ -80,10 +77,7 @@ describe('<Rule />', ()=> {
                 {name: '=', label: '='},
                 {name: '!=', label: '!='}
             ]
-            function getOperators(field) {
-                return expected_operators;
-            }
-            schema.getOperators = getOperators;
+            schema.getOperators = (field)=>{ return expected_operators; };
             const dom = shallow(<Rule {...props} />);
 
             expect(dom.find('ValueSelector').props().options).to.equal(expected_operators);
@@ -165,8 +159,8 @@ describe('<Rule />', ()=> {
                 myValue = value;
                 myId = id;
             }
-            const dom = shallow(<Rule {...props} />);
-            dom.instance().onValueChanged('any_field', 'any_value');
+            const instance = shallow(<Rule {...props} />).instance();
+            instance.onValueChanged('any_field', 'any_value');
 
             expect(myField).to.equal('any_field');
             expect(myValue).to.equal('any_value');
@@ -185,8 +179,8 @@ describe('<Rule />', ()=> {
                 myRuleId = ruleId;
                 myParentId = parentId;
             }
-            const dom = shallow(<Rule {...props} />);
-            dom.instance().removeRule(anyEvent);
+            const instance = shallow(<Rule {...props} />).instance();
+            instance.removeRule(anyEvent);
 
             expect(myRuleId).to.equal('id');
             expect(myParentId).to.equal('parentId');
