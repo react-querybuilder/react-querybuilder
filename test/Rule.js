@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 
 import Rule from '../lib/Rule';
-import { ValueSelector, ValueEditor } from '../lib/controls/index';
+import { ActionElement, ValueSelector, ValueEditor } from '../lib/controls/index';
 
 describe('<Rule />', ()=> {
     let controls;
@@ -14,7 +14,8 @@ describe('<Rule />', ()=> {
         controls = {
             fieldSelector: React.Component,
             operatorSelector: React.Component,
-            valueEditor: React.Component
+            valueEditor: React.Component,
+            removeRuleAction: React.Component
         }
         classNames = {
             fields: 'custom-fields-class',
@@ -25,7 +26,9 @@ describe('<Rule />', ()=> {
             fields: [],
             controls: controls,
             getOperators: (field)=>{return []},
-            classNames: classNames
+            classNames: classNames,
+            onPropChange: (field, value, id)=>{},
+            onRuleRemove: (ruleId, parentId)=>{}
         }
         props = {
             key: 'key',
@@ -34,8 +37,7 @@ describe('<Rule />', ()=> {
             value: 'value',
             operator: 'operator',
             schema: schema,
-            parentId: 'parentId',
-            onRuleRemove: (ruleId, parentId)=>{}
+            parentId: 'parentId'
         }
     });
 
@@ -123,6 +125,72 @@ describe('<Rule />', ()=> {
         });
 
         //TODO spy on value change handler and verify it is triggered
+    });
+
+    describe('rule remove action as <ActionElement />', ()=> {
+        beforeEach(() => {
+            controls.removeRuleAction = ActionElement;
+        });
+
+        it('should have label set to "x"', ()=> {
+            const dom = shallow(<Rule {...props} />);
+
+            expect(dom.find('ActionElement').props().label).to.equal('x');
+        });
+
+        it('should have the default className', ()=> {
+            const dom = shallow(<Rule {...props} />);
+            expect(dom.find('ActionElement').props().className).to.contain('rule-remove');
+        });
+
+        it('should have the custom className', ()=> {
+            const dom = shallow(<Rule {...props} />);
+            expect(dom.find('ActionElement').props().className).to.contain('custom-removeRule-class');
+        });
+
+        it('should have the onChange method handler', ()=> {
+            const dom = shallow(<Rule {...props} />);
+
+            expect(dom.find('ActionElement').props().handleOnClick).to.be.a('function');
+        });
+
+        //TODO spy on value change handler and verify it is triggered
+    });
+
+    describe('onValueChanged', ()=> {
+        it('should call the onPropChange with the rule id', ()=>{
+            let myField, myValue, myId;
+            schema.onPropChange = (field, value, id) => {
+                myField = field;
+                myValue = value;
+                myId = id;
+            }
+            const dom = shallow(<Rule {...props} />);
+            dom.instance().onValueChanged('any_field', 'any_value');
+
+            expect(myField).to.equal('any_field');
+            expect(myValue).to.equal('any_value');
+            expect(myId).to.equal('id');
+        });
+    });
+
+    describe('removeRule', ()=> {
+        it('should call the onRuleRemove with the rule and parent id', ()=>{
+            let myRuleId, myParentId;
+            let anyEvent = {
+                preventDefault: ()=>{},
+                stopPropagation: ()=>{}
+            }
+            schema.onRuleRemove = (ruleId, parentId) => {
+                myRuleId = ruleId;
+                myParentId = parentId;
+            }
+            const dom = shallow(<Rule {...props} />);
+            dom.instance().removeRule(anyEvent);
+
+            expect(myRuleId).to.equal('id');
+            expect(myParentId).to.equal('parentId');
+        });
     });
 
     function behavesLikeASelector(value, defaultClassName, customClassName) {
