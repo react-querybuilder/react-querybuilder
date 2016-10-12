@@ -12,13 +12,6 @@ export default class RuleGroup extends React.Component {
         };
     }
 
-    componentWillMount() {
-      this.onCombinatorChange = this.onCombinatorChange.bind(this);
-      this.addRule = this.addRule.bind(this);
-      this.addGroup = this.addGroup.bind(this);
-      this.removeGroup = this.removeGroup.bind(this);
-    }
-
     render() {
         const {combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, classNames}} = this.props;
         return (
@@ -90,13 +83,13 @@ export default class RuleGroup extends React.Component {
         return this.props.parentId;
     }
 
-    onCombinatorChange(value) {
+    onCombinatorChange = (value) => {
         const {onPropChange} = this.props.schema;
 
         onPropChange('combinator', value, this.props.id);
     }
 
-    addRule(event) {
+    addRule = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -106,7 +99,7 @@ export default class RuleGroup extends React.Component {
         onRuleAdd(newRule, this.props.id)
     }
 
-    addGroup(event) {
+    addGroup = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -115,7 +108,7 @@ export default class RuleGroup extends React.Component {
         onGroupAdd(newGroup, this.props.id)
     }
 
-    removeGroup(event) {
+    removeGroup = (event) => {
         event.preventDefault();
         event.stopPropagation();
 

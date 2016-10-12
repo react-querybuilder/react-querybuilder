@@ -12,13 +12,6 @@ export default class Rule extends React.Component {
         };
     }
 
-    componentWillMount() {
-        this.onFieldChanged = this.onFieldChanged.bind(this);
-        this.onOperatorChanged = this.onOperatorChanged.bind(this);
-        this.onValueChanged = this.onValueChanged.bind(this);
-        this.removeRule = this.removeRule.bind(this);
-    }
-
     render() {
         const {field, operator, value, schema: {fields, operators, controls, getOperators, classNames}} = this.props;
         return (
@@ -65,25 +58,25 @@ export default class Rule extends React.Component {
         );
     }
 
-    onFieldChanged(value) {
+    onFieldChanged = (value) => {
         this.onElementChanged('field', value);
     }
 
-    onOperatorChanged(value) {
+    onOperatorChanged = (value) => {
         this.onElementChanged('operator', value);
     }
 
-    onValueChanged(value) {
+    onValueChanged = (value) => {
         this.onElementChanged('value', value);
     }
 
-    onElementChanged(field, value) {
+    onElementChanged = (field, value) => {
         const {id, schema: {onPropChange}} = this.props;
 
         onPropChange(field, value, id);
     }
 
-    removeRule(event) {
+    removeRule = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
