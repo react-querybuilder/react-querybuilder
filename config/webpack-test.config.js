@@ -5,9 +5,6 @@ const webpackCommon = require('./webpack-common.config');
 const path = require('path');
 
 module.exports = merge(webpackCommon, {
-    entry: {
-        index: './lib/index.js'
-    },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, '../dist')
@@ -20,7 +17,7 @@ module.exports = merge(webpackCommon, {
         'react/lib/ReactContext': true
     },
 
-    devtool: 'cheap-module-source-map',
+    devtool: 'inline-source-map',
 
 
 });
