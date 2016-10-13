@@ -26,6 +26,7 @@ module.exports = function (config) {
             reporters: [
                 {type: 'html', subdir: 'html'},
                 {type: 'text-summary'},
+                {'type': 'lcov'}
             ],
             includeAllSources: true,
             instrumenterOptions: {

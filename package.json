@@ -26,6 +26,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-1": "^6.16.0",
     "chai": "^3.5.0",
+    "codecov.io": "^0.1.6",
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.25.0",
     "del-cli": "^0.2.0",
