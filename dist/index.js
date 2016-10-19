@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -78,164 +78,12 @@ module.exports = react;
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ValueEditor = function (_React$Component) {
-  _inherits(ValueEditor, _React$Component);
-
-  _createClass(ValueEditor, null, [{
-    key: 'propTypes',
-    get: function get() {
-      return {
-        field: _react2.default.PropTypes.string,
-        operator: _react2.default.PropTypes.string,
-        value: _react2.default.PropTypes.string,
-        handleOnChange: _react2.default.PropTypes.func
-      };
-    }
-  }]);
-
-  function ValueEditor(props) {
-    _classCallCheck(this, ValueEditor);
-
-    return _possibleConstructorReturn(this, (ValueEditor.__proto__ || Object.getPrototypeOf(ValueEditor)).call(this, props));
-  }
-
-  _createClass(ValueEditor, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props;
-      var field = _props.field;
-      var operator = _props.operator;
-      var value = _props.value;
-      var handleOnChange = _props.handleOnChange;
-
-
-      if (operator === 'null' || operator === 'notNull') {
-        return null;
-      }
-
-      return _react2.default.createElement('input', { type: 'text',
-        value: value,
-        onChange: function onChange(e) {
-          return handleOnChange(e.target.value);
-        } });
-    }
-  }]);
-
-  return ValueEditor;
-}(_react2.default.Component);
-
-exports.default = ValueEditor;
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ValueSelector = function (_React$Component) {
-  _inherits(ValueSelector, _React$Component);
-
-  _createClass(ValueSelector, null, [{
-    key: 'propTypes',
-    get: function get() {
-      return {
-        value: _react2.default.PropTypes.string,
-        options: _react2.default.PropTypes.array.isRequired,
-        className: _react2.default.PropTypes.string,
-        handleOnChange: _react2.default.PropTypes.func
-      };
-    }
-  }]);
-
-  function ValueSelector(props) {
-    _classCallCheck(this, ValueSelector);
-
-    return _possibleConstructorReturn(this, (ValueSelector.__proto__ || Object.getPrototypeOf(ValueSelector)).call(this, props));
-  }
-
-  _createClass(ValueSelector, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props;
-      var value = _props.value;
-      var options = _props.options;
-      var className = _props.className;
-      var handleOnChange = _props.handleOnChange;
-
-
-      return _react2.default.createElement(
-        'select',
-        { className: className,
-          value: value,
-          onChange: function onChange(e) {
-            return handleOnChange(e.target.value);
-          } },
-        options.map(function (option) {
-          return _react2.default.createElement(
-            'option',
-            { key: option.name, value: option.name },
-            option.label
-          );
-        })
-      );
-    }
-  }]);
-
-  return ValueSelector;
-}(_react2.default.Component);
-
-exports.default = ValueSelector;
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _uniqueId = __webpack_require__(14);
+var _uniqueId = __webpack_require__(17);
 
 var _uniqueId2 = _interopRequireDefault(_uniqueId);
 
@@ -243,11 +91,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _RuleGroup = __webpack_require__(5);
+var _RuleGroup = __webpack_require__(3);
 
 var _RuleGroup2 = _interopRequireDefault(_RuleGroup);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -285,6 +133,11 @@ var QueryBuilder = function (_React$Component) {
                 operators: _react2.default.PropTypes.array,
                 combinators: _react2.default.PropTypes.array,
                 controlElements: _react2.default.PropTypes.shape({
+                    addGroupAction: _react2.default.PropTypes.func,
+                    removeGroupAction: _react2.default.PropTypes.func,
+                    addRuleAction: _react2.default.PropTypes.func,
+                    removeRuleAction: _react2.default.PropTypes.func,
+                    combinatorSelector: _react2.default.PropTypes.func,
                     fieldSelector: _react2.default.PropTypes.func,
                     operatorSelector: _react2.default.PropTypes.func,
                     valueEditor: _react2.default.PropTypes.func
@@ -595,6 +448,11 @@ var QueryBuilder = function (_React$Component) {
         key: 'defaultControlElements',
         get: function get() {
             return {
+                addGroupAction: _index.ActionElement,
+                removeGroupAction: _index.ActionElement,
+                addRuleAction: _index.ActionElement,
+                removeRuleAction: _index.ActionElement,
+                combinatorSelector: _index.ValueSelector,
                 fieldSelector: _index.ValueSelector,
                 operatorSelector: _index.ValueSelector,
                 valueEditor: _index.ValueEditor
@@ -608,7 +466,7 @@ var QueryBuilder = function (_React$Component) {
 exports.default = QueryBuilder;
 
 /***/ },
-/* 4 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -624,14 +482,6 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _ValueEditor = __webpack_require__(1);
-
-var _ValueEditor2 = _interopRequireDefault(_ValueEditor);
-
-var _ValueSelector = __webpack_require__(2);
-
-var _ValueSelector2 = _interopRequireDefault(_ValueSelector);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -644,16 +494,40 @@ var Rule = function (_React$Component) {
     _inherits(Rule, _React$Component);
 
     function Rule() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
         _classCallCheck(this, Rule);
 
-        return _possibleConstructorReturn(this, (Rule.__proto__ || Object.getPrototypeOf(Rule)).apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Rule.__proto__ || Object.getPrototypeOf(Rule)).call.apply(_ref, [this].concat(args))), _this), _this.onFieldChanged = function (value) {
+            _this.onElementChanged('field', value);
+        }, _this.onOperatorChanged = function (value) {
+            _this.onElementChanged('operator', value);
+        }, _this.onValueChanged = function (value) {
+            _this.onElementChanged('value', value);
+        }, _this.onElementChanged = function (property, value) {
+            var _this$props = _this.props;
+            var id = _this$props.id;
+            var onPropChange = _this$props.schema.onPropChange;
+
+
+            onPropChange(property, value, id);
+        }, _this.removeRule = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            _this.props.schema.onRuleRemove(_this.props.id, _this.props.parentId);
+        }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(Rule, [{
         key: 'render',
         value: function render() {
-            var _this2 = this;
-
             var _props = this.props;
             var field = _props.field;
             var operator = _props.operator;
@@ -672,47 +546,26 @@ var Rule = function (_React$Component) {
                     options: fields,
                     value: field,
                     className: 'rule-fields ' + classNames.fields,
-                    handleOnChange: this.onValueChanged.bind(this, 'field')
+                    handleOnChange: this.onFieldChanged
                 }),
                 _react2.default.createElement(controls.operatorSelector, {
                     options: getOperators(field),
                     value: operator,
                     className: 'rule-operators ' + classNames.operators,
-                    handleOnChange: this.onValueChanged.bind(this, 'operator')
+                    handleOnChange: this.onOperatorChanged
                 }),
                 _react2.default.createElement(controls.valueEditor, {
                     field: field,
                     operator: operator,
                     value: value,
-                    handleOnChange: this.onValueChanged.bind(this, 'value')
+                    handleOnChange: this.onValueChanged
                 }),
-                _react2.default.createElement(
-                    'button',
-                    { className: 'rule-remove ' + classNames.removeRule,
-                        onClick: function onClick(event) {
-                            return _this2.removeRule(event);
-                        } },
-                    'x'
-                )
+                _react2.default.createElement(controls.removeRuleAction, {
+                    label: 'x',
+                    className: 'rule-remove ' + classNames.removeRule,
+                    handleOnClick: this.removeRule
+                })
             );
-        }
-    }, {
-        key: 'onValueChanged',
-        value: function onValueChanged(field, value) {
-            var _props2 = this.props;
-            var id = _props2.id;
-            var onPropChange = _props2.schema.onPropChange;
-
-
-            onPropChange(field, value, id);
-        }
-    }, {
-        key: 'removeRule',
-        value: function removeRule(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            this.props.schema.onRuleRemove(this.props.id, this.props.parentId);
         }
     }], [{
         key: 'defaultProps',
@@ -734,7 +587,7 @@ var Rule = function (_React$Component) {
 exports.default = Rule;
 
 /***/ },
-/* 5 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -750,7 +603,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Rule = __webpack_require__(4);
+var _Rule = __webpack_require__(2);
 
 var _Rule2 = _interopRequireDefault(_Rule);
 
@@ -766,9 +619,48 @@ var RuleGroup = function (_React$Component) {
     _inherits(RuleGroup, _React$Component);
 
     function RuleGroup() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
         _classCallCheck(this, RuleGroup);
 
-        return _possibleConstructorReturn(this, (RuleGroup.__proto__ || Object.getPrototypeOf(RuleGroup)).apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RuleGroup.__proto__ || Object.getPrototypeOf(RuleGroup)).call.apply(_ref, [this].concat(args))), _this), _this.onCombinatorChange = function (value) {
+            var onPropChange = _this.props.schema.onPropChange;
+
+
+            onPropChange('combinator', value, _this.props.id);
+        }, _this.addRule = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var _this$props$schema = _this.props.schema;
+            var createRule = _this$props$schema.createRule;
+            var onRuleAdd = _this$props$schema.onRuleAdd;
+
+
+            var newRule = createRule();
+            onRuleAdd(newRule, _this.props.id);
+        }, _this.addGroup = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var _this$props$schema2 = _this.props.schema;
+            var createRuleGroup = _this$props$schema2.createRuleGroup;
+            var onGroupAdd = _this$props$schema2.onGroupAdd;
+
+            var newGroup = createRuleGroup();
+            onGroupAdd(newGroup, _this.props.id);
+        }, _this.removeGroup = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            _this.props.schema.onGroupRemove(_this.props.id, _this.props.parentId);
+        }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(RuleGroup, [{
@@ -781,6 +673,7 @@ var RuleGroup = function (_React$Component) {
             var rules = _props.rules;
             var _props$schema = _props.schema;
             var combinators = _props$schema.combinators;
+            var controls = _props$schema.controls;
             var onRuleRemove = _props$schema.onRuleRemove;
             var isRuleGroup = _props$schema.isRuleGroup;
             var classNames = _props$schema.classNames;
@@ -788,45 +681,27 @@ var RuleGroup = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'ruleGroup ' + classNames.ruleGroup },
-                _react2.default.createElement(
-                    'select',
-                    { className: 'ruleGroup-combinators ' + classNames.combinators,
-                        value: combinator,
-                        onChange: function onChange(event) {
-                            return _this2.onCombinatorChange(event.target.value);
-                        } },
-                    combinators.map(function (c) {
-                        return _react2.default.createElement(
-                            'option',
-                            { key: c.name, value: c.name },
-                            c.label
-                        );
-                    })
-                ),
-                _react2.default.createElement(
-                    'button',
-                    { className: 'ruleGroup-addRule ' + classNames.addRule,
-                        onClick: function onClick(event) {
-                            return _this2.addRule(event);
-                        } },
-                    '+Rule'
-                ),
-                _react2.default.createElement(
-                    'button',
-                    { className: 'ruleGroup-addGroup ' + classNames.addGroup,
-                        onClick: function onClick(event) {
-                            return _this2.addGroup(event);
-                        } },
-                    '+Group'
-                ),
-                this.props.parentId ? _react2.default.createElement(
-                    'button',
-                    { className: 'ruleGroup-remove ' + classNames.removeGroup,
-                        onClick: function onClick(event) {
-                            return _this2.removeGroup(event, _this2.props.id);
-                        } },
-                    'x'
-                ) : null,
+                _react2.default.createElement(controls.combinatorSelector, {
+                    options: combinators,
+                    value: combinator,
+                    className: 'ruleGroup-combinators ' + classNames.combinators,
+                    handleOnChange: this.onCombinatorChange
+                }),
+                _react2.default.createElement(controls.addRuleAction, {
+                    label: '+Rule',
+                    className: 'ruleGroup-addRule ' + classNames.addRule,
+                    handleOnClick: this.addRule
+                }),
+                _react2.default.createElement(controls.addGroupAction, {
+                    label: '+Group',
+                    className: 'ruleGroup-addGroup ' + classNames.addGroup,
+                    handleOnClick: this.addGroup
+                }),
+                this.hasParentGroup() ? _react2.default.createElement(controls.removeGroupAction, {
+                    label: 'x',
+                    className: 'ruleGroup-remove ' + classNames.removeGroup,
+                    handleOnClick: this.removeGroup
+                }) : null,
                 rules.map(function (r) {
                     return isRuleGroup(r) ? _react2.default.createElement(RuleGroup, { key: r.id,
                         id: r.id,
@@ -845,47 +720,9 @@ var RuleGroup = function (_React$Component) {
             );
         }
     }, {
-        key: 'onCombinatorChange',
-        value: function onCombinatorChange(value) {
-            var onPropChange = this.props.schema.onPropChange;
-
-
-            onPropChange('combinator', value, this.props.id);
-        }
-    }, {
-        key: 'addRule',
-        value: function addRule(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            var _props$schema2 = this.props.schema;
-            var createRule = _props$schema2.createRule;
-            var onRuleAdd = _props$schema2.onRuleAdd;
-
-
-            var newRule = createRule();
-            onRuleAdd(newRule, this.props.id);
-        }
-    }, {
-        key: 'addGroup',
-        value: function addGroup(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            var _props$schema3 = this.props.schema;
-            var createRuleGroup = _props$schema3.createRuleGroup;
-            var onGroupAdd = _props$schema3.onGroupAdd;
-
-            var newGroup = createRuleGroup();
-            onGroupAdd(newGroup, this.props.id);
-        }
-    }, {
-        key: 'removeGroup',
-        value: function removeGroup(event, groupId) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            this.props.schema.onGroupRemove(groupId, this.props.parentId);
+        key: 'hasParentGroup',
+        value: function hasParentGroup() {
+            return this.props.parentId;
         }
     }], [{
         key: 'defaultProps',
@@ -906,6 +743,149 @@ var RuleGroup = function (_React$Component) {
 exports.default = RuleGroup;
 
 /***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ActionElement = function (_React$Component) {
+  _inherits(ActionElement, _React$Component);
+
+  _createClass(ActionElement, null, [{
+    key: 'propTypes',
+    get: function get() {
+      return {
+        label: _react2.default.PropTypes.string,
+        className: _react2.default.PropTypes.string,
+        handleOnClick: _react2.default.PropTypes.func
+      };
+    }
+  }]);
+
+  function ActionElement(props) {
+    _classCallCheck(this, ActionElement);
+
+    return _possibleConstructorReturn(this, (ActionElement.__proto__ || Object.getPrototypeOf(ActionElement)).call(this, props));
+  }
+
+  _createClass(ActionElement, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var label = _props.label;
+      var className = _props.className;
+      var handleOnClick = _props.handleOnClick;
+
+
+      return _react2.default.createElement(
+        'button',
+        { className: className,
+          onClick: function onClick(e) {
+            return handleOnClick(e);
+          } },
+        label
+      );
+    }
+  }]);
+
+  return ActionElement;
+}(_react2.default.Component);
+
+exports.default = ActionElement;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ValueEditor = function (_React$Component) {
+  _inherits(ValueEditor, _React$Component);
+
+  _createClass(ValueEditor, null, [{
+    key: 'propTypes',
+    get: function get() {
+      return {
+        field: _react2.default.PropTypes.string,
+        operator: _react2.default.PropTypes.string,
+        value: _react2.default.PropTypes.string,
+        handleOnChange: _react2.default.PropTypes.func
+      };
+    }
+  }]);
+
+  function ValueEditor(props) {
+    _classCallCheck(this, ValueEditor);
+
+    return _possibleConstructorReturn(this, (ValueEditor.__proto__ || Object.getPrototypeOf(ValueEditor)).call(this, props));
+  }
+
+  _createClass(ValueEditor, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var field = _props.field;
+      var operator = _props.operator;
+      var value = _props.value;
+      var handleOnChange = _props.handleOnChange;
+
+
+      if (operator === 'null' || operator === 'notNull') {
+        return null;
+      }
+
+      return _react2.default.createElement('input', { type: 'text',
+        value: value,
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.value);
+        } });
+    }
+  }]);
+
+  return ValueEditor;
+}(_react2.default.Component);
+
+exports.default = ValueEditor;
+
+/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -916,7 +896,86 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ValueEditor = __webpack_require__(1);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ValueSelector = function (_React$Component) {
+  _inherits(ValueSelector, _React$Component);
+
+  _createClass(ValueSelector, null, [{
+    key: 'propTypes',
+    get: function get() {
+      return {
+        value: _react2.default.PropTypes.string,
+        options: _react2.default.PropTypes.array.isRequired,
+        className: _react2.default.PropTypes.string,
+        handleOnChange: _react2.default.PropTypes.func
+      };
+    }
+  }]);
+
+  function ValueSelector(props) {
+    _classCallCheck(this, ValueSelector);
+
+    return _possibleConstructorReturn(this, (ValueSelector.__proto__ || Object.getPrototypeOf(ValueSelector)).call(this, props));
+  }
+
+  _createClass(ValueSelector, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var value = _props.value;
+      var options = _props.options;
+      var className = _props.className;
+      var handleOnChange = _props.handleOnChange;
+
+
+      return _react2.default.createElement(
+        'select',
+        { className: className,
+          value: value,
+          onChange: function onChange(e) {
+            return handleOnChange(e.target.value);
+          } },
+        options.map(function (option) {
+          return _react2.default.createElement(
+            'option',
+            { key: option.name, value: option.name },
+            option.label
+          );
+        })
+      );
+    }
+  }]);
+
+  return ValueSelector;
+}(_react2.default.Component);
+
+exports.default = ValueSelector;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ValueEditor = __webpack_require__(5);
 
 Object.defineProperty(exports, 'ValueEditor', {
   enumerable: true,
@@ -925,7 +984,7 @@ Object.defineProperty(exports, 'ValueEditor', {
   }
 });
 
-var _ValueSelector = __webpack_require__(2);
+var _ValueSelector = __webpack_require__(6);
 
 Object.defineProperty(exports, 'ValueSelector', {
   enumerable: true,
@@ -934,13 +993,22 @@ Object.defineProperty(exports, 'ValueSelector', {
   }
 });
 
+var _ActionElement = __webpack_require__(4);
+
+Object.defineProperty(exports, 'ActionElement', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ActionElement).default;
+  }
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(10);
+var root = __webpack_require__(12);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -949,11 +1017,40 @@ module.exports = Symbol;
 
 
 /***/ },
-/* 8 */
+/* 9 */
+/***/ function(module, exports) {
+
+/**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array ? array.length : 0,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+module.exports = arrayMap;
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(7),
-    isSymbol = __webpack_require__(12);
+var Symbol = __webpack_require__(8),
+    arrayMap = __webpack_require__(9),
+    isArray = __webpack_require__(13),
+    isSymbol = __webpack_require__(15);
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;
@@ -975,6 +1072,10 @@ function baseToString(value) {
   if (typeof value == 'string') {
     return value;
   }
+  if (isArray(value)) {
+    // Recursively convert values (susceptible to call stack limits).
+    return arrayMap(value, baseToString) + '';
+  }
   if (isSymbol(value)) {
     return symbolToString ? symbolToString.call(value) : '';
   }
@@ -986,7 +1087,7 @@ module.exports = baseToString;
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -994,13 +1095,13 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)))
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-var freeGlobal = __webpack_require__(9);
+var freeGlobal = __webpack_require__(11);
 
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -1012,7 +1113,39 @@ module.exports = root;
 
 
 /***/ },
-/* 11 */
+/* 13 */
+/***/ function(module, exports) {
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
+
+/***/ },
+/* 14 */
 /***/ function(module, exports) {
 
 /**
@@ -1047,10 +1180,10 @@ module.exports = isObjectLike;
 
 
 /***/ },
-/* 12 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-var isObjectLike = __webpack_require__(11);
+var isObjectLike = __webpack_require__(14);
 
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
@@ -1091,10 +1224,10 @@ module.exports = isSymbol;
 
 
 /***/ },
-/* 13 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-var baseToString = __webpack_require__(8);
+var baseToString = __webpack_require__(10);
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -1104,8 +1237,8 @@ var baseToString = __webpack_require__(8);
  * @memberOf _
  * @since 4.0.0
  * @category Lang
- * @param {*} value The value to process.
- * @returns {string} Returns the string.
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
  * @example
  *
  * _.toString(null);
@@ -1125,10 +1258,10 @@ module.exports = toString;
 
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-var toString = __webpack_require__(13);
+var toString = __webpack_require__(16);
 
 /** Used to generate unique IDs. */
 var idCounter = 0;
@@ -1159,7 +1292,7 @@ module.exports = uniqueId;
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports) {
 
 var g;
@@ -1184,7 +1317,7 @@ module.exports = g;
 
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1194,7 +1327,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _QueryBuilder = __webpack_require__(3);
+var _QueryBuilder = __webpack_require__(1);
 
 Object.defineProperty(exports, 'QueryBuilder', {
   enumerable: true,
