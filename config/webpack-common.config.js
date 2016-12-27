@@ -11,7 +11,6 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/
       },
-
       {
         test: /\.scss/,
         loader: ExtractTextPlugin.extract({
