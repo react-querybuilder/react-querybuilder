@@ -4,26 +4,27 @@ let ExtractTextPlugin = require('extract-text-webpack-plugin');
 let ProvidePlugin = require('webpack').ProvidePlugin;
 
 module.exports = {
-    module: {
-        loaders: [
-            {
-                test: /\.(js|jsx)$/, loader: 'babel',
-                exclude: /node_modules/
-            },
+  module: {
+    loaders: [
+      {
+        test: /\.(js|jsx)$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      },
 
-            {
-                test: /\.scss/,
-                loader: ExtractTextPlugin.extract({
-                    loader: ['css', 'sass']
-                })
-            }
-        ],
-    },
-    resolve: {
-        extensions: ['.js', '.jsx', '.scss']
-    },
+      {
+        test: /\.scss/,
+        loader: ExtractTextPlugin.extract({
+          loader: ['css-loader', 'sass-loader']
+        })
+      }
+    ],
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '.scss']
+  },
 
-    plugins: [
-        new ExtractTextPlugin('query-builder.css')
-    ]
+  plugins: [
+    new ExtractTextPlugin('query-builder.css')
+  ]
 };
