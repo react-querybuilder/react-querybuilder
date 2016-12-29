@@ -70,7 +70,7 @@
 /* 0 */
 /***/ function(module, exports) {
 
-module.exports = React;
+module.exports = require("react");
 
 /***/ },
 /* 1 */
