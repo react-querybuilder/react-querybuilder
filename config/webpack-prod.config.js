@@ -6,25 +6,23 @@ const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = merge(webpackCommon, {
-    entry: {
-        index: './lib/index.js'
-    },
-    output: {
-        filename: '[name].js',
-        path: path.resolve(__dirname, '../dist')
-    },
-    externals: [
-        'react',
-        'react-dom',
-    ],
+  entry: {
+    index: './lib/index.js'
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, '../dist')
+  },
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+  },
 
-    devtool: 'none',
+  devtool: 'none',
 
-    plugins: [
-        new CopyPlugin([
-            {
-                from: './lib/query-builder.scss',
-            }
-        ])
-    ]
+  plugins: [
+    new CopyPlugin([{
+      from: './lib/query-builder.scss',
+    }])
+  ]
 });
