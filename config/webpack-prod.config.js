@@ -11,7 +11,8 @@ module.exports = merge(webpackCommon, {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, '../dist')
+    path: path.resolve(__dirname, '../dist'),
+    libraryTarget: 'commonjs2',
   },
   externals: {
     'react': 'commonjs react',
