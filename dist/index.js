@@ -1,3 +1,4 @@
+module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1266,14 +1267,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _QueryBuilder = __webpack_require__(1);
 
-Object.defineProperty(exports, 'QueryBuilder', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_QueryBuilder).default;
-  }
-});
+var _QueryBuilder2 = _interopRequireDefault(_QueryBuilder);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _QueryBuilder2.default;
 
 /***/ }
 /******/ ]);
