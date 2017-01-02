@@ -10,10 +10,6 @@ export default class ValueSelector extends React.Component {
     }
   }
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const {value, options, className, handleOnChange} = this.props;
 

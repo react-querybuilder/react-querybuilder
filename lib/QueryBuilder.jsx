@@ -146,11 +146,13 @@ export default class QueryBuilder extends React.Component {
 
         return (
             <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
-                <RuleGroup rules={rules}
-                           combinator={combinator}
-                           schema={schema}
-                           id={id}
-                           parentId={null}/>
+                <RuleGroup
+                    rules={rules}
+                    combinator={combinator}
+                    schema={schema}
+                    id={id}
+                    parentId={null}
+                />
             </div>
         );
     }
