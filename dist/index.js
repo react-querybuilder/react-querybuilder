@@ -232,11 +232,13 @@ var QueryBuilder = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'queryBuilder ' + schema.classNames.queryBuilder },
-                _react2.default.createElement(_RuleGroup2.default, { rules: rules,
+                _react2.default.createElement(_RuleGroup2.default, {
+                    rules: rules,
                     combinator: combinator,
                     schema: schema,
                     id: id,
-                    parentId: null })
+                    parentId: null
+                })
             );
         }
     }, {
@@ -561,6 +563,7 @@ var Rule = function (_React$Component) {
                     field: field,
                     operator: operator,
                     value: value,
+                    className: 'rule-value ' + classNames.value,
                     handleOnChange: this.onValueChanged
                 }),
                 _react2.default.createElement(controls.removeRuleAction, {
@@ -916,22 +919,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ValueSelector = function (_React$Component) {
   _inherits(ValueSelector, _React$Component);
 
-  _createClass(ValueSelector, null, [{
-    key: 'propTypes',
-    get: function get() {
-      return {
-        value: _react2.default.PropTypes.string,
-        options: _react2.default.PropTypes.array.isRequired,
-        className: _react2.default.PropTypes.string,
-        handleOnChange: _react2.default.PropTypes.func
-      };
-    }
-  }]);
-
-  function ValueSelector(props) {
+  function ValueSelector() {
     _classCallCheck(this, ValueSelector);
 
-    return _possibleConstructorReturn(this, (ValueSelector.__proto__ || Object.getPrototypeOf(ValueSelector)).call(this, props));
+    return _possibleConstructorReturn(this, (ValueSelector.__proto__ || Object.getPrototypeOf(ValueSelector)).apply(this, arguments));
   }
 
   _createClass(ValueSelector, [{
@@ -959,6 +950,16 @@ var ValueSelector = function (_React$Component) {
           );
         })
       );
+    }
+  }], [{
+    key: 'propTypes',
+    get: function get() {
+      return {
+        value: _react2.default.PropTypes.string,
+        options: _react2.default.PropTypes.array.isRequired,
+        className: _react2.default.PropTypes.string,
+        handleOnChange: _react2.default.PropTypes.func
+      };
     }
   }]);
 

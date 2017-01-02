@@ -42,7 +42,8 @@ export default class Rule extends React.Component {
                             field: field,
                             operator: operator,
                             value: value,
-                            handleOnChange: this.onValueChanged
+                            className: `rule-value ${classNames.value}`,
+                            handleOnChange: this.onValueChanged,
                         }
                     )
                 }
