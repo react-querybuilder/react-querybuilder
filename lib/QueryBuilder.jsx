@@ -1,4 +1,5 @@
 import uniqueId from 'lodash/uniqueId';
+import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
 
 import RuleGroup from './RuleGroup';
@@ -257,27 +258,9 @@ export default class QueryBuilder extends React.Component {
 
         const {onQueryChange} = this.props;
         if (onQueryChange) {
-            const query = this._constructQuery(this.state.root);
+            const query = cloneDeep(this.state.root);
             onQueryChange(query);
         }
-    }
-
-    _constructQuery(node) {
-        let query;
-        const {isRuleGroup} = this.state.schema;
-
-        if (isRuleGroup(node)) {
-            const {combinator, rules} = node;
-            query = {
-                combinator,
-                rules: rules.map(r=> this._constructQuery(r, {}))
-            };
-        } else {
-            const {field, operator, value} = node;
-            query = {field, operator, value};
-        }
-
-        return query;
     }
 }
 
