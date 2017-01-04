@@ -13,18 +13,8 @@ export default class RuleGroup extends React.Component {
     }
 
     render() {
-        const {
-          combinator,
-          rules,
-          schema: {
-            combinators,
-            controls,
-            onRuleRemove,
-            isRuleGroup,
-            classNames,
-          },
-        } = this.props;
-        return (
+        const { combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, classNames } } = this.props;
+          return (
             <div className={`ruleGroup ${classNames.ruleGroup}`}>
                 {
                     React.createElement(controls.combinatorSelector,
