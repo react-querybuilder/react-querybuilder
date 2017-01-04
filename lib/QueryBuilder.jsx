@@ -1,4 +1,4 @@
-import uniqueId from 'lodash/uniqueId';
+import uniqueId from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
 
@@ -167,7 +167,7 @@ export default class QueryBuilder extends React.Component {
         const {fields, operators} = this.state.schema;
 
         return {
-            id: uniqueId('r-'),
+            id: `r-${uniqueId()}`,
             field: fields[0].name,
             value: '',
             operator: operators[0].name
@@ -176,7 +176,7 @@ export default class QueryBuilder extends React.Component {
 
     createRuleGroup() {
         return {
-            id: uniqueId('g-'),
+            id: `g-${uniqueId()}`,
             rules: [],
             combinator: this.props.combinators[0].name,
         };
