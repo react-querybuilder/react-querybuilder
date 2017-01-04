@@ -260,6 +260,7 @@ with the following properties:
 We are using [github-changes](https://github.com/lalitkapoor/github-changes) to generate the changelog.
 
 To use it:
+
 1. tag your commit using [semantic versioning](http://semver.org/)
 1. run `npm run generate-changelog`
 1. enter your github credentials at the prompt
