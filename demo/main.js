@@ -1,6 +1,6 @@
 import '../lib/query-builder.scss';
-import {QueryBuilder} from '../lib/index';
-import {render} from "react-dom";
+import QueryBuilder from '../lib/index';
+import ReactDOM from "react-dom";
 import React from 'react';
 
 const fields = [
@@ -52,14 +52,14 @@ class RootView extends React.Component {
                 if (this.props.field !== 'isDev' || this.props.operator !== '=') {
                     return <input type="text"
                                   value={this.props.value}
-                                  onChange={e=>this.props.handleOnChange(e.target.value)} />
+                                  onChange={e => this.props.handleOnChange(e.target.value)}/>
                 }
 
                 return (
                     <span>
                         <input type="checkbox"
                                value={!!this.props.value}
-                               onChange={e=>this.props.handleOnChange(e.target.checked)}/>
+                               onChange={e => this.props.handleOnChange(e.target.checked)}/>
                     </span>
                 );
             }
@@ -73,5 +73,5 @@ class RootView extends React.Component {
 
 }
 
-render(<RootView fields={fields} />, document.querySelector('.container'));
+ReactDOM.render(<RootView fields={fields}/>, document.querySelector('.container'));
 
