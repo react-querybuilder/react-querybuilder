@@ -24,7 +24,7 @@ Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your
 
 OR
 
-[See live Demo](http://www.webpackbin.com/41LfnfeBb).
+[See live Demo](http://www.webpackbin.com/410SaYgPG).
 
 
 ## Usage
