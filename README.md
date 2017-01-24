@@ -30,7 +30,7 @@ OR
 ## Usage
 
 ```jsx
-import {QueryBuilder} from 'react-querybuilder';
+import QueryBuilder from 'react-querybuilder';
 
 const fields = [
     {name: 'firstName', label: 'First Name'},
