@@ -13,7 +13,7 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, operators, controls, getOperators, classNames}} = this.props;
+        const {field, operator, value, schema: {fields, controls, getOperators, classNames}} = this.props;
         return (
             <div className={`rule ${classNames.rule}`}>
                 {

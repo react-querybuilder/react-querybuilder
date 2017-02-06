@@ -14,7 +14,7 @@ module.exports = function (config) {
 
 
         preprocessors: {
-            [testFileGlob]: ['webpack']
+            [testFileGlob]: ['webpack', 'sourcemap']
         },
         webpack: require('./config/webpack-test.config'),
         webpackMiddleware: {noInfo: true},

@@ -191,7 +191,7 @@ export default class QueryBuilder extends React.Component {
         }
 
 
-        return QueryBuilder.defaultOperators;
+        return this.props.operators;
     }
 
     onRuleAdd(rule, parentId) {
