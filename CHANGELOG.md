@@ -1,8 +1,10 @@
 ## Change Log
 
-### v1.3.4 (2017/02/06)
+### v1.3.5 (2017/02/06)
 - [#24](https://github.com/sapientglobalmarkets/react-querybuilder/pull/24) README: Update live demo link to use 1.3.4 and React 15 (@mreishus)
 - [#23](https://github.com/sapientglobalmarkets/react-querybuilder/pull/23) README.md Usage - destructuring removed from import (@mreishus)
+
+### 1.3.4 (2017/01/23)
 - [#17](https://github.com/sapientglobalmarkets/react-querybuilder/pull/17) Add npm-based changelog generator (@maniax89)
 - [#18](https://github.com/sapientglobalmarkets/react-querybuilder/pull/18) Add code coverage & TravisCI (@maniax89)
 
