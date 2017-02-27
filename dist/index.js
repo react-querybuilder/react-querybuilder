@@ -1782,22 +1782,26 @@ var RuleGroup = function (_React$Component) {
                     options: combinators,
                     value: combinator,
                     className: 'ruleGroup-combinators ' + classNames.combinators,
-                    handleOnChange: this.onCombinatorChange
+                    handleOnChange: this.onCombinatorChange,
+                    rules: rules
                 }),
                 _react2.default.createElement(controls.addRuleAction, {
                     label: '+Rule',
                     className: 'ruleGroup-addRule ' + classNames.addRule,
-                    handleOnClick: this.addRule
+                    handleOnClick: this.addRule,
+                    rules: rules
                 }),
                 _react2.default.createElement(controls.addGroupAction, {
                     label: '+Group',
                     className: 'ruleGroup-addGroup ' + classNames.addGroup,
-                    handleOnClick: this.addGroup
+                    handleOnClick: this.addGroup,
+                    rules: rules
                 }),
                 this.hasParentGroup() ? _react2.default.createElement(controls.removeGroupAction, {
                     label: 'x',
                     className: 'ruleGroup-remove ' + classNames.removeGroup,
-                    handleOnClick: this.removeGroup
+                    handleOnClick: this.removeGroup,
+                    rules: rules
                 }) : null,
                 rules.map(function (r) {
                     return isRuleGroup(r) ? _react2.default.createElement(RuleGroup, { key: r.id,

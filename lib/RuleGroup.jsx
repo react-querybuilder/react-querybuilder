@@ -22,7 +22,8 @@ export default class RuleGroup extends React.Component {
                             options: combinators,
                             value: combinator,
                             className: `ruleGroup-combinators ${classNames.combinators}`,
-                            handleOnChange: this.onCombinatorChange
+                            handleOnChange: this.onCombinatorChange, 
+                            rules: rules
                         }
                     )
                 }
@@ -31,7 +32,8 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Rule',
                             className: `ruleGroup-addRule ${classNames.addRule}`,
-                            handleOnClick: this.addRule
+                            handleOnClick: this.addRule, 
+                            rules: rules
                         }
                     )
                 }
@@ -40,7 +42,8 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Group',
                             className: `ruleGroup-addGroup ${classNames.addGroup}`,
-                            handleOnClick: this.addGroup
+                            handleOnClick: this.addGroup, 
+                            rules: rules
                         }
                     )
                 }
@@ -50,7 +53,8 @@ export default class RuleGroup extends React.Component {
                             {
                                 label: 'x',
                                 className: `ruleGroup-remove ${classNames.removeGroup}`,
-                                handleOnClick: this.removeGroup
+                                handleOnClick: this.removeGroup, 
+                                rules: rules
                             }
                         ) : null
                 }
