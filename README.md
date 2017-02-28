@@ -158,7 +158,6 @@ The following control overrides are supported:
     label: React.PropTypes.string, //"x"
     className: React.PropTypes.string, //css classNames to be applied
     handleOnClick: React.PropTypes.func, //callback function to invoke removing a <Rule />
-    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
     level: React.PropTypes.number //The level of the current group
   }
   ```
