@@ -126,6 +126,7 @@ export default class QueryBuilder extends React.Component {
                 onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
                 onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
                 onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
+                getLevel: this.getLevel.bind(this),
                 isRuleGroup: this.isRuleGroup.bind(this),
                 controls,
                 getOperators: (...args)=>this.getOperators(...args),
@@ -229,6 +230,30 @@ export default class QueryBuilder extends React.Component {
 
         parent.rules.splice(index, 1);
         this.setState({root: this.state.root});
+    }
+    
+    getLevel(id) {
+        return this._getLevel(id, 0, this.state.root)
+    }
+    
+    _getLevel(id, index, root) {
+        const {isRuleGroup} = this.state.schema;
+        
+        var foundAtIndex = -1;
+        if(root.id === id) {
+            foundAtIndex = index; 
+        } else if(isRuleGroup(root)) {
+            for(const rule of root.rules) {
+                var indexForRule = index;
+                if(isRuleGroup(rule))
+                    indexForRule++;
+                foundAtIndex = this._getLevel(id, indexForRule, rule);
+                if(foundAtIndex > -1) 
+                    break;
+            }    
+        }
+        return foundAtIndex;
+       
     }
 
     _findRule(id, parent) {

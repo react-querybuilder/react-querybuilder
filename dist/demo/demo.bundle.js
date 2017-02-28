@@ -10719,6 +10719,7 @@ var QueryBuilder = function (_React$Component) {
                     onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
                     onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
                     onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
+                    getLevel: this.getLevel.bind(this),
                     isRuleGroup: this.isRuleGroup.bind(this),
                     controls: controls,
                     getOperators: function getOperators() {
@@ -10848,6 +10849,51 @@ var QueryBuilder = function (_React$Component) {
             this.setState({ root: this.state.root });
         }
     }, {
+        key: 'getLevel',
+        value: function getLevel(id) {
+            return this._getLevel(id, 0, this.state.root);
+        }
+    }, {
+        key: '_getLevel',
+        value: function _getLevel(id, index, root) {
+            var isRuleGroup = this.state.schema.isRuleGroup;
+
+
+            var foundAtIndex = -1;
+            if (root.id === id) {
+                foundAtIndex = index;
+            } else if (isRuleGroup(root)) {
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = root.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var rule = _step.value;
+
+                        var indexForRule = index;
+                        if (isRuleGroup(rule)) indexForRule++;
+                        foundAtIndex = this._getLevel(id, indexForRule, rule);
+                        if (foundAtIndex > -1) break;
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+            }
+            return foundAtIndex;
+        }
+    }, {
         key: '_findRule',
         value: function _findRule(id, parent) {
             var isRuleGroup = this.state.schema.isRuleGroup;
@@ -10857,13 +10903,13 @@ var QueryBuilder = function (_React$Component) {
                 return parent;
             }
 
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var rule = _step.value;
+                for (var _iterator2 = parent.rules[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var rule = _step2.value;
 
                     if (rule.id === id) {
                         return rule;
@@ -10875,16 +10921,16 @@ var QueryBuilder = function (_React$Component) {
                     }
                 }
             } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
                     }
                 } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
                     }
                 }
             }
@@ -11031,8 +11077,10 @@ var Rule = function (_React$Component) {
                 fields = _props$schema.fields,
                 controls = _props$schema.controls,
                 getOperators = _props$schema.getOperators,
+                getLevel = _props$schema.getLevel,
                 classNames = _props$schema.classNames;
 
+            var level = getLevel(this.props.id);
             return _react2.default.createElement(
                 'div',
                 { className: 'rule ' + classNames.rule },
@@ -11040,25 +11088,29 @@ var Rule = function (_React$Component) {
                     options: fields,
                     value: field,
                     className: 'rule-fields ' + classNames.fields,
-                    handleOnChange: this.onFieldChanged
+                    handleOnChange: this.onFieldChanged,
+                    level: level
                 }),
                 _react2.default.createElement(controls.operatorSelector, {
                     options: getOperators(field),
                     value: operator,
                     className: 'rule-operators ' + classNames.operators,
-                    handleOnChange: this.onOperatorChanged
+                    handleOnChange: this.onOperatorChanged,
+                    level: level
                 }),
                 _react2.default.createElement(controls.valueEditor, {
                     field: field,
                     operator: operator,
                     value: value,
                     className: 'rule-value ' + classNames.value,
-                    handleOnChange: this.onValueChanged
+                    handleOnChange: this.onValueChanged,
+                    level: level
                 }),
                 _react2.default.createElement(controls.removeRuleAction, {
                     label: 'x',
                     className: 'rule-remove ' + classNames.removeRule,
-                    handleOnClick: this.removeRule
+                    handleOnClick: this.removeRule,
+                    level: level
                 })
             );
         }
@@ -11171,8 +11223,10 @@ var RuleGroup = function (_React$Component) {
                 controls = _props$schema.controls,
                 onRuleRemove = _props$schema.onRuleRemove,
                 isRuleGroup = _props$schema.isRuleGroup,
+                getLevel = _props$schema.getLevel,
                 classNames = _props$schema.classNames;
 
+            var level = getLevel(this.props.id);
             return _react2.default.createElement(
                 'div',
                 { className: 'ruleGroup ' + classNames.ruleGroup },
@@ -11181,25 +11235,29 @@ var RuleGroup = function (_React$Component) {
                     value: combinator,
                     className: 'ruleGroup-combinators ' + classNames.combinators,
                     handleOnChange: this.onCombinatorChange,
-                    rules: rules
+                    rules: rules,
+                    level: level
                 }),
                 _react2.default.createElement(controls.addRuleAction, {
                     label: '+Rule',
                     className: 'ruleGroup-addRule ' + classNames.addRule,
                     handleOnClick: this.addRule,
-                    rules: rules
+                    rules: rules,
+                    level: level
                 }),
                 _react2.default.createElement(controls.addGroupAction, {
                     label: '+Group',
                     className: 'ruleGroup-addGroup ' + classNames.addGroup,
                     handleOnClick: this.addGroup,
-                    rules: rules
+                    rules: rules,
+                    level: level
                 }),
                 this.hasParentGroup() ? _react2.default.createElement(controls.removeGroupAction, {
                     label: 'x',
                     className: 'ruleGroup-remove ' + classNames.removeGroup,
                     handleOnClick: this.removeGroup,
-                    rules: rules
+                    rules: rules,
+                    level: level
                 }) : null,
                 rules.map(function (r) {
                     return isRuleGroup(r) ? _react2.default.createElement(RuleGroup, { key: r.id,
