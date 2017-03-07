@@ -4,12 +4,6 @@
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
 [![codecov.io](https://codecov.io/github/sapientglobalmarkets/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/sapientglobalmarkets/react-querybuilder?branch=master)
 
-## Forked Repo
-This is a fork of https://github.com/sapientglobalmarkets/react-querybuilder to expand the context information passed to the 'controlElements' components overrides. 
-
-- The Level that the component will appear on the query builder tree. For example, this would allow overrides to hide the 'add group' button if 5 levels deep.
-- The rules that already exist in that group. For example, this would allow overrides to hide the combinator if only one Rule is present for a Group.
-
 ## Credits
 This component was inspired by prior work from:
 
