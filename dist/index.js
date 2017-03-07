@@ -1458,6 +1458,8 @@ var QueryBuilder = function (_React$Component) {
     }, {
         key: '_getLevel',
         value: function _getLevel(id, index, root) {
+            var _this3 = this;
+
             var isRuleGroup = this.state.schema.isRuleGroup;
 
 
@@ -1465,33 +1467,13 @@ var QueryBuilder = function (_React$Component) {
             if (root.id === id) {
                 foundAtIndex = index;
             } else if (isRuleGroup(root)) {
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = root.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var rule = _step.value;
-
+                root.rules.forEach(function (rule) {
+                    if (foundAtIndex === -1) {
                         var indexForRule = index;
                         if (isRuleGroup(rule)) indexForRule++;
-                        foundAtIndex = this._getLevel(id, indexForRule, rule);
-                        if (foundAtIndex > -1) break;
+                        foundAtIndex = _this3._getLevel(id, indexForRule, rule);
                     }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
+                });
             }
             return foundAtIndex;
         }
@@ -1505,13 +1487,13 @@ var QueryBuilder = function (_React$Component) {
                 return parent;
             }
 
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
             try {
-                for (var _iterator2 = parent.rules[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var rule = _step2.value;
+                for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var rule = _step.value;
 
                     if (rule.id === id) {
                         return rule;
@@ -1523,16 +1505,16 @@ var QueryBuilder = function (_React$Component) {
                     }
                 }
             } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
+                _didIteratorError = true;
+                _iteratorError = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
                     }
                 } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
+                    if (_didIteratorError) {
+                        throw _iteratorError;
                     }
                 }
             }
