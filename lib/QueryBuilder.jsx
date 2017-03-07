@@ -240,17 +240,17 @@ export default class QueryBuilder extends React.Component {
         const {isRuleGroup} = this.state.schema;
         
         var foundAtIndex = -1;
-        if(root.id === id) {
+        if(root.id === id ) {
             foundAtIndex = index; 
         } else if(isRuleGroup(root)) {
-            for(const rule of root.rules) {
-                var indexForRule = index;
-                if(isRuleGroup(rule))
-                    indexForRule++;
-                foundAtIndex = this._getLevel(id, indexForRule, rule);
-                if(foundAtIndex > -1) 
-                    break;
-            }    
+            root.rules.forEach(rule => {
+                if(foundAtIndex === -1) {
+                    var indexForRule = index;
+                    if(isRuleGroup(rule))
+                        indexForRule++;
+                    foundAtIndex = this._getLevel(id, indexForRule, rule);
+                }
+            });
         }
         return foundAtIndex;
        
