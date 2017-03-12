@@ -182,6 +182,7 @@ The following control overrides are supported:
 
   ```js
   {
+    field: React.PropTypes.string, //field name corresponding to this Rule
     options: React.PropTypes.array.isRequired, //return value of getOperators(field)
     value: React.PropTypes.string, //selected operator from the existing query representation, if any
     className: React.PropTypes.string, //css classNames to be applied

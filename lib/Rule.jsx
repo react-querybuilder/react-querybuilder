@@ -31,6 +31,7 @@ export default class Rule extends React.Component {
                 {
                     React.createElement(controls.operatorSelector,
                         {
+                            field: field,
                             options: getOperators(field),
                             value: operator,
                             className: `rule-operators ${classNames.operators}`,

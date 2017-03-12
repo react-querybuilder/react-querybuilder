@@ -11074,6 +11074,7 @@ var Rule = function (_React$Component) {
                     level: level
                 }),
                 _react2.default.createElement(controls.operatorSelector, {
+                    field: field,
                     options: getOperators(field),
                     value: operator,
                     className: 'rule-operators ' + classNames.operators,
