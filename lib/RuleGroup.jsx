@@ -13,7 +13,8 @@ export default class RuleGroup extends React.Component {
     }
 
     render() {
-        const { combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, classNames } } = this.props;
+        const { combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, getLevel, classNames } } = this.props;
+        const level = getLevel(this.props.id);
           return (
             <div className={`ruleGroup ${classNames.ruleGroup}`}>
                 {
@@ -22,7 +23,9 @@ export default class RuleGroup extends React.Component {
                             options: combinators,
                             value: combinator,
                             className: `ruleGroup-combinators ${classNames.combinators}`,
-                            handleOnChange: this.onCombinatorChange
+                            handleOnChange: this.onCombinatorChange, 
+                            rules: rules, 
+                            level: level
                         }
                     )
                 }
@@ -31,7 +34,9 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Rule',
                             className: `ruleGroup-addRule ${classNames.addRule}`,
-                            handleOnClick: this.addRule
+                            handleOnClick: this.addRule, 
+                            rules: rules, 
+                            level: level
                         }
                     )
                 }
@@ -40,7 +45,9 @@ export default class RuleGroup extends React.Component {
                         {
                             label: '+Group',
                             className: `ruleGroup-addGroup ${classNames.addGroup}`,
-                            handleOnClick: this.addGroup
+                            handleOnClick: this.addGroup, 
+                            rules: rules, 
+                            level: level
                         }
                     )
                 }
@@ -50,7 +57,9 @@ export default class RuleGroup extends React.Component {
                             {
                                 label: 'x',
                                 className: `ruleGroup-remove ${classNames.removeGroup}`,
-                                handleOnClick: this.removeGroup
+                                handleOnClick: this.removeGroup, 
+                                rules: rules, 
+                                level: level
                             }
                         ) : null
                 }

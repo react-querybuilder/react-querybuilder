@@ -118,7 +118,9 @@ The following control overrides are supported:
   {
     label: React.PropTypes.string, //"+Group"
     className: React.PropTypes.string, //css classNames to be applied
-    handleOnClick: React.PropTypes.func //callback function to invoke adding a <RuleGroup />
+    handleOnClick: React.PropTypes.func, //callback function to invoke adding a <RuleGroup />
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
+    level: React.PropTypes.number //The level of the current group
   }
   ```
 - `removeGroupAction`: By default a `<button />` is used. The following props are passed:
@@ -127,7 +129,9 @@ The following control overrides are supported:
   {
     label: React.PropTypes.string, //"x"
     className: React.PropTypes.string, //css classNames to be applied
-    handleOnClick: React.PropTypes.func //callback function to invoke removing a <RuleGroup />
+    handleOnClick: React.PropTypes.func, //callback function to invoke removing a <RuleGroup />
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
+    level: React.PropTypes.number //The level of the current group
   }
   ```
 - `addRuleAction`: By default a `<button />` is used. The following props are passed:
@@ -136,7 +140,9 @@ The following control overrides are supported:
   {
     label: React.PropTypes.string, //"+Rule"
     className: React.PropTypes.string, //css classNames to be applied
-    handleOnClick: React.PropTypes.func //callback function to invoke adding a <Rule />
+    handleOnClick: React.PropTypes.func, //callback function to invoke adding a <Rule />
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
+    level: React.PropTypes.number //The level of the current group
   }
   ```
 - `removeRuleAction`: By default a `<button />` is used. The following props are passed:
@@ -145,7 +151,8 @@ The following control overrides are supported:
   {
     label: React.PropTypes.string, //"x"
     className: React.PropTypes.string, //css classNames to be applied
-    handleOnClick: React.PropTypes.func //callback function to invoke removing a <Rule />
+    handleOnClick: React.PropTypes.func, //callback function to invoke removing a <Rule />
+    level: React.PropTypes.number //The level of the current group
   }
   ```
 - `combinatorSelector`: By default a `<select />` is used. The following props are passed:
@@ -155,7 +162,9 @@ The following control overrides are supported:
     options: React.PropTypes.array.isRequired, //same as 'combinators' passed into QueryBuilder
     value: React.PropTypes.string, //selected combinator from the existing query representation, if any
     className: React.PropTypes.string, //css classNames to be applied
-    handleOnChange: React.PropTypes.func //callback function to update query representation
+    handleOnChange: React.PropTypes.func, //callback function to update query representation
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group
+    level: React.PropTypes.number //The level of the current group
   }
   ```
 - `fieldSelector`: By default a `<select />` is used. The following props are passed:
@@ -165,7 +174,8 @@ The following control overrides are supported:
     options: React.PropTypes.array.isRequired, //same as 'fields' passed into QueryBuilder
     value: React.PropTypes.string, //selected field from the existing query representation, if any
     className: React.PropTypes.string, //css classNames to be applied
-    handleOnChange: React.PropTypes.func //callback function to update query representation
+    handleOnChange: React.PropTypes.func, //callback function to update query representation
+    level: React.PropTypes.number //The level the group this rule belongs to
   }
   ```
 - `operatorSelector`: By default a `<select />` is used. The following props are passed:
@@ -176,6 +186,7 @@ The following control overrides are supported:
     value: React.PropTypes.string, //selected operator from the existing query representation, if any
     className: React.PropTypes.string, //css classNames to be applied
     handleOnChange: React.PropTypes.func //callback function to update query representation
+    level: React.PropTypes.number //The level the group this rule belongs to
   }
   ```
 - `valueEditor`: By default a `<input type="text" />` is used. The following props are passed:
@@ -186,6 +197,7 @@ The following control overrides are supported:
     operator: React.PropTypes.string, //operator name corresponding to this Rule
     value: React.PropTypes.string, //value from the existing query representation, if any
     handleOnChange: React.PropTypes.func //callback function to update the query representation
+    level: React.PropTypes.number //The level the group this rule belongs to
   }
   ```
 

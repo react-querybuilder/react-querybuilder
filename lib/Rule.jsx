@@ -13,7 +13,8 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, controls, getOperators, classNames}} = this.props;
+        const {field, operator, value, schema: {fields, controls, getOperators, getLevel, classNames}} = this.props;
+        var level = getLevel(this.props.id);
         return (
             <div className={`rule ${classNames.rule}`}>
                 {
@@ -22,7 +23,8 @@ export default class Rule extends React.Component {
                             options: fields,
                             value: field,
                             className: `rule-fields ${classNames.fields}`,
-                            handleOnChange: this.onFieldChanged
+                            handleOnChange: this.onFieldChanged, 
+                            level: level
                         }
                     )
                 }
@@ -32,7 +34,8 @@ export default class Rule extends React.Component {
                             options: getOperators(field),
                             value: operator,
                             className: `rule-operators ${classNames.operators}`,
-                            handleOnChange: this.onOperatorChanged
+                            handleOnChange: this.onOperatorChanged, 
+                            level: level
                         }
                     )
                 }
@@ -43,7 +46,8 @@ export default class Rule extends React.Component {
                             operator: operator,
                             value: value,
                             className: `rule-value ${classNames.value}`,
-                            handleOnChange: this.onValueChanged,
+                            handleOnChange: this.onValueChanged, 
+                            level: level
                         }
                     )
                 }
@@ -52,7 +56,8 @@ export default class Rule extends React.Component {
                     {
                         label: 'x',
                         className: `rule-remove ${classNames.removeRule}`,
-                        handleOnClick: this.removeRule
+                        handleOnClick: this.removeRule, 
+                        level: level
                     })
                 }
             </div>
