@@ -1,5 +1,9 @@
 ## Change Log
 
+### upcoming (2017/03/13)
+- [#28](https://github.com/sapientglobalmarkets/react-querybuilder/pull/28) Add field to operator selector control element (@SamLoy)
+- [#27](https://github.com/sapientglobalmarkets/react-querybuilder/pull/27) Added more context information to controlElements (@SamLoy)
+
 ### v1.3.5 (2017/02/06)
 - [#24](https://github.com/sapientglobalmarkets/react-querybuilder/pull/24) README: Update live demo link to use 1.3.4 and React 15 (@mreishus)
 - [#23](https://github.com/sapientglobalmarkets/react-querybuilder/pull/23) README.md Usage - destructuring removed from import (@mreishus)
