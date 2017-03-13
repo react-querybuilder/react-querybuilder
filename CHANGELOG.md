@@ -1,6 +1,6 @@
 ## Change Log
 
-### upcoming (2017/03/13)
+### v1.3.6 (2017/03/13)
 - [#28](https://github.com/sapientglobalmarkets/react-querybuilder/pull/28) Add field to operator selector control element (@SamLoy)
 - [#27](https://github.com/sapientglobalmarkets/react-querybuilder/pull/27) Added more context information to controlElements (@SamLoy)
 
