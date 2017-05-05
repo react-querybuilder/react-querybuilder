@@ -1,6 +1,7 @@
 import uniqueId from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import RuleGroup from './RuleGroup';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
@@ -21,23 +22,23 @@ export default class QueryBuilder extends React.Component {
 
     static get propTypes() {
         return {
-            query: React.PropTypes.object,
-            fields: React.PropTypes.array.isRequired,
-            operators: React.PropTypes.array,
-            combinators: React.PropTypes.array,
-            controlElements: React.PropTypes.shape({
-                addGroupAction: React.PropTypes.func,
-                removeGroupAction: React.PropTypes.func,
-                addRuleAction: React.PropTypes.func,
-                removeRuleAction: React.PropTypes.func,
-                combinatorSelector: React.PropTypes.func,
-                fieldSelector: React.PropTypes.func,
-                operatorSelector: React.PropTypes.func,
-                valueEditor: React.PropTypes.func
+            query: PropTypes.object,
+            fields: PropTypes.array.isRequired,
+            operators: PropTypes.array,
+            combinators: PropTypes.array,
+            controlElements: PropTypes.shape({
+                addGroupAction: PropTypes.func,
+                removeGroupAction: PropTypes.func,
+                addRuleAction: PropTypes.func,
+                removeRuleAction: PropTypes.func,
+                combinatorSelector: PropTypes.func,
+                fieldSelector: PropTypes.func,
+                operatorSelector: PropTypes.func,
+                valueEditor: PropTypes.func
             }),
-            getOperators: React.PropTypes.func,
-            onQueryChange: React.PropTypes.func,
-            controlClassnames: React.PropTypes.object
+            getOperators: PropTypes.func,
+            onQueryChange: PropTypes.func,
+            controlClassnames: PropTypes.object
         };
     }
 

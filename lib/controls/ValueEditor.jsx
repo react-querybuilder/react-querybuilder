@@ -1,12 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class ValueEditor extends React.Component {
   static get propTypes() {
     return {
-      field: React.PropTypes.string,
-      operator: React.PropTypes.string,
-      value: React.PropTypes.string,
-      handleOnChange: React.PropTypes.func
+      field: PropTypes.string,
+      operator: PropTypes.string,
+      value: PropTypes.string,
+      handleOnChange: PropTypes.func
     };
   }
 

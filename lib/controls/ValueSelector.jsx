@@ -1,12 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class ValueSelector extends React.Component {
   static get propTypes() {
     return {
-      value: React.PropTypes.string,
-      options: React.PropTypes.array.isRequired,
-      className: React.PropTypes.string,
-      handleOnChange: React.PropTypes.func
+      value: PropTypes.string,
+      options: PropTypes.array.isRequired,
+      className: PropTypes.string,
+      handleOnChange: PropTypes.func
     }
   }
 

@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class ActionElement extends React.Component {
   static get propTypes() {
     return {
-      label: React.PropTypes.string,
-      className: React.PropTypes.string,
-      handleOnClick: React.PropTypes.func
+      label: PropTypes.string,
+      className: PropTypes.string,
+      handleOnClick: PropTypes.func
     }
   }
 
