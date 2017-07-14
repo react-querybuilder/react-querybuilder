@@ -1,5 +1,5 @@
 process.env.BABEL_ENV = 'test'; // Set the proper environment for babel
-const testFileGlob = 'lib/**/*.test.js';
+const testFileGlob = 'src/**/*.test.js';
 
 
 module.exports = function (config) {
