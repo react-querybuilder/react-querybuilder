@@ -32,6 +32,7 @@
     "del-cli": "^1.1.0",
     "enzyme": "^2.8.2",
     "extract-text-webpack-plugin": "^3.0.0",
+    "gh-pages": "^1.0.0",
     "github-changes": "^1.1.0",
     "html-webpack-plugin": "^2.26.0",
     "karma": "^1.6.0",
@@ -69,6 +70,7 @@
   "scripts": {
     "start": "webpack-dev-server --env dev",
     "dist": "del dist; webpack --env prod",
+    "publish:demo": "npm run dist && node gh-pages.publish.js",
     "test": "karma start karma.conf.js",
     "test:watch": "npm test -- --no-single-run --auto-watch",
     "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",
