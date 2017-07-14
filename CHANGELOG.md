@@ -1,6 +1,6 @@
 ## Change Log
 
-### upcoming (2017/07/14)
+### v1.3.8 (2017/07/14)
 - [#38](https://github.com/sapientglobalmarkets/react-querybuilder/pull/38) Chore/demo (@pavanpodila)
 - [#37](https://github.com/sapientglobalmarkets/react-querybuilder/pull/37) package updates and making it compatible with codesandbox.io (@pavanpodila)
 
