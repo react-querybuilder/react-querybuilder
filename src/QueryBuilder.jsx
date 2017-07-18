@@ -108,7 +108,7 @@ export default class QueryBuilder extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if (this.props.query !== props.query) {
+        if(JSON.stringify(props.query) !== JSON.stringify(this.props.query)){
             this.setState({ root: props.query });
         }
     }

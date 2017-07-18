@@ -11692,7 +11692,7 @@ var QueryBuilder = function (_React$Component) {
     _createClass(QueryBuilder, [{
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(props) {
-            if (this.props.query !== props.query) {
+            if (JSON.stringify(props.query) !== JSON.stringify(this.props.query)) {
                 this.setState({ root: props.query });
             }
         }
