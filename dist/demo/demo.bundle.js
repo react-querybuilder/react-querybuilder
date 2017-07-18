@@ -11690,6 +11690,13 @@ var QueryBuilder = function (_React$Component) {
     }
 
     _createClass(QueryBuilder, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            if (this.props.query !== props.query) {
+                this.setState({ root: props.query });
+            }
+        }
+    }, {
         key: 'componentWillMount',
         value: function componentWillMount() {
             var _this2 = this;
