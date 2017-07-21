@@ -113,13 +113,23 @@ describe('<QueryBuilder />', () => {
             component = ReactDOM.render(<QueryBuilder query={query} fields={fields}/>, node);
         });
 
-        it('should update state with correct value', () => {
+        it('should update state with correct value', (done) => {
             expect(component.state.root.combinator).to.equal('and');
 
-            query.combinator = 'or'
+            var newQuery = JSON.parse(JSON.stringify(query))
+            newQuery.combinator = 'or'
             // Rendering to the same node will call componentWillReceiveProps
-            ReactDOM.render(<QueryBuilder query={query} fields={fields}/>, node);
-            expect(component.state.root.combinator).to.equal('or');
+            ReactDOM.render(<QueryBuilder query={newQuery} fields={fields}/>, node);
+            function waitForState() {
+                if(component.state.root.combinator === 'or'){
+                    expect(component.state.root.combinator).to.equal('or');
+                    done()
+                }
+                else{
+                    setTimeout(waitForState, 300)
+                }
+            }
+            waitForState()
         });
 
     });
