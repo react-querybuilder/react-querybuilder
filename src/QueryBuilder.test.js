@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {shallow, mount} from 'enzyme';
 
 import QueryBuilder from './QueryBuilder';
@@ -89,6 +90,49 @@ describe('<QueryBuilder />', () => {
 
     });
 
+    describe('when query prop is updated', () => {
+        let component, node;
+        let query = {
+            combinator: 'and',
+            id: '111',
+            rules: [
+                {
+                    id: '222',
+                    field: 'firstName',
+                    value: 'Test',
+                    operator: '='
+                }
+            ]
+        };
+        const fields = [
+            {name: 'firstName', label: 'First Name'},
+        ];
+
+        beforeEach(() => {
+            node = document.createElement('div');
+            component = ReactDOM.render(<QueryBuilder query={query} fields={fields}/>, node);
+        });
+
+        it('should update state with correct value', (done) => {
+            expect(component.state.root.combinator).to.equal('and');
+
+            var newQuery = JSON.parse(JSON.stringify(query))
+            newQuery.combinator = 'or'
+            // Rendering to the same node will call componentWillReceiveProps
+            ReactDOM.render(<QueryBuilder query={newQuery} fields={fields}/>, node);
+            function waitForState() {
+                if(component.state.root.combinator === 'or'){
+                    expect(component.state.root.combinator).to.equal('or');
+                    done()
+                }
+                else{
+                    setTimeout(waitForState, 300)
+                }
+            }
+            waitForState()
+        });
+
+    });
     describe('when initial operators are provided', () => {
 
         let dom;

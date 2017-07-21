@@ -107,6 +107,12 @@ export default class QueryBuilder extends React.Component {
         };
     }
 
+    componentWillReceiveProps(props) {
+        if(JSON.stringify(props.query) !== JSON.stringify(this.props.query)){
+            this.setState({ root: props.query });
+        }
+    }
+
     componentWillMount() {
         const {fields, operators, combinators, controlElements, controlClassnames} = this.props;
         const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
