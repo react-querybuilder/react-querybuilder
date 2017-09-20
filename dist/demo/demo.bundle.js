@@ -16714,8 +16714,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _react = __webpack_require__(16);
 
 var _react2 = _interopRequireDefault(_react);
@@ -16726,57 +16724,32 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var ValueEditor = function ValueEditor(props) {
+  var field = props.field,
+      operator = props.operator,
+      value = props.value,
+      handleOnChange = props.handleOnChange;
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ValueEditor = function (_React$Component) {
-  _inherits(ValueEditor, _React$Component);
-
-  _createClass(ValueEditor, null, [{
-    key: 'propTypes',
-    get: function get() {
-      return {
-        field: _propTypes2.default.string,
-        operator: _propTypes2.default.string,
-        value: _propTypes2.default.string,
-        handleOnChange: _propTypes2.default.func
-      };
-    }
-  }]);
-
-  function ValueEditor(props) {
-    _classCallCheck(this, ValueEditor);
-
-    return _possibleConstructorReturn(this, (ValueEditor.__proto__ || Object.getPrototypeOf(ValueEditor)).call(this, props));
+  if (operator === 'null' || operator === 'notNull') {
+    return null;
   }
 
-  _createClass(ValueEditor, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props,
-          field = _props.field,
-          operator = _props.operator,
-          value = _props.value,
-          handleOnChange = _props.handleOnChange;
+  return _react2.default.createElement('input', { type: 'text',
+    value: value,
+    onChange: function onChange(e) {
+      return handleOnChange(e.target.value);
+    } });
+};
 
+ValueEditor.displayName = 'ValueEditor';
 
-      if (operator === 'null' || operator === 'notNull') {
-        return null;
-      }
-
-      return _react2.default.createElement('input', { type: 'text',
-        value: value,
-        onChange: function onChange(e) {
-          return handleOnChange(e.target.value);
-        } });
-    }
-  }]);
-
-  return ValueEditor;
-}(_react2.default.Component);
+ValueEditor.propTypes = {
+  field: _propTypes2.default.string,
+  operator: _propTypes2.default.string,
+  value: _propTypes2.default.string,
+  handleOnChange: _propTypes2.default.func
+};
 
 exports.default = ValueEditor;
 
@@ -16791,8 +16764,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _react = __webpack_require__(16);
 
 var _react2 = _interopRequireDefault(_react);
@@ -16803,61 +16774,38 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ValueSelector = function (_React$Component) {
-  _inherits(ValueSelector, _React$Component);
-
-  function ValueSelector() {
-    _classCallCheck(this, ValueSelector);
-
-    return _possibleConstructorReturn(this, (ValueSelector.__proto__ || Object.getPrototypeOf(ValueSelector)).apply(this, arguments));
-  }
-
-  _createClass(ValueSelector, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props,
-          value = _props.value,
-          options = _props.options,
-          className = _props.className,
-          handleOnChange = _props.handleOnChange;
+var ValueSelector = function ValueSelector(props) {
+  var value = props.value,
+      options = props.options,
+      className = props.className,
+      handleOnChange = props.handleOnChange;
 
 
+  return _react2.default.createElement(
+    'select',
+    { className: className,
+      value: value,
+      onChange: function onChange(e) {
+        return handleOnChange(e.target.value);
+      } },
+    options.map(function (option) {
       return _react2.default.createElement(
-        'select',
-        { className: className,
-          value: value,
-          onChange: function onChange(e) {
-            return handleOnChange(e.target.value);
-          } },
-        options.map(function (option) {
-          return _react2.default.createElement(
-            'option',
-            { key: option.name, value: option.name },
-            option.label
-          );
-        })
+        'option',
+        { key: option.name, value: option.name },
+        option.label
       );
-    }
-  }], [{
-    key: 'propTypes',
-    get: function get() {
-      return {
-        value: _propTypes2.default.string,
-        options: _propTypes2.default.array.isRequired,
-        className: _propTypes2.default.string,
-        handleOnChange: _propTypes2.default.func
-      };
-    }
-  }]);
+    })
+  );
+};
 
-  return ValueSelector;
-}(_react2.default.Component);
+ValueSelector.displayName = 'ValueSelector';
+
+ValueSelector.propTypes = {
+  value: _propTypes2.default.string,
+  options: _propTypes2.default.array.isRequired,
+  className: _propTypes2.default.string,
+  handleOnChange: _propTypes2.default.func
+};
 
 exports.default = ValueSelector;
 
@@ -16872,8 +16820,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _react = __webpack_require__(16);
 
 var _react2 = _interopRequireDefault(_react);
@@ -16884,54 +16830,29 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ActionElement = function (_React$Component) {
-  _inherits(ActionElement, _React$Component);
-
-  _createClass(ActionElement, null, [{
-    key: 'propTypes',
-    get: function get() {
-      return {
-        label: _propTypes2.default.string,
-        className: _propTypes2.default.string,
-        handleOnClick: _propTypes2.default.func
-      };
-    }
-  }]);
-
-  function ActionElement(props) {
-    _classCallCheck(this, ActionElement);
-
-    return _possibleConstructorReturn(this, (ActionElement.__proto__ || Object.getPrototypeOf(ActionElement)).call(this, props));
-  }
-
-  _createClass(ActionElement, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props,
-          label = _props.label,
-          className = _props.className,
-          handleOnClick = _props.handleOnClick;
+var ActionElement = function ActionElement(props) {
+  var label = props.label,
+      className = props.className,
+      handleOnClick = props.handleOnClick;
 
 
-      return _react2.default.createElement(
-        'button',
-        { className: className,
-          onClick: function onClick(e) {
-            return handleOnClick(e);
-          } },
-        label
-      );
-    }
-  }]);
+  return _react2.default.createElement(
+    'button',
+    { className: className,
+      onClick: function onClick(e) {
+        return handleOnClick(e);
+      } },
+    label
+  );
+};
 
-  return ActionElement;
-}(_react2.default.Component);
+ActionElement.displayName = 'ActionElement';
+
+ActionElement.propTypes = {
+  label: _propTypes2.default.string,
+  className: _propTypes2.default.string,
+  handleOnClick: _propTypes2.default.func
+};
 
 exports.default = ActionElement;
 
