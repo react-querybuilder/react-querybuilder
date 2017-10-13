@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.3.8 (2017/07/14)
+- [#38](https://github.com/sapientglobalmarkets/react-querybuilder/pull/38) Chore/demo (@pavanpodila)
+- [#37](https://github.com/sapientglobalmarkets/react-querybuilder/pull/37) package updates and making it compatible with codesandbox.io (@pavanpodila)
+
 ### v1.3.6 (2017/03/13)
 - [#28](https://github.com/sapientglobalmarkets/react-querybuilder/pull/28) Add field to operator selector control element (@SamLoy)
 - [#27](https://github.com/sapientglobalmarkets/react-querybuilder/pull/27) Added more context information to controlElements (@SamLoy)

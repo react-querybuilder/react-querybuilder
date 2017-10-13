@@ -1,5 +1,5 @@
 process.env.BABEL_ENV = 'test'; // Set the proper environment for babel
-const testFileGlob = 'lib/**/*.test.js';
+const testFileGlob = 'src/**/*.test.js';
 
 
 module.exports = function (config) {
@@ -17,7 +17,9 @@ module.exports = function (config) {
             [testFileGlob]: ['webpack', 'sourcemap']
         },
         webpack: require('./config/webpack-test.config'),
-        webpackMiddleware: {noInfo: true},
+        webpackMiddleware: {
+            stats: 'errors-only'
+        },
 
 
         reporters: ['mocha', 'coverage'],
