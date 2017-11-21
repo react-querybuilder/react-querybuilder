@@ -1,3 +1,7 @@
+// Type definitions for react-querybuilder 1.3
+// Project: https://github.com/sapientglobalmarkets/react-querybuilder/
+// Definitions by: Jake Boone <https://github.com/jakeboone02>
+
 import * as React from 'react';
 
 interface NameLabelPair {
