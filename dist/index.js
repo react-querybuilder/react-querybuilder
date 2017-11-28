@@ -1689,6 +1689,7 @@ var QueryBuilder = function (_React$Component) {
                 fields: [],
                 operators: QueryBuilder.defaultOperators,
                 combinators: QueryBuilder.defaultCombinators,
+                translations: QueryBuilder.defaultTranslations,
                 controlElements: null,
                 getOperators: null,
                 onQueryChange: null,
@@ -1715,7 +1716,8 @@ var QueryBuilder = function (_React$Component) {
                 }),
                 getOperators: _propTypes2.default.func,
                 onQueryChange: _propTypes2.default.func,
-                controlClassnames: _propTypes2.default.object
+                controlClassnames: _propTypes2.default.object,
+                translations: _propTypes2.default.object
             };
         }
     }]);
@@ -1796,12 +1798,14 @@ var QueryBuilder = function (_React$Component) {
                 rules = _state$root.rules,
                 combinator = _state$root.combinator,
                 schema = _state.schema;
+            var translations = this.props.translations;
 
 
             return _react2.default.createElement(
                 'div',
                 { className: 'queryBuilder ' + schema.classNames.queryBuilder },
                 _react2.default.createElement(_RuleGroup2.default, {
+                    translations: translations,
                     rules: rules,
                     combinator: combinator,
                     schema: schema,
@@ -1985,6 +1989,41 @@ var QueryBuilder = function (_React$Component) {
             }
         }
     }], [{
+        key: 'defaultTranslations',
+        get: function get() {
+
+            return {
+                fields: {
+                    title: "Fields"
+                },
+                operators: {
+                    title: "Operators"
+                },
+                value: {
+                    title: "Value"
+                },
+                removeRule: {
+                    label: "x",
+                    title: "Remove rule"
+                },
+                removeGroup: {
+                    label: "x",
+                    title: "Remove group"
+                },
+                addRule: {
+                    label: "+Rule",
+                    title: "Add rule"
+                },
+                addGroup: {
+                    label: "+Group",
+                    title: "Add group"
+                },
+                combinators: {
+                    title: "Combinators"
+                }
+            };
+        }
+    }, {
         key: 'defaultOperators',
         get: function get() {
 
@@ -5147,6 +5186,7 @@ var RuleGroup = function (_React$Component) {
             var _props = this.props,
                 combinator = _props.combinator,
                 rules = _props.rules,
+                translations = _props.translations,
                 _props$schema = _props.schema,
                 combinators = _props$schema.combinators,
                 controls = _props$schema.controls,
@@ -5162,27 +5202,31 @@ var RuleGroup = function (_React$Component) {
                 _react2.default.createElement(controls.combinatorSelector, {
                     options: combinators,
                     value: combinator,
+                    title: translations.combinators.title,
                     className: 'ruleGroup-combinators ' + classNames.combinators,
                     handleOnChange: this.onCombinatorChange,
                     rules: rules,
                     level: level
                 }),
                 _react2.default.createElement(controls.addRuleAction, {
-                    label: '+Rule',
+                    label: translations.addRule.label,
+                    title: translations.addRule.title,
                     className: 'ruleGroup-addRule ' + classNames.addRule,
                     handleOnClick: this.addRule,
                     rules: rules,
                     level: level
                 }),
                 _react2.default.createElement(controls.addGroupAction, {
-                    label: '+Group',
+                    label: translations.addGroup.label,
+                    title: translations.addGroup.title,
                     className: 'ruleGroup-addGroup ' + classNames.addGroup,
                     handleOnClick: this.addGroup,
                     rules: rules,
                     level: level
                 }),
                 this.hasParentGroup() ? _react2.default.createElement(controls.removeGroupAction, {
-                    label: 'x',
+                    label: translations.removeGroup.label,
+                    title: translations.removeGroup.title,
                     className: 'ruleGroup-remove ' + classNames.removeGroup,
                     handleOnClick: this.removeGroup,
                     rules: rules,
@@ -5194,6 +5238,7 @@ var RuleGroup = function (_React$Component) {
                         schema: _this2.props.schema,
                         parentId: _this2.props.id,
                         combinator: r.combinator,
+                        translations: _this2.props.translations,
                         rules: r.rules }) : _react2.default.createElement(_Rule2.default, { key: r.id,
                         id: r.id,
                         field: r.field,
@@ -5201,6 +5246,7 @@ var RuleGroup = function (_React$Component) {
                         operator: r.operator,
                         schema: _this2.props.schema,
                         parentId: _this2.props.id,
+                        translations: _this2.props.translations,
                         onRuleRemove: onRuleRemove });
                 })
             );
@@ -5295,6 +5341,7 @@ var Rule = function (_React$Component) {
                 field = _props.field,
                 operator = _props.operator,
                 value = _props.value,
+                translations = _props.translations,
                 _props$schema = _props.schema,
                 fields = _props$schema.fields,
                 controls = _props$schema.controls,
@@ -5308,6 +5355,7 @@ var Rule = function (_React$Component) {
                 { className: 'rule ' + classNames.rule },
                 _react2.default.createElement(controls.fieldSelector, {
                     options: fields,
+                    title: translations.fields.title,
                     value: field,
                     className: 'rule-fields ' + classNames.fields,
                     handleOnChange: this.onFieldChanged,
@@ -5315,6 +5363,7 @@ var Rule = function (_React$Component) {
                 }),
                 _react2.default.createElement(controls.operatorSelector, {
                     field: field,
+                    title: translations.operators.title,
                     options: getOperators(field),
                     value: operator,
                     className: 'rule-operators ' + classNames.operators,
@@ -5323,6 +5372,7 @@ var Rule = function (_React$Component) {
                 }),
                 _react2.default.createElement(controls.valueEditor, {
                     field: field,
+                    title: translations.value.title,
                     operator: operator,
                     value: value,
                     className: 'rule-value ' + classNames.value,
@@ -5330,7 +5380,8 @@ var Rule = function (_React$Component) {
                     level: level
                 }),
                 _react2.default.createElement(controls.removeRuleAction, {
-                    label: 'x',
+                    label: translations.removeRule.label,
+                    title: translations.removeRule.title,
                     className: 'rule-remove ' + classNames.removeRule,
                     handleOnClick: this.removeRule,
                     level: level
@@ -5421,7 +5472,8 @@ var ValueEditor = function ValueEditor(props) {
   var field = props.field,
       operator = props.operator,
       value = props.value,
-      handleOnChange = props.handleOnChange;
+      handleOnChange = props.handleOnChange,
+      title = props.title;
 
 
   if (operator === 'null' || operator === 'notNull') {
@@ -5430,6 +5482,7 @@ var ValueEditor = function ValueEditor(props) {
 
   return _react2.default.createElement('input', { type: 'text',
     value: value,
+    title: title,
     onChange: function onChange(e) {
       return handleOnChange(e.target.value);
     } });
@@ -5441,7 +5494,8 @@ ValueEditor.propTypes = {
   field: _propTypes2.default.string,
   operator: _propTypes2.default.string,
   value: _propTypes2.default.string,
-  handleOnChange: _propTypes2.default.func
+  handleOnChange: _propTypes2.default.func,
+  title: _propTypes2.default.string
 };
 
 exports.default = ValueEditor;
@@ -5471,13 +5525,15 @@ var ValueSelector = function ValueSelector(props) {
   var value = props.value,
       options = props.options,
       className = props.className,
-      handleOnChange = props.handleOnChange;
+      handleOnChange = props.handleOnChange,
+      title = props.title;
 
 
   return _react2.default.createElement(
     'select',
     { className: className,
       value: value,
+      title: title,
       onChange: function onChange(e) {
         return handleOnChange(e.target.value);
       } },
@@ -5497,7 +5553,8 @@ ValueSelector.propTypes = {
   value: _propTypes2.default.string,
   options: _propTypes2.default.array.isRequired,
   className: _propTypes2.default.string,
-  handleOnChange: _propTypes2.default.func
+  handleOnChange: _propTypes2.default.func,
+  title: _propTypes2.default.string
 };
 
 exports.default = ValueSelector;
@@ -5526,12 +5583,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var ActionElement = function ActionElement(props) {
   var label = props.label,
       className = props.className,
-      handleOnClick = props.handleOnClick;
+      handleOnClick = props.handleOnClick,
+      title = props.title;
 
 
   return _react2.default.createElement(
     'button',
     { className: className,
+      title: title,
       onClick: function onClick(e) {
         return handleOnClick(e);
       } },
@@ -5544,7 +5603,8 @@ ActionElement.displayName = 'ActionElement';
 ActionElement.propTypes = {
   label: _propTypes2.default.string,
   className: _propTypes2.default.string,
-  handleOnClick: _propTypes2.default.func
+  handleOnClick: _propTypes2.default.func,
+  title: _propTypes2.default.string
 };
 
 exports.default = ActionElement;

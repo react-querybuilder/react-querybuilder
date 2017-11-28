@@ -13,7 +13,7 @@ export default class RuleGroup extends React.Component {
     }
 
     render() {
-        const { combinator, rules, schema: {combinators, controls, onRuleRemove, isRuleGroup, getLevel, classNames } } = this.props;
+        const { combinator, rules, translations, schema: {combinators, controls, onRuleRemove, isRuleGroup, getLevel, classNames} } = this.props;
         const level = getLevel(this.props.id);
           return (
             <div className={`ruleGroup ${classNames.ruleGroup}`}>
@@ -22,9 +22,10 @@ export default class RuleGroup extends React.Component {
                         {
                             options: combinators,
                             value: combinator,
+                            title: translations.combinators.title,
                             className: `ruleGroup-combinators ${classNames.combinators}`,
-                            handleOnChange: this.onCombinatorChange, 
-                            rules: rules, 
+                            handleOnChange: this.onCombinatorChange,
+                            rules: rules,
                             level: level
                         }
                     )
@@ -32,10 +33,11 @@ export default class RuleGroup extends React.Component {
                 {
                     React.createElement(controls.addRuleAction,
                         {
-                            label: '+Rule',
+                            label: translations.addRule.label,
+                            title: translations.addRule.title,
                             className: `ruleGroup-addRule ${classNames.addRule}`,
-                            handleOnClick: this.addRule, 
-                            rules: rules, 
+                            handleOnClick: this.addRule,
+                            rules: rules,
                             level: level
                         }
                     )
@@ -43,10 +45,11 @@ export default class RuleGroup extends React.Component {
                 {
                     React.createElement(controls.addGroupAction,
                         {
-                            label: '+Group',
+                            label: translations.addGroup.label,
+                            title: translations.addGroup.title,
                             className: `ruleGroup-addGroup ${classNames.addGroup}`,
-                            handleOnClick: this.addGroup, 
-                            rules: rules, 
+                            handleOnClick: this.addGroup,
+                            rules: rules,
                             level: level
                         }
                     )
@@ -55,10 +58,11 @@ export default class RuleGroup extends React.Component {
                     this.hasParentGroup() ?
                         React.createElement(controls.removeGroupAction,
                             {
-                                label: 'x',
+                                label: translations.removeGroup.label,
+                                title: translations.removeGroup.title,
                                 className: `ruleGroup-remove ${classNames.removeGroup}`,
-                                handleOnClick: this.removeGroup, 
-                                rules: rules, 
+                                handleOnClick: this.removeGroup,
+                                rules: rules,
                                 level: level
                             }
                         ) : null
@@ -72,6 +76,7 @@ export default class RuleGroup extends React.Component {
                                               schema={this.props.schema}
                                               parentId={this.props.id}
                                               combinator={r.combinator}
+                                              translations={this.props.translations}
                                               rules={r.rules}/>
                                  : <Rule key={r.id}
                                          id={r.id}
@@ -80,6 +85,7 @@ export default class RuleGroup extends React.Component {
                                          operator={r.operator}
                                          schema={this.props.schema}
                                          parentId={this.props.id}
+                                         translations={this.props.translations}
                                          onRuleRemove={onRuleRemove}/>
                          );
                      })

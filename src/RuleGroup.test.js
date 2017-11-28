@@ -29,7 +29,7 @@ describe('<RuleGroup />', ()=> {
             onRuleAdd: (rule, parentId)=>{},
             onGroupAdd: (ruleGroup, id)=>{},
             createRule: ()=>{ return _createRule(1);},
-            createRuleGroup: ()=>{ return _createRuleGroup(1, 'any_parent_id', []);}, 
+            createRuleGroup: ()=>{ return _createRuleGroup(1, 'any_parent_id', []);},
             getLevel: (id) => 0
         }
         props = {
@@ -37,7 +37,37 @@ describe('<RuleGroup />', ()=> {
             parentId: 'parentId',
             rules: [],
             combinator: 'and',
-            schema: schema
+            schema: schema,
+            translations: {
+                fields: {
+                    title: "Fields",
+                },
+                operators: {
+                    title: "Operators",
+                },
+                value: {
+                    title: "Value",
+                },
+                removeRule: {
+                    label: "x",
+                    title: "Remove rule",
+                },
+                removeGroup: {
+                    label: "x",
+                    title: "Remove group",
+                },
+                addRule: {
+                    label: "+Rule",
+                    title: "Add rule",
+                },
+                addGroup: {
+                    label: "+Group",
+                    title: "Add group",
+                },
+                combinators: {
+                    title: "Combinators",
+                }
+            }
         }
     });
 
@@ -62,7 +92,7 @@ describe('<RuleGroup />', ()=> {
                 {name: 'or', label: 'OR'}
             ];
             schema.combinators = expected_combinators;
-            const dom = shallow(<RuleGroup {...props} />);   
+            const dom = shallow(<RuleGroup {...props} />);
             expect(dom.find('ValueSelector').props().options).to.equal(expected_combinators);
         });
 
