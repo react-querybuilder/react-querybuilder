@@ -20,6 +20,7 @@ interface Rule {
 type AndOr = 'and' | 'or';
 
 interface RuleGroup {
+    id: string;
     combinator: AndOr;
     rules: Rule[] | RuleGroup;
 }
