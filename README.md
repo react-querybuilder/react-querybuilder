@@ -119,7 +119,7 @@ The following control overrides are supported:
     label: React.PropTypes.string, //"+Group"
     className: React.PropTypes.string, //css classNames to be applied
     handleOnClick: React.PropTypes.func, //callback function to invoke adding a <RuleGroup />
-    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group,
     level: React.PropTypes.number //The level of the current group
   }
   ```
@@ -130,7 +130,7 @@ The following control overrides are supported:
     label: React.PropTypes.string, //"x"
     className: React.PropTypes.string, //css classNames to be applied
     handleOnClick: React.PropTypes.func, //callback function to invoke removing a <RuleGroup />
-    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group,
     level: React.PropTypes.number //The level of the current group
   }
   ```
@@ -141,7 +141,7 @@ The following control overrides are supported:
     label: React.PropTypes.string, //"+Rule"
     className: React.PropTypes.string, //css classNames to be applied
     handleOnClick: React.PropTypes.func, //callback function to invoke adding a <Rule />
-    rules: React.PropTypes.array, //Provides the number of rules already present for this group, 
+    rules: React.PropTypes.array, //Provides the number of rules already present for this group,
     level: React.PropTypes.number //The level of the current group
   }
   ```
@@ -265,6 +265,45 @@ with the following properties:
 
 }
 ```
+
+#### translations *(Optional)*
+This can be used to override translatable texts applied to various controls
+that are created by the `<QueryBuilder />`. This is an object
+with the following properties:
+
+```js
+{
+    fields: {
+        title: "Fields",
+    },
+    operators: {
+        title: "Operators",
+    },
+    value: {
+        title: "Value",
+    },
+    removeRule: {
+        label: "x",
+        title: "Remove rule",
+    },
+    removeGroup: {
+        label: "x",
+        title: "Remove group",
+    },
+    addRule: {
+        label: "+Rule",
+        title: "Add rule",
+    },
+    addGroup: {
+        label: "+Group",
+        title: "Add group",
+    },
+    combinators: {
+        title: "Combinators",
+    }
+}
+```
+
 
 ## Development
 

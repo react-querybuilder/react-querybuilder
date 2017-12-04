@@ -13,7 +13,7 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, schema: {fields, controls, getOperators, getLevel, classNames}} = this.props;
+        const {field, operator, value, translations, schema: {fields, controls, getOperators, getLevel, classNames}} = this.props;
         var level = getLevel(this.props.id);
         return (
             <div className={`rule ${classNames.rule}`}>
@@ -21,9 +21,10 @@ export default class Rule extends React.Component {
                     React.createElement(controls.fieldSelector,
                         {
                             options: fields,
+                            title: translations.fields.title,
                             value: field,
                             className: `rule-fields ${classNames.fields}`,
-                            handleOnChange: this.onFieldChanged, 
+                            handleOnChange: this.onFieldChanged,
                             level: level
                         }
                     )
@@ -32,10 +33,11 @@ export default class Rule extends React.Component {
                     React.createElement(controls.operatorSelector,
                         {
                             field: field,
+                            title: translations.operators.title,
                             options: getOperators(field),
                             value: operator,
                             className: `rule-operators ${classNames.operators}`,
-                            handleOnChange: this.onOperatorChanged, 
+                            handleOnChange: this.onOperatorChanged,
                             level: level
                         }
                     )
@@ -44,10 +46,11 @@ export default class Rule extends React.Component {
                     React.createElement(controls.valueEditor,
                         {
                             field: field,
+                            title: translations.value.title,
                             operator: operator,
                             value: value,
                             className: `rule-value ${classNames.value}`,
-                            handleOnChange: this.onValueChanged, 
+                            handleOnChange: this.onValueChanged,
                             level: level
                         }
                     )
@@ -55,9 +58,10 @@ export default class Rule extends React.Component {
                 {
                     React.createElement(controls.removeRuleAction,
                     {
-                        label: 'x',
+                        label: translations.removeRule.label,
+                        title: translations.removeRule.title,
                         className: `rule-remove ${classNames.removeRule}`,
-                        handleOnClick: this.removeRule, 
+                        handleOnClick: this.removeRule,
                         level: level
                     })
                 }

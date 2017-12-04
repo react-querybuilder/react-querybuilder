@@ -35,7 +35,37 @@ describe('<Rule />', ()=> {
             value: 'value',
             operator: 'operator',
             schema: schema,
-            parentId: 'parentId'
+            parentId: 'parentId',
+            translations: {
+                fields: {
+                    title: "Fields",
+                },
+                operators: {
+                    title: "Operators",
+                },
+                value: {
+                    title: "Value",
+                },
+                removeRule: {
+                    label: "x",
+                    title: "Remove rule",
+                },
+                removeGroup: {
+                    label: "x",
+                    title: "Remove group",
+                },
+                addRule: {
+                    label: "+Rule",
+                    title: "Add rule",
+                },
+                addGroup: {
+                    label: "+Group",
+                    title: "Add group",
+                },
+                combinators: {
+                    title: "Combinators",
+                }
+            }
         }
     });
 
@@ -83,7 +113,7 @@ describe('<Rule />', ()=> {
 
             expect(dom.find('ValueSelector').props().options).to.equal(expected_operators);
         });
-        
+
          it('should have field set to selected field', ()=> {
             props.field = 'selected_field';
             const dom = shallow(<Rule {...props} />);
@@ -252,7 +282,7 @@ describe('<Rule />', ()=> {
             const dom = shallow(<Rule {...props} />);
             expect(dom.find('ValueSelector').props().handleOnChange).to.be.a('function');
         });
-        
+
         it('should have the level of the Rule', ()=> {
             const dom = shallow(<Rule {...props} />);
             expect(dom.find('ValueSelector').props().level).to.equal(0);
