@@ -1,5 +1,4 @@
 process.env.BABEL_ENV = 'test'; // Set the proper environment for babel
-const testFileGlob = 'src/**/*.test.js';
 
 
 module.exports = function (config) {
@@ -8,13 +7,13 @@ module.exports = function (config) {
         frameworks: ['mocha', 'chai', 'es6-shim'],
 
         files: [
-            testFileGlob
+            'tests.webpack.js',
         ],
         exclude: [],
 
 
         preprocessors: {
-            [testFileGlob]: ['webpack', 'sourcemap']
+            'tests.webpack.js': ['webpack', 'sourcemap']
         },
         webpack: require('./config/webpack-test.config'),
         webpackMiddleware: {
@@ -26,13 +25,13 @@ module.exports = function (config) {
         coverageReporter: {
             dir: 'coverage',
             reporters: [
-                {type: 'html', subdir: 'html'},
-                {type: 'text-summary'},
-                {'type': 'lcov'}
+                { type: 'html', subdir: 'html' },
+                { type: 'text-summary' },
+                { 'type': 'lcov' }
             ],
             includeAllSources: true,
             instrumenterOptions: {
-                istanbul: {noCompact: true}
+                istanbul: { noCompact: true }
             }
         },
 
