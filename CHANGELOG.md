@@ -1,5 +1,11 @@
 ## Change Log
 
+### upcoming (2017/12/11)
+- [#47](https://github.com/sapientglobalmarkets/react-querybuilder/pull/47) Add translations property to be able to set translatable texts. (@bubenkoff)
+- [#46](https://github.com/sapientglobalmarkets/react-querybuilder/pull/46) Types: Added id attribute to RuleGroup (@jakeboone02)
+- [#44](https://github.com/sapientglobalmarkets/react-querybuilder/pull/44) Add TypeScript typings (@jakeboone02)
+- [#42](https://github.com/sapientglobalmarkets/react-querybuilder/pull/42) Converted Rule subcomponents to SFCs (@jakeboone02)
+
 ### v1.3.8 (2017/07/14)
 - [#38](https://github.com/sapientglobalmarkets/react-querybuilder/pull/38) Chore/demo (@pavanpodila)
 - [#37](https://github.com/sapientglobalmarkets/react-querybuilder/pull/37) package updates and making it compatible with codesandbox.io (@pavanpodila)
