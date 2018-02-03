@@ -1,3 +1,4 @@
+import uniqueId from 'uuid/v4';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,7 +13,7 @@ const ValueSelector = (props) => {
       {
         options.map(option=> {
           return (
-            <option key={option.name} value={option.name}>{option.label}</option>
+            <option key={option.id || option.name} value={option.name}>{option.label}</option>
           );
         })
       }

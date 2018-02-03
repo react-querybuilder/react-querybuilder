@@ -45,4 +45,20 @@ describe('<ValueSelector />', ()=> {
             expect(count).to.equal(1);
         });
     });
+
+    describe('when the fields have the id key', ()=> {
+        const fooId = '3';
+        const barId = '5';
+
+        const options = [
+            {name: "foo", label: "foo label", id: fooId},
+            {name: "bar", label: "bar label", id: barId}
+        ]
+
+        it('the options should have keys 3 and 5', ()=> {
+            const dom = shallow(<ValueSelector options={options} />);
+            expect(dom.find('option').at(0).key()).to.equal(fooId);
+            expect(dom.find('option').at(1).key()).to.equal(barId);
+        });
+    });
 });
