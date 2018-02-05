@@ -46,6 +46,7 @@ export default class Rule extends React.Component {
                     React.createElement(controls.valueEditor,
                         {
                             field: field,
+                            options: options,
                             title: translations.value.title,
                             operator: operator,
                             value: value,
