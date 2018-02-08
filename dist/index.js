@@ -61,14 +61,14 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 44);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var freeGlobal = __webpack_require__(27);
+var freeGlobal = __webpack_require__(28);
 
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -377,7 +377,7 @@ module.exports = ListCache;
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var eq = __webpack_require__(25);
+var eq = __webpack_require__(26);
 
 /**
  * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -474,8 +474,8 @@ module.exports = getMapData;
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assignValue = __webpack_require__(29),
-    baseAssignValue = __webpack_require__(30);
+var assignValue = __webpack_require__(30),
+    baseAssignValue = __webpack_require__(31);
 
 /**
  * Copies properties of `source` to `object`.
@@ -521,12 +521,10 @@ module.exports = copyObject;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 if (process.env.NODE_ENV !== 'production') {
@@ -548,7 +546,7 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(127)();
+  module.exports = __webpack_require__(128)();
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
@@ -582,9 +580,9 @@ module.exports = Symbol;
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayLikeKeys = __webpack_require__(31),
+var arrayLikeKeys = __webpack_require__(32),
     baseKeys = __webpack_require__(93),
-    isArrayLike = __webpack_require__(35);
+    isArrayLike = __webpack_require__(36);
 
 /**
  * Creates an array of the own enumerable property names of `object`.
@@ -745,7 +743,7 @@ module.exports = isPrototype;
 /***/ (function(module, exports, __webpack_require__) {
 
 var arrayFilter = __webpack_require__(101),
-    stubArray = __webpack_require__(37);
+    stubArray = __webpack_require__(38);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -807,11 +805,9 @@ module.exports = cloneArrayBuffer;
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -849,11 +845,9 @@ module.exports = emptyFunction;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -910,12 +904,10 @@ module.exports = invariant;
 
 "use strict";
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -927,6 +919,41 @@ module.exports = ReactPropTypesSecret;
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var rng = __webpack_require__(47);
+var bytesToUuid = __webpack_require__(48);
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options == 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || bytesToUuid(rnds);
+}
+
+module.exports = v4;
+
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports) {
 
 var g;
@@ -953,7 +980,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 /**
@@ -996,7 +1023,7 @@ module.exports = eq;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
@@ -1039,7 +1066,7 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -1047,10 +1074,10 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(25)))
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -1082,11 +1109,11 @@ module.exports = toSource;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseAssignValue = __webpack_require__(30),
-    eq = __webpack_require__(25);
+var baseAssignValue = __webpack_require__(31),
+    eq = __webpack_require__(26);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -1116,7 +1143,7 @@ module.exports = assignValue;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var defineProperty = __webpack_require__(82);
@@ -1147,13 +1174,13 @@ module.exports = baseAssignValue;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseTimes = __webpack_require__(84),
     isArguments = __webpack_require__(85),
     isArray = __webpack_require__(16),
-    isBuffer = __webpack_require__(32),
+    isBuffer = __webpack_require__(33),
     isIndex = __webpack_require__(88),
     isTypedArray = __webpack_require__(89);
 
@@ -1202,7 +1229,7 @@ module.exports = arrayLikeKeys;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(0),
@@ -1247,7 +1274,7 @@ module.exports = isBuffer;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17)(module)))
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 /** Used as references for various `Number` constants. */
@@ -1288,7 +1315,7 @@ module.exports = isLength;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 /**
@@ -1309,11 +1336,11 @@ module.exports = overArg;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(26),
-    isLength = __webpack_require__(33);
+var isFunction = __webpack_require__(27),
+    isLength = __webpack_require__(34);
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
@@ -1348,12 +1375,12 @@ module.exports = isArrayLike;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayLikeKeys = __webpack_require__(31),
+var arrayLikeKeys = __webpack_require__(32),
     baseKeysIn = __webpack_require__(96),
-    isArrayLike = __webpack_require__(35);
+    isArrayLike = __webpack_require__(36);
 
 /**
  * Creates an array of the own and inherited enumerable property names of `object`.
@@ -1386,7 +1413,7 @@ module.exports = keysIn;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 /**
@@ -1415,13 +1442,13 @@ module.exports = stubArray;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayPush = __webpack_require__(39),
-    getPrototype = __webpack_require__(40),
+var arrayPush = __webpack_require__(40),
+    getPrototype = __webpack_require__(41),
     getSymbols = __webpack_require__(19),
-    stubArray = __webpack_require__(37);
+    stubArray = __webpack_require__(38);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeGetSymbols = Object.getOwnPropertySymbols;
@@ -1446,7 +1473,7 @@ module.exports = getSymbolsIn;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 /**
@@ -1472,10 +1499,10 @@ module.exports = arrayPush;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(34);
+var overArg = __webpack_require__(35);
 
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -1484,10 +1511,10 @@ module.exports = getPrototype;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayPush = __webpack_require__(39),
+var arrayPush = __webpack_require__(40),
     isArray = __webpack_require__(16);
 
 /**
@@ -1510,7 +1537,7 @@ module.exports = baseGetAllKeys;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports) {
 
 /**
@@ -1542,17 +1569,15 @@ module.exports = arrayReduce;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -1570,52 +1595,50 @@ var emptyFunction = __webpack_require__(21);
 var warning = emptyFunction;
 
 if (process.env.NODE_ENV !== 'production') {
-  (function () {
-    var printWarning = function printWarning(format) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
       }
 
-      var argIndex = 0;
-      var message = 'Warning: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      });
-      if (typeof console !== 'undefined') {
-        console.error(message);
-      }
-      try {
-        // --- Welcome to debugging React ---
-        // This error was thrown as a convenience so that you can use this stack
-        // to find the callsite that caused this warning to fire.
-        throw new Error(message);
-      } catch (x) {}
-    };
-
-    warning = function warning(condition, format) {
-      if (format === undefined) {
-        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-      }
-
-      if (format.indexOf('Failed Composite propType: ') === 0) {
-        return; // Ignore CompositeComponent proptype check.
-      }
-
-      if (!condition) {
-        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-          args[_key2 - 2] = arguments[_key2];
-        }
-
-        printWarning.apply(undefined, [format].concat(args));
-      }
-    };
-  })();
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
 }
 
 module.exports = warning;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1625,7 +1648,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _QueryBuilder = __webpack_require__(45);
+var _QueryBuilder = __webpack_require__(46);
 
 var _QueryBuilder2 = _interopRequireDefault(_QueryBuilder);
 
@@ -1634,7 +1657,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _QueryBuilder2.default;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1646,7 +1669,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _v = __webpack_require__(46);
+var _v = __webpack_require__(24);
 
 var _v2 = _interopRequireDefault(_v);
 
@@ -1662,11 +1685,11 @@ var _propTypes = __webpack_require__(11);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _RuleGroup = __webpack_require__(128);
+var _RuleGroup = __webpack_require__(129);
 
 var _RuleGroup2 = _interopRequireDefault(_RuleGroup);
 
-var _index = __webpack_require__(130);
+var _index = __webpack_require__(131);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2077,41 +2100,6 @@ var QueryBuilder = function (_React$Component) {
 exports.default = QueryBuilder;
 
 /***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var rng = __webpack_require__(47);
-var bytesToUuid = __webpack_require__(48);
-
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof(options) == 'string') {
-    buf = options == 'binary' ? new Array(16) : null;
-    options = null;
-  }
-  options = options || {};
-
-  var rnds = options.random || (options.rng || rng)();
-
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-
-  // Copy bytes to buffer, if provided
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
-
-  return buf || bytesToUuid(rnds);
-}
-
-module.exports = v4;
-
-
-/***/ }),
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2149,7 +2137,7 @@ if (!rng) {
 
 module.exports = rng;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(25)))
 
 /***/ }),
 /* 48 */
@@ -2221,7 +2209,7 @@ module.exports = cloneDeep;
 
 var Stack = __webpack_require__(51),
     arrayEach = __webpack_require__(81),
-    assignValue = __webpack_require__(29),
+    assignValue = __webpack_require__(30),
     baseAssign = __webpack_require__(83),
     baseAssignIn = __webpack_require__(95),
     cloneBuffer = __webpack_require__(98),
@@ -2235,7 +2223,7 @@ var Stack = __webpack_require__(51),
     initCloneByTag = __webpack_require__(111),
     initCloneObject = __webpack_require__(123),
     isArray = __webpack_require__(16),
-    isBuffer = __webpack_require__(32),
+    isBuffer = __webpack_require__(33),
     isObject = __webpack_require__(3),
     keys = __webpack_require__(14);
 
@@ -2675,10 +2663,10 @@ module.exports = stackSet;
 /* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(26),
+var isFunction = __webpack_require__(27),
     isMasked = __webpack_require__(65),
     isObject = __webpack_require__(3),
-    toSource = __webpack_require__(28);
+    toSource = __webpack_require__(29);
 
 /**
  * Used to match `RegExp`
@@ -3469,7 +3457,7 @@ module.exports = isTypedArray;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    isLength = __webpack_require__(33),
+    isLength = __webpack_require__(34),
     isObjectLike = __webpack_require__(15);
 
 /** `Object#toString` result references. */
@@ -3554,7 +3542,7 @@ module.exports = baseUnary;
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(27);
+/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(28);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -3619,7 +3607,7 @@ module.exports = baseKeys;
 /* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(34);
+var overArg = __webpack_require__(35);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeKeys = overArg(Object.keys, Object);
@@ -3632,7 +3620,7 @@ module.exports = nativeKeys;
 /***/ (function(module, exports, __webpack_require__) {
 
 var copyObject = __webpack_require__(10),
-    keysIn = __webpack_require__(36);
+    keysIn = __webpack_require__(37);
 
 /**
  * The base implementation of `_.assignIn` without support for multiple sources
@@ -3841,7 +3829,7 @@ module.exports = arrayFilter;
 /***/ (function(module, exports, __webpack_require__) {
 
 var copyObject = __webpack_require__(10),
-    getSymbolsIn = __webpack_require__(38);
+    getSymbolsIn = __webpack_require__(39);
 
 /**
  * Copies own and inherited symbols of `source` to `object`.
@@ -3862,7 +3850,7 @@ module.exports = copySymbolsIn;
 /* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetAllKeys = __webpack_require__(41),
+var baseGetAllKeys = __webpack_require__(42),
     getSymbols = __webpack_require__(19),
     keys = __webpack_require__(14);
 
@@ -3884,9 +3872,9 @@ module.exports = getAllKeys;
 /* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetAllKeys = __webpack_require__(41),
-    getSymbolsIn = __webpack_require__(38),
-    keysIn = __webpack_require__(36);
+var baseGetAllKeys = __webpack_require__(42),
+    getSymbolsIn = __webpack_require__(39),
+    keysIn = __webpack_require__(37);
 
 /**
  * Creates an array of own and inherited enumerable property names and
@@ -3913,7 +3901,7 @@ var DataView = __webpack_require__(106),
     Set = __webpack_require__(108),
     WeakMap = __webpack_require__(109),
     baseGetTag = __webpack_require__(7),
-    toSource = __webpack_require__(28);
+    toSource = __webpack_require__(29);
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
@@ -4176,7 +4164,7 @@ module.exports = cloneDataView;
 /***/ (function(module, exports, __webpack_require__) {
 
 var addMapEntry = __webpack_require__(115),
-    arrayReduce = __webpack_require__(42),
+    arrayReduce = __webpack_require__(43),
     mapToArray = __webpack_require__(116);
 
 /** Used to compose bitmasks for cloning. */
@@ -4272,7 +4260,7 @@ module.exports = cloneRegExp;
 /***/ (function(module, exports, __webpack_require__) {
 
 var addSetEntry = __webpack_require__(119),
-    arrayReduce = __webpack_require__(42),
+    arrayReduce = __webpack_require__(43),
     setToArray = __webpack_require__(120);
 
 /** Used to compose bitmasks for cloning. */
@@ -4391,7 +4379,7 @@ module.exports = cloneTypedArray;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseCreate = __webpack_require__(124),
-    getPrototype = __webpack_require__(40),
+    getPrototype = __webpack_require__(41),
     isPrototype = __webpack_require__(18);
 
 /**
@@ -4452,22 +4440,21 @@ module.exports = baseCreate;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
 
 var emptyFunction = __webpack_require__(21);
 var invariant = __webpack_require__(22);
-var warning = __webpack_require__(43);
+var warning = __webpack_require__(44);
+var assign = __webpack_require__(126);
 
 var ReactPropTypesSecret = __webpack_require__(23);
-var checkPropTypes = __webpack_require__(126);
+var checkPropTypes = __webpack_require__(127);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -4563,7 +4550,8 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
     objectOf: createObjectOfTypeChecker,
     oneOf: createEnumTypeChecker,
     oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
   };
 
   /**
@@ -4778,7 +4766,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       if (typeof checker !== 'function') {
         warning(
           false,
-          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
           'received %s at index %s.',
           getPostfixForTypeWarning(checker),
           i
@@ -4829,6 +4817,36 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       }
       return null;
     }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = assign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
     return createChainableTypeChecker(validate);
   }
 
@@ -4971,20 +4989,115 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
 
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(22);
-  var warning = __webpack_require__(43);
+  var warning = __webpack_require__(44);
   var ReactPropTypesSecret = __webpack_require__(23);
   var loggedTypeFailures = {};
 }
@@ -5011,7 +5124,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
         try {
           // This is intentionally an invariant that gets caught. It's the same
           // behavior as without this statement except with a better message.
-          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
           error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
         } catch (ex) {
           error = ex;
@@ -5036,17 +5149,15 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -5091,7 +5202,8 @@ module.exports = function() {
     objectOf: getShim,
     oneOf: getShim,
     oneOfType: getShim,
-    shape: getShim
+    shape: getShim,
+    exact: getShim
   };
 
   ReactPropTypes.checkPropTypes = emptyFunction;
@@ -5102,7 +5214,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5118,7 +5230,7 @@ var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Rule = __webpack_require__(129);
+var _Rule = __webpack_require__(130);
 
 var _Rule2 = _interopRequireDefault(_Rule);
 
@@ -5275,7 +5387,7 @@ var RuleGroup = function (_React$Component) {
 exports.default = RuleGroup;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5408,7 +5520,7 @@ var Rule = function (_React$Component) {
 exports.default = Rule;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5418,7 +5530,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ValueEditor = __webpack_require__(131);
+var _ValueEditor = __webpack_require__(132);
 
 Object.defineProperty(exports, 'ValueEditor', {
   enumerable: true,
@@ -5427,7 +5539,7 @@ Object.defineProperty(exports, 'ValueEditor', {
   }
 });
 
-var _ValueSelector = __webpack_require__(132);
+var _ValueSelector = __webpack_require__(133);
 
 Object.defineProperty(exports, 'ValueSelector', {
   enumerable: true,
@@ -5436,7 +5548,7 @@ Object.defineProperty(exports, 'ValueSelector', {
   }
 });
 
-var _ActionElement = __webpack_require__(133);
+var _ActionElement = __webpack_require__(134);
 
 Object.defineProperty(exports, 'ActionElement', {
   enumerable: true,
@@ -5448,7 +5560,7 @@ Object.defineProperty(exports, 'ActionElement', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5501,7 +5613,7 @@ ValueEditor.propTypes = {
 exports.default = ValueEditor;
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5510,6 +5622,10 @@ exports.default = ValueEditor;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _v = __webpack_require__(24);
+
+var _v2 = _interopRequireDefault(_v);
 
 var _react = __webpack_require__(2);
 
@@ -5540,7 +5656,7 @@ var ValueSelector = function ValueSelector(props) {
     options.map(function (option) {
       return _react2.default.createElement(
         'option',
-        { key: option.name, value: option.name },
+        { key: option.id || option.name, value: option.name },
         option.label
       );
     })
@@ -5560,7 +5676,7 @@ ValueSelector.propTypes = {
 exports.default = ValueSelector;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
