@@ -58,10 +58,14 @@ function logQuery(query) {
 `<QueryBuilder />` is the only top-level component exposed from this library. It supports the following properties:
 
 #### fields *(Required)*
-[ {name:String, label:String} ]
+[ {name:String, label:String, id:ID} ]
 
 The array of fields that should be used. Each field should be an object with
-`{name:String, label:String}` |
+
+`{name:String, label:String, id:ID}` |
+
+The Id is optional, if you do not provide an id for a field then the name will be used
+
 
 #### operators *(Optional)*
 [ {name:String, label:String} ]
