@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.4.2 (2018/03/02)
+- [#55](https://github.com/sapientglobalmarkets/react-querybuilder/pull/55) Add optional id information in README (@CharlyJazz)
+
 ### v1.4.1 (2018/03/02)
 - [#53](https://github.com/sapientglobalmarkets/react-querybuilder/pull/53) Add optional Id to fields propertie (@CharlyJazz)
 
