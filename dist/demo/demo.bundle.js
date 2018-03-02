@@ -2170,7 +2170,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var fields = [{ name: 'firstName', label: 'First Name', id: 1 }, { name: 'firstName', label: 'First Name', id: 2 }, { name: 'age', label: 'Age' }, { name: 'address', label: 'Address', id: 4 }, { name: 'phone', label: 'Phone', id: 5 }, { name: 'email', label: 'Email', id: 6 }, { name: 'twitter', label: 'Twitter', id: 7 }, { name: 'isDev', label: 'Is a Developer?', value: false, id: 8 }];
+var fields = [{ name: 'firstName', label: 'First Name' }, { name: 'lastName', label: 'Last Name' }, { name: 'age', label: 'Age' }, { name: 'address', label: 'Address' }, { name: 'phone', label: 'Phone' }, { name: 'email', label: 'Email' }, { name: 'twitter', label: 'Twitter' }, { name: 'isDev', label: 'Is a Developer?', value: false }];
 
 var RootView = function (_React$Component) {
     _inherits(RootView, _React$Component);
