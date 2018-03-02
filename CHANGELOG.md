@@ -1,6 +1,6 @@
 ## Change Log
 
-### upcoming (2018/03/02)
+### v1.4.1 (2018/03/02)
 - [#53](https://github.com/sapientglobalmarkets/react-querybuilder/pull/53) Add optional Id to fields propertie (@CharlyJazz)
 
 ### v1.4.0 (2017/12/11)
