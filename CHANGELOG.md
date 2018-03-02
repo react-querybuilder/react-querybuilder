@@ -1,6 +1,9 @@
 ## Change Log
 
-### upcoming (2017/12/11)
+### upcoming (2018/03/02)
+- [#53](https://github.com/sapientglobalmarkets/react-querybuilder/pull/53) Add optional Id to fields propertie (@CharlyJazz)
+
+### v1.4.0 (2017/12/11)
 - [#47](https://github.com/sapientglobalmarkets/react-querybuilder/pull/47) Add translations property to be able to set translatable texts. (@bubenkoff)
 - [#46](https://github.com/sapientglobalmarkets/react-querybuilder/pull/46) Types: Added id attribute to RuleGroup (@jakeboone02)
 - [#44](https://github.com/sapientglobalmarkets/react-querybuilder/pull/44) Add TypeScript typings (@jakeboone02)
