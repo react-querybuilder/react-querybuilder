@@ -11,6 +11,7 @@ export default class QueryBuilder extends React.Component {
         return {
             query: null,
             fields: [],
+            initValue: {},
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
             translations: QueryBuilder.defaultTranslations,
@@ -25,6 +26,7 @@ export default class QueryBuilder extends React.Component {
         return {
             query: PropTypes.object,
             fields: PropTypes.array.isRequired,
+            initValue: PropTypes.object,
             operators: PropTypes.array,
             combinators: PropTypes.array,
             controlElements: PropTypes.shape({
@@ -144,11 +146,11 @@ export default class QueryBuilder extends React.Component {
     }
 
     componentWillMount() {
-        const {fields, operators, combinators, controlElements, controlClassnames} = this.props;
+        const {fields, initValue, operators, combinators, controlElements, controlClassnames} = this.props;
         const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
         const controls = Object.assign({}, QueryBuilder.defaultControlElements, controlElements);
         this.setState({
-            root: this.getInitialQuery(),
+            root: this.getInitialQuery(initValue),
             schema: {
                 fields,
                 operators,
@@ -172,9 +174,10 @@ export default class QueryBuilder extends React.Component {
 
     }
 
-    getInitialQuery() {
-        return this.props.query || this.createRuleGroup();
+    getInitialQuery(initValue) {
+        return this.props.query || this.createRuleGroup(initValue);
     }
+
 
     componentDidMount() {
         this._notifyQueryChange(null);
@@ -214,7 +217,14 @@ export default class QueryBuilder extends React.Component {
         };
     }
 
-    createRuleGroup() {
+    createRuleGroup(initValue) {
+        if (typeof initValue !== 'undefined') {
+            return {
+                id: `g-${uniqueId()}`,
+                rules: initValue.rules,
+                combinator: this.props.combinators[0].name,
+            };
+        }
         return {
             id: `g-${uniqueId()}`,
             rules: [],
