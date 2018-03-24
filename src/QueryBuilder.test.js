@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-
+var sinon = require('sinon')
 import QueryBuilder from './QueryBuilder';
 
 describe('<QueryBuilder />', () => {
@@ -25,7 +25,7 @@ describe('<QueryBuilder />', () => {
 
     describe('when initial query is provided', () => {
         let dom;
-
+      
         beforeEach(() => {
             const fields = [
                 { name: 'firstName', label: 'First Name' },
@@ -47,6 +47,7 @@ describe('<QueryBuilder />', () => {
             };
 
             dom = mount(<QueryBuilder query={query} fields={fields} />);
+            
         });
 
         afterEach(() => {
@@ -94,6 +95,8 @@ describe('<QueryBuilder />', () => {
         });
 
         it('should accept new props (query and fields) and update query and schema.fields', ()=>{
+            let spy = sinon.spy(QueryBuilder.prototype, "componentWillReceiveProps");
+            expect(spy.calledOnce).to.equal(false);
             const newFields = [
                 { name: 'domainName', label: 'Domain Name' },
                 { name: 'ownerName', label: 'Owner Name' },
@@ -119,10 +122,13 @@ describe('<QueryBuilder />', () => {
             query: newQuery,
             fields: newFields
         });
+        expect(spy.calledOnce).to.equal(true);
         expect(dom.props('query') !== newQuery).to.equal(true); 
         expect(dom.props('root') !== newQuery).to.equal(true); 
+        
         let fieldstate = dom.state('schema');
         let root = dom.state('root');
+        
         expect(fieldstate.fields).to.equal(newFields);
         expect(root).to.equal(newQuery);
         
