@@ -119,11 +119,11 @@ describe('<QueryBuilder />', () => {
             query: newQuery,
             fields: newFields
         });
-        expect(oldfieldstate.fields === newFields).to.equal(false); 
+        expect(dom.props('root') !== newQuery).to.equal(true); 
         let fieldstate = dom.state('schema');
-     
+        let root = dom.state('root');
         expect(fieldstate.fields).to.equal(newFields);
-        expect(dom.state('root')).to.equal(newQuery);
+        expect(root).to.equal(newQuery);
         
         const rule = dom.find('Rule');
         expect(rule.find('.rule-fields select').props().value).to.equal('domainName');
