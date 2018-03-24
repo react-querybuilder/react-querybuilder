@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-
+import sinon from 'sinon';
 import Rule from './Rule';
 import { ActionElement, ValueSelector, ValueEditor } from './controls/index';
 
@@ -156,6 +156,13 @@ describe('<Rule />', ()=> {
             expect(dom.find('ValueEditor').props().handleOnChange).to.be.a('function');
         });
 
+        it('should trigger change handler',()=>{
+            const mockEvent = {target:{value:"foo"}};
+            let onChange = sinon.spy();
+            const dom = shallow(<ValueEditor handleOnChange={onChange} />);
+            dom.find('input').simulate('change', mockEvent);
+            expect(onChange.called).to.equal(true);        
+        });
         //TODO spy on value change handler and verify it is triggered
     });
 
@@ -185,6 +192,7 @@ describe('<Rule />', ()=> {
 
             expect(dom.find('ActionElement').props().handleOnClick).to.be.a('function');
         });
+       
 
         //TODO spy on value change handler and verify it is triggered
     });
