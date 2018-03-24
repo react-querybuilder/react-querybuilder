@@ -93,7 +93,7 @@ describe('<QueryBuilder />', () => {
             expect(rule.find('input').props().value).to.equal('Test');
         });
 
-        it('should accept new props and update query and schema.fields', ()=>{
+        it('should accept new props (query and fields) and update query and schema.fields', ()=>{
             const newFields = [
                 { name: 'domainName', label: 'Domain Name' },
                 { name: 'ownerName', label: 'Owner Name' },
@@ -117,11 +117,18 @@ describe('<QueryBuilder />', () => {
             query: newQuery,
             fields: newFields
         });
-
+        
+        let fieldstate = dom.state('schema');
+     
+        expect(fieldstate.fields).to.equal(newFields);
+        expect(dom.state('root')).to.equal(newQuery);
+        
         const rule = dom.find('Rule');
         expect(rule.find('.rule-fields select').props().value).to.equal('domainName');
+        expect(rule.find('input').props().value).to.equal('www.example.com');
 
     });
+   
 });
     
     describe('when initial operators are provided', () => {
