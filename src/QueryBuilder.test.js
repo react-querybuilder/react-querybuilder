@@ -126,7 +126,6 @@ describe('<QueryBuilder />', () => {
                 ]
             };
             //First mount with props
-            //sinon.spy(QueryBuilder.prototype, 'componentWillMount');
             sinon.spy(QueryBuilder.prototype, 'componentWillReceiveProps');
             const dom = mount(<QueryBuilder />);
            
@@ -138,9 +137,14 @@ describe('<QueryBuilder />', () => {
                 fields: newFields
             });
             expect(QueryBuilder.prototype.componentWillReceiveProps.calledOnce).to.equal(true);
+            expect(dom.props().query).to.equal(newQuery);
+            const rule = dom.find('Rule');
+            expect(dom.find('RuleGroup')).to.have.length(1);
+            expect(rule.find('input').props().value).to.equal('www.example.com');
         });
         
     });  
+   
     describe('when initial operators are provided', () => {
 
         let dom;
