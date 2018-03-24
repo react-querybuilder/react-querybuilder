@@ -7,7 +7,7 @@ const path = require('path');
 
 module.exports = merge(webpackCommon, {
   entry: {
-    index: './lib/index.js'
+    index: './src/index.js'
   },
   output: {
     filename: '[name].js',
@@ -23,7 +23,7 @@ module.exports = merge(webpackCommon, {
 
   plugins: [
     new CopyPlugin([{
-      from: './lib/query-builder.scss',
+      from: './src/query-builder.scss',
     }])
   ]
 });

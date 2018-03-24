@@ -1,5 +1,5 @@
 import React from 'react';
-import {shallow, mount} from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import QueryBuilder from './QueryBuilder';
 
@@ -28,9 +28,9 @@ describe('<QueryBuilder />', () => {
 
         beforeEach(() => {
             const fields = [
-                {name: 'firstName', label: 'First Name'},
-                {name: 'lastName', label: 'Last Name'},
-                {name: 'age', label: 'Age'},
+                { name: 'firstName', label: 'First Name' },
+                { name: 'lastName', label: 'Last Name' },
+                { name: 'age', label: 'Age' },
             ];
 
             const query = {
@@ -46,7 +46,13 @@ describe('<QueryBuilder />', () => {
                 ]
             };
 
-            dom = mount(<QueryBuilder query={query} fields={fields}/>);
+            dom = mount(<QueryBuilder query={query} fields={fields} />);
+        });
+
+        afterEach(() => {
+            if (dom) {
+                dom.unmount();
+            }
         });
 
         it('should contain a <Rule />', () => {
@@ -69,16 +75,16 @@ describe('<QueryBuilder />', () => {
             expect(rule.find('.rule-fields option')).to.have.length(3);
         });
 
-        it('should have an field selector with the correct field', () => {
+        it('should have a field selector with the correct field', () => {
             const rule = dom.find('Rule');
 
-            expect(rule.find('.rule-fields').props().value).to.equal('firstName');
+            expect(rule.find('.rule-fields select').props().value).to.equal('firstName');
         });
 
         it('should have an operator selector with the correct operator', () => {
             const rule = dom.find('Rule');
 
-            expect(rule.find('.rule-operators').props().value).to.equal('=');
+            expect(rule.find('.rule-operators select').props().value).to.equal('=');
         });
 
         it('should have an input control with the correct value', () => {
@@ -94,16 +100,16 @@ describe('<QueryBuilder />', () => {
         let dom;
         beforeEach(() => {
             const operators = [
-                {name: 'null', label: 'Custom Is Null'},
-                {name: 'notNull', label: 'Is Not Null'},
-                {name: 'in', label: 'In'},
-                {name: 'notIn', label: 'Not In'},
+                { name: 'null', label: 'Custom Is Null' },
+                { name: 'notNull', label: 'Is Not Null' },
+                { name: 'in', label: 'In' },
+                { name: 'notIn', label: 'Not In' },
             ];
 
             const fields = [
-                {name: 'firstName', label: 'First Name'},
-                {name: 'lastName', label: 'Last Name'},
-                {name: 'age', label: 'Age'},
+                { name: 'firstName', label: 'First Name' },
+                { name: 'lastName', label: 'Last Name' },
+                { name: 'age', label: 'Age' },
             ];
 
             const query = {
@@ -121,7 +127,7 @@ describe('<QueryBuilder />', () => {
 
             dom = mount(<QueryBuilder operators={operators}
                                       fields={fields}
-                                      query={query}/>);
+                                      query={query} />);
         });
 
         it('should use the given operators', () => {
@@ -136,55 +142,55 @@ describe('<QueryBuilder />', () => {
             expect(operatorOption.text()).to.equal('Custom Is Null');
         });
     });
-        
-    describe('when calculating the level of a rule', function() {
-         let dom;
-         beforeEach(() => {
+
+    describe('when calculating the level of a rule', function () {
+        let dom;
+        beforeEach(() => {
             const fields = [
-                {name: 'firstName', label: 'First Name'},
-                {name: 'lastName', label: 'Last Name'},
-                {name: 'age', label: 'Age'},
+                { name: 'firstName', label: 'First Name' },
+                { name: 'lastName', label: 'Last Name' },
+                { name: 'age', label: 'Age' },
             ];
             const query = {
                 combinator: 'and',
                 id: '111',
                 rules: [{
-                        id: '222',
+                    id: '222',
+                    field: 'firstName',
+                    value: 'Test',
+                    operator: '='
+                }, {
+                    id: '333',
+                    field: 'firstName',
+                    value: 'Test',
+                    operator: '='
+                }, {
+                    combinator: 'and',
+                    id: '444',
+                    rules: [{
+                        id: '555',
                         field: 'firstName',
                         value: 'Test',
                         operator: '='
-                    }, {
-                        id: '333',
-                        field: 'firstName',
-                        value: 'Test',
-                        operator: '='
-                    }, {
-                        combinator: 'and',
-                        id: '444',
-                        rules: [{
-                            id: '555',
-                            field: 'firstName',
-                            value: 'Test',
-                            operator: '='
-                        }]
-                }]  
+                    }]
+                }]
             };
 
-            dom = mount(<QueryBuilder query={query} fields={fields}/>);
+            dom = mount(<QueryBuilder query={query} fields={fields} />);
         });
-        
-        it('should be 0 for the top level', function() {
+
+        it('should be 0 for the top level', function () {
             expect(dom.state('schema').getLevel('111')).to.equal(0);
             expect(dom.state('schema').getLevel('222')).to.equal(0);
             expect(dom.state('schema').getLevel('333')).to.equal(0);
-        });        
-        
-        it('should be 1 for the second level', function() {
+        });
+
+        it('should be 1 for the second level', function () {
             expect(dom.state('schema').getLevel('444')).to.equal(1);
             expect(dom.state('schema').getLevel('555')).to.equal(1);
         });
-             
-        it('should handle an invalid id', function() {
+
+        it('should handle an invalid id', function () {
             expect(dom.state('schema').getLevel('546')).to.equal(-1);
         });
     });

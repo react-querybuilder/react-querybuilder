@@ -13,6 +13,7 @@ export default class QueryBuilder extends React.Component {
             fields: [],
             operators: QueryBuilder.defaultOperators,
             combinators: QueryBuilder.defaultCombinators,
+            translations: QueryBuilder.defaultTranslations,
             controlElements: null,
             getOperators: null,
             onQueryChange: null,
@@ -38,7 +39,8 @@ export default class QueryBuilder extends React.Component {
             }),
             getOperators: PropTypes.func,
             onQueryChange: PropTypes.func,
-            controlClassnames: PropTypes.object
+            controlClassnames: PropTypes.object,
+            translations: PropTypes.object
         };
     }
 
@@ -49,6 +51,40 @@ export default class QueryBuilder extends React.Component {
             root: {},
             schema: {},
         };
+    }
+
+    static get defaultTranslations() {
+
+        return {
+            fields: {
+                title: "Fields",
+            },
+            operators: {
+                title: "Operators",
+            },
+            value: {
+                title: "Value",
+            },
+            removeRule: {
+                label: "x",
+                title: "Remove rule",
+            },
+            removeGroup: {
+                label: "x",
+                title: "Remove group",
+            },
+            addRule: {
+                label: "+Rule",
+                title: "Add rule",
+            },
+            addGroup: {
+                label: "+Group",
+                title: "Add group",
+            },
+            combinators: {
+                title: "Combinators",
+            }
+        }
     }
 
     static get defaultOperators() {
@@ -152,10 +188,12 @@ export default class QueryBuilder extends React.Component {
 
     render() {
         const {root: {id, rules, combinator}, schema} = this.state;
+        const {translations} = this.props;
 
         return (
             <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
                 <RuleGroup
+                    translations={translations}
                     rules={rules}
                     combinator={combinator}
                     schema={schema}
@@ -238,17 +276,17 @@ export default class QueryBuilder extends React.Component {
         parent.rules.splice(index, 1);
         this.setState({root: this.state.root});
     }
-    
+
     getLevel(id) {
         return this._getLevel(id, 0, this.state.root)
     }
-    
+
     _getLevel(id, index, root) {
         const {isRuleGroup} = this.state.schema;
-        
+
         var foundAtIndex = -1;
         if(root.id === id ) {
-            foundAtIndex = index; 
+            foundAtIndex = index;
         } else if(isRuleGroup(root)) {
             root.rules.forEach(rule => {
                 if(foundAtIndex === -1) {
@@ -260,7 +298,7 @@ export default class QueryBuilder extends React.Component {
             });
         }
         return foundAtIndex;
-       
+
     }
 
     _findRule(id, parent) {

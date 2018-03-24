@@ -16,9 +16,10 @@ module.exports = merge(webpackCommon, {
 
     devtool: 'cheap-module-source-map',
     devServer: {
-        inline: true,
         historyApiFallback: true,
-        stats: 'minimal'
+        stats: {
+            maxModules: 0
+        }
     },
 
     plugins: [
