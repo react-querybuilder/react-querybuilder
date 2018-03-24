@@ -119,6 +119,7 @@ describe('<QueryBuilder />', () => {
             query: newQuery,
             fields: newFields
         });
+        expect(dom.props('query') !== newQuery).to.equal(true); 
         expect(dom.props('root') !== newQuery).to.equal(true); 
         let fieldstate = dom.state('schema');
         let root = dom.state('root');
