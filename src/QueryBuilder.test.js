@@ -93,8 +93,37 @@ describe('<QueryBuilder />', () => {
             expect(rule.find('input').props().value).to.equal('Test');
         });
 
-    });
+        it('should accept new props and update query and schema.fields', ()=>{
+            const newFields = [
+                { name: 'domainName', label: 'Domain Name' },
+                { name: 'ownerName', label: 'Owner Name' },
+               
+            ];
 
+            const newQuery = {
+                combinator: 'and',
+                id: '111',
+                rules: [
+                    {
+                        id: '222',
+                        field: 'domainName',
+                        value: 'www.example.com',
+                        operator: '='
+                    }
+                ]
+            };
+       
+        dom.setProps({
+            query: newQuery,
+            fields: newFields
+        });
+
+        const rule = dom.find('Rule');
+        expect(rule.find('.rule-fields select').props().value).to.equal('domainName');
+
+    });
+});
+    
     describe('when initial operators are provided', () => {
 
         let dom;

@@ -143,7 +143,6 @@ export default class QueryBuilder extends React.Component {
         };
     }
     
-  
     componentWillReceiveProps(nextProps) {
         let schema  = {...this.state.schema};
          
@@ -157,7 +156,7 @@ export default class QueryBuilder extends React.Component {
          }
    
     }
-    
+
     componentWillMount() {
         const {fields, operators, combinators, controlElements, controlClassnames} = this.props;
         const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
