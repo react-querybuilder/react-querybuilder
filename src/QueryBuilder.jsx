@@ -143,6 +143,7 @@ export default class QueryBuilder extends React.Component {
         };
     }
     
+
     componentWillReceiveProps(nextProps) {
         let schema  = {...this.state.schema};
          
