@@ -53,6 +53,7 @@
     "postcss-loader": "^2.0.9",
     "react-addons-test-utils": "^15.6.2",
     "sass-loader": "^6.0.3",
+    "sinon": "^4.4.8",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.9.7",
     "webpack-merge": "^4.1.1"
