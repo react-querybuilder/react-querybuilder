@@ -113,11 +113,13 @@ describe('<QueryBuilder />', () => {
                 ]
             };
        
+        let oldfieldstate = dom.state('schema');   
+        
         dom.setProps({
             query: newQuery,
             fields: newFields
         });
-        
+        expect(oldfieldstate.fields === newFields).to.equal(false); 
         let fieldstate = dom.state('schema');
      
         expect(fieldstate.fields).to.equal(newFields);
