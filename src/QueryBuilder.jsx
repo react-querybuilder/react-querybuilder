@@ -143,12 +143,21 @@ export default class QueryBuilder extends React.Component {
         };
     }
     
-    componentWillReceiveProps(props) {
-      if (this.props.query !== props.query) {
-        this.setState({ root: props.query });
-      }
-    }
+  
+    componentWillReceiveProps(nextProps) {
+        let schema  = {...this.state.schema};
+         
+         if (this.props.query !== nextProps.query) {
+             this.setState({ root: nextProps.query });
+         }
 
+         if(schema.fields !== nextProps.fields){
+             schema.fields = nextProps.fields;
+              this.setState({ schema });
+         }
+   
+    }
+    
     componentWillMount() {
         const {fields, operators, combinators, controlElements, controlClassnames} = this.props;
         const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
