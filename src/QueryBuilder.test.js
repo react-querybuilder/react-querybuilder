@@ -10,6 +10,12 @@ describe('<QueryBuilder />', () => {
     });
 
     describe('when rendered', () => {
+        it('calls componentWillMount', () => {
+            sinon.spy(QueryBuilder.prototype, 'componentWillMount');
+            const dom = mount(<QueryBuilder />);
+            expect(QueryBuilder.prototype.componentWillMount.calledOnce).to.equal(true);
+            dom.unmount();
+        });
         it('should render the root RuleGroup', () => {
             const dom = shallow(<QueryBuilder />);
             expect(dom.find('RuleGroup')).to.have.length(1);
@@ -23,9 +29,11 @@ describe('<QueryBuilder />', () => {
 
     });
 
+    
+
     describe('when initial query is provided', () => {
         let dom;
-        let spy = sinon.spy(QueryBuilder.prototype, "componentWillReceiveProps");
+        
         beforeEach(() => {
             const fields = [
                 { name: 'firstName', label: 'First Name' },
@@ -94,9 +102,10 @@ describe('<QueryBuilder />', () => {
             expect(rule.find('input').props().value).to.equal('Test');
         });
 
-        it('should accept new props (query and fields) and update query and schema.fields', ()=>{
-            
-            expect(spy.calledOnce).to.equal(false);
+       
+});
+    describe('when new props are passed',()=>{ 
+        it('calls componentWillRecieveProps', () => {
 
             const newFields = [
                 { name: 'domainName', label: 'Domain Name' },
@@ -116,66 +125,22 @@ describe('<QueryBuilder />', () => {
                     }
                 ]
             };
-       
+            //First mount with props
+            //sinon.spy(QueryBuilder.prototype, 'componentWillMount');
+            sinon.spy(QueryBuilder.prototype, 'componentWillReceiveProps');
+            const dom = mount(<QueryBuilder />);
            
-        
-        dom.setProps({
-            query: newQuery,
-            fields: newFields
+            expect(QueryBuilder.prototype.componentWillReceiveProps.calledOnce).to.equal(false);
+         
+            //componentWillRecieveProps
+            dom.setProps({
+                query: newQuery,
+                fields: newFields
+            });
+            expect(QueryBuilder.prototype.componentWillReceiveProps.calledOnce).to.equal(true);
         });
-        expect(spy.calledOnce).to.equal(true);
-        expect(dom.props('query') !== newQuery).to.equal(true); 
-        expect(dom.props('root') !== newQuery).to.equal(true); 
         
-        let fieldstate = dom.state('schema');
-        let root = dom.state('root');
-        
-        expect(fieldstate.fields).to.equal(newFields);
-        expect(root).to.equal(newQuery);
-        
-      
-
-    });
-    it('should have new rule fields and values', ()=>{
-            
-        expect(spy.calledOnce).to.equal(true);
-
-        const newFields = [
-            { name: 'domainName', label: 'Domain Name' },
-            { name: 'ownerName', label: 'Owner Name' },
-           
-        ];
-
-        const newQuery = {
-            combinator: 'and',
-            id: '111',
-            rules: [
-                {
-                    id: '222',
-                    field: 'domainName',
-                    value: 'www.example.com',
-                    operator: '!='
-                }
-            ]
-        };
-   
-       
-    
-    dom.setProps({
-        query: newQuery,
-        fields: newFields
-    });
-    
-    
-    const rule = dom.find('Rule');
-    expect(rule.find('.rule-fields select').props().value).to.equal('domainName');
-    expect(rule.find('input').props().value).to.equal('www.example.com');
-    expect(rule.find('.rule-operators select').props().value).to.equal('!=');
-
-});
-   
-});
-    
+    });  
     describe('when initial operators are provided', () => {
 
         let dom;
@@ -223,7 +188,7 @@ describe('<QueryBuilder />', () => {
             expect(operatorOption.text()).to.equal('Custom Is Null');
         });
     });
-
+   
     describe('when calculating the level of a rule', function () {
         let dom;
         beforeEach(() => {
