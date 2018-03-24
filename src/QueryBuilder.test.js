@@ -25,7 +25,7 @@ describe('<QueryBuilder />', () => {
 
     describe('when initial query is provided', () => {
         let dom;
-      
+        let spy = sinon.spy(QueryBuilder.prototype, "componentWillReceiveProps");
         beforeEach(() => {
             const fields = [
                 { name: 'firstName', label: 'First Name' },
@@ -95,8 +95,9 @@ describe('<QueryBuilder />', () => {
         });
 
         it('should accept new props (query and fields) and update query and schema.fields', ()=>{
-            let spy = sinon.spy(QueryBuilder.prototype, "componentWillReceiveProps");
+            
             expect(spy.calledOnce).to.equal(false);
+
             const newFields = [
                 { name: 'domainName', label: 'Domain Name' },
                 { name: 'ownerName', label: 'Owner Name' },
@@ -111,12 +112,12 @@ describe('<QueryBuilder />', () => {
                         id: '222',
                         field: 'domainName',
                         value: 'www.example.com',
-                        operator: '='
+                        operator: '!='
                     }
                 ]
             };
        
-        let oldfieldstate = dom.state('schema');   
+           
         
         dom.setProps({
             query: newQuery,
@@ -132,11 +133,46 @@ describe('<QueryBuilder />', () => {
         expect(fieldstate.fields).to.equal(newFields);
         expect(root).to.equal(newQuery);
         
-        const rule = dom.find('Rule');
-        expect(rule.find('.rule-fields select').props().value).to.equal('domainName');
-        expect(rule.find('input').props().value).to.equal('www.example.com');
+      
 
     });
+    it('should have new rule fields and values', ()=>{
+            
+        expect(spy.calledOnce).to.equal(true);
+
+        const newFields = [
+            { name: 'domainName', label: 'Domain Name' },
+            { name: 'ownerName', label: 'Owner Name' },
+           
+        ];
+
+        const newQuery = {
+            combinator: 'and',
+            id: '111',
+            rules: [
+                {
+                    id: '222',
+                    field: 'domainName',
+                    value: 'www.example.com',
+                    operator: '!='
+                }
+            ]
+        };
+   
+       
+    
+    dom.setProps({
+        query: newQuery,
+        fields: newFields
+    });
+    
+    
+    const rule = dom.find('Rule');
+    expect(rule.find('.rule-fields select').props().value).to.equal('domainName');
+    expect(rule.find('input').props().value).to.equal('www.example.com');
+    expect(rule.find('.rule-operators select').props().value).to.equal('!=');
+
+});
    
 });
     
