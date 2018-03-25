@@ -10,18 +10,7 @@ describe('<QueryBuilder />', () => {
     });
 
     describe('when rendered', () => {
-        const query = {
-            combinator: 'and',
-            id: '111',
-            rules: [
-                {
-                    id: '222',
-                    field: 'firstName',
-                    value: 'Test',
-                    operator: '='
-                }
-            ]
-        };
+        
         it('calls componentWillMount', () => {
             sinon.spy(QueryBuilder.prototype, 'componentWillMount');
             const dom = mount(<QueryBuilder />);
@@ -45,12 +34,13 @@ describe('<QueryBuilder />', () => {
             expect(options).to.have.length(2); // and, or
         });
         it('should call  onQueryChange',()=>{
-            
-            const dom = mount(<QueryBuilder onQueryChange={()=>{return query}} />);
+            const dom = mount(<QueryBuilder onQueryChange={()=>{}} />);
             dom.instance()._notifyQueryChange(()=>{});
             dom.update();
             expect(dom.props().query).to.equal(null);
         });
+      
+        
 
     });
 
