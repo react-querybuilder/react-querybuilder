@@ -10,18 +10,7 @@ describe('<QueryBuilder />', () => {
     });
 
     describe('when rendered', () => {
-        const query = {
-            combinator: 'and',
-            id: '111',
-            rules: [
-                {
-                    id: '222',
-                    field: 'firstName',
-                    value: 'Test',
-                    operator: '='
-                }
-            ]
-        };
+        
         it('calls componentWillMount', () => {
             sinon.spy(QueryBuilder.prototype, 'componentWillMount');
             const dom = mount(<QueryBuilder />);
@@ -45,11 +34,42 @@ describe('<QueryBuilder />', () => {
             expect(options).to.have.length(2); // and, or
         });
         it('should call  onQueryChange',()=>{
-            
-            const dom = mount(<QueryBuilder onQueryChange={()=>{return query}} />);
+            const dom = mount(<QueryBuilder onQueryChange={()=>{}} />);
             dom.instance()._notifyQueryChange(()=>{});
             dom.update();
             expect(dom.props().query).to.equal(null);
+        });
+      
+        it('should call  onRuleAdd and show rule is added',()=>{
+            const fields = [
+                { name: 'firstName', label: 'First Name' },
+                { name: 'lastName', label: 'Last Name' },
+                { name: 'age', label: 'Age' },
+            ];
+
+            const query = {
+                combinator: 'and',
+                id: '111',
+                rules: [
+                    {
+                        id: '222',
+                        field: 'firstName',
+                        value: 'Test',
+                        operator: '='
+                    }
+                ]
+            };
+            const rule = {
+                field: "domainName",
+                id: "999",
+                operator:"null",
+                value: ""
+            }
+            const dom = mount(<QueryBuilder query={query} fields={fields} />);
+            
+            dom.instance().onRuleAdd(rule, '111');
+            dom.update();
+            expect(dom.state('root').rules[1].id).to.equal("999");
         });
 
     });
