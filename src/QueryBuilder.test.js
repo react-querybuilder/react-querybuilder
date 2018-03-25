@@ -10,6 +10,18 @@ describe('<QueryBuilder />', () => {
     });
 
     describe('when rendered', () => {
+        const query = {
+            combinator: 'and',
+            id: '111',
+            rules: [
+                {
+                    id: '222',
+                    field: 'firstName',
+                    value: 'Test',
+                    operator: '='
+                }
+            ]
+        };
         it('calls componentWillMount', () => {
             sinon.spy(QueryBuilder.prototype, 'componentWillMount');
             const dom = mount(<QueryBuilder />);
@@ -20,8 +32,9 @@ describe('<QueryBuilder />', () => {
             sinon.spy(QueryBuilder.prototype, 'componentDidMount');
             const dom = mount(<QueryBuilder />);
             expect(QueryBuilder.prototype.componentDidMount.calledOnce).to.equal(true);
-            dom.instance()._notifyQueryChange(null);
-            dom.unmount();
+            dom.instance()._notifyQueryChange(()=>{},query);
+            dom.update();
+            expect(dom.props().query).to.equal(null);
         });
         it('should render the root RuleGroup', () => {
             const dom = shallow(<QueryBuilder />);
@@ -186,7 +199,11 @@ describe('<QueryBuilder />', () => {
                                       fields={fields}
                                       query={query} />);
         });
-
+        it('should get operators for field', () => {
+            let operators = dom.state('schema').getOperators('firstName');
+            //console.log('OPS',operators);
+            expect(operators.length).to.equal(4);
+        });
         it('should use the given operators', () => {
             const operatorOptions = dom.find('Rule').find('.rule-operators option');
 
@@ -198,7 +215,8 @@ describe('<QueryBuilder />', () => {
 
             expect(operatorOption.text()).to.equal('Custom Is Null');
         });
-    });
+    }); 
+   
    
     describe('when calculating the level of a rule', function () {
         let dom;
