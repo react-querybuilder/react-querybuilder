@@ -32,9 +32,7 @@ describe('<QueryBuilder />', () => {
             sinon.spy(QueryBuilder.prototype, 'componentDidMount');
             const dom = mount(<QueryBuilder />);
             expect(QueryBuilder.prototype.componentDidMount.calledOnce).to.equal(true);
-            dom.instance()._notifyQueryChange(()=>{},query);
-            dom.update();
-            expect(dom.props().query).to.equal(null);
+        
         });
         it('should render the root RuleGroup', () => {
             const dom = shallow(<QueryBuilder />);
@@ -45,6 +43,13 @@ describe('<QueryBuilder />', () => {
             const dom = mount(<QueryBuilder />);
             const options = dom.find('select option');
             expect(options).to.have.length(2); // and, or
+        });
+        it('should call  onQueryChange',()=>{
+            
+            const dom = mount(<QueryBuilder onQueryChange={()=>{return query}} />);
+            dom.instance()._notifyQueryChange(()=>{});
+            dom.update();
+            expect(dom.props().query).to.equal(null);
         });
 
     });
