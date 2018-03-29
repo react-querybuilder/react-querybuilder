@@ -38,7 +38,7 @@ interface CommonCustomControlProps {
 
 interface ActionCustomControlProps extends CommonCustomControlProps {
     label?: string;
-    handleOnClick?: () => void;
+    handleOnClick?(): void;
 }
 
 interface ActionWithRulesCustomControlProps extends ActionCustomControlProps {
@@ -50,7 +50,7 @@ interface ActionWithRulesCustomControlProps extends ActionCustomControlProps {
 
 interface SelectorEditorCustomControlProps extends CommonCustomControlProps {
     value?: string;
-    handleOnChange?: () => void;
+    handleOnChange?(value: any): void;
 }
 
 interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
@@ -120,8 +120,8 @@ interface QueryBuilderProps {
      * operators for the given field
      * @param field
      */
-    getOperators?: (field: string) => NameLabelList;
-    onQueryChange: (query: RuleGroup) => void;
+    getOperators?(field: string): NameLabelList;
+    onQueryChange(query: RuleGroup): void;
     /**
      * This can be used to assign specific CSS classes to various controls
      * that are created by the `<QueryBuilder />`.
