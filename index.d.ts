@@ -72,13 +72,17 @@ interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps
     operator?: string;
 }
 
+interface Field extends NameLabelPair {
+    id?: string;
+}
+
 interface QueryBuilderProps {
     query?: RuleGroup;
     /**
      * The array of fields that should be used. Each field should be an object
      * with {name: String, label: String}
      */
-    fields: NameLabelList;
+    fields: Field[];
     /**
      * The array of operators that should be used.
      * @default
@@ -120,7 +124,11 @@ interface QueryBuilderProps {
      * operators for the given field
      * @param field
      */
-    getOperators?(field: string): NameLabelList;
+    getOperators?(field: string): Field[];
+    /**
+     * This is a notification that is invoked anytime the query configuration changes.
+     * @param query
+     */
     onQueryChange(query: RuleGroup): void;
     /**
      * This can be used to assign specific CSS classes to various controls
@@ -172,6 +180,40 @@ interface QueryBuilderProps {
          */
         removeRule?: string;
     };
+    /**
+     * This can be used to override translatable texts applied to various
+     * controls that are created by the `<QueryBuilder />`.
+     */
+    translations?: {
+        fields?: {
+            title: string;
+        };
+        operators?: {
+            title: string;
+        };
+        value?: {
+            title: string;
+        };
+        removeRule?: {
+            label: string;
+            title: string;
+        };
+        removeGroup?: {
+            label: string;
+            title: string;
+        };
+        addRule?: {
+            label: string;
+            title: string;
+        };
+        addGroup?: {
+            label: string;
+            title: string;
+        };
+        combinators?: {
+            title: string;
+        };
+    }
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
