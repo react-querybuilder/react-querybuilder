@@ -1,4 +1,4 @@
-// Type definitions for react-querybuilder 1.3
+// Type definitions for react-querybuilder 1.4.2
 // Project: https://github.com/sapientglobalmarkets/react-querybuilder/
 // Definitions by: Jake Boone <https://github.com/jakeboone02>
 
