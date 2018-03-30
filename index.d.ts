@@ -18,12 +18,10 @@ interface Rule {
     value: string|number;
 }
 
-type AndOr = 'and' | 'or';
-
 interface RuleGroup {
     id: string;
-    combinator: AndOr;
-    rules: Rule[] | RuleGroup;
+    combinator: string;
+    rules: (Rule | RuleGroup)[];
 }
 
 interface CommonCustomControlProps {
