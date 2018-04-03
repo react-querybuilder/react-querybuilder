@@ -1,4 +1,4 @@
-// Type definitions for react-querybuilder 1.3
+// Type definitions for react-querybuilder 1.4.2
 // Project: https://github.com/sapientglobalmarkets/react-querybuilder/
 // Definitions by: Jake Boone <https://github.com/jakeboone02>
 
@@ -12,17 +12,16 @@ interface NameLabelPair {
 type NameLabelList = NameLabelPair[];
 
 interface Rule {
+    id: string;
     field: string;
     operator: string;
     value: string|number;
 }
 
-type AndOr = 'and' | 'or';
-
 interface RuleGroup {
     id: string;
-    combinator: AndOr;
-    rules: Rule[] | RuleGroup;
+    combinator: string;
+    rules: (Rule | RuleGroup)[];
 }
 
 interface CommonCustomControlProps {
@@ -38,7 +37,7 @@ interface CommonCustomControlProps {
 
 interface ActionCustomControlProps extends CommonCustomControlProps {
     label?: string;
-    handleOnClick?: () => void;
+    handleOnClick?(): void;
 }
 
 interface ActionWithRulesCustomControlProps extends ActionCustomControlProps {
@@ -50,7 +49,7 @@ interface ActionWithRulesCustomControlProps extends ActionCustomControlProps {
 
 interface SelectorEditorCustomControlProps extends CommonCustomControlProps {
     value?: string;
-    handleOnChange?: () => void;
+    handleOnChange?(value: any): void;
 }
 
 interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
@@ -72,13 +71,17 @@ interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps
     operator?: string;
 }
 
+interface Field extends NameLabelPair {
+    id?: string;
+}
+
 interface QueryBuilderProps {
     query?: RuleGroup;
     /**
      * The array of fields that should be used. Each field should be an object
      * with {name: String, label: String}
      */
-    fields: NameLabelList;
+    fields: Field[];
     /**
      * The array of operators that should be used.
      * @default
@@ -120,8 +123,12 @@ interface QueryBuilderProps {
      * operators for the given field
      * @param field
      */
-    getOperators?: (field: string) => NameLabelList;
-    onQueryChange: (query: RuleGroup) => void;
+    getOperators?(field: string): Field[];
+    /**
+     * This is a notification that is invoked anytime the query configuration changes.
+     * @param query
+     */
+    onQueryChange(query: RuleGroup): void;
     /**
      * This can be used to assign specific CSS classes to various controls
      * that are created by the `<QueryBuilder />`.
@@ -172,6 +179,40 @@ interface QueryBuilderProps {
          */
         removeRule?: string;
     };
+    /**
+     * This can be used to override translatable texts applied to various
+     * controls that are created by the `<QueryBuilder />`.
+     */
+    translations?: {
+        fields?: {
+            title: string;
+        };
+        operators?: {
+            title: string;
+        };
+        value?: {
+            title: string;
+        };
+        removeRule?: {
+            label: string;
+            title: string;
+        };
+        removeGroup?: {
+            label: string;
+            title: string;
+        };
+        addRule?: {
+            label: string;
+            title: string;
+        };
+        addGroup?: {
+            label: string;
+            title: string;
+        };
+        combinators?: {
+            title: string;
+        };
+    }
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
