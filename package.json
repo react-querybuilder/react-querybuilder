@@ -1,22 +1,17 @@
 {
   "name": "react-querybuilder",
   "version": "1.4.3",
-  "description": "The React <QueryBuilder /> component for constructing queries",
+  "description":
+    "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
   "types": "./index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
   },
-  "keywords": [
-    "react",
-    "query",
-    "builder",
-    "operators",
-    "ui",
-    "component"
-  ],
-  "author": "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
+  "keywords": ["react", "query", "builder", "operators", "ui", "component"],
+  "author":
+    "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
   "license": "MIT",
   "homepage": "https://github.com/sapientglobalmarkets/react-querybuilder",
   "devDependencies": {
@@ -74,7 +69,9 @@
     "publish:demo": "npm run dist && node gh-pages.publish.js",
     "test": "karma start karma.conf.js",
     "test:watch": "npm test -- --no-single-run --auto-watch",
-    "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",
-    "generate-changelog": "node node_modules/github-changes -o sapientglobalmarkets -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY/MM/DD)\""
+    "codecov":
+      "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",
+    "generate-changelog":
+      "node node_modules/github-changes -o sapientglobalmarkets -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY/MM/DD)\""
   }
 }
