@@ -95,12 +95,9 @@ export default class QueryBuilder extends React.Component {
     return [
       { name: 'string_type', label: 'String' },
       { name: 'integer_type', label: 'Integer' },
-      { name: 'file_type', label: 'File' },
       { name: 'date_type', label: 'Date' },
       { name: 'float_type', label: 'Float' },
       { name: 'json_type', label: 'JSON' },
-      { name: 'array_type', label: 'Array' },
-      { name: 'map_type', label: 'Map' },
     ]
   }
 

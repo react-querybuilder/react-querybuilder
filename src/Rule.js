@@ -33,11 +33,10 @@ export default class Rule extends React.Component {
     return (
       <div className={`rule ${classNames.rule}`}>
         {React.createElement(controls.dataTypeSelector, {
-          field: field,
           title: translations.dataTypes.title,
           options: dataTypes,
           value: dataType,
-          className: `rule-operators ${classNames.dataTypes}`,
+          className: `rule-datatypes ${classNames.dataTypes}`,
           handleOnChange: this.onDataTypeChange,
           level: level,
         })}

@@ -2058,7 +2058,7 @@ var QueryBuilder = function (_React$Component) {
   }, {
     key: 'defaultDataTypes',
     get: function get() {
-      return [{ name: 'string_type', label: 'String' }, { name: 'integer_type', label: 'Integer' }, { name: 'file_type', label: 'File' }, { name: 'date_type', label: 'Date' }, { name: 'float_type', label: 'Float' }, { name: 'json_type', label: 'JSON' }, { name: 'array_type', label: 'Array' }, { name: 'map_type', label: 'Map' }];
+      return [{ name: 'string_type', label: 'String' }, { name: 'integer_type', label: 'Integer' }, { name: 'date_type', label: 'Date' }, { name: 'float_type', label: 'Float' }, { name: 'json_type', label: 'JSON' }];
     }
   }, {
     key: 'defaultOperators',
@@ -3428,7 +3428,6 @@ var Rule = function (_React$Component) {
         'div',
         { className: 'rule ' + classNames.rule },
         _react2.default.createElement(controls.dataTypeSelector, {
-          field: field,
           title: translations.dataTypes.title,
           options: dataTypes,
           value: dataType,
