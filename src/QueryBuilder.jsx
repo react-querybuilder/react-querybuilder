@@ -205,12 +205,13 @@ export default class QueryBuilder extends React.Component {
 
     createRule() {
         const {fields, operators} = this.state.schema;
+        const field = fields[0].name;
 
         return {
             id: `r-${uniqueId()}`,
-            field: fields[0].name,
+            field,
             value: '',
-            operator: operators[0].name
+            operator: this.getOperators(field)[0].name
         };
     }
 
@@ -251,6 +252,11 @@ export default class QueryBuilder extends React.Component {
     onPropChange(prop, value, ruleId) {
         const rule = this._findRule(ruleId, this.state.root);
         Object.assign(rule, {[prop]: value});
+
+        // Reset operator for field change
+        if (prop === 'field') {
+            Object.assign(rule, {operator: this.getOperators(rule.field)[0].name})
+        }
 
         this.setState({root: this.state.root});
     }
