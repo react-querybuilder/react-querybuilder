@@ -2,7 +2,7 @@
 // pull the pieces in and avoid a dependency entirely.
 
 // https://github.com/ramda/ramda/blob/v0.25.0/source/type.js
-function type(val) {
+function type(val?: object | null): string {
   return val === null
     ? 'Null'
     : val === undefined
@@ -11,7 +11,7 @@ function type(val) {
 }
 
 // https://github.com/ramda/ramda/blob/v0.25.0/source/internal/_cloneRegExp.js
-function _cloneRegExp(pattern) {
+function cloneRegExp(pattern: RegExp): RegExp {
   return new RegExp(
     pattern.source,
     (pattern.global ? 'g' : '') +
@@ -23,8 +23,8 @@ function _cloneRegExp(pattern) {
 }
 
 // https://github.com/ramda/ramda/blob/v0.25.0/source/internal/_clone.js
-function _clone(value, refFrom, refTo, deep) {
-  function copy(copiedValue) {
+function clone(value: any, refFrom: any, refTo: any, deep: any): any {
+  function copy(copiedValue: any): any {
     const len = refFrom.length;
     let idx = 0;
     while (idx < len) {
@@ -37,7 +37,7 @@ function _clone(value, refFrom, refTo, deep) {
     refTo[idx + 1] = copiedValue;
     for (const key in value) {
       copiedValue[key] = deep
-        ? _clone(value[key], refFrom, refTo, true)
+        ? clone(value[key], refFrom, refTo, true)
         : value[key];
     }
     return copiedValue;
@@ -51,7 +51,7 @@ function _clone(value, refFrom, refTo, deep) {
     case 'Date':
       return new Date(value.valueOf());
     case 'RegExp':
-      return _cloneRegExp(value);
+      return cloneRegExp(value);
     default:
       return value;
   }
@@ -60,5 +60,5 @@ function _clone(value, refFrom, refTo, deep) {
 export default function deepClone<T>(value: any): T {
   return value != null && typeof value.clone === 'function'
     ? value.clone()
-    : _clone(value, [], [], true);
+    : clone(value, [], [], true);
 }

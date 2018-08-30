@@ -17,7 +17,7 @@ const ValueEditor = (props: ValueEditorProps): JSX.Element | null => {
 
   return (
     <input
-      type="text"
+      type='text'
       value={value}
       title={title}
       onChange={(e) => handleOnChange(e.target.value)}
