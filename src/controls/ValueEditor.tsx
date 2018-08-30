@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 export interface ValueEditorProps {
   field: string;
@@ -10,7 +10,7 @@ export interface ValueEditorProps {
 
 const ValueEditor = (props: ValueEditorProps): JSX.Element => {
   this.displayName = 'ValueEditor';
-  const { field, operator, value, handleOnChange, title } = props;
+  const { operator, value, handleOnChange, title } = props;
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
