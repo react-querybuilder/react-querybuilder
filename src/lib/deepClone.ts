@@ -1,6 +1,9 @@
 // Lodash was previously used only for a deep clone. We can simply
 // pull the pieces in and avoid a dependency entirely.
 
+// Please note the typing of these functions is abysmal.
+// Ramda is not typed and thus we are abusing `any` in this file.
+
 // https://github.com/ramda/ramda/blob/v0.25.0/source/type.js
 function type(val?: object | null): string {
   return val === null
