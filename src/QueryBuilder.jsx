@@ -1,8 +1,9 @@
 import uniqueId from 'uuid/v4';
-import cloneDeep from 'lodash/cloneDeep';
+// import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import deepClone from './lib/deepClone';
 import RuleGroup from './RuleGroup';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
 
@@ -322,7 +323,7 @@ export default class QueryBuilder extends React.Component {
 
         const {onQueryChange} = this.props;
         if (onQueryChange) {
-            const query = cloneDeep(this.state.root);
+            const query = deepClone(this.state.root);
             onQueryChange(query);
         }
     }

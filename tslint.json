@@ -1,0 +1,13 @@
+{
+  "extends": ["tslint-react", "ns8-tslint"],
+  "rules": {
+    "function-name": [
+      true,
+      {
+        "function-regex": "^[a-zA-Z][\\w\\d]+$"
+      }
+    ],
+
+    "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"]
+  }
+}
