@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Rule, Schema, Translations } from '../types';
+import { Rule, RuleGroup, Schema, Translations } from '../types';
 import RuleComponent from '../Rule';
 // --- Helpers
 function findTranslationProp(
@@ -20,13 +20,13 @@ function findTranslationProp(
 interface RuleGroupProps {
   id: string | null;
   parentId: string | null;
-  rules: Rule[];
+  rules: (Rule | RuleGroup)[];
   combinator: string;
   schema: Schema;
   translations?: Translations;
 }
 
-class RuleGroup extends React.Component<RuleGroupProps, {}> {
+class RuleGroupComponent extends React.Component<RuleGroupProps, {}> {
   static get defaultProps() {
     return {
       id: null,
@@ -91,7 +91,7 @@ class RuleGroup extends React.Component<RuleGroupProps, {}> {
           : null}
         {rules.map((r) => {
           return isRuleGroup(r) ? (
-            <RuleGroup
+            <RuleGroupComponent
               key={r.id}
               id={r.id}
               schema={this.props.schema}
@@ -155,4 +155,4 @@ class RuleGroup extends React.Component<RuleGroupProps, {}> {
   };
 }
 
-export default RuleGroup;
+export default RuleGroupComponent;

@@ -12,7 +12,6 @@ export interface ValueSelectorProps {
 }
 
 const ValueSelector = (props: ValueSelectorProps): JSX.Element => {
-  // this.displayName = 'ValueSelector';
   const { value, options, className, handleOnChange, title } = props;
 
   return (
@@ -32,5 +31,7 @@ const ValueSelector = (props: ValueSelectorProps): JSX.Element => {
     </select>
   );
 };
+
+ValueSelector['displayName'] = 'ValueSelector';
 
 export default ValueSelector;

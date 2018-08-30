@@ -8,7 +8,6 @@ export interface ActionElementProps {
 }
 
 function ActionElement(props: ActionElementProps): JSX.Element {
-  // this.displayName = 'ActionElement';
   const { label, className, handleOnClick, title } = props;
 
   return (
@@ -21,5 +20,7 @@ function ActionElement(props: ActionElementProps): JSX.Element {
     </button>
   );
 }
+
+ActionElement['displayName'] = 'ActionElement';
 
 export default ActionElement;

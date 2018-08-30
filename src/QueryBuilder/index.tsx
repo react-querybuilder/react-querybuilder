@@ -1,12 +1,16 @@
 import uniqueId from 'uuid/v4';
 // import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 
 import deepClone from '../lib/deepClone';
-import RuleGroup from '../RuleGroup';
+import RuleGroupComponent from '../RuleGroup';
 import { ActionElement, ValueEditor, ValueSelector } from '../controls';
-import { QueryBuilderProps } from '../types';
+import {
+  ControlClassnames,
+  QueryBuilderProps,
+  NameAndLabel,
+  Translations,
+} from '../types';
 
 import 'QueryBuilder.css';
 
@@ -33,29 +37,6 @@ class QueryBuilder extends React.Component<
     };
   }
 
-  static get propTypes() {
-    return {
-      query: PropTypes.object,
-      fields: PropTypes.array.isRequired,
-      operators: PropTypes.array,
-      combinators: PropTypes.array,
-      controlElements: PropTypes.shape({
-        addGroupAction: PropTypes.func,
-        removeGroupAction: PropTypes.func,
-        addRuleAction: PropTypes.func,
-        removeRuleAction: PropTypes.func,
-        combinatorSelector: PropTypes.func,
-        fieldSelector: PropTypes.func,
-        operatorSelector: PropTypes.func,
-        valueEditor: PropTypes.func,
-      }),
-      getOperators: PropTypes.func,
-      onQueryChange: PropTypes.func,
-      controlClassnames: PropTypes.object,
-      translations: PropTypes.object,
-    };
-  }
-
   constructor(props: QueryBuilderProps) {
     super(props);
     this.state = {
@@ -64,7 +45,7 @@ class QueryBuilder extends React.Component<
     };
   }
 
-  static get defaultTranslations() {
+  static get defaultTranslations(): Translations {
     return {
       fields: {
         title: 'Fields',
@@ -97,7 +78,7 @@ class QueryBuilder extends React.Component<
     };
   }
 
-  static get defaultOperators() {
+  static get defaultOperators(): NameAndLabel[] {
     return [
       { name: 'null', label: 'Is Null' },
       { name: 'notNull', label: 'Is Not Null' },
@@ -112,11 +93,11 @@ class QueryBuilder extends React.Component<
     ];
   }
 
-  static get defaultCombinators() {
+  static get defaultCombinators(): NameAndLabel[] {
     return [{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];
   }
 
-  static get defaultControlClassnames() {
+  static get defaultControlClassnames(): ControlClassnames {
     return {
       queryBuilder: '',
 
@@ -206,7 +187,7 @@ class QueryBuilder extends React.Component<
 
     return (
       <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
-        <RuleGroup
+        <RuleGroupComponent
           translations={translations}
           rules={rules}
           combinator={combinator}
@@ -234,9 +215,8 @@ class QueryBuilder extends React.Component<
   }
 
   createRuleGroup() {
-    const combinator = this.props.combinators == null
-      ? ''
-      : this.props.combinators[0].name
+    const combinator =
+      this.props.combinators == null ? '' : this.props.combinators[0].name;
 
     return {
       combinator,
@@ -341,7 +321,7 @@ class QueryBuilder extends React.Component<
 
     const { onQueryChange } = this.props;
     if (onQueryChange) {
-      const query = deepClone(this.state.root);
+      const query = deepClone<any>(this.state.root);
       onQueryChange(query);
     }
   }

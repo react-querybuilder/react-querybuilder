@@ -32,7 +32,7 @@ export interface Rule {
 
 export interface RuleGroup {
   id: string;
-  rules: Rule[];
+  rules: (Rule | RuleGroup)[];
   combinator: string;
 }
 

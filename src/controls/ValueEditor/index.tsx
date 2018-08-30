@@ -9,7 +9,6 @@ export interface ValueEditorProps {
 }
 
 const ValueEditor = (props: ValueEditorProps): JSX.Element | null => {
-  // this.displayName = 'ValueEditor';
   const { operator, value, handleOnChange, title } = props;
 
   if (operator === 'null' || operator === 'notNull') {
@@ -25,5 +24,7 @@ const ValueEditor = (props: ValueEditorProps): JSX.Element | null => {
     />
   );
 };
+
+ValueEditor['displayName'] = 'ValueEditor';
 
 export default ValueEditor;
