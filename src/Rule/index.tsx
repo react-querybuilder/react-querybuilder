@@ -20,7 +20,7 @@ class RuleComponent extends React.Component<RuleProps, {}> {
       field: undefined,
       operator: undefined,
       value: undefined,
-      schema: {} as Schema,
+      schema: {} as Schema, // This is baaaad. Find better way.
     };
   }
 
