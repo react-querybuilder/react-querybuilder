@@ -12,9 +12,18 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var Rule_1 = require("../Rule");
-var RuleGroup = /** @class */ (function (_super) {
-    __extends(RuleGroup, _super);
-    function RuleGroup() {
+// --- Helpers
+function findTranslationProp(fieldName, prop, translations) {
+    if (translations == null)
+        return fieldName;
+    if (translations[fieldName] != null) {
+        return translations[fieldName][prop];
+    }
+    return fieldName;
+}
+var RuleGroupComponent = /** @class */ (function (_super) {
+    __extends(RuleGroupComponent, _super);
+    function RuleGroupComponent() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onCombinatorChange = function (value) {
             var onPropChange = _this.props.schema.onPropChange;
@@ -41,7 +50,7 @@ var RuleGroup = /** @class */ (function (_super) {
         };
         return _this;
     }
-    Object.defineProperty(RuleGroup, "defaultProps", {
+    Object.defineProperty(RuleGroupComponent, "defaultProps", {
         get: function () {
             return {
                 id: null,
@@ -54,7 +63,7 @@ var RuleGroup = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    RuleGroup.prototype.render = function () {
+    RuleGroupComponent.prototype.render = function () {
         var _this = this;
         var _a = this.props, combinator = _a.combinator, rules = _a.rules, translations = _a.translations, _b = _a.schema, combinators = _b.combinators, controls = _b.controls, onRuleRemove = _b.onRuleRemove, isRuleGroup = _b.isRuleGroup, getLevel = _b.getLevel, classNames = _b.classNames;
         var level = getLevel(this.props.id);
@@ -62,23 +71,23 @@ var RuleGroup = /** @class */ (function (_super) {
             React.createElement(controls.combinatorSelector, {
                 options: combinators,
                 value: combinator,
-                title: translations.combinators.title,
+                title: findTranslationProp('combinators', 'title', translations),
                 className: "ruleGroup-combinators " + classNames.combinators,
                 handleOnChange: this.onCombinatorChange,
                 rules: rules,
                 level: level,
             }),
             React.createElement(controls.addRuleAction, {
-                label: translations.addRule.label,
-                title: translations.addRule.title,
+                label: findTranslationProp('addRule', 'label', translations),
+                title: findTranslationProp('addRule', 'title', translations),
                 className: "ruleGroup-addRule " + classNames.addRule,
                 handleOnClick: this.addRule,
                 rules: rules,
                 level: level,
             }),
             React.createElement(controls.addGroupAction, {
-                label: translations.addGroup.label,
-                title: translations.addGroup.title,
+                label: findTranslationProp('addGroup', 'label', translations),
+                title: findTranslationProp('addGroup', 'title', translations),
                 className: "ruleGroup-addGroup " + classNames.addGroup,
                 handleOnClick: this.addGroup,
                 rules: rules,
@@ -86,8 +95,8 @@ var RuleGroup = /** @class */ (function (_super) {
             }),
             this.hasParentGroup()
                 ? React.createElement(controls.removeGroupAction, {
-                    label: translations.removeGroup.label,
-                    title: translations.removeGroup.title,
+                    label: findTranslationProp('removeGroup', 'label', translations),
+                    title: findTranslationProp('removeGroup', 'title', translations),
                     className: "ruleGroup-remove " + classNames.removeGroup,
                     handleOnClick: this.removeGroup,
                     rules: rules,
@@ -95,13 +104,13 @@ var RuleGroup = /** @class */ (function (_super) {
                 })
                 : null,
             rules.map(function (r) {
-                return isRuleGroup(r) ? (React.createElement(RuleGroup, { key: r.id, id: r.id, schema: _this.props.schema, parentId: _this.props.id, combinator: r.combinator, translations: _this.props.translations, rules: r.rules })) : (React.createElement(Rule_1.default, { key: r.id, id: r.id, field: r.field, value: r.value, operator: r.operator, schema: _this.props.schema, parentId: _this.props.id, translations: _this.props.translations, onRuleRemove: onRuleRemove }));
+                return isRuleGroup(r) ? (React.createElement(RuleGroupComponent, { key: r.id, id: r.id, schema: _this.props.schema, parentId: _this.props.id, combinator: r.combinator, translations: _this.props.translations, rules: r.rules })) : (React.createElement(Rule_1.default, { key: r.id, id: r.id, field: r.field, value: r.value, operator: r.operator, schema: _this.props.schema, parentId: _this.props.id, translations: _this.props.translations, onRuleRemove: onRuleRemove }));
             })));
     };
-    RuleGroup.prototype.hasParentGroup = function () {
+    RuleGroupComponent.prototype.hasParentGroup = function () {
         return this.props.parentId;
     };
-    return RuleGroup;
+    return RuleGroupComponent;
 }(React.Component));
-exports.default = RuleGroup;
+exports.default = RuleGroupComponent;
 //# sourceMappingURL=index.js.map

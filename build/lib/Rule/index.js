@@ -52,18 +52,34 @@ var RuleComponent = /** @class */ (function (_super) {
     RuleComponent.prototype.render = function () {
         var _a = this.props, field = _a.field, operator = _a.operator, value = _a.value, translations = _a.translations, _b = _a.schema, fields = _b.fields, controls = _b.controls, getOperators = _b.getOperators, getLevel = _b.getLevel, classNames = _b.classNames;
         var level = getLevel(this.props.id);
+        // --- Handle conditional Translations Prop
+        var fieldTitle = translations == null || translations.fields == null
+            ? 'Fields'
+            : translations.fields.title;
+        var operatorsTitle = translations == null || translations.operators == null
+            ? 'Operators'
+            : translations.operators.title;
+        var valueTitle = translations == null || translations.value == null
+            ? 'Value'
+            : translations.value.title;
+        var removeRuleLabel = translations == null || translations.removeRule == null
+            ? 'Remove Rule'
+            : translations.removeRule.label;
+        var removeRuleTitle = translations == null || translations.removeRule == null
+            ? 'Remove Rule'
+            : translations.removeRule.title;
         return (React.createElement("div", { className: "rule " + classNames.rule },
             React.createElement(controls.fieldSelector, {
+                level: level,
                 options: fields,
-                title: translations.fields.title,
+                title: fieldTitle,
                 value: field,
                 className: "rule-fields " + classNames.fields,
                 handleOnChange: this.onFieldChanged,
-                level: level,
             }),
             React.createElement(controls.operatorSelector, {
                 field: field,
-                title: translations.operators.title,
+                title: operatorsTitle,
                 options: getOperators(field),
                 value: operator,
                 className: "rule-operators " + classNames.operators,
@@ -72,7 +88,7 @@ var RuleComponent = /** @class */ (function (_super) {
             }),
             React.createElement(controls.valueEditor, {
                 field: field,
-                title: translations.value.title,
+                title: valueTitle,
                 operator: operator,
                 value: value,
                 className: "rule-value " + classNames.value,
@@ -80,8 +96,8 @@ var RuleComponent = /** @class */ (function (_super) {
                 level: level,
             }),
             React.createElement(controls.removeRuleAction, {
-                label: translations.removeRule.label,
-                title: translations.removeRule.title,
+                label: removeRuleLabel,
+                title: removeRuleTitle,
                 className: "rule-remove " + classNames.removeRule,
                 handleOnClick: this.removeRule,
                 level: level,

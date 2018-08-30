@@ -1,11 +1,10 @@
 "use strict";
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
-var ActionElement = function (props) {
-    _this.displayName = 'ActionElement';
+var React = require("react");
+function ActionElement(props) {
     var label = props.label, className = props.className, handleOnClick = props.handleOnClick, title = props.title;
-    return (react_1.default.createElement("button", { className: className, title: title, onClick: function (e) { return handleOnClick(e); } }, label));
-};
+    return (React.createElement("button", { className: className, title: title, onClick: function (e) { return handleOnClick(e); } }, label));
+}
+ActionElement['displayName'] = 'ActionElement';
 exports.default = ActionElement;
 //# sourceMappingURL=index.js.map

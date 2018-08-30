@@ -13,7 +13,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var v4_1 = require("uuid/v4");
 // import cloneDeep from 'lodash/cloneDeep';
 var React = require("react");
-var prop_types_1 = require("prop-types");
 var deepClone_1 = require("../lib/deepClone");
 var RuleGroup_1 = require("../RuleGroup");
 var controls_1 = require("../controls");
@@ -40,32 +39,6 @@ var QueryBuilder = /** @class */ (function (_super) {
                 getOperators: null,
                 onQueryChange: null,
                 controlClassnames: null,
-            };
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(QueryBuilder, "propTypes", {
-        get: function () {
-            return {
-                query: prop_types_1.default.object,
-                fields: prop_types_1.default.array.isRequired,
-                operators: prop_types_1.default.array,
-                combinators: prop_types_1.default.array,
-                controlElements: prop_types_1.default.shape({
-                    addGroupAction: prop_types_1.default.func,
-                    removeGroupAction: prop_types_1.default.func,
-                    addRuleAction: prop_types_1.default.func,
-                    removeRuleAction: prop_types_1.default.func,
-                    combinatorSelector: prop_types_1.default.func,
-                    fieldSelector: prop_types_1.default.func,
-                    operatorSelector: prop_types_1.default.func,
-                    valueEditor: prop_types_1.default.func,
-                }),
-                getOperators: prop_types_1.default.func,
-                onQueryChange: prop_types_1.default.func,
-                controlClassnames: prop_types_1.default.object,
-                translations: prop_types_1.default.object,
             };
         },
         enumerable: true,
@@ -224,10 +197,11 @@ var QueryBuilder = /** @class */ (function (_super) {
         };
     };
     QueryBuilder.prototype.createRuleGroup = function () {
+        var combinator = this.props.combinators == null ? '' : this.props.combinators[0].name;
         return {
+            combinator: combinator,
             id: "g-" + v4_1.default(),
             rules: [],
-            combinator: this.props.combinators[0].name,
         };
     };
     QueryBuilder.prototype.getOperators = function (field) {
