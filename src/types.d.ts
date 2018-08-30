@@ -1,3 +1,5 @@
+export { QueryBuilderProps } from '../index';
+
 // --- Support Types
 export interface NameAndLabel {
   name: string;
@@ -43,12 +45,12 @@ export interface Schema {
 
   createRule: () => Rule;
   createRuleGroup: () => RuleGroup;
-  onRuleAdd: (rule: Rule, parentId: string) => void;
-  onGroupAdd: (group: RuleGroup, parentId: string) => void;
-  onRuleRemove: (ruleId: string, parentId: string) => void;
-  onGroupRemove: (groupId: string, parentId: string) => void;
-  onPropChange: (prop: any, value: any, ruleId: string) => void;
-  getLevel: (id: string) => number;
+  onRuleAdd: (rule: Rule, parentId: string | null) => void;
+  onGroupAdd: (group: RuleGroup, parentId: string | null) => void;
+  onRuleRemove: (ruleId: string | null, parentId: string | null) => void;
+  onGroupRemove: (groupId: string | null, parentId: string | null) => void;
+  onPropChange: (prop: any, value: any, ruleId: string | null) => void;
+  getLevel: (id: string | null) => number;
   isRuleGroup: (rule: any) => rule is RuleGroup;
   controls: any; // Object of objects
   getOperators: (field: NameAndLabel) => NameAndLabel[];
@@ -65,12 +67,12 @@ export interface TranslationDetails {
 }
 
 export interface Translations {
-  fields: TranslationTitle;
-  operators: TranslationTitle;
-  value: TranslationTitle;
-  removeRule: TranslationDetails;
-  removeGroup: TranslationDetails;
-  addRule: TranslationDetails;
-  addGroup: TranslationDetails;
-  combinators: TranslationDetails;
+  fields?: TranslationTitle;
+  operators?: TranslationTitle;
+  value?: TranslationTitle;
+  removeRule?: TranslationDetails;
+  removeGroup?: TranslationDetails;
+  addRule?: TranslationDetails;
+  addGroup?: TranslationDetails;
+  combinators?: TranslationTitle;
 }

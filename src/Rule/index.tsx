@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NameAndLabel, Schema, Translations } from './types';
+import { NameAndLabel, Schema, Translations } from '../types';
 
 // --- Component Props
 interface RuleProps {
@@ -9,7 +9,7 @@ interface RuleProps {
   operator: NameAndLabel;
   schema: Schema;
   parentId: string | null;
-  translations: Translations;
+  translations?: Translations;
   onRuleRemove: (ruleId: string, parentId: string) => void;
 }
 
@@ -33,20 +33,47 @@ class RuleComponent extends React.Component<RuleProps, {}> {
       translations,
       schema: { fields, controls, getOperators, getLevel, classNames },
     } = this.props;
-    var level = getLevel(this.props.id);
+
+    const level = getLevel(this.props.id);
+    // --- Handle conditional Translations Prop
+    const fieldTitle =
+      translations == null || translations.fields == null
+        ? 'Fields'
+        : translations.fields.title;
+
+    const operatorsTitle =
+      translations == null || translations.operators == null
+        ? 'Operators'
+        : translations.operators.title;
+
+    const valueTitle =
+      translations == null || translations.value == null
+        ? 'Value'
+        : translations.value.title;
+
+    const removeRuleLabel =
+      translations == null || translations.removeRule == null
+        ? 'Remove Rule'
+        : translations.removeRule.label;
+
+    const removeRuleTitle =
+      translations == null || translations.removeRule == null
+        ? 'Remove Rule'
+        : translations.removeRule.title;
+
     return (
       <div className={`rule ${classNames.rule}`}>
         {React.createElement(controls.fieldSelector, {
+          level,
           options: fields,
-          title: translations.fields.title,
+          title: fieldTitle,
           value: field,
           className: `rule-fields ${classNames.fields}`,
           handleOnChange: this.onFieldChanged,
-          level: level,
         })}
         {React.createElement(controls.operatorSelector, {
           field: field,
-          title: translations.operators.title,
+          title: operatorsTitle,
           options: getOperators(field),
           value: operator,
           className: `rule-operators ${classNames.operators}`,
@@ -55,7 +82,7 @@ class RuleComponent extends React.Component<RuleProps, {}> {
         })}
         {React.createElement(controls.valueEditor, {
           field: field,
-          title: translations.value.title,
+          title: valueTitle,
           operator: operator,
           value: value,
           className: `rule-value ${classNames.value}`,
@@ -63,8 +90,8 @@ class RuleComponent extends React.Component<RuleProps, {}> {
           level: level,
         })}
         {React.createElement(controls.removeRuleAction, {
-          label: translations.removeRule.label,
-          title: translations.removeRule.title,
+          label: removeRuleLabel,
+          title: removeRuleTitle,
           className: `rule-remove ${classNames.removeRule}`,
           handleOnClick: this.removeRule,
           level: level,

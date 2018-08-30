@@ -1,6 +1,20 @@
 import * as React from 'react';
-import { Rule, Schema, Translations } from './types';
-import RuleComponent from './Rule';
+import { Rule, Schema, Translations } from '../types';
+import RuleComponent from '../Rule';
+// --- Helpers
+function findTranslationProp(
+  fieldName: string,
+  prop: string,
+  translations?: Translations,
+): string {
+  if (translations == null) return fieldName;
+
+  if (translations[fieldName] != null) {
+    return translations[fieldName][prop];
+  }
+
+  return fieldName;
+}
 
 // --- Component Props
 interface RuleGroupProps {
@@ -9,7 +23,7 @@ interface RuleGroupProps {
   rules: Rule[];
   combinator: string;
   schema: Schema;
-  translations: Translations;
+  translations?: Translations;
 }
 
 class RuleGroup extends React.Component<RuleGroupProps, {}> {
@@ -43,23 +57,23 @@ class RuleGroup extends React.Component<RuleGroupProps, {}> {
         {React.createElement(controls.combinatorSelector, {
           options: combinators,
           value: combinator,
-          title: translations.combinators.title,
+          title: findTranslationProp('combinators', 'title', translations),
           className: `ruleGroup-combinators ${classNames.combinators}`,
           handleOnChange: this.onCombinatorChange,
           rules: rules,
           level: level,
         })}
         {React.createElement(controls.addRuleAction, {
-          label: translations.addRule.label,
-          title: translations.addRule.title,
+          label: findTranslationProp('addRule', 'label', translations),
+          title: findTranslationProp('addRule', 'title', translations),
           className: `ruleGroup-addRule ${classNames.addRule}`,
           handleOnClick: this.addRule,
           rules: rules,
           level: level,
         })}
         {React.createElement(controls.addGroupAction, {
-          label: translations.addGroup.label,
-          title: translations.addGroup.title,
+          label: findTranslationProp('addGroup', 'label', translations),
+          title: findTranslationProp('addGroup', 'title', translations),
           className: `ruleGroup-addGroup ${classNames.addGroup}`,
           handleOnClick: this.addGroup,
           rules: rules,
@@ -67,8 +81,8 @@ class RuleGroup extends React.Component<RuleGroupProps, {}> {
         })}
         {this.hasParentGroup()
           ? React.createElement(controls.removeGroupAction, {
-              label: translations.removeGroup.label,
-              title: translations.removeGroup.title,
+              label: findTranslationProp('removeGroup', 'label', translations),
+              title: findTranslationProp('removeGroup', 'title', translations),
               className: `ruleGroup-remove ${classNames.removeGroup}`,
               handleOnClick: this.removeGroup,
               rules: rules,

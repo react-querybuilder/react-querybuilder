@@ -8,8 +8,8 @@ export interface ValueEditorProps {
   title: string;
 }
 
-const ValueEditor = (props: ValueEditorProps): JSX.Element => {
-  this.displayName = 'ValueEditor';
+const ValueEditor = (props: ValueEditorProps): JSX.Element | null => {
+  // this.displayName = 'ValueEditor';
   const { operator, value, handleOnChange, title } = props;
 
   if (operator === 'null' || operator === 'notNull') {

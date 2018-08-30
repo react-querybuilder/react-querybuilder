@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Rule from './Rule';
-import { ActionElement, ValueSelector, ValueEditor } from './controls/index';
+import Rule from '.';
+import { ActionElement, ValueSelector, ValueEditor } from '../controls';
 
 describe('<Rule />', ()=> {
     let controls, classNames, schema, props;

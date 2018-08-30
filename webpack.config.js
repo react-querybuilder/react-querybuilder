@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = env => {
+module.exports = (env) => {
 
     const config = {
         prod: require('./config/webpack-prod.config'), // lib files,
