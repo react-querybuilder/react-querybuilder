@@ -7,14 +7,22 @@ const path = require('path');
 
 module.exports = merge(webpackCommon, {
     entry: {
-        demo: './demo/main.js'
-    },
+        index: './src/index.js'
+      },
+    
     output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(__dirname, '../dist/demo')
+        filename: '[name].js',
+        path: path.resolve(__dirname, '../dist'),
+        libraryTarget: 'commonjs2',
+    },
+
+    externals: {
+        'react': 'commonjs react',
+        'react-dom': 'commonjs react-dom',
     },
 
     devtool: 'cheap-module-source-map',
+
     devServer: {
         historyApiFallback: true,
         stats: {
@@ -23,9 +31,8 @@ module.exports = merge(webpackCommon, {
     },
 
     plugins: [
-        new HtmlPlugin({
-            title: 'react-querybuilder (DEMO)',
-            template: './demo/index.html'
-        })
-    ]
+        new CopyPlugin([{
+          from: './src/query-builder.scss',
+        }])
+      ]
 });

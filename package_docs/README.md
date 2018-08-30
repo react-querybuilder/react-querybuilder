@@ -13,16 +13,10 @@ This component was inspired by prior work from:
 
 ## Getting Started
 
-![Screenshot](_assets/screenshot.png)
-
 ```shell
 npm install react-querybuilder --save
 ```
 ## Demo
-
-Open `<path-to-project>/node_modules/react-querybuilder/demo/index.html` in your browser.
-
-OR
 
 [See live Demo](https://sapientglobalmarkets.github.io/react-querybuilder/).
 

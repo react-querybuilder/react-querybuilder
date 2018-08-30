@@ -18,6 +18,4 @@ module.exports = merge(webpackCommon, {
     },
 
     devtool: 'inline-source-map',
-
-
 });

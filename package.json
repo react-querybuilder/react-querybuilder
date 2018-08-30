@@ -71,10 +71,8 @@
   "scripts": {
     "start": "webpack-dev-server --env dev",
     "dist": "del dist; webpack --env prod",
-    "publish:demo": "npm run dist && node gh-pages.publish.js",
     "test": "karma start karma.conf.js",
-    "test:watch": "npm test -- --no-single-run --auto-watch",
-    "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",
-    "generate-changelog": "node node_modules/github-changes -o sapientglobalmarkets -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY/MM/DD)\""
+    "test:watch": "yarn test -- --no-single-run --auto-watch",
+    "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js"
   }
 }
