@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Rule, RuleGroup, Schema, Translations } from '../types';
+// tslint:disable-next-line:import-name
 import RuleComponent from '../Rule';
 // --- Helpers
 function findTranslationProp(
@@ -27,67 +28,60 @@ interface RuleGroupProps {
 }
 
 class RuleGroupComponent extends React.Component<RuleGroupProps, {}> {
-  static get defaultProps() {
+  static get defaultProps(): RuleGroupProps {
     return {
       id: null,
       parentId: null,
       rules: [],
       combinator: 'and',
-      schema: {},
+      schema: {} as Schema, // This is baaaad. Fix.
     };
   }
 
-  render() {
+  render(): JSX.Element {
     const {
       combinator,
       rules,
       translations,
-      schema: {
-        combinators,
-        controls,
-        onRuleRemove,
-        isRuleGroup,
-        getLevel,
-        classNames,
-      },
+      schema: { combinators, controls, isRuleGroup, getLevel, classNames },
     } = this.props;
     const level = getLevel(this.props.id);
     return (
       <div className={`ruleGroup ${classNames.ruleGroup}`}>
         {React.createElement(controls.combinatorSelector, {
+          rules,
+          level,
           options: combinators,
           value: combinator,
           title: findTranslationProp('combinators', 'title', translations),
           className: `ruleGroup-combinators ${classNames.combinators}`,
           handleOnChange: this.onCombinatorChange,
-          rules: rules,
-          level: level,
         })}
         {React.createElement(controls.addRuleAction, {
+          rules,
+          level,
           label: findTranslationProp('addRule', 'label', translations),
           title: findTranslationProp('addRule', 'title', translations),
           className: `ruleGroup-addRule ${classNames.addRule}`,
           handleOnClick: this.addRule,
-          rules: rules,
-          level: level,
         })}
         {React.createElement(controls.addGroupAction, {
+          rules,
+          level,
           label: findTranslationProp('addGroup', 'label', translations),
           title: findTranslationProp('addGroup', 'title', translations),
           className: `ruleGroup-addGroup ${classNames.addGroup}`,
           handleOnClick: this.addGroup,
-          rules: rules,
-          level: level,
         })}
         {this.hasParentGroup()
           ? React.createElement(controls.removeGroupAction, {
-              label: findTranslationProp('removeGroup', 'label', translations),
-              title: findTranslationProp('removeGroup', 'title', translations),
-              className: `ruleGroup-remove ${classNames.removeGroup}`,
-              handleOnClick: this.removeGroup,
-              rules: rules,
-              level: level,
-            })
+            rules,
+            level,
+            label: findTranslationProp('removeGroup', 'label', translations),
+            title: findTranslationProp('removeGroup', 'title', translations),
+            className: `ruleGroup-remove ${classNames.removeGroup}`,
+            handleOnClick: this.removeGroup,
+          })
           : null}
         {rules.map((r) => {
           return isRuleGroup(r) ? (
@@ -110,7 +104,6 @@ class RuleGroupComponent extends React.Component<RuleGroupProps, {}> {
               schema={this.props.schema}
               parentId={this.props.id}
               translations={this.props.translations}
-              onRuleRemove={onRuleRemove}
             />
           );
         })}
@@ -118,17 +111,17 @@ class RuleGroupComponent extends React.Component<RuleGroupProps, {}> {
     );
   }
 
-  hasParentGroup() {
-    return this.props.parentId;
+  hasParentGroup(): boolean {
+    return !!this.props.parentId;
   }
 
-  onCombinatorChange = (value) => {
+  onCombinatorChange = (value: any): void => {
     const { onPropChange } = this.props.schema;
 
     onPropChange('combinator', value, this.props.id);
-  };
+  }
 
-  addRule = (event) => {
+  addRule = (event: Event): void => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -136,23 +129,23 @@ class RuleGroupComponent extends React.Component<RuleGroupProps, {}> {
 
     const newRule = createRule();
     onRuleAdd(newRule, this.props.id);
-  };
+  }
 
-  addGroup = (event) => {
+  addGroup = (event: Event): void => {
     event.preventDefault();
     event.stopPropagation();
 
     const { createRuleGroup, onGroupAdd } = this.props.schema;
     const newGroup = createRuleGroup();
     onGroupAdd(newGroup, this.props.id);
-  };
+  }
 
-  removeGroup = (event) => {
+  removeGroup = (event: Event): void => {
     event.preventDefault();
     event.stopPropagation();
 
     this.props.schema.onGroupRemove(this.props.id, this.props.parentId);
-  };
+  }
 }
 
 export default RuleGroupComponent;

@@ -53,7 +53,7 @@ export interface Schema {
   getLevel: (id: string | null) => number;
   isRuleGroup: (rule: any) => rule is RuleGroup;
   controls: any; // Object of objects
-  getOperators: (field: NameAndLabel) => NameAndLabel[];
+  getOperators: (field: string) => NameAndLabel[];
 }
 
 // --- Translations

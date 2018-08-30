@@ -4,28 +4,27 @@ import { NameAndLabel, Schema, Translations } from '../types';
 // --- Component Props
 interface RuleProps {
   id: string | null;
-  field: NameAndLabel;
-  value: string;
-  operator: NameAndLabel;
+  field?: string | NameAndLabel;
+  value?: string;
+  operator?: NameAndLabel;
   schema: Schema;
   parentId: string | null;
   translations?: Translations;
-  onRuleRemove: (ruleId: string, parentId: string) => void;
 }
 
 class RuleComponent extends React.Component<RuleProps, {}> {
-  static get defaultProps() {
+  static get defaultProps(): RuleProps {
     return {
       id: null,
       parentId: null,
-      field: null,
-      operator: null,
-      value: null,
-      schema: null,
+      field: undefined,
+      operator: undefined,
+      value: undefined,
+      schema: {} as Schema,
     };
   }
 
-  render() {
+  render(): JSX.Element {
     const {
       field,
       operator,
@@ -36,6 +35,8 @@ class RuleComponent extends React.Component<RuleProps, {}> {
 
     const level = getLevel(this.props.id);
     // --- Handle conditional Translations Prop
+    const validField = typeof field === 'string' ? field : 'Field';
+
     const fieldTitle =
       translations == null || translations.fields == null
         ? 'Fields'
@@ -72,61 +73,61 @@ class RuleComponent extends React.Component<RuleProps, {}> {
           handleOnChange: this.onFieldChanged,
         })}
         {React.createElement(controls.operatorSelector, {
-          field: field,
+          field,
+          level,
           title: operatorsTitle,
-          options: getOperators(field),
+          options: getOperators(validField),
           value: operator,
           className: `rule-operators ${classNames.operators}`,
           handleOnChange: this.onOperatorChanged,
-          level: level,
         })}
         {React.createElement(controls.valueEditor, {
-          field: field,
+          field,
+          level,
+          operator,
+          value,
           title: valueTitle,
-          operator: operator,
-          value: value,
           className: `rule-value ${classNames.value}`,
           handleOnChange: this.onValueChanged,
-          level: level,
         })}
         {React.createElement(controls.removeRuleAction, {
+          level,
           label: removeRuleLabel,
           title: removeRuleTitle,
           className: `rule-remove ${classNames.removeRule}`,
           handleOnClick: this.removeRule,
-          level: level,
         })}
       </div>
     );
   }
 
-  onFieldChanged = (value) => {
+  onFieldChanged = (value: string): void => {
     this.onElementChanged('field', value);
-  };
+  }
 
-  onOperatorChanged = (value) => {
+  onOperatorChanged = (value: string): void => {
     this.onElementChanged('operator', value);
-  };
+  }
 
-  onValueChanged = (value) => {
+  onValueChanged = (value: any): void => {
     this.onElementChanged('value', value);
-  };
+  }
 
-  onElementChanged = (property, value) => {
+  onElementChanged = (property: string, value: any): void => {
     const {
       id,
       schema: { onPropChange },
     } = this.props;
 
     onPropChange(property, value, id);
-  };
+  }
 
   removeRule = (event) => {
     event.preventDefault();
     event.stopPropagation();
 
     this.props.schema.onRuleRemove(this.props.id, this.props.parentId);
-  };
+  }
 }
 
 export default RuleComponent;
