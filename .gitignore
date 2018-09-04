@@ -4,5 +4,5 @@ node_modules
 .tmp
 coverage
 
-/build
-/dist
+build
+dist
