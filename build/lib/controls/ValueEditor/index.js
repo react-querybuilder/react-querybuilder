@@ -6,7 +6,7 @@ var ValueEditor = function (props) {
     if (operator === 'null' || operator === 'notNull') {
         return null;
     }
-    return (React.createElement("input", { type: "text", value: value, title: title, onChange: function (e) { return handleOnChange(e.target.value); } }));
+    return (React.createElement("input", { type: 'text', value: value, title: title, onChange: function (e) { return handleOnChange(e.target.value); } }));
 };
 ValueEditor['displayName'] = 'ValueEditor';
 exports.default = ValueEditor;

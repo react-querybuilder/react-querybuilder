@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
+// tslint:disable-next-line:import-name
 var Rule_1 = require("../Rule");
 // --- Helpers
 function findTranslationProp(fieldName, prop, translations) {
@@ -65,50 +66,50 @@ var RuleGroupComponent = /** @class */ (function (_super) {
     });
     RuleGroupComponent.prototype.render = function () {
         var _this = this;
-        var _a = this.props, combinator = _a.combinator, rules = _a.rules, translations = _a.translations, _b = _a.schema, combinators = _b.combinators, controls = _b.controls, onRuleRemove = _b.onRuleRemove, isRuleGroup = _b.isRuleGroup, getLevel = _b.getLevel, classNames = _b.classNames;
+        var _a = this.props, combinator = _a.combinator, rules = _a.rules, translations = _a.translations, _b = _a.schema, combinators = _b.combinators, controls = _b.controls, isRuleGroup = _b.isRuleGroup, getLevel = _b.getLevel, classNames = _b.classNames;
         var level = getLevel(this.props.id);
         return (React.createElement("div", { className: "ruleGroup " + classNames.ruleGroup },
             React.createElement(controls.combinatorSelector, {
+                rules: rules,
+                level: level,
                 options: combinators,
                 value: combinator,
                 title: findTranslationProp('combinators', 'title', translations),
                 className: "ruleGroup-combinators " + classNames.combinators,
                 handleOnChange: this.onCombinatorChange,
-                rules: rules,
-                level: level,
             }),
             React.createElement(controls.addRuleAction, {
+                rules: rules,
+                level: level,
                 label: findTranslationProp('addRule', 'label', translations),
                 title: findTranslationProp('addRule', 'title', translations),
                 className: "ruleGroup-addRule " + classNames.addRule,
                 handleOnClick: this.addRule,
-                rules: rules,
-                level: level,
             }),
             React.createElement(controls.addGroupAction, {
+                rules: rules,
+                level: level,
                 label: findTranslationProp('addGroup', 'label', translations),
                 title: findTranslationProp('addGroup', 'title', translations),
                 className: "ruleGroup-addGroup " + classNames.addGroup,
                 handleOnClick: this.addGroup,
-                rules: rules,
-                level: level,
             }),
             this.hasParentGroup()
                 ? React.createElement(controls.removeGroupAction, {
+                    rules: rules,
+                    level: level,
                     label: findTranslationProp('removeGroup', 'label', translations),
                     title: findTranslationProp('removeGroup', 'title', translations),
                     className: "ruleGroup-remove " + classNames.removeGroup,
                     handleOnClick: this.removeGroup,
-                    rules: rules,
-                    level: level,
                 })
                 : null,
             rules.map(function (r) {
-                return isRuleGroup(r) ? (React.createElement(RuleGroupComponent, { key: r.id, id: r.id, schema: _this.props.schema, parentId: _this.props.id, combinator: r.combinator, translations: _this.props.translations, rules: r.rules })) : (React.createElement(Rule_1.default, { key: r.id, id: r.id, field: r.field, value: r.value, operator: r.operator, schema: _this.props.schema, parentId: _this.props.id, translations: _this.props.translations, onRuleRemove: onRuleRemove }));
+                return isRuleGroup(r) ? (React.createElement(RuleGroupComponent, { key: r.id, id: r.id, schema: _this.props.schema, parentId: _this.props.id, combinator: r.combinator, translations: _this.props.translations, rules: r.rules })) : (React.createElement(Rule_1.default, { key: r.id, id: r.id, field: r.field, value: r.value, operator: r.operator, schema: _this.props.schema, parentId: _this.props.id, translations: _this.props.translations }));
             })));
     };
     RuleGroupComponent.prototype.hasParentGroup = function () {
-        return this.props.parentId;
+        return !!this.props.parentId;
     };
     return RuleGroupComponent;
 }(React.Component));

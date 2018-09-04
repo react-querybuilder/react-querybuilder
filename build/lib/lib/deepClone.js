@@ -2,6 +2,8 @@
 // Lodash was previously used only for a deep clone. We can simply
 // pull the pieces in and avoid a dependency entirely.
 Object.defineProperty(exports, "__esModule", { value: true });
+// Please note the typing of these functions is abysmal.
+// Ramda is not typed and thus we are abusing `any` in this file.
 // https://github.com/ramda/ramda/blob/v0.25.0/source/type.js
 function type(val) {
     return val === null
@@ -11,7 +13,7 @@ function type(val) {
             : Object.prototype.toString.call(val).slice(8, -1);
 }
 // https://github.com/ramda/ramda/blob/v0.25.0/source/internal/_cloneRegExp.js
-function _cloneRegExp(pattern) {
+function cloneRegExp(pattern) {
     return new RegExp(pattern.source, (pattern.global ? 'g' : '') +
         (pattern.ignoreCase ? 'i' : '') +
         (pattern.multiline ? 'm' : '') +
@@ -19,7 +21,7 @@ function _cloneRegExp(pattern) {
         (pattern.unicode ? 'u' : ''));
 }
 // https://github.com/ramda/ramda/blob/v0.25.0/source/internal/_clone.js
-function _clone(value, refFrom, refTo, deep) {
+function clone(value, refFrom, refTo, deep) {
     function copy(copiedValue) {
         var len = refFrom.length;
         var idx = 0;
@@ -33,7 +35,7 @@ function _clone(value, refFrom, refTo, deep) {
         refTo[idx + 1] = copiedValue;
         for (var key in value) {
             copiedValue[key] = deep
-                ? _clone(value[key], refFrom, refTo, true)
+                ? clone(value[key], refFrom, refTo, true)
                 : value[key];
         }
         return copiedValue;
@@ -46,7 +48,7 @@ function _clone(value, refFrom, refTo, deep) {
         case 'Date':
             return new Date(value.valueOf());
         case 'RegExp':
-            return _cloneRegExp(value);
+            return cloneRegExp(value);
         default:
             return value;
     }
@@ -54,7 +56,7 @@ function _clone(value, refFrom, refTo, deep) {
 function deepClone(value) {
     return value != null && typeof value.clone === 'function'
         ? value.clone()
-        : _clone(value, [], [], true);
+        : clone(value, [], [], true);
 }
 exports.default = deepClone;
 //# sourceMappingURL=deepClone.js.map

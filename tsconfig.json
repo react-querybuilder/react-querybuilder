@@ -14,17 +14,13 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": false,
+    "paths": { "*": ["node_modules/@types/*", "*"] },
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "declaration": true,
     "experimentalDecorators": true
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.sass"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.sass"],
   "exclude": ["node_modules", "build", "scripts"]
 }

@@ -10,10 +10,12 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable-next-line:import-name
 var v4_1 = require("uuid/v4");
 // import cloneDeep from 'lodash/cloneDeep';
 var React = require("react");
 var deepClone_1 = require("../lib/deepClone");
+// tslint:disable-next-line:import-name
 var RuleGroup_1 = require("../RuleGroup");
 var controls_1 = require("../controls");
 require("QueryBuilder.css");
@@ -30,15 +32,15 @@ var QueryBuilder = /** @class */ (function (_super) {
     Object.defineProperty(QueryBuilder, "defaultProps", {
         get: function () {
             return {
-                query: null,
+                query: undefined,
                 fields: [],
                 operators: QueryBuilder.defaultOperators,
                 combinators: QueryBuilder.defaultCombinators,
                 translations: QueryBuilder.defaultTranslations,
-                controlElements: null,
-                getOperators: null,
-                onQueryChange: null,
-                controlClassnames: null,
+                controlElements: undefined,
+                getOperators: undefined,
+                onQueryChange: function () { },
+                controlClassnames: undefined,
             };
         },
         enumerable: true,
@@ -148,27 +150,21 @@ var QueryBuilder = /** @class */ (function (_super) {
         this.setState({
             root: this.getInitialQuery(),
             schema: {
+                classNames: classNames,
+                combinators: combinators,
+                controls: controls,
                 fields: fields,
                 operators: operators,
-                combinators: combinators,
-                classNames: classNames,
                 createRule: this.createRule.bind(this),
                 createRuleGroup: this.createRuleGroup.bind(this),
-                onRuleAdd: this._notifyQueryChange.bind(this, this.onRuleAdd),
-                onGroupAdd: this._notifyQueryChange.bind(this, this.onGroupAdd),
-                onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
-                onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
-                onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
+                onRuleAdd: this.notifyQueryChange.bind(this, this.onRuleAdd),
+                onGroupAdd: this.notifyQueryChange.bind(this, this.onGroupAdd),
+                onRuleRemove: this.notifyQueryChange.bind(this, this.onRuleRemove),
+                onGroupRemove: this.notifyQueryChange.bind(this, this.onGroupRemove),
+                onPropChange: this.notifyQueryChange.bind(this, this.onPropChange),
                 getLevel: this.getLevel.bind(this),
                 isRuleGroup: this.isRuleGroup.bind(this),
-                controls: controls,
-                getOperators: function () {
-                    var args = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i] = arguments[_i];
-                    }
-                    return _this.getOperators(args);
-                },
+                getOperators: function (field) { return _this.getOperators(field); },
             },
         });
     };
@@ -176,7 +172,7 @@ var QueryBuilder = /** @class */ (function (_super) {
         return this.props.query || this.createRuleGroup();
     };
     QueryBuilder.prototype.componentDidMount = function () {
-        this._notifyQueryChange(null);
+        this.notifyQueryChange(undefined);
     };
     QueryBuilder.prototype.render = function () {
         var _a = this.state, _b = _a.root, id = _b.id, rules = _b.rules, combinator = _b.combinator, schema = _a.schema;
@@ -214,29 +210,29 @@ var QueryBuilder = /** @class */ (function (_super) {
         return this.props.operators;
     };
     QueryBuilder.prototype.onRuleAdd = function (rule, parentId) {
-        var parent = this._findRule(parentId, this.state.root);
+        var parent = this.findRule(parentId, this.state.root);
         parent.rules.push(rule);
         this.setState({ root: this.state.root });
     };
     QueryBuilder.prototype.onGroupAdd = function (group, parentId) {
-        var parent = this._findRule(parentId, this.state.root);
+        var parent = this.findRule(parentId, this.state.root);
         parent.rules.push(group);
         this.setState({ root: this.state.root });
     };
     QueryBuilder.prototype.onPropChange = function (prop, value, ruleId) {
-        var rule = this._findRule(ruleId, this.state.root);
+        var _a;
+        var rule = this.findRule(ruleId, this.state.root);
         Object.assign(rule, (_a = {}, _a[prop] = value, _a));
         this.setState({ root: this.state.root });
-        var _a;
     };
     QueryBuilder.prototype.onRuleRemove = function (ruleId, parentId) {
-        var parent = this._findRule(parentId, this.state.root);
+        var parent = this.findRule(parentId, this.state.root);
         var index = parent.rules.findIndex(function (x) { return x.id === ruleId; });
         parent.rules.splice(index, 1);
         this.setState({ root: this.state.root });
     };
     QueryBuilder.prototype.onGroupRemove = function (groupId, parentId) {
-        var parent = this._findRule(parentId, this.state.root);
+        var parent = this.findRule(parentId, this.state.root);
         var index = parent.rules.findIndex(function (x) { return x.id === groupId; });
         parent.rules.splice(index, 1);
         this.setState({ root: this.state.root });
@@ -244,6 +240,7 @@ var QueryBuilder = /** @class */ (function (_super) {
     QueryBuilder.prototype.getLevel = function (id) {
         return this._getLevel(id, 0, this.state.root);
     };
+    // tslint:disable-next-line:function-name
     QueryBuilder.prototype._getLevel = function (id, index, root) {
         var _this = this;
         var isRuleGroup = this.state.schema.isRuleGroup;
@@ -256,14 +253,14 @@ var QueryBuilder = /** @class */ (function (_super) {
                 if (foundAtIndex === -1) {
                     var indexForRule = index;
                     if (isRuleGroup(rule))
-                        indexForRule++;
+                        indexForRule += 1;
                     foundAtIndex = _this._getLevel(id, indexForRule, rule);
                 }
             });
         }
         return foundAtIndex;
     };
-    QueryBuilder.prototype._findRule = function (id, parent) {
+    QueryBuilder.prototype.findRule = function (id, parent) {
         var isRuleGroup = this.state.schema.isRuleGroup;
         if (parent.id === id) {
             return parent;
@@ -273,15 +270,15 @@ var QueryBuilder = /** @class */ (function (_super) {
             if (rule.id === id) {
                 return rule;
             }
-            else if (isRuleGroup(rule)) {
-                var subRule = this._findRule(id, rule);
+            if (isRuleGroup(rule)) {
+                var subRule = this.findRule(id, rule);
                 if (subRule) {
                     return subRule;
                 }
             }
         }
     };
-    QueryBuilder.prototype._notifyQueryChange = function (fn) {
+    QueryBuilder.prototype.notifyQueryChange = function (fn) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];

@@ -40,10 +40,10 @@ var RuleComponent = /** @class */ (function (_super) {
             return {
                 id: null,
                 parentId: null,
-                field: null,
-                operator: null,
-                value: null,
-                schema: null,
+                field: undefined,
+                operator: undefined,
+                value: undefined,
+                schema: {},
             };
         },
         enumerable: true,
@@ -53,6 +53,7 @@ var RuleComponent = /** @class */ (function (_super) {
         var _a = this.props, field = _a.field, operator = _a.operator, value = _a.value, translations = _a.translations, _b = _a.schema, fields = _b.fields, controls = _b.controls, getOperators = _b.getOperators, getLevel = _b.getLevel, classNames = _b.classNames;
         var level = getLevel(this.props.id);
         // --- Handle conditional Translations Prop
+        var validField = typeof field === 'string' ? field : 'Field';
         var fieldTitle = translations == null || translations.fields == null
             ? 'Fields'
             : translations.fields.title;
@@ -79,28 +80,28 @@ var RuleComponent = /** @class */ (function (_super) {
             }),
             React.createElement(controls.operatorSelector, {
                 field: field,
+                level: level,
                 title: operatorsTitle,
-                options: getOperators(field),
+                options: getOperators(validField),
                 value: operator,
                 className: "rule-operators " + classNames.operators,
                 handleOnChange: this.onOperatorChanged,
-                level: level,
             }),
             React.createElement(controls.valueEditor, {
                 field: field,
-                title: valueTitle,
+                level: level,
                 operator: operator,
                 value: value,
+                title: valueTitle,
                 className: "rule-value " + classNames.value,
                 handleOnChange: this.onValueChanged,
-                level: level,
             }),
             React.createElement(controls.removeRuleAction, {
+                level: level,
                 label: removeRuleLabel,
                 title: removeRuleTitle,
                 className: "rule-remove " + classNames.removeRule,
                 handleOnClick: this.removeRule,
-                level: level,
             })));
     };
     return RuleComponent;
