@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import RuleGroup from './RuleGroup';
-import { ActionElement, ValueSelector } from './controls/index';
+import { ActionElement, ValueSelector } from '../controls/index';
 
 describe('<RuleGroup />', ()=> {
     let controls, classNames, schema, props;

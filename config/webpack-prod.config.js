@@ -9,11 +9,13 @@ module.exports = merge(webpackCommon, {
   entry: {
     index: './src/index.js'
   },
+
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
     libraryTarget: 'commonjs2',
   },
+  
   externals: {
     'react': 'commonjs react',
     'react-dom': 'commonjs react-dom',
