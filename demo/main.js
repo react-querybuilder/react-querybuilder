@@ -13,46 +13,47 @@ const fields1 = [
     {name: 'twitter', label: 'Twitter'},
     {name: 'isDev', label: 'Is a Developer?', value: false},
 ];
+
 const fields2 = [
     {name: 'contactFirstName', label: 'Contact First Name'},
     {name: 'contactLastName', label: 'Contact Last Name'},
     {name: 'contactEmail', label: 'Contact Email'},
 ];
-const fieldQuerySets = {
-     set1: { 
-         fields: fields1, 
-         query: {
-                    "id": "g-fe7a7130-9d9f-4ec8-b5d3-79b5f0aff350",
-                    "rules": [
-                    {
-                        "id": "r-2c153586-5044-4ceb-9f36-cee6b06b035f",
-                        "field": "firstName",
-                        "value": "Steve",
-                        "operator": "="
-                    }
-                    ],
-                    "combinator": "and"
-                }
-            }, 
 
-     set2:{ 
-         fields: fields2, 
-         query: {
-                    "id": "g-fe7a7130-9d9f-4ec8-b5d3-79b5f0aff350",
-                    "rules": [
-                    {
-                        "id": "r-2c153586-5044-4ceb-9f36-cee6b06b035f",
-                        "field": "contactFirstName",
-                        "value": "Sally",
-                        "operator": "="
-                    }
-                    ],
-                    "combinator": "and"
+const fieldQuerySets = {
+    set1: {
+        fields: fields1,
+        query: {
+            "id": "g-fe7a7130-9d9f-4ec8-b5d3-79b5f0aff350",
+            "rules": [
+                {
+                    "id": "r-2c153586-5044-4ceb-9f36-cee6b06b035f",
+                    "field": "firstName",
+                    "value": "Steve",
+                    "operator": "="
                 }
-    
+            ],
+            "combinator": "and"
+        }
     },
 
-}
+     set2: {
+        fields: fields2,
+        query: {
+            "id": "g-fe7a7130-9d9f-4ec8-b5d3-79b5f0aff350",
+            "rules": [
+                {
+                    "id": "r-2c153586-5044-4ceb-9f36-cee6b06b035f",
+                    "field": "contactFirstName",
+                    "value": "Sally",
+                    "operator": "="
+                }
+            ],
+            "combinator": "and"
+        }
+    }
+};
+
 class RootView extends React.Component {
     constructor() {
         super();
@@ -68,42 +69,33 @@ class RootView extends React.Component {
             currentSet: "set1"
         };
     }
-    componentDidMount = () =>{
-       //console.log(fieldQuerySets.set2.query);
-    }
-   
-    handleChange = (e) =>{
-        e.persist()
-        this.setState((prevState)=>{ 
-            return {
-                    currentSet: e.target.value, 
-                } 
-        })
 
+    handleChange = (e) =>{
+        e.persist();
+        this.setState((prevState) => ({ currentSet: e.target.value }));
     }
+
     render() {
         let controlElements = {
             valueEditor: this.customValueEditor()
         }
         const { currentSet } = this.state;
 
-       // console.log(currentSet,this.state.query[currentSet] );
-
         return (
-        
             <div className="flex-box">
-                <div><select name="fieldToggle" value={this.state.currentSet} onChange={this.handleChange}>
+                <div>
+                    <select name="fieldToggle" value={this.state.currentSet} onChange={this.handleChange}>
                         <option value="set1">Set 1</option>
                         <option value="set2">Set 2</option>
-                      </select>
+                    </select>
                 </div>
                 <div className="scroll">
-                    <QueryBuilder 
-                                  query={ this.state.query[currentSet]}
-                                  fields={this.state.fields[currentSet]}
-                                  controlElements={controlElements}
-                                  controlClassnames={{fields: 'form-control'}}
-                                  onQueryChange={this.logQuery.bind(this)}/>
+                    <QueryBuilder
+                        query={ this.state.query[currentSet]}
+                        fields={this.state.fields[currentSet]}
+                        controlElements={controlElements}
+                        controlClassnames={{fields: 'form-control'}}
+                        onQueryChange={this.logQuery.bind(this)}/>
                 </div>
                 <div className="shrink query-log scroll">
                     <h4>Query</h4>
@@ -115,22 +107,18 @@ class RootView extends React.Component {
 
     customValueEditor() {
         let checkbox = class MyCheckbox extends React.Component {
-            constructor(props) {
-                super(props);
-            }
-
             render() {
                 if (this.props.field !== 'isDev' || this.props.operator !== '=') {
                     return <input type="text"
                                   value={this.props.value}
-                                  onChange={e => this.props.handleOnChange(e.target.value)}/>
+                                  onChange={e => this.props.handleOnChange(e.target.value)} />
                 }
 
                 return (
                     <span>
                         <input type="checkbox"
                                value={!!this.props.value}
-                               onChange={e => this.props.handleOnChange(e.target.checked)}/>
+                               onChange={e => this.props.handleOnChange(e.target.checked)} />
                     </span>
                 );
             }
@@ -147,4 +135,3 @@ class RootView extends React.Component {
 }
 
 ReactDOM.render(<RootView />, document.querySelector('.container'));
-
