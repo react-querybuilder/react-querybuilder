@@ -82,24 +82,24 @@ class RootView extends React.Component {
         const { currentSet } = this.state;
 
         return (
-            <div className="flex-box">
-                <div>
-                    <select name="fieldToggle" value={this.state.currentSet} onChange={this.handleChange}>
-                        <option value="set1">Set 1</option>
-                        <option value="set2">Set 2</option>
-                    </select>
-                </div>
-                <div className="scroll">
-                    <QueryBuilder
-                        query={ this.state.query[currentSet]}
-                        fields={this.state.fields[currentSet]}
-                        controlElements={controlElements}
-                        controlClassnames={{fields: 'form-control'}}
-                        onQueryChange={this.logQuery.bind(this)}/>
-                </div>
-                <div className="shrink query-log scroll">
-                    <h4>Query</h4>
-                    <pre>{JSON.stringify(this.state.query[this.state.currentSet], null, 2)}</pre>
+            <div className='flex-box-outer'>
+                <select className='set-changer' name="fieldToggle" value={this.state.currentSet} onChange={this.handleChange}>
+                    <option value="set1">Set 1</option>
+                    <option value="set2">Set 2</option>
+                </select>
+                <div className="flex-box">
+                    <div className="scroll">
+                        <QueryBuilder
+                            query={ this.state.query[currentSet]}
+                            fields={this.state.fields[currentSet]}
+                            controlElements={controlElements}
+                            controlClassnames={{fields: 'form-control'}}
+                            onQueryChange={this.logQuery.bind(this)}/>
+                    </div>
+                    <div className="shrink query-log scroll">
+                        <h4>Query</h4>
+                        <pre>{JSON.stringify(this.state.query[this.state.currentSet], null, 2)}</pre>
+                    </div>
                 </div>
             </div>
         );
