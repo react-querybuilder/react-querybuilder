@@ -14,7 +14,9 @@
     "builder",
     "operators",
     "ui",
-    "component"
+    "component",
+    "clause",
+    "expression"
   ],
   "author": "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
   "license": "MIT",
@@ -29,7 +31,7 @@
     "chai": "^4.1.2",
     "codecov.io": "^0.1.6",
     "copy-webpack-plugin": "^4.2.3",
-    "css-loader": "^0.28.7",
+    "css-loader": "^2.0.1",
     "del-cli": "^1.1.0",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
