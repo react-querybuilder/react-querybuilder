@@ -40,10 +40,8 @@ const fieldQuerySets = {
      set2: {
         fields: fields2,
         query: {
-            "id": "g-fe7a7130-9d9f-4ec8-b5d3-79b5f0aff350",
             "rules": [
                 {
-                    "id": "r-2c153586-5044-4ceb-9f36-cee6b06b035f",
                     "field": "contactFirstName",
                     "value": "Sally",
                     "operator": "="
