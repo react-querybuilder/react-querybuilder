@@ -10,7 +10,7 @@ describe('<QueryBuilder />', () => {
     });
 
     describe('when rendered', () => {
-        
+
         it('calls componentWillMount', () => {
             sinon.spy(QueryBuilder.prototype, 'componentWillMount');
             const dom = mount(<QueryBuilder />);
@@ -21,7 +21,7 @@ describe('<QueryBuilder />', () => {
             sinon.spy(QueryBuilder.prototype, 'componentDidMount');
             const dom = mount(<QueryBuilder />);
             expect(QueryBuilder.prototype.componentDidMount.calledOnce).to.equal(true);
-        
+
         });
         it('should render the root RuleGroup', () => {
             const dom = shallow(<QueryBuilder />);
@@ -39,16 +39,16 @@ describe('<QueryBuilder />', () => {
             dom.update();
             expect(dom.props().query).to.equal(null);
         });
-      
-        
+
+
 
     });
 
-    
+
 
     describe('when initial query is provided', () => {
-        let dom;
-        
+        let dom, query;
+
         beforeEach(() => {
             const fields = [
                 { name: 'firstName', label: 'First Name' },
@@ -56,12 +56,10 @@ describe('<QueryBuilder />', () => {
                 { name: 'age', label: 'Age' },
             ];
 
-            const query = {
+            query = {
                 combinator: 'and',
-                id: '111',
                 rules: [
                     {
-                        id: '222',
                         field: 'firstName',
                         value: 'Test',
                         operator: '='
@@ -70,7 +68,7 @@ describe('<QueryBuilder />', () => {
             };
 
             dom = mount(<QueryBuilder query={query} fields={fields} />);
-            
+
         });
 
         afterEach(() => {
@@ -78,6 +76,13 @@ describe('<QueryBuilder />', () => {
                 dom.unmount();
             }
         });
+
+        it('should generate valid query', () => {
+            const validQuery = QueryBuilder.prototype.generateValidQuery(query);
+            expect(validQuery).haveOwnProperty('id');
+            expect(validQuery.rules[0]).haveOwnProperty('id');
+        })
+
 
         it('should contain a <Rule />', () => {
 
@@ -117,15 +122,15 @@ describe('<QueryBuilder />', () => {
             expect(rule.find('input').props().value).to.equal('Test');
         });
 
-       
+
 });
-    describe('when new props are passed',()=>{ 
+    describe('when new props are passed',()=>{
         it('calls componentWillRecieveProps', () => {
 
             const newFields = [
                 { name: 'domainName', label: 'Domain Name' },
                 { name: 'ownerName', label: 'Owner Name' },
-               
+
             ];
 
             const newQuery = {
@@ -143,9 +148,9 @@ describe('<QueryBuilder />', () => {
             //First mount with props
             sinon.spy(QueryBuilder.prototype, 'componentWillReceiveProps');
             const dom = mount(<QueryBuilder />);
-           
+
             expect(QueryBuilder.prototype.componentWillReceiveProps.calledOnce).to.equal(false);
-         
+
             //componentWillRecieveProps
             dom.setProps({
                 query: newQuery,
@@ -157,9 +162,9 @@ describe('<QueryBuilder />', () => {
             expect(dom.find('RuleGroup')).to.have.length(1);
             expect(rule.find('input').props().value).to.equal('www.example.com');
         });
-        
-    });  
-   
+
+    });
+
     describe('when initial operators are provided', () => {
 
         let dom;
@@ -210,9 +215,9 @@ describe('<QueryBuilder />', () => {
 
             expect(operatorOption.text()).to.equal('Custom Is Null');
         });
-    }); 
-   
-   
+    });
+
+
     describe('when calculating the level of a rule', function () {
         let dom;
         beforeEach(() => {

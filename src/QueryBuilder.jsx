@@ -142,11 +142,11 @@ export default class QueryBuilder extends React.Component {
             valueEditor: ValueEditor
         };
     }
-    
+
 
     componentWillReceiveProps(nextProps) {
         let schema  = {...this.state.schema};
-         
+
          if (this.props.query !== nextProps.query) {
              this.setState({ root: nextProps.query });
          }
@@ -155,7 +155,7 @@ export default class QueryBuilder extends React.Component {
              schema.fields = nextProps.fields;
               this.setState({ schema });
          }
-   
+
     }
 
     componentWillMount() {
@@ -187,8 +187,23 @@ export default class QueryBuilder extends React.Component {
 
     }
 
+    generateValidQuery(query) {
+        if(this.isRuleGroup(query)) {
+            return ({
+                id: query.id || `g-${uniqueId()}`,
+                rules: query.rules.map(rule => this.generateValidQuery(rule)),
+                combinator: query.combinator,
+            });
+        }
+        return ({
+            id: query.id || `r-${uniqueId()}`,
+            ...query,
+        });
+    }
+
     getInitialQuery() {
-        return this.props.query || this.createRuleGroup();
+        const {query} = this.props;
+        return (query && this.generateValidQuery(query)) || this.createRuleGroup();
     }
 
     componentDidMount() {
@@ -342,4 +357,3 @@ export default class QueryBuilder extends React.Component {
         }
     }
 }
-
