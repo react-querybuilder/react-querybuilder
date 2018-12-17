@@ -83,6 +83,24 @@ describe('<QueryBuilder />', () => {
             expect(validQuery.rules[0]).haveOwnProperty('id');
         })
 
+        it('should not generate new id if query provides id', () => {
+            const queryWithId = {
+                id: 'g-12345',
+                combinator: 'and',
+                rules: [
+                    {
+                        id: 'r-12345',
+                        field: 'firstName',
+                        value: 'Test',
+                        operator: '='
+                    }
+                ]
+            };
+            const validQuery = QueryBuilder.prototype.generateValidQuery(queryWithId);
+            expect(validQuery.id).to.equal('g-12345');
+            expect(validQuery.rules[0].id).to.equal('r-12345');
+        })
+
 
         it('should contain a <Rule />', () => {
 
