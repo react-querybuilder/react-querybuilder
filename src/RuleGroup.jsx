@@ -82,6 +82,7 @@ export default class RuleGroup extends React.Component {
                                          id={r.id}
                                          field={r.field}
                                          value={r.value}
+                                         customRules={r.customRules}
                                          operator={r.operator}
                                          schema={this.props.schema}
                                          parentId={this.props.id}
@@ -100,18 +101,14 @@ export default class RuleGroup extends React.Component {
 
     onCombinatorChange = (value) => {
         const {onPropChange} = this.props.schema;
-
         onPropChange('combinator', value, this.props.id);
     }
-
     addRule = (event) => {
         event.preventDefault();
         event.stopPropagation();
-
         const {createRule, onRuleAdd} = this.props.schema;
-
         const newRule = createRule();
-        onRuleAdd(newRule, this.props.id)
+        onRuleAdd({ ...newRule}, this.props.id)
     }
 
     addGroup = (event) => {
@@ -129,6 +126,4 @@ export default class RuleGroup extends React.Component {
 
         this.props.schema.onGroupRemove(this.props.id, this.props.parentId);
     }
-
-
 }

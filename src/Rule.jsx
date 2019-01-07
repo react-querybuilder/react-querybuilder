@@ -13,7 +13,10 @@ export default class Rule extends React.Component {
     }
 
     render() {
-        const {field, operator, value, translations, schema: {fields, controls, getOperators, getLevel, classNames}} = this.props;
+        const {field, operator, value, translations,
+          schema: { fields, controls, getOperators, getLevel, classNames },
+          customRules, id, parentId
+        } = this.props;
         var level = getLevel(this.props.id);
         return (
             <div className={`rule ${classNames.rule}`}>
@@ -45,7 +48,10 @@ export default class Rule extends React.Component {
                 {
                     React.createElement(controls.valueEditor,
                         {
+                            customRules: customRules,
                             field: field,
+                            id: id,
+                            parentId: parentId,
                             title: translations.value.title,
                             operator: operator,
                             value: value,
@@ -93,6 +99,4 @@ export default class Rule extends React.Component {
 
         this.props.schema.onRuleRemove(this.props.id, this.props.parentId);
     }
-
-
 }

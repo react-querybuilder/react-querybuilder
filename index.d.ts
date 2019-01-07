@@ -1,9 +1,7 @@
 // Type definitions for react-querybuilder 1.4.2
 // Project: https://github.com/sapientglobalmarkets/react-querybuilder/
 // Definitions by: Jake Boone <https://github.com/jakeboone02>
-
 import * as React from 'react';
-
 interface NameLabelPair {
     name: string;
     label: string;
@@ -15,12 +13,16 @@ interface Rule {
     id: string;
     field: string;
     operator: string;
+    combinator?: string;
+    customRules?: CustomRules;
+    rules?: Array<Rule | RuleGroup>;
     value: string|number;
 }
 
 interface RuleGroup {
     id: string;
     combinator: string;
+    customRules?: CustomRules;
     rules: (Rule | RuleGroup)[];
 }
 
@@ -69,10 +71,17 @@ interface OperatorSelectorCustomControlProps extends SelectorEditorCustomControl
 interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps {
     field?: string;
     operator?: string;
+    customRules?: CustomRules;
+    id: string;
+    parentId?: string;
 }
 
 interface Field extends NameLabelPair {
     id?: string;
+}
+
+interface CustomRules {
+    [key: string]: string | number | boolean | object;
 }
 
 interface QueryBuilderProps {
@@ -82,6 +91,7 @@ interface QueryBuilderProps {
      * with {name: String, label: String}
      */
     fields: Field[];
+    customRules?: CustomRules;
     /**
      * The array of operators that should be used.
      * @default
