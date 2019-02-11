@@ -224,6 +224,20 @@ describe('<QueryBuilder />', () => {
       expect(wrapper.state().root.id).to.be.a('string');
       expect(wrapper.state().root.rules[0].id).to.be.a('string');
     });
+
+    it('should keep same state if same props are passed (root/fields)', () => {
+      const wrp = mount(<QueryBuilder query={newQuery} fields={newFields} />);
+      const stateQuery1 = wrp.state().root;
+      const stateFields1 = wrp.state().schema.fields;
+
+      wrp.setProps({
+        query: newQuery,
+        fields: newFields
+      });
+
+      expect(wrp.state().root).to.equal(stateQuery1);
+      expect(wrp.state().schema.fields).to.equal(stateFields1);
+    });
   });
 
   describe('when initial operators are provided', () => {
@@ -278,6 +292,51 @@ describe('<QueryBuilder />', () => {
         .find('.rule-operators option')
         .first();
       expect(operatorOption.text()).to.equal('Custom Is Null');
+    });
+  });
+
+  describe('when getOperators fn prop is provided', () => {
+    let wrapper, getOperators;
+
+    const fields = [
+      { name: 'firstName', label: 'First Name' },
+      { name: 'lastName', label: 'Last Name' },
+      { name: 'age', label: 'Age' }
+    ];
+
+    const query = {
+      id: 'g-012345',
+      combinator: 'or',
+      rules: [
+        {
+          id: 'r-0123456789',
+          field: 'lastName',
+          value: 'Another Test',
+          operator: '='
+        }
+      ]
+    };
+
+    beforeEach(() => {
+      getOperators = sinon.spy((fields, wada=123) => {
+        return [
+          { name: 'custom-operator-1', label: 'Op. 1' },
+          { name: 'custom-operator-2', label: 'Op. 2' },
+          { name: 'custom-operator-3', label: 'Op. 3' }
+        ];
+      });
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
+    });
+
+    afterEach(() => {
+      getOperators.resetHistory();
+      wrapper.unmount();
+    });
+
+    it('should invoke custom getOperators function', () => {
+      expect(getOperators.callCount).to.equal(1); // 1 Rule in query
+      wrapper.instance().getOperators();
+      expect(getOperators.callCount).to.equal(2);
     });
   });
 

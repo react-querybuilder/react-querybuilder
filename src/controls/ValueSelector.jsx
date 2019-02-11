@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const ValueSelector = (props) => {
-  const {value, options, className, handleOnChange, title} = props;
+  const { value, options, className, handleOnChange, title } = props;
 
   return (
     <select className={className}
@@ -12,8 +12,9 @@ const ValueSelector = (props) => {
             onChange={e=>handleOnChange(e.target.value)}>
       {
         options.map(option=> {
+          const key = option.id ? `key-${option.id}` : `key-${option.name}`;
           return (
-            <option key={option.id || option.name} value={option.name}>{option.label}</option>
+            <option key={key} value={option.name}>{option.label}</option>
           );
         })
       }

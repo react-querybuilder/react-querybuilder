@@ -2,7 +2,6 @@ import uniqueId from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import RuleGroup from './RuleGroup';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
 
@@ -227,13 +226,14 @@ export default class QueryBuilder extends React.Component {
   }
 
   createRule() {
-    const { fields, operators } = this.state.schema;
+    const { fields } = this.state.schema;
+    const field = fields[0].name;
 
     return {
       id: `r-${uniqueId()}`,
-      field: fields[0].name,
+      field,
       value: '',
-      operator: operators[0].name
+      operator: this.getOperators(field)[0].name
     };
   }
 
@@ -248,9 +248,7 @@ export default class QueryBuilder extends React.Component {
   getOperators(field) {
     if (this.props.getOperators) {
       const ops = this.props.getOperators(field);
-      if (ops) {
-        return ops;
-      }
+      if (ops) return ops;
     }
 
     return this.props.operators;
@@ -273,6 +271,11 @@ export default class QueryBuilder extends React.Component {
   onPropChange(prop, value, ruleId) {
     const rule = this._findRule(ruleId, this.state.root);
     Object.assign(rule, { [prop]: value });
+
+    // Reset operator and value for field change
+    if (prop === 'field') {
+      Object.assign(rule, { operator: this.getOperators(rule.field)[0].name, value: '' });
+    }
 
     this.setState({ root: this.state.root });
   }

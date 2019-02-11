@@ -57,8 +57,8 @@ describe('<ValueSelector />', ()=> {
 
         it('the options should have keys 3 and 5', ()=> {
             const dom = shallow(<ValueSelector options={options} />);
-            expect(dom.find('option').at(0).key()).to.equal(fooId);
-            expect(dom.find('option').at(1).key()).to.equal(barId);
+            expect(dom.find('option').at(0).key()).to.equal(`key-${fooId}`);
+            expect(dom.find('option').at(1).key()).to.equal(`key-${barId}`);
         });
     });
 });
