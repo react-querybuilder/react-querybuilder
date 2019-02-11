@@ -1,52 +1,72 @@
 <html>
-
-<head>
+  <head>
     <title>React Query Builder</title>
     <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
 
-        .set-changer {
-          margin-bottom: 20px;
-        }
+      .set-changer {
+        margin-bottom: 20px;
+      }
 
-        .flex-box-outer {
-          padding: 20px;
-        }
+      .flex-box-outer {
+        padding: 20px;
+      }
 
-        .flex-box {
-            display: flex;
-        }
+      .flex-box {
+        display: flex;
+      }
 
-        .flex-box > * {
-            flex: 1;
-        }
+      .flex-box > * {
+        flex: 1;
+      }
 
-        .scroll {
-            overflow: auto;
-        }
+      .scroll {
+        overflow: auto;
+      }
 
-        .shrink {
-            flex: 0 1 auto;
-        }
+      .shrink {
+        flex: 0 1 auto;
+      }
 
-        .query-log {
-            font-family: Consolas, "Courier New", monospace;
-            white-space: nowrap;
-            max-width: 400px;
-            margin-left: 2rem;
-        }
+      .query-log {
+        font-family: Consolas, "Courier New", monospace;
+        white-space: nowrap;
+        max-width: 400px;
+        margin-left: 2rem;
+      }
+
+      .queryBuilder {
+        min-width: 405px;
+      }
+
+      .control-panel button {
+        color: #888;
+        font-size: 14px;
+        padding: 10px 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        border-radius: 3px;
+        border: none;
+        background-color: #f1f1f1;
+      }
+
+      .control-panel button:hover {
+        color: #000;
+        background-color: #eaeaea;
+      }
+
+      hr {
+        border: 1px solid #eee;
+        margin-bottom: 15px;
+      }
     </style>
-</head>
-
-<body class="flex-box">
-
-<div class="container flex-box"></div>
-
-</body>
-
+  </head>
+  <body class="flex-box">
+    <div class="container flex-box"></div>
+  </body>
 </html>
