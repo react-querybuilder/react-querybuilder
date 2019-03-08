@@ -15,7 +15,7 @@ interface Rule {
     id: string;
     field: string;
     operator: string;
-    value: string|number;
+    value: any;
 }
 
 interface RuleGroup {
