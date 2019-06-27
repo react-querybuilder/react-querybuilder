@@ -25,7 +25,7 @@ ValueEditor.propTypes = {
   value: PropTypes.string,
   handleOnChange: PropTypes.func,
   title: PropTypes.string,
-  className: PrpTypes.string,
+  className: PropTypes.string,
 };
 
 export default ValueEditor;
