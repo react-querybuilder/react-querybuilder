@@ -1,19 +1,8 @@
 {
-    "presets": [
-        "env",
-        "react",
-        "stage-1"
-    ],
-    "env": {
-        "test": {
-            "plugins": [
-                [
-                    "__coverage__",
-                    {
-                        "ignore": "*.test.*"
-                    }
-                ]
-            ]
-        }
+  "presets": ["@babel/env", "@babel/react"],
+  "env": {
+    "test": {
+      "plugins": ["istanbul", "@babel/plugin-proposal-class-properties"]
     }
+  }
 }

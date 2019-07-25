@@ -5,19 +5,18 @@ const webpackCommon = require('./webpack-common.config');
 const path = require('path');
 
 module.exports = merge(webpackCommon, {
-    output: {
-        filename: '[name].js',
-        path: path.resolve(__dirname, '../dist')
-    },
+  mode: 'development',
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, '../dist')
+  },
 
-    externals: {
-        'cheerio': 'window',
-        'react/addons': true,
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': true
-    },
+  externals: {
+    cheerio: 'window',
+    'react/addons': true,
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true
+  },
 
-    devtool: 'inline-source-map',
-
-
+  devtool: 'inline-source-map'
 });
