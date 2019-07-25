@@ -1,6 +1,6 @@
 'use strict';
 
-let HtmlPlugin = require('html-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
 const path = require('path');

@@ -1,7 +1,6 @@
 'use strict';
 
-let ExtractTextPlugin = require('extract-text-webpack-plugin');
-let ProvidePlugin = require('webpack').ProvidePlugin;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   module: {
@@ -21,9 +20,22 @@ module.exports = {
       },
       {
         test: /\.scss/,
-        use: ExtractTextPlugin.extract({
-          use: ['css-loader', 'sass-loader']
-        })
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       }
     ]
   },
@@ -31,7 +43,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.scss']
   },
 
-  plugins: [new ExtractTextPlugin('query-builder.css')],
+  plugins: [new MiniCssExtractPlugin({ filename: 'query-builder.css' })],
 
   stats: {
     maxModules: 0
