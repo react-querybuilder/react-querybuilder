@@ -95,30 +95,20 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
-/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../src/index */ "./src/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _src_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../src/index */ "./src/index.js");
+/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
+/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3__);
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
@@ -204,91 +194,70 @@ var preparedQueries = {
   }
 };
 
-var RootView =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(RootView, _React$Component);
+var RootView = function RootView() {
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(preparedQueries.primary),
+      _useState2 = _slicedToArray(_useState, 2),
+      query = _useState2[0],
+      setQuery = _useState2[1];
 
-  function RootView(props) {
-    var _this;
-
-    _classCallCheck(this, RootView);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(RootView).call(this, props));
-    _this.handleQueryChange = _this.handleQueryChange.bind(_assertThisInitialized(_this));
-    _this.state = {
-      query: preparedQueries.primary,
-      fields: preparedFields.primary
-    };
-    return _this;
-  } // Reloads a prepared query, a PoC for query updates by props change.
-  // If no target is supplied, clear query (generic query).
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(preparedFields.primary),
+      _useState4 = _slicedToArray(_useState3, 2),
+      fields = _useState4[0],
+      setFields = _useState4[1];
+  /**
+   * Reloads a prepared query, a PoC for query updates by props change.
+   * If no target is supplied, clear query (generic query).
+   * @param {"primary"|"secondary"} target The target query
+   */
 
 
-  _createClass(RootView, [{
-    key: "loadQuery",
-    value: function loadQuery(target) {
-      if (target) {
-        this.setState({
-          query: preparedQueries[target],
-          fields: preparedFields[target]
-        });
-      } else {
-        this.setState({
-          query: preparedQueries.generic,
-          fields: preparedFields.generic
-        });
-      }
+  var loadQuery = function loadQuery(target) {
+    if (target) {
+      setQuery(preparedQueries[target]);
+      setFields(preparedFields[target]);
+    } else {
+      setQuery(preparedQueries.generic);
+      setFields(preparedFields.generic);
     }
-  }, {
-    key: "handleQueryChange",
-    value: function handleQueryChange(query) {
-      this.setState({
-        query: query
-      });
+  };
+
+  var handleQueryChange = function handleQueryChange(query) {
+    setQuery(query);
+  };
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "flex-box-outer"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "control-panel"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    onClick: function onClick() {
+      return loadQuery('primary');
     }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this;
-
-      return react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("div", {
-        className: "flex-box-outer"
-      }, react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("div", {
-        className: "control-panel"
-      }, react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("button", {
-        onClick: function onClick() {
-          return _this2.loadQuery('primary');
-        }
-      }, "Load primary query"), react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("button", {
-        onClick: function onClick() {
-          return _this2.loadQuery('secondary');
-        }
-      }, "Load secondary query"), react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("button", {
-        onClick: function onClick() {
-          return _this2.loadQuery();
-        }
-      }, "Clear query")), react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("div", {
-        className: "flex-box"
-      }, react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("div", {
-        className: "scroll"
-      }, react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement(_src_index__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        query: this.state.query,
-        fields: this.state.fields,
-        controlClassnames: {
-          fields: 'form-control'
-        },
-        onQueryChange: this.handleQueryChange
-      })), react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("div", {
-        className: "shrink query-log scroll"
-      }, react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("pre", null, JSON.stringify(this.state.query, null, 2)))));
+  }, "Load primary query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    onClick: function onClick() {
+      return loadQuery('secondary');
     }
-  }]);
+  }, "Load secondary query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    onClick: function onClick() {
+      return loadQuery();
+    }
+  }, "Clear query")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "flex-box"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "scroll"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src_index__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    query: query,
+    fields: fields,
+    controlClassnames: {
+      fields: 'form-control'
+    },
+    onQueryChange: handleQueryChange
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "shrink query-log scroll"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, JSON.stringify(query, null, 2)))));
+};
 
-  return RootView;
-}(react__WEBPACK_IMPORTED_MODULE_3___default.a.Component);
-
-react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render(react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement(RootView, null), document.querySelector('.container'));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));
 
 /***/ }),
 
@@ -29880,18 +29849,23 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return QueryBuilder; });
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash/cloneDeep */ "./node_modules/lodash/cloneDeep.js");
-/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/cloneDeep */ "./node_modules/lodash/cloneDeep.js");
+/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
-/* harmony import */ var _controls_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./controls/index */ "./src/controls/index.js");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controls */ "./src/controls/index.js");
+/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -29899,505 +29873,503 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
 
 
 
 
+/**
+ * @typedef {Object} RuleType
+ * @property {string} id
+ * @property {string} field
+ * @property {string} operator
+ * @property {any} value
+ */
 
+/**
+ * @typedef {Object} RuleGroupType
+ * @property {string} id
+ * @property {string} combinator
+ * @property {(RuleType|RuleGroupType)[]} rules
+ */
 
-var QueryBuilder =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(QueryBuilder, _React$Component);
+/**
+ * @typedef {Object} ControlElements
+ * @property {React.Component} addGroupAction
+ * @property {React.Component} removeGroupAction
+ * @property {React.Component} addRuleAction
+ * @property {React.Component} removeRuleAction
+ * @property {React.Component} combinatorSelector
+ * @property {React.Component} fieldSelector
+ * @property {React.Component} operatorSelector
+ * @property {React.Component} valueEditor
+ */
 
-  _createClass(QueryBuilder, null, [{
-    key: "defaultProps",
-    get: function get() {
-      return {
-        query: null,
-        fields: [],
-        operators: QueryBuilder.defaultOperators,
-        combinators: QueryBuilder.defaultCombinators,
-        translations: QueryBuilder.defaultTranslations,
-        controlElements: null,
-        getOperators: null,
-        onQueryChange: null,
-        controlClassnames: null
-      };
-    }
-  }, {
-    key: "propTypes",
-    get: function get() {
-      return {
-        query: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.object,
-        fields: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.array.isRequired,
-        operators: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.array,
-        combinators: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.array,
-        controlElements: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.shape({
-          addGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          removeGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          addRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          removeRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          combinatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          fieldSelector: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          operatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-          valueEditor: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func
-        }),
-        getOperators: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-        onQueryChange: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.func,
-        controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.object,
-        translations: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.object
-      };
-    }
-  }]);
+/**
+ * @typedef {Object} QueryBuilderProps
+ * @property {RuleGroupType} query
+ * @property {string[]} fields
+ * @property {{name: string; label: string;}[]} operators
+ * @property {{name: string; label: string;}[]} combinators
+ * @property {ControlElements} controlElements
+ * @property {(field: string) => {name: string; label: string;}[]} getOperators
+ * @property {(query: RuleGroupType) => void} onQueryChange
+ * @property {{}} controlClassnames
+ * @property {{}} translations
+ */
 
-  function QueryBuilder() {
-    var _getPrototypeOf2;
-
-    var _this;
-
-    _classCallCheck(this, QueryBuilder);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(QueryBuilder)).call.apply(_getPrototypeOf2, [this].concat(args)));
-    _this.state = {
-      root: {},
-      schema: {}
-    };
-    return _this;
+var defaultTranslations = {
+  fields: {
+    title: 'Fields'
+  },
+  operators: {
+    title: 'Operators'
+  },
+  value: {
+    title: 'Value'
+  },
+  removeRule: {
+    label: 'x',
+    title: 'Remove rule'
+  },
+  removeGroup: {
+    label: 'x',
+    title: 'Remove group'
+  },
+  addRule: {
+    label: '+Rule',
+    title: 'Add rule'
+  },
+  addGroup: {
+    label: '+Group',
+    title: 'Add group'
+  },
+  combinators: {
+    title: 'Combinators'
   }
+};
+var defaultOperators = [{
+  name: 'null',
+  label: 'Is Null'
+}, {
+  name: 'notNull',
+  label: 'Is Not Null'
+}, {
+  name: 'in',
+  label: 'In'
+}, {
+  name: 'notIn',
+  label: 'Not In'
+}, {
+  name: '=',
+  label: '='
+}, {
+  name: '!=',
+  label: '!='
+}, {
+  name: '<',
+  label: '<'
+}, {
+  name: '>',
+  label: '>'
+}, {
+  name: '<=',
+  label: '<='
+}, {
+  name: '>=',
+  label: '>='
+}];
+var defaultCombinators = [{
+  name: 'and',
+  label: 'AND'
+}, {
+  name: 'or',
+  label: 'OR'
+}];
+var defaultControlClassnames = {
+  queryBuilder: '',
+  ruleGroup: '',
+  combinators: '',
+  addRule: '',
+  addGroup: '',
+  removeGroup: '',
+  rule: '',
+  fields: '',
+  operators: '',
+  value: '',
+  removeRule: ''
+};
+var defaultControlElements = {
+  addGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
+  removeGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
+  addRuleAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
+  removeRuleAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
+  combinatorSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
+  fieldSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
+  operatorSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
+  valueEditor: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueEditor"]
+};
+/**
+ * @param {QueryBuilderProps} props
+ */
 
-  _createClass(QueryBuilder, [{
-    key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {
-      var schema = _objectSpread({}, this.state.schema);
-
-      if (this.props.query !== nextProps.query) {
-        this.setState({
-          root: this.generateValidQuery(nextProps.query)
-        });
-      }
-
-      if (schema.fields !== nextProps.fields) {
-        schema.fields = nextProps.fields;
-        this.setState({
-          schema: schema
-        });
-      }
-    }
-  }, {
-    key: "componentWillMount",
-    value: function componentWillMount() {
-      var _this2 = this;
-
-      var _this$props = this.props,
-          fields = _this$props.fields,
-          operators = _this$props.operators,
-          combinators = _this$props.combinators,
-          controlElements = _this$props.controlElements,
-          controlClassnames = _this$props.controlClassnames;
-      var classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
-      var controls = Object.assign({}, QueryBuilder.defaultControlElements, controlElements);
-      this.setState({
-        root: this.getInitialQuery(),
-        schema: {
-          fields: fields,
-          operators: operators,
-          combinators: combinators,
-          classNames: classNames,
-          createRule: this.createRule.bind(this),
-          createRuleGroup: this.createRuleGroup.bind(this),
-          onRuleAdd: this._notifyQueryChange.bind(this, this.onRuleAdd),
-          onGroupAdd: this._notifyQueryChange.bind(this, this.onGroupAdd),
-          onRuleRemove: this._notifyQueryChange.bind(this, this.onRuleRemove),
-          onGroupRemove: this._notifyQueryChange.bind(this, this.onGroupRemove),
-          onPropChange: this._notifyQueryChange.bind(this, this.onPropChange),
-          getLevel: this.getLevel.bind(this),
-          isRuleGroup: this.isRuleGroup.bind(this),
-          controls: controls,
-          getOperators: function getOperators() {
-            return _this2.getOperators.apply(_this2, arguments);
-          }
-        }
-      });
-    }
-  }, {
-    key: "generateValidQuery",
-    value: function generateValidQuery(query) {
-      var _this3 = this;
-
-      if (this.isRuleGroup(query)) {
-        return {
-          id: query.id || "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()()),
-          rules: query.rules.map(function (rule) {
-            return _this3.generateValidQuery(rule);
-          }),
-          combinator: query.combinator
-        };
-      }
-
-      return _objectSpread({
-        id: query.id || "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()())
-      }, query);
-    }
-  }, {
-    key: "getInitialQuery",
-    value: function getInitialQuery() {
-      var query = this.props.query;
-      return query && this.generateValidQuery(query) || this.createRuleGroup(); // TODO: If we replace the above line with the below line, a test should fail.
-      // Must properly test that IDs exist, since we use them to generate component keys.
-      // return query || this.createRuleGroup();
-    }
-  }, {
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      this._notifyQueryChange(null);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this$state = this.state,
-          _this$state$root = _this$state.root,
-          id = _this$state$root.id,
-          rules = _this$state$root.rules,
-          combinator = _this$state$root.combinator,
-          schema = _this$state.schema;
-      var translations = this.props.translations;
-      return react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
-        className: "queryBuilder ".concat(schema.classNames.queryBuilder)
-      }, react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_RuleGroup__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        translations: translations,
-        rules: rules,
-        combinator: combinator,
-        schema: schema,
-        id: id,
-        parentId: null
-      }));
-    }
-  }, {
-    key: "isRuleGroup",
-    value: function isRuleGroup(rule) {
-      return !!(rule.combinator && rule.rules);
-    }
-  }, {
-    key: "createRule",
-    value: function createRule() {
-      var fields = this.state.schema.fields;
-      var field = fields[0].name;
+var QueryBuilder = function QueryBuilder(props) {
+  /**
+   * Generates a valid query object
+   * @param {RuleGroupType} query Unvalidated query
+   * @returns {RuleGroupType}
+   */
+  var generateValidQuery = function generateValidQuery(query) {
+    if (isRuleGroup(query)) {
       return {
-        id: "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()()),
-        field: field,
-        value: '',
-        operator: this.getOperators(field)[0].name
+        id: query.id || "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
+        rules: query.rules.map(function (rule) {
+          return generateValidQuery(rule);
+        }),
+        combinator: query.combinator
       };
     }
-  }, {
-    key: "createRuleGroup",
-    value: function createRuleGroup() {
-      return {
-        id: "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()()),
-        rules: [],
-        combinator: this.props.combinators[0].name
-      };
-    }
-  }, {
-    key: "getOperators",
-    value: function getOperators(field) {
-      if (this.props.getOperators) {
-        var ops = this.props.getOperators(field);
-        if (ops) return ops;
-      }
 
-      return this.props.operators;
-    }
-  }, {
-    key: "onRuleAdd",
-    value: function onRuleAdd(rule, parentId) {
-      var parent = this._findRule(parentId, this.state.root);
+    return _objectSpread({
+      id: query.id || "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()())
+    }, query);
+  };
+  /**
+   * Gets the initial query
+   * @returns {RuleGroupType}
+   */
 
+
+  var getInitialQuery = function getInitialQuery() {
+    var query = props.query;
+    return query && generateValidQuery(query) || createRuleGroup();
+  };
+  /**
+   * Determines if this is a Rule or RuleGroup
+   * @param {RuleType} rule
+   * @returns {boolean}
+   */
+
+
+  var isRuleGroup = function isRuleGroup(rule) {
+    return !!(rule.combinator && rule.rules);
+  };
+  /**
+   * @returns {RuleType}
+   */
+
+
+  var createRule = function createRule() {
+    var fields = schema.fields;
+    var field = fields[0].name;
+    return {
+      id: "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
+      field: field,
+      value: '',
+      operator: getOperators(field)[0].name
+    };
+  };
+  /**
+   * @returns {RuleGroupType}
+   */
+
+
+  var createRuleGroup = function createRuleGroup() {
+    return {
+      id: "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
+      rules: [],
+      combinator: props.combinators[0].name
+    };
+  };
+  /**
+   * Gets the operators for a given field
+   * @param {string} field
+   * @returns {{name: string; label: string;}[]}
+   */
+
+
+  var getOperators = function getOperators(field) {
+    if (props.getOperators) {
+      var ops = props.getOperators(field);
+      if (ops) return ops;
+    }
+
+    return props.operators;
+  };
+  /**
+   * Adds a rule to the query
+   * @param {RuleType} rule Rule to add
+   * @param {string} parentId ID of the parent rule group
+   */
+
+
+  var onRuleAdd = function onRuleAdd(rule, parentId) {
+    var rootCopy = _objectSpread({}, root);
+
+    var parent = _findRule(parentId, rootCopy);
+
+    if (parent) {
       parent.rules.push(rule);
-      this.setState({
-        root: this.state.root
-      });
+    } else {
+      rootCopy.rules.push(createRule());
     }
-  }, {
-    key: "onGroupAdd",
-    value: function onGroupAdd(group, parentId) {
-      var parent = this._findRule(parentId, this.state.root);
 
+    setRoot(rootCopy);
+
+    _notifyQueryChange();
+  };
+  /**
+   * Adds a rule group to the query
+   * @param {RuleGroupType} group Rule group to add
+   * @param {string} parentId ID of the parent rule group
+   */
+
+
+  var onGroupAdd = function onGroupAdd(group, parentId) {
+    var rootCopy = _objectSpread({}, root);
+
+    var parent = _findRule(parentId, rootCopy);
+
+    if (parent) {
       parent.rules.push(group);
-      this.setState({
-        root: this.state.root
+    } else {
+      rootCopy.rules.push(createRuleGroup());
+    }
+
+    setRoot(rootCopy);
+
+    _notifyQueryChange();
+  };
+  /**
+   * @param {string} prop Property that changed
+   * @param {any} value Value of the property
+   * @param {string} ruleId ID of the rule
+   */
+
+
+  var onPropChange = function onPropChange(prop, value, ruleId) {
+    var rootCopy = _objectSpread({}, root);
+
+    var rule = _findRule(ruleId, rootCopy);
+
+    Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and value for field change
+
+    if (prop === 'field') {
+      Object.assign(rule, {
+        operator: getOperators(rule.field)[0].name,
+        value: ''
       });
     }
-  }, {
-    key: "onPropChange",
-    value: function onPropChange(prop, value, ruleId) {
-      var rule = this._findRule(ruleId, this.state.root);
 
-      Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and value for field change
+    setRoot(rootCopy);
 
-      if (prop === 'field') {
-        Object.assign(rule, {
-          operator: this.getOperators(rule.field)[0].name,
-          value: ''
-        });
-      }
+    _notifyQueryChange();
+  };
+  /**
+   * Removes a rule from the query
+   * @param {string} ruleId ID of rule to remove
+   * @param {string} parentId ID of the parent rule group
+   */
 
-      this.setState({
-        root: this.state.root
+
+  var onRuleRemove = function onRuleRemove(ruleId, parentId) {
+    var rootCopy = _objectSpread({}, root);
+
+    var parent = _findRule(parentId, rootCopy);
+
+    var index = parent.rules.findIndex(function (x) {
+      return x.id === ruleId;
+    });
+    parent.rules.splice(index, 1);
+    setRoot(rootCopy);
+
+    _notifyQueryChange();
+  };
+  /**
+   * Removes a rule group from the query
+   * @param {string} groupId ID of rule group to remove
+   * @param {string} parentId ID of the parent rule group
+   */
+
+
+  var onGroupRemove = function onGroupRemove(groupId, parentId) {
+    var rootCopy = _objectSpread({}, root);
+
+    var parent = _findRule(parentId, rootCopy);
+
+    var index = parent.rules.findIndex(function (x) {
+      return x.id === groupId;
+    });
+    parent.rules.splice(index, 1);
+    setRoot(rootCopy);
+
+    _notifyQueryChange();
+  };
+
+  var _getLevel = function _getLevel(id, index, root) {
+    var isRuleGroup = schema.isRuleGroup;
+    var foundAtIndex = -1;
+
+    if (root.id === id) {
+      foundAtIndex = index;
+    } else if (isRuleGroup(root)) {
+      root.rules.forEach(function (rule) {
+        if (foundAtIndex === -1) {
+          var indexForRule = index;
+          if (isRuleGroup(rule)) indexForRule++;
+          foundAtIndex = _getLevel(id, indexForRule, rule);
+        }
       });
     }
-  }, {
-    key: "onRuleRemove",
-    value: function onRuleRemove(ruleId, parentId) {
-      var parent = this._findRule(parentId, this.state.root);
 
-      var index = parent.rules.findIndex(function (x) {
-        return x.id === ruleId;
-      });
-      parent.rules.splice(index, 1);
-      this.setState({
-        root: this.state.root
-      });
+    return foundAtIndex;
+  };
+
+  var getLevel = function getLevel(id) {
+    return _getLevel(id, 0, root);
+  };
+
+  var _findRule = function _findRule(id, parent) {
+    var isRuleGroup = schema.isRuleGroup;
+
+    if (parent.id === id) {
+      return parent;
     }
-  }, {
-    key: "onGroupRemove",
-    value: function onGroupRemove(groupId, parentId) {
-      var parent = this._findRule(parentId, this.state.root);
 
-      var index = parent.rules.findIndex(function (x) {
-        return x.id === groupId;
-      });
-      parent.rules.splice(index, 1);
-      this.setState({
-        root: this.state.root
-      });
-    }
-  }, {
-    key: "getLevel",
-    value: function getLevel(id) {
-      return this._getLevel(id, 0, this.state.root);
-    }
-  }, {
-    key: "_getLevel",
-    value: function _getLevel(id, index, root) {
-      var _this4 = this;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-      var isRuleGroup = this.state.schema.isRuleGroup;
-      var foundAtIndex = -1;
+    try {
+      for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var rule = _step.value;
 
-      if (root.id === id) {
-        foundAtIndex = index;
-      } else if (isRuleGroup(root)) {
-        root.rules.forEach(function (rule) {
-          if (foundAtIndex === -1) {
-            var indexForRule = index;
-            if (isRuleGroup(rule)) indexForRule++;
-            foundAtIndex = _this4._getLevel(id, indexForRule, rule);
+        if (rule.id === id) {
+          return rule;
+        } else if (isRuleGroup(rule)) {
+          var subRule = _findRule(id, rule);
+
+          if (subRule) {
+            return subRule;
           }
-        });
+        }
       }
-
-      return foundAtIndex;
-    }
-  }, {
-    key: "_findRule",
-    value: function _findRule(id, parent) {
-      var isRuleGroup = this.state.schema.isRuleGroup;
-
-      if (parent.id === id) {
-        return parent;
-      }
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
       try {
-        for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var rule = _step.value;
-
-          if (rule.id === id) {
-            return rule;
-          } else if (isRuleGroup(rule)) {
-            var subRule = this._findRule(id, rule);
-
-            if (subRule) {
-              return subRule;
-            }
-          }
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
         }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
       } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-            _iterator["return"]();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
+        if (_didIteratorError) {
+          throw _iteratorError;
         }
       }
     }
-  }, {
-    key: "_notifyQueryChange",
-    value: function _notifyQueryChange(fn) {
-      if (fn) {
-        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-          args[_key2 - 1] = arguments[_key2];
-        }
+  };
 
-        fn.call.apply(fn, [this].concat(args));
-      }
+  var _notifyQueryChange = function _notifyQueryChange() {
+    var onQueryChange = props.onQueryChange;
 
-      var onQueryChange = this.props.onQueryChange;
+    if (onQueryChange) {
+      var query = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0___default()(root);
+      onQueryChange(query);
+    }
+  };
 
-      if (onQueryChange) {
-        var query = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(this.state.root);
-        onQueryChange(query);
-      }
-    }
-  }], [{
-    key: "defaultTranslations",
-    get: function get() {
-      return {
-        fields: {
-          title: 'Fields'
-        },
-        operators: {
-          title: 'Operators'
-        },
-        value: {
-          title: 'Value'
-        },
-        removeRule: {
-          label: 'x',
-          title: 'Remove rule'
-        },
-        removeGroup: {
-          label: 'x',
-          title: 'Remove group'
-        },
-        addRule: {
-          label: '+Rule',
-          title: 'Add rule'
-        },
-        addGroup: {
-          label: '+Group',
-          title: 'Add group'
-        },
-        combinators: {
-          title: 'Combinators'
-        }
-      };
-    }
-  }, {
-    key: "defaultOperators",
-    get: function get() {
-      return [{
-        name: 'null',
-        label: 'Is Null'
-      }, {
-        name: 'notNull',
-        label: 'Is Not Null'
-      }, {
-        name: 'in',
-        label: 'In'
-      }, {
-        name: 'notIn',
-        label: 'Not In'
-      }, {
-        name: '=',
-        label: '='
-      }, {
-        name: '!=',
-        label: '!='
-      }, {
-        name: '<',
-        label: '<'
-      }, {
-        name: '>',
-        label: '>'
-      }, {
-        name: '<=',
-        label: '<='
-      }, {
-        name: '>=',
-        label: '>='
-      }];
-    }
-  }, {
-    key: "defaultCombinators",
-    get: function get() {
-      return [{
-        name: 'and',
-        label: 'AND'
-      }, {
-        name: 'or',
-        label: 'OR'
-      }];
-    }
-  }, {
-    key: "defaultControlClassnames",
-    get: function get() {
-      return {
-        queryBuilder: '',
-        ruleGroup: '',
-        combinators: '',
-        addRule: '',
-        addGroup: '',
-        removeGroup: '',
-        rule: '',
-        fields: '',
-        operators: '',
-        value: '',
-        removeRule: ''
-      };
-    }
-  }, {
-    key: "defaultControlElements",
-    get: function get() {
-      return {
-        addGroupAction: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-        removeGroupAction: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-        addRuleAction: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-        removeRuleAction: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-        combinatorSelector: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ValueSelector"],
-        fieldSelector: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ValueSelector"],
-        operatorSelector: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ValueSelector"],
-        valueEditor: _controls_index__WEBPACK_IMPORTED_MODULE_5__["ValueEditor"]
-      };
-    }
-  }]);
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(getInitialQuery()),
+      _useState2 = _slicedToArray(_useState, 2),
+      root = _useState2[0],
+      setRoot = _useState2[1];
 
-  return QueryBuilder;
-}(react__WEBPACK_IMPORTED_MODULE_2___default.a.Component);
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
+    fields: props.fields,
+    operators: _objectSpread({}, defaultOperators, {}, props.operators),
+    combinators: props.combinators || defaultCombinators,
+    classNames: _objectSpread({}, defaultControlClassnames, {}, props.controlClassnames),
+    createRule: createRule,
+    createRuleGroup: createRuleGroup,
+    onRuleAdd: onRuleAdd,
+    onGroupAdd: onGroupAdd,
+    onRuleRemove: onRuleRemove,
+    onGroupRemove: onGroupRemove,
+    onPropChange: onPropChange,
+    getLevel: getLevel,
+    isRuleGroup: isRuleGroup,
+    controls: _objectSpread({}, defaultControlElements, {}, props.controlElements),
+    getOperators: getOperators
+  }),
+      _useState4 = _slicedToArray(_useState3, 2),
+      schema = _useState4[0],
+      setSchema = _useState4[1]; // Set the query state when a new query prop comes in
 
 
+  Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
+    setRoot(generateValidQuery(props.query));
+  }, [props.query]); // Set the schema when a new fields prop comes in
+
+  Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
+    setSchema(_objectSpread({}, schema, {
+      fields: props.fields
+    }));
+  }, [props.fields]); // Notify a query change on mount
+
+  Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
+    _notifyQueryChange();
+  }, []);
+  return react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+    className: "queryBuilder ".concat(schema.classNames.queryBuilder)
+  }, react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_RuleGroup__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    translations: props.translations,
+    rules: root.rules,
+    combinator: root.combinator,
+    schema: schema,
+    id: root.id,
+    parentId: null
+  }));
+};
+
+QueryBuilder.defaultProps = {
+  query: null,
+  fields: [],
+  operators: defaultOperators,
+  combinators: defaultCombinators,
+  translations: defaultTranslations,
+  controlElements: null,
+  getOperators: null,
+  onQueryChange: null,
+  controlClassnames: null
+};
+QueryBuilder.propTypes = {
+  query: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
+  fields: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.array.isRequired,
+  operators: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.shape({
+    name: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+    label: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string
+  })),
+  combinators: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.shape({
+    name: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+    label: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string
+  })),
+  controlElements: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.shape({
+    addGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    removeGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    addRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    removeRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    combinatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    fieldSelector: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    operatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    valueEditor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func
+  }),
+  getOperators: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  onQueryChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
+  translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object
+};
+/* harmony default export */ __webpack_exports__["default"] = (QueryBuilder);
 
 /***/ }),
 
@@ -30410,144 +30382,89 @@ function (_React$Component) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Rule; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+var Rule = function Rule(props) {
+  var onElementChanged = function onElementChanged(property, value) {
+    var id = props.id,
+        onPropChange = props.schema.onPropChange;
+    onPropChange(property, value, id);
+  };
 
-var Rule =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Rule, _React$Component);
+  var onFieldChanged = function onFieldChanged(value) {
+    onElementChanged('field', value);
+  };
 
-  function Rule() {
-    var _getPrototypeOf2;
+  var onOperatorChanged = function onOperatorChanged(value) {
+    onElementChanged('operator', value);
+  };
 
-    var _this;
+  var onValueChanged = function onValueChanged(value) {
+    onElementChanged('value', value);
+  };
 
-    _classCallCheck(this, Rule);
+  var removeRule = function removeRule(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    props.schema.onRuleRemove(props.id, props.parentId);
+  };
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+  var field = props.field,
+      operator = props.operator,
+      value = props.value,
+      translations = props.translations,
+      _props$schema = props.schema,
+      fields = _props$schema.fields,
+      controls = _props$schema.controls,
+      getOperators = _props$schema.getOperators,
+      getLevel = _props$schema.getLevel,
+      classNames = _props$schema.classNames;
+  var level = getLevel(props.id);
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "rule ".concat(classNames.rule)
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.fieldSelector, {
+    options: fields,
+    title: translations.fields.title,
+    value: field,
+    className: "rule-fields ".concat(classNames.fields),
+    handleOnChange: onFieldChanged,
+    level: level
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.operatorSelector, {
+    field: field,
+    title: translations.operators.title,
+    options: getOperators(field),
+    value: operator,
+    className: "rule-operators ".concat(classNames.operators),
+    handleOnChange: onOperatorChanged,
+    level: level
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.valueEditor, {
+    field: field,
+    title: translations.value.title,
+    operator: operator,
+    value: value,
+    className: "rule-value ".concat(classNames.value),
+    handleOnChange: onValueChanged,
+    level: level
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.removeRuleAction, {
+    label: translations.removeRule.label,
+    title: translations.removeRule.title,
+    className: "rule-remove ".concat(classNames.removeRule),
+    handleOnClick: removeRule,
+    level: level
+  }));
+};
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Rule)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-    _defineProperty(_assertThisInitialized(_this), "onFieldChanged", function (value) {
-      _this.onElementChanged('field', value);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "onOperatorChanged", function (value) {
-      _this.onElementChanged('operator', value);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "onValueChanged", function (value) {
-      _this.onElementChanged('value', value);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "onElementChanged", function (property, value) {
-      var _this$props = _this.props,
-          id = _this$props.id,
-          onPropChange = _this$props.schema.onPropChange;
-      onPropChange(property, value, id);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "removeRule", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      _this.props.schema.onRuleRemove(_this.props.id, _this.props.parentId);
-    });
-
-    return _this;
-  }
-
-  _createClass(Rule, [{
-    key: "render",
-    value: function render() {
-      var _this$props2 = this.props,
-          field = _this$props2.field,
-          operator = _this$props2.operator,
-          value = _this$props2.value,
-          translations = _this$props2.translations,
-          _this$props2$schema = _this$props2.schema,
-          fields = _this$props2$schema.fields,
-          controls = _this$props2$schema.controls,
-          getOperators = _this$props2$schema.getOperators,
-          getLevel = _this$props2$schema.getLevel,
-          classNames = _this$props2$schema.classNames;
-      var level = getLevel(this.props.id);
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "rule ".concat(classNames.rule)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.fieldSelector, {
-        options: fields,
-        title: translations.fields.title,
-        value: field,
-        className: "rule-fields ".concat(classNames.fields),
-        handleOnChange: this.onFieldChanged,
-        level: level
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.operatorSelector, {
-        field: field,
-        title: translations.operators.title,
-        options: getOperators(field),
-        value: operator,
-        className: "rule-operators ".concat(classNames.operators),
-        handleOnChange: this.onOperatorChanged,
-        level: level
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.valueEditor, {
-        field: field,
-        title: translations.value.title,
-        operator: operator,
-        value: value,
-        className: "rule-value ".concat(classNames.value),
-        handleOnChange: this.onValueChanged,
-        level: level
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.removeRuleAction, {
-        label: translations.removeRule.label,
-        title: translations.removeRule.title,
-        className: "rule-remove ".concat(classNames.removeRule),
-        handleOnClick: this.removeRule,
-        level: level
-      }));
-    }
-  }], [{
-    key: "defaultProps",
-    get: function get() {
-      return {
-        id: null,
-        parentId: null,
-        field: null,
-        operator: null,
-        value: null,
-        schema: null
-      };
-    }
-  }]);
-
-  return Rule;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-
+Rule.defaultProps = {
+  id: null,
+  parentId: null,
+  field: null,
+  operator: null,
+  value: null,
+  schema: null
+};
+/* harmony default export */ __webpack_exports__["default"] = (Rule);
 
 /***/ }),
 
@@ -30560,178 +30477,121 @@ function (_React$Component) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return RuleGroup; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Rule */ "./src/Rule.jsx");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
+var RuleGroup = function RuleGroup(props) {
+  var hasParentGroup = function hasParentGroup() {
+    return props.parentId;
+  };
 
-var RuleGroup =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(RuleGroup, _React$Component);
+  var onCombinatorChange = function onCombinatorChange(value) {
+    var onPropChange = props.schema.onPropChange;
+    onPropChange('combinator', value, props.id);
+  };
 
-  function RuleGroup() {
-    var _getPrototypeOf2;
+  var addRule = function addRule(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var _props$schema = props.schema,
+        createRule = _props$schema.createRule,
+        onRuleAdd = _props$schema.onRuleAdd;
+    var newRule = createRule();
+    onRuleAdd(newRule, props.id);
+  };
 
-    var _this;
+  var addGroup = function addGroup(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var _props$schema2 = props.schema,
+        createRuleGroup = _props$schema2.createRuleGroup,
+        onGroupAdd = _props$schema2.onGroupAdd;
+    var newGroup = createRuleGroup();
+    onGroupAdd(newGroup, props.id);
+  };
 
-    _classCallCheck(this, RuleGroup);
+  var removeGroup = function removeGroup(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    props.schema.onGroupRemove(props.id, props.parentId);
+  };
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(RuleGroup)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-    _defineProperty(_assertThisInitialized(_this), "onCombinatorChange", function (value) {
-      var onPropChange = _this.props.schema.onPropChange;
-      onPropChange('combinator', value, _this.props.id);
+  var combinator = props.combinator,
+      rules = props.rules,
+      translations = props.translations,
+      _props$schema3 = props.schema,
+      combinators = _props$schema3.combinators,
+      controls = _props$schema3.controls,
+      onRuleRemove = _props$schema3.onRuleRemove,
+      isRuleGroup = _props$schema3.isRuleGroup,
+      getLevel = _props$schema3.getLevel,
+      classNames = _props$schema3.classNames;
+  var level = getLevel(props.id);
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "ruleGroup ".concat(classNames.ruleGroup)
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
+    options: combinators,
+    value: combinator,
+    title: translations.combinators.title,
+    className: "ruleGroup-combinators ".concat(classNames.combinators),
+    handleOnChange: onCombinatorChange,
+    rules: rules,
+    level: level
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.addRuleAction, {
+    label: translations.addRule.label,
+    title: translations.addRule.title,
+    className: "ruleGroup-addRule ".concat(classNames.addRule),
+    handleOnClick: addRule,
+    rules: rules,
+    level: level
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.addGroupAction, {
+    label: translations.addGroup.label,
+    title: translations.addGroup.title,
+    className: "ruleGroup-addGroup ".concat(classNames.addGroup),
+    handleOnClick: addGroup,
+    rules: rules,
+    level: level
+  }), hasParentGroup() ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.removeGroupAction, {
+    label: translations.removeGroup.label,
+    title: translations.removeGroup.title,
+    className: "ruleGroup-remove ".concat(classNames.removeGroup),
+    handleOnClick: removeGroup,
+    rules: rules,
+    level: level
+  }) : null, rules.map(function (r) {
+    return isRuleGroup(r) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RuleGroup, {
+      key: r.id,
+      id: r.id,
+      schema: props.schema,
+      parentId: props.id,
+      combinator: r.combinator,
+      translations: props.translations,
+      rules: r.rules
+    }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Rule__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      key: r.id,
+      id: r.id,
+      field: r.field,
+      value: r.value,
+      operator: r.operator,
+      schema: props.schema,
+      parentId: props.id,
+      translations: props.translations,
+      onRuleRemove: onRuleRemove
     });
+  }));
+};
 
-    _defineProperty(_assertThisInitialized(_this), "addRule", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      var _this$props$schema = _this.props.schema,
-          createRule = _this$props$schema.createRule,
-          onRuleAdd = _this$props$schema.onRuleAdd;
-      var newRule = createRule();
-      onRuleAdd(newRule, _this.props.id);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "addGroup", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      var _this$props$schema2 = _this.props.schema,
-          createRuleGroup = _this$props$schema2.createRuleGroup,
-          onGroupAdd = _this$props$schema2.onGroupAdd;
-      var newGroup = createRuleGroup();
-      onGroupAdd(newGroup, _this.props.id);
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "removeGroup", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      _this.props.schema.onGroupRemove(_this.props.id, _this.props.parentId);
-    });
-
-    return _this;
-  }
-
-  _createClass(RuleGroup, [{
-    key: "render",
-    value: function render() {
-      var _this2 = this;
-
-      var _this$props = this.props,
-          combinator = _this$props.combinator,
-          rules = _this$props.rules,
-          translations = _this$props.translations,
-          _this$props$schema3 = _this$props.schema,
-          combinators = _this$props$schema3.combinators,
-          controls = _this$props$schema3.controls,
-          onRuleRemove = _this$props$schema3.onRuleRemove,
-          isRuleGroup = _this$props$schema3.isRuleGroup,
-          getLevel = _this$props$schema3.getLevel,
-          classNames = _this$props$schema3.classNames;
-      var level = getLevel(this.props.id);
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "ruleGroup ".concat(classNames.ruleGroup)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
-        options: combinators,
-        value: combinator,
-        title: translations.combinators.title,
-        className: "ruleGroup-combinators ".concat(classNames.combinators),
-        handleOnChange: this.onCombinatorChange,
-        rules: rules,
-        level: level
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.addRuleAction, {
-        label: translations.addRule.label,
-        title: translations.addRule.title,
-        className: "ruleGroup-addRule ".concat(classNames.addRule),
-        handleOnClick: this.addRule,
-        rules: rules,
-        level: level
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.addGroupAction, {
-        label: translations.addGroup.label,
-        title: translations.addGroup.title,
-        className: "ruleGroup-addGroup ".concat(classNames.addGroup),
-        handleOnClick: this.addGroup,
-        rules: rules,
-        level: level
-      }), this.hasParentGroup() ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.removeGroupAction, {
-        label: translations.removeGroup.label,
-        title: translations.removeGroup.title,
-        className: "ruleGroup-remove ".concat(classNames.removeGroup),
-        handleOnClick: this.removeGroup,
-        rules: rules,
-        level: level
-      }) : null, rules.map(function (r) {
-        return isRuleGroup(r) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RuleGroup, {
-          key: r.id,
-          id: r.id,
-          schema: _this2.props.schema,
-          parentId: _this2.props.id,
-          combinator: r.combinator,
-          translations: _this2.props.translations,
-          rules: r.rules
-        }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Rule__WEBPACK_IMPORTED_MODULE_1__["default"], {
-          key: r.id,
-          id: r.id,
-          field: r.field,
-          value: r.value,
-          operator: r.operator,
-          schema: _this2.props.schema,
-          parentId: _this2.props.id,
-          translations: _this2.props.translations,
-          onRuleRemove: onRuleRemove
-        });
-      }));
-    }
-  }, {
-    key: "hasParentGroup",
-    value: function hasParentGroup() {
-      return this.props.parentId;
-    }
-  }], [{
-    key: "defaultProps",
-    get: function get() {
-      return {
-        id: null,
-        parentId: null,
-        rules: [],
-        combinator: 'and',
-        schema: {}
-      };
-    }
-  }]);
-
-  return RuleGroup;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-
+RuleGroup.defaultProps = {
+  id: null,
+  parentId: null,
+  rules: [],
+  combinator: 'and',
+  schema: {}
+};
+/* harmony default export */ __webpack_exports__["default"] = (RuleGroup);
 
 /***/ }),
 
