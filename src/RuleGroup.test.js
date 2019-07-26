@@ -198,7 +198,7 @@ describe('<RuleGroup />', () => {
 
       it('returns truthy', () => {
         const instance = shallow(<RuleGroup {...props} />).instance();
-        expect(instance.hasParentGroup()).isOk;
+        expect(instance.hasParentGroup()).to.be.ok;
       });
     });
 
@@ -209,7 +209,7 @@ describe('<RuleGroup />', () => {
 
       it('returns falsey', () => {
         const instance = shallow(<RuleGroup {...props} />).instance();
-        expect(instance.hasParentGroup()).isNotOk;
+        expect(instance.hasParentGroup()).to.not.be.ok;
       });
     });
   });

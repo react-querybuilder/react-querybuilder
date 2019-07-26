@@ -1,16 +1,14 @@
+const puppeteer = require('puppeteer');
+process.env.CHROME_BIN = puppeteer.executablePath();
 process.env.BABEL_ENV = 'test'; // Set the proper environment for babel
 
-
-module.exports = function (config) {
+module.exports = function(config) {
     config.set({
         basePath: '',
         frameworks: ['mocha', 'chai', 'es6-shim'],
 
-        files: [
-            'tests.webpack.js',
-        ],
+        files: ['tests.webpack.js'],
         exclude: [],
-
 
         preprocessors: {
             'tests.webpack.js': ['webpack', 'sourcemap']
@@ -20,14 +18,13 @@ module.exports = function (config) {
             stats: 'errors-only'
         },
 
-
         reporters: ['mocha', 'coverage'],
         coverageReporter: {
             dir: 'coverage',
             reporters: [
                 { type: 'html', subdir: 'html' },
                 { type: 'text-summary' },
-                { 'type': 'lcov' }
+                { type: 'lcov' }
             ],
             includeAllSources: true,
             instrumenterOptions: {
@@ -35,13 +32,18 @@ module.exports = function (config) {
             }
         },
 
-
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: false,
-        browsers: ['PhantomJS'],
+        browsers: ['ChromeHeadlessNoSandbox'],
+        customLaunchers: {
+            ChromeHeadlessNoSandbox: {
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox']
+            }
+        },
         singleRun: true,
         concurrency: Infinity
-    })
+    });
 };

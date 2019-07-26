@@ -1,33 +1,51 @@
 'use strict';
 
-let ExtractTextPlugin = require('extract-text-webpack-plugin');
-let ProvidePlugin = require('webpack').ProvidePlugin;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    module: {
-        rules: [
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        options: {
+          presets: [
+            '@babel/preset-env',
             {
-                test: /\.(js|jsx)$/,
-                use: 'babel-loader',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.scss/,
-                use: ExtractTextPlugin.extract({
-                    use: ['css-loader', 'sass-loader']
-                })
+              plugins: ['@babel/plugin-proposal-class-properties']
             }
-        ],
-    },
-    resolve: {
-        extensions: ['.js', '.jsx', '.scss']
-    },
+          ]
+        }
+      },
+      {
+        test: /\.scss/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '.scss']
+  },
 
-    plugins: [
-        new ExtractTextPlugin('query-builder.css')
-    ],
+  plugins: [new MiniCssExtractPlugin({ filename: 'query-builder.css' })],
 
-    stats: {
-        maxModules: 0
-    }
+  stats: {
+    maxModules: 0
+  }
 };
