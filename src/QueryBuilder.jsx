@@ -331,8 +331,10 @@ const QueryBuilder = (props) => {
   };
 
   const [root, setRoot] = useState(getInitialQuery());
-  const [schema, setSchema] = useState({
-    fields: props.fields,
+  const [fields, setFields] = useState(props.fields);
+
+  const schema = {
+    fields,
     operators: { ...defaultOperators, ...props.operators },
     combinators: props.combinators || defaultCombinators,
     classNames: { ...defaultControlClassnames, ...props.controlClassnames },
@@ -347,16 +349,16 @@ const QueryBuilder = (props) => {
     isRuleGroup,
     controls: { ...defaultControlElements, ...props.controlElements },
     getOperators
-  });
+  };
 
   // Set the query state when a new query prop comes in
   useEffect(() => {
     setRoot(generateValidQuery(props.query));
   }, [props.query]);
 
-  // Set the schema when a new fields prop comes in
+  // Set the fields state when a new fields prop comes in
   useEffect(() => {
-    setSchema({ ...schema, fields: props.fields });
+    setFields(props.fields);
   }, [props.fields]);
 
   // Notify a query change on mount
