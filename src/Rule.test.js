@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
@@ -9,10 +9,22 @@ describe('<Rule />', () => {
   beforeEach(() => {
     //set defaults
     controls = {
-      fieldSelector: React.Component,
-      operatorSelector: React.Component,
-      valueEditor: React.Component,
-      removeRuleAction: React.Component
+      fieldSelector: (props) => (
+        <select onChange={(e) => props.handleOnChange(e.target.value)}>
+          <option value="field">Field</option>
+          <option value="any_field">Any Field</option>
+        </select>
+      ),
+      operatorSelector: (props) => (
+        <select onChange={(e) => props.handleOnChange(e.target.value)}>
+          <option value="operator">Operator</option>
+          <option value="any_operator">Any Operator</option>
+        </select>
+      ),
+      valueEditor: (props) => (
+        <input type="text" onChange={(e) => props.handleOnChange(e.target.value)} />
+      ),
+      removeRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>
     };
     classNames = {
       fields: 'custom-fields-class',
@@ -195,7 +207,7 @@ describe('<Rule />', () => {
     //TODO spy on value change handler and verify it is triggered
   });
 
-  describe('#onElementChanged methods', () => {
+  describe('onElementChanged methods', () => {
     let actualProperty, actualValue, actualId;
     beforeEach(() => {
       schema.onPropChange = (property, value, id) => {
@@ -205,18 +217,10 @@ describe('<Rule />', () => {
       };
     });
 
-    it('should call the onPropChange with the rule id', () => {
-      // const instance = shallow(<Rule {...props} />).instance();
-      // instance.onElementChanged('any_property', 'any_value');
-      // expect(actualProperty).to.equal('any_property');
-      // expect(actualValue).to.equal('any_value');
-      // expect(actualId).to.equal('id');
-    });
-
-    describe('#onFieldChanged', () => {
-      it('should call the onPropChange with the rule id', () => {
-        const dom = shallow(<Rule {...props} />);
-        dom.find('.rule-fields').simulate('change', { target: { value: 'field2' } });
+    describe('onFieldChanged', () => {
+      it('should call onPropChange with the rule id', () => {
+        const dom = mount(<Rule {...props} />);
+        dom.find('.rule-fields').simulate('change', { target: { value: 'any_field' } });
 
         expect(actualProperty).to.equal('field');
         expect(actualValue).to.equal('any_field');
@@ -224,10 +228,10 @@ describe('<Rule />', () => {
       });
     });
 
-    describe('#onOperatorChanged', () => {
-      it('should call the onPropChange with the rule id', () => {
-        const instance = shallow(<Rule {...props} />).instance();
-        instance.onOperatorChanged('any_operator');
+    describe('onOperatorChanged', () => {
+      it('should call onPropChange with the rule id', () => {
+        const dom = mount(<Rule {...props} />);
+        dom.find('.rule-operators').simulate('change', { target: { value: 'any_operator' } });
 
         expect(actualProperty).to.equal('operator');
         expect(actualValue).to.equal('any_operator');
@@ -235,10 +239,10 @@ describe('<Rule />', () => {
       });
     });
 
-    describe('#onValueChanged', () => {
-      it('should call the onPropChange with the rule id', () => {
-        const instance = shallow(<Rule {...props} />).instance();
-        instance.onValueChanged('any_value');
+    describe('onValueChanged', () => {
+      it('should call onPropChange with the rule id', () => {
+        const dom = mount(<Rule {...props} />);
+        dom.find('.rule-value').simulate('change', { target: { value: 'any_value' } });
 
         expect(actualProperty).to.equal('value');
         expect(actualValue).to.equal('any_value');
@@ -248,18 +252,14 @@ describe('<Rule />', () => {
   });
 
   describe('removeRule', () => {
-    it('should call the onRuleRemove with the rule and parent id', () => {
+    it('should call onRuleRemove with the rule and parent id', () => {
       let myRuleId, myParentId;
-      let anyEvent = {
-        preventDefault: () => {},
-        stopPropagation: () => {}
-      };
       schema.onRuleRemove = (ruleId, parentId) => {
         myRuleId = ruleId;
         myParentId = parentId;
       };
-      const instance = shallow(<Rule {...props} />).instance();
-      instance.removeRule(anyEvent);
+      const dom = mount(<Rule {...props} />);
+      dom.find('.rule-remove').simulate('click');
 
       expect(myRuleId).to.equal('id');
       expect(myParentId).to.equal('parentId');

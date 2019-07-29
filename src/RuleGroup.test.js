@@ -1,17 +1,22 @@
+import { mount, shallow } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
-import RuleGroup from './RuleGroup';
 import { ActionElement, ValueSelector } from './controls/index';
+import RuleGroup from './RuleGroup';
 
 describe('<RuleGroup />', () => {
   let controls, classNames, schema, props;
   beforeEach(() => {
     //set defaults
     controls = {
-      combinatorSelector: React.Component,
-      addRuleAction: React.Component,
-      addGroupAction: React.Component,
-      removeGroupAction: React.Component
+      combinatorSelector: (props) => (
+        <select onChange={(e) => props.handleOnChange(e.target.value)}>
+          <option value="combinator">Combinator</option>
+          <option value="any_combinator_value">Any Combinator</option>
+        </select>
+      ),
+      addRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>,
+      addGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Group</button>,
+      removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>
     };
     classNames = {
       combinators: 'custom-combinators-class',
@@ -29,12 +34,8 @@ describe('<RuleGroup />', () => {
       onPropChange: (prop, value, id) => {},
       onRuleAdd: (rule, parentId) => {},
       onGroupAdd: (ruleGroup, id) => {},
-      createRule: () => {
-        return _createRule(1);
-      },
-      createRuleGroup: () => {
-        return _createRuleGroup(1, 'any_parent_id', []);
-      },
+      createRule: () => _createRule(1),
+      createRuleGroup: () => _createRuleGroup(1, 'any_parent_id', []),
       getLevel: (id) => 0
     };
     props = {
@@ -190,40 +191,18 @@ describe('<RuleGroup />', () => {
     });
   });
 
-  describe('#hasParentGroup', () => {
-    describe('when it has a parentId', () => {
-      beforeEach(() => {
-        props.parentId = 'any_parent_id';
-      });
-
-      it('returns truthy', () => {
-        const instance = shallow(<RuleGroup {...props} />).instance();
-        expect(instance.hasParentGroup()).to.be.ok;
-      });
-    });
-
-    describe('when it does not have a parentId', () => {
-      beforeEach(() => {
-        props.parentId = null;
-      });
-
-      it('returns falsey', () => {
-        const instance = shallow(<RuleGroup {...props} />).instance();
-        expect(instance.hasParentGroup()).to.not.be.ok;
-      });
-    });
-  });
-
-  describe('#onCombinatorChange', () => {
-    it('calls the #onPropChange from the schema with expected values', () => {
+  describe('onCombinatorChange', () => {
+    it('calls onPropChange from the schema with expected values', () => {
       let actualProperty, actualValue, actualId;
       schema.onPropChange = (prop, value, id) => {
         actualProperty = prop;
         actualValue = value;
         actualId = id;
       };
-      const instance = shallow(<RuleGroup {...props} />).instance();
-      instance.onCombinatorChange('any_combinator_value');
+      const dom = mount(<RuleGroup {...props} />);
+      dom
+        .find('.ruleGroup-combinators')
+        .simulate('change', { target: { value: 'any_combinator_value' } });
 
       expect(actualProperty).to.equal('combinator');
       expect(actualValue).to.equal('any_combinator_value');
@@ -231,45 +210,45 @@ describe('<RuleGroup />', () => {
     });
   });
 
-  describe('#addRule', () => {
-    it('calls the #onRuleAdd from the schema with expected values', () => {
+  describe('addRule', () => {
+    it('calls onRuleAdd from the schema with expected values', () => {
       let actualRule, actualId;
       schema.onRuleAdd = (rule, id) => {
         actualRule = rule;
         actualId = id;
       };
-      const instance = shallow(<RuleGroup {...props} />).instance();
-      instance.addRule(_mockEvent());
+      const dom = mount(<RuleGroup {...props} />);
+      dom.find('.ruleGroup-addRule').simulate('click');
 
       expect(actualRule).to.include.keys('id', 'field', 'operator', 'value');
       expect(actualId).to.equal('id');
     });
   });
 
-  describe('#addGroup', () => {
-    it('calls the #onGroupAdd from the schema with expected values', () => {
+  describe('addGroup', () => {
+    it('calls onGroupAdd from the schema with expected values', () => {
       let actualRuleGroup, actualId;
       schema.onGroupAdd = (ruleGroup, id) => {
         actualRuleGroup = ruleGroup;
         actualId = id;
       };
-      const instance = shallow(<RuleGroup {...props} />).instance();
-      instance.addGroup(_mockEvent());
+      const dom = mount(<RuleGroup {...props} />);
+      dom.find('.ruleGroup-addGroup').simulate('click');
 
       expect(actualRuleGroup).to.include.keys('id', 'parentId', 'rules');
       expect(actualId).to.equal('id');
     });
   });
 
-  describe('#removeGroup', () => {
-    it('calls the #onGroupRemove from the schema with expected values', () => {
+  describe('removeGroup', () => {
+    it('calls onGroupRemove from the schema with expected values', () => {
       let actualId, actualParentId;
       schema.onGroupRemove = (id, parentId) => {
         actualId = id;
         actualParentId = parentId;
       };
-      const instance = shallow(<RuleGroup {...props} />).instance();
-      instance.removeGroup(_mockEvent());
+      const dom = mount(<RuleGroup {...props} />);
+      dom.find('.ruleGroup-remove').simulate('click');
 
       expect(actualId).to.equal('id');
       expect(actualParentId).to.equal('parentId');
