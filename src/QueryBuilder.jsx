@@ -149,11 +149,11 @@ const QueryBuilder = (props) => {
 
   /**
    * Determines if this is a Rule or RuleGroup
-   * @param {RuleType} rule
+   * @param {RuleType|RuleGroupType} ruleOrGroup
    * @returns {boolean}
    */
-  const isRuleGroup = (rule) => {
-    return !!(rule.combinator && rule.rules);
+  const isRuleGroup = (ruleOrGroup) => {
+    return !!(ruleOrGroup.combinator && ruleOrGroup.rules);
   };
 
   /**
@@ -281,14 +281,12 @@ const QueryBuilder = (props) => {
     _notifyQueryChange();
   };
 
-  const _getLevel = (id, index, root) => {
-    const { isRuleGroup } = schema;
-
+  const _getLevel = (id, index, query) => {
     let foundAtIndex = -1;
-    if (root.id === id) {
+    if (query.id === id) {
       foundAtIndex = index;
-    } else if (isRuleGroup(root)) {
-      root.rules.forEach((rule) => {
+    } else if (isRuleGroup(query)) {
+      query.rules.forEach((rule) => {
         if (foundAtIndex === -1) {
           let indexForRule = index;
           if (isRuleGroup(rule)) indexForRule++;
@@ -304,8 +302,6 @@ const QueryBuilder = (props) => {
   };
 
   const _findRule = (id, parent) => {
-    const { isRuleGroup } = schema;
-
     if (parent.id === id) {
       return parent;
     }
@@ -352,7 +348,7 @@ const QueryBuilder = (props) => {
 
   // Set the query state when a new query prop comes in
   useEffect(() => {
-    setRoot(generateValidQuery(props.query));
+    setRoot(generateValidQuery(props.query || getInitialQuery()));
   }, [props.query]);
 
   // Notify a query change on mount
