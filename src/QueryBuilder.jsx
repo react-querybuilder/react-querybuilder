@@ -254,10 +254,17 @@ const QueryBuilder = (props) => {
     _notifyQueryChange();
   };
 
+  /**
+   * Gets the level of the rule with the provided ID
+   * @param {string} id Rule ID
+   */
   const getLevelFromRoot = (id) => {
     return getLevel(id, 0, root);
   };
 
+  /**
+   * Executes the `onQueryChange` function, if provided
+   */
   const _notifyQueryChange = () => {
     const { onQueryChange } = props;
     if (onQueryChange) {
