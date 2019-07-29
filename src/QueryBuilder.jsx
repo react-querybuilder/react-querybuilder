@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import uniqueId from 'uuid/v4';
 import { ActionElement, ValueEditor, ValueSelector } from './controls';
 import RuleGroup from './RuleGroup';
+import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 /**
  * @typedef {Object} RuleType
@@ -120,40 +121,12 @@ const defaultControlElements = {
  */
 const QueryBuilder = (props) => {
   /**
-   * Generates a valid query object
-   * @param {RuleGroupType} query Unvalidated query
-   * @returns {RuleGroupType}
-   */
-  const generateValidQuery = (query) => {
-    if (isRuleGroup(query)) {
-      return {
-        id: query.id || `g-${uniqueId()}`,
-        rules: query.rules.map((rule) => generateValidQuery(rule)),
-        combinator: query.combinator
-      };
-    }
-    return {
-      id: query.id || `r-${uniqueId()}`,
-      ...query
-    };
-  };
-
-  /**
    * Gets the initial query
    * @returns {RuleGroupType}
    */
   const getInitialQuery = () => {
     const { query } = props;
     return (query && generateValidQuery(query)) || createRuleGroup();
-  };
-
-  /**
-   * Determines if this is a Rule or RuleGroup
-   * @param {RuleType|RuleGroupType} ruleOrGroup
-   * @returns {boolean}
-   */
-  const isRuleGroup = (ruleOrGroup) => {
-    return !!(ruleOrGroup.combinator && ruleOrGroup.rules);
   };
 
   /**
@@ -203,7 +176,7 @@ const QueryBuilder = (props) => {
    */
   const onRuleAdd = (rule, parentId) => {
     const rootCopy = { ...root };
-    const parent = _findRule(parentId, rootCopy);
+    const parent = findRule(parentId, rootCopy);
     if (parent) {
       parent.rules.push(rule);
     } else {
@@ -220,7 +193,7 @@ const QueryBuilder = (props) => {
    */
   const onGroupAdd = (group, parentId) => {
     const rootCopy = { ...root };
-    const parent = _findRule(parentId, rootCopy);
+    const parent = findRule(parentId, rootCopy);
     if (parent) {
       parent.rules.push(group);
     } else {
@@ -237,7 +210,7 @@ const QueryBuilder = (props) => {
    */
   const onPropChange = (prop, value, ruleId) => {
     const rootCopy = { ...root };
-    const rule = _findRule(ruleId, rootCopy);
+    const rule = findRule(ruleId, rootCopy);
     Object.assign(rule, { [prop]: value });
 
     // Reset operator and value for field change
@@ -256,7 +229,7 @@ const QueryBuilder = (props) => {
    */
   const onRuleRemove = (ruleId, parentId) => {
     const rootCopy = { ...root };
-    const parent = _findRule(parentId, rootCopy);
+    const parent = findRule(parentId, rootCopy);
     const index = parent.rules.findIndex((x) => x.id === ruleId);
 
     parent.rules.splice(index, 1);
@@ -272,7 +245,7 @@ const QueryBuilder = (props) => {
    */
   const onGroupRemove = (groupId, parentId) => {
     const rootCopy = { ...root };
-    const parent = _findRule(parentId, rootCopy);
+    const parent = findRule(parentId, rootCopy);
     const index = parent.rules.findIndex((x) => x.id === groupId);
 
     parent.rules.splice(index, 1);
@@ -281,41 +254,8 @@ const QueryBuilder = (props) => {
     _notifyQueryChange();
   };
 
-  const _getLevel = (id, index, query) => {
-    let foundAtIndex = -1;
-    if (query.id === id) {
-      foundAtIndex = index;
-    } else if (isRuleGroup(query)) {
-      query.rules.forEach((rule) => {
-        if (foundAtIndex === -1) {
-          let indexForRule = index;
-          if (isRuleGroup(rule)) indexForRule++;
-          foundAtIndex = _getLevel(id, indexForRule, rule);
-        }
-      });
-    }
-    return foundAtIndex;
-  };
-
-  const getLevel = (id) => {
-    return _getLevel(id, 0, root);
-  };
-
-  const _findRule = (id, parent) => {
-    if (parent.id === id) {
-      return parent;
-    }
-
-    for (const rule of parent.rules) {
-      if (rule.id === id) {
-        return rule;
-      } else if (isRuleGroup(rule)) {
-        const subRule = _findRule(id, rule);
-        if (subRule) {
-          return subRule;
-        }
-      }
-    }
+  const getLevelFromRoot = (id) => {
+    return getLevel(id, 0, root);
   };
 
   const _notifyQueryChange = () => {
@@ -331,7 +271,7 @@ const QueryBuilder = (props) => {
   const schema = {
     fields: props.fields,
     operators: { ...defaultOperators, ...props.operators },
-    combinators: props.combinators || defaultCombinators,
+    combinators: props.combinators,
     classNames: { ...defaultControlClassnames, ...props.controlClassnames },
     createRule,
     createRuleGroup,
@@ -340,7 +280,7 @@ const QueryBuilder = (props) => {
     onRuleRemove,
     onGroupRemove,
     onPropChange,
-    getLevel,
+    getLevel: getLevelFromRoot,
     isRuleGroup,
     controls: { ...defaultControlElements, ...props.controlElements },
     getOperators
