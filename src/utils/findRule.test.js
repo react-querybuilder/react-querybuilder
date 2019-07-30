@@ -39,4 +39,8 @@ describe('findRule', () => {
   it('should find a sub rule', () => {
     expect(findRule('555', query)).to.be.a('object');
   });
+
+  it('should not find an invalid id', () => {
+    expect(findRule('777', query)).to.be.undefined;
+  });
 });

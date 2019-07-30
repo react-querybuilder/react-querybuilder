@@ -177,11 +177,7 @@ const QueryBuilder = (props) => {
   const onRuleAdd = (rule, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    if (parent) {
-      parent.rules.push(rule);
-    } else {
-      rootCopy.rules.push(createRule());
-    }
+    parent.rules.push(rule);
     setRoot(rootCopy);
     _notifyQueryChange();
   };
@@ -194,11 +190,7 @@ const QueryBuilder = (props) => {
   const onGroupAdd = (group, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    if (parent) {
-      parent.rules.push(group);
-    } else {
-      rootCopy.rules.push(createRuleGroup());
-    }
+    parent.rules.push(group);
     setRoot(rootCopy);
     _notifyQueryChange();
   };

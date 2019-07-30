@@ -250,12 +250,19 @@ describe('<QueryBuilder />', () => {
     });
 
     afterEach(() => {
-      getOperators.resetHistory();
       wrapper.unmount();
+      getOperators.resetHistory();
     });
 
     it('should invoke custom getOperators function', () => {
-      expect(getOperators.callCount).to.be.greaterThan(0); // 1 Rule in query
+      expect(getOperators.callCount).to.be.greaterThan(0);
+    });
+
+    it('should handle invalid getOperators function', () => {
+      wrapper.unmount();
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
+      const operators = wrapper.find('.rule-operators option');
+      expect(operators.first().props().value).to.equal('null');
     });
   });
 
@@ -328,6 +335,24 @@ describe('<QueryBuilder />', () => {
         .simulate('change', { target: { value: 'field2' } });
 
       expect(onQueryChange.getCall(2).args[0].rules[0].field).to.equal('field2');
+    });
+
+    it('should create a new rule and change the operator', () => {
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('Rule').length).to.equal(1);
+      expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
+      expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
+
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '!=' } });
+
+      expect(onQueryChange.getCall(2).args[0].rules[0].operator).to.equal('!=');
     });
   });
 });
