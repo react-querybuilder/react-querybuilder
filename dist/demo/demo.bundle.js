@@ -29859,6 +29859,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controls */ "./src/controls/index.js");
 /* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -29872,6 +29873,7 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -30016,44 +30018,12 @@ var defaultControlElements = {
 
 var QueryBuilder = function QueryBuilder(props) {
   /**
-   * Generates a valid query object
-   * @param {RuleGroupType} query Unvalidated query
-   * @returns {RuleGroupType}
-   */
-  var generateValidQuery = function generateValidQuery(query) {
-    if (isRuleGroup(query)) {
-      return {
-        id: query.id || "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
-        rules: query.rules.map(function (rule) {
-          return generateValidQuery(rule);
-        }),
-        combinator: query.combinator
-      };
-    }
-
-    return _objectSpread({
-      id: query.id || "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()())
-    }, query);
-  };
-  /**
    * Gets the initial query
    * @returns {RuleGroupType}
    */
-
-
   var getInitialQuery = function getInitialQuery() {
     var query = props.query;
-    return query && generateValidQuery(query) || createRuleGroup();
-  };
-  /**
-   * Determines if this is a Rule or RuleGroup
-   * @param {RuleType} rule
-   * @returns {boolean}
-   */
-
-
-  var isRuleGroup = function isRuleGroup(rule) {
-    return !!(rule.combinator && rule.rules);
+    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_6__["generateValidQuery"])(query) || createRuleGroup();
   };
   /**
    * @returns {RuleType}
@@ -30061,7 +30031,7 @@ var QueryBuilder = function QueryBuilder(props) {
 
 
   var createRule = function createRule() {
-    var fields = schema.fields;
+    var fields = props.fields;
     var field = fields[0].name;
     return {
       id: "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
@@ -30107,14 +30077,8 @@ var QueryBuilder = function QueryBuilder(props) {
   var onRuleAdd = function onRuleAdd(rule, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = _findRule(parentId, rootCopy);
-
-    if (parent) {
-      parent.rules.push(rule);
-    } else {
-      rootCopy.rules.push(createRule());
-    }
-
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    parent.rules.push(rule);
     setRoot(rootCopy);
 
     _notifyQueryChange();
@@ -30129,14 +30093,8 @@ var QueryBuilder = function QueryBuilder(props) {
   var onGroupAdd = function onGroupAdd(group, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = _findRule(parentId, rootCopy);
-
-    if (parent) {
-      parent.rules.push(group);
-    } else {
-      rootCopy.rules.push(createRuleGroup());
-    }
-
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    parent.rules.push(group);
     setRoot(rootCopy);
 
     _notifyQueryChange();
@@ -30151,8 +30109,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onPropChange = function onPropChange(prop, value, ruleId) {
     var rootCopy = _objectSpread({}, root);
 
-    var rule = _findRule(ruleId, rootCopy);
-
+    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(ruleId, rootCopy);
     Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and value for field change
 
     if (prop === 'field') {
@@ -30176,8 +30133,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onRuleRemove = function onRuleRemove(ruleId, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = _findRule(parentId, rootCopy);
-
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
     var index = parent.rules.findIndex(function (x) {
       return x.id === ruleId;
     });
@@ -30196,8 +30152,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onGroupRemove = function onGroupRemove(groupId, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = _findRule(parentId, rootCopy);
-
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
     var index = parent.rules.findIndex(function (x) {
       return x.id === groupId;
     });
@@ -30206,70 +30161,19 @@ var QueryBuilder = function QueryBuilder(props) {
 
     _notifyQueryChange();
   };
+  /**
+   * Gets the level of the rule with the provided ID
+   * @param {string} id Rule ID
+   */
 
-  var _getLevel = function _getLevel(id, index, root) {
-    var isRuleGroup = schema.isRuleGroup;
-    var foundAtIndex = -1;
 
-    if (root.id === id) {
-      foundAtIndex = index;
-    } else if (isRuleGroup(root)) {
-      root.rules.forEach(function (rule) {
-        if (foundAtIndex === -1) {
-          var indexForRule = index;
-          if (isRuleGroup(rule)) indexForRule++;
-          foundAtIndex = _getLevel(id, indexForRule, rule);
-        }
-      });
-    }
-
-    return foundAtIndex;
+  var getLevelFromRoot = function getLevelFromRoot(id) {
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_6__["getLevel"])(id, 0, root);
   };
+  /**
+   * Executes the `onQueryChange` function, if provided
+   */
 
-  var getLevel = function getLevel(id) {
-    return _getLevel(id, 0, root);
-  };
-
-  var _findRule = function _findRule(id, parent) {
-    var isRuleGroup = schema.isRuleGroup;
-
-    if (parent.id === id) {
-      return parent;
-    }
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var rule = _step.value;
-
-        if (rule.id === id) {
-          return rule;
-        } else if (isRuleGroup(rule)) {
-          var subRule = _findRule(id, rule);
-
-          if (subRule) {
-            return subRule;
-          }
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-  };
 
   var _notifyQueryChange = function _notifyQueryChange() {
     var onQueryChange = props.onQueryChange;
@@ -30285,10 +30189,10 @@ var QueryBuilder = function QueryBuilder(props) {
       root = _useState2[0],
       setRoot = _useState2[1];
 
-  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
+  var schema = {
     fields: props.fields,
     operators: _objectSpread({}, defaultOperators, {}, props.operators),
-    combinators: props.combinators || defaultCombinators,
+    combinators: props.combinators,
     classNames: _objectSpread({}, defaultControlClassnames, {}, props.controlClassnames),
     createRule: createRule,
     createRuleGroup: createRuleGroup,
@@ -30297,25 +30201,15 @@ var QueryBuilder = function QueryBuilder(props) {
     onRuleRemove: onRuleRemove,
     onGroupRemove: onGroupRemove,
     onPropChange: onPropChange,
-    getLevel: getLevel,
-    isRuleGroup: isRuleGroup,
+    getLevel: getLevelFromRoot,
+    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_6__["isRuleGroup"],
     controls: _objectSpread({}, defaultControlElements, {}, props.controlElements),
     getOperators: getOperators
-  }),
-      _useState4 = _slicedToArray(_useState3, 2),
-      schema = _useState4[0],
-      setSchema = _useState4[1]; // Set the query state when a new query prop comes in
-
+  }; // Set the query state when a new query prop comes in
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
-    setRoot(generateValidQuery(props.query));
-  }, [props.query]); // Set the schema when a new fields prop comes in
-
-  Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
-    setSchema(_objectSpread({}, schema, {
-      fields: props.fields
-    }));
-  }, [props.fields]); // Notify a query change on mount
+    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_6__["generateValidQuery"])(props.query || getInitialQuery()));
+  }, [props.query]); // Notify a query change on mount
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
     _notifyQueryChange();
@@ -30785,6 +30679,191 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/utils/findRule.js":
+/*!*******************************!*\
+  !*** ./src/utils/findRule.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! . */ "./src/utils/index.js");
+
+
+var findRule = function findRule(id, parent) {
+  if (parent.id === id) {
+    return parent;
+  }
+
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = parent.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var rule = _step.value;
+
+      if (rule.id === id) {
+        return rule;
+      } else if (Object(___WEBPACK_IMPORTED_MODULE_0__["isRuleGroup"])(rule)) {
+        var subRule = findRule(id, rule);
+
+        if (subRule) {
+          return subRule;
+        }
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+        _iterator["return"]();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (findRule);
+
+/***/ }),
+
+/***/ "./src/utils/generateValidQuery.js":
+/*!*****************************************!*\
+  !*** ./src/utils/generateValidQuery.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! . */ "./src/utils/index.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+/**
+ * Generates a valid query object
+ * @param {RuleGroupType} query Unvalidated query
+ * @returns {RuleGroupType}
+ */
+
+var generateValidQuery = function generateValidQuery(query) {
+  if (Object(___WEBPACK_IMPORTED_MODULE_1__["isRuleGroup"])(query)) {
+    return {
+      id: query.id || "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()()),
+      rules: query.rules.map(function (rule) {
+        return generateValidQuery(rule);
+      }),
+      combinator: query.combinator
+    };
+  }
+
+  return _objectSpread({
+    id: query.id || "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()())
+  }, query);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (generateValidQuery);
+
+/***/ }),
+
+/***/ "./src/utils/getLevel.js":
+/*!*******************************!*\
+  !*** ./src/utils/getLevel.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! . */ "./src/utils/index.js");
+
+
+var getLevel = function getLevel(id, index, query) {
+  var foundAtIndex = -1;
+
+  if (query.id === id) {
+    foundAtIndex = index;
+  } else if (Object(___WEBPACK_IMPORTED_MODULE_0__["isRuleGroup"])(query)) {
+    query.rules.forEach(function (rule) {
+      if (foundAtIndex === -1) {
+        var indexForRule = index;
+        if (Object(___WEBPACK_IMPORTED_MODULE_0__["isRuleGroup"])(rule)) indexForRule++;
+        foundAtIndex = getLevel(id, indexForRule, rule);
+      }
+    });
+  }
+
+  return foundAtIndex;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getLevel);
+
+/***/ }),
+
+/***/ "./src/utils/index.js":
+/*!****************************!*\
+  !*** ./src/utils/index.js ***!
+  \****************************/
+/*! exports provided: findRule, generateValidQuery, getLevel, isRuleGroup */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _findRule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./findRule */ "./src/utils/findRule.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "findRule", function() { return _findRule__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+/* harmony import */ var _generateValidQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generateValidQuery */ "./src/utils/generateValidQuery.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "generateValidQuery", function() { return _generateValidQuery__WEBPACK_IMPORTED_MODULE_1__["default"]; });
+
+/* harmony import */ var _getLevel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getLevel */ "./src/utils/getLevel.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getLevel", function() { return _getLevel__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+
+/* harmony import */ var _isRuleGroup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isRuleGroup */ "./src/utils/isRuleGroup.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "isRuleGroup", function() { return _isRuleGroup__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./src/utils/isRuleGroup.js":
+/*!**********************************!*\
+  !*** ./src/utils/isRuleGroup.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ * Determines if this is a Rule or RuleGroup
+ * @param {RuleType|RuleGroupType} ruleOrGroup
+ * @returns {boolean}
+ */
+var isRuleGroup = function isRuleGroup(ruleOrGroup) {
+  return !!(ruleOrGroup.combinator && ruleOrGroup.rules);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (isRuleGroup);
 
 /***/ })
 
