@@ -162,7 +162,9 @@ export default class QueryBuilder extends React.Component {
     const { fields, operators, combinators, controlElements, controlClassnames } = this.props;
     // const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
     
-    const classNames = Object.keys(QueryBuilder.defaultControlClassnames).concat(Object.keys(controlClassnames))
+    const classNames = !controlClassnames ? 
+      QueryBuilder.defaultControlClassnames : 
+      Object.keys(QueryBuilder.defaultControlClassnames).concat(Object.keys(controlClassnames))
       // iterate to generate the object
       .reduce(function (obj, k) {
         // define object property, treat as 0 if not defined
