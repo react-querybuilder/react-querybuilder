@@ -3,8 +3,17 @@ import cloneDeep from 'lodash/cloneDeep';
 import React from 'react';
 import PropTypes from 'prop-types';
 import RuleGroup from './RuleGroup';
-import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
-import { Close, Add, PlaylistAdd } from '@material-ui/icons';
+import { 
+  ActionElement, 
+  ValueEditor, 
+  ValueSelector, 
+  CombinatorSelector 
+} from './controls/index';
+import { 
+  Close, 
+  Add, 
+  PlaylistAdd 
+} from '@material-ui/icons';
 
 export default class QueryBuilder extends React.Component {
   static get defaultProps() {
@@ -68,8 +77,8 @@ export default class QueryBuilder extends React.Component {
         icon : <Close/>,
       },
       removeGroup: {
-        label: 'x',
-        title: 'Remove group'
+        title: 'Remove group',
+        icon : <Close/>,
       },
       addRule: {
         title: 'Add rule',
@@ -110,10 +119,10 @@ export default class QueryBuilder extends React.Component {
       queryBuilder: '',
 
       ruleGroup: '',
-      combinators: '',
+      combinators: 'combinator',
       addRule: 'ruleButtons',
       addGroup: 'addGroupButton',
-      removeGroup: '',
+      removeGroup: 'ruleButtons',
 
       rule: '',
       fields: 'fields',
@@ -129,7 +138,7 @@ export default class QueryBuilder extends React.Component {
       removeGroupAction: ActionElement,
       addRuleAction: ActionElement,
       removeRuleAction: ActionElement,
-      combinatorSelector: ValueSelector,
+      combinatorSelector: CombinatorSelector,
       fieldSelector: ValueSelector,
       operatorSelector: ValueSelector,
       valueEditor: ValueEditor

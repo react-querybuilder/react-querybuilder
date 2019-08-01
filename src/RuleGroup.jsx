@@ -22,45 +22,47 @@ export default class RuleGroup extends React.Component {
     const level = getLevel(this.props.id);
     return (
       <div className={`ruleGroup ${classNames.ruleGroup}`}>
-        {React.createElement(controls.combinatorSelector, {
-          options: combinators,
-          value: combinator,
-          title: translations.combinators.title,
-          className: `ruleGroup-combinators ${classNames.combinators}`,
-          icon : translations.combinators.icon,
-          handleOnChange: this.onCombinatorChange,
-          rules: rules,
-          level: level
-        })}
-        {React.createElement(controls.addRuleAction, {
-          label: translations.addRule.label,
-          title: translations.addRule.title,
-          className: `ruleGroup-addRule ${classNames.addRule}`,
-          icon : translations.addRule.icon,
-          handleOnClick: this.addRule,
-          rules: rules,
-          level: level
-        })}
-        {React.createElement(controls.addGroupAction, {
-          label: translations.addGroup.label,
-          title: translations.addGroup.title,
-          className: `ruleGroup-addGroup ${classNames.addGroup}`,
-          icon : translations.addGroup.icon,
-          handleOnClick: this.addGroup,
-          rules: rules,
-          level: level
-        })}
-        {this.hasParentGroup()
-          ? React.createElement(controls.removeGroupAction, {
-              label: translations.removeGroup.label,
-              title: translations.removeGroup.title,
-              className: `ruleGroup-remove ${classNames.removeGroup}`,
-              icon : translations.removeGroup.icon,
-              handleOnClick: this.removeGroup,
-              rules: rules,
-              level: level
-            })
-          : null}
+        <div style={{display : 'flex'}}>
+          {React.createElement(controls.combinatorSelector, {
+            options: combinators,
+            value: combinator,
+            title: translations.combinators.title,
+            className: `ruleGroup-combinators ${classNames.combinators}`,
+            icon : translations.combinators.icon,
+            handleOnChange: this.onCombinatorChange,
+            rules: rules,
+            level: level
+          })}
+          {React.createElement(controls.addRuleAction, {
+            label: translations.addRule.label,
+            title: translations.addRule.title,
+            className: `ruleGroup-addRule ${classNames.addRule}`,
+            icon : translations.addRule.icon,
+            handleOnClick: this.addRule,
+            rules: rules,
+            level: level
+          })}
+          {React.createElement(controls.addGroupAction, {
+            label: translations.addGroup.label,
+            title: translations.addGroup.title,
+            className: `ruleGroup-addGroup ${classNames.addGroup}`,
+            icon : translations.addGroup.icon,
+            handleOnClick: this.addGroup,
+            rules: rules,
+            level: level
+          })}
+          {this.hasParentGroup()
+            ? React.createElement(controls.removeGroupAction, {
+                label: translations.removeGroup.label,
+                title: translations.removeGroup.title,
+                className: `ruleGroup-remove ${classNames.removeGroup}`,
+                icon : translations.removeGroup.icon,
+                handleOnClick: this.removeGroup,
+                rules: rules,
+                level: level
+              })
+            : null}
+        </div>
         {rules.map((r) => {
           return isRuleGroup(r) ? (
             <RuleGroup

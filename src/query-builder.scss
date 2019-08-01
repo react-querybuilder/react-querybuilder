@@ -35,3 +35,30 @@
         padding-bottom : 10px
     }
 }
+
+.combinator {
+
+    border : 1.2px solid lightgray;
+    border-radius: 4px;
+
+    .toggle {
+        background: lightgrey
+    }
+
+    .andButton {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .orButton {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+
+    button {
+        height: 35px;
+        &:hover {
+            background: lightgrey
+        }
+    }
+}

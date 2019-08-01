@@ -32,6 +32,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^5.2.0",
     "chai": "^4.1.2",
+    "classnames": "^2.2.6",
     "codecov.io": "^0.1.6",
     "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^3.1.0",
