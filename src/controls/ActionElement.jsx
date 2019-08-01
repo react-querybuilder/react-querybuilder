@@ -1,16 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from '@material-ui/core/Button';
+import { IconButton } from '@material-ui/core';
 
 const ActionElement = (props) => {
-  const {label, className, handleOnClick, title} = props;
+  const {label, className, handleOnClick, title, icon} = props;
 
-  return (
-    <button className={className}
-            title={title}
-            onClick={e=>handleOnClick(e)}>
-      {label}
-    </button>
-  );
+  if(!icon)
+    return (
+      <Button className={className} title={title} onClick={handleOnClick}>
+        {label || ''}
+      </Button>
+    );
+  else
+    return (
+      <IconButton className={className} title={title} onClick={handleOnClick}>
+        {icon}
+      </IconButton>
+    );
 }
 
 ActionElement.displayName = 'ActionElement';

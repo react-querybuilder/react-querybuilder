@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RuleGroup from './RuleGroup';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
+import { Close, Add, PlaylistAdd } from '@material-ui/icons';
 
 export default class QueryBuilder extends React.Component {
   static get defaultProps() {
@@ -63,20 +64,21 @@ export default class QueryBuilder extends React.Component {
         title: 'Value'
       },
       removeRule: {
-        label: 'x',
-        title: 'Remove rule'
+        title: 'Remove rule',
+        icon : <Close/>,
       },
       removeGroup: {
         label: 'x',
         title: 'Remove group'
       },
       addRule: {
-        label: '+Rule',
-        title: 'Add rule'
+        title: 'Add rule',
+        icon : <Add/>,
+
       },
       addGroup: {
-        label: '+Group',
-        title: 'Add group'
+        title: 'Add group',
+        icon : <PlaylistAdd/>,
       },
       combinators: {
         title: 'Combinators'
@@ -104,21 +106,21 @@ export default class QueryBuilder extends React.Component {
   }
 
   static get defaultControlClassnames() {
-    return {
+    return { 
       queryBuilder: '',
 
       ruleGroup: '',
       combinators: '',
-      addRule: '',
-      addGroup: '',
+      addRule: 'ruleButtons',
+      addGroup: 'addGroupButton',
       removeGroup: '',
 
       rule: '',
-      fields: '',
-      operators: '',
-      value: '',
-      removeRule: ''
-    };
+      fields: 'fields',
+      operators: 'fields',
+      value: 'value',
+      removeRule: 'ruleButtons'
+    }
   }
 
   static get defaultControlElements() {
@@ -149,7 +151,18 @@ export default class QueryBuilder extends React.Component {
 
   componentWillMount() {
     const { fields, operators, combinators, controlElements, controlClassnames } = this.props;
-    const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
+    // const classNames = Object.assign({}, QueryBuilder.defaultControlClassnames, controlClassnames);
+    
+    const classNames = Object.keys(QueryBuilder.defaultControlClassnames).concat(Object.keys(controlClassnames))
+      // iterate to generate the object
+      .reduce(function (obj, k) {
+        // define object property, treat as 0 if not defined
+        obj[k] = (QueryBuilder.defaultControlClassnames[k] || '') + ' ' + (controlClassnames[k] || '');
+        // return object difference
+        return obj;
+        // set initial value as an empty object
+      }, {})
+    
     const controls = Object.assign({}, QueryBuilder.defaultControlElements, controlElements);
     this.setState({
       root: this.getInitialQuery(),

@@ -113,7 +113,21 @@ class RootView extends React.Component {
             <QueryBuilder
               query={this.state.query}
               fields={this.state.fields}
-              controlClassnames={{ fields: 'form-control' }}
+              controlClassnames={{
+                // queryBuilder: '',
+          
+                // ruleGroup: '',
+                // combinators: '',
+                // addRule: '',
+                // addGroup: '',
+                // removeGroup: '',
+          
+                // rule: '',
+                // fields: '',
+                // operators: '',
+                value: 'sa',
+                // removeRule: ''
+              }}
               onQueryChange={this.handleQueryChange}
             />
           </div>

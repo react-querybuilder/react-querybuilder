@@ -1,18 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TextField } from '@material-ui/core';
 
 const ValueEditor = (props) => {
-  const {field, operator, value, handleOnChange, title} = props;
+  const {field, operator, value, handleOnChange, className, title} = props;
+
+  const onChangeBinder = (e) => {
+    handleOnChange(e.target.value)
+  }
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   return (
-    <input type="text"
-           value={value}
-           title={title}
-           onChange={e=>handleOnChange(e.target.value)} />
+    // <input type="text"
+    //        value={value}
+    //        title={title}
+    //        onChange={e=>handleOnChange(e.target.value)} />
+    <TextField
+      className={className}
+      value={value}
+      onChange={onChangeBinder}
+      variant="outlined"
+    />
   );
 };
 

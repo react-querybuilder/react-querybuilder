@@ -1,24 +1,37 @@
 import uniqueId from 'uuid/v4';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Select, MenuItem, InputLabel, FormControl, OutlinedInput } from '@material-ui/core';
 
 const ValueSelector = (props) => {
   const { value, options, className, handleOnChange, title } = props;
 
+  const onChangeBinder = (e) => {
+    handleOnChange(e.target.value)
+  }
+
   return (
-    <select className={className}
-            value={value}
-            title={title}
-            onChange={e=>handleOnChange(e.target.value)}>
-      {
-        options.map(option=> {
-          const key = option.id ? `key-${option.id}` : `key-${option.name}`;
-          return (
-            <option key={key} value={option.name}>{option.label}</option>
-          );
-        })
-      }
-    </select>
+    <FormControl variant="outlined">
+      <Select
+        variant="outlined"
+        className={className}
+        value={value}
+        title={title}
+        onChange={onChangeBinder}
+
+        input={<OutlinedInput name={value} id={`outlined-${title}`}/>}
+      >
+        {
+          options.map(option=> {
+            const key = option.id ? `key-${option.id}` : `key-${option.name}`;
+            return (
+              <MenuItem key={key} value={option.name}>{option.label}</MenuItem> 
+            );
+          })
+        }
+      </Select>
+    </FormControl>
+    
   );
 }
 

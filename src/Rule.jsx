@@ -53,6 +53,7 @@ export default class Rule extends React.Component {
           label: translations.removeRule.label,
           title: translations.removeRule.title,
           className: `rule-remove ${classNames.removeRule}`,
+          icon : translations.removeRule.icon,
           handleOnClick: this.removeRule,
           level: level
         })}

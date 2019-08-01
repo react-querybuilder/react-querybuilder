@@ -27,6 +27,7 @@ export default class RuleGroup extends React.Component {
           value: combinator,
           title: translations.combinators.title,
           className: `ruleGroup-combinators ${classNames.combinators}`,
+          icon : translations.combinators.icon,
           handleOnChange: this.onCombinatorChange,
           rules: rules,
           level: level
@@ -35,6 +36,7 @@ export default class RuleGroup extends React.Component {
           label: translations.addRule.label,
           title: translations.addRule.title,
           className: `ruleGroup-addRule ${classNames.addRule}`,
+          icon : translations.addRule.icon,
           handleOnClick: this.addRule,
           rules: rules,
           level: level
@@ -43,6 +45,7 @@ export default class RuleGroup extends React.Component {
           label: translations.addGroup.label,
           title: translations.addGroup.title,
           className: `ruleGroup-addGroup ${classNames.addGroup}`,
+          icon : translations.addGroup.icon,
           handleOnClick: this.addGroup,
           rules: rules,
           level: level
@@ -52,6 +55,7 @@ export default class RuleGroup extends React.Component {
               label: translations.removeGroup.label,
               title: translations.removeGroup.title,
               className: `ruleGroup-remove ${classNames.removeGroup}`,
+              icon : translations.removeGroup.icon,
               handleOnClick: this.removeGroup,
               rules: rules,
               level: level
