@@ -1,7 +1,8 @@
+import { mount } from 'enzyme';
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 import QueryBuilder from './QueryBuilder';
-var sinon = require('sinon');
+const sinon = require('sinon');
 
 describe('<QueryBuilder />', () => {
   it('should exist', () => {
@@ -9,26 +10,14 @@ describe('<QueryBuilder />', () => {
   });
 
   describe('when rendered', () => {
-    let wrapper, cmpWillMount, cmpDidMount;
+    let wrapper;
 
     beforeEach(() => {
-      cmpWillMount = sinon.spy(QueryBuilder.prototype, 'componentWillMount');
-      cmpDidMount = sinon.spy(QueryBuilder.prototype, 'componentDidMount');
       wrapper = mount(<QueryBuilder />);
     });
 
     afterEach(() => {
-      cmpWillMount.restore();
-      cmpDidMount.restore();
       wrapper.unmount();
-    });
-
-    it('calls componentWillMount', () => {
-      expect(cmpWillMount.calledOnce).to.equal(true);
-    });
-
-    it('calls componentDidMount', () => {
-      expect(cmpDidMount.calledOnce).to.equal(true);
     });
 
     it('should render the root RuleGroup', () => {
@@ -46,51 +35,22 @@ describe('<QueryBuilder />', () => {
 
     beforeEach(() => {
       queryChange = sinon.spy();
-      wrapper = mount(<QueryBuilder onQueryChange={queryChange} />);
+      act(() => {
+        wrapper = mount(<QueryBuilder onQueryChange={queryChange} />);
+      });
     });
 
     afterEach(() => {
-      queryChange.resetHistory();
       wrapper.unmount();
-    });
-
-    it('should call onQueryChange', () => {
-      wrapper.instance()._notifyQueryChange(() => {});
-      wrapper.update();
-      expect(wrapper.props().query).to.equal(null);
+      queryChange.resetHistory();
     });
 
     it('should call onQueryChange with query', () => {
       // Spy is called initially when mounting component (once)
       expect(queryChange.calledOnce).to.equal(true);
-
-      const query = wrapper.state().root;
-      wrapper.instance()._notifyQueryChange(() => {});
-      wrapper.update();
-
-      expect(queryChange.callCount).to.equal(2);
+      const initialID = wrapper.find('RuleGroup').props().id;
+      const query = { id: initialID, combinator: 'and', rules: [] };
       expect(queryChange.calledWith(query)).to.equal(true);
-    });
-  });
-
-  describe('when initial query, with ID, is provided', () => {
-    const queryWithID = {
-      id: 'g-12345',
-      combinator: 'and',
-      rules: [
-        {
-          id: 'r-12345',
-          field: 'firstName',
-          value: 'Test',
-          operator: '='
-        }
-      ]
-    };
-
-    it('should not generate new ID if query provides ID', () => {
-      const validQuery = QueryBuilder.prototype.generateValidQuery(queryWithID);
-      expect(validQuery.id).to.equal('g-12345');
-      expect(validQuery.rules[0].id).to.equal('r-12345');
     });
   });
 
@@ -114,18 +74,13 @@ describe('<QueryBuilder />', () => {
     ];
 
     beforeEach(() => {
-      wrapper = mount(<QueryBuilder query={queryWithoutID} fields={fields} />);
+      act(() => {
+        wrapper = mount(<QueryBuilder query={queryWithoutID} fields={fields} />);
+      });
     });
 
     afterEach(() => {
       wrapper.unmount();
-    });
-
-    it('should generate IDs if missing in query', () => {
-      expect(queryWithoutID).to.not.haveOwnProperty('id');
-      const validQuery = QueryBuilder.prototype.generateValidQuery(queryWithoutID);
-      expect(validQuery).haveOwnProperty('id');
-      expect(validQuery.rules[0]).haveOwnProperty('id');
     });
 
     it('should contain a <Rule />', () => {
@@ -162,7 +117,7 @@ describe('<QueryBuilder />', () => {
   });
 
   describe('when receiving new props', () => {
-    let wrapper, cmpWillReceiveProps;
+    let wrapper;
     const newFields = [
       { name: 'domainName', label: 'Domain Name' },
       { name: 'ownerName', label: 'Owner Name' }
@@ -180,33 +135,17 @@ describe('<QueryBuilder />', () => {
     };
 
     beforeEach(() => {
-      cmpWillReceiveProps = sinon.spy(QueryBuilder.prototype, 'componentWillReceiveProps');
-      wrapper = mount(<QueryBuilder />);
+      act(() => {
+        wrapper = mount(<QueryBuilder />);
+      });
     });
 
     afterEach(() => {
-      QueryBuilder.prototype.componentWillReceiveProps.restore();
       wrapper.unmount();
     });
 
-    it('calls componentWillRecieveProps', () => {
-      expect(cmpWillReceiveProps.called).to.equal(false);
-
-      wrapper.setProps({
-        query: newQuery,
-        fields: newFields
-      });
-
-      expect(cmpWillReceiveProps.calledOnce).to.equal(true);
-      expect(wrapper.props().query).to.equal(newQuery);
-      expect(wrapper.find('RuleGroup')).to.have.length(1);
-
-      const rule = wrapper.find('Rule');
-      expect(rule.find('input').props().value).to.equal('www.example.com');
-    });
-
     it('should generate new ID in state when receiving new props (query) with missing IDs', () => {
-      const initialID = wrapper.state().root.id;
+      const initialID = wrapper.find('RuleGroup').props().id;
 
       expect(wrapper.props().query).to.be.null;
       expect(initialID).to.not.be.undefined;
@@ -216,27 +155,14 @@ describe('<QueryBuilder />', () => {
         query: newQuery,
         fields: newFields
       });
+      wrapper.update();
 
       expect(wrapper.props().query).to.not.be.null;
       expect(wrapper.props().query).to.be.an('object');
       expect(wrapper.props().query.id).to.be.undefined;
 
-      expect(wrapper.state().root.id).to.be.a('string');
-      expect(wrapper.state().root.rules[0].id).to.be.a('string');
-    });
-
-    it('should keep same state if same props are passed (root/fields)', () => {
-      const wrp = mount(<QueryBuilder query={newQuery} fields={newFields} />);
-      const stateQuery1 = wrp.state().root;
-      const stateFields1 = wrp.state().schema.fields;
-
-      wrp.setProps({
-        query: newQuery,
-        fields: newFields
-      });
-
-      expect(wrp.state().root).to.equal(stateQuery1);
-      expect(wrp.state().schema.fields).to.equal(stateFields1);
+      expect(wrapper.find('RuleGroup').props().id).to.be.a('string');
+      expect(wrapper.find('RuleGroup').props().rules[0].id).to.be.a('string');
     });
   });
 
@@ -276,11 +202,6 @@ describe('<QueryBuilder />', () => {
       wrapper.unmount();
     });
 
-    it('should get operators for field', () => {
-      let operators = wrapper.state('schema').getOperators('firstName');
-      expect(operators.length).to.equal(4);
-    });
-
     it('should use the given operators', () => {
       const operatorOptions = wrapper.find('Rule').find('.rule-operators option');
       expect(operatorOptions.length).to.equal(4);
@@ -318,7 +239,7 @@ describe('<QueryBuilder />', () => {
     };
 
     beforeEach(() => {
-      getOperators = sinon.spy((fields, wada=123) => {
+      getOperators = sinon.spy((fields, wada = 123) => {
         return [
           { name: 'custom-operator-1', label: 'Op. 1' },
           { name: 'custom-operator-2', label: 'Op. 2' },
@@ -329,78 +250,109 @@ describe('<QueryBuilder />', () => {
     });
 
     afterEach(() => {
-      getOperators.resetHistory();
       wrapper.unmount();
+      getOperators.resetHistory();
     });
 
     it('should invoke custom getOperators function', () => {
-      expect(getOperators.callCount).to.equal(1); // 1 Rule in query
-      wrapper.instance().getOperators();
-      expect(getOperators.callCount).to.equal(2);
+      expect(getOperators.callCount).to.be.greaterThan(0);
+    });
+
+    it('should handle invalid getOperators function', () => {
+      wrapper.unmount();
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
+      const operators = wrapper.find('.rule-operators option');
+      expect(operators.first().props().value).to.equal('null');
     });
   });
 
-  describe('when calculating the level of a rule', function() {
-    let wrapper;
+  describe('actions', () => {
+    let wrapper, onQueryChange;
+    const fields = [{ name: 'Field 1', value: 'field1' }, { name: 'Field 2', value: 'field2' }];
 
     beforeEach(() => {
-      const fields = [
-        { name: 'firstName', label: 'First Name' },
-        { name: 'lastName', label: 'Last Name' },
-        { name: 'age', label: 'Age' }
-      ];
-
-      const query = {
-        combinator: 'and',
-        id: '111',
-        rules: [
-          {
-            id: '222',
-            field: 'firstName',
-            value: 'Test',
-            operator: '='
-          },
-          {
-            id: '333',
-            field: 'firstName',
-            value: 'Test',
-            operator: '='
-          },
-          {
-            combinator: 'and',
-            id: '444',
-            rules: [
-              {
-                id: '555',
-                field: 'firstName',
-                value: 'Test',
-                operator: '='
-              }
-            ]
-          }
-        ]
-      };
-
-      wrapper = mount(<QueryBuilder query={query} fields={fields} />);
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
     });
 
     afterEach(() => {
       wrapper.unmount();
+      onQueryChange.resetHistory();
     });
 
-    it('should be 0 for the top level', function() {
-      expect(wrapper.state('schema').getLevel('111')).to.equal(0);
-      expect(wrapper.state('schema').getLevel('222')).to.equal(0);
-      expect(wrapper.state('schema').getLevel('333')).to.equal(0);
+    it('should create a new rule and remove that rule', () => {
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('Rule').length).to.equal(1);
+      expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
+      expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
+
+      wrapper
+        .find('.rule-remove')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('Rule').length).to.equal(0);
+      expect(onQueryChange.getCall(2).args[0].rules).to.have.length(0);
     });
 
-    it('should be 1 for the second level', function() {
-      expect(wrapper.state('schema').getLevel('444')).to.equal(1);
-      expect(wrapper.state('schema').getLevel('555')).to.equal(1);
+    it('should create a new group and remove that group', () => {
+      wrapper
+        .find('.ruleGroup-addGroup')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('RuleGroup').length).to.equal(2);
+      expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
+      expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
+      expect(onQueryChange.getCall(1).args[0].rules[0].combinator).to.not.be.undefined;
+
+      wrapper
+        .find('.ruleGroup-remove')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('RuleGroup').length).to.equal(1);
+      expect(onQueryChange.getCall(2).args[0].rules).to.have.length(0);
     });
 
-    it('should handle an invalid id', function() {
-      expect(wrapper.state('schema').getLevel('546')).to.equal(-1);
+    it('should create a new rule and change the fields', () => {
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('Rule').length).to.equal(1);
+      expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
+      expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
+
+      wrapper
+        .find('.rule-fields')
+        .first()
+        .simulate('change', { target: { value: 'field2' } });
+
+      expect(onQueryChange.getCall(2).args[0].rules[0].field).to.equal('field2');
+    });
+
+    it('should create a new rule and change the operator', () => {
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+
+      expect(wrapper.find('Rule').length).to.equal(1);
+      expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
+      expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
+
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '!=' } });
+
+      expect(onQueryChange.getCall(2).args[0].rules[0].operator).to.equal('!=');
     });
   });
 });
