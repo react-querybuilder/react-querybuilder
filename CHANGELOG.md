@@ -1,5 +1,10 @@
 ## Change Log
 
+### upcoming (2019/08/18)
+- [#87](https://github.com/sapientglobalmarkets/react-querybuilder/pull/87) Hooks rewrite and increased test coverage (@jakeboone02)
+- [#86](https://github.com/sapientglobalmarkets/react-querybuilder/pull/86) Upgrade dependencies and replace deprecated or unmaintained packages (@sapientglobalmarkets)
+- [#82](https://github.com/sapientglobalmarkets/react-querybuilder/pull/82) Removed type restrictions on Rule values (@jakeboone02)
+
 ### v1.4.3 (2018/04/08)
 - [#60](https://github.com/sapientglobalmarkets/react-querybuilder/pull/60) Fixed typescript function parameter definitions (@jakeboone02)
 
