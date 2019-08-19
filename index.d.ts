@@ -6,7 +6,6 @@ import * as React from 'react';
 
 interface NameLabelPair {
     name: string;
-    title: string;
     label: string;
 }
 
@@ -34,6 +33,7 @@ interface CommonCustomControlProps {
      * The level of the current group
      */
     level: number;
+    title: string;
 }
 
 interface ActionCustomControlProps extends CommonCustomControlProps {
