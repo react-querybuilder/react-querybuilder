@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "1.4.3",
+  "version": "2.0.0",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
   "types": "./index.d.ts",
@@ -50,6 +50,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "mocha": "^6.2.0",
     "node-sass": "^4.7.2",
+    "np": "^5.0.3",
     "postcss-cssnext": "^3.0.2",
     "postcss-loader": "^3.0.0",
     "puppeteer": "^1.19.0",
@@ -63,18 +64,19 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "prop-types": "^15.6.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
     "uuid": "^3.0.1"
   },
   "peerDependencies": {
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   },
   "scripts": {
     "start": "webpack-dev-server --env dev",
     "dist": "del dist; webpack --env prod",
     "publish:demo": "npm run dist && node gh-pages.publish.js",
+    "publish:npm": "npm run np",
     "test": "karma start karma.conf.js",
     "test:watch": "npm test -- --no-single-run --auto-watch",
     "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",

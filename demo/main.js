@@ -1,7 +1,7 @@
-import '../src/query-builder.scss';
-import QueryBuilder from '../src/index';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import React from 'react';
+import QueryBuilder from '../src/index';
+import '../src/query-builder.scss';
 
 const preparedFields = {
   primary: [{ name: 'firstName', label: 'First Name' }, { name: 'lastName', label: 'Last Name' }],
@@ -69,62 +69,53 @@ const preparedQueries = {
   }
 };
 
-class RootView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleQueryChange = this.handleQueryChange.bind(this);
-    this.state = {
-      query: preparedQueries.primary,
-      fields: preparedFields.primary
-    };
-  }
+const RootView = () => {
+  const [query, setQuery] = useState(preparedQueries.primary);
+  const [fields, setFields] = useState(preparedFields.primary);
 
-  // Reloads a prepared query, a PoC for query updates by props change.
-  // If no target is supplied, clear query (generic query).
-  loadQuery(target) {
+  /**
+   * Reloads a prepared query, a PoC for query updates by props change.
+   * If no target is supplied, clear query (generic query).
+   * @param {"primary"|"secondary"} target The target query
+   */
+  const loadQuery = (target) => {
     if (target) {
-      this.setState({
-        query: preparedQueries[target],
-        fields: preparedFields[target]
-      });
+      setQuery(preparedQueries[target]);
+      setFields(preparedFields[target]);
     } else {
-      this.setState({
-        query: preparedQueries.generic,
-        fields: preparedFields.generic
-      });
+      setQuery(preparedQueries.generic);
+      setFields(preparedFields.generic);
     }
-  }
+  };
 
-  handleQueryChange(query) {
-    this.setState({ query });
-  }
+  const handleQueryChange = (query) => {
+    setQuery(query);
+  };
 
-  render() {
-    return (
-      <div className="flex-box-outer">
-        <div className="control-panel">
-          <button onClick={() => this.loadQuery('primary')}>Load primary query</button>
-          <button onClick={() => this.loadQuery('secondary')}>Load secondary query</button>
-          <button onClick={() => this.loadQuery()}>Clear query</button>
+  return (
+    <div className="flex-box-outer">
+      <div className="control-panel">
+        <button onClick={() => loadQuery('primary')}>Load primary query</button>
+        <button onClick={() => loadQuery('secondary')}>Load secondary query</button>
+        <button onClick={() => loadQuery()}>Clear query</button>
+      </div>
+      <hr />
+      <div className="flex-box">
+        <div className="scroll">
+          <QueryBuilder
+            query={query}
+            fields={fields}
+            controlClassnames={{ fields: 'form-control' }}
+            onQueryChange={handleQueryChange}
+          />
         </div>
-        <hr />
-        <div className="flex-box">
-          <div className="scroll">
-            <QueryBuilder
-              query={this.state.query}
-              fields={this.state.fields}
-              controlClassnames={{ fields: 'form-control' }}
-              onQueryChange={this.handleQueryChange}
-            />
-          </div>
-          <div className="shrink query-log scroll">
-            <h4>Query</h4>
-            <pre>{JSON.stringify(this.state.query, null, 2)}</pre>
-          </div>
+        <div className="shrink query-log scroll">
+          <h4>Query</h4>
+          <pre>{JSON.stringify(query, null, 2)}</pre>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 ReactDOM.render(<RootView />, document.querySelector('.container'));
