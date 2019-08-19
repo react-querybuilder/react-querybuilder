@@ -1,9 +1,9 @@
-import uniqueId from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
-import React from 'react';
 import PropTypes from 'prop-types';
-import RuleGroup from './RuleGroup';
+import React from 'react';
+import uniqueId from 'uuid/v4';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
+import RuleGroup from './RuleGroup';
 
 export default class QueryBuilder extends React.Component {
   static get defaultProps() {
