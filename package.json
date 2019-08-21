@@ -54,6 +54,8 @@
     "postcss-cssnext": "^3.0.2",
     "postcss-loader": "^3.0.0",
     "puppeteer": "^1.19.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
     "sass-loader": "^7.1.0",
     "sinon": "^7.3.2",
     "webpack": "^4.37.0",
@@ -64,13 +66,11 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "prop-types": "^15.6.0",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
     "uuid": "^3.0.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "scripts": {
     "start": "webpack-dev-server --env dev",
