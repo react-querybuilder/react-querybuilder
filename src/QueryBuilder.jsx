@@ -346,4 +346,6 @@ QueryBuilder.propTypes = {
   translations: PropTypes.object
 };
 
+QueryBuilder.displayName = 'QueryBuilder';
+
 export default QueryBuilder;

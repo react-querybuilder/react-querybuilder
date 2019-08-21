@@ -87,4 +87,6 @@ Rule.defaultProps = {
   schema: null
 };
 
+Rule.displayName = 'Rule';
+
 export default Rule;

@@ -121,4 +121,6 @@ RuleGroup.defaultProps = {
   schema: {}
 };
 
+RuleGroup.displayName = 'RuleGroup';
+
 export default RuleGroup;
