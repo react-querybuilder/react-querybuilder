@@ -179,7 +179,7 @@ const QueryBuilder = (props) => {
     const parent = findRule(parentId, rootCopy);
     parent.rules.push(rule);
     setRoot(rootCopy);
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
 
   /**
@@ -192,7 +192,7 @@ const QueryBuilder = (props) => {
     const parent = findRule(parentId, rootCopy);
     parent.rules.push(group);
     setRoot(rootCopy);
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
 
   /**
@@ -211,7 +211,7 @@ const QueryBuilder = (props) => {
     }
 
     setRoot(rootCopy);
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
 
   /**
@@ -227,7 +227,7 @@ const QueryBuilder = (props) => {
     parent.rules.splice(index, 1);
 
     setRoot(rootCopy);
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
 
   /**
@@ -243,7 +243,7 @@ const QueryBuilder = (props) => {
     parent.rules.splice(index, 1);
 
     setRoot(rootCopy);
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
 
   /**
@@ -257,7 +257,7 @@ const QueryBuilder = (props) => {
   /**
    * Executes the `onQueryChange` function, if provided
    */
-  const _notifyQueryChange = () => {
+  const _notifyQueryChange = (root) => {
     const { onQueryChange } = props;
     if (onQueryChange) {
       const query = cloneDeep(root);
@@ -292,7 +292,7 @@ const QueryBuilder = (props) => {
 
   // Notify a query change on mount
   useEffect(() => {
-    _notifyQueryChange();
+    _notifyQueryChange(root);
   }, []);
 
   return (
