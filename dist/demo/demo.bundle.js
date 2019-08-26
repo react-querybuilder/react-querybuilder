@@ -30081,7 +30081,7 @@ var QueryBuilder = function QueryBuilder(props) {
     parent.rules.push(rule);
     setRoot(rootCopy);
 
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
   /**
    * Adds a rule group to the query
@@ -30097,7 +30097,7 @@ var QueryBuilder = function QueryBuilder(props) {
     parent.rules.push(group);
     setRoot(rootCopy);
 
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
   /**
    * @param {string} prop Property that changed
@@ -30121,7 +30121,7 @@ var QueryBuilder = function QueryBuilder(props) {
 
     setRoot(rootCopy);
 
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
   /**
    * Removes a rule from the query
@@ -30140,7 +30140,7 @@ var QueryBuilder = function QueryBuilder(props) {
     parent.rules.splice(index, 1);
     setRoot(rootCopy);
 
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
   /**
    * Removes a rule group from the query
@@ -30159,7 +30159,7 @@ var QueryBuilder = function QueryBuilder(props) {
     parent.rules.splice(index, 1);
     setRoot(rootCopy);
 
-    _notifyQueryChange();
+    _notifyQueryChange(rootCopy);
   };
   /**
    * Gets the level of the rule with the provided ID
@@ -30175,11 +30175,11 @@ var QueryBuilder = function QueryBuilder(props) {
    */
 
 
-  var _notifyQueryChange = function _notifyQueryChange() {
+  var _notifyQueryChange = function _notifyQueryChange(newRoot) {
     var onQueryChange = props.onQueryChange;
 
     if (onQueryChange) {
-      var query = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0___default()(root);
+      var query = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0___default()(newRoot);
       onQueryChange(query);
     }
   };
@@ -30212,7 +30212,7 @@ var QueryBuilder = function QueryBuilder(props) {
   }, [props.query]); // Notify a query change on mount
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
-    _notifyQueryChange();
+    _notifyQueryChange(root);
   }, []);
   return react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "queryBuilder ".concat(schema.classNames.queryBuilder)
@@ -30263,6 +30263,7 @@ QueryBuilder.propTypes = {
   controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
   translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object
 };
+QueryBuilder.displayName = 'QueryBuilder';
 /* harmony default export */ __webpack_exports__["default"] = (QueryBuilder);
 
 /***/ }),
@@ -30358,6 +30359,7 @@ Rule.defaultProps = {
   value: null,
   schema: null
 };
+Rule.displayName = 'Rule';
 /* harmony default export */ __webpack_exports__["default"] = (Rule);
 
 /***/ }),
@@ -30485,6 +30487,7 @@ RuleGroup.defaultProps = {
   combinator: 'and',
   schema: {}
 };
+RuleGroup.displayName = 'RuleGroup';
 /* harmony default export */ __webpack_exports__["default"] = (RuleGroup);
 
 /***/ }),
@@ -30547,11 +30550,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ValueEditor = function ValueEditor(props) {
-  var field = props.field,
-      operator = props.operator,
+  var operator = props.operator,
       value = props.value,
       handleOnChange = props.handleOnChange,
-      title = props.title;
+      title = props.title,
+      className = props.className;
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -30561,6 +30564,7 @@ var ValueEditor = function ValueEditor(props) {
     type: "text",
     value: value,
     title: title,
+    className: className,
     onChange: function onChange(e) {
       return handleOnChange(e.target.value);
     }
@@ -30573,7 +30577,8 @@ ValueEditor.propTypes = {
   operator: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
   value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
   handleOnChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
-  title: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string
+  title: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  className: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string
 };
 /* harmony default export */ __webpack_exports__["default"] = (ValueEditor);
 
@@ -30588,13 +30593,10 @@ ValueEditor.propTypes = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
-
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
 
 
 
@@ -30604,7 +30606,7 @@ var ValueSelector = function ValueSelector(props) {
       className = props.className,
       handleOnChange = props.handleOnChange,
       title = props.title;
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("select", {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
     className: className,
     value: value,
     title: title,
@@ -30613,7 +30615,7 @@ var ValueSelector = function ValueSelector(props) {
     }
   }, options.map(function (option) {
     var key = option.id ? "key-".concat(option.id) : "key-".concat(option.name);
-    return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("option", {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
       key: key,
       value: option.name
     }, option.label);
@@ -30622,11 +30624,11 @@ var ValueSelector = function ValueSelector(props) {
 
 ValueSelector.displayName = 'ValueSelector';
 ValueSelector.propTypes = {
-  value: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string,
-  options: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.array.isRequired,
-  className: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string,
-  handleOnChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-  title: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string
+  value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  options: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.array.isRequired,
+  className: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  handleOnChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  title: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string
 };
 /* harmony default export */ __webpack_exports__["default"] = (ValueSelector);
 
