@@ -257,10 +257,10 @@ const QueryBuilder = (props) => {
   /**
    * Executes the `onQueryChange` function, if provided
    */
-  const _notifyQueryChange = (root) => {
+  const _notifyQueryChange = (newRoot) => {
     const { onQueryChange } = props;
     if (onQueryChange) {
-      const query = cloneDeep(root);
+      const query = cloneDeep(newRoot);
       onQueryChange(query);
     }
   };
