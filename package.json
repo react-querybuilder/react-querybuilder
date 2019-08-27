@@ -18,7 +18,10 @@
     "clause",
     "expression"
   ],
-  "author": "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
+  "contributors": [
+    "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
+    "Jake Boone"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/sapientglobalmarkets/react-querybuilder",
   "devDependencies": {
