@@ -228,6 +228,10 @@ interface QueryBuilderProps {
       title: string;
     };
   };
+  /**
+   * Show the combinators between rules and rule groups.
+   */
+  showCombinators?: boolean;
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}

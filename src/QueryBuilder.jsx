@@ -330,7 +330,8 @@ const QueryBuilder = (props) => {
     getOperators,
     getValueEditorType,
     getInputType,
-    getValues
+    getValues,
+    showCombinators: props.showCombinators
   };
 
   // Set the query state when a new query prop comes in
@@ -369,7 +370,8 @@ QueryBuilder.defaultProps = {
   getInputType: null,
   getValues: null,
   onQueryChange: null,
-  controlClassnames: null
+  controlClassnames: null,
+  showCombinators: false
 };
 
 QueryBuilder.propTypes = {
@@ -397,7 +399,8 @@ QueryBuilder.propTypes = {
   getValues: PropTypes.func,
   onQueryChange: PropTypes.func,
   controlClassnames: PropTypes.object,
-  translations: PropTypes.object
+  translations: PropTypes.object,
+  showCombinators: PropTypes.bool
 };
 
 QueryBuilder.displayName = 'QueryBuilder';

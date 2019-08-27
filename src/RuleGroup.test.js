@@ -255,6 +255,28 @@ describe('<RuleGroup />', () => {
     });
   });
 
+  describe('showCombinators', () => {
+    it('does not display combinators when there is only one rule', () => {
+      schema.showCombinators = true;
+      props.rules = [{ id: 'r-test', field: 'test', value: 'Test', operator: '=' }];
+      const dom = shallow(<RuleGroup {...props} />);
+      const sc = dom.find('.ruleGroup-combinator');
+      expect(sc.length).to.equal(0);
+    });
+
+    it('displays combinators when there is more than one rule', () => {
+      schema.showCombinators = true;
+      props.rules = [
+        { id: 'g-test1', rules: [], combinator: 'and' },
+        { id: 'r-test', field: 'test', value: 'Test', operator: '=' },
+        { id: 'g-test2', rules: [], combinator: 'and' }
+      ];
+      const dom = shallow(<RuleGroup {...props} />);
+      const sc = dom.find('.ruleGroup-combinator');
+      expect(sc.length).to.equal(2);
+    });
+  });
+
   //shared examples
   function behavesLikeAnActionElement(label, defaultClassName, customClassName) {
     it('should have the correct label', () => {

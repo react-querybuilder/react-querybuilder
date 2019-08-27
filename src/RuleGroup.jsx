@@ -84,29 +84,39 @@ const RuleGroup = (props) => {
             level
           })
         : null}
-      {rules.map((r) =>
+      {rules.map((r, idx) =>
         isRuleGroup(r) ? (
-          <RuleGroup
-            key={r.id}
-            id={r.id}
-            schema={props.schema}
-            parentId={props.id}
-            combinator={r.combinator}
-            translations={props.translations}
-            rules={r.rules}
-          />
+          <>
+            {idx && props.schema.showCombinators ? (
+              <span className="ruleGroup-combinator">{props.combinator}</span>
+            ) : null}
+            <RuleGroup
+              key={r.id}
+              id={r.id}
+              schema={props.schema}
+              parentId={props.id}
+              combinator={r.combinator}
+              translations={props.translations}
+              rules={r.rules}
+            />
+          </>
         ) : (
-          <Rule
-            key={r.id}
-            id={r.id}
-            field={r.field}
-            value={r.value}
-            operator={r.operator}
-            schema={props.schema}
-            parentId={props.id}
-            translations={props.translations}
-            onRuleRemove={onRuleRemove}
-          />
+          <>
+            {idx && props.schema.showCombinators ? (
+              <span className="ruleGroup-combinator">{props.combinator}</span>
+            ) : null}
+            <Rule
+              key={r.id}
+              id={r.id}
+              field={r.field}
+              value={r.value}
+              operator={r.operator}
+              schema={props.schema}
+              parentId={props.id}
+              translations={props.translations}
+              onRuleRemove={onRuleRemove}
+            />
+          </>
         )
       )}
     </div>

@@ -131,6 +131,7 @@ const getValues = (field, operator) => {
 const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
+  const [showCombinators, setShowCombinators] = useState(false);
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -157,6 +158,14 @@ const RootView = () => {
         <button onClick={() => loadQuery('primary')}>Load primary query</button>
         <button onClick={() => loadQuery('secondary')}>Load secondary query</button>
         <button onClick={() => loadQuery()}>Clear query</button>
+        <label>
+          <input
+            type="checkbox"
+            checked={showCombinators}
+            onChange={(e) => setShowCombinators(e.target.checked)}
+          />{' '}
+          Show Combinators
+        </label>
       </div>
       <hr />
       <div className="flex-box">
@@ -170,6 +179,7 @@ const RootView = () => {
             getValueEditorType={getValueEditorType}
             getInputType={getInputType}
             getValues={getValues}
+            showCombinators={showCombinators}
           />
         </div>
         <div className="shrink query-log scroll">
