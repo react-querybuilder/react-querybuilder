@@ -179,7 +179,7 @@ var preparedQueries = {
       field: 'isMusician',
       id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
       operator: '=',
-      value: 'true'
+      value: true
     }, {
       field: 'instrument',
       id: 'r-df23ba2b-e600-491d-967c-116ade6fe45e',
@@ -191,6 +191,80 @@ var preparedQueries = {
   generic: {
     combinator: 'and',
     rules: []
+  }
+};
+
+var getOperators = function getOperators(field) {
+  switch (field) {
+    case 'instrument':
+    case 'isMusician':
+      return [{
+        name: '=',
+        label: 'is'
+      }];
+
+    default:
+      return null;
+  }
+};
+
+var getValueEditorType = function getValueEditorType(field, operator) {
+  switch (field) {
+    case 'gender':
+      return 'radio';
+
+    case 'instrument':
+      return 'select';
+
+    case 'isMusician':
+      return 'checkbox';
+
+    default:
+      return 'text';
+  }
+};
+
+var getInputType = function getInputType(field, operator) {
+  switch (field) {
+    case 'age':
+      return 'number';
+
+    default:
+      return 'text';
+  }
+};
+
+var getValues = function getValues(field, operator) {
+  switch (field) {
+    case 'instrument':
+      return [{
+        name: 'Guitar',
+        label: 'Guitar'
+      }, {
+        name: 'Piano',
+        label: 'Piano'
+      }, {
+        name: 'Vocals',
+        label: 'Vocals'
+      }, {
+        name: 'Drums',
+        label: 'Drums'
+      }];
+
+    case 'gender':
+      return [{
+        name: 'M',
+        label: 'Male'
+      }, {
+        name: 'F',
+        label: 'Female'
+      }, {
+        name: 'O',
+        label: 'Other'
+      }];
+
+    default:
+      return [];
   }
 };
 
@@ -251,7 +325,11 @@ var RootView = function RootView() {
     controlClassnames: {
       fields: 'form-control'
     },
-    onQueryChange: handleQueryChange
+    onQueryChange: handleQueryChange,
+    getOperators: getOperators,
+    getValueEditorType: getValueEditorType,
+    getInputType: getInputType,
+    getValues: getValues
   })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "shrink query-log scroll"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, JSON.stringify(query, null, 2)))));
@@ -30053,6 +30131,54 @@ var QueryBuilder = function QueryBuilder(props) {
     };
   };
   /**
+   * Gets the ValueEditor type for a given field and operator
+   * @param {string} field
+   * @param {string} operator
+   * @returns {string}
+   */
+
+
+  var getValueEditorType = function getValueEditorType(field, operator) {
+    if (props.getValueEditorType) {
+      var vet = props.getValueEditorType(field, operator);
+      if (vet) return vet;
+    }
+
+    return 'text';
+  };
+  /**
+   * Gets the `<input />` type for a given field and operator
+   * @param {string} field
+   * @param {string} operator
+   * @returns {string}
+   */
+
+
+  var getInputType = function getInputType(field, operator) {
+    if (props.getInputType) {
+      var inputType = props.getInputType(field, operator);
+      if (inputType) return inputType;
+    }
+
+    return 'text';
+  };
+  /**
+   * Gets the list of valid values for a given field and operator
+   * @param {string} field
+   * @param {string} operator
+   * @returns {{name: string; label: string;}[]}
+   */
+
+
+  var getValues = function getValues(field, operator) {
+    if (props.getValues) {
+      var vals = props.getValues(field, operator);
+      if (vals) return vals;
+    }
+
+    return [];
+  };
+  /**
    * Gets the operators for a given field
    * @param {string} field
    * @returns {{name: string; label: string;}[]}
@@ -30204,7 +30330,10 @@ var QueryBuilder = function QueryBuilder(props) {
     getLevel: getLevelFromRoot,
     isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_6__["isRuleGroup"],
     controls: _objectSpread({}, defaultControlElements, {}, props.controlElements),
-    getOperators: getOperators
+    getOperators: getOperators,
+    getValueEditorType: getValueEditorType,
+    getInputType: getInputType,
+    getValues: getValues
   }; // Set the query state when a new query prop comes in
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
@@ -30234,6 +30363,9 @@ QueryBuilder.defaultProps = {
   translations: defaultTranslations,
   controlElements: null,
   getOperators: null,
+  getValueEditorType: null,
+  getInputType: null,
+  getValues: null,
   onQueryChange: null,
   controlClassnames: null
 };
@@ -30259,6 +30391,9 @@ QueryBuilder.propTypes = {
     valueEditor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func
   }),
   getOperators: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  getValueEditorType: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  getInputType: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  getValues: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   onQueryChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
   translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object
@@ -30315,7 +30450,10 @@ var Rule = function Rule(props) {
       controls = _props$schema.controls,
       getOperators = _props$schema.getOperators,
       getLevel = _props$schema.getLevel,
-      classNames = _props$schema.classNames;
+      classNames = _props$schema.classNames,
+      getValueEditorType = _props$schema.getValueEditorType,
+      getInputType = _props$schema.getInputType,
+      getValues = _props$schema.getValues;
   var level = getLevel(props.id);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule)
@@ -30339,6 +30477,9 @@ var Rule = function Rule(props) {
     title: translations.value.title,
     operator: operator,
     value: value,
+    type: getValueEditorType(field, operator),
+    inputType: getInputType(field, operator),
+    values: getValues(field, operator),
     className: "rule-value ".concat(classNames.value),
     handleOnChange: onValueChanged,
     level: level
@@ -30549,36 +30690,81 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var ValueEditor = function ValueEditor(props) {
-  var operator = props.operator,
-      value = props.value,
-      handleOnChange = props.handleOnChange,
-      title = props.title,
-      className = props.className;
+var ValueEditor = function ValueEditor(_ref) {
+  var operator = _ref.operator,
+      value = _ref.value,
+      handleOnChange = _ref.handleOnChange,
+      title = _ref.title,
+      className = _ref.className,
+      type = _ref.type,
+      inputType = _ref.inputType,
+      values = _ref.values;
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    type: "text",
-    value: value,
-    title: title,
-    className: className,
-    onChange: function onChange(e) {
-      return handleOnChange(e.target.value);
-    }
-  });
+  switch (type) {
+    case 'select':
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.value);
+        },
+        value: value
+      }, values.map(function (v) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+          key: v.name,
+          value: v.name
+        }, v.label);
+      }));
+
+    case 'checkbox':
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "checkbox",
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.checked);
+        },
+        checked: !!value
+      });
+
+    case 'radio':
+      return values.map(function (v) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+          key: v.name
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          type: "radio",
+          value: v.name,
+          checked: value === v.name,
+          onChange: function onChange(e) {
+            return handleOnChange(e.target.value);
+          }
+        }), ' ', v.label);
+      });
+
+    default:
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: inputType || 'text',
+        value: value,
+        title: title,
+        className: className,
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.value);
+        }
+      });
+  }
 };
 
 ValueEditor.displayName = 'ValueEditor';
 ValueEditor.propTypes = {
   field: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
   operator: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
-  value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   handleOnChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   title: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
-  className: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string
+  className: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  type: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOf(['select', 'checkbox', 'radio', 'text']),
+  inputType: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  values: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object)
 };
 /* harmony default export */ __webpack_exports__["default"] = (ValueEditor);
 
