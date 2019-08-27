@@ -69,6 +69,65 @@ const preparedQueries = {
   }
 };
 
+const getOperators = (field) => {
+  switch (field) {
+    case 'instrument':
+    case 'isMusician':
+      return [{ name: '=', label: 'is' }];
+
+    default:
+      return null;
+  }
+};
+
+const getValueEditorType = (field, operator) => {
+  switch (field) {
+    case 'gender':
+      return 'radio';
+
+    case 'instrument':
+      return 'select';
+
+    case 'isMusician':
+      return 'checkbox';
+
+    default:
+      return 'text';
+  }
+};
+
+const getInputType = (field, operator) => {
+  switch (field) {
+    case 'age':
+      return 'number';
+
+    default:
+      return 'text';
+  }
+};
+
+const getValues = (field, operator) => {
+  switch (field) {
+    case 'instrument':
+      return [
+        { name: 'Guitar', label: 'Guitar' },
+        { name: 'Piano', label: 'Piano' },
+        { name: 'Vocals', label: 'Vocals' },
+        { name: 'Drums', label: 'Drums' }
+      ];
+
+    case 'gender':
+      return [
+        { name: 'M', label: 'Male' },
+        { name: 'F', label: 'Female' },
+        { name: 'O', label: 'Other' }
+      ];
+
+    default:
+      return [];
+  }
+};
+
 const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
@@ -107,6 +166,10 @@ const RootView = () => {
             fields={fields}
             controlClassnames={{ fields: 'form-control' }}
             onQueryChange={handleQueryChange}
+            getOperators={getOperators}
+            getValueEditorType={getValueEditorType}
+            getInputType={getInputType}
+            getValues={getValues}
           />
         </div>
         <div className="shrink query-log scroll">

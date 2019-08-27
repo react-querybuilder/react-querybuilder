@@ -34,7 +34,16 @@ const Rule = (props) => {
     operator,
     value,
     translations,
-    schema: { fields, controls, getOperators, getLevel, classNames }
+    schema: {
+      fields,
+      controls,
+      getOperators,
+      getLevel,
+      classNames,
+      getValueEditorType,
+      getInputType,
+      getValues
+    }
   } = props;
 
   const level = getLevel(props.id);
@@ -63,6 +72,9 @@ const Rule = (props) => {
         title: translations.value.title,
         operator: operator,
         value: value,
+        type: getValueEditorType(field, operator),
+        inputType: getInputType(field, operator),
+        values: getValues(field, operator),
         className: `rule-value ${classNames.value}`,
         handleOnChange: onValueChanged,
         level: level
