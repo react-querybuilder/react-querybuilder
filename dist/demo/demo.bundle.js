@@ -179,7 +179,7 @@ var preparedQueries = {
       field: 'isMusician',
       id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
       operator: '=',
-      value: 'true'
+      value: true
     }, {
       field: 'instrument',
       id: 'r-df23ba2b-e600-491d-967c-116ade6fe45e',
@@ -30713,6 +30713,7 @@ var ValueEditor = function ValueEditor(_ref) {
         value: value
       }, values.map(function (v) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+          key: v.name,
           value: v.name
         }, v.label);
       }));
@@ -30723,12 +30724,14 @@ var ValueEditor = function ValueEditor(_ref) {
         onChange: function onChange(e) {
           return handleOnChange(e.target.checked);
         },
-        value: !!value
+        checked: !!value
       });
 
     case 'radio':
       return values.map(function (v) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+          key: v.name
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           type: "radio",
           value: v.name,
           checked: value === v.name,
@@ -30755,7 +30758,7 @@ ValueEditor.displayName = 'ValueEditor';
 ValueEditor.propTypes = {
   field: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
   operator: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
-  value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   handleOnChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   title: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
   className: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
