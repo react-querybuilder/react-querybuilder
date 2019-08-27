@@ -20,14 +20,20 @@ const ValueEditor = ({
       return (
         <select onChange={(e) => handleOnChange(e.target.value)} value={value}>
           {values.map((v) => (
-            <option value={v.name}>{v.label}</option>
+            <option key={v.name} value={v.name}>
+              {v.label}
+            </option>
           ))}
         </select>
       );
 
     case 'checkbox':
       return (
-        <input type="checkbox" onChange={(e) => handleOnChange(e.target.checked)} value={!!value} />
+        <input
+          type="checkbox"
+          onChange={(e) => handleOnChange(e.target.checked)}
+          checked={!!value}
+        />
       );
 
     case 'radio':
@@ -61,7 +67,7 @@ ValueEditor.displayName = 'ValueEditor';
 ValueEditor.propTypes = {
   field: PropTypes.string,
   operator: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.any,
   handleOnChange: PropTypes.func,
   title: PropTypes.string,
   className: PropTypes.string,
