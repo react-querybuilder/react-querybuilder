@@ -38,7 +38,7 @@ const ValueEditor = ({
 
     case 'radio':
       return values.map((v) => (
-        <label>
+        <label key={v.name}>
           <input
             type="radio"
             value={v.name}
