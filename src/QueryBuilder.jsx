@@ -156,6 +156,51 @@ const QueryBuilder = (props) => {
   };
 
   /**
+   * Gets the ValueEditor type for a given field and operator
+   * @param {string} field
+   * @param {string} operator
+   * @returns {string}
+   */
+  const getValueEditorType = (field, operator) => {
+    if (props.getValueEditorType) {
+      const vet = props.getValueEditorType(field, operator);
+      if (vet) return vet;
+    }
+
+    return 'text';
+  };
+
+  /**
+   * Gets the `<input />` type for a given field and operator
+   * @param {string} field
+   * @param {string} operator
+   * @returns {string}
+   */
+  const getInputType = (field, operator) => {
+    if (props.getInputType) {
+      const inputType = props.getInputType(field, operator);
+      if (inputType) return inputType;
+    }
+
+    return 'text';
+  };
+
+  /**
+   * Gets the list of valid values for a given field and operator
+   * @param {string} field
+   * @param {string} operator
+   * @returns {{name: string; label: string;}[]}
+   */
+  const getValues = (field, operator) => {
+    if (props.getValues) {
+      const vals = props.getValues(field, operator);
+      if (vals) return vals;
+    }
+
+    return [];
+  };
+
+  /**
    * Gets the operators for a given field
    * @param {string} field
    * @returns {{name: string; label: string;}[]}
@@ -282,7 +327,10 @@ const QueryBuilder = (props) => {
     getLevel: getLevelFromRoot,
     isRuleGroup,
     controls: { ...defaultControlElements, ...props.controlElements },
-    getOperators
+    getOperators,
+    getValueEditorType,
+    getInputType,
+    getValues
   };
 
   // Set the query state when a new query prop comes in
@@ -317,6 +365,9 @@ QueryBuilder.defaultProps = {
   translations: defaultTranslations,
   controlElements: null,
   getOperators: null,
+  getValueEditorType: null,
+  getInputType: null,
+  getValues: null,
   onQueryChange: null,
   controlClassnames: null
 };
@@ -341,6 +392,9 @@ QueryBuilder.propTypes = {
     valueEditor: PropTypes.func
   }),
   getOperators: PropTypes.func,
+  getValueEditorType: PropTypes.func,
+  getInputType: PropTypes.func,
+  getValues: PropTypes.func,
   onQueryChange: PropTypes.func,
   controlClassnames: PropTypes.object,
   translations: PropTypes.object

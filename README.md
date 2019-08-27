@@ -34,17 +34,17 @@ OR
 ## Usage
 
 ```jsx
-import QueryBuilder from "react-querybuilder";
+import QueryBuilder from 'react-querybuilder';
 
 const fields = [
-  { name: "firstName", label: "First Name" },
-  { name: "lastName", label: "Last Name" },
-  { name: "age", label: "Age" },
-  { name: "address", label: "Address" },
-  { name: "phone", label: "Phone" },
-  { name: "email", label: "Email" },
-  { name: "twitter", label: "Twitter" },
-  { name: "isDev", label: "Is a Developer?", value: false }
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+  { name: 'age', label: 'Age' },
+  { name: 'address', label: 'Address' },
+  { name: 'phone', label: 'Phone' },
+  { name: 'email', label: 'Email' },
+  { name: 'twitter', label: 'Twitter' },
+  { name: 'isDev', label: 'Is a Developer?', value: false }
 ];
 
 const dom = <QueryBuilder fields={fields} onQueryChange={logQuery} />;
@@ -76,16 +76,16 @@ The array of operators that should be used. The default operators include:
 
 ```js
 [
-  { name: "null", label: "Is Null" },
-  { name: "notNull", label: "Is Not Null" },
-  { name: "in", label: "In" },
-  { name: "notIn", label: "Not In" },
-  { name: "=", label: "=" },
-  { name: "!=", label: "!=" },
-  { name: "<", label: "<" },
-  { name: ">", label: ">" },
-  { name: "<=", label: "<=" },
-  { name: ">=", label: ">=" }
+  { name: 'null', label: 'Is Null' },
+  { name: 'notNull', label: 'Is Not Null' },
+  { name: 'in', label: 'In' },
+  { name: 'notIn', label: 'Not In' },
+  { name: '=', label: '=' },
+  { name: '!=', label: '!=' },
+  { name: '<', label: '<' },
+  { name: '>', label: '>' },
+  { name: '<=', label: '<=' },
+  { name: '>=', label: '>=' }
 ];
 ```
 
@@ -96,7 +96,7 @@ The array of operators that should be used. The default operators include:
 The array of combinators that should be used for RuleGroups. The default set includes:
 
 ```js
-[{ name: "and", label: "AND" }, { name: "or", label: "OR" }];
+[{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];
 ```
 
 ### controlElements _(Optional)_
@@ -121,7 +121,7 @@ This is a custom controls object that allows you to override the control element
 ```js
 {
   label: React.PropTypes.string, //"+Group"
-  className: React.PropTypes.string, //css classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied
   handleOnClick: React.PropTypes.func, //callback function to invoke adding a <RuleGroup />
   rules: React.PropTypes.array, //Provides the number of rules already present for this group,
   level: React.PropTypes.number //The level of the current group
@@ -133,7 +133,7 @@ This is a custom controls object that allows you to override the control element
 ```js
 {
   label: React.PropTypes.string, //"x"
-  className: React.PropTypes.string, //css classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied
   handleOnClick: React.PropTypes.func, //callback function to invoke removing a <RuleGroup />
   rules: React.PropTypes.array, //Provides the number of rules already present for this group,
   level: React.PropTypes.number //The level of the current group
@@ -145,7 +145,7 @@ This is a custom controls object that allows you to override the control element
 ```js
 {
   label: React.PropTypes.string, //"+Rule"
-  className: React.PropTypes.string, //css classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied
   handleOnClick: React.PropTypes.func, //callback function to invoke adding a <Rule />
   rules: React.PropTypes.array, //Provides the number of rules already present for this group,
   level: React.PropTypes.number //The level of the current group
@@ -157,7 +157,7 @@ This is a custom controls object that allows you to override the control element
 ```js
 {
   label: React.PropTypes.string, //"x"
-  className: React.PropTypes.string, //css classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied
   handleOnClick: React.PropTypes.func, //callback function to invoke removing a <Rule />
   level: React.PropTypes.number //The level of the current group
 }
@@ -169,7 +169,7 @@ This is a custom controls object that allows you to override the control element
 {
   options: React.PropTypes.array.isRequired, //same as 'combinators' passed into QueryBuilder
   value: React.PropTypes.string, //selected combinator from the existing query representation, if any
-  className: React.PropTypes.string, //css classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied
   handleOnChange: React.PropTypes.func, //callback function to update query representation
   rules: React.PropTypes.array, //Provides the number of rules already present for this group
   level: React.PropTypes.number //The level of the current group
@@ -182,7 +182,7 @@ This is a custom controls object that allows you to override the control element
 {
   options: React.PropTypes.array.isRequired, //same as 'fields' passed into QueryBuilder
   value: React.PropTypes.string, //selected field from the existing query representation, if any
-  className: React.PropTypes.string, //css classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied
   handleOnChange: React.PropTypes.func, //callback function to update query representation
   level: React.PropTypes.number //The level the group this rule belongs to
 }
@@ -195,22 +195,25 @@ This is a custom controls object that allows you to override the control element
   field: React.PropTypes.string, //field name corresponding to this Rule
   options: React.PropTypes.array.isRequired, //return value of getOperators(field)
   value: React.PropTypes.string, //selected operator from the existing query representation, if any
-  className: React.PropTypes.string, //css classNames to be applied
-  handleOnChange: React.PropTypes.func //callback function to update query representation
+  className: React.PropTypes.string, //CSS classNames to be applied
+  handleOnChange: React.PropTypes.func, //callback function to update query representation
   level: React.PropTypes.number //The level the group this rule belongs to
 }
 ```
 
-- `valueEditor`: By default a `<input type="text" />` is used. The following props are passed:
+- `valueEditor`: By default an `<input type="text" />` is used. The following props are passed:
 
 ```js
 {
   field: React.PropTypes.string, //field name corresponding to this Rule
   operator: React.PropTypes.string, //operator name corresponding to this Rule
   value: React.PropTypes.string, //value from the existing query representation, if any
-  handleOnChange: React.PropTypes.func //callback function to update the query representation
-  level: React.PropTypes.number //The level the group this rule belongs to
-  className: React.PropTypes.string, //css classNames to be applied
+  handleOnChange: React.PropTypes.func, //callback function to update the query representation
+  type: React.PropTypes.oneOf(['text', 'select', 'checkbox', 'radio']), //type of editor to be displayed
+  inputType: React.PropTypes.string, //type of <input> if type is "text"
+  values: React.PropTypes.arrayOf(React.PropTypes.object), //
+  level: React.PropTypes.number, //The level the group this rule belongs to
+  className: React.PropTypes.string, //CSS classNames to be applied
 }
 ```
 
@@ -219,6 +222,24 @@ This is a custom controls object that allows you to override the control element
 `function(field):[]`
 
 This is a callback function invoked to get the list of allowed operators for the given field.
+
+### getValueEditorType _(Optional)_
+
+`function(field, operator):string`
+
+This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default), `"select"`, `"checkbox"`, and `"radio"`.
+
+### getInputType _(Optional)_
+
+`function(field, operator):string`
+
+This is a callback function invoked to get the `type` of `<input />` for the given field and operator (only applicable when `getValueEditorType` returns `"text"` or a falsy value). If no function is provided, `"text"` is used as the default.
+
+### getValues _(Optional)_
+
+`function(field, operator):[]`
+
+This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
 ### onQueryChange _(Optional)_
 

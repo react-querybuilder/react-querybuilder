@@ -266,6 +266,157 @@ describe('<QueryBuilder />', () => {
     });
   });
 
+  describe('when getValueEditorType fn prop is provided', () => {
+    let wrapper, getValueEditorType;
+
+    const fields = [
+      { name: 'firstName', label: 'First Name' },
+      { name: 'lastName', label: 'Last Name' },
+      { name: 'age', label: 'Age' }
+    ];
+
+    const query = {
+      id: 'g-012345',
+      combinator: 'or',
+      rules: [
+        {
+          id: 'r-0123456789',
+          field: 'lastName',
+          value: 'Another Test',
+          operator: '='
+        }
+      ]
+    };
+
+    beforeEach(() => {
+      getValueEditorType = sinon.spy(() => 'text');
+      wrapper = mount(
+        <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      getValueEditorType.resetHistory();
+    });
+
+    it('should invoke custom getValueEditorType function', () => {
+      expect(getValueEditorType.callCount).to.be.greaterThan(0);
+    });
+
+    it('should handle invalid getValueEditorType function', () => {
+      wrapper.unmount();
+      wrapper = mount(
+        <QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />
+      );
+      const valueEditor = wrapper.find('.rule-value');
+      expect(valueEditor.first().props().type).to.equal('text');
+    });
+  });
+
+  describe('when getInputType fn prop is provided', () => {
+    let wrapper, getInputType;
+
+    const fields = [
+      { name: 'firstName', label: 'First Name' },
+      { name: 'lastName', label: 'Last Name' },
+      { name: 'age', label: 'Age' }
+    ];
+
+    const query = {
+      id: 'g-012345',
+      combinator: 'or',
+      rules: [
+        {
+          id: 'r-0123456789',
+          field: 'lastName',
+          value: 'Another Test',
+          operator: '='
+        }
+      ]
+    };
+
+    beforeEach(() => {
+      getInputType = sinon.spy(() => 'text');
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      getInputType.resetHistory();
+    });
+
+    it('should invoke custom getInputType function', () => {
+      expect(getInputType.callCount).to.be.greaterThan(0);
+    });
+
+    it('should handle invalid getInputType function', () => {
+      wrapper.unmount();
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
+      const valueEditor = wrapper.find('.rule-value');
+      expect(valueEditor.first().props().type).to.equal('text');
+    });
+  });
+
+  describe('when getValues fn prop is provided', () => {
+    let wrapper, getValues;
+    const getValueEditorType = () => 'select';
+
+    const fields = [
+      { name: 'firstName', label: 'First Name' },
+      { name: 'lastName', label: 'Last Name' },
+      { name: 'age', label: 'Age' }
+    ];
+
+    const query = {
+      id: 'g-012345',
+      combinator: 'or',
+      rules: [
+        {
+          id: 'r-0123456789',
+          field: 'lastName',
+          value: 'Another Test',
+          operator: '='
+        }
+      ]
+    };
+
+    beforeEach(() => {
+      getValues = sinon.spy(() => [{ name: 'test', label: 'Test' }]);
+      wrapper = mount(
+        <QueryBuilder
+          query={query}
+          fields={fields}
+          getValueEditorType={getValueEditorType}
+          getValues={getValues}
+        />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      getValues.resetHistory();
+    });
+
+    it('should invoke custom getValues function', () => {
+      expect(getValues.callCount).to.be.greaterThan(0);
+    });
+
+    it('should generate the correct number of options', () => {
+      const opts = wrapper.find('.rule-value option');
+      expect(opts.length).to.equal(1);
+    });
+
+    it('should handle invalid getValues function', () => {
+      wrapper.unmount();
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
+      const select = wrapper.find('.rule-value');
+      expect(select.length).to.be.greaterThan(0);
+      const opts = wrapper.find('.rule-value option');
+      expect(opts.length).to.equal(0);
+    });
+  });
+
   describe('actions', () => {
     let wrapper, onQueryChange;
     const fields = [{ name: 'Field 1', value: 'field1' }, { name: 'Field 2', value: 'field2' }];

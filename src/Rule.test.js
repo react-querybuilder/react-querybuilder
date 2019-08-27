@@ -36,6 +36,12 @@ describe('<Rule />', () => {
       controls: controls,
       classNames: classNames,
       getOperators: (field) => [{ name: '=', value: 'is' }, { name: '!=', value: 'is not' }],
+      getValueEditorType: (field, operator) => 'text',
+      getInputType: (field, operator) => 'text',
+      getValues: (field, operator) => [
+        { name: 'one', label: 'One' },
+        { name: 'two', label: 'Two' }
+      ],
       onPropChange: (field, value, id) => {},
       onRuleRemove: (ruleId, parentId) => {},
       getLevel: () => 0
