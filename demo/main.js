@@ -52,7 +52,7 @@ const preparedQueries = {
         field: 'isMusician',
         id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
         operator: '=',
-        value: 'true'
+        value: true
       },
       {
         field: 'instrument',
