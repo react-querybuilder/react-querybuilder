@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder from '../src/index';
+import QueryBuilder, { formatQuery } from '../src';
 import '../src/query-builder.scss';
 
 const preparedFields = {
@@ -52,7 +52,7 @@ const preparedQueries = {
         field: 'isMusician',
         id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
         operator: '=',
-        value: 'true'
+        value: true
       },
       {
         field: 'instrument',
@@ -171,10 +171,12 @@ const RootView = () => {
             getInputType={getInputType}
             getValues={getValues}
           />
+          <h4>SQL</h4>
+          <div>{formatQuery(query, 'sql')}</div>
         </div>
         <div className="shrink query-log scroll">
           <h4>Query</h4>
-          <pre>{JSON.stringify(query, null, 2)}</pre>
+          <pre>{formatQuery(query, 'json')}</pre>
         </div>
       </div>
     </div>
