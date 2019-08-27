@@ -1,6 +1,10 @@
 ## Change Log
 
-### 2.0.0 (2019/08/18)
+### v2.0.1 (2019/08/27)
+- [#93](https://github.com/sapientglobalmarkets/react-querybuilder/pull/93) Pass in new root to _notifyQueryChange (@pumbor)
+- [#84](https://github.com/sapientglobalmarkets/react-querybuilder/pull/84) Add className prop to ValueEditor, pass it on to input element (#84) (@kkkrist)
+
+### v2.0.0 (2019/08/18)
 - [#87](https://github.com/sapientglobalmarkets/react-querybuilder/pull/87) Hooks rewrite and increased test coverage (@jakeboone02)
 - [#86](https://github.com/sapientglobalmarkets/react-querybuilder/pull/86) Upgrade dependencies and replace deprecated or unmaintained packages (@sapientglobalmarkets)
 - [#82](https://github.com/sapientglobalmarkets/react-querybuilder/pull/82) Removed type restrictions on Rule values (@jakeboone02)
