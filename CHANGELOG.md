@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.1.0 (2019/08/27)
+- [#94](https://github.com/sapientglobalmarkets/react-querybuilder/pull/94) Enhanced default ValueEditor to handle multiple input types (@jakeboone02)
+
 ### v2.0.1 (2019/08/27)
 - [#93](https://github.com/sapientglobalmarkets/react-querybuilder/pull/93) Pass in new root to _notifyQueryChange (@pumbor)
 - [#84](https://github.com/sapientglobalmarkets/react-querybuilder/pull/84) Add className prop to ValueEditor, pass it on to input element (#84) (@kkkrist)
