@@ -30416,10 +30416,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
 
-var Rule = function Rule(props) {
+var Rule = function Rule(_ref) {
+  var id = _ref.id,
+      parentId = _ref.parentId,
+      field = _ref.field,
+      operator = _ref.operator,
+      value = _ref.value,
+      translations = _ref.translations,
+      _ref$schema = _ref.schema,
+      classNames = _ref$schema.classNames,
+      controls = _ref$schema.controls,
+      fields = _ref$schema.fields,
+      getInputType = _ref$schema.getInputType,
+      getLevel = _ref$schema.getLevel,
+      getOperators = _ref$schema.getOperators,
+      getValueEditorType = _ref$schema.getValueEditorType,
+      getValues = _ref$schema.getValues,
+      onPropChange = _ref$schema.onPropChange,
+      onRuleRemove = _ref$schema.onRuleRemove;
+
   var onElementChanged = function onElementChanged(property, value) {
-    var id = props.id,
-        onPropChange = props.schema.onPropChange;
     onPropChange(property, value, id);
   };
 
@@ -30438,23 +30454,10 @@ var Rule = function Rule(props) {
   var removeRule = function removeRule(event) {
     event.preventDefault();
     event.stopPropagation();
-    props.schema.onRuleRemove(props.id, props.parentId);
+    onRuleRemove(id, parentId);
   };
 
-  var field = props.field,
-      operator = props.operator,
-      value = props.value,
-      translations = props.translations,
-      _props$schema = props.schema,
-      fields = _props$schema.fields,
-      controls = _props$schema.controls,
-      getOperators = _props$schema.getOperators,
-      getLevel = _props$schema.getLevel,
-      classNames = _props$schema.classNames,
-      getValueEditorType = _props$schema.getValueEditorType,
-      getInputType = _props$schema.getInputType,
-      getValues = _props$schema.getValues;
-  var level = getLevel(props.id);
+  var level = getLevel(id);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule)
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.fieldSelector, {
@@ -30520,53 +30523,55 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var RuleGroup = function RuleGroup(props) {
+var RuleGroup = function RuleGroup(_ref) {
+  var id = _ref.id,
+      parentId = _ref.parentId,
+      combinator = _ref.combinator,
+      rules = _ref.rules,
+      translations = _ref.translations,
+      schema = _ref.schema;
+  var classNames = schema.classNames,
+      combinators = schema.combinators,
+      controls = schema.controls,
+      createRule = schema.createRule,
+      createRuleGroup = schema.createRuleGroup,
+      getLevel = schema.getLevel,
+      isRuleGroup = schema.isRuleGroup,
+      onGroupAdd = schema.onGroupAdd,
+      onGroupRemove = schema.onGroupRemove,
+      onPropChange = schema.onPropChange,
+      onRuleAdd = schema.onRuleAdd,
+      onRuleRemove = schema.onRuleRemove;
+
   var hasParentGroup = function hasParentGroup() {
-    return props.parentId;
+    return !!parentId;
   };
 
   var onCombinatorChange = function onCombinatorChange(value) {
-    var onPropChange = props.schema.onPropChange;
-    onPropChange('combinator', value, props.id);
+    onPropChange('combinator', value, id);
   };
 
   var addRule = function addRule(event) {
     event.preventDefault();
     event.stopPropagation();
-    var _props$schema = props.schema,
-        createRule = _props$schema.createRule,
-        onRuleAdd = _props$schema.onRuleAdd;
     var newRule = createRule();
-    onRuleAdd(newRule, props.id);
+    onRuleAdd(newRule, id);
   };
 
   var addGroup = function addGroup(event) {
     event.preventDefault();
     event.stopPropagation();
-    var _props$schema2 = props.schema,
-        createRuleGroup = _props$schema2.createRuleGroup,
-        onGroupAdd = _props$schema2.onGroupAdd;
     var newGroup = createRuleGroup();
-    onGroupAdd(newGroup, props.id);
+    onGroupAdd(newGroup, id);
   };
 
   var removeGroup = function removeGroup(event) {
     event.preventDefault();
     event.stopPropagation();
-    props.schema.onGroupRemove(props.id, props.parentId);
+    onGroupRemove(id, parentId);
   };
 
-  var combinator = props.combinator,
-      rules = props.rules,
-      translations = props.translations,
-      _props$schema3 = props.schema,
-      combinators = _props$schema3.combinators,
-      controls = _props$schema3.controls,
-      onRuleRemove = _props$schema3.onRuleRemove,
-      isRuleGroup = _props$schema3.isRuleGroup,
-      getLevel = _props$schema3.getLevel,
-      classNames = _props$schema3.classNames;
-  var level = getLevel(props.id);
+  var level = getLevel(id);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "ruleGroup ".concat(classNames.ruleGroup)
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
@@ -30602,10 +30607,10 @@ var RuleGroup = function RuleGroup(props) {
     return isRuleGroup(r) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RuleGroup, {
       key: r.id,
       id: r.id,
-      schema: props.schema,
-      parentId: props.id,
+      schema: schema,
+      parentId: id,
       combinator: r.combinator,
-      translations: props.translations,
+      translations: translations,
       rules: r.rules
     }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Rule__WEBPACK_IMPORTED_MODULE_1__["default"], {
       key: r.id,
@@ -30613,9 +30618,9 @@ var RuleGroup = function RuleGroup(props) {
       field: r.field,
       value: r.value,
       operator: r.operator,
-      schema: props.schema,
-      parentId: props.id,
-      translations: props.translations,
+      schema: schema,
+      parentId: id,
+      translations: translations,
       onRuleRemove: onRuleRemove
     });
   }));
@@ -30649,11 +30654,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var ActionElement = function ActionElement(props) {
-  var label = props.label,
-      className = props.className,
-      handleOnClick = props.handleOnClick,
-      title = props.title;
+var ActionElement = function ActionElement(_ref) {
+  var className = _ref.className,
+      handleOnClick = _ref.handleOnClick,
+      label = _ref.label,
+      title = _ref.title;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: className,
     title: title,
@@ -30707,6 +30712,8 @@ var ValueEditor = function ValueEditor(_ref) {
   switch (type) {
     case 'select':
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        className: className,
+        title: title,
         onChange: function onChange(e) {
           return handleOnChange(e.target.value);
         },
@@ -30721,6 +30728,8 @@ var ValueEditor = function ValueEditor(_ref) {
     case 'checkbox':
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "checkbox",
+        className: className,
+        title: title,
         onChange: function onChange(e) {
           return handleOnChange(e.target.checked);
         },
@@ -30728,7 +30737,10 @@ var ValueEditor = function ValueEditor(_ref) {
       });
 
     case 'radio':
-      return values.map(function (v) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: className,
+        title: title
+      }, values.map(function (v) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           key: v.name
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -30738,8 +30750,8 @@ var ValueEditor = function ValueEditor(_ref) {
           onChange: function onChange(e) {
             return handleOnChange(e.target.value);
           }
-        }), ' ', v.label);
-      });
+        }), v.label);
+      }));
 
     default:
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -30786,12 +30798,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var ValueSelector = function ValueSelector(props) {
-  var value = props.value,
-      options = props.options,
-      className = props.className,
-      handleOnChange = props.handleOnChange,
-      title = props.title;
+var ValueSelector = function ValueSelector(_ref) {
+  var className = _ref.className,
+      handleOnChange = _ref.handleOnChange,
+      options = _ref.options,
+      title = _ref.title,
+      value = _ref.value;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
     className: className,
     value: value,
