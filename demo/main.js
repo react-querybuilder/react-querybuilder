@@ -131,6 +131,7 @@ const getValues = (field, operator) => {
 const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
+  const [format, setFormat] = useState('json');
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -171,12 +172,20 @@ const RootView = () => {
             getInputType={getInputType}
             getValues={getValues}
           />
-          <h4>SQL</h4>
-          <div>{formatQuery(query, 'sql')}</div>
         </div>
         <div className="shrink query-log scroll">
           <h4>Query</h4>
-          <pre>{formatQuery(query, 'json')}</pre>
+          <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+            <label>
+              <input type="radio" checked={format === 'json'} onChange={() => setFormat('json')} />
+              JSON
+            </label>
+            <label>
+              <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />
+              SQL
+            </label>
+          </div>
+          <pre>{formatQuery(query, format)}</pre>
         </div>
       </div>
     </div>
