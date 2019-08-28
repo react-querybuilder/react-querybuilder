@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Rule from './Rule';
 
 const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) => {
@@ -86,14 +86,13 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
           level={level}
         />
       ) : null}
-      {rules.map((r, idx) =>
-        isRuleGroup(r) ? (
-          <>
-            {idx && showCombinators ? (
-              <span className="ruleGroup-combinator">{combinator}</span>
-            ) : null}
+      {rules.map((r, idx) => (
+        <Fragment key={r.id}>
+          {idx && showCombinators ? (
+            <span className="ruleGroup-combinator">{combinator}</span>
+          ) : null}
+          {isRuleGroup(r) ? (
             <RuleGroup
-              key={r.id}
               id={r.id}
               schema={schema}
               parentId={id}
@@ -101,14 +100,8 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
               translations={translations}
               rules={r.rules}
             />
-          </>
-        ) : (
-          <>
-            {idx && showCombinators ? (
-              <span className="ruleGroup-combinator">{combinator}</span>
-            ) : null}
+          ) : (
             <Rule
-              key={r.id}
               id={r.id}
               field={r.field}
               value={r.value}
@@ -118,9 +111,9 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
               translations={translations}
               onRuleRemove={onRuleRemove}
             />
-          </>
-        )
-      )}
+          )}
+        </Fragment>
+      ))}
     </div>
   );
 };
