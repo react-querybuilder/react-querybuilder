@@ -41,6 +41,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {(query: RuleGroupType) => void} onQueryChange
  * @property {{}} controlClassnames
  * @property {{}} translations
+ * @property {boolean} showCombinators
  */
 
 const defaultTranslations = {
