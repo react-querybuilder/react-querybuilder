@@ -22,6 +22,8 @@ interface RuleGroup {
   rules: (Rule | RuleGroup)[];
 }
 
+type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';
+
 interface CommonCustomControlProps {
   /**
    * CSS classNames to be applied
@@ -31,6 +33,10 @@ interface CommonCustomControlProps {
    * The level of the current group
    */
   level: number;
+  /**
+   * The title for this control
+   */
+  title: string;
 }
 
 interface ActionCustomControlProps extends CommonCustomControlProps {
@@ -67,6 +73,9 @@ interface OperatorSelectorCustomControlProps extends SelectorEditorCustomControl
 interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps {
   field?: string;
   operator?: string;
+  type?: ValueEditorType;
+  inputType?: string;
+  values?: any[];
 }
 
 interface Field extends NameLabelPair {
