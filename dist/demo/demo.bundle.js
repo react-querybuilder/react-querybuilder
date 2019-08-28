@@ -30707,6 +30707,8 @@ var ValueEditor = function ValueEditor(_ref) {
   switch (type) {
     case 'select':
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        className: className,
+        title: title,
         onChange: function onChange(e) {
           return handleOnChange(e.target.value);
         },
@@ -30721,6 +30723,8 @@ var ValueEditor = function ValueEditor(_ref) {
     case 'checkbox':
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "checkbox",
+        className: className,
+        title: title,
         onChange: function onChange(e) {
           return handleOnChange(e.target.checked);
         },
@@ -30728,7 +30732,10 @@ var ValueEditor = function ValueEditor(_ref) {
       });
 
     case 'radio':
-      return values.map(function (v) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: className,
+        title: title
+      }, values.map(function (v) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           key: v.name
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -30738,8 +30745,8 @@ var ValueEditor = function ValueEditor(_ref) {
           onChange: function onChange(e) {
             return handleOnChange(e.target.value);
           }
-        }), ' ', v.label);
-      });
+        }), v.label);
+      }));
 
     default:
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
