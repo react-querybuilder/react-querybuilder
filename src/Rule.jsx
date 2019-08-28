@@ -1,12 +1,26 @@
 import React from 'react';
 
-const Rule = (props) => {
+const Rule = ({
+  id,
+  parentId,
+  field,
+  operator,
+  value,
+  translations,
+  schema: {
+    classNames,
+    controls,
+    fields,
+    getInputType,
+    getLevel,
+    getOperators,
+    getValueEditorType,
+    getValues,
+    onPropChange,
+    onRuleRemove
+  }
+}) => {
   const onElementChanged = (property, value) => {
-    const {
-      id,
-      schema: { onPropChange }
-    } = props;
-
     onPropChange(property, value, id);
   };
 
@@ -26,66 +40,49 @@ const Rule = (props) => {
     event.preventDefault();
     event.stopPropagation();
 
-    props.schema.onRuleRemove(props.id, props.parentId);
+    onRuleRemove(id, parentId);
   };
 
-  const {
-    field,
-    operator,
-    value,
-    translations,
-    schema: {
-      fields,
-      controls,
-      getOperators,
-      getLevel,
-      classNames,
-      getValueEditorType,
-      getInputType,
-      getValues
-    }
-  } = props;
-
-  const level = getLevel(props.id);
+  const level = getLevel(id);
 
   return (
     <div className={`rule ${classNames.rule}`}>
-      {React.createElement(controls.fieldSelector, {
-        options: fields,
-        title: translations.fields.title,
-        value: field,
-        className: `rule-fields ${classNames.fields}`,
-        handleOnChange: onFieldChanged,
-        level: level
-      })}
-      {React.createElement(controls.operatorSelector, {
-        field: field,
-        title: translations.operators.title,
-        options: getOperators(field),
-        value: operator,
-        className: `rule-operators ${classNames.operators}`,
-        handleOnChange: onOperatorChanged,
-        level: level
-      })}
-      {React.createElement(controls.valueEditor, {
-        field: field,
-        title: translations.value.title,
-        operator: operator,
-        value: value,
-        type: getValueEditorType(field, operator),
-        inputType: getInputType(field, operator),
-        values: getValues(field, operator),
-        className: `rule-value ${classNames.value}`,
-        handleOnChange: onValueChanged,
-        level: level
-      })}
-      {React.createElement(controls.removeRuleAction, {
-        label: translations.removeRule.label,
-        title: translations.removeRule.title,
-        className: `rule-remove ${classNames.removeRule}`,
-        handleOnClick: removeRule,
-        level: level
-      })}
+      <controls.fieldSelector
+        options={fields}
+        title={translations.fields.title}
+        value={field}
+        className={`rule-fields ${classNames.fields}`}
+        handleOnChange={onFieldChanged}
+        level={level}
+      />
+      <controls.operatorSelector
+        field={field}
+        title={translations.operators.title}
+        options={getOperators(field)}
+        value={operator}
+        className={`rule-operators ${classNames.operators}`}
+        handleOnChange={onOperatorChanged}
+        level={level}
+      />
+      <controls.valueEditor
+        field={field}
+        title={translations.value.title}
+        operator={operator}
+        value={value}
+        type={getValueEditorType(field, operator)}
+        inputType={getInputType(field, operator)}
+        values={getValues(field, operator)}
+        className={`rule-value ${classNames.value}`}
+        handleOnChange={onValueChanged}
+        level={level}
+      />
+      <controls.removeRuleAction
+        label={translations.removeRule.label}
+        title={translations.removeRule.title}
+        className={`rule-remove ${classNames.removeRule}`}
+        handleOnClick={removeRule}
+        level={level}
+      />
     </div>
   );
 };
