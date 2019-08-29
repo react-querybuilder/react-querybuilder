@@ -1,7 +1,11 @@
 ## Change Log
 
+### v2.2.0 (2019/08/29)
+- [#95](https://github.com/sapientglobalmarkets/react-querybuilder/pull/95) Add formatQuery function (@jakeboone02)
+- [#96](https://github.com/sapientglobalmarkets/react-querybuilder/pull/96) Added showCombinatorsBetweenRules option (@jakeboone02)
+
 ### v2.1.0 (2019/08/27)
-- [#94](https://github.com/sapientglobalmarkets/react-querybuilder/pull/94) Enhanced default ValueEditor to handle multiple input types (@jakeboone02)
+- [#94](https://github.com/sapientglobalmarkets/react-querybuilder/pull/94) Enhanced default ValueEditor to handle multiple input types (#94) (@jakeboone02)
 
 ### v2.0.1 (2019/08/27)
 - [#93](https://github.com/sapientglobalmarkets/react-querybuilder/pull/93) Pass in new root to _notifyQueryChange (@pumbor)
