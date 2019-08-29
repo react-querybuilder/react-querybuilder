@@ -1,4 +1,4 @@
-// Type definitions for react-querybuilder 2.1.0
+// Type definitions for react-querybuilder 2.2.1
 // Project: https://github.com/sapientglobalmarkets/react-querybuilder/
 // Definitions by: Jake Boone <https://github.com/jakeboone02>
 
@@ -36,7 +36,7 @@ interface CommonCustomControlProps {
   /**
    * The title for this control
    */
-  title: string;
+  title?: string;
 }
 
 interface ActionCustomControlProps extends CommonCustomControlProps {
@@ -251,8 +251,8 @@ export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  */
-export const formatQuery = (
+export function formatQuery(
   ruleGroup: RuleGroup,
   format: 'json' | 'sql',
   valueProcessor?: (field: string, operator: string, value: any) => string
-) => string;
+): string;
