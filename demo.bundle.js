@@ -99,7 +99,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _src_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../src/index */ "./src/index.js");
+/* harmony import */ var _src__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../src */ "./src/index.js");
 /* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
 /* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3__);
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -278,6 +278,16 @@ var RootView = function RootView() {
       _useState4 = _slicedToArray(_useState3, 2),
       fields = _useState4[0],
       setFields = _useState4[1];
+
+  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])('json'),
+      _useState6 = _slicedToArray(_useState5, 2),
+      format = _useState6[0],
+      setFormat = _useState6[1];
+
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+      _useState8 = _slicedToArray(_useState7, 2),
+      showCombinatorsBetweenRules = _useState8[0],
+      setShowCombinatorsBetweenRules = _useState8[1];
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
@@ -315,11 +325,17 @@ var RootView = function RootView() {
     onClick: function onClick() {
       return loadQuery();
     }
-  }, "Clear query")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, "Clear query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "checkbox",
+    checked: showCombinatorsBetweenRules,
+    onChange: function onChange(e) {
+      return setShowCombinatorsBetweenRules(e.target.checked);
+    }
+  }), "Show combinators between rules")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "flex-box"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "scroll"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src_index__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_2__["default"], {
     query: query,
     fields: fields,
     controlClassnames: {
@@ -329,10 +345,28 @@ var RootView = function RootView() {
     getOperators: getOperators,
     getValueEditorType: getValueEditorType,
     getInputType: getInputType,
-    getValues: getValues
+    getValues: getValues,
+    showCombinatorsBetweenRules: showCombinatorsBetweenRules
   })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "shrink query-log scroll"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, JSON.stringify(query, null, 2)))));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-evenly'
+    }
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "radio",
+    checked: format === 'json',
+    onChange: function onChange() {
+      return setFormat('json');
+    }
+  }), "JSON"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "radio",
+    checked: format === 'sql',
+    onChange: function onChange() {
+      return setFormat('sql');
+    }
+  }), "SQL")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, Object(_src__WEBPACK_IMPORTED_MODULE_2__["formatQuery"])(query, format)))));
 };
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));
@@ -29997,6 +30031,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @property {(query: RuleGroupType) => void} onQueryChange
  * @property {{}} controlClassnames
  * @property {{}} translations
+ * @property {boolean} showCombinatorsBetweenRules
  */
 
 var defaultTranslations = {
@@ -30333,7 +30368,8 @@ var QueryBuilder = function QueryBuilder(props) {
     getOperators: getOperators,
     getValueEditorType: getValueEditorType,
     getInputType: getInputType,
-    getValues: getValues
+    getValues: getValues,
+    showCombinatorsBetweenRules: props.showCombinatorsBetweenRules
   }; // Set the query state when a new query prop comes in
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
@@ -30367,7 +30403,8 @@ QueryBuilder.defaultProps = {
   getInputType: null,
   getValues: null,
   onQueryChange: null,
-  controlClassnames: null
+  controlClassnames: null,
+  showCombinatorsBetweenRules: false
 };
 QueryBuilder.propTypes = {
   query: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
@@ -30396,7 +30433,8 @@ QueryBuilder.propTypes = {
   getValues: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   onQueryChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
-  translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object
+  translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
+  showCombinatorsBetweenRules: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
 };
 QueryBuilder.displayName = 'QueryBuilder';
 /* harmony default export */ __webpack_exports__["default"] = (QueryBuilder);
@@ -30416,10 +30454,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
 
-var Rule = function Rule(props) {
+var Rule = function Rule(_ref) {
+  var id = _ref.id,
+      parentId = _ref.parentId,
+      field = _ref.field,
+      operator = _ref.operator,
+      value = _ref.value,
+      translations = _ref.translations,
+      _ref$schema = _ref.schema,
+      classNames = _ref$schema.classNames,
+      controls = _ref$schema.controls,
+      fields = _ref$schema.fields,
+      getInputType = _ref$schema.getInputType,
+      getLevel = _ref$schema.getLevel,
+      getOperators = _ref$schema.getOperators,
+      getValueEditorType = _ref$schema.getValueEditorType,
+      getValues = _ref$schema.getValues,
+      onPropChange = _ref$schema.onPropChange,
+      onRuleRemove = _ref$schema.onRuleRemove;
+
   var onElementChanged = function onElementChanged(property, value) {
-    var id = props.id,
-        onPropChange = props.schema.onPropChange;
     onPropChange(property, value, id);
   };
 
@@ -30438,23 +30492,10 @@ var Rule = function Rule(props) {
   var removeRule = function removeRule(event) {
     event.preventDefault();
     event.stopPropagation();
-    props.schema.onRuleRemove(props.id, props.parentId);
+    onRuleRemove(id, parentId);
   };
 
-  var field = props.field,
-      operator = props.operator,
-      value = props.value,
-      translations = props.translations,
-      _props$schema = props.schema,
-      fields = _props$schema.fields,
-      controls = _props$schema.controls,
-      getOperators = _props$schema.getOperators,
-      getLevel = _props$schema.getLevel,
-      classNames = _props$schema.classNames,
-      getValueEditorType = _props$schema.getValueEditorType,
-      getInputType = _props$schema.getInputType,
-      getValues = _props$schema.getValues;
-  var level = getLevel(props.id);
+  var level = getLevel(id);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule)
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.fieldSelector, {
@@ -30520,56 +30561,59 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var RuleGroup = function RuleGroup(props) {
+var RuleGroup = function RuleGroup(_ref) {
+  var id = _ref.id,
+      parentId = _ref.parentId,
+      combinator = _ref.combinator,
+      rules = _ref.rules,
+      translations = _ref.translations,
+      schema = _ref.schema;
+  var classNames = schema.classNames,
+      combinators = schema.combinators,
+      controls = schema.controls,
+      createRule = schema.createRule,
+      createRuleGroup = schema.createRuleGroup,
+      getLevel = schema.getLevel,
+      isRuleGroup = schema.isRuleGroup,
+      onGroupAdd = schema.onGroupAdd,
+      onGroupRemove = schema.onGroupRemove,
+      onPropChange = schema.onPropChange,
+      onRuleAdd = schema.onRuleAdd,
+      onRuleRemove = schema.onRuleRemove,
+      showCombinatorsBetweenRules = schema.showCombinatorsBetweenRules;
+
   var hasParentGroup = function hasParentGroup() {
-    return props.parentId;
+    return !!parentId;
   };
 
   var onCombinatorChange = function onCombinatorChange(value) {
-    var onPropChange = props.schema.onPropChange;
-    onPropChange('combinator', value, props.id);
+    onPropChange('combinator', value, id);
   };
 
   var addRule = function addRule(event) {
     event.preventDefault();
     event.stopPropagation();
-    var _props$schema = props.schema,
-        createRule = _props$schema.createRule,
-        onRuleAdd = _props$schema.onRuleAdd;
     var newRule = createRule();
-    onRuleAdd(newRule, props.id);
+    onRuleAdd(newRule, id);
   };
 
   var addGroup = function addGroup(event) {
     event.preventDefault();
     event.stopPropagation();
-    var _props$schema2 = props.schema,
-        createRuleGroup = _props$schema2.createRuleGroup,
-        onGroupAdd = _props$schema2.onGroupAdd;
     var newGroup = createRuleGroup();
-    onGroupAdd(newGroup, props.id);
+    onGroupAdd(newGroup, id);
   };
 
   var removeGroup = function removeGroup(event) {
     event.preventDefault();
     event.stopPropagation();
-    props.schema.onGroupRemove(props.id, props.parentId);
+    onGroupRemove(id, parentId);
   };
 
-  var combinator = props.combinator,
-      rules = props.rules,
-      translations = props.translations,
-      _props$schema3 = props.schema,
-      combinators = _props$schema3.combinators,
-      controls = _props$schema3.controls,
-      onRuleRemove = _props$schema3.onRuleRemove,
-      isRuleGroup = _props$schema3.isRuleGroup,
-      getLevel = _props$schema3.getLevel,
-      classNames = _props$schema3.classNames;
-  var level = getLevel(props.id);
+  var level = getLevel(id);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "ruleGroup ".concat(classNames.ruleGroup)
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
+  }, showCombinatorsBetweenRules ? null : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
     options: combinators,
     value: combinator,
     title: translations.combinators.title,
@@ -30598,26 +30642,34 @@ var RuleGroup = function RuleGroup(props) {
     handleOnClick: removeGroup,
     rules: rules,
     level: level
-  }) : null, rules.map(function (r) {
-    return isRuleGroup(r) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RuleGroup, {
-      key: r.id,
+  }) : null, rules.map(function (r, idx) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
+      key: r.id
+    }, idx && showCombinatorsBetweenRules ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
+      options: combinators,
+      value: combinator,
+      title: translations.combinators.title,
+      className: "ruleGroup-combinators betweenRules ".concat(classNames.combinators),
+      handleOnChange: onCombinatorChange,
+      rules: rules,
+      level: level
+    }) : null, isRuleGroup(r) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RuleGroup, {
       id: r.id,
-      schema: props.schema,
-      parentId: props.id,
+      schema: schema,
+      parentId: id,
       combinator: r.combinator,
-      translations: props.translations,
+      translations: translations,
       rules: r.rules
     }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Rule__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      key: r.id,
       id: r.id,
       field: r.field,
       value: r.value,
       operator: r.operator,
-      schema: props.schema,
-      parentId: props.id,
-      translations: props.translations,
+      schema: schema,
+      parentId: id,
+      translations: translations,
       onRuleRemove: onRuleRemove
-    });
+    }));
   }));
 };
 
@@ -30649,11 +30701,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var ActionElement = function ActionElement(props) {
-  var label = props.label,
-      className = props.className,
-      handleOnClick = props.handleOnClick,
-      title = props.title;
+var ActionElement = function ActionElement(_ref) {
+  var className = _ref.className,
+      handleOnClick = _ref.handleOnClick,
+      label = _ref.label,
+      title = _ref.title;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: className,
     title: title,
@@ -30707,6 +30759,8 @@ var ValueEditor = function ValueEditor(_ref) {
   switch (type) {
     case 'select':
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        className: className,
+        title: title,
         onChange: function onChange(e) {
           return handleOnChange(e.target.value);
         },
@@ -30721,6 +30775,8 @@ var ValueEditor = function ValueEditor(_ref) {
     case 'checkbox':
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "checkbox",
+        className: className,
+        title: title,
         onChange: function onChange(e) {
           return handleOnChange(e.target.checked);
         },
@@ -30728,7 +30784,10 @@ var ValueEditor = function ValueEditor(_ref) {
       });
 
     case 'radio':
-      return values.map(function (v) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: className,
+        title: title
+      }, values.map(function (v) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           key: v.name
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -30738,8 +30797,8 @@ var ValueEditor = function ValueEditor(_ref) {
           onChange: function onChange(e) {
             return handleOnChange(e.target.value);
           }
-        }), ' ', v.label);
-      });
+        }), v.label);
+      }));
 
     default:
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -30786,12 +30845,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var ValueSelector = function ValueSelector(props) {
-  var value = props.value,
-      options = props.options,
-      className = props.className,
-      handleOnChange = props.handleOnChange,
-      title = props.title;
+var ValueSelector = function ValueSelector(_ref) {
+  var className = _ref.className,
+      handleOnChange = _ref.handleOnChange,
+      options = _ref.options,
+      title = _ref.title,
+      value = _ref.value;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
     className: className,
     value: value,
@@ -30848,14 +30907,18 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! exports provided: default */
+/*! exports provided: default, formatQuery */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _QueryBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QueryBuilder */ "./src/QueryBuilder.jsx");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "formatQuery", function() { return _utils__WEBPACK_IMPORTED_MODULE_1__["formatQuery"]; });
+
 
 /* harmony default export */ __webpack_exports__["default"] = (_QueryBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
 
 /***/ }),
 
@@ -30922,6 +30985,83 @@ var findRule = function findRule(id, parent) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (findRule);
+
+/***/ }),
+
+/***/ "./src/utils/formatQuery.js":
+/*!**********************************!*\
+  !*** ./src/utils/formatQuery.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! . */ "./src/utils/index.js");
+
+/**
+ * Formats a query in the requested output format.  The optional
+ * `valueProcessor` argument can be used to format the values differently
+ * based on a given field, operator, and value.  By default, values are
+ * processed assuming the default operators are being used.
+ * @param {RuleGroup} ruleGroup
+ * @param {"json"|"sql"} format
+ * @param {Function} valueProcessor
+ */
+
+var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
+  if (format.toLowerCase() === 'json') {
+    return JSON.stringify(ruleGroup, null, 2);
+  } else if (format.toLowerCase() === 'sql') {
+    var valueProc = valueProcessor || function (field, operator, value) {
+      var val = "\"".concat(value, "\"");
+
+      if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
+        val = '';
+      } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
+        val = "(".concat(value.split(',').map(function (v) {
+          return "\"".concat(v.trim(), "\"");
+        }).join(', '), ")");
+      } else if (typeof value === 'boolean') {
+        val = "".concat(value).toUpperCase();
+      }
+
+      return val;
+    };
+
+    var processRule = function processRule(rule) {
+      var value = valueProc(rule.field, rule.operator, rule.value);
+      var operator = rule.operator;
+
+      if (rule.operator.toLowerCase() === 'null') {
+        operator = 'is null';
+      } else if (rule.operator.toLowerCase() === 'notnull') {
+        operator = 'is not null';
+      } else if (rule.operator.toLowerCase() === 'notin') {
+        operator = 'not in';
+      }
+
+      return "".concat(rule.field, " ").concat(operator, " ").concat(value).trim();
+    };
+
+    var processRuleGroup = function processRuleGroup(rg) {
+      var processedRules = rg.rules.map(function (rule) {
+        if (Object(___WEBPACK_IMPORTED_MODULE_0__["isRuleGroup"])(rule)) {
+          return processRuleGroup(rule);
+        }
+
+        return processRule(rule);
+      });
+      return '(' + processedRules.join(" ".concat(rg.combinator, " ")) + ')';
+    };
+
+    return processRuleGroup(ruleGroup);
+  } else {
+    return '';
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (formatQuery);
 
 /***/ }),
 
@@ -31009,7 +31149,7 @@ var getLevel = function getLevel(id, index, query) {
 /*!****************************!*\
   !*** ./src/utils/index.js ***!
   \****************************/
-/*! exports provided: findRule, generateValidQuery, getLevel, isRuleGroup */
+/*! exports provided: findRule, formatQuery, generateValidQuery, getLevel, isRuleGroup */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31017,14 +31157,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _findRule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./findRule */ "./src/utils/findRule.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "findRule", function() { return _findRule__WEBPACK_IMPORTED_MODULE_0__["default"]; });
 
-/* harmony import */ var _generateValidQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generateValidQuery */ "./src/utils/generateValidQuery.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "generateValidQuery", function() { return _generateValidQuery__WEBPACK_IMPORTED_MODULE_1__["default"]; });
+/* harmony import */ var _formatQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./formatQuery */ "./src/utils/formatQuery.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "formatQuery", function() { return _formatQuery__WEBPACK_IMPORTED_MODULE_1__["default"]; });
 
-/* harmony import */ var _getLevel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getLevel */ "./src/utils/getLevel.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getLevel", function() { return _getLevel__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+/* harmony import */ var _generateValidQuery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generateValidQuery */ "./src/utils/generateValidQuery.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "generateValidQuery", function() { return _generateValidQuery__WEBPACK_IMPORTED_MODULE_2__["default"]; });
 
-/* harmony import */ var _isRuleGroup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isRuleGroup */ "./src/utils/isRuleGroup.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "isRuleGroup", function() { return _isRuleGroup__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+/* harmony import */ var _getLevel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getLevel */ "./src/utils/getLevel.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getLevel", function() { return _getLevel__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+
+/* harmony import */ var _isRuleGroup__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./isRuleGroup */ "./src/utils/isRuleGroup.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "isRuleGroup", function() { return _isRuleGroup__WEBPACK_IMPORTED_MODULE_4__["default"]; });
+
 
 
 
