@@ -315,7 +315,6 @@ const QueryBuilder = (props) => {
 
   const schema = {
     fields: props.fields,
-    operators: { ...defaultOperators, ...props.operators },
     combinators: props.combinators,
     classNames: { ...defaultControlClassnames, ...props.controlClassnames },
     createRule,
@@ -348,7 +347,7 @@ const QueryBuilder = (props) => {
   return (
     <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
       <RuleGroup
-        translations={props.translations}
+        translations={{ ...defaultTranslations, ...props.translations }}
         rules={root.rules}
         combinator={root.combinator}
         schema={schema}
