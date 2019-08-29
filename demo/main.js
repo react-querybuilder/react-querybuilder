@@ -131,7 +131,7 @@ const getValues = (field, operator) => {
 const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
-  const [showCombinators, setShowCombinators] = useState(false);
+  const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -161,10 +161,10 @@ const RootView = () => {
         <label>
           <input
             type="checkbox"
-            checked={showCombinators}
-            onChange={(e) => setShowCombinators(e.target.checked)}
-          />{' '}
-          Show Combinators
+            checked={showCombinatorsBetweenRules}
+            onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}
+          />
+          Show combinators between rules
         </label>
       </div>
       <hr />
@@ -179,7 +179,7 @@ const RootView = () => {
             getValueEditorType={getValueEditorType}
             getInputType={getInputType}
             getValues={getValues}
-            showCombinators={showCombinators}
+            showCombinatorsBetweenRules={showCombinatorsBetweenRules}
           />
         </div>
         <div className="shrink query-log scroll">

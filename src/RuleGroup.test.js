@@ -36,7 +36,8 @@ describe('<RuleGroup />', () => {
       onGroupAdd: (ruleGroup, id) => {},
       createRule: () => _createRule(1),
       createRuleGroup: () => _createRuleGroup(1, 'any_parent_id', []),
-      getLevel: (id) => 0
+      getLevel: (id) => 0,
+      showCombinatorsBetweenRules: false
     };
     props = {
       id: 'id',
@@ -255,24 +256,24 @@ describe('<RuleGroup />', () => {
     });
   });
 
-  describe('showCombinators', () => {
+  describe('showCombinatorsBetweenRules', () => {
     it('does not display combinators when there is only one rule', () => {
-      schema.showCombinators = true;
+      schema.showCombinatorsBetweenRules = true;
       props.rules = [{ id: 'r-test', field: 'test', value: 'Test', operator: '=' }];
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-combinator');
+      const sc = dom.find('.ruleGroup-combinators');
       expect(sc.length).to.equal(0);
     });
 
     it('displays combinators when there is more than one rule', () => {
-      schema.showCombinators = true;
+      schema.showCombinatorsBetweenRules = true;
       props.rules = [
         { id: 'g-test1', rules: [], combinator: 'and' },
         { id: 'r-test', field: 'test', value: 'Test', operator: '=' },
         { id: 'g-test2', rules: [], combinator: 'and' }
       ];
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-combinator');
+      const sc = dom.find('.ruleGroup-combinators');
       expect(sc.length).to.equal(2);
     });
   });

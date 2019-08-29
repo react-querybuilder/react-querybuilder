@@ -15,7 +15,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
     onPropChange,
     onRuleAdd,
     onRuleRemove,
-    showCombinators
+    showCombinatorsBetweenRules
   } = schema;
 
   const hasParentGroup = () => !!parentId;
@@ -51,15 +51,17 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
 
   return (
     <div className={`ruleGroup ${classNames.ruleGroup}`}>
-      <controls.combinatorSelector
-        options={combinators}
-        value={combinator}
-        title={translations.combinators.title}
-        className={`ruleGroup-combinators ${classNames.combinators}`}
-        handleOnChange={onCombinatorChange}
-        rules={rules}
-        level={level}
-      />
+      {showCombinatorsBetweenRules ? null : (
+        <controls.combinatorSelector
+          options={combinators}
+          value={combinator}
+          title={translations.combinators.title}
+          className={`ruleGroup-combinators ${classNames.combinators}`}
+          handleOnChange={onCombinatorChange}
+          rules={rules}
+          level={level}
+        />
+      )}
       <controls.addRuleAction
         label={translations.addRule.label}
         title={translations.addRule.title}
@@ -88,8 +90,16 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
       ) : null}
       {rules.map((r, idx) => (
         <Fragment key={r.id}>
-          {idx && showCombinators ? (
-            <span className="ruleGroup-combinator">{combinator}</span>
+          {idx && showCombinatorsBetweenRules ? (
+            <controls.combinatorSelector
+              options={combinators}
+              value={combinator}
+              title={translations.combinators.title}
+              className={`ruleGroup-combinators betweenRules ${classNames.combinators}`}
+              handleOnChange={onCombinatorChange}
+              rules={rules}
+              level={level}
+            />
           ) : null}
           {isRuleGroup(r) ? (
             <RuleGroup

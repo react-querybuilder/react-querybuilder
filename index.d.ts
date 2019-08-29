@@ -238,9 +238,9 @@ interface QueryBuilderProps {
     };
   };
   /**
-   * Show the combinators between rules and rule groups.
+   * Show the combinators between rules and rule groups instead of at the top of rule groups.
    */
-  showCombinators?: boolean;
+  showCombinatorsBetweenRules?: boolean;
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
