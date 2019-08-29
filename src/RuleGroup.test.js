@@ -332,11 +332,4 @@ describe('<RuleGroup />', () => {
       rules: rules
     };
   }
-
-  function _mockEvent() {
-    return {
-      preventDefault: () => {},
-      stopPropagation: () => {}
-    };
-  }
 });
