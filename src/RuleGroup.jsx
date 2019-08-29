@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Rule from './Rule';
 
 const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) => {
@@ -14,7 +14,8 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
     onGroupRemove,
     onPropChange,
     onRuleAdd,
-    onRuleRemove
+    onRuleRemove,
+    showCombinatorsBetweenRules
   } = schema;
 
   const hasParentGroup = () => !!parentId;
@@ -50,15 +51,17 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
 
   return (
     <div className={`ruleGroup ${classNames.ruleGroup}`}>
-      <controls.combinatorSelector
-        options={combinators}
-        value={combinator}
-        title={translations.combinators.title}
-        className={`ruleGroup-combinators ${classNames.combinators}`}
-        handleOnChange={onCombinatorChange}
-        rules={rules}
-        level={level}
-      />
+      {showCombinatorsBetweenRules ? null : (
+        <controls.combinatorSelector
+          options={combinators}
+          value={combinator}
+          title={translations.combinators.title}
+          className={`ruleGroup-combinators ${classNames.combinators}`}
+          handleOnChange={onCombinatorChange}
+          rules={rules}
+          level={level}
+        />
+      )}
       <controls.addRuleAction
         label={translations.addRule.label}
         title={translations.addRule.title}
@@ -85,31 +88,42 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
           level={level}
         />
       ) : null}
-      {rules.map((r) =>
-        isRuleGroup(r) ? (
-          <RuleGroup
-            key={r.id}
-            id={r.id}
-            schema={schema}
-            parentId={id}
-            combinator={r.combinator}
-            translations={translations}
-            rules={r.rules}
-          />
-        ) : (
-          <Rule
-            key={r.id}
-            id={r.id}
-            field={r.field}
-            value={r.value}
-            operator={r.operator}
-            schema={schema}
-            parentId={id}
-            translations={translations}
-            onRuleRemove={onRuleRemove}
-          />
-        )
-      )}
+      {rules.map((r, idx) => (
+        <Fragment key={r.id}>
+          {idx && showCombinatorsBetweenRules ? (
+            <controls.combinatorSelector
+              options={combinators}
+              value={combinator}
+              title={translations.combinators.title}
+              className={`ruleGroup-combinators betweenRules ${classNames.combinators}`}
+              handleOnChange={onCombinatorChange}
+              rules={rules}
+              level={level}
+            />
+          ) : null}
+          {isRuleGroup(r) ? (
+            <RuleGroup
+              id={r.id}
+              schema={schema}
+              parentId={id}
+              combinator={r.combinator}
+              translations={translations}
+              rules={r.rules}
+            />
+          ) : (
+            <Rule
+              id={r.id}
+              field={r.field}
+              value={r.value}
+              operator={r.operator}
+              schema={schema}
+              parentId={id}
+              translations={translations}
+              onRuleRemove={onRuleRemove}
+            />
+          )}
+        </Fragment>
+      ))}
     </div>
   );
 };

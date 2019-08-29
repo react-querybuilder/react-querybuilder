@@ -132,6 +132,7 @@ const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
   const [format, setFormat] = useState('json');
+  const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -158,6 +159,14 @@ const RootView = () => {
         <button onClick={() => loadQuery('primary')}>Load primary query</button>
         <button onClick={() => loadQuery('secondary')}>Load secondary query</button>
         <button onClick={() => loadQuery()}>Clear query</button>
+        <label>
+          <input
+            type="checkbox"
+            checked={showCombinatorsBetweenRules}
+            onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}
+          />
+          Show combinators between rules
+        </label>
       </div>
       <hr />
       <div className="flex-box">
@@ -171,6 +180,7 @@ const RootView = () => {
             getValueEditorType={getValueEditorType}
             getInputType={getInputType}
             getValues={getValues}
+            showCombinatorsBetweenRules={showCombinatorsBetweenRules}
           />
         </div>
         <div className="shrink query-log scroll">
