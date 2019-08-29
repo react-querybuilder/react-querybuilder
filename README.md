@@ -56,9 +56,13 @@ function logQuery(query) {
 
 ## API
 
-`<QueryBuilder />` is the only top-level component exposed from this library. It supports the following properties:
+This library exposes a React component, [`<QueryBuilder />`](#QueryBuilder), and a utility function, [`formatQuery`](#formatQuery). `<QueryBuilder />` is the default export, and `formatQuery` is exposed as a named export.
 
-### fields _(Required)_
+### QueryBuilder
+
+`<QueryBuilder />` supports the following properties:
+
+#### fields _(Required)_
 
 `[ {name:String, label:String, id:ID} ]`
 
@@ -68,7 +72,7 @@ The array of fields that should be used. Each field should be an object with:
 
 The `id` is optional, if you do not provide an id for a field then the name will be used.
 
-### operators _(Optional)_
+#### operators _(Optional)_
 
 `[ {name:String, label:String} ]`
 
@@ -89,7 +93,7 @@ The array of operators that should be used. The default operators include:
 ];
 ```
 
-### combinators _(Optional)_
+#### combinators _(Optional)_
 
 `[ {name:String, label:String} ]`
 
@@ -99,7 +103,7 @@ The array of combinators that should be used for RuleGroups. The default set inc
 [{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];
 ```
 
-### controlElements _(Optional)_
+#### controlElements _(Optional)_
 
 ```js
 React.PropTypes.shape({
@@ -217,31 +221,31 @@ This is a custom controls object that allows you to override the control element
 }
 ```
 
-### getOperators _(Optional)_
+#### getOperators _(Optional)_
 
 `function(field):[]`
 
 This is a callback function invoked to get the list of allowed operators for the given field.
 
-### getValueEditorType _(Optional)_
+#### getValueEditorType _(Optional)_
 
 `function(field, operator):string`
 
 This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default), `"select"`, `"checkbox"`, and `"radio"`.
 
-### getInputType _(Optional)_
+#### getInputType _(Optional)_
 
 `function(field, operator):string`
 
 This is a callback function invoked to get the `type` of `<input />` for the given field and operator (only applicable when `getValueEditorType` returns `"text"` or a falsy value). If no function is provided, `"text"` is used as the default.
 
-### getValues _(Optional)_
+#### getValues _(Optional)_
 
 `function(field, operator):[]`
 
 This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
-### onQueryChange _(Optional)_
+#### onQueryChange _(Optional)_
 
 `function(queryJSON):void`
 
@@ -275,7 +279,7 @@ This is a notification that is invoked anytime the query configuration changes. 
 }
 ```
 
-### controlClassnames _(Optional)_
+#### controlClassnames _(Optional)_
 
 This can be used to assign specific `CSS` classes to various controls that are created by the `<QueryBuilder />`. This is an object with the following properties:
 
@@ -298,7 +302,7 @@ This can be used to assign specific `CSS` classes to various controls that are c
 }
 ```
 
-### translations _(Optional)_
+#### translations _(Optional)_
 
 This can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />`. This is an object with the following properties:
 
@@ -335,11 +339,74 @@ This can be used to override translatable texts applied to various controls that
 }
 ```
 
-### showCombinatorsBetweenRules _(Optional)_
+#### showCombinatorsBetweenRules _(Optional)_
 
 `boolean`
 
 Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
+
+### formatQuery
+
+`formatQuery` formats a given query in either JSON or SQL format. Example:
+
+```js
+import { formatQuery } from 'react-querybuilder';
+
+const query = {
+  id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+  rules: [
+    {
+      id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+      field: 'firstName',
+      value: 'Steve',
+      operator: '='
+    },
+    {
+      id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and'
+};
+
+console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
+```
+
+An optional third argument can be passed into `formatQuery` if you need to control the way the value portion of the output is processed. (This is only applicable when the format is `"sql"`.)
+
+```js
+const query = {
+  id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+  rules: [
+    {
+      id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+      field: 'instrument',
+      value: ['Guitar', 'Vocals'],
+      operator: 'in'
+    },
+    {
+      id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and'
+};
+
+const valueProcessor = (field, operator, value) => {
+  if (operator === 'in') {
+    // Assuming `value` is an array, such as from a multi-select
+    return `(${value.map((v) => `"${v.trim()}"`).join(',')})`;
+  } else {
+    return `"${value}"`;
+  }
+};
+
+console.log(formatQuery(query, 'sql', valueProcessor)); // '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
+```
 
 ## Development
 

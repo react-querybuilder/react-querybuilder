@@ -244,3 +244,15 @@ interface QueryBuilderProps {
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
+
+/**
+ * Formats a query in the requested output format.  The optional
+ * `valueProcessor` argument can be used to format the values differently
+ * based on a given field, operator, and value.  By default, values are
+ * processed assuming the default operators are being used.
+ */
+export const formatQuery = (
+  ruleGroup: RuleGroup,
+  format: 'json' | 'sql',
+  valueProcessor?: (field: string, operator: string, value: any) => string
+) => string;

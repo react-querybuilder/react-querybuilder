@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder from '../src/index';
+import QueryBuilder, { formatQuery } from '../src';
 import '../src/query-builder.scss';
 
 const preparedFields = {
@@ -131,6 +131,7 @@ const getValues = (field, operator) => {
 const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
+  const [format, setFormat] = useState('json');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
 
   /**
@@ -184,7 +185,17 @@ const RootView = () => {
         </div>
         <div className="shrink query-log scroll">
           <h4>Query</h4>
-          <pre>{JSON.stringify(query, null, 2)}</pre>
+          <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+            <label>
+              <input type="radio" checked={format === 'json'} onChange={() => setFormat('json')} />
+              JSON
+            </label>
+            <label>
+              <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />
+              SQL
+            </label>
+          </div>
+          <pre>{formatQuery(query, format)}</pre>
         </div>
       </div>
     </div>
