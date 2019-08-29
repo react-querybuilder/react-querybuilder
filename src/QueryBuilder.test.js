@@ -2,7 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import QueryBuilder from './QueryBuilder';
-const sinon = require('sinon');
+import sinon from 'sinon';
 
 describe('<QueryBuilder />', () => {
   it('should exist', () => {
