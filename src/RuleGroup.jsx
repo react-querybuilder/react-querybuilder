@@ -14,7 +14,6 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
     onGroupRemove,
     onPropChange,
     onRuleAdd,
-    onRuleRemove,
     showCombinatorsBetweenRules
   } = schema;
 
@@ -119,7 +118,6 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
               schema={schema}
               parentId={id}
               translations={translations}
-              onRuleRemove={onRuleRemove}
             />
           )}
         </Fragment>
