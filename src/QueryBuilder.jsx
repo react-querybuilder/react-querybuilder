@@ -41,6 +41,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {(query: RuleGroupType) => void} onQueryChange
  * @property {{}} controlClassnames
  * @property {{}} translations
+ * @property {boolean} showCombinatorsBetweenRules
  */
 
 const defaultTranslations = {
@@ -330,7 +331,8 @@ const QueryBuilder = (props) => {
     getOperators,
     getValueEditorType,
     getInputType,
-    getValues
+    getValues,
+    showCombinatorsBetweenRules: props.showCombinatorsBetweenRules
   };
 
   // Set the query state when a new query prop comes in
@@ -369,7 +371,8 @@ QueryBuilder.defaultProps = {
   getInputType: null,
   getValues: null,
   onQueryChange: null,
-  controlClassnames: null
+  controlClassnames: null,
+  showCombinatorsBetweenRules: false
 };
 
 QueryBuilder.propTypes = {
@@ -397,7 +400,8 @@ QueryBuilder.propTypes = {
   getValues: PropTypes.func,
   onQueryChange: PropTypes.func,
   controlClassnames: PropTypes.object,
-  translations: PropTypes.object
+  translations: PropTypes.object,
+  showCombinatorsBetweenRules: PropTypes.bool
 };
 
 QueryBuilder.displayName = 'QueryBuilder';

@@ -335,6 +335,12 @@ This can be used to override translatable texts applied to various controls that
 }
 ```
 
+### showCombinatorsBetweenRules _(Optional)_
+
+`boolean`
+
+Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
+
 ## Development
 
 ### Changelog Generation
