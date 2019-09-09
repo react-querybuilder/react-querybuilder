@@ -22,16 +22,16 @@ const preparedFields = {
 
 const preparedQueries = {
   primary: {
-    id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+    id: 'g-pnZdU4g',
     rules: [
       {
-        id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+        id: 'r-amcGG29',
         field: 'firstName',
         value: 'Steve',
         operator: '='
       },
       {
-        id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+        id: 'r-1HSbhnt',
         field: 'lastName',
         value: 'Vai',
         operator: '='
@@ -40,23 +40,23 @@ const preparedQueries = {
     combinator: 'and'
   },
   secondary: {
-    id: 'g-15e72d98-557f-4a09-af90-6d7afc05b0f7',
+    id: 'g-ZFGAOyxj',
     rules: [
       {
+        id: 'r-HAIQE84X',
         field: 'age',
-        id: 'r-45b166dd-d69a-4008-9587-fe796aeda496',
         operator: '>',
         value: '28'
       },
       {
+        id: 'r-zLf9uJqw',
         field: 'isMusician',
-        id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
         operator: '=',
         value: true
       },
       {
+        id: 'r-D9WSvlj5',
         field: 'instrument',
-        id: 'r-df23ba2b-e600-491d-967c-116ade6fe45e',
         operator: '=',
         value: 'Guitar'
       }
