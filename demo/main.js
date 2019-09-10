@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import nanoid from 'nanoid';
 import QueryBuilder, { formatQuery } from '../src';
 import '../src/query-builder.scss';
 
@@ -22,16 +23,16 @@ const preparedFields = {
 
 const preparedQueries = {
   primary: {
-    id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+    id: `g-${nanoid()}`,
     rules: [
       {
-        id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+        id: `r-${nanoid()}`,
         field: 'firstName',
         value: 'Steve',
         operator: '='
       },
       {
-        id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+        id: `r-${nanoid()}`,
         field: 'lastName',
         value: 'Vai',
         operator: '='
@@ -40,23 +41,23 @@ const preparedQueries = {
     combinator: 'and'
   },
   secondary: {
-    id: 'g-15e72d98-557f-4a09-af90-6d7afc05b0f7',
+    id: `g-${nanoid()}`,
     rules: [
       {
         field: 'age',
-        id: 'r-45b166dd-d69a-4008-9587-fe796aeda496',
+        id: `r-${nanoid()}`,
         operator: '>',
         value: '28'
       },
       {
         field: 'isMusician',
-        id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
+        id: `r-${nanoid()}`,
         operator: '=',
         value: true
       },
       {
         field: 'instrument',
-        id: 'r-df23ba2b-e600-491d-967c-116ade6fe45e',
+        id: `r-${nanoid()}`,
         operator: '=',
         value: 'Guitar'
       }

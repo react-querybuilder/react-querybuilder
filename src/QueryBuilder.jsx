@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import uniqueId from 'uuid/v4';
+import nanoid from 'nanoid';
 import { ActionElement, ValueEditor, ValueSelector } from './controls';
 import RuleGroup from './RuleGroup';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
@@ -138,7 +138,7 @@ const QueryBuilder = (props) => {
     const field = fields[0].name;
 
     return {
-      id: `r-${uniqueId()}`,
+      id: `r-${nanoid()}`,
       field,
       value: '',
       operator: getOperators(field)[0].name
@@ -150,7 +150,7 @@ const QueryBuilder = (props) => {
    */
   const createRuleGroup = () => {
     return {
-      id: `g-${uniqueId()}`,
+      id: `g-${nanoid()}`,
       rules: [],
       combinator: props.combinators[0].name
     };
