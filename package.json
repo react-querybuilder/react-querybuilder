@@ -77,7 +77,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --env dev",
-    "dist": "del dist; webpack --env prod",
+    "dist": "del dist && webpack --env prod",
     "publish:demo": "npm run dist && node gh-pages.publish.js",
     "publish:npm": "np",
     "test": "karma start karma.conf.js",
