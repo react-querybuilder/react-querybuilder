@@ -99,9 +99,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _src__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../src */ "./src/index.js");
-/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
-/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _src__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src */ "./src/index.js");
+/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
+/* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4__);
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -109,6 +111,7 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -154,14 +157,14 @@ var preparedFields = {
 };
 var preparedQueries = {
   primary: {
-    id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+    id: "g-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
     rules: [{
-      id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+      id: "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
       field: 'firstName',
       value: 'Steve',
       operator: '='
     }, {
-      id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+      id: "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -169,20 +172,20 @@ var preparedQueries = {
     combinator: 'and'
   },
   secondary: {
-    id: 'g-15e72d98-557f-4a09-af90-6d7afc05b0f7',
+    id: "g-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
     rules: [{
       field: 'age',
-      id: 'r-45b166dd-d69a-4008-9587-fe796aeda496',
+      id: "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
       operator: '>',
       value: '28'
     }, {
       field: 'isMusician',
-      id: 'r-db6fded6-bd8c-4b4f-9a33-a00f7417a9a9',
+      id: "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
       operator: '=',
       value: true
     }, {
       field: 'instrument',
-      id: 'r-df23ba2b-e600-491d-967c-116ade6fe45e',
+      id: "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_2___default()()),
       operator: '=',
       value: 'Guitar'
     }],
@@ -335,7 +338,7 @@ var RootView = function RootView() {
     className: "flex-box"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "scroll"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_3__["default"], {
     query: query,
     fields: fields,
     controlClassnames: {
@@ -366,7 +369,7 @@ var RootView = function RootView() {
     onChange: function onChange() {
       return setFormat('sql');
     }
-  }), "SQL")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, Object(_src__WEBPACK_IMPORTED_MODULE_2__["formatQuery"])(query, format)))));
+  }), "SQL")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format)))));
 };
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));
@@ -4193,6 +4196,50 @@ function stubFalse() {
 }
 
 module.exports = stubFalse;
+
+
+/***/ }),
+
+/***/ "./node_modules/nanoid/index.browser.js":
+/*!**********************************************!*\
+  !*** ./node_modules/nanoid/index.browser.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+if (true) {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    throw new Error(
+      'React Native does not have a built-in secure random generator. ' +
+      'If you don’t need unpredictable IDs, you can use `nanoid/non-secure`. ' +
+      'For secure ID install `expo-random` locally and use `nanoid/async`.'
+    )
+  }
+  if (typeof self === 'undefined' || (!self.crypto && !self.msCrypto)) {
+    throw new Error(
+      'Your browser does not have secure random generator. ' +
+      'If you don’t need unpredictable IDs, you can use nanoid/non-secure.'
+    )
+  }
+}
+
+var crypto = self.crypto || self.msCrypto
+
+/*
+ * This alphabet uses a-z A-Z 0-9 _- symbols.
+ * Symbols order was changed for better gzip compression.
+ */
+var url = 'Uint8ArdomValuesObj012345679BCDEFGHIJKLMNPQRSTWXYZ_cfghkpqvwxyz-'
+
+module.exports = function (size) {
+  size = size || 21
+  var id = ''
+  var bytes = crypto.getRandomValues(new Uint8Array(size))
+  while (0 < size--) {
+    id += url[bytes[size] & 63]
+  }
+  return id
+}
 
 
 /***/ }),
@@ -29768,126 +29815,6 @@ if (false) {} else {
 
 /***/ }),
 
-/***/ "./node_modules/uuid/lib/bytesToUuid.js":
-/*!**********************************************!*\
-  !*** ./node_modules/uuid/lib/bytesToUuid.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([bth[buf[i++]], bth[buf[i++]], 
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]]]).join('');
-}
-
-module.exports = bytesToUuid;
-
-
-/***/ }),
-
-/***/ "./node_modules/uuid/lib/rng-browser.js":
-/*!**********************************************!*\
-  !*** ./node_modules/uuid/lib/rng-browser.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/uuid/v4.js":
-/*!*********************************!*\
-  !*** ./node_modules/uuid/v4.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var rng = __webpack_require__(/*! ./lib/rng */ "./node_modules/uuid/lib/rng-browser.js");
-var bytesToUuid = __webpack_require__(/*! ./lib/bytesToUuid */ "./node_modules/uuid/lib/bytesToUuid.js");
-
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof(options) == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
-    options = null;
-  }
-  options = options || {};
-
-  var rnds = options.random || (options.rng || rng)();
-
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-
-  // Copy bytes to buffer, if provided
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
-
-  return buf || bytesToUuid(rnds);
-}
-
-module.exports = v4;
-
-
-/***/ }),
-
 /***/ "./node_modules/webpack/buildin/global.js":
 /*!***********************************!*\
   !*** (webpack)/buildin/global.js ***!
@@ -29967,8 +29894,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controls */ "./src/controls/index.js");
 /* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
@@ -30147,7 +30074,7 @@ var QueryBuilder = function QueryBuilder(props) {
     var fields = props.fields;
     var field = fields[0].name;
     return {
-      id: "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
+      id: "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_3___default()()),
       field: field,
       value: '',
       operator: getOperators(field)[0].name
@@ -30160,7 +30087,7 @@ var QueryBuilder = function QueryBuilder(props) {
 
   var createRuleGroup = function createRuleGroup() {
     return {
-      id: "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_3___default()()),
+      id: "g-".concat(nanoid__WEBPACK_IMPORTED_MODULE_3___default()()),
       rules: [],
       combinator: props.combinators[0].name
     };
@@ -30352,7 +30279,6 @@ var QueryBuilder = function QueryBuilder(props) {
 
   var schema = {
     fields: props.fields,
-    operators: _objectSpread({}, defaultOperators, {}, props.operators),
     combinators: props.combinators,
     classNames: _objectSpread({}, defaultControlClassnames, {}, props.controlClassnames),
     createRule: createRule,
@@ -30382,7 +30308,7 @@ var QueryBuilder = function QueryBuilder(props) {
   return react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "queryBuilder ".concat(schema.classNames.queryBuilder)
   }, react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_RuleGroup__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    translations: props.translations,
+    translations: _objectSpread({}, defaultTranslations, {}, props.translations),
     rules: root.rules,
     combinator: root.combinator,
     schema: schema,
@@ -30579,7 +30505,6 @@ var RuleGroup = function RuleGroup(_ref) {
       onGroupRemove = schema.onGroupRemove,
       onPropChange = schema.onPropChange,
       onRuleAdd = schema.onRuleAdd,
-      onRuleRemove = schema.onRuleRemove,
       showCombinatorsBetweenRules = schema.showCombinatorsBetweenRules;
 
   var hasParentGroup = function hasParentGroup() {
@@ -30667,8 +30592,7 @@ var RuleGroup = function RuleGroup(_ref) {
       operator: r.operator,
       schema: schema,
       parentId: id,
-      translations: translations,
-      onRuleRemove: onRuleRemove
+      translations: translations
     }));
   }));
 };
@@ -31074,8 +30998,8 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var ___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! . */ "./src/utils/index.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -31094,7 +31018,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var generateValidQuery = function generateValidQuery(query) {
   if (Object(___WEBPACK_IMPORTED_MODULE_1__["isRuleGroup"])(query)) {
     return {
-      id: query.id || "g-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()()),
+      id: query.id || "g-".concat(nanoid__WEBPACK_IMPORTED_MODULE_0___default()()),
       rules: query.rules.map(function (rule) {
         return generateValidQuery(rule);
       }),
@@ -31103,7 +31027,7 @@ var generateValidQuery = function generateValidQuery(query) {
   }
 
   return _objectSpread({
-    id: query.id || "r-".concat(uuid_v4__WEBPACK_IMPORTED_MODULE_0___default()())
+    id: query.id || "r-".concat(nanoid__WEBPACK_IMPORTED_MODULE_0___default()())
   }, query);
 };
 
