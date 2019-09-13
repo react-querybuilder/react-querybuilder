@@ -68,8 +68,8 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "prop-types": "^15.6.0",
-    "uuid": "^3.0.1"
+    "nanoid": "^2.1.0",
+    "prop-types": "^15.6.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

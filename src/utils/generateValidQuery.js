@@ -1,4 +1,4 @@
-import uniqueId from 'uuid/v4';
+import nanoid from 'nanoid';
 import { isRuleGroup } from '.';
 
 /**
@@ -9,13 +9,13 @@ import { isRuleGroup } from '.';
 const generateValidQuery = (query) => {
   if (isRuleGroup(query)) {
     return {
-      id: query.id || `g-${uniqueId()}`,
+      id: query.id || `g-${nanoid()}`,
       rules: query.rules.map((rule) => generateValidQuery(rule)),
       combinator: query.combinator
     };
   }
   return {
-    id: query.id || `r-${uniqueId()}`,
+    id: query.id || `r-${nanoid()}`,
     ...query
   };
 };
