@@ -353,16 +353,16 @@ Pass `true` to show the combinators (and/or) between rules and rule groups inste
 import { formatQuery } from 'react-querybuilder';
 
 const query = {
-  id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+  id: 'g-b6SQ6WCcup8e37xhydwHE',
   rules: [
     {
-      id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+      id: 'r-zITQOjVEWlsU1fncraSNn',
       field: 'firstName',
       value: 'Steve',
       operator: '='
     },
     {
-      id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+      id: 'r-zVx7ARNak3TCZNFHkwMG2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -378,16 +378,16 @@ An optional third argument can be passed into `formatQuery` if you need to contr
 
 ```js
 const query = {
-  id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+  id: 'g-J5GsbcFmZ6xOJCLPPKIfE',
   rules: [
     {
-      id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+      id: 'r-KneYcwIPPHDGSogtKhG4g',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
       operator: 'in'
     },
     {
-      id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+      id: 'r-wz6AkZbzSyDYbPk1AxgvO',
       field: 'lastName',
       value: 'Vai',
       operator: '='
