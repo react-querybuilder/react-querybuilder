@@ -46,7 +46,7 @@ const Rule = ({
   const level = getLevel(id);
 
   return (
-    <div className={`rule ${classNames.rule}`}>
+    <div className={`rule ${classNames.rule}`} data-rule-id={id} data-level={level}>
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}

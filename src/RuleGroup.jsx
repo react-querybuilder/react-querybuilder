@@ -49,7 +49,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
   const level = getLevel(id);
 
   return (
-    <div className={`ruleGroup ${classNames.ruleGroup}`}>
+    <div className={`ruleGroup ${classNames.ruleGroup}`} data-rule-group-id={id} data-level={level}>
       {showCombinatorsBetweenRules ? null : (
         <controls.combinatorSelector
           options={combinators}
