@@ -52,7 +52,7 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
         }
         return processRule(rule);
       });
-      return '(' + processedRules.join(` ${rg.combinator} `) + ')';
+      return `${rg.not ? 'NOT ' : ''}(${processedRules.join(` ${rg.combinator} `)})`;
     };
 
     return processRuleGroup(ruleGroup);

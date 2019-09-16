@@ -38,7 +38,8 @@ const preparedQueries = {
         operator: '='
       }
     ],
-    combinator: 'and'
+    combinator: 'and',
+    not: false
   },
   secondary: {
     id: `g-${nanoid()}`,
@@ -62,10 +63,12 @@ const preparedQueries = {
         value: 'Guitar'
       }
     ],
-    combinator: 'or'
+    combinator: 'or',
+    not: false
   },
   generic: {
     combinator: 'and',
+    not: false,
     rules: []
   }
 };
@@ -134,6 +137,7 @@ const RootView = () => {
   const [fields, setFields] = useState(preparedFields.primary);
   const [format, setFormat] = useState('json');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
+  const [showNotToggle, setShowNotToggle] = useState(false);
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -168,6 +172,14 @@ const RootView = () => {
           />
           Show combinators between rules
         </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showNotToggle}
+            onChange={(e) => setShowNotToggle(e.target.checked)}
+          />
+          Show "not" toggle
+        </label>
       </div>
       <hr />
       <div className="flex-box">
@@ -182,6 +194,7 @@ const RootView = () => {
             getInputType={getInputType}
             getValues={getValues}
             showCombinatorsBetweenRules={showCombinatorsBetweenRules}
+            showNotToggle={showNotToggle}
           />
         </div>
         <div className="shrink query-log scroll">

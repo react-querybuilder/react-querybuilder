@@ -55,14 +55,16 @@ const query = {
           operator: '!='
         }
       ],
-      combinator: 'or'
+      combinator: 'or',
+      not: true
     }
   ],
-  combinator: 'and'
+  combinator: 'and',
+  not: false
 };
 
 const sqlString =
-  '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and (gender = "M" or job != "Programmer"))';
+  '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and NOT (gender = "M" or job != "Programmer"))';
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
@@ -94,7 +96,8 @@ describe('formatQuery', () => {
           operator: '='
         }
       ],
-      combinator: 'and'
+      combinator: 'and',
+      not: false
     };
 
     const valueProcessor = (field, operator, value) => {

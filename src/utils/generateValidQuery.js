@@ -11,7 +11,8 @@ const generateValidQuery = (query) => {
     return {
       id: query.id || `g-${nanoid()}`,
       rules: query.rules.map((rule) => generateValidQuery(rule)),
-      combinator: query.combinator
+      combinator: query.combinator,
+      not: !!query.not
     };
   }
   return {

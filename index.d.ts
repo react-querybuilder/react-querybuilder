@@ -56,6 +56,11 @@ interface SelectorEditorCustomControlProps extends CommonCustomControlProps {
   handleOnChange?(value: any): void;
 }
 
+interface NotToggleCustomControlProps extends CommonCustomControlProps {
+  checked?: boolean;
+  handleOnChange?(checked: boolean): void;
+}
+
 interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
   options: NameLabelPair[];
   rules?: Rule[];
@@ -124,6 +129,7 @@ interface QueryBuilderProps {
     fieldSelector?: React.ComponentType<FieldSelectorCustomControlProps>;
     operatorSelector?: React.ComponentType<OperatorSelectorCustomControlProps>;
     valueEditor?: React.ComponentType<ValueEditorCustomControlProps>;
+    notToggle?: React.ComponentType<NotToggleCustomControlProps>;
   };
   /**
    * This is a callback function invoked to get the list of allowed
@@ -202,6 +208,10 @@ interface QueryBuilderProps {
      * `<button>` to remove a Rule
      */
     removeRule?: string;
+    /**
+     * `<label>` on the "not" toggle
+     */
+    notToggle?: string;
   };
   /**
    * This can be used to override translatable texts applied to various
@@ -236,11 +246,18 @@ interface QueryBuilderProps {
     combinators?: {
       title: string;
     };
+    notToggle?: {
+      title: string;
+    };
   };
   /**
    * Show the combinators between rules and rule groups instead of at the top of rule groups.
    */
   showCombinatorsBetweenRules?: boolean;
+  /**
+   * Show the "not" toggle for rule groups.
+   */
+  showNotToggle?: boolean;
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
