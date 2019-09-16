@@ -1,5 +1,10 @@
 ## Change Log
 
+### v2.3.0 (2019/09/16)
+- [#104](https://github.com/sapientglobalmarkets/react-querybuilder/pull/104) Add "not" toggle switch for rule groups (@jakeboone02)
+- [#103](https://github.com/sapientglobalmarkets/react-querybuilder/pull/103) Add level, rule id to DOM elements (@srinivasdamam)
+- [#102](https://github.com/sapientglobalmarkets/react-querybuilder/pull/102) Replace uuid with nanoid (@srinivasdamam)
+
 ### v2.2.0 (2019/08/29)
 - [#95](https://github.com/sapientglobalmarkets/react-querybuilder/pull/95) Add formatQuery function (@jakeboone02)
 - [#96](https://github.com/sapientglobalmarkets/react-querybuilder/pull/96) Added showCombinatorsBetweenRules option (@jakeboone02)
