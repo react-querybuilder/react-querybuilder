@@ -1,6 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import { ActionElement, ValueSelector } from './controls/index';
+import { ActionElement, NotToggle, ValueSelector } from './controls/index';
 import RuleGroup from './RuleGroup';
 
 describe('<RuleGroup />', () => {
@@ -16,13 +16,20 @@ describe('<RuleGroup />', () => {
       ),
       addRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>,
       addGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Group</button>,
-      removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>
+      removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
+      notToggle: (props) => (
+        <label>
+          <input onChange={(e) => props.handleOnChange(e.target.checked)} />
+          Not
+        </label>
+      )
     };
     classNames = {
       combinators: 'custom-combinators-class',
       addRule: 'custom-addRule-class',
       addGroup: 'custom-addGroup-class',
-      removeGroup: 'custom-removeGroup-class'
+      removeGroup: 'custom-removeGroup-class',
+      notToggle: 'custom-notToggle-class'
     };
     schema = {
       combinators: [],
@@ -37,7 +44,8 @@ describe('<RuleGroup />', () => {
       createRule: () => _createRule(1),
       createRuleGroup: () => _createRuleGroup(1, 'any_parent_id', []),
       getLevel: (id) => 0,
-      showCombinatorsBetweenRules: false
+      showCombinatorsBetweenRules: false,
+      showNotToggle: false
     };
     props = {
       id: 'id',
@@ -73,6 +81,9 @@ describe('<RuleGroup />', () => {
         },
         combinators: {
           title: 'Combinators'
+        },
+        notToggle: {
+          title: 'Invert this group'
         }
       }
     };
@@ -211,6 +222,24 @@ describe('<RuleGroup />', () => {
     });
   });
 
+  describe('onNotToggleChange', () => {
+    it('calls onPropChange from the schema with expected values', () => {
+      let actualProperty, actualValue, actualId;
+      schema.onPropChange = (prop, value, id) => {
+        actualProperty = prop;
+        actualValue = value;
+        actualId = id;
+      };
+      schema.showNotToggle = true;
+      const dom = mount(<RuleGroup {...props} />);
+      dom.find('.ruleGroup-notToggle input').simulate('change', { target: { checked: true } });
+
+      expect(actualProperty).to.equal('not');
+      expect(actualValue).to.equal(true);
+      expect(actualId).to.equal('id');
+    });
+  });
+
   describe('addRule', () => {
     it('calls onRuleAdd from the schema with expected values', () => {
       let actualRule, actualId;
@@ -278,6 +307,32 @@ describe('<RuleGroup />', () => {
     });
   });
 
+  describe('showNotToggle', () => {
+    beforeEach(() => {
+      schema.showNotToggle = true;
+      controls.notToggle = NotToggle;
+    });
+
+    it('does not display NOT toggle by default', () => {
+      schema.showNotToggle = false;
+      const dom = shallow(<RuleGroup {...props} />);
+      const sc = dom.find('.ruleGroup-notToggle');
+      expect(sc.length).to.equal(0);
+    });
+
+    it('displays NOT toggle when showNotToggle is set to true', () => {
+      const dom = shallow(<RuleGroup {...props} />);
+      const sc = dom.find('.ruleGroup-notToggle');
+      expect(sc.length).to.equal(1);
+    });
+
+    it('has the correct classNames', () => {
+      const dom = shallow(<RuleGroup {...props} />);
+      expect(dom.find('NotToggle').props().className).to.contain('ruleGroup-notToggle');
+      expect(dom.find('NotToggle').props().className).to.contain('custom-notToggle-class');
+    });
+  });
+
   //shared examples
   function behavesLikeAnActionElement(label, defaultClassName, customClassName) {
     it('should have the correct label', () => {
@@ -303,11 +358,13 @@ describe('<RuleGroup />', () => {
       const dom = shallow(<RuleGroup {...props} />);
       expect(dom.find(element).props().className).to.contain(customClassName);
     });
+
     it('should pass down the existing rules array', () => {
       props.rules = [_createRule(1), _createRule(2)];
       const dom = shallow(<RuleGroup {...props} />);
       expect(dom.find(element).props().rules).to.equal(props.rules);
     });
+
     it('should pass down the level of the element', () => {
       props.rules = [_createRule(1), _createRule(2)];
       const dom = shallow(<RuleGroup {...props} />);

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import Rule from './Rule';
 
-const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) => {
+const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not }) => {
   const {
     classNames,
     combinators,
@@ -14,13 +14,18 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
     onGroupRemove,
     onPropChange,
     onRuleAdd,
-    showCombinatorsBetweenRules
+    showCombinatorsBetweenRules,
+    showNotToggle
   } = schema;
 
   const hasParentGroup = () => !!parentId;
 
   const onCombinatorChange = (value) => {
     onPropChange('combinator', value, id);
+  };
+
+  const onNotToggleChange = (checked) => {
+    onPropChange('not', checked, id);
   };
 
   const addRule = (event) => {
@@ -59,6 +64,14 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema }) =>
           handleOnChange={onCombinatorChange}
           rules={rules}
           level={level}
+        />
+      )}
+      {!showNotToggle ? null : (
+        <controls.notToggle
+          className={`ruleGroup-notToggle ${classNames.notToggle}`}
+          title={translations.notToggle.title}
+          checked={not}
+          handleOnChange={onNotToggleChange}
         />
       )}
       <controls.addRuleAction

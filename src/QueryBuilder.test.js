@@ -49,7 +49,7 @@ describe('<QueryBuilder />', () => {
       // Spy is called initially when mounting component (once)
       expect(queryChange.calledOnce).to.equal(true);
       const initialID = wrapper.find('RuleGroup').props().id;
-      const query = { id: initialID, combinator: 'and', rules: [] };
+      const query = { id: initialID, combinator: 'and', rules: [], not: false };
       expect(queryChange.calledWith(query)).to.equal(true);
     });
   });
@@ -58,6 +58,7 @@ describe('<QueryBuilder />', () => {
     let wrapper;
     const queryWithoutID = {
       combinator: 'and',
+      not: false,
       rules: [
         {
           field: 'firstName',
@@ -125,6 +126,7 @@ describe('<QueryBuilder />', () => {
 
     const newQuery = {
       combinator: 'and',
+      not: false,
       rules: [
         {
           field: 'domainName',
@@ -183,6 +185,7 @@ describe('<QueryBuilder />', () => {
 
     const query = {
       combinator: 'and',
+      not: false,
       id: '111',
       rules: [
         {
@@ -228,6 +231,7 @@ describe('<QueryBuilder />', () => {
     const query = {
       id: 'g-012345',
       combinator: 'or',
+      not: false,
       rules: [
         {
           id: 'r-0123456789',
@@ -278,6 +282,7 @@ describe('<QueryBuilder />', () => {
     const query = {
       id: 'g-012345',
       combinator: 'or',
+      not: false,
       rules: [
         {
           id: 'r-0123456789',
@@ -326,6 +331,7 @@ describe('<QueryBuilder />', () => {
     const query = {
       id: 'g-012345',
       combinator: 'or',
+      not: false,
       rules: [
         {
           id: 'r-0123456789',
@@ -371,6 +377,7 @@ describe('<QueryBuilder />', () => {
     const query = {
       id: 'g-012345',
       combinator: 'or',
+      not: false,
       rules: [
         {
           id: 'r-0123456789',

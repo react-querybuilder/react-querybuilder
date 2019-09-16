@@ -115,6 +115,7 @@ React.PropTypes.shape({
   fieldSelector: React.PropTypes.func, //returns ReactClass
   operatorSelector: React.PropTypes.func, //returns ReactClass
   valueEditor: React.PropTypes.func //returns ReactClass
+  notToggle: React.PropTypes.func //returns ReactClass
 });
 ```
 
@@ -221,6 +222,18 @@ This is a custom controls object that allows you to override the control element
 }
 ```
 
+- `notToggle`: By default, `<label><input type="checkbox" />Not</label>` is used. The following props are passed:
+
+```js
+{
+  checked: React.PropTypes.bool, // Whether the input should be checked or not
+  handleOnChange: React.PropTypes.func, // Callback function to update the query representation
+  title: React.PropTypes.string, // Tooltip for the label
+  level: React.PropTypes.number, // The level of the group
+  className: React.PropTypes.string, // CSS classNames to be applied
+}
+```
+
 #### getOperators _(Optional)_
 
 `function(field):[]`
@@ -254,6 +267,7 @@ This is a notification that is invoked anytime the query configuration changes. 
 ```json
 {
   "combinator": "and",
+  "not": false,
   "rules": [
     {
       "field": "firstName",
@@ -292,6 +306,7 @@ This can be used to assign specific `CSS` classes to various controls that are c
     addRule:String, // <button> to add a Rule
     addGroup:String, // <button> to add a RuleGroup
     removeGroup:String, // <button> to remove a RuleGroup
+    notToggle:String, // <label> on the "not" toggle
 
     rule:String, // <div> containing the Rule
     fields:String, // <select> control for fields
@@ -335,6 +350,9 @@ This can be used to override translatable texts applied to various controls that
     },
     combinators: {
         title: "Combinators",
+    },
+    notToggle: {
+        title: "Invert this group",
     }
 }
 ```
@@ -344,6 +362,12 @@ This can be used to override translatable texts applied to various controls that
 `boolean`
 
 Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
+
+#### showNotToggle _(Optional)_
+
+`boolean`
+
+Pass `true` to show the "Not" toggle switch for each rule group.
 
 ### formatQuery
 
@@ -368,7 +392,8 @@ const query = {
       operator: '='
     }
   ],
-  combinator: 'and'
+  combinator: 'and',
+  not: false
 };
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
@@ -393,7 +418,8 @@ const query = {
       operator: '='
     }
   ],
-  combinator: 'and'
+  combinator: 'and',
+  not: false
 };
 
 const valueProcessor = (field, operator, value) => {

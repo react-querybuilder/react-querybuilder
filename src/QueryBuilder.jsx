@@ -2,7 +2,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import nanoid from 'nanoid';
-import { ActionElement, ValueEditor, ValueSelector } from './controls';
+import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import RuleGroup from './RuleGroup';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
@@ -18,6 +18,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {string} id
  * @property {string} combinator
  * @property {(RuleType|RuleGroupType)[]} rules
+ * @property {boolean} not
  */
 /**
  * @typedef {Object} ControlElements
@@ -29,6 +30,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {React.Component} fieldSelector
  * @property {React.Component} operatorSelector
  * @property {React.Component} valueEditor
+ * @property {React.Component} notToggle
  */
 /**
  * @typedef {Object} QueryBuilderProps
@@ -72,6 +74,9 @@ const defaultTranslations = {
   },
   combinators: {
     title: 'Combinators'
+  },
+  notToggle: {
+    title: 'Invert this group'
   }
 };
 
@@ -98,6 +103,7 @@ const defaultControlClassnames = {
   addRule: '',
   addGroup: '',
   removeGroup: '',
+  notToggle: '',
 
   rule: '',
   fields: '',
@@ -114,7 +120,8 @@ const defaultControlElements = {
   combinatorSelector: ValueSelector,
   fieldSelector: ValueSelector,
   operatorSelector: ValueSelector,
-  valueEditor: ValueEditor
+  valueEditor: ValueEditor,
+  notToggle: NotToggle
 };
 
 /**
@@ -152,7 +159,8 @@ const QueryBuilder = (props) => {
     return {
       id: `g-${nanoid()}`,
       rules: [],
-      combinator: props.combinators[0].name
+      combinator: props.combinators[0].name,
+      not: false
     };
   };
 
@@ -331,7 +339,8 @@ const QueryBuilder = (props) => {
     getValueEditorType,
     getInputType,
     getValues,
-    showCombinatorsBetweenRules: props.showCombinatorsBetweenRules
+    showCombinatorsBetweenRules: props.showCombinatorsBetweenRules,
+    showNotToggle: props.showNotToggle
   };
 
   // Set the query state when a new query prop comes in
@@ -353,6 +362,7 @@ const QueryBuilder = (props) => {
         schema={schema}
         id={root.id}
         parentId={null}
+        not={root.not}
       />
     </div>
   );
@@ -371,7 +381,8 @@ QueryBuilder.defaultProps = {
   getValues: null,
   onQueryChange: null,
   controlClassnames: null,
-  showCombinatorsBetweenRules: false
+  showCombinatorsBetweenRules: false,
+  showNotToggle: false
 };
 
 QueryBuilder.propTypes = {
@@ -391,7 +402,8 @@ QueryBuilder.propTypes = {
     combinatorSelector: PropTypes.func,
     fieldSelector: PropTypes.func,
     operatorSelector: PropTypes.func,
-    valueEditor: PropTypes.func
+    valueEditor: PropTypes.func,
+    notToggle: PropTypes.func
   }),
   getOperators: PropTypes.func,
   getValueEditorType: PropTypes.func,
@@ -400,7 +412,8 @@ QueryBuilder.propTypes = {
   onQueryChange: PropTypes.func,
   controlClassnames: PropTypes.object,
   translations: PropTypes.object,
-  showCombinatorsBetweenRules: PropTypes.bool
+  showCombinatorsBetweenRules: PropTypes.bool,
+  showNotToggle: PropTypes.bool
 };
 
 QueryBuilder.displayName = 'QueryBuilder';
