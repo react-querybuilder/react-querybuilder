@@ -138,6 +138,23 @@ describe('<Rule />', () => {
       expect(dom.find('ValueSelector').props().field).to.equal('selected_field');
     });
 
+    it('should have context set to specified value if supplied', () => {
+      props.context = { prop1: 'prop1_value'};
+      const dom = shallow(<Rule {...props} />);
+
+      const contextFromProps = dom.find('ValueSelector').props().context;
+
+      expect(contextFromProps === undefined || contextFromProps === null).to.be.false;
+      expect(contextFromProps.prop1 === undefined || contextFromProps.prop1 === null).to.be.false;
+      expect(contextFromProps.prop1).to.equal('prop1_value');
+    });
+
+    it('should have context set to null if not supplied', () => {
+      const dom = shallow(<Rule {...props} />);
+
+      expect(dom.find('ValueSelector').props().context === null).to.be.true;
+    });
+
     behavesLikeASelector('operator', 'rule-operators', 'custom-operators-class');
   });
 
@@ -165,6 +182,23 @@ describe('<Rule />', () => {
       const dom = shallow(<Rule {...props} />);
 
       expect(dom.find('ValueEditor').props().value).to.equal('specified_value');
+    });
+
+    it('should have context set to specified value if supplied', () => {
+      props.context = { prop1: 'prop1_value'};
+      const dom = shallow(<Rule {...props} />);
+
+      const contextFromProps = dom.find('ValueEditor').props().context;
+
+      expect(contextFromProps === undefined || contextFromProps === null).to.be.false;
+      expect(contextFromProps.prop1 === undefined || contextFromProps.prop1 === null).to.be.false;
+      expect(contextFromProps.prop1).to.equal('prop1_value');
+    });
+
+    it('should have context set to null if not supplied', () => {
+      const dom = shallow(<Rule {...props} />);
+
+      expect(dom.find('ValueEditor').props().context === null).to.be.true;
     });
 
     it('should have the onChange method handler', () => {

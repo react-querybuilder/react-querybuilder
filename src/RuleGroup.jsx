@@ -53,6 +53,16 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
 
   const level = getLevel(id);
 
+  const getContextData = (rule) => {
+    const field = rule && schema && schema.fields
+      ? schema.fields.find((f) => f.name === rule.field) 
+      : null;
+
+    return field
+      ? field.context
+      : null;
+  };
+
   return (
     <div className={`ruleGroup ${classNames.ruleGroup}`} data-rule-group-id={id} data-level={level}>
       {showCombinatorsBetweenRules ? null : (
@@ -131,6 +141,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
               schema={schema}
               parentId={id}
               translations={translations}
+              context={getContextData(r)}
             />
           )}
         </Fragment>

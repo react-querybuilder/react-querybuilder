@@ -168,6 +168,12 @@ describe('<RuleGroup />', () => {
     });
 
     it('has the first rule with the correct values', () => {
+      props.schema.fields = [{
+        name: 'field_1',
+        label: 'label_1',
+        context: { prop: `prop_value` }
+      }];
+
       const dom = shallow(<RuleGroup {...props} />);
       const ruleProps = dom
         .find('Rule')
@@ -177,6 +183,8 @@ describe('<RuleGroup />', () => {
       expect(ruleProps.field).to.equal('field_1');
       expect(ruleProps.operator).to.equal('operator_1');
       expect(ruleProps.value).to.equal('value_1');
+      expect(ruleProps.context !== null && ruleProps.context !== undefined).to.be.true;
+      expect(ruleProps.context.prop).to.equal('prop_value');
     });
   });
 
@@ -250,7 +258,7 @@ describe('<RuleGroup />', () => {
       const dom = mount(<RuleGroup {...props} />);
       dom.find('.ruleGroup-addRule').simulate('click');
 
-      expect(actualRule).to.include.keys('id', 'field', 'operator', 'value');
+      expect(actualRule).to.include.keys('id', 'field', 'operator', 'value', 'context');
       expect(actualId).to.equal('id');
     });
   });
@@ -378,7 +386,8 @@ describe('<RuleGroup />', () => {
       id: 'rule_id_' + index,
       field: 'field_' + index,
       operator: 'operator_' + index,
-      value: 'value_' + index
+      value: 'value_' + index,
+      context: { prop: `prop${index}_value`}
     };
   }
 

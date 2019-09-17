@@ -69,7 +69,7 @@ describe('<QueryBuilder />', () => {
     };
 
     const fields = [
-      { name: 'firstName', label: 'First Name' },
+      { name: 'firstName', label: 'First Name', context: { prop: 'prop_value' } },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
     ];
@@ -91,9 +91,14 @@ describe('<QueryBuilder />', () => {
 
     it('should have the Rule with the correct props', () => {
       const rule = wrapper.find('Rule');
+
+      console.log(rule.props().schema.fields);
+
       expect(rule.props().field).to.equal('firstName');
       expect(rule.props().value).to.equal('Test without ID');
       expect(rule.props().operator).to.equal('=');
+      expect(rule.props().context === null || rule.props().context === undefined).to.be.false;
+      expect(rule.props().context.prop).to.equal('prop_value');
     });
 
     it('should have a select control with the provided fields', () => {

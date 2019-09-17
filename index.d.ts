@@ -70,21 +70,24 @@ interface FieldSelectorCustomControlProps extends SelectorEditorCustomControlPro
   options: NameLabelPair[];
 }
 
-interface OperatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
+interface OperatorSelectorCustomControlProps<T = any> extends SelectorEditorCustomControlProps {
   field?: string;
   options: NameLabelPair[];
+  context?: T;
 }
 
-interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps {
+interface ValueEditorCustomControlProps<T = any> extends SelectorEditorCustomControlProps {
   field?: string;
   operator?: string;
   type?: ValueEditorType;
   inputType?: string;
   values?: any[];
+  context?: T;
 }
 
-interface Field extends NameLabelPair {
+interface Field<T = any> extends NameLabelPair {
   id?: string;
+  context?: T;
 }
 
 interface QueryBuilderProps {

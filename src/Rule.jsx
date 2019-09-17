@@ -7,6 +7,7 @@ const Rule = ({
   operator,
   value,
   translations,
+  context,
   schema: {
     classNames,
     controls,
@@ -63,6 +64,7 @@ const Rule = ({
         className={`rule-operators ${classNames.operators}`}
         handleOnChange={onOperatorChanged}
         level={level}
+        context={context}
       />
       <controls.valueEditor
         field={field}
@@ -75,6 +77,7 @@ const Rule = ({
         className={`rule-value ${classNames.value}`}
         handleOnChange={onValueChanged}
         level={level}
+        context={context}
       />
       <controls.removeRuleAction
         label={translations.removeRule.label}
@@ -93,7 +96,8 @@ Rule.defaultProps = {
   field: null,
   operator: null,
   value: null,
-  schema: null
+  schema: null,
+  context: null
 };
 
 Rule.displayName = 'Rule';
