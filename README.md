@@ -70,7 +70,9 @@ The array of fields that should be used. Each field should be an object with:
 
 `{name:String, label:String, id:ID, context: any}` |
 
-The `id` is optional, if you do not provide an id for a field then the name will be used.
+The `id` is optional, if you do not provide an id for a field then the name will be used. 
+
+Use the optional `context` property to pass any custom data to custom `valueEditor` and custom `operatorSelector`.
 
 #### operators _(Optional)_
 
@@ -202,7 +204,8 @@ This is a custom controls object that allows you to override the control element
   value: React.PropTypes.string, //selected operator from the existing query representation, if any
   className: React.PropTypes.string, //CSS classNames to be applied
   handleOnChange: React.PropTypes.func, //callback function to update query representation
-  level: React.PropTypes.number //The level the group this rule belongs to
+  level: React.PropTypes.number, //The level the group this rule belongs to
+  context: object //The optional context object attached to the field definition, null if not supplied
 }
 ```
 
@@ -218,7 +221,8 @@ This is a custom controls object that allows you to override the control element
   inputType: React.PropTypes.string, //type of <input> if type is "text"
   values: React.PropTypes.arrayOf(React.PropTypes.object), //
   level: React.PropTypes.number, //The level the group this rule belongs to
-  className: React.PropTypes.string, //CSS classNames to be applied
+  className: React.PropTypes.string, //CSS classNames to be applied,
+  context: object //The optional context object attached to the field definition, null if not supplied
 }
 ```
 
