@@ -54,13 +54,10 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
   const level = getLevel(id);
 
   const getContextData = (rule) => {
-    const field = rule && schema && schema.fields
-      ? schema.fields.find((f) => f.name === rule.field) 
-      : null;
+    const field =
+      rule && schema && schema.fields ? schema.fields.find((f) => f.name === rule.field) : null;
 
-    return field
-      ? field.context
-      : null;
+    return field ? field.context : null;
   };
 
   return (

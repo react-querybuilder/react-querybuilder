@@ -139,7 +139,7 @@ describe('<Rule />', () => {
     });
 
     it('should have context set to specified value if supplied', () => {
-      props.context = { prop1: 'prop1_value'};
+      props.context = { prop1: 'prop1_value' };
       const dom = shallow(<Rule {...props} />);
 
       const contextFromProps = dom.find('ValueSelector').props().context;
@@ -185,7 +185,7 @@ describe('<Rule />', () => {
     });
 
     it('should have context set to specified value if supplied', () => {
-      props.context = { prop1: 'prop1_value'};
+      props.context = { prop1: 'prop1_value' };
       const dom = shallow(<Rule {...props} />);
 
       const contextFromProps = dom.find('ValueEditor').props().context;

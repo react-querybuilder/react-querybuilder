@@ -64,11 +64,11 @@ This library exposes a React component, [`<QueryBuilder />`](#QueryBuilder), and
 
 #### fields _(Required)_
 
-`[ {name:String, label:String, id:ID} ]`
+`[ {name:String, label:String, id:ID, context: any} ]`
 
 The array of fields that should be used. Each field should be an object with:
 
-`{name:String, label:String, id:ID}` |
+`{name:String, label:String, id:ID, context: any}` |
 
 The `id` is optional, if you do not provide an id for a field then the name will be used.
 

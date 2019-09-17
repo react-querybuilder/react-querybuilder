@@ -168,11 +168,13 @@ describe('<RuleGroup />', () => {
     });
 
     it('has the first rule with the correct values', () => {
-      props.schema.fields = [{
-        name: 'field_1',
-        label: 'label_1',
-        context: { prop: `prop_value` }
-      }];
+      props.schema.fields = [
+        {
+          name: 'field_1',
+          label: 'label_1',
+          context: { prop: `prop_value` }
+        }
+      ];
 
       const dom = shallow(<RuleGroup {...props} />);
       const ruleProps = dom
@@ -387,7 +389,7 @@ describe('<RuleGroup />', () => {
       field: 'field_' + index,
       operator: 'operator_' + index,
       value: 'value_' + index,
-      context: { prop: `prop${index}_value`}
+      context: { prop: `prop${index}_value` }
     };
   }
 
