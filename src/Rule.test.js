@@ -32,7 +32,7 @@ describe('<Rule />', () => {
       removeRule: 'custom-removeRule-class'
     };
     schema = {
-      fields: ['field1', 'field2'],
+      fields: [{ name: 'field1', label: 'Field 1' }, { name: 'field2', label: 'Field 2' }],
       controls: controls,
       classNames: classNames,
       getOperators: (field) => [{ name: '=', value: 'is' }, { name: '!=', value: 'is not' }],
@@ -151,6 +151,14 @@ describe('<Rule />', () => {
       const dom = shallow(<Rule {...props} />);
 
       expect(dom.find('ValueEditor').props().field).to.equal('selected_field');
+    });
+
+    it('should have fieldData set to selected field data', () => {
+      props.field = 'field1';
+      const dom = shallow(<Rule {...props} />);
+
+      expect(dom.find('ValueEditor').props().fieldData.name).to.equal('field1');
+      expect(dom.find('ValueEditor').props().fieldData.label).to.equal('Field 1');
     });
 
     it('should have operator set to selected operator', () => {
