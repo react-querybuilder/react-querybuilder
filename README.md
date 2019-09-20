@@ -66,11 +66,13 @@ This library exposes a React component, [`<QueryBuilder />`](#QueryBuilder), and
 
 `[ {name:String, label:String, id:ID} ]`
 
-The array of fields that should be used. Each field should be an object with:
+The array of fields that should be used. Each field should be an object with at least:
 
-`{name:String, label:String, id:ID}` |
+`{name:String, label:String, id:ID}`
 
-The `id` is optional, if you do not provide an id for a field then the name will be used.
+The `id` is optional. If you do not provide an `id` for a field then the `name` will be used.
+
+Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on `controlElements` below).
 
 #### operators _(Optional)_
 
@@ -198,6 +200,7 @@ This is a custom controls object that allows you to override the control element
 ```js
 {
   field: React.PropTypes.string, //field name corresponding to this Rule
+  fieldData: React.PropTypes.object, //the entire object from the fields array for this field
   options: React.PropTypes.array.isRequired, //return value of getOperators(field)
   value: React.PropTypes.string, //selected operator from the existing query representation, if any
   className: React.PropTypes.string, //CSS classNames to be applied
@@ -211,6 +214,7 @@ This is a custom controls object that allows you to override the control element
 ```js
 {
   field: React.PropTypes.string, //field name corresponding to this Rule
+  fieldData: React.PropTypes.object, //the entire object from the fields array for this field
   operator: React.PropTypes.string, //operator name corresponding to this Rule
   value: React.PropTypes.string, //value from the existing query representation, if any
   handleOnChange: React.PropTypes.func, //callback function to update the query representation
