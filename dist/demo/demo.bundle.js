@@ -34969,6 +34969,9 @@ var Rule = function Rule(_ref) {
     onRuleRemove(id, parentId);
   };
 
+  var fieldData = fields.find(function (f) {
+    return f.name === field;
+  }) || null;
   var level = getLevel(id);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule),
@@ -34983,6 +34986,7 @@ var Rule = function Rule(_ref) {
     level: level
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.operatorSelector, {
     field: field,
+    fieldData: fieldData,
     title: translations.operators.title,
     options: getOperators(field),
     value: operator,
@@ -34991,6 +34995,7 @@ var Rule = function Rule(_ref) {
     level: level
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.valueEditor, {
     field: field,
+    fieldData: fieldData,
     title: translations.value.title,
     operator: operator,
     value: value,

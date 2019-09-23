@@ -43,6 +43,7 @@ const Rule = ({
     onRuleRemove(id, parentId);
   };
 
+  const fieldData = fields.find((f) => f.name === field) || null;
   const level = getLevel(id);
 
   return (
@@ -57,6 +58,7 @@ const Rule = ({
       />
       <controls.operatorSelector
         field={field}
+        fieldData={fieldData}
         title={translations.operators.title}
         options={getOperators(field)}
         value={operator}
@@ -66,6 +68,7 @@ const Rule = ({
       />
       <controls.valueEditor
         field={field}
+        fieldData={fieldData}
         title={translations.value.title}
         operator={operator}
         value={value}

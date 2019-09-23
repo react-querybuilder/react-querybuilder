@@ -72,11 +72,13 @@ interface FieldSelectorCustomControlProps extends SelectorEditorCustomControlPro
 
 interface OperatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
   field?: string;
+  fieldData?: Field;
   options: NameLabelPair[];
 }
 
 interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps {
   field?: string;
+  fieldData?: Field;
   operator?: string;
   type?: ValueEditorType;
   inputType?: string;
@@ -85,6 +87,7 @@ interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps
 
 interface Field extends NameLabelPair {
   id?: string;
+  [x: string]: any;
 }
 
 interface QueryBuilderProps {
