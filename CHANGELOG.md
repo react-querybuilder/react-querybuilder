@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.4.0 (2019/09/23)
+- [#107](https://github.com/sapientglobalmarkets/react-querybuilder/pull/107) Add new fieldData prop for custom OperatorSelector and ValueEditor components (@jakeboone02)
+
 ### v2.3.0 (2019/09/16)
 - [#104](https://github.com/sapientglobalmarkets/react-querybuilder/pull/104) Add "not" toggle switch for rule groups (@jakeboone02)
 - [#103](https://github.com/sapientglobalmarkets/react-querybuilder/pull/103) Add level, rule id to DOM elements (@srinivasdamam)
