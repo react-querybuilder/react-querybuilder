@@ -24,6 +24,12 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
             .split(',')
             .map((v) => `"${v.trim()}"`)
             .join(', ')})`;
+        } else if(operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
+          val = `"%${value}%"`;
+        } else if(operator.toLowerCase() === 'beginswith' || operator.toLowerCase() === 'doesnotbeginwith') {
+          val = `"${value}%"`;
+        } else if(operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
+          val = `"%${value}"`;
         } else if (typeof value === 'boolean') {
           val = `${value}`.toUpperCase();
         }
