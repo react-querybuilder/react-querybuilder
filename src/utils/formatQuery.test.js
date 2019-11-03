@@ -53,6 +53,12 @@ const query = {
           field: 'job',
           value: 'Programmer',
           operator: '!='
+        },
+        {
+          id: 'r-23206z73-9996-434b-72zr-9q87a02a2d48',
+          field: 'lastName',
+          value: 'something',
+          operator: 'contains'
         }
       ],
       combinator: 'or',
@@ -64,7 +70,7 @@ const query = {
 };
 
 const sqlString =
-  '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and NOT (gender = "M" or job != "Programmer"))';
+  '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and NOT (gender = "M" or job != "Programmer" or lastName like "%something%"))';
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
