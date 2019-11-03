@@ -34,12 +34,28 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
       const value = valueProc(rule.field, rule.operator, rule.value);
 
       let operator = rule.operator;
-      if (rule.operator.toLowerCase() === 'null') {
-        operator = 'is null';
-      } else if (rule.operator.toLowerCase() === 'notnull') {
-        operator = 'is not null';
-      } else if (rule.operator.toLowerCase() === 'notin') {
-        operator = 'not in';
+      switch(rule.operator.toLowerCase()) {
+        case 'null':
+          operator = 'is null';
+          break;
+        case 'notnull':
+          operator = 'is not null';
+          break;
+        case 'notin':
+          operator = 'not in';
+          break;
+        case 'contains':
+        case 'beginswith':
+        case 'endswith':
+          operator = 'like';
+          break;
+        case 'doesnotcontain':
+        case 'doesnotbeginwith':
+        case 'doesnotendwith':
+          operator = 'not like';
+          break;
+        default:
+          break;
       }
 
       return `${rule.field} ${operator} ${value}`.trim();
