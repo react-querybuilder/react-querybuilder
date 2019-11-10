@@ -82,22 +82,22 @@ The array of operators that should be used. The default operators include:
 
 ```js
 [
-  { name: 'null', label: 'Is Null' },
-  { name: 'notNull', label: 'Is Not Null' },
-  { name: 'in', label: 'In' },
-  { name: 'notIn', label: 'Not In' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' },
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
   { name: '>', label: '>' },
   { name: '<=', label: '<=' },
   { name: '>=', label: '>=' },
-  { name: 'contains', label: 'Contains' },
-  { name: 'beginsWith', label: 'Begins With' },
-  { name: 'endsWith', label: 'Ends With' },
-  { name: 'doesNotContain', label: 'Does not contain' },
-  { name: 'doesNotBeginWith', label: 'Does not begin with' },
-  { name: 'doesNotEndWith', label: 'Does not end with' }
+  { name: 'contains', label: 'contains' },
+  { name: 'beginsWith', label: 'begins with' },
+  { name: 'endsWith', label: 'ends with' },
+  { name: 'doesNotContain', label: 'does not contain' },
+  { name: 'doesNotBeginWith', label: 'does not begin with' },
+  { name: 'doesNotEndWith', label: 'does not end with' }
 ];
 ```
 
