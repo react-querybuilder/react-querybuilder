@@ -91,7 +91,13 @@ The array of operators that should be used. The default operators include:
   { name: '<', label: '<' },
   { name: '>', label: '>' },
   { name: '<=', label: '<=' },
-  { name: '>=', label: '>=' }
+  { name: '>=', label: '>=' },
+  { name: 'contains', label: 'Contains' },
+  { name: 'beginsWith', label: 'Begins With' },
+  { name: 'endsWith', label: 'Ends With' },
+  { name: 'doesNotContain', label: 'Does not contain' },
+  { name: 'doesNotBeginWith', label: 'Does not begin with' },
+  { name: 'doesNotEndWith', label: 'Does not end with' }
 ];
 ```
 

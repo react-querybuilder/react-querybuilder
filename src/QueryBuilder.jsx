@@ -81,16 +81,22 @@ const defaultTranslations = {
 };
 
 const defaultOperators = [
-  { name: 'null', label: 'Is Null' },
-  { name: 'notNull', label: 'Is Not Null' },
-  { name: 'in', label: 'In' },
-  { name: 'notIn', label: 'Not In' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' },
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
   { name: '>', label: '>' },
   { name: '<=', label: '<=' },
-  { name: '>=', label: '>=' }
+  { name: '>=', label: '>=' },
+  { name: 'contains', label: 'contains' },
+  { name: 'beginsWith', label: 'begins with' },
+  { name: 'endsWith', label: 'ends with' },
+  { name: 'doesNotContain', label: 'does not contain' },
+  { name: 'doesNotBeginWith', label: 'does not begin with' },
+  { name: 'doesNotEndWith', label: 'does not end with' }
 ];
 
 const defaultCombinators = [{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];

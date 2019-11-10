@@ -53,10 +53,53 @@ const query = {
           field: 'job',
           value: 'Programmer',
           operator: '!='
+        },
+        {
+          id: 'r-23206z73-9996-434b-72zr-9q87a02a2d48',
+          field: 'email',
+          value: '@',
+          operator: 'contains'
         }
       ],
       combinator: 'or',
       not: true
+    },
+    {
+      id: 'g-e87d4w79-82v6-42e9-n032-6hg996039670',
+      rules: [
+        {
+          id: 'r-86463d12-d045-4172-8489-0d9c42490967',
+          field: 'lastName',
+          value: 'ab',
+          operator: 'doesNotContain'
+        },
+        {
+          id: 'r-a0d80c26-1daa-44ae-98ef-594c741b6eb5',
+          field: 'job',
+          value: 'Prog',
+          operator: 'beginsWith'
+        },
+        {
+          id: 'r-23206z73-9996-434b-72zr-9q87a02a2d48',
+          field: 'email',
+          value: 'com',
+          operator: 'endsWith'
+        },
+        {
+          id: 'r-a0d80c26-1daa-44ae-98ef-594c741b6eb5',
+          field: 'job',
+          value: 'Man',
+          operator: 'doesNotBeginWith'
+        },
+        {
+          id: 'r-23206z73-9996-434b-72zr-9q87a02a2d48',
+          field: 'email',
+          value: 'fr',
+          operator: 'doesNotEndWith'
+        }
+      ],
+      combinator: 'or',
+      not: false
     }
   ],
   combinator: 'and',
@@ -64,7 +107,7 @@ const query = {
 };
 
 const sqlString =
-  '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and NOT (gender = "M" or job != "Programmer"))';
+  '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and NOT (gender = "M" or job != "Programmer" or email like "%@%") and (lastName not like "%ab%" or job like "Prog%" or email like "%com" or job not like "Man%" or email not like "%fr"))';
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
