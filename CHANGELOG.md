@@ -1,5 +1,9 @@
 ## Change Log
 
+### v2.5.0 (2019/11/10)
+- [#112](https://github.com/sapientglobalmarkets/react-querybuilder/pull/112) Format query handle more operators - Release version 2.5.0 (@oumar-sh)
+- [#111](https://github.com/sapientglobalmarkets/react-querybuilder/pull/111) Format query handle more operators (Close Issue #110) (@oumar-sh)
+
 ### v2.4.0 (2019/09/23)
 - [#107](https://github.com/sapientglobalmarkets/react-querybuilder/pull/107) Add new fieldData prop for custom OperatorSelector and ValueEditor components (@jakeboone02)
 
