@@ -34533,16 +34533,16 @@ var defaultTranslations = {
 };
 var defaultOperators = [{
   name: 'null',
-  label: 'Is Null'
+  label: 'is null'
 }, {
   name: 'notNull',
-  label: 'Is Not Null'
+  label: 'is not null'
 }, {
   name: 'in',
-  label: 'In'
+  label: 'in'
 }, {
   name: 'notIn',
-  label: 'Not In'
+  label: 'not in'
 }, {
   name: '=',
   label: '='
@@ -34561,6 +34561,24 @@ var defaultOperators = [{
 }, {
   name: '>=',
   label: '>='
+}, {
+  name: 'contains',
+  label: 'contains'
+}, {
+  name: 'beginsWith',
+  label: 'begins with'
+}, {
+  name: 'endsWith',
+  label: 'ends with'
+}, {
+  name: 'doesNotContain',
+  label: 'does not contain'
+}, {
+  name: 'doesNotBeginWith',
+  label: 'does not begin with'
+}, {
+  name: 'doesNotEndWith',
+  label: 'does not end with'
 }];
 var defaultCombinators = [{
   name: 'and',
@@ -35562,6 +35580,12 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
         val = "(".concat(value.split(',').map(function (v) {
           return "\"".concat(v.trim(), "\"");
         }).join(', '), ")");
+      } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
+        val = "\"%".concat(value, "%\"");
+      } else if (operator.toLowerCase() === 'beginswith' || operator.toLowerCase() === 'doesnotbeginwith') {
+        val = "\"".concat(value, "%\"");
+      } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
+        val = "\"%".concat(value, "\"");
       } else if (typeof value === 'boolean') {
         val = "".concat(value).toUpperCase();
       }
@@ -35573,12 +35597,33 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
       var value = valueProc(rule.field, rule.operator, rule.value);
       var operator = rule.operator;
 
-      if (rule.operator.toLowerCase() === 'null') {
-        operator = 'is null';
-      } else if (rule.operator.toLowerCase() === 'notnull') {
-        operator = 'is not null';
-      } else if (rule.operator.toLowerCase() === 'notin') {
-        operator = 'not in';
+      switch (rule.operator.toLowerCase()) {
+        case 'null':
+          operator = 'is null';
+          break;
+
+        case 'notnull':
+          operator = 'is not null';
+          break;
+
+        case 'notin':
+          operator = 'not in';
+          break;
+
+        case 'contains':
+        case 'beginswith':
+        case 'endswith':
+          operator = 'like';
+          break;
+
+        case 'doesnotcontain':
+        case 'doesnotbeginwith':
+        case 'doesnotendwith':
+          operator = 'not like';
+          break;
+
+        default:
+          break;
       }
 
       return "".concat(rule.field, " ").concat(operator, " ").concat(value).trim();
