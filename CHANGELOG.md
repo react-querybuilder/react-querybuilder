@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.5.1 (2019/11/11)
+- [#113](https://github.com/sapientglobalmarkets/react-querybuilder/pull/113) Bugfix/not property (@romanlamsal)
+
 ### v2.5.0 (2019/11/10)
 - [#112](https://github.com/sapientglobalmarkets/react-querybuilder/pull/112) Format query handle more operators - Release version 2.5.0 (@oumar-sh)
 - [#111](https://github.com/sapientglobalmarkets/react-querybuilder/pull/111) Format query handle more operators (Close Issue #110) (@oumar-sh)
