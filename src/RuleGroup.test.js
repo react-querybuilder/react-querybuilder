@@ -223,6 +223,30 @@ describe('<RuleGroup />', () => {
   });
 
   describe('onNotToggleChange', () => {
+    it('should set NOT property on ruleGroups below root', () => {
+      // given
+      const idOfNestedRuleGroup = "nested"
+      const propsWithNestedRuleGroup = {
+        ...props,
+        id: "root",
+        rules: [
+          {
+            id: idOfNestedRuleGroup,
+            combinator: "and",
+            rules: [],
+            not: true
+          }
+        ]
+      }
+      propsWithNestedRuleGroup.schema.isRuleGroup = () => true
+
+      // when
+      const dom = mount(<RuleGroup {...propsWithNestedRuleGroup}/>);
+
+      // then
+      expect(dom.find(RuleGroup).find({id: idOfNestedRuleGroup}).props().not).to.equal(true);
+    })
+
     it('calls onPropChange from the schema with expected values', () => {
       let actualProperty, actualValue, actualId;
       schema.onPropChange = (prop, value, id) => {
