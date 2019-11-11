@@ -20,6 +20,7 @@ interface RuleGroup {
   id: string;
   combinator: string;
   rules: (Rule | RuleGroup)[];
+  not?: boolean;
 }
 
 type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';

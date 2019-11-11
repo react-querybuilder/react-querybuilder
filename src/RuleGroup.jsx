@@ -121,6 +121,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
               combinator={r.combinator}
               translations={translations}
               rules={r.rules}
+              not={r.not}
             />
           ) : (
             <Rule
