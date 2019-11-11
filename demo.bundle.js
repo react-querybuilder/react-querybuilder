@@ -35170,7 +35170,8 @@ var RuleGroup = function RuleGroup(_ref) {
       parentId: id,
       combinator: r.combinator,
       translations: translations,
-      rules: r.rules
+      rules: r.rules,
+      not: r.not
     }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Rule__WEBPACK_IMPORTED_MODULE_1__["default"], {
       id: r.id,
       field: r.field,
