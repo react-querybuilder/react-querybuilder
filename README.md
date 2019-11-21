@@ -66,7 +66,7 @@ This library exposes a React component, [`<QueryBuilder />`](#QueryBuilder), and
 
 `{id?: string, combinator: string, rules: ({field: string, value: any, operator: string} | {rules: ...[], combinator: string})[]}`
 
-The initial query, in JSON form (follows the same format as the parameter passed to the `onQueryChange` callback). `id` is optional. See [the demo source](demo/main.js) for examples.
+The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](demo/main.js) for examples.
 
 #### `fields` _(Required)_
 
@@ -78,7 +78,7 @@ The array of fields that should be used. Each field should be an object with at 
 
 The `id` is optional. If you do not provide an `id` for a field then the `name` will be used.
 
-Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on `controlElements` below).
+Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements-optional)).
 
 #### `operators` _(Optional)_
 
