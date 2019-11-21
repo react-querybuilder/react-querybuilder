@@ -66,7 +66,7 @@ This library exposes a React component, [`<QueryBuilder />`](#QueryBuilder), and
 
 `{id?: string, combinator: string, rules: ({field: string, value: any, operator: string} | {rules: ...[], combinator: string})[]}`
 
-The initial query, in JSON form (follows the same format as the parameter passed to the `onQueryChange` callback). `id` is optional. See [the demo source](blob/master/demo/main.js) for examples.
+The initial query, in JSON form (follows the same format as the parameter passed to the `onQueryChange` callback). `id` is optional. See [the demo source](demo/main.js) for examples.
 
 #### `fields` _(Required)_
 
