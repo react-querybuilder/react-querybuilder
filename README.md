@@ -321,6 +321,7 @@ This can be used to assign specific `CSS` classes to various controls that are c
     queryBuilder: string, // Root <div> element
 
     ruleGroup: string, // <div> containing the RuleGroup
+    header: string, // <div> containing the RuleGroup header controls
     combinators: string, // <select> control for combinators
     addRule: string, // <button> to add a Rule
     addGroup: string, // <button> to add a RuleGroup

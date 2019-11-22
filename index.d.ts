@@ -177,6 +177,10 @@ interface QueryBuilderProps {
      */
     ruleGroup?: string;
     /**
+     * `<div>` containing the RuleGroup header controls
+     */
+    header?: string;
+    /**
      * `<select>` control for combinators
      */
     combinators?: string;
