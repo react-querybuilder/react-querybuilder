@@ -34590,6 +34590,7 @@ var defaultCombinators = [{
 var defaultControlClassnames = {
   queryBuilder: '',
   ruleGroup: '',
+  header: '',
   combinators: '',
   addRule: '',
   addGroup: '',
@@ -34999,6 +35000,7 @@ var Rule = function Rule(_ref) {
     options: fields,
     title: translations.fields.title,
     value: field,
+    operator: operator,
     className: "rule-fields ".concat(classNames.fields),
     handleOnChange: onFieldChanged,
     level: level
@@ -35119,6 +35121,8 @@ var RuleGroup = function RuleGroup(_ref) {
     className: "ruleGroup ".concat(classNames.ruleGroup),
     "data-rule-group-id": id,
     "data-level": level
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "ruleGroup-header ".concat(classNames.header)
   }, showCombinatorsBetweenRules ? null : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
     options: combinators,
     value: combinator,
@@ -35153,7 +35157,7 @@ var RuleGroup = function RuleGroup(_ref) {
     handleOnClick: removeGroup,
     rules: rules,
     level: level
-  }) : null, rules.map(function (r, idx) {
+  }) : null), rules.map(function (r, idx) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
       key: r.id
     }, idx && showCombinatorsBetweenRules ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.combinatorSelector, {
