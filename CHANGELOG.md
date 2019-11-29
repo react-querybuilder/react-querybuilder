@@ -1,5 +1,8 @@
 ## Change Log
 
+### v3.0.0 (2019/11/29)
+- [#115](https://github.com/sapientglobalmarkets/react-querybuilder/pull/115) Add ruleGroup-header div (@jakeboone02)
+
 ### v2.5.1 (2019/11/11)
 - [#113](https://github.com/sapientglobalmarkets/react-querybuilder/pull/113) Bugfix/not property (@romanlamsal)
 
