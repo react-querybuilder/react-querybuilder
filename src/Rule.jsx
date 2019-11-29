@@ -52,6 +52,7 @@ const Rule = ({
         options={fields}
         title={translations.fields.title}
         value={field}
+        operator={operator}
         className={`rule-fields ${classNames.fields}`}
         handleOnChange={onFieldChanged}
         level={level}

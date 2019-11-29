@@ -204,6 +204,7 @@ This is a custom controls object that allows you to override the control element
 {
   options: React.PropTypes.array.isRequired, // Same as 'fields' passed into QueryBuilder
   value: React.PropTypes.string, // Selected field from the existing query representation, if any
+  operator: React.PropTypes.string, // Selected operator from the existing query representation, if any
   className: React.PropTypes.string, // CSS classNames to be applied
   handleOnChange: React.PropTypes.func, // Callback function to update query representation
   level: React.PropTypes.number // The level the group this rule belongs to

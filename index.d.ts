@@ -69,6 +69,7 @@ interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomContr
 
 interface FieldSelectorCustomControlProps extends SelectorEditorCustomControlProps {
   options: NameLabelPair[];
+  operator?: string;
 }
 
 interface OperatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
