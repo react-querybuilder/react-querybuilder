@@ -99,12 +99,16 @@ const defaultOperators = [
   { name: 'doesNotEndWith', label: 'does not end with' }
 ];
 
-const defaultCombinators = [{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];
+const defaultCombinators = [
+  { name: 'and', label: 'AND' },
+  { name: 'or', label: 'OR' }
+];
 
 const defaultControlClassnames = {
   queryBuilder: '',
 
   ruleGroup: '',
+  header: '',
   combinators: '',
   addRule: '',
   addGroup: '',

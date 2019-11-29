@@ -95,7 +95,12 @@ describe('<RuleGroup />', () => {
 
   it('should have a className of "ruleGroup"', () => {
     const dom = shallow(<RuleGroup {...props} />);
-    expect(dom.find('div').hasClass('ruleGroup')).to.be.true;
+    expect(
+      dom
+        .find('div')
+        .first()
+        .hasClass('ruleGroup')
+    ).to.be.true;
   });
 
   describe('combinator selector as <ValueSelector />', () => {
@@ -104,7 +109,10 @@ describe('<RuleGroup />', () => {
     });
 
     it('should have options set to expected combinators', () => {
-      const expected_combinators = [{ name: 'and', label: 'AND' }, { name: 'or', label: 'OR' }];
+      const expected_combinators = [
+        { name: 'and', label: 'AND' },
+        { name: 'or', label: 'OR' }
+      ];
       schema.combinators = expected_combinators;
       const dom = shallow(<RuleGroup {...props} />);
       expect(dom.find('ValueSelector').props().options).to.equal(expected_combinators);
@@ -225,27 +233,32 @@ describe('<RuleGroup />', () => {
   describe('onNotToggleChange', () => {
     it('should set NOT property on ruleGroups below root', () => {
       // given
-      const idOfNestedRuleGroup = "nested"
+      const idOfNestedRuleGroup = 'nested';
       const propsWithNestedRuleGroup = {
         ...props,
-        id: "root",
+        id: 'root',
         rules: [
           {
             id: idOfNestedRuleGroup,
-            combinator: "and",
+            combinator: 'and',
             rules: [],
             not: true
           }
         ]
-      }
-      propsWithNestedRuleGroup.schema.isRuleGroup = () => true
+      };
+      propsWithNestedRuleGroup.schema.isRuleGroup = () => true;
 
       // when
-      const dom = mount(<RuleGroup {...propsWithNestedRuleGroup}/>);
+      const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
 
       // then
-      expect(dom.find(RuleGroup).find({id: idOfNestedRuleGroup}).props().not).to.equal(true);
-    })
+      expect(
+        dom
+          .find(RuleGroup)
+          .find({ id: idOfNestedRuleGroup })
+          .props().not
+      ).to.equal(true);
+    });
 
     it('calls onPropChange from the schema with expected values', () => {
       let actualProperty, actualValue, actualId;

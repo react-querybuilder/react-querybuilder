@@ -55,51 +55,53 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
 
   return (
     <div className={`ruleGroup ${classNames.ruleGroup}`} data-rule-group-id={id} data-level={level}>
-      {showCombinatorsBetweenRules ? null : (
-        <controls.combinatorSelector
-          options={combinators}
-          value={combinator}
-          title={translations.combinators.title}
-          className={`ruleGroup-combinators ${classNames.combinators}`}
-          handleOnChange={onCombinatorChange}
+      <div className={`ruleGroup-header ${classNames.header}`}>
+        {showCombinatorsBetweenRules ? null : (
+          <controls.combinatorSelector
+            options={combinators}
+            value={combinator}
+            title={translations.combinators.title}
+            className={`ruleGroup-combinators ${classNames.combinators}`}
+            handleOnChange={onCombinatorChange}
+            rules={rules}
+            level={level}
+          />
+        )}
+        {!showNotToggle ? null : (
+          <controls.notToggle
+            className={`ruleGroup-notToggle ${classNames.notToggle}`}
+            title={translations.notToggle.title}
+            checked={not}
+            handleOnChange={onNotToggleChange}
+          />
+        )}
+        <controls.addRuleAction
+          label={translations.addRule.label}
+          title={translations.addRule.title}
+          className={`ruleGroup-addRule ${classNames.addRule}`}
+          handleOnClick={addRule}
           rules={rules}
           level={level}
         />
-      )}
-      {!showNotToggle ? null : (
-        <controls.notToggle
-          className={`ruleGroup-notToggle ${classNames.notToggle}`}
-          title={translations.notToggle.title}
-          checked={not}
-          handleOnChange={onNotToggleChange}
-        />
-      )}
-      <controls.addRuleAction
-        label={translations.addRule.label}
-        title={translations.addRule.title}
-        className={`ruleGroup-addRule ${classNames.addRule}`}
-        handleOnClick={addRule}
-        rules={rules}
-        level={level}
-      />
-      <controls.addGroupAction
-        label={translations.addGroup.label}
-        title={translations.addGroup.title}
-        className={`ruleGroup-addGroup ${classNames.addGroup}`}
-        handleOnClick={addGroup}
-        rules={rules}
-        level={level}
-      />
-      {hasParentGroup() ? (
-        <controls.removeGroupAction
-          label={translations.removeGroup.label}
-          title={translations.removeGroup.title}
-          className={`ruleGroup-remove ${classNames.removeGroup}`}
-          handleOnClick={removeGroup}
+        <controls.addGroupAction
+          label={translations.addGroup.label}
+          title={translations.addGroup.title}
+          className={`ruleGroup-addGroup ${classNames.addGroup}`}
+          handleOnClick={addGroup}
           rules={rules}
           level={level}
         />
-      ) : null}
+        {hasParentGroup() ? (
+          <controls.removeGroupAction
+            label={translations.removeGroup.label}
+            title={translations.removeGroup.title}
+            className={`ruleGroup-remove ${classNames.removeGroup}`}
+            handleOnClick={removeGroup}
+            rules={rules}
+            level={level}
+          />
+        ) : null}
+      </div>
       {rules.map((r, idx) => (
         <Fragment key={r.id}>
           {idx && showCombinatorsBetweenRules ? (
