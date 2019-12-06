@@ -1,5 +1,8 @@
 ## Change Log
 
+### v3.0.1 (2019/12/06)
+- [#117](https://github.com/sapientglobalmarkets/react-querybuilder/pull/117) Fixed a rule default value on add/change (@xxsnakerxx)
+
 ### v3.0.0 (2019/11/29)
 - [#115](https://github.com/sapientglobalmarkets/react-querybuilder/pull/115) Add ruleGroup-header div (@jakeboone02)
 
