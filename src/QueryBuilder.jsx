@@ -234,6 +234,28 @@ const QueryBuilder = (props) => {
   };
 
   /**
+   * @param {RuleType} rule
+   * @returns {string|boolean}
+   */
+  const getRuleDefaultValue = (rule) => {
+    let value = '';
+
+    const values = getValues(rule.field, rule.operator);
+
+    if (values.length) {
+      value = values[0].name;
+    } else {
+      const editorType = getValueEditorType(rule.field, rule.operator);
+
+      if (editorType === 'checkbox') {
+        value = false;
+      }
+    }
+
+    return value;
+  }
+
+  /**
    * Adds a rule to the query
    * @param {RuleType} rule Rule to add
    * @param {string} parentId ID of the parent rule group
@@ -241,7 +263,10 @@ const QueryBuilder = (props) => {
   const onRuleAdd = (rule, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    parent.rules.push(rule);
+    parent.rules.push({
+      ...rule,
+      value: getRuleDefaultValue(rule),
+    });
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
   };
@@ -269,9 +294,12 @@ const QueryBuilder = (props) => {
     const rule = findRule(ruleId, rootCopy);
     Object.assign(rule, { [prop]: value });
 
-    // Reset operator and value for field change
+    // Reset operator and set default value for field change
     if (prop === 'field') {
-      Object.assign(rule, { operator: getOperators(rule.field)[0].name, value: '' });
+      Object.assign(rule, {
+        operator: getOperators(rule.field)[0].name,
+        value: getRuleDefaultValue(rule),
+      });
     }
 
     setRoot(rootCopy);
