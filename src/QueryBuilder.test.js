@@ -426,7 +426,7 @@ describe('<QueryBuilder />', () => {
 
   describe('actions', () => {
     let wrapper, onQueryChange;
-    const fields = [{ name: 'Field 1', value: 'field1' }, { name: 'Field 2', value: 'field2' }];
+    const fields = [{ name: 'field1', label: 'Field1' }, { name: 'field2', label: 'Field 2' }];
 
     beforeEach(() => {
       onQueryChange = sinon.spy();
@@ -511,6 +511,62 @@ describe('<QueryBuilder />', () => {
         .simulate('change', { target: { value: '!=' } });
 
       expect(onQueryChange.getCall(2).args[0].rules[0].operator).to.equal('!=');
+    });
+
+    it('should set default value for a rule', () => {
+      wrapper.setProps({
+        fields,
+        onQueryChange,
+        getValues: (field) => {
+          if (field === 'field1') {
+            return [
+              { name: 'value1', label: 'Value 1'},
+              { name: 'value2', label: 'Value 2'},
+            ]
+          };
+
+          return [];
+        },
+        getValueEditorType: (field) => {
+          if (field === 'field2') return 'checkbox';
+
+          return 'text';
+        }
+      });
+
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+
+      expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
+      expect(onQueryChange.getCall(1).args[0].rules[0].value).to.equal('value1');
+
+      wrapper
+        .find('.rule-fields')
+        .first()
+        .simulate('change', { target: { value: 'field2' } });
+
+      expect(onQueryChange.getCall(2).args[0].rules[0].field).to.equal('field2');
+      expect(onQueryChange.getCall(2).args[0].rules[0].value).to.equal(false);
+
+      wrapper.setProps({
+        fields: fields.slice(1),
+        onQueryChange,
+        getValueEditorType: (field) => {
+          if (field === 'field2') return 'checkbox';
+
+          return 'text';
+        }
+      });
+
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+
+      expect(onQueryChange.getCall(3).args[0].rules).to.have.length(2);
+      expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal(false);
     });
   });
 });
