@@ -34718,6 +34718,28 @@ var QueryBuilder = function QueryBuilder(props) {
     return props.operators;
   };
   /**
+   * @param {RuleType} rule
+   * @returns {string|boolean}
+   */
+
+
+  var getRuleDefaultValue = function getRuleDefaultValue(rule) {
+    var value = '';
+    var values = getValues(rule.field, rule.operator);
+
+    if (values.length) {
+      value = values[0].name;
+    } else {
+      var editorType = getValueEditorType(rule.field, rule.operator);
+
+      if (editorType === 'checkbox') {
+        value = false;
+      }
+    }
+
+    return value;
+  };
+  /**
    * Adds a rule to the query
    * @param {RuleType} rule Rule to add
    * @param {string} parentId ID of the parent rule group
@@ -34728,7 +34750,9 @@ var QueryBuilder = function QueryBuilder(props) {
     var rootCopy = _objectSpread({}, root);
 
     var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
-    parent.rules.push(rule);
+    parent.rules.push(_objectSpread({}, rule, {
+      value: getRuleDefaultValue(rule)
+    }));
     setRoot(rootCopy);
 
     _notifyQueryChange(rootCopy);
@@ -34760,12 +34784,12 @@ var QueryBuilder = function QueryBuilder(props) {
     var rootCopy = _objectSpread({}, root);
 
     var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(ruleId, rootCopy);
-    Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and value for field change
+    Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
 
     if (prop === 'field') {
       Object.assign(rule, {
         operator: getOperators(rule.field)[0].name,
-        value: ''
+        value: getRuleDefaultValue(rule)
       });
     }
 
