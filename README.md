@@ -4,32 +4,41 @@
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
 [![codecov.io](https://codecov.io/github/sapientglobalmarkets/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/sapientglobalmarkets/react-querybuilder?branch=master)
 
-## Credits
-
-This component was inspired by prior work from:
-
-- [jQuery QueryBuilder](http://querybuilder.js.org/)
-- [Angular QueryBuilder](https://github.com/mfauveau/angular-query-builder)
-
-## Getting Started
+- [Getting Started](#Getting-Started)
+- [Demo](#Demo)
+- [Usage](#Usage)
+- [API](#API)
+  - [QueryBuilder](#QueryBuilder)
+  - [formatQuery](#formatQuery)
+- [Development](#Development)
+  - [Changelog Generation](#Changelog-Generation)
+- [Credits](#Credits)
 
 ![Screenshot](_assets/screenshot.png)
+
+## Getting Started
 
 ```shell
 npm install react-querybuilder --save
 ```
 
+OR
+
+```shell
+yarn add react-querybuilder
+```
+
 ## Demo
 
-To run a demo of the react-querybuilder being used, go through the following steps.
-
-- `npm install` _Install npm packages_
-- `npm start` _Run a local server_
-- `http://localhost:8080/` _Visit your localhost in your browser_
+[See live demo](https://sapientglobalmarkets.github.io/react-querybuilder/)
 
 OR
 
-[See live demo](https://sapientglobalmarkets.github.io/react-querybuilder/).
+To run the demo yourself, go through the following steps:
+
+1. `npm install` _Install npm packages_
+2. `npm start` _Run a local server_
+3. http://localhost:8080/ _Visit your localhost in your browser_
 
 ## Usage
 
@@ -464,7 +473,14 @@ We are using [github-changes](https://github.com/lalitkapoor/github-changes) to 
 To use it:
 
 1. tag your commit using [semantic versioning](http://semver.org/)
-1. run `npm run generate-changelog`
-1. enter your github credentials at the prompt
-1. commit
-1. push your commit and tags
+2. run `npm run generate-changelog`
+3. enter your github credentials at the prompt
+4. commit
+5. push your commit and tags
+
+## Credits
+
+This component was inspired by prior work from:
+
+- [jQuery QueryBuilder](http://querybuilder.js.org/)
+- [Angular QueryBuilder](https://github.com/mfauveau/angular-query-builder)
