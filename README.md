@@ -399,6 +399,12 @@ Pass `true` to show the combinators (and/or) between rules and rule groups inste
 
 Pass `true` to show the "Not" toggle switch for each rule group.
 
+#### `resetOnFieldChange` _(Optional)_
+
+`boolean`
+
+Pass `false` not to reset operator and value for field change
+
 ### formatQuery
 
 `formatQuery` formats a given query in either JSON or SQL format. Example:
