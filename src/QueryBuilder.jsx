@@ -23,6 +23,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 /**
  * @typedef {Object} ControlElements
  * @property {React.Component} addGroupAction
+ * @property {React.Component} wrapGroupAction
  * @property {React.Component} removeGroupAction
  * @property {React.Component} addRuleAction
  * @property {React.Component} removeRuleAction
@@ -72,6 +73,10 @@ const defaultTranslations = {
     label: '+Group',
     title: 'Add group'
   },
+  wrapGroup: {
+    label: '(Group)',
+    title: 'Wrap with group'
+  },
   combinators: {
     title: 'Combinators'
   },
@@ -114,7 +119,7 @@ const defaultControlClassnames = {
   addGroup: '',
   removeGroup: '',
   notToggle: '',
-
+  wrapGroup: '',
   rule: '',
   fields: '',
   operators: '',
@@ -124,6 +129,7 @@ const defaultControlClassnames = {
 
 const defaultControlElements = {
   addGroupAction: ActionElement,
+  wrapGroupAction: ActionElement,
   removeGroupAction: ActionElement,
   addRuleAction: ActionElement,
   removeRuleAction: ActionElement,
@@ -263,7 +269,7 @@ const QueryBuilder = (props) => {
   const onRuleAdd = (rule, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    parent.rules.push({
+    parent.rules.unshift({
       ...rule,
       value: getRuleDefaultValue(rule),
     });
@@ -279,6 +285,21 @@ const QueryBuilder = (props) => {
   const onGroupAdd = (group, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
+    parent.rules.unshift(group);
+    setRoot(rootCopy);
+    _notifyQueryChange(rootCopy);
+  };
+
+  /**
+   * Wraps the rule query with Group
+   * @param {RuleGroupType} group Rule group to add
+   * @param {string} parentId ID of the parent rule group
+   */
+  const onGroupWrap = (group, parentId) => {
+    const rootCopy = { ...root };
+    const parent = findRule(parentId, rootCopy);
+    group.rules = [...parent.rules];
+    parent.rules.length = 0;
     parent.rules.push(group);
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
@@ -367,6 +388,7 @@ const QueryBuilder = (props) => {
     createRuleGroup,
     onRuleAdd,
     onGroupAdd,
+    onGroupWrap,
     onRuleRemove,
     onGroupRemove,
     onPropChange,
@@ -434,6 +456,7 @@ QueryBuilder.propTypes = {
   ),
   controlElements: PropTypes.shape({
     addGroupAction: PropTypes.func,
+    wrapGroupAction: PropTypes.func,
     removeGroupAction: PropTypes.func,
     addRuleAction: PropTypes.func,
     removeRuleAction: PropTypes.func,

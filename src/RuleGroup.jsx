@@ -11,6 +11,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
     getLevel,
     isRuleGroup,
     onGroupAdd,
+    onGroupWrap,
     onGroupRemove,
     onPropChange,
     onRuleAdd,
@@ -42,6 +43,14 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
 
     const newGroup = createRuleGroup();
     onGroupAdd(newGroup, id);
+  };
+
+  const wrapGroup = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const newGroup = createRuleGroup();
+    onGroupWrap(newGroup, id);
   };
 
   const removeGroup = (event) => {
@@ -90,6 +99,14 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
           handleOnClick={addGroup}
           rules={rules}
           level={level}
+        />
+        <controls.wrapGroupAction
+            label={translations.wrapGroup.label}
+            title={translations.wrapGroup.title}
+            className={`ruleGroup-wrapGroup ${classNames.wrapGroup}`}
+            handleOnClick={wrapGroup}
+            rules={rules}
+            level={level}
         />
         {hasParentGroup() ? (
           <controls.removeGroupAction
