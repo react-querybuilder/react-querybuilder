@@ -127,6 +127,7 @@ interface QueryBuilderProps {
   combinators?: NameLabelPair[];
   controlElements?: {
     addGroupAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
+    wrapGroupAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
     removeGroupAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
     addRuleAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
     removeRuleAction?: React.ComponentType<ActionCustomControlProps>;

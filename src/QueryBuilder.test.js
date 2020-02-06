@@ -568,14 +568,5 @@ describe('<QueryBuilder />', () => {
       expect(onQueryChange.getCall(3).args[0].rules).to.have.length(2);
       expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal(false);
     });
-
-    // it('should wrap rules to group', () => {
-    //   wrapper
-    //       .find('.ruleGroup-wrapGroup')
-    //       .first()
-    //       .simulate('click');
-    //
-    //   expect(wrapper.find('RuleGroup').length).to.equal(1);
-    // });
   });
 });

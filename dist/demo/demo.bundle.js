@@ -4222,7 +4222,11 @@ module.exports = stubFalse;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+// This file replaces `index.js` in bundlers like webpack or Rollup,
+// according to `browser` config in `package.json`.
+
 if (true) {
+  // All bundlers will remove this block in production bundle
   if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
     throw new Error(
       'React Native does not have a built-in secure random generator. ' +
@@ -4240,18 +4244,35 @@ if (true) {
 
 var crypto = self.crypto || self.msCrypto
 
-/*
- * This alphabet uses a-z A-Z 0-9 _- symbols.
- * Symbols order was changed for better gzip compression.
- */
-var url = 'QLUint8ARdomValuesObj0h6345-79BCrypgJzHKTNYDSMkXPZ_FfG1WcqvwxEI2'
+// This alphabet uses a-z A-Z 0-9 _- symbols.
+// Symbols are generated for smaller size.
+// -_zyxwvutsrqponmlkjihgfedcba9876543210ZYXWVUTSRQPONMLKJIHGFEDCBA
+var url = '-_'
+// Loop from 36 to 0 (from z to a and 9 to 0 in Base36).
+var i = 36
+while (i--) {
+  // 36 is radix. Number.prototype.toString(36) returns number
+  // in Base36 representation. Base36 is like hex, but it uses 0–9 and a-z.
+  url += i.toString(36)
+}
+// Loop from 36 to 10 (from Z to A in Base36).
+i = 36
+while (i-- - 10) {
+  url += i.toString(36).toUpperCase()
+}
 
 module.exports = function (size) {
-  size = size || 21
   var id = ''
-  var bytes = crypto.getRandomValues(new Uint8Array(size))
-  while (size--) {
-    id += url[bytes[size] & 63]
+  var bytes = crypto.getRandomValues(new Uint8Array(size || 21))
+  i = size || 21
+
+  // Compact alternative for `for (var i = 0; i < size; i++)`
+  while (i--) {
+    // We can’t use bytes bigger than the alphabet. 63 is 00111111 bitmask.
+    // This mask reduces random byte 0-255 to 0-63 values.
+    // There is no need in `|| ''` and `* 1.6` hacks in here,
+    // because bitmask trim bytes exact to alphabet size.
+    id += url[bytes[i] & 63]
   }
   return id
 }
@@ -32988,7 +33009,7 @@ if (false) {} else {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/** @license React v16.8.6
+/** @license React v16.12.0
  * react-is.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -33010,25 +33031,29 @@ Object.defineProperty(exports, '__esModule', { value: true });
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
 var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-
 var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
 var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
 var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
 var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
 var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
 var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
+var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+// (unstable) APIs that have been removed. Can we remove the symbols?
+
 var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
 var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
 var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
 var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
 var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
 var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
 
 function isValidElementType(type) {
-  return typeof type === 'string' || typeof type === 'function' ||
-  // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);
+  return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE);
 }
 
 /**
@@ -33044,12 +33069,11 @@ function isValidElementType(type) {
  * paths. Removing the logging code for production environments will keep the
  * same logic and follow the same code paths.
  */
-
-var lowPriorityWarning = function () {};
+var lowPriorityWarningWithoutStack = function () {};
 
 {
   var printWarning = function (format) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
 
@@ -33057,9 +33081,11 @@ var lowPriorityWarning = function () {};
     var message = 'Warning: ' + format.replace(/%s/g, function () {
       return args[argIndex++];
     });
+
     if (typeof console !== 'undefined') {
       console.warn(message);
     }
+
     try {
       // --- Welcome to debugging React ---
       // This error was thrown as a convenience so that you can use this stack
@@ -33068,25 +33094,27 @@ var lowPriorityWarning = function () {};
     } catch (x) {}
   };
 
-  lowPriorityWarning = function (condition, format) {
+  lowPriorityWarningWithoutStack = function (condition, format) {
     if (format === undefined) {
-      throw new Error('`lowPriorityWarning(condition, format, ...args)` requires a warning ' + 'message argument');
+      throw new Error('`lowPriorityWarningWithoutStack(condition, format, ...args)` requires a warning ' + 'message argument');
     }
+
     if (!condition) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+      for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
         args[_key2 - 2] = arguments[_key2];
       }
 
-      printWarning.apply(undefined, [format].concat(args));
+      printWarning.apply(void 0, [format].concat(args));
     }
   };
 }
 
-var lowPriorityWarning$1 = lowPriorityWarning;
+var lowPriorityWarningWithoutStack$1 = lowPriorityWarningWithoutStack;
 
 function typeOf(object) {
   if (typeof object === 'object' && object !== null) {
     var $$typeof = object.$$typeof;
+
     switch ($$typeof) {
       case REACT_ELEMENT_TYPE:
         var type = object.type;
@@ -33099,29 +33127,32 @@ function typeOf(object) {
           case REACT_STRICT_MODE_TYPE:
           case REACT_SUSPENSE_TYPE:
             return type;
+
           default:
             var $$typeofType = type && type.$$typeof;
 
             switch ($$typeofType) {
               case REACT_CONTEXT_TYPE:
               case REACT_FORWARD_REF_TYPE:
+              case REACT_LAZY_TYPE:
+              case REACT_MEMO_TYPE:
               case REACT_PROVIDER_TYPE:
                 return $$typeofType;
+
               default:
                 return $$typeof;
             }
+
         }
-      case REACT_LAZY_TYPE:
-      case REACT_MEMO_TYPE:
+
       case REACT_PORTAL_TYPE:
         return $$typeof;
     }
   }
 
   return undefined;
-}
+} // AsyncMode is deprecated along with isAsyncMode
 
-// AsyncMode is deprecated along with isAsyncMode
 var AsyncMode = REACT_ASYNC_MODE_TYPE;
 var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
 var ContextConsumer = REACT_CONTEXT_TYPE;
@@ -33135,17 +33166,16 @@ var Portal = REACT_PORTAL_TYPE;
 var Profiler = REACT_PROFILER_TYPE;
 var StrictMode = REACT_STRICT_MODE_TYPE;
 var Suspense = REACT_SUSPENSE_TYPE;
+var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
 
-var hasWarnedAboutDeprecatedIsAsyncMode = false;
-
-// AsyncMode should be deprecated
 function isAsyncMode(object) {
   {
     if (!hasWarnedAboutDeprecatedIsAsyncMode) {
       hasWarnedAboutDeprecatedIsAsyncMode = true;
-      lowPriorityWarning$1(false, 'The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+      lowPriorityWarningWithoutStack$1(false, 'The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
     }
   }
+
   return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
 }
 function isConcurrentMode(object) {
@@ -37062,6 +37092,14 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -37094,6 +37132,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /**
  * @typedef {Object} ControlElements
  * @property {React.Component} addGroupAction
+ * @property {React.Component} wrapGroupAction
  * @property {React.Component} removeGroupAction
  * @property {React.Component} addRuleAction
  * @property {React.Component} removeRuleAction
@@ -37143,6 +37182,10 @@ var defaultTranslations = {
   addGroup: {
     label: '+Group',
     title: 'Add group'
+  },
+  wrapGroup: {
+    label: '(Group)',
+    title: 'Wrap with group'
   },
   combinators: {
     title: 'Combinators'
@@ -37216,6 +37259,7 @@ var defaultControlClassnames = {
   addGroup: '',
   removeGroup: '',
   notToggle: '',
+  wrapGroup: '',
   rule: '',
   fields: '',
   operators: '',
@@ -37224,6 +37268,7 @@ var defaultControlClassnames = {
 };
 var defaultControlElements = {
   addGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
+  wrapGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
   removeGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
   addRuleAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
   removeRuleAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
@@ -37370,7 +37415,7 @@ var QueryBuilder = function QueryBuilder(props) {
     var rootCopy = _objectSpread({}, root);
 
     var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
-    parent.rules.push(_objectSpread({}, rule, {
+    parent.rules.unshift(_objectSpread({}, rule, {
       value: getRuleDefaultValue(rule)
     }));
     setRoot(rootCopy);
@@ -37388,6 +37433,24 @@ var QueryBuilder = function QueryBuilder(props) {
     var rootCopy = _objectSpread({}, root);
 
     var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    parent.rules.unshift(group);
+    setRoot(rootCopy);
+
+    _notifyQueryChange(rootCopy);
+  };
+  /**
+   * Wraps the rule query with Group
+   * @param {RuleGroupType} group Rule group to add
+   * @param {string} parentId ID of the parent rule group
+   */
+
+
+  var onGroupWrap = function onGroupWrap(group, parentId) {
+    var rootCopy = _objectSpread({}, root);
+
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    group.rules = _toConsumableArray(parent.rules);
+    parent.rules.length = 0;
     parent.rules.push(group);
     setRoot(rootCopy);
 
@@ -37491,6 +37554,7 @@ var QueryBuilder = function QueryBuilder(props) {
     createRuleGroup: createRuleGroup,
     onRuleAdd: onRuleAdd,
     onGroupAdd: onGroupAdd,
+    onGroupWrap: onGroupWrap,
     onRuleRemove: onRuleRemove,
     onGroupRemove: onGroupRemove,
     onPropChange: onPropChange,
@@ -37554,6 +37618,7 @@ QueryBuilder.propTypes = {
   })),
   controlElements: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.shape({
     addGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+    wrapGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
     removeGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
     addRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
     removeRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
@@ -37722,6 +37787,7 @@ var RuleGroup = function RuleGroup(_ref) {
       getLevel = schema.getLevel,
       isRuleGroup = schema.isRuleGroup,
       onGroupAdd = schema.onGroupAdd,
+      onGroupWrap = schema.onGroupWrap,
       onGroupRemove = schema.onGroupRemove,
       onPropChange = schema.onPropChange,
       onRuleAdd = schema.onRuleAdd,
@@ -37752,6 +37818,13 @@ var RuleGroup = function RuleGroup(_ref) {
     event.stopPropagation();
     var newGroup = createRuleGroup();
     onGroupAdd(newGroup, id);
+  };
+
+  var wrapGroup = function wrapGroup(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var newGroup = createRuleGroup();
+    onGroupWrap(newGroup, id);
   };
 
   var removeGroup = function removeGroup(event) {
@@ -37792,6 +37865,13 @@ var RuleGroup = function RuleGroup(_ref) {
     title: translations.addGroup.title,
     className: "ruleGroup-addGroup ".concat(classNames.addGroup),
     handleOnClick: addGroup,
+    rules: rules,
+    level: level
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.wrapGroupAction, {
+    label: translations.wrapGroup.label,
+    title: translations.wrapGroup.title,
+    className: "ruleGroup-wrapGroup ".concat(classNames.wrapGroup),
+    handleOnClick: wrapGroup,
     rules: rules,
     level: level
   }), hasParentGroup() ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.removeGroupAction, {
