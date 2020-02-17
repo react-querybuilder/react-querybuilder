@@ -295,7 +295,7 @@ const QueryBuilder = (props) => {
     Object.assign(rule, { [prop]: value });
 
     // Reset operator and set default value for field change
-    if (prop === 'field') {
+    if (props.resetOnFieldChange && prop === 'field') {
       Object.assign(rule, {
         operator: getOperators(rule.field)[0].name,
         value: getRuleDefaultValue(rule),
@@ -420,7 +420,8 @@ QueryBuilder.defaultProps = {
   onQueryChange: null,
   controlClassnames: null,
   showCombinatorsBetweenRules: false,
-  showNotToggle: false
+  showNotToggle: false,
+  resetOnFieldChange: true
 };
 
 QueryBuilder.propTypes = {
@@ -451,7 +452,8 @@ QueryBuilder.propTypes = {
   controlClassnames: PropTypes.object,
   translations: PropTypes.object,
   showCombinatorsBetweenRules: PropTypes.bool,
-  showNotToggle: PropTypes.bool
+  showNotToggle: PropTypes.bool,
+  resetOnFieldChange: PropTypes.bool
 };
 
 QueryBuilder.displayName = 'QueryBuilder';
