@@ -44,6 +44,8 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {{}} controlClassnames
  * @property {{}} translations
  * @property {boolean} showCombinatorsBetweenRules
+ * @property {boolean} showNotToggle
+ * @property {boolean} resetOnFieldChange
  */
 
 const defaultTranslations = {

@@ -138,6 +138,7 @@ const RootView = () => {
   const [format, setFormat] = useState('json');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
+  const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -164,22 +165,6 @@ const RootView = () => {
         <button onClick={() => loadQuery('primary')}>Load primary query</button>
         <button onClick={() => loadQuery('secondary')}>Load secondary query</button>
         <button onClick={() => loadQuery()}>Clear query</button>
-        <label>
-          <input
-            type="checkbox"
-            checked={showCombinatorsBetweenRules}
-            onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}
-          />
-          Show combinators between rules
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showNotToggle}
-            onChange={(e) => setShowNotToggle(e.target.checked)}
-          />
-          Show "not" toggle
-        </label>
       </div>
       <hr />
       <div className="flex-box">
@@ -195,9 +180,43 @@ const RootView = () => {
             getValues={getValues}
             showCombinatorsBetweenRules={showCombinatorsBetweenRules}
             showNotToggle={showNotToggle}
+            resetOnFieldChange={resetOnFieldChange}
           />
         </div>
         <div className="shrink query-log scroll">
+          <h4>Options</h4>
+          <div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showCombinatorsBetweenRules}
+                  onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}
+                />
+                Show combinators between rules
+              </label>
+            </div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showNotToggle}
+                  onChange={(e) => setShowNotToggle(e.target.checked)}
+                />
+                Show "not" toggle
+              </label>
+            </div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={resetOnFieldChange}
+                  onChange={(e) => setResetOnFieldChange(e.target.checked)}
+                />
+                Reset rule on field change
+              </label>
+            </div>
+          </div>
           <h4>Query</h4>
           <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
             <label>

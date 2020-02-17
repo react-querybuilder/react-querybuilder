@@ -267,6 +267,10 @@ interface QueryBuilderProps {
    * Show the "not" toggle for rule groups.
    */
   showNotToggle?: boolean;
+  /**
+   * Reset the operator and value components when the `field` changes.
+   */
+  resetOnFieldChange?: boolean;
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}

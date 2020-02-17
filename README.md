@@ -403,7 +403,7 @@ Pass `true` to show the "Not" toggle switch for each rule group.
 
 `boolean`
 
-Pass `false` not to reset operator and value for field change
+Pass `false` not to reset operator and value for field change.
 
 ### formatQuery
 
