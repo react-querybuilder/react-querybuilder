@@ -299,6 +299,11 @@ var RootView = function RootView() {
       _useState10 = _slicedToArray(_useState9, 2),
       showNotToggle = _useState10[0],
       setShowNotToggle = _useState10[1];
+
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true),
+      _useState12 = _slicedToArray(_useState11, 2),
+      resetOnFieldChange = _useState12[0],
+      setResetOnFieldChange = _useState12[1];
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
@@ -336,19 +341,7 @@ var RootView = function RootView() {
     onClick: function onClick() {
       return loadQuery();
     }
-  }, "Clear query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    type: "checkbox",
-    checked: showCombinatorsBetweenRules,
-    onChange: function onChange(e) {
-      return setShowCombinatorsBetweenRules(e.target.checked);
-    }
-  }), "Show combinators between rules"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    type: "checkbox",
-    checked: showNotToggle,
-    onChange: function onChange(e) {
-      return setShowNotToggle(e.target.checked);
-    }
-  }), "Show \"not\" toggle")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, "Clear query")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "flex-box"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "scroll"
@@ -364,10 +357,29 @@ var RootView = function RootView() {
     getInputType: getInputType,
     getValues: getValues,
     showCombinatorsBetweenRules: showCombinatorsBetweenRules,
-    showNotToggle: showNotToggle
+    showNotToggle: showNotToggle,
+    resetOnFieldChange: resetOnFieldChange
   })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "shrink query-log scroll"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Options"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "checkbox",
+    checked: showCombinatorsBetweenRules,
+    onChange: function onChange(e) {
+      return setShowCombinatorsBetweenRules(e.target.checked);
+    }
+  }), "Show combinators between rules")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "checkbox",
+    checked: showNotToggle,
+    onChange: function onChange(e) {
+      return setShowNotToggle(e.target.checked);
+    }
+  }), "Show \"not\" toggle")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "checkbox",
+    checked: resetOnFieldChange,
+    onChange: function onChange(e) {
+      return setResetOnFieldChange(e.target.checked);
+    }
+  }), "Reset rule on field change"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-evenly'
@@ -4222,7 +4234,11 @@ module.exports = stubFalse;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+// This file replaces `index.js` in bundlers like webpack or Rollup,
+// according to `browser` config in `package.json`.
+
 if (true) {
+  // All bundlers will remove this block in production bundle
   if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
     throw new Error(
       'React Native does not have a built-in secure random generator. ' +
@@ -4240,18 +4256,35 @@ if (true) {
 
 var crypto = self.crypto || self.msCrypto
 
-/*
- * This alphabet uses a-z A-Z 0-9 _- symbols.
- * Symbols order was changed for better gzip compression.
- */
-var url = 'QLUint8ARdomValuesObj0h6345-79BCrypgJzHKTNYDSMkXPZ_FfG1WcqvwxEI2'
+// This alphabet uses a-z A-Z 0-9 _- symbols.
+// Symbols are generated for smaller size.
+// -_zyxwvutsrqponmlkjihgfedcba9876543210ZYXWVUTSRQPONMLKJIHGFEDCBA
+var url = '-_'
+// Loop from 36 to 0 (from z to a and 9 to 0 in Base36).
+var i = 36
+while (i--) {
+  // 36 is radix. Number.prototype.toString(36) returns number
+  // in Base36 representation. Base36 is like hex, but it uses 0–9 and a-z.
+  url += i.toString(36)
+}
+// Loop from 36 to 10 (from Z to A in Base36).
+i = 36
+while (i-- - 10) {
+  url += i.toString(36).toUpperCase()
+}
 
 module.exports = function (size) {
-  size = size || 21
   var id = ''
-  var bytes = crypto.getRandomValues(new Uint8Array(size))
-  while (size--) {
-    id += url[bytes[size] & 63]
+  var bytes = crypto.getRandomValues(new Uint8Array(size || 21))
+  i = size || 21
+
+  // Compact alternative for `for (var i = 0; i < size; i++)`
+  while (i--) {
+    // We can’t use bytes bigger than the alphabet. 63 is 00111111 bitmask.
+    // This mask reduces random byte 0-255 to 0-63 values.
+    // There is no need in `|| ''` and `* 1.6` hacks in here,
+    // because bitmask trim bytes exact to alphabet size.
+    id += url[bytes[i] & 63]
   }
   return id
 }
@@ -37116,6 +37149,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @property {{}} controlClassnames
  * @property {{}} translations
  * @property {boolean} showCombinatorsBetweenRules
+ * @property {boolean} showNotToggle
+ * @property {boolean} resetOnFieldChange
  */
 
 var defaultTranslations = {
@@ -37406,7 +37441,7 @@ var QueryBuilder = function QueryBuilder(props) {
     var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(ruleId, rootCopy);
     Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
 
-    if (prop === 'field') {
+    if (props.resetOnFieldChange && prop === 'field') {
       Object.assign(rule, {
         operator: getOperators(rule.field)[0].name,
         value: getRuleDefaultValue(rule)
@@ -37539,7 +37574,8 @@ QueryBuilder.defaultProps = {
   onQueryChange: null,
   controlClassnames: null,
   showCombinatorsBetweenRules: false,
-  showNotToggle: false
+  showNotToggle: false,
+  resetOnFieldChange: true
 };
 QueryBuilder.propTypes = {
   query: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
@@ -37571,7 +37607,8 @@ QueryBuilder.propTypes = {
   controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
   translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
   showCombinatorsBetweenRules: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
-  showNotToggle: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
+  showNotToggle: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
 };
 QueryBuilder.displayName = 'QueryBuilder';
 /* harmony default export */ __webpack_exports__["default"] = (QueryBuilder);
