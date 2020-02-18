@@ -426,7 +426,10 @@ describe('<QueryBuilder />', () => {
 
   describe('actions', () => {
     let wrapper, onQueryChange;
-    const fields = [{ name: 'field1', label: 'Field1' }, { name: 'field2', label: 'Field 2' }];
+    const fields = [
+      { name: 'field1', label: 'Field 1' },
+      { name: 'field2', label: 'Field 2' }
+    ];
 
     beforeEach(() => {
       onQueryChange = sinon.spy();
@@ -520,10 +523,10 @@ describe('<QueryBuilder />', () => {
         getValues: (field) => {
           if (field === 'field1') {
             return [
-              { name: 'value1', label: 'Value 1'},
-              { name: 'value2', label: 'Value 2'},
-            ]
-          };
+              { name: 'value1', label: 'Value 1' },
+              { name: 'value2', label: 'Value 2' }
+            ];
+          }
 
           return [];
         },
@@ -567,6 +570,73 @@ describe('<QueryBuilder />', () => {
 
       expect(onQueryChange.getCall(3).args[0].rules).to.have.length(2);
       expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal(false);
+    });
+  });
+
+  describe('resetOnFieldChange prop', () => {
+    let wrapper, onQueryChange;
+    const fields = [
+      { name: 'field1', label: 'Field 1' },
+      { name: 'field2', label: 'Field 2' }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('resets the operator and value when true', () => {
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '>' } });
+      wrapper
+        .find('.rule-value')
+        .first()
+        .simulate('change', { target: { value: 'Test' } });
+      wrapper
+        .find('.rule-fields')
+        .first()
+        .simulate('change', { target: { value: 'field2' } });
+
+      expect(onQueryChange.getCall(3).args[0].rules[0].operator).to.equal('>');
+      expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal('Test');
+      expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('null');
+      expect(onQueryChange.getCall(4).args[0].rules[0].value).to.equal('');
+    });
+
+    it('does not reset the operator and value when false', () => {
+      wrapper.setProps({ resetOnFieldChange: false });
+      wrapper
+        .find('.ruleGroup-addRule')
+        .first()
+        .simulate('click');
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '>' } });
+      wrapper
+        .find('.rule-value')
+        .first()
+        .simulate('change', { target: { value: 'Test' } });
+      wrapper
+        .find('.rule-fields')
+        .first()
+        .simulate('change', { target: { value: 'field2' } });
+
+      expect(onQueryChange.getCall(3).args[0].rules[0].operator).to.equal('>');
+      expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal('Test');
+      expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('>');
+      expect(onQueryChange.getCall(4).args[0].rules[0].value).to.equal('Test');
     });
   });
 });
