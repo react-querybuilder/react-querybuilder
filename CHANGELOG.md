@@ -1,5 +1,8 @@
 ## Change Log
 
+### v3.1.0 (2020-02-18)
+- [#122](https://github.com/sapientglobalmarkets/react-querybuilder/pull/122) Add prop to control value and operator reset functionality on field change. (@lakk1)
+
 ### v3.0.1 (2019-12-06)
 - [#117](https://github.com/sapientglobalmarkets/react-querybuilder/pull/117) Fixed a rule default value on add/change (@xxsnakerxx)
 
