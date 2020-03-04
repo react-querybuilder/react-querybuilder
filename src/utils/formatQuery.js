@@ -6,12 +6,12 @@ import { isRuleGroup } from '.';
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  * @param {RuleGroup} ruleGroup
- * @param {"json"|"sql"} format
+ * @param {"json"|"sql"|"json_without_ids"} format
  * @param {Function} valueProcessor
  */
 const formatQuery = (ruleGroup, format, valueProcessor) => {
   if (format.toLowerCase() === 'json') {
-    return JSON.stringify(ruleGroup, null, 2);
+    return JSON.stringify(ruleGroup, null, 2)
   } else if (format.toLowerCase() === 'sql') {
     const valueProc =
       valueProcessor ||
@@ -78,9 +78,20 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
     };
 
     return processRuleGroup(ruleGroup);
+  } else if (format.toLowerCase() === 'json_without_ids') {
+    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup))
   } else {
     return '';
   }
 };
+
+const removeIdsFromRuleGroup = ruleGroup => {
+  const ruleGroupCopy = { ...ruleGroup };
+  delete ruleGroupCopy.id;
+  if (ruleGroupCopy.rules) {
+    ruleGroupCopy.rules = ruleGroupCopy.rules.map(rule => removeIdsFromRuleGroup(rule));
+  }
+  return ruleGroupCopy;
+}
 
 export default formatQuery;
