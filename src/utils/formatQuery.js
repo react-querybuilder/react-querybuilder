@@ -11,7 +11,7 @@ import { isRuleGroup } from '.';
  */
 const formatQuery = (ruleGroup, format, valueProcessor) => {
   if (format.toLowerCase() === 'json') {
-    return JSON.stringify(ruleGroup, null, 2);
+    return JSON.stringify(ruleGroup, null, 2)
   } else if (format.toLowerCase() === 'sql') {
     const valueProc =
       valueProcessor ||
