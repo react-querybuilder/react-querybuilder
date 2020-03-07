@@ -271,6 +271,10 @@ interface QueryBuilderProps {
    * Reset the operator and value components when the `field` changes.
    */
   resetOnFieldChange?: boolean;
+  /**
+   * Reset the value component when the `operator` changes.
+   */
+  resetOnOperatorChange?: boolean;
 }
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
