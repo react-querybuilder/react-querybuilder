@@ -46,6 +46,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {boolean} showCombinatorsBetweenRules
  * @property {boolean} showNotToggle
  * @property {boolean} resetOnFieldChange
+ * @property {boolean} resetOnOperatorChange
  */
 
 const defaultTranslations = {
@@ -304,6 +305,12 @@ const QueryBuilder = (props) => {
       });
     }
 
+    if (props.resetOnOperatorChange && prop === 'operator') {
+      Object.assign(rule, {
+        value: getRuleDefaultValue(rule),
+      });
+    }
+
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
   };
@@ -423,7 +430,8 @@ QueryBuilder.defaultProps = {
   controlClassnames: null,
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
-  resetOnFieldChange: true
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false
 };
 
 QueryBuilder.propTypes = {
@@ -455,7 +463,8 @@ QueryBuilder.propTypes = {
   translations: PropTypes.object,
   showCombinatorsBetweenRules: PropTypes.bool,
   showNotToggle: PropTypes.bool,
-  resetOnFieldChange: PropTypes.bool
+  resetOnFieldChange: PropTypes.bool,
+  resetOnOperatorChange: PropTypes.bool
 };
 
 QueryBuilder.displayName = 'QueryBuilder';

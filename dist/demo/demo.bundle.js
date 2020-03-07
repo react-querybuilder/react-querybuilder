@@ -37151,6 +37151,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @property {boolean} showCombinatorsBetweenRules
  * @property {boolean} showNotToggle
  * @property {boolean} resetOnFieldChange
+ * @property {boolean} resetOnOperatorChange
  */
 
 var defaultTranslations = {
@@ -37448,6 +37449,12 @@ var QueryBuilder = function QueryBuilder(props) {
       });
     }
 
+    if (props.resetOnOperatorChange && prop === 'operator') {
+      Object.assign(rule, {
+        value: getRuleDefaultValue(rule)
+      });
+    }
+
     setRoot(rootCopy);
 
     _notifyQueryChange(rootCopy);
@@ -37575,7 +37582,8 @@ QueryBuilder.defaultProps = {
   controlClassnames: null,
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
-  resetOnFieldChange: true
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false
 };
 QueryBuilder.propTypes = {
   query: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
@@ -37608,7 +37616,8 @@ QueryBuilder.propTypes = {
   translations: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
   showCombinatorsBetweenRules: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
   showNotToggle: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
-  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
+  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+  resetOnOperatorChange: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
 };
 QueryBuilder.displayName = 'QueryBuilder';
 /* harmony default export */ __webpack_exports__["default"] = (QueryBuilder);
