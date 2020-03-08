@@ -405,6 +405,12 @@ Pass `true` to show the "Not" toggle switch for each rule group.
 
 Pass `false` not to reset operator and value for field change.
 
+#### `resetOnOperatorChange` _(Optional)_
+
+`boolean`
+
+Pass `true` to reset value on operator change.
+
 ### formatQuery
 
 `formatQuery` formats a given query in either JSON or SQL format. Example:
