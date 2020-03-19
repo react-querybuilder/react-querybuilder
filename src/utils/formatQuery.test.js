@@ -155,4 +155,96 @@ describe('formatQuery', () => {
       '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
     );
   });
+
+  it('handles json_without_ids correctly', () => {
+    const example_without_ids = {
+      rules: [
+        {
+          field: 'firstName',
+          value: '',
+          operator: 'null'
+        },
+        {
+          field: 'lastName',
+          value: '',
+          operator: 'notNull'
+        },
+        {
+          field: 'firstName',
+          value: 'Test,This',
+          operator: 'in'
+        },
+        {
+          field: 'lastName',
+          value: 'Test,This',
+          operator: 'notIn'
+        },
+        {
+          field: 'age',
+          value: '26',
+          operator: '='
+        },
+        {
+          field: 'isMusician',
+          value: true,
+          operator: '='
+        },
+        {
+          rules: [
+            {
+              field: 'gender',
+              value: 'M',
+              operator: '='
+            },
+            {
+              field: 'job',
+              value: 'Programmer',
+              operator: '!='
+            },
+            {
+              field: 'email',
+              value: '@',
+              operator: 'contains'
+            }
+          ],
+          combinator: 'or',
+          not: true
+        },
+        {
+          rules: [
+            {
+              field: 'lastName',
+              value: 'ab',
+              operator: 'doesNotContain'
+            },
+            {
+              field: 'job',
+              value: 'Prog',
+              operator: 'beginsWith'
+            },
+            {
+              field: 'email',
+              value: 'com',
+              operator: 'endsWith'
+            },
+            {
+              field: 'job',
+              value: 'Man',
+              operator: 'doesNotBeginWith'
+            },
+            {
+              field: 'email',
+              value: 'fr',
+              operator: 'doesNotEndWith'
+            }
+          ],
+          combinator: 'or',
+          not: false
+        }
+      ],
+      combinator: 'and',
+      not: false
+    };
+    expect(formatQuery(query, 'json_without_ids')).to.equal(JSON.stringify(example_without_ids));
+  })
 });

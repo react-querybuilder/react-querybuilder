@@ -407,7 +407,7 @@ Pass `false` not to reset operator and value for field change.
 
 ### formatQuery
 
-`formatQuery` formats a given query in either JSON or SQL format. Example:
+`formatQuery` formats a given query in either SQL, JSON, or JSON without ids 'json_without_ids' (can be useful if you need to serialize the rules). Example:
 
 ```js
 import { formatQuery } from 'react-querybuilder';
@@ -468,6 +468,47 @@ const valueProcessor = (field, operator, value) => {
 };
 
 console.log(formatQuery(query, 'sql', valueProcessor)); // '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
+```
+
+Or you can pass 'json_without_ids' to get the same query without the IDs, it can be useful if you need to save the query to the url so that it becomes bookmarkable:
+
+```js
+const query = {
+  id: 'g-J5GsbcFmZ6xOJCLPPKIfE',
+  rules: [
+    {
+      id: 'r-KneYcwIPPHDGSogtKhG4g',
+      field: 'instrument',
+      value: ['Guitar', 'Vocals'],
+      operator: 'in'
+    },
+    {
+      id: 'r-wz6AkZbzSyDYbPk1AxgvO',
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and',
+  not: false
+};
+console.log(formatQuery(query, 'json_without_ids')); 
+// {
+//   rules: [
+//     {
+//       field: 'instrument',
+//       value: ['Guitar', 'Vocals'],
+//       operator: 'in'
+//     },
+//     {
+//       field: 'lastName',
+//       value: 'Vai',
+//       operator: '='
+//     }
+//   ],
+//   combinator: 'and',
+//   not: false
+// };
 ```
 
 ## Development
