@@ -407,7 +407,7 @@ Pass `false` not to reset operator and value for field change.
 
 ### formatQuery
 
-`formatQuery` formats a given query in either SQL, JSON, or JSON without ids 'json_without_ids' (can be useful if you need to serialize the rules). Example:
+`formatQuery` formats a given query in either SQL, JSON, or JSON without IDs (which can be useful if you need to serialize the rules). Example:
 
 ```js
 import { formatQuery } from 'react-querybuilder';
@@ -470,7 +470,7 @@ const valueProcessor = (field, operator, value) => {
 console.log(formatQuery(query, 'sql', valueProcessor)); // '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
 ```
 
-Or you can pass 'json_without_ids' to get the same query without the IDs, it can be useful if you need to save the query to the url so that it becomes bookmarkable:
+The 'json_without_ids' format will return the same query without the IDs.  This can be useful, for example, if you need to save the query to the URL so that it becomes bookmarkable:
 
 ```js
 const query = {
@@ -492,6 +492,7 @@ const query = {
   combinator: 'and',
   not: false
 };
+
 console.log(formatQuery(query, 'json_without_ids')); 
 // {
 //   rules: [
