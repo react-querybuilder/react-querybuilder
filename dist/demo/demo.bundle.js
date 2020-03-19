@@ -38242,6 +38242,12 @@ var findRule = function findRule(id, parent) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! . */ "./src/utils/index.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 /**
  * Formats a query in the requested output format.  The optional
@@ -38249,7 +38255,7 @@ __webpack_require__.r(__webpack_exports__);
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  * @param {RuleGroup} ruleGroup
- * @param {"json"|"sql"} format
+ * @param {"json"|"sql"|"json_without_ids"} format
  * @param {Function} valueProcessor
  */
 
@@ -38327,9 +38333,25 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
     };
 
     return processRuleGroup(ruleGroup);
+  } else if (format.toLowerCase() === 'json_without_ids') {
+    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
   } else {
     return '';
   }
+};
+
+var removeIdsFromRuleGroup = function removeIdsFromRuleGroup(ruleGroup) {
+  var ruleGroupCopy = _objectSpread({}, ruleGroup);
+
+  delete ruleGroupCopy.id;
+
+  if (ruleGroupCopy.rules) {
+    ruleGroupCopy.rules = ruleGroupCopy.rules.map(function (rule) {
+      return removeIdsFromRuleGroup(rule);
+    });
+  }
+
+  return ruleGroupCopy;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (formatQuery);
