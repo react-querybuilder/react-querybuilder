@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import nanoid from 'nanoid';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
+import Rule from './Rule';
 import RuleGroup from './RuleGroup';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
@@ -134,7 +135,8 @@ const defaultControlElements = {
   fieldSelector: ValueSelector,
   operatorSelector: ValueSelector,
   valueEditor: ValueEditor,
-  notToggle: NotToggle
+  notToggle: NotToggle,
+  rule: Rule
 };
 
 /**
@@ -256,7 +258,7 @@ const QueryBuilder = (props) => {
     }
 
     return value;
-  }
+  };
 
   /**
    * Adds a rule to the query
@@ -268,7 +270,7 @@ const QueryBuilder = (props) => {
     const parent = findRule(parentId, rootCopy);
     parent.rules.push({
       ...rule,
-      value: getRuleDefaultValue(rule),
+      value: getRuleDefaultValue(rule)
     });
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
@@ -301,13 +303,13 @@ const QueryBuilder = (props) => {
     if (props.resetOnFieldChange && prop === 'field') {
       Object.assign(rule, {
         operator: getOperators(rule.field)[0].name,
-        value: getRuleDefaultValue(rule),
+        value: getRuleDefaultValue(rule)
       });
     }
 
     if (props.resetOnOperatorChange && prop === 'operator') {
       Object.assign(rule, {
-        value: getRuleDefaultValue(rule),
+        value: getRuleDefaultValue(rule)
       });
     }
 

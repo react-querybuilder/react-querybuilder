@@ -126,7 +126,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
               not={r.not}
             />
           ) : (
-            <Rule
+            <controls.rule
               id={r.id}
               field={r.field}
               value={r.value}

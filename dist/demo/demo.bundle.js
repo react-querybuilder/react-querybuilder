@@ -37085,8 +37085,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controls */ "./src/controls/index.js");
-/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
+/* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Rule */ "./src/Rule.jsx");
+/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -37100,6 +37101,7 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -37267,7 +37269,8 @@ var defaultControlElements = {
   fieldSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
   operatorSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
   valueEditor: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueEditor"],
-  notToggle: _controls__WEBPACK_IMPORTED_MODULE_4__["NotToggle"]
+  notToggle: _controls__WEBPACK_IMPORTED_MODULE_4__["NotToggle"],
+  rule: _Rule__WEBPACK_IMPORTED_MODULE_5__["default"]
 };
 /**
  * @param {QueryBuilderProps} props
@@ -37280,7 +37283,7 @@ var QueryBuilder = function QueryBuilder(props) {
    */
   var getInitialQuery = function getInitialQuery() {
     var query = props.query;
-    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_6__["generateValidQuery"])(query) || createRuleGroup();
+    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_7__["generateValidQuery"])(query) || createRuleGroup();
   };
   /**
    * @returns {RuleType}
@@ -37405,7 +37408,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onRuleAdd = function onRuleAdd(rule, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
     parent.rules.push(_objectSpread({}, rule, {
       value: getRuleDefaultValue(rule)
     }));
@@ -37423,7 +37426,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onGroupAdd = function onGroupAdd(group, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
     parent.rules.push(group);
     setRoot(rootCopy);
 
@@ -37439,7 +37442,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onPropChange = function onPropChange(prop, value, ruleId) {
     var rootCopy = _objectSpread({}, root);
 
-    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(ruleId, rootCopy);
+    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(ruleId, rootCopy);
     Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
 
     if (props.resetOnFieldChange && prop === 'field') {
@@ -37469,7 +37472,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onRuleRemove = function onRuleRemove(ruleId, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
     var index = parent.rules.findIndex(function (x) {
       return x.id === ruleId;
     });
@@ -37488,7 +37491,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onGroupRemove = function onGroupRemove(groupId, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["findRule"])(parentId, rootCopy);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
     var index = parent.rules.findIndex(function (x) {
       return x.id === groupId;
     });
@@ -37504,7 +37507,7 @@ var QueryBuilder = function QueryBuilder(props) {
 
 
   var getLevelFromRoot = function getLevelFromRoot(id) {
-    return Object(_utils__WEBPACK_IMPORTED_MODULE_6__["getLevel"])(id, 0, root);
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_7__["getLevel"])(id, 0, root);
   };
   /**
    * Executes the `onQueryChange` function, if provided
@@ -37537,7 +37540,7 @@ var QueryBuilder = function QueryBuilder(props) {
     onGroupRemove: onGroupRemove,
     onPropChange: onPropChange,
     getLevel: getLevelFromRoot,
-    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_6__["isRuleGroup"],
+    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_7__["isRuleGroup"],
     controls: _objectSpread({}, defaultControlElements, {}, props.controlElements),
     getOperators: getOperators,
     getValueEditorType: getValueEditorType,
@@ -37548,7 +37551,7 @@ var QueryBuilder = function QueryBuilder(props) {
   }; // Set the query state when a new query prop comes in
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
-    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_6__["generateValidQuery"])(props.query || getInitialQuery()));
+    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_7__["generateValidQuery"])(props.query || getInitialQuery()));
   }, [props.query]); // Notify a query change on mount
 
   Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
@@ -37556,7 +37559,7 @@ var QueryBuilder = function QueryBuilder(props) {
   }, []);
   return react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "queryBuilder ".concat(schema.classNames.queryBuilder)
-  }, react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_RuleGroup__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_RuleGroup__WEBPACK_IMPORTED_MODULE_6__["default"], {
     translations: _objectSpread({}, defaultTranslations, {}, props.translations),
     rules: root.rules,
     combinator: root.combinator,
@@ -37866,7 +37869,7 @@ var RuleGroup = function RuleGroup(_ref) {
       translations: translations,
       rules: r.rules,
       not: r.not
-    }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Rule__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.rule, {
       id: r.id,
       field: r.field,
       value: r.value,
