@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import RuleGroup from './RuleGroup';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';

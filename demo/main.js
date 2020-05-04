@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import QueryBuilder, { formatQuery } from '../src';
 import '../src/query-builder.scss';
 
