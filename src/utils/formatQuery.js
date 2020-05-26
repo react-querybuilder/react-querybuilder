@@ -75,7 +75,7 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
 
       if (parameterized && value) {
 
-        if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
+        if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
           const splitValue = rule.value.split(',').map((v) => v.trim());
           splitValue.forEach((v) => params.push(v));
           return `${rule.field} ${operator} (${splitValue.map((v) => '?').join(', ')})`;
