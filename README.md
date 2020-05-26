@@ -407,7 +407,7 @@ Pass `false` not to reset operator and value for field change.
 
 ### formatQuery
 
-`formatQuery` formats a given query in either SQL, JSON, or JSON without IDs (which can be useful if you need to serialize the rules). Example:
+`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, or JSON without IDs (which can be useful if you need to serialize the rules). Example:
 
 ```js
 import { formatQuery } from 'react-querybuilder';
@@ -433,6 +433,7 @@ const query = {
 };
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
+console.log(formatQuery(query, 'parameterized')); // '{ sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }'
 ```
 
 An optional third argument can be passed into `formatQuery` if you need to control the way the value portion of the output is processed. (This is only applicable when the format is `"sql"`.)
