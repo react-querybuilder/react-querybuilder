@@ -21,6 +21,17 @@ const mapOperator = (op) => {
   }
 };
 
+const removeIdsFromRuleGroup = (ruleGroup) => {
+  const ruleGroupCopy = { ...ruleGroup };
+  delete ruleGroupCopy.id;
+
+  if (ruleGroupCopy.rules) {
+    ruleGroupCopy.rules = ruleGroupCopy.rules.map((rule) => removeIdsFromRuleGroup(rule));
+  }
+
+  return ruleGroupCopy;
+};
+
 /**
  * Formats a query in the requested output format.  The optional
  * `valueProcessor` argument can be used to format the values differently
@@ -31,10 +42,14 @@ const mapOperator = (op) => {
  * @param {Function} valueProcessor
  */
 const formatQuery = (ruleGroup, format, valueProcessor) => {
-  if (format.toLowerCase() === 'json') {
+  const formatLowerCase = format.toLowerCase();
+
+  if (formatLowerCase === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
-  } else if (format.toLowerCase() === 'sql' || format.toLowerCase() === 'parameterized') {
-    const parameterized = format.toLowerCase() === 'parameterized';
+  } else if (formatLowerCase === 'json_without_ids') {
+    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
+  } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
+    const parameterized = formatLowerCase === 'parameterized';
     const params = [];
 
     const valueProc =
@@ -101,20 +116,9 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
     } else {
       return processRuleGroup(ruleGroup);
     }
-  } else if (format.toLowerCase() === 'json_without_ids') {
-    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
   } else {
     return '';
   }
-};
-
-const removeIdsFromRuleGroup = (ruleGroup) => {
-  const ruleGroupCopy = { ...ruleGroup };
-  delete ruleGroupCopy.id;
-  if (ruleGroupCopy.rules) {
-    ruleGroupCopy.rules = ruleGroupCopy.rules.map((rule) => removeIdsFromRuleGroup(rule));
-  }
-  return ruleGroupCopy;
 };
 
 export default formatQuery;

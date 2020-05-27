@@ -433,7 +433,7 @@ const query = {
 };
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
-console.log(formatQuery(query, 'parameterized')); // '{ sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }'
+console.log(formatQuery(query, 'parameterized')); // { sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }
 ```
 
 An optional third argument can be passed into `formatQuery` if you need to control the way the value portion of the output is processed. (This is only applicable when the format is `"sql"`.)
