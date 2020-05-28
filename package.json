@@ -4,6 +4,7 @@
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
   "types": "./index.d.ts",
+  "files": ["dist/query-builder.scss", "index.d.ts"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
