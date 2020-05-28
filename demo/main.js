@@ -227,8 +227,12 @@ const RootView = () => {
               <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />
               SQL
             </label>
+            <label>
+              <input type="radio" checked={format === 'parameterized'} onChange={() => setFormat('parameterized')} />
+              Parameterized
+            </label>
           </div>
-          <pre>{formatQuery(query, format)}</pre>
+          <pre>{format === 'parameterized' ? JSON.stringify(formatQuery(query, format), null, 2) : formatQuery(query, format)}</pre>
         </div>
       </div>
     </div>

@@ -399,7 +399,13 @@ var RootView = function RootView() {
     onChange: function onChange() {
       return setFormat('sql');
     }
-  }), "SQL")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format)))));
+  }), "SQL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "radio",
+    checked: format === 'parameterized',
+    onChange: function onChange() {
+      return setFormat('parameterized');
+    }
+  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, format === 'parameterized' ? JSON.stringify(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format)))));
 };
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));
@@ -34999,20 +35005,68 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+
+var mapOperator = function mapOperator(op) {
+  switch (op.toLowerCase()) {
+    case 'null':
+      return 'is null';
+
+    case 'notnull':
+      return 'is not null';
+
+    case 'notin':
+      return 'not in';
+
+    case 'contains':
+    case 'beginswith':
+    case 'endswith':
+      return 'like';
+
+    case 'doesnotcontain':
+    case 'doesnotbeginwith':
+    case 'doesnotendwith':
+      return 'not like';
+
+    default:
+      return op;
+  }
+};
+
+var removeIdsFromRuleGroup = function removeIdsFromRuleGroup(ruleGroup) {
+  var ruleGroupCopy = _objectSpread({}, ruleGroup);
+
+  delete ruleGroupCopy.id;
+
+  if (ruleGroupCopy.rules) {
+    ruleGroupCopy.rules = ruleGroupCopy.rules.map(function (rule) {
+      return removeIdsFromRuleGroup(rule);
+    });
+  }
+
+  return ruleGroupCopy;
+};
 /**
  * Formats a query in the requested output format.  The optional
  * `valueProcessor` argument can be used to format the values differently
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  * @param {RuleGroup} ruleGroup
- * @param {"json"|"sql"|"json_without_ids"} format
+ * @param {"json"|"sql"|"json_without_ids"|"parameterized"} format
  * @param {Function} valueProcessor
  */
 
+
 var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
-  if (format.toLowerCase() === 'json') {
+  var formatLowerCase = format.toLowerCase();
+
+  if (formatLowerCase === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
-  } else if (format.toLowerCase() === 'sql') {
+  } else if (formatLowerCase === 'json_without_ids') {
+    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
+  } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
+    var parameterized = formatLowerCase === 'parameterized';
+    var params = [];
+
     var valueProc = valueProcessor || function (field, operator, value) {
       var val = "\"".concat(value, "\"");
 
@@ -35037,38 +35091,25 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
 
     var processRule = function processRule(rule) {
       var value = valueProc(rule.field, rule.operator, rule.value);
-      var operator = rule.operator;
+      var operator = mapOperator(rule.operator);
 
-      switch (rule.operator.toLowerCase()) {
-        case 'null':
-          operator = 'is null';
-          break;
+      if (parameterized && value) {
+        if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
+          var splitValue = rule.value.split(',').map(function (v) {
+            return v.trim();
+          });
+          splitValue.forEach(function (v) {
+            return params.push(v);
+          });
+          return "".concat(rule.field, " ").concat(operator, " (").concat(splitValue.map(function (v) {
+            return '?';
+          }).join(', '), ")");
+        }
 
-        case 'notnull':
-          operator = 'is not null';
-          break;
-
-        case 'notin':
-          operator = 'not in';
-          break;
-
-        case 'contains':
-        case 'beginswith':
-        case 'endswith':
-          operator = 'like';
-          break;
-
-        case 'doesnotcontain':
-        case 'doesnotbeginwith':
-        case 'doesnotendwith':
-          operator = 'not like';
-          break;
-
-        default:
-          break;
+        params.push(value.match(/^"?(.*?)"?$/)[1]);
       }
 
-      return "".concat(rule.field, " ").concat(operator, " ").concat(value).trim();
+      return "".concat(rule.field, " ").concat(operator, " ").concat(parameterized && value ? '?' : value).trim();
     };
 
     var processRuleGroup = function processRuleGroup(rg) {
@@ -35082,26 +35123,17 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
       return "".concat(rg.not ? 'NOT ' : '', "(").concat(processedRules.join(" ".concat(rg.combinator, " ")), ")");
     };
 
-    return processRuleGroup(ruleGroup);
-  } else if (format.toLowerCase() === 'json_without_ids') {
-    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
+    if (parameterized) {
+      return {
+        sql: processRuleGroup(ruleGroup),
+        params: params
+      };
+    } else {
+      return processRuleGroup(ruleGroup);
+    }
   } else {
     return '';
   }
-};
-
-var removeIdsFromRuleGroup = function removeIdsFromRuleGroup(ruleGroup) {
-  var ruleGroupCopy = _objectSpread({}, ruleGroup);
-
-  delete ruleGroupCopy.id;
-
-  if (ruleGroupCopy.rules) {
-    ruleGroupCopy.rules = ruleGroupCopy.rules.map(function (rule) {
-      return removeIdsFromRuleGroup(rule);
-    });
-  }
-
-  return ruleGroupCopy;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (formatQuery);

@@ -283,6 +283,6 @@ export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
  */
 export function formatQuery(
   ruleGroup: RuleGroup,
-  format: 'json' | 'sql' | 'json_without_ids',
+  format: 'json' | 'sql' | 'json_without_ids' | 'parameterized',
   valueProcessor?: (field: string, operator: string, value: any) => string
-): string;
+): string | { sql: string; params: string[]; };
