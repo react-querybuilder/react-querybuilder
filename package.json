@@ -1,10 +1,13 @@
 {
   "name": "react-querybuilder",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
   "types": "./index.d.ts",
-  "files": ["dist/query-builder.scss", "index.d.ts"],
+  "files": [
+    "dist/query-builder.scss",
+    "index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
