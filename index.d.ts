@@ -62,6 +62,11 @@ interface NotToggleCustomControlProps extends CommonCustomControlProps {
   handleOnChange?(checked: boolean): void;
 }
 
+interface RuleGroupCustomControlProps extends CommonCustomControlProps {
+  checked: boolean
+  handleOnChange?(checked: boolean): void;
+}
+
 interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
   options: NameLabelPair[];
   rules?: Rule[];
@@ -135,6 +140,7 @@ interface QueryBuilderProps {
     operatorSelector?: React.ComponentType<OperatorSelectorCustomControlProps>;
     valueEditor?: React.ComponentType<ValueEditorCustomControlProps>;
     notToggle?: React.ComponentType<NotToggleCustomControlProps>;
+    ruleGroup?: React.ComponentType<RuleGroupCustomControlProps>
   };
   /**
    * This is a callback function invoked to get the list of allowed

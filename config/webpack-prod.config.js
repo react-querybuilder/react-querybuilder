@@ -23,10 +23,12 @@ module.exports = merge(webpackCommon, {
   devtool: 'none',
 
   plugins: [
-    new CopyPlugin([
-      {
-        from: './src/query-builder.scss'
-      }
-    ])
+    new CopyPlugin({
+      patterns: [
+        {
+          from: './src/query-builder.scss'
+        }
+      ]
+    })
   ]
 });

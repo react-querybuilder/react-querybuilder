@@ -141,7 +141,8 @@ React.PropTypes.shape({
   fieldSelector: React.PropTypes.func, // returns ReactClass
   operatorSelector: React.PropTypes.func, // returns ReactClass
   valueEditor: React.PropTypes.func, // returns ReactClass
-  notToggle: React.PropTypes.func // returns ReactClass
+  notToggle: React.PropTypes.func, // returns ReactClass
+  ruleGroup: React.PropTypes.func // returns ReactClass
 });
 ```
 
@@ -260,6 +261,20 @@ This is a custom controls object that allows you to override the control element
   title: React.PropTypes.string, // Tooltip for the label
   level: React.PropTypes.number, // The level of the group
   className: React.PropTypes.string, // CSS classNames to be applied
+}
+```
+
+- `ruleGroup`: By default, `<RuleGroup />` is used. The following props are passed:
+
+```js
+{
+  id: React.PropTypes.string,
+  parentId: React.PropTypes.string,, 
+  combinator: React.PropTypes.string, 
+  rules: React.PropTypes.array, 
+  translations: React.PropTypes.object, 
+  schema: React.PropTypes.object, 
+  not: React.PropTypes.boolean
 }
 ```
 
