@@ -31,6 +31,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {React.Component} operatorSelector
  * @property {React.Component} valueEditor
  * @property {React.Component} notToggle
+ * @property {React.Component} ruleGroup
  */
 /**
  * @typedef {Object} QueryBuilderProps
@@ -133,7 +134,8 @@ const defaultControlElements = {
   fieldSelector: ValueSelector,
   operatorSelector: ValueSelector,
   valueEditor: ValueEditor,
-  notToggle: NotToggle
+  notToggle: NotToggle,
+  ruleGroup: RuleGroup
 };
 
 /**
@@ -395,7 +397,7 @@ const QueryBuilder = (props) => {
 
   return (
     <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
-      <RuleGroup
+      <schema.controls.ruleGroup
         translations={{ ...defaultTranslations, ...props.translations }}
         rules={root.rules}
         combinator={root.combinator}
@@ -444,7 +446,8 @@ QueryBuilder.propTypes = {
     fieldSelector: PropTypes.func,
     operatorSelector: PropTypes.func,
     valueEditor: PropTypes.func,
-    notToggle: PropTypes.func
+    notToggle: PropTypes.func,
+    ruleGroup: PropTypes.func
   }),
   getOperators: PropTypes.func,
   getValueEditorType: PropTypes.func,
