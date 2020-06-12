@@ -34900,11 +34900,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "formatQuery", function() { return _utils__WEBPACK_IMPORTED_MODULE_1__["formatQuery"]; });
 
 /* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Rule */ "./src/Rule.jsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rule", function() { return _Rule__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rule", function() { return _Rule__WEBPACK_IMPORTED_MODULE_2__["Rule"]; });
 
 
 /* harmony default export */ __webpack_exports__["default"] = (_QueryBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]);
-
 
 
 

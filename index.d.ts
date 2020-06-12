@@ -62,9 +62,77 @@ interface NotToggleCustomControlProps extends CommonCustomControlProps {
   handleOnChange?(checked: boolean): void;
 }
 
+interface Translations {
+  fields?: {
+    title: string;
+  };
+  operators?: {
+    title: string;
+  };
+  value?: {
+    title: string;
+  };
+  removeRule?: {
+    label: string;
+    title: string;
+  };
+  removeGroup?: {
+    label: string;
+    title: string;
+  };
+  addRule?: {
+    label: string;
+    title: string;
+  };
+  addGroup?: {
+    label: string;
+    title: string;
+  };
+  combinators?: {
+    title: string;
+  };
+  notToggle?: {
+    title: string;
+  };
+}
+
+interface RuleType {
+  id: string;
+  field: string;
+  operator: string;
+  value: any;
+}
+
+interface RuleGroupType {
+  id: string;
+  combinator: string;
+  rules: (RuleType|RuleGroupType)[];
+  not: boolean;
+}
+
 interface RuleGroupCustomControlProps extends CommonCustomControlProps {
-  checked: boolean
-  handleOnChange?(checked: boolean): void;
+  id?: string;
+  parentId?: string;
+  combinator?: string;
+  rules?: [];
+  translations?: Translations;
+  schema?: {
+    fields: Field[];
+    classNames?: {},
+    combinators: {name: string; label: string;}[],
+    controls?: {},
+    createRule?(): RuleType,
+    createRuleGroup?(): RuleGroupType,
+    getLevel?(id: string): number,
+    isRuleGroup?(ruleOrGroup: RuleType|RuleGroupType): boolean,
+    onGroupAdd?(group: RuleGroupType, parentId: string): void,
+    onGroupRemove?(groupId: string, parentId: string): void,
+    onPropChange?(prop: string, value: any, ruleId: string): void,
+    onRuleAdd?(rule: RuleType, parentId: string): void;
+    showCombinatorsBetweenRules?: boolean;
+    showNotToggle?: boolean;
+  };
+  not?: boolean;
 }
 
 interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
@@ -232,39 +300,7 @@ interface QueryBuilderProps {
    * This can be used to override translatable texts applied to various
    * controls that are created by the `<QueryBuilder />`.
    */
-  translations?: {
-    fields?: {
-      title: string;
-    };
-    operators?: {
-      title: string;
-    };
-    value?: {
-      title: string;
-    };
-    removeRule?: {
-      label: string;
-      title: string;
-    };
-    removeGroup?: {
-      label: string;
-      title: string;
-    };
-    addRule?: {
-      label: string;
-      title: string;
-    };
-    addGroup?: {
-      label: string;
-      title: string;
-    };
-    combinators?: {
-      title: string;
-    };
-    notToggle?: {
-      title: string;
-    };
-  };
+  translations?: Translations;
   /**
    * Show the combinators between rules and rule groups instead of at the top of rule groups.
    */
