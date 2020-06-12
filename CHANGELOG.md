@@ -1,5 +1,12 @@
 ## Change Log
 
+### v3.3.0 (2020-06-12)
+- [#141](https://github.com/sapientglobalmarkets/react-querybuilder/pull/141) Add custom control option for RuleGroup component (@rbalaine)
+
+### v3.2.0 (2020-05-28)
+- [#139](https://github.com/sapientglobalmarkets/react-querybuilder/pull/139) Added "parameterized" option to formatQuery (@jakeboone02)
+- [#131](https://github.com/sapientglobalmarkets/react-querybuilder/pull/131) Fix content links in readme (@geekayush)
+
 ### v3.1.0 (2020-02-18)
 - [#122](https://github.com/sapientglobalmarkets/react-querybuilder/pull/122) Add prop to control value and operator reset functionality on field change. (@lakk1)
 
