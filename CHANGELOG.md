@@ -1,5 +1,8 @@
 ## Change Log
 
+### v3.4.0 (2020-06-15)
+- [#142](https://github.com/sapientglobalmarkets/react-querybuilder/pull/142) Implemented customizable Rule component (@jakeboone02)
+
 ### v3.3.0 (2020-06-12)
 - [#141](https://github.com/sapientglobalmarkets/react-querybuilder/pull/141) Add custom control option for RuleGroup component (@rbalaine)
 
