@@ -1,9 +1,10 @@
 import cloneDeep from 'lodash/cloneDeep';
+import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { nanoid } from 'nanoid';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
-import RuleGroup from './RuleGroup';
+import { Rule } from './Rule';
+import { RuleGroup } from './RuleGroup';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 /**
@@ -135,13 +136,14 @@ const defaultControlElements = {
   operatorSelector: ValueSelector,
   valueEditor: ValueEditor,
   notToggle: NotToggle,
-  ruleGroup: RuleGroup
+  ruleGroup: RuleGroup,
+  rule: Rule
 };
 
 /**
  * @param {QueryBuilderProps} props
  */
-const QueryBuilder = (props) => {
+export const QueryBuilder = (props) => {
   /**
    * Gets the initial query
    * @returns {RuleGroupType}
@@ -447,7 +449,8 @@ QueryBuilder.propTypes = {
     operatorSelector: PropTypes.func,
     valueEditor: PropTypes.func,
     notToggle: PropTypes.func,
-    ruleGroup: PropTypes.func
+    ruleGroup: PropTypes.func,
+    rule: PropTypes.func
   }),
   getOperators: PropTypes.func,
   getValueEditorType: PropTypes.func,
@@ -462,5 +465,3 @@ QueryBuilder.propTypes = {
 };
 
 QueryBuilder.displayName = 'QueryBuilder';
-
-export default QueryBuilder;

@@ -2,7 +2,7 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
-import Rule from './Rule';
+import { Rule } from './Rule';
 
 describe('<Rule />', () => {
   let controls, classNames, schema, props;
