@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
-import Rule from './Rule';
 
-const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not }) => {
+export const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not }) => {
   const {
     classNames,
     combinators,
@@ -126,7 +125,7 @@ const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not 
               not={r.not}
             />
           ) : (
-            <Rule
+            <controls.rule
               id={r.id}
               field={r.field}
               value={r.value}
@@ -151,5 +150,3 @@ RuleGroup.defaultProps = {
 };
 
 RuleGroup.displayName = 'RuleGroup';
-
-export default RuleGroup;

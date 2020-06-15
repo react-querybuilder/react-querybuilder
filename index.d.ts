@@ -206,7 +206,8 @@ interface QueryBuilderProps {
     operatorSelector?: React.ComponentType<OperatorSelectorProps>;
     valueEditor?: React.ComponentType<ValueEditorProps>;
     notToggle?: React.ComponentType<NotToggleProps>;
-    ruleGroup?: React.ComponentType<RuleGroupCustomControlProps>
+    ruleGroup?: React.ComponentType<RuleGroupCustomControlProps>;
+    rule?: React.ComponentType<RuleProps>;
   };
   /**
    * This is a callback function invoked to get the list of allowed

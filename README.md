@@ -65,7 +65,7 @@ function logQuery(query) {
 
 ## API
 
-This library exposes a React component, [`<QueryBuilder />`](#QueryBuilder), and a utility function, [`formatQuery`](#formatQuery). `<QueryBuilder />` is the default export, and `formatQuery` is exposed as a named export.
+The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) React component.  Named exports include the `<Rule />` component (for use in custom `<RuleGroup />` implementations) and a utility function, [`formatQuery`](#formatQuery).
 
 ### QueryBuilder
 
@@ -132,17 +132,18 @@ The array of combinators that should be used for RuleGroups. The default set inc
 #### `controlElements` _(Optional)_
 
 ```js
-React.PropTypes.shape({
-  addGroupAction: React.PropTypes.func, // returns ReactClass
-  removeGroupAction: React.PropTypes.func, // returns ReactClass
-  addRuleAction: React.PropTypes.func, // returns ReactClass
-  removeRuleAction: React.PropTypes.func, // returns ReactClass
-  combinatorSelector: React.PropTypes.func, // returns ReactClass
-  fieldSelector: React.PropTypes.func, // returns ReactClass
-  operatorSelector: React.PropTypes.func, // returns ReactClass
-  valueEditor: React.PropTypes.func, // returns ReactClass
-  notToggle: React.PropTypes.func, // returns ReactClass
-  ruleGroup: React.PropTypes.func // returns ReactClass
+PropTypes.shape({
+  addGroupAction: PropTypes.func, // returns ReactClass
+  removeGroupAction: PropTypes.func, // returns ReactClass
+  addRuleAction: PropTypes.func, // returns ReactClass
+  removeRuleAction: PropTypes.func, // returns ReactClass
+  combinatorSelector: PropTypes.func, // returns ReactClass
+  fieldSelector: PropTypes.func, // returns ReactClass
+  operatorSelector: PropTypes.func, // returns ReactClass
+  valueEditor: PropTypes.func, // returns ReactClass
+  notToggle: PropTypes.func, // returns ReactClass
+  ruleGroup: PropTypes.func, // returns ReactClass
+  rule: PropTypes.func // returns ReactClass
 });
 ```
 
@@ -152,11 +153,11 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  label: React.PropTypes.string, // "+Group"
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnClick: React.PropTypes.func, // Callback function to invoke adding a <RuleGroup />
-  rules: React.PropTypes.array, // Provides the number of rules already present for this group,
-  level: React.PropTypes.number // The level of the current group
+  label: PropTypes.string, // "+Group"
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnClick: PropTypes.func, // Callback function to invoke adding a <RuleGroup />
+  rules: PropTypes.array, // Provides the number of rules already present for this group,
+  level: PropTypes.number // The level of the current group
 }
 ```
 
@@ -164,11 +165,11 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  label: React.PropTypes.string, // "x"
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnClick: React.PropTypes.func, // Callback function to invoke removing a <RuleGroup />
-  rules: React.PropTypes.array, // Provides the number of rules already present for this group,
-  level: React.PropTypes.number // The level of the current group
+  label: PropTypes.string, // "x"
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnClick: PropTypes.func, // Callback function to invoke removing a <RuleGroup />
+  rules: PropTypes.array, // Provides the number of rules already present for this group,
+  level: PropTypes.number // The level of the current group
 }
 ```
 
@@ -176,11 +177,11 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  label: React.PropTypes.string, // "+Rule"
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnClick: React.PropTypes.func, // Callback function to invoke adding a <Rule />
-  rules: React.PropTypes.array, // Provides the number of rules already present for this group,
-  level: React.PropTypes.number // The level of the current group
+  label: PropTypes.string, // "+Rule"
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnClick: PropTypes.func, // Callback function to invoke adding a <Rule />
+  rules: PropTypes.array, // Provides the number of rules already present for this group,
+  level: PropTypes.number // The level of the current group
 }
 ```
 
@@ -188,10 +189,10 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  label: React.PropTypes.string, // "x"
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnClick: React.PropTypes.func, // Callback function to invoke removing a <Rule />
-  level: React.PropTypes.number // The level of the current group
+  label: PropTypes.string, // "x"
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnClick: PropTypes.func, // Callback function to invoke removing a <Rule />
+  level: PropTypes.number // The level of the current group
 }
 ```
 
@@ -199,12 +200,12 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  options: React.PropTypes.array.isRequired, // Same as 'combinators' passed into QueryBuilder
-  value: React.PropTypes.string, // Selected combinator from the existing query representation, if any
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnChange: React.PropTypes.func, // Callback function to update query representation
-  rules: React.PropTypes.array, // Provides the number of rules already present for this group
-  level: React.PropTypes.number // The level of the current group
+  options: PropTypes.array.isRequired, // Same as 'combinators' passed into QueryBuilder
+  value: PropTypes.string, // Selected combinator from the existing query representation, if any
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnChange: PropTypes.func, // Callback function to update query representation
+  rules: PropTypes.array, // Provides the number of rules already present for this group
+  level: PropTypes.number // The level of the current group
 }
 ```
 
@@ -212,12 +213,12 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  options: React.PropTypes.array.isRequired, // Same as 'fields' passed into QueryBuilder
-  value: React.PropTypes.string, // Selected field from the existing query representation, if any
-  operator: React.PropTypes.string, // Selected operator from the existing query representation, if any
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnChange: React.PropTypes.func, // Callback function to update query representation
-  level: React.PropTypes.number // The level the group this rule belongs to
+  options: PropTypes.array.isRequired, // Same as 'fields' passed into QueryBuilder
+  value: PropTypes.string, // Selected field from the existing query representation, if any
+  operator: PropTypes.string, // Selected operator from the existing query representation, if any
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnChange: PropTypes.func, // Callback function to update query representation
+  level: PropTypes.number // The level the group this rule belongs to
 }
 ```
 
@@ -225,13 +226,13 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  field: React.PropTypes.string, // Field name corresponding to this Rule
-  fieldData: React.PropTypes.object, // The entire object from the fields array for this field
-  options: React.PropTypes.array.isRequired, // Return value of getOperators(field)
-  value: React.PropTypes.string, // Selected operator from the existing query representation, if any
-  className: React.PropTypes.string, // CSS classNames to be applied
-  handleOnChange: React.PropTypes.func, // Callback function to update query representation
-  level: React.PropTypes.number // The level the group this rule belongs to
+  field: PropTypes.string, // Field name corresponding to this Rule
+  fieldData: PropTypes.object, // The entire object from the fields array for this field
+  options: PropTypes.array.isRequired, // Return value of getOperators(field)
+  value: PropTypes.string, // Selected operator from the existing query representation, if any
+  className: PropTypes.string, // CSS classNames to be applied
+  handleOnChange: PropTypes.func, // Callback function to update query representation
+  level: PropTypes.number // The level the group this rule belongs to
 }
 ```
 
@@ -239,16 +240,16 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  field: React.PropTypes.string, // Field name corresponding to this Rule
-  fieldData: React.PropTypes.object, // The entire object from the fields array for this field
-  operator: React.PropTypes.string, // Operator name corresponding to this Rule
-  value: React.PropTypes.string, // Value from the existing query representation, if any
-  handleOnChange: React.PropTypes.func, // Callback function to update the query representation
-  type: React.PropTypes.oneOf(['text', 'select', 'checkbox', 'radio']), // Type of editor to be displayed
-  inputType: React.PropTypes.string, // Type of <input> if `type` is "text"
-  values: React.PropTypes.arrayOf(React.PropTypes.object), //
-  level: React.PropTypes.number, // The level the group this rule belongs to
-  className: React.PropTypes.string, // CSS classNames to be applied
+  field: PropTypes.string, // Field name corresponding to this Rule
+  fieldData: PropTypes.object, // The entire object from the fields array for this field
+  operator: PropTypes.string, // Operator name corresponding to this Rule
+  value: PropTypes.string, // Value from the existing query representation, if any
+  handleOnChange: PropTypes.func, // Callback function to update the query representation
+  type: PropTypes.oneOf(['text', 'select', 'checkbox', 'radio']), // Type of editor to be displayed
+  inputType: PropTypes.string, // Type of <input> if `type` is "text"
+  values: PropTypes.arrayOf(PropTypes.object), //
+  level: PropTypes.number, // The level the group this rule belongs to
+  className: PropTypes.string, // CSS classNames to be applied
 }
 ```
 
@@ -256,11 +257,11 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  checked: React.PropTypes.bool, // Whether the input should be checked or not
-  handleOnChange: React.PropTypes.func, // Callback function to update the query representation
-  title: React.PropTypes.string, // Tooltip for the label
-  level: React.PropTypes.number, // The level of the group
-  className: React.PropTypes.string, // CSS classNames to be applied
+  checked: PropTypes.bool, // Whether the input should be checked or not
+  handleOnChange: PropTypes.func, // Callback function to update the query representation
+  title: PropTypes.string, // Tooltip for the label
+  level: PropTypes.number, // The level of the group
+  className: PropTypes.string, // CSS classNames to be applied
 }
 ```
 
@@ -268,13 +269,27 @@ This is a custom controls object that allows you to override the control element
 
 ```js
 {
-  id: React.PropTypes.string,
-  parentId: React.PropTypes.string,, 
-  combinator: React.PropTypes.string, 
-  rules: React.PropTypes.array, 
-  translations: React.PropTypes.object, 
-  schema: React.PropTypes.object, 
-  not: React.PropTypes.boolean
+  id: PropTypes.string,
+  parentId: PropTypes.string,
+  combinator: PropTypes.string,
+  rules: PropTypes.array,
+  translations: PropTypes.object,
+  schema: PropTypes.object,
+  not: PropTypes.boolean
+}
+```
+
+- `rule`: By default, `<Rule />` is used. The following props are passed:
+
+```js
+{
+  id: PropTypes.string,
+  parentId: PropTypes.string,
+  field: PropTypes.string,
+  value: PropTypes.any,
+  operator: PropTypes.string,
+  translations: PropTypes.object,
+  schema: PropTypes.object
 }
 ```
 
@@ -344,7 +359,6 @@ This can be used to assign specific `CSS` classes to various controls that are c
 ```js
 {
     queryBuilder: string, // Root <div> element
-
     ruleGroup: string, // <div> containing the RuleGroup
     header: string, // <div> containing the RuleGroup header controls
     combinators: string, // <select> control for combinators
@@ -352,13 +366,11 @@ This can be used to assign specific `CSS` classes to various controls that are c
     addGroup: string, // <button> to add a RuleGroup
     removeGroup: string, // <button> to remove a RuleGroup
     notToggle: string, // <label> on the "not" toggle
-
     rule: string, // <div> containing the Rule
     fields: string, // <select> control for fields
     operators: string, // <select> control for operators
     value: string, // <input> for the field value
     removeRule: string // <button> to remove a Rule
-
 }
 ```
 
@@ -509,7 +521,7 @@ const query = {
   not: false
 };
 
-console.log(formatQuery(query, 'json_without_ids')); 
+console.log(formatQuery(query, 'json_without_ids'));
 // {
 //   rules: [
 //     {

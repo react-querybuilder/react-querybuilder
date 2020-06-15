@@ -1,7 +1,8 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { ActionElement, NotToggle, ValueSelector } from './controls/index';
-import RuleGroup from './RuleGroup';
+import { Rule } from './Rule';
+import { RuleGroup } from './RuleGroup';
 
 describe('<RuleGroup />', () => {
   let controls, classNames, schema, props;
@@ -22,7 +23,8 @@ describe('<RuleGroup />', () => {
           <input onChange={(e) => props.handleOnChange(e.target.checked)} />
           Not
         </label>
-      )
+      ),
+      rule: Rule
     };
     classNames = {
       combinators: 'custom-combinators-class',
