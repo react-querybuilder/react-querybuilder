@@ -108,6 +108,24 @@ const query = {
 
 const sqlString =
   '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and age = "26" and isMusician = TRUE and NOT (gender = "M" or job != "Programmer" or email like "%@%") and (lastName not like "%ab%" or job like "Prog%" or email like "%com" or job not like "Man%" or email not like "%fr"))';
+const parameterizedSQLString =
+  '(firstName is null and lastName is not null and firstName in (?, ?) and lastName not in (?, ?) and age = ? and isMusician = ? and NOT (gender = ? or job != ? or email like ?) and (lastName not like ? or job like ? or email like ? or job not like ? or email not like ?))';
+const params = [
+  'Test',
+  'This',
+  'Test',
+  'This',
+  '26',
+  'TRUE',
+  'M',
+  'Programmer',
+  '%@%',
+  '%ab%',
+  'Prog%',
+  '%com',
+  'Man%',
+  '%fr'
+];
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
@@ -116,6 +134,13 @@ describe('formatQuery', () => {
 
   it('formats SQL correctly', () => {
     expect(formatQuery(query, 'sql')).to.equal(sqlString);
+  });
+
+  it('formats parameterized SQL correctly', () => {
+    const parameterized = formatQuery(query, 'parameterized');
+    expect(parameterized).to.have.property('sql', parameterizedSQLString);
+    expect(parameterized).to.have.property('params');
+    expect(parameterized.params).to.deep.equal(params);
   });
 
   it('handles invalid type correctly', () => {
@@ -246,5 +271,5 @@ describe('formatQuery', () => {
       not: false
     };
     expect(formatQuery(query, 'json_without_ids')).to.equal(JSON.stringify(example_without_ids));
-  })
+  });
 });

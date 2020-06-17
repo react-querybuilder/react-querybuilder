@@ -1,4 +1,4 @@
-// Type definitions for react-querybuilder 2.2.1
+// Type definitions for react-querybuilder 3.3.0
 // Project: https://github.com/sapientglobalmarkets/react-querybuilder/
 // Definitions by: Jake Boone <https://github.com/jakeboone02>
 
@@ -9,23 +9,79 @@ interface NameLabelPair {
   label: string;
 }
 
-interface Rule {
+interface Field extends NameLabelPair {
+  id?: string;
+  [x: string]: any;
+}
+
+interface RuleType {
   id: string;
   field: string;
   operator: string;
   value: any;
 }
 
-interface RuleGroup {
+interface RuleGroupType {
   id: string;
   combinator: string;
-  rules: (Rule | RuleGroup)[];
+  rules: (RuleType | RuleGroupType)[];
   not?: boolean;
+}
+
+interface Schema {
+  fields: Field[];
+  classNames?: {},
+  combinators: {name: string; label: string;}[],
+  controls?: {},
+  createRule?(): RuleType,
+  createRuleGroup?(): RuleGroupType,
+  getLevel?(id: string): number,
+  isRuleGroup?(ruleOrGroup: RuleType | RuleGroupType): boolean,
+  onGroupAdd?(group: RuleGroupType, parentId: string): void,
+  onGroupRemove?(groupId: string, parentId: string): void,
+  onPropChange?(prop: string, value: any, ruleId: string): void,
+  onRuleAdd?(rule: RuleType, parentId: string): void;
+  showCombinatorsBetweenRules?: boolean;
+  showNotToggle?: boolean;
+}
+
+interface Translations {
+  fields?: {
+    title: string;
+  };
+  operators?: {
+    title: string;
+  };
+  value?: {
+    title: string;
+  };
+  removeRule?: {
+    label: string;
+    title: string;
+  };
+  removeGroup?: {
+    label: string;
+    title: string;
+  };
+  addRule?: {
+    label: string;
+    title: string;
+  };
+  addGroup?: {
+    label: string;
+    title: string;
+  };
+  combinators?: {
+    title: string;
+  };
+  notToggle?: {
+    title: string;
+  };
 }
 
 type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';
 
-interface CommonCustomControlProps {
+interface CommonProps {
   /**
    * CSS classNames to be applied
    */
@@ -40,45 +96,65 @@ interface CommonCustomControlProps {
   title?: string;
 }
 
-interface ActionCustomControlProps extends CommonCustomControlProps {
+interface ActionProps extends CommonProps {
   label?: string;
   handleOnClick?(): void;
 }
 
-interface ActionWithRulesCustomControlProps extends ActionCustomControlProps {
+interface ActionWithRulesProps extends ActionProps {
   /**
    * Rules already present for this group
    */
-  rules?: Rule[];
+  rules?: RuleType[];
 }
 
-interface SelectorEditorCustomControlProps extends CommonCustomControlProps {
+interface SelectorEditorProps extends CommonProps {
   value?: string;
   handleOnChange?(value: any): void;
 }
 
-interface NotToggleCustomControlProps extends CommonCustomControlProps {
+interface NotToggleProps extends CommonProps {
   checked?: boolean;
   handleOnChange?(checked: boolean): void;
 }
 
-interface CombinatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
-  options: NameLabelPair[];
-  rules?: Rule[];
+interface RuleGroupProps {
+  id?: string;
+  parentId?: string;
+  combinator?: string;
+  rules?: (RuleType | RuleGroupType)[];
+  translations?: Translations;
+  schema?: Schema;
+  not?: boolean;
 }
 
-interface FieldSelectorCustomControlProps extends SelectorEditorCustomControlProps {
+interface RuleProps {
+  id?: string;
+  parentId?: string;
+  field?: Field;
+  operator?: string;
+  value?: any;
+  translations: Translations;
+  schema?: Schema;
+}
+
+interface CombinatorSelectorProps extends SelectorEditorProps {
+  options: NameLabelPair[];
+  rules?: RuleType[];
+}
+
+interface FieldSelectorProps extends SelectorEditorProps {
   options: NameLabelPair[];
   operator?: string;
 }
 
-interface OperatorSelectorCustomControlProps extends SelectorEditorCustomControlProps {
+interface OperatorSelectorProps extends SelectorEditorProps {
   field?: string;
   fieldData?: Field;
   options: NameLabelPair[];
 }
 
-interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps {
+interface ValueEditorProps extends SelectorEditorProps {
   field?: string;
   fieldData?: Field;
   operator?: string;
@@ -87,13 +163,8 @@ interface ValueEditorCustomControlProps extends SelectorEditorCustomControlProps
   values?: any[];
 }
 
-interface Field extends NameLabelPair {
-  id?: string;
-  [x: string]: any;
-}
-
 interface QueryBuilderProps {
-  query?: RuleGroup;
+  query?: RuleGroupType;
   /**
    * The array of fields that should be used. Each field should be an object
    * with {name: String, label: String}
@@ -126,15 +197,17 @@ interface QueryBuilderProps {
    */
   combinators?: NameLabelPair[];
   controlElements?: {
-    addGroupAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
-    removeGroupAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
-    addRuleAction?: React.ComponentType<ActionWithRulesCustomControlProps>;
-    removeRuleAction?: React.ComponentType<ActionCustomControlProps>;
-    combinatorSelector?: React.ComponentType<CombinatorSelectorCustomControlProps>;
-    fieldSelector?: React.ComponentType<FieldSelectorCustomControlProps>;
-    operatorSelector?: React.ComponentType<OperatorSelectorCustomControlProps>;
-    valueEditor?: React.ComponentType<ValueEditorCustomControlProps>;
-    notToggle?: React.ComponentType<NotToggleCustomControlProps>;
+    addGroupAction?: React.ComponentType<ActionWithRulesProps>;
+    removeGroupAction?: React.ComponentType<ActionWithRulesProps>;
+    addRuleAction?: React.ComponentType<ActionWithRulesProps>;
+    removeRuleAction?: React.ComponentType<ActionProps>;
+    combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
+    fieldSelector?: React.ComponentType<FieldSelectorProps>;
+    operatorSelector?: React.ComponentType<OperatorSelectorProps>;
+    valueEditor?: React.ComponentType<ValueEditorProps>;
+    notToggle?: React.ComponentType<NotToggleProps>;
+    ruleGroup?: React.ComponentType<RuleGroupCustomControlProps>;
+    rule?: React.ComponentType<RuleProps>;
   };
   /**
    * This is a callback function invoked to get the list of allowed
@@ -163,7 +236,7 @@ interface QueryBuilderProps {
   /**
    * This is a notification that is invoked anytime the query configuration changes.
    */
-  onQueryChange(query: RuleGroup): void;
+  onQueryChange(query: RuleGroupType): void;
   /**
    * This can be used to assign specific CSS classes to various controls
    * that are created by the `<QueryBuilder />`.
@@ -226,39 +299,7 @@ interface QueryBuilderProps {
    * This can be used to override translatable texts applied to various
    * controls that are created by the `<QueryBuilder />`.
    */
-  translations?: {
-    fields?: {
-      title: string;
-    };
-    operators?: {
-      title: string;
-    };
-    value?: {
-      title: string;
-    };
-    removeRule?: {
-      label: string;
-      title: string;
-    };
-    removeGroup?: {
-      label: string;
-      title: string;
-    };
-    addRule?: {
-      label: string;
-      title: string;
-    };
-    addGroup?: {
-      label: string;
-      title: string;
-    };
-    combinators?: {
-      title: string;
-    };
-    notToggle?: {
-      title: string;
-    };
-  };
+  translations?: Translations;
   /**
    * Show the combinators between rules and rule groups instead of at the top of rule groups.
    */
@@ -279,6 +320,8 @@ interface QueryBuilderProps {
 
 export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
 
+export class Rule extends React.Component<RuleProps> {}
+
 /**
  * Formats a query in the requested output format.  The optional
  * `valueProcessor` argument can be used to format the values differently
@@ -286,7 +329,7 @@ export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
  * processed assuming the default operators are being used.
  */
 export function formatQuery(
-  ruleGroup: RuleGroup,
-  format: 'json' | 'sql' | 'json_without_ids',
+  ruleGroup: RuleGroupType,
+  format: 'json' | 'sql' | 'json_without_ids' | 'parameterized',
   valueProcessor?: (field: string, operator: string, value: any) => string
-): string;
+): string | { sql: string; params: string[]; };

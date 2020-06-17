@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Rule = ({
+export const Rule = ({
   id,
   parentId,
   field,
@@ -101,5 +101,3 @@ Rule.defaultProps = {
 };
 
 Rule.displayName = 'Rule';
-
-export default Rule;

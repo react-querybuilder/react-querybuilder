@@ -1,9 +1,10 @@
 import cloneDeep from 'lodash/cloneDeep';
+import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import nanoid from 'nanoid';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
-import RuleGroup from './RuleGroup';
+import { Rule } from './Rule';
+import { RuleGroup } from './RuleGroup';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 /**
@@ -31,6 +32,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {React.Component} operatorSelector
  * @property {React.Component} valueEditor
  * @property {React.Component} notToggle
+ * @property {React.Component} ruleGroup
  */
 /**
  * @typedef {Object} QueryBuilderProps
@@ -134,13 +136,15 @@ const defaultControlElements = {
   fieldSelector: ValueSelector,
   operatorSelector: ValueSelector,
   valueEditor: ValueEditor,
-  notToggle: NotToggle
+  notToggle: NotToggle,
+  ruleGroup: RuleGroup,
+  rule: Rule
 };
 
 /**
  * @param {QueryBuilderProps} props
  */
-const QueryBuilder = (props) => {
+export const QueryBuilder = (props) => {
   /**
    * Gets the initial query
    * @returns {RuleGroupType}
@@ -402,7 +406,7 @@ const QueryBuilder = (props) => {
 
   return (
     <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
-      <RuleGroup
+      <schema.controls.ruleGroup
         translations={{ ...defaultTranslations, ...props.translations }}
         rules={root.rules}
         combinator={root.combinator}
@@ -452,7 +456,9 @@ QueryBuilder.propTypes = {
     fieldSelector: PropTypes.func,
     operatorSelector: PropTypes.func,
     valueEditor: PropTypes.func,
-    notToggle: PropTypes.func
+    notToggle: PropTypes.func,
+    ruleGroup: PropTypes.func,
+    rule: PropTypes.func
   }),
   getOperators: PropTypes.func,
   getValueEditorType: PropTypes.func,
@@ -468,5 +474,3 @@ QueryBuilder.propTypes = {
 };
 
 QueryBuilder.displayName = 'QueryBuilder';
-
-export default QueryBuilder;

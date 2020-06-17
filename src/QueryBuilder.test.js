@@ -1,8 +1,8 @@
 import { mount } from 'enzyme';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import QueryBuilder from './QueryBuilder';
 import sinon from 'sinon';
+import { QueryBuilder } from './QueryBuilder';
 
 describe('<QueryBuilder />', () => {
   it('should exist', () => {

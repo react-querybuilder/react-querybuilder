@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import QueryBuilder, { formatQuery } from '../src';
 import '../src/query-builder.scss';
 
@@ -242,8 +242,12 @@ const RootView = () => {
               <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />
               SQL
             </label>
+            <label>
+              <input type="radio" checked={format === 'parameterized'} onChange={() => setFormat('parameterized')} />
+              Parameterized
+            </label>
           </div>
-          <pre>{formatQuery(query, format)}</pre>
+          <pre>{format === 'parameterized' ? JSON.stringify(formatQuery(query, format), null, 2) : formatQuery(query, format)}</pre>
         </div>
       </div>
     </div>
