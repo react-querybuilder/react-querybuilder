@@ -211,10 +211,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should match the label of the first operator', () => {
-      const operatorOption = wrapper
-        .find('Rule')
-        .find('.rule-operators option')
-        .first();
+      const operatorOption = wrapper.find('Rule').find('.rule-operators option').first();
       expect(operatorOption.text()).to.equal('Custom Is Null');
     });
   });
@@ -442,49 +439,34 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should create a new rule and remove that rule', () => {
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('Rule').length).to.equal(1);
       expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
       expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
 
-      wrapper
-        .find('.rule-remove')
-        .first()
-        .simulate('click');
+      wrapper.find('.rule-remove').first().simulate('click');
 
       expect(wrapper.find('Rule').length).to.equal(0);
       expect(onQueryChange.getCall(2).args[0].rules).to.have.length(0);
     });
 
     it('should create a new group and remove that group', () => {
-      wrapper
-        .find('.ruleGroup-addGroup')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
 
       expect(wrapper.find('RuleGroup').length).to.equal(2);
       expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
       expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
       expect(onQueryChange.getCall(1).args[0].rules[0].combinator).to.not.be.undefined;
 
-      wrapper
-        .find('.ruleGroup-remove')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-remove').first().simulate('click');
 
       expect(wrapper.find('RuleGroup').length).to.equal(1);
       expect(onQueryChange.getCall(2).args[0].rules).to.have.length(0);
     });
 
     it('should create a new rule and change the fields', () => {
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('Rule').length).to.equal(1);
       expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
@@ -499,10 +481,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should create a new rule and change the operator', () => {
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('Rule').length).to.equal(1);
       expect(onQueryChange.getCall(0).args[0].rules).to.have.length(0);
@@ -537,10 +516,7 @@ describe('<QueryBuilder />', () => {
         }
       });
 
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.getCall(1).args[0].rules).to.have.length(1);
       expect(onQueryChange.getCall(1).args[0].rules[0].value).to.equal('value1');
@@ -563,10 +539,7 @@ describe('<QueryBuilder />', () => {
         }
       });
 
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.getCall(3).args[0].rules).to.have.length(2);
       expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal(false);
@@ -591,10 +564,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('resets the operator and value when true', () => {
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
       wrapper
         .find('.rule-operators')
         .first()
@@ -616,10 +586,7 @@ describe('<QueryBuilder />', () => {
 
     it('does not reset the operator and value when false', () => {
       wrapper.setProps({ resetOnFieldChange: false });
-      wrapper
-        .find('.ruleGroup-addRule')
-        .first()
-        .simulate('click');
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
       wrapper
         .find('.rule-operators')
         .first()
@@ -636,6 +603,68 @@ describe('<QueryBuilder />', () => {
       expect(onQueryChange.getCall(3).args[0].rules[0].operator).to.equal('>');
       expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal('Test');
       expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('>');
+      expect(onQueryChange.getCall(4).args[0].rules[0].value).to.equal('Test');
+    });
+  });
+
+  describe('resetOnOperatorChange prop', () => {
+    let wrapper, onQueryChange;
+    const fields = [
+      { name: 'field1', label: 'Field 1' },
+      { name: 'field2', label: 'Field 2' }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('resets the value when true', () => {
+      wrapper.setProps({ resetOnOperatorChange: true });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '>' } });
+      wrapper
+        .find('.rule-value')
+        .first()
+        .simulate('change', { target: { value: 'Test' } });
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '=' } });
+
+      expect(onQueryChange.getCall(3).args[0].rules[0].operator).to.equal('>');
+      expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal('Test');
+      expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('=');
+      expect(onQueryChange.getCall(4).args[0].rules[0].value).to.equal('');
+    });
+
+    it('does not reset the value when false', () => {
+      wrapper.setProps({ resetOnOperatorChange: false });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '>' } });
+      wrapper
+        .find('.rule-value')
+        .first()
+        .simulate('change', { target: { value: 'Test' } });
+      wrapper
+        .find('.rule-operators')
+        .first()
+        .simulate('change', { target: { value: '=' } });
+
+      expect(onQueryChange.getCall(3).args[0].rules[0].operator).to.equal('>');
+      expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal('Test');
+      expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('=');
       expect(onQueryChange.getCall(4).args[0].rules[0].value).to.equal('Test');
     });
   });
