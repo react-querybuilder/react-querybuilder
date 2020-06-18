@@ -5,7 +5,10 @@ import QueryBuilder, { formatQuery } from '../src';
 import '../src/query-builder.scss';
 
 const preparedFields = {
-  primary: [{ name: 'firstName', label: 'First Name' }, { name: 'lastName', label: 'Last Name' }],
+  primary: [
+    { name: 'firstName', label: 'First Name' },
+    { name: 'lastName', label: 'Last Name' }
+  ],
   secondary: [
     { name: 'age', label: 'Age' },
     { name: 'isMusician', label: 'Is a musician' },
@@ -139,6 +142,7 @@ const RootView = () => {
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
   const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
+  const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -181,6 +185,7 @@ const RootView = () => {
             showCombinatorsBetweenRules={showCombinatorsBetweenRules}
             showNotToggle={showNotToggle}
             resetOnFieldChange={resetOnFieldChange}
+            resetOnOperatorChange={resetOnOperatorChange}
           />
         </div>
         <div className="shrink query-log scroll">
@@ -214,6 +219,16 @@ const RootView = () => {
                   onChange={(e) => setResetOnFieldChange(e.target.checked)}
                 />
                 Reset rule on field change
+              </label>
+            </div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={resetOnOperatorChange}
+                  onChange={(e) => setResetOnOperatorChange(e.target.checked)}
+                />
+                Reset rule on operator change
               </label>
             </div>
           </div>

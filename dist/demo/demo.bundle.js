@@ -307,6 +307,11 @@ var RootView = function RootView() {
       _useState12 = _slicedToArray(_useState11, 2),
       resetOnFieldChange = _useState12[0],
       setResetOnFieldChange = _useState12[1];
+
+  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+      _useState14 = _slicedToArray(_useState13, 2),
+      resetOnOperatorChange = _useState14[0],
+      setResetOnOperatorChange = _useState14[1];
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
@@ -361,7 +366,8 @@ var RootView = function RootView() {
     getValues: getValues,
     showCombinatorsBetweenRules: showCombinatorsBetweenRules,
     showNotToggle: showNotToggle,
-    resetOnFieldChange: resetOnFieldChange
+    resetOnFieldChange: resetOnFieldChange,
+    resetOnOperatorChange: resetOnOperatorChange
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "shrink query-log scroll"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Options"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -382,7 +388,13 @@ var RootView = function RootView() {
     onChange: function onChange(e) {
       return setResetOnFieldChange(e.target.checked);
     }
-  }), "Reset rule on field change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }), "Reset rule on field change")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "checkbox",
+    checked: resetOnOperatorChange,
+    onChange: function onChange(e) {
+      return setResetOnOperatorChange(e.target.checked);
+    }
+  }), "Reset rule on operator change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-evenly'
@@ -33937,6 +33949,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @property {boolean} showCombinatorsBetweenRules
  * @property {boolean} showNotToggle
  * @property {boolean} resetOnFieldChange
+ * @property {boolean} resetOnOperatorChange
  */
 
 var defaultTranslations = {
@@ -34236,6 +34249,12 @@ var QueryBuilder = function QueryBuilder(props) {
       });
     }
 
+    if (props.resetOnOperatorChange && prop === 'operator') {
+      Object.assign(rule, {
+        value: getRuleDefaultValue(rule)
+      });
+    }
+
     setRoot(rootCopy);
 
     _notifyQueryChange(rootCopy);
@@ -34362,7 +34381,8 @@ QueryBuilder.defaultProps = {
   controlClassnames: null,
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
-  resetOnFieldChange: true
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false
 };
 QueryBuilder.propTypes = {
   query: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object,
@@ -34397,7 +34417,8 @@ QueryBuilder.propTypes = {
   translations: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object,
   showCombinatorsBetweenRules: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
   showNotToggle: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
-  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool
+  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
+  resetOnOperatorChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool
 };
 QueryBuilder.displayName = 'QueryBuilder';
 
