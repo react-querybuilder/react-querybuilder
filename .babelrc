@@ -2,7 +2,7 @@
   "presets": ["@babel/env", "@babel/react"],
   "env": {
     "test": {
-      "plugins": ["istanbul", "@babel/plugin-proposal-class-properties"]
+      "plugins": ["istanbul"]
     }
   }
 }

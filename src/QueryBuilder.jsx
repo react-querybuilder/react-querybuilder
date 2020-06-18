@@ -1,5 +1,7 @@
+import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
 import { nanoid } from 'nanoid';
+import objectAssign from 'object-assign';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
@@ -48,6 +50,7 @@ import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
  * @property {boolean} showCombinatorsBetweenRules
  * @property {boolean} showNotToggle
  * @property {boolean} resetOnFieldChange
+ * @property {boolean} resetOnOperatorChange
  */
 
 const defaultTranslations = {
@@ -259,7 +262,7 @@ export const QueryBuilder = (props) => {
     }
 
     return value;
-  }
+  };
 
   /**
    * Adds a rule to the query
@@ -271,7 +274,7 @@ export const QueryBuilder = (props) => {
     const parent = findRule(parentId, rootCopy);
     parent.rules.push({
       ...rule,
-      value: getRuleDefaultValue(rule),
+      value: getRuleDefaultValue(rule)
     });
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
@@ -298,13 +301,19 @@ export const QueryBuilder = (props) => {
   const onPropChange = (prop, value, ruleId) => {
     const rootCopy = { ...root };
     const rule = findRule(ruleId, rootCopy);
-    Object.assign(rule, { [prop]: value });
+    objectAssign(rule, { [prop]: value });
 
     // Reset operator and set default value for field change
     if (props.resetOnFieldChange && prop === 'field') {
-      Object.assign(rule, {
+      objectAssign(rule, {
         operator: getOperators(rule.field)[0].name,
-        value: getRuleDefaultValue(rule),
+        value: getRuleDefaultValue(rule)
+      });
+    }
+
+    if (props.resetOnOperatorChange && prop === 'operator') {
+      Object.assign(rule, {
+        value: getRuleDefaultValue(rule)
       });
     }
 
@@ -320,7 +329,7 @@ export const QueryBuilder = (props) => {
   const onRuleRemove = (ruleId, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    const index = parent.rules.findIndex((x) => x.id === ruleId);
+    const index = arrayFindIndex(parent.rules, (x) => x.id === ruleId);
 
     parent.rules.splice(index, 1);
 
@@ -336,7 +345,7 @@ export const QueryBuilder = (props) => {
   const onGroupRemove = (groupId, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    const index = parent.rules.findIndex((x) => x.id === groupId);
+    const index = arrayFindIndex(parent.rules, (x) => x.id === groupId);
 
     parent.rules.splice(index, 1);
 
@@ -427,7 +436,8 @@ QueryBuilder.defaultProps = {
   controlClassnames: null,
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
-  resetOnFieldChange: true
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false
 };
 
 QueryBuilder.propTypes = {
@@ -461,7 +471,8 @@ QueryBuilder.propTypes = {
   translations: PropTypes.object,
   showCombinatorsBetweenRules: PropTypes.bool,
   showNotToggle: PropTypes.bool,
-  resetOnFieldChange: PropTypes.bool
+  resetOnFieldChange: PropTypes.bool,
+  resetOnOperatorChange: PropTypes.bool
 };
 
 QueryBuilder.displayName = 'QueryBuilder';

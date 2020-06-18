@@ -10,6 +10,7 @@
 - [API](#api)
   - [QueryBuilder](#querybuilder)
   - [formatQuery](#formatquery)
+- [IE11 Support](#ie11-support)
 - [Development](#development)
   - [Changelog Generation](#changelog-generation)
 - [Credits](#credits)
@@ -432,6 +433,12 @@ Pass `true` to show the "Not" toggle switch for each rule group.
 
 Pass `false` not to reset operator and value for field change.
 
+#### `resetOnOperatorChange` _(Optional)_
+
+`boolean`
+
+Pass `true` to reset value on operator change.
+
 ### formatQuery
 
 `formatQuery` formats a given query in either SQL, parameterized SQL, JSON, or JSON without IDs (which can be useful if you need to serialize the rules). Example:
@@ -539,6 +546,18 @@ console.log(formatQuery(query, 'json_without_ids'));
 //   not: false
 // };
 ```
+
+## IE11 Support
+
+In order to use this library with IE11, you must copy the Microsoft-prefixed `crypto` implementation to `window.crypto`:
+
+```js
+if (!window.crypto) {
+  window.crypto = window.msCrypto
+}
+```
+
+This requirement is due to the inclusion of the [`nanoid`](https://github.com/ai/nanoid#ie) library.
 
 ## Development
 
