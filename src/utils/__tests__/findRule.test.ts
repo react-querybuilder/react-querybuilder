@@ -1,4 +1,4 @@
-import { findRule } from '.';
+import { findRule } from '..';
 
 describe('findRule', () => {
   const query = {

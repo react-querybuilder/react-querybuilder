@@ -1,7 +1,7 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-import { ValueEditor } from '.';
+import { ValueEditor } from '..';
 
 describe('<ValueEditor />', () => {
   const props = {

@@ -1,9 +1,9 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import { ActionElement, NotToggle, ValueSelector } from './controls/index';
-import { Rule } from './Rule';
-import { RuleGroup } from './RuleGroup';
-import { ActionProps, ValueSelectorProps } from './types';
+import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
+import { Rule } from '../Rule';
+import { RuleGroup } from '../RuleGroup';
+import { ActionProps, ValueSelectorProps } from '../types';
 
 describe('<RuleGroup />', () => {
   let controls, classNames, schema, props;

@@ -1,4 +1,4 @@
-import { isRuleGroup } from '.';
+import { isRuleGroup } from '..';
 
 describe('isRuleGroup', () => {
   const rule = {

@@ -99,7 +99,7 @@ const defaultControlElements = {
   rule: Rule
 };
 
-export const QueryBuilder: React.FC<QueryBuilderProps> = ({
+export const QueryBuilder: React.FC<QueryBuilderProps> = (/* istanbul ignore next */{
   query,
   fields = [],
   operators = defaultOperators,
@@ -312,6 +312,7 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
    * Executes the `onQueryChange` function, if provided
    */
   const _notifyQueryChange = (newRoot: RuleGroupType) => {
+    /* istanbul ignore else */
     if (onQueryChange) {
       const newQuery = cloneDeep(newRoot);
       onQueryChange(newQuery);

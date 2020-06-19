@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { ValueSelector } from '.';
+import { ValueSelector } from '..';
 
 describe('<ValueSelector />', () => {
   const props = {

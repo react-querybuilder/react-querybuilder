@@ -1,4 +1,4 @@
-import { formatQuery } from '.';
+import { formatQuery } from '..';
 
 const query = {
   id: 'g-067a4722-55e0-49c3-83b5-b31e10e69f9d',

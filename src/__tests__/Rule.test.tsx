@@ -1,9 +1,9 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-import { ActionElement, ValueEditor, ValueSelector } from './controls/index';
-import { Rule } from './Rule';
-import { OperatorSelectorProps } from './types';
+import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
+import { Rule } from '../Rule';
+import { OperatorSelectorProps } from '../types';
 
 describe('<Rule />', () => {
   let controls, classNames, schema, props;

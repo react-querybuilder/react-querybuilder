@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { ActionElement } from '.';
+import { ActionElement } from '..';
 
 describe('<ActionElement />', () => {
   const props = {

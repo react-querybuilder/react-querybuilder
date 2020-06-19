@@ -1,5 +1,5 @@
-import generateValidQuery from './generateValidQuery';
-import { RuleGroupType } from '../types';
+import generateValidQuery from '../generateValidQuery';
+import { RuleGroupType } from '../../types';
 
 describe('generateValidQuery', () => {
   describe('when initial query, with ID, is provided', () => {
