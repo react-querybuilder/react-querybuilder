@@ -50664,7 +50664,7 @@ var Rule = function Rule(_ref) {
 
   var fieldData = array_find__WEBPACK_IMPORTED_MODULE_0___default()(fields, function (f) {
     return f.name === field;
-  }) || null;
+  });
   var level = getLevel(id);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule),
@@ -50801,7 +50801,8 @@ var RuleGroup = function RuleGroup(_ref) {
     className: "ruleGroup-notToggle ".concat(classNames.notToggle),
     title: translations.notToggle.title,
     checked: not,
-    handleOnChange: onNotToggleChange
+    handleOnChange: onNotToggleChange,
+    level: level
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.addRuleAction, {
     label: translations.addRule.label,
     title: translations.addRule.title,

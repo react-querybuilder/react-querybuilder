@@ -3,8 +3,14 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 import { QueryBuilder } from './QueryBuilder';
+import { RuleGroupType } from './types';
 
 describe('<QueryBuilder />', () => {
+  const props = {
+    fields: [],
+    onQueryChange: () => null
+  };
+
   it('should exist', () => {
     expect(QueryBuilder).to.exist;
   });
@@ -13,7 +19,7 @@ describe('<QueryBuilder />', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = mount(<QueryBuilder />);
+      wrapper = mount(<QueryBuilder {...props} />);
     });
 
     afterEach(() => {
@@ -36,7 +42,7 @@ describe('<QueryBuilder />', () => {
     beforeEach(() => {
       queryChange = sinon.spy();
       act(() => {
-        wrapper = mount(<QueryBuilder onQueryChange={queryChange} />);
+        wrapper = mount(<QueryBuilder {...props} onQueryChange={queryChange} />);
       });
     });
 
@@ -76,7 +82,9 @@ describe('<QueryBuilder />', () => {
 
     beforeEach(() => {
       act(() => {
-        wrapper = mount(<QueryBuilder query={queryWithoutID} fields={fields} />);
+        wrapper = mount(
+          <QueryBuilder {...props} query={queryWithoutID as RuleGroupType} fields={fields} />
+        );
       });
     });
 
@@ -138,7 +146,7 @@ describe('<QueryBuilder />', () => {
 
     beforeEach(() => {
       act(() => {
-        wrapper = mount(<QueryBuilder />);
+        wrapper = mount(<QueryBuilder {...props} />);
       });
     });
 
@@ -198,7 +206,9 @@ describe('<QueryBuilder />', () => {
     };
 
     beforeEach(() => {
-      wrapper = mount(<QueryBuilder operators={operators} fields={fields} query={query} />);
+      wrapper = mount(
+        <QueryBuilder {...props} operators={operators} fields={fields} query={query} />
+      );
     });
 
     afterEach(() => {
@@ -247,7 +257,9 @@ describe('<QueryBuilder />', () => {
           { name: 'custom-operator-3', label: 'Op. 3' }
         ];
       });
-      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
+      wrapper = mount(
+        <QueryBuilder {...props} query={query} fields={fields} getOperators={getOperators} />
+      );
     });
 
     afterEach(() => {
@@ -261,7 +273,9 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getOperators function', () => {
       wrapper.unmount();
-      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
+      wrapper = mount(
+        <QueryBuilder {...props} query={query} fields={fields} getOperators={() => null} />
+      );
       const operators = wrapper.find('.rule-operators option');
       expect(operators.first().props().value).to.equal('null');
     });
@@ -293,7 +307,12 @@ describe('<QueryBuilder />', () => {
     beforeEach(() => {
       getValueEditorType = sinon.spy(() => 'text');
       wrapper = mount(
-        <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
+        <QueryBuilder
+          {...props}
+          query={query}
+          fields={fields}
+          getValueEditorType={getValueEditorType}
+        />
       );
     });
 
@@ -309,7 +328,7 @@ describe('<QueryBuilder />', () => {
     it('should handle invalid getValueEditorType function', () => {
       wrapper.unmount();
       wrapper = mount(
-        <QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />
+        <QueryBuilder {...props} query={query} fields={fields} getValueEditorType={() => null} />
       );
       const valueEditor = wrapper.find('.rule-value');
       expect(valueEditor.first().props().type).to.equal('text');
@@ -341,7 +360,9 @@ describe('<QueryBuilder />', () => {
 
     beforeEach(() => {
       getInputType = sinon.spy(() => 'text');
-      wrapper = mount(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
+      wrapper = mount(
+        <QueryBuilder {...props} query={query} fields={fields} getInputType={getInputType} />
+      );
     });
 
     afterEach(() => {
@@ -355,7 +376,9 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getInputType function', () => {
       wrapper.unmount();
-      wrapper = mount(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
+      wrapper = mount(
+        <QueryBuilder {...props} query={query} fields={fields} getInputType={() => null} />
+      );
       const valueEditor = wrapper.find('.rule-value');
       expect(valueEditor.first().props().type).to.equal('text');
     });
@@ -363,7 +386,7 @@ describe('<QueryBuilder />', () => {
 
   describe('when getValues fn prop is provided', () => {
     let wrapper, getValues;
-    const getValueEditorType = () => 'select';
+    const getValueEditorType = (field: string, operator: string) => 'select' as 'select';
 
     const fields = [
       { name: 'firstName', label: 'First Name' },
@@ -389,6 +412,7 @@ describe('<QueryBuilder />', () => {
       getValues = sinon.spy(() => [{ name: 'test', label: 'Test' }]);
       wrapper = mount(
         <QueryBuilder
+          {...props}
           query={query}
           fields={fields}
           getValueEditorType={getValueEditorType}
@@ -413,7 +437,9 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getValues function', () => {
       wrapper.unmount();
-      wrapper = mount(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
+      wrapper = mount(
+        <QueryBuilder {...props} query={query} fields={fields} getValues={() => null} />
+      );
       const select = wrapper.find('.rule-value');
       expect(select.length).to.be.greaterThan(0);
       const opts = wrapper.find('.rule-value option');

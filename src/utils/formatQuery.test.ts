@@ -137,14 +137,14 @@ describe('formatQuery', () => {
   });
 
   it('formats parameterized SQL correctly', () => {
-    const parameterized = formatQuery(query, 'parameterized');
+    const parameterized = formatQuery(query, 'parameterized') as {sql: string; params: string[]};
     expect(parameterized).to.have.property('sql', parameterizedSQLString);
     expect(parameterized).to.have.property('params');
     expect(parameterized.params).to.deep.equal(params);
   });
 
   it('handles invalid type correctly', () => {
-    expect(formatQuery(query, 'null')).to.equal('');
+    expect(formatQuery(query, 'null' as any)).to.equal('');
   });
 
   it('handles custom valueProcessor correctly', () => {

@@ -38,14 +38,14 @@ export const Rule: React.FC<RuleProps> = ({
     onElementChanged('value', value);
   };
 
-  const removeRule = (event: Event) => {
+  const removeRule = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
     onRuleRemove(id, parentId);
   };
 
-  const fieldData = arrayFind(fields, (f) => f.name === field) || null;
+  const fieldData = arrayFind(fields, (f) => f.name === field);
   const level = getLevel(id);
 
   return (

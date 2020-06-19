@@ -36,7 +36,7 @@ export const RuleGroup: React.FC<RuleGroupProps> = ({
     onPropChange('not', checked, id);
   };
 
-  const addRule = (event: Event) => {
+  const addRule = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -44,7 +44,7 @@ export const RuleGroup: React.FC<RuleGroupProps> = ({
     onRuleAdd(newRule, id);
   };
 
-  const addGroup = (event: Event) => {
+  const addGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -52,7 +52,7 @@ export const RuleGroup: React.FC<RuleGroupProps> = ({
     onGroupAdd(newGroup, id);
   };
 
-  const removeGroup = (event: Event) => {
+  const removeGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -81,6 +81,7 @@ export const RuleGroup: React.FC<RuleGroupProps> = ({
             title={translations.notToggle.title}
             checked={not}
             handleOnChange={onNotToggleChange}
+            level={level}
           />
         )}
         <controls.addRuleAction
@@ -125,7 +126,7 @@ export const RuleGroup: React.FC<RuleGroupProps> = ({
           ) : null}
           {isRuleGroup(r) ? (
             <RuleGroup
-              id={r.id}
+              id={r.id!}
               schema={schema}
               parentId={id}
               combinator={r.combinator}

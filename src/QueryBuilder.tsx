@@ -9,7 +9,7 @@ import { RuleGroup } from './RuleGroup';
 import { QueryBuilderProps, RuleGroupType, RuleType, Translations } from './types';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
-const defaultTranslations: Required<Translations> = {
+const defaultTranslations: Translations = {
   fields: {
     title: 'Fields'
   },

@@ -34,7 +34,7 @@ export interface CommonProps {
   /**
    * CSS classNames to be applied
    */
-  className: string;
+  className?: string;
   /**
    * The level of the current group
    */
@@ -54,7 +54,7 @@ export interface ActionWithRulesProps extends ActionProps {
   /**
    * Rules already present for this group
    */
-  rules?: RuleType[];
+  rules?: (RuleGroupType | RuleType)[];
 }
 
 export interface SelectorEditorProps extends CommonProps {
@@ -73,7 +73,7 @@ export interface NotToggleProps extends CommonProps {
 
 export interface CombinatorSelectorProps extends ValueSelectorProps {
   options: NameLabelPair[];
-  rules?: RuleType[];
+  rules?: (RuleGroupType | RuleType)[];
 }
 
 export interface FieldSelectorProps extends ValueSelectorProps {
@@ -96,37 +96,80 @@ export interface ValueEditorProps extends SelectorEditorProps {
   values?: any[];
 }
 
+export interface Controls {
+  addGroupAction: React.ComponentType<ActionWithRulesProps>;
+  addRuleAction: React.ComponentType<ActionWithRulesProps>;
+  combinatorSelector: React.ComponentType<CombinatorSelectorProps>;
+  fieldSelector: React.ComponentType<FieldSelectorProps>;
+  notToggle: React.ComponentType<NotToggleProps>;
+  operatorSelector: React.ComponentType<OperatorSelectorProps>;
+  removeGroupAction: React.ComponentType<ActionWithRulesProps>;
+  removeRuleAction: React.ComponentType<ActionProps>;
+  rule: React.ComponentType<RuleProps>;
+  ruleGroup: React.ComponentType<RuleGroupProps>;
+  valueEditor: React.ComponentType<ValueEditorProps>;
+}
+
+export interface Classnames {
+  /**
+   * Root `<div>` element
+   */
+  queryBuilder: string;
+  /**
+   * `<div>` containing the RuleGroup
+   */
+  ruleGroup: string;
+  /**
+   * `<div>` containing the RuleGroup header controls
+   */
+  header: string;
+  /**
+   * `<select>` control for combinators
+   */
+  combinators: string;
+  /**
+   * `<button>` to add a Rule
+   */
+  addRule: string;
+  /**
+   * `<button>` to add a RuleGroup
+   */
+  addGroup: string;
+  /**
+   * `<button>` to remove a RuleGroup
+   */
+  removeGroup: string;
+  /**
+   * `<div>` containing the Rule
+   */
+  rule: string;
+  /**
+   * `<select>` control for fields
+   */
+  fields: string;
+  /**
+   * `<select>` control for operators
+   */
+  operators: string;
+  /**
+   * `<input>` for the field value
+   */
+  value: string;
+  /**
+   * `<button>` to remove a Rule
+   */
+  removeRule: string;
+  /**
+   * `<label>` on the "not" toggle
+   */
+  notToggle: string;
+}
+
 export interface Schema {
   fields: Field[];
-  classNames: {
-    queryBuilder: string;
-    ruleGroup: string;
-    rule: string;
-    fields: string;
-    operators: string;
-    value: string;
-    removeRule: string;
-    addRule: string;
-    header: string;
-    combinators: string;
-    notToggle: string;
-    addGroup: string;
-    removeGroup: string;
-  };
+  classNames: Classnames;
   combinators: { name: string; label: string }[];
-  controls: {
-    fieldSelector: React.ComponentType<any>;
-    operatorSelector: React.ComponentType<any>;
-    valueEditor: React.ComponentType<any>;
-    removeRuleAction: React.ComponentType<any>;
-    combinatorSelector:React.ComponentType<any>;
-    notToggle:React.ComponentType<any>;
-    addRuleAction:React.ComponentType<any>;
-    addGroupAction:React.ComponentType<any>;
-    removeGroupAction:React.ComponentType<any>;
-    ruleGroup: React.ComponentType<RuleGroupProps>;
-    rule:React.ComponentType<RuleProps>;
-  };
+  controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupType;
   getLevel(id: string): number;
@@ -145,35 +188,35 @@ export interface Schema {
 }
 
 export interface Translations {
-  fields?: {
+  fields: {
     title: string;
   };
-  operators?: {
+  operators: {
     title: string;
   };
-  value?: {
+  value: {
     title: string;
   };
-  removeRule?: {
+  removeRule: {
     label: string;
     title: string;
   };
-  removeGroup?: {
+  removeGroup: {
     label: string;
     title: string;
   };
-  addRule?: {
+  addRule: {
     label: string;
     title: string;
   };
-  addGroup?: {
+  addGroup: {
     label: string;
     title: string;
   };
-  combinators?: {
+  combinators: {
     title: string;
   };
-  notToggle?: {
+  notToggle: {
     title: string;
   };
 }
@@ -181,11 +224,11 @@ export interface Translations {
 export interface RuleGroupProps {
   id: string;
   parentId?: string;
-  combinator: string;
-  rules: (RuleType | RuleGroupType)[];
-  translations: Required<Translations>;
+  combinator?: string;
+  rules?: (RuleType | RuleGroupType)[];
+  translations: Translations;
   schema: Schema;
-  not: boolean;
+  not?: boolean;
 }
 
 export interface RuleProps {
@@ -194,7 +237,7 @@ export interface RuleProps {
   field: string;
   operator: string;
   value: any;
-  translations: Required<Translations>;
+  translations: Translations;
   schema: Schema;
 }
 
@@ -231,19 +274,7 @@ export interface QueryBuilderProps {
    * ]
    */
   combinators?: NameLabelPair[];
-  controlElements?: {
-    addGroupAction?: React.ComponentType<ActionWithRulesProps>;
-    removeGroupAction?: React.ComponentType<ActionWithRulesProps>;
-    addRuleAction?: React.ComponentType<ActionWithRulesProps>;
-    removeRuleAction?: React.ComponentType<ActionProps>;
-    combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
-    fieldSelector?: React.ComponentType<FieldSelectorProps>;
-    operatorSelector?: React.ComponentType<OperatorSelectorProps>;
-    valueEditor?: React.ComponentType<ValueEditorProps>;
-    notToggle?: React.ComponentType<NotToggleProps>;
-    ruleGroup?: React.ComponentType<RuleGroupProps>;
-    rule?: React.ComponentType<RuleProps>;
-  };
+  controlElements?: Partial<Controls>;
   /**
    * This is a callback function invoked to get the list of allowed
    * operators for the given field.
@@ -276,65 +307,12 @@ export interface QueryBuilderProps {
    * This can be used to assign specific CSS classes to various controls
    * that are created by the `<QueryBuilder />`.
    */
-  controlClassnames?: {
-    /**
-     * Root `<div>` element
-     */
-    queryBuilder?: string;
-    /**
-     * `<div>` containing the RuleGroup
-     */
-    ruleGroup?: string;
-    /**
-     * `<div>` containing the RuleGroup header controls
-     */
-    header?: string;
-    /**
-     * `<select>` control for combinators
-     */
-    combinators?: string;
-    /**
-     * `<button>` to add a Rule
-     */
-    addRule?: string;
-    /**
-     * `<button>` to add a RuleGroup
-     */
-    addGroup?: string;
-    /**
-     * `<button>` to remove a RuleGroup
-     */
-    removeGroup?: string;
-    /**
-     * `<div>` containing the Rule
-     */
-    rule?: string;
-    /**
-     * `<select>` control for fields
-     */
-    fields?: string;
-    /**
-     * `<select>` control for operators
-     */
-    operators?: string;
-    /**
-     * `<input>` for the field value
-     */
-    value?: string;
-    /**
-     * `<button>` to remove a Rule
-     */
-    removeRule?: string;
-    /**
-     * `<label>` on the "not" toggle
-     */
-    notToggle?: string;
-  };
+  controlClassnames?: Partial<Classnames>;
   /**
    * This can be used to override translatable texts applied to various
    * controls that are created by the `<QueryBuilder />`.
    */
-  translations?: Translations;
+  translations?: Partial<Translations>;
   /**
    * Show the combinators between rules and rule groups instead of at the top of rule groups.
    */
