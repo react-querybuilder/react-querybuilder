@@ -1,5 +1,7 @@
+import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
 import { nanoid } from 'nanoid';
+import objectAssign from 'object-assign';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
@@ -299,11 +301,11 @@ export const QueryBuilder = (props) => {
   const onPropChange = (prop, value, ruleId) => {
     const rootCopy = { ...root };
     const rule = findRule(ruleId, rootCopy);
-    Object.assign(rule, { [prop]: value });
+    objectAssign(rule, { [prop]: value });
 
     // Reset operator and set default value for field change
     if (props.resetOnFieldChange && prop === 'field') {
-      Object.assign(rule, {
+      objectAssign(rule, {
         operator: getOperators(rule.field)[0].name,
         value: getRuleDefaultValue(rule)
       });
@@ -327,7 +329,7 @@ export const QueryBuilder = (props) => {
   const onRuleRemove = (ruleId, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    const index = parent.rules.findIndex((x) => x.id === ruleId);
+    const index = arrayFindIndex(parent.rules, (x) => x.id === ruleId);
 
     parent.rules.splice(index, 1);
 
@@ -343,7 +345,7 @@ export const QueryBuilder = (props) => {
   const onGroupRemove = (groupId, parentId) => {
     const rootCopy = { ...root };
     const parent = findRule(parentId, rootCopy);
-    const index = parent.rules.findIndex((x) => x.id === groupId);
+    const index = arrayFindIndex(parent.rules, (x) => x.id === groupId);
 
     parent.rules.splice(index, 1);
 

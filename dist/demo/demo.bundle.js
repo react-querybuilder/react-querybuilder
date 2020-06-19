@@ -424,6 +424,78 @@ react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEB
 
 /***/ }),
 
+/***/ "./node_modules/array-find-index/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/array-find-index/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+module.exports = function (arr, predicate, ctx) {
+	if (typeof Array.prototype.findIndex === 'function') {
+		return arr.findIndex(predicate, ctx);
+	}
+
+	if (typeof predicate !== 'function') {
+		throw new TypeError('predicate must be a function');
+	}
+
+	var list = Object(arr);
+	var len = list.length;
+
+	if (len === 0) {
+		return -1;
+	}
+
+	for (var i = 0; i < len; i++) {
+		if (predicate.call(ctx, list[i], i, list)) {
+			return i;
+		}
+	}
+
+	return -1;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/array-find/find.js":
+/*!*****************************************!*\
+  !*** ./node_modules/array-find/find.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function find(array, predicate, context) {
+  if (typeof Array.prototype.find === 'function') {
+    return array.find(predicate, context);
+  }
+
+  context = context || this;
+  var length = array.length;
+  var i;
+
+  if (typeof predicate !== 'function') {
+    throw new TypeError(predicate + ' is not a function');
+  }
+
+  for (i = 0; i < length; i++) {
+    if (predicate.call(context, array[i], i, array)) {
+      return array[i];
+    }
+  }
+}
+
+module.exports = find;
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash/_DataView.js":
 /*!******************************************!*\
   !*** ./node_modules/lodash/_DataView.js ***!
@@ -4268,107 +4340,95 @@ __webpack_require__.r(__webpack_exports__);
 // according to `browser` config in `package.json`.
 
 
-
 if (true) {
   // All bundlers will remove this block in the production bundle.
-  if (
-    typeof navigator !== 'undefined' &&
-    navigator.product === 'ReactNative' &&
-    typeof crypto === 'undefined'
-  ) {
-    throw new Error(
-      'React Native does not have a built-in secure random generator. ' +
-        'If you don’t need unpredictable IDs use `nanoid/non-secure`. ' +
-        'For secure IDs, import `react-native-get-random-values` ' +
-        'before Nano ID. If you use Expo, install `expo-random` ' +
-        'and use `nanoid/async`.'
-    )
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative' && typeof crypto === 'undefined') {
+    throw new Error('React Native does not have a built-in secure random generator. ' + 'If you don’t need unpredictable IDs use `nanoid/non-secure`. ' + 'For secure IDs, import `react-native-get-random-values` ' + 'before Nano ID. If you use Expo, install `expo-random` ' + 'and use `nanoid/async`.');
   }
+
   if (typeof msCrypto !== 'undefined' && typeof crypto === 'undefined') {
-    throw new Error(
-      'Add `if (!window.crypto) window.crypto = window.msCrypto` ' +
-        'before Nano ID to fix IE 11 support'
-    )
+    throw new Error('Add `if (!window.crypto) window.crypto = window.msCrypto` ' + 'before Nano ID to fix IE 11 support');
   }
+
   if (typeof crypto === 'undefined') {
-    throw new Error(
-      'Your browser does not have secure random generator. ' +
-        'If you don’t need unpredictable IDs, you can use nanoid/non-secure.'
-    )
+    throw new Error('Your browser does not have secure random generator. ' + 'If you don’t need unpredictable IDs, you can use nanoid/non-secure.');
   }
 }
 
-let random = bytes => crypto.getRandomValues(new Uint8Array(bytes))
+var random = function random(bytes) {
+  return crypto.getRandomValues(new Uint8Array(bytes));
+};
 
-let customRandom = (alphabet, size, getRandom) => {
+var customRandom = function customRandom(alphabet, size, getRandom) {
   // First, a bitmask is necessary to generate the ID. The bitmask makes bytes
   // values closer to the alphabet size. The bitmask calculates the closest
   // `2^31 - 1` number, which exceeds the alphabet size.
   // For example, the bitmask for the alphabet size 30 is 31 (00011111).
   // `Math.clz32` is not used, because it is not available in browsers.
-  let mask = (2 << (Math.log(alphabet.length - 1) / Math.LN2)) - 1
-  // Though, the bitmask solution is not perfect since the bytes exceeding
+  var mask = (2 << Math.log(alphabet.length - 1) / Math.LN2) - 1; // Though, the bitmask solution is not perfect since the bytes exceeding
   // the alphabet size are refused. Therefore, to reliably generate the ID,
   // the random bytes redundancy has to be satisfied.
-
   // Note: every hardware random generator call is performance expensive,
   // because the system call for entropy collection takes a lot of time.
   // So, to avoid additional system calls, extra bytes are requested in advance.
-
   // Next, a step determines how many random bytes to generate.
   // The number of random bytes gets decided upon the ID size, mask,
   // alphabet size, and magic number 1.6 (using 1.6 peaks at performance
   // according to benchmarks).
-
   // `-~f => Math.ceil(f)` if f is a float
   // `-~i => i + 1` if i is an integer
-  let step = -~((1.6 * mask * size) / alphabet.length)
 
-  return () => {
-    let id = ''
+  var step = -~(1.6 * mask * size / alphabet.length);
+  return function () {
+    var id = '';
+
     while (true) {
-      let bytes = getRandom(step)
-      // A compact alternative for `for (var i = 0; i < step; i++)`.
-      let j = step
+      var bytes = getRandom(step); // A compact alternative for `for (var i = 0; i < step; i++)`.
+
+      var j = step;
+
       while (j--) {
         // Adding `|| ''` refuses a random byte that exceeds the alphabet size.
-        id += alphabet[bytes[j] & mask] || ''
-        // `id.length + 1 === size` is a more compact option.
-        if (id.length === +size) return id
+        id += alphabet[bytes[j] & mask] || ''; // `id.length + 1 === size` is a more compact option.
+
+        if (id.length === +size) return id;
       }
     }
-  }
-}
+  };
+};
 
-let customAlphabet = (alphabet, size) => customRandom(alphabet, size, random)
+var customAlphabet = function customAlphabet(alphabet, size) {
+  return customRandom(alphabet, size, random);
+};
 
-let nanoid = (size = 21) => {
-  let id = ''
-  let bytes = crypto.getRandomValues(new Uint8Array(size))
+var nanoid = function nanoid() {
+  var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 21;
+  var id = '';
+  var bytes = crypto.getRandomValues(new Uint8Array(size)); // A compact alternative for `for (var i = 0; i < step; i++)`.
 
-  // A compact alternative for `for (var i = 0; i < step; i++)`.
   while (size--) {
     // It is incorrect to use bytes exceeding the alphabet size.
     // The following mask reduces the random byte in the 0-255 value
     // range to the 0-63 value range. Therefore, adding hacks, such
     // as empty string fallback or magic numbers, is unneccessary because
     // the bitmask trims bytes down to the alphabet size.
-    let byte = bytes[size] & 63
+    var byte = bytes[size] & 63;
+
     if (byte < 36) {
       // `0-9a-z`
-      id += byte.toString(36)
+      id += byte.toString(36);
     } else if (byte < 62) {
       // `A-Z`
-      id += (byte - 26).toString(36).toUpperCase()
+      id += (byte - 26).toString(36).toUpperCase();
     } else if (byte < 63) {
-      id += '_'
+      id += '_';
     } else {
-      id += '-'
+      id += '-';
     }
   }
-  return id
-}
 
+  return id;
+};
 
 
 
@@ -4386,10 +4446,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "urlAlphabet", function() { return urlAlphabet; });
 // This alphabet uses `A-Za-z0-9_-` symbols. The genetic algorithm helped
 // optimize the gzip compression for this alphabet.
-let urlAlphabet =
-  'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW'
-
-
+var urlAlphabet = 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
 
 
 /***/ }),
@@ -33868,17 +33925,21 @@ module.exports = function(module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "QueryBuilder", function() { return QueryBuilder; });
-/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/cloneDeep */ "./node_modules/lodash/cloneDeep.js");
-/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controls */ "./src/controls/index.js");
-/* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Rule */ "./src/Rule.jsx");
-/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
+/* harmony import */ var array_find_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! array-find-index */ "./node_modules/array-find-index/index.js");
+/* harmony import */ var array_find_index__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(array_find_index__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash/cloneDeep */ "./node_modules/lodash/cloneDeep.js");
+/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
+/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(object_assign__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./controls */ "./src/controls/index.js");
+/* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Rule */ "./src/Rule.jsx");
+/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.jsx");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -33896,6 +33957,8 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 
 
 
@@ -34057,17 +34120,17 @@ var defaultControlClassnames = {
   removeRule: ''
 };
 var defaultControlElements = {
-  addGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
-  removeGroupAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
-  addRuleAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
-  removeRuleAction: _controls__WEBPACK_IMPORTED_MODULE_4__["ActionElement"],
-  combinatorSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
-  fieldSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
-  operatorSelector: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueSelector"],
-  valueEditor: _controls__WEBPACK_IMPORTED_MODULE_4__["ValueEditor"],
-  notToggle: _controls__WEBPACK_IMPORTED_MODULE_4__["NotToggle"],
-  ruleGroup: _RuleGroup__WEBPACK_IMPORTED_MODULE_6__["RuleGroup"],
-  rule: _Rule__WEBPACK_IMPORTED_MODULE_5__["Rule"]
+  addGroupAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  removeGroupAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  addRuleAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  removeRuleAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  combinatorSelector: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueSelector"],
+  fieldSelector: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueSelector"],
+  operatorSelector: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueSelector"],
+  valueEditor: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueEditor"],
+  notToggle: _controls__WEBPACK_IMPORTED_MODULE_6__["NotToggle"],
+  ruleGroup: _RuleGroup__WEBPACK_IMPORTED_MODULE_8__["RuleGroup"],
+  rule: _Rule__WEBPACK_IMPORTED_MODULE_7__["Rule"]
 };
 /**
  * @param {QueryBuilderProps} props
@@ -34080,7 +34143,7 @@ var QueryBuilder = function QueryBuilder(props) {
    */
   var getInitialQuery = function getInitialQuery() {
     var query = props.query;
-    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_7__["generateValidQuery"])(query) || createRuleGroup();
+    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_9__["generateValidQuery"])(query) || createRuleGroup();
   };
   /**
    * @returns {RuleType}
@@ -34091,7 +34154,7 @@ var QueryBuilder = function QueryBuilder(props) {
     var fields = props.fields;
     var field = fields[0].name;
     return {
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_1__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
       field: field,
       value: '',
       operator: getOperators(field)[0].name
@@ -34104,7 +34167,7 @@ var QueryBuilder = function QueryBuilder(props) {
 
   var createRuleGroup = function createRuleGroup() {
     return {
-      id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_1__["nanoid"])()),
+      id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
       rules: [],
       combinator: props.combinators[0].name,
       not: false
@@ -34205,7 +34268,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onRuleAdd = function onRuleAdd(rule, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
     parent.rules.push(_objectSpread(_objectSpread({}, rule), {}, {
       value: getRuleDefaultValue(rule)
     }));
@@ -34223,7 +34286,7 @@ var QueryBuilder = function QueryBuilder(props) {
   var onGroupAdd = function onGroupAdd(group, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
     parent.rules.push(group);
     setRoot(rootCopy);
 
@@ -34239,11 +34302,11 @@ var QueryBuilder = function QueryBuilder(props) {
   var onPropChange = function onPropChange(prop, value, ruleId) {
     var rootCopy = _objectSpread({}, root);
 
-    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(ruleId, rootCopy);
-    Object.assign(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
+    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(ruleId, rootCopy);
+    object_assign__WEBPACK_IMPORTED_MODULE_3___default()(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
 
     if (props.resetOnFieldChange && prop === 'field') {
-      Object.assign(rule, {
+      object_assign__WEBPACK_IMPORTED_MODULE_3___default()(rule, {
         operator: getOperators(rule.field)[0].name,
         value: getRuleDefaultValue(rule)
       });
@@ -34269,8 +34332,8 @@ var QueryBuilder = function QueryBuilder(props) {
   var onRuleRemove = function onRuleRemove(ruleId, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
-    var index = parent.rules.findIndex(function (x) {
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
+    var index = array_find_index__WEBPACK_IMPORTED_MODULE_0___default()(parent.rules, function (x) {
       return x.id === ruleId;
     });
     parent.rules.splice(index, 1);
@@ -34288,8 +34351,8 @@ var QueryBuilder = function QueryBuilder(props) {
   var onGroupRemove = function onGroupRemove(groupId, parentId) {
     var rootCopy = _objectSpread({}, root);
 
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_7__["findRule"])(parentId, rootCopy);
-    var index = parent.rules.findIndex(function (x) {
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
+    var index = array_find_index__WEBPACK_IMPORTED_MODULE_0___default()(parent.rules, function (x) {
       return x.id === groupId;
     });
     parent.rules.splice(index, 1);
@@ -34304,7 +34367,7 @@ var QueryBuilder = function QueryBuilder(props) {
 
 
   var getLevelFromRoot = function getLevelFromRoot(id) {
-    return Object(_utils__WEBPACK_IMPORTED_MODULE_7__["getLevel"])(id, 0, root);
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_9__["getLevel"])(id, 0, root);
   };
   /**
    * Executes the `onQueryChange` function, if provided
@@ -34315,12 +34378,12 @@ var QueryBuilder = function QueryBuilder(props) {
     var onQueryChange = props.onQueryChange;
 
     if (onQueryChange) {
-      var query = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_0___default()(newRoot);
+      var query = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(newRoot);
       onQueryChange(query);
     }
   };
 
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_3__["useState"])(getInitialQuery()),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_5__["useState"])(getInitialQuery()),
       _useState2 = _slicedToArray(_useState, 2),
       root = _useState2[0],
       setRoot = _useState2[1];
@@ -34337,7 +34400,7 @@ var QueryBuilder = function QueryBuilder(props) {
     onGroupRemove: onGroupRemove,
     onPropChange: onPropChange,
     getLevel: getLevelFromRoot,
-    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_7__["isRuleGroup"],
+    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_9__["isRuleGroup"],
     controls: _objectSpread(_objectSpread({}, defaultControlElements), props.controlElements),
     getOperators: getOperators,
     getValueEditorType: getValueEditorType,
@@ -34347,16 +34410,16 @@ var QueryBuilder = function QueryBuilder(props) {
     showNotToggle: props.showNotToggle
   }; // Set the query state when a new query prop comes in
 
-  Object(react__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(function () {
-    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_7__["generateValidQuery"])(props.query || getInitialQuery()));
+  Object(react__WEBPACK_IMPORTED_MODULE_5__["useEffect"])(function () {
+    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_9__["generateValidQuery"])(props.query || getInitialQuery()));
   }, [props.query]); // Notify a query change on mount
 
-  Object(react__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(function () {
+  Object(react__WEBPACK_IMPORTED_MODULE_5__["useEffect"])(function () {
     _notifyQueryChange(root);
   }, []);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
     className: "queryBuilder ".concat(schema.classNames.queryBuilder)
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement(schema.controls.ruleGroup, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(schema.controls.ruleGroup, {
     translations: _objectSpread(_objectSpread({}, defaultTranslations), props.translations),
     rules: root.rules,
     combinator: root.combinator,
@@ -34385,40 +34448,40 @@ QueryBuilder.defaultProps = {
   resetOnOperatorChange: false
 };
 QueryBuilder.propTypes = {
-  query: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object,
-  fields: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.array.isRequired,
-  operators: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.shape({
-    name: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string,
-    label: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string
+  query: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.object,
+  fields: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.array.isRequired,
+  operators: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.shape({
+    name: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.string,
+    label: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.string
   })),
-  combinators: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.shape({
-    name: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string,
-    label: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string
+  combinators: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.shape({
+    name: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.string,
+    label: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.string
   })),
-  controlElements: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.shape({
-    addGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    removeGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    addRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    removeRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    combinatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    fieldSelector: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    operatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    valueEditor: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    notToggle: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    ruleGroup: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-    rule: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func
+  controlElements: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.shape({
+    addGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    removeGroupAction: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    addRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    removeRuleAction: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    combinatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    fieldSelector: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    operatorSelector: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    valueEditor: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    notToggle: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    ruleGroup: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+    rule: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func
   }),
-  getOperators: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-  getValueEditorType: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-  getInputType: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-  getValues: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-  onQueryChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
-  controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object,
-  translations: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object,
-  showCombinatorsBetweenRules: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
-  showNotToggle: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
-  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
-  resetOnOperatorChange: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool
+  getOperators: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+  getValueEditorType: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+  getInputType: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+  getValues: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+  onQueryChange: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.func,
+  controlClassnames: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.object,
+  translations: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.object,
+  showCombinatorsBetweenRules: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.bool,
+  showNotToggle: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.bool,
+  resetOnFieldChange: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.bool,
+  resetOnOperatorChange: prop_types__WEBPACK_IMPORTED_MODULE_4___default.a.bool
 };
 QueryBuilder.displayName = 'QueryBuilder';
 
@@ -34434,8 +34497,11 @@ QueryBuilder.displayName = 'QueryBuilder';
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Rule", function() { return Rule; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var array_find__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! array-find */ "./node_modules/array-find/find.js");
+/* harmony import */ var array_find__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(array_find__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+
 
 var Rule = function Rule(_ref) {
   var id = _ref.id,
@@ -34478,15 +34544,15 @@ var Rule = function Rule(_ref) {
     onRuleRemove(id, parentId);
   };
 
-  var fieldData = fields.find(function (f) {
+  var fieldData = array_find__WEBPACK_IMPORTED_MODULE_0___default()(fields, function (f) {
     return f.name === field;
   }) || null;
   var level = getLevel(id);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule),
     "data-rule-id": id,
     "data-level": level
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.fieldSelector, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(controls.fieldSelector, {
     options: fields,
     title: translations.fields.title,
     value: field,
@@ -34494,7 +34560,7 @@ var Rule = function Rule(_ref) {
     className: "rule-fields ".concat(classNames.fields),
     handleOnChange: onFieldChanged,
     level: level
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.operatorSelector, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(controls.operatorSelector, {
     field: field,
     fieldData: fieldData,
     title: translations.operators.title,
@@ -34503,7 +34569,7 @@ var Rule = function Rule(_ref) {
     className: "rule-operators ".concat(classNames.operators),
     handleOnChange: onOperatorChanged,
     level: level
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.valueEditor, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(controls.valueEditor, {
     field: field,
     fieldData: fieldData,
     title: translations.value.title,
@@ -34515,7 +34581,7 @@ var Rule = function Rule(_ref) {
     className: "rule-value ".concat(classNames.value),
     handleOnChange: onValueChanged,
     level: level
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(controls.removeRuleAction, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(controls.removeRuleAction, {
     label: translations.removeRule.label,
     title: translations.removeRule.title,
     className: "rule-remove ".concat(classNames.removeRule),
@@ -34994,7 +35060,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! . */ "./src/utils/index.js");
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 

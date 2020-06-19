@@ -8,14 +8,11 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
+        // Regenerate the regex below by running:
+        // > npx are-you-es5 check . -rv
+        exclude: /[\\/]node_modules[\\/](?!(nanoid)[\\/])/,
         options: {
-          presets: [
-            '@babel/preset-env',
-            {
-              plugins: ['@babel/plugin-proposal-class-properties']
-            }
-          ]
+          presets: ['@babel/preset-env']
         }
       },
       {

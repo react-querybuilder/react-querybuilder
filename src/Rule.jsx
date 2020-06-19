@@ -1,3 +1,4 @@
+import arrayFind from 'array-find';
 import React from 'react';
 
 export const Rule = ({
@@ -43,7 +44,7 @@ export const Rule = ({
     onRuleRemove(id, parentId);
   };
 
-  const fieldData = fields.find((f) => f.name === field) || null;
+  const fieldData = arrayFind(fields, (f) => f.name === field) || null;
   const level = getLevel(id);
 
   return (
