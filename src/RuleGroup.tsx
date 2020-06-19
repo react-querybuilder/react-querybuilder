@@ -1,6 +1,15 @@
 import React, { Fragment } from 'react';
+import { RuleGroupProps } from './types';
 
-export const RuleGroup = ({ id, parentId, combinator, rules, translations, schema, not }) => {
+export const RuleGroup: React.FC<RuleGroupProps> = ({
+  id,
+  parentId,
+  combinator = 'and',
+  rules = [],
+  translations,
+  schema,
+  not
+}) => {
   const {
     classNames,
     combinators,
@@ -19,15 +28,15 @@ export const RuleGroup = ({ id, parentId, combinator, rules, translations, schem
 
   const hasParentGroup = () => !!parentId;
 
-  const onCombinatorChange = (value) => {
+  const onCombinatorChange = (value: any) => {
     onPropChange('combinator', value, id);
   };
 
-  const onNotToggleChange = (checked) => {
+  const onNotToggleChange = (checked: boolean) => {
     onPropChange('not', checked, id);
   };
 
-  const addRule = (event) => {
+  const addRule = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -35,7 +44,7 @@ export const RuleGroup = ({ id, parentId, combinator, rules, translations, schem
     onRuleAdd(newRule, id);
   };
 
-  const addGroup = (event) => {
+  const addGroup = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -43,11 +52,11 @@ export const RuleGroup = ({ id, parentId, combinator, rules, translations, schem
     onGroupAdd(newGroup, id);
   };
 
-  const removeGroup = (event) => {
+  const removeGroup = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    onGroupRemove(id, parentId);
+    onGroupRemove(id, parentId || /* istanbul ignore next */ '');
   };
 
   const level = getLevel(id);
@@ -122,11 +131,11 @@ export const RuleGroup = ({ id, parentId, combinator, rules, translations, schem
               combinator={r.combinator}
               translations={translations}
               rules={r.rules}
-              not={r.not}
+              not={!!r.not}
             />
           ) : (
             <controls.rule
-              id={r.id}
+              id={r.id!}
               field={r.field}
               value={r.value}
               operator={r.operator}
@@ -139,14 +148,6 @@ export const RuleGroup = ({ id, parentId, combinator, rules, translations, schem
       ))}
     </div>
   );
-};
-
-RuleGroup.defaultProps = {
-  id: null,
-  parentId: null,
-  rules: [],
-  combinator: 'and',
-  schema: {}
 };
 
 RuleGroup.displayName = 'RuleGroup';

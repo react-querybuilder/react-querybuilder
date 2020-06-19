@@ -97,12 +97,7 @@ describe('<RuleGroup />', () => {
 
   it('should have a className of "ruleGroup"', () => {
     const dom = shallow(<RuleGroup {...props} />);
-    expect(
-      dom
-        .find('div')
-        .first()
-        .hasClass('ruleGroup')
-    ).to.be.true;
+    expect(dom.find('div').first().hasClass('ruleGroup')).to.be.true;
   });
 
   describe('combinator selector as <ValueSelector />', () => {
@@ -179,10 +174,7 @@ describe('<RuleGroup />', () => {
 
     it('has the first rule with the correct values', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      const ruleProps = dom
-        .find('Rule')
-        .first()
-        .props();
+      const ruleProps = dom.find('Rule').first().props();
       expect(ruleProps.id).to.equal('rule_id_1');
       expect(ruleProps.field).to.equal('field_1');
       expect(ruleProps.operator).to.equal('operator_1');
@@ -209,7 +201,23 @@ describe('<RuleGroup />', () => {
       expect(groupProps.id).to.equal('rule_group_id_1');
       expect(groupProps.parentId).to.equal('id');
       expect(groupProps.rules).to.be.an('array');
-      expect(groupProps.combinator).to.equal('and');
+      expect(groupProps.combinator).to.be.undefined;
+    });
+  });
+
+  describe('when no rules or combinator props exist', () => {
+    it('has default props', () => {
+      const dom = mount(
+        <RuleGroup
+          id={props.id}
+          parentId={props.parentId}
+          schema={{...props.schema, isRuleGroup: () => true}}
+          translations={props.translations}
+        />
+      );
+      const groupProps = dom.find('RuleGroup').props();
+      expect(groupProps.rules).to.be.undefined;
+      expect(groupProps.combinator).to.be.undefined;
     });
   });
 
@@ -254,12 +262,7 @@ describe('<RuleGroup />', () => {
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
 
       // then
-      expect(
-        dom
-          .find(RuleGroup)
-          .find({ id: idOfNestedRuleGroup })
-          .props().not
-      ).to.equal(true);
+      expect(dom.find(RuleGroup).find({ id: idOfNestedRuleGroup }).props().not).to.equal(true);
     });
 
     it('calls onPropChange from the schema with expected values', () => {

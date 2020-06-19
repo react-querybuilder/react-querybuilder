@@ -1,7 +1,8 @@
 import arrayFind from 'array-find';
 import React from 'react';
+import { RuleProps } from './types';
 
-export const Rule = ({
+export const Rule: React.FC<RuleProps> = ({
   id,
   parentId,
   field,
@@ -21,23 +22,23 @@ export const Rule = ({
     onRuleRemove
   }
 }) => {
-  const onElementChanged = (property, value) => {
+  const onElementChanged = (property: string, value: any) => {
     onPropChange(property, value, id);
   };
 
-  const onFieldChanged = (value) => {
+  const onFieldChanged = (value: any) => {
     onElementChanged('field', value);
   };
 
-  const onOperatorChanged = (value) => {
+  const onOperatorChanged = (value: any) => {
     onElementChanged('operator', value);
   };
 
-  const onValueChanged = (value) => {
+  const onValueChanged = (value: any) => {
     onElementChanged('value', value);
   };
 
-  const removeRule = (event) => {
+  const removeRule = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -90,15 +91,6 @@ export const Rule = ({
       />
     </div>
   );
-};
-
-Rule.defaultProps = {
-  id: null,
-  parentId: null,
-  field: null,
-  operator: null,
-  value: null,
-  schema: null
 };
 
 Rule.displayName = 'Rule';

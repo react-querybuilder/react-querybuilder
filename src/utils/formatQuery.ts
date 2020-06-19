@@ -1,6 +1,8 @@
+import { cloneDeep } from 'lodash';
 import { isRuleGroup } from '.';
+import { ExportFormat, RuleGroupType, RuleType, ValueProcessor } from '../types';
 
-const mapOperator = (op) => {
+const mapOperator = (op: string) => {
   switch (op.toLowerCase()) {
     case 'null':
       return 'is null';
@@ -21,11 +23,11 @@ const mapOperator = (op) => {
   }
 };
 
-const removeIdsFromRuleGroup = (ruleGroup) => {
-  const ruleGroupCopy = { ...ruleGroup };
+const removeIdsFromRuleGroup = (ruleGroup: RuleGroupType | RuleType) => {
+  const ruleGroupCopy = cloneDeep(ruleGroup);
   delete ruleGroupCopy.id;
 
-  if (ruleGroupCopy.rules) {
+  if (isRuleGroup(ruleGroupCopy)) {
     ruleGroupCopy.rules = ruleGroupCopy.rules.map((rule) => removeIdsFromRuleGroup(rule));
   }
 
@@ -37,12 +39,13 @@ const removeIdsFromRuleGroup = (ruleGroup) => {
  * `valueProcessor` argument can be used to format the values differently
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
- * @param {RuleGroup} ruleGroup
- * @param {"json"|"sql"|"json_without_ids"|"parameterized"} format
- * @param {Function} valueProcessor
  */
-const formatQuery = (ruleGroup, format, valueProcessor) => {
-  const formatLowerCase = format.toLowerCase();
+const formatQuery = (
+  ruleGroup: RuleGroupType,
+  format: ExportFormat,
+  valueProcessor?: ValueProcessor
+) => {
+  const formatLowerCase = format.toLowerCase() as ExportFormat;
 
   if (formatLowerCase === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
@@ -50,18 +53,18 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
     return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
   } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
     const parameterized = formatLowerCase === 'parameterized';
-    const params = [];
+    const params: string[] = [];
 
-    const valueProc =
+    const valueProc: ValueProcessor =
       valueProcessor ||
-      ((field, operator, value) => {
+      ((field: string, operator: string, value: any) => {
         let val = `"${value}"`;
         if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
           val = '';
         } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
           val = `(${value
             .split(',')
-            .map((v) => `"${v.trim()}"`)
+            .map((v: string) => `"${v.trim()}"`)
             .join(', ')})`;
         } else if (
           operator.toLowerCase() === 'contains' ||
@@ -84,24 +87,23 @@ const formatQuery = (ruleGroup, format, valueProcessor) => {
         return val;
       });
 
-    const processRule = (rule) => {
+    const processRule = (rule: RuleType) => {
       const value = valueProc(rule.field, rule.operator, rule.value);
       const operator = mapOperator(rule.operator);
 
       if (parameterized && value) {
-
         if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
-          const splitValue = rule.value.split(',').map((v) => v.trim());
+          const splitValue = (rule.value as string).split(',').map((v) => v.trim());
           splitValue.forEach((v) => params.push(v));
           return `${rule.field} ${operator} (${splitValue.map((v) => '?').join(', ')})`;
         }
 
-        params.push(value.match(/^"?(.*?)"?$/)[1]);
+        params.push((value as string).match(/^"?(.*?)"?$/)![1]);
       }
       return `${rule.field} ${operator} ${parameterized && value ? '?' : value}`.trim();
     };
 
-    const processRuleGroup = (rg) => {
+    const processRuleGroup = (rg: RuleGroupType): string => {
       const processedRules = rg.rules.map((rule) => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);

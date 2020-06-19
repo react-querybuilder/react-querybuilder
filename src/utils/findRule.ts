@@ -1,6 +1,7 @@
 import { isRuleGroup } from '.';
+import { RuleGroupType, RuleType } from '../types';
 
-const findRule = (id, parent) => {
+const findRule = (id: string, parent: RuleGroupType): RuleGroupType | RuleType | undefined => {
   if (parent.id === id) {
     return parent;
   }
@@ -15,6 +16,8 @@ const findRule = (id, parent) => {
       }
     }
   }
+
+  return undefined;
 };
 
 export default findRule;

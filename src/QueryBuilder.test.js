@@ -149,7 +149,7 @@ describe('<QueryBuilder />', () => {
     it('should generate new ID in state when receiving new props (query) with missing IDs', () => {
       const initialID = wrapper.find('RuleGroup').props().id;
 
-      expect(wrapper.props().query).to.be.null;
+      expect(wrapper.props().query).to.be.undefined;
       expect(initialID).to.not.be.undefined;
       expect(initialID).to.be.a('string');
 

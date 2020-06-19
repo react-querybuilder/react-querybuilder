@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./types/",
+    "declaration": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "strict": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "target": "es5",
+    "esModuleInterop": true
+  },
+  "include": ["./src/"],
+  "exclude": ["**/*.test.*"]
+}

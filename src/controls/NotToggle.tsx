@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import { NotToggleProps } from '../types';
 
-const NotToggle = ({ className, handleOnChange, title, checked }) => {
+const NotToggle: React.FC<NotToggleProps> = ({ className, handleOnChange, title, checked }) => {
   return (
     <label className={className} title={title}>
       <input
@@ -15,12 +15,5 @@ const NotToggle = ({ className, handleOnChange, title, checked }) => {
 };
 
 NotToggle.displayName = 'NotToggle';
-
-NotToggle.propTypes = {
-  className: PropTypes.string,
-  handleOnChange: PropTypes.func,
-  title: PropTypes.string,
-  checked: PropTypes.bool
-};
 
 export default NotToggle;

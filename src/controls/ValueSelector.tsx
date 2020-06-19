@@ -1,7 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { ValueSelectorProps } from '../types';
 
-const ValueSelector = ({ className, handleOnChange, options, title, value }) => (
+const ValueSelector: React.FC<ValueSelectorProps> = ({
+  className,
+  handleOnChange,
+  options,
+  title,
+  value
+}) => (
   <select
     className={className}
     value={value}
@@ -19,13 +25,5 @@ const ValueSelector = ({ className, handleOnChange, options, title, value }) => 
 );
 
 ValueSelector.displayName = 'ValueSelector';
-
-ValueSelector.propTypes = {
-  value: PropTypes.string,
-  options: PropTypes.array.isRequired,
-  className: PropTypes.string,
-  handleOnChange: PropTypes.func,
-  title: PropTypes.string
-};
 
 export default ValueSelector;

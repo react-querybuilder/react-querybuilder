@@ -1,12 +1,11 @@
 import { nanoid } from 'nanoid';
 import { isRuleGroup } from '.';
+import { RuleType, RuleGroupType } from '../types';
 
 /**
  * Generates a valid query object
- * @param {RuleGroupType} query Unvalidated query
- * @returns {RuleGroupType}
  */
-const generateValidQuery = (query) => {
+const generateValidQuery = (query: RuleGroupType|RuleType): RuleGroupType|RuleType => {
   if (isRuleGroup(query)) {
     return {
       id: query.id || `g-${nanoid()}`,

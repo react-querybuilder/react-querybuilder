@@ -1,7 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { ValueEditorProps } from '../types';
 
-const ValueEditor = ({
+const ValueEditor: React.FC<ValueEditorProps> = ({
   operator,
   value,
   handleOnChange,
@@ -23,7 +23,7 @@ const ValueEditor = ({
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
           value={value}>
-          {values.map((v) => (
+          {values!.map((v) => (
             <option key={v.name} value={v.name}>
               {v.label}
             </option>
@@ -45,7 +45,7 @@ const ValueEditor = ({
     case 'radio':
       return (
         <span className={className} title={title}>
-          {values.map((v) => (
+          {values!.map((v) => (
             <label key={v.name}>
               <input
                 type="radio"
@@ -73,17 +73,5 @@ const ValueEditor = ({
 };
 
 ValueEditor.displayName = 'ValueEditor';
-
-ValueEditor.propTypes = {
-  field: PropTypes.string,
-  operator: PropTypes.string,
-  value: PropTypes.any,
-  handleOnChange: PropTypes.func,
-  title: PropTypes.string,
-  className: PropTypes.string,
-  type: PropTypes.oneOf(['select', 'checkbox', 'radio', 'text']),
-  inputType: PropTypes.string,
-  values: PropTypes.arrayOf(PropTypes.object)
-};
 
 export default ValueEditor;

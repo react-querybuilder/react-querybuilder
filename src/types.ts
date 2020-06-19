@@ -1,51 +1,150 @@
-// Type definitions for react-querybuilder 3.3.0
-// Project: https://github.com/sapientglobalmarkets/react-querybuilder/
-// Definitions by: Jake Boone <https://github.com/jakeboone02>
+import React from 'react';
 
-import * as React from 'react';
-
-interface NameLabelPair {
+export interface NameLabelPair {
   name: string;
   label: string;
 }
 
-interface Field extends NameLabelPair {
+export interface Field extends NameLabelPair {
   id?: string;
   [x: string]: any;
 }
 
-interface RuleType {
-  id: string;
+export interface RuleType {
+  id?: string;
   field: string;
   operator: string;
   value: any;
 }
 
-interface RuleGroupType {
+export interface RuleGroupType {
   id: string;
   combinator: string;
   rules: (RuleType | RuleGroupType)[];
   not?: boolean;
 }
 
-interface Schema {
-  fields: Field[];
-  classNames?: {},
-  combinators: {name: string; label: string;}[],
-  controls?: {},
-  createRule?(): RuleType,
-  createRuleGroup?(): RuleGroupType,
-  getLevel?(id: string): number,
-  isRuleGroup?(ruleOrGroup: RuleType | RuleGroupType): boolean,
-  onGroupAdd?(group: RuleGroupType, parentId: string): void,
-  onGroupRemove?(groupId: string, parentId: string): void,
-  onPropChange?(prop: string, value: any, ruleId: string): void,
-  onRuleAdd?(rule: RuleType, parentId: string): void;
-  showCombinatorsBetweenRules?: boolean;
-  showNotToggle?: boolean;
+export type ExportFormat = 'json' | 'sql' | 'json_without_ids' | 'parameterized';
+
+export type ValueProcessor = (field: string, operator: string, value: any) => string;
+
+export type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';
+
+export interface CommonProps {
+  /**
+   * CSS classNames to be applied
+   */
+  className: string;
+  /**
+   * The level of the current group
+   */
+  level: number;
+  /**
+   * The title for this control
+   */
+  title?: string;
 }
 
-interface Translations {
+export interface ActionProps extends CommonProps {
+  label?: string;
+  handleOnClick(e: React.MouseEvent): void;
+}
+
+export interface ActionWithRulesProps extends ActionProps {
+  /**
+   * Rules already present for this group
+   */
+  rules?: RuleType[];
+}
+
+export interface SelectorEditorProps extends CommonProps {
+  value?: string;
+  handleOnChange(value: any): void;
+}
+
+export interface ValueSelectorProps extends SelectorEditorProps {
+  options: Field[];
+}
+
+export interface NotToggleProps extends CommonProps {
+  checked?: boolean;
+  handleOnChange(checked: boolean): void;
+}
+
+export interface CombinatorSelectorProps extends ValueSelectorProps {
+  options: NameLabelPair[];
+  rules?: RuleType[];
+}
+
+export interface FieldSelectorProps extends ValueSelectorProps {
+  options: NameLabelPair[];
+  operator?: string;
+}
+
+export interface OperatorSelectorProps extends ValueSelectorProps {
+  field?: string;
+  fieldData?: Field;
+  options: NameLabelPair[];
+}
+
+export interface ValueEditorProps extends SelectorEditorProps {
+  field?: string;
+  fieldData?: Field;
+  operator?: string;
+  type?: ValueEditorType;
+  inputType?: string;
+  values?: any[];
+}
+
+export interface Schema {
+  fields: Field[];
+  classNames: {
+    queryBuilder: string;
+    ruleGroup: string;
+    rule: string;
+    fields: string;
+    operators: string;
+    value: string;
+    removeRule: string;
+    addRule: string;
+    header: string;
+    combinators: string;
+    notToggle: string;
+    addGroup: string;
+    removeGroup: string;
+  };
+  combinators: { name: string; label: string }[];
+  controls: {
+    fieldSelector: React.ComponentType<any>;
+    operatorSelector: React.ComponentType<any>;
+    valueEditor: React.ComponentType<any>;
+    removeRuleAction: React.ComponentType<any>;
+    combinatorSelector:React.ComponentType<any>;
+    notToggle:React.ComponentType<any>;
+    addRuleAction:React.ComponentType<any>;
+    addGroupAction:React.ComponentType<any>;
+    removeGroupAction:React.ComponentType<any>;
+    ruleGroup: React.ComponentType<RuleGroupProps>;
+    rule:React.ComponentType<RuleProps>;
+  };
+  createRule(): RuleType;
+  createRuleGroup(): RuleGroupType;
+  getLevel(id: string): number;
+  getOperators(field: string): Field[];
+  getValueEditorType(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
+  getInputType(field: string, operator: string): string;
+  getValues(field: string, operator: string): NameLabelPair[];
+  isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
+  onGroupAdd(group: RuleGroupType, parentId: string): void;
+  onGroupRemove(groupId: string, parentId: string): void;
+  onPropChange(prop: string, value: any, ruleId: string): void;
+  onRuleAdd(rule: RuleType, parentId: string): void;
+  onRuleRemove(id: string, parentId: string): void;
+  showCombinatorsBetweenRules: boolean;
+  showNotToggle: boolean;
+}
+
+export interface Translations {
   fields?: {
     title: string;
   };
@@ -79,91 +178,27 @@ interface Translations {
   };
 }
 
-type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';
-
-interface CommonProps {
-  /**
-   * CSS classNames to be applied
-   */
-  className: string;
-  /**
-   * The level of the current group
-   */
-  level: number;
-  /**
-   * The title for this control
-   */
-  title?: string;
-}
-
-interface ActionProps extends CommonProps {
-  label?: string;
-  handleOnClick?(): void;
-}
-
-interface ActionWithRulesProps extends ActionProps {
-  /**
-   * Rules already present for this group
-   */
-  rules?: RuleType[];
-}
-
-interface SelectorEditorProps extends CommonProps {
-  value?: string;
-  handleOnChange?(value: any): void;
-}
-
-interface NotToggleProps extends CommonProps {
-  checked?: boolean;
-  handleOnChange?(checked: boolean): void;
-}
-
-interface RuleGroupProps {
-  id?: string;
+export interface RuleGroupProps {
+  id: string;
   parentId?: string;
-  combinator?: string;
-  rules?: (RuleType | RuleGroupType)[];
-  translations?: Translations;
-  schema?: Schema;
-  not?: boolean;
+  combinator: string;
+  rules: (RuleType | RuleGroupType)[];
+  translations: Required<Translations>;
+  schema: Schema;
+  not: boolean;
 }
 
-interface RuleProps {
-  id?: string;
-  parentId?: string;
-  field?: Field;
-  operator?: string;
-  value?: any;
-  translations: Translations;
-  schema?: Schema;
+export interface RuleProps {
+  id: string;
+  parentId: string;
+  field: string;
+  operator: string;
+  value: any;
+  translations: Required<Translations>;
+  schema: Schema;
 }
 
-interface CombinatorSelectorProps extends SelectorEditorProps {
-  options: NameLabelPair[];
-  rules?: RuleType[];
-}
-
-interface FieldSelectorProps extends SelectorEditorProps {
-  options: NameLabelPair[];
-  operator?: string;
-}
-
-interface OperatorSelectorProps extends SelectorEditorProps {
-  field?: string;
-  fieldData?: Field;
-  options: NameLabelPair[];
-}
-
-interface ValueEditorProps extends SelectorEditorProps {
-  field?: string;
-  fieldData?: Field;
-  operator?: string;
-  type?: ValueEditorType;
-  inputType?: string;
-  values?: any[];
-}
-
-interface QueryBuilderProps {
+export interface QueryBuilderProps {
   query?: RuleGroupType;
   /**
    * The array of fields that should be used. Each field should be an object
@@ -206,7 +241,7 @@ interface QueryBuilderProps {
     operatorSelector?: React.ComponentType<OperatorSelectorProps>;
     valueEditor?: React.ComponentType<ValueEditorProps>;
     notToggle?: React.ComponentType<NotToggleProps>;
-    ruleGroup?: React.ComponentType<RuleGroupCustomControlProps>;
+    ruleGroup?: React.ComponentType<RuleGroupProps>;
     rule?: React.ComponentType<RuleProps>;
   };
   /**
@@ -317,19 +352,3 @@ interface QueryBuilderProps {
    */
   resetOnOperatorChange?: boolean;
 }
-
-export default class QueryBuilder extends React.Component<QueryBuilderProps> {}
-
-export class Rule extends React.Component<RuleProps> {}
-
-/**
- * Formats a query in the requested output format.  The optional
- * `valueProcessor` argument can be used to format the values differently
- * based on a given field, operator, and value.  By default, values are
- * processed assuming the default operators are being used.
- */
-export function formatQuery(
-  ruleGroup: RuleGroupType,
-  format: 'json' | 'sql' | 'json_without_ids' | 'parameterized',
-  valueProcessor?: (field: string, operator: string, value: any) => string
-): string | { sql: string; params: string[]; };
