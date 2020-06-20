@@ -50313,9 +50313,7 @@ var defaultControlElements = {
   ruleGroup: _RuleGroup__WEBPACK_IMPORTED_MODULE_7__["RuleGroup"],
   rule: _Rule__WEBPACK_IMPORTED_MODULE_6__["Rule"]
 };
-var QueryBuilder = function QueryBuilder(
-/* istanbul ignore next */
-_ref) {
+var QueryBuilder = function QueryBuilder(_ref) {
   var query = _ref.query,
       _ref$fields = _ref.fields,
       fields = _ref$fields === void 0 ? [] : _ref$fields,

@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { getLevel } from '..';
 
 describe('when calculating the level of a rule', () => {

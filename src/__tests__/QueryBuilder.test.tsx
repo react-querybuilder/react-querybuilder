@@ -1,13 +1,14 @@
-import { mount, ShallowWrapper, ReactWrapper } from 'enzyme';
+import { expect } from 'chai';
+import { mount, ReactWrapper } from 'enzyme';
+import { cloneDeep } from 'lodash';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
+import { ActionElement } from '../controls';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
 import { QueryBuilderProps, RuleGroupType } from '../types';
-import { cloneDeep } from 'lodash';
-import { ActionElement } from '../controls';
 
 describe('<QueryBuilder />', () => {
   const props: QueryBuilderProps = {

@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { isRuleGroup } from '..';
 
 describe('isRuleGroup', () => {

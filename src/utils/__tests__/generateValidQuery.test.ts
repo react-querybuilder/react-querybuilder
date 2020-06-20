@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import generateValidQuery from '../generateValidQuery';
 import { RuleGroupType } from '../../types';
 

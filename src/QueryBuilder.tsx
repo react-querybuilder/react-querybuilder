@@ -6,7 +6,15 @@ import React, { useEffect, useState } from 'react';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
-import { QueryBuilderProps, RuleGroupType, RuleType, Translations } from './types';
+import {
+  Classnames,
+  Controls,
+  NameLabelPair,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleType,
+  Translations
+} from './types';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 const defaultTranslations: Translations = {
@@ -43,7 +51,7 @@ const defaultTranslations: Translations = {
   }
 };
 
-const defaultOperators = [
+const defaultOperators: NameLabelPair[] = [
   { name: 'null', label: 'is null' },
   { name: 'notNull', label: 'is not null' },
   { name: 'in', label: 'in' },
@@ -62,14 +70,13 @@ const defaultOperators = [
   { name: 'doesNotEndWith', label: 'does not end with' }
 ];
 
-const defaultCombinators = [
+const defaultCombinators: NameLabelPair[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' }
 ];
 
-const defaultControlClassnames = {
+const defaultControlClassnames: Classnames = {
   queryBuilder: '',
-
   ruleGroup: '',
   header: '',
   combinators: '',
@@ -77,7 +84,6 @@ const defaultControlClassnames = {
   addGroup: '',
   removeGroup: '',
   notToggle: '',
-
   rule: '',
   fields: '',
   operators: '',
@@ -85,7 +91,7 @@ const defaultControlClassnames = {
   removeRule: ''
 };
 
-const defaultControlElements = {
+const defaultControlElements: Controls = {
   addGroupAction: ActionElement,
   removeGroupAction: ActionElement,
   addRuleAction: ActionElement,
@@ -99,7 +105,7 @@ const defaultControlElements = {
   rule: Rule
 };
 
-export const QueryBuilder: React.FC<QueryBuilderProps> = (/* istanbul ignore next */{
+export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   query,
   fields = [],
   operators = defaultOperators,

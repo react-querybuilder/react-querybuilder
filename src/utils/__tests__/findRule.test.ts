@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { findRule } from '..';
 
 describe('findRule', () => {
