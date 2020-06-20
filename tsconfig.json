@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "outDir": "./types/",
     "declaration": true,
+    "emitDeclarationOnly": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "strict": true,
