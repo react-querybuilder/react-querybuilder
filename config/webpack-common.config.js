@@ -6,6 +6,11 @@ module.exports = {
   module: {
     rules: [
       {
+        parser: {
+          amd: false
+        }
+      },
+      {
         test: /\.(t|j)sx?$/,
         loader: 'babel-loader',
         // Regenerate the regex below by running:
