@@ -333,6 +333,7 @@ var RootView = function RootView() {
     setQuery(query);
   };
 
+  var formatString = format === 'json_without_ids' ? JSON.stringify(JSON.parse(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format)), null, 2) : format === 'parameterized' ? JSON.stringify(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "flex-box-outer"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -397,7 +398,8 @@ var RootView = function RootView() {
   }), "Reset rule on operator change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     style: {
       display: 'flex',
-      justifyContent: 'space-evenly'
+      justifyContent: 'space-between',
+      flexDirection: 'column'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
     type: "radio",
@@ -406,6 +408,12 @@ var RootView = function RootView() {
       return setFormat('json');
     }
   }), "JSON"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "radio",
+    checked: format === 'json_without_ids',
+    onChange: function onChange() {
+      return setFormat('json_without_ids');
+    }
+  }), "JSON Without IDs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
     type: "radio",
     checked: format === 'sql',
     onChange: function onChange() {
@@ -417,7 +425,7 @@ var RootView = function RootView() {
     onChange: function onChange() {
       return setFormat('parameterized');
     }
-  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, format === 'parameterized' ? JSON.stringify(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format)))));
+  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, formatString))));
 };
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));

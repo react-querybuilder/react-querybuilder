@@ -163,6 +163,13 @@ const RootView = () => {
     setQuery(query);
   };
 
+  const formatString =
+    format === 'json_without_ids'
+      ? JSON.stringify(JSON.parse(formatQuery(query, format)), null, 2)
+      : format === 'parameterized'
+      ? JSON.stringify(formatQuery(query, format), null, 2)
+      : formatQuery(query, format);
+
   return (
     <div className="flex-box-outer">
       <div className="control-panel">
@@ -233,21 +240,33 @@ const RootView = () => {
             </div>
           </div>
           <h4>Query</h4>
-          <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
             <label>
               <input type="radio" checked={format === 'json'} onChange={() => setFormat('json')} />
               JSON
+            </label>
+            <label>
+              <input
+                type="radio"
+                checked={format === 'json_without_ids'}
+                onChange={() => setFormat('json_without_ids')}
+              />
+              JSON Without IDs
             </label>
             <label>
               <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />
               SQL
             </label>
             <label>
-              <input type="radio" checked={format === 'parameterized'} onChange={() => setFormat('parameterized')} />
+              <input
+                type="radio"
+                checked={format === 'parameterized'}
+                onChange={() => setFormat('parameterized')}
+              />
               Parameterized
             </label>
           </div>
-          <pre>{format === 'parameterized' ? JSON.stringify(formatQuery(query, format), null, 2) : formatQuery(query, format)}</pre>
+          <pre>{formatString}</pre>
         </div>
       </div>
     </div>
