@@ -1,6 +1,6 @@
 'use strict';
 
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
 const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
