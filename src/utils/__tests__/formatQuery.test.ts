@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { formatQuery } from '..';
+import { ValueProcessor } from '../../types';
 
 const query = {
   id: 'g-067a4722-55e0-49c3-83b5-b31e10e69f9d',
@@ -138,7 +139,7 @@ describe('formatQuery', () => {
   });
 
   it('formats parameterized SQL correctly', () => {
-    const parameterized = formatQuery(query, 'parameterized') as {sql: string; params: string[]};
+    const parameterized = formatQuery(query, 'parameterized') as { sql: string; params: string[] };
     expect(parameterized).to.have.property('sql', parameterizedSQLString);
     expect(parameterized).to.have.property('params');
     expect(parameterized.params).to.deep.equal(params);
@@ -169,7 +170,7 @@ describe('formatQuery', () => {
       not: false
     };
 
-    const valueProcessor = (field, operator, value) => {
+    const valueProcessor: ValueProcessor = (field, operator, value) => {
       if (operator === 'in') {
         return `(${value.map((v) => `"${v.trim()}"`).join(',')})`;
       } else {
@@ -177,8 +178,34 @@ describe('formatQuery', () => {
       }
     };
 
-    expect(formatQuery(queryWithArrayValue, 'sql', valueProcessor)).to.equal(
+    expect(formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor })).to.equal(
       '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
+    );
+  });
+
+  it('handles quoteFieldNamesWith correctly', () => {
+    const queryWithArrayValue = {
+      id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
+      rules: [
+        {
+          id: 'r-32ef0844-07e3-4f3b-aeca-3873da3e208b',
+          field: 'instrument',
+          value: 'Guitar, Vocals',
+          operator: 'in'
+        },
+        {
+          id: 'r-3db9ba21-080d-4a5e-b4da-d949b4ad055b',
+          field: 'lastName',
+          value: 'Vai',
+          operator: '='
+        }
+      ],
+      combinator: 'and',
+      not: false
+    };
+
+    expect(formatQuery(queryWithArrayValue, { format: 'sql', quoteFieldNamesWith: '`' })).to.equal(
+      '(`instrument` in ("Guitar", "Vocals") and `lastName` = "Vai")'
     );
   });
 
