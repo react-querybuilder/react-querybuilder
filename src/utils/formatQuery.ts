@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import { isRuleGroup } from '.';
 import { ExportFormat, RuleGroupType, RuleType, ValueProcessor } from '../types';
 
@@ -27,17 +26,6 @@ const mapOperator = (op: string) => {
     default:
       return op;
   }
-};
-
-const removeIdsFromRuleGroup = (ruleGroup: RuleGroupType | RuleType) => {
-  const ruleGroupCopy = cloneDeep(ruleGroup);
-  delete ruleGroupCopy.id;
-
-  if (isRuleGroup(ruleGroupCopy)) {
-    ruleGroupCopy.rules = ruleGroupCopy.rules.map((rule) => removeIdsFromRuleGroup(rule));
-  }
-
-  return ruleGroupCopy;
 };
 
 const defaultValueProcessor: ValueProcessor = (field: string, operator: string, value: any) => {
@@ -90,7 +78,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
   if (formatLowerCase === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
   } else if (formatLowerCase === 'json_without_ids') {
-    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
+    return JSON.stringify(ruleGroup, ['rules', 'field', 'value', 'operator', 'combinator', 'not']);
   } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
     const parameterized = formatLowerCase === 'parameterized';
     const params: string[] = [];
