@@ -333,7 +333,13 @@ var RootView = function RootView() {
     setQuery(query);
   };
 
-  var formatString = format === 'json_without_ids' ? JSON.stringify(JSON.parse(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format)), null, 2) : format === 'parameterized' ? JSON.stringify(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, format);
+  var formatString = format === 'json_without_ids' ? JSON.stringify(JSON.parse(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, {
+    format: format
+  })), null, 2) : format === 'parameterized' ? JSON.stringify(Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, {
+    format: format
+  }), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, {
+    format: format
+  });
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "flex-box-outer"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -51304,6 +51310,28 @@ var removeIdsFromRuleGroup = function removeIdsFromRuleGroup(ruleGroup) {
 
   return ruleGroupCopy;
 };
+
+var defaultValueProcessor = function defaultValueProcessor(field, operator, value) {
+  var val = "\"".concat(value, "\"");
+
+  if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
+    val = '';
+  } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
+    val = "(".concat(value.split(',').map(function (v) {
+      return "\"".concat(v.trim(), "\"");
+    }).join(', '), ")");
+  } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
+    val = "\"%".concat(value, "%\"");
+  } else if (operator.toLowerCase() === 'beginswith' || operator.toLowerCase() === 'doesnotbeginwith') {
+    val = "\"".concat(value, "%\"");
+  } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
+    val = "\"%".concat(value, "\"");
+  } else if (typeof value === 'boolean') {
+    val = "".concat(value).toUpperCase();
+  }
+
+  return val;
+};
 /**
  * Formats a query in the requested output format.  The optional
  * `valueProcessor` argument can be used to format the values differently
@@ -51312,7 +51340,21 @@ var removeIdsFromRuleGroup = function removeIdsFromRuleGroup(ruleGroup) {
  */
 
 
-var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
+var formatQuery = function formatQuery(ruleGroup, options) {
+  var format;
+  var valueProcessor;
+  var quoteFieldNamesWith;
+
+  if (typeof options === 'string') {
+    format = options;
+    valueProcessor = defaultValueProcessor;
+    quoteFieldNamesWith = '';
+  } else {
+    format = (options === null || options === void 0 ? void 0 : options.format) || 'json';
+    valueProcessor = (options === null || options === void 0 ? void 0 : options.valueProcessor) || defaultValueProcessor;
+    quoteFieldNamesWith = (options === null || options === void 0 ? void 0 : options.quoteFieldNamesWith) || '';
+  }
+
   var formatLowerCase = format.toLowerCase();
 
   if (formatLowerCase === 'json') {
@@ -51323,30 +51365,8 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
     var parameterized = formatLowerCase === 'parameterized';
     var params = [];
 
-    var valueProc = valueProcessor || function (field, operator, value) {
-      var val = "\"".concat(value, "\"");
-
-      if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
-        val = '';
-      } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
-        val = "(".concat(value.split(',').map(function (v) {
-          return "\"".concat(v.trim(), "\"");
-        }).join(', '), ")");
-      } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
-        val = "\"%".concat(value, "%\"");
-      } else if (operator.toLowerCase() === 'beginswith' || operator.toLowerCase() === 'doesnotbeginwith') {
-        val = "\"".concat(value, "%\"");
-      } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
-        val = "\"%".concat(value, "\"");
-      } else if (typeof value === 'boolean') {
-        val = "".concat(value).toUpperCase();
-      }
-
-      return val;
-    };
-
     var processRule = function processRule(rule) {
-      var value = valueProc(rule.field, rule.operator, rule.value);
+      var value = valueProcessor(rule.field, rule.operator, rule.value);
       var operator = mapOperator(rule.operator);
 
       if (parameterized && value) {
@@ -51357,7 +51377,7 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
           splitValue.forEach(function (v) {
             return params.push(v);
           });
-          return "".concat(rule.field, " ").concat(operator, " (").concat(splitValue.map(function (v) {
+          return "".concat(quoteFieldNamesWith).concat(rule.field).concat(quoteFieldNamesWith, " ").concat(operator, " (").concat(splitValue.map(function (v) {
             return '?';
           }).join(', '), ")");
         }
@@ -51365,7 +51385,7 @@ var formatQuery = function formatQuery(ruleGroup, format, valueProcessor) {
         params.push(value.match(/^"?(.*?)"?$/)[1]);
       }
 
-      return "".concat(rule.field, " ").concat(operator, " ").concat(parameterized && value ? '?' : value).trim();
+      return "".concat(quoteFieldNamesWith).concat(rule.field).concat(quoteFieldNamesWith, " ").concat(operator, " ").concat(parameterized && value ? '?' : value).trim();
     };
 
     var processRuleGroup = function processRuleGroup(rg) {
