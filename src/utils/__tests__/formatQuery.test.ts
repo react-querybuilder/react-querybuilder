@@ -131,6 +131,7 @@ const params = [
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
+    expect(formatQuery(query)).to.equal(JSON.stringify(query, null, 2));
     expect(formatQuery(query, 'json')).to.equal(JSON.stringify(query, null, 2));
   });
 

@@ -70,7 +70,7 @@ const defaultValueProcessor: ValueProcessor = (field: string, operator: string, 
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  */
-const formatQuery = (ruleGroup: RuleGroupType, options: FormatQueryOptions | ExportFormat) => {
+const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | ExportFormat) => {
   let format: ExportFormat;
   let valueProcessor: ValueProcessor;
   let quoteFieldNamesWith: string;
@@ -80,9 +80,9 @@ const formatQuery = (ruleGroup: RuleGroupType, options: FormatQueryOptions | Exp
     valueProcessor = defaultValueProcessor;
     quoteFieldNamesWith = '';
   } else {
-    format = options.format || 'json';
-    valueProcessor = options.valueProcessor || defaultValueProcessor;
-    quoteFieldNamesWith = options.quoteFieldNamesWith || '';
+    format = options?.format || 'json';
+    valueProcessor = options?.valueProcessor || defaultValueProcessor;
+    quoteFieldNamesWith = options?.quoteFieldNamesWith || '';
   }
 
   const formatLowerCase = format.toLowerCase() as ExportFormat;
