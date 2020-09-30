@@ -29,23 +29,23 @@ const mapOperator = (op: string) => {
 };
 
 const defaultValueProcessor: ValueProcessor = (field: string, operator: string, value: any) => {
-  let val = `"${value}"`;
+  let val = `'${value}'`;
   if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
     val = '';
   } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
     val = `(${value
       .split(',')
-      .map((v: string) => `"${v.trim()}"`)
+      .map((v: string) => `'${v.trim()}'`)
       .join(', ')})`;
   } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
-    val = `"%${value}%"`;
+    val = `'%${value}%'`;
   } else if (
     operator.toLowerCase() === 'beginswith' ||
     operator.toLowerCase() === 'doesnotbeginwith'
   ) {
-    val = `"${value}%"`;
+    val = `'${value}%'`;
   } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
-    val = `"%${value}"`;
+    val = `'%${value}'`;
   } else if (typeof value === 'boolean') {
     val = `${value}`.toUpperCase();
   }
@@ -96,7 +96,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
           }${quoteFieldNamesWith} ${operator} (${splitValue.map((v) => '?').join(', ')})`;
         }
 
-        params.push((value as string).match(/^"?(.*?)"?$/)![1]);
+        params.push((value as string).match(/^'?(.*?)'?$/)![1]);
       }
       return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
         parameterized && value ? '?' : value
