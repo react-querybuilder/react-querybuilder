@@ -470,7 +470,17 @@ console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = 
 console.log(formatQuery(query, 'parameterized')); // { sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }
 ```
 
-An optional third argument can be passed into `formatQuery` if you need to control the way the value portion of the output is processed. (This is only applicable when the format is `"sql"`.)
+An `options` object can be passed as the second argument instead of a format string in order to have more detailed control over the output.  The options object takes the following form:
+
+```ts
+interface FormatQueryOptions {
+  format: 'sql' | 'json' | 'json_without_ids' | 'parameterized'; // same as passing a `format` string instead of an options object
+  valueProcessor: (field: string, operator: string, value: any) => string; // see below for an example
+  quoteFieldNamesWith: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
+}
+```
+
+For example, if you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for `format: "sql"`).
 
 ```js
 const query = {
@@ -502,7 +512,7 @@ const valueProcessor = (field, operator, value) => {
   }
 };
 
-console.log(formatQuery(query, 'sql', valueProcessor)); // '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
+console.log(formatQuery(query, { format: 'sql', valueProcessor })); // '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
 ```
 
 The 'json_without_ids' format will return the same query without the IDs.  This can be useful, for example, if you need to save the query to the URL so that it becomes bookmarkable:

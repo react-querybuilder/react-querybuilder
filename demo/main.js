@@ -165,10 +165,10 @@ const RootView = () => {
 
   const formatString =
     format === 'json_without_ids'
-      ? JSON.stringify(JSON.parse(formatQuery(query, format)), null, 2)
+      ? JSON.stringify(JSON.parse(formatQuery(query, { format })), null, 2)
       : format === 'parameterized'
-      ? JSON.stringify(formatQuery(query, format), null, 2)
-      : formatQuery(query, format);
+      ? JSON.stringify(formatQuery(query, { format }), null, 2)
+      : formatQuery(query, { format });
 
   return (
     <div className="flex-box-outer">
@@ -240,7 +240,8 @@ const RootView = () => {
             </div>
           </div>
           <h4>Query</h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
+          <div
+            style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
             <label>
               <input type="radio" checked={format === 'json'} onChange={() => setFormat('json')} />
               JSON

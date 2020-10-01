@@ -1,6 +1,11 @@
-import { cloneDeep } from 'lodash';
 import { isRuleGroup } from '.';
 import { ExportFormat, RuleGroupType, RuleType, ValueProcessor } from '../types';
+
+interface FormatQueryOptions {
+  format?: ExportFormat;
+  valueProcessor?: ValueProcessor;
+  quoteFieldNamesWith?: string;
+}
 
 const mapOperator = (op: string) => {
   switch (op.toLowerCase()) {
@@ -23,15 +28,28 @@ const mapOperator = (op: string) => {
   }
 };
 
-const removeIdsFromRuleGroup = (ruleGroup: RuleGroupType | RuleType) => {
-  const ruleGroupCopy = cloneDeep(ruleGroup);
-  delete ruleGroupCopy.id;
-
-  if (isRuleGroup(ruleGroupCopy)) {
-    ruleGroupCopy.rules = ruleGroupCopy.rules.map((rule) => removeIdsFromRuleGroup(rule));
+const defaultValueProcessor: ValueProcessor = (field: string, operator: string, value: any) => {
+  let val = `'${value}'`;
+  if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
+    val = '';
+  } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
+    val = `(${value
+      .split(',')
+      .map((v: string) => `'${v.trim()}'`)
+      .join(', ')})`;
+  } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
+    val = `'%${value}%'`;
+  } else if (
+    operator.toLowerCase() === 'beginswith' ||
+    operator.toLowerCase() === 'doesnotbeginwith'
+  ) {
+    val = `'${value}%'`;
+  } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
+    val = `'%${value}'`;
+  } else if (typeof value === 'boolean') {
+    val = `${value}`.toUpperCase();
   }
-
-  return ruleGroupCopy;
+  return val;
 };
 
 /**
@@ -40,67 +58,49 @@ const removeIdsFromRuleGroup = (ruleGroup: RuleGroupType | RuleType) => {
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  */
-const formatQuery = (
-  ruleGroup: RuleGroupType,
-  format: ExportFormat,
-  valueProcessor?: ValueProcessor
-) => {
+const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | ExportFormat) => {
+  let format: ExportFormat;
+  let valueProcessor: ValueProcessor;
+  let quoteFieldNamesWith: string;
+
+  if (typeof options === 'string') {
+    format = options;
+    valueProcessor = defaultValueProcessor;
+    quoteFieldNamesWith = '';
+  } else {
+    format = options?.format || 'json';
+    valueProcessor = options?.valueProcessor || defaultValueProcessor;
+    quoteFieldNamesWith = options?.quoteFieldNamesWith || '';
+  }
+
   const formatLowerCase = format.toLowerCase() as ExportFormat;
 
   if (formatLowerCase === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
   } else if (formatLowerCase === 'json_without_ids') {
-    return JSON.stringify(removeIdsFromRuleGroup(ruleGroup));
+    return JSON.stringify(ruleGroup, ['rules', 'field', 'value', 'operator', 'combinator', 'not']);
   } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
     const parameterized = formatLowerCase === 'parameterized';
     const params: string[] = [];
 
-    const valueProc: ValueProcessor =
-      valueProcessor ||
-      ((field: string, operator: string, value: any) => {
-        let val = `"${value}"`;
-        if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
-          val = '';
-        } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
-          val = `(${value
-            .split(',')
-            .map((v: string) => `"${v.trim()}"`)
-            .join(', ')})`;
-        } else if (
-          operator.toLowerCase() === 'contains' ||
-          operator.toLowerCase() === 'doesnotcontain'
-        ) {
-          val = `"%${value}%"`;
-        } else if (
-          operator.toLowerCase() === 'beginswith' ||
-          operator.toLowerCase() === 'doesnotbeginwith'
-        ) {
-          val = `"${value}%"`;
-        } else if (
-          operator.toLowerCase() === 'endswith' ||
-          operator.toLowerCase() === 'doesnotendwith'
-        ) {
-          val = `"%${value}"`;
-        } else if (typeof value === 'boolean') {
-          val = `${value}`.toUpperCase();
-        }
-        return val;
-      });
-
     const processRule = (rule: RuleType) => {
-      const value = valueProc(rule.field, rule.operator, rule.value);
+      const value = valueProcessor(rule.field, rule.operator, rule.value);
       const operator = mapOperator(rule.operator);
 
       if (parameterized && value) {
         if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
           const splitValue = (rule.value as string).split(',').map((v) => v.trim());
           splitValue.forEach((v) => params.push(v));
-          return `${rule.field} ${operator} (${splitValue.map((v) => '?').join(', ')})`;
+          return `${quoteFieldNamesWith}${
+            rule.field
+          }${quoteFieldNamesWith} ${operator} (${splitValue.map((v) => '?').join(', ')})`;
         }
 
-        params.push((value as string).match(/^"?(.*?)"?$/)![1]);
+        params.push((value as string).match(/^'?(.*?)'?$/)![1]);
       }
-      return `${rule.field} ${operator} ${parameterized && value ? '?' : value}`.trim();
+      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
+        parameterized && value ? '?' : value
+      }`.trim();
     };
 
     const processRuleGroup = (rg: RuleGroupType): string => {
