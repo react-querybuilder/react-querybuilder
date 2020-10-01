@@ -34123,20 +34123,20 @@ var mapOperator = function mapOperator(op) {
 };
 
 var defaultValueProcessor = function defaultValueProcessor(field, operator, value) {
-  var val = "\"".concat(value, "\"");
+  var val = "'".concat(value, "'");
 
   if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
     val = '';
   } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
     val = "(".concat(value.split(',').map(function (v) {
-      return "\"".concat(v.trim(), "\"");
+      return "'".concat(v.trim(), "'");
     }).join(', '), ")");
   } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
-    val = "\"%".concat(value, "%\"");
+    val = "'%".concat(value, "%'");
   } else if (operator.toLowerCase() === 'beginswith' || operator.toLowerCase() === 'doesnotbeginwith') {
-    val = "\"".concat(value, "%\"");
+    val = "'".concat(value, "%'");
   } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
-    val = "\"%".concat(value, "\"");
+    val = "'%".concat(value, "'");
   } else if (typeof value === 'boolean') {
     val = "".concat(value).toUpperCase();
   }
@@ -34193,7 +34193,7 @@ var formatQuery = function formatQuery(ruleGroup, options) {
           }).join(', '), ")");
         }
 
-        params.push(value.match(/^"?(.*?)"?$/)[1]);
+        params.push(value.match(/^'?(.*?)'?$/)[1]);
       }
 
       return "".concat(quoteFieldNamesWith).concat(rule.field).concat(quoteFieldNamesWith, " ").concat(operator, " ").concat(parameterized && value ? '?' : value).trim();
