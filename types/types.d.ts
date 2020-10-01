@@ -255,6 +255,15 @@ export interface QueryBuilderProps {
     combinators?: NameLabelPair[];
     controlElements?: Partial<Controls>;
     /**
+     * The default field for new rules.  This can be a string identifying the
+     * default field, or a function that returns a field name.
+     */
+    defaultField?: string | ((fieldsData: Field[]) => string);
+    /**
+     * Returns the default value for new rules.
+     */
+    defaultValue?(rule: RuleType): any;
+    /**
      * This is a callback function invoked to get the list of allowed
      * operators for the given field.
      */

@@ -33223,6 +33223,8 @@ var QueryBuilder = function QueryBuilder(_ref) {
       _ref$translations = _ref.translations,
       translations = _ref$translations === void 0 ? defaultTranslations : _ref$translations,
       controlElements = _ref.controlElements,
+      defaultField = _ref.defaultField,
+      defaultValue = _ref.defaultValue,
       getOperators = _ref.getOperators,
       getValueEditorType = _ref.getValueEditorType,
       getInputType = _ref.getInputType,
@@ -33247,6 +33249,15 @@ var QueryBuilder = function QueryBuilder(_ref) {
 
   var createRule = function createRule() {
     var field = fields[0].name;
+
+    if (defaultField) {
+      if (typeof defaultField === 'string') {
+        field = defaultField;
+      } else {
+        field = defaultField(fields);
+      }
+    }
+
     return {
       id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
       field: field,
@@ -33316,7 +33327,7 @@ var QueryBuilder = function QueryBuilder(_ref) {
     return operators;
   };
 
-  var getRuleDefaultValue = function getRuleDefaultValue(rule) {
+  var getRuleDefaultValue = defaultValue !== null && defaultValue !== void 0 ? defaultValue : function (rule) {
     var value = '';
     var values = getValuesMain(rule.field, rule.operator);
 
@@ -33335,7 +33346,6 @@ var QueryBuilder = function QueryBuilder(_ref) {
   /**
    * Adds a rule to the query
    */
-
 
   var onRuleAdd = function onRuleAdd(rule, parentId) {
     var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(root);

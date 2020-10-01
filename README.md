@@ -296,31 +296,43 @@ This is a custom controls object that allows you to override the control element
 
 #### `getOperators` _(Optional)_
 
-`function(field: string): []`
+`(field: string) => []`
 
 This is a callback function invoked to get the list of allowed operators for the given field.
 
 #### `getValueEditorType` _(Optional)_
 
-`function(field: string, operator: string): string`
+`(field: string, operator: string) => string`
 
 This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default), `"select"`, `"checkbox"`, and `"radio"`.
 
 #### `getInputType` _(Optional)_
 
-`function(field: string, operator: string): string`
+`(field: string, operator: string) => string`
 
 This is a callback function invoked to get the `type` of `<input />` for the given field and operator (only applicable when `getValueEditorType` returns `"text"` or a falsy value). If no function is provided, `"text"` is used as the default.
 
 #### `getValues` _(Optional)_
 
-`function(field: string, operator: string): []`
+`(field: string, operator: string) => []`
 
 This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
+#### `defaultField` _(Optional)_
+
+`string | ((fieldsData: Field[]) => string)`
+
+The default field for new rules.  This can be a string identifying the default field, or a function that returns a field name.
+
+#### `defaultValue` _(Optional)_
+
+`(rule: Rule) => any`
+
+This function returns the default value for new rules.
+
 #### `onQueryChange` _(Optional)_
 
-`function(queryJSON: RuleGroup): void`
+`(queryJSON: RuleGroup) => void`
 
 This is a notification that is invoked anytime the query configuration changes. The query is provided as a JSON structure, as shown below:
 
