@@ -286,14 +286,15 @@ export interface QueryBuilderProps {
   defaultValue?(rule: RuleType): any;
   /**
    * This is a callback function invoked to get the list of allowed
-   * operators for the given field.
+   * operators for the given field.  If `null` is returned, the default
+   * operators are used.
    */
-  getOperators?(field: string): Field[];
+  getOperators?(field: string): Field[] | null;
   /**
    * This is a callback function invoked to get the type of `ValueEditor`
    * for the given field and operator.
    */
-  getValueEditorType?(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
+  getValueEditorType?(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio' | null;
   /**
    * This is a callback function invoked to get the `type` of `<input />`
    * for the given field and operator (only applicable when

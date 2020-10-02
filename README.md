@@ -296,15 +296,15 @@ This is a custom controls object that allows you to override the control element
 
 #### `getOperators` _(Optional)_
 
-`(field: string) => []`
+`(field: string) => { name: string; label: string; }[] | null`
 
-This is a callback function invoked to get the list of allowed operators for the given field.
+This is a callback function invoked to get the list of allowed operators for the given field.  If `null` is returned, the default operators are used.
 
 #### `getValueEditorType` _(Optional)_
 
-`(field: string, operator: string) => string`
+`(field: string, operator: string) => 'text' | 'select' | 'checkbox' | 'radio' | null`
 
-This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default), `"select"`, `"checkbox"`, and `"radio"`.
+This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
 
 #### `getInputType` _(Optional)_
 
@@ -314,7 +314,7 @@ This is a callback function invoked to get the `type` of `<input />` for the giv
 
 #### `getValues` _(Optional)_
 
-`(field: string, operator: string) => []`
+`(field: string, operator: string) => { name: string; label: string; }[]`
 
 This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
@@ -486,9 +486,9 @@ An `options` object can be passed as the second argument instead of a format str
 
 ```ts
 interface FormatQueryOptions {
-  format: 'sql' | 'json' | 'json_without_ids' | 'parameterized'; // same as passing a `format` string instead of an options object
-  valueProcessor: (field: string, operator: string, value: any) => string; // see below for an example
-  quoteFieldNamesWith: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
+  format?: 'sql' | 'json' | 'json_without_ids' | 'parameterized'; // same as passing a `format` string instead of an options object
+  valueProcessor?: (field: string, operator: string, value: any) => string; // see below for an example
+  quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
 }
 ```
 
