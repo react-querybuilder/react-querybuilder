@@ -276,15 +276,25 @@ export interface QueryBuilderProps {
   combinators?: NameLabelPair[];
   controlElements?: Partial<Controls>;
   /**
-   * This is a callback function invoked to get the list of allowed
-   * operators for the given field.
+   * The default field for new rules.  This can be a string identifying the
+   * default field, or a function that returns a field name.
    */
-  getOperators?(field: string): Field[];
+  getDefaultField?: string | ((fieldsData: Field[]) => string);
+  /**
+   * Returns the default value for new rules.
+   */
+  getDefaultValue?(rule: RuleType): any;
+  /**
+   * This is a callback function invoked to get the list of allowed
+   * operators for the given field.  If `null` is returned, the default
+   * operators are used.
+   */
+  getOperators?(field: string): Field[] | null;
   /**
    * This is a callback function invoked to get the type of `ValueEditor`
    * for the given field and operator.
    */
-  getValueEditorType?(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
+  getValueEditorType?(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio' | null;
   /**
    * This is a callback function invoked to get the `type` of `<input />`
    * for the given field and operator (only applicable when

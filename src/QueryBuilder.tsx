@@ -13,6 +13,7 @@ import {
   QueryBuilderProps,
   RuleGroupType,
   RuleType,
+  Schema,
   Translations
 } from './types';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
@@ -112,6 +113,8 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   combinators = defaultCombinators,
   translations = defaultTranslations,
   controlElements,
+  getDefaultField,
+  getDefaultValue,
   getOperators,
   getValueEditorType,
   getInputType,
@@ -131,7 +134,14 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   };
 
   const createRule = (): RuleType => {
-    const field = fields[0].name;
+    let field = fields[0].name;
+    if (getDefaultField) {
+      if (typeof getDefaultField === 'string') {
+        field = getDefaultField;
+      } else {
+        field = getDefaultField(fields);
+      }
+    }
 
     return {
       id: `r-${nanoid()}`,
@@ -198,23 +208,25 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
     return operators;
   };
 
-  const getRuleDefaultValue = (rule: RuleType) => {
-    let value: any = '';
+  const getRuleDefaultValue =
+    getDefaultValue ??
+    ((rule: RuleType) => {
+      let value: any = '';
 
-    const values = getValuesMain(rule.field, rule.operator);
+      const values = getValuesMain(rule.field, rule.operator);
 
-    if (values.length) {
-      value = values[0].name;
-    } else {
-      const editorType = getValueEditorTypeMain(rule.field, rule.operator);
+      if (values.length) {
+        value = values[0].name;
+      } else {
+        const editorType = getValueEditorTypeMain(rule.field, rule.operator);
 
-      if (editorType === 'checkbox') {
-        value = false;
+        if (editorType === 'checkbox') {
+          value = false;
+        }
       }
-    }
 
-    return value;
-  };
+      return value;
+    });
 
   /**
    * Adds a rule to the query
@@ -327,7 +339,7 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
 
   const [root, setRoot] = useState(getInitialQuery() as RuleGroupType);
 
-  const schema = {
+  const schema: Schema = {
     fields,
     combinators,
     classNames: { ...defaultControlClassnames, ...controlClassnames },
