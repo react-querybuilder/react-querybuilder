@@ -113,8 +113,8 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   combinators = defaultCombinators,
   translations = defaultTranslations,
   controlElements,
-  defaultField,
-  defaultValue,
+  getDefaultField,
+  getDefaultValue,
   getOperators,
   getValueEditorType,
   getInputType,
@@ -135,11 +135,11 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
 
   const createRule = (): RuleType => {
     let field = fields[0].name;
-    if (defaultField) {
-      if (typeof defaultField === 'string') {
-        field = defaultField;
+    if (getDefaultField) {
+      if (typeof getDefaultField === 'string') {
+        field = getDefaultField;
       } else {
-        field = defaultField(fields);
+        field = getDefaultField(fields);
       }
     }
 
@@ -209,7 +209,7 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   };
 
   const getRuleDefaultValue =
-    defaultValue ??
+    getDefaultValue ??
     ((rule: RuleType) => {
       let value: any = '';
 

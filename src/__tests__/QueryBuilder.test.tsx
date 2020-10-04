@@ -724,7 +724,7 @@ describe('<QueryBuilder />', () => {
     });
   });
 
-  describe('defaultField prop', () => {
+  describe('getDefaultField prop', () => {
     let wrapper: ReactWrapper, onQueryChange;
     const fields = [
       { name: 'field1', label: 'Field 1' },
@@ -742,21 +742,21 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the default field as a string', () => {
-      wrapper.setProps({ defaultField: 'field2' });
+      wrapper.setProps({ getDefaultField: 'field2' });
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.getCall(1).args[0].rules[0].field).to.equal('field2');
     });
 
     it('sets the default field as a function', () => {
-      wrapper.setProps({ defaultField: () => 'field2' });
+      wrapper.setProps({ getDefaultField: () => 'field2' });
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.getCall(1).args[0].rules[0].field).to.equal('field2');
     });
   })
 
-  describe('defaultValue prop', () => {
+  describe('getDefaultValue prop', () => {
     let wrapper: ReactWrapper, onQueryChange;
     const fields = [
       { name: 'field1', label: 'Field 1' },
@@ -774,7 +774,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the default value', () => {
-      wrapper.setProps({ defaultValue: () => 'Test Value' });
+      wrapper.setProps({ getDefaultValue: () => 'Test Value' });
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.getCall(1).args[0].rules[0].value).to.equal('Test Value');

@@ -33223,8 +33223,8 @@ var QueryBuilder = function QueryBuilder(_ref) {
       _ref$translations = _ref.translations,
       translations = _ref$translations === void 0 ? defaultTranslations : _ref$translations,
       controlElements = _ref.controlElements,
-      defaultField = _ref.defaultField,
-      defaultValue = _ref.defaultValue,
+      getDefaultField = _ref.getDefaultField,
+      getDefaultValue = _ref.getDefaultValue,
       getOperators = _ref.getOperators,
       getValueEditorType = _ref.getValueEditorType,
       getInputType = _ref.getInputType,
@@ -33250,11 +33250,11 @@ var QueryBuilder = function QueryBuilder(_ref) {
   var createRule = function createRule() {
     var field = fields[0].name;
 
-    if (defaultField) {
-      if (typeof defaultField === 'string') {
-        field = defaultField;
+    if (getDefaultField) {
+      if (typeof getDefaultField === 'string') {
+        field = getDefaultField;
       } else {
-        field = defaultField(fields);
+        field = getDefaultField(fields);
       }
     }
 
@@ -33327,7 +33327,7 @@ var QueryBuilder = function QueryBuilder(_ref) {
     return operators;
   };
 
-  var getRuleDefaultValue = defaultValue !== null && defaultValue !== void 0 ? defaultValue : function (rule) {
+  var getRuleDefaultValue = getDefaultValue !== null && getDefaultValue !== void 0 ? getDefaultValue : function (rule) {
     var value = '';
     var values = getValuesMain(rule.field, rule.operator);
 

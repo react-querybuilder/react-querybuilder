@@ -318,13 +318,13 @@ This is a callback function invoked to get the `type` of `<input />` for the giv
 
 This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
-#### `defaultField` _(Optional)_
+#### `getDefaultField` _(Optional)_
 
 `string | ((fieldsData: Field[]) => string)`
 
 The default field for new rules.  This can be a string identifying the default field, or a function that returns a field name.
 
-#### `defaultValue` _(Optional)_
+#### `getDefaultValue` _(Optional)_
 
 `(rule: Rule) => any`
 
