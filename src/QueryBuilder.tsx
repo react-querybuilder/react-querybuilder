@@ -134,7 +134,10 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   };
 
   const createRule = (): RuleType => {
-    let field = fields[0].name;
+    let field = '';
+    if (fields && fields[0]) {
+      field = fields[0].name
+    }
     if (getDefaultField) {
       if (typeof getDefaultField === 'string') {
         field = getDefaultField;
