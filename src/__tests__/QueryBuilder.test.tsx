@@ -89,6 +89,27 @@ describe('<QueryBuilder />', () => {
     });
   });
 
+  describe('when initial query, without fields, is provided create rule should work', () => {
+    let wrapper: ReactWrapper;
+
+    beforeEach(() => {
+      const newProps = cloneDeep(props);
+      delete newProps.fields;
+      act(() => {
+        wrapper = mount(<QueryBuilder {...newProps} />);
+      });
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+    });
+
+    it('should be able to create rule on add rule click', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      expect(wrapper.find(Rule).length).to.eq(1);
+    });
+  });
+
   describe('when initial query, without ID, is provided', () => {
     let wrapper: ReactWrapper;
     const queryWithoutID = {
