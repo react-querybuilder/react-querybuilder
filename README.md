@@ -1,6 +1,6 @@
 # react-querybuilder
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
@@ -624,6 +624,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/srinivasdamam"><img src="https://avatars0.githubusercontent.com/u/13461208?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Srinivas Damam</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=srinivasdamam" title="Code">💻</a></td>
     <td align="center"><a href="https://matthewreishus.com/"><img src="https://avatars3.githubusercontent.com/u/937354?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matthew Reishus</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=mreishus" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/duwalanise"><img src="https://avatars2.githubusercontent.com/u/7278569?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anish Duwal</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=duwalanise" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=duwalanise" title="Tests">⚠️</a></td>
   </tr>
 </table>
 

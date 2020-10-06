@@ -98,6 +98,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "duwalanise",
+      "name": "Anish Duwal",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7278569?v=4",
+      "profile": "https://github.com/duwalanise",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7
