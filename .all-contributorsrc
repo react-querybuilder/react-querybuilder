@@ -1,0 +1,26 @@
+{
+  "projectName": "react-querybuilder",
+  "projectOwner": "sapientglobalmarkets",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "jakeboone02",
+      "name": "Jake Boone",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/366438?v=4",
+      "profile": "https://github.com/jakeboone02",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
