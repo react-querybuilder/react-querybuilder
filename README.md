@@ -1,6 +1,6 @@
 # react-querybuilder
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
@@ -617,6 +617,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://quicklens.app/"><img src="https://avatars0.githubusercontent.com/u/156846?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pavan Podila</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=pavanpodila" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=pavanpodila" title="Documentation">📖</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=pavanpodila" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/maniax89"><img src="https://avatars2.githubusercontent.com/u/6325237?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Andrew Turgeon</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=maniax89" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=maniax89" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/miphe"><img src="https://avatars2.githubusercontent.com/u/393147?v=4?s=100" width="100px;" alt=""/><br /><sub><b>André Drougge</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=miphe" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=miphe" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/oumar-sh"><img src="https://avatars0.githubusercontent.com/u/10144493?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Oumar Sharif DAMBABA</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=oumar-sh" title="Code">💻</a></td>
   </tr>
 </table>
 
