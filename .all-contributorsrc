@@ -126,6 +126,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "vitorhsb",
+      "name": "Vitor Barbosa",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/86801?v=4",
+      "profile": "http://vitorbarbosa.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
