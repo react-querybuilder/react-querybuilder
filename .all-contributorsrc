@@ -173,6 +173,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "fabioespinosa",
+      "name": "Fabio Espinosa",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10719524?v=4",
+      "profile": "https://github.com/fabioespinosa",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7
