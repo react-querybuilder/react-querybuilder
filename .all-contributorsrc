@@ -164,6 +164,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "geekayush",
+      "name": "Ayush Srivastava",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/22499864?v=4",
+      "profile": "https://geekayush.github.io/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
