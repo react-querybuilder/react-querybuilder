@@ -135,6 +135,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lakk1",
+      "name": "Laxminarayana",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/9366737?v=4",
+      "profile": "https://github.com/lakk1",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
