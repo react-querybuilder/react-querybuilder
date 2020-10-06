@@ -145,6 +145,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "kkkrist",
+      "name": "Christian Mund",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3873068?v=4",
+      "profile": "https://mundpropaganda.net/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
