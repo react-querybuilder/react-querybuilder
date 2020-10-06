@@ -184,6 +184,17 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "bubenkoff",
+      "name": "Anatoly Bubenkov",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/427136?v=4",
+      "profile": "https://careers.stackoverflow.com/bubenkoff",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7
