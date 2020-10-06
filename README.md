@@ -16,6 +16,7 @@
 - [Development](#development)
   - [Changelog Generation](#changelog-generation)
 - [Credits](#credits)
+- [Contributors](#contributors-)
 
 ![Screenshot](_assets/screenshot.png)
 
