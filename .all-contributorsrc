@@ -89,6 +89,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mreishus",
+      "name": "Matthew Reishus",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/937354?v=4",
+      "profile": "https://matthewreishus.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
