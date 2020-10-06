@@ -60,6 +60,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "artenator",
+      "name": "Arte Ebrahimi",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1946019?v=4",
+      "profile": "https://github.com/artenator",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7
