@@ -1,8 +1,7 @@
 # react-querybuilder
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
 [![codecov.io](https://codecov.io/github/sapientglobalmarkets/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/sapientglobalmarkets/react-querybuilder?branch=master)
@@ -615,6 +614,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/jakeboone02"><img src="https://avatars1.githubusercontent.com/u/366438?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jake Boone</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=jakeboone02" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=jakeboone02" title="Documentation">📖</a> <a href="#maintenance-jakeboone02" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://quicklens.app/"><img src="https://avatars0.githubusercontent.com/u/156846?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pavan Podila</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=pavanpodila" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=pavanpodila" title="Documentation">📖</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=pavanpodila" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
