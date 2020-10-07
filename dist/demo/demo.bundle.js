@@ -33248,7 +33248,11 @@ var QueryBuilder = function QueryBuilder(_ref) {
   };
 
   var createRule = function createRule() {
-    var field = fields[0].name;
+    var field = '';
+
+    if (fields && fields[0]) {
+      field = fields[0].name;
+    }
 
     if (getDefaultField) {
       if (typeof getDefaultField === 'string') {
