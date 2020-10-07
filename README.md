@@ -1,6 +1,6 @@
 # react-querybuilder
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
@@ -637,6 +637,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://geekayush.github.io/"><img src="https://avatars2.githubusercontent.com/u/22499864?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ayush Srivastava</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=geekayush" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/fabioespinosa"><img src="https://avatars2.githubusercontent.com/u/10719524?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Fabio Espinosa</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=fabioespinosa" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=fabioespinosa" title="Documentation">📖</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=fabioespinosa" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://careers.stackoverflow.com/bubenkoff"><img src="https://avatars0.githubusercontent.com/u/427136?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anatoly Bubenkov</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=bubenkoff" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=bubenkoff" title="Documentation">📖</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=bubenkoff" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/saurabhnemade"><img src="https://avatars0.githubusercontent.com/u/17445338?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Saurabh Nemade</b></sub></a><br /><a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=saurabhnemade" title="Code">💻</a> <a href="https://github.com/sapientglobalmarkets/react-querybuilder/commits?author=saurabhnemade" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
