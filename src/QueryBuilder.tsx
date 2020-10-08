@@ -1,3 +1,4 @@
+import arrayFind from 'array-find';
 import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
 import { nanoid } from 'nanoid';
@@ -53,10 +54,6 @@ const defaultTranslations: Translations = {
 };
 
 const defaultOperators: NameLabelPair[] = [
-  { name: 'null', label: 'is null' },
-  { name: 'notNull', label: 'is not null' },
-  { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' },
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
@@ -68,7 +65,11 @@ const defaultOperators: NameLabelPair[] = [
   { name: 'endsWith', label: 'ends with' },
   { name: 'doesNotContain', label: 'does not contain' },
   { name: 'doesNotBeginWith', label: 'does not begin with' },
-  { name: 'doesNotEndWith', label: 'does not end with' }
+  { name: 'doesNotEndWith', label: 'does not end with' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' }
 ];
 
 const defaultCombinators: NameLabelPair[] = [
@@ -106,7 +107,7 @@ const defaultControlElements: Controls = {
   rule: Rule
 };
 
-export const QueryBuilder: React.FC<QueryBuilderProps> = ({
+export const QueryBuilder = ({
   query,
   fields = [],
   operators = defaultOperators,
@@ -125,7 +126,7 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   showNotToggle = false,
   resetOnFieldChange = true,
   resetOnOperatorChange = false
-}) => {
+}: QueryBuilderProps) => {
   /**
    * Gets the initial query
    */
@@ -136,7 +137,7 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   const createRule = (): RuleType => {
     let field = '';
     if (fields && fields[0]) {
-      field = fields[0].name
+      field = fields[0].name;
     }
     if (getDefaultField) {
       if (typeof getDefaultField === 'string') {
@@ -237,12 +238,11 @@ export const QueryBuilder: React.FC<QueryBuilderProps> = ({
   const onRuleAdd = (rule: RuleType, parentId: string) => {
     const rootCopy = cloneDeep(root);
     const parent = findRule(parentId, rootCopy) as RuleGroupType;
+    const fieldData = arrayFind(fields, (f) => f.name === rule.field);
+    const value = fieldData?.defaultValue ?? getRuleDefaultValue(rule);
     /* istanbul ignore else */
     if (parent) {
-      parent.rules.push({
-        ...rule,
-        value: getRuleDefaultValue(rule)
-      });
+      parent.rules.push({ ...rule, value });
       setRoot(rootCopy);
       _notifyQueryChange(rootCopy);
     }

@@ -8,7 +8,7 @@ import { ActionElement } from '../controls';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
-import { QueryBuilderProps, RuleGroupType } from '../types';
+import { Field, QueryBuilderProps, RuleGroupType } from '../types';
 
 describe('<QueryBuilder />', () => {
   const props: QueryBuilderProps = {
@@ -124,7 +124,7 @@ describe('<QueryBuilder />', () => {
       ]
     };
 
-    const fields = [
+    const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
@@ -235,7 +235,7 @@ describe('<QueryBuilder />', () => {
       { name: 'notIn', label: 'Not In' }
     ];
 
-    const fields = [
+    const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
@@ -279,7 +279,7 @@ describe('<QueryBuilder />', () => {
   describe('when getOperators fn prop is provided', () => {
     let wrapper: ReactWrapper, getOperators;
 
-    const fields = [
+    const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
@@ -327,14 +327,14 @@ describe('<QueryBuilder />', () => {
         <QueryBuilder {...props} query={query} fields={fields} getOperators={() => null} />
       );
       const operators = wrapper.find('.rule-operators option');
-      expect(operators.first().props().value).to.equal('null');
+      expect(operators.first().props().value).to.equal('=');
     });
   });
 
   describe('when getValueEditorType fn prop is provided', () => {
     let wrapper: ReactWrapper, getValueEditorType;
 
-    const fields = [
+    const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
@@ -388,7 +388,7 @@ describe('<QueryBuilder />', () => {
   describe('when getInputType fn prop is provided', () => {
     let wrapper: ReactWrapper, getInputType;
 
-    const fields = [
+    const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
@@ -438,7 +438,7 @@ describe('<QueryBuilder />', () => {
     let wrapper: ReactWrapper, getValues;
     const getValueEditorType = (field: string, operator: string) => 'select' as 'select';
 
-    const fields = [
+    const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' }
@@ -499,7 +499,7 @@ describe('<QueryBuilder />', () => {
 
   describe('actions', () => {
     let wrapper: ReactWrapper, onQueryChange;
-    const fields = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' }
     ];
@@ -624,7 +624,7 @@ describe('<QueryBuilder />', () => {
 
   describe('resetOnFieldChange prop', () => {
     let wrapper: ReactWrapper, onQueryChange;
-    const fields = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' }
     ];
@@ -656,7 +656,7 @@ describe('<QueryBuilder />', () => {
 
       expect(onQueryChange.getCall(3).args[0].rules[0].operator).to.equal('>');
       expect(onQueryChange.getCall(3).args[0].rules[0].value).to.equal('Test');
-      expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('null');
+      expect(onQueryChange.getCall(4).args[0].rules[0].operator).to.equal('=');
       expect(onQueryChange.getCall(4).args[0].rules[0].value).to.equal('');
     });
 
@@ -685,7 +685,7 @@ describe('<QueryBuilder />', () => {
 
   describe('resetOnOperatorChange prop', () => {
     let wrapper: ReactWrapper, onQueryChange;
-    const fields = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' }
     ];
@@ -747,7 +747,7 @@ describe('<QueryBuilder />', () => {
 
   describe('getDefaultField prop', () => {
     let wrapper: ReactWrapper, onQueryChange;
-    const fields = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' }
     ];
@@ -775,11 +775,11 @@ describe('<QueryBuilder />', () => {
 
       expect(onQueryChange.getCall(1).args[0].rules[0].field).to.equal('field2');
     });
-  })
+  });
 
   describe('getDefaultValue prop', () => {
     let wrapper: ReactWrapper, onQueryChange;
-    const fields = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' }
     ];
@@ -800,5 +800,137 @@ describe('<QueryBuilder />', () => {
 
       expect(onQueryChange.getCall(1).args[0].rules[0].value).to.equal('Test Value');
     });
-  })
+  });
+
+  describe('defaultValue property in field', () => {
+    let wrapper: ReactWrapper, onQueryChange;
+    const fields: Field[] = [
+      { name: 'field1', label: 'Field 1', defaultValue: 'Test Value 1' },
+      { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('sets the default value', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onQueryChange.getCall(1).args[0].rules[0].value).to.equal('Test Value 1');
+    });
+  });
+
+  describe('values property in field', () => {
+    let wrapper: ReactWrapper, onQueryChange;
+    const fields: Field[] = [
+      {
+        name: 'field1',
+        label: 'Field 1',
+        defaultValue: 'test',
+        values: [{ name: 'test', label: 'Test' }]
+      },
+      {
+        name: 'field2',
+        label: 'Field 2',
+        defaultValue: 'test',
+        values: [{ name: 'test', label: 'Test' }]
+      }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('sets the values list', () => {
+      wrapper.setProps({ getValueEditorType: () => 'select' });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(wrapper.find('select.rule-value')).to.have.length(1);
+    });
+  });
+
+  describe('inputType property in field', () => {
+    let wrapper: ReactWrapper, onQueryChange;
+    const fields: Field[] = [
+      { name: 'field1', label: 'Field 1', inputType: 'number' },
+      { name: 'field2', label: 'Field 2', inputType: 'date' }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('sets the input type', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(wrapper.find('input[type="number"].rule-value')).to.have.length(1);
+    });
+  });
+
+  describe('valueEditorType property in field', () => {
+    let wrapper: ReactWrapper, onQueryChange;
+    const fields: Field[] = [
+      { name: 'field1', label: 'Field 1', valueEditorType: 'select' },
+      { name: 'field2', label: 'Field 2', valueEditorType: null }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('sets the value editor type', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(wrapper.find('select.rule-value')).to.have.length(1);
+    });
+  });
+
+  describe('operators property in field', () => {
+    let wrapper: ReactWrapper, onQueryChange;
+    const fields: Field[] = [
+      { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
+      { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = sinon.spy();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.resetHistory();
+    });
+
+    it('sets the value editor type', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(wrapper.find('select.rule-operators')).to.have.length(1);
+      expect(wrapper.find('select.rule-operators option')).to.have.length(1);
+    });
+  });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NotToggleProps } from '../types';
 
-const NotToggle: React.FC<NotToggleProps> = ({ className, handleOnChange, title, checked }) => {
+const NotToggle = ({ className, handleOnChange, title, checked }: NotToggleProps) => {
   return (
     <label className={className} title={title}>
       <input

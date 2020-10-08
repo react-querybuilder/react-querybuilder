@@ -7,6 +7,11 @@ export interface NameLabelPair {
 
 export interface Field extends NameLabelPair {
   id?: string;
+  operators?: NameLabelPair[];
+  valueEditorType?: ValueEditorType;
+  inputType?: string | null;
+  values?: NameLabelPair[];
+  defaultValue?: any;
   [x: string]: any;
 }
 
@@ -28,7 +33,7 @@ export type ExportFormat = 'json' | 'sql' | 'json_without_ids' | 'parameterized'
 
 export type ValueProcessor = (field: string, operator: string, value: any) => string;
 
-export type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';
+export type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio' | null;
 
 export interface CommonProps {
   /**
@@ -92,7 +97,7 @@ export interface ValueEditorProps extends SelectorEditorProps {
   fieldData?: Field;
   operator?: string;
   type?: ValueEditorType;
-  inputType?: string;
+  inputType?: string | null;
   values?: any[];
 }
 
@@ -174,8 +179,8 @@ export interface Schema {
   createRuleGroup(): RuleGroupType;
   getLevel(id: string): number;
   getOperators(field: string): Field[];
-  getValueEditorType(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
-  getInputType(field: string, operator: string): string;
+  getValueEditorType(field: string, operator: string): ValueEditorType;
+  getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
   onGroupAdd(group: RuleGroupType, parentId: string): void;
@@ -294,14 +299,14 @@ export interface QueryBuilderProps {
    * This is a callback function invoked to get the type of `ValueEditor`
    * for the given field and operator.
    */
-  getValueEditorType?(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio' | null;
+  getValueEditorType?(field: string, operator: string): ValueEditorType;
   /**
    * This is a callback function invoked to get the `type` of `<input />`
    * for the given field and operator (only applicable when
    * `getValueEditorType` returns `"text"` or a falsy value). If no
    * function is provided, `"text"` is used as the default.
    */
-  getInputType?(field: string, operator: string): string;
+  getInputType?(field: string, operator: string): string | null;
   /**
    * This is a callback function invoked to get the list of allowed
    * values for the given field and operator (only applicable when

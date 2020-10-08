@@ -57,7 +57,7 @@ const fields = [
   { name: 'phone', label: 'Phone' },
   { name: 'email', label: 'Email' },
   { name: 'twitter', label: 'Twitter' },
-  { name: 'isDev', label: 'Is a Developer?', value: false }
+  { name: 'isDev', label: 'Is a Developer?', defaultValue: false }
 ];
 
 const dom = <QueryBuilder fields={fields} onQueryChange={logQuery} />;
@@ -83,13 +83,20 @@ The initial query, in JSON form (follows the same format as the parameter passed
 
 #### `fields` _(Required)_
 
-`{name: string, label: string, id?: string}[]`
+The array of fields that should be used. Each field should be an object with the following signature:
 
-The array of fields that should be used. Each field should be an object with at least:
-
-`{name: string, label: string}`
-
-The `id` is optional. If you do not provide an `id` for a field then the `name` will be used.
+```ts
+interface Field {
+  id?: string; // The field identifier (if not provided, then `name` will be used)
+  name: string; // REQUIRED - the field name
+  label: string; // REQUIRED - the field label
+  operators?: { name: string; label: string; }[]; // Array of operators (if not provided, then `getOperators()` will be used)
+  valueEditorType?: 'text' | 'select' | 'checkbox' | 'radio' | null; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
+  inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
+  values?: { name: string; label: string; }[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
+  defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
+}
+```
 
 Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements-optional)).
 
@@ -101,10 +108,6 @@ The array of operators that should be used. The default operators include:
 
 ```js
 [
-  { name: 'null', label: 'is null' },
-  { name: 'notNull', label: 'is not null' },
-  { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' },
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
@@ -116,7 +119,11 @@ The array of operators that should be used. The default operators include:
   { name: 'endsWith', label: 'ends with' },
   { name: 'doesNotContain', label: 'does not contain' },
   { name: 'doesNotBeginWith', label: 'does not begin with' },
-  { name: 'doesNotEndWith', label: 'does not end with' }
+  { name: 'doesNotEndWith', label: 'does not end with' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' }
 ];
 ```
 
@@ -374,19 +381,19 @@ This can be used to assign specific `CSS` classes to various controls that are c
 
 ```js
 {
-    queryBuilder: string, // Root <div> element
-    ruleGroup: string, // <div> containing the RuleGroup
-    header: string, // <div> containing the RuleGroup header controls
-    combinators: string, // <select> control for combinators
-    addRule: string, // <button> to add a Rule
-    addGroup: string, // <button> to add a RuleGroup
-    removeGroup: string, // <button> to remove a RuleGroup
-    notToggle: string, // <label> on the "not" toggle
-    rule: string, // <div> containing the Rule
-    fields: string, // <select> control for fields
-    operators: string, // <select> control for operators
-    value: string, // <input> for the field value
-    removeRule: string // <button> to remove a Rule
+  queryBuilder: string, // Root <div> element
+  ruleGroup: string, // <div> containing the RuleGroup
+  header: string, // <div> containing the RuleGroup header controls
+  combinators: string, // <select> control for combinators
+  addRule: string, // <button> to add a Rule
+  addGroup: string, // <button> to add a RuleGroup
+  removeGroup: string, // <button> to remove a RuleGroup
+  notToggle: string, // <label> on the "not" toggle
+  rule: string, // <div> containing the Rule
+  fields: string, // <select> control for fields
+  operators: string, // <select> control for operators
+  value: string, // <input> for the field value
+  removeRule: string // <button> to remove a Rule
 }
 ```
 
@@ -396,37 +403,37 @@ This can be used to override translatable texts applied to various controls that
 
 ```js
 {
-    fields: {
-        title: "Fields",
-    },
-    operators: {
-        title: "Operators",
-    },
-    value: {
-        title: "Value",
-    },
-    removeRule: {
-        label: "x",
-        title: "Remove rule",
-    },
-    removeGroup: {
-        label: "x",
-        title: "Remove group",
-    },
-    addRule: {
-        label: "+Rule",
-        title: "Add rule",
-    },
-    addGroup: {
-        label: "+Group",
-        title: "Add group",
-    },
-    combinators: {
-        title: "Combinators",
-    },
-    notToggle: {
-        title: "Invert this group",
-    }
+  fields: {
+    title: "Fields",
+  },
+  operators: {
+    title: "Operators",
+  },
+  value: {
+    title: "Value",
+  },
+  removeRule: {
+    label: "x",
+    title: "Remove rule",
+  },
+  removeGroup: {
+    label: "x",
+    title: "Remove group",
+  },
+  addRule: {
+    label: "+Rule",
+    title: "Add rule",
+  },
+  addGroup: {
+    label: "+Group",
+    title: "Add group",
+  },
+  combinators: {
+    title: "Combinators",
+  },
+  notToggle: {
+    title: "Invert this group",
+  }
 }
 ```
 

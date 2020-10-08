@@ -1,7 +1,7 @@
 import React from 'react';
 import { ValueEditorProps } from '../types';
 
-const ValueEditor: React.FC<ValueEditorProps> = ({
+const ValueEditor = ({
   operator,
   value,
   handleOnChange,
@@ -10,7 +10,7 @@ const ValueEditor: React.FC<ValueEditorProps> = ({
   type,
   inputType,
   values
-}) => {
+}: ValueEditorProps) => {
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
