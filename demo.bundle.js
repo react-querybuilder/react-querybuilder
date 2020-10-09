@@ -81,25 +81,25 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./demo/main.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./demo/main.tsx");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./demo/main.js":
-/*!**********************!*\
-  !*** ./demo/main.js ***!
-  \**********************/
+/***/ "./demo/main.tsx":
+/*!***********************!*\
+  !*** ./demo/main.tsx ***!
+  \***********************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _src__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src */ "./src/index.ts");
 /* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
 /* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4__);
@@ -130,13 +130,37 @@ var preparedFields = {
   }],
   secondary: [{
     name: 'age',
-    label: 'Age'
+    label: 'Age',
+    inputType: 'number'
   }, {
     name: 'isMusician',
-    label: 'Is a musician'
+    label: 'Is a musician',
+    valueEditorType: 'checkbox',
+    operators: [{
+      name: '=',
+      label: 'is'
+    }]
   }, {
     name: 'instrument',
-    label: 'Instrument'
+    label: 'Instrument',
+    valueEditorType: 'select',
+    values: [{
+      name: 'Guitar',
+      label: 'Guitar'
+    }, {
+      name: 'Piano',
+      label: 'Piano'
+    }, {
+      name: 'Vocals',
+      label: 'Vocals'
+    }, {
+      name: 'Drums',
+      label: 'Drums'
+    }],
+    operators: [{
+      name: '=',
+      label: 'is'
+    }]
   }],
   generic: [{
     name: 'firstName',
@@ -146,10 +170,22 @@ var preparedFields = {
     label: 'Last name'
   }, {
     name: 'age',
-    label: 'Age'
+    label: 'Age',
+    inputType: 'number'
   }, {
     name: 'gender',
-    label: 'Gender'
+    label: 'Gender',
+    valueEditorType: 'radio',
+    values: [{
+      name: 'M',
+      label: 'Male'
+    }, {
+      name: 'F',
+      label: 'Female'
+    }, {
+      name: 'O',
+      label: 'Other'
+    }]
   }, {
     name: 'height',
     label: 'Height'
@@ -160,14 +196,14 @@ var preparedFields = {
 };
 var preparedQueries = {
   primary: {
-    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
     rules: [{
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       field: 'firstName',
       value: 'Steve',
       operator: '='
     }, {
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -176,20 +212,20 @@ var preparedQueries = {
     not: false
   },
   secondary: {
-    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
     rules: [{
       field: 'age',
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       operator: '>',
       value: '28'
     }, {
       field: 'isMusician',
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       operator: '=',
       value: true
     }, {
       field: 'instrument',
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       operator: '=',
       value: 'Guitar'
     }],
@@ -197,125 +233,51 @@ var preparedQueries = {
     not: false
   },
   generic: {
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
     combinator: 'and',
     not: false,
     rules: []
   }
 };
 
-var getOperators = function getOperators(field) {
-  switch (field) {
-    case 'instrument':
-    case 'isMusician':
-      return [{
-        name: '=',
-        label: 'is'
-      }];
-
-    default:
-      return null;
-  }
-};
-
-var getValueEditorType = function getValueEditorType(field, operator) {
-  switch (field) {
-    case 'gender':
-      return 'radio';
-
-    case 'instrument':
-      return 'select';
-
-    case 'isMusician':
-      return 'checkbox';
-
-    default:
-      return 'text';
-  }
-};
-
-var getInputType = function getInputType(field, operator) {
-  switch (field) {
-    case 'age':
-      return 'number';
-
-    default:
-      return 'text';
-  }
-};
-
-var getValues = function getValues(field, operator) {
-  switch (field) {
-    case 'instrument':
-      return [{
-        name: 'Guitar',
-        label: 'Guitar'
-      }, {
-        name: 'Piano',
-        label: 'Piano'
-      }, {
-        name: 'Vocals',
-        label: 'Vocals'
-      }, {
-        name: 'Drums',
-        label: 'Drums'
-      }];
-
-    case 'gender':
-      return [{
-        name: 'M',
-        label: 'Male'
-      }, {
-        name: 'F',
-        label: 'Female'
-      }, {
-        name: 'O',
-        label: 'Other'
-      }];
-
-    default:
-      return [];
-  }
-};
-
 var RootView = function RootView() {
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(preparedQueries.primary),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(preparedQueries.primary),
       _useState2 = _slicedToArray(_useState, 2),
       query = _useState2[0],
       setQuery = _useState2[1];
 
-  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(preparedFields.primary),
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(preparedFields.primary),
       _useState4 = _slicedToArray(_useState3, 2),
       fields = _useState4[0],
       setFields = _useState4[1];
 
-  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])('json'),
+  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])('json'),
       _useState6 = _slicedToArray(_useState5, 2),
       format = _useState6[0],
       setFormat = _useState6[1];
 
-  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
       _useState8 = _slicedToArray(_useState7, 2),
       showCombinatorsBetweenRules = _useState8[0],
       setShowCombinatorsBetweenRules = _useState8[1];
 
-  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
       _useState10 = _slicedToArray(_useState9, 2),
       showNotToggle = _useState10[0],
       setShowNotToggle = _useState10[1];
 
-  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true),
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(true),
       _useState12 = _slicedToArray(_useState11, 2),
       resetOnFieldChange = _useState12[0],
       setResetOnFieldChange = _useState12[1];
 
-  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
       _useState14 = _slicedToArray(_useState13, 2),
       resetOnOperatorChange = _useState14[0],
       setResetOnOperatorChange = _useState14[1];
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
-   * @param {"primary"|"secondary"} target The target query
    */
 
 
@@ -340,101 +302,97 @@ var RootView = function RootView() {
   }), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, {
     format: format
   });
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "flex-box-outer"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "control-panel"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     onClick: function onClick() {
       return loadQuery('primary');
     }
-  }, "Load primary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+  }, "Load primary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     onClick: function onClick() {
       return loadQuery('secondary');
     }
-  }, "Load secondary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+  }, "Load secondary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     onClick: function onClick() {
       return loadQuery();
     }
-  }, "Clear query")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, "Clear query")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "flex-box"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "scroll"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_3__["default"], {
     query: query,
     fields: fields,
     controlClassnames: {
       fields: 'form-control'
     },
     onQueryChange: handleQueryChange,
-    getOperators: getOperators,
-    getValueEditorType: getValueEditorType,
-    getInputType: getInputType,
-    getValues: getValues,
     showCombinatorsBetweenRules: showCombinatorsBetweenRules,
     showNotToggle: showNotToggle,
     resetOnFieldChange: resetOnFieldChange,
     resetOnOperatorChange: resetOnOperatorChange
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "shrink query-log scroll"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Options"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h4", null, "Options"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: showCombinatorsBetweenRules,
     onChange: function onChange(e) {
       return setShowCombinatorsBetweenRules(e.target.checked);
     }
-  }), "Show combinators between rules")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "Show combinators between rules")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: showNotToggle,
     onChange: function onChange(e) {
       return setShowNotToggle(e.target.checked);
     }
-  }), "Show \"not\" toggle")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "Show \"not\" toggle")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: resetOnFieldChange,
     onChange: function onChange(e) {
       return setResetOnFieldChange(e.target.checked);
     }
-  }), "Reset rule on field change")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "Reset rule on field change")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: resetOnOperatorChange,
     onChange: function onChange(e) {
       return setResetOnOperatorChange(e.target.checked);
     }
-  }), "Reset rule on operator change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }), "Reset rule on operator change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-between',
       flexDirection: 'column'
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'json',
     onChange: function onChange() {
       return setFormat('json');
     }
-  }), "JSON"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "JSON"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'json_without_ids',
     onChange: function onChange() {
       return setFormat('json_without_ids');
     }
-  }), "JSON Without IDs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "JSON Without IDs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'sql',
     onChange: function onChange() {
       return setFormat('sql');
     }
-  }), "SQL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "SQL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'parameterized',
     onChange: function onChange() {
       return setFormat('parameterized');
     }
-  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, formatString))));
+  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("pre", null, formatString))));
 };
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));
+react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RootView, null), document.querySelector('.container'));
 
 /***/ }),
 
@@ -33055,19 +33013,21 @@ module.exports = function(module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "QueryBuilder", function() { return QueryBuilder; });
-/* harmony import */ var array_find_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! array-find-index */ "./node_modules/array-find-index/index.js");
-/* harmony import */ var array_find_index__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(array_find_index__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash/cloneDeep */ "./node_modules/lodash/cloneDeep.js");
-/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
-/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
-/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(object_assign__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./controls */ "./src/controls/index.ts");
-/* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Rule */ "./src/Rule.tsx");
-/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.tsx");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils */ "./src/utils/index.ts");
+/* harmony import */ var array_find__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! array-find */ "./node_modules/array-find/find.js");
+/* harmony import */ var array_find__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(array_find__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var array_find_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! array-find-index */ "./node_modules/array-find-index/index.js");
+/* harmony import */ var array_find_index__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(array_find_index__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash/cloneDeep */ "./node_modules/lodash/cloneDeep.js");
+/* harmony import */ var lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
+/* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(object_assign__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./controls */ "./src/controls/index.ts");
+/* harmony import */ var _Rule__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Rule */ "./src/Rule.tsx");
+/* harmony import */ var _RuleGroup__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RuleGroup */ "./src/RuleGroup.tsx");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils */ "./src/utils/index.ts");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -33085,6 +33045,7 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -33129,18 +33090,6 @@ var defaultTranslations = {
   }
 };
 var defaultOperators = [{
-  name: 'null',
-  label: 'is null'
-}, {
-  name: 'notNull',
-  label: 'is not null'
-}, {
-  name: 'in',
-  label: 'in'
-}, {
-  name: 'notIn',
-  label: 'not in'
-}, {
   name: '=',
   label: '='
 }, {
@@ -33176,6 +33125,18 @@ var defaultOperators = [{
 }, {
   name: 'doesNotEndWith',
   label: 'does not end with'
+}, {
+  name: 'null',
+  label: 'is null'
+}, {
+  name: 'notNull',
+  label: 'is not null'
+}, {
+  name: 'in',
+  label: 'in'
+}, {
+  name: 'notIn',
+  label: 'not in'
 }];
 var defaultCombinators = [{
   name: 'and',
@@ -33200,17 +33161,17 @@ var defaultControlClassnames = {
   removeRule: ''
 };
 var defaultControlElements = {
-  addGroupAction: _controls__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-  removeGroupAction: _controls__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-  addRuleAction: _controls__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-  removeRuleAction: _controls__WEBPACK_IMPORTED_MODULE_5__["ActionElement"],
-  combinatorSelector: _controls__WEBPACK_IMPORTED_MODULE_5__["ValueSelector"],
-  fieldSelector: _controls__WEBPACK_IMPORTED_MODULE_5__["ValueSelector"],
-  operatorSelector: _controls__WEBPACK_IMPORTED_MODULE_5__["ValueSelector"],
-  valueEditor: _controls__WEBPACK_IMPORTED_MODULE_5__["ValueEditor"],
-  notToggle: _controls__WEBPACK_IMPORTED_MODULE_5__["NotToggle"],
-  ruleGroup: _RuleGroup__WEBPACK_IMPORTED_MODULE_7__["RuleGroup"],
-  rule: _Rule__WEBPACK_IMPORTED_MODULE_6__["Rule"]
+  addGroupAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  removeGroupAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  addRuleAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  removeRuleAction: _controls__WEBPACK_IMPORTED_MODULE_6__["ActionElement"],
+  combinatorSelector: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueSelector"],
+  fieldSelector: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueSelector"],
+  operatorSelector: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueSelector"],
+  valueEditor: _controls__WEBPACK_IMPORTED_MODULE_6__["ValueEditor"],
+  notToggle: _controls__WEBPACK_IMPORTED_MODULE_6__["NotToggle"],
+  ruleGroup: _RuleGroup__WEBPACK_IMPORTED_MODULE_8__["RuleGroup"],
+  rule: _Rule__WEBPACK_IMPORTED_MODULE_7__["Rule"]
 };
 var QueryBuilder = function QueryBuilder(_ref) {
   var query = _ref.query,
@@ -33223,6 +33184,8 @@ var QueryBuilder = function QueryBuilder(_ref) {
       _ref$translations = _ref.translations,
       translations = _ref$translations === void 0 ? defaultTranslations : _ref$translations,
       controlElements = _ref.controlElements,
+      getDefaultField = _ref.getDefaultField,
+      getDefaultValue = _ref.getDefaultValue,
       getOperators = _ref.getOperators,
       getValueEditorType = _ref.getValueEditorType,
       getInputType = _ref.getInputType,
@@ -33242,13 +33205,26 @@ var QueryBuilder = function QueryBuilder(_ref) {
    * Gets the initial query
    */
   var getInitialQuery = function getInitialQuery() {
-    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_8__["generateValidQuery"])(query) || createRuleGroup();
+    return query && Object(_utils__WEBPACK_IMPORTED_MODULE_9__["generateValidQuery"])(query) || createRuleGroup();
   };
 
   var createRule = function createRule() {
-    var field = fields[0].name;
+    var field = '';
+
+    if (fields && fields[0]) {
+      field = fields[0].name;
+    }
+
+    if (getDefaultField) {
+      if (typeof getDefaultField === 'string') {
+        field = getDefaultField;
+      } else {
+        field = getDefaultField(fields);
+      }
+    }
+
     return {
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_3__["nanoid"])()),
       field: field,
       value: '',
       operator: getOperatorsMain(field)[0].name
@@ -33257,7 +33233,7 @@ var QueryBuilder = function QueryBuilder(_ref) {
 
   var createRuleGroup = function createRuleGroup() {
     return {
-      id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_3__["nanoid"])()),
       rules: [],
       combinator: combinators[0].name,
       not: false
@@ -33316,7 +33292,7 @@ var QueryBuilder = function QueryBuilder(_ref) {
     return operators;
   };
 
-  var getRuleDefaultValue = function getRuleDefaultValue(rule) {
+  var getRuleDefaultValue = getDefaultValue !== null && getDefaultValue !== void 0 ? getDefaultValue : function (rule) {
     var value = '';
     var values = getValuesMain(rule.field, rule.operator);
 
@@ -33336,15 +33312,20 @@ var QueryBuilder = function QueryBuilder(_ref) {
    * Adds a rule to the query
    */
 
-
   var onRuleAdd = function onRuleAdd(rule, parentId) {
-    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(root);
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_8__["findRule"])(parentId, rootCopy);
+    var _fieldData$defaultVal;
+
+    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default()(root);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
+    var fieldData = array_find__WEBPACK_IMPORTED_MODULE_0___default()(fields, function (f) {
+      return f.name === rule.field;
+    });
+    var value = (_fieldData$defaultVal = fieldData === null || fieldData === void 0 ? void 0 : fieldData.defaultValue) !== null && _fieldData$defaultVal !== void 0 ? _fieldData$defaultVal : getRuleDefaultValue(rule);
     /* istanbul ignore else */
 
     if (parent) {
       parent.rules.push(_objectSpread(_objectSpread({}, rule), {}, {
-        value: getRuleDefaultValue(rule)
+        value: value
       }));
       setRoot(rootCopy);
 
@@ -33357,8 +33338,8 @@ var QueryBuilder = function QueryBuilder(_ref) {
 
 
   var onGroupAdd = function onGroupAdd(group, parentId) {
-    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(root);
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_8__["findRule"])(parentId, rootCopy);
+    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default()(root);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
     /* istanbul ignore else */
 
     if (parent) {
@@ -33370,15 +33351,15 @@ var QueryBuilder = function QueryBuilder(_ref) {
   };
 
   var onPropChange = function onPropChange(prop, value, ruleId) {
-    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(root);
-    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_8__["findRule"])(ruleId, rootCopy);
+    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default()(root);
+    var rule = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(ruleId, rootCopy);
     /* istanbul ignore else */
 
     if (rule) {
-      object_assign__WEBPACK_IMPORTED_MODULE_3___default()(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
+      object_assign__WEBPACK_IMPORTED_MODULE_4___default()(rule, _defineProperty({}, prop, value)); // Reset operator and set default value for field change
 
       if (resetOnFieldChange && prop === 'field') {
-        object_assign__WEBPACK_IMPORTED_MODULE_3___default()(rule, {
+        object_assign__WEBPACK_IMPORTED_MODULE_4___default()(rule, {
           operator: getOperatorsMain(rule.field)[0].name,
           value: getRuleDefaultValue(rule)
         });
@@ -33401,12 +33382,12 @@ var QueryBuilder = function QueryBuilder(_ref) {
 
 
   var onRuleRemove = function onRuleRemove(ruleId, parentId) {
-    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(root);
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_8__["findRule"])(parentId, rootCopy);
+    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default()(root);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
     /* istanbul ignore else */
 
     if (parent) {
-      var index = array_find_index__WEBPACK_IMPORTED_MODULE_0___default()(parent.rules, function (x) {
+      var index = array_find_index__WEBPACK_IMPORTED_MODULE_1___default()(parent.rules, function (x) {
         return x.id === ruleId;
       });
       parent.rules.splice(index, 1);
@@ -33421,12 +33402,12 @@ var QueryBuilder = function QueryBuilder(_ref) {
 
 
   var onGroupRemove = function onGroupRemove(groupId, parentId) {
-    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(root);
-    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_8__["findRule"])(parentId, rootCopy);
+    var rootCopy = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default()(root);
+    var parent = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["findRule"])(parentId, rootCopy);
     /* istanbul ignore else */
 
     if (parent) {
-      var index = array_find_index__WEBPACK_IMPORTED_MODULE_0___default()(parent.rules, function (x) {
+      var index = array_find_index__WEBPACK_IMPORTED_MODULE_1___default()(parent.rules, function (x) {
         return x.id === groupId;
       });
       parent.rules.splice(index, 1);
@@ -33441,7 +33422,7 @@ var QueryBuilder = function QueryBuilder(_ref) {
 
 
   var getLevelFromRoot = function getLevelFromRoot(id) {
-    return Object(_utils__WEBPACK_IMPORTED_MODULE_8__["getLevel"])(id, 0, root);
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_9__["getLevel"])(id, 0, root);
   };
   /**
    * Executes the `onQueryChange` function, if provided
@@ -33451,12 +33432,12 @@ var QueryBuilder = function QueryBuilder(_ref) {
   var _notifyQueryChange = function _notifyQueryChange(newRoot) {
     /* istanbul ignore else */
     if (onQueryChange) {
-      var newQuery = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_1___default()(newRoot);
+      var newQuery = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_2___default()(newRoot);
       onQueryChange(newQuery);
     }
   };
 
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_4__["useState"])(getInitialQuery()),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_5__["useState"])(getInitialQuery()),
       _useState2 = _slicedToArray(_useState, 2),
       root = _useState2[0],
       setRoot = _useState2[1];
@@ -33473,7 +33454,7 @@ var QueryBuilder = function QueryBuilder(_ref) {
     onGroupRemove: onGroupRemove,
     onPropChange: onPropChange,
     getLevel: getLevelFromRoot,
-    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_8__["isRuleGroup"],
+    isRuleGroup: _utils__WEBPACK_IMPORTED_MODULE_9__["isRuleGroup"],
     controls: _objectSpread(_objectSpread({}, defaultControlElements), controlElements),
     getOperators: getOperatorsMain,
     getValueEditorType: getValueEditorTypeMain,
@@ -33483,16 +33464,16 @@ var QueryBuilder = function QueryBuilder(_ref) {
     showNotToggle: showNotToggle
   }; // Set the query state when a new query prop comes in
 
-  Object(react__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(function () {
-    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_8__["generateValidQuery"])(query || getInitialQuery()));
+  Object(react__WEBPACK_IMPORTED_MODULE_5__["useEffect"])(function () {
+    setRoot(Object(_utils__WEBPACK_IMPORTED_MODULE_9__["generateValidQuery"])(query || getInitialQuery()));
   }, [query]); // Notify a query change on mount
 
-  Object(react__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(function () {
+  Object(react__WEBPACK_IMPORTED_MODULE_5__["useEffect"])(function () {
     _notifyQueryChange(root);
   }, []);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_4___default.a.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
     className: "queryBuilder ".concat(schema.classNames.queryBuilder)
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_4___default.a.createElement(schema.controls.ruleGroup, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(schema.controls.ruleGroup, {
     translations: _objectSpread(_objectSpread({}, defaultTranslations), translations),
     rules: root.rules,
     combinator: root.combinator,
@@ -33522,6 +33503,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var Rule = function Rule(_ref) {
+  var _fieldData$inputType, _fieldData$operators, _fieldData$valueEdito, _fieldData$values;
+
   var id = _ref.id,
       parentId = _ref.parentId,
       field = _ref.field,
@@ -33565,6 +33548,10 @@ var Rule = function Rule(_ref) {
   var fieldData = array_find__WEBPACK_IMPORTED_MODULE_0___default()(fields, function (f) {
     return f.name === field;
   });
+  var inputType = (_fieldData$inputType = fieldData === null || fieldData === void 0 ? void 0 : fieldData.inputType) !== null && _fieldData$inputType !== void 0 ? _fieldData$inputType : getInputType(field, operator);
+  var operators = (_fieldData$operators = fieldData === null || fieldData === void 0 ? void 0 : fieldData.operators) !== null && _fieldData$operators !== void 0 ? _fieldData$operators : getOperators(field);
+  var valueEditorType = (_fieldData$valueEdito = fieldData === null || fieldData === void 0 ? void 0 : fieldData.valueEditorType) !== null && _fieldData$valueEdito !== void 0 ? _fieldData$valueEdito : getValueEditorType(field, operator);
+  var values = (_fieldData$values = fieldData === null || fieldData === void 0 ? void 0 : fieldData.values) !== null && _fieldData$values !== void 0 ? _fieldData$values : getValues(field, operator);
   var level = getLevel(id);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "rule ".concat(classNames.rule),
@@ -33582,7 +33569,7 @@ var Rule = function Rule(_ref) {
     field: field,
     fieldData: fieldData,
     title: translations.operators.title,
-    options: getOperators(field),
+    options: operators,
     value: operator,
     className: "rule-operators ".concat(classNames.operators),
     handleOnChange: onOperatorChanged,
@@ -33593,9 +33580,9 @@ var Rule = function Rule(_ref) {
     title: translations.value.title,
     operator: operator,
     value: value,
-    type: getValueEditorType(field, operator),
-    inputType: getInputType(field, operator),
-    values: getValues(field, operator),
+    type: valueEditorType,
+    inputType: inputType,
+    values: values,
     className: "rule-value ".concat(classNames.value),
     handleOnChange: onValueChanged,
     level: level
