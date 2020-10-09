@@ -2,7 +2,7 @@ import arrayFind from 'array-find';
 import React from 'react';
 import { RuleProps } from './types';
 
-export const Rule: React.FC<RuleProps> = ({
+export const Rule = ({
   id,
   parentId,
   field,
@@ -21,7 +21,7 @@ export const Rule: React.FC<RuleProps> = ({
     onPropChange,
     onRuleRemove
   }
-}) => {
+}: RuleProps) => {
   const onElementChanged = (property: string, value: any) => {
     onPropChange(property, value, id);
   };
@@ -46,6 +46,10 @@ export const Rule: React.FC<RuleProps> = ({
   };
 
   const fieldData = arrayFind(fields, (f) => f.name === field);
+  const inputType = fieldData?.inputType ?? getInputType(field, operator);
+  const operators = fieldData?.operators ?? getOperators(field);
+  const valueEditorType = fieldData?.valueEditorType ?? getValueEditorType(field, operator);
+  const values = fieldData?.values ?? getValues(field, operator);
   const level = getLevel(id);
 
   return (
@@ -63,7 +67,7 @@ export const Rule: React.FC<RuleProps> = ({
         field={field}
         fieldData={fieldData}
         title={translations.operators.title}
-        options={getOperators(field)}
+        options={operators}
         value={operator}
         className={`rule-operators ${classNames.operators}`}
         handleOnChange={onOperatorChanged}
@@ -75,9 +79,9 @@ export const Rule: React.FC<RuleProps> = ({
         title={translations.value.title}
         operator={operator}
         value={value}
-        type={getValueEditorType(field, operator)}
-        inputType={getInputType(field, operator)}
-        values={getValues(field, operator)}
+        type={valueEditorType}
+        inputType={inputType}
+        values={values}
         className={`rule-value ${classNames.value}`}
         handleOnChange={onValueChanged}
         level={level}

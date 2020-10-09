@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { RuleGroupProps } from './types';
 
-export const RuleGroup: React.FC<RuleGroupProps> = ({
+export const RuleGroup = ({
   id,
   parentId,
   combinator = 'and',
@@ -9,7 +9,7 @@ export const RuleGroup: React.FC<RuleGroupProps> = ({
   translations,
   schema,
   not
-}) => {
+}: RuleGroupProps) => {
   const {
     classNames,
     combinators,

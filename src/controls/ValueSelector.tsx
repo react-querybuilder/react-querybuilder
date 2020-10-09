@@ -1,13 +1,13 @@
 import React from 'react';
 import { ValueSelectorProps } from '../types';
 
-const ValueSelector: React.FC<ValueSelectorProps> = ({
+const ValueSelector = ({
   className,
   handleOnChange,
   options,
   title,
   value
-}) => (
+}: ValueSelectorProps) => (
   <select
     className={className}
     value={value}

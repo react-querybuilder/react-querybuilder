@@ -1,6 +1,6 @@
 # react-querybuilder
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Build Status](https://travis-ci.org/sapientglobalmarkets/react-querybuilder.svg?branch=master)](https://travis-ci.org/sapientglobalmarkets/react-querybuilder)
@@ -57,7 +57,7 @@ const fields = [
   { name: 'phone', label: 'Phone' },
   { name: 'email', label: 'Email' },
   { name: 'twitter', label: 'Twitter' },
-  { name: 'isDev', label: 'Is a Developer?', value: false }
+  { name: 'isDev', label: 'Is a Developer?', defaultValue: false }
 ];
 
 const dom = <QueryBuilder fields={fields} onQueryChange={logQuery} />;
@@ -83,13 +83,20 @@ The initial query, in JSON form (follows the same format as the parameter passed
 
 #### `fields` _(Required)_
 
-`{name: string, label: string, id?: string}[]`
+The array of fields that should be used. Each field should be an object with the following signature:
 
-The array of fields that should be used. Each field should be an object with at least:
-
-`{name: string, label: string}`
-
-The `id` is optional. If you do not provide an `id` for a field then the `name` will be used.
+```ts
+interface Field {
+  id?: string; // The field identifier (if not provided, then `name` will be used)
+  name: string; // REQUIRED - the field name
+  label: string; // REQUIRED - the field label
+  operators?: { name: string; label: string; }[]; // Array of operators (if not provided, then `getOperators()` will be used)
+  valueEditorType?: 'text' | 'select' | 'checkbox' | 'radio' | null; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
+  inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
+  values?: { name: string; label: string; }[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
+  defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
+}
+```
 
 Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements-optional)).
 
@@ -101,10 +108,6 @@ The array of operators that should be used. The default operators include:
 
 ```js
 [
-  { name: 'null', label: 'is null' },
-  { name: 'notNull', label: 'is not null' },
-  { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' },
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
@@ -116,7 +119,11 @@ The array of operators that should be used. The default operators include:
   { name: 'endsWith', label: 'ends with' },
   { name: 'doesNotContain', label: 'does not contain' },
   { name: 'doesNotBeginWith', label: 'does not begin with' },
-  { name: 'doesNotEndWith', label: 'does not end with' }
+  { name: 'doesNotEndWith', label: 'does not end with' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' }
 ];
 ```
 
@@ -135,165 +142,198 @@ The array of combinators that should be used for RuleGroups. The default set inc
 
 #### `controlElements` _(Optional)_
 
-```js
-PropTypes.shape({
-  addGroupAction: PropTypes.func, // returns ReactClass
-  removeGroupAction: PropTypes.func, // returns ReactClass
-  addRuleAction: PropTypes.func, // returns ReactClass
-  removeRuleAction: PropTypes.func, // returns ReactClass
-  combinatorSelector: PropTypes.func, // returns ReactClass
-  fieldSelector: PropTypes.func, // returns ReactClass
-  operatorSelector: PropTypes.func, // returns ReactClass
-  valueEditor: PropTypes.func, // returns ReactClass
-  notToggle: PropTypes.func, // returns ReactClass
-  ruleGroup: PropTypes.func, // returns ReactClass
-  rule: PropTypes.func // returns ReactClass
-});
+```ts
+interface Controls {
+  addGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  addRuleAction?: React.ComponentType<ActionWithRulesProps>;
+  combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
+  fieldSelector?: React.ComponentType<FieldSelectorProps>;
+  notToggle?: React.ComponentType<NotToggleProps>;
+  operatorSelector?: React.ComponentType<OperatorSelectorProps>;
+  removeGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  removeRuleAction?: React.ComponentType<ActionProps>;
+  rule?: React.ComponentType<RuleProps>;
+  ruleGroup?: React.ComponentType<RuleGroupProps>;
+  valueEditor?: React.ComponentType<ValueEditorProps>;
+}
 ```
 
 This is a custom controls object that allows you to override the control elements used. The following control overrides are supported:
 
 - `addGroupAction`: By default a `<button />` is used. The following props are passed:
 
-```js
-{
-  label: PropTypes.string, // "+Group"
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnClick: PropTypes.func, // Callback function to invoke adding a <RuleGroup />
-  rules: PropTypes.array, // Provides the number of rules already present for this group,
-  level: PropTypes.number // The level of the current group
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.addGroup.label, e.g. "+Group"
+  title: string; // translations.addGroup.title, e.g. "Add group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
 }
 ```
 
 - `removeGroupAction`: By default a `<button />` is used. The following props are passed:
 
-```js
-{
-  label: PropTypes.string, // "x"
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnClick: PropTypes.func, // Callback function to invoke removing a <RuleGroup />
-  rules: PropTypes.array, // Provides the number of rules already present for this group,
-  level: PropTypes.number // The level of the current group
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.removeGroup.label, e.g. "x"
+  title: string; // translations.removeGroup.title, e.g. "Remove group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
 }
 ```
 
 - `addRuleAction`: By default a `<button />` is used. The following props are passed:
 
-```js
-{
-  label: PropTypes.string, // "+Rule"
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnClick: PropTypes.func, // Callback function to invoke adding a <Rule />
-  rules: PropTypes.array, // Provides the number of rules already present for this group,
-  level: PropTypes.number // The level of the current group
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.addGroup.label, e.g. "+Rule"
+  title: string; // translations.addGroup.title, e.g. "Add rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
 }
 ```
 
 - `removeRuleAction`: By default a `<button />` is used. The following props are passed:
 
-```js
-{
-  label: PropTypes.string, // "x"
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnClick: PropTypes.func, // Callback function to invoke removing a <Rule />
-  level: PropTypes.number // The level of the current group
+```ts
+interface ActionProps {
+  label: string; // translations.removeRule.label, e.g. "x"
+  title: string; // translations.removeRule.title, e.g. "Remove rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  level: number; // The level of the current group
 }
 ```
 
 - `combinatorSelector`: By default a `<select />` is used. The following props are passed:
 
-```js
-{
-  options: PropTypes.array.isRequired, // Same as 'combinators' passed into QueryBuilder
-  value: PropTypes.string, // Selected combinator from the existing query representation, if any
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnChange: PropTypes.func, // Callback function to update query representation
-  rules: PropTypes.array, // Provides the number of rules already present for this group
-  level: PropTypes.number // The level of the current group
+```ts
+interface CombinatorSelectorProps {
+  options: { name: string; label: string; }[]; // Same as 'combinators' passed into QueryBuilder
+  value: string; // Selected combinator from the existing query representation, if any
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Callback function to update query representation
+  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
 }
 ```
 
 - `fieldSelector`: By default a `<select />` is used. The following props are passed:
 
-```js
-{
-  options: PropTypes.array.isRequired, // Same as 'fields' passed into QueryBuilder
-  value: PropTypes.string, // Selected field from the existing query representation, if any
-  operator: PropTypes.string, // Selected operator from the existing query representation, if any
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnChange: PropTypes.func, // Callback function to update query representation
-  level: PropTypes.number // The level the group this rule belongs to
+```ts
+interface FieldSelectorProps {
+  options: Field[]; // Same as 'fields' passed into QueryBuilder
+  value: string; // Selected field from the existing query representation, if any
+  title: string; // translations.fields.title, e.g. "Fields"
+  operator: string; // Selected operator from the existing query representation, if any
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Callback function to update query representation
+  level: number; // The level the group this rule belongs to
 }
 ```
 
 - `operatorSelector`: By default a `<select />` is used. The following props are passed:
 
-```js
-{
-  field: PropTypes.string, // Field name corresponding to this Rule
-  fieldData: PropTypes.object, // The entire object from the fields array for this field
-  options: PropTypes.array.isRequired, // Return value of getOperators(field)
-  value: PropTypes.string, // Selected operator from the existing query representation, if any
-  className: PropTypes.string, // CSS classNames to be applied
-  handleOnChange: PropTypes.func, // Callback function to update query representation
-  level: PropTypes.number // The level the group this rule belongs to
+```ts
+interface OperatorSelectorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  options: { name: string; label: string; }[]; // Return value of getOperators(field)
+  value: string; // Selected operator from the existing query representation, if any
+  title: string; // translations.operators.title, e.g. "Operators"
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Callback function to update query representation
+  level: number; // The level the group this rule belongs to
 }
 ```
 
 - `valueEditor`: By default an `<input type="text" />` is used. The following props are passed:
 
-```js
-{
-  field: PropTypes.string, // Field name corresponding to this Rule
-  fieldData: PropTypes.object, // The entire object from the fields array for this field
-  operator: PropTypes.string, // Operator name corresponding to this Rule
-  value: PropTypes.string, // Value from the existing query representation, if any
-  handleOnChange: PropTypes.func, // Callback function to update the query representation
-  type: PropTypes.oneOf(['text', 'select', 'checkbox', 'radio']), // Type of editor to be displayed
-  inputType: PropTypes.string, // Type of <input> if `type` is "text"
-  values: PropTypes.arrayOf(PropTypes.object), //
-  level: PropTypes.number, // The level the group this rule belongs to
-  className: PropTypes.string, // CSS classNames to be applied
+```ts
+interface ValueEditorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  operator: string; // Operator name corresponding to this rule
+  value: string; // Value from the existing query representation, if any
+  title: string; // translations.value.title, e.g. "Value"
+  handleOnChange: (value: any) => void; // Callback function to update the query representation
+  type: 'text'|'select'|'checkbox'|'radio'; // Type of editor to be displayed
+  inputType: string; // @type of <input> if `type` is "text"
+  values: any[]; // List of available values for this rule
+  level: number; // The level the group this rule belongs to
+  className: string; // CSS classNames to be applied
 }
 ```
 
 - `notToggle`: By default, `<label><input type="checkbox" />Not</label>` is used. The following props are passed:
 
-```js
-{
-  checked: PropTypes.bool, // Whether the input should be checked or not
-  handleOnChange: PropTypes.func, // Callback function to update the query representation
-  title: PropTypes.string, // Tooltip for the label
-  level: PropTypes.number, // The level of the group
-  className: PropTypes.string, // CSS classNames to be applied
+```ts
+interface NotToggleProps {
+  checked: boolean; // Whether the input should be checked or not
+  handleOnChange: (checked: boolean) => void; // Callback function to update the query representation
+  title: string; // translations.notToggle.title, e.g. "Invert this group"
+  level: number; // The level of the group
+  className: string; // CSS classNames to be applied
 }
 ```
 
 - `ruleGroup`: By default, `<RuleGroup />` is used. The following props are passed:
 
-```js
-{
-  id: PropTypes.string,
-  parentId: PropTypes.string,
-  combinator: PropTypes.string,
-  rules: PropTypes.array,
-  translations: PropTypes.object,
-  schema: PropTypes.object,
-  not: PropTypes.boolean
+```ts
+interface RuleGroupProps {
+  id: string; // Unique identifier for this rule group
+  parentId: string; // Identifier of the parent group
+  combinator: string; // Combinator for this group, e.g. "and" / "or"
+  rules: (RuleType | RuleGroupType)[]; // List of rules and/or sub-groups for this group
+  translations: Translations; // The full translations object
+  schema: Schema; // See `Schema` documentation below
+  not: boolean; // Whether or not to invert this group
 }
 ```
 
 - `rule`: By default, `<Rule />` is used. The following props are passed:
 
-```js
-{
-  id: PropTypes.string,
-  parentId: PropTypes.string,
-  field: PropTypes.string,
-  value: PropTypes.any,
-  operator: PropTypes.string,
-  translations: PropTypes.object,
-  schema: PropTypes.object
+```ts
+interface RuleProps {
+  id: string; // Unique identifier for this rule
+  parentId: string; // Identifier of the parent group
+  field: string; // Field name for this rule
+  operator: string; // Operator name for this rule
+  value: any; // Value for this rule
+  translations: Translations; // The full translations object
+  schema: Schema; // See `Schema` documentation below
+}
+```
+
+The `Schema` object passed in the `rule` and `ruleGroup` props has the following signature:
+
+```ts
+interface Schema {
+  fields: Field[];
+  classNames: Classnames;
+  combinators: { name: string; label: string }[];
+  controls: Controls;
+  createRule(): RuleType;
+  createRuleGroup(): RuleGroupType;
+  getLevel(id: string): number;
+  getOperators(field: string): Field[];
+  getValueEditorType(field: string, operator: string): 'text'|'select'|'checkbox'|'radio';
+  getInputType(field: string, operator: string): string | null;
+  getValues(field: string, operator: string): { name: string; label: string; }[];
+  isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
+  onGroupAdd(group: RuleGroupType, parentId: string): void;
+  onGroupRemove(groupId: string, parentId: string): void;
+  onPropChange(prop: string, value: any, ruleId: string): void;
+  onRuleAdd(rule: RuleType, parentId: string): void;
+  onRuleRemove(id: string, parentId: string): void;
+  showCombinatorsBetweenRules: boolean;
+  showNotToggle: boolean;
 }
 ```
 
@@ -370,23 +410,23 @@ This is a notification that is invoked anytime the query configuration changes. 
 
 #### `controlClassnames` _(Optional)_
 
-This can be used to assign specific `CSS` classes to various controls that are created by the `<QueryBuilder />`. This is an object with the following properties:
+This can be used to assign specific `CSS` classes to various controls that are created by the `<QueryBuilder />`. This is an object with the following signature:
 
-```js
-{
-    queryBuilder: string, // Root <div> element
-    ruleGroup: string, // <div> containing the RuleGroup
-    header: string, // <div> containing the RuleGroup header controls
-    combinators: string, // <select> control for combinators
-    addRule: string, // <button> to add a Rule
-    addGroup: string, // <button> to add a RuleGroup
-    removeGroup: string, // <button> to remove a RuleGroup
-    notToggle: string, // <label> on the "not" toggle
-    rule: string, // <div> containing the Rule
-    fields: string, // <select> control for fields
-    operators: string, // <select> control for operators
-    value: string, // <input> for the field value
-    removeRule: string // <button> to remove a Rule
+```ts
+interface Classnames {
+  queryBuilder: string; // Root <div> element
+  ruleGroup: string; // <div> containing the RuleGroup
+  header: string; // <div> containing the RuleGroup header controls
+  combinators: string; // <select> control for combinators
+  addRule: string; // <button> to add a Rule
+  addGroup: string; // <button> to add a RuleGroup
+  removeGroup: string; // <button> to remove a RuleGroup
+  notToggle: string; // <label> on the "not" toggle
+  rule: string; // <div> containing the Rule
+  fields: string; // <select> control for fields
+  operators: string; // <select> control for operators
+  value: string; // <input> for the field value
+  removeRule: string; // <button> to remove a Rule
 }
 ```
 
@@ -396,37 +436,37 @@ This can be used to override translatable texts applied to various controls that
 
 ```js
 {
-    fields: {
-        title: "Fields",
-    },
-    operators: {
-        title: "Operators",
-    },
-    value: {
-        title: "Value",
-    },
-    removeRule: {
-        label: "x",
-        title: "Remove rule",
-    },
-    removeGroup: {
-        label: "x",
-        title: "Remove group",
-    },
-    addRule: {
-        label: "+Rule",
-        title: "Add rule",
-    },
-    addGroup: {
-        label: "+Group",
-        title: "Add group",
-    },
-    combinators: {
-        title: "Combinators",
-    },
-    notToggle: {
-        title: "Invert this group",
-    }
+  fields: {
+    title: "Fields",
+  },
+  operators: {
+    title: "Operators",
+  },
+  value: {
+    title: "Value",
+  },
+  removeRule: {
+    label: "x",
+    title: "Remove rule",
+  },
+  removeGroup: {
+    label: "x",
+    title: "Remove group",
+  },
+  addRule: {
+    label: "+Rule",
+    title: "Add rule",
+  },
+  addGroup: {
+    label: "+Group",
+    title: "Add group",
+  },
+  combinators: {
+    title: "Combinators",
+  },
+  notToggle: {
+    title: "Invert this group",
+  }
 }
 ```
 
