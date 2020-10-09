@@ -8,7 +8,7 @@ const path = require('path');
 module.exports = merge(webpackCommon, {
   mode: 'development',
   entry: {
-    demo: './demo/main.js'
+    demo: './demo/main.tsx'
   },
   output: {
     filename: '[name].bundle.js',

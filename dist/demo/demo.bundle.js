@@ -81,15 +81,15 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./demo/main.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./demo/main.tsx");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./demo/main.js":
-/*!**********************!*\
-  !*** ./demo/main.js ***!
-  \**********************/
+/***/ "./demo/main.tsx":
+/*!***********************!*\
+  !*** ./demo/main.tsx ***!
+  \***********************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -233,6 +233,7 @@ var preparedQueries = {
     not: false
   },
   generic: {
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
     combinator: 'and',
     not: false,
     rules: []
@@ -277,7 +278,6 @@ var RootView = function RootView() {
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
-   * @param {"primary"|"secondary"} target The target query
    */
 
 

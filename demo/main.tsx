@@ -1,10 +1,10 @@
+import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { nanoid } from 'nanoid';
-import QueryBuilder, { formatQuery } from '../src';
+import QueryBuilder, { ExportFormat, Field, formatQuery, RuleGroupType } from '../src';
 import '../src/query-builder.scss';
 
-const preparedFields = {
+const preparedFields: { [key: string]: Field[] } = {
   primary: [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' }
@@ -49,7 +49,7 @@ const preparedFields = {
   ]
 };
 
-const preparedQueries = {
+const preparedQueries: { [key: string]: RuleGroupType } = {
   primary: {
     id: `g-${nanoid()}`,
     rules: [
@@ -95,6 +95,7 @@ const preparedQueries = {
     not: false
   },
   generic: {
+    id: `g-${nanoid()}`,
     combinator: 'and',
     not: false,
     rules: []
@@ -102,9 +103,9 @@ const preparedQueries = {
 };
 
 const RootView = () => {
-  const [query, setQuery] = useState(preparedQueries.primary);
-  const [fields, setFields] = useState(preparedFields.primary);
-  const [format, setFormat] = useState('json');
+  const [query, setQuery] = useState<RuleGroupType>(preparedQueries.primary);
+  const [fields, setFields] = useState<Field[]>(preparedFields.primary);
+  const [format, setFormat] = useState<ExportFormat>('json');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
   const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
@@ -113,9 +114,8 @@ const RootView = () => {
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
-   * @param {"primary"|"secondary"} target The target query
    */
-  const loadQuery = (target) => {
+  const loadQuery = (target?: 'primary' | 'secondary') => {
     if (target) {
       setQuery(preparedQueries[target]);
       setFields(preparedFields[target]);
@@ -131,7 +131,7 @@ const RootView = () => {
 
   const formatString =
     format === 'json_without_ids'
-      ? JSON.stringify(JSON.parse(formatQuery(query, { format })), null, 2)
+      ? JSON.stringify(JSON.parse(formatQuery(query, { format }) as string), null, 2)
       : format === 'parameterized'
       ? JSON.stringify(formatQuery(query, { format }), null, 2)
       : formatQuery(query, { format });
