@@ -1,4 +1,7 @@
-import React from 'react';
+/// <reference types="react" />
 import { ActionProps } from '../types';
-declare const ActionElement: React.FC<ActionProps>;
+declare const ActionElement: {
+    ({ className, handleOnClick, label, title }: ActionProps): JSX.Element;
+    displayName: string;
+};
 export default ActionElement;

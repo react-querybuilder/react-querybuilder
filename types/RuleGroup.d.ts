@@ -1,3 +1,6 @@
-import React from 'react';
+/// <reference types="react" />
 import { RuleGroupProps } from './types';
-export declare const RuleGroup: React.FC<RuleGroupProps>;
+export declare const RuleGroup: {
+    ({ id, parentId, combinator, rules, translations, schema, not }: RuleGroupProps): JSX.Element;
+    displayName: string;
+};

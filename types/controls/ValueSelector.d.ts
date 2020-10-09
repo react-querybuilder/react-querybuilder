@@ -1,4 +1,7 @@
-import React from 'react';
+/// <reference types="react" />
 import { ValueSelectorProps } from '../types';
-declare const ValueSelector: React.FC<ValueSelectorProps>;
+declare const ValueSelector: {
+    ({ className, handleOnChange, options, title, value }: ValueSelectorProps): JSX.Element;
+    displayName: string;
+};
 export default ValueSelector;

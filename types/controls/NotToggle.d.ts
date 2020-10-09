@@ -1,4 +1,7 @@
-import React from 'react';
+/// <reference types="react" />
 import { NotToggleProps } from '../types';
-declare const NotToggle: React.FC<NotToggleProps>;
+declare const NotToggle: {
+    ({ className, handleOnChange, title, checked }: NotToggleProps): JSX.Element;
+    displayName: string;
+};
 export default NotToggle;
