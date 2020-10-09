@@ -130,13 +130,37 @@ var preparedFields = {
   }],
   secondary: [{
     name: 'age',
-    label: 'Age'
+    label: 'Age',
+    inputType: 'number'
   }, {
     name: 'isMusician',
-    label: 'Is a musician'
+    label: 'Is a musician',
+    valueEditorType: 'checkbox',
+    operators: [{
+      name: '=',
+      label: 'is'
+    }]
   }, {
     name: 'instrument',
-    label: 'Instrument'
+    label: 'Instrument',
+    valueEditorType: 'select',
+    values: [{
+      name: 'Guitar',
+      label: 'Guitar'
+    }, {
+      name: 'Piano',
+      label: 'Piano'
+    }, {
+      name: 'Vocals',
+      label: 'Vocals'
+    }, {
+      name: 'Drums',
+      label: 'Drums'
+    }],
+    operators: [{
+      name: '=',
+      label: 'is'
+    }]
   }],
   generic: [{
     name: 'firstName',
@@ -146,10 +170,22 @@ var preparedFields = {
     label: 'Last name'
   }, {
     name: 'age',
-    label: 'Age'
+    label: 'Age',
+    inputType: 'number'
   }, {
     name: 'gender',
-    label: 'Gender'
+    label: 'Gender',
+    valueEditorType: 'radio',
+    values: [{
+      name: 'M',
+      label: 'Male'
+    }, {
+      name: 'F',
+      label: 'Female'
+    }, {
+      name: 'O',
+      label: 'Other'
+    }]
   }, {
     name: 'height',
     label: 'Height'
@@ -200,80 +236,6 @@ var preparedQueries = {
     combinator: 'and',
     not: false,
     rules: []
-  }
-};
-
-var getOperators = function getOperators(field) {
-  switch (field) {
-    case 'instrument':
-    case 'isMusician':
-      return [{
-        name: '=',
-        label: 'is'
-      }];
-
-    default:
-      return null;
-  }
-};
-
-var getValueEditorType = function getValueEditorType(field, operator) {
-  switch (field) {
-    case 'gender':
-      return 'radio';
-
-    case 'instrument':
-      return 'select';
-
-    case 'isMusician':
-      return 'checkbox';
-
-    default:
-      return 'text';
-  }
-};
-
-var getInputType = function getInputType(field, operator) {
-  switch (field) {
-    case 'age':
-      return 'number';
-
-    default:
-      return 'text';
-  }
-};
-
-var getValues = function getValues(field, operator) {
-  switch (field) {
-    case 'instrument':
-      return [{
-        name: 'Guitar',
-        label: 'Guitar'
-      }, {
-        name: 'Piano',
-        label: 'Piano'
-      }, {
-        name: 'Vocals',
-        label: 'Vocals'
-      }, {
-        name: 'Drums',
-        label: 'Drums'
-      }];
-
-    case 'gender':
-      return [{
-        name: 'M',
-        label: 'Male'
-      }, {
-        name: 'F',
-        label: 'Female'
-      }, {
-        name: 'O',
-        label: 'Other'
-      }];
-
-    default:
-      return [];
   }
 };
 
@@ -367,10 +329,6 @@ var RootView = function RootView() {
       fields: 'form-control'
     },
     onQueryChange: handleQueryChange,
-    getOperators: getOperators,
-    getValueEditorType: getValueEditorType,
-    getInputType: getInputType,
-    getValues: getValues,
     showCombinatorsBetweenRules: showCombinatorsBetweenRules,
     showNotToggle: showNotToggle,
     resetOnFieldChange: resetOnFieldChange,

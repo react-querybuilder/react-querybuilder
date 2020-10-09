@@ -10,15 +10,40 @@ const preparedFields = {
     { name: 'lastName', label: 'Last Name' }
   ],
   secondary: [
-    { name: 'age', label: 'Age' },
-    { name: 'isMusician', label: 'Is a musician' },
-    { name: 'instrument', label: 'Instrument' }
+    { name: 'age', label: 'Age', inputType: 'number' },
+    {
+      name: 'isMusician',
+      label: 'Is a musician',
+      valueEditorType: 'checkbox',
+      operators: [{ name: '=', label: 'is' }]
+    },
+    {
+      name: 'instrument',
+      label: 'Instrument',
+      valueEditorType: 'select',
+      values: [
+        { name: 'Guitar', label: 'Guitar' },
+        { name: 'Piano', label: 'Piano' },
+        { name: 'Vocals', label: 'Vocals' },
+        { name: 'Drums', label: 'Drums' }
+      ],
+      operators: [{ name: '=', label: 'is' }]
+    }
   ],
   generic: [
     { name: 'firstName', label: 'First name' },
     { name: 'lastName', label: 'Last name' },
-    { name: 'age', label: 'Age' },
-    { name: 'gender', label: 'Gender' },
+    { name: 'age', label: 'Age', inputType: 'number' },
+    {
+      name: 'gender',
+      label: 'Gender',
+      valueEditorType: 'radio',
+      values: [
+        { name: 'M', label: 'Male' },
+        { name: 'F', label: 'Female' },
+        { name: 'O', label: 'Other' }
+      ]
+    },
     { name: 'height', label: 'Height' },
     { name: 'job', label: 'Job' }
   ]
@@ -76,65 +101,6 @@ const preparedQueries = {
   }
 };
 
-const getOperators = (field) => {
-  switch (field) {
-    case 'instrument':
-    case 'isMusician':
-      return [{ name: '=', label: 'is' }];
-
-    default:
-      return null;
-  }
-};
-
-const getValueEditorType = (field, operator) => {
-  switch (field) {
-    case 'gender':
-      return 'radio';
-
-    case 'instrument':
-      return 'select';
-
-    case 'isMusician':
-      return 'checkbox';
-
-    default:
-      return 'text';
-  }
-};
-
-const getInputType = (field, operator) => {
-  switch (field) {
-    case 'age':
-      return 'number';
-
-    default:
-      return 'text';
-  }
-};
-
-const getValues = (field, operator) => {
-  switch (field) {
-    case 'instrument':
-      return [
-        { name: 'Guitar', label: 'Guitar' },
-        { name: 'Piano', label: 'Piano' },
-        { name: 'Vocals', label: 'Vocals' },
-        { name: 'Drums', label: 'Drums' }
-      ];
-
-    case 'gender':
-      return [
-        { name: 'M', label: 'Male' },
-        { name: 'F', label: 'Female' },
-        { name: 'O', label: 'Other' }
-      ];
-
-    default:
-      return [];
-  }
-};
-
 const RootView = () => {
   const [query, setQuery] = useState(preparedQueries.primary);
   const [fields, setFields] = useState(preparedFields.primary);
@@ -185,10 +151,6 @@ const RootView = () => {
             fields={fields}
             controlClassnames={{ fields: 'form-control' }}
             onQueryChange={handleQueryChange}
-            getOperators={getOperators}
-            getValueEditorType={getValueEditorType}
-            getInputType={getInputType}
-            getValues={getValues}
             showCombinatorsBetweenRules={showCombinatorsBetweenRules}
             showNotToggle={showNotToggle}
             resetOnFieldChange={resetOnFieldChange}
