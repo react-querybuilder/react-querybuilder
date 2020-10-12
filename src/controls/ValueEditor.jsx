@@ -38,19 +38,20 @@ const ValueEditor = ({
 
     case 'datetime':
       return (
-          <DatePicker
-              selected={setHours(setMinutes(new Date(), 30), 16)}
-              onChange={(e) => handleOnChange(e)}
-              showTimeSelect
-              className={className}
-              timeFormat="HH:mm"
-              injectTimes={[
-                setHours(setMinutes(new Date(), 1), 0),
-                setHours(setMinutes(new Date(), 59), 23)
-              ]}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              value={value}
-          />
+          <span className={className} title={title}>
+            <DatePicker
+                // selected={setHours(setMinutes(new Date(), 30), 16)}
+                onChange={(e) => handleOnChange(e)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                // injectTimes={[
+                //   setHours(setMinutes(new Date(), 1), 0),
+                //   setHours(setMinutes(new Date(), 59), 23)
+                // ]}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                // value={value}
+            />
+          </span>
       );
 
     case 'checkbox':
@@ -84,7 +85,8 @@ const ValueEditor = ({
     default:
       return (
         <input
-          type={inputType || 'text'}
+            // type={inputType || 'text'}
+          type={'dafualt..asd'}
           value={value}
           title={title}
           className={className}
