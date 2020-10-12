@@ -1,5 +1,5 @@
 {
-  "name": "react-querybuilder",
+  "name": "react-with-wrap-querybuilder",
   "version": "3.0.2",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.js",
@@ -20,7 +20,8 @@
   ],
   "contributors": [
     "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
-    "Jake Boone"
+    "Jake Boone",
+    "Peter Brecska <pbrecska@pixelfederation.com>"
   ],
   "license": "MIT",
   "homepage": "https://github.com/sapientglobalmarkets/react-querybuilder",
@@ -69,7 +70,8 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "nanoid": "^2.1.10",
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.6.0",
+    "react-datepicker": "^3.2.2"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

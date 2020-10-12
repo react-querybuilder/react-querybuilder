@@ -1,5 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import setHours from "date-fns";
+import setMinutes from "date-fns";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const ValueEditor = ({
   operator,
@@ -29,6 +34,23 @@ const ValueEditor = ({
             </option>
           ))}
         </select>
+      );
+
+    case 'datetime':
+      return (
+          <DatePicker
+              selected={setHours(setMinutes(new Date(), 30), 16)}
+              onChange={(e) => handleOnChange(e)}
+              showTimeSelect
+              className={className}
+              timeFormat="HH:mm"
+              injectTimes={[
+                setHours(setMinutes(new Date(), 1), 0),
+                setHours(setMinutes(new Date(), 59), 23)
+              ]}
+              dateFormat="MMMM d, yyyy h:mm aa"
+              value={value}
+          />
       );
 
     case 'checkbox':
@@ -81,7 +103,7 @@ ValueEditor.propTypes = {
   handleOnChange: PropTypes.func,
   title: PropTypes.string,
   className: PropTypes.string,
-  type: PropTypes.oneOf(['select', 'checkbox', 'radio', 'text']),
+  type: PropTypes.oneOf(['select', 'checkbox', 'radio', 'text', 'datetime']),
   inputType: PropTypes.string,
   values: PropTypes.arrayOf(PropTypes.object)
 };
