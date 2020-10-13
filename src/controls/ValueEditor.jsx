@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import setHours from "date-fns";
-import setMinutes from "date-fns";
+import setHours from "date-fns/setHours";
+import setMinutes from "date-fns/setMinutes";
 import DatePicker from "react-datepicker";
-
-import "react-datepicker/dist/react-datepicker.css";
 
 const ValueEditor = ({
   operator,
@@ -40,16 +38,16 @@ const ValueEditor = ({
       return (
           <span className={className} title={title}>
             <DatePicker
-                // selected={setHours(setMinutes(new Date(), 30), 16)}
+                selected={setHours(setMinutes(new Date(), 30), 16)}
                 onChange={(e) => handleOnChange(e)}
                 showTimeSelect
                 timeFormat="HH:mm"
-                // injectTimes={[
-                //   setHours(setMinutes(new Date(), 1), 0),
-                //   setHours(setMinutes(new Date(), 59), 23)
-                // ]}
+                injectTimes={[
+                  setHours(setMinutes(new Date(), 1), 0),
+                  setHours(setMinutes(new Date(), 59), 23)
+                ]}
                 dateFormat="MMMM d, yyyy h:mm aa"
-                // value={value}
+                value={value}
             />
           </span>
       );
@@ -85,11 +83,10 @@ const ValueEditor = ({
     default:
       return (
         <input
-            // type={inputType || 'text'}
-          type={'dafualt..asd'}
+          type={inputType || 'text'}
           value={value}
           title={title}
-          className={className}
+          className={className + "default-input-type"}
           onChange={(e) => handleOnChange(e.target.value)}
         />
       );

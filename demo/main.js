@@ -93,7 +93,7 @@ const getValueEditorType = (field, operator) => {
       return 'select';
 
     case 'isMusician':
-      return 'checkbox';
+      return 'datetime';
 
     default:
       return 'text';
@@ -103,7 +103,7 @@ const getValueEditorType = (field, operator) => {
 const getInputType = (field, operator) => {
   switch (field) {
     case 'age':
-      return 'number';
+      return 'datetime';
 
     default:
       return 'text';

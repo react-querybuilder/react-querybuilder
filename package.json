@@ -68,6 +68,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "date-fns": "^2.16.1",
     "lodash": "^4.17.4",
     "nanoid": "^2.1.10",
     "prop-types": "^15.6.0",
