@@ -37,18 +37,12 @@ const ValueEditor = ({
       if (value === true) {
         value = moment.utc().toDate()
       }
-      const onlyEdges = time => {
-        const hour = moment.utc(time).hours();
-        return hour < 23 || hour > 1;
-      }
       return (
         <DatePicker
           customInput={<input className={className} title={title}/>}
           selected={moment.utc(value, "YYYY-MM-DD HH:mm").toDate()}
           onChange={(e) => handleOnChange(moment(e).format("YYYY-MM-DD HH:mm"))}
-          timeFormat="HH:mm"
-          filterTime={onlyEdges}
-          timeInputLabel="Time:"
+          timeInputLabel="čas"
           showTimeInput
           dateFormat="YYYY-MM-DD HH:mm"
           value={moment.utc(value, "YYYY-MM-DD HH:mm").format("DD.MMM.yyyy HH:mm")}

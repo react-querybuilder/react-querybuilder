@@ -69997,11 +69997,6 @@ var ValueEditor = function ValueEditor(_ref) {
         value = moment__WEBPACK_IMPORTED_MODULE_3___default.a.utc().toDate();
       }
 
-      var onlyEdges = function onlyEdges(time) {
-        var hour = moment__WEBPACK_IMPORTED_MODULE_3___default.a.utc(time).hours();
-        return hour < 23 || hour > 1;
-      };
-
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
         customInput: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           className: className,
@@ -70011,9 +70006,7 @@ var ValueEditor = function ValueEditor(_ref) {
         onChange: function onChange(e) {
           return handleOnChange(moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("YYYY-MM-DD HH:mm"));
         },
-        timeFormat: "HH:mm",
-        filterTime: onlyEdges,
-        timeInputLabel: "Time:",
+        timeInputLabel: "\u010Das",
         showTimeInput: true,
         dateFormat: "YYYY-MM-DD HH:mm",
         value: moment__WEBPACK_IMPORTED_MODULE_3___default.a.utc(value, "YYYY-MM-DD HH:mm").format("DD.MMM.yyyy HH:mm"),
