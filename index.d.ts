@@ -23,7 +23,7 @@ interface RuleGroup {
   not?: boolean;
 }
 
-type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio';
+type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio' | 'datetime';
 
 interface CommonCustomControlProps {
   /**
