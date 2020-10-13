@@ -8,7 +8,7 @@ const path = require('path');
 module.exports = merge(webpackCommon, {
   mode: 'production',
   entry: {
-    index: './src/index.js'
+    index: './index.js'
   },
   output: {
     filename: '[name].js',
