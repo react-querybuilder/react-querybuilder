@@ -35,17 +35,17 @@ const ValueEditor = ({
 
     case 'datetime':
       if (value === true) {
-        value = moment.utc().toDate()
+        value = moment().toDate()
       }
       return (
         <DatePicker
           customInput={<input className={className} title={title}/>}
-          selected={moment.utc(value, "YYYY-MM-DD HH:mm").toDate()}
-          onChange={(e) => handleOnChange(moment(e).format("YYYY-MM-DD HH:mm"))}
-          timeInputLabel="čas"
+          selected={moment(value, "yyyy-MM-DD HH:mm").toDate()}
+          onChange={(e) => handleOnChange(moment(e).format("yyyy-MM-DD HH:mm"))}
+          timeInputLabel="čas:"
           showTimeInput
-          dateFormat="YYYY-MM-DD HH:mm"
-          value={moment.utc(value, "YYYY-MM-DD HH:mm").format("DD.MMM.yyyy HH:mm")}
+          dateFormat="yyyy-MM-DD HH:mm"
+          value={moment(value, "yyyy-MM-DD HH:mm").format("yyyy-MM-DD HH:mm")}
           popperModifiers={{
             offset: {
               enabled: true,

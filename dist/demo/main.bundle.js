@@ -69994,7 +69994,7 @@ var ValueEditor = function ValueEditor(_ref) {
 
     case 'datetime':
       if (value === true) {
-        value = moment__WEBPACK_IMPORTED_MODULE_3___default.a.utc().toDate();
+        value = moment__WEBPACK_IMPORTED_MODULE_3___default()().toDate();
       }
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
@@ -70002,14 +70002,14 @@ var ValueEditor = function ValueEditor(_ref) {
           className: className,
           title: title
         }),
-        selected: moment__WEBPACK_IMPORTED_MODULE_3___default.a.utc(value, "YYYY-MM-DD HH:mm").toDate(),
+        selected: moment__WEBPACK_IMPORTED_MODULE_3___default()(value, "yyyy-MM-DD HH:mm").toDate(),
         onChange: function onChange(e) {
-          return handleOnChange(moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("YYYY-MM-DD HH:mm"));
+          return handleOnChange(moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("yyyy-MM-DD HH:mm"));
         },
-        timeInputLabel: "\u010Das",
+        timeInputLabel: "\u010Das:",
         showTimeInput: true,
-        dateFormat: "YYYY-MM-DD HH:mm",
-        value: moment__WEBPACK_IMPORTED_MODULE_3___default.a.utc(value, "YYYY-MM-DD HH:mm").format("DD.MMM.yyyy HH:mm"),
+        dateFormat: "yyyy-MM-DD HH:mm",
+        value: moment__WEBPACK_IMPORTED_MODULE_3___default()(value, "yyyy-MM-DD HH:mm").format("yyyy-MM-DD HH:mm"),
         popperModifiers: {
           offset: {
             enabled: true,
