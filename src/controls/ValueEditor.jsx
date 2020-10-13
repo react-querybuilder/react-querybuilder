@@ -35,10 +35,11 @@ const ValueEditor = ({
       );
 
     case 'datetime':
+
       return (
           <span className={className} title={title}>
             <DatePicker
-                selected={setHours(setMinutes(new Date(), 30), 16)}
+                selected={new Date(value)}
                 onChange={(e) => handleOnChange(e)}
                 showTimeSelect
                 timeFormat="HH:mm"

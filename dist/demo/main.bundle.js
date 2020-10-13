@@ -48427,7 +48427,7 @@ var ValueEditor = function ValueEditor(_ref) {
         className: className,
         title: title
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_4___default.a, {
-        selected: Object(date_fns_setHours__WEBPACK_IMPORTED_MODULE_2__["default"])(Object(date_fns_setMinutes__WEBPACK_IMPORTED_MODULE_3__["default"])(new Date(), 30), 16),
+        selected: new Date(value),
         onChange: function onChange(e) {
           return handleOnChange(e);
         },
