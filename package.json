@@ -69,12 +69,12 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "moment": "^2.29.1",
     "nanoid": "^2.1.10",
     "prop-types": "^15.6.0",
     "react-datepicker": "^3.2.2"
   },
   "peerDependencies": {
+    "moment": "^2.29.1",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },

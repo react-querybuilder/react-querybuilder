@@ -10,6 +10,7 @@ module.exports = merge(webpackCommon, {
   entry: {
     index: './index.js'
   },
+
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
@@ -17,7 +18,8 @@ module.exports = merge(webpackCommon, {
   },
   externals: {
     react: 'commonjs react',
-    'react-dom': 'commonjs react-dom'
+    'react-dom': 'commonjs react-dom',
+    moment: 'moment',
   },
 
   devtool: 'none',
