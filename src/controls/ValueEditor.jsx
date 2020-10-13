@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import setHours from "date-fns/setHours";
-import setMinutes from "date-fns/setMinutes";
 import DatePicker from "react-datepicker";
+import moment from 'moment';
 
 const ValueEditor = ({
   operator,
@@ -35,22 +34,36 @@ const ValueEditor = ({
       );
 
     case 'datetime':
-
+      if (value === true) {
+        value = moment.utc().toDate()
+      }
+      const onlyEdges = time => {
+        const hour = moment.utc(time).hours();
+        return hour < 23 || hour > 1;
+      }
       return (
-          <span className={className} title={title}>
-            <DatePicker
-                selected={new Date(value)}
-                onChange={(e) => handleOnChange(e)}
-                showTimeSelect
-                timeFormat="HH:mm"
-                injectTimes={[
-                  setHours(setMinutes(new Date(), 1), 0),
-                  setHours(setMinutes(new Date(), 59), 23)
-                ]}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                value={value}
-            />
-          </span>
+        <DatePicker
+          customInput={<input className={className} title={title}/>}
+          selected={moment.utc(value, "YYYY-MM-DD HH:mm").toDate()}
+          onChange={(e) => handleOnChange(moment(e).format("YYYY-MM-DD HH:mm"))}
+          timeFormat="HH:mm"
+          filterTime={onlyEdges}
+          timeInputLabel="Time:"
+          showTimeInput
+          dateFormat="YYYY-MM-DD HH:mm"
+          value={moment.utc(value, "YYYY-MM-DD HH:mm").format("DD.MMM.yyyy HH:mm")}
+          popperModifiers={{
+            offset: {
+              enabled: true,
+              offset: "5px, 10px"
+            },
+            preventOverflow: {
+              enabled: true,
+              escapeWithReference: false,
+              boundariesElement: "viewport"
+            }
+          }}
+        />
       );
 
     case 'checkbox':

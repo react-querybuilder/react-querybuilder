@@ -68,8 +68,8 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "date-fns": "^2.16.1",
     "lodash": "^4.17.4",
+    "moment": "^2.29.1",
     "nanoid": "^2.1.10",
     "prop-types": "^15.6.0",
     "react-datepicker": "^3.2.2"
