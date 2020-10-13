@@ -1,3 +1,9 @@
+#HOW TO BUILD:
+
+```
+rm -r dist
+yarn webpack ./src --env prod
+``` 
 # react-querybuilder
 
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
