@@ -35,23 +35,14 @@ const ValueEditor = ({
 
     case 'datetime':
       const regExp=/^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
-      console.log("-", value);
-
       if(typeof value !== 'string' || !value.match(regExp)){
-        console.log(value);
         value = moment().toDate();
       }
-      console.log("+", value);
 
       return (
         <DatePicker
           customInput={<input className={className} title={title}/>}
-          onChange={(e) => {
-            const s = moment(e).format("YYYY-MM-DD HH:mm");
-            handleOnChange(s);
-            console.log(e, s);
-          }
-          }
+          onChange={(e) => handleOnChange(moment(e).format("YYYY-MM-DD HH:mm"))}
           timeInputLabel="čas:"
           showTimeInput
           dateFormat="MM/dd/yyyy h:mm aa"
