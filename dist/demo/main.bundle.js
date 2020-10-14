@@ -69993,12 +69993,15 @@ var ValueEditor = function ValueEditor(_ref) {
       }));
 
     case 'datetime':
-      if (value === true) {
+      if (!moment__WEBPACK_IMPORTED_MODULE_3___default.a.isDate(value)) {
         value = moment__WEBPACK_IMPORTED_MODULE_3___default()().toDate();
       }
 
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a // customInput={<input className={className} title={title}/>}
-      , {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
+        customInput: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          className: className,
+          title: title
+        }),
         selected: moment__WEBPACK_IMPORTED_MODULE_3___default()(value, "yyyy-MM-DD HH:mm").toDate(),
         onChange: function onChange(e) {
           return handleOnChange(moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("yyyy-MM-DD HH:mm"));

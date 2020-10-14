@@ -34,12 +34,12 @@ const ValueEditor = ({
       );
 
     case 'datetime':
-      if (value === true) {
+      if (!moment.isDate(value)) {
         value = moment().toDate()
       }
       return (
         <DatePicker
-          // customInput={<input className={className} title={title}/>}
+          customInput={<input className={className} title={title}/>}
           selected={moment(value, "yyyy-MM-DD HH:mm").toDate()}
           onChange={(e) => handleOnChange(moment(e).format("yyyy-MM-DD HH:mm"))}
           timeInputLabel="čas:"
