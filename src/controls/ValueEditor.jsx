@@ -46,7 +46,12 @@ const ValueEditor = ({
       return (
         <DatePicker
           customInput={<input className={className} title={title}/>}
-          onChange={(e) => handleOnChange(moment(e).format("yyyy-MM-DD HH:mm"))}
+          onChange={(e) => {
+            const s = moment(e).format("yyyy-MM-DD HH:mm");
+            handleOnChange(s);
+            console.log(e, s);
+          }
+          }
           timeInputLabel="čas:"
           showTimeInput
           dateFormat="MM/dd/yyyy h:mm aa"

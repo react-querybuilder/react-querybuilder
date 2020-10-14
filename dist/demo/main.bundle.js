@@ -70008,7 +70008,9 @@ var ValueEditor = function ValueEditor(_ref) {
           title: title
         }),
         onChange: function onChange(e) {
-          return handleOnChange(moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("yyyy-MM-DD HH:mm"));
+          var s = moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("yyyy-MM-DD HH:mm");
+          handleOnChange(s);
+          console.log(e, s);
         },
         timeInputLabel: "\u010Das:",
         showTimeInput: true,
