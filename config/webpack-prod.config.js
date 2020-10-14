@@ -21,8 +21,8 @@ module.exports = merge(webpackCommon, {
     'react-dom': 'commonjs react-dom',
     moment: 'moment',
   },
-
-  devtool: 'none',
+  devtool: 'cheap-module-source-map',
+  // devtool: 'none',
 
   plugins: [
     new CopyPlugin([
