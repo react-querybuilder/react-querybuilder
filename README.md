@@ -4,6 +4,10 @@
 rm -r dist
 yarn webpack ./src --env prod
 ``` 
+ci:
+```
+rm -rf dist ; yarn webpack ./src --env prod ; cp ./dist/main.js ./dist/index.js ; git add . ; git commit -m "test" ; git push https://github.com/pixelfederation/react-with-wrap-querybuilder.git
+```
 # react-querybuilder
 
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)

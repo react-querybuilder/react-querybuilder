@@ -70008,7 +70008,7 @@ var ValueEditor = function ValueEditor(_ref) {
           title: title
         }),
         onChange: function onChange(e) {
-          var s = moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("yyyy-MM-DD HH:mm");
+          var s = moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("YYYY-MM-DD HH:mm");
           handleOnChange(s);
           console.log(e, s);
         },
