@@ -69994,11 +69994,14 @@ var ValueEditor = function ValueEditor(_ref) {
 
     case 'datetime':
       var regExp = /^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
+      console.log("-", value);
 
       if (typeof value !== 'string' || !value.match(regExp)) {
+        console.log(value);
         value = moment__WEBPACK_IMPORTED_MODULE_3___default()().toDate();
       }
 
+      console.log("+", value);
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
         customInput: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           className: className,

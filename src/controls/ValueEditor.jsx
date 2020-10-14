@@ -35,9 +35,13 @@ const ValueEditor = ({
 
     case 'datetime':
       const regExp=/^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
+      console.log("-", value);
+
       if(typeof value !== 'string' || !value.match(regExp)){
+        console.log(value);
         value = moment().toDate();
       }
+      console.log("+", value);
 
       return (
         <DatePicker
