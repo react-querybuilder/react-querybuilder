@@ -34,8 +34,10 @@ const ValueEditor = ({
       );
 
     case 'datetime':
-      if (!moment.isDate(value)) {
-        value = moment().toDate()
+      const regExp=/^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
+
+      if(typeof value !== 'string' || !value.match(regExp)){
+        value = moment().format("yyyy-MM-DD HH:mm");
       }
       return (
         <DatePicker
