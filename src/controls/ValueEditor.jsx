@@ -35,19 +35,18 @@ const ValueEditor = ({
 
     case 'datetime':
       const regExp=/^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
-
       if(typeof value !== 'string' || !value.match(regExp)){
-        value = moment().format("yyyy-MM-DD HH:mm");
+        value = moment().toDate();
       }
+
       return (
         <DatePicker
           customInput={<input className={className} title={title}/>}
-          selected={moment(value, "yyyy-MM-DD HH:mm").toDate()}
           onChange={(e) => handleOnChange(moment(e).format("yyyy-MM-DD HH:mm"))}
           timeInputLabel="čas:"
           showTimeInput
-          dateFormat="yyyy-MM-DD HH:mm"
-          value={moment(value, "yyyy-MM-DD HH:mm").format("yyyy-MM-DD HH:mm")}
+          dateFormat="MM/dd/yyyy h:mm aa"
+          value={value}
           popperModifiers={{
             offset: {
               enabled: true,

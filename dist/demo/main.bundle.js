@@ -69996,7 +69996,7 @@ var ValueEditor = function ValueEditor(_ref) {
       var regExp = /^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
 
       if (typeof value !== 'string' || !value.match(regExp)) {
-        value = moment__WEBPACK_IMPORTED_MODULE_3___default()().format("yyyy-MM-DD HH:mm");
+        value = moment__WEBPACK_IMPORTED_MODULE_3___default()().toDate();
       }
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
@@ -70004,14 +70004,13 @@ var ValueEditor = function ValueEditor(_ref) {
           className: className,
           title: title
         }),
-        selected: moment__WEBPACK_IMPORTED_MODULE_3___default()(value, "yyyy-MM-DD HH:mm").toDate(),
         onChange: function onChange(e) {
           return handleOnChange(moment__WEBPACK_IMPORTED_MODULE_3___default()(e).format("yyyy-MM-DD HH:mm"));
         },
         timeInputLabel: "\u010Das:",
         showTimeInput: true,
-        dateFormat: "yyyy-MM-DD HH:mm",
-        value: moment__WEBPACK_IMPORTED_MODULE_3___default()(value, "yyyy-MM-DD HH:mm").format("yyyy-MM-DD HH:mm"),
+        dateFormat: "MM/dd/yyyy h:mm aa",
+        value: value,
         popperModifiers: {
           offset: {
             enabled: true,
