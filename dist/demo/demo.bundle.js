@@ -86,6 +86,100 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./demo/BootstrapValueEditor.tsx":
+/*!***************************************!*\
+  !*** ./demo/BootstrapValueEditor.tsx ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var BootstrapValueEditor = function BootstrapValueEditor(_ref) {
+  var operator = _ref.operator,
+      value = _ref.value,
+      handleOnChange = _ref.handleOnChange,
+      title = _ref.title,
+      className = _ref.className,
+      type = _ref.type,
+      inputType = _ref.inputType,
+      values = _ref.values;
+
+  if (operator === 'null' || operator === 'notNull') {
+    return null;
+  }
+
+  switch (type) {
+    case 'select':
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        className: className,
+        title: title,
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.value);
+        },
+        value: value
+      }, values.map(function (v) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+          key: v.name,
+          value: v.name
+        }, v.label);
+      }));
+
+    case 'checkbox':
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "checkbox",
+        className: "form-check-input",
+        title: title,
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.checked);
+        },
+        checked: !!value
+      });
+
+    case 'radio':
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        title: title
+      }, values.map(function (v) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: v.name,
+          className: "form-check-inline"
+        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          className: "form-check form-check-input",
+          type: "radio",
+          id: v.name,
+          value: v.name,
+          checked: value === v.name,
+          onChange: function onChange(e) {
+            return handleOnChange(e.target.value);
+          }
+        }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+          className: "form-check-label",
+          htmlFor: v.name
+        }, v.label));
+      }));
+
+    default:
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: inputType || 'text',
+        value: value,
+        title: title,
+        className: className,
+        onChange: function onChange(e) {
+          return handleOnChange(e.target.value);
+        }
+      });
+  }
+};
+
+BootstrapValueEditor.displayName = 'ValueEditor';
+/* harmony default export */ __webpack_exports__["default"] = (BootstrapValueEditor);
+
+/***/ }),
+
 /***/ "./demo/main.tsx":
 /*!***********************!*\
   !*** ./demo/main.tsx ***!
@@ -95,14 +189,17 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.browser.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _src__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../src */ "./src/index.ts");
 /* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../src/query-builder.scss */ "./src/query-builder.scss");
 /* harmony import */ var _src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_src_query_builder_scss__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BootstrapValueEditor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BootstrapValueEditor */ "./demo/BootstrapValueEditor.tsx");
+/* harmony import */ var _with_bootstrap_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./with-bootstrap.scss */ "./demo/with-bootstrap.scss");
+/* harmony import */ var _with_bootstrap_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_with_bootstrap_scss__WEBPACK_IMPORTED_MODULE_6__);
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -120,6 +217,27 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
+
+var controlClassnames = {
+  default: {},
+  bootstrap: {
+    addGroup: 'btn btn-secondary btn-sm',
+    addRule: 'btn btn-primary btn-sm',
+    removeGroup: 'btn btn-danger btn-sm',
+    removeRule: 'btn btn-danger btn-sm',
+    combinators: 'form-control form-control-sm',
+    fields: 'form-control form-control-sm',
+    operators: 'form-control form-control-sm',
+    value: 'form-control form-control-sm'
+  }
+};
+var controlElements = {
+  default: {},
+  bootstrap: {
+    valueEditor: _BootstrapValueEditor__WEBPACK_IMPORTED_MODULE_5__["default"]
+  }
+};
 var preparedFields = {
   primary: [{
     name: 'firstName',
@@ -175,6 +293,10 @@ var preparedFields = {
   }, {
     name: 'gender',
     label: 'Gender',
+    operators: [{
+      name: '=',
+      label: 'is'
+    }],
     valueEditorType: 'radio',
     values: [{
       name: 'M',
@@ -196,14 +318,14 @@ var preparedFields = {
 };
 var preparedQueries = {
   primary: {
-    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
     rules: [{
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       field: 'firstName',
       value: 'Steve',
       operator: '='
     }, {
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -212,20 +334,20 @@ var preparedQueries = {
     not: false
   },
   secondary: {
-    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
     rules: [{
       field: 'age',
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       operator: '>',
       value: '28'
     }, {
       field: 'isMusician',
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       operator: '=',
       value: true
     }, {
       field: 'instrument',
-      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+      id: "r-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
       operator: '=',
       value: 'Guitar'
     }],
@@ -233,7 +355,7 @@ var preparedQueries = {
     not: false
   },
   generic: {
-    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_2__["nanoid"])()),
+    id: "g-".concat(Object(nanoid__WEBPACK_IMPORTED_MODULE_0__["nanoid"])()),
     combinator: 'and',
     not: false,
     rules: []
@@ -241,40 +363,45 @@ var preparedQueries = {
 };
 
 var RootView = function RootView() {
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(preparedQueries.primary),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(preparedQueries.primary),
       _useState2 = _slicedToArray(_useState, 2),
       query = _useState2[0],
       setQuery = _useState2[1];
 
-  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(preparedFields.primary),
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(preparedFields.primary),
       _useState4 = _slicedToArray(_useState3, 2),
       fields = _useState4[0],
       setFields = _useState4[1];
 
-  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])('json'),
+  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])('json'),
       _useState6 = _slicedToArray(_useState5, 2),
       format = _useState6[0],
       setFormat = _useState6[1];
 
-  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
       _useState8 = _slicedToArray(_useState7, 2),
       showCombinatorsBetweenRules = _useState8[0],
       setShowCombinatorsBetweenRules = _useState8[1];
 
-  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
       _useState10 = _slicedToArray(_useState9, 2),
       showNotToggle = _useState10[0],
       setShowNotToggle = _useState10[1];
 
-  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true),
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(true),
       _useState12 = _slicedToArray(_useState11, 2),
       resetOnFieldChange = _useState12[0],
       setResetOnFieldChange = _useState12[1];
 
-  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
       _useState14 = _slicedToArray(_useState13, 2),
       resetOnOperatorChange = _useState14[0],
       setResetOnOperatorChange = _useState14[1];
+
+  var _useState15 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])('default'),
+      _useState16 = _slicedToArray(_useState15, 2),
+      style = _useState16[0],
+      setStyle = _useState16[1];
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
@@ -302,97 +429,119 @@ var RootView = function RootView() {
   }), null, 2) : Object(_src__WEBPACK_IMPORTED_MODULE_3__["formatQuery"])(query, {
     format: format
   });
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  var qbWrapperClassName = "scroll ".concat(style === 'bootstrap' ? 'with-bootstrap' : '');
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "flex-box-outer"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "control-panel"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     onClick: function onClick() {
       return loadQuery('primary');
     }
-  }, "Load primary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+  }, "Load primary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     onClick: function onClick() {
       return loadQuery('secondary');
     }
-  }, "Load secondary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+  }, "Load secondary query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     onClick: function onClick() {
       return loadQuery();
     }
-  }, "Clear query")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, "Clear query")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "flex-box"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "scroll"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    className: qbWrapperClassName
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("form", {
+    className: "form-inline"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_src__WEBPACK_IMPORTED_MODULE_3__["default"], {
     query: query,
     fields: fields,
-    controlClassnames: {
-      fields: 'form-control'
-    },
+    controlClassnames: controlClassnames[style],
+    controlElements: controlElements[style],
     onQueryChange: handleQueryChange,
     showCombinatorsBetweenRules: showCombinatorsBetweenRules,
     showNotToggle: showNotToggle,
     resetOnFieldChange: resetOnFieldChange,
     resetOnOperatorChange: resetOnOperatorChange
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "shrink query-log scroll"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Options"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h4", null, "Style"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("select", {
+    value: style,
+    onChange: function onChange(e) {
+      return setStyle(e.target.value);
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("option", {
+    value: "default"
+  }, "Default"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("option", {
+    value: "bootstrap"
+  }, "Bootstrap")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h4", null, "Options"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: showCombinatorsBetweenRules,
     onChange: function onChange(e) {
       return setShowCombinatorsBetweenRules(e.target.checked);
     }
-  }), "Show combinators between rules")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "Show combinators between rules")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: showNotToggle,
     onChange: function onChange(e) {
       return setShowNotToggle(e.target.checked);
     }
-  }), "Show \"not\" toggle")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "Show \"not\" toggle")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: resetOnFieldChange,
     onChange: function onChange(e) {
       return setResetOnFieldChange(e.target.checked);
     }
-  }), "Reset rule on field change")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "Reset rule on field change")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "checkbox",
     checked: resetOnOperatorChange,
     onChange: function onChange(e) {
       return setResetOnOperatorChange(e.target.checked);
     }
-  }), "Reset rule on operator change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }), "Reset rule on operator change"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h4", null, "Query"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-between',
       flexDirection: 'column'
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'json',
     onChange: function onChange() {
       return setFormat('json');
     }
-  }), "JSON"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "JSON"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'json_without_ids',
     onChange: function onChange() {
       return setFormat('json_without_ids');
     }
-  }), "JSON Without IDs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "JSON Without IDs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'sql',
     onChange: function onChange() {
       return setFormat('sql');
     }
-  }), "SQL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }), "SQL"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "radio",
     checked: format === 'parameterized',
     onChange: function onChange() {
       return setFormat('parameterized');
     }
-  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, formatString))));
+  }), "Parameterized")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("pre", null, formatString))));
 };
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(RootView, null), document.querySelector('.container'));
+react_dom__WEBPACK_IMPORTED_MODULE_2___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RootView, null), document.querySelector('.container'));
+
+/***/ }),
+
+/***/ "./demo/with-bootstrap.scss":
+/*!**********************************!*\
+  !*** ./demo/with-bootstrap.scss ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 

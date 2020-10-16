@@ -3,6 +3,31 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, { ExportFormat, Field, formatQuery, RuleGroupType } from '../src';
 import '../src/query-builder.scss';
+import BootstrapValueEditor from './BootstrapValueEditor';
+import './with-bootstrap.scss';
+
+type StyleName = 'default' | 'bootstrap';
+
+const controlClassnames = {
+  default: {},
+  bootstrap: {
+    addGroup: 'btn btn-secondary btn-sm',
+    addRule: 'btn btn-primary btn-sm',
+    removeGroup: 'btn btn-danger btn-sm',
+    removeRule: 'btn btn-danger btn-sm',
+    combinators: 'form-control form-control-sm',
+    fields: 'form-control form-control-sm',
+    operators: 'form-control form-control-sm',
+    value: 'form-control form-control-sm'
+  }
+};
+
+const controlElements = {
+  default: {},
+  bootstrap: {
+    valueEditor: BootstrapValueEditor
+  }
+};
 
 const preparedFields: { [key: string]: Field[] } = {
   primary: [
@@ -37,6 +62,7 @@ const preparedFields: { [key: string]: Field[] } = {
     {
       name: 'gender',
       label: 'Gender',
+      operators: [{ name: '=', label: 'is' }],
       valueEditorType: 'radio',
       values: [
         { name: 'M', label: 'Male' },
@@ -110,6 +136,7 @@ const RootView = () => {
   const [showNotToggle, setShowNotToggle] = useState(false);
   const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
   const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
+  const [style, setStyle] = useState<StyleName>('default');
 
   /**
    * Reloads a prepared query, a PoC for query updates by props change.
@@ -136,6 +163,8 @@ const RootView = () => {
       ? JSON.stringify(formatQuery(query, { format }), null, 2)
       : formatQuery(query, { format });
 
+  const qbWrapperClassName = `scroll ${style === 'bootstrap' ? 'with-bootstrap' : ''}`;
+
   return (
     <div className="flex-box-outer">
       <div className="control-panel">
@@ -145,19 +174,27 @@ const RootView = () => {
       </div>
       <hr />
       <div className="flex-box">
-        <div className="scroll">
-          <QueryBuilder
-            query={query}
-            fields={fields}
-            controlClassnames={{ fields: 'form-control' }}
-            onQueryChange={handleQueryChange}
-            showCombinatorsBetweenRules={showCombinatorsBetweenRules}
-            showNotToggle={showNotToggle}
-            resetOnFieldChange={resetOnFieldChange}
-            resetOnOperatorChange={resetOnOperatorChange}
-          />
+        <div className={qbWrapperClassName}>
+          <form className="form-inline">
+            <QueryBuilder
+              query={query}
+              fields={fields}
+              controlClassnames={controlClassnames[style]}
+              controlElements={controlElements[style]}
+              onQueryChange={handleQueryChange}
+              showCombinatorsBetweenRules={showCombinatorsBetweenRules}
+              showNotToggle={showNotToggle}
+              resetOnFieldChange={resetOnFieldChange}
+              resetOnOperatorChange={resetOnOperatorChange}
+            />
+          </form>
         </div>
         <div className="shrink query-log scroll">
+          <h4>Style</h4>
+          <select value={style} onChange={(e) => setStyle(e.target.value as StyleName)}>
+            <option value="default">Default</option>
+            <option value="bootstrap">Bootstrap</option>
+          </select>
           <h4>Options</h4>
           <div>
             <div>

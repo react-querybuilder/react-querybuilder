@@ -46,6 +46,7 @@
     "all-contributors-cli": "^6.18.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-istanbul": "^6.0.0",
+    "bootstrap": "^4.5.3",
     "chai": "^4.1.2",
     "codecov.io": "^0.1.6",
     "copy-webpack-plugin": "^6.1.1",
