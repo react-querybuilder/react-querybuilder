@@ -3,10 +3,15 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, { ExportFormat, Field, formatQuery, RuleGroupType } from '../src';
 import '../src/query-builder.scss';
+import AntDActionElement from './AntDActionElement';
+import AntDNotToggle from './AntDNotToggle';
+import AntDValueEditor from './AntDValueEditor';
+import AntDValueSelector from './AntDValueSelector';
 import BootstrapValueEditor from './BootstrapValueEditor';
+import './with-antd.less';
 import './with-bootstrap.scss';
 
-type StyleName = 'default' | 'bootstrap';
+type StyleName = 'default' | 'bootstrap' | 'antd';
 
 const controlClassnames = {
   default: {},
@@ -19,13 +24,25 @@ const controlClassnames = {
     fields: 'form-control form-control-sm',
     operators: 'form-control form-control-sm',
     value: 'form-control form-control-sm'
-  }
+  },
+  antd: {}
 };
 
 const controlElements = {
   default: {},
   bootstrap: {
     valueEditor: BootstrapValueEditor
+  },
+  antd: {
+    addGroupAction: AntDActionElement,
+    addRuleAction: AntDActionElement,
+    combinatorSelector: AntDValueSelector,
+    fieldSelector: AntDValueSelector,
+    notToggle: AntDNotToggle,
+    operatorSelector: AntDValueSelector,
+    removeGroupAction: AntDActionElement,
+    removeRuleAction: AntDActionElement,
+    valueEditor: AntDValueEditor
   }
 };
 
@@ -163,7 +180,9 @@ const RootView = () => {
       ? JSON.stringify(formatQuery(query, { format }), null, 2)
       : formatQuery(query, { format });
 
-  const qbWrapperClassName = `scroll ${style === 'bootstrap' ? 'with-bootstrap' : ''}`;
+  const qbWrapperClassName = `scroll ${
+    style === 'bootstrap' ? 'with-bootstrap' : style === 'antd' ? 'with-antd' : ''
+  }`;
 
   return (
     <div className="flex-box-outer">
@@ -194,6 +213,7 @@ const RootView = () => {
           <select value={style} onChange={(e) => setStyle(e.target.value as StyleName)}>
             <option value="default">Default</option>
             <option value="bootstrap">Bootstrap</option>
+            <option value="antd">Ant Design</option>
           </select>
           <h4>Options</h4>
           <div>
