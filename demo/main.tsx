@@ -7,6 +7,7 @@ import AntDActionElement from './AntDActionElement';
 import AntDNotToggle from './AntDNotToggle';
 import AntDValueEditor from './AntDValueEditor';
 import AntDValueSelector from './AntDValueSelector';
+import BootstrapNotToggle from './BootstrapNotToggle';
 import BootstrapValueEditor from './BootstrapValueEditor';
 import './with-antd.less';
 import './with-bootstrap.scss';
@@ -31,6 +32,7 @@ const controlClassnames = {
 const controlElements = {
   default: {},
   bootstrap: {
+    notToggle: BootstrapNotToggle,
     valueEditor: BootstrapValueEditor
   },
   antd: {
