@@ -2,7 +2,7 @@ import React from 'react';
 import { NotToggleProps } from '../src/types';
 
 const BootstrapNotToggle = ({ className, handleOnChange, title, checked }: NotToggleProps) => (
-  <div className="form-check-inline">
+  <div className={`form-check-inline ${className}`}>
     <input
       id="notToggle"
       className="form-check-input"
@@ -10,7 +10,7 @@ const BootstrapNotToggle = ({ className, handleOnChange, title, checked }: NotTo
       onChange={(e) => handleOnChange(e.target.checked)}
       checked={!!checked}
     />
-    <label className={className} title={title} htmlFor="notToggle">
+    <label title={title} htmlFor="notToggle">
       Not
     </label>
   </div>

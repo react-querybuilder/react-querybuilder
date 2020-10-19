@@ -1,3 +1,4 @@
+import { Button, Checkbox, Divider, Layout, Radio, Select, Space, Typography } from 'antd';
 import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -16,8 +17,14 @@ import AntDValueEditor from './AntDValueEditor';
 import AntDValueSelector from './AntDValueSelector';
 import BootstrapNotToggle from './BootstrapNotToggle';
 import BootstrapValueEditor from './BootstrapValueEditor';
+import './github-fork-ribbon.scss';
 import './with-antd.less';
 import './with-bootstrap.scss';
+import './with-default.scss';
+
+const { Header, Sider, Content } = Layout;
+const { Option } = Select;
+const { Title } = Typography;
 
 type StyleName = 'default' | 'bootstrap' | 'antd';
 
@@ -189,116 +196,114 @@ const RootView = () => {
       ? JSON.stringify(formatQuery(query, { format }), null, 2)
       : formatQuery(query, { format });
 
-  const qbWrapperClassName = `scroll ${
-    style === 'bootstrap' ? 'with-bootstrap' : style === 'antd' ? 'with-antd' : ''
-  }`;
+  const qbWrapperClassName = `with-${style}`;
 
   return (
-    <div className="flex-box-outer">
-      <div className="control-panel">
-        <button onClick={() => loadQuery('primary')}>Load primary query</button>
-        <button onClick={() => loadQuery('secondary')}>Load secondary query</button>
-        <button onClick={() => loadQuery()}>Clear query</button>
-      </div>
-      <hr />
-      <div className="flex-box">
-        <div className={qbWrapperClassName}>
-          <form className="form-inline">
-            <QueryBuilder
-              query={query}
-              fields={fields}
-              controlClassnames={controlClassnames[style]}
-              controlElements={controlElements[style]}
-              onQueryChange={handleQueryChange}
-              showCombinatorsBetweenRules={showCombinatorsBetweenRules}
-              showNotToggle={showNotToggle}
-              resetOnFieldChange={resetOnFieldChange}
-              resetOnOperatorChange={resetOnOperatorChange}
-            />
-          </form>
-        </div>
-        <div className="shrink query-log scroll">
-          <h4>Style</h4>
-          <select value={style} onChange={(e) => setStyle(e.target.value as StyleName)}>
-            <option value="default">Default</option>
-            <option value="bootstrap">Bootstrap</option>
-            <option value="antd">Ant Design</option>
-          </select>
-          <h4>Options</h4>
+    <Layout>
+      <Header>
+        <Title level={3} style={{ display: 'inline-block' }}>
+          <a href="https://github.com/sapientglobalmarkets/react-querybuilder">
+            React Query Builder
+          </a>
+        </Title>
+      </Header>
+      <Layout>
+        <Sider theme="light" width={260} style={{ padding: '1rem' }}>
+          <Title level={4}>Style</Title>
+          <Select value={style} onChange={(v) => setStyle(v as StyleName)}>
+            <Option value="default">Default</Option>
+            <Option value="bootstrap">Bootstrap</Option>
+            <Option value="antd">Ant Design</Option>
+          </Select>
+          <Divider />
+          <Title level={4}>Options</Title>
           <div>
             <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={showCombinatorsBetweenRules}
-                  onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}
-                />
+              <Checkbox
+                checked={showCombinatorsBetweenRules}
+                onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}>
                 Show combinators between rules
-              </label>
+              </Checkbox>
             </div>
             <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={showNotToggle}
-                  onChange={(e) => setShowNotToggle(e.target.checked)}
-                />
+              <Checkbox
+                checked={showNotToggle}
+                onChange={(e) => setShowNotToggle(e.target.checked)}>
                 Show "not" toggle
-              </label>
+              </Checkbox>
             </div>
             <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={resetOnFieldChange}
-                  onChange={(e) => setResetOnFieldChange(e.target.checked)}
-                />
+              <Checkbox
+                checked={resetOnFieldChange}
+                onChange={(e) => setResetOnFieldChange(e.target.checked)}>
                 Reset rule on field change
-              </label>
+              </Checkbox>
             </div>
             <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={resetOnOperatorChange}
-                  onChange={(e) => setResetOnOperatorChange(e.target.checked)}
-                />
+              <Checkbox
+                checked={resetOnOperatorChange}
+                onChange={(e) => setResetOnOperatorChange(e.target.checked)}>
                 Reset rule on operator change
-              </label>
+              </Checkbox>
             </div>
           </div>
-          <h4>Query</h4>
+          <Divider />
+          <Title level={4}>Output</Title>
           <div
             style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-            <label>
-              <input type="radio" checked={format === 'json'} onChange={() => setFormat('json')} />
+            <Radio checked={format === 'json'} onChange={() => setFormat('json')}>
               JSON
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={format === 'json_without_ids'}
-                onChange={() => setFormat('json_without_ids')}
-              />
+            </Radio>
+            <Radio
+              checked={format === 'json_without_ids'}
+              onChange={() => setFormat('json_without_ids')}>
               JSON Without IDs
-            </label>
-            <label>
-              <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />
+            </Radio>
+            <Radio checked={format === 'sql'} onChange={() => setFormat('sql')}>
               SQL
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={format === 'parameterized'}
-                onChange={() => setFormat('parameterized')}
-              />
+            </Radio>
+            <Radio checked={format === 'parameterized'} onChange={() => setFormat('parameterized')}>
               Parameterized
-            </label>
+            </Radio>
           </div>
+          <Divider />
+          <Title level={4}>Installation</Title>
+          <pre>npm i react-querybuilder</pre>
+          OR
+          <pre>yarn add react-querybuilder</pre>
+        </Sider>
+        <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
+          <Space>
+            <Button type="default" onClick={() => loadQuery('primary')}>
+              Load query #1
+            </Button>
+            <Button type="default" onClick={() => loadQuery('secondary')}>
+              Load query #2
+            </Button>
+            <Button type="default" onClick={() => loadQuery()}>
+              Load query #3
+            </Button>
+          </Space>
+          <div className={qbWrapperClassName}>
+            <form className="form-inline" style={{ marginTop: '1rem' }}>
+              <QueryBuilder
+                query={query}
+                fields={fields}
+                controlClassnames={controlClassnames[style]}
+                controlElements={controlElements[style]}
+                onQueryChange={handleQueryChange}
+                showCombinatorsBetweenRules={showCombinatorsBetweenRules}
+                showNotToggle={showNotToggle}
+                resetOnFieldChange={resetOnFieldChange}
+                resetOnOperatorChange={resetOnOperatorChange}
+              />
+            </form>
+          </div>
+          <Divider />
           <pre>{formatString}</pre>
-        </div>
-      </div>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
