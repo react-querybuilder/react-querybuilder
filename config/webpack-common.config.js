@@ -21,7 +21,27 @@ module.exports = {
         }
       },
       {
-        test: /\.scss/,
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              sourceMap: true,
+              lessOptions: { javascriptEnabled: true }
+            }
+          }
+        ]
+      },
+      {
+        test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
