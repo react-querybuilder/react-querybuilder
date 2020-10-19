@@ -1,7 +1,14 @@
 import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder, { ExportFormat, Field, formatQuery, RuleGroupType } from '../src';
+import QueryBuilder, {
+  Classnames,
+  Controls,
+  ExportFormat,
+  Field,
+  formatQuery,
+  RuleGroupType
+} from '../src';
 import '../src/query-builder.scss';
 import AntDActionElement from './AntDActionElement';
 import AntDNotToggle from './AntDNotToggle';
@@ -14,7 +21,7 @@ import './with-bootstrap.scss';
 
 type StyleName = 'default' | 'bootstrap' | 'antd';
 
-const controlClassnames = {
+const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
   default: {},
   bootstrap: {
     addGroup: 'btn btn-secondary btn-sm',
@@ -29,7 +36,7 @@ const controlClassnames = {
   antd: {}
 };
 
-const controlElements = {
+const controlElements: { [k in StyleName]: Partial<Controls> } = {
   default: {},
   bootstrap: {
     notToggle: BootstrapNotToggle,
