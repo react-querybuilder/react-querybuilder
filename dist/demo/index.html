@@ -4,86 +4,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>React Query Builder</title>
     <style>
-      html,
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      .set-changer {
-        margin-bottom: 20px;
-      }
-
-      .flex-box-outer {
-        padding: 20px;
-      }
-
-      .flex-box {
-        display: flex;
-      }
-
-      .flex-box > * {
-        flex: 1;
-      }
-
-      .scroll {
-        overflow: auto;
-      }
-
-      .shrink {
-        flex: 0 1 auto;
-      }
-
-      .query-log {
-        white-space: nowrap;
-        max-width: 400px;
-        margin-left: 2rem;
-      }
-
-      .query-log h4:first-child {
-        margin-top: 0;
-      }
-
-      .query-log pre {
+      pre {
+        background-color: #eeeeee;
+        border: 1px solid gray;
+        border-radius: 4px;
         font-family: Consolas, 'Courier New', monospace;
         font-size: small;
+        padding: 1rem;
       }
 
       .queryBuilder {
         min-width: 405px;
       }
 
-      .control-panel label {
-        font-size: 13px;
-        margin-right: 0.5rem;
-      }
-
-      .control-panel button {
-        color: #888;
-        font-size: 14px;
-        padding: 10px 15px;
-        margin-right: 10px;
-        cursor: pointer;
-        border-radius: 3px;
-        border: none;
-        background-color: #f1f1f1;
-      }
-
-      .control-panel button:hover {
-        color: #000;
-        background-color: #eaeaea;
-      }
-
-      hr {
-        border: 1px solid #eee;
-        margin-bottom: 15px;
+      .github-fork-ribbon:before {
+        background-color: #090;
       }
     </style>
     <script>if (!window.crypto) window.crypto = window.msCrypto;</script>
   <link href="query-builder.css" rel="stylesheet"></head>
-  <body class="flex-box">
-    <div class="container flex-box"></div>
+  <body>
+    <a class="github-fork-ribbon" href="https://github.com/sapientglobalmarkets/react-querybuilder" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+    <div class="container"></div>
   <script src="demo.bundle.js"></script></body>
 </html>
