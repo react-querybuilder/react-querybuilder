@@ -26434,5 +26434,11 @@ div.ant-typography-edit-content.ant-typography-rtl {
   .with-default .ruleGroup-notToggle {
     margin-left: 0.5rem; }
 
+.with-material .ruleGroup-addRule, .with-material .ruleGroup-addGroup, .with-material .ruleGroup-notToggle {
+  margin-left: 0.5rem; }
+
+.with-material .rule-remove, .with-material .ruleGroup-remove {
+  float: right; }
+
 
 /*# sourceMappingURL=query-builder.css.map*/
