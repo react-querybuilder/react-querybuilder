@@ -20,7 +20,8 @@
     "ui",
     "component",
     "clause",
-    "expression"
+    "expression",
+    "sql"
   ],
   "contributors": [
     "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
