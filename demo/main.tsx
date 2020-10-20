@@ -18,15 +18,20 @@ import AntDValueSelector from './AntDValueSelector';
 import BootstrapNotToggle from './BootstrapNotToggle';
 import BootstrapValueEditor from './BootstrapValueEditor';
 import './github-fork-ribbon.scss';
+import MaterialActionElement from './MaterialActionElement';
+import MaterialNotToggle from './MaterialNotToggle';
+import MaterialValueEditor from './MaterialValueEditor';
+import MaterialValueSelector from './MaterialValueSelector';
 import './with-antd.less';
 import './with-bootstrap.scss';
 import './with-default.scss';
+import './with-material.scss';
 
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
 const { Title } = Typography;
 
-type StyleName = 'default' | 'bootstrap' | 'antd';
+type StyleName = 'default' | 'bootstrap' | 'antd' | 'material';
 
 const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
   default: {},
@@ -40,7 +45,8 @@ const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
     operators: 'form-control form-control-sm',
     value: 'form-control form-control-sm'
   },
-  antd: {}
+  antd: {},
+  material: {}
 };
 
 const controlElements: { [k in StyleName]: Partial<Controls> } = {
@@ -59,6 +65,17 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
     removeGroupAction: AntDActionElement,
     removeRuleAction: AntDActionElement,
     valueEditor: AntDValueEditor
+  },
+  material: {
+    addGroupAction: MaterialActionElement,
+    addRuleAction: MaterialActionElement,
+    combinatorSelector: MaterialValueSelector,
+    fieldSelector: MaterialValueSelector,
+    notToggle: MaterialNotToggle,
+    operatorSelector: MaterialValueSelector,
+    removeGroupAction: MaterialActionElement,
+    removeRuleAction: MaterialActionElement,
+    valueEditor: MaterialValueEditor
   }
 };
 
@@ -213,6 +230,7 @@ const RootView = () => {
           <Select value={style} onChange={(v) => setStyle(v as StyleName)}>
             <Option value="default">Default</Option>
             <Option value="bootstrap">Bootstrap</Option>
+            <Option value="material">Material</Option>
             <Option value="antd">Ant Design</Option>
           </Select>
           <Divider />
