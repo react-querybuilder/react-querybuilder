@@ -11,21 +11,21 @@ import QueryBuilder, {
   RuleGroupType
 } from '../src';
 import '../src/query-builder.scss';
-import AntDActionElement from './AntDActionElement';
-import AntDNotToggle from './AntDNotToggle';
-import AntDValueEditor from './AntDValueEditor';
-import AntDValueSelector from './AntDValueSelector';
-import BootstrapNotToggle from './BootstrapNotToggle';
-import BootstrapValueEditor from './BootstrapValueEditor';
-import './github-fork-ribbon.scss';
-import MaterialActionElement from './MaterialActionElement';
-import MaterialNotToggle from './MaterialNotToggle';
-import MaterialValueEditor from './MaterialValueEditor';
-import MaterialValueSelector from './MaterialValueSelector';
-import './with-antd.less';
-import './with-bootstrap.scss';
-import './with-default.scss';
-import './with-material.scss';
+import AntDActionElement from './components/AntDActionElement';
+import AntDNotToggle from './components/AntDNotToggle';
+import AntDValueEditor from './components/AntDValueEditor';
+import AntDValueSelector from './components/AntDValueSelector';
+import BootstrapNotToggle from './components/BootstrapNotToggle';
+import BootstrapValueEditor from './components/BootstrapValueEditor';
+import MaterialActionElement from './components/MaterialActionElement';
+import MaterialNotToggle from './components/MaterialNotToggle';
+import MaterialValueEditor from './components/MaterialValueEditor';
+import MaterialValueSelector from './components/MaterialValueSelector';
+import './styles/github-fork-ribbon.scss';
+import './styles/with-antd.less';
+import './styles/with-bootstrap.scss';
+import './styles/with-default.scss';
+import './styles/with-material.scss';
 
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;

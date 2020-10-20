@@ -7,7 +7,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Select from '@material-ui/core/Select';
 import React from 'react';
-import { ValueEditorProps } from '../src/types';
+import { ValueEditorProps } from '../../src/types';
 
 const MaterialValueEditor = ({
   operator,
