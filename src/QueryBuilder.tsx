@@ -204,6 +204,10 @@ export const QueryBuilder = ({
    * Gets the operators for a given field
    */
   const getOperatorsMain = (field: string) => {
+    const fieldData = arrayFind(fields, (f) => f.name === field);
+    if (fieldData?.operators) {
+      return fieldData.operators;
+    }
     if (getOperators) {
       const ops = getOperators(field);
       if (ops) return ops;
