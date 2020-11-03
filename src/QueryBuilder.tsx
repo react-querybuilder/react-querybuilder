@@ -147,10 +147,13 @@ export const QueryBuilder = ({
       }
     }
 
+    const f = arrayFind(fields, (f) => f.name === field);
+    const value = f?.defaultValue ?? '';
+
     return {
       id: `r-${nanoid()}`,
       field,
-      value: '',
+      value,
       operator: getOperatorsMain(field)[0].name
     };
   };
@@ -192,6 +195,11 @@ export const QueryBuilder = ({
    * Gets the list of valid values for a given field and operator
    */
   const getValuesMain = (field: string, operator: string) => {
+    const fieldData = arrayFind(fields, (f) => f.name === field);
+    /* istanbul ignore if */
+    if (fieldData?.values) {
+      return fieldData.values;
+    }
     if (getValues) {
       const vals = getValues(field, operator);
       if (vals) return vals;
@@ -216,25 +224,31 @@ export const QueryBuilder = ({
     return operators;
   };
 
-  const getRuleDefaultValue =
-    getDefaultValue ??
-    ((rule: RuleType) => {
-      let value: any = '';
+  const getRuleDefaultValue = (rule: RuleType) => {
+    const fieldData = arrayFind(fields, (f) => f.name === rule.field);
+    /* istanbul ignore if */
+    if (fieldData?.defaultValue) {
+      return fieldData.defaultValue;
+    } else if (getDefaultValue) {
+      return getDefaultValue(rule);
+    }
 
-      const values = getValuesMain(rule.field, rule.operator);
+    let value: any = '';
 
-      if (values.length) {
-        value = values[0].name;
-      } else {
-        const editorType = getValueEditorTypeMain(rule.field, rule.operator);
+    const values = getValuesMain(rule.field, rule.operator);
 
-        if (editorType === 'checkbox') {
-          value = false;
-        }
+    if (values.length) {
+      value = values[0].name;
+    } else {
+      const editorType = getValueEditorTypeMain(rule.field, rule.operator);
+
+      if (editorType === 'checkbox') {
+        value = false;
       }
+    }
 
-      return value;
-    });
+    return value;
+  };
 
   /**
    * Adds a rule to the query

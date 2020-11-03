@@ -102,6 +102,7 @@ const preparedFields: { [key: string]: Field[] } = {
         { name: 'Vocals', label: 'Vocals' },
         { name: 'Drums', label: 'Drums' }
       ],
+      defaultValue: 'Piano',
       operators: [{ name: '=', label: 'is' }]
     }
   ],
