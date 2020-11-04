@@ -226,8 +226,8 @@ export const QueryBuilder = ({
 
   const getRuleDefaultValue = (rule: RuleType) => {
     const fieldData = arrayFind(fields, (f) => f.name === rule.field);
-    /* istanbul ignore if */
-    if (fieldData?.defaultValue) {
+    /* istanbul ignore next */
+    if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
       return fieldData.defaultValue;
     } else if (getDefaultValue) {
       return getDefaultValue(rule);

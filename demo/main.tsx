@@ -90,7 +90,8 @@ const preparedFields: { [key: string]: Field[] } = {
       name: 'isMusician',
       label: 'Is a musician',
       valueEditorType: 'checkbox',
-      operators: [{ name: '=', label: 'is' }]
+      operators: [{ name: '=', label: 'is' }],
+      defaultValue: false
     },
     {
       name: 'instrument',
