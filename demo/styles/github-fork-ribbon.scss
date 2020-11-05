@@ -21,11 +21,13 @@
   position: fixed;
 }
 
-.github-fork-ribbon:hover, .github-fork-ribbon:active {
-  background-color: rgba(0, 0, 0, 0.0);
+.github-fork-ribbon:hover,
+.github-fork-ribbon:active {
+  background-color: rgba(0, 0, 0, 0);
 }
 
-.github-fork-ribbon:before, .github-fork-ribbon:after {
+.github-fork-ribbon:before,
+.github-fork-ribbon:after {
   /* The right and left classes determine the side we attach our banner to */
   position: absolute;
   display: block;
@@ -47,16 +49,22 @@
 }
 
 .github-fork-ribbon:before {
-  content: "";
+  content: '';
 
   /* Add a bit of padding to give some substance outside the "stitching" */
-  padding: .38em 0;
+  padding: 0.38em 0;
 
   /* Set the base colour */
   background-color: #a00;
 
   /* Set a gradient: transparent black at the top to almost-transparent black at the bottom */
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.15)));
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(rgba(0, 0, 0, 0)),
+    to(rgba(0, 0, 0, 0.15))
+  );
   background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
   background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
   background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
@@ -64,9 +72,9 @@
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
 
   /* Add a drop shadow */
-  -webkit-box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
-  box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0.15em 0.23em 0 rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0.15em 0.23em 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0.15em 0.23em 0 rgba(0, 0, 0, 0.5);
 
   pointer-events: auto;
 }
@@ -77,45 +85,56 @@
 
   /* Set the text properties */
   color: #fff;
-  font: 700 1em "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 700 1em 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.54em;
   text-decoration: none;
-  text-shadow: 0 -.08em rgba(0, 0, 0, 0.5);
+  text-shadow: 0 -0.08em rgba(0, 0, 0, 0.5);
   text-align: center;
   text-indent: 0;
 
   /* Set the layout properties */
-  padding: .15em 0;
-  margin: .15em 0;
+  padding: 0.15em 0;
+  margin: 0.15em 0;
 
   /* Add "stitching" effect */
-  border-width: .08em 0;
+  border-width: 0.08em 0;
   border-style: dotted;
   border-color: #fff;
   border-color: rgba(255, 255, 255, 0.7);
 }
 
-.github-fork-ribbon.left-top, .github-fork-ribbon.left-bottom {
+.github-fork-ribbon.left-top,
+.github-fork-ribbon.left-bottom {
   right: auto;
   left: 0;
 }
 
-.github-fork-ribbon.left-bottom, .github-fork-ribbon.right-bottom {
+.github-fork-ribbon.left-bottom,
+.github-fork-ribbon.right-bottom {
   top: auto;
   bottom: 0;
 }
 
-.github-fork-ribbon.left-top:before, .github-fork-ribbon.left-top:after, .github-fork-ribbon.left-bottom:before, .github-fork-ribbon.left-bottom:after {
+.github-fork-ribbon.left-top:before,
+.github-fork-ribbon.left-top:after,
+.github-fork-ribbon.left-bottom:before,
+.github-fork-ribbon.left-bottom:after {
   right: auto;
   left: -3.23em;
 }
 
-.github-fork-ribbon.left-bottom:before, .github-fork-ribbon.left-bottom:after, .github-fork-ribbon.right-bottom:before, .github-fork-ribbon.right-bottom:after {
+.github-fork-ribbon.left-bottom:before,
+.github-fork-ribbon.left-bottom:after,
+.github-fork-ribbon.right-bottom:before,
+.github-fork-ribbon.right-bottom:after {
   top: auto;
   bottom: 3.23em;
 }
 
-.github-fork-ribbon.left-top:before, .github-fork-ribbon.left-top:after, .github-fork-ribbon.right-bottom:before, .github-fork-ribbon.right-bottom:after {
+.github-fork-ribbon.left-top:before,
+.github-fork-ribbon.left-top:after,
+.github-fork-ribbon.right-bottom:before,
+.github-fork-ribbon.right-bottom:after {
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
   -ms-transform: rotate(-45deg);

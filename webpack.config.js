@@ -1,14 +1,13 @@
 'use strict';
 
-module.exports = env => {
+module.exports = (env) => {
+  const config = {
+    prod: [
+      require('./config/webpack-demo.config'), // For the demo
+      require('./config/webpack-prod.config') // lib files
+    ],
+    dev: require('./config/webpack-dev.config')
+  };
 
-    const config = {
-        prod: [
-            require('./config/webpack-demo.config'), // For the demo
-            require('./config/webpack-prod.config'), // lib files
-        ],
-        dev: require('./config/webpack-dev.config')
-    };
-
-    return config[env];
+  return config[env];
 };

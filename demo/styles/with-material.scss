@@ -1,9 +1,12 @@
 .with-material {
-  .ruleGroup-addRule, .ruleGroup-addGroup, .ruleGroup-notToggle {
+  .ruleGroup-addRule,
+  .ruleGroup-addGroup,
+  .ruleGroup-notToggle {
     margin-left: 0.5rem;
   }
 
-  .rule-remove, .ruleGroup-remove {
+  .rule-remove,
+  .ruleGroup-remove {
     float: right;
   }
 }

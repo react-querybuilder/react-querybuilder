@@ -1,7 +1,7 @@
 import { isRuleGroup } from '.';
 import { RuleGroupType, RuleType } from '../types';
 
-const getLevel = (id: string, index: number, query: RuleGroupType|RuleType) => {
+const getLevel = (id: string, index: number, query: RuleGroupType | RuleType) => {
   let foundAtIndex = -1;
   if (query.id === id) {
     foundAtIndex = index;

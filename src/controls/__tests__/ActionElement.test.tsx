@@ -8,7 +8,7 @@ describe('<ActionElement />', () => {
     handleOnClick: () => null,
     className: '',
     level: 0
-  }
+  };
 
   it('should exist', () => {
     expect(ActionElement).to.exist;
