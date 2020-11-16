@@ -206,6 +206,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "eddie-xavi",
+      "name": "Edwin Xavier",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/74540236?v=4",
+      "profile": "https://www.linkedin.com/in/edwin-xavier/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
