@@ -9,12 +9,13 @@ const ValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  fieldData
 }: ValueEditorProps) => {
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
-
+  const placeHolderText = fieldData && fieldData.placeholder || '';
   switch (type) {
     case 'select':
       return (
@@ -63,6 +64,7 @@ const ValueEditor = ({
       return (
         <input
           type={inputType || 'text'}
+          placeholder={placeHolderText}
           value={value}
           title={title}
           className={className}
