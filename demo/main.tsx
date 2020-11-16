@@ -81,8 +81,8 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
 
 const preparedFields: { [key: string]: Field[] } = {
   primary: [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' }
+    { name: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
+    { name: 'lastName', label: 'Last Name', placeholder: 'Enter last name'  }
   ],
   secondary: [
     { name: 'age', label: 'Age', inputType: 'number' },
@@ -108,8 +108,8 @@ const preparedFields: { [key: string]: Field[] } = {
     }
   ],
   generic: [
-    { name: 'firstName', label: 'First name' },
-    { name: 'lastName', label: 'Last name' },
+    { name: 'firstName', label: 'First name', placeholder: 'Enter first name' },
+    { name: 'lastName', label: 'Last name', placeholder: 'Enter last name' },
     { name: 'age', label: 'Age', inputType: 'number' },
     {
       name: 'gender',
