@@ -10,7 +10,7 @@ interface FormatQueryOptions {
  * based on a given field, operator, and value.  By default, values are
  * processed assuming the default operators are being used.
  */
-declare const formatQuery: (ruleGroup: RuleGroupType, options?: "json" | FormatQueryOptions | "sql" | "json_without_ids" | "parameterized" | undefined) => string | {
+declare const formatQuery: (ruleGroup: RuleGroupType, options?: "json" | "sql" | "json_without_ids" | "parameterized" | FormatQueryOptions | undefined) => string | {
     sql: string;
     params: string[];
 };

@@ -15,7 +15,7 @@ const ValueEditor = ({
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
-  const placeHolderText = fieldData && fieldData.placeholder || '';
+  const placeHolderText = (fieldData && fieldData.placeholder) || '';
   switch (type) {
     case 'select':
       return (
