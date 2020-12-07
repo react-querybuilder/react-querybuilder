@@ -101,6 +101,12 @@ interface Field {
 
 Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements-optional)).
 
+#### `context` _(Optional)_
+
+`any`
+
+A "bucket" for passing arbitrary props down to custom components. The `custom` prop is passed to each and every component, so it's accessible anywhere in the `QueryBuilder` component tree.
+
 #### `operators` _(Optional)_
 
 `{name: string, label: string}[]`
@@ -171,6 +177,7 @@ interface ActionWithRulesProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -184,6 +191,7 @@ interface ActionWithRulesProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -197,6 +205,7 @@ interface ActionWithRulesProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -209,6 +218,7 @@ interface ActionProps {
   className: string; // CSS classNames to be applied
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -222,6 +232,7 @@ interface CombinatorSelectorProps {
   handleOnChange: (value: any) => void; // Callback function to update query representation
   rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -236,6 +247,7 @@ interface FieldSelectorProps {
   className: string; // CSS classNames to be applied
   handleOnChange: (value: any) => void; // Callback function to update query representation
   level: number; // The level the group this rule belongs to
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -251,6 +263,7 @@ interface OperatorSelectorProps {
   className: string; // CSS classNames to be applied
   handleOnChange: (value: any) => void; // Callback function to update query representation
   level: number; // The level the group this rule belongs to
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -269,6 +282,7 @@ interface ValueEditorProps {
   values: any[]; // List of available values for this rule
   level: number; // The level the group this rule belongs to
   className: string; // CSS classNames to be applied
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -281,6 +295,7 @@ interface NotToggleProps {
   title: string; // translations.notToggle.title, e.g. "Invert this group"
   level: number; // The level of the group
   className: string; // CSS classNames to be applied
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -295,6 +310,7 @@ interface RuleGroupProps {
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` documentation below
   not: boolean; // Whether or not to invert this group
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 
@@ -309,6 +325,7 @@ interface RuleProps {
   value: any; // Value for this rule
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` documentation below
+  context: any; // Container for custom props that are passed to all components
 }
 ```
 

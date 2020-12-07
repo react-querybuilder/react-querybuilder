@@ -49,6 +49,10 @@ export interface CommonProps {
    * The title for this control
    */
   title?: string;
+  /**
+   * Container for custom props that are passed to all components
+   */
+  context?: any;
 }
 
 export interface ActionProps extends CommonProps {
@@ -235,6 +239,7 @@ export interface RuleGroupProps {
   translations: Translations;
   schema: Schema;
   not?: boolean;
+  context?: any;
 }
 
 export interface RuleProps {
@@ -245,6 +250,7 @@ export interface RuleProps {
   value: any;
   translations: Translations;
   schema: Schema;
+  context?: any;
 }
 
 export interface QueryBuilderProps {
@@ -345,4 +351,8 @@ export interface QueryBuilderProps {
    * Reset the value component when the `operator` changes.
    */
   resetOnOperatorChange?: boolean;
+  /**
+   * Container for custom props that are passed to all components
+   */
+  context?: any;
 }

@@ -125,7 +125,8 @@ export const QueryBuilder = ({
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
   resetOnFieldChange = true,
-  resetOnOperatorChange = false
+  resetOnOperatorChange = false,
+  context
 }: QueryBuilderProps) => {
   /**
    * Gets the initial query
@@ -401,6 +402,7 @@ export const QueryBuilder = ({
         schema={schema}
         id={root.id}
         not={!!root.not}
+        context={context}
       />
     </div>
   );
