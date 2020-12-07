@@ -8,7 +8,8 @@ export const RuleGroup = ({
   rules = [],
   translations,
   schema,
-  not
+  not,
+  context
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -73,6 +74,7 @@ export const RuleGroup = ({
             handleOnChange={onCombinatorChange}
             rules={rules}
             level={level}
+            context={context}
           />
         )}
         {!showNotToggle ? null : (
@@ -82,6 +84,7 @@ export const RuleGroup = ({
             checked={not}
             handleOnChange={onNotToggleChange}
             level={level}
+            context={context}
           />
         )}
         <controls.addRuleAction
@@ -91,6 +94,7 @@ export const RuleGroup = ({
           handleOnClick={addRule}
           rules={rules}
           level={level}
+          context={context}
         />
         <controls.addGroupAction
           label={translations.addGroup.label}
@@ -99,6 +103,7 @@ export const RuleGroup = ({
           handleOnClick={addGroup}
           rules={rules}
           level={level}
+          context={context}
         />
         {hasParentGroup() ? (
           <controls.removeGroupAction
@@ -108,6 +113,7 @@ export const RuleGroup = ({
             handleOnClick={removeGroup}
             rules={rules}
             level={level}
+            context={context}
           />
         ) : null}
       </div>
@@ -122,10 +128,11 @@ export const RuleGroup = ({
               handleOnChange={onCombinatorChange}
               rules={rules}
               level={level}
+              context={context}
             />
           ) : null}
           {isRuleGroup(r) ? (
-            <RuleGroup
+            <controls.ruleGroup
               id={r.id!}
               schema={schema}
               parentId={id}
@@ -133,6 +140,7 @@ export const RuleGroup = ({
               translations={translations}
               rules={r.rules}
               not={!!r.not}
+              context={context}
             />
           ) : (
             <controls.rule
@@ -143,6 +151,7 @@ export const RuleGroup = ({
               schema={schema}
               parentId={id}
               translations={translations}
+              context={context}
             />
           )}
         </Fragment>

@@ -26,7 +26,8 @@ describe('<RuleGroup />', () => {
           Not
         </label>
       ),
-      rule: Rule
+      rule: Rule,
+      ruleGroup: RuleGroup
     };
     classNames = {
       combinators: 'custom-combinators-class',

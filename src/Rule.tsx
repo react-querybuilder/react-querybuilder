@@ -20,7 +20,8 @@ export const Rule = ({
     getValues,
     onPropChange,
     onRuleRemove
-  }
+  },
+  context
 }: RuleProps) => {
   const onElementChanged = (property: string, value: any) => {
     onPropChange(property, value, id);
@@ -62,6 +63,7 @@ export const Rule = ({
         className={`rule-fields ${classNames.fields}`}
         handleOnChange={onFieldChanged}
         level={level}
+        context={context}
       />
       <controls.operatorSelector
         field={field}
@@ -72,6 +74,7 @@ export const Rule = ({
         className={`rule-operators ${classNames.operators}`}
         handleOnChange={onOperatorChanged}
         level={level}
+        context={context}
       />
       <controls.valueEditor
         field={field}
@@ -85,6 +88,7 @@ export const Rule = ({
         className={`rule-value ${classNames.value}`}
         handleOnChange={onValueChanged}
         level={level}
+        context={context}
       />
       <controls.removeRuleAction
         label={translations.removeRule.label}
@@ -92,6 +96,7 @@ export const Rule = ({
         className={`rule-remove ${classNames.removeRule}`}
         handleOnClick={removeRule}
         level={level}
+        context={context}
       />
     </div>
   );
