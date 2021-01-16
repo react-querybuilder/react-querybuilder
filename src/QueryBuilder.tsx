@@ -1,9 +1,9 @@
 import arrayFind from 'array-find';
 import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
-import { nanoid } from 'nanoid';
 import objectAssign from 'object-assign';
 import React, { useEffect, useState } from 'react';
+import short from 'short-uuid';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
@@ -18,6 +18,8 @@ import {
   Translations
 } from './types';
 import { findRule, generateValidQuery, getLevel, isRuleGroup } from './utils';
+
+const translator = short();
 
 const defaultTranslations: Translations = {
   fields: {
@@ -152,7 +154,7 @@ export const QueryBuilder = ({
     const value = f?.defaultValue ?? '';
 
     return {
-      id: `r-${nanoid()}`,
+      id: `r-${translator.new()}`,
       field,
       value,
       operator: getOperatorsMain(field)[0].name
@@ -161,7 +163,7 @@ export const QueryBuilder = ({
 
   const createRuleGroup = (): RuleGroupType => {
     return {
-      id: `g-${nanoid()}`,
+      id: `g-${translator.new()}`,
       rules: [],
       combinator: combinators[0].name,
       not: false

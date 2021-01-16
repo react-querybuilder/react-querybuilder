@@ -15,7 +15,7 @@ module.exports = {
         loader: 'babel-loader',
         // Regenerate the regex below by running:
         // > npx are-you-es5 check . -rv
-        exclude: /[\\/]node_modules[\\/](?!(nanoid)[\\/])/,
+        exclude: /[\\/]node_modules[\\/](?!(short-uuid)[\\/])/,
         options: {
           presets: ['@babel/preset-env', '@babel/preset-typescript']
         }

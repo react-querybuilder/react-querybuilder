@@ -1,7 +1,7 @@
 import { Button, Checkbox, Divider, Layout, Radio, Select, Space, Typography } from 'antd';
-import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import short from 'short-uuid';
 import QueryBuilder, {
   Classnames,
   Controls,
@@ -32,6 +32,8 @@ const { Option } = Select;
 const { Title } = Typography;
 
 type StyleName = 'default' | 'bootstrap' | 'antd' | 'material';
+
+const translator = short();
 
 const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
   default: {},
@@ -129,16 +131,16 @@ const preparedFields: { [key: string]: Field[] } = {
 
 const preparedQueries: { [key: string]: RuleGroupType } = {
   primary: {
-    id: `g-${nanoid()}`,
+    id: `g-${translator.new()}`,
     rules: [
       {
-        id: `r-${nanoid()}`,
+        id: `r-${translator.new()}`,
         field: 'firstName',
         value: 'Steve',
         operator: '='
       },
       {
-        id: `r-${nanoid()}`,
+        id: `r-${translator.new()}`,
         field: 'lastName',
         value: 'Vai',
         operator: '='
@@ -148,23 +150,23 @@ const preparedQueries: { [key: string]: RuleGroupType } = {
     not: false
   },
   secondary: {
-    id: `g-${nanoid()}`,
+    id: `g-${translator.new()}`,
     rules: [
       {
         field: 'age',
-        id: `r-${nanoid()}`,
+        id: `r-${translator.new()}`,
         operator: '>',
         value: '28'
       },
       {
         field: 'isMusician',
-        id: `r-${nanoid()}`,
+        id: `r-${translator.new()}`,
         operator: '=',
         value: true
       },
       {
         field: 'instrument',
-        id: `r-${nanoid()}`,
+        id: `r-${translator.new()}`,
         operator: '=',
         value: 'Guitar'
       }
@@ -173,7 +175,7 @@ const preparedQueries: { [key: string]: RuleGroupType } = {
     not: false
   },
   generic: {
-    id: `g-${nanoid()}`,
+    id: `g-${translator.new()}`,
     combinator: 'and',
     not: false,
     rules: []
