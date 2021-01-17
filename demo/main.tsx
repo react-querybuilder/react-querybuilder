@@ -1,5 +1,4 @@
 import { Button, Checkbox, Divider, Layout, Radio, Select, Space, Typography } from 'antd';
-import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, {
@@ -32,6 +31,8 @@ const { Option } = Select;
 const { Title } = Typography;
 
 type StyleName = 'default' | 'bootstrap' | 'antd' | 'material';
+
+const generateID = () => Math.random().toString();
 
 const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
   default: {},
@@ -129,16 +130,16 @@ const preparedFields: { [key: string]: Field[] } = {
 
 const preparedQueries: { [key: string]: RuleGroupType } = {
   primary: {
-    id: `g-${nanoid()}`,
+    id: `g-${generateID()}`,
     rules: [
       {
-        id: `r-${nanoid()}`,
+        id: `r-${generateID()}`,
         field: 'firstName',
         value: 'Steve',
         operator: '='
       },
       {
-        id: `r-${nanoid()}`,
+        id: `r-${generateID()}`,
         field: 'lastName',
         value: 'Vai',
         operator: '='
@@ -148,23 +149,23 @@ const preparedQueries: { [key: string]: RuleGroupType } = {
     not: false
   },
   secondary: {
-    id: `g-${nanoid()}`,
+    id: `g-${generateID()}`,
     rules: [
       {
         field: 'age',
-        id: `r-${nanoid()}`,
+        id: `r-${generateID()}`,
         operator: '>',
         value: '28'
       },
       {
         field: 'isMusician',
-        id: `r-${nanoid()}`,
+        id: `r-${generateID()}`,
         operator: '=',
         value: true
       },
       {
         field: 'instrument',
-        id: `r-${nanoid()}`,
+        id: `r-${generateID()}`,
         operator: '=',
         value: 'Guitar'
       }
@@ -173,7 +174,7 @@ const preparedQueries: { [key: string]: RuleGroupType } = {
     not: false
   },
   generic: {
-    id: `g-${nanoid()}`,
+    id: `g-${generateID()}`,
     combinator: 'and',
     not: false,
     rules: []

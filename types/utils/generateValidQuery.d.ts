@@ -1,4 +1,4 @@
-import { RuleType, RuleGroupType } from '../types';
+import { RuleGroupType, RuleType } from '../types';
 /**
  * Generates a valid query object
  */
