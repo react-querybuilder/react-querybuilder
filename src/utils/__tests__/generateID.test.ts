@@ -7,5 +7,5 @@ describe('when generating IDs', () => {
     const id2 = generateID();
 
     expect(id1).not.to.equal(id2);
-  })
-})
+  });
+});
