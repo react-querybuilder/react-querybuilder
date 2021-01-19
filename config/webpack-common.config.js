@@ -13,9 +13,7 @@ module.exports = {
       {
         test: /\.(t|j)sx?$/,
         loader: 'babel-loader',
-        // Regenerate the regex below by running:
-        // > npx are-you-es5 check . -rv
-        exclude: /[\\/]node_modules[\\/](?!()[\\/])/,
+        exclude: /node_modules/,
         options: {
           presets: ['@babel/preset-env', '@babel/preset-typescript']
         }
