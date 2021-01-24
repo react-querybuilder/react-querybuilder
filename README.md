@@ -12,6 +12,7 @@
 - [API](#api)
   - [QueryBuilder](#querybuilder)
   - [formatQuery](#formatquery)
+  - [Defaults](#defaults)
 - [Development](#development)
   - [Changelog Generation](#changelog-generation)
 - [Credits](#credits)
@@ -628,6 +629,15 @@ console.log(formatQuery(query, 'json_without_ids'));
 //   not: false
 // };
 ```
+
+### Defaults
+
+The following default configuration objects are exported for convenience.
+
+- `defaultCombinators`
+- `defaultOperators`
+- `defaultTranslations`
+- `defaultValueProcessor`
 
 ## Development
 
