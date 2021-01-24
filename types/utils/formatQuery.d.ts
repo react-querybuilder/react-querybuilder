@@ -4,6 +4,7 @@ interface FormatQueryOptions {
     valueProcessor?: ValueProcessor;
     quoteFieldNamesWith?: string;
 }
+export declare const defaultValueProcessor: ValueProcessor;
 /**
  * Formats a query in the requested output format.  The optional
  * `valueProcessor` argument can be used to format the values differently
