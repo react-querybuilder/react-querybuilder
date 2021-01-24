@@ -28,7 +28,7 @@ const mapOperator = (op: string) => {
   }
 };
 
-const defaultValueProcessor: ValueProcessor = (field: string, operator: string, value: any) => {
+export const defaultValueProcessor: ValueProcessor = (field: string, operator: string, value: any) => {
   let val = `'${value}'`;
   if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
     val = '';

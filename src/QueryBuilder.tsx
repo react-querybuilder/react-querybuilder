@@ -18,7 +18,7 @@ import {
 } from './types';
 import { findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
-const defaultTranslations: Translations = {
+export const defaultTranslations: Translations = {
   fields: {
     title: 'Fields'
   },
@@ -52,7 +52,7 @@ const defaultTranslations: Translations = {
   }
 };
 
-const defaultOperators: NameLabelPair[] = [
+export const defaultOperators: NameLabelPair[] = [
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
@@ -71,7 +71,7 @@ const defaultOperators: NameLabelPair[] = [
   { name: 'notIn', label: 'not in' }
 ];
 
-const defaultCombinators: NameLabelPair[] = [
+export const defaultCombinators: NameLabelPair[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' }
 ];
