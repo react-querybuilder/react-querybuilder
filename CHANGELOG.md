@@ -1,5 +1,41 @@
 ## Change Log
 
+### v3.9.2 (2021-01-24)
+- [#178](https://github.com/sapientglobalmarkets/react-querybuilder/pull/178) Export default configs (@jakeboone02)
+- [#176](https://github.com/sapientglobalmarkets/react-querybuilder/pull/176) Remove unnecessary exclude pattern (@vitorhsb)
+
+### v3.9.1 (2021-01-17)
+- [#175](https://github.com/sapientglobalmarkets/react-querybuilder/pull/175) Replaced nanoid with Math.random() (@jakeboone02)
+
+### v3.9.0 (2020-12-07)
+- [#171](https://github.com/sapientglobalmarkets/react-querybuilder/pull/171) Custom props (@jakeboone02)
+
+### v3.8.4 (2020-11-16)
+- [#167](https://github.com/sapientglobalmarkets/react-querybuilder/pull/167) Added placeholder support for text fields (@eddie-xavi)
+
+### v3.8.2 (2020-11-03)
+- [#164](https://github.com/sapientglobalmarkets/react-querybuilder/pull/164) Fixed setting of default values (@jakeboone02)
+
+### v3.8.1 (2020-10-23)
+- [#161](https://github.com/sapientglobalmarkets/react-querybuilder/pull/161) Demo styles (@jakeboone02)
+
+### v3.8.0 (2020-10-09)
+- [#160](https://github.com/sapientglobalmarkets/react-querybuilder/pull/160) Added field-level configuration options (@jakeboone02)
+
+### v3.7.1 (2020-10-07)
+- [#158](https://github.com/sapientglobalmarkets/react-querybuilder/pull/158) createRule giving `name` of undefined when fields are empty (@saurabhnemade)
+
+### v3.7.0 (2020-10-04)
+- [#157](https://github.com/sapientglobalmarkets/react-querybuilder/pull/157) Implemented getDefaultField and getDefaultValue props (@jakeboone02)
+
+### v3.6.0 (2020-10-01)
+- [#155](https://github.com/sapientglobalmarkets/react-querybuilder/pull/155) Refactored formatQuery options (@jakeboone02)
+
+### v3.5.0 (2020-06-20)
+- [#145](https://github.com/sapientglobalmarkets/react-querybuilder/pull/145) Convert to TypeScript (@jakeboone02)
+- [#144](https://github.com/sapientglobalmarkets/react-querybuilder/pull/144) Implemented IE11 support (#144) (@jakeboone02)
+- [#135](https://github.com/sapientglobalmarkets/react-querybuilder/pull/135) Reset value on operator change (@artenator)
+
 ### v3.4.0 (2020-06-15)
 - [#142](https://github.com/sapientglobalmarkets/react-querybuilder/pull/142) Implemented customizable Rule component (@jakeboone02)
 
@@ -20,7 +56,7 @@
 - [#115](https://github.com/sapientglobalmarkets/react-querybuilder/pull/115) Add ruleGroup-header div (@jakeboone02)
 
 ### v2.5.1 (2019-11-11)
-- [#113](https://github.com/sapientglobalmarkets/react-querybuilder/pull/113) Bugfix/not property (@romanlamsal)
+- [#113](https://github.com/sapientglobalmarkets/react-querybuilder/pull/113) Bugfix/not property (@RomanLamsal1337)
 
 ### v2.5.0 (2019-11-10)
 - [#112](https://github.com/sapientglobalmarkets/react-querybuilder/pull/112) Format query handle more operators - Release version 2.5.0 (@oumar-sh)
