@@ -1,5 +1,5 @@
 import arrayFind from 'array-find';
-import React from 'react';
+import * as React from 'react';
 import { RuleProps } from './types';
 
 export const Rule = ({

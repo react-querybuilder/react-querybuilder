@@ -1,5 +1,4 @@
-import React from 'react';
-import { NotToggleProps } from '../src/types';
+import { NotToggleProps } from '../../src/types';
 
 const BootstrapNotToggle = ({ className, handleOnChange, title, checked }: NotToggleProps) => (
   <div className={`form-check-inline ${className}`}>

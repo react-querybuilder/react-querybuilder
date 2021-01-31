@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { mount, shallow } from 'enzyme';
-import React from 'react';
+import * as React from 'react';
 import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';

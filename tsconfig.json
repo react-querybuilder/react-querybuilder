@@ -7,7 +7,7 @@
     "strict": true,
     "module": "es6",
     "moduleResolution": "node",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "target": "es5",
     "esModuleInterop": true
   },

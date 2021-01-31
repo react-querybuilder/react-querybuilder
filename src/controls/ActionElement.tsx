@@ -1,4 +1,3 @@
-import React from 'react';
 import { ActionProps } from '../types';
 
 const ActionElement = ({ className, handleOnClick, label, title }: ActionProps) => (

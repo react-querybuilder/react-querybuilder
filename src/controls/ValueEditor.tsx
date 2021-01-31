@@ -1,4 +1,3 @@
-import React from 'react';
 import { ValueEditorProps } from '../types';
 
 const ValueEditor = ({

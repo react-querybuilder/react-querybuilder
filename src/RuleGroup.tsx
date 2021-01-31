@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
+import * as React from 'react';
 import { RuleGroupProps } from './types';
 
 export const RuleGroup = ({

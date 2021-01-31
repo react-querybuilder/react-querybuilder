@@ -1,5 +1,4 @@
-import React from 'react';
-import { ValueEditorProps } from '../src/types';
+import { ValueEditorProps } from '../../src/types';
 
 const BootstrapValueEditor = ({
   operator,

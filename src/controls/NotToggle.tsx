@@ -1,4 +1,3 @@
-import React from 'react';
 import { NotToggleProps } from '../types';
 
 const NotToggle = ({ className, handleOnChange, title, checked }: NotToggleProps) => (

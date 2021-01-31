@@ -1,6 +1,5 @@
 import { Checkbox, Input, Radio, Select } from 'antd';
-import React from 'react';
-import { ValueEditorProps } from '../src/types';
+import { ValueEditorProps } from '../../src/types';
 
 const { Option } = Select;
 

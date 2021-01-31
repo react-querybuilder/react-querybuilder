@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { mount, ReactWrapper } from 'enzyme';
 import { cloneDeep } from 'lodash';
-import React from 'react';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 import { ActionElement } from '../controls';

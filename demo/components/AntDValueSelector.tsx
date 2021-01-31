@@ -1,6 +1,5 @@
 import { Select } from 'antd';
-import React from 'react';
-import { ValueSelectorProps } from '../types';
+import { ValueSelectorProps } from '../../src/types';
 
 const { Option } = Select;
 

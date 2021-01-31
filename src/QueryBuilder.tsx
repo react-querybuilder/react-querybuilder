@@ -2,7 +2,7 @@ import arrayFind from 'array-find';
 import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
 import objectAssign from 'object-assign';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
