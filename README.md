@@ -512,6 +512,12 @@ Pass `false` not to reset operator and value for field change.
 
 Pass `true` to reset value on operator change.
 
+#### `enableMountQueryChange` _(Optional)_
+
+`boolean`
+
+Pass `false` to disable the `onQueryChange` on mount of component which will set default value.
+
 ### formatQuery
 
 `formatQuery` formats a given query in either SQL, parameterized SQL, JSON, or JSON without IDs (which can be useful if you need to serialize the rules). Example:

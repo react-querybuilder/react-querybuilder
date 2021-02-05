@@ -112,6 +112,7 @@ export const QueryBuilder = ({
   operators = defaultOperators,
   combinators = defaultCombinators,
   translations = defaultTranslations,
+  enableMountQueryChange = true,
   controlElements,
   getDefaultField,
   getDefaultValue,
@@ -389,7 +390,9 @@ export const QueryBuilder = ({
 
   // Notify a query change on mount
   useEffect(() => {
-    _notifyQueryChange(root);
+    if (enableMountQueryChange) {
+      _notifyQueryChange(root);
+    }
   }, []);
 
   return (
