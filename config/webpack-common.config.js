@@ -6,11 +6,6 @@ module.exports = {
   module: {
     rules: [
       {
-        parser: {
-          amd: false
-        }
-      },
-      {
         test: /\.(t|j)sx?$/,
         loader: 'babel-loader',
         // Regenerate the regex below by running:
@@ -62,12 +57,11 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.scss', '.less']
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.scss', '.less'],
+    fallback: {
+      'util': false
+    }
   },
 
   plugins: [new MiniCssExtractPlugin({ filename: 'query-builder.css' })],
-
-  stats: {
-    maxModules: 0
-  }
 };

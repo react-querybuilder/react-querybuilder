@@ -389,6 +389,7 @@ export const QueryBuilder = ({
   }, [query]);
 
   // Notify a query change on mount
+  /* istanbul ignore next */
   useEffect(() => {
     if (enableMountQueryChange) {
       _notifyQueryChange(root);
