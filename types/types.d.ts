@@ -266,6 +266,7 @@ export interface QueryBuilderProps {
      */
     combinators?: NameLabelPair[];
     controlElements?: Partial<Controls>;
+    enableMountQueryChange?: boolean;
     /**
      * The default field for new rules.  This can be a string identifying the
      * default field, or a function that returns a field name.
