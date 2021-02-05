@@ -4,3 +4,6 @@ node_modules
 .tmp
 coverage
 /.DS_Store
+dist/commons.js
+dist/runtime.js
+dist/tests.webpack.*.js

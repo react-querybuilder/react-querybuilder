@@ -6,8 +6,9 @@ const path = require('path');
 
 module.exports = merge(webpackCommon, {
   mode: 'development',
+
   output: {
-    filename: '[name].js',
+    // filename: '[name].js',
     path: path.resolve(__dirname, '../dist')
   },
 

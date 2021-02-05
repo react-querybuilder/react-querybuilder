@@ -3,24 +3,44 @@
 const HtmlPlugin = require('html-webpack-plugin');
 const { merge } = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 
 module.exports = merge(webpackCommon, {
   mode: 'production',
+
   entry: {
     demo: './demo/main.tsx'
   },
+
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../dist/demo')
   },
 
-  devtool: 'cheap-module-source-map',
+  module: {
+    rules: [
+      {
+        parser: {
+          amd: false
+        }
+      }
+    ]
+  },
+
+  devtool: 'source-map',
+
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false
+      })
+    ]
+  },
+
   devServer: {
-    historyApiFallback: true,
-    stats: {
-      maxModules: 0
-    }
+    historyApiFallback: true
   },
 
   plugins: [
