@@ -105,7 +105,7 @@ Field objects can also contain other data. Each field object will be passed to t
 
 `any`
 
-A "bucket" for passing arbitrary props down to custom components. The `custom` prop is passed to each and every component, so it's accessible anywhere in the `QueryBuilder` component tree.
+A "bucket" for passing arbitrary props down to custom components. The `context` prop is passed to each and every component, so it's accessible anywhere in the `QueryBuilder` component tree.
 
 #### `operators` _(Optional)_
 
@@ -432,19 +432,19 @@ This can be used to assign specific `CSS` classes to various controls that are c
 
 ```ts
 interface Classnames {
-  queryBuilder: string; // Root <div> element
-  ruleGroup: string; // <div> containing the RuleGroup
-  header: string; // <div> containing the RuleGroup header controls
-  combinators: string; // <select> control for combinators
-  addRule: string; // <button> to add a Rule
-  addGroup: string; // <button> to add a RuleGroup
-  removeGroup: string; // <button> to remove a RuleGroup
-  notToggle: string; // <label> on the "not" toggle
-  rule: string; // <div> containing the Rule
-  fields: string; // <select> control for fields
-  operators: string; // <select> control for operators
-  value: string; // <input> for the field value
-  removeRule: string; // <button> to remove a Rule
+  queryBuilder?: string; // Root <div> element
+  ruleGroup?: string; // <div> containing the RuleGroup
+  header?: string; // <div> containing the RuleGroup header controls
+  combinators?: string; // <select> control for combinators
+  addRule?: string; // <button> to add a Rule
+  addGroup?: string; // <button> to add a RuleGroup
+  removeGroup?: string; // <button> to remove a RuleGroup
+  notToggle?: string; // <label> on the "not" toggle
+  rule?: string; // <div> containing the Rule
+  fields?: string; // <select> control for fields
+  operators?: string; // <select> control for operators
+  value?: string; // <input> for the field value
+  removeRule?: string; // <button> to remove a Rule
 }
 ```
 
