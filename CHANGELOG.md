@@ -1,5 +1,8 @@
 ## Change Log
 
+### v3.9.3 (2021-02-05)
+- [#179](https://github.com/sapientglobalmarkets/react-querybuilder/pull/179) Added ability to disable inital queryChange (@saurabhnemade)
+
 ### v3.9.2 (2021-01-24)
 - [#178](https://github.com/sapientglobalmarkets/react-querybuilder/pull/178) Export default configs (@jakeboone02)
 - [#176](https://github.com/sapientglobalmarkets/react-querybuilder/pull/176) Remove unnecessary exclude pattern (@vitorhsb)
