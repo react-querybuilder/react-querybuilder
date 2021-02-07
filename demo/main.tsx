@@ -83,7 +83,7 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
 const preparedFields: { [key: string]: Field[] } = {
   primary: [
     { name: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
-    { name: 'lastName', label: 'Last Name', placeholder: 'Enter last name'  }
+    { name: 'lastName', label: 'Last Name', placeholder: 'Enter last name' }
   ],
   secondary: [
     { name: 'age', label: 'Age', inputType: 'number' },
