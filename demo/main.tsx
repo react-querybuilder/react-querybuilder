@@ -222,9 +222,7 @@ const RootView = () => {
     <Layout>
       <Header>
         <Title level={3} style={{ display: 'inline-block' }}>
-          <a href="https://github.com/react-querybuilder/react-querybuilder">
-            React Query Builder
-          </a>
+          <a href="https://github.com/react-querybuilder/react-querybuilder">React Query Builder</a>
         </Title>
       </Header>
       <Layout>
