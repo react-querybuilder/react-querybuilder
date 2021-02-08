@@ -59,9 +59,9 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.scss', '.less'],
     fallback: {
-      'util': false
+      util: false
     }
   },
 
-  plugins: [new MiniCssExtractPlugin({ filename: 'query-builder.css' })],
+  plugins: [new MiniCssExtractPlugin({ filename: 'query-builder.css' })]
 };

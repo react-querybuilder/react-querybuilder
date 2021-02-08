@@ -20,7 +20,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.1
         with:
-          prettier_options: --write ./{src,demo}/**/*
+          prettier_options: --write ./{src,demo,config}/**/*
           prettier_version: 2.2.1
           commit_message: "Prettified code"
         env:
