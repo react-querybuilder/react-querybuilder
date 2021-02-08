@@ -51,7 +51,6 @@
     "babel-plugin-istanbul": "^6.0.0",
     "bootstrap": "^4.5.3",
     "chai": "^4.1.2",
-    "codecov.io": "^0.1.6",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
     "del-cli": "^3.0.1",
@@ -110,7 +109,6 @@
     "publish:npm": "np",
     "test": "karma start karma.conf.js",
     "test:watch": "npm test -- --no-single-run --auto-watch",
-    "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",
     "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   }
 }
