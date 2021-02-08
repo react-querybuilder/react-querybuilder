@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/sapientglobalmarkets/react-querybuilder"
+    "url": "https://github.com/react-querybuilder/react-querybuilder"
   },
   "keywords": [
     "react",
@@ -28,7 +28,7 @@
     "Jake Boone"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/sapientglobalmarkets/react-querybuilder",
+  "homepage": "https://github.com/react-querybuilder/react-querybuilder",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -111,6 +111,6 @@
     "test": "karma start karma.conf.js",
     "test:watch": "npm test -- --no-single-run --auto-watch",
     "codecov": "cat coverage/*/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js",
-    "generate-changelog": "node node_modules/github-changes -o sapientglobalmarkets -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
+    "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   }
 }
