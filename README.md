@@ -3,7 +3,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
-[![Build Status](https://travis-ci.org/react-querybuilder/react-querybuilder.svg?branch=master)](https://travis-ci.org/react-querybuilder/react-querybuilder)
+![workflow status](https://github.com/react-querybuilder/react-querybuilder/workflows/Continuous%20Integration/badge.svg)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
 
 - [Getting Started](#getting-started)
