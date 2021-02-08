@@ -40,9 +40,10 @@ OR
 
 To run the demo yourself, go through the following steps:
 
-1. `npm install` _Install npm packages_
-2. `npm start` _Run a local server_
-3. http://localhost:8080/ _Visit your localhost in your browser_
+1. _Clone this repo_
+2. `yarn` _Install npm packages_
+3. `yarn start` _Run a local server_
+4. http://localhost:8080/ _Visit your localhost in your browser_
 
 ## Usage
 
