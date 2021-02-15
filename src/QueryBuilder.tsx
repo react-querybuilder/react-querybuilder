@@ -17,6 +17,7 @@ import {
   Translations
 } from './types';
 import { findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
+import './query-builder.scss';
 
 export const defaultTranslations: Translations = {
   fields: {
