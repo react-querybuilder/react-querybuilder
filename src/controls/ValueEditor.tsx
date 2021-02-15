@@ -23,7 +23,7 @@ const ValueEditor = ({
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
           value={value}>
-          {values!.map((v) => (
+          {values && values.map((v) => (
             <option key={v.name} value={v.name}>
               {v.label}
             </option>
@@ -45,7 +45,7 @@ const ValueEditor = ({
     case 'radio':
       return (
         <span className={className} title={title}>
-          {values!.map((v) => (
+          {values && values.map((v) => (
             <label key={v.name}>
               <input
                 type="radio"
