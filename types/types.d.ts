@@ -87,6 +87,7 @@ export interface ValueEditorProps extends SelectorEditorProps {
     type?: ValueEditorType;
     inputType?: string | null;
     values?: any[];
+    value?: any;
 }
 export interface Controls {
     addGroupAction: React.ComponentType<ActionWithRulesProps>;
