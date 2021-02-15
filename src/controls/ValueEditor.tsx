@@ -23,11 +23,12 @@ const ValueEditor = ({
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
           value={value}>
-          {values && values.map((v) => (
-            <option key={v.name} value={v.name}>
-              {v.label}
-            </option>
-          ))}
+          {values &&
+            values.map((v) => (
+              <option key={v.name} value={v.name}>
+                {v.label}
+              </option>
+            ))}
         </select>
       );
 
@@ -45,17 +46,18 @@ const ValueEditor = ({
     case 'radio':
       return (
         <span className={className} title={title}>
-          {values && values.map((v) => (
-            <label key={v.name}>
-              <input
-                type="radio"
-                value={v.name}
-                checked={value === v.name}
-                onChange={(e) => handleOnChange(e.target.value)}
-              />
-              {v.label}
-            </label>
-          ))}
+          {values &&
+            values.map((v) => (
+              <label key={v.name}>
+                <input
+                  type="radio"
+                  value={v.name}
+                  checked={value === v.name}
+                  onChange={(e) => handleOnChange(e.target.value)}
+                />
+                {v.label}
+              </label>
+            ))}
         </span>
       );
 
