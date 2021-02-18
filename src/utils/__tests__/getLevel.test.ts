@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getLevel } from '..';
 
 describe('when calculating the level of a rule', () => {
@@ -34,17 +33,17 @@ describe('when calculating the level of a rule', () => {
   };
 
   it('should be 0 for the top level', function () {
-    expect(getLevel('111', 0, query)).to.equal(0);
-    expect(getLevel('222', 0, query)).to.equal(0);
-    expect(getLevel('333', 0, query)).to.equal(0);
+    expect(getLevel('111', 0, query)).toBe(0);
+    expect(getLevel('222', 0, query)).toBe(0);
+    expect(getLevel('333', 0, query)).toBe(0);
   });
 
   it('should be 1 for the second level', function () {
-    expect(getLevel('444', 0, query)).to.equal(1);
-    expect(getLevel('555', 0, query)).to.equal(1);
+    expect(getLevel('444', 0, query)).toBe(1);
+    expect(getLevel('555', 0, query)).toBe(1);
   });
 
   it('should handle an invalid id', function () {
-    expect(getLevel('546', 0, query)).to.equal(-1);
+    expect(getLevel('546', 0, query)).toBe(-1);
   });
 });

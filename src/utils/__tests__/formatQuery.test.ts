@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { formatQuery } from '..';
 import { ValueProcessor } from '../../types';
 
@@ -130,23 +129,23 @@ const params = [
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
-    expect(formatQuery(query)).to.equal(JSON.stringify(query, null, 2));
-    expect(formatQuery(query, 'json')).to.equal(JSON.stringify(query, null, 2));
+    expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
+    expect(formatQuery(query, 'json')).toBe(JSON.stringify(query, null, 2));
   });
 
   it('formats SQL correctly', () => {
-    expect(formatQuery(query, 'sql')).to.equal(sqlString);
+    expect(formatQuery(query, 'sql')).toBe(sqlString);
   });
 
   it('formats parameterized SQL correctly', () => {
     const parameterized = formatQuery(query, 'parameterized') as { sql: string; params: string[] };
-    expect(parameterized).to.have.property('sql', parameterizedSQLString);
-    expect(parameterized).to.have.property('params');
-    expect(parameterized.params).to.deep.equal(params);
+    expect(parameterized).toHaveProperty('sql', parameterizedSQLString);
+    expect(parameterized).toHaveProperty('params');
+    expect(parameterized.params).toEqual(params);
   });
 
   it('handles invalid type correctly', () => {
-    expect(formatQuery(query, 'null' as any)).to.equal('');
+    expect(formatQuery(query, 'null' as any)).toBe('');
   });
 
   it('handles custom valueProcessor correctly', () => {
@@ -178,7 +177,7 @@ describe('formatQuery', () => {
       }
     };
 
-    expect(formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor })).to.equal(
+    expect(formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor })).toBe(
       `(instrument in ('Guitar','Vocals') and lastName = 'Vai')`
     );
   });
@@ -204,7 +203,7 @@ describe('formatQuery', () => {
       not: false
     };
 
-    expect(formatQuery(queryWithArrayValue, { format: 'sql', quoteFieldNamesWith: '`' })).to.equal(
+    expect(formatQuery(queryWithArrayValue, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
       "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai')"
     );
   });
@@ -298,6 +297,6 @@ describe('formatQuery', () => {
       combinator: 'and',
       not: false
     };
-    expect(formatQuery(query, 'json_without_ids')).to.equal(JSON.stringify(example_without_ids));
+    expect(formatQuery(query, 'json_without_ids')).toBe(JSON.stringify(example_without_ids));
   });
 });

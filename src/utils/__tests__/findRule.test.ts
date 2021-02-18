@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { findRule } from '..';
 
 describe('findRule', () => {
@@ -34,14 +33,14 @@ describe('findRule', () => {
   };
 
   it('should find a root rule', () => {
-    expect(findRule('111', query)).to.be.a('object');
+    expect(findRule('111', query)).toBeDefined();
   });
 
   it('should find a sub rule', () => {
-    expect(findRule('555', query)).to.be.a('object');
+    expect(findRule('555', query)).toBeDefined();
   });
 
   it('should not find an invalid id', () => {
-    expect(findRule('777', query)).to.be.undefined;
+    expect(findRule('777', query)).toBeUndefined;
   });
 });

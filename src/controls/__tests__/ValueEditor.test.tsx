@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import { mount, shallow } from 'enzyme';
-import sinon from 'sinon';
 import { ValueEditor } from '..';
 
 describe('<ValueEditor />', () => {
@@ -10,28 +8,28 @@ describe('<ValueEditor />', () => {
   };
 
   it('should exist', () => {
-    expect(ValueEditor).to.exist;
+    expect(ValueEditor).toBeDefined();
   });
 
   describe('when using default rendering', () => {
     it('should have an <input /> element', () => {
       const dom = shallow(<ValueEditor {...props} />);
-      expect(dom.find('input')).to.have.length(1);
+      expect(dom.find('input')).toHaveLength(1);
     });
 
     it('should have the value passed into the <input />', () => {
       const dom = shallow(<ValueEditor {...props} value="test" />);
-      expect(dom.find('input').props().value).to.equal('test');
+      expect(dom.find('input').props().value).toBe('test');
     });
 
     it('should render nothing for operator "null"', () => {
       const dom = shallow(<ValueEditor {...props} operator="null" />);
-      expect(dom.type()).to.be.null;
+      expect(dom.type()).toBeNull();
     });
 
     it('should render nothing for operator "notNull"', () => {
       const dom = shallow(<ValueEditor {...props} operator="notNull" />);
-      expect(dom.type()).to.be.null;
+      expect(dom.type()).toBeNull();
     });
 
     it('should call the onChange method passed in', () => {
@@ -41,7 +39,7 @@ describe('<ValueEditor />', () => {
       const dom = shallow(<ValueEditor {...props} handleOnChange={onChange} />);
 
       dom.find('input').simulate('change', mockEvent);
-      expect(count).to.equal(1);
+      expect(count).toBe(1);
     });
   });
 
@@ -52,14 +50,14 @@ describe('<ValueEditor />', () => {
       );
 
       const select = wrapper.find('select');
-      expect(select.length).to.equal(1);
+      expect(select.length).toBe(1);
 
       const opts = wrapper.find('select option');
-      expect(opts.length).to.equal(1);
+      expect(opts.length).toBe(1);
     });
 
     it('should call the onChange method passed in', () => {
-      const handleOnChange = sinon.spy();
+      const handleOnChange = jest.fn();
       const wrapper = mount(
         <ValueEditor
           {...props}
@@ -71,22 +69,22 @@ describe('<ValueEditor />', () => {
 
       const select = wrapper.find('select');
       select.simulate('change', { target: { value: 'test' } });
-      expect(handleOnChange.calledOnceWith('test')).to.equal(true);
+      expect(handleOnChange).toHaveBeenCalledWith('test');
     });
   });
 
   describe('when rendering a checkbox', () => {
     it('should render the checkbox and react to changes', () => {
-      const handleOnChange = sinon.spy();
+      const handleOnChange = jest.fn();
       const wrapper = mount(
         <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} />
       );
 
       const checkbox = wrapper.find('input[type="checkbox"]');
-      expect(checkbox.length).to.equal(1);
+      expect(checkbox.length).toBe(1);
 
       wrapper.simulate('change', { target: { checked: true } });
-      expect(handleOnChange.calledOnceWith(true)).to.equal(true);
+      expect(handleOnChange).toHaveBeenCalledWith(true);
     });
   });
 
@@ -97,11 +95,11 @@ describe('<ValueEditor />', () => {
       );
 
       const input = wrapper.find('label input[type="radio"]');
-      expect(input.length).to.equal(1);
+      expect(input.length).toBe(1);
     });
 
     it('should call the onChange handler', () => {
-      const handleOnChange = sinon.spy();
+      const handleOnChange = jest.fn();
       const wrapper = mount(
         <ValueEditor
           {...props}
@@ -113,7 +111,7 @@ describe('<ValueEditor />', () => {
 
       const input = wrapper.find('input');
       input.simulate('change', { target: { value: 'test' } });
-      expect(handleOnChange.calledOnceWith('test')).to.equal(true);
+      expect(handleOnChange).toHaveBeenCalledWith('test');
     });
   });
 });

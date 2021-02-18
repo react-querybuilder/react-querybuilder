@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { isRuleGroup } from '..';
 
 describe('isRuleGroup', () => {
@@ -16,10 +15,10 @@ describe('isRuleGroup', () => {
   };
 
   it('identifies a rule', () => {
-    expect(isRuleGroup(rule)).to.be.false;
+    expect(isRuleGroup(rule)).toBe(false);
   });
 
   it('identifies a rule group', () => {
-    expect(isRuleGroup(ruleGroup)).to.be.true;
+    expect(isRuleGroup(ruleGroup)).toBe(true);
   });
 });
