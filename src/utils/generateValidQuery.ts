@@ -7,15 +7,16 @@ import { RuleGroupType, RuleType } from '../types';
 const generateValidQuery = (query: RuleGroupType | RuleType): RuleGroupType | RuleType => {
   if (isRuleGroup(query)) {
     return {
-      id: query.id || `g-${generateID()}`,
+      ...query,
+      id: query.id ?? `g-${generateID()}`,
       rules: query.rules.map((rule) => generateValidQuery(rule)),
       combinator: query.combinator,
       not: !!query.not
     };
   }
   return {
-    id: query.id || `r-${generateID()}`,
-    ...query
+    ...query,
+    id: query.id ?? `r-${generateID()}`
   };
 };
 
