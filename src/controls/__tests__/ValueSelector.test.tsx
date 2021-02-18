@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { ValueSelector } from '..';
 
@@ -9,7 +8,7 @@ describe('<ValueSelector />', () => {
   };
 
   it('should exist', () => {
-    expect(ValueSelector).to.exist;
+    expect(ValueSelector).toBeDefined();
   });
 
   describe('when using default rendering', () => {
@@ -20,22 +19,22 @@ describe('<ValueSelector />', () => {
 
     it('should have an <select /> element', () => {
       const dom = shallow(<ValueSelector {...props} options={options} />);
-      expect(dom.find('select')).to.have.length(1);
+      expect(dom.find('select')).toHaveLength(1);
     });
 
     it('should have the options passed into the <select />', () => {
       const dom = shallow(<ValueSelector {...props} options={options} />);
-      expect(dom.find('option')).to.have.length(2);
+      expect(dom.find('option')).toHaveLength(2);
     });
 
     it('should have the value passed into the <select />', () => {
       const dom = shallow(<ValueSelector {...props} options={options} value="foo" />);
-      expect(dom.find('select').props().value).to.equal('foo');
+      expect(dom.find('select').props().value).toBe('foo');
     });
 
     it('should have the className passed into the <select />', () => {
       const dom = shallow(<ValueSelector {...props} options={options} className="foo" />);
-      expect(dom.find('select').hasClass('foo')).to.equal(true);
+      expect(dom.find('select').hasClass('foo')).toBe(true);
     });
 
     it('should call the onChange method passed in', () => {
@@ -45,7 +44,7 @@ describe('<ValueSelector />', () => {
       const dom = shallow(<ValueSelector {...props} options={options} handleOnChange={onChange} />);
 
       dom.find('select').simulate('change', mockEvent);
-      expect(count).to.equal(1);
+      expect(count).toBe(1);
     });
   });
 
@@ -60,8 +59,8 @@ describe('<ValueSelector />', () => {
 
     it('the options should have keys 3 and 5', () => {
       const dom = shallow(<ValueSelector {...props} options={options} />);
-      expect(dom.find('option').at(0).key()).to.equal(`key-${fooId}`);
-      expect(dom.find('option').at(1).key()).to.equal(`key-${barId}`);
+      expect(dom.find('option').at(0).key()).toBe(`key-${fooId}`);
+      expect(dom.find('option').at(1).key()).toBe(`key-${barId}`);
     });
   });
 });

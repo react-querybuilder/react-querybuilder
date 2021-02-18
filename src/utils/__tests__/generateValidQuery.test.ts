@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import generateValidQuery from '../generateValidQuery';
 import { RuleGroupType } from '../../types';
 
@@ -19,8 +18,8 @@ describe('generateValidQuery', () => {
 
     it('should not generate new ID if query provides ID', () => {
       const validQuery = generateValidQuery(queryWithID) as RuleGroupType;
-      expect(validQuery.id).to.equal('g-12345');
-      expect(validQuery.rules[0].id).to.equal('r-12345');
+      expect(validQuery.id).toBe('g-12345');
+      expect(validQuery.rules[0].id).toBe('r-12345');
     });
   });
 
@@ -37,10 +36,10 @@ describe('generateValidQuery', () => {
     };
 
     it('should generate IDs if missing in query', () => {
-      expect(queryWithoutID).to.not.haveOwnProperty('id');
+      expect(queryWithoutID).not.toHaveProperty('id');
       const validQuery = generateValidQuery(queryWithoutID as RuleGroupType) as RuleGroupType;
-      expect(validQuery).haveOwnProperty('id');
-      expect(validQuery.rules[0]).haveOwnProperty('id');
+      expect(validQuery).toHaveProperty('id');
+      expect(validQuery.rules[0]).toHaveProperty('id');
     });
   });
 });

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { generateID } from '..';
 
 describe('when generating IDs', () => {
@@ -6,6 +5,6 @@ describe('when generating IDs', () => {
     const id1 = generateID();
     const id2 = generateID();
 
-    expect(id1).not.to.equal(id2);
+    expect(id1).not.toBe(id2);
   });
 });
