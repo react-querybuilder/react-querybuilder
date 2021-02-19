@@ -1,7 +1,15 @@
 import { mount, shallow } from 'enzyme';
 import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
 import { Rule } from '../Rule';
-import { Classnames, Controls, Field, NameLabelPair, OperatorSelectorProps, RuleProps, Schema } from '../types';
+import {
+  Classnames,
+  Controls,
+  Field,
+  NameLabelPair,
+  OperatorSelectorProps,
+  RuleProps,
+  Schema
+} from '../types';
 
 describe('<Rule />', () => {
   let controls: Partial<Controls>,
