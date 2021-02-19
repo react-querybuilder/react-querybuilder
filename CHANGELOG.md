@@ -1,5 +1,19 @@
 ## Change Log
 
+### v3.9.7 (2021-02-18)
+- [#189](https://github.com/react-querybuilder/react-querybuilder/pull/189) Convert tests to Jest (@jakeboone02)
+- [#188](https://github.com/react-querybuilder/react-querybuilder/pull/188) Include extra attributes in valid query (@jakeboone02)
+
+### v3.9.6 (2021-02-15)
+- [#183](https://github.com/react-querybuilder/react-querybuilder/pull/183) Add codecov upload to workflow (@jakeboone02)
+- [#182](https://github.com/react-querybuilder/react-querybuilder/pull/182) Update GHA to build and test (@jakeboone02)
+
+### v3.9.5 (2021-02-08)
+- [#181](https://github.com/react-querybuilder/react-querybuilder/pull/181) Created main.yml for GitHub workflows (@jakeboone02)
+
+### v3.9.4 (2021-02-06)
+- [#180](https://github.com/react-querybuilder/react-querybuilder/pull/180) Webpack 5 (@jakeboone02)
+
 ### v3.9.3 (2021-02-05)
 - [#179](https://github.com/react-querybuilder/react-querybuilder/pull/179) Added ability to disable inital queryChange (@saurabhnemade)
 
@@ -86,7 +100,7 @@
 
 ### v2.0.0 (2019-08-18)
 - [#87](https://github.com/react-querybuilder/react-querybuilder/pull/87) Hooks rewrite and increased test coverage (@jakeboone02)
-- [#86](https://github.com/react-querybuilder/react-querybuilder/pull/86) Upgrade dependencies and replace deprecated or unmaintained packages (@react-querybuilder)
+- [#86](https://github.com/react-querybuilder/react-querybuilder/pull/86) Upgrade dependencies and replace deprecated or unmaintained packages (@sapientglobalmarkets)
 - [#82](https://github.com/react-querybuilder/react-querybuilder/pull/82) Removed type restrictions on Rule values (@jakeboone02)
 
 ### v1.4.3 (2018-04-08)
