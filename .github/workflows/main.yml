@@ -22,7 +22,7 @@ jobs:
         with:
           prettier_options: --write ./{src,demo,config}/**/*
           prettier_version: 2.2.1
-          commit_message: "Prettified code"
+          commit_message: 'Prettified code'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build:
@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: '14'
       - run: yarn install --frozen-lockfile
+      - run: yarn lint
       - run: yarn dist
       - run: yarn test
       - name: Upload coverage to Codecov

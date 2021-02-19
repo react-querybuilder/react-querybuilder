@@ -433,7 +433,7 @@ describe('<QueryBuilder />', () => {
 
   describe('when getValues fn prop is provided', () => {
     let wrapper: ReactWrapper, getValues: jest.Mock;
-    const getValueEditorType = (field: string, operator: string) => 'select' as 'select';
+    const getValueEditorType = () => 'select' as const;
 
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },

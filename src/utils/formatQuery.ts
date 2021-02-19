@@ -29,7 +29,7 @@ const mapOperator = (op: string) => {
 };
 
 export const defaultValueProcessor: ValueProcessor = (
-  field: string,
+  _field: string,
   operator: string,
   value: any
 ) => {
@@ -97,7 +97,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
           splitValue.forEach((v) => params.push(v));
           return `${quoteFieldNamesWith}${
             rule.field
-          }${quoteFieldNamesWith} ${operator} (${splitValue.map((v) => '?').join(', ')})`;
+          }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
         }
 
         params.push((value as string).match(/^'?(.*?)'?$/)![1]);

@@ -5,8 +5,11 @@ import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
 import {
   ActionProps,
+  ActionWithRulesProps,
   Classnames,
+  CombinatorSelectorProps,
   Controls,
+  NotToggleProps,
   RuleGroupProps,
   RuleGroupType,
   RuleType,
@@ -22,16 +25,22 @@ describe('<RuleGroup />', () => {
   beforeEach(() => {
     //set defaults
     controls = {
-      combinatorSelector: (props) => (
+      combinatorSelector: (props: CombinatorSelectorProps) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
           <option value="combinator">Combinator</option>
           <option value="any_combinator_value">Any Combinator</option>
         </select>
       ),
-      addRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>,
-      addGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Group</button>,
-      removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
-      notToggle: (props) => (
+      addRuleAction: (props: ActionWithRulesProps) => (
+        <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>
+      ),
+      addGroupAction: (props: ActionWithRulesProps) => (
+        <button onClick={(e) => props.handleOnClick(e)}>+Group</button>
+      ),
+      removeGroupAction: (props: ActionWithRulesProps) => (
+        <button onClick={(e) => props.handleOnClick(e)}>x</button>
+      ),
+      notToggle: (props: NotToggleProps) => (
         <label>
           <input onChange={(e) => props.handleOnChange(e.target.checked)} />
           Not

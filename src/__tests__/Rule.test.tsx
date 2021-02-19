@@ -2,13 +2,16 @@ import { mount, shallow } from 'enzyme';
 import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
 import { Rule } from '../Rule';
 import {
+  ActionProps,
   Classnames,
   Controls,
   Field,
+  FieldSelectorProps,
   NameLabelPair,
   OperatorSelectorProps,
   RuleProps,
-  Schema
+  Schema,
+  ValueEditorProps
 } from '../types';
 
 describe('<Rule />', () => {
@@ -19,22 +22,24 @@ describe('<Rule />', () => {
   beforeEach(() => {
     //set defaults
     controls = {
-      fieldSelector: (props) => (
+      fieldSelector: (props: FieldSelectorProps) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
           <option value="field">Field</option>
           <option value="any_field">Any Field</option>
         </select>
       ),
-      operatorSelector: (props) => (
+      operatorSelector: (props: OperatorSelectorProps) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
           <option value="operator">Operator</option>
           <option value="any_operator">Any Operator</option>
         </select>
       ),
-      valueEditor: (props) => (
+      valueEditor: (props: ValueEditorProps) => (
         <input type="text" onChange={(e) => props.handleOnChange(e.target.value)} />
       ),
-      removeRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>
+      removeRuleAction: (props: ActionProps) => (
+        <button onClick={(e) => props.handleOnClick(e)}>x</button>
+      )
     };
     classNames = {
       fields: 'custom-fields-class',
@@ -144,9 +149,7 @@ describe('<Rule />', () => {
         { name: '=', label: '=' },
         { name: '!=', label: '!=' }
       ];
-      schema.getOperators = (field) => {
-        return expected_operators;
-      };
+      schema.getOperators = () => expected_operators;
       const dom = shallow(<Rule {...props} />);
 
       expect(dom.find(ValueSelector).props().options).toEqual(expected_operators);
@@ -206,7 +209,7 @@ describe('<Rule />', () => {
 
     it('should trigger change handler', () => {
       const mockEvent = { target: { value: 'foo' } };
-      let onChange = jest.fn();
+      const onChange = jest.fn();
       const dom = shallow(<ValueEditor level={0} handleOnChange={onChange} />);
       dom.find('input').simulate('change', mockEvent);
       expect(onChange).toHaveBeenCalled();
