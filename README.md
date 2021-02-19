@@ -80,7 +80,7 @@ The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) Re
 
 `{id?: string, combinator: string, rules: ({field: string, value: any, operator: string} | {rules: ...[], combinator: string})[]}`
 
-The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](demo/main.js) for examples.
+The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](demo/main.tsx) for examples.
 
 #### `fields` _(Required)_
 
