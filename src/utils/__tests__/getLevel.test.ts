@@ -1,7 +1,8 @@
 import { getLevel } from '..';
+import { RuleGroupType } from '../../types';
 
 describe('when calculating the level of a rule', () => {
-  const query = {
+  const query: RuleGroupType = {
     combinator: 'and',
     id: '111',
     rules: [

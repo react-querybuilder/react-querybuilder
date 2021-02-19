@@ -1,9 +1,11 @@
 import { shallow } from 'enzyme';
 import { ValueSelector } from '..';
+import { ValueSelectorProps } from '../../types';
 
 describe('<ValueSelector />', () => {
-  const props = {
-    handleOnChange: () => null,
+  const props: ValueSelectorProps = {
+    handleOnChange: () => {},
+    options: [],
     level: 0
   };
 

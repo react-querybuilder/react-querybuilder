@@ -1,9 +1,10 @@
 import { mount, shallow } from 'enzyme';
 import { ValueEditor } from '..';
+import { ValueEditorProps } from '../../types';
 
 describe('<ValueEditor />', () => {
-  const props = {
-    handleOnChange: () => null,
+  const props: ValueEditorProps = {
+    handleOnChange: () => {},
     level: 0
   };
 

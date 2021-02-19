@@ -1,7 +1,16 @@
 import { formatQuery } from '..';
-import { ValueProcessor } from '../../types';
+import { RuleGroupType, ValueProcessor } from '../../types';
 
-const query = {
+// Utility type from https://github.com/typeorm/typeorm/blob/master/src/common/DeepPartial.ts
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T[P] extends ReadonlyArray<infer U>
+    ? ReadonlyArray<DeepPartial<U>>
+    : DeepPartial<T[P]> | T[P];
+};
+
+const query: RuleGroupType = {
   id: 'g-067a4722-55e0-49c3-83b5-b31e10e69f9d',
   rules: [
     {
@@ -149,7 +158,7 @@ describe('formatQuery', () => {
   });
 
   it('handles custom valueProcessor correctly', () => {
-    const queryWithArrayValue = {
+    const queryWithArrayValue: RuleGroupType = {
       id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
       rules: [
         {
@@ -169,9 +178,9 @@ describe('formatQuery', () => {
       not: false
     };
 
-    const valueProcessor: ValueProcessor = (field, operator, value) => {
+    const valueProcessor: ValueProcessor = (_field, operator, value) => {
       if (operator === 'in') {
-        return `(${value.map((v) => `'${v.trim()}'`).join(',')})`;
+        return `(${value.map((v: string) => `'${v.trim()}'`).join(',')})`;
       } else {
         return `'${value}'`;
       }
@@ -183,7 +192,7 @@ describe('formatQuery', () => {
   });
 
   it('handles quoteFieldNamesWith correctly', () => {
-    const queryWithArrayValue = {
+    const queryWithArrayValue: RuleGroupType = {
       id: 'g-8953ed65-f5ff-4b77-8d03-8d8788beb50b',
       rules: [
         {
@@ -209,7 +218,7 @@ describe('formatQuery', () => {
   });
 
   it('handles json_without_ids correctly', () => {
-    const example_without_ids = {
+    const example_without_ids: DeepPartial<RuleGroupType> = {
       rules: [
         {
           field: 'firstName',

@@ -1,10 +1,13 @@
 import { mount, shallow } from 'enzyme';
 import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
 import { Rule } from '../Rule';
-import { OperatorSelectorProps } from '../types';
+import { Classnames, Controls, Field, NameLabelPair, OperatorSelectorProps, RuleProps, Schema } from '../types';
 
 describe('<Rule />', () => {
-  let controls, classNames, schema, props;
+  let controls: Partial<Controls>,
+    classNames: Partial<Classnames>,
+    schema: Partial<Schema>,
+    props: RuleProps;
   beforeEach(() => {
     //set defaults
     controls = {
@@ -35,29 +38,28 @@ describe('<Rule />', () => {
         { name: 'field1', label: 'Field 1' },
         { name: 'field2', label: 'Field 2' }
       ],
-      controls: controls,
-      classNames: classNames,
-      getOperators: (field) => [
-        { name: '=', value: 'is' },
-        { name: '!=', value: 'is not' }
+      controls: controls as Controls,
+      classNames: classNames as Classnames,
+      getOperators: (_field) => [
+        { name: '=', label: 'is' },
+        { name: '!=', label: 'is not' }
       ],
-      getValueEditorType: (field, operator) => 'text',
-      getInputType: (field, operator) => 'text',
-      getValues: (field, operator) => [
+      getValueEditorType: (_field, _operator) => 'text',
+      getInputType: (_field, _operator) => 'text',
+      getValues: (_field, _operator) => [
         { name: 'one', label: 'One' },
         { name: 'two', label: 'Two' }
       ],
-      onPropChange: (field, value, id) => {},
-      onRuleRemove: (ruleId, parentId) => {},
+      onPropChange: (_field, _value, _id) => {},
+      onRuleRemove: (_ruleId, _parentId) => {},
       getLevel: () => 0
     };
     props = {
-      key: 'key',
       id: 'id',
       field: 'field',
       value: 'value',
       operator: 'operator',
-      schema: schema,
+      schema: schema as Schema,
       parentId: 'parentId',
       translations: {
         fields: {
@@ -87,6 +89,9 @@ describe('<Rule />', () => {
         },
         combinators: {
           title: 'Combinators'
+        },
+        notToggle: {
+          title: 'Invert this group'
         }
       }
     };
@@ -108,7 +113,7 @@ describe('<Rule />', () => {
     });
 
     it('should have options set to expected fields', () => {
-      const expected_fields = [
+      const expected_fields: Field[] = [
         { name: 'firstName', label: 'First Label' },
         { name: 'secondName', label: 'Second Label' }
       ];
@@ -127,7 +132,7 @@ describe('<Rule />', () => {
     });
 
     it('should have options set to fields returned from "getOperators"', () => {
-      const expected_operators = [
+      const expected_operators: NameLabelPair[] = [
         { name: '=', label: '=' },
         { name: '!=', label: '!=' }
       ];
@@ -232,7 +237,7 @@ describe('<Rule />', () => {
   });
 
   describe('onElementChanged methods', () => {
-    let actualProperty, actualValue, actualId;
+    let actualProperty: string, actualValue: any, actualId: string;
     beforeEach(() => {
       schema.onPropChange = (property, value, id) => {
         actualProperty = property;
@@ -277,7 +282,7 @@ describe('<Rule />', () => {
 
   describe('removeRule', () => {
     it('should call onRuleRemove with the rule and parent id', () => {
-      let myRuleId, myParentId;
+      let myRuleId: string, myParentId: string;
       schema.onRuleRemove = (ruleId, parentId) => {
         myRuleId = ruleId;
         myParentId = parentId;
@@ -290,7 +295,7 @@ describe('<Rule />', () => {
     });
   });
 
-  function behavesLikeASelector(value, defaultClassName, customClassName) {
+  function behavesLikeASelector(value: string, defaultClassName: string, customClassName: string) {
     it('should have the selected value set correctly', () => {
       const dom = shallow(<Rule {...props} />);
       expect(dom.find('ValueSelector').props().value).toBe(value);

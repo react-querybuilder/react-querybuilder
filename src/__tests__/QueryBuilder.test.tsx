@@ -5,12 +5,12 @@ import { ActionElement } from '../controls';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
-import { Field, QueryBuilderProps, RuleGroupType } from '../types';
+import { Field, NameLabelPair, QueryBuilderProps, RuleGroupType } from '../types';
 
 describe('<QueryBuilder />', () => {
   const props: QueryBuilderProps = {
     fields: [],
-    onQueryChange: () => null
+    onQueryChange: () => {}
   };
 
   it('should exist', () => {
@@ -57,7 +57,7 @@ describe('<QueryBuilder />', () => {
       // Spy is called initially when mounting component (once)
       expect(queryChange).toHaveBeenCalledTimes(1);
       const initialID = wrapper.find(RuleGroup).props().id;
-      const query = { id: initialID, combinator: 'and', rules: [], not: false };
+      const query: RuleGroupType = { id: initialID, combinator: 'and', rules: [], not: false };
       expect(queryChange).toHaveBeenCalledWith(query);
     });
   });
@@ -109,7 +109,8 @@ describe('<QueryBuilder />', () => {
 
   describe('when initial query, without ID, is provided', () => {
     let wrapper: ReactWrapper;
-    const queryWithoutID = {
+    const queryWithoutID: RuleGroupType = {
+      id: undefined,
       combinator: 'and',
       not: false,
       rules: [
@@ -174,12 +175,13 @@ describe('<QueryBuilder />', () => {
 
   describe('when receiving new props', () => {
     let wrapper: ReactWrapper<QueryBuilderProps>;
-    const newFields = [
+    const newFields: Field[] = [
       { name: 'domainName', label: 'Domain Name' },
       { name: 'ownerName', label: 'Owner Name' }
     ];
 
-    const newQuery = {
+    const newQuery: RuleGroupType = {
+      id: undefined,
       combinator: 'and',
       not: false,
       rules: [
@@ -225,7 +227,7 @@ describe('<QueryBuilder />', () => {
 
   describe('when initial operators are provided', () => {
     let wrapper: ReactWrapper;
-    const operators = [
+    const operators: NameLabelPair[] = [
       { name: 'null', label: 'Custom Is Null' },
       { name: 'notNull', label: 'Is Not Null' },
       { name: 'in', label: 'In' },
@@ -238,7 +240,7 @@ describe('<QueryBuilder />', () => {
       { name: 'age', label: 'Age' }
     ];
 
-    const query = {
+    const query: RuleGroupType = {
       combinator: 'and',
       not: false,
       id: '111',
@@ -282,7 +284,7 @@ describe('<QueryBuilder />', () => {
       { name: 'age', label: 'Age' }
     ];
 
-    const query = {
+    const query: RuleGroupType = {
       id: 'g-012345',
       combinator: 'or',
       not: false,
@@ -335,7 +337,7 @@ describe('<QueryBuilder />', () => {
       { name: 'age', label: 'Age' }
     ];
 
-    const query = {
+    const query: RuleGroupType = {
       id: 'g-012345',
       combinator: 'or',
       not: false,
@@ -389,7 +391,7 @@ describe('<QueryBuilder />', () => {
       { name: 'age', label: 'Age' }
     ];
 
-    const query = {
+    const query: RuleGroupType = {
       id: 'g-012345',
       combinator: 'or',
       not: false,
@@ -439,7 +441,7 @@ describe('<QueryBuilder />', () => {
       { name: 'age', label: 'Age' }
     ];
 
-    const query = {
+    const query: RuleGroupType = {
       id: 'g-012345',
       combinator: 'or',
       not: false,
@@ -570,7 +572,7 @@ describe('<QueryBuilder />', () => {
       wrapper.setProps({
         fields,
         onQueryChange,
-        getValues: (field) => {
+        getValues: (field: string) => {
           if (field === 'field1') {
             return [
               { name: 'value1', label: 'Value 1' },
@@ -580,7 +582,7 @@ describe('<QueryBuilder />', () => {
 
           return [];
         },
-        getValueEditorType: (field) => {
+        getValueEditorType: (field: string) => {
           if (field === 'field2') return 'checkbox';
 
           return 'text';
@@ -603,7 +605,7 @@ describe('<QueryBuilder />', () => {
       wrapper.setProps({
         fields: fields.slice(1),
         onQueryChange,
-        getValueEditorType: (field) => {
+        getValueEditorType: (field: string) => {
           if (field === 'field2') return 'checkbox';
 
           return 'text';

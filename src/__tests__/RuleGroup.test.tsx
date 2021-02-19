@@ -3,10 +3,22 @@ import * as React from 'react';
 import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
-import { ActionProps, ValueSelectorProps } from '../types';
+import {
+  ActionProps,
+  Classnames,
+  Controls,
+  RuleGroupProps,
+  RuleGroupType,
+  RuleType,
+  Schema,
+  ValueSelectorProps
+} from '../types';
 
 describe('<RuleGroup />', () => {
-  let controls, classNames, schema, props;
+  let controls: Partial<Controls>,
+    classNames: Partial<Classnames>,
+    schema: Partial<Schema>,
+    props: RuleGroupProps;
   beforeEach(() => {
     //set defaults
     controls = {
@@ -37,17 +49,17 @@ describe('<RuleGroup />', () => {
     };
     schema = {
       combinators: [],
-      controls: controls,
-      classNames: classNames,
-      isRuleGroup: (rule) => {
+      controls: controls as Controls,
+      classNames: classNames as Classnames,
+      isRuleGroup: (rule): rule is RuleGroupType => {
         return false;
       },
-      onPropChange: (prop, value, id) => {},
-      onRuleAdd: (rule, parentId) => {},
-      onGroupAdd: (ruleGroup, id) => {},
+      onPropChange: (_prop, _value, _id) => {},
+      onRuleAdd: (_rule, _parentId) => {},
+      onGroupAdd: (_ruleGroup, _id) => {},
       createRule: () => _createRule(1),
       createRuleGroup: () => _createRuleGroup(1, 'any_parent_id', []),
-      getLevel: (id) => 0,
+      getLevel: (_id) => 0,
       showCombinatorsBetweenRules: false,
       showNotToggle: false
     };
@@ -56,7 +68,7 @@ describe('<RuleGroup />', () => {
       parentId: 'parentId',
       rules: [],
       combinator: 'and',
-      schema: schema,
+      schema: schema as Schema,
       translations: {
         fields: {
           title: 'Fields'
@@ -187,9 +199,7 @@ describe('<RuleGroup />', () => {
   describe('when 1 rule group exists', () => {
     beforeEach(() => {
       props.rules = [_createRuleGroup(1, props.id, [])];
-      schema.isRuleGroup = (rule) => {
-        return true;
-      };
+      schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
     });
 
     it('has 1 <RuleGroup /> element', () => {
@@ -213,7 +223,7 @@ describe('<RuleGroup />', () => {
         <RuleGroup
           id={props.id}
           parentId={props.parentId}
-          schema={{ ...props.schema, isRuleGroup: () => true }}
+          schema={{ ...props.schema, isRuleGroup: (_rule): _rule is RuleGroupType => true }}
           translations={props.translations}
         />
       );
@@ -225,7 +235,7 @@ describe('<RuleGroup />', () => {
 
   describe('onCombinatorChange', () => {
     it('calls onPropChange from the schema with expected values', () => {
-      let actualProperty, actualValue, actualId;
+      let actualProperty: string, actualValue: any, actualId: string;
       schema.onPropChange = (prop, value, id) => {
         actualProperty = prop;
         actualValue = value;
@@ -258,7 +268,7 @@ describe('<RuleGroup />', () => {
           }
         ]
       };
-      propsWithNestedRuleGroup.schema.isRuleGroup = () => true;
+      propsWithNestedRuleGroup.schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
 
       // when
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
@@ -268,7 +278,7 @@ describe('<RuleGroup />', () => {
     });
 
     it('calls onPropChange from the schema with expected values', () => {
-      let actualProperty, actualValue, actualId;
+      let actualProperty: string, actualValue: any, actualId: string;
       schema.onPropChange = (prop, value, id) => {
         actualProperty = prop;
         actualValue = value;
@@ -286,7 +296,7 @@ describe('<RuleGroup />', () => {
 
   describe('addRule', () => {
     it('calls onRuleAdd from the schema with expected values', () => {
-      let actualRule, actualId;
+      let actualRule: RuleType, actualId: string;
       schema.onRuleAdd = (rule, id) => {
         actualRule = rule;
         actualId = id;
@@ -304,7 +314,7 @@ describe('<RuleGroup />', () => {
 
   describe('addGroup', () => {
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup, actualId;
+      let actualRuleGroup: RuleGroupType, actualId: string;
       schema.onGroupAdd = (ruleGroup, id) => {
         actualRuleGroup = ruleGroup;
         actualId = id;
@@ -321,7 +331,7 @@ describe('<RuleGroup />', () => {
 
   describe('removeGroup', () => {
     it('calls onGroupRemove from the schema with expected values', () => {
-      let actualId, actualParentId;
+      let actualId: string, actualParentId: string;
       schema.onGroupRemove = (id, parentId) => {
         actualId = id;
         actualParentId = parentId;
@@ -383,7 +393,11 @@ describe('<RuleGroup />', () => {
   });
 
   //shared examples
-  function behavesLikeAnActionElement(label, defaultClassName, customClassName) {
+  function behavesLikeAnActionElement(
+    label: string,
+    defaultClassName: string,
+    customClassName: string
+  ) {
     it('should have the correct label', () => {
       const dom = shallow(<RuleGroup {...props} />);
       expect(dom.find('ActionElement').props().label).toBe(label);
@@ -426,20 +440,19 @@ describe('<RuleGroup />', () => {
   }
 
   //helper functions
-  function _createRule(index) {
+  const _createRule = (index: number): RuleType => {
     return {
       id: 'rule_id_' + index,
       field: 'field_' + index,
       operator: 'operator_' + index,
       value: 'value_' + index
     };
-  }
+  };
 
-  function _createRuleGroup(index, parentId, rules) {
-    return {
-      id: 'rule_group_id_' + index,
-      parentId: parentId,
-      rules: rules
-    };
-  }
+  const _createRuleGroup = (index: number, parentId: string, rules: RuleType[]): RuleGroupType => ({
+    id: 'rule_group_id_' + index,
+    parentId,
+    rules,
+    combinator: undefined
+  });
 });

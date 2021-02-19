@@ -1,9 +1,10 @@
 import { shallow } from 'enzyme';
 import { ActionElement } from '..';
+import { ActionProps } from '../../types';
 
 describe('<ActionElement />', () => {
-  const props = {
-    handleOnClick: () => null,
+  const props: ActionProps = {
+    handleOnClick: () => {},
     className: '',
     level: 0
   };

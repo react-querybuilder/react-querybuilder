@@ -25,6 +25,7 @@ export interface RuleType {
 
 export interface RuleGroupType {
   id: string;
+  parentId?: string;
   combinator: string;
   rules: (RuleType | RuleGroupType)[];
   not?: boolean;
