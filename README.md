@@ -1,7 +1,11 @@
 # react-querybuilder
+
+<!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+<!-- prettier-ignore-end -->
+
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 ![workflow status](https://github.com/react-querybuilder/react-querybuilder/workflows/Continuous%20Integration/badge.svg)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
@@ -70,7 +74,7 @@ function logQuery(query) {
 
 ## API
 
-The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) React component.  Named exports include the `<Rule />` component (for use in custom `<RuleGroup />` implementations) and a utility function, [`formatQuery`](#formatQuery).
+The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) React component. Named exports include the `<Rule />` component (for use in custom `<RuleGroup />` implementations) and a utility function, [`formatQuery`](#formatQuery).
 
 ### QueryBuilder
 
@@ -91,10 +95,10 @@ interface Field {
   id?: string; // The field identifier (if not provided, then `name` will be used)
   name: string; // REQUIRED - the field name
   label: string; // REQUIRED - the field label
-  operators?: { name: string; label: string; }[]; // Array of operators (if not provided, then `getOperators()` will be used)
+  operators?: { name: string; label: string }[]; // Array of operators (if not provided, then `getOperators()` will be used)
   valueEditorType?: 'text' | 'select' | 'checkbox' | 'radio' | null; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
   inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
-  values?: { name: string; label: string; }[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
+  values?: { name: string; label: string }[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
 }
@@ -176,7 +180,7 @@ interface ActionWithRulesProps {
   title: string; // translations.addGroup.title, e.g. "Add group"
   className: string; // CSS classNames to be applied
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
-  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
 }
@@ -190,7 +194,7 @@ interface ActionWithRulesProps {
   title: string; // translations.removeGroup.title, e.g. "Remove group"
   className: string; // CSS classNames to be applied
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
-  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
 }
@@ -204,7 +208,7 @@ interface ActionWithRulesProps {
   title: string; // translations.addGroup.title, e.g. "Add rule"
   className: string; // CSS classNames to be applied
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
-  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
 }
@@ -227,11 +231,11 @@ interface ActionProps {
 
 ```ts
 interface CombinatorSelectorProps {
-  options: { name: string; label: string; }[]; // Same as 'combinators' passed into QueryBuilder
+  options: { name: string; label: string }[]; // Same as 'combinators' passed into QueryBuilder
   value: string; // Selected combinator from the existing query representation, if any
   className: string; // CSS classNames to be applied
   handleOnChange: (value: any) => void; // Callback function to update query representation
-  rules: (RuleGroupType|RuleType)[]; // Provides the number of rules already present for this group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
 }
@@ -258,7 +262,7 @@ interface FieldSelectorProps {
 interface OperatorSelectorProps {
   field: string; // Field name corresponding to this rule
   fieldData: Field; // The entire object from the fields array for this field
-  options: { name: string; label: string; }[]; // Return value of getOperators(field)
+  options: { name: string; label: string }[]; // Return value of getOperators(field)
   value: string; // Selected operator from the existing query representation, if any
   title: string; // translations.operators.title, e.g. "Operators"
   className: string; // CSS classNames to be applied
@@ -278,7 +282,7 @@ interface ValueEditorProps {
   value: string; // Value from the existing query representation, if any
   title: string; // translations.value.title, e.g. "Value"
   handleOnChange: (value: any) => void; // Callback function to update the query representation
-  type: 'text'|'select'|'checkbox'|'radio'; // Type of editor to be displayed
+  type: 'text' | 'select' | 'checkbox' | 'radio'; // Type of editor to be displayed
   inputType: string; // @type of <input> if `type` is "text"
   values: any[]; // List of available values for this rule
   level: number; // The level the group this rule belongs to
@@ -342,9 +346,9 @@ interface Schema {
   createRuleGroup(): RuleGroupType;
   getLevel(id: string): number;
   getOperators(field: string): Field[];
-  getValueEditorType(field: string, operator: string): 'text'|'select'|'checkbox'|'radio';
+  getValueEditorType(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
   getInputType(field: string, operator: string): string | null;
-  getValues(field: string, operator: string): { name: string; label: string; }[];
+  getValues(field: string, operator: string): { name: string; label: string }[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
   onGroupAdd(group: RuleGroupType, parentId: string): void;
   onGroupRemove(groupId: string, parentId: string): void;
@@ -360,7 +364,7 @@ interface Schema {
 
 `(field: string) => { name: string; label: string; }[] | null`
 
-This is a callback function invoked to get the list of allowed operators for the given field.  If `null` is returned, the default operators are used.
+This is a callback function invoked to get the list of allowed operators for the given field. If `null` is returned, the default operators are used.
 
 #### `getValueEditorType` _(Optional)_
 
@@ -384,7 +388,7 @@ This is a callback function invoked to get the list of allowed values for the gi
 
 `string | ((fieldsData: Field[]) => string)`
 
-The default field for new rules.  This can be a string identifying the default field, or a function that returns a field name.
+The default field for new rules. This can be a string identifying the default field, or a function that returns a field name.
 
 #### `getDefaultValue` _(Optional)_
 
@@ -550,7 +554,7 @@ console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = 
 console.log(formatQuery(query, 'parameterized')); // { sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }
 ```
 
-An `options` object can be passed as the second argument instead of a format string in order to have more detailed control over the output.  The options object takes the following form:
+An `options` object can be passed as the second argument instead of a format string in order to have more detailed control over the output. The options object takes the following form:
 
 ```ts
 interface FormatQueryOptions {
@@ -595,7 +599,7 @@ const valueProcessor = (field, operator, value) => {
 console.log(formatQuery(query, { format: 'sql', valueProcessor })); // '(instrument in ("Guitar","Vocals") and lastName = "Vai")'
 ```
 
-The 'json_without_ids' format will return the same query without the IDs.  This can be useful, for example, if you need to save the query to the URL so that it becomes bookmarkable:
+The 'json_without_ids' format will return the same query without the IDs. This can be useful, for example, if you need to save the query to the URL so that it becomes bookmarkable:
 
 ```js
 const query = {
@@ -645,6 +649,13 @@ The following default configuration objects are exported for convenience.
 - `defaultOperators`
 - `defaultTranslations`
 - `defaultValueProcessor`
+
+The following components are exported as well:
+
+- `ActionElement` - used for buttons ("Add rule", "Remove group", etc.)
+- `NotToggle` - used for the "Invert this group" toggle switch
+- `ValueEditor` - the default ValueEditor component
+- `ValueSelector` - used for drop-down lists: the combinator, field, and operator selectors
 
 ## Development
 
