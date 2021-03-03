@@ -93,15 +93,15 @@ export interface FieldSelectorProps extends ValueSelectorProps {
 }
 
 export interface OperatorSelectorProps extends ValueSelectorProps {
-  field?: string;
-  fieldData?: Field;
+  field: string;
+  fieldData: Field;
   options: NameLabelPair[];
 }
 
 export interface ValueEditorProps extends SelectorEditorProps {
-  field?: string;
-  fieldData?: Field;
-  operator?: string;
+  field: string;
+  fieldData: Field;
+  operator: string;
   type?: ValueEditorType;
   inputType?: string | null;
   values?: any[];

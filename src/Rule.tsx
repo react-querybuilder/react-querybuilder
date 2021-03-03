@@ -1,6 +1,6 @@
 import arrayFind from 'array-find';
 import * as React from 'react';
-import { RuleProps } from './types';
+import { Field, RuleProps } from './types';
 
 export const Rule = ({
   id,
@@ -46,11 +46,11 @@ export const Rule = ({
     onRuleRemove(id, parentId);
   };
 
-  const fieldData = arrayFind(fields, (f) => f.name === field);
-  const inputType = fieldData?.inputType ?? getInputType(field, operator);
-  const operators = fieldData?.operators ?? getOperators(field);
-  const valueEditorType = fieldData?.valueEditorType ?? getValueEditorType(field, operator);
-  const values = fieldData?.values ?? getValues(field, operator);
+  const fieldData = arrayFind(fields, (f) => f.name === field) ?? ({} as Field);
+  const inputType = fieldData.inputType ?? getInputType(field, operator);
+  const operators = fieldData.operators ?? getOperators(field);
+  const valueEditorType = fieldData.valueEditorType ?? getValueEditorType(field, operator);
+  const values = fieldData.values ?? getValues(field, operator);
   const level = getLevel(id);
 
   return (
