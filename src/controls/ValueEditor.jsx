@@ -34,7 +34,7 @@ const ValueEditor = ({
       );
 
     case 'datetime':
-      const regExp=/^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
+      const regExp =/^\d{4}-[0-1][1-9]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
       if(typeof value !== 'string' || !value.match(regExp)){
         value = moment().toDate();
       }
