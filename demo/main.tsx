@@ -1,3 +1,4 @@
+import { ChakraProvider } from '@chakra-ui/react';
 import { Button, Checkbox, Divider, Layout, Radio, Select, Space, Typography } from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -16,6 +17,10 @@ import AntDValueEditor from './components/AntDValueEditor';
 import AntDValueSelector from './components/AntDValueSelector';
 import BootstrapNotToggle from './components/BootstrapNotToggle';
 import BootstrapValueEditor from './components/BootstrapValueEditor';
+import ChakraActionElement from './components/ChakraActionElement';
+import ChakraNotToggle from './components/ChakraNotToggle';
+import ChakraValueEditor from './components/ChakraValueEditor';
+import ChakraValueSelector from './components/ChakraValueSelector';
 import MaterialActionElement from './components/MaterialActionElement';
 import MaterialNotToggle from './components/MaterialNotToggle';
 import MaterialValueEditor from './components/MaterialValueEditor';
@@ -23,6 +28,7 @@ import MaterialValueSelector from './components/MaterialValueSelector';
 import './styles/github-fork-ribbon.scss';
 import './styles/with-antd.less';
 import './styles/with-bootstrap.scss';
+import './styles/with-chakra.scss';
 import './styles/with-default.scss';
 import './styles/with-material.scss';
 
@@ -30,7 +36,7 @@ const { Header, Sider, Content } = Layout;
 const { Option } = Select;
 const { Title } = Typography;
 
-type StyleName = 'default' | 'bootstrap' | 'antd' | 'material';
+type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
 
 const generateID = () => Math.random().toString();
 
@@ -47,7 +53,8 @@ const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
     value: 'form-control form-control-sm'
   },
   antd: {},
-  material: {}
+  material: {},
+  chakra: {}
 };
 
 const controlElements: { [k in StyleName]: Partial<Controls> } = {
@@ -77,6 +84,17 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
     removeGroupAction: MaterialActionElement,
     removeRuleAction: MaterialActionElement,
     valueEditor: MaterialValueEditor
+  },
+  chakra: {
+    addGroupAction: ChakraActionElement,
+    addRuleAction: ChakraActionElement,
+    combinatorSelector: ChakraValueSelector,
+    fieldSelector: ChakraValueSelector,
+    notToggle: ChakraNotToggle,
+    operatorSelector: ChakraValueSelector,
+    removeGroupAction: ChakraActionElement,
+    removeRuleAction: ChakraActionElement,
+    valueEditor: ChakraValueEditor
   }
 };
 
@@ -219,110 +237,117 @@ const RootView = () => {
   const qbWrapperClassName = `with-${style}`;
 
   return (
-    <Layout>
-      <Header>
-        <Title level={3} style={{ display: 'inline-block' }}>
-          <a href="https://github.com/react-querybuilder/react-querybuilder">React Query Builder</a>
-        </Title>
-      </Header>
+    <ChakraProvider resetCSS={style === 'chakra'}>
       <Layout>
-        <Sider theme="light" width={260} style={{ padding: '1rem' }}>
-          <Title level={4}>Style</Title>
-          <Select value={style} onChange={(v) => setStyle(v as StyleName)}>
-            <Option value="default">Default</Option>
-            <Option value="bootstrap">Bootstrap</Option>
-            <Option value="material">Material</Option>
-            <Option value="antd">Ant Design</Option>
-          </Select>
-          <Divider />
-          <Title level={4}>Options</Title>
-          <div>
+        <Header>
+          <Title level={3} style={{ display: 'inline-block' }}>
+            <a href="https://github.com/react-querybuilder/react-querybuilder">
+              React Query Builder
+            </a>
+          </Title>
+        </Header>
+        <Layout>
+          <Sider theme="light" width={260} style={{ padding: '1rem' }}>
+            <Title level={4}>Style</Title>
+            <Select value={style} onChange={(v) => setStyle(v as StyleName)}>
+              <Option value="default">Default</Option>
+              <Option value="bootstrap">Bootstrap</Option>
+              <Option value="material">Material</Option>
+              <Option value="antd">Ant Design</Option>
+              <Option value="chakra">Chakra UI</Option>
+            </Select>
+            <Divider />
+            <Title level={4}>Options</Title>
             <div>
-              <Checkbox
-                checked={showCombinatorsBetweenRules}
-                onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}>
-                Show combinators between rules
-              </Checkbox>
+              <div>
+                <Checkbox
+                  checked={showCombinatorsBetweenRules}
+                  onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}>
+                  Show combinators between rules
+                </Checkbox>
+              </div>
+              <div>
+                <Checkbox
+                  checked={showNotToggle}
+                  onChange={(e) => setShowNotToggle(e.target.checked)}>
+                  Show &quot;not&quot; toggle
+                </Checkbox>
+              </div>
+              <div>
+                <Checkbox
+                  checked={resetOnFieldChange}
+                  onChange={(e) => setResetOnFieldChange(e.target.checked)}>
+                  Reset rule on field change
+                </Checkbox>
+              </div>
+              <div>
+                <Checkbox
+                  checked={resetOnOperatorChange}
+                  onChange={(e) => setResetOnOperatorChange(e.target.checked)}>
+                  Reset rule on operator change
+                </Checkbox>
+              </div>
             </div>
-            <div>
-              <Checkbox
-                checked={showNotToggle}
-                onChange={(e) => setShowNotToggle(e.target.checked)}>
-                Show "not" toggle
-              </Checkbox>
+            <Divider />
+            <Title level={4}>Output</Title>
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
+              <Radio checked={format === 'json'} onChange={() => setFormat('json')}>
+                JSON
+              </Radio>
+              <Radio
+                checked={format === 'json_without_ids'}
+                onChange={() => setFormat('json_without_ids')}>
+                JSON Without IDs
+              </Radio>
+              <Radio checked={format === 'sql'} onChange={() => setFormat('sql')}>
+                SQL
+              </Radio>
+              <Radio
+                checked={format === 'parameterized'}
+                onChange={() => setFormat('parameterized')}>
+                Parameterized
+              </Radio>
             </div>
-            <div>
-              <Checkbox
-                checked={resetOnFieldChange}
-                onChange={(e) => setResetOnFieldChange(e.target.checked)}>
-                Reset rule on field change
-              </Checkbox>
+            <Divider />
+            <Title level={4}>Installation</Title>
+            <pre>npm i react-querybuilder</pre>
+            OR
+            <pre>yarn add react-querybuilder</pre>
+          </Sider>
+          <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
+            <Space>
+              <Button type="default" onClick={() => loadQuery('primary')}>
+                Load query #1
+              </Button>
+              <Button type="default" onClick={() => loadQuery('secondary')}>
+                Load query #2
+              </Button>
+              <Button type="default" onClick={() => loadQuery()}>
+                Load query #3
+              </Button>
+            </Space>
+            <div className={qbWrapperClassName}>
+              <form className="form-inline" style={{ marginTop: '1rem' }}>
+                <QueryBuilder
+                  query={query}
+                  fields={fields}
+                  controlClassnames={controlClassnames[style]}
+                  controlElements={controlElements[style]}
+                  onQueryChange={handleQueryChange}
+                  showCombinatorsBetweenRules={showCombinatorsBetweenRules}
+                  showNotToggle={showNotToggle}
+                  resetOnFieldChange={resetOnFieldChange}
+                  resetOnOperatorChange={resetOnOperatorChange}
+                />
+              </form>
             </div>
-            <div>
-              <Checkbox
-                checked={resetOnOperatorChange}
-                onChange={(e) => setResetOnOperatorChange(e.target.checked)}>
-                Reset rule on operator change
-              </Checkbox>
-            </div>
-          </div>
-          <Divider />
-          <Title level={4}>Output</Title>
-          <div
-            style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-            <Radio checked={format === 'json'} onChange={() => setFormat('json')}>
-              JSON
-            </Radio>
-            <Radio
-              checked={format === 'json_without_ids'}
-              onChange={() => setFormat('json_without_ids')}>
-              JSON Without IDs
-            </Radio>
-            <Radio checked={format === 'sql'} onChange={() => setFormat('sql')}>
-              SQL
-            </Radio>
-            <Radio checked={format === 'parameterized'} onChange={() => setFormat('parameterized')}>
-              Parameterized
-            </Radio>
-          </div>
-          <Divider />
-          <Title level={4}>Installation</Title>
-          <pre>npm i react-querybuilder</pre>
-          OR
-          <pre>yarn add react-querybuilder</pre>
-        </Sider>
-        <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
-          <Space>
-            <Button type="default" onClick={() => loadQuery('primary')}>
-              Load query #1
-            </Button>
-            <Button type="default" onClick={() => loadQuery('secondary')}>
-              Load query #2
-            </Button>
-            <Button type="default" onClick={() => loadQuery()}>
-              Load query #3
-            </Button>
-          </Space>
-          <div className={qbWrapperClassName}>
-            <form className="form-inline" style={{ marginTop: '1rem' }}>
-              <QueryBuilder
-                query={query}
-                fields={fields}
-                controlClassnames={controlClassnames[style]}
-                controlElements={controlElements[style]}
-                onQueryChange={handleQueryChange}
-                showCombinatorsBetweenRules={showCombinatorsBetweenRules}
-                showNotToggle={showNotToggle}
-                resetOnFieldChange={resetOnFieldChange}
-                resetOnOperatorChange={resetOnOperatorChange}
-              />
-            </form>
-          </div>
-          <Divider />
-          <pre>{formatString}</pre>
-        </Content>
+            <Divider />
+            <pre>{formatString}</pre>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </ChakraProvider>
   );
 };
 
