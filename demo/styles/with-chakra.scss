@@ -1,0 +1,26 @@
+.with-chakra {
+  .ruleGroup-addRule,
+  .ruleGroup-addGroup,
+  .ruleGroup-notToggle {
+    margin-left: 0.5rem;
+  }
+
+  .rule-remove,
+  .ruleGroup-remove {
+    float: right;
+  }
+
+  .chakra-select__wrapper {
+    width: fit-content;
+    display: inline-block;
+  }
+
+  .chakra-input {
+    width: auto;
+    display: inline-block;
+  }
+
+  .chakra-radio-group {
+    display: inline-block;
+  }
+}
