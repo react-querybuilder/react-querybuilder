@@ -488,6 +488,7 @@ This can be used to override translatable texts applied to various controls that
     title: "Combinators",
   },
   notToggle: {
+    label: "Not",
     title: "Invert this group",
   }
 }

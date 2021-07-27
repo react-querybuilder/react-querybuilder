@@ -80,6 +80,7 @@ export interface ValueSelectorProps extends SelectorEditorProps {
 export interface NotToggleProps extends CommonProps {
   checked?: boolean;
   handleOnChange(checked: boolean): void;
+  label?: string;
 }
 
 export interface CombinatorSelectorProps extends ValueSelectorProps {
@@ -229,6 +230,7 @@ export interface Translations {
     title: string;
   };
   notToggle: {
+    label: string;
     title: string;
   };
 }

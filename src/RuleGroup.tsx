@@ -82,6 +82,7 @@ export const RuleGroup = ({
           <controls.notToggle
             className={`ruleGroup-notToggle ${classNames.notToggle}`}
             title={translations.notToggle.title}
+            label={translations.notToggle.label}
             checked={not}
             handleOnChange={onNotToggleChange}
             level={level}

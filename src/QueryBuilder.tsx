@@ -49,6 +49,7 @@ export const defaultTranslations: Translations = {
     title: 'Combinators'
   },
   notToggle: {
+    label: 'Not',
     title: 'Invert this group'
   }
 };

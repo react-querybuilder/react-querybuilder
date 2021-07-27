@@ -1,6 +1,12 @@
 import { NotToggleProps } from '../../src/types';
 
-const BootstrapNotToggle = ({ className, handleOnChange, title, checked }: NotToggleProps) => (
+const BootstrapNotToggle = ({
+  className,
+  handleOnChange,
+  title,
+  label,
+  checked
+}: NotToggleProps) => (
   <div className={`form-check-inline ${className}`}>
     <input
       id="notToggle"
@@ -10,7 +16,7 @@ const BootstrapNotToggle = ({ className, handleOnChange, title, checked }: NotTo
       checked={!!checked}
     />
     <label title={title} htmlFor="notToggle">
-      Not
+      {label}
     </label>
   </div>
 );
