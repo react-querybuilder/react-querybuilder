@@ -47,9 +47,9 @@ const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
     addRule: 'btn btn-primary btn-sm',
     removeGroup: 'btn btn-danger btn-sm',
     removeRule: 'btn btn-danger btn-sm',
-    combinators: 'form-control form-control-sm',
-    fields: 'form-control form-control-sm',
-    operators: 'form-control form-control-sm',
+    combinators: 'form-select form-select-sm',
+    fields: 'form-select form-select-sm',
+    operators: 'form-select form-select-sm',
     value: 'form-control form-control-sm'
   },
   antd: {},

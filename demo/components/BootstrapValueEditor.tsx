@@ -18,7 +18,7 @@ const BootstrapValueEditor = ({
     case 'select':
       return (
         <select
-          className={className}
+          className={`${className} form-select form-select-sm`}
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
           value={value}>
@@ -34,7 +34,7 @@ const BootstrapValueEditor = ({
       return (
         <input
           type="checkbox"
-          className={`form-check-input`}
+          className="form-check-input"
           title={title}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}
@@ -45,9 +45,9 @@ const BootstrapValueEditor = ({
       return (
         <span title={title}>
           {values!.map((v) => (
-            <div key={v.name} className="form-check-inline">
+            <div key={v.name} className="form-check form-check-inline">
               <input
-                className="form-check form-check-input"
+                className="form-check-input"
                 type="radio"
                 id={v.name}
                 value={v.name}
