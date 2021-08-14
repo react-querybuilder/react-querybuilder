@@ -31,7 +31,7 @@ export interface RuleGroupType {
   not?: boolean;
 }
 
-export type ExportFormat = 'json' | 'sql' | 'json_without_ids' | 'parameterized';
+export type ExportFormat = 'json' | 'sql' | 'json_without_ids' | 'parameterized'| 'mongo';
 
 export type ValueProcessor = (field: string, operator: string, value: any) => string;
 

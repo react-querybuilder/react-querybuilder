@@ -95,16 +95,14 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
         if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
           const splitValue = (rule.value as string).split(',').map((v) => v.trim());
           splitValue.forEach((v) => params.push(v));
-          return `${quoteFieldNamesWith}${
-            rule.field
-          }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+          return `${quoteFieldNamesWith}${rule.field
+            }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
         }
 
         params.push((value as string).match(/^'?(.*?)'?$/)![1]);
       }
-      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
-        parameterized && value ? '?' : value
-      }`.trim();
+      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${parameterized && value ? '?' : value
+        }`.trim();
     };
 
     const processRuleGroup = (rg: RuleGroupType): string => {
@@ -122,7 +120,93 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     } else {
       return processRuleGroup(ruleGroup);
     }
-  } else {
+  }
+  else if (formatLowerCase === 'mongo') {
+
+    /**
+     * Formats query to mongo db query
+     * 
+     */
+    const formatToMongoQuery = (query: any) => {
+
+      let formattedQuery = "";
+
+      // mongo db operator map
+      const operators: any = {
+        "=": "$eq",
+        "!=": "$ne",
+        "<": "$lt",
+        "<=": "$lte",
+        ">": "$gt",
+        ">=": "gte",
+        "in": "$in",
+        "notIn": "$nin",
+
+      };
+      /**
+       * 
+       * Recursive function to process rules and rule groups
+       */
+      function format(qr: any) {
+        let exp = "";
+        const combinator = `$${qr.combinator}`;
+
+        for (const obj of qr.rules) {
+
+          const operator = operators[obj.operator];
+
+          if (obj.field) {
+
+            if (["<", "<=", "=", ">", ">="].includes(obj.operator)) {
+
+              exp = exp + `{ ${obj.field}:{${operator}:${obj.value}} }`
+            }
+            else if (obj.operator == 'contains') {
+              exp = exp + `{${obj.field}:/${obj.value}/} `
+            }
+            else if (obj.operator === 'beginsWith') {
+              exp = exp + `{${obj.field}:/^${obj.value}/} `
+            }
+            else if (obj.operator === 'endsWith') {
+              exp = exp + `{${obj.field}:/${obj.value}$/} `
+            }
+            else if (obj.operator === 'doesNotContain') {
+              exp = exp + `{${obj.field}:{$not:/${obj.value}/}} `
+            }
+            else if (obj.operator === 'doesNotBeginWith') {
+              exp = exp + `{${obj.field}:{$not:/^${obj.value}/}} `
+            }
+            else if (obj.operator === 'doesNotEndWith') {
+              exp = exp + `{${obj.field}:{$not:/${obj.value}$/}}`
+            }
+            else if (obj.operator === 'null') {
+              exp = exp + `{${obj.field}:null} `
+            }
+            else if (obj.operator === 'notNull') {
+              exp = exp + `{${obj.field}:{$ne:null}} `
+            }
+            else if (obj.operator === 'in' || obj.operator === 'notIn') {
+              exp = exp + `{${obj.field}:{${operator}:[${obj.value}]}} `
+            }
+            exp = exp + ","
+          }
+          else if (obj.rules) {
+            exp = `${exp} { ${format(obj)} }`
+          }
+
+        }
+
+        exp = `${combinator}:[${exp}]`
+        return exp;
+      };
+
+      formattedQuery = format(query);
+
+      return `{${formattedQuery}}`;
+    }
+    return formatToMongoQuery(ruleGroup)
+  }
+  else {
     return '';
   }
 };

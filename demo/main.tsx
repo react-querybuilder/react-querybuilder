@@ -308,6 +308,11 @@ const RootView = () => {
                 onChange={() => setFormat('parameterized')}>
                 Parameterized
               </Radio>
+              <Radio
+                checked={format === 'mongo'}
+                onChange={() => setFormat('mongo')}>
+                Mongo
+              </Radio>
             </div>
             <Divider />
             <Title level={4}>Installation</Title>
