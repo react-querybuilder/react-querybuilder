@@ -95,14 +95,16 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
         if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
           const splitValue = (rule.value as string).split(',').map((v) => v.trim());
           splitValue.forEach((v) => params.push(v));
-          return `${quoteFieldNamesWith}${rule.field
-            }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+          return `${quoteFieldNamesWith}${
+            rule.field
+          }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
         }
 
         params.push((value as string).match(/^'?(.*?)'?$/)![1]);
       }
-      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${parameterized && value ? '?' : value
-        }`.trim();
+      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
+        parameterized && value ? '?' : value
+      }`.trim();
     };
 
     const processRuleGroup = (rg: RuleGroupType): string => {
@@ -122,7 +124,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     }
   }
   else if (formatLowerCase === 'mongo') {
-
+    
     /**
      * Formats query to mongo db query
      * 
