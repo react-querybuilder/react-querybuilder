@@ -196,8 +196,6 @@ describe('formatQuery', () => {
     expect(parameterized.params).toEqual(params);
   });
   it('formats to mongo query correctly', () => {
-    console.log("======================================")
-    console.log(formatQuery(mongoQuery, 'mongo'))
     expect(formatQuery(mongoQuery, 'mongo')).toBe(mongoQueryString);
   });
 
