@@ -526,8 +526,8 @@ Pass `false` to disable the `onQueryChange` on mount of component which will set
 
 ### formatQuery
 
-`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, or JSON without IDs (which can be useful if you need to serialize the rules). Example:
-
+`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, MongoDB Query or JSON without IDs (which can be useful if you need to serialize the rules). NOT is currently not supported for mongo query but rules can be created using != operator. 
+Example:
 ```js
 import { formatQuery } from 'react-querybuilder';
 
@@ -553,6 +553,7 @@ const query = {
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
 console.log(formatQuery(query, 'parameterized')); // { sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }
+console.log(formatQuery(query, 'mongo')); // {$and:[{firstName:{$eq:"Steve"}},{lastName:{$eq:"Vai"}},]}
 ```
 
 An `options` object can be passed as the second argument instead of a format string in order to have more detailed control over the output. The options object takes the following form:

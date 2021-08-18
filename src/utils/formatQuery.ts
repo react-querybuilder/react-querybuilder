@@ -129,7 +129,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
      * Formats query to mongo db query
      * 
      */
-    const formatToMongoQuery = (query: any) => {
+     const formatToMongoQuery = (query: any) => {
 
       let formattedQuery = "";
 
@@ -158,49 +158,54 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
           const operator = operators[obj.operator];
 
           if (obj.field) {
+            let value=obj.value;
+            if(typeof obj.value !="boolean" ){
+               value=`"${obj.value}"`
+            }
+         
+            
+            if (["<", "<=", "=", "!=",">", ">="].includes(obj.operator)) {
 
-            if (["<", "<=", "=", ">", ">="].includes(obj.operator)) {
-
-              exp = exp + `{ ${obj.field}:{${operator}:${obj.value}} }`
+              exp = exp + `{${obj.field}:{${operator}:${value}}}`
             }
             else if (obj.operator == 'contains') {
-              exp = exp + `{${obj.field}:/${obj.value}/} `
+              exp = exp + `{${obj.field}:/${value}/}`
             }
             else if (obj.operator === 'beginsWith') {
-              exp = exp + `{${obj.field}:/^${obj.value}/} `
+              exp = exp + `{${obj.field}:/^${value}/}`
             }
             else if (obj.operator === 'endsWith') {
-              exp = exp + `{${obj.field}:/${obj.value}$/} `
+              exp = exp + `{${obj.field}:/${value}$/}`
             }
             else if (obj.operator === 'doesNotContain') {
-              exp = exp + `{${obj.field}:{$not:/${obj.value}/}} `
+              exp = exp + `{${obj.field}:{$not:/${value}/}}`
             }
             else if (obj.operator === 'doesNotBeginWith') {
-              exp = exp + `{${obj.field}:{$not:/^${obj.value}/}} `
+              exp = exp + `{${obj.field}:{$not:/^${value}/}}`
             }
             else if (obj.operator === 'doesNotEndWith') {
-              exp = exp + `{${obj.field}:{$not:/${obj.value}$/}}`
+              exp = exp + `{${obj.field}:{$not:/${value}$/}}`
             }
             else if (obj.operator === 'null') {
-              exp = exp + `{${obj.field}:null} `
+              exp = exp + `{${obj.field}:null}`
             }
             else if (obj.operator === 'notNull') {
-              exp = exp + `{${obj.field}:{$ne:null}} `
+              exp = exp + `{${obj.field}:{$ne:null}}`
             }
             else if (obj.operator === 'in' || obj.operator === 'notIn') {
-              exp = exp + `{${obj.field}:{${operator}:[${obj.value}]}} `
+              exp = exp + `{${obj.field}:{${operator}:[${obj.value.split(',').map((val:any)=>{return (`"${val.trim()}"`)})}]}}`
             }
             exp = exp + ","
           }
           else if (obj.rules) {
-            exp = `${exp} { ${format(obj)} }`
+            exp = `${exp}{${format(obj)}}`
           }
 
         }
 
         exp = `${combinator}:[${exp}]`
         return exp;
-      };
+      }
 
       formattedQuery = format(query);
 
