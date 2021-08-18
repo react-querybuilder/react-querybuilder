@@ -308,9 +308,7 @@ const RootView = () => {
                 onChange={() => setFormat('parameterized')}>
                 Parameterized
               </Radio>
-              <Radio
-                checked={format === 'mongodb'}
-                onChange={() => setFormat('mongodb')}>
+              <Radio checked={format === 'mongodb'} onChange={() => setFormat('mongodb')}>
                 Mongo
               </Radio>
             </div>

@@ -122,102 +122,88 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     } else {
       return processRuleGroup(ruleGroup);
     }
-  }
-  else if (formatLowerCase === 'mongodb') {
-    
+  } else if (formatLowerCase === 'mongodb') {
     /**
      * Formats query to mongo db query
-     * 
+     *
      */
-     const formatToMongoQuery = (query: any) => {
-
-      let formattedQuery = "";
+    const formatToMongoQuery = (query: any) => {
+      let formattedQuery = '';
 
       // mongo db operator map
       const operators: any = {
-        "=": "$eq",
-        "!=": "$ne",
-        "<": "$lt",
-        "<=": "$lte",
-        ">": "$gt",
-        ">=": "gte",
-        "in": "$in",
-        "notIn": "$nin",
-
+        '=': '$eq',
+        '!=': '$ne',
+        '<': '$lt',
+        '<=': '$lte',
+        '>': '$gt',
+        '>=': 'gte',
+        in: '$in',
+        notIn: '$nin'
       };
       /**
-       * 
+       *
        * Recursive function to process rules and rule groups
        */
       function format(qr: any) {
-        let exp = "";
+        let exp = '';
         const combinator = `$${qr.combinator}`;
-        
-        let rulesLength=qr.rules.length;
-        for (const obj of qr.rules) {
 
+        let rulesLength = qr.rules.length;
+        for (const obj of qr.rules) {
           const operator = operators[obj.operator];
 
           if (obj.field) {
-            let value=obj.value;
+            let value = obj.value;
 
-            if(typeof obj.value !="boolean" ){
-               value=`"${obj.value}"`
+            if (typeof obj.value != 'boolean') {
+              value = `"${obj.value}"`;
             }
-         
-            
-            if (["<", "<=", "=", "!=",">", ">="].includes(obj.operator)) {
 
-              exp = exp + `{${obj.field}:{${operator}:${value}}}`
+            if (['<', '<=', '=', '!=', '>', '>='].includes(obj.operator)) {
+              exp = exp + `{${obj.field}:{${operator}:${value}}}`;
+            } else if (obj.operator == 'contains') {
+              exp = exp + `{${obj.field}:/${obj.value}/}`;
+            } else if (obj.operator === 'beginsWith') {
+              exp = exp + `{${obj.field}:/^${obj.value}/}`;
+            } else if (obj.operator === 'endsWith') {
+              exp = exp + `{${obj.field}:/${obj.value}$/}`;
+            } else if (obj.operator === 'doesNotContain') {
+              exp = exp + `{${obj.field}:{$not:/${obj.value}/}}`;
+            } else if (obj.operator === 'doesNotBeginWith') {
+              exp = exp + `{${obj.field}:{$not:/^${obj.value}/}}`;
+            } else if (obj.operator === 'doesNotEndWith') {
+              exp = exp + `{${obj.field}:{$not:/${obj.value}$/}}`;
+            } else if (obj.operator === 'null') {
+              exp = exp + `{${obj.field}:null}`;
+            } else if (obj.operator === 'notNull') {
+              exp = exp + `{${obj.field}:{$ne:null}}`;
+            } else if (obj.operator === 'in' || obj.operator === 'notIn') {
+              exp =
+                exp +
+                `{${obj.field}:{${operator}:[${obj.value.split(',').map((val: any) => {
+                  return `"${val.trim()}"`;
+                })}]}}`;
             }
-            else if (obj.operator == 'contains') {
-              exp = exp + `{${obj.field}:/${obj.value}/}`
+            if (--rulesLength) {
+              exp = exp + ',';
             }
-            else if (obj.operator === 'beginsWith') {
-              exp = exp + `{${obj.field}:/^${obj.value}/}`
-            }
-            else if (obj.operator === 'endsWith') {
-              exp = exp + `{${obj.field}:/${obj.value}$/}`
-            }
-            else if (obj.operator === 'doesNotContain') {
-              exp = exp + `{${obj.field}:{$not:/${obj.value}/}}`
-            }
-            else if (obj.operator === 'doesNotBeginWith') {
-              exp = exp + `{${obj.field}:{$not:/^${obj.value}/}}`
-            }
-            else if (obj.operator === 'doesNotEndWith') {
-              exp = exp + `{${obj.field}:{$not:/${obj.value}$/}}`
-            }
-            else if (obj.operator === 'null') {
-              exp = exp + `{${obj.field}:null}`
-            }
-            else if (obj.operator === 'notNull') {
-              exp = exp + `{${obj.field}:{$ne:null}}`
-            }
-            else if (obj.operator === 'in' || obj.operator === 'notIn') {
-              exp = exp + `{${obj.field}:{${operator}:[${obj.value.split(',').map((val:any)=>{return (`"${val.trim()}"`)})}]}}`
-            }
-            if(--rulesLength){
-              exp = exp + ","
-            }
-          }
-          else if (obj.rules) {
-            exp = `${exp}{${format(obj)}}`
+          } else if (obj.rules) {
+            exp = `${exp}{${format(obj)}}`;
           }
         }
-        exp = `${combinator}:[${exp}]`
-        
+        exp = `${combinator}:[${exp}]`;
+
         return exp;
       }
 
       formattedQuery = format(query);
 
       return `{${formattedQuery}}`;
-    }
-    
-    return formatToMongoQuery(ruleGroup)
-  }
-  else {
+    };
+
+    return formatToMongoQuery(ruleGroup);
+  } else {
     return '';
   }
 };

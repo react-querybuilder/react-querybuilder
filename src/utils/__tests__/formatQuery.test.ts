@@ -192,12 +192,14 @@ const mongoQuery: RuleGroupType = {
     },
     {
       id: 'g-067a4722-55e0-49c3-83b5-b31e10ef69f9d',
-      rules:[{
-        id: 'r-6d653dae-7c2f-436b-84reb8-e1c4e24fcd7f',
-        field: 'job',
-        value: 'Sales Executive',
-        operator: '='
-      }],
+      rules: [
+        {
+          id: 'r-6d653dae-7c2f-436b-84reb8-e1c4e24fcd7f',
+          field: 'job',
+          value: 'Sales Executive',
+          operator: '='
+        }
+      ],
       combinator: 'or',
       not: false
     }
@@ -226,7 +228,8 @@ const params = [
   '%fr'
 ];
 
-const mongoQueryString='{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
+const mongoQueryString =
+  '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
     expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
