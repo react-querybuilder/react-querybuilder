@@ -123,7 +123,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       return processRuleGroup(ruleGroup);
     }
   }
-  else if (formatLowerCase === 'mongo') {
+  else if (formatLowerCase === 'mongodb') {
     
     /**
      * Formats query to mongo db query
@@ -152,13 +152,15 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       function format(qr: any) {
         let exp = "";
         const combinator = `$${qr.combinator}`;
-
+        
+        let rulesLength=qr.rules.length;
         for (const obj of qr.rules) {
 
           const operator = operators[obj.operator];
 
           if (obj.field) {
             let value=obj.value;
+
             if(typeof obj.value !="boolean" ){
                value=`"${obj.value}"`
             }
@@ -169,22 +171,22 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
               exp = exp + `{${obj.field}:{${operator}:${value}}}`
             }
             else if (obj.operator == 'contains') {
-              exp = exp + `{${obj.field}:/${value}/}`
+              exp = exp + `{${obj.field}:/${obj.value}/}`
             }
             else if (obj.operator === 'beginsWith') {
-              exp = exp + `{${obj.field}:/^${value}/}`
+              exp = exp + `{${obj.field}:/^${obj.value}/}`
             }
             else if (obj.operator === 'endsWith') {
-              exp = exp + `{${obj.field}:/${value}$/}`
+              exp = exp + `{${obj.field}:/${obj.value}$/}`
             }
             else if (obj.operator === 'doesNotContain') {
-              exp = exp + `{${obj.field}:{$not:/${value}/}}`
+              exp = exp + `{${obj.field}:{$not:/${obj.value}/}}`
             }
             else if (obj.operator === 'doesNotBeginWith') {
-              exp = exp + `{${obj.field}:{$not:/^${value}/}}`
+              exp = exp + `{${obj.field}:{$not:/^${obj.value}/}}`
             }
             else if (obj.operator === 'doesNotEndWith') {
-              exp = exp + `{${obj.field}:{$not:/${value}$/}}`
+              exp = exp + `{${obj.field}:{$not:/${obj.value}$/}}`
             }
             else if (obj.operator === 'null') {
               exp = exp + `{${obj.field}:null}`
@@ -195,15 +197,16 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
             else if (obj.operator === 'in' || obj.operator === 'notIn') {
               exp = exp + `{${obj.field}:{${operator}:[${obj.value.split(',').map((val:any)=>{return (`"${val.trim()}"`)})}]}}`
             }
-            exp = exp + ","
+            if(--rulesLength){
+              exp = exp + ","
+            }
           }
           else if (obj.rules) {
             exp = `${exp}{${format(obj)}}`
           }
-
         }
-
         exp = `${combinator}:[${exp}]`
+        
         return exp;
       }
 
@@ -211,6 +214,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
 
       return `{${formattedQuery}}`;
     }
+    
     return formatToMongoQuery(ruleGroup)
   }
   else {
