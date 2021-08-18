@@ -553,7 +553,7 @@ const query = {
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
 console.log(formatQuery(query, 'parameterized')); // { sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }
-console.log(formatQuery(query, 'mongo')); // {$and:[{firstName:{$eq:"Steve"}},{lastName:{$eq:"Vai"}},]}
+console.log(formatQuery(query, 'mongodb')); // {$and:[{firstName:{$eq:"Steve"}},{lastName:{$eq:"Vai"}},]}
 ```
 
 An `options` object can be passed as the second argument instead of a format string in order to have more detailed control over the output. The options object takes the following form:
