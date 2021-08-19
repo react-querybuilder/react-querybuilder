@@ -115,6 +115,98 @@ const query: RuleGroupType = {
   combinator: 'and',
   not: false
 };
+const mongoQuery: RuleGroupType = {
+  id: 'g-067a4722-55e0-49c3-83b5-b31e10e69f9d',
+  rules: [
+    {
+      id: 'r-74bbb7e6-b046-40d2-9170-48113afbfe3e',
+      field: 'firstName',
+      value: '',
+      operator: 'null'
+    },
+    {
+      id: 'r-11af1a9a-10eb-4c5d-a7cb-64b776328ab7',
+      field: 'lastName',
+      value: '',
+      operator: 'notNull'
+    },
+    {
+      id: 'r-8c8882ad-b754-419a-9481-dec597a66570',
+      field: 'firstName',
+      value: 'Test,This',
+      operator: 'in'
+    },
+    {
+      id: 'r-85206a73-9806-434b-95ac-9d00a02a2d48',
+      field: 'lastName',
+      value: 'Test,This',
+      operator: 'notIn'
+    },
+    {
+      id: 'r-7e764eaf-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'age',
+      value: '26',
+      operator: '='
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'isMusician',
+      value: true,
+      operator: '='
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'email',
+      value: '@',
+      operator: 'contains'
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'email',
+      value: 'ab',
+      operator: 'beginsWith'
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'email',
+      value: 'com',
+      operator: 'endsWith'
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'hello',
+      value: 'com',
+      operator: 'doesNotContain'
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'job',
+      value: 'Man',
+      operator: 'doesNotBeginWith'
+    },
+    {
+      id: 'r-6d653dae-7c2f-436b-84b8-e1c4e24fcd7f',
+      field: 'job',
+      value: 'ger',
+      operator: 'doesNotEndWith'
+    },
+    {
+      id: 'g-067a4722-55e0-49c3-83b5-b31e10ef69f9d',
+      rules: [
+        {
+          id: 'r-6d653dae-7c2f-436b-84reb8-e1c4e24fcd7f',
+          field: 'job',
+          value: 'Sales Executive',
+          operator: '='
+        }
+      ],
+      combinator: 'or',
+      not: false
+    }
+  ],
+  combinator: 'and',
+  not: false
+};
 
 const sqlString = `(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and age = '26' and isMusician = TRUE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))`;
 const parameterizedSQLString =
@@ -136,6 +228,8 @@ const params = [
   '%fr'
 ];
 
+const mongoQueryString =
+  '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
     expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -151,6 +245,9 @@ describe('formatQuery', () => {
     expect(parameterized).toHaveProperty('sql', parameterizedSQLString);
     expect(parameterized).toHaveProperty('params');
     expect(parameterized.params).toEqual(params);
+  });
+  it('formats to mongo query correctly', () => {
+    expect(formatQuery(mongoQuery, 'mongodb')).toBe(mongoQueryString);
   });
 
   it('handles invalid type correctly', () => {
