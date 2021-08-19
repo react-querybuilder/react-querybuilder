@@ -2,7 +2,7 @@
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
@@ -714,6 +714,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://careers.stackoverflow.com/bubenkoff"><img src="https://avatars0.githubusercontent.com/u/427136?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anatoly Bubenkov</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=bubenkoff" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=bubenkoff" title="Documentation">📖</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=bubenkoff" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/saurabhnemade"><img src="https://avatars0.githubusercontent.com/u/17445338?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Saurabh Nemade</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=saurabhnemade" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=saurabhnemade" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/edwin-xavier/"><img src="https://avatars2.githubusercontent.com/u/74540236?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Edwin Xavier</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=eddie-xavi" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=eddie-xavi" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://stackoverflow.com/users/3875582/code-monk"><img src="https://avatars.githubusercontent.com/u/15674997?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Code Monk</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=CodMonk" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=CodMonk" title="Documentation">📖</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=CodMonk" title="Tests">⚠️</a></td>
   </tr>
 </table>
 

@@ -216,7 +216,19 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "CodMonk",
+      "name": "Code Monk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15674997?v=4",
+      "profile": "http://stackoverflow.com/users/3875582/code-monk",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
