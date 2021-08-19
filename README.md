@@ -526,8 +526,8 @@ Pass `false` to disable the `onQueryChange` on mount of component which will set
 
 ### formatQuery
 
-`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, MongoDB Query or JSON without IDs (which can be useful if you need to serialize the rules). NOT is currently not supported for mongo query but rules can be created using != operator. 
-Example:
+`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `!=` operator. Example:
+
 ```js
 import { formatQuery } from 'react-querybuilder';
 
@@ -553,7 +553,7 @@ const query = {
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
 console.log(formatQuery(query, 'parameterized')); // { sql: "(firstName = ? and lastName = ?)", params: ["Steve", "Vai"] }
-console.log(formatQuery(query, 'mongodb')); // {$and:[{firstName:{$eq:"Steve"}},{lastName:{$eq:"Vai"}}]}
+console.log(formatQuery(query, 'mongodb')); // '{$and:[{firstName:{$eq:"Steve"}},{lastName:{$eq:"Vai"}}]}'
 ```
 
 An `options` object can be passed as the second argument instead of a format string in order to have more detailed control over the output. The options object takes the following form:
@@ -594,7 +594,7 @@ const valueProcessor = (field, operator, value) => {
     // Assuming `value` is an array, such as from a multi-select
     return `(${value.map((v) => `"${v.trim()}"`).join(',')})`;
   } else {
-    return `"${value}"`;
+    return defaultValueProcessor(field, operator, value);
   }
 };
 
