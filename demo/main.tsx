@@ -207,6 +207,7 @@ const RootView = () => {
   const [showNotToggle, setShowNotToggle] = useState(false);
   const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
   const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
+  const [autoSelectField, setAutoSelectField] = useState(true);
   const [style, setStyle] = useState<StyleName>('default');
 
   /**
@@ -287,6 +288,13 @@ const RootView = () => {
                   Reset rule on operator change
                 </Checkbox>
               </div>
+              <div>
+                <Checkbox
+                  checked={autoSelectField}
+                  onChange={(e) => setAutoSelectField(e.target.checked)}>
+                  Auto-select field
+                </Checkbox>
+              </div>
             </div>
             <Divider />
             <Title level={4}>Output</Title>
@@ -342,6 +350,7 @@ const RootView = () => {
                   showNotToggle={showNotToggle}
                   resetOnFieldChange={resetOnFieldChange}
                   resetOnOperatorChange={resetOnOperatorChange}
+                  autoSelectField={autoSelectField}
                 />
               </form>
             </div>

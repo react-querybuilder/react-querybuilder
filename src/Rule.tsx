@@ -19,7 +19,8 @@ export const Rule = ({
     getValueEditorType,
     getValues,
     onPropChange,
-    onRuleRemove
+    onRuleRemove,
+    autoSelectField
   },
   context
 }: RuleProps) => {
@@ -65,31 +66,35 @@ export const Rule = ({
         level={level}
         context={context}
       />
-      <controls.operatorSelector
-        field={field}
-        fieldData={fieldData}
-        title={translations.operators.title}
-        options={operators}
-        value={operator}
-        className={`rule-operators ${classNames.operators}`}
-        handleOnChange={onOperatorChanged}
-        level={level}
-        context={context}
-      />
-      <controls.valueEditor
-        field={field}
-        fieldData={fieldData}
-        title={translations.value.title}
-        operator={operator}
-        value={value}
-        type={valueEditorType}
-        inputType={inputType}
-        values={values}
-        className={`rule-value ${classNames.value}`}
-        handleOnChange={onValueChanged}
-        level={level}
-        context={context}
-      />
+      {(autoSelectField || fieldData.name !== '~') && (
+        <>
+          <controls.operatorSelector
+            field={field}
+            fieldData={fieldData}
+            title={translations.operators.title}
+            options={operators}
+            value={operator}
+            className={`rule-operators ${classNames.operators}`}
+            handleOnChange={onOperatorChanged}
+            level={level}
+            context={context}
+          />
+          <controls.valueEditor
+            field={field}
+            fieldData={fieldData}
+            title={translations.value.title}
+            operator={operator}
+            value={value}
+            type={valueEditorType}
+            inputType={inputType}
+            values={values}
+            className={`rule-value ${classNames.value}`}
+            handleOnChange={onValueChanged}
+            level={level}
+            context={context}
+          />
+        </>
+      )}
       <controls.removeRuleAction
         label={translations.removeRule.label}
         title={translations.removeRule.title}

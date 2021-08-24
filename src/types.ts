@@ -198,6 +198,7 @@ export interface Schema {
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
+  autoSelectField: boolean;
 }
 
 export interface Translations {
@@ -356,6 +357,10 @@ export interface QueryBuilderProps {
    * Reset the value component when the `operator` changes.
    */
   resetOnOperatorChange?: boolean;
+  /**
+   * Select the first field in the array automatically
+   */
+  autoSelectField?: boolean;
   /**
    * Container for custom props that are passed to all components
    */

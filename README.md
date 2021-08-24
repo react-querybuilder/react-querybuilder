@@ -357,6 +357,7 @@ interface Schema {
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
+  autoSelectField boolean;
 }
 ```
 
@@ -523,6 +524,12 @@ Pass `true` to reset value on operator change.
 `boolean`
 
 Pass `false` to disable the `onQueryChange` on mount of component which will set default value.
+
+#### `autoSelectField` _(Optional)_
+
+`boolean`
+
+Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which is selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
 
 ### formatQuery
 

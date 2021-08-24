@@ -128,8 +128,13 @@ export const QueryBuilder = ({
   showNotToggle = false,
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
+  autoSelectField = true,
   context
 }: QueryBuilderProps) => {
+  if (!autoSelectField) {
+    fields = [{ id: '~', name: '~', label: '------' }, ...fields];
+  }
+
   /**
    * Gets the initial query
    */
@@ -382,7 +387,8 @@ export const QueryBuilder = ({
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
     showCombinatorsBetweenRules,
-    showNotToggle
+    showNotToggle,
+    autoSelectField
   };
 
   // Set the query state when a new query prop comes in

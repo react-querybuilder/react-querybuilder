@@ -227,9 +227,9 @@ const params = [
   'Man%',
   '%fr'
 ];
-
 const mongoQueryString =
   '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
+
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
     expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -246,6 +246,7 @@ describe('formatQuery', () => {
     expect(parameterized).toHaveProperty('params');
     expect(parameterized.params).toEqual(params);
   });
+
   it('formats to mongo query correctly', () => {
     expect(formatQuery(mongoQuery, 'mongodb')).toBe(mongoQueryString);
   });

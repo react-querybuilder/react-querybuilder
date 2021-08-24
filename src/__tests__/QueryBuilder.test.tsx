@@ -930,4 +930,32 @@ describe('<QueryBuilder />', () => {
       expect(wrapper.find('select.rule-operators option')).toHaveLength(1);
     });
   });
+
+  describe('auto-select field', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock;
+    const fields: Field[] = [
+      { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
+      { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] }
+    ];
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      wrapper = mount(
+        <QueryBuilder fields={fields} onQueryChange={onQueryChange} autoSelectField={false} />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('sets the value editor type', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(wrapper.find('select.rule-fields')).toHaveLength(1);
+      expect(wrapper.find('select.rule-operators')).toHaveLength(0);
+      expect(wrapper.find('.rule-value')).toHaveLength(0);
+    });
+  });
 });
