@@ -123,86 +123,67 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       return processRuleGroup(ruleGroup);
     }
   } else if (formatLowerCase === 'mongodb') {
-    /**
-     * Formats query to mongo db query
-     *
-     */
-    const formatToMongoQuery = (query: any) => {
-      let formattedQuery = '';
+    const mongoOperators: { [x: string]: string } = {
+      '=': '$eq',
+      '!=': '$ne',
+      '<': '$lt',
+      '<=': '$lte',
+      '>': '$gt',
+      '>=': 'gte',
+      in: '$in',
+      notIn: '$nin'
+    };
 
-      // mongo db operator map
-      const operators: any = {
-        '=': '$eq',
-        '!=': '$ne',
-        '<': '$lt',
-        '<=': '$lte',
-        '>': '$gt',
-        '>=': 'gte',
-        in: '$in',
-        notIn: '$nin'
-      };
-      /**
-       *
-       * Recursive function to process rules and rule groups
-       */
-      function format(qr: any) {
-        let exp = '';
-        const combinator = `$${qr.combinator}`;
+    const formatRuleGroup = (qr: RuleGroupType) => {
+      const combinator = `$${qr.combinator}`;
 
-        let rulesLength = qr.rules.length;
-        for (const obj of qr.rules) {
-          const operator = operators[obj.operator];
+      const expression = qr.rules
+        .map((obj) => {
+          let exp = '';
 
-          if (obj.field) {
+          if (!isRuleGroup(obj)) {
+            const mongoOperator = mongoOperators[obj.operator];
             let value = obj.value;
 
-            if (typeof obj.value != 'boolean') {
+            if (typeof obj.value !== 'boolean') {
               value = `"${obj.value}"`;
             }
 
             if (['<', '<=', '=', '!=', '>', '>='].includes(obj.operator)) {
-              exp = exp + `{${obj.field}:{${operator}:${value}}}`;
-            } else if (obj.operator == 'contains') {
-              exp = exp + `{${obj.field}:/${obj.value}/}`;
+              exp = `{${obj.field}:{${mongoOperator}:${value}}}`;
+            } else if (obj.operator === 'contains') {
+              exp = `{${obj.field}:/${obj.value}/}`;
             } else if (obj.operator === 'beginsWith') {
-              exp = exp + `{${obj.field}:/^${obj.value}/}`;
+              exp = `{${obj.field}:/^${obj.value}/}`;
             } else if (obj.operator === 'endsWith') {
-              exp = exp + `{${obj.field}:/${obj.value}$/}`;
+              exp = `{${obj.field}:/${obj.value}$/}`;
             } else if (obj.operator === 'doesNotContain') {
-              exp = exp + `{${obj.field}:{$not:/${obj.value}/}}`;
+              exp = `{${obj.field}:{$not:/${obj.value}/}}`;
             } else if (obj.operator === 'doesNotBeginWith') {
-              exp = exp + `{${obj.field}:{$not:/^${obj.value}/}}`;
+              exp = `{${obj.field}:{$not:/^${obj.value}/}}`;
             } else if (obj.operator === 'doesNotEndWith') {
-              exp = exp + `{${obj.field}:{$not:/${obj.value}$/}}`;
+              exp = `{${obj.field}:{$not:/${obj.value}$/}}`;
             } else if (obj.operator === 'null') {
-              exp = exp + `{${obj.field}:null}`;
+              exp = `{${obj.field}:null}`;
             } else if (obj.operator === 'notNull') {
-              exp = exp + `{${obj.field}:{$ne:null}}`;
+              exp = `{${obj.field}:{$ne:null}}`;
             } else if (obj.operator === 'in' || obj.operator === 'notIn') {
-              exp =
-                exp +
-                `{${obj.field}:{${operator}:[${obj.value.split(',').map((val: any) => {
-                  return `"${val.trim()}"`;
-                })}]}}`;
+              exp = `{${obj.field}:{${mongoOperator}:[${obj.value.split(',').map((val: any) => {
+                return `"${val.trim()}"`;
+              })}]}}`;
             }
-            if (--rulesLength) {
-              exp = exp + ',';
-            }
-          } else if (obj.rules) {
-            exp = `${exp}{${format(obj)}}`;
+          } else {
+            exp = `{${formatRuleGroup(obj)}}`;
           }
-        }
-        exp = `${combinator}:[${exp}]`;
 
-        return exp;
-      }
+          return exp;
+        })
+        .join(',');
 
-      formattedQuery = format(query);
-
-      return `{${formattedQuery}}`;
+      return `${combinator}:[${expression}]`;
     };
 
-    return formatToMongoQuery(ruleGroup);
+    return `{${formatRuleGroup(ruleGroup)}}`;
   } else {
     return '';
   }

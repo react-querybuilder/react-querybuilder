@@ -119,6 +119,12 @@ const mongoQuery: RuleGroupType = {
   id: 'g-067a4722-55e0-49c3-83b5-b31e10e69f9d',
   rules: [
     {
+      id: 'r-invalid',
+      field: 'invalid',
+      value: '',
+      operator: 'invalid'
+    },
+    {
       id: 'r-74bbb7e6-b046-40d2-9170-48113afbfe3e',
       field: 'firstName',
       value: '',
@@ -228,7 +234,7 @@ const params = [
   '%fr'
 ];
 const mongoQueryString =
-  '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
+  '{$and:[,{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
