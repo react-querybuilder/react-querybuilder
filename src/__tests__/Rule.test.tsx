@@ -104,6 +104,7 @@ describe('<Rule />', () => {
           title: 'Combinators'
         },
         notToggle: {
+          label: 'Not',
           title: 'Invert this group'
         }
       }
@@ -210,7 +211,15 @@ describe('<Rule />', () => {
     it('should trigger change handler', () => {
       const mockEvent = { target: { value: 'foo' } };
       const onChange = jest.fn();
-      const dom = shallow(<ValueEditor level={0} handleOnChange={onChange} />);
+      const dom = shallow(
+        <ValueEditor
+          level={0}
+          handleOnChange={onChange}
+          field="test"
+          fieldData={{ name: 'test', label: 'Test' }}
+          operator="and"
+        />
+      );
       dom.find('input').simulate('change', mockEvent);
       expect(onChange).toHaveBeenCalled();
     });

@@ -3,6 +3,7 @@ import * as React from 'react';
 export interface NameLabelPair {
   name: string;
   label: string;
+  [x: string]: any;
 }
 
 export interface Field extends NameLabelPair {
@@ -12,7 +13,6 @@ export interface Field extends NameLabelPair {
   inputType?: string | null;
   values?: NameLabelPair[];
   defaultValue?: any;
-  [x: string]: any;
   placeholder?: string;
 }
 
@@ -74,7 +74,7 @@ export interface SelectorEditorProps extends CommonProps {
 }
 
 export interface ValueSelectorProps extends SelectorEditorProps {
-  options: Field[];
+  options: NameLabelPair[];
 }
 
 export interface NotToggleProps extends CommonProps {
@@ -84,19 +84,17 @@ export interface NotToggleProps extends CommonProps {
 }
 
 export interface CombinatorSelectorProps extends ValueSelectorProps {
-  options: NameLabelPair[];
   rules?: (RuleGroupType | RuleType)[];
 }
 
 export interface FieldSelectorProps extends ValueSelectorProps {
-  options: NameLabelPair[];
+  options: Field[];
   operator?: string;
 }
 
 export interface OperatorSelectorProps extends ValueSelectorProps {
   field: string;
   fieldData: Field;
-  options: NameLabelPair[];
 }
 
 export interface ValueEditorProps extends SelectorEditorProps {
@@ -186,7 +184,7 @@ export interface Schema {
   createRule(): RuleType;
   createRuleGroup(): RuleGroupType;
   getLevel(id: string): number;
-  getOperators(field: string): Field[];
+  getOperators(field: string): NameLabelPair[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[];
@@ -307,7 +305,7 @@ export interface QueryBuilderProps {
    * operators for the given field.  If `null` is returned, the default
    * operators are used.
    */
-  getOperators?(field: string): Field[] | null;
+  getOperators?(field: string): NameLabelPair[] | null;
   /**
    * This is a callback function invoked to get the type of `ValueEditor`
    * for the given field and operator.

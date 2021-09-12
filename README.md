@@ -345,7 +345,7 @@ interface Schema {
   createRule(): RuleType;
   createRuleGroup(): RuleGroupType;
   getLevel(id: string): number;
-  getOperators(field: string): Field[];
+  getOperators(field: string): { name: string; label: string }[];
   getValueEditorType(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): { name: string; label: string }[];
@@ -357,7 +357,7 @@ interface Schema {
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
-  autoSelectField boolean;
+  autoSelectField: boolean;
 }
 ```
 
