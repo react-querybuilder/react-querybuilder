@@ -21,7 +21,8 @@ const BootstrapValueEditor = ({
           className={`${className} form-select form-select-sm`}
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
-          value={value}>
+          value={value}
+        >
           {values!.map((v) => (
             <option key={v.name} value={v.name}>
               {v.label}

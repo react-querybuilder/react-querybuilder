@@ -47,7 +47,8 @@ const AntDValueEditor = ({
               key={v.name}
               value={v.name}
               checked={value === v.name}
-              onChange={(e) => handleOnChange(e.target.value)}>
+              onChange={(e) => handleOnChange(e.target.value)}
+            >
               {v.label}
             </Radio>
           ))}

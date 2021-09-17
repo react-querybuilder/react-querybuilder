@@ -6,7 +6,8 @@ const AntDNotToggle = ({ className, handleOnChange, label, checked }: NotToggleP
     <Checkbox
       className={className}
       onChange={(e) => handleOnChange(e.target.checked)}
-      checked={!!checked}>
+      checked={!!checked}
+    >
       {label}
     </Checkbox>
   );

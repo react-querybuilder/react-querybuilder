@@ -11,7 +11,8 @@ const ValueSelector = ({
     className={className}
     value={value}
     title={title}
-    onChange={(e) => handleOnChange(e.target.value)}>
+    onChange={(e) => handleOnChange(e.target.value)}
+  >
     {options.map((option) => {
       const key = option.id ? `key-${option.id}` : `key-${option.name}`;
       return (

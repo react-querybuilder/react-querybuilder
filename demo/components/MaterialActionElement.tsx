@@ -8,7 +8,8 @@ const MaterialActionElement = ({ className, handleOnClick, label, title }: Actio
     className={className}
     title={title}
     size="small"
-    onClick={(e) => handleOnClick(e)}>
+    onClick={(e) => handleOnClick(e)}
+  >
     {label}
   </Button>
 );

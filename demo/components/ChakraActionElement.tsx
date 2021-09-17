@@ -8,7 +8,8 @@ const ChakraActionElement = ({ className, handleOnClick, label, title }: ActionP
     colorScheme="gray"
     variant="solid"
     onClick={(e) => handleOnClick(e)}
-    size="xs">
+    size="xs"
+  >
     {label}
   </Button>
 );

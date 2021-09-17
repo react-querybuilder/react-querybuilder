@@ -23,7 +23,8 @@ const ChakraValueEditor = ({
           value={value}
           size="xs"
           variant="filled"
-          onChange={(e) => handleOnChange(e.target.value)}>
+          onChange={(e) => handleOnChange(e.target.value)}
+        >
           {values.map((v) => (
             <option key={v.name} value={v.name}>
               {v.label}

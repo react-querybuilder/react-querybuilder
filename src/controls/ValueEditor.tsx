@@ -22,7 +22,8 @@ const ValueEditor = ({
           className={className}
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
-          value={value}>
+          value={value}
+        >
           {values &&
             values.map((v) => (
               <option key={v.name} value={v.name}>
