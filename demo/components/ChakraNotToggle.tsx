@@ -8,8 +8,7 @@ const ChakraNotToggle = ({ className, handleOnChange, label, checked, title }: N
       title={title}
       size="sm"
       onChange={(e) => handleOnChange(e.target.checked)}
-      checked={checked}
-    >
+      checked={checked}>
       {label}
     </Checkbox>
   );
