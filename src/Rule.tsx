@@ -1,6 +1,9 @@
 import arrayFind from 'array-find';
+import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
+import { RuleType } from '.';
 import { Field, RuleProps } from './types';
+import { generateID } from './utils';
 
 export const Rule = ({
   id,
@@ -19,8 +22,10 @@ export const Rule = ({
     getValueEditorType,
     getValues,
     onPropChange,
+    onRuleAdd,
     onRuleRemove,
-    autoSelectField
+    autoSelectField,
+    showCloneButtons
   },
   context
 }: RuleProps) => {
@@ -38,6 +43,19 @@ export const Rule = ({
 
   const onValueChanged = (value: any) => {
     onElementChanged('value', value);
+  };
+
+  const cloneRule = (event: React.MouseEvent<Element, MouseEvent>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const newRule: RuleType = cloneDeep({
+      id: `r-${generateID()}`,
+      field,
+      operator,
+      value
+    });
+    onRuleAdd(newRule, parentId);
   };
 
   const removeRule = (event: React.MouseEvent<Element, MouseEvent>) => {
@@ -94,6 +112,16 @@ export const Rule = ({
             context={context}
           />
         </>
+      )}
+      {showCloneButtons && (
+        <controls.cloneRuleAction
+          label={translations.cloneRule.label}
+          title={translations.cloneRule.title}
+          className={`rule-cloneRule ${classNames.cloneRule}`}
+          handleOnClick={cloneRule}
+          level={level}
+          context={context}
+        />
       )}
       <controls.removeRuleAction
         label={translations.removeRule.label}

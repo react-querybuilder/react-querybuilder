@@ -4,6 +4,9 @@ import { ValueEditorProps } from '../../types';
 
 describe('<ValueEditor />', () => {
   const props: ValueEditorProps = {
+    field: 'TEST',
+    fieldData: { name: 'TEST', label: 'Test' },
+    operator: '=',
     handleOnChange: () => {},
     level: 0
   };

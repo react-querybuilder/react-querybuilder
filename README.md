@@ -158,6 +158,8 @@ The array of combinators that should be used for RuleGroups. The default set inc
 interface Controls {
   addGroupAction?: React.ComponentType<ActionWithRulesProps>;
   addRuleAction?: React.ComponentType<ActionWithRulesProps>;
+  cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  cloneRuleAction?: React.ComponentType<ActionProps>;
   combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
   fieldSelector?: React.ComponentType<FieldSelectorProps>;
   notToggle?: React.ComponentType<NotToggleProps>;
@@ -173,6 +175,20 @@ interface Controls {
 This is a custom controls object that allows you to override the control elements used. The following control overrides are supported:
 
 - `addGroupAction`: By default a `<button />` is used. The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.addGroup.label, e.g. "+Group"
+  title: string; // translations.addGroup.title, e.g. "Add group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+}
+```
+
+- `cloneGroupAction`: By default a `<button />` is used. The following props are passed:
 
 ```ts
 interface ActionWithRulesProps {
@@ -209,6 +225,19 @@ interface ActionWithRulesProps {
   className: string; // CSS classNames to be applied
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+}
+```
+
+- `cloneRuleAction`: By default a `<button />` is used. The following props are passed:
+
+```ts
+interface ActionProps {
+  label: string; // translations.addGroup.label, e.g. "+Rule"
+  title: string; // translations.addGroup.title, e.g. "Add rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
 }
@@ -357,6 +386,7 @@ interface Schema {
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
+  showCloneButtons: boolean;
   autoSelectField: boolean;
 }
 ```
@@ -444,6 +474,8 @@ interface Classnames {
   combinators?: string; // <select> control for combinators
   addRule?: string; // <button> to add a Rule
   addGroup?: string; // <button> to add a RuleGroup
+  cloneRule?: string; // <button> to clone a Rule
+  cloneGroup?: string; // <button> to clone a RuleGroup
   removeGroup?: string; // <button> to remove a RuleGroup
   notToggle?: string; // <label> on the "not" toggle
   rule?: string; // <div> containing the Rule
@@ -491,6 +523,14 @@ This can be used to override translatable texts applied to various controls that
   notToggle: {
     label: "Not",
     title: "Invert this group",
+  },
+  cloneRule: {
+    label: '⧉',
+    title: 'Clone rule'
+  },
+  cloneRuleGroup: {
+    label: '⧉',
+    title: 'Clone group'
   }
 }
 ```
@@ -506,6 +546,12 @@ Pass `true` to show the combinators (and/or) between rules and rule groups inste
 `boolean`
 
 Pass `true` to show the "Not" toggle switch for each rule group.
+
+#### `showCloneButtons` _(Optional)_
+
+`boolean`
+
+Pass `true` to show the "Clone rule" and "Clone group" buttons.
 
 #### `resetOnFieldChange` _(Optional)_
 

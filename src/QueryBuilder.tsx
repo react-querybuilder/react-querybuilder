@@ -3,110 +3,16 @@ import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
 import objectAssign from 'object-assign';
 import { useEffect, useState } from 'react';
-import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
-import { Rule } from './Rule';
-import { RuleGroup } from './RuleGroup';
 import {
-  Classnames,
-  Controls,
-  NameLabelPair,
-  QueryBuilderProps,
-  RuleGroupType,
-  RuleType,
-  Schema,
-  Translations
-} from './types';
-import { findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
+  defaultCombinators,
+  defaultControlClassnames,
+  defaultControlElements,
+  defaultOperators,
+  defaultTranslations
+} from './defaults';
 import './query-builder.scss';
-
-export const defaultTranslations: Translations = {
-  fields: {
-    title: 'Fields'
-  },
-  operators: {
-    title: 'Operators'
-  },
-  value: {
-    title: 'Value'
-  },
-  removeRule: {
-    label: 'x',
-    title: 'Remove rule'
-  },
-  removeGroup: {
-    label: 'x',
-    title: 'Remove group'
-  },
-  addRule: {
-    label: '+Rule',
-    title: 'Add rule'
-  },
-  addGroup: {
-    label: '+Group',
-    title: 'Add group'
-  },
-  combinators: {
-    title: 'Combinators'
-  },
-  notToggle: {
-    label: 'Not',
-    title: 'Invert this group'
-  }
-};
-
-export const defaultOperators: NameLabelPair[] = [
-  { name: '=', label: '=' },
-  { name: '!=', label: '!=' },
-  { name: '<', label: '<' },
-  { name: '>', label: '>' },
-  { name: '<=', label: '<=' },
-  { name: '>=', label: '>=' },
-  { name: 'contains', label: 'contains' },
-  { name: 'beginsWith', label: 'begins with' },
-  { name: 'endsWith', label: 'ends with' },
-  { name: 'doesNotContain', label: 'does not contain' },
-  { name: 'doesNotBeginWith', label: 'does not begin with' },
-  { name: 'doesNotEndWith', label: 'does not end with' },
-  { name: 'null', label: 'is null' },
-  { name: 'notNull', label: 'is not null' },
-  { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' }
-];
-
-export const defaultCombinators: NameLabelPair[] = [
-  { name: 'and', label: 'AND' },
-  { name: 'or', label: 'OR' }
-];
-
-const defaultControlClassnames: Classnames = {
-  queryBuilder: '',
-  ruleGroup: '',
-  header: '',
-  combinators: '',
-  addRule: '',
-  addGroup: '',
-  removeGroup: '',
-  notToggle: '',
-  rule: '',
-  fields: '',
-  operators: '',
-  value: '',
-  removeRule: ''
-};
-
-const defaultControlElements: Controls = {
-  addGroupAction: ActionElement,
-  removeGroupAction: ActionElement,
-  addRuleAction: ActionElement,
-  removeRuleAction: ActionElement,
-  combinatorSelector: ValueSelector,
-  fieldSelector: ValueSelector,
-  operatorSelector: ValueSelector,
-  valueEditor: ValueEditor,
-  notToggle: NotToggle,
-  ruleGroup: RuleGroup,
-  rule: Rule
-};
+import { QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
+import { findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 export const QueryBuilder = ({
   query,
@@ -126,6 +32,7 @@ export const QueryBuilder = ({
   controlClassnames,
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
+  showCloneButtons = false,
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
   autoSelectField = true,
@@ -144,7 +51,7 @@ export const QueryBuilder = ({
 
   const createRule = (): RuleType => {
     let field = '';
-    if (fields && fields[0]) {
+    if (fields?.length && fields[0]) {
       field = fields[0].name;
     }
     if (getDefaultField) {
@@ -155,15 +62,19 @@ export const QueryBuilder = ({
       }
     }
 
-    const f = arrayFind(fields, (f) => f.name === field);
-    const value = f?.defaultValue ?? '';
+    const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
+    const operator = operators.length ? operators[0].name : /* istanbul ignore next */ '';
 
-    return {
+    const newRule = {
       id: `r-${generateID()}`,
       field,
-      value,
-      operator: getOperatorsMain(field)[0].name
+      value: '',
+      operator
     };
+
+    const value = getRuleDefaultValue(newRule);
+
+    return { ...newRule, value };
   };
 
   const createRuleGroup = (): RuleGroupType => {
@@ -264,14 +175,9 @@ export const QueryBuilder = ({
   const onRuleAdd = (rule: RuleType, parentId: string) => {
     const rootCopy = cloneDeep(root);
     const parent = findRule(parentId, rootCopy) as RuleGroupType;
-    const fieldData = arrayFind(fields, (f) => f.name === rule.field);
-    const value = fieldData?.defaultValue ?? getRuleDefaultValue(rule);
-    /* istanbul ignore else */
-    if (parent) {
-      parent.rules.push({ ...rule, value });
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
-    }
+    parent?.rules.push(rule);
+    setRoot(rootCopy);
+    _notifyQueryChange(rootCopy);
   };
 
   /**
@@ -297,8 +203,10 @@ export const QueryBuilder = ({
 
       // Reset operator and set default value for field change
       if (resetOnFieldChange && prop === 'field') {
+        const operators = getOperatorsMain(rule.field) ?? /* istanbul ignore next */ [];
+        const operator = operators.length ? operators[0].name : /* istanbul ignore next */ '';
         objectAssign(rule, {
-          operator: getOperatorsMain(rule.field)[0].name,
+          operator,
           value: getRuleDefaultValue(rule)
         });
       }
@@ -388,6 +296,7 @@ export const QueryBuilder = ({
     getValues: getValuesMain,
     showCombinatorsBetweenRules,
     showNotToggle,
+    showCloneButtons,
     autoSelectField
   };
 

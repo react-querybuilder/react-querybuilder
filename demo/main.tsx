@@ -66,6 +66,8 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
   antd: {
     addGroupAction: AntDActionElement,
     addRuleAction: AntDActionElement,
+    cloneGroupAction: AntDActionElement,
+    cloneRuleAction: AntDActionElement,
     combinatorSelector: AntDValueSelector,
     fieldSelector: AntDValueSelector,
     notToggle: AntDNotToggle,
@@ -77,6 +79,8 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
   material: {
     addGroupAction: MaterialActionElement,
     addRuleAction: MaterialActionElement,
+    cloneGroupAction: MaterialActionElement,
+    cloneRuleAction: MaterialActionElement,
     combinatorSelector: MaterialValueSelector,
     fieldSelector: MaterialValueSelector,
     notToggle: MaterialNotToggle,
@@ -88,6 +92,8 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
   chakra: {
     addGroupAction: ChakraActionElement,
     addRuleAction: ChakraActionElement,
+    cloneGroupAction: ChakraActionElement,
+    cloneRuleAction: ChakraActionElement,
     combinatorSelector: ChakraValueSelector,
     fieldSelector: ChakraValueSelector,
     notToggle: ChakraNotToggle,
@@ -98,12 +104,12 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
   }
 };
 
-const preparedFields: { [key: string]: Field[] } = {
-  primary: [
+const preparedFields: Field[][] = [
+  [
     { name: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
     { name: 'lastName', label: 'Last Name', placeholder: 'Enter last name' }
   ],
-  secondary: [
+  [
     { name: 'age', label: 'Age', inputType: 'number' },
     {
       name: 'isMusician',
@@ -126,7 +132,7 @@ const preparedFields: { [key: string]: Field[] } = {
       operators: [{ name: '=', label: 'is' }]
     }
   ],
-  generic: [
+  [
     { name: 'firstName', label: 'First name', placeholder: 'Enter first name' },
     { name: 'lastName', label: 'Last name', placeholder: 'Enter last name' },
     { name: 'age', label: 'Age', inputType: 'number' },
@@ -144,10 +150,10 @@ const preparedFields: { [key: string]: Field[] } = {
     { name: 'height', label: 'Height' },
     { name: 'job', label: 'Job' }
   ]
-};
+];
 
-const preparedQueries: { [key: string]: RuleGroupType } = {
-  primary: {
+const preparedQueries: RuleGroupType[] = [
+  {
     id: `g-${generateID()}`,
     rules: [
       {
@@ -166,7 +172,7 @@ const preparedQueries: { [key: string]: RuleGroupType } = {
     combinator: 'and',
     not: false
   },
-  secondary: {
+  {
     id: `g-${generateID()}`,
     rules: [
       {
@@ -191,20 +197,21 @@ const preparedQueries: { [key: string]: RuleGroupType } = {
     combinator: 'or',
     not: false
   },
-  generic: {
+  {
     id: `g-${generateID()}`,
     combinator: 'and',
     not: false,
     rules: []
   }
-};
+];
 
 const RootView = () => {
-  const [query, setQuery] = useState<RuleGroupType>(preparedQueries.primary);
-  const [fields, setFields] = useState<Field[]>(preparedFields.primary);
+  const [query, setQuery] = useState<RuleGroupType>(preparedQueries[0]);
+  const [fields, setFields] = useState<Field[]>(preparedFields[0]);
   const [format, setFormat] = useState<ExportFormat>('json');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
+  const [showCloneButtons, setShowCloneButtons] = useState(false);
   const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
   const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
   const [autoSelectField, setAutoSelectField] = useState(true);
@@ -214,14 +221,9 @@ const RootView = () => {
    * Reloads a prepared query, a PoC for query updates by props change.
    * If no target is supplied, clear query (generic query).
    */
-  const loadQuery = (target?: 'primary' | 'secondary') => {
-    if (target) {
-      setQuery(preparedQueries[target]);
-      setFields(preparedFields[target]);
-    } else {
-      setQuery(preparedQueries.generic);
-      setFields(preparedFields.generic);
-    }
+  const loadQuery = (target: number) => {
+    setQuery(preparedQueries[target]);
+    setFields(preparedFields[target]);
   };
 
   const handleQueryChange = (query) => {
@@ -276,6 +278,13 @@ const RootView = () => {
               </div>
               <div>
                 <Checkbox
+                  checked={showCloneButtons}
+                  onChange={(e) => setShowCloneButtons(e.target.checked)}>
+                  Show clone buttons
+                </Checkbox>
+              </div>
+              <div>
+                <Checkbox
                   checked={resetOnFieldChange}
                   onChange={(e) => setResetOnFieldChange(e.target.checked)}>
                   Reset rule on field change
@@ -300,25 +309,19 @@ const RootView = () => {
             <Title level={4}>Output</Title>
             <div
               style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-              <Radio checked={format === 'json'} onChange={() => setFormat('json')}>
-                JSON
-              </Radio>
-              <Radio
-                checked={format === 'json_without_ids'}
-                onChange={() => setFormat('json_without_ids')}>
-                JSON Without IDs
-              </Radio>
-              <Radio checked={format === 'sql'} onChange={() => setFormat('sql')}>
-                SQL
-              </Radio>
-              <Radio
-                checked={format === 'parameterized'}
-                onChange={() => setFormat('parameterized')}>
-                Parameterized
-              </Radio>
-              <Radio checked={format === 'mongodb'} onChange={() => setFormat('mongodb')}>
-                MongoDB
-              </Radio>
+              {(
+                [
+                  { fmt: 'json', lbl: 'JSON' },
+                  { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
+                  { fmt: 'sql', lbl: 'SQL' },
+                  { fmt: 'parameterized', lbl: 'Parameterized' },
+                  { fmt: 'mongodb', lbl: 'MongoDB' }
+                ] as const
+              ).map(({ fmt, lbl }) => (
+                <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
+                  {lbl}
+                </Radio>
+              ))}
             </div>
             <Divider />
             <Title level={4}>Installation</Title>
@@ -328,15 +331,11 @@ const RootView = () => {
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
             <Space>
-              <Button type="default" onClick={() => loadQuery('primary')}>
-                Load query #1
-              </Button>
-              <Button type="default" onClick={() => loadQuery('secondary')}>
-                Load query #2
-              </Button>
-              <Button type="default" onClick={() => loadQuery()}>
-                Load query #3
-              </Button>
+              {[null, null, null].map((_el, idx) => (
+                <Button key={idx} type="default" onClick={() => loadQuery(idx)}>
+                  Load query #{idx + 1}
+                </Button>
+              ))}
             </Space>
             <div className={qbWrapperClassName}>
               <form className="form-inline" style={{ marginTop: '1rem' }}>
@@ -348,6 +347,7 @@ const RootView = () => {
                   onQueryChange={handleQueryChange}
                   showCombinatorsBetweenRules={showCombinatorsBetweenRules}
                   showNotToggle={showNotToggle}
+                  showCloneButtons={showCloneButtons}
                   resetOnFieldChange={resetOnFieldChange}
                   resetOnOperatorChange={resetOnOperatorChange}
                   autoSelectField={autoSelectField}
