@@ -24,7 +24,7 @@ describe('generateValidQuery', () => {
   });
 
   describe('when initial query, without ID, is provided', () => {
-    const queryWithoutID = {
+    const queryWithoutID: Partial<RuleGroupType> = {
       combinator: 'and',
       rules: [
         {

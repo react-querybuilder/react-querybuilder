@@ -110,6 +110,8 @@ export interface ValueEditorProps extends SelectorEditorProps {
 export interface Controls {
   addGroupAction: React.ComponentType<ActionWithRulesProps>;
   addRuleAction: React.ComponentType<ActionWithRulesProps>;
+  cloneGroupAction: React.ComponentType<ActionWithRulesProps>;
+  cloneRuleAction: React.ComponentType<ActionProps>;
   combinatorSelector: React.ComponentType<CombinatorSelectorProps>;
   fieldSelector: React.ComponentType<FieldSelectorProps>;
   notToggle: React.ComponentType<NotToggleProps>;
@@ -146,6 +148,14 @@ export interface Classnames {
    * `<button>` to add a RuleGroup
    */
   addGroup: string;
+  /**
+   * `<button>` to clone a Rule
+   */
+  cloneRule: string;
+  /**
+   * `<button>` to clone a RuleGroup
+   */
+  cloneGroup: string;
   /**
    * `<button>` to remove a RuleGroup
    */
@@ -196,6 +206,7 @@ export interface Schema {
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
+  showCloneButtons: boolean;
   autoSelectField: boolean;
 }
 
@@ -229,6 +240,14 @@ export interface Translations {
     title: string;
   };
   notToggle: {
+    label: string;
+    title: string;
+  };
+  cloneRule: {
+    label: string;
+    title: string;
+  };
+  cloneRuleGroup: {
     label: string;
     title: string;
   };
@@ -347,6 +366,10 @@ export interface QueryBuilderProps {
    * Show the "not" toggle for rule groups.
    */
   showNotToggle?: boolean;
+  /**
+   * Show the "Clone rule" and "Clone group" buttons
+   */
+  showCloneButtons?: boolean;
   /**
    * Reset the operator and value components when the `field` changes.
    */

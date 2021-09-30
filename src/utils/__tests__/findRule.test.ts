@@ -1,7 +1,8 @@
 import { findRule } from '..';
+import { RuleGroupType } from '../..';
 
 describe('findRule', () => {
-  const query = {
+  const query: RuleGroupType = {
     combinator: 'and',
     id: '111',
     rules: [

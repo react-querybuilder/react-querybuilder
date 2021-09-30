@@ -10,6 +10,7 @@ import {
   NameLabelPair,
   OperatorSelectorProps,
   RuleProps,
+  RuleType,
   Schema,
   ValueEditorProps
 } from '../types';
@@ -22,6 +23,9 @@ describe('<Rule />', () => {
   beforeEach(() => {
     //set defaults
     controls = {
+      cloneRuleAction: (props: ActionProps) => (
+        <button onClick={(e) => props.handleOnClick(e)}>⧉</button>
+      ),
       fieldSelector: (props: FieldSelectorProps) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
           <option value="field">Field</option>
@@ -42,6 +46,7 @@ describe('<Rule />', () => {
       )
     };
     classNames = {
+      cloneRule: 'custom-cloneRule-class',
       fields: 'custom-fields-class',
       operators: 'custom-operators-class',
       removeRule: 'custom-removeRule-class'
@@ -65,7 +70,8 @@ describe('<Rule />', () => {
       ],
       onPropChange: (_field, _value, _id) => {},
       onRuleRemove: (_ruleId, _parentId) => {},
-      getLevel: () => 0
+      getLevel: () => 0,
+      showCloneButtons: false
     };
     props = {
       id: 'id',
@@ -106,6 +112,14 @@ describe('<Rule />', () => {
         notToggle: {
           label: 'Not',
           title: 'Invert this group'
+        },
+        cloneRule: {
+          label: '⧉',
+          title: 'Clone rule'
+        },
+        cloneRuleGroup: {
+          label: '⧉',
+          title: 'Clone group'
         }
       }
     };
@@ -256,6 +270,37 @@ describe('<Rule />', () => {
     //TODO spy on value change handler and verify it is triggered
   });
 
+  describe('clone rule action as <ActionElement />', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+      controls.cloneRuleAction = ActionElement;
+    });
+
+    it('should have label set to "⧉"', () => {
+      const dom = shallow(<Rule {...props} />);
+
+      expect(dom.find('ActionElement').props().label).toBe('⧉');
+    });
+
+    it('should have the default className', () => {
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find('ActionElement').props().className).toContain('rule-cloneRule');
+    });
+
+    it('should have the custom className', () => {
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find('ActionElement').props().className).toContain('custom-cloneRule-class');
+    });
+
+    it('should have the onChange method handler', () => {
+      const dom = shallow(<Rule {...props} />);
+
+      expect(typeof dom.find(ActionElement).props().handleOnClick).toBe('function');
+    });
+
+    //TODO spy on value change handler and verify it is triggered
+  });
+
   describe('onElementChanged methods', () => {
     let actualProperty: string, actualValue: any, actualId: string;
     beforeEach(() => {
@@ -297,6 +342,25 @@ describe('<Rule />', () => {
         expect(actualValue).toBe('any_value');
         expect(actualId).toBe('id');
       });
+    });
+  });
+
+  describe('cloneRule', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+    });
+
+    it('should call onAddRule with the rule and parent id', () => {
+      let myRule: RuleType, myParentId: string;
+      schema.onRuleAdd = (rule, parentId) => {
+        myRule = rule;
+        myParentId = parentId;
+      };
+      const dom = mount(<Rule {...props} />);
+      dom.find('.rule-cloneRule').simulate('click');
+
+      expect(myRule).toBeDefined();
+      expect(myParentId).toBe('parentId');
     });
   });
 

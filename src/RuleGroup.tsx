@@ -1,6 +1,9 @@
-import { Fragment } from 'react';
 import * as React from 'react';
-import { RuleGroupProps } from './types';
+import { Fragment } from 'react';
+import { RuleGroupProps, RuleGroupType } from './types';
+import { regenerateIDs } from './utils';
+
+const hasParentGroup = (parentId: any) => !!parentId;
 
 export const RuleGroup = ({
   id,
@@ -25,10 +28,9 @@ export const RuleGroup = ({
     onPropChange,
     onRuleAdd,
     showCombinatorsBetweenRules,
-    showNotToggle
+    showNotToggle,
+    showCloneButtons
   } = schema;
-
-  const hasParentGroup = () => !!parentId;
 
   const onCombinatorChange = (value: any) => {
     onPropChange('combinator', value, id);
@@ -54,6 +56,20 @@ export const RuleGroup = ({
     onGroupAdd(newGroup, id);
   };
 
+  const cloneGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const thisGroup: RuleGroupType = {
+      id,
+      combinator,
+      rules,
+      not
+    };
+    const newGroup = regenerateIDs(thisGroup);
+    onGroupAdd(newGroup, parentId!);
+  };
+
   const removeGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
@@ -66,7 +82,7 @@ export const RuleGroup = ({
   return (
     <div className={`ruleGroup ${classNames.ruleGroup}`} data-rule-group-id={id} data-level={level}>
       <div className={`ruleGroup-header ${classNames.header}`}>
-        {showCombinatorsBetweenRules ? null : (
+        {!showCombinatorsBetweenRules && (
           <controls.combinatorSelector
             options={combinators}
             value={combinator}
@@ -78,7 +94,7 @@ export const RuleGroup = ({
             context={context}
           />
         )}
-        {!showNotToggle ? null : (
+        {showNotToggle && (
           <controls.notToggle
             className={`ruleGroup-notToggle ${classNames.notToggle}`}
             title={translations.notToggle.title}
@@ -107,7 +123,18 @@ export const RuleGroup = ({
           level={level}
           context={context}
         />
-        {hasParentGroup() ? (
+        {showCloneButtons && hasParentGroup(parentId) && (
+          <controls.cloneGroupAction
+            label={translations.cloneRuleGroup.label}
+            title={translations.cloneRuleGroup.title}
+            className={`ruleGroup-cloneGroup ${classNames.cloneGroup}`}
+            handleOnClick={cloneGroup}
+            rules={rules}
+            level={level}
+            context={context}
+          />
+        )}
+        {hasParentGroup(parentId) && (
           <controls.removeGroupAction
             label={translations.removeGroup.label}
             title={translations.removeGroup.title}
@@ -117,11 +144,11 @@ export const RuleGroup = ({
             level={level}
             context={context}
           />
-        ) : null}
+        )}
       </div>
       {rules.map((r, idx) => (
         <Fragment key={r.id}>
-          {idx && showCombinatorsBetweenRules ? (
+          {idx > 0 && showCombinatorsBetweenRules && (
             <controls.combinatorSelector
               options={combinators}
               value={combinator}
@@ -132,10 +159,10 @@ export const RuleGroup = ({
               level={level}
               context={context}
             />
-          ) : null}
+          )}
           {isRuleGroup(r) ? (
             <controls.ruleGroup
-              id={r.id!}
+              id={r.id}
               schema={schema}
               parentId={id}
               combinator={r.combinator}

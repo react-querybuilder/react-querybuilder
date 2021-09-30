@@ -4,7 +4,6 @@ import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
 import {
-  ActionProps,
   ActionWithRulesProps,
   Classnames,
   CombinatorSelectorProps,
@@ -23,7 +22,6 @@ describe('<RuleGroup />', () => {
     schema: Partial<Schema>,
     props: RuleGroupProps;
   beforeEach(() => {
-    //set defaults
     controls = {
       combinatorSelector: (props: CombinatorSelectorProps) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
@@ -36,6 +34,9 @@ describe('<RuleGroup />', () => {
       ),
       addGroupAction: (props: ActionWithRulesProps) => (
         <button onClick={(e) => props.handleOnClick(e)}>+Group</button>
+      ),
+      cloneGroupAction: (props: ActionWithRulesProps) => (
+        <button onClick={(e) => props.handleOnClick(e)}>⧉</button>
       ),
       removeGroupAction: (props: ActionWithRulesProps) => (
         <button onClick={(e) => props.handleOnClick(e)}>x</button>
@@ -53,6 +54,7 @@ describe('<RuleGroup />', () => {
       combinators: 'custom-combinators-class',
       addRule: 'custom-addRule-class',
       addGroup: 'custom-addGroup-class',
+      cloneGroup: 'custom-cloneGroup-class',
       removeGroup: 'custom-removeGroup-class',
       notToggle: 'custom-notToggle-class'
     };
@@ -60,7 +62,7 @@ describe('<RuleGroup />', () => {
       combinators: [],
       controls: controls as Controls,
       classNames: classNames as Classnames,
-      isRuleGroup: (rule): rule is RuleGroupType => {
+      isRuleGroup: (_rule): _rule is RuleGroupType => {
         return false;
       },
       onPropChange: (_prop, _value, _id) => {},
@@ -70,7 +72,8 @@ describe('<RuleGroup />', () => {
       createRuleGroup: () => _createRuleGroup(1, 'any_parent_id', []),
       getLevel: (_id) => 0,
       showCombinatorsBetweenRules: false,
-      showNotToggle: false
+      showNotToggle: false,
+      showCloneButtons: false
     };
     props = {
       id: 'id',
@@ -108,7 +111,16 @@ describe('<RuleGroup />', () => {
           title: 'Combinators'
         },
         notToggle: {
+          label: 'Not',
           title: 'Invert this group'
+        },
+        cloneRule: {
+          label: '⧉',
+          title: 'Clone rule'
+        },
+        cloneRuleGroup: {
+          label: '⧉',
+          title: 'Clone group'
         }
       }
     };
@@ -169,6 +181,15 @@ describe('<RuleGroup />', () => {
     });
 
     behavesLikeAnActionElement('+Group', 'ruleGroup-addGroup', 'custom-addGroup-class');
+  });
+
+  describe('clone group action as an <ActionElement />', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+      controls.cloneGroupAction = ActionElement;
+    });
+
+    behavesLikeAnActionElement('⧉', 'ruleGroup-cloneGroup', 'custom-cloneGroup-class');
   });
 
   describe('remove group action as an <ActionElement />', () => {
@@ -338,6 +359,27 @@ describe('<RuleGroup />', () => {
     });
   });
 
+  describe('cloneGroup', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+    });
+
+    it('calls onGroupAdd from the schema with expected values', () => {
+      let actualRuleGroup: RuleGroupType, actualId: string;
+      schema.onGroupAdd = (ruleGroup, id) => {
+        actualRuleGroup = ruleGroup;
+        actualId = id;
+      };
+      const dom = mount(<RuleGroup {...props} />);
+      dom.find('.ruleGroup-cloneGroup').simulate('click');
+
+      expect(actualRuleGroup.combinator).toBe('and');
+      expect(actualRuleGroup.not).toBeUndefined();
+      expect(actualRuleGroup.rules).toHaveLength(0);
+      expect(actualId).toBe('parentId');
+    });
+  });
+
   describe('removeGroup', () => {
     it('calls onGroupRemove from the schema with expected values', () => {
       let actualId: string, actualParentId: string;
@@ -401,6 +443,33 @@ describe('<RuleGroup />', () => {
     });
   });
 
+  describe('showCloneButtons', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+      controls.cloneGroupAction = ActionElement;
+    });
+
+    it('does not display clone buttons by default', () => {
+      schema.showCloneButtons = false;
+      const dom = shallow(<RuleGroup {...props} />);
+      const sc = dom.find('.ruleGroup-cloneGroup');
+      expect(sc.length).toBe(0);
+    });
+
+    it('displays clone buttons when showCloneButtons is set to true', () => {
+      const dom = shallow(<RuleGroup {...props} />);
+      const sc = dom.find('.ruleGroup-cloneGroup');
+      expect(sc.length).toBe(1);
+    });
+
+    it('has the correct classNames', () => {
+      const dom = shallow(<RuleGroup {...props} />);
+      expect(dom.find('.ruleGroup-cloneGroup').props().className).toContain(
+        'custom-cloneGroup-class'
+      );
+    });
+  });
+
   //shared examples
   function behavesLikeAnActionElement(
     label: string,
@@ -409,7 +478,7 @@ describe('<RuleGroup />', () => {
   ) {
     it('should have the correct label', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find('ActionElement').props().label).toBe(label);
+      expect(dom.find(ActionElement).props().label).toBe(label);
     });
 
     it('should have the onClick method handler', () => {
@@ -421,7 +490,7 @@ describe('<RuleGroup />', () => {
   }
 
   function behavesLikeAnElementWithClassNames(
-    element: React.ComponentType<ActionProps & ValueSelectorProps & { rules: [] }>,
+    element: React.ComponentType<ActionWithRulesProps & ValueSelectorProps>,
     defaultClassName: string,
     customClassName: string
   ) {
@@ -451,10 +520,10 @@ describe('<RuleGroup />', () => {
   //helper functions
   const _createRule = (index: number): RuleType => {
     return {
-      id: 'rule_id_' + index,
-      field: 'field_' + index,
-      operator: 'operator_' + index,
-      value: 'value_' + index
+      id: `rule_id_${index}`,
+      field: `field_${index}`,
+      operator: `operator_${index}`,
+      value: `value_${index}`
     };
   };
 
