@@ -357,7 +357,7 @@ describe('<Rule />', () => {
       schema.showCloneButtons = true;
     });
 
-    it('should call onAddRule with the rule and parent id', () => {
+    it('should call onRuleAdd with the rule and parent id', () => {
       let myRule: RuleType, myParentId: string;
       schema.onRuleAdd = (rule, parentId) => {
         myRule = rule;

@@ -357,6 +357,20 @@ export interface QueryBuilderProps {
    */
   getValues?(field: string, operator: string): NameLabelPair[];
   /**
+   * This callback is invoked before a new rule is added. The function should either manipulate
+   * the rule and return it, or return `false` to cancel the addition of the rule.
+   */
+  onAddRule?(rule: RuleType, parentId: string, query: RuleGroupType): RuleType | false;
+  /**
+   * This callback is invoked before a new group is added. The function should either manipulate
+   * the group and return it, or return `false` to cancel the addition of the group.
+   */
+  onAddGroup?(
+    ruleGroup: RuleGroupType,
+    parentId: string,
+    query: RuleGroupType
+  ): RuleGroupType | false;
+  /**
    * This is a notification that is invoked anytime the query configuration changes.
    */
   onQueryChange(query: RuleGroupType): void;

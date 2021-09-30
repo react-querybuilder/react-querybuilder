@@ -15,6 +15,7 @@
 - [Usage](#usage)
 - [API](#api)
   - [QueryBuilder](#querybuilder)
+  - [findRule](#findRule)
   - [formatQuery](#formatquery)
   - [Defaults](#defaults)
 - [Development](#development)
@@ -436,6 +437,18 @@ The default operator for new rules. This can be a string identifying the default
 
 This function returns the default value for new rules.
 
+#### `onAddRule` _(Optional)_
+
+`(rule: RuleType, parentId: string, query: RuleGroupType) => RuleType | false`
+
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. (Use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.)
+
+#### `onAddGroup` _(Optional)_
+
+`(ruleGroup: RuleGroupType, parentId: string, query: RuleGroupType) => RuleGroupType | false`
+
+This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. (Use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.)
+
 #### `onQueryChange` _(Optional)_
 
 `(query: RuleGroupType) => void`
@@ -592,9 +605,26 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-### formatQuery
+### `findRule`
 
-`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `!=` operator. Example:
+```ts
+function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupType;
+```
+
+`findRule` is a utility function for finding the rule or group within the query hierarchy that has a given `id`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
+
+### `formatQuery`
+
+```ts
+function formatQuery(
+  query: RuleGroupType,
+  options?: ExportFormat | FormatQueryOptions
+): string | { sql: string; params: string[] };
+```
+
+`formatQuery` parses a given query into one of the following formats: SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `"!="` operator.
+
+Example:
 
 ```js
 import { formatQuery } from 'react-querybuilder';
@@ -693,22 +723,24 @@ const query = {
 };
 
 console.log(formatQuery(query, 'json_without_ids'));
-// {
-//   rules: [
-//     {
-//       field: 'instrument',
-//       value: ['Guitar', 'Vocals'],
-//       operator: 'in'
-//     },
-//     {
-//       field: 'lastName',
-//       value: 'Vai',
-//       operator: '='
-//     }
-//   ],
-//   combinator: 'and',
-//   not: false
-// };
+/*
+{
+  rules: [
+    {
+      field: 'instrument',
+      value: ['Guitar', 'Vocals'],
+      operator: 'in'
+    },
+    {
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and',
+  not: false
+}
+*/
 ```
 
 ### Defaults

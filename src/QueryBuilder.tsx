@@ -28,6 +28,8 @@ export const QueryBuilder = ({
   getValueEditorType,
   getInputType,
   getValues,
+  onAddRule,
+  onAddGroup,
   onQueryChange,
   controlClassnames,
   showCombinatorsBetweenRules = false,
@@ -195,9 +197,11 @@ export const QueryBuilder = ({
    * Adds a rule to the query
    */
   const onRuleAdd = (rule: RuleType, parentId: string) => {
+    const newRule = typeof onAddRule === 'function' ? onAddRule(rule, parentId, root) : rule;
+    if (!newRule) return;
     const rootCopy = cloneDeep(root);
     const parent = findRule(parentId, rootCopy) as RuleGroupType;
-    parent?.rules.push(rule);
+    parent?.rules.push(generateValidQuery(newRule));
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
   };
@@ -206,11 +210,13 @@ export const QueryBuilder = ({
    * Adds a rule group to the query
    */
   const onGroupAdd = (group: RuleGroupType, parentId: string) => {
+    const newGroup = typeof onAddGroup === 'function' ? onAddGroup(group, parentId, root) : group;
+    if (!newGroup) return;
     const rootCopy = cloneDeep(root);
     const parent = findRule(parentId, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {
-      parent.rules.push(group);
+      parent.rules.push(generateValidQuery(newGroup));
       setRoot(rootCopy);
       _notifyQueryChange(rootCopy);
     }

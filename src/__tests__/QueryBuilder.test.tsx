@@ -1,6 +1,7 @@
 import { mount, ReactWrapper } from 'enzyme';
 import { cloneDeep } from 'lodash';
 import { act } from 'react-dom/test-utils';
+import { RuleType } from '..';
 import { ActionElement } from '../controls';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
@@ -880,6 +881,74 @@ describe('<QueryBuilder />', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('Test Value');
+    });
+  });
+
+  describe('onAddRule prop', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock, onAddRule: jest.Mock;
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      onAddRule = jest.fn(() => false as const);
+      wrapper = mount(
+        <QueryBuilder {...props} onAddRule={onAddRule} onQueryChange={onQueryChange} />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('cancels the rule addition', () => {
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onAddRule).toHaveBeenCalled();
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('modifies the rule addition', () => {
+      const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
+      wrapper.setProps({ onAddRule: () => rule });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('modified');
+    });
+  });
+
+  describe('onAddGroup prop', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock, onAddGroup: jest.Mock;
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      onAddGroup = jest.fn(() => false as const);
+      wrapper = mount(
+        <QueryBuilder {...props} onAddGroup={onAddGroup} onQueryChange={onQueryChange} />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('cancels the group addition', () => {
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+
+      expect(onAddGroup).toHaveBeenCalled();
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('modifies the group addition', () => {
+      const group: RuleGroupType = { id: 'new', combinator: 'fake', rules: [] };
+      wrapper.setProps({ onAddGroup: () => group });
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('fake');
     });
   });
 
