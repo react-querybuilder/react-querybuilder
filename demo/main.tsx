@@ -205,6 +205,14 @@ const preparedQueries: RuleGroupType[] = [
   }
 ];
 
+const formatMap: { fmt: ExportFormat; lbl: string }[] = [
+  { fmt: 'json', lbl: 'JSON' },
+  { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
+  { fmt: 'sql', lbl: 'SQL' },
+  { fmt: 'parameterized', lbl: 'Parameterized' },
+  { fmt: 'mongodb', lbl: 'MongoDB' }
+];
+
 const RootView = () => {
   const [query, setQuery] = useState<RuleGroupType>(preparedQueries[0]);
   const [fields, setFields] = useState<Field[]>(preparedFields[0]);
@@ -215,6 +223,7 @@ const RootView = () => {
   const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
   const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
   const [autoSelectField, setAutoSelectField] = useState(true);
+  const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [style, setStyle] = useState<StyleName>('default');
 
   /**
@@ -262,62 +271,55 @@ const RootView = () => {
             <Divider />
             <Title level={4}>Options</Title>
             <div>
-              <div>
-                <Checkbox
-                  checked={showCombinatorsBetweenRules}
-                  onChange={(e) => setShowCombinatorsBetweenRules(e.target.checked)}>
-                  Show combinators between rules
-                </Checkbox>
-              </div>
-              <div>
-                <Checkbox
-                  checked={showNotToggle}
-                  onChange={(e) => setShowNotToggle(e.target.checked)}>
-                  Show &quot;not&quot; toggle
-                </Checkbox>
-              </div>
-              <div>
-                <Checkbox
-                  checked={showCloneButtons}
-                  onChange={(e) => setShowCloneButtons(e.target.checked)}>
-                  Show clone buttons
-                </Checkbox>
-              </div>
-              <div>
-                <Checkbox
-                  checked={resetOnFieldChange}
-                  onChange={(e) => setResetOnFieldChange(e.target.checked)}>
-                  Reset rule on field change
-                </Checkbox>
-              </div>
-              <div>
-                <Checkbox
-                  checked={resetOnOperatorChange}
-                  onChange={(e) => setResetOnOperatorChange(e.target.checked)}>
-                  Reset rule on operator change
-                </Checkbox>
-              </div>
-              <div>
-                <Checkbox
-                  checked={autoSelectField}
-                  onChange={(e) => setAutoSelectField(e.target.checked)}>
-                  Auto-select field
-                </Checkbox>
-              </div>
+              {[
+                {
+                  checked: showCombinatorsBetweenRules,
+                  setter: setShowCombinatorsBetweenRules,
+                  label: 'Show combinators between rules'
+                },
+                {
+                  checked: showNotToggle,
+                  setter: setShowNotToggle,
+                  label: 'Show "not" toggle'
+                },
+                {
+                  checked: showCloneButtons,
+                  setter: setShowCloneButtons,
+                  label: 'Show clone buttons'
+                },
+                {
+                  checked: resetOnFieldChange,
+                  setter: setResetOnFieldChange,
+                  label: 'Reset rule on field change'
+                },
+                {
+                  checked: resetOnOperatorChange,
+                  setter: setResetOnOperatorChange,
+                  label: 'Reset rule on operator change'
+                },
+                {
+                  checked: autoSelectField,
+                  setter: setAutoSelectField,
+                  label: 'Auto-select field'
+                },
+                {
+                  checked: addRuleToNewGroups,
+                  setter: setAddRuleToNewGroups,
+                  label: 'Add rule to new groups'
+                }
+              ].map(({ checked, label, setter }) => (
+                <div key={label}>
+                  <Checkbox checked={checked} onChange={(e) => setter(e.target.checked)}>
+                    {label}
+                  </Checkbox>
+                </div>
+              ))}
             </div>
             <Divider />
             <Title level={4}>Output</Title>
             <div
               style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-              {(
-                [
-                  { fmt: 'json', lbl: 'JSON' },
-                  { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
-                  { fmt: 'sql', lbl: 'SQL' },
-                  { fmt: 'parameterized', lbl: 'Parameterized' },
-                  { fmt: 'mongodb', lbl: 'MongoDB' }
-                ] as const
-              ).map(({ fmt, lbl }) => (
+              {formatMap.map(({ fmt, lbl }) => (
                 <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
                   {lbl}
                 </Radio>
@@ -351,6 +353,7 @@ const RootView = () => {
                   resetOnFieldChange={resetOnFieldChange}
                   resetOnOperatorChange={resetOnOperatorChange}
                   autoSelectField={autoSelectField}
+                  addRuleToNewGroups={addRuleToNewGroups}
                 />
               </form>
             </div>

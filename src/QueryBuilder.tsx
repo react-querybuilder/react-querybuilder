@@ -36,6 +36,7 @@ export const QueryBuilder = ({
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
   autoSelectField = true,
+  addRuleToNewGroups = false,
   context
 }: QueryBuilderProps) => {
   if (!autoSelectField) {
@@ -80,7 +81,7 @@ export const QueryBuilder = ({
   const createRuleGroup = (): RuleGroupType => {
     return {
       id: `g-${generateID()}`,
-      rules: [],
+      rules: addRuleToNewGroups ? [createRule()] : [],
       combinator: combinators[0].name,
       not: false
     };
@@ -297,7 +298,8 @@ export const QueryBuilder = ({
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
-    autoSelectField
+    autoSelectField,
+    addRuleToNewGroups
   };
 
   // Set the query state when a new query prop comes in

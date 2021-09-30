@@ -923,7 +923,7 @@ describe('<QueryBuilder />', () => {
       onQueryChange.mockReset();
     });
 
-    it('sets the value editor type', () => {
+    it('sets the operators options', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('select.rule-operators')).toHaveLength(1);
@@ -950,12 +950,42 @@ describe('<QueryBuilder />', () => {
       onQueryChange.mockReset();
     });
 
-    it('sets the value editor type', () => {
+    it('hides the operator selector and value editor', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('select.rule-fields')).toHaveLength(1);
       expect(wrapper.find('select.rule-operators')).toHaveLength(0);
       expect(wrapper.find('.rule-value')).toHaveLength(0);
+    });
+  });
+
+  describe('add rule to new groups', () => {
+    let wrapper: ReactWrapper;
+    const query: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
+
+    beforeEach(() => {
+      wrapper = mount(<QueryBuilder {...props} query={query} addRuleToNewGroups />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+    });
+
+    it('does not add a rule when the component is created', () => {
+      expect(wrapper.find('.rule')).toHaveLength(0);
+    });
+
+    it('adds a rule when a new group is created', () => {
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+
+      expect(wrapper.find('.rule')).toHaveLength(1);
+    });
+
+    it('adds a rule when mounted if no initial query is provided', () => {
+      wrapper.unmount();
+      wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
+
+      expect(wrapper.find('.rule')).toHaveLength(1);
     });
   });
 });

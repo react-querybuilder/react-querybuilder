@@ -82,7 +82,7 @@ The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) Re
 
 #### `query` _(Optional)_
 
-`{id?: string, combinator: string, rules: ({field: string, value: any, operator: string} | {rules: ...[], combinator: string})[]}`
+`{ id?: string; combinator: string; rules: ({ field: string; operator: string; value: any; } | { combinator: string; rules: ...[]; })[]; }`
 
 The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](demo/main.tsx) for examples.
 
@@ -114,7 +114,7 @@ A "bucket" for passing arbitrary props down to custom components. The `context` 
 
 #### `operators` _(Optional)_
 
-`{name: string, label: string}[]`
+`{ name: string; label: string; }[]`
 
 The array of operators that should be used. The default operators include:
 
@@ -141,7 +141,7 @@ The array of operators that should be used. The default operators include:
 
 #### `combinators` _(Optional)_
 
-`{name: string, label: string}[]`
+`{ name: string, label: string; }[]`
 
 The array of combinators that should be used for RuleGroups. The default set includes:
 
@@ -423,13 +423,13 @@ The default field for new rules. This can be a string identifying the default fi
 
 #### `getDefaultValue` _(Optional)_
 
-`(rule: Rule) => any`
+`(rule: RuleType) => any`
 
 This function returns the default value for new rules.
 
 #### `onQueryChange` _(Optional)_
 
-`(queryJSON: RuleGroup) => void`
+`(query: RuleGroupType) => void`
 
 This is a notification that is invoked anytime the query configuration changes. The query is provided as a JSON structure, as shown below:
 
@@ -576,6 +576,12 @@ Pass `false` to disable the `onQueryChange` on mount of component which will set
 `boolean`
 
 Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which is selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
+
+#### `addRuleToNewGroups` _(Optional)_
+
+`boolean`
+
+Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
 ### formatQuery
 

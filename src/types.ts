@@ -208,6 +208,7 @@ export interface Schema {
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
+  addRuleToNewGroups: boolean;
 }
 
 export interface Translations {
@@ -382,6 +383,10 @@ export interface QueryBuilderProps {
    * Select the first field in the array automatically
    */
   autoSelectField?: boolean;
+  /**
+   * Adds a new default rule automatically to each new group
+   */
+  addRuleToNewGroups?: boolean;
   /**
    * Container for custom props that are passed to all components
    */
