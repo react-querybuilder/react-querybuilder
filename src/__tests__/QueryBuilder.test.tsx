@@ -592,6 +592,16 @@ describe('<QueryBuilder />', () => {
       expect(onQueryChange.mock.calls[2][0].rules[0].operator).toBe('!=');
     });
 
+    it('should change the combinator of the root group', () => {
+      expect(wrapper.find(RuleGroup)).toHaveLength(1);
+      expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
+
+      wrapper.find('select.ruleGroup-combinators').simulate('change', { target: { value: 'or' } });
+
+      expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(0);
+      expect(onQueryChange.mock.calls[1][0].combinator).toBe('or');
+    });
+
     it('should set default value for a rule', () => {
       wrapper.setProps({
         fields,
