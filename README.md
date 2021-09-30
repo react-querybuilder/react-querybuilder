@@ -99,6 +99,7 @@ interface Field {
   valueEditorType?: 'text' | 'select' | 'checkbox' | 'radio' | null; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
   inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
   values?: { name: string; label: string }[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
+  defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
 }
@@ -368,6 +369,7 @@ The `Schema` object passed in the `rule` and `ruleGroup` props has the following
 ```ts
 interface Schema {
   fields: Field[];
+  fieldMap: { [k: string]: Field };
   classNames: Classnames;
   combinators: { name: string; label: string }[];
   controls: Controls;
@@ -388,6 +390,7 @@ interface Schema {
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
+  addRuleToNewGroups: boolean;
 }
 ```
 
@@ -420,6 +423,12 @@ This is a callback function invoked to get the list of allowed values for the gi
 `string | ((fieldsData: Field[]) => string)`
 
 The default field for new rules. This can be a string identifying the default field, or a function that returns a field name.
+
+#### `getDefaultOperator` _(Optional)_
+
+`string | ((field: string) => string)`
+
+The default operator for new rules. This can be a string identifying the default operator, or a function that returns an operator name.
 
 #### `getDefaultValue` _(Optional)_
 

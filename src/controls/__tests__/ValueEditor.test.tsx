@@ -54,10 +54,10 @@ describe('<ValueEditor />', () => {
       );
 
       const select = wrapper.find('select');
-      expect(select.length).toBe(1);
+      expect(select).toHaveLength(1);
 
       const opts = wrapper.find('select option');
-      expect(opts.length).toBe(1);
+      expect(opts).toHaveLength(1);
     });
 
     it('should call the onChange method passed in', () => {
@@ -85,7 +85,7 @@ describe('<ValueEditor />', () => {
       );
 
       const checkbox = wrapper.find('input[type="checkbox"]');
-      expect(checkbox.length).toBe(1);
+      expect(checkbox).toHaveLength(1);
 
       wrapper.simulate('change', { target: { checked: true } });
       expect(handleOnChange).toHaveBeenCalledWith(true);
@@ -99,7 +99,7 @@ describe('<ValueEditor />', () => {
       );
 
       const input = wrapper.find('label input[type="radio"]');
-      expect(input.length).toBe(1);
+      expect(input).toHaveLength(1);
     });
 
     it('should call the onChange handler', () => {

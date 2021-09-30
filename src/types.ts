@@ -12,6 +12,7 @@ export interface Field extends NameLabelPair {
   valueEditorType?: ValueEditorType;
   inputType?: string | null;
   values?: NameLabelPair[];
+  defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
 }
@@ -188,6 +189,7 @@ export interface Classnames {
 
 export interface Schema {
   fields: Field[];
+  fieldMap: { [k: string]: Field };
   classNames: Classnames;
   combinators: { name: string; label: string }[];
   controls: Controls;
@@ -201,7 +203,11 @@ export interface Schema {
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
   onGroupAdd(group: RuleGroupType, parentId: string): void;
   onGroupRemove(groupId: string, parentId: string): void;
-  onPropChange(prop: string, value: any, ruleId: string): void;
+  onPropChange(
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id'>,
+    value: any,
+    ruleId: string
+  ): void;
   onRuleAdd(rule: RuleType, parentId: string): void;
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
@@ -312,17 +318,22 @@ export interface QueryBuilderProps {
   controlElements?: Partial<Controls>;
   enableMountQueryChange?: boolean;
   /**
-   * The default field for new rules.  This can be a string identifying the
+   * The default field for new rules. This can be a string identifying the
    * default field, or a function that returns a field name.
    */
   getDefaultField?: string | ((fieldsData: Field[]) => string);
+  /**
+   * The default operator for new rules. This can be a string identifying the
+   * default operator, or a function that returns an operator name.
+   */
+  getDefaultOperator?: string | ((field: string) => string);
   /**
    * Returns the default value for new rules.
    */
   getDefaultValue?(rule: RuleType): any;
   /**
    * This is a callback function invoked to get the list of allowed
-   * operators for the given field.  If `null` is returned, the default
+   * operators for the given field. If `null` is returned, the default
    * operators are used.
    */
   getOperators?(field: string): NameLabelPair[] | null;

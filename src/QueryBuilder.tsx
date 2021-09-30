@@ -1,7 +1,6 @@
-import arrayFind from 'array-find';
-import arrayFindIndex from 'array-find-index';
 import cloneDeep from 'lodash/cloneDeep';
-import objectAssign from 'object-assign';
+import findIndex from 'lodash/findIndex';
+import uniqWith from 'lodash/uniqWith';
 import { useEffect, useState } from 'react';
 import {
   defaultCombinators,
@@ -11,7 +10,7 @@ import {
   defaultTranslations
 } from './defaults';
 import './query-builder.scss';
-import { QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
+import { Field, QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
 import { findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 export const QueryBuilder = ({
@@ -23,6 +22,7 @@ export const QueryBuilder = ({
   enableMountQueryChange = true,
   controlElements,
   getDefaultField,
+  getDefaultOperator,
   getDefaultValue,
   getOperators,
   getValueEditorType,
@@ -43,6 +43,10 @@ export const QueryBuilder = ({
     fields = [{ id: '~', name: '~', label: '------' }, ...fields];
   }
 
+  fields = uniqWith(fields, (a, b) => a.name === b.name);
+  const fieldMap: { [k: string]: Field } = {};
+  fields.forEach((f) => (fieldMap[f.name] = f));
+
   /**
    * Gets the initial query
    */
@@ -56,17 +60,16 @@ export const QueryBuilder = ({
       field = fields[0].name;
     }
     if (getDefaultField) {
-      if (typeof getDefaultField === 'string') {
-        field = getDefaultField;
-      } else {
+      if (typeof getDefaultField === 'function') {
         field = getDefaultField(fields);
+      } else {
+        field = getDefaultField;
       }
     }
 
-    const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-    const operator = operators.length ? operators[0].name : /* istanbul ignore next */ '';
+    const operator = getRuleDefaultOperator(field);
 
-    const newRule = {
+    const newRule: RuleType = {
       id: `r-${generateID()}`,
       field,
       value: '',
@@ -115,7 +118,7 @@ export const QueryBuilder = ({
    * Gets the list of valid values for a given field and operator
    */
   const getValuesMain = (field: string, operator: string) => {
-    const fieldData = arrayFind(fields, (f) => f.name === field);
+    const fieldData = fieldMap[field];
     /* istanbul ignore if */
     if (fieldData?.values) {
       return fieldData.values;
@@ -132,7 +135,7 @@ export const QueryBuilder = ({
    * Gets the operators for a given field
    */
   const getOperatorsMain = (field: string) => {
-    const fieldData = arrayFind(fields, (f) => f.name === field);
+    const fieldData = fieldMap[field];
     if (fieldData?.operators) {
       return fieldData.operators;
     }
@@ -144,8 +147,26 @@ export const QueryBuilder = ({
     return operators;
   };
 
+  const getRuleDefaultOperator = (field: string) => {
+    const fieldData = fieldMap[field];
+    if (fieldData?.defaultOperator) {
+      return fieldData.defaultOperator;
+    }
+
+    if (getDefaultOperator) {
+      if (typeof getDefaultOperator === 'function') {
+        return getDefaultOperator(field);
+      } else {
+        return getDefaultOperator;
+      }
+    }
+
+    const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
+    return operators.length ? operators[0].name : /* istanbul ignore next */ '';
+  };
+
   const getRuleDefaultValue = (rule: RuleType) => {
-    const fieldData = arrayFind(fields, (f) => f.name === rule.field);
+    const fieldData = fieldMap[rule.field];
     /* istanbul ignore next */
     if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
       return fieldData.defaultValue;
@@ -195,27 +216,35 @@ export const QueryBuilder = ({
     }
   };
 
-  const onPropChange = (prop: string, value: any, ruleId: string) => {
+  const onPropChange = (
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id'>,
+    value: any,
+    ruleId: string
+  ) => {
     const rootCopy = cloneDeep(root);
-    const rule = findRule(ruleId, rootCopy) as RuleType;
+    const rule = findRule(ruleId, rootCopy) as RuleType | RuleGroupType;
     /* istanbul ignore else */
     if (rule) {
-      objectAssign(rule, { [prop]: value });
+      const isGroup = isRuleGroup(rule);
 
-      // Reset operator and set default value for field change
-      if (resetOnFieldChange && prop === 'field') {
-        const operators = getOperatorsMain(rule.field) ?? /* istanbul ignore next */ [];
-        const operator = operators.length ? operators[0].name : /* istanbul ignore next */ '';
-        objectAssign(rule, {
-          operator,
-          value: getRuleDefaultValue(rule)
-        });
+      // TODO: there has to be a better way to do this
+      if (isGroup) {
+        (rule[prop as keyof RuleGroupType] as any) = value;
+      } else {
+        rule[prop as keyof RuleType] = value;
       }
 
-      if (resetOnOperatorChange && prop === 'operator') {
-        Object.assign(rule, {
-          value: getRuleDefaultValue(rule)
-        });
+      if (!isGroup) {
+        // Reset operator and set default value for field change
+        if (resetOnFieldChange && prop === 'field') {
+          const operator = getRuleDefaultOperator(rule.field);
+          rule.operator = operator;
+          rule.value = getRuleDefaultValue(rule);
+        }
+
+        if (resetOnOperatorChange && prop === 'operator') {
+          rule.value = getRuleDefaultValue(rule);
+        }
       }
 
       setRoot(rootCopy);
@@ -226,12 +255,12 @@ export const QueryBuilder = ({
   /**
    * Removes a rule from the query
    */
-  const onRuleRemove = (ruleId: string, parentId: string) => {
+  const onRuleRemove = (id: string, parentId: string) => {
     const rootCopy = cloneDeep(root);
     const parent = findRule(parentId, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {
-      const index = arrayFindIndex(parent.rules, (x) => x.id === ruleId);
+      const index = findIndex(parent.rules, { id });
 
       parent.rules.splice(index, 1);
 
@@ -243,12 +272,12 @@ export const QueryBuilder = ({
   /**
    * Removes a rule group from the query
    */
-  const onGroupRemove = (groupId: string, parentId: string) => {
+  const onGroupRemove = (id: string, parentId: string) => {
     const rootCopy = cloneDeep(root);
     const parent = findRule(parentId, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {
-      const index = arrayFindIndex(parent.rules, (x) => x.id === groupId);
+      const index = findIndex(parent.rules, { id });
 
       parent.rules.splice(index, 1);
 
@@ -279,6 +308,7 @@ export const QueryBuilder = ({
 
   const schema: Schema = {
     fields,
+    fieldMap,
     combinators,
     classNames: { ...defaultControlClassnames, ...controlClassnames },
     createRule,

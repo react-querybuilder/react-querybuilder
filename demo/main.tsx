@@ -107,7 +107,12 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
 const preparedFields: Field[][] = [
   [
     { name: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
-    { name: 'lastName', label: 'Last Name', placeholder: 'Enter last name' }
+    {
+      name: 'lastName',
+      label: 'Last Name',
+      placeholder: 'Enter last name',
+      defaultOperator: 'beginsWith'
+    }
   ],
   [
     { name: 'age', label: 'Age', inputType: 'number' },

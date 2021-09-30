@@ -1,4 +1,3 @@
-import arrayFind from 'array-find';
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import { RuleType } from '.';
@@ -16,6 +15,7 @@ export const Rule = ({
     classNames,
     controls,
     fields,
+    fieldMap,
     getInputType,
     getLevel,
     getOperators,
@@ -29,20 +29,8 @@ export const Rule = ({
   },
   context
 }: RuleProps) => {
-  const onElementChanged = (property: string, value: any) => {
-    onPropChange(property, value, id);
-  };
-
-  const onFieldChanged = (value: any) => {
-    onElementChanged('field', value);
-  };
-
-  const onOperatorChanged = (value: any) => {
-    onElementChanged('operator', value);
-  };
-
-  const onValueChanged = (value: any) => {
-    onElementChanged('value', value);
+  const generateOnChangeHandler = (prop: Exclude<keyof RuleType, 'id'>) => (value: any) => {
+    onPropChange(prop, value, id);
   };
 
   const cloneRule = (event: React.MouseEvent<Element, MouseEvent>) => {
@@ -65,7 +53,7 @@ export const Rule = ({
     onRuleRemove(id, parentId);
   };
 
-  const fieldData = arrayFind(fields, (f) => f.name === field) ?? ({} as Field);
+  const fieldData = fieldMap?.[field] ?? ({} as Field);
   const inputType = fieldData.inputType ?? getInputType(field, operator);
   const operators = fieldData.operators ?? getOperators(field);
   const valueEditorType = fieldData.valueEditorType ?? getValueEditorType(field, operator);
@@ -80,7 +68,7 @@ export const Rule = ({
         value={field}
         operator={operator}
         className={`rule-fields ${classNames.fields}`}
-        handleOnChange={onFieldChanged}
+        handleOnChange={generateOnChangeHandler('field')}
         level={level}
         context={context}
       />
@@ -93,7 +81,7 @@ export const Rule = ({
             options={operators}
             value={operator}
             className={`rule-operators ${classNames.operators}`}
-            handleOnChange={onOperatorChanged}
+            handleOnChange={generateOnChangeHandler('operator')}
             level={level}
             context={context}
           />
@@ -107,7 +95,7 @@ export const Rule = ({
             inputType={inputType}
             values={values}
             className={`rule-value ${classNames.value}`}
-            handleOnChange={onValueChanged}
+            handleOnChange={generateOnChangeHandler('value')}
             level={level}
             context={context}
           />
