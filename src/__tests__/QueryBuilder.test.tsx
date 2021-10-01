@@ -1,6 +1,7 @@
 import { mount, ReactWrapper } from 'enzyme';
 import { cloneDeep } from 'lodash';
 import { act } from 'react-dom/test-utils';
+import { RuleType } from '..';
 import { ActionElement } from '../controls';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
@@ -78,11 +79,11 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should not contain a <Rule />', () => {
-      expect(wrapper.find(Rule).length).toBe(0);
+      expect(wrapper.find(Rule)).toHaveLength(0);
     });
 
     it('should contain the addRuleAction and addGroupAction components', () => {
-      expect(wrapper.find(ActionElement).length).toBe(2);
+      expect(wrapper.find(ActionElement)).toHaveLength(2);
     });
   });
 
@@ -103,7 +104,31 @@ describe('<QueryBuilder />', () => {
 
     it('should be able to create rule on add rule click', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
-      expect(wrapper.find(Rule).length).toBe(1);
+      expect(wrapper.find(Rule)).toHaveLength(1);
+    });
+  });
+
+  describe('when initial query, with duplicate fields, is provided', () => {
+    let wrapper: ReactWrapper;
+
+    beforeEach(() => {
+      props.fields = [
+        { name: 'dupe', label: 'One' },
+        { name: 'dupe', label: 'Two' }
+      ];
+      act(() => {
+        wrapper = mount(<QueryBuilder {...props} />);
+      });
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+    });
+
+    it('passes down a unique set of fields (by name)', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      expect(wrapper.find('Rule')).toHaveLength(1);
+      expect(wrapper.find(Rule).props().schema.fields).toHaveLength(1);
     });
   });
 
@@ -266,7 +291,7 @@ describe('<QueryBuilder />', () => {
 
     it('should use the given operators', () => {
       const operatorOptions = wrapper.find(Rule).find('.rule-operators option');
-      expect(operatorOptions.length).toBe(4);
+      expect(operatorOptions).toHaveLength(4);
     });
 
     it('should match the label of the first operator', () => {
@@ -479,7 +504,7 @@ describe('<QueryBuilder />', () => {
 
     it('should generate the correct number of options', () => {
       const opts = wrapper.find('.rule-value option');
-      expect(opts.length).toBe(1);
+      expect(opts).toHaveLength(1);
     });
 
     it('should handle invalid getValues function', () => {
@@ -490,7 +515,7 @@ describe('<QueryBuilder />', () => {
       const select = wrapper.find('.rule-value');
       expect(select.length).toBeGreaterThan(0);
       const opts = wrapper.find('.rule-value option');
-      expect(opts.length).toBe(0);
+      expect(opts).toHaveLength(0);
     });
   });
 
@@ -514,34 +539,34 @@ describe('<QueryBuilder />', () => {
     it('should create a new rule and remove that rule', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
-      expect(wrapper.find(Rule).length).toBe(1);
+      expect(wrapper.find(Rule)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
       wrapper.find('.rule-remove').first().simulate('click');
 
-      expect(wrapper.find(Rule).length).toBe(0);
+      expect(wrapper.find(Rule)).toHaveLength(0);
       expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
     });
 
     it('should create a new group and remove that group', () => {
       wrapper.find('.ruleGroup-addGroup').first().simulate('click');
 
-      expect(wrapper.find(RuleGroup).length).toBe(2);
+      expect(wrapper.find(RuleGroup)).toHaveLength(2);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
       expect(onQueryChange.mock.calls[1][0].rules[0].combinator).not.toBeUndefined();
 
       wrapper.find('.ruleGroup-remove').first().simulate('click');
 
-      expect(wrapper.find(RuleGroup).length).toBe(1);
+      expect(wrapper.find(RuleGroup)).toHaveLength(1);
       expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
     });
 
     it('should create a new rule and change the fields', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
-      expect(wrapper.find(Rule).length).toBe(1);
+      expect(wrapper.find(Rule)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
@@ -556,7 +581,7 @@ describe('<QueryBuilder />', () => {
     it('should create a new rule and change the operator', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
-      expect(wrapper.find(Rule).length).toBe(1);
+      expect(wrapper.find(Rule)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
@@ -566,6 +591,16 @@ describe('<QueryBuilder />', () => {
         .simulate('change', { target: { value: '!=' } });
 
       expect(onQueryChange.mock.calls[2][0].rules[0].operator).toBe('!=');
+    });
+
+    it('should change the combinator of the root group', () => {
+      expect(wrapper.find(RuleGroup)).toHaveLength(1);
+      expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
+
+      wrapper.find('select.ruleGroup-combinators').simulate('change', { target: { value: 'or' } });
+
+      expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(0);
+      expect(onQueryChange.mock.calls[1][0].combinator).toBe('or');
     });
 
     it('should set default value for a rule', () => {
@@ -774,6 +809,56 @@ describe('<QueryBuilder />', () => {
     });
   });
 
+  describe('getDefaultOperator prop', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock;
+    const fields: Field[] = [{ name: 'field1', label: 'Field 1' }];
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('sets the default operator as a string', () => {
+      wrapper.setProps({ getDefaultOperator: 'beginsWith' });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
+    });
+
+    it('sets the default operator as a function', () => {
+      wrapper.setProps({ getDefaultOperator: () => 'beginsWith' });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
+    });
+  });
+
+  describe('defaultOperator property in field', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock;
+    const fields: Field[] = [{ name: 'field1', label: 'Field 1', defaultOperator: 'beginsWith' }];
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      wrapper = mount(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('sets the default operator', () => {
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
+    });
+  });
+
   describe('getDefaultValue prop', () => {
     let wrapper: ReactWrapper, onQueryChange: jest.Mock;
     const fields: Field[] = [
@@ -796,6 +881,74 @@ describe('<QueryBuilder />', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('Test Value');
+    });
+  });
+
+  describe('onAddRule prop', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock, onAddRule: jest.Mock;
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      onAddRule = jest.fn(() => false as const);
+      wrapper = mount(
+        <QueryBuilder {...props} onAddRule={onAddRule} onQueryChange={onQueryChange} />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('cancels the rule addition', () => {
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onAddRule).toHaveBeenCalled();
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('modifies the rule addition', () => {
+      const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
+      wrapper.setProps({ onAddRule: () => rule });
+      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('modified');
+    });
+  });
+
+  describe('onAddGroup prop', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock, onAddGroup: jest.Mock;
+
+    beforeEach(() => {
+      onQueryChange = jest.fn();
+      onAddGroup = jest.fn(() => false as const);
+      wrapper = mount(
+        <QueryBuilder {...props} onAddGroup={onAddGroup} onQueryChange={onQueryChange} />
+      );
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+      onQueryChange.mockReset();
+    });
+
+    it('cancels the group addition', () => {
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+
+      expect(onAddGroup).toHaveBeenCalled();
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('modifies the group addition', () => {
+      const group: RuleGroupType = { id: 'new', combinator: 'fake', rules: [] };
+      wrapper.setProps({ onAddGroup: () => group });
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+
+      expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('fake');
     });
   });
 
@@ -923,7 +1076,7 @@ describe('<QueryBuilder />', () => {
       onQueryChange.mockReset();
     });
 
-    it('sets the value editor type', () => {
+    it('sets the operators options', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('select.rule-operators')).toHaveLength(1);
@@ -950,12 +1103,42 @@ describe('<QueryBuilder />', () => {
       onQueryChange.mockReset();
     });
 
-    it('sets the value editor type', () => {
+    it('hides the operator selector and value editor', () => {
       wrapper.find('.ruleGroup-addRule').first().simulate('click');
 
       expect(wrapper.find('select.rule-fields')).toHaveLength(1);
       expect(wrapper.find('select.rule-operators')).toHaveLength(0);
       expect(wrapper.find('.rule-value')).toHaveLength(0);
+    });
+  });
+
+  describe('add rule to new groups', () => {
+    let wrapper: ReactWrapper;
+    const query: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
+
+    beforeEach(() => {
+      wrapper = mount(<QueryBuilder {...props} query={query} addRuleToNewGroups />);
+    });
+
+    afterEach(() => {
+      wrapper.unmount();
+    });
+
+    it('does not add a rule when the component is created', () => {
+      expect(wrapper.find('.rule')).toHaveLength(0);
+    });
+
+    it('adds a rule when a new group is created', () => {
+      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+
+      expect(wrapper.find('.rule')).toHaveLength(1);
+    });
+
+    it('adds a rule when mounted if no initial query is provided', () => {
+      wrapper.unmount();
+      wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
+
+      expect(wrapper.find('.rule')).toHaveLength(1);
     });
   });
 });

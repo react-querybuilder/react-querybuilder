@@ -401,7 +401,7 @@ describe('<RuleGroup />', () => {
       props.rules = [{ id: 'r-test', field: 'test', value: 'Test', operator: '=' }];
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find('.ruleGroup-combinators');
-      expect(sc.length).toBe(0);
+      expect(sc).toHaveLength(0);
     });
 
     it('displays combinators when there is more than one rule', () => {
@@ -413,7 +413,7 @@ describe('<RuleGroup />', () => {
       ];
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find('.ruleGroup-combinators');
-      expect(sc.length).toBe(2);
+      expect(sc).toHaveLength(2);
     });
   });
 
@@ -427,13 +427,13 @@ describe('<RuleGroup />', () => {
       schema.showNotToggle = false;
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find('.ruleGroup-notToggle');
-      expect(sc.length).toBe(0);
+      expect(sc).toHaveLength(0);
     });
 
     it('displays NOT toggle when showNotToggle is set to true', () => {
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find('.ruleGroup-notToggle');
-      expect(sc.length).toBe(1);
+      expect(sc).toHaveLength(1);
     });
 
     it('has the correct classNames', () => {
@@ -453,13 +453,13 @@ describe('<RuleGroup />', () => {
       schema.showCloneButtons = false;
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find('.ruleGroup-cloneGroup');
-      expect(sc.length).toBe(0);
+      expect(sc).toHaveLength(0);
     });
 
     it('displays clone buttons when showCloneButtons is set to true', () => {
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find('.ruleGroup-cloneGroup');
-      expect(sc.length).toBe(1);
+      expect(sc).toHaveLength(1);
     });
 
     it('has the correct classNames', () => {

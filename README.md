@@ -15,6 +15,7 @@
 - [Usage](#usage)
 - [API](#api)
   - [QueryBuilder](#querybuilder)
+  - [findRule](#findRule)
   - [formatQuery](#formatquery)
   - [Defaults](#defaults)
 - [Development](#development)
@@ -82,7 +83,7 @@ The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) Re
 
 #### `query` _(Optional)_
 
-`{id?: string, combinator: string, rules: ({field: string, value: any, operator: string} | {rules: ...[], combinator: string})[]}`
+`{ id?: string; combinator: string; rules: ({ field: string; operator: string; value: any; } | { combinator: string; rules: ...[]; })[]; }`
 
 The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](demo/main.tsx) for examples.
 
@@ -99,6 +100,7 @@ interface Field {
   valueEditorType?: 'text' | 'select' | 'checkbox' | 'radio' | null; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
   inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
   values?: { name: string; label: string }[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
+  defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
 }
@@ -114,7 +116,7 @@ A "bucket" for passing arbitrary props down to custom components. The `context` 
 
 #### `operators` _(Optional)_
 
-`{name: string, label: string}[]`
+`{ name: string; label: string; }[]`
 
 The array of operators that should be used. The default operators include:
 
@@ -141,7 +143,7 @@ The array of operators that should be used. The default operators include:
 
 #### `combinators` _(Optional)_
 
-`{name: string, label: string}[]`
+`{ name: string, label: string; }[]`
 
 The array of combinators that should be used for RuleGroups. The default set includes:
 
@@ -368,6 +370,7 @@ The `Schema` object passed in the `rule` and `ruleGroup` props has the following
 ```ts
 interface Schema {
   fields: Field[];
+  fieldMap: { [k: string]: Field };
   classNames: Classnames;
   combinators: { name: string; label: string }[];
   controls: Controls;
@@ -388,6 +391,7 @@ interface Schema {
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
+  addRuleToNewGroups: boolean;
 }
 ```
 
@@ -421,15 +425,33 @@ This is a callback function invoked to get the list of allowed values for the gi
 
 The default field for new rules. This can be a string identifying the default field, or a function that returns a field name.
 
+#### `getDefaultOperator` _(Optional)_
+
+`string | ((field: string) => string)`
+
+The default operator for new rules. This can be a string identifying the default operator, or a function that returns an operator name.
+
 #### `getDefaultValue` _(Optional)_
 
-`(rule: Rule) => any`
+`(rule: RuleType) => any`
 
 This function returns the default value for new rules.
 
+#### `onAddRule` _(Optional)_
+
+`(rule: RuleType, parentId: string, query: RuleGroupType) => RuleType | false`
+
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. (Use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.)
+
+#### `onAddGroup` _(Optional)_
+
+`(ruleGroup: RuleGroupType, parentId: string, query: RuleGroupType) => RuleGroupType | false`
+
+This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. (Use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.)
+
 #### `onQueryChange` _(Optional)_
 
-`(queryJSON: RuleGroup) => void`
+`(query: RuleGroupType) => void`
 
 This is a notification that is invoked anytime the query configuration changes. The query is provided as a JSON structure, as shown below:
 
@@ -577,9 +599,32 @@ Pass `false` to disable the `onQueryChange` on mount of component which will set
 
 Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which is selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
 
-### formatQuery
+#### `addRuleToNewGroups` _(Optional)_
 
-`formatQuery` formats a given query in either SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `!=` operator. Example:
+`boolean`
+
+Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
+
+### `findRule`
+
+```ts
+function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupType;
+```
+
+`findRule` is a utility function for finding the rule or group within the query hierarchy that has a given `id`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
+
+### `formatQuery`
+
+```ts
+function formatQuery(
+  query: RuleGroupType,
+  options?: ExportFormat | FormatQueryOptions
+): string | { sql: string; params: string[] };
+```
+
+`formatQuery` parses a given query into one of the following formats: SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `"!="` operator.
+
+Example:
 
 ```js
 import { formatQuery } from 'react-querybuilder';
@@ -678,22 +723,24 @@ const query = {
 };
 
 console.log(formatQuery(query, 'json_without_ids'));
-// {
-//   rules: [
-//     {
-//       field: 'instrument',
-//       value: ['Guitar', 'Vocals'],
-//       operator: 'in'
-//     },
-//     {
-//       field: 'lastName',
-//       value: 'Vai',
-//       operator: '='
-//     }
-//   ],
-//   combinator: 'and',
-//   not: false
-// };
+/*
+{
+  rules: [
+    {
+      field: 'instrument',
+      value: ['Guitar', 'Vocals'],
+      operator: 'in'
+    },
+    {
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and',
+  not: false
+}
+*/
 ```
 
 ### Defaults

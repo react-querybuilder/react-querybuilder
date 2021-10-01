@@ -12,6 +12,7 @@ export interface Field extends NameLabelPair {
   valueEditorType?: ValueEditorType;
   inputType?: string | null;
   values?: NameLabelPair[];
+  defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
 }
@@ -188,6 +189,7 @@ export interface Classnames {
 
 export interface Schema {
   fields: Field[];
+  fieldMap: { [k: string]: Field };
   classNames: Classnames;
   combinators: { name: string; label: string }[];
   controls: Controls;
@@ -201,13 +203,18 @@ export interface Schema {
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
   onGroupAdd(group: RuleGroupType, parentId: string): void;
   onGroupRemove(groupId: string, parentId: string): void;
-  onPropChange(prop: string, value: any, ruleId: string): void;
+  onPropChange(
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id'>,
+    value: any,
+    ruleId: string
+  ): void;
   onRuleAdd(rule: RuleType, parentId: string): void;
   onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
+  addRuleToNewGroups: boolean;
 }
 
 export interface Translations {
@@ -311,17 +318,22 @@ export interface QueryBuilderProps {
   controlElements?: Partial<Controls>;
   enableMountQueryChange?: boolean;
   /**
-   * The default field for new rules.  This can be a string identifying the
+   * The default field for new rules. This can be a string identifying the
    * default field, or a function that returns a field name.
    */
   getDefaultField?: string | ((fieldsData: Field[]) => string);
+  /**
+   * The default operator for new rules. This can be a string identifying the
+   * default operator, or a function that returns an operator name.
+   */
+  getDefaultOperator?: string | ((field: string) => string);
   /**
    * Returns the default value for new rules.
    */
   getDefaultValue?(rule: RuleType): any;
   /**
    * This is a callback function invoked to get the list of allowed
-   * operators for the given field.  If `null` is returned, the default
+   * operators for the given field. If `null` is returned, the default
    * operators are used.
    */
   getOperators?(field: string): NameLabelPair[] | null;
@@ -344,6 +356,20 @@ export interface QueryBuilderProps {
    * function is provided, an empty array is used as the default.
    */
   getValues?(field: string, operator: string): NameLabelPair[];
+  /**
+   * This callback is invoked before a new rule is added. The function should either manipulate
+   * the rule and return it, or return `false` to cancel the addition of the rule.
+   */
+  onAddRule?(rule: RuleType, parentId: string, query: RuleGroupType): RuleType | false;
+  /**
+   * This callback is invoked before a new group is added. The function should either manipulate
+   * the group and return it, or return `false` to cancel the addition of the group.
+   */
+  onAddGroup?(
+    ruleGroup: RuleGroupType,
+    parentId: string,
+    query: RuleGroupType
+  ): RuleGroupType | false;
   /**
    * This is a notification that is invoked anytime the query configuration changes.
    */
@@ -382,6 +408,10 @@ export interface QueryBuilderProps {
    * Select the first field in the array automatically
    */
   autoSelectField?: boolean;
+  /**
+   * Adds a new default rule automatically to each new group
+   */
+  addRuleToNewGroups?: boolean;
   /**
    * Container for custom props that are passed to all components
    */

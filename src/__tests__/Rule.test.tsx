@@ -15,6 +15,15 @@ import {
   ValueEditorProps
 } from '../types';
 
+const defaultFields: Field[] = [
+  { name: 'field1', label: 'Field 1' },
+  { name: 'field2', label: 'Field 2' }
+];
+const fieldMap: { [k: string]: Field } = {};
+defaultFields.forEach((f) => {
+  fieldMap[f.name] = f;
+});
+
 describe('<Rule />', () => {
   let controls: Partial<Controls>,
     classNames: Partial<Classnames>,
@@ -52,10 +61,8 @@ describe('<Rule />', () => {
       removeRule: 'custom-removeRule-class'
     };
     schema = {
-      fields: [
-        { name: 'field1', label: 'Field 1' },
-        { name: 'field2', label: 'Field 2' }
-      ],
+      fields: defaultFields,
+      fieldMap,
       controls: controls as Controls,
       classNames: classNames as Classnames,
       getOperators: (_field) => [
@@ -75,7 +82,7 @@ describe('<Rule />', () => {
     };
     props = {
       id: 'id',
-      field: 'field',
+      field: 'field', // note that this is not a valid field name based on the defaultFields
       value: 'value',
       operator: 'operator',
       schema: schema as Schema,
@@ -350,7 +357,7 @@ describe('<Rule />', () => {
       schema.showCloneButtons = true;
     });
 
-    it('should call onAddRule with the rule and parent id', () => {
+    it('should call onRuleAdd with the rule and parent id', () => {
       let myRule: RuleType, myParentId: string;
       schema.onRuleAdd = (rule, parentId) => {
         myRule = rule;
