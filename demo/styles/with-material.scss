@@ -1,10 +1,14 @@
 .with-material {
   .ruleGroup-addRule,
   .ruleGroup-addGroup,
+  .rule-cloneRule,
+  .ruleGroup-cloneGroup,
   .ruleGroup-notToggle {
     margin-left: 0.5rem;
   }
 
+  .ruleGroup-cloneGroup,
+  .rule-cloneRule,
   .rule-remove,
   .ruleGroup-remove {
     float: right;

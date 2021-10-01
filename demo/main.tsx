@@ -45,6 +45,8 @@ const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
   bootstrap: {
     addGroup: 'btn btn-secondary btn-sm',
     addRule: 'btn btn-primary btn-sm',
+    cloneGroup: 'btn btn-secondary btn-sm',
+    cloneRule: 'btn btn-secondary btn-sm',
     removeGroup: 'btn btn-danger btn-sm',
     removeRule: 'btn btn-danger btn-sm',
     combinators: 'form-select form-select-sm',
