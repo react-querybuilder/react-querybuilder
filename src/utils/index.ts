@@ -1,3 +1,4 @@
+export { default as c } from './c';
 export { default as findRule } from './findRule';
 export { default as formatQuery, defaultValueProcessor } from './formatQuery';
 export { default as generateID } from './generateID';

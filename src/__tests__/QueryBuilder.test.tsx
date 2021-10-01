@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 import { act } from 'react-dom/test-utils';
 import { RuleType } from '..';
 import { ActionElement } from '../controls';
+import { standardClassnames } from '../defaults';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
@@ -27,6 +28,10 @@ describe('<QueryBuilder />', () => {
 
     afterEach(() => {
       wrapper.unmount();
+    });
+
+    it('should have the correct className', () => {
+      expect(wrapper.find('div').first().hasClass(standardClassnames.queryBuilder)).toBe(true);
     });
 
     it('should render the root RuleGroup', () => {
@@ -103,7 +108,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should be able to create rule on add rule click', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
       expect(wrapper.find(Rule)).toHaveLength(1);
     });
   });
@@ -126,8 +131,8 @@ describe('<QueryBuilder />', () => {
     });
 
     it('passes down a unique set of fields (by name)', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
-      expect(wrapper.find('Rule')).toHaveLength(1);
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
+      expect(wrapper.find(Rule)).toHaveLength(1);
       expect(wrapper.find(Rule).props().schema.fields).toHaveLength(1);
     });
   });
@@ -179,17 +184,17 @@ describe('<QueryBuilder />', () => {
 
     it('should have a select control with the provided fields', () => {
       const rule = wrapper.find(Rule);
-      expect(rule.find('.rule-fields option')).toHaveLength(3);
+      expect(rule.find(`.${standardClassnames.fields} option`)).toHaveLength(3);
     });
 
     it('should have a field selector with the correct field', () => {
       const rule = wrapper.find(Rule);
-      expect(rule.find('.rule-fields select').props().value).toBe('firstName');
+      expect(rule.find(`.${standardClassnames.fields} select`).props().value).toBe('firstName');
     });
 
     it('should have an operator selector with the correct operator', () => {
       const rule = wrapper.find(Rule);
-      expect(rule.find('.rule-operators select').props().value).toBe('=');
+      expect(rule.find(`.${standardClassnames.operators} select`).props().value).toBe('=');
     });
 
     it('should have an input control with the correct value', () => {
@@ -290,12 +295,15 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should use the given operators', () => {
-      const operatorOptions = wrapper.find(Rule).find('.rule-operators option');
+      const operatorOptions = wrapper.find(Rule).find(`.${standardClassnames.operators} option`);
       expect(operatorOptions).toHaveLength(4);
     });
 
     it('should match the label of the first operator', () => {
-      const operatorOption = wrapper.find(Rule).find('.rule-operators option').first();
+      const operatorOption = wrapper
+        .find(Rule)
+        .find(`.${standardClassnames.operators} option`)
+        .first();
       expect(operatorOption.text()).toBe('Custom Is Null');
     });
   });
@@ -348,7 +356,7 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(
         <QueryBuilder {...props} query={query} fields={fields} getOperators={() => null} />
       );
-      const operators = wrapper.find('.rule-operators option');
+      const operators = wrapper.find(`.${standardClassnames.operators} option`);
       expect(operators.first().props().value).toBe('=');
     });
   });
@@ -402,7 +410,7 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(
         <QueryBuilder {...props} query={query} fields={fields} getValueEditorType={() => null} />
       );
-      const valueEditor = wrapper.find('.rule-value');
+      const valueEditor = wrapper.find(`.${standardClassnames.value}`);
       expect(valueEditor.first().props().type).toBe('text');
     });
   });
@@ -451,7 +459,7 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(
         <QueryBuilder {...props} query={query} fields={fields} getInputType={() => null} />
       );
-      const valueEditor = wrapper.find('.rule-value');
+      const valueEditor = wrapper.find(`.${standardClassnames.value}`);
       expect(valueEditor.first().props().type).toBe('text');
     });
   });
@@ -503,7 +511,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should generate the correct number of options', () => {
-      const opts = wrapper.find('.rule-value option');
+      const opts = wrapper.find(`.${standardClassnames.value} option`);
       expect(opts).toHaveLength(1);
     });
 
@@ -512,9 +520,9 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(
         <QueryBuilder {...props} query={query} fields={fields} getValues={() => null} />
       );
-      const select = wrapper.find('.rule-value');
+      const select = wrapper.find(`.${standardClassnames.value}`);
       expect(select.length).toBeGreaterThan(0);
-      const opts = wrapper.find('.rule-value option');
+      const opts = wrapper.find(`.${standardClassnames.value} option`);
       expect(opts).toHaveLength(0);
     });
   });
@@ -537,41 +545,41 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should create a new rule and remove that rule', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(wrapper.find(Rule)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
-      wrapper.find('.rule-remove').first().simulate('click');
+      wrapper.find(`.${standardClassnames.removeRule}`).first().simulate('click');
 
       expect(wrapper.find(Rule)).toHaveLength(0);
       expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
     });
 
     it('should create a new group and remove that group', () => {
-      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
 
       expect(wrapper.find(RuleGroup)).toHaveLength(2);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
       expect(onQueryChange.mock.calls[1][0].rules[0].combinator).not.toBeUndefined();
 
-      wrapper.find('.ruleGroup-remove').first().simulate('click');
+      wrapper.find(`.${standardClassnames.removeGroup}`).first().simulate('click');
 
       expect(wrapper.find(RuleGroup)).toHaveLength(1);
       expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
     });
 
     it('should create a new rule and change the fields', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(wrapper.find(Rule)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
       wrapper
-        .find('.rule-fields')
+        .find(`.${standardClassnames.fields}`)
         .first()
         .simulate('change', { target: { value: 'field2' } });
 
@@ -579,14 +587,14 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should create a new rule and change the operator', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(wrapper.find(Rule)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '!=' } });
 
@@ -597,7 +605,9 @@ describe('<QueryBuilder />', () => {
       expect(wrapper.find(RuleGroup)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
 
-      wrapper.find('select.ruleGroup-combinators').simulate('change', { target: { value: 'or' } });
+      wrapper
+        .find(`select.${standardClassnames.combinators}`)
+        .simulate('change', { target: { value: 'or' } });
 
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(0);
       expect(onQueryChange.mock.calls[1][0].combinator).toBe('or');
@@ -624,13 +634,13 @@ describe('<QueryBuilder />', () => {
         }
       });
 
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
       expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('value1');
 
       wrapper
-        .find('.rule-fields')
+        .find(`.${standardClassnames.fields}`)
         .first()
         .simulate('change', { target: { value: 'field2' } });
 
@@ -647,7 +657,7 @@ describe('<QueryBuilder />', () => {
         }
       });
 
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[3][0].rules).toHaveLength(2);
       expect(onQueryChange.mock.calls[3][0].rules[0].value).toBe(false);
@@ -672,17 +682,17 @@ describe('<QueryBuilder />', () => {
     });
 
     it('resets the operator and value when true', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '>' } });
       wrapper
-        .find('.rule-value')
+        .find(`.${standardClassnames.value}`)
         .first()
         .simulate('change', { target: { value: 'Test' } });
       wrapper
-        .find('.rule-fields')
+        .find(`.${standardClassnames.fields}`)
         .first()
         .simulate('change', { target: { value: 'field2' } });
 
@@ -694,17 +704,17 @@ describe('<QueryBuilder />', () => {
 
     it('does not reset the operator and value when false', () => {
       wrapper.setProps({ resetOnFieldChange: false });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '>' } });
       wrapper
-        .find('.rule-value')
+        .find(`.${standardClassnames.value}`)
         .first()
         .simulate('change', { target: { value: 'Test' } });
       wrapper
-        .find('.rule-fields')
+        .find(`.${standardClassnames.fields}`)
         .first()
         .simulate('change', { target: { value: 'field2' } });
 
@@ -734,17 +744,17 @@ describe('<QueryBuilder />', () => {
 
     it('resets the value when true', () => {
       wrapper.setProps({ resetOnOperatorChange: true });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '>' } });
       wrapper
-        .find('.rule-value')
+        .find(`.${standardClassnames.value}`)
         .first()
         .simulate('change', { target: { value: 'Test' } });
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '=' } });
 
@@ -756,17 +766,17 @@ describe('<QueryBuilder />', () => {
 
     it('does not reset the value when false', () => {
       wrapper.setProps({ resetOnOperatorChange: false });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '>' } });
       wrapper
-        .find('.rule-value')
+        .find(`.${standardClassnames.value}`)
         .first()
         .simulate('change', { target: { value: 'Test' } });
       wrapper
-        .find('.rule-operators')
+        .find(`.${standardClassnames.operators}`)
         .first()
         .simulate('change', { target: { value: '=' } });
 
@@ -796,14 +806,14 @@ describe('<QueryBuilder />', () => {
 
     it('sets the default field as a string', () => {
       wrapper.setProps({ getDefaultField: 'field2' });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].field).toBe('field2');
     });
 
     it('sets the default field as a function', () => {
       wrapper.setProps({ getDefaultField: () => 'field2' });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].field).toBe('field2');
     });
@@ -825,14 +835,14 @@ describe('<QueryBuilder />', () => {
 
     it('sets the default operator as a string', () => {
       wrapper.setProps({ getDefaultOperator: 'beginsWith' });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
     });
 
     it('sets the default operator as a function', () => {
       wrapper.setProps({ getDefaultOperator: () => 'beginsWith' });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
     });
@@ -853,7 +863,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the default operator', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
     });
@@ -878,7 +888,7 @@ describe('<QueryBuilder />', () => {
 
     it('sets the default value', () => {
       wrapper.setProps({ getDefaultValue: () => 'Test Value' });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('Test Value');
     });
@@ -903,7 +913,7 @@ describe('<QueryBuilder />', () => {
     it('cancels the rule addition', () => {
       expect(onQueryChange).toHaveBeenCalledTimes(1);
 
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onAddRule).toHaveBeenCalled();
       expect(onQueryChange).toHaveBeenCalledTimes(1);
@@ -912,7 +922,7 @@ describe('<QueryBuilder />', () => {
     it('modifies the rule addition', () => {
       const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
       wrapper.setProps({ onAddRule: () => rule });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('modified');
     });
@@ -937,7 +947,7 @@ describe('<QueryBuilder />', () => {
     it('cancels the group addition', () => {
       expect(onQueryChange).toHaveBeenCalledTimes(1);
 
-      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
 
       expect(onAddGroup).toHaveBeenCalled();
       expect(onQueryChange).toHaveBeenCalledTimes(1);
@@ -946,7 +956,7 @@ describe('<QueryBuilder />', () => {
     it('modifies the group addition', () => {
       const group: RuleGroupType = { id: 'new', combinator: 'fake', rules: [] };
       wrapper.setProps({ onAddGroup: () => group });
-      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('fake');
     });
@@ -970,7 +980,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the default value', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
       expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('Test Value 1');
     });
@@ -1005,9 +1015,9 @@ describe('<QueryBuilder />', () => {
 
     it('sets the values list', () => {
       wrapper.setProps({ getValueEditorType: () => 'select' });
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
-      expect(wrapper.find('select.rule-value')).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.value}`)).toHaveLength(1);
     });
   });
 
@@ -1029,9 +1039,9 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the input type', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
-      expect(wrapper.find('input[type="number"].rule-value')).toHaveLength(1);
+      expect(wrapper.find(`input[type="number"].${standardClassnames.value}`)).toHaveLength(1);
     });
   });
 
@@ -1053,9 +1063,9 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the value editor type', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
-      expect(wrapper.find('select.rule-value')).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.value}`)).toHaveLength(1);
     });
   });
 
@@ -1077,10 +1087,10 @@ describe('<QueryBuilder />', () => {
     });
 
     it('sets the operators options', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
-      expect(wrapper.find('select.rule-operators')).toHaveLength(1);
-      expect(wrapper.find('select.rule-operators option')).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.operators}`)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.operators} option`)).toHaveLength(1);
     });
   });
 
@@ -1104,11 +1114,11 @@ describe('<QueryBuilder />', () => {
     });
 
     it('hides the operator selector and value editor', () => {
-      wrapper.find('.ruleGroup-addRule').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addRule}`).first().simulate('click');
 
-      expect(wrapper.find('select.rule-fields')).toHaveLength(1);
-      expect(wrapper.find('select.rule-operators')).toHaveLength(0);
-      expect(wrapper.find('.rule-value')).toHaveLength(0);
+      expect(wrapper.find(`select.${standardClassnames.fields}`)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.operators}`)).toHaveLength(0);
+      expect(wrapper.find(`.${standardClassnames.value}`)).toHaveLength(0);
     });
   });
 
@@ -1125,20 +1135,20 @@ describe('<QueryBuilder />', () => {
     });
 
     it('does not add a rule when the component is created', () => {
-      expect(wrapper.find('.rule')).toHaveLength(0);
+      expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(0);
     });
 
     it('adds a rule when a new group is created', () => {
-      wrapper.find('.ruleGroup-addGroup').first().simulate('click');
+      wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
 
-      expect(wrapper.find('.rule')).toHaveLength(1);
+      expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(1);
     });
 
     it('adds a rule when mounted if no initial query is provided', () => {
       wrapper.unmount();
       wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
 
-      expect(wrapper.find('.rule')).toHaveLength(1);
+      expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(1);
     });
   });
 });

@@ -1,8 +1,9 @@
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import { RuleType } from '.';
+import { standardClassnames } from './defaults';
 import { Field, RuleProps } from './types';
-import { generateID } from './utils';
+import { c, generateID } from './utils';
 
 export const Rule = ({
   id,
@@ -61,13 +62,16 @@ export const Rule = ({
   const level = getLevel(id);
 
   return (
-    <div className={`rule ${classNames.rule}`} data-rule-id={id} data-level={level}>
+    <div
+      className={c(standardClassnames.rule, classNames.rule)}
+      data-rule-id={id}
+      data-level={level}>
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}
         value={field}
         operator={operator}
-        className={`rule-fields ${classNames.fields}`}
+        className={c(standardClassnames.fields, classNames.fields)}
         handleOnChange={generateOnChangeHandler('field')}
         level={level}
         context={context}
@@ -80,7 +84,7 @@ export const Rule = ({
             title={translations.operators.title}
             options={operators}
             value={operator}
-            className={`rule-operators ${classNames.operators}`}
+            className={c(standardClassnames.operators, classNames.operators)}
             handleOnChange={generateOnChangeHandler('operator')}
             level={level}
             context={context}
@@ -94,7 +98,7 @@ export const Rule = ({
             type={valueEditorType}
             inputType={inputType}
             values={values}
-            className={`rule-value ${classNames.value}`}
+            className={c(standardClassnames.value, classNames.value)}
             handleOnChange={generateOnChangeHandler('value')}
             level={level}
             context={context}
@@ -105,7 +109,7 @@ export const Rule = ({
         <controls.cloneRuleAction
           label={translations.cloneRule.label}
           title={translations.cloneRule.title}
-          className={`rule-cloneRule ${classNames.cloneRule}`}
+          className={c(standardClassnames.cloneRule, classNames.cloneRule)}
           handleOnClick={cloneRule}
           level={level}
           context={context}
@@ -114,7 +118,7 @@ export const Rule = ({
       <controls.removeRuleAction
         label={translations.removeRule.label}
         title={translations.removeRule.title}
-        className={`rule-remove ${classNames.removeRule}`}
+        className={c(standardClassnames.removeRule, classNames.removeRule)}
         handleOnClick={removeRule}
         level={level}
         context={context}

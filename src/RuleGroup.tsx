@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Fragment } from 'react';
+import { standardClassnames } from './defaults';
 import { RuleGroupProps, RuleGroupType } from './types';
-import { regenerateIDs } from './utils';
+import { c, regenerateIDs } from './utils';
 
 const hasParentGroup = (parentId: any) => !!parentId;
 
@@ -80,14 +81,17 @@ export const RuleGroup = ({
   const level = getLevel(id);
 
   return (
-    <div className={`ruleGroup ${classNames.ruleGroup}`} data-rule-group-id={id} data-level={level}>
-      <div className={`ruleGroup-header ${classNames.header}`}>
+    <div
+      className={c(standardClassnames.ruleGroup, classNames.ruleGroup)}
+      data-rule-group-id={id}
+      data-level={level}>
+      <div className={c(standardClassnames.header, classNames.header)}>
         {!showCombinatorsBetweenRules && (
           <controls.combinatorSelector
             options={combinators}
             value={combinator}
             title={translations.combinators.title}
-            className={`ruleGroup-combinators ${classNames.combinators}`}
+            className={c(standardClassnames.combinators, classNames.combinators)}
             handleOnChange={onCombinatorChange}
             rules={rules}
             level={level}
@@ -96,7 +100,7 @@ export const RuleGroup = ({
         )}
         {showNotToggle && (
           <controls.notToggle
-            className={`ruleGroup-notToggle ${classNames.notToggle}`}
+            className={c(standardClassnames.notToggle, classNames.notToggle)}
             title={translations.notToggle.title}
             label={translations.notToggle.label}
             checked={not}
@@ -108,7 +112,7 @@ export const RuleGroup = ({
         <controls.addRuleAction
           label={translations.addRule.label}
           title={translations.addRule.title}
-          className={`ruleGroup-addRule ${classNames.addRule}`}
+          className={c(standardClassnames.addRule, classNames.addRule)}
           handleOnClick={addRule}
           rules={rules}
           level={level}
@@ -117,7 +121,7 @@ export const RuleGroup = ({
         <controls.addGroupAction
           label={translations.addGroup.label}
           title={translations.addGroup.title}
-          className={`ruleGroup-addGroup ${classNames.addGroup}`}
+          className={c(standardClassnames.addGroup, classNames.addGroup)}
           handleOnClick={addGroup}
           rules={rules}
           level={level}
@@ -127,7 +131,7 @@ export const RuleGroup = ({
           <controls.cloneGroupAction
             label={translations.cloneRuleGroup.label}
             title={translations.cloneRuleGroup.title}
-            className={`ruleGroup-cloneGroup ${classNames.cloneGroup}`}
+            className={c(standardClassnames.cloneGroup, classNames.cloneGroup)}
             handleOnClick={cloneGroup}
             rules={rules}
             level={level}
@@ -138,7 +142,7 @@ export const RuleGroup = ({
           <controls.removeGroupAction
             label={translations.removeGroup.label}
             title={translations.removeGroup.title}
-            className={`ruleGroup-remove ${classNames.removeGroup}`}
+            className={c(standardClassnames.removeGroup, classNames.removeGroup)}
             handleOnClick={removeGroup}
             rules={rules}
             level={level}
@@ -153,7 +157,11 @@ export const RuleGroup = ({
               options={combinators}
               value={combinator}
               title={translations.combinators.title}
-              className={`ruleGroup-combinators betweenRules ${classNames.combinators}`}
+              className={c(
+                standardClassnames.combinators,
+                standardClassnames.betweenRules,
+                classNames.combinators
+              )}
               handleOnChange={onCombinatorChange}
               rules={rules}
               level={level}

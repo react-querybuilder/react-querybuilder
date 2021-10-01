@@ -7,11 +7,12 @@ import {
   defaultControlClassnames,
   defaultControlElements,
   defaultOperators,
-  defaultTranslations
+  defaultTranslations,
+  standardClassnames
 } from './defaults';
 import './query-builder.scss';
 import { Field, QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
-import { findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
+import { c, findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
 
 export const QueryBuilder = ({
   query,
@@ -352,7 +353,7 @@ export const QueryBuilder = ({
   }, []);
 
   return (
-    <div className={`queryBuilder ${schema.classNames.queryBuilder}`}>
+    <div className={c(standardClassnames.queryBuilder, schema.classNames.queryBuilder)}>
       <schema.controls.ruleGroup
         translations={{ ...defaultTranslations, ...translations }}
         rules={root.rules}

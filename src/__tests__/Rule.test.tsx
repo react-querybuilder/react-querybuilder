@@ -1,5 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
+import { standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
 import {
   ActionProps,
@@ -136,10 +137,10 @@ describe('<Rule />', () => {
     expect(Rule).toBeDefined();
   });
 
-  it('should have a className of "rule"', () => {
+  it('should have correct className', () => {
     const dom = shallow(<Rule {...props} />);
 
-    expect(dom.find('div').hasClass('rule')).toBe(true);
+    expect(dom.find('div').hasClass(standardClassnames.rule)).toBe(true);
   });
 
   describe('field selector as <ValueSelector />', () => {
@@ -158,7 +159,7 @@ describe('<Rule />', () => {
       expect(dom.find(ValueSelector).props().options).toEqual(expected_fields);
     });
 
-    behavesLikeASelector('field', 'rule-fields', 'custom-fields-class');
+    behavesLikeASelector('field', standardClassnames.fields, 'custom-fields-class');
   });
 
   describe('operator selector as <ValueSelector />', () => {
@@ -186,7 +187,7 @@ describe('<Rule />', () => {
       );
     });
 
-    behavesLikeASelector('operator', 'rule-operators', 'custom-operators-class');
+    behavesLikeASelector('operator', standardClassnames.operators, 'custom-operators-class');
   });
 
   describe('value editor as <ValueEditor />', () => {
@@ -213,14 +214,14 @@ describe('<Rule />', () => {
       props.operator = 'selected_operator';
       const dom = shallow(<Rule {...props} />);
 
-      expect(dom.find('ValueEditor').props().operator).toBe('selected_operator');
+      expect(dom.find(ValueEditor).props().operator).toBe('selected_operator');
     });
 
     it('should have value set to specified value', () => {
       props.value = 'specified_value';
       const dom = shallow(<Rule {...props} />);
 
-      expect(dom.find('ValueEditor').props().value).toBe('specified_value');
+      expect(dom.find(ValueEditor).props().value).toBe('specified_value');
     });
 
     it('should have the onChange method handler', () => {
@@ -255,17 +256,17 @@ describe('<Rule />', () => {
     it('should have label set to "x"', () => {
       const dom = shallow(<Rule {...props} />);
 
-      expect(dom.find('ActionElement').props().label).toBe('x');
+      expect(dom.find(ActionElement).props().label).toBe('x');
     });
 
     it('should have the default className', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ActionElement').props().className).toContain('rule-remove');
+      expect(dom.find(ActionElement).props().className).toContain(standardClassnames.removeRule);
     });
 
     it('should have the custom className', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ActionElement').props().className).toContain('custom-removeRule-class');
+      expect(dom.find(ActionElement).props().className).toContain('custom-removeRule-class');
     });
 
     it('should have the onChange method handler', () => {
@@ -286,17 +287,17 @@ describe('<Rule />', () => {
     it('should have label set to "⧉"', () => {
       const dom = shallow(<Rule {...props} />);
 
-      expect(dom.find('ActionElement').props().label).toBe('⧉');
+      expect(dom.find(ActionElement).props().label).toBe('⧉');
     });
 
     it('should have the default className', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ActionElement').props().className).toContain('rule-cloneRule');
+      expect(dom.find(ActionElement).props().className).toContain(standardClassnames.cloneRule);
     });
 
     it('should have the custom className', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ActionElement').props().className).toContain('custom-cloneRule-class');
+      expect(dom.find(ActionElement).props().className).toContain('custom-cloneRule-class');
     });
 
     it('should have the onChange method handler', () => {
@@ -321,7 +322,9 @@ describe('<Rule />', () => {
     describe('onFieldChanged', () => {
       it('should call onPropChange with the rule id', () => {
         const dom = mount(<Rule {...props} />);
-        dom.find('.rule-fields').simulate('change', { target: { value: 'any_field' } });
+        dom
+          .find(`.${standardClassnames.fields}`)
+          .simulate('change', { target: { value: 'any_field' } });
 
         expect(actualProperty).toBe('field');
         expect(actualValue).toBe('any_field');
@@ -332,7 +335,9 @@ describe('<Rule />', () => {
     describe('onOperatorChanged', () => {
       it('should call onPropChange with the rule id', () => {
         const dom = mount(<Rule {...props} />);
-        dom.find('.rule-operators').simulate('change', { target: { value: 'any_operator' } });
+        dom
+          .find(`.${standardClassnames.operators}`)
+          .simulate('change', { target: { value: 'any_operator' } });
 
         expect(actualProperty).toBe('operator');
         expect(actualValue).toBe('any_operator');
@@ -343,7 +348,9 @@ describe('<Rule />', () => {
     describe('onValueChanged', () => {
       it('should call onPropChange with the rule id', () => {
         const dom = mount(<Rule {...props} />);
-        dom.find('.rule-value').simulate('change', { target: { value: 'any_value' } });
+        dom
+          .find(`.${standardClassnames.value}`)
+          .simulate('change', { target: { value: 'any_value' } });
 
         expect(actualProperty).toBe('value');
         expect(actualValue).toBe('any_value');
@@ -364,7 +371,7 @@ describe('<Rule />', () => {
         myParentId = parentId;
       };
       const dom = mount(<Rule {...props} />);
-      dom.find('.rule-cloneRule').simulate('click');
+      dom.find(`.${standardClassnames.cloneRule}`).simulate('click');
 
       expect(myRule).toBeDefined();
       expect(myParentId).toBe('parentId');
@@ -379,7 +386,7 @@ describe('<Rule />', () => {
         myParentId = parentId;
       };
       const dom = mount(<Rule {...props} />);
-      dom.find('.rule-remove').simulate('click');
+      dom.find(`.${standardClassnames.removeRule}`).simulate('click');
 
       expect(myRuleId).toBe('id');
       expect(myParentId).toBe('parentId');
@@ -389,17 +396,17 @@ describe('<Rule />', () => {
   function behavesLikeASelector(value: string, defaultClassName: string, customClassName: string) {
     it('should have the selected value set correctly', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ValueSelector').props().value).toBe(value);
+      expect(dom.find(ValueSelector).props().value).toBe(value);
     });
 
     it('should have the default className', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ValueSelector').props().className).toContain(defaultClassName);
+      expect(dom.find(ValueSelector).props().className).toContain(defaultClassName);
     });
 
     it('should have the custom className', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find('ValueSelector').props().className).toContain(customClassName);
+      expect(dom.find(ValueSelector).props().className).toContain(customClassName);
     });
 
     it('should have the onChange method handler', () => {

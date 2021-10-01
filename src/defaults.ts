@@ -70,6 +70,25 @@ export const defaultCombinators: NameLabelPair[] = [
   { name: 'or', label: 'OR' }
 ];
 
+export const standardClassnames = {
+  queryBuilder: 'queryBuilder',
+  ruleGroup: 'ruleGroup',
+  header: 'ruleGroup-header',
+  combinators: 'ruleGroup-combinators',
+  addRule: 'ruleGroup-addRule',
+  addGroup: 'ruleGroup-addGroup',
+  cloneRule: 'rule-cloneRule',
+  cloneGroup: 'ruleGroup-cloneGroup',
+  removeGroup: 'ruleGroup-remove',
+  notToggle: 'ruleGroup-notToggle',
+  rule: 'rule',
+  fields: 'rule-fields',
+  operators: 'rule-operators',
+  value: 'rule-value',
+  removeRule: 'rule-remove',
+  betweenRules: 'betweenRules'
+} as const;
+
 export const defaultControlClassnames: Classnames = {
   queryBuilder: '',
   ruleGroup: '',

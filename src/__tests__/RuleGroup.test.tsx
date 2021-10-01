@@ -1,6 +1,7 @@
 import { mount, shallow } from 'enzyme';
 import * as React from 'react';
 import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
+import { standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
 import {
@@ -130,9 +131,9 @@ describe('<RuleGroup />', () => {
     expect(RuleGroup).toBeDefined();
   });
 
-  it('should have a className of "ruleGroup"', () => {
+  it('should have correct className', () => {
     const dom = shallow(<RuleGroup {...props} />);
-    expect(dom.find('div').first().hasClass('ruleGroup')).toBe(true);
+    expect(dom.find('div').first().hasClass(standardClassnames.ruleGroup)).toBe(true);
   });
 
   describe('combinator selector as <ValueSelector />', () => {
@@ -162,7 +163,7 @@ describe('<RuleGroup />', () => {
 
     behavesLikeAnElementWithClassNames(
       ValueSelector,
-      'ruleGroup-combinators',
+      standardClassnames.combinators,
       'custom-combinators-class'
     );
   });
@@ -172,7 +173,7 @@ describe('<RuleGroup />', () => {
       controls.addRuleAction = ActionElement;
     });
 
-    behavesLikeAnActionElement('+Rule', 'ruleGroup-addRule', 'custom-addRule-class');
+    behavesLikeAnActionElement('+Rule', standardClassnames.addRule, 'custom-addRule-class');
   });
 
   describe('add group action as an <ActionElement />', () => {
@@ -180,7 +181,7 @@ describe('<RuleGroup />', () => {
       controls.addGroupAction = ActionElement;
     });
 
-    behavesLikeAnActionElement('+Group', 'ruleGroup-addGroup', 'custom-addGroup-class');
+    behavesLikeAnActionElement('+Group', standardClassnames.addGroup, 'custom-addGroup-class');
   });
 
   describe('clone group action as an <ActionElement />', () => {
@@ -189,7 +190,7 @@ describe('<RuleGroup />', () => {
       controls.cloneGroupAction = ActionElement;
     });
 
-    behavesLikeAnActionElement('⧉', 'ruleGroup-cloneGroup', 'custom-cloneGroup-class');
+    behavesLikeAnActionElement('⧉', standardClassnames.cloneGroup, 'custom-cloneGroup-class');
   });
 
   describe('remove group action as an <ActionElement />', () => {
@@ -200,10 +201,10 @@ describe('<RuleGroup />', () => {
     it('does not exist if it does not have a parent', () => {
       props.parentId = null;
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find('ActionElement')).toHaveLength(0);
+      expect(dom.find(ActionElement)).toHaveLength(0);
     });
 
-    behavesLikeAnActionElement('x', 'ruleGroup-remove', 'custom-removeGroup-class');
+    behavesLikeAnActionElement('x', standardClassnames.removeGroup, 'custom-removeGroup-class');
   });
 
   describe('when 2 rules exist', () => {
@@ -213,7 +214,7 @@ describe('<RuleGroup />', () => {
 
     it('has 2 <Rule /> elements', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find('Rule')).toHaveLength(2);
+      expect(dom.find(Rule)).toHaveLength(2);
     });
 
     it('has the first rule with the correct values', () => {
@@ -234,7 +235,7 @@ describe('<RuleGroup />', () => {
 
     it('has 1 <RuleGroup /> element', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find('RuleGroup')).toHaveLength(1);
+      expect(dom.find(RuleGroup)).toHaveLength(1);
     });
 
     it('has 1 <RuleGroup /> with expected properties', () => {
@@ -273,7 +274,7 @@ describe('<RuleGroup />', () => {
       };
       const dom = mount(<RuleGroup {...props} />);
       dom
-        .find('.ruleGroup-combinators')
+        .find(`.${standardClassnames.combinators}`)
         .simulate('change', { target: { value: 'any_combinator_value' } });
 
       expect(actualProperty).toBe('combinator');
@@ -316,7 +317,9 @@ describe('<RuleGroup />', () => {
       };
       schema.showNotToggle = true;
       const dom = mount(<RuleGroup {...props} />);
-      dom.find('.ruleGroup-notToggle input').simulate('change', { target: { checked: true } });
+      dom
+        .find(`.${standardClassnames.notToggle} input`)
+        .simulate('change', { target: { checked: true } });
 
       expect(actualProperty).toBe('not');
       expect(actualValue).toBe(true);
@@ -332,7 +335,7 @@ describe('<RuleGroup />', () => {
         actualId = id;
       };
       const dom = mount(<RuleGroup {...props} />);
-      dom.find('.ruleGroup-addRule').simulate('click');
+      dom.find(`.${standardClassnames.addRule}`).simulate('click');
 
       expect(actualRule).toHaveProperty('id');
       expect(actualRule).toHaveProperty('field');
@@ -350,7 +353,7 @@ describe('<RuleGroup />', () => {
         actualId = id;
       };
       const dom = mount(<RuleGroup {...props} />);
-      dom.find('.ruleGroup-addGroup').simulate('click');
+      dom.find(`.${standardClassnames.addGroup}`).simulate('click');
 
       expect(actualRuleGroup).toHaveProperty('id');
       expect(actualRuleGroup).toHaveProperty('parentId');
@@ -371,7 +374,7 @@ describe('<RuleGroup />', () => {
         actualId = id;
       };
       const dom = mount(<RuleGroup {...props} />);
-      dom.find('.ruleGroup-cloneGroup').simulate('click');
+      dom.find(`.${standardClassnames.cloneGroup}`).simulate('click');
 
       expect(actualRuleGroup.combinator).toBe('and');
       expect(actualRuleGroup.not).toBeUndefined();
@@ -388,7 +391,7 @@ describe('<RuleGroup />', () => {
         actualParentId = parentId;
       };
       const dom = mount(<RuleGroup {...props} />);
-      dom.find('.ruleGroup-remove').simulate('click');
+      dom.find(`.${standardClassnames.removeGroup}`).simulate('click');
 
       expect(actualId).toBe('id');
       expect(actualParentId).toBe('parentId');
@@ -400,7 +403,7 @@ describe('<RuleGroup />', () => {
       schema.showCombinatorsBetweenRules = true;
       props.rules = [{ id: 'r-test', field: 'test', value: 'Test', operator: '=' }];
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-combinators');
+      const sc = dom.find(`.${standardClassnames.combinators}`);
       expect(sc).toHaveLength(0);
     });
 
@@ -412,7 +415,7 @@ describe('<RuleGroup />', () => {
         { id: 'g-test2', rules: [], combinator: 'and' }
       ];
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-combinators');
+      const sc = dom.find(`.${standardClassnames.combinators}`);
       expect(sc).toHaveLength(2);
     });
   });
@@ -426,20 +429,20 @@ describe('<RuleGroup />', () => {
     it('does not display NOT toggle by default', () => {
       schema.showNotToggle = false;
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-notToggle');
+      const sc = dom.find(`.${standardClassnames.notToggle}`);
       expect(sc).toHaveLength(0);
     });
 
     it('displays NOT toggle when showNotToggle is set to true', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-notToggle');
+      const sc = dom.find(`.${standardClassnames.notToggle}`);
       expect(sc).toHaveLength(1);
     });
 
     it('has the correct classNames', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find('NotToggle').props().className).toContain('ruleGroup-notToggle');
-      expect(dom.find('NotToggle').props().className).toContain('custom-notToggle-class');
+      expect(dom.find(NotToggle).props().className).toContain(standardClassnames.notToggle);
+      expect(dom.find(NotToggle).props().className).toContain('custom-notToggle-class');
     });
   });
 
@@ -452,19 +455,19 @@ describe('<RuleGroup />', () => {
     it('does not display clone buttons by default', () => {
       schema.showCloneButtons = false;
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-cloneGroup');
+      const sc = dom.find(`.${standardClassnames.cloneGroup}`);
       expect(sc).toHaveLength(0);
     });
 
     it('displays clone buttons when showCloneButtons is set to true', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find('.ruleGroup-cloneGroup');
+      const sc = dom.find(`.${standardClassnames.cloneGroup}`);
       expect(sc).toHaveLength(1);
     });
 
     it('has the correct classNames', () => {
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find('.ruleGroup-cloneGroup').props().className).toContain(
+      expect(dom.find(`.${standardClassnames.cloneGroup}`).props().className).toContain(
         'custom-cloneGroup-class'
       );
     });

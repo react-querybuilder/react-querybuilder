@@ -12,7 +12,7 @@ describe('when generating IDs', () => {
           combinator: 'and',
           rules: [
             {
-              id: 'rule',
+              id: 'innerRule',
               field: 'TEST',
               operator: '=',
               value: ''
