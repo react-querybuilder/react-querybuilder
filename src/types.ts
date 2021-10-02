@@ -156,6 +156,10 @@ export interface Classnames {
    */
   header: string;
   /**
+   * `<div>` containing the RuleGroup child rules/groups
+   */
+  body: string;
+  /**
    * `<select>` control for combinators
    */
   combinators: string;

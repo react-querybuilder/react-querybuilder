@@ -158,50 +158,52 @@ export const RuleGroup = ({
           />
         )}
       </div>
-      {rules.map((r, idx) => (
-        <Fragment key={r.id}>
-          {idx > 0 && showCombinatorsBetweenRules && (
-            <controls.combinatorSelector
-              options={combinators}
-              value={combinator}
-              title={translations.combinators.title}
-              className={c(
-                standardClassnames.combinators,
-                standardClassnames.betweenRules,
-                classNames.combinators
-              )}
-              handleOnChange={onCombinatorChange}
-              rules={rules}
-              level={level}
-              context={context}
-              validation={validationResult}
-            />
-          )}
-          {isRuleGroup(r) ? (
-            <controls.ruleGroup
-              id={r.id}
-              schema={schema}
-              parentId={id}
-              combinator={r.combinator}
-              translations={translations}
-              rules={r.rules}
-              not={!!r.not}
-              context={context}
-            />
-          ) : (
-            <controls.rule
-              id={r.id!}
-              field={r.field}
-              value={r.value}
-              operator={r.operator}
-              schema={schema}
-              parentId={id}
-              translations={translations}
-              context={context}
-            />
-          )}
-        </Fragment>
-      ))}
+      <div className={c(standardClassnames.body, classNames.body)}>
+        {rules.map((r, idx) => (
+          <Fragment key={r.id}>
+            {idx > 0 && showCombinatorsBetweenRules && (
+              <controls.combinatorSelector
+                options={combinators}
+                value={combinator}
+                title={translations.combinators.title}
+                className={c(
+                  standardClassnames.combinators,
+                  standardClassnames.betweenRules,
+                  classNames.combinators
+                )}
+                handleOnChange={onCombinatorChange}
+                rules={rules}
+                level={level}
+                context={context}
+                validation={validationResult}
+              />
+            )}
+            {isRuleGroup(r) ? (
+              <controls.ruleGroup
+                id={r.id}
+                schema={schema}
+                parentId={id}
+                combinator={r.combinator}
+                translations={translations}
+                rules={r.rules}
+                not={!!r.not}
+                context={context}
+              />
+            ) : (
+              <controls.rule
+                id={r.id!}
+                field={r.field}
+                value={r.value}
+                operator={r.operator}
+                schema={schema}
+                parentId={id}
+                translations={translations}
+                context={context}
+              />
+            )}
+          </Fragment>
+        ))}
+      </div>
     </div>
   );
 };

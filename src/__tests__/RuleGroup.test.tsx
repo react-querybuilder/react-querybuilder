@@ -53,6 +53,8 @@ describe('<RuleGroup />', () => {
       ruleGroup: RuleGroup
     };
     classNames = {
+      header: 'custom-header-class',
+      body: 'custom-body-class',
       combinators: 'custom-combinators-class',
       addRule: 'custom-addRule-class',
       addGroup: 'custom-addGroup-class',
@@ -133,9 +135,11 @@ describe('<RuleGroup />', () => {
     expect(RuleGroup).toBeDefined();
   });
 
-  it('should have correct className', () => {
+  it('should have correct classNames', () => {
     const dom = shallow(<RuleGroup {...props} />);
     expect(dom.find('div').first().hasClass(standardClassnames.ruleGroup)).toBe(true);
+    expect(dom.find(`.${standardClassnames.header}.${classNames.header}`)).toHaveLength(1);
+    expect(dom.find(`.${standardClassnames.body}.${classNames.body}`)).toHaveLength(1);
   });
 
   describe('combinator selector as <ValueSelector />', () => {
