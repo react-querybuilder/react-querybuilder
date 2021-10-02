@@ -156,4 +156,9 @@
   .ruleGroup-notToggle {
     margin-left: 0.5rem;
   }
+
+  // Bold the +Rule button if the group has no child rules or groups
+  .ruleGroup.queryBuilder-invalid .ruleGroup-addRule {
+    font-weight: bold !important;
+  }
 }

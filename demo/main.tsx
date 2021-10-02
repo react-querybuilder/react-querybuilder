@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import QueryBuilder, {
   Classnames,
   Controls,
+  defaultValidator,
   ExportFormat,
   Field,
   formatQuery,
@@ -361,6 +362,7 @@ const RootView = () => {
                   resetOnOperatorChange={resetOnOperatorChange}
                   autoSelectField={autoSelectField}
                   addRuleToNewGroups={addRuleToNewGroups}
+                  validator={defaultValidator}
                 />
               </form>
             </div>

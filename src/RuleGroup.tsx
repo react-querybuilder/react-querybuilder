@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import { standardClassnames } from './defaults';
 import { RuleGroupProps, RuleGroupType } from './types';
-import { c, regenerateIDs } from './utils';
+import { c, getValidationClassNames, regenerateIDs } from './utils';
 
 const hasParentGroup = (parentId: any) => !!parentId;
 
@@ -30,7 +30,8 @@ export const RuleGroup = ({
     onRuleAdd,
     showCombinatorsBetweenRules,
     showNotToggle,
-    showCloneButtons
+    showCloneButtons,
+    validationMap
   } = schema;
 
   const onCombinatorChange = (value: any) => {
@@ -80,11 +81,12 @@ export const RuleGroup = ({
 
   const level = getLevel(id);
 
+  const validationResult = validationMap[id];
+  const validationClassName = getValidationClassNames(validationResult);
+  const outerClassName = c(standardClassnames.ruleGroup, classNames.ruleGroup, validationClassName);
+
   return (
-    <div
-      className={c(standardClassnames.ruleGroup, classNames.ruleGroup)}
-      data-rule-group-id={id}
-      data-level={level}>
+    <div className={outerClassName} data-rule-group-id={id} data-level={level}>
       <div className={c(standardClassnames.header, classNames.header)}>
         {!showCombinatorsBetweenRules && (
           <controls.combinatorSelector
@@ -96,6 +98,7 @@ export const RuleGroup = ({
             rules={rules}
             level={level}
             context={context}
+            validation={validationResult}
           />
         )}
         {showNotToggle && (
@@ -107,6 +110,7 @@ export const RuleGroup = ({
             handleOnChange={onNotToggleChange}
             level={level}
             context={context}
+            validation={validationResult}
           />
         )}
         <controls.addRuleAction
@@ -117,6 +121,7 @@ export const RuleGroup = ({
           rules={rules}
           level={level}
           context={context}
+          validation={validationResult}
         />
         <controls.addGroupAction
           label={translations.addGroup.label}
@@ -126,6 +131,7 @@ export const RuleGroup = ({
           rules={rules}
           level={level}
           context={context}
+          validation={validationResult}
         />
         {showCloneButtons && hasParentGroup(parentId) && (
           <controls.cloneGroupAction
@@ -136,6 +142,7 @@ export const RuleGroup = ({
             rules={rules}
             level={level}
             context={context}
+            validation={validationResult}
           />
         )}
         {hasParentGroup(parentId) && (
@@ -147,6 +154,7 @@ export const RuleGroup = ({
             rules={rules}
             level={level}
             context={context}
+            validation={validationResult}
           />
         )}
       </div>
@@ -166,6 +174,7 @@ export const RuleGroup = ({
               rules={rules}
               level={level}
               context={context}
+              validation={validationResult}
             />
           )}
           {isRuleGroup(r) ? (

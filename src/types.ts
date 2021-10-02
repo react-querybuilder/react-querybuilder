@@ -6,6 +6,19 @@ export interface NameLabelPair {
   [x: string]: any;
 }
 
+export interface ValidationResult {
+  valid: boolean;
+  reasons?: any[];
+}
+
+export interface ValidationMap {
+  [id: string]: boolean | ValidationResult;
+}
+
+export type QueryValidator = (query: RuleGroupType) => boolean | ValidationMap;
+
+export type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
+
 export interface Field extends NameLabelPair {
   id?: string;
   operators?: NameLabelPair[];
@@ -15,6 +28,7 @@ export interface Field extends NameLabelPair {
   defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
+  validator?: RuleValidator;
 }
 
 export interface RuleType {
@@ -55,6 +69,10 @@ export interface CommonProps {
    * Container for custom props that are passed to all components
    */
   context?: any;
+  /**
+   * Validation result of the parent component
+   */
+  validation?: boolean | ValidationResult;
 }
 
 export interface ActionProps extends CommonProps {
@@ -215,6 +233,7 @@ export interface Schema {
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
+  validationMap: ValidationMap;
 }
 
 export interface Translations {
@@ -412,6 +431,10 @@ export interface QueryBuilderProps {
    * Adds a new default rule automatically to each new group
    */
   addRuleToNewGroups?: boolean;
+  /**
+   * Query validation function
+   */
+  validator?: QueryValidator;
   /**
    * Container for custom props that are passed to all components
    */

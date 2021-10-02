@@ -13,13 +13,9 @@
 - [Getting Started](#getting-started)
 - [Demo](#demo)
 - [Usage](#usage)
-- [API](#api)
-  - [QueryBuilder](#querybuilder)
-  - [findRule](#findRule)
-  - [formatQuery](#formatquery)
-  - [Defaults](#defaults)
+- [Default API](#default-api)
+- [Other exports](#other-exports)
 - [Development](#development)
-  - [Changelog Generation](#changelog-generation)
 - [Credits](#credits)
 - [Contributors](#contributors-)
 
@@ -73,13 +69,9 @@ function logQuery(query) {
 }
 ```
 
-## API
+## Default API
 
-The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) React component. Named exports include the `<Rule />` component (for use in custom `<RuleGroup />` implementations) and a utility function, [`formatQuery`](#formatQuery).
-
-### QueryBuilder
-
-`<QueryBuilder />` supports the following properties:
+The default export of this library is the `QueryBuilder` React component, which supports the following props.
 
 #### `query` _(Optional)_
 
@@ -103,6 +95,7 @@ interface Field {
   defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
+  validator?(): boolean | ValidationResult; // Called when a rule specifies this field (see the [main validator prop](#validator-optional) for more information)
 }
 ```
 
@@ -187,6 +180,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -201,6 +195,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -215,6 +210,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -229,6 +225,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -242,6 +239,7 @@ interface ActionProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -255,6 +253,7 @@ interface ActionProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -269,6 +268,7 @@ interface CombinatorSelectorProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -284,6 +284,7 @@ interface FieldSelectorProps {
   handleOnChange: (value: any) => void; // Callback function to update query representation
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -300,6 +301,7 @@ interface OperatorSelectorProps {
   handleOnChange: (value: any) => void; // Callback function to update query representation
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -319,6 +321,7 @@ interface ValueEditorProps {
   level: number; // The level the group this rule belongs to
   className: string; // CSS classNames to be applied
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -332,6 +335,7 @@ interface NotToggleProps {
   level: number; // The level of the group
   className: string; // CSS classNames to be applied
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -392,6 +396,7 @@ interface Schema {
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
+  validationMap: ValidationMap;
 }
 ```
 
@@ -605,7 +610,25 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-### `findRule`
+#### `validator` _(Optional)_
+
+`(query: RuleGroupType) => boolean | { [id: string]: boolean | { valid: boolean; reasons?: any[] } }`
+
+This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`.
+
+## Other exports
+
+#### `defaultValidator`
+
+```ts
+function defaultValidator(query: RuleGroupType) => {
+  [id: string]: { valid: boolean; reasons: string[]; }
+}
+```
+
+Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](#demo) -- empty groups will have bold text on the "+Rule" button.
+
+#### `findRule`
 
 ```ts
 function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupType;
@@ -613,7 +636,7 @@ function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupT
 
 `findRule` is a utility function for finding the rule or group within the query hierarchy that has a given `id`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
 
-### `formatQuery`
+#### `formatQuery`
 
 ```ts
 function formatQuery(
@@ -761,7 +784,7 @@ The following components are exported as well:
 
 ## Development
 
-### Changelog Generation
+#### Changelog Generation
 
 We are using [github-changes](https://github.com/lalitkapoor/github-changes) to generate the changelog.
 

@@ -86,7 +86,9 @@ export const standardClassnames = {
   operators: 'rule-operators',
   value: 'rule-value',
   removeRule: 'rule-remove',
-  betweenRules: 'betweenRules'
+  betweenRules: 'betweenRules',
+  valid: 'queryBuilder-valid',
+  invalid: 'queryBuilder-invalid'
 } as const;
 
 export const defaultControlClassnames: Classnames = {
@@ -122,3 +124,8 @@ export const defaultControlElements: Controls = {
   ruleGroup: RuleGroup,
   rule: Rule
 };
+
+export const groupInvalidReasons = {
+  empty: 'empty',
+  invalidCombinator: 'invalid combinator'
+} as const;

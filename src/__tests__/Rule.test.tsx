@@ -13,6 +13,7 @@ import {
   RuleProps,
   RuleType,
   Schema,
+  ValidationResult,
   ValueEditorProps
 } from '../types';
 
@@ -79,7 +80,8 @@ describe('<Rule />', () => {
       onPropChange: (_field, _value, _id) => {},
       onRuleRemove: (_ruleId, _parentId) => {},
       getLevel: () => 0,
-      showCloneButtons: false
+      showCloneButtons: false,
+      validationMap: {}
     };
     props = {
       id: 'id',
@@ -390,6 +392,49 @@ describe('<Rule />', () => {
 
       expect(myRuleId).toBe('id');
       expect(myParentId).toBe('parentId');
+    });
+  });
+
+  describe('validation', () => {
+    it('should not validate if no validationMap[id] value exists and no validator function is provided', () => {
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+    });
+
+    it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
+      const validator = jest.fn(() => true);
+      schema.fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
+      schema.validationMap = { id: false };
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
+      expect(validator).not.toHaveBeenCalled();
+    });
+
+    it('should validate to true if validationMap[id] = true', () => {
+      schema.validationMap = { id: true };
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+    });
+
+    it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
+      const validator = jest.fn(() => true);
+      props.field = 'field1';
+      schema.fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+      expect(validator).toHaveBeenCalled();
+    });
+
+    it('should pass down validationResult as validation to children', () => {
+      const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
+      schema.controls.fieldSelector = ValueSelector;
+      schema.validationMap = { id: valRes };
+      const dom = shallow(<Rule {...props} />);
+      expect(dom.find(ValueSelector).props().validation).toEqual(valRes);
     });
   });
 

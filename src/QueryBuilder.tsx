@@ -40,14 +40,15 @@ export const QueryBuilder = ({
   resetOnOperatorChange = false,
   autoSelectField = true,
   addRuleToNewGroups = false,
+  validator,
   context
 }: QueryBuilderProps) => {
   if (!autoSelectField) {
-    fields = [{ id: '~', name: '~', label: '------' }, ...fields];
+    fields = [{ id: '~', name: '~', label: '------' } as Field].concat(fields);
   }
 
-  fields = uniqWith(fields, (a, b) => a.name === b.name);
   const fieldMap: { [k: string]: Field } = {};
+  fields = uniqWith(fields, (a, b) => a.name === b.name);
   fields.forEach((f) => (fieldMap[f.name] = f));
 
   /**
@@ -313,6 +314,9 @@ export const QueryBuilder = ({
 
   const [root, setRoot] = useState(getInitialQuery() as RuleGroupType);
 
+  const validationResult = typeof validator === 'function' ? validator(root) : {};
+  const validationMap = typeof validationResult === 'object' ? validationResult : {};
+
   const schema: Schema = {
     fields,
     fieldMap,
@@ -336,7 +340,8 @@ export const QueryBuilder = ({
     showNotToggle,
     showCloneButtons,
     autoSelectField,
-    addRuleToNewGroups
+    addRuleToNewGroups,
+    validationMap
   };
 
   // Set the query state when a new query prop comes in
@@ -352,8 +357,18 @@ export const QueryBuilder = ({
     }
   }, []);
 
+  const className = c(
+    standardClassnames.queryBuilder,
+    schema.classNames.queryBuilder,
+    typeof validationResult === 'boolean'
+      ? validationResult
+        ? standardClassnames.valid
+        : standardClassnames.invalid
+      : ''
+  );
+
   return (
-    <div className={c(standardClassnames.queryBuilder, schema.classNames.queryBuilder)}>
+    <div className={className}>
       <schema.controls.ruleGroup
         translations={{ ...defaultTranslations, ...translations }}
         rules={root.rules}

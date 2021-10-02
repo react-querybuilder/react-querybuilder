@@ -1,1 +1,1 @@
-export default (...classNames: string[]) => classNames.join(' ');
+export default (...classNames: string[]) => classNames.join(' ').trim();
