@@ -446,13 +446,13 @@ This function returns the default value for new rules.
 
 `(rule: RuleType, parentId: string, query: RuleGroupType) => RuleType | false`
 
-This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. (Use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.)
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. _(To completely prevent the addition of new rules, pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.
 
 #### `onAddGroup` _(Optional)_
 
 `(ruleGroup: RuleGroupType, parentId: string, query: RuleGroupType) => RuleGroupType | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. (Use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.)
+This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. _(To completely prevent the addition of new groups, pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.
 
 #### `onQueryChange` _(Optional)_
 
