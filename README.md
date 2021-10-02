@@ -13,7 +13,7 @@
 - [Getting Started](#getting-started)
 - [Demo](#demo)
 - [Usage](#usage)
-- [Default API](#default-api)
+- [API](#api)
 - [Other exports](#other-exports)
 - [Development](#development)
 - [Credits](#credits)
@@ -69,7 +69,7 @@ function logQuery(query) {
 }
 ```
 
-## Default API
+## API
 
 The default export of this library is the `QueryBuilder` React component, which supports the following props.
 

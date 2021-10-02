@@ -1,21 +1,7 @@
 .with-chakra {
-  .ruleGroup-addRule,
-  .ruleGroup-addGroup,
-  .rule-cloneRule,
-  .ruleGroup-cloneGroup,
-  .ruleGroup-notToggle {
-    margin-left: 0.5rem;
-  }
-
-  .ruleGroup-cloneGroup,
-  .rule-cloneRule,
-  .rule-remove,
-  .ruleGroup-remove {
-    float: right;
-  }
-
   .chakra-select__wrapper {
     width: fit-content;
+    width: -moz-fit-content; // vendor prefix required for Firefox
     display: inline-block;
   }
 
