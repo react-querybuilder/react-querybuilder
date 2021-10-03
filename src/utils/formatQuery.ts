@@ -1,11 +1,13 @@
 import { isRuleGroup } from '.';
-import { ExportFormat, RuleGroupType, RuleType, ValueProcessor } from '../types';
+import {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleType,
+  ValueProcessor
+} from '../types';
 
-interface FormatQueryOptions {
-  format?: ExportFormat;
-  valueProcessor?: ValueProcessor;
-  quoteFieldNamesWith?: string;
-}
+const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
 
 const mapOperator = (op: string) => {
   switch (op.toLowerCase()) {
@@ -15,6 +17,8 @@ const mapOperator = (op: string) => {
       return 'is not null';
     case 'notin':
       return 'not in';
+    case 'notbetween':
+      return 'not between';
     case 'contains':
     case 'beginswith':
     case 'endswith':
@@ -28,32 +32,52 @@ const mapOperator = (op: string) => {
   }
 };
 
+const mongoOperators: { [op: string]: string } = {
+  '=': '$eq',
+  '!=': '$ne',
+  '<': '$lt',
+  '<=': '$lte',
+  '>': '$gt',
+  '>=': 'gte',
+  in: '$in',
+  notIn: '$nin'
+};
+
 export const defaultValueProcessor: ValueProcessor = (
   _field: string,
   operator: string,
   value: any
 ) => {
-  let val = `'${value}'`;
-  if (operator.toLowerCase() === 'null' || operator.toLowerCase() === 'notnull') {
-    val = '';
-  } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'notin') {
-    val = `(${value
-      .split(',')
-      .map((v: string) => `'${v.trim()}'`)
-      .join(', ')})`;
-  } else if (operator.toLowerCase() === 'contains' || operator.toLowerCase() === 'doesnotcontain') {
-    val = `'%${value}%'`;
-  } else if (
-    operator.toLowerCase() === 'beginswith' ||
-    operator.toLowerCase() === 'doesnotbeginwith'
-  ) {
-    val = `'${value}%'`;
-  } else if (operator.toLowerCase() === 'endswith' || operator.toLowerCase() === 'doesnotendwith') {
-    val = `'%${value}'`;
+  const operatorLowerCase = operator.toLowerCase();
+  if (operatorLowerCase === 'null' || operatorLowerCase === 'notnull') {
+    return '';
+  } else if (operatorLowerCase === 'in' || operatorLowerCase === 'notin') {
+    const valArray = toArray(value);
+    if (valArray.length > 0) {
+      return `(${valArray.map((v: string) => `'${v.trim()}'`).join(', ')})`;
+    } else {
+      return '';
+    }
+  } else if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
+    if (
+      (Array.isArray(value) && value.length === 2) ||
+      (typeof value === 'string' && /^[^,]+,[^,]+$/.test(value))
+    ) {
+      const [first, second] = toArray(value);
+      return `'${first.trim()}' and '${second.trim()}'`;
+    } else {
+      return '';
+    }
+  } else if (operatorLowerCase === 'contains' || operatorLowerCase === 'doesnotcontain') {
+    return `'%${value}%'`;
+  } else if (operatorLowerCase === 'beginswith' || operatorLowerCase === 'doesnotbeginwith') {
+    return `'${value}%'`;
+  } else if (operatorLowerCase === 'endswith' || operatorLowerCase === 'doesnotendwith') {
+    return `'%${value}'`;
   } else if (typeof value === 'boolean') {
-    val = `${value}`.toUpperCase();
+    return `${value}`.toUpperCase();
   }
-  return val;
+  return `'${value}'`;
 };
 
 /**
@@ -91,19 +115,40 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       const value = valueProcessor(rule.field, rule.operator, rule.value);
       const operator = mapOperator(rule.operator);
 
-      if (parameterized && value) {
-        if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
-          const splitValue = (rule.value as string).split(',').map((v) => v.trim());
-          splitValue.forEach((v) => params.push(v));
-          return `${quoteFieldNamesWith}${
-            rule.field
-          }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+      if (parameterized) {
+        if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
+          return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
+        } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
+          if (value) {
+            const splitValue = (rule.value as string).split(',').map((v) => v.trim());
+            splitValue.forEach((v) => params.push(v));
+            return `${quoteFieldNamesWith}${
+              rule.field
+            }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+          } else {
+            return '';
+          }
+        } else if (
+          operator.toLowerCase() === 'between' ||
+          operator.toLowerCase() === 'not between'
+        ) {
+          if (value) {
+            const [first, second] = toArray(rule.value).map((v) => v.trim());
+            params.push(first);
+            params.push(second);
+            return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ? and ?`;
+          } else {
+            return '';
+          }
         }
-
         params.push((value as string).match(/^'?(.*?)'?$/)![1]);
+      } else {
+        if (['in', 'not in', 'between', 'not between'].includes(operator.toLowerCase()) && !value) {
+          return '';
+        }
       }
       return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
-        parameterized && value ? '?' : value
+        parameterized ? '?' : value
       }`.trim();
     };
 
@@ -114,7 +159,9 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
         }
         return processRule(rule);
       });
-      return `${rg.not ? 'NOT ' : ''}(${processedRules.join(` ${rg.combinator} `)})`;
+      return `${rg.not ? 'NOT ' : ''}(${processedRules
+        .filter((r) => !!r)
+        .join(` ${rg.combinator} `)})`;
     };
 
     if (parameterized) {
@@ -123,61 +170,79 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       return processRuleGroup(ruleGroup);
     }
   } else if (formatLowerCase === 'mongodb') {
-    const mongoOperators: { [x: string]: string } = {
-      '=': '$eq',
-      '!=': '$ne',
-      '<': '$lt',
-      '<=': '$lte',
-      '>': '$gt',
-      '>=': 'gte',
-      in: '$in',
-      notIn: '$nin'
-    };
-
     const formatRuleGroup = (qr: RuleGroupType) => {
       const combinator = `$${qr.combinator}`;
 
       const expression = qr.rules
-        .map((obj) => {
+        .map((rule) => {
           let exp = '';
 
-          if (!isRuleGroup(obj)) {
-            const mongoOperator = mongoOperators[obj.operator];
-            let value = obj.value;
-
-            if (typeof obj.value !== 'boolean') {
-              value = `"${obj.value}"`;
-            }
-
-            if (['<', '<=', '=', '!=', '>', '>='].includes(obj.operator)) {
-              exp = `{${obj.field}:{${mongoOperator}:${value}}}`;
-            } else if (obj.operator === 'contains') {
-              exp = `{${obj.field}:/${obj.value}/}`;
-            } else if (obj.operator === 'beginsWith') {
-              exp = `{${obj.field}:/^${obj.value}/}`;
-            } else if (obj.operator === 'endsWith') {
-              exp = `{${obj.field}:/${obj.value}$/}`;
-            } else if (obj.operator === 'doesNotContain') {
-              exp = `{${obj.field}:{$not:/${obj.value}/}}`;
-            } else if (obj.operator === 'doesNotBeginWith') {
-              exp = `{${obj.field}:{$not:/^${obj.value}/}}`;
-            } else if (obj.operator === 'doesNotEndWith') {
-              exp = `{${obj.field}:{$not:/${obj.value}$/}}`;
-            } else if (obj.operator === 'null') {
-              exp = `{${obj.field}:null}`;
-            } else if (obj.operator === 'notNull') {
-              exp = `{${obj.field}:{$ne:null}}`;
-            } else if (obj.operator === 'in' || obj.operator === 'notIn') {
-              exp = `{${obj.field}:{${mongoOperator}:[${obj.value.split(',').map((val: any) => {
-                return `"${val.trim()}"`;
-              })}]}}`;
-            }
+          if (isRuleGroup(rule)) {
+            exp = `{${formatRuleGroup(rule)}}`;
           } else {
-            exp = `{${formatRuleGroup(obj)}}`;
+            const mongoOperator = mongoOperators[rule.operator];
+            let value = rule.value;
+
+            if (typeof rule.value !== 'boolean') {
+              value = `"${rule.value}"`;
+            }
+
+            if (['<', '<=', '=', '!=', '>', '>='].includes(rule.operator)) {
+              exp = `{${rule.field}:{${mongoOperator}:${value}}}`;
+            } else if (rule.operator === 'contains') {
+              exp = `{${rule.field}:/${rule.value}/}`;
+            } else if (rule.operator === 'beginsWith') {
+              exp = `{${rule.field}:/^${rule.value}/}`;
+            } else if (rule.operator === 'endsWith') {
+              exp = `{${rule.field}:/${rule.value}$/}`;
+            } else if (rule.operator === 'doesNotContain') {
+              exp = `{${rule.field}:{$not:/${rule.value}/}}`;
+            } else if (rule.operator === 'doesNotBeginWith') {
+              exp = `{${rule.field}:{$not:/^${rule.value}/}}`;
+            } else if (rule.operator === 'doesNotEndWith') {
+              exp = `{${rule.field}:{$not:/${rule.value}$/}}`;
+            } else if (rule.operator === 'null') {
+              exp = `{${rule.field}:null}`;
+            } else if (rule.operator === 'notNull') {
+              exp = `{${rule.field}:{$ne:null}}`;
+            } else if (rule.operator === 'in' || rule.operator === 'notIn') {
+              const valArray = toArray(rule.value);
+              if (valArray.length) {
+                exp = `{${rule.field}:{${mongoOperator}:[${valArray.map((val: any) => {
+                  return `"${val.trim()}"`;
+                })}]}}`;
+              } else {
+                exp = '';
+              }
+            } else if (rule.operator === 'between' || rule.operator === 'notBetween') {
+              const valArray = toArray(rule.value);
+              if (valArray.length) {
+                const [first, second] = valArray;
+                if (rule.operator === 'between') {
+                  if (
+                    (Array.isArray(rule.value) && rule.value.length === 2) ||
+                    (typeof rule.value === 'string' && /^[^,]+,[^,]+$/.test(rule.value))
+                  ) {
+                    exp = `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
+                      rule.field
+                    }:{$lte:"${second.trim()}"}}]}`;
+                  } else {
+                    exp = '';
+                  }
+                } else {
+                  exp = `{$or:[{${rule.field}:{$lt:"${first.trim()}"}},{${
+                    rule.field
+                  }:{$gt:"${second.trim()}"}}]}`;
+                }
+              } else {
+                exp = '';
+              }
+            }
           }
 
           return exp;
         })
+        .filter((e) => !!e)
         .join(',');
 
       return `${combinator}:[${expression}]`;

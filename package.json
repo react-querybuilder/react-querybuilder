@@ -110,7 +110,7 @@
     "publish:demo": "npm run dist && node gh-pages.publish.js",
     "publish:npm": "np",
     "lint": "eslint src/",
-    "test": "jest --coverage --verbose",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   }

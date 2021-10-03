@@ -130,7 +130,9 @@ The array of operators that should be used. The default operators include:
   { name: 'null', label: 'is null' },
   { name: 'notNull', label: 'is not null' },
   { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' }
+  { name: 'notIn', label: 'not in' },
+  { name: 'between', label: 'between' },
+  { name: 'notBetween', label: 'not between' }
 ];
 ```
 
