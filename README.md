@@ -44,29 +44,35 @@ To run the demo yourself, go through the following steps:
 1. _Clone this repo_
 2. `yarn` _Install npm packages_
 3. `yarn start` _Run a local server_
-4. http://localhost:8080/ _Visit your localhost in your browser_
+4. http://localhost:8080/ _Visit localhost:8080 in your browser_
 
 ## Usage
 
-```jsx
-import QueryBuilder from 'react-querybuilder';
+```tsx
+import { useState } from 'react';
+import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
-  { name: 'age', label: 'Age' },
+  { name: 'age', label: 'Age', inputType: 'number' },
   { name: 'address', label: 'Address' },
   { name: 'phone', label: 'Phone' },
-  { name: 'email', label: 'Email' },
+  { name: 'email', label: 'Email', validator: ({ value }) => /^[^@]+@[^@]+/.test(value) },
   { name: 'twitter', label: 'Twitter' },
-  { name: 'isDev', label: 'Is a Developer?', defaultValue: false }
+  { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false }
 ];
 
-const dom = <QueryBuilder fields={fields} onQueryChange={logQuery} />;
+export const App = () => {
+  const [query, setQuery] = useState<RuleGroupType>({
+    id: 'root',
+    combinator: 'and',
+    not: false,
+    rules: []
+  });
 
-function logQuery(query) {
-  console.log(query);
-}
+  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
+};
 ```
 
 ## API
@@ -113,7 +119,7 @@ A "bucket" for passing arbitrary props down to custom components. The `context` 
 
 The array of operators that should be used. The default operators include:
 
-```js
+```ts
 [
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
@@ -142,7 +148,7 @@ The array of operators that should be used. The default operators include:
 
 The array of combinators that should be used for RuleGroups. The default set includes:
 
-```js
+```ts
 [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' }
@@ -520,7 +526,7 @@ interface Classnames {
 
 This can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />`. This is an object with the following properties:
 
-```js
+```ts
 {
   fields: {
     title: "Fields",
@@ -652,20 +658,20 @@ function formatQuery(
 
 Example:
 
-```js
+```ts
 import { formatQuery } from 'react-querybuilder';
 
 const query = {
-  id: 'g-b6SQ6WCcup8e37xhydwHE',
+  id: 'root',
   rules: [
     {
-      id: 'r-zITQOjVEWlsU1fncraSNn',
+      id: 'r1',
       field: 'firstName',
       value: 'Steve',
       operator: '='
     },
     {
-      id: 'r-zVx7ARNak3TCZNFHkwMG2',
+      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -694,18 +700,18 @@ interface FormatQueryOptions {
 
 For example, if you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for `format: "sql"`).
 
-```js
+```ts
 const query = {
-  id: 'g-J5GsbcFmZ6xOJCLPPKIfE',
+  id: 'root',
   rules: [
     {
-      id: 'r-KneYcwIPPHDGSogtKhG4g',
+      id: 'r1',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
       operator: 'in'
     },
     {
-      id: 'r-wz6AkZbzSyDYbPk1AxgvO',
+      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -729,18 +735,18 @@ console.log(formatQuery(query, { format: 'sql', valueProcessor })); // '(instrum
 
 The 'json_without_ids' format will return the same query without the IDs. This can be useful, for example, if you need to save the query to the URL so that it becomes bookmarkable:
 
-```js
+```ts
 const query = {
-  id: 'g-J5GsbcFmZ6xOJCLPPKIfE',
+  id: 'root',
   rules: [
     {
-      id: 'r-KneYcwIPPHDGSogtKhG4g',
+      id: 'r1',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
       operator: 'in'
     },
     {
-      id: 'r-wz6AkZbzSyDYbPk1AxgvO',
+      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -771,7 +777,7 @@ console.log(formatQuery(query, 'json_without_ids'));
 */
 ```
 
-The validation options (`validator` and `fields`) only affect the output when `format` is `sql`, `parameterized`, or `mongodb`. If the `validator` function returns `false` or `{ valid: false }`, the `sql` and `parameterized` formats will return `"(1 = 1)"`, and the `mongodb` format will return `"{$and:[{$expr:true}]}"`. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the field-based `validator` functions) will be ignored.
+The validation options (`validator` and `fields`) only affect the output when `format` is `sql`, `parameterized`, or `mongodb`. If the `validator` function returns `false`, the `sql` and `parameterized` formats will return `"(1 = 1)"` and the `mongodb` format will return `"{$and:[{$expr:true}]}"`. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the field-based `validator` functions) will be ignored.
 
 Example:
 
