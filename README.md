@@ -698,7 +698,7 @@ interface FormatQueryOptions {
 }
 ```
 
-For example, if you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for `format: "sql"`).
+For example, if you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for "sql" format).
 
 ```ts
 const query = {
@@ -777,7 +777,7 @@ console.log(formatQuery(query, 'json_without_ids'));
 */
 ```
 
-The validation options (`validator` and `fields`) only affect the output when `format` is `sql`, `parameterized`, or `mongodb`. If the `validator` function returns `false`, the `sql` and `parameterized` formats will return `"(1 = 1)"` and the `mongodb` format will return `"{$and:[{$expr:true}]}"`. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the field-based `validator` functions) will be ignored.
+The validation options (`validator` and `fields`) only affect the output when `format` is "sql", "parameterized", or "mongodb". If the `validator` function returns `false`, the "sql" and "parameterized" formats will return `"(1 = 1)"` and the `mongodb` format will return `"{$and:[{$expr:true}]}"` to maintain valid syntax while (hopefully) not affecting the query criteria. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
 
 Example:
 
@@ -811,6 +811,11 @@ console.log(
   formatQuery(query, { format: 'sql', fields: [{ name: 'firstName', validator: () => false }] })
 ); // "(lastName = 'Vai')"
 ```
+
+A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", or "mongodb". This validation is used regardless of the presence of any `validator` options either at the query or field level.
+
+- Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
+- Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array of length two (`value.length === 2`) nor a string with exactly one comma that isn't the first or last character (`value.split(',').length === 2` and neither element is an empty string).
 
 ### Defaults
 
