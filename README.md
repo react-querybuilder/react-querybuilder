@@ -687,6 +687,8 @@ interface FormatQueryOptions {
   format?: 'sql' | 'json' | 'json_without_ids' | 'parameterized'; // same as passing a `format` string instead of an options object
   valueProcessor?: (field: string, operator: string, value: any) => string; // see below for an example
   quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
+  validator?: QueryValidator; // function to validate the entire query (see [validator](#validator-optional))
+  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[]; // This can be the same Field[] passed to <QueryBuilder />, but really all you need to provide is the name and validator for each field
 }
 ```
 
@@ -767,6 +769,41 @@ console.log(formatQuery(query, 'json_without_ids'));
   not: false
 }
 */
+```
+
+The validation options (`validator` and `fields`) only affect the output when `format` is `sql`, `parameterized`, or `mongodb`. If the `validator` function returns `false` or `{ valid: false }`, the `sql` and `parameterized` formats will return `"(1 = 1)"`, and the `mongodb` format will return `"{$and:[{$expr:true}]}"`. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the field-based `validator` functions) will be ignored.
+
+Example:
+
+```ts
+const query = {
+  id: 'root',
+  rules: [
+    {
+      id: 'r1',
+      field: 'firstName',
+      value: '',
+      operator: '='
+    },
+    {
+      id: 'r2',
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and',
+  not: false
+};
+
+// Invalid query
+console.log(formatQuery(query, { format: 'sql', validator: () => false })); // "(1 = 1)"
+// Invalid rule based on validation map
+console.log(formatQuery(query, { format: 'sql', validator: () => ({ r1: false }) })); // "(lastName = 'Vai')"
+// Invalid rule based on field validator
+console.log(
+  formatQuery(query, { format: 'sql', fields: [{ name: 'firstName', validator: () => false }] })
+); // "(lastName = 'Vai')"
 ```
 
 ### Defaults

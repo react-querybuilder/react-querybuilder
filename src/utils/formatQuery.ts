@@ -1,4 +1,6 @@
+import uniqWith from 'lodash/uniqWith';
 import { isRuleGroup } from '.';
+import { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from '..';
 import {
   ExportFormat,
   FormatQueryOptions,
@@ -6,6 +8,7 @@ import {
   RuleType,
   ValueProcessor
 } from '../types';
+import isRuleOrGroupValid from './isRuleOrGroupValid';
 
 const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
 
@@ -87,18 +90,21 @@ export const defaultValueProcessor: ValueProcessor = (
  * processed assuming the default operators are being used.
  */
 const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | ExportFormat) => {
-  let format: ExportFormat;
-  let valueProcessor: ValueProcessor;
-  let quoteFieldNamesWith: string;
+  let format: ExportFormat = 'json';
+  let valueProcessor = defaultValueProcessor;
+  let quoteFieldNamesWith = '';
+  let validator: QueryValidator = () => true;
+  let fields: { name: string; validator?: RuleValidator; [k: string]: any }[] = [];
+  let validationMap: ValidationMap = {};
 
-  if (typeof options === 'string') {
+  if (typeof options === 'object' && options !== null) {
+    format = options.format ?? 'json';
+    valueProcessor = options.valueProcessor ?? defaultValueProcessor;
+    quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
+    validator = options.validator ?? (() => true);
+    fields = options.fields ?? [];
+  } else if (typeof options === 'string') {
     format = options;
-    valueProcessor = defaultValueProcessor;
-    quoteFieldNamesWith = '';
-  } else {
-    format = options?.format || 'json';
-    valueProcessor = options?.valueProcessor || defaultValueProcessor;
-    quoteFieldNamesWith = options?.quoteFieldNamesWith || '';
   }
 
   const formatLowerCase = format.toLowerCase() as ExportFormat;
@@ -111,7 +117,47 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     const parameterized = formatLowerCase === 'parameterized';
     const params: string[] = [];
 
+    // istanbul ignore else
+    if (typeof validator === 'function') {
+      const validationResult = validator(ruleGroup);
+      if (typeof validationResult === 'boolean') {
+        if (validationResult === false) {
+          return parameterized ? { sql: '(1 = 1)', params: [] } : '(1 = 1)';
+        }
+      } else {
+        validationMap = validationResult;
+      }
+    }
+
+    const validatorMap: { [f: string]: RuleValidator } = {};
+    const uniqueFields = uniqWith(fields, (a, b) => a.name === b.name);
+    uniqueFields.forEach((f) => {
+      // istanbul ignore else
+      if (typeof f.validator === 'function') {
+        validatorMap[f.name] = f.validator;
+      }
+    });
+
     const processRule = (rule: RuleType) => {
+      let validationResult: boolean | ValidationResult | undefined = undefined;
+      let fieldValidator: RuleValidator | undefined = undefined;
+      if (rule.id) {
+        validationResult = validationMap[rule.id];
+      }
+      if (fields.length) {
+        const fieldArr = fields.filter((f) => f.name === rule.field);
+        if (fieldArr.length) {
+          const field = fieldArr[0];
+          // istanbul ignore else
+          if (typeof field.validator === 'function') {
+            fieldValidator = field.validator;
+          }
+        }
+      }
+      if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
+        return '';
+      }
+
       const value = valueProcessor(rule.field, rule.operator, rule.value);
       const operator = mapOperator(rule.operator);
 
@@ -152,33 +198,57 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       }`.trim();
     };
 
-    const processRuleGroup = (rg: RuleGroupType): string => {
+    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): string => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id])) {
+        return outermost ? '(1 = 1)' : '';
+      }
+
       const processedRules = rg.rules.map((rule) => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);
         }
         return processRule(rule);
       });
+
+      if (processedRules.length === 0) {
+        return '(1 = 1)';
+      }
+
       return `${rg.not ? 'NOT ' : ''}(${processedRules
         .filter((r) => !!r)
         .join(` ${rg.combinator} `)})`;
     };
 
     if (parameterized) {
-      return { sql: processRuleGroup(ruleGroup), params };
+      return { sql: processRuleGroup(ruleGroup, true), params };
     } else {
-      return processRuleGroup(ruleGroup);
+      return processRuleGroup(ruleGroup, true);
     }
   } else if (formatLowerCase === 'mongodb') {
-    const formatRuleGroup = (qr: RuleGroupType) => {
-      const combinator = `$${qr.combinator}`;
+    // istanbul ignore else
+    if (typeof validator === 'function') {
+      const validationResult = validator(ruleGroup);
+      if (typeof validationResult === 'boolean') {
+        if (validationResult === false) {
+          return '{$and:[{$expr:true}]}';
+        }
+      } else {
+        validationMap = validationResult;
+      }
+    }
 
-      const expression = qr.rules
+    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id])) {
+        return outermost ? '$and:[{$expr:true}]' : '';
+      }
+
+      const combinator = `$${rg.combinator}`;
+
+      const expression: string = rg.rules
         .map((rule) => {
-          let exp = '';
-
           if (isRuleGroup(rule)) {
-            exp = `{${formatRuleGroup(rule)}}`;
+            const processedRuleGroup = processRuleGroup(rule);
+            return processedRuleGroup ? `{${processedRuleGroup}}` : '';
           } else {
             const mongoOperator = mongoOperators[rule.operator];
             let value = rule.value;
@@ -188,31 +258,31 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
             }
 
             if (['<', '<=', '=', '!=', '>', '>='].includes(rule.operator)) {
-              exp = `{${rule.field}:{${mongoOperator}:${value}}}`;
+              return `{${rule.field}:{${mongoOperator}:${value}}}`;
             } else if (rule.operator === 'contains') {
-              exp = `{${rule.field}:/${rule.value}/}`;
+              return `{${rule.field}:/${rule.value}/}`;
             } else if (rule.operator === 'beginsWith') {
-              exp = `{${rule.field}:/^${rule.value}/}`;
+              return `{${rule.field}:/^${rule.value}/}`;
             } else if (rule.operator === 'endsWith') {
-              exp = `{${rule.field}:/${rule.value}$/}`;
+              return `{${rule.field}:/${rule.value}$/}`;
             } else if (rule.operator === 'doesNotContain') {
-              exp = `{${rule.field}:{$not:/${rule.value}/}}`;
+              return `{${rule.field}:{$not:/${rule.value}/}}`;
             } else if (rule.operator === 'doesNotBeginWith') {
-              exp = `{${rule.field}:{$not:/^${rule.value}/}}`;
+              return `{${rule.field}:{$not:/^${rule.value}/}}`;
             } else if (rule.operator === 'doesNotEndWith') {
-              exp = `{${rule.field}:{$not:/${rule.value}$/}}`;
+              return `{${rule.field}:{$not:/${rule.value}$/}}`;
             } else if (rule.operator === 'null') {
-              exp = `{${rule.field}:null}`;
+              return `{${rule.field}:null}`;
             } else if (rule.operator === 'notNull') {
-              exp = `{${rule.field}:{$ne:null}}`;
+              return `{${rule.field}:{$ne:null}}`;
             } else if (rule.operator === 'in' || rule.operator === 'notIn') {
               const valArray = toArray(rule.value);
               if (valArray.length) {
-                exp = `{${rule.field}:{${mongoOperator}:[${valArray.map((val: any) => {
+                return `{${rule.field}:{${mongoOperator}:[${valArray.map((val: any) => {
                   return `"${val.trim()}"`;
                 })}]}}`;
               } else {
-                exp = '';
+                return '';
               }
             } else if (rule.operator === 'between' || rule.operator === 'notBetween') {
               const valArray = toArray(rule.value);
@@ -223,32 +293,32 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
                     (Array.isArray(rule.value) && rule.value.length === 2) ||
                     (typeof rule.value === 'string' && /^[^,]+,[^,]+$/.test(rule.value))
                   ) {
-                    exp = `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
+                    return `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
                       rule.field
                     }:{$lte:"${second.trim()}"}}]}`;
                   } else {
-                    exp = '';
+                    return '';
                   }
                 } else {
-                  exp = `{$or:[{${rule.field}:{$lt:"${first.trim()}"}},{${
+                  return `{$or:[{${rule.field}:{$lt:"${first.trim()}"}},{${
                     rule.field
                   }:{$gt:"${second.trim()}"}}]}`;
                 }
               } else {
-                exp = '';
+                return '';
               }
             }
           }
 
-          return exp;
+          return '';
         })
         .filter((e) => !!e)
         .join(',');
 
-      return `${combinator}:[${expression}]`;
+      return expression ? `${combinator}:[${expression}]` : '$and:[{$expr:true}]';
     };
 
-    return `{${formatRuleGroup(ruleGroup)}}`;
+    return `{${processRuleGroup(ruleGroup, true)}}`;
   } else {
     return '';
   }

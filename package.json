@@ -92,6 +92,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "jest": {
+    "coverageDirectory": "coverage",
     "setupFilesAfterEnv": [
       "<rootDir>src/setupTests.ts"
     ],

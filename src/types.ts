@@ -287,6 +287,12 @@ export interface FormatQueryOptions {
   format?: ExportFormat;
   valueProcessor?: ValueProcessor;
   quoteFieldNamesWith?: string;
+  validator?: QueryValidator;
+  /**
+   * This can be the same Field[] passed to <QueryBuilder />, but really
+   * all you need to provide is the name and validator for each field.
+   */
+  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
 }
 
 export interface RuleGroupProps {
