@@ -3,8 +3,15 @@
   .ruleGroup.queryBuilder-invalid .ruleGroup-addRule {
     font-weight: bold !important;
   }
+
+  // Purple outline for empty text fields
   .rule.queryBuilder-invalid .rule-value {
     border: 2px solid rebeccapurple;
+  }
+
+  // Message to user about empty groups
+  .ruleGroup.queryBuilder-invalid > .ruleGroup-body::before {
+    content: 'Empty groups are considered invalid. Avoid them by using addRuleToNewGroups.';
   }
 }
 
