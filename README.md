@@ -14,12 +14,8 @@
 - [Demo](#demo)
 - [Usage](#usage)
 - [API](#api)
-  - [QueryBuilder](#querybuilder)
-  - [findRule](#findRule)
-  - [formatQuery](#formatquery)
-  - [Defaults](#defaults)
+- [Other exports](#other-exports)
 - [Development](#development)
-  - [Changelog Generation](#changelog-generation)
 - [Credits](#credits)
 - [Contributors](#contributors-)
 
@@ -48,38 +44,40 @@ To run the demo yourself, go through the following steps:
 1. _Clone this repo_
 2. `yarn` _Install npm packages_
 3. `yarn start` _Run a local server_
-4. http://localhost:8080/ _Visit your localhost in your browser_
+4. http://localhost:8080/ _Visit localhost:8080 in your browser_
 
 ## Usage
 
-```jsx
-import QueryBuilder from 'react-querybuilder';
+```tsx
+import { useState } from 'react';
+import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
-  { name: 'age', label: 'Age' },
+  { name: 'age', label: 'Age', inputType: 'number' },
   { name: 'address', label: 'Address' },
   { name: 'phone', label: 'Phone' },
-  { name: 'email', label: 'Email' },
+  { name: 'email', label: 'Email', validator: ({ value }) => /^[^@]+@[^@]+/.test(value) },
   { name: 'twitter', label: 'Twitter' },
-  { name: 'isDev', label: 'Is a Developer?', defaultValue: false }
+  { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false }
 ];
 
-const dom = <QueryBuilder fields={fields} onQueryChange={logQuery} />;
+export const App = () => {
+  const [query, setQuery] = useState<RuleGroupType>({
+    id: 'root',
+    combinator: 'and',
+    not: false,
+    rules: []
+  });
 
-function logQuery(query) {
-  console.log(query);
-}
+  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
+};
 ```
 
 ## API
 
-The default export of this library is the [`<QueryBuilder />`](#QueryBuilder) React component. Named exports include the `<Rule />` component (for use in custom `<RuleGroup />` implementations) and a utility function, [`formatQuery`](#formatQuery).
-
-### QueryBuilder
-
-`<QueryBuilder />` supports the following properties:
+The default export of this library is the `QueryBuilder` React component, which supports the following props.
 
 #### `query` _(Optional)_
 
@@ -103,6 +101,7 @@ interface Field {
   defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
+  validator?(): boolean | ValidationResult; // Called when a rule specifies this field (see the [main validator prop](#validator-optional) for more information)
 }
 ```
 
@@ -120,7 +119,7 @@ A "bucket" for passing arbitrary props down to custom components. The `context` 
 
 The array of operators that should be used. The default operators include:
 
-```js
+```ts
 [
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
@@ -137,7 +136,9 @@ The array of operators that should be used. The default operators include:
   { name: 'null', label: 'is null' },
   { name: 'notNull', label: 'is not null' },
   { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' }
+  { name: 'notIn', label: 'not in' },
+  { name: 'between', label: 'between' },
+  { name: 'notBetween', label: 'not between' }
 ];
 ```
 
@@ -147,7 +148,7 @@ The array of operators that should be used. The default operators include:
 
 The array of combinators that should be used for RuleGroups. The default set includes:
 
-```js
+```ts
 [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' }
@@ -187,6 +188,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -201,6 +203,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -215,6 +218,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -229,6 +233,7 @@ interface ActionWithRulesProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -242,6 +247,7 @@ interface ActionProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -255,6 +261,7 @@ interface ActionProps {
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -269,6 +276,7 @@ interface CombinatorSelectorProps {
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -284,6 +292,7 @@ interface FieldSelectorProps {
   handleOnChange: (value: any) => void; // Callback function to update query representation
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -300,6 +309,7 @@ interface OperatorSelectorProps {
   handleOnChange: (value: any) => void; // Callback function to update query representation
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -319,6 +329,7 @@ interface ValueEditorProps {
   level: number; // The level the group this rule belongs to
   className: string; // CSS classNames to be applied
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
 }
 ```
 
@@ -332,6 +343,7 @@ interface NotToggleProps {
   level: number; // The level of the group
   className: string; // CSS classNames to be applied
   context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
 }
 ```
 
@@ -392,6 +404,7 @@ interface Schema {
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
+  validationMap: ValidationMap;
 }
 ```
 
@@ -441,13 +454,13 @@ This function returns the default value for new rules.
 
 `(rule: RuleType, parentId: string, query: RuleGroupType) => RuleType | false`
 
-This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. (Use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.)
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. _(To completely prevent the addition of new rules, pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.
 
 #### `onAddGroup` _(Optional)_
 
 `(ruleGroup: RuleGroupType, parentId: string, query: RuleGroupType) => RuleGroupType | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. (Use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.)
+This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. _(To completely prevent the addition of new groups, pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.
 
 #### `onQueryChange` _(Optional)_
 
@@ -493,6 +506,7 @@ interface Classnames {
   queryBuilder?: string; // Root <div> element
   ruleGroup?: string; // <div> containing the RuleGroup
   header?: string; // <div> containing the RuleGroup header controls
+  body?: string; // <div> containing the RuleGroup child rules/groups
   combinators?: string; // <select> control for combinators
   addRule?: string; // <button> to add a Rule
   addGroup?: string; // <button> to add a RuleGroup
@@ -512,7 +526,7 @@ interface Classnames {
 
 This can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />`. This is an object with the following properties:
 
-```js
+```ts
 {
   fields: {
     title: "Fields",
@@ -605,7 +619,25 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-### `findRule`
+#### `validator` _(Optional)_
+
+`(query: RuleGroupType) => boolean | { [id: string]: boolean | { valid: boolean; reasons?: any[] } }`
+
+This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`.
+
+## Other exports
+
+#### `defaultValidator`
+
+```ts
+function defaultValidator(query: RuleGroupType) => {
+  [id: string]: { valid: boolean; reasons: string[]; }
+}
+```
+
+Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](#demo) -- empty groups will have bold text on the "+Rule" button.
+
+#### `findRule`
 
 ```ts
 function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupType;
@@ -613,7 +645,7 @@ function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupT
 
 `findRule` is a utility function for finding the rule or group within the query hierarchy that has a given `id`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
 
-### `formatQuery`
+#### `formatQuery`
 
 ```ts
 function formatQuery(
@@ -626,20 +658,20 @@ function formatQuery(
 
 Example:
 
-```js
+```ts
 import { formatQuery } from 'react-querybuilder';
 
 const query = {
-  id: 'g-b6SQ6WCcup8e37xhydwHE',
+  id: 'root',
   rules: [
     {
-      id: 'r-zITQOjVEWlsU1fncraSNn',
+      id: 'r1',
       field: 'firstName',
       value: 'Steve',
       operator: '='
     },
     {
-      id: 'r-zVx7ARNak3TCZNFHkwMG2',
+      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -661,23 +693,25 @@ interface FormatQueryOptions {
   format?: 'sql' | 'json' | 'json_without_ids' | 'parameterized'; // same as passing a `format` string instead of an options object
   valueProcessor?: (field: string, operator: string, value: any) => string; // see below for an example
   quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
+  validator?: QueryValidator; // function to validate the entire query (see [validator](#validator-optional))
+  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[]; // This can be the same Field[] passed to <QueryBuilder />, but really all you need to provide is the name and validator for each field
 }
 ```
 
-For example, if you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for `format: "sql"`).
+For example, if you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for "sql" format).
 
-```js
+```ts
 const query = {
-  id: 'g-J5GsbcFmZ6xOJCLPPKIfE',
+  id: 'root',
   rules: [
     {
-      id: 'r-KneYcwIPPHDGSogtKhG4g',
+      id: 'r1',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
       operator: 'in'
     },
     {
-      id: 'r-wz6AkZbzSyDYbPk1AxgvO',
+      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -701,18 +735,18 @@ console.log(formatQuery(query, { format: 'sql', valueProcessor })); // '(instrum
 
 The 'json_without_ids' format will return the same query without the IDs. This can be useful, for example, if you need to save the query to the URL so that it becomes bookmarkable:
 
-```js
+```ts
 const query = {
-  id: 'g-J5GsbcFmZ6xOJCLPPKIfE',
+  id: 'root',
   rules: [
     {
-      id: 'r-KneYcwIPPHDGSogtKhG4g',
+      id: 'r1',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
       operator: 'in'
     },
     {
-      id: 'r-wz6AkZbzSyDYbPk1AxgvO',
+      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
@@ -743,6 +777,46 @@ console.log(formatQuery(query, 'json_without_ids'));
 */
 ```
 
+The validation options (`validator` and `fields`) only affect the output when `format` is "sql", "parameterized", or "mongodb". If the `validator` function returns `false`, the "sql" and "parameterized" formats will return `"(1 = 1)"` and the `mongodb` format will return `"{$and:[{$expr:true}]}"` to maintain valid syntax while (hopefully) not affecting the query criteria. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
+
+Example:
+
+```ts
+const query = {
+  id: 'root',
+  rules: [
+    {
+      id: 'r1',
+      field: 'firstName',
+      value: '',
+      operator: '='
+    },
+    {
+      id: 'r2',
+      field: 'lastName',
+      value: 'Vai',
+      operator: '='
+    }
+  ],
+  combinator: 'and',
+  not: false
+};
+
+// Invalid query
+console.log(formatQuery(query, { format: 'sql', validator: () => false })); // "(1 = 1)"
+// Invalid rule based on validation map
+console.log(formatQuery(query, { format: 'sql', validator: () => ({ r1: false }) })); // "(lastName = 'Vai')"
+// Invalid rule based on field validator
+console.log(
+  formatQuery(query, { format: 'sql', fields: [{ name: 'firstName', validator: () => false }] })
+); // "(lastName = 'Vai')"
+```
+
+A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", or "mongodb". This validation is used regardless of the presence of any `validator` options either at the query or field level.
+
+- Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
+- Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array of length two (`value.length === 2`) nor a string with exactly one comma that isn't the first or last character (`value.split(',').length === 2` and neither element is an empty string).
+
 ### Defaults
 
 The following default configuration objects are exported for convenience.
@@ -761,7 +835,7 @@ The following components are exported as well:
 
 ## Development
 
-### Changelog Generation
+#### Changelog Generation
 
 We are using [github-changes](https://github.com/lalitkapoor/github-changes) to generate the changelog.
 

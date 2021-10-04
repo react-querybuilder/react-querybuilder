@@ -3,7 +3,7 @@ import * as React from 'react';
 import { RuleType } from '.';
 import { standardClassnames } from './defaults';
 import { Field, RuleProps } from './types';
-import { c, generateID } from './utils';
+import { c, generateID, getValidationClassNames } from './utils';
 
 export const Rule = ({
   id,
@@ -26,7 +26,8 @@ export const Rule = ({
     onRuleAdd,
     onRuleRemove,
     autoSelectField,
-    showCloneButtons
+    showCloneButtons,
+    validationMap
   },
   context
 }: RuleProps) => {
@@ -61,11 +62,16 @@ export const Rule = ({
   const values = fieldData.values ?? getValues(field, operator);
   const level = getLevel(id);
 
+  const validationResult =
+    validationMap[id] ??
+    (typeof fieldData.validator === 'function'
+      ? fieldData.validator({ id, field, operator, value })
+      : null);
+  const validationClassName = getValidationClassNames(validationResult);
+  const outerClassName = c(standardClassnames.rule, classNames.rule, validationClassName);
+
   return (
-    <div
-      className={c(standardClassnames.rule, classNames.rule)}
-      data-rule-id={id}
-      data-level={level}>
+    <div className={outerClassName} data-rule-id={id} data-level={level}>
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}
@@ -75,6 +81,7 @@ export const Rule = ({
         handleOnChange={generateOnChangeHandler('field')}
         level={level}
         context={context}
+        validation={validationResult}
       />
       {(autoSelectField || fieldData.name !== '~') && (
         <>
@@ -88,6 +95,7 @@ export const Rule = ({
             handleOnChange={generateOnChangeHandler('operator')}
             level={level}
             context={context}
+            validation={validationResult}
           />
           <controls.valueEditor
             field={field}
@@ -102,6 +110,7 @@ export const Rule = ({
             handleOnChange={generateOnChangeHandler('value')}
             level={level}
             context={context}
+            validation={validationResult}
           />
         </>
       )}
@@ -113,6 +122,7 @@ export const Rule = ({
           handleOnClick={cloneRule}
           level={level}
           context={context}
+          validation={validationResult}
         />
       )}
       <controls.removeRuleAction
@@ -122,6 +132,7 @@ export const Rule = ({
         handleOnClick={removeRule}
         level={level}
         context={context}
+        validation={validationResult}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { mount, ReactWrapper } from 'enzyme';
 import { cloneDeep } from 'lodash';
 import { act } from 'react-dom/test-utils';
-import { RuleType } from '..';
+import { defaultValidator, RuleType, ValidationMap } from '..';
 import { ActionElement } from '../controls';
 import { standardClassnames } from '../defaults';
 import { QueryBuilder } from '../QueryBuilder';
@@ -1149,6 +1149,54 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
 
       expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(1);
+    });
+  });
+
+  describe('validation', () => {
+    it('should not validate if no validator function is provided', () => {
+      const wrapper = mount(<QueryBuilder {...props} />);
+      expect(wrapper.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
+      expect(wrapper.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+      expect(wrapper.find(RuleGroup).props().schema.validationMap).toEqual({});
+    });
+
+    it('should validate groups if default validator function is provided', () => {
+      props.validator = defaultValidator;
+      const wrapper = mount(<QueryBuilder {...props} />);
+      wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
+      // Expect the root group to be valid (contains the inner group)
+      expect(
+        wrapper.find(`.${standardClassnames.ruleGroup}.${standardClassnames.valid}`)
+      ).toHaveLength(1);
+      // Expect the inner group to be invalid (empty)
+      expect(
+        wrapper.find(`.${standardClassnames.ruleGroup}.${standardClassnames.invalid}`)
+      ).toHaveLength(1);
+    });
+
+    it('should use custom validator function returning false', () => {
+      const validator = jest.fn(() => false);
+      props.validator = validator;
+      const wrapper = mount(<QueryBuilder {...props} />);
+      expect(validator).toHaveBeenCalled();
+      expect(wrapper.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
+      expect(wrapper.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
+    });
+
+    it('should use custom validator function returning true', () => {
+      const validator = jest.fn(() => true);
+      props.validator = validator;
+      const wrapper = mount(<QueryBuilder {...props} />);
+      expect(validator).toHaveBeenCalled();
+      expect(wrapper.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
+      expect(wrapper.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+    });
+
+    it('should pass down validationMap to children', () => {
+      const valMap: ValidationMap = { id: { valid: false, reasons: ['invalid'] } };
+      props.validator = () => valMap;
+      const dom = mount(<QueryBuilder {...props} />);
+      expect(dom.find(RuleGroup).props().schema.validationMap).toEqual(valMap);
     });
   });
 });

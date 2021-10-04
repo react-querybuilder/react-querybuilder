@@ -6,6 +6,19 @@ export interface NameLabelPair {
   [x: string]: any;
 }
 
+export interface ValidationResult {
+  valid: boolean;
+  reasons?: any[];
+}
+
+export interface ValidationMap {
+  [id: string]: boolean | ValidationResult;
+}
+
+export type QueryValidator = (query: RuleGroupType) => boolean | ValidationMap;
+
+export type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
+
 export interface Field extends NameLabelPair {
   id?: string;
   operators?: NameLabelPair[];
@@ -15,6 +28,7 @@ export interface Field extends NameLabelPair {
   defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
+  validator?: RuleValidator;
 }
 
 export interface RuleType {
@@ -55,6 +69,10 @@ export interface CommonProps {
    * Container for custom props that are passed to all components
    */
   context?: any;
+  /**
+   * Validation result of the parent component
+   */
+  validation?: boolean | ValidationResult;
 }
 
 export interface ActionProps extends CommonProps {
@@ -138,6 +156,10 @@ export interface Classnames {
    */
   header: string;
   /**
+   * `<div>` containing the RuleGroup child rules/groups
+   */
+  body: string;
+  /**
    * `<select>` control for combinators
    */
   combinators: string;
@@ -215,6 +237,7 @@ export interface Schema {
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
+  validationMap: ValidationMap;
 }
 
 export interface Translations {
@@ -260,6 +283,18 @@ export interface Translations {
   };
 }
 
+export interface FormatQueryOptions {
+  format?: ExportFormat;
+  valueProcessor?: ValueProcessor;
+  quoteFieldNamesWith?: string;
+  validator?: QueryValidator;
+  /**
+   * This can be the same Field[] passed to <QueryBuilder />, but really
+   * all you need to provide is the name and validator for each field.
+   */
+  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
+}
+
 export interface RuleGroupProps {
   id: string;
   parentId?: string;
@@ -293,16 +328,23 @@ export interface QueryBuilderProps {
    * The array of operators that should be used.
    * @default
    * [
-   *     {name: 'null', label: 'Is Null'},
-   *     {name: 'notNull', label: 'Is Not Null'},
-   *     {name: 'in', label: 'In'},
-   *     {name: 'notIn', label: 'Not In'},
-   *     {name: '=', label: '='},
-   *     {name: '!=', label: '!='},
-   *     {name: '<', label: '<'},
-   *     {name: '>', label: '>'},
-   *     {name: '<=', label: '<='},
-   *     {name: '>=', label: '>='},
+   *   { name: '=', label: '=' },
+   *   { name: '!=', label: '!=' },
+   *   { name: '<', label: '<' },
+   *   { name: '>', label: '>' },
+   *   { name: '<=', label: '<=' },
+   *   { name: '>=', label: '>=' },
+   *   { name: 'contains', label: 'contains' },
+   *   { name: 'beginsWith', label: 'begins with' },
+   *   { name: 'endsWith', label: 'ends with' },
+   *   { name: 'doesNotContain', label: 'does not contain' },
+   *   { name: 'doesNotBeginWith', label: 'does not begin with' },
+   *   { name: 'doesNotEndWith', label: 'does not end with' },
+   *   { name: 'null', label: 'is null' },
+   *   { name: 'notNull', label: 'is not null' },
+   *   { name: 'in', label: 'in' },
+   *   { name: 'notIn', label: 'not in' },
+   *   { name: 'between', label: 'between' },
    * ]
    */
   operators?: NameLabelPair[];
@@ -412,6 +454,10 @@ export interface QueryBuilderProps {
    * Adds a new default rule automatically to each new group
    */
   addRuleToNewGroups?: boolean;
+  /**
+   * Query validation function
+   */
+  validator?: QueryValidator;
   /**
    * Container for custom props that are passed to all components
    */

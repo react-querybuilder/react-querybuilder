@@ -62,7 +62,9 @@ export const defaultOperators: NameLabelPair[] = [
   { name: 'null', label: 'is null' },
   { name: 'notNull', label: 'is not null' },
   { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' }
+  { name: 'notIn', label: 'not in' },
+  { name: 'between', label: 'between' },
+  { name: 'notBetween', label: 'not between' }
 ];
 
 export const defaultCombinators: NameLabelPair[] = [
@@ -74,6 +76,7 @@ export const standardClassnames = {
   queryBuilder: 'queryBuilder',
   ruleGroup: 'ruleGroup',
   header: 'ruleGroup-header',
+  body: 'ruleGroup-body',
   combinators: 'ruleGroup-combinators',
   addRule: 'ruleGroup-addRule',
   addGroup: 'ruleGroup-addGroup',
@@ -86,13 +89,16 @@ export const standardClassnames = {
   operators: 'rule-operators',
   value: 'rule-value',
   removeRule: 'rule-remove',
-  betweenRules: 'betweenRules'
+  betweenRules: 'betweenRules',
+  valid: 'queryBuilder-valid',
+  invalid: 'queryBuilder-invalid'
 } as const;
 
 export const defaultControlClassnames: Classnames = {
   queryBuilder: '',
   ruleGroup: '',
   header: '',
+  body: '',
   combinators: '',
   addRule: '',
   addGroup: '',
@@ -122,3 +128,8 @@ export const defaultControlElements: Controls = {
   ruleGroup: RuleGroup,
   rule: Rule
 };
+
+export const groupInvalidReasons = {
+  empty: 'empty',
+  invalidCombinator: 'invalid combinator'
+} as const;

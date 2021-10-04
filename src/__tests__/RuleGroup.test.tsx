@@ -1,5 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import * as React from 'react';
+import { ValidationResult } from '..';
 import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
 import { standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
@@ -52,6 +53,8 @@ describe('<RuleGroup />', () => {
       ruleGroup: RuleGroup
     };
     classNames = {
+      header: 'custom-header-class',
+      body: 'custom-body-class',
       combinators: 'custom-combinators-class',
       addRule: 'custom-addRule-class',
       addGroup: 'custom-addGroup-class',
@@ -74,7 +77,8 @@ describe('<RuleGroup />', () => {
       getLevel: (_id) => 0,
       showCombinatorsBetweenRules: false,
       showNotToggle: false,
-      showCloneButtons: false
+      showCloneButtons: false,
+      validationMap: {}
     };
     props = {
       id: 'id',
@@ -131,9 +135,11 @@ describe('<RuleGroup />', () => {
     expect(RuleGroup).toBeDefined();
   });
 
-  it('should have correct className', () => {
+  it('should have correct classNames', () => {
     const dom = shallow(<RuleGroup {...props} />);
     expect(dom.find('div').first().hasClass(standardClassnames.ruleGroup)).toBe(true);
+    expect(dom.find(`.${standardClassnames.header}.${classNames.header}`)).toHaveLength(1);
+    expect(dom.find(`.${standardClassnames.body}.${classNames.body}`)).toHaveLength(1);
   });
 
   describe('combinator selector as <ValueSelector />', () => {
@@ -470,6 +476,38 @@ describe('<RuleGroup />', () => {
       expect(dom.find(`.${standardClassnames.cloneGroup}`).props().className).toContain(
         'custom-cloneGroup-class'
       );
+    });
+  });
+
+  describe('validation', () => {
+    it('should not validate if no validationMap[id] value exists', () => {
+      const dom = shallow(<RuleGroup {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+    });
+
+    it('should validate to false if validationMap[id] = false', () => {
+      schema.validationMap = { id: false };
+      const dom = shallow(<RuleGroup {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
+    });
+
+    it('should validate to true if validationMap[id] = true', () => {
+      schema.validationMap = { id: true };
+      const dom = shallow(<RuleGroup {...props} />);
+      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
+      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+    });
+
+    it('should pass down validationResult as validation to children', () => {
+      const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
+      schema.controls.combinatorSelector = ValueSelector;
+      schema.controls.addRuleAction = ActionElement;
+      schema.validationMap = { id: valRes };
+      const dom = shallow(<RuleGroup {...props} />);
+      expect(dom.find(ValueSelector).props().validation).toEqual(valRes);
+      expect(dom.find(ActionElement).props().validation).toEqual(valRes);
     });
   });
 

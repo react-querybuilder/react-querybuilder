@@ -1,14 +1,17 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { QuestionOutlineIcon } from '@chakra-ui/icons';
+import { ChakraProvider, Tooltip } from '@chakra-ui/react';
 import { Button, Checkbox, Divider, Layout, Radio, Select, Space, Typography } from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, {
   Classnames,
   Controls,
+  defaultValidator,
   ExportFormat,
   Field,
   formatQuery,
-  RuleGroupType
+  RuleGroupType,
+  RuleType
 } from '../src';
 import '../src/query-builder.scss';
 import AntDActionElement from './components/AntDActionElement';
@@ -25,6 +28,7 @@ import MaterialActionElement from './components/MaterialActionElement';
 import MaterialNotToggle from './components/MaterialNotToggle';
 import MaterialValueEditor from './components/MaterialValueEditor';
 import MaterialValueSelector from './components/MaterialValueSelector';
+import './styles/common.scss';
 import './styles/github-fork-ribbon.scss';
 import './styles/with-antd.less';
 import './styles/with-bootstrap.scss';
@@ -38,7 +42,9 @@ const { Title } = Typography;
 
 type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
 
-const generateID = () => Math.random().toString();
+const repoLink = 'https://github.com/react-querybuilder/react-querybuilder';
+
+const validator = (r: RuleType) => !!r.value;
 
 const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
   default: {},
@@ -108,16 +114,17 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
 
 const preparedFields: Field[][] = [
   [
-    { name: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
+    { name: 'firstName', label: 'First Name', placeholder: 'Enter first name', validator },
     {
       name: 'lastName',
       label: 'Last Name',
       placeholder: 'Enter last name',
-      defaultOperator: 'beginsWith'
+      defaultOperator: 'beginsWith',
+      validator
     }
   ],
   [
-    { name: 'age', label: 'Age', inputType: 'number' },
+    { name: 'age', label: 'Age', inputType: 'number', validator },
     {
       name: 'isMusician',
       label: 'Is a musician',
@@ -140,9 +147,9 @@ const preparedFields: Field[][] = [
     }
   ],
   [
-    { name: 'firstName', label: 'First name', placeholder: 'Enter first name' },
-    { name: 'lastName', label: 'Last name', placeholder: 'Enter last name' },
-    { name: 'age', label: 'Age', inputType: 'number' },
+    { name: 'firstName', label: 'First name', placeholder: 'Enter first name', validator },
+    { name: 'lastName', label: 'Last name', placeholder: 'Enter last name', validator },
+    { name: 'age', label: 'Age', inputType: 'number', validator },
     {
       name: 'gender',
       label: 'Gender',
@@ -154,23 +161,21 @@ const preparedFields: Field[][] = [
         { name: 'O', label: 'Other' }
       ]
     },
-    { name: 'height', label: 'Height' },
-    { name: 'job', label: 'Job' }
+    { name: 'height', label: 'Height', validator },
+    { name: 'job', label: 'Job', validator }
   ]
 ];
 
 const preparedQueries: RuleGroupType[] = [
   {
-    id: `g-${generateID()}`,
+    id: 'root0',
     rules: [
       {
-        id: `r-${generateID()}`,
         field: 'firstName',
         value: 'Steve',
         operator: '='
       },
       {
-        id: `r-${generateID()}`,
         field: 'lastName',
         value: 'Vai',
         operator: '='
@@ -180,23 +185,20 @@ const preparedQueries: RuleGroupType[] = [
     not: false
   },
   {
-    id: `g-${generateID()}`,
+    id: 'root1',
     rules: [
       {
         field: 'age',
-        id: `r-${generateID()}`,
         operator: '>',
         value: '28'
       },
       {
         field: 'isMusician',
-        id: `r-${generateID()}`,
         operator: '=',
         value: true
       },
       {
         field: 'instrument',
-        id: `r-${generateID()}`,
         operator: '=',
         value: 'Guitar'
       }
@@ -205,7 +207,7 @@ const preparedQueries: RuleGroupType[] = [
     not: false
   },
   {
-    id: `g-${generateID()}`,
+    id: 'root2',
     combinator: 'and',
     not: false,
     rules: []
@@ -231,20 +233,74 @@ const RootView = () => {
   const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
   const [autoSelectField, setAutoSelectField] = useState(true);
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
+  const [useValidation, setUseValidation] = useState(false);
   const [style, setStyle] = useState<StyleName>('default');
 
-  /**
-   * Reloads a prepared query, a PoC for query updates by props change.
-   * If no target is supplied, clear query (generic query).
-   */
   const loadQuery = (target: number) => {
     setQuery(preparedQueries[target]);
     setFields(preparedFields[target]);
   };
 
-  const handleQueryChange = (query) => {
-    setQuery(query);
-  };
+  const optionsInfo = [
+    {
+      checked: showCombinatorsBetweenRules,
+      setter: setShowCombinatorsBetweenRules,
+      link: '#showcombinatorsbetweenrules-optional',
+      label: 'Combinators between rules',
+      title:
+        'When checked, combinator (and/or) selectors will appear between rules instead of in the group header'
+    },
+    {
+      checked: showNotToggle,
+      setter: setShowNotToggle,
+      link: '#shownottoggle-optional',
+      label: 'Show "not" toggle',
+      title: `When checked, the check box to invert a group's rules, by default labelled "Not", will be visible`
+    },
+    {
+      checked: showCloneButtons,
+      setter: setShowCloneButtons,
+      link: '#showclonebuttons-optional',
+      label: 'Show clone buttons',
+      title: 'When checked, the buttons to clone rules and groups will be visible'
+    },
+    {
+      checked: resetOnFieldChange,
+      setter: setResetOnFieldChange,
+      link: '#resetonfieldchange-optional',
+      label: 'Reset on field change',
+      title: `When checked, operator and value will be reset when a rule's field selection changes`
+    },
+    {
+      checked: resetOnOperatorChange,
+      setter: setResetOnOperatorChange,
+      link: '#resetonoperatorchange-optional',
+      label: 'Reset on operator change',
+      title: 'When checked, the value will reset when the operator changes'
+    },
+    {
+      checked: autoSelectField,
+      setter: setAutoSelectField,
+      link: '#autoselectfield-optional',
+      label: 'Auto-select field',
+      title: 'When checked, the default field will be automatically selected for new rules'
+    },
+    {
+      checked: addRuleToNewGroups,
+      setter: setAddRuleToNewGroups,
+      link: '#addruletonewgroups-optional',
+      label: 'Add rule to new groups',
+      title: 'When checked, a rule will be automatically added to new groups'
+    },
+    {
+      checked: useValidation,
+      setter: setUseValidation,
+      link: '#validator-optional',
+      label: 'Use validation',
+      title:
+        'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups'
+    }
+  ];
 
   const formatString =
     format === 'json_without_ids'
@@ -253,7 +309,7 @@ const RootView = () => {
       ? JSON.stringify(formatQuery(query, { format }), null, 2)
       : formatQuery(query, { format });
 
-  const qbWrapperClassName = `with-${style}`;
+  const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();
 
   return (
     <ChakraProvider resetCSS={style === 'chakra'}>
@@ -276,59 +332,61 @@ const RootView = () => {
               <Option value="chakra">Chakra UI</Option>
             </Select>
             <Divider />
-            <Title level={4}>Options</Title>
+            <Title level={4}>
+              Options
+              {'\u00a0'}
+              <a href={`${repoLink}#api`} target="_blank" rel="noreferrer">
+                <Tooltip
+                  label={`Boolean props on the QueryBuilder component (click for documentation)`}
+                  fontSize="small"
+                  placement="right">
+                  <QuestionOutlineIcon />
+                </Tooltip>
+              </a>
+            </Title>
             <div>
-              {[
-                {
-                  checked: showCombinatorsBetweenRules,
-                  setter: setShowCombinatorsBetweenRules,
-                  label: 'Show combinators between rules'
-                },
-                {
-                  checked: showNotToggle,
-                  setter: setShowNotToggle,
-                  label: 'Show "not" toggle'
-                },
-                {
-                  checked: showCloneButtons,
-                  setter: setShowCloneButtons,
-                  label: 'Show clone buttons'
-                },
-                {
-                  checked: resetOnFieldChange,
-                  setter: setResetOnFieldChange,
-                  label: 'Reset rule on field change'
-                },
-                {
-                  checked: resetOnOperatorChange,
-                  setter: setResetOnOperatorChange,
-                  label: 'Reset rule on operator change'
-                },
-                {
-                  checked: autoSelectField,
-                  setter: setAutoSelectField,
-                  label: 'Auto-select field'
-                },
-                {
-                  checked: addRuleToNewGroups,
-                  setter: setAddRuleToNewGroups,
-                  label: 'Add rule to new groups'
-                }
-              ].map(({ checked, label, setter }) => (
+              {optionsInfo.map(({ checked, label, link, setter, title }) => (
                 <div key={label}>
                   <Checkbox checked={checked} onChange={(e) => setter(e.target.checked)}>
                     {label}
+                    {'\u00a0'}
+                    <a href={`${repoLink}${link}`} target="_blank" rel="noreferrer">
+                      <Tooltip
+                        label={`${title} (click for documentation)`}
+                        fontSize="small"
+                        placement="right">
+                        <QuestionOutlineIcon />
+                      </Tooltip>
+                    </a>
                   </Checkbox>
                 </div>
               ))}
             </div>
             <Divider />
-            <Title level={4}>Output</Title>
+            <Title level={4}>
+              Output
+              {'\u00a0'}
+              <a href={`${repoLink}#formatquery`} target="_blank" rel="noreferrer">
+                <Tooltip
+                  label={`The output format of the formatQuery function (click for documentation)`}
+                  fontSize="small"
+                  placement="right">
+                  <QuestionOutlineIcon />
+                </Tooltip>
+              </a>
+            </Title>
             <div
               style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
               {formatMap.map(({ fmt, lbl }) => (
                 <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
                   {lbl}
+                  {'\u00a0'}
+                  <Tooltip
+                    label={`formatQuery(query, "${fmt}")`}
+                    fontSize="small"
+                    placement="right">
+                    <QuestionOutlineIcon />
+                  </Tooltip>
                 </Radio>
               ))}
             </div>
@@ -353,7 +411,7 @@ const RootView = () => {
                   fields={fields}
                   controlClassnames={controlClassnames[style]}
                   controlElements={controlElements[style]}
-                  onQueryChange={handleQueryChange}
+                  onQueryChange={setQuery}
                   showCombinatorsBetweenRules={showCombinatorsBetweenRules}
                   showNotToggle={showNotToggle}
                   showCloneButtons={showCloneButtons}
@@ -361,6 +419,7 @@ const RootView = () => {
                   resetOnOperatorChange={resetOnOperatorChange}
                   autoSelectField={autoSelectField}
                   addRuleToNewGroups={addRuleToNewGroups}
+                  validator={useValidation && defaultValidator}
                 />
               </form>
             </div>

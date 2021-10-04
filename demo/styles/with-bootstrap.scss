@@ -38,21 +38,6 @@
   // @import '~bootstrap/scss/utilities';
   // @import '~bootstrap/scss/print';
 
-  .ruleGroup-cloneGroup,
-  .rule-cloneRule,
-  .rule-remove,
-  .ruleGroup-remove {
-    float: right;
-  }
-
-  .ruleGroup-addRule,
-  .ruleGroup-addGroup,
-  .rule-cloneRule,
-  .ruleGroup-cloneGroup,
-  .ruleGroup-notToggle {
-    margin-left: 0.5rem;
-  }
-
   .form-control,
   .form-select {
     display: inline-block;
