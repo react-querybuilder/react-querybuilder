@@ -1,4 +1,5 @@
 import { mount, shallow } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 import { ValueEditor } from '..';
 import { ValueEditorProps } from '../../types';
 
@@ -44,6 +45,32 @@ describe('<ValueEditor />', () => {
 
       dom.find('input').simulate('change', mockEvent);
       expect(count).toBe(1);
+    });
+
+    it('should make the inputType "text" if operator is "between" or "notBetween"', () => {
+      const dom = mount(<ValueEditor {...props} inputType="number" operator="between" />);
+      expect(dom.find('input').props().type).toBe('text');
+    });
+
+    it('should set the value to "" if operator is not "between" or "notBetween" and inputType is "number" and value contains a comma', () => {
+      const handleOnChange = jest.fn();
+      const dom = mount(
+        <ValueEditor
+          {...props}
+          inputType="number"
+          operator="between"
+          value="12,14"
+          handleOnChange={handleOnChange}
+        />
+      );
+      act(() => {
+        dom.setProps({ operator: 'notBetween' });
+      });
+      expect(handleOnChange).not.toHaveBeenCalledWith('');
+      act(() => {
+        dom.setProps({ operator: '=' });
+      });
+      expect(handleOnChange).toHaveBeenCalledWith('');
     });
   });
 

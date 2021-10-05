@@ -62,11 +62,9 @@ export const defaultValueProcessor: ValueProcessor = (
       return '';
     }
   } else if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
-    if (
-      (Array.isArray(value) && value.length === 2) ||
-      (typeof value === 'string' && /^[^,]+,[^,]+$/.test(value))
-    ) {
-      const [first, second] = toArray(value);
+    const valArray = toArray(value);
+    if (valArray.length === 2 && !!valArray[0] && !!valArray[1]) {
+      const [first, second] = valArray;
       return `'${first.trim()}' and '${second.trim()}'`;
     } else {
       return '';
@@ -286,19 +284,12 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
               }
             } else if (rule.operator === 'between' || rule.operator === 'notBetween') {
               const valArray = toArray(rule.value);
-              if (valArray.length) {
+              if (valArray.length === 2 && !!valArray[0] && !!valArray[1]) {
                 const [first, second] = valArray;
                 if (rule.operator === 'between') {
-                  if (
-                    (Array.isArray(rule.value) && rule.value.length === 2) ||
-                    (typeof rule.value === 'string' && /^[^,]+,[^,]+$/.test(rule.value))
-                  ) {
-                    return `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
-                      rule.field
-                    }:{$lte:"${second.trim()}"}}]}`;
-                  } else {
-                    return '';
-                  }
+                  return `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
+                    rule.field
+                  }:{$lte:"${second.trim()}"}}]}`;
                 } else {
                   return `{$or:[{${rule.field}:{$lt:"${first.trim()}"}},{${
                     rule.field

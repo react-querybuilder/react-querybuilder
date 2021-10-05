@@ -218,7 +218,7 @@ const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'json', lbl: 'JSON' },
   { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
   { fmt: 'sql', lbl: 'SQL' },
-  { fmt: 'parameterized', lbl: 'Parameterized' },
+  { fmt: 'parameterized', lbl: 'Parameterized SQL' },
   { fmt: 'mongodb', lbl: 'MongoDB' }
 ];
 

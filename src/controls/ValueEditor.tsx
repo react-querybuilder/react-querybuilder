@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ValueEditorProps } from '../types';
 
 const ValueEditor = ({
@@ -14,7 +15,26 @@ const ValueEditor = ({
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
-  const placeHolderText = (fieldData && fieldData.placeholder) || '';
+
+  // This side effect blanks out the value if the inputType is "number",
+  // the operator is not "between" and not "notBetween",
+  // and the value contains a comma.
+  useEffect(() => {
+    if (
+      inputType === 'number' &&
+      !['between', 'notBetween'].includes(operator) &&
+      typeof value === 'string' &&
+      value.includes(',')
+    ) {
+      handleOnChange('');
+    }
+  }, [inputType, operator, value, handleOnChange]);
+
+  const placeHolderText = fieldData?.placeholder ?? '';
+  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+    ? 'text'
+    : inputType || 'text';
+
   switch (type) {
     case 'select':
       return (
@@ -64,7 +84,7 @@ const ValueEditor = ({
     default:
       return (
         <input
-          type={inputType || 'text'}
+          type={inputTypeCoerced}
           placeholder={placeHolderText}
           value={value}
           title={title}
