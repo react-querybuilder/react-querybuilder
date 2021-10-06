@@ -1,16 +1,15 @@
-import { QuestionOutlineIcon } from '@chakra-ui/icons';
+import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, Tooltip } from '@chakra-ui/react';
 import { Button, Checkbox, Divider, Layout, Radio, Select, Typography } from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, {
-  Classnames,
-  Controls,
   defaultValidator,
   ExportFormat,
   Field,
   formatQuery,
   FormatQueryOptions,
+  QueryBuilderProps,
   RuleGroupType,
   RuleType
 } from '../src';
@@ -39,77 +38,79 @@ import './styles/with-material.scss';
 
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
-const { Title } = Typography;
+const { Link, Title } = Typography;
 
 type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
 
 const repoLink = 'https://github.com/react-querybuilder/react-querybuilder';
+const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 
 const validator = (r: RuleType) => !!r.value;
 
-const controlClassnames: { [k in StyleName]: Partial<Classnames> } = {
+const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
   default: {},
   bootstrap: {
-    addGroup: 'btn btn-secondary btn-sm',
-    addRule: 'btn btn-primary btn-sm',
-    cloneGroup: 'btn btn-secondary btn-sm',
-    cloneRule: 'btn btn-secondary btn-sm',
-    removeGroup: 'btn btn-danger btn-sm',
-    removeRule: 'btn btn-danger btn-sm',
-    combinators: 'form-select form-select-sm',
-    fields: 'form-select form-select-sm',
-    operators: 'form-select form-select-sm',
-    value: 'form-control form-control-sm'
-  },
-  antd: {},
-  material: {},
-  chakra: {}
-};
-
-const controlElements: { [k in StyleName]: Partial<Controls> } = {
-  default: {},
-  bootstrap: {
-    notToggle: BootstrapNotToggle,
-    valueEditor: BootstrapValueEditor
+    controlClassnames: {
+      addGroup: 'btn btn-secondary btn-sm',
+      addRule: 'btn btn-primary btn-sm',
+      cloneGroup: 'btn btn-secondary btn-sm',
+      cloneRule: 'btn btn-secondary btn-sm',
+      removeGroup: 'btn btn-danger btn-sm',
+      removeRule: 'btn btn-danger btn-sm',
+      combinators: 'form-select form-select-sm',
+      fields: 'form-select form-select-sm',
+      operators: 'form-select form-select-sm',
+      value: 'form-control form-control-sm'
+    },
+    controlElements: {
+      notToggle: BootstrapNotToggle,
+      valueEditor: BootstrapValueEditor
+    }
   },
   antd: {
-    addGroupAction: AntDActionElement,
-    addRuleAction: AntDActionElement,
-    cloneGroupAction: AntDActionElement,
-    cloneRuleAction: AntDActionElement,
-    combinatorSelector: AntDValueSelector,
-    fieldSelector: AntDValueSelector,
-    notToggle: AntDNotToggle,
-    operatorSelector: AntDValueSelector,
-    removeGroupAction: AntDActionElement,
-    removeRuleAction: AntDActionElement,
-    valueEditor: AntDValueEditor
+    controlElements: {
+      addGroupAction: AntDActionElement,
+      addRuleAction: AntDActionElement,
+      cloneGroupAction: AntDActionElement,
+      cloneRuleAction: AntDActionElement,
+      combinatorSelector: AntDValueSelector,
+      fieldSelector: AntDValueSelector,
+      notToggle: AntDNotToggle,
+      operatorSelector: AntDValueSelector,
+      removeGroupAction: AntDActionElement,
+      removeRuleAction: AntDActionElement,
+      valueEditor: AntDValueEditor
+    }
   },
   material: {
-    addGroupAction: MaterialActionElement,
-    addRuleAction: MaterialActionElement,
-    cloneGroupAction: MaterialActionElement,
-    cloneRuleAction: MaterialActionElement,
-    combinatorSelector: MaterialValueSelector,
-    fieldSelector: MaterialValueSelector,
-    notToggle: MaterialNotToggle,
-    operatorSelector: MaterialValueSelector,
-    removeGroupAction: MaterialActionElement,
-    removeRuleAction: MaterialActionElement,
-    valueEditor: MaterialValueEditor
+    controlElements: {
+      addGroupAction: MaterialActionElement,
+      addRuleAction: MaterialActionElement,
+      cloneGroupAction: MaterialActionElement,
+      cloneRuleAction: MaterialActionElement,
+      combinatorSelector: MaterialValueSelector,
+      fieldSelector: MaterialValueSelector,
+      notToggle: MaterialNotToggle,
+      operatorSelector: MaterialValueSelector,
+      removeGroupAction: MaterialActionElement,
+      removeRuleAction: MaterialActionElement,
+      valueEditor: MaterialValueEditor
+    }
   },
   chakra: {
-    addGroupAction: ChakraActionElement,
-    addRuleAction: ChakraActionElement,
-    cloneGroupAction: ChakraActionElement,
-    cloneRuleAction: ChakraActionElement,
-    combinatorSelector: ChakraValueSelector,
-    fieldSelector: ChakraValueSelector,
-    notToggle: ChakraNotToggle,
-    operatorSelector: ChakraValueSelector,
-    removeGroupAction: ChakraActionElement,
-    removeRuleAction: ChakraActionElement,
-    valueEditor: ChakraValueEditor
+    controlElements: {
+      addGroupAction: ChakraActionElement,
+      addRuleAction: ChakraActionElement,
+      cloneGroupAction: ChakraActionElement,
+      cloneRuleAction: ChakraActionElement,
+      combinatorSelector: ChakraValueSelector,
+      fieldSelector: ChakraValueSelector,
+      notToggle: ChakraNotToggle,
+      operatorSelector: ChakraValueSelector,
+      removeGroupAction: ChakraActionElement,
+      removeRuleAction: ChakraActionElement,
+      valueEditor: ChakraValueEditor
+    }
   }
 };
 
@@ -329,7 +330,7 @@ const RootView = () => {
                   label={`Boolean props on the QueryBuilder component (click for documentation)`}
                   fontSize="small"
                   placement="right">
-                  <QuestionOutlineIcon />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </a>
             </Title>
@@ -344,7 +345,7 @@ const RootView = () => {
                         label={`${title} (click for documentation)`}
                         fontSize="small"
                         placement="right">
-                        <QuestionOutlineIcon />
+                        <QuestionCircleOutlined />
                       </Tooltip>
                     </a>
                   </Checkbox>
@@ -363,7 +364,7 @@ const RootView = () => {
                   label={`The output format of the formatQuery function (click for documentation)`}
                   fontSize="small"
                   placement="right">
-                  <QuestionOutlineIcon />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </a>
             </Title>
@@ -377,13 +378,18 @@ const RootView = () => {
                     label={`formatQuery(query, "${fmt}")`}
                     fontSize="small"
                     placement="right">
-                    <QuestionOutlineIcon />
+                    <QuestionCircleOutlined />
                   </Tooltip>
                 </Radio>
               ))}
             </div>
             <Divider />
-            <Title level={4}>Installation</Title>
+            <Title level={4}>
+              Installation{'\u00a0'}
+              <Link href={npmLink} target="_blank">
+                <LinkOutlined />
+              </Link>
+            </Title>
             <pre>npm i react-querybuilder</pre>
             OR
             <pre>yarn add react-querybuilder</pre>
@@ -394,8 +400,6 @@ const RootView = () => {
                 <QueryBuilder
                   query={query}
                   fields={fields}
-                  controlClassnames={controlClassnames[style]}
-                  controlElements={controlElements[style]}
                   onQueryChange={setQuery}
                   showCombinatorsBetweenRules={showCombinatorsBetweenRules}
                   showNotToggle={showNotToggle}
@@ -405,6 +409,7 @@ const RootView = () => {
                   autoSelectField={autoSelectField}
                   addRuleToNewGroups={addRuleToNewGroups}
                   validator={useValidation && defaultValidator}
+                  {...styleOptions[style]}
                 />
               </form>
             </div>

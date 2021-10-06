@@ -31,11 +31,11 @@
   "license": "MIT",
   "homepage": "https://github.com/react-querybuilder/react-querybuilder",
   "devDependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
-    "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.6.5",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
