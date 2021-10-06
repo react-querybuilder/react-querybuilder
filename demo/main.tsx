@@ -1,6 +1,6 @@
 import { QuestionOutlineIcon } from '@chakra-ui/icons';
 import { ChakraProvider, Tooltip } from '@chakra-ui/react';
-import { Button, Checkbox, Divider, Layout, Radio, Select, Space, Typography } from 'antd';
+import { Button, Checkbox, Divider, Layout, Radio, Select, Typography } from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, {
@@ -10,6 +10,7 @@ import QueryBuilder, {
   ExportFormat,
   Field,
   formatQuery,
+  FormatQueryOptions,
   RuleGroupType,
   RuleType
 } from '../src';
@@ -112,107 +113,89 @@ const controlElements: { [k in StyleName]: Partial<Controls> } = {
   }
 };
 
-const preparedFields: Field[][] = [
-  [
-    { name: 'firstName', label: 'First Name', placeholder: 'Enter first name', validator },
-    {
-      name: 'lastName',
-      label: 'Last Name',
-      placeholder: 'Enter last name',
-      defaultOperator: 'beginsWith',
-      validator
-    }
-  ],
-  [
-    { name: 'age', label: 'Age', inputType: 'number', validator },
-    {
-      name: 'isMusician',
-      label: 'Is a musician',
-      valueEditorType: 'checkbox',
-      operators: [{ name: '=', label: 'is' }],
-      defaultValue: false
-    },
-    {
-      name: 'instrument',
-      label: 'Instrument',
-      valueEditorType: 'select',
-      values: [
-        { name: 'Guitar', label: 'Guitar' },
-        { name: 'Piano', label: 'Piano' },
-        { name: 'Vocals', label: 'Vocals' },
-        { name: 'Drums', label: 'Drums' }
-      ],
-      defaultValue: 'Piano',
-      operators: [{ name: '=', label: 'is' }]
-    }
-  ],
-  [
-    { name: 'firstName', label: 'First name', placeholder: 'Enter first name', validator },
-    { name: 'lastName', label: 'Last name', placeholder: 'Enter last name', validator },
-    { name: 'age', label: 'Age', inputType: 'number', validator },
-    {
-      name: 'gender',
-      label: 'Gender',
-      operators: [{ name: '=', label: 'is' }],
-      valueEditorType: 'radio',
-      values: [
-        { name: 'M', label: 'Male' },
-        { name: 'F', label: 'Female' },
-        { name: 'O', label: 'Other' }
-      ]
-    },
-    { name: 'height', label: 'Height', validator },
-    { name: 'job', label: 'Job', validator }
-  ]
+const fields: Field[] = [
+  { name: 'firstName', label: 'First Name', placeholder: 'Enter first name', validator },
+  {
+    name: 'lastName',
+    label: 'Last Name',
+    placeholder: 'Enter last name',
+    defaultOperator: 'beginsWith',
+    validator
+  },
+  { name: 'age', label: 'Age', inputType: 'number', validator },
+  {
+    name: 'isMusician',
+    label: 'Is a musician',
+    valueEditorType: 'checkbox',
+    operators: [{ name: '=', label: 'is' }],
+    defaultValue: false
+  },
+  {
+    name: 'instrument',
+    label: 'Instrument',
+    valueEditorType: 'select',
+    values: [
+      { name: 'Guitar', label: 'Guitar' },
+      { name: 'Piano', label: 'Piano' },
+      { name: 'Vocals', label: 'Vocals' },
+      { name: 'Drums', label: 'Drums' }
+    ],
+    defaultValue: 'Piano',
+    operators: [{ name: '=', label: 'is' }]
+  },
+  {
+    name: 'gender',
+    label: 'Gender',
+    operators: [{ name: '=', label: 'is' }],
+    valueEditorType: 'radio',
+    values: [
+      { name: 'M', label: 'Male' },
+      { name: 'F', label: 'Female' },
+      { name: 'O', label: 'Other' }
+    ]
+  },
+  { name: 'height', label: 'Height', validator },
+  { name: 'job', label: 'Job', validator }
 ];
 
-const preparedQueries: RuleGroupType[] = [
-  {
-    id: 'root0',
-    rules: [
-      {
-        field: 'firstName',
-        value: 'Steve',
-        operator: '='
-      },
-      {
-        field: 'lastName',
-        value: 'Vai',
-        operator: '='
-      }
-    ],
-    combinator: 'and',
-    not: false
-  },
-  {
-    id: 'root1',
-    rules: [
-      {
-        field: 'age',
-        operator: '>',
-        value: '28'
-      },
-      {
-        field: 'isMusician',
-        operator: '=',
-        value: true
-      },
-      {
-        field: 'instrument',
-        operator: '=',
-        value: 'Guitar'
-      }
-    ],
-    combinator: 'or',
-    not: false
-  },
-  {
-    id: 'root2',
-    combinator: 'and',
-    not: false,
-    rules: []
-  }
-];
+const initialQuery: RuleGroupType = {
+  id: 'root',
+  rules: [
+    {
+      field: 'firstName',
+      value: 'Stev',
+      operator: 'beginsWith'
+    },
+    {
+      field: 'lastName',
+      value: 'Vai, Vaughan',
+      operator: 'in'
+    },
+    {
+      field: 'age',
+      operator: '>',
+      value: '28'
+    },
+    {
+      id: 'subGroup',
+      combinator: 'or',
+      rules: [
+        {
+          field: 'isMusician',
+          operator: '=',
+          value: true
+        },
+        {
+          field: 'instrument',
+          operator: '=',
+          value: 'Guitar'
+        }
+      ]
+    }
+  ],
+  combinator: 'and',
+  not: false
+};
 
 const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'json', lbl: 'JSON' },
@@ -223,8 +206,7 @@ const formatMap: { fmt: ExportFormat; lbl: string }[] = [
 ];
 
 const RootView = () => {
-  const [query, setQuery] = useState<RuleGroupType>(preparedQueries[0]);
-  const [fields, setFields] = useState<Field[]>(preparedFields[0]);
+  const [query, setQuery] = useState(initialQuery);
   const [format, setFormat] = useState<ExportFormat>('json');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
@@ -236,14 +218,10 @@ const RootView = () => {
   const [useValidation, setUseValidation] = useState(false);
   const [style, setStyle] = useState<StyleName>('default');
 
-  const loadQuery = (target: number) => {
-    setQuery(preparedQueries[target]);
-    setFields(preparedFields[target]);
-  };
-
   const optionsInfo = [
     {
       checked: showCombinatorsBetweenRules,
+      default: false,
       setter: setShowCombinatorsBetweenRules,
       link: '#showcombinatorsbetweenrules-optional',
       label: 'Combinators between rules',
@@ -252,6 +230,7 @@ const RootView = () => {
     },
     {
       checked: showNotToggle,
+      default: false,
       setter: setShowNotToggle,
       link: '#shownottoggle-optional',
       label: 'Show "not" toggle',
@@ -259,6 +238,7 @@ const RootView = () => {
     },
     {
       checked: showCloneButtons,
+      default: false,
       setter: setShowCloneButtons,
       link: '#showclonebuttons-optional',
       label: 'Show clone buttons',
@@ -266,6 +246,7 @@ const RootView = () => {
     },
     {
       checked: resetOnFieldChange,
+      default: true,
       setter: setResetOnFieldChange,
       link: '#resetonfieldchange-optional',
       label: 'Reset on field change',
@@ -273,6 +254,7 @@ const RootView = () => {
     },
     {
       checked: resetOnOperatorChange,
+      default: false,
       setter: setResetOnOperatorChange,
       link: '#resetonoperatorchange-optional',
       label: 'Reset on operator change',
@@ -280,6 +262,7 @@ const RootView = () => {
     },
     {
       checked: autoSelectField,
+      default: true,
       setter: setAutoSelectField,
       link: '#autoselectfield-optional',
       label: 'Auto-select field',
@@ -287,6 +270,7 @@ const RootView = () => {
     },
     {
       checked: addRuleToNewGroups,
+      default: false,
       setter: setAddRuleToNewGroups,
       link: '#addruletonewgroups-optional',
       label: 'Add rule to new groups',
@@ -294,6 +278,7 @@ const RootView = () => {
     },
     {
       checked: useValidation,
+      default: false,
       setter: setUseValidation,
       link: '#validator-optional',
       label: 'Use validation',
@@ -302,12 +287,16 @@ const RootView = () => {
     }
   ];
 
+  const resetOptions = () =>
+    optionsInfo.forEach((opt) => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
+
+  const formatOptions = useValidation ? ({ format, fields } as FormatQueryOptions) : format;
   const formatString =
     format === 'json_without_ids'
-      ? JSON.stringify(JSON.parse(formatQuery(query, { format }) as string), null, 2)
+      ? JSON.stringify(JSON.parse(formatQuery(query, formatOptions) as string), null, 2)
       : format === 'parameterized'
-      ? JSON.stringify(formatQuery(query, { format }), null, 2)
-      : formatQuery(query, { format });
+      ? JSON.stringify(formatQuery(query, formatOptions), null, 2)
+      : (formatQuery(query, formatOptions) as string);
 
   const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();
 
@@ -361,6 +350,9 @@ const RootView = () => {
                   </Checkbox>
                 </div>
               ))}
+              <Button type="default" onClick={resetOptions}>
+                Defaults
+              </Button>
             </div>
             <Divider />
             <Title level={4}>
@@ -397,13 +389,6 @@ const RootView = () => {
             <pre>yarn add react-querybuilder</pre>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
-            <Space>
-              {[null, null, null].map((_el, idx) => (
-                <Button key={idx} type="default" onClick={() => loadQuery(idx)}>
-                  Load query #{idx + 1}
-                </Button>
-              ))}
-            </Space>
             <div className={qbWrapperClassName}>
               <form className="form-inline" style={{ marginTop: '1rem' }}>
                 <QueryBuilder
