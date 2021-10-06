@@ -63,7 +63,7 @@ export const defaultValueProcessor: ValueProcessor = (
     }
   } else if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
     const valArray = toArray(value);
-    if (valArray.length === 2 && !!valArray[0] && !!valArray[1]) {
+    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
       const [first, second] = valArray;
       return `'${first.trim()}' and '${second.trim()}'`;
     } else {
@@ -288,7 +288,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
               }
             } else if (rule.operator === 'between' || rule.operator === 'notBetween') {
               const valArray = toArray(rule.value);
-              if (valArray.length === 2 && !!valArray[0] && !!valArray[1]) {
+              if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
                 const [first, second] = valArray;
                 if (rule.operator === 'between') {
                   return `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
