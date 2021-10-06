@@ -247,7 +247,7 @@ const params = [
   'Test',
   'This',
   '26',
-  'TRUE',
+  true,
   'M',
   'Programmer',
   '%@%',

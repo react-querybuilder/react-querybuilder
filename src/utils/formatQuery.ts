@@ -113,7 +113,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     return JSON.stringify(ruleGroup, ['rules', 'field', 'value', 'operator', 'combinator', 'not']);
   } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
     const parameterized = formatLowerCase === 'parameterized';
-    const params: string[] = [];
+    const params: any[] = [];
 
     // istanbul ignore else
     if (typeof validator === 'function') {
@@ -185,7 +185,11 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
             return '';
           }
         }
-        params.push((value as string).match(/^'?(.*?)'?$/)![1]);
+        params.push(
+          ['boolean', 'number'].includes(typeof rule.value)
+            ? rule.value
+            : (value as string).match(/^'?(.*?)'?$/)![1]
+        );
       } else {
         if (['in', 'not in', 'between', 'not between'].includes(operator.toLowerCase()) && !value) {
           return '';
