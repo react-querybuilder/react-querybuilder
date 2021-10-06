@@ -1,7 +1,9 @@
 import { Checkbox, Input, RadioGroup, Radio, Select, Stack } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { ValueEditorProps } from '../../src/types';
 
 const ChakraValueEditor = ({
+  fieldData,
   operator,
   value,
   handleOnChange,
@@ -14,6 +16,22 @@ const ChakraValueEditor = ({
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
+
+  useEffect(() => {
+    if (
+      inputType === 'number' &&
+      !['between', 'notBetween'].includes(operator) &&
+      typeof value === 'string' &&
+      value.includes(',')
+    ) {
+      handleOnChange('');
+    }
+  }, [inputType, operator, value, handleOnChange]);
+
+  const placeHolderText = fieldData?.placeholder ?? '';
+  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+    ? 'text'
+    : inputType || 'text';
 
   switch (type) {
     case 'select':
@@ -58,12 +76,13 @@ const ChakraValueEditor = ({
     default:
       return (
         <Input
-          type={inputType || 'text'}
+          type={inputTypeCoerced}
           value={value}
           title={title}
           size="xs"
           variant="filled"
           className={className}
+          placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}
         />
       );

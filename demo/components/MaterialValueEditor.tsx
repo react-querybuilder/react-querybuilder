@@ -6,9 +6,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Select from '@material-ui/core/Select';
+import { useEffect } from 'react';
 import { ValueEditorProps } from '../../src/types';
 
 const MaterialValueEditor = ({
+  fieldData,
   operator,
   value,
   handleOnChange,
@@ -21,6 +23,22 @@ const MaterialValueEditor = ({
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
+
+  useEffect(() => {
+    if (
+      inputType === 'number' &&
+      !['between', 'notBetween'].includes(operator) &&
+      typeof value === 'string' &&
+      value.includes(',')
+    ) {
+      handleOnChange('');
+    }
+  }, [inputType, operator, value, handleOnChange]);
+
+  const placeHolderText = fieldData?.placeholder ?? '';
+  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+    ? 'text'
+    : inputType || 'text';
 
   switch (type) {
     case 'select':
@@ -59,10 +77,11 @@ const MaterialValueEditor = ({
     default:
       return (
         <Input
-          type={inputType || 'text'}
+          type={inputTypeCoerced}
           value={value}
           title={title}
           className={className}
+          placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}
         />
       );

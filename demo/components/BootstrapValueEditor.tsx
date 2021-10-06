@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { ValueEditorProps } from '../../src/types';
 
 const BootstrapValueEditor = ({
+  fieldData,
   operator,
   value,
   handleOnChange,
@@ -13,6 +15,22 @@ const BootstrapValueEditor = ({
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
+
+  useEffect(() => {
+    if (
+      inputType === 'number' &&
+      !['between', 'notBetween'].includes(operator) &&
+      typeof value === 'string' &&
+      value.includes(',')
+    ) {
+      handleOnChange('');
+    }
+  }, [inputType, operator, value, handleOnChange]);
+
+  const placeHolderText = fieldData?.placeholder ?? '';
+  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+    ? 'text'
+    : inputType || 'text';
 
   switch (type) {
     case 'select':
@@ -65,10 +83,11 @@ const BootstrapValueEditor = ({
     default:
       return (
         <input
-          type={inputType || 'text'}
+          type={inputTypeCoerced}
           value={value}
           title={title}
           className={className}
+          placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}
         />
       );

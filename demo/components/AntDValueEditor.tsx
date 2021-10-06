@@ -1,9 +1,11 @@
 import { Checkbox, Input, Radio, Select } from 'antd';
+import { useEffect } from 'react';
 import { ValueEditorProps } from '../../src/types';
 
 const { Option } = Select;
 
 const AntDValueEditor = ({
+  fieldData,
   operator,
   value,
   handleOnChange,
@@ -16,6 +18,22 @@ const AntDValueEditor = ({
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
+
+  useEffect(() => {
+    if (
+      inputType === 'number' &&
+      !['between', 'notBetween'].includes(operator) &&
+      typeof value === 'string' &&
+      value.includes(',')
+    ) {
+      handleOnChange('');
+    }
+  }, [inputType, operator, value, handleOnChange]);
+
+  const placeHolderText = fieldData?.placeholder ?? '';
+  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+    ? 'text'
+    : inputType || 'text';
 
   switch (type) {
     case 'select':
@@ -57,10 +75,11 @@ const AntDValueEditor = ({
     default:
       return (
         <Input
-          type={inputType || 'text'}
+          type={inputTypeCoerced}
           value={value}
           title={title}
           className={className}
+          placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}
         />
       );
