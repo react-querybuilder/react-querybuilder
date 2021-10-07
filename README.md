@@ -35,18 +35,18 @@ yarn add react-querybuilder
 
 ## Demo
 
-[See live demo](https://react-querybuilder.github.io/react-querybuilder/)
-
-OR
+[Click here to see a live, interactive demo](https://react-querybuilder.github.io/react-querybuilder/).
 
 To run the demo yourself, go through the following steps:
 
 1. _Clone this repo_
-2. `yarn` _Install npm packages_
+2. `yarn` _Install dependencies_
 3. `yarn start` _Run a local server_
-4. http://localhost:8080/ _Visit localhost:8080 in your browser_
+4. _Visit http://localhost:8080 in your browser_
 
 ## Usage
+
+_(For advanced tips and tricks, visit the [wiki](https://github.com/react-querybuilder/react-querybuilder/wiki).)_
 
 ```tsx
 import { useState } from 'react';
