@@ -651,7 +651,7 @@ function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupT
 function formatQuery(
   query: RuleGroupType,
   options?: ExportFormat | FormatQueryOptions
-): string | { sql: string; params: string[] };
+): string | ParameterizedSQL;
 ```
 
 `formatQuery` parses a given query into one of the following formats: SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `"!="` operator.

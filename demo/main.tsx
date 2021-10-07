@@ -9,6 +9,7 @@ import QueryBuilder, {
   Field,
   formatQuery,
   FormatQueryOptions,
+  ParameterizedSQL,
   QueryBuilderProps,
   RuleGroupType,
   RuleType
@@ -296,7 +297,7 @@ const RootView = () => {
     format === 'json_without_ids'
       ? JSON.stringify(JSON.parse(formatQuery(query, formatOptions) as string), null, 2)
       : format === 'parameterized'
-      ? JSON.stringify(formatQuery(query, formatOptions), null, 2)
+      ? JSON.stringify(formatQuery(query, formatOptions) as ParameterizedSQL, null, 2)
       : (formatQuery(query, formatOptions) as string);
 
   const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();

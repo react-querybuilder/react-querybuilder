@@ -1,6 +1,12 @@
 import uniqWith from 'lodash/uniqWith';
 import { isRuleGroup } from '.';
-import { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from '..';
+import {
+  ParameterizedSQL,
+  QueryValidator,
+  RuleValidator,
+  ValidationMap,
+  ValidationResult
+} from '..';
 import {
   ExportFormat,
   FormatQueryOptions,
@@ -120,7 +126,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       const validationResult = validator(ruleGroup);
       if (typeof validationResult === 'boolean') {
         if (validationResult === false) {
-          return parameterized ? { sql: '(1 = 1)', params: [] } : '(1 = 1)';
+          return parameterized ? ({ sql: '(1 = 1)', params: [] } as ParameterizedSQL) : '(1 = 1)';
         }
       } else {
         validationMap = validationResult;

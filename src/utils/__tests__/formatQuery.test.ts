@@ -1,5 +1,5 @@
 import { formatQuery } from '..';
-import { RuleGroupType, ValueProcessor } from '../../types';
+import { ParameterizedSQL, RuleGroupType, ValueProcessor } from '../../types';
 
 const query: RuleGroupType = {
   id: 'g-root',
@@ -272,7 +272,7 @@ describe('formatQuery', () => {
   });
 
   it('formats parameterized SQL correctly', () => {
-    const parameterized = formatQuery(query, 'parameterized') as { sql: string; params: string[] };
+    const parameterized = formatQuery(query, 'parameterized') as ParameterizedSQL;
     expect(parameterized).toHaveProperty('sql', parameterizedSQLString);
     expect(parameterized).toHaveProperty('params');
     expect(parameterized.params).toEqual(params);
@@ -488,7 +488,7 @@ describe('formatQuery', () => {
             fields: [{ name: 'field', validator: () => false }]
           }
         )
-      ).toEqual({ sql: `(field2 = ?)`, params: [''] });
+      ).toEqual({ sql: `(field2 = ?)`, params: [''] } as ParameterizedSQL);
     });
 
     it('should invalidate parameterized', () => {
@@ -497,7 +497,7 @@ describe('formatQuery', () => {
           { id: 'root', combinator: 'and', rules: [] },
           { format: 'parameterized', validator: () => false }
         )
-      ).toEqual({ sql: '(1 = 1)', params: [] });
+      ).toEqual({ sql: '(1 = 1)', params: [] } as ParameterizedSQL);
     });
 
     it('should invalidate a mongob query', () => {

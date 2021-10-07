@@ -295,6 +295,11 @@ export interface FormatQueryOptions {
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
 }
 
+export interface ParameterizedSQL {
+  sql: string;
+  params: any[];
+}
+
 export interface RuleGroupProps {
   id: string;
   parentId?: string;
