@@ -342,6 +342,18 @@ describe('formatQuery', () => {
     );
   });
 
+  it('handles custom fallbackExpression correctly', () => {
+    const queryWithArrayValue: RuleGroupType = {
+      id: 'g-root',
+      combinator: 'and',
+      rules: []
+    };
+
+    expect(
+      formatQuery(queryWithArrayValue, { format: 'sql', fallbackExpression: 'fallbackExpression' })
+    ).toBe('fallbackExpression');
+  });
+
   it('handles json_without_ids correctly', () => {
     const example_without_ids: RuleGroupType = {
       id: 'root',

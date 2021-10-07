@@ -100,6 +100,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
   let validator: QueryValidator = () => true;
   let fields: { name: string; validator?: RuleValidator; [k: string]: any }[] = [];
   let validationMap: ValidationMap = {};
+  let fallbackExpression = '';
 
   if (typeof options === 'object' && options !== null) {
     format = options.format ?? 'json';
@@ -107,8 +108,16 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
+    fallbackExpression = options.fallbackExpression ?? '';
   } else if (typeof options === 'string') {
     format = options;
+  }
+  if (!fallbackExpression) {
+    if (['parameterized', 'sql'].includes(format)) {
+      fallbackExpression = '(1 = 1)';
+    } else if (format === 'mongodb') {
+      fallbackExpression = '$and:[{$expr:true}]';
+    }
   }
 
   const formatLowerCase = format.toLowerCase() as ExportFormat;
@@ -126,7 +135,9 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       const validationResult = validator(ruleGroup);
       if (typeof validationResult === 'boolean') {
         if (validationResult === false) {
-          return parameterized ? ({ sql: '(1 = 1)', params: [] } as ParameterizedSQL) : '(1 = 1)';
+          return parameterized
+            ? ({ sql: fallbackExpression, params: [] } as ParameterizedSQL)
+            : fallbackExpression;
         }
       } else {
         validationMap = validationResult;
@@ -208,7 +219,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
 
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id])) {
-        return outermost ? '(1 = 1)' : '';
+        return outermost ? fallbackExpression : '';
       }
 
       const processedRules = rg.rules.map((rule) => {
@@ -219,7 +230,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       });
 
       if (processedRules.length === 0) {
-        return '(1 = 1)';
+        return fallbackExpression;
       }
 
       return `${rg.not ? 'NOT ' : ''}(${processedRules
@@ -238,7 +249,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       const validationResult = validator(ruleGroup);
       if (typeof validationResult === 'boolean') {
         if (validationResult === false) {
-          return '{$and:[{$expr:true}]}';
+          return `{${fallbackExpression}}`;
         }
       } else {
         validationMap = validationResult;
@@ -247,7 +258,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
 
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id])) {
-        return outermost ? '$and:[{$expr:true}]' : '';
+        return outermost ? fallbackExpression : '';
       }
 
       const combinator = `$${rg.combinator}`;
@@ -316,7 +327,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
         .filter((e) => !!e)
         .join(',');
 
-      return expression ? `${combinator}:[${expression}]` : '$and:[{$expr:true}]';
+      return expression ? `${combinator}:[${expression}]` : fallbackExpression;
     };
 
     return `{${processRuleGroup(ruleGroup, true)}}`;

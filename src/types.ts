@@ -293,6 +293,12 @@ export interface FormatQueryOptions {
    * all you need to provide is the name and validator for each field.
    */
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
+  /**
+   * This string will be inserted in place of invalid groups for "sql",
+   * "parameterized", and "mongodb" formats. Defaults to '(1 = 1)' for "sql"
+   * and "parameterized", '$and:[{$expr:true}]' for "mongodb".
+   */
+  fallbackExpression?: string;
 }
 
 export interface ParameterizedSQL {

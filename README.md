@@ -695,6 +695,7 @@ interface FormatQueryOptions {
   quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
   validator?: QueryValidator; // function to validate the entire query (see [validator](#validator-optional))
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[]; // This can be the same Field[] passed to <QueryBuilder />, but really all you need to provide is the name and validator for each field
+  fallbackExpression?: string; // this string will be inserted in place of invalid groups for "sql", "parameterized", and "mongodb" formats (defaults to '(1 = 1)' for "sql" and "parameterized", '$and:[{$expr:true}]' for "mongodb")
 }
 ```
 
@@ -803,7 +804,7 @@ const query = {
 };
 
 // Invalid query
-console.log(formatQuery(query, { format: 'sql', validator: () => false })); // "(1 = 1)"
+console.log(formatQuery(query, { format: 'sql', validator: () => false })); // "(1 = 1)" <-- see `fallbackExpression` option
 // Invalid rule based on validation map
 console.log(formatQuery(query, { format: 'sql', validator: () => ({ r1: false }) })); // "(lastName = 'Vai')"
 // Invalid rule based on field validator
