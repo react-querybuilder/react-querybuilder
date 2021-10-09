@@ -415,7 +415,7 @@ const RootView = () => {
               </form>
             </div>
             <Divider />
-            <pre>{formatString}</pre>
+            <pre id="formatQuery-output">{formatString}</pre>
           </Content>
         </Layout>
       </Layout>
