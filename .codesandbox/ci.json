@@ -1,0 +1,5 @@
+{
+  "sandboxes": ["react-querybuilder-ci-oq8ts"],
+  "node": "14",
+  "buildCommand": "dist"
+}
