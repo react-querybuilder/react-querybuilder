@@ -3,6 +3,10 @@ import { ChakraProvider, Tooltip } from '@chakra-ui/react';
 import { Button, Checkbox, Divider, Layout, Radio, Select, Typography } from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
+import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
+import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import QueryBuilder, {
   defaultValidator,
   ExportFormat,
@@ -45,6 +49,26 @@ type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
 
 const repoLink = 'https://github.com/react-querybuilder/react-querybuilder';
 const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
+
+SyntaxHighlighter.registerLanguage('json', json);
+SyntaxHighlighter.registerLanguage('json_without_ids', json);
+SyntaxHighlighter.registerLanguage('parameterized', json);
+SyntaxHighlighter.registerLanguage('sql', sql);
+
+const shStyle = {
+  ...vs,
+  hljs: {
+    ...vs.hljs,
+    backgroundColor: '#eeeeee',
+    border: '1px solid gray',
+    borderRadius: 4,
+    fontFamily: "Consolas, 'Courier New', monospace",
+    fontSize: 'small',
+    padding: '1rem',
+    minWidth: 405,
+    whiteSpace: 'pre-wrap'
+  }
+};
 
 const validator = (r: RuleType) => !!r.value;
 
@@ -415,7 +439,13 @@ const RootView = () => {
               </form>
             </div>
             <Divider />
-            <pre id="formatQuery-output">{formatString}</pre>
+            {format === 'mongodb' ? (
+              <pre id="formatQuery-output">{formatString}</pre>
+            ) : (
+              <SyntaxHighlighter language={format} style={shStyle}>
+                {formatString}
+              </SyntaxHighlighter>
+            )}
           </Content>
         </Layout>
       </Layout>
