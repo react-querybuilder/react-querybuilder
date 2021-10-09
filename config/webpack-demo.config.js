@@ -21,6 +21,7 @@ module.exports = merge(webpackCommon, {
   module: {
     rules: [
       {
+        test: /\.js$/,
         parser: {
           amd: false
         }
