@@ -185,7 +185,6 @@ const fields: Field[] = [
 ];
 
 const initialQuery: RuleGroupType = {
-  id: 'root',
   rules: [
     {
       field: 'firstName',
@@ -203,7 +202,6 @@ const initialQuery: RuleGroupType = {
       value: '28'
     },
     {
-      id: 'subGroup',
       combinator: 'or',
       rules: [
         {

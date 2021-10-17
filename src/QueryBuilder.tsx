@@ -1,5 +1,5 @@
+import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
-import findIndex from 'lodash/findIndex';
 import uniqWith from 'lodash/uniqWith';
 import { useEffect, useState } from 'react';
 import {
@@ -12,7 +12,7 @@ import {
 } from './defaults';
 import './query-builder.scss';
 import { Field, QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
-import { c, findRule, generateID, generateValidQuery, getLevel, isRuleGroup } from './utils';
+import { c, findPath, generateID, generateValidQueryObject, isRuleGroup } from './utils';
 
 export const QueryBuilder = ({
   query,
@@ -55,7 +55,7 @@ export const QueryBuilder = ({
    * Gets the initial query
    */
   const getInitialQuery = () => {
-    return (query && generateValidQuery(query)) || createRuleGroup();
+    return generateValidQueryObject(query || createRuleGroup());
   };
 
   const createRule = (): RuleType => {
@@ -198,12 +198,13 @@ export const QueryBuilder = ({
   /**
    * Adds a rule to the query
    */
-  const onRuleAdd = (rule: RuleType, parentId: string) => {
-    const newRule = typeof onAddRule === 'function' ? onAddRule(rule, parentId, root) : rule;
+  const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
+    const newRule = typeof onAddRule === 'function' ? onAddRule(rule, parentPath, root) : rule;
     if (!newRule) return;
     const rootCopy = cloneDeep(root);
-    const parent = findRule(parentId, rootCopy) as RuleGroupType;
-    parent?.rules.push(generateValidQuery(newRule));
+    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
+    const thisPath = parentPath.concat([parent.rules.length]);
+    parent.rules.push(generateValidQueryObject(newRule, thisPath));
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
   };
@@ -211,26 +212,24 @@ export const QueryBuilder = ({
   /**
    * Adds a rule group to the query
    */
-  const onGroupAdd = (group: RuleGroupType, parentId: string) => {
-    const newGroup = typeof onAddGroup === 'function' ? onAddGroup(group, parentId, root) : group;
+  const onGroupAdd = (group: RuleGroupType, parentPath: number[]) => {
+    const newGroup = typeof onAddGroup === 'function' ? onAddGroup(group, parentPath, root) : group;
     if (!newGroup) return;
     const rootCopy = cloneDeep(root);
-    const parent = findRule(parentId, rootCopy) as RuleGroupType;
-    /* istanbul ignore else */
-    if (parent) {
-      parent.rules.push(generateValidQuery(newGroup));
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
-    }
+    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
+    const thisPath = parentPath.concat([parent.rules.length]);
+    parent.rules.push(generateValidQueryObject(newGroup, thisPath));
+    setRoot(rootCopy);
+    _notifyQueryChange(rootCopy);
   };
 
   const onPropChange = (
-    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id'>,
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
     value: any,
-    ruleId: string
+    path: number[]
   ) => {
     const rootCopy = cloneDeep(root);
-    const rule = findRule(ruleId, rootCopy) as RuleType | RuleGroupType;
+    const rule = findPath(path, rootCopy);
     /* istanbul ignore else */
     if (rule) {
       const isGroup = isRuleGroup(rule);
@@ -263,14 +262,14 @@ export const QueryBuilder = ({
   /**
    * Removes a rule from the query
    */
-  const onRuleRemove = (id: string, parentId: string) => {
+  const onRuleRemove = (path: number[]) => {
     const rootCopy = cloneDeep(root);
-    const parent = findRule(parentId, rootCopy) as RuleGroupType;
+    const parentPath = clone(path);
+    const index = parentPath.pop();
+    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {
-      const index = findIndex(parent.rules, { id });
-
-      parent.rules.splice(index, 1);
+      parent.rules.splice(index!, 1);
 
       setRoot(rootCopy);
       _notifyQueryChange(rootCopy);
@@ -280,25 +279,18 @@ export const QueryBuilder = ({
   /**
    * Removes a rule group from the query
    */
-  const onGroupRemove = (id: string, parentId: string) => {
+  const onGroupRemove = (path: number[]) => {
     const rootCopy = cloneDeep(root);
-    const parent = findRule(parentId, rootCopy) as RuleGroupType;
+    const parentPath = clone(path);
+    const index = parentPath.pop();
+    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {
-      const index = findIndex(parent.rules, { id });
-
-      parent.rules.splice(index, 1);
+      parent.rules.splice(index!, 1);
 
       setRoot(rootCopy);
       _notifyQueryChange(rootCopy);
     }
-  };
-
-  /**
-   * Gets the level of the rule with the provided ID
-   */
-  const getLevelFromRoot = (id: string) => {
-    return getLevel(id, 0, root);
   };
 
   /**
@@ -329,7 +321,6 @@ export const QueryBuilder = ({
     onRuleRemove,
     onGroupRemove,
     onPropChange,
-    getLevel: getLevelFromRoot,
     isRuleGroup,
     controls: { ...defaultControlElements, ...controlElements },
     getOperators: getOperatorsMain,
@@ -346,7 +337,7 @@ export const QueryBuilder = ({
 
   // Set the query state when a new query prop comes in
   useEffect(() => {
-    setRoot(generateValidQuery(query || getInitialQuery()) as RuleGroupType);
+    setRoot(generateValidQueryObject(query || getInitialQuery()));
   }, [query]);
 
   // Notify a query change on mount
@@ -375,6 +366,7 @@ export const QueryBuilder = ({
         combinator={root.combinator}
         schema={schema}
         id={root.id}
+        path={[]}
         not={!!root.not}
         context={context}
       />

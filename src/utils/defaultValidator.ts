@@ -25,10 +25,13 @@ const defaultValidator: QueryValidator = (query) => {
     if (!defaultCombinators.map((c) => c.name).includes(rg.combinator) && rg.rules.length >= 2) {
       reasons.push(groupInvalidReasons.invalidCombinator);
     }
-    if (reasons.length) {
-      result[rg.id] = { valid: false, reasons };
-    } else {
-      result[rg.id] = true;
+    /* istanbul ignore else */
+    if (rg.id) {
+      if (reasons.length) {
+        result[rg.id] = { valid: false, reasons };
+      } else {
+        result[rg.id] = true;
+      }
     }
     rg.rules.forEach((r) => {
       if (isRuleGroup(r)) {

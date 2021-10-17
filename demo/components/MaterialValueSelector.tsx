@@ -13,7 +13,7 @@ const MaterialValueSelector = ({
   <FormControl className={className} title={title}>
     <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
       {options.map((option) => {
-        const key = option.id ? `key-${option.id}` : `key-${option.name}`;
+        const key = `key-${option.id ?? option.name}`;
         return (
           <MenuItem key={key} value={option.name}>
             {option.label}

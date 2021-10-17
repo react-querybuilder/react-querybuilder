@@ -69,12 +69,11 @@ describe('<RuleGroup />', () => {
       isRuleGroup: (_rule): _rule is RuleGroupType => {
         return false;
       },
-      onPropChange: (_prop, _value, _id) => {},
-      onRuleAdd: (_rule, _parentId) => {},
-      onGroupAdd: (_ruleGroup, _id) => {},
+      onPropChange: (_prop, _value, _path) => {},
+      onRuleAdd: (_rule, _parentPath) => {},
+      onGroupAdd: (_ruleGroup, _parentPath) => {},
       createRule: () => _createRule(1),
-      createRuleGroup: () => _createRuleGroup(1, 'any_parent_id', []),
-      getLevel: (_id) => 0,
+      createRuleGroup: () => _createRuleGroup(1, [], []),
       showCombinatorsBetweenRules: false,
       showNotToggle: false,
       showCloneButtons: false,
@@ -82,7 +81,7 @@ describe('<RuleGroup />', () => {
     };
     props = {
       id: 'id',
-      parentId: 'parentId',
+      path: [0],
       rules: [],
       combinator: 'and',
       schema: schema as Schema,
@@ -205,7 +204,7 @@ describe('<RuleGroup />', () => {
     });
 
     it('does not exist if it does not have a parent', () => {
-      props.parentId = null;
+      props.path = [];
       const dom = shallow(<RuleGroup {...props} />);
       expect(dom.find(ActionElement)).toHaveLength(0);
     });
@@ -235,7 +234,7 @@ describe('<RuleGroup />', () => {
 
   describe('when 1 rule group exists', () => {
     beforeEach(() => {
-      props.rules = [_createRuleGroup(1, props.id, [])];
+      props.rules = [_createRuleGroup(1, [], [])];
       schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
     });
 
@@ -248,35 +247,34 @@ describe('<RuleGroup />', () => {
       const dom = shallow(<RuleGroup {...props} />);
       const groupProps = dom.find(RuleGroup).props();
       expect(groupProps.id).toBe('rule_group_id_1');
-      expect(groupProps.parentId).toBe('id');
+      expect(groupProps.path).toEqual([0, 0]);
       expect(Array.isArray(groupProps.rules)).toBe(true);
       expect(groupProps.combinator).toBeUndefined();
     });
   });
 
-  describe('when no rules or combinator props exist', () => {
+  describe('when no combinator prop exists', () => {
     it('has default props', () => {
       const dom = mount(
         <RuleGroup
-          id={props.id}
-          parentId={props.parentId}
+          path={[]}
+          rules={[]}
           schema={{ ...props.schema, isRuleGroup: (_rule): _rule is RuleGroupType => true }}
           translations={props.translations}
         />
       );
       const groupProps = dom.find(RuleGroup).props();
-      expect(groupProps.rules).toBeUndefined();
       expect(groupProps.combinator).toBeUndefined();
     });
   });
 
   describe('onCombinatorChange', () => {
     it('calls onPropChange from the schema with expected values', () => {
-      let actualProperty: string, actualValue: any, actualId: string;
-      schema.onPropChange = (prop, value, id) => {
+      let actualProperty: string, actualValue: any, actualPath: number[];
+      schema.onPropChange = (prop, value, path) => {
         actualProperty = prop;
         actualValue = value;
-        actualId = id;
+        actualPath = path;
       };
       const dom = mount(<RuleGroup {...props} />);
       dom
@@ -285,17 +283,15 @@ describe('<RuleGroup />', () => {
 
       expect(actualProperty).toBe('combinator');
       expect(actualValue).toBe('any_combinator_value');
-      expect(actualId).toBe('id');
+      expect(actualPath).toEqual([0]);
     });
   });
 
   describe('onNotToggleChange', () => {
     it('should set NOT property on ruleGroups below root', () => {
-      // given
       const idOfNestedRuleGroup = 'nested';
       const propsWithNestedRuleGroup = {
         ...props,
-        id: 'root',
         rules: [
           {
             id: idOfNestedRuleGroup,
@@ -307,19 +303,17 @@ describe('<RuleGroup />', () => {
       };
       propsWithNestedRuleGroup.schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
 
-      // when
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
 
-      // then
       expect(dom.find(RuleGroup).find({ id: idOfNestedRuleGroup }).props().not).toBe(true);
     });
 
     it('calls onPropChange from the schema with expected values', () => {
-      let actualProperty: string, actualValue: any, actualId: string;
-      schema.onPropChange = (prop, value, id) => {
+      let actualProperty: string, actualValue: any, actualPath: number[];
+      schema.onPropChange = (prop, value, path) => {
         actualProperty = prop;
         actualValue = value;
-        actualId = id;
+        actualPath = path;
       };
       schema.showNotToggle = true;
       const dom = mount(<RuleGroup {...props} />);
@@ -329,16 +323,16 @@ describe('<RuleGroup />', () => {
 
       expect(actualProperty).toBe('not');
       expect(actualValue).toBe(true);
-      expect(actualId).toBe('id');
+      expect(actualPath).toEqual([0]);
     });
   });
 
   describe('addRule', () => {
     it('calls onRuleAdd from the schema with expected values', () => {
-      let actualRule: RuleType, actualId: string;
-      schema.onRuleAdd = (rule, id) => {
+      let actualRule: RuleType, actualPath: number[];
+      schema.onRuleAdd = (rule, path) => {
         actualRule = rule;
-        actualId = id;
+        actualPath = path;
       };
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.addRule}`).simulate('click');
@@ -347,24 +341,23 @@ describe('<RuleGroup />', () => {
       expect(actualRule).toHaveProperty('field');
       expect(actualRule).toHaveProperty('operator');
       expect(actualRule).toHaveProperty('value');
-      expect(actualId).toBe('id');
+      expect(actualPath).toEqual([0]);
     });
   });
 
   describe('addGroup', () => {
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup: RuleGroupType, actualId: string;
-      schema.onGroupAdd = (ruleGroup, id) => {
+      let actualRuleGroup: RuleGroupType, actualPath: number[];
+      schema.onGroupAdd = (ruleGroup, path) => {
         actualRuleGroup = ruleGroup;
-        actualId = id;
+        actualPath = path;
       };
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.addGroup}`).simulate('click');
 
       expect(actualRuleGroup).toHaveProperty('id');
-      expect(actualRuleGroup).toHaveProperty('parentId');
       expect(actualRuleGroup).toHaveProperty('rules');
-      expect(actualId).toBe('id');
+      expect(actualPath).toEqual([0]);
     });
   });
 
@@ -374,10 +367,10 @@ describe('<RuleGroup />', () => {
     });
 
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup: RuleGroupType, actualId: string;
-      schema.onGroupAdd = (ruleGroup, id) => {
+      let actualRuleGroup: RuleGroupType, actualPath: number[];
+      schema.onGroupAdd = (ruleGroup, path) => {
         actualRuleGroup = ruleGroup;
-        actualId = id;
+        actualPath = path;
       };
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.cloneGroup}`).simulate('click');
@@ -385,29 +378,27 @@ describe('<RuleGroup />', () => {
       expect(actualRuleGroup.combinator).toBe('and');
       expect(actualRuleGroup.not).toBeUndefined();
       expect(actualRuleGroup.rules).toHaveLength(0);
-      expect(actualId).toBe('parentId');
+      expect(actualPath).toEqual([]);
     });
   });
 
   describe('removeGroup', () => {
     it('calls onGroupRemove from the schema with expected values', () => {
-      let actualId: string, actualParentId: string;
-      schema.onGroupRemove = (id, parentId) => {
-        actualId = id;
-        actualParentId = parentId;
+      let actualPath: number[];
+      schema.onGroupRemove = (path) => {
+        actualPath = path;
       };
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.removeGroup}`).simulate('click');
 
-      expect(actualId).toBe('id');
-      expect(actualParentId).toBe('parentId');
+      expect(actualPath).toEqual([0]);
     });
   });
 
   describe('showCombinatorsBetweenRules', () => {
     it('does not display combinators when there is only one rule', () => {
       schema.showCombinatorsBetweenRules = true;
-      props.rules = [{ id: 'r-test', field: 'test', value: 'Test', operator: '=' }];
+      props.rules = [{ field: 'test', value: 'Test', operator: '=' }];
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find(`.${standardClassnames.combinators}`);
       expect(sc).toHaveLength(0);
@@ -416,9 +407,9 @@ describe('<RuleGroup />', () => {
     it('displays combinators when there is more than one rule', () => {
       schema.showCombinatorsBetweenRules = true;
       props.rules = [
-        { id: 'g-test1', rules: [], combinator: 'and' },
-        { id: 'r-test', field: 'test', value: 'Test', operator: '=' },
-        { id: 'g-test2', rules: [], combinator: 'and' }
+        { rules: [], combinator: 'and' },
+        { field: 'test', value: 'Test', operator: '=' },
+        { rules: [], combinator: 'and' }
       ];
       const dom = shallow(<RuleGroup {...props} />);
       const sc = dom.find(`.${standardClassnames.combinators}`);
@@ -554,7 +545,7 @@ describe('<RuleGroup />', () => {
     it('should pass down the level of the element', () => {
       props.rules = [_createRule(1), _createRule(2)];
       const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find(element).props().level).toBe(0);
+      expect(dom.find(element).props().level).toBe(1);
     });
   }
 
@@ -568,10 +559,17 @@ describe('<RuleGroup />', () => {
     };
   };
 
-  const _createRuleGroup = (index: number, parentId: string, rules: RuleType[]): RuleGroupType => ({
-    id: 'rule_group_id_' + index,
-    parentId,
-    rules,
-    combinator: undefined
-  });
+  const _createRuleGroup = (
+    index: number,
+    parentPath: number[],
+    rules: RuleType[]
+  ): RuleGroupType => {
+    const thisPath = parentPath.concat([index]);
+    return {
+      id: 'rule_group_id_' + index,
+      path: thisPath,
+      rules,
+      combinator: undefined
+    };
+  };
 });

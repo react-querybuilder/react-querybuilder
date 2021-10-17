@@ -32,6 +32,7 @@ export interface Field extends NameLabelPair {
 }
 
 export interface RuleType {
+  path?: number[];
   id?: string;
   field: string;
   operator: string;
@@ -39,8 +40,8 @@ export interface RuleType {
 }
 
 export interface RuleGroupType {
-  id: string;
-  parentId?: string;
+  path?: number[];
+  id?: string;
   combinator: string;
   rules: (RuleType | RuleGroupType)[];
   not?: boolean;
@@ -217,21 +218,20 @@ export interface Schema {
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupType;
-  getLevel(id: string): number;
   getOperators(field: string): NameLabelPair[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
-  onGroupAdd(group: RuleGroupType, parentId: string): void;
-  onGroupRemove(groupId: string, parentId: string): void;
+  onGroupAdd(group: RuleGroupType, parentPath: number[]): void;
+  onGroupRemove(path: number[]): void;
   onPropChange(
-    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id'>,
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
     value: any,
-    ruleId: string
+    path: number[]
   ): void;
-  onRuleAdd(rule: RuleType, parentId: string): void;
-  onRuleRemove(id: string, parentId: string): void;
+  onRuleAdd(rule: RuleType, parentPath: number[]): void;
+  onRuleRemove(path: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -307,10 +307,10 @@ export interface ParameterizedSQL {
 }
 
 export interface RuleGroupProps {
-  id: string;
-  parentId?: string;
+  id?: string;
+  path: number[];
   combinator?: string;
-  rules?: (RuleType | RuleGroupType)[];
+  rules: (RuleType | RuleGroupType)[];
   translations: Translations;
   schema: Schema;
   not?: boolean;
@@ -318,8 +318,8 @@ export interface RuleGroupProps {
 }
 
 export interface RuleProps {
-  id: string;
-  parentId: string;
+  id?: string;
+  path: number[];
   field: string;
   operator: string;
   value: any;
@@ -413,14 +413,14 @@ export interface QueryBuilderProps {
    * This callback is invoked before a new rule is added. The function should either manipulate
    * the rule and return it, or return `false` to cancel the addition of the rule.
    */
-  onAddRule?(rule: RuleType, parentId: string, query: RuleGroupType): RuleType | false;
+  onAddRule?(rule: RuleType, parentPath: number[], query: RuleGroupType): RuleType | false;
   /**
    * This callback is invoked before a new group is added. The function should either manipulate
    * the group and return it, or return `false` to cancel the addition of the group.
    */
   onAddGroup?(
     ruleGroup: RuleGroupType,
-    parentId: string,
+    parentPath: number[],
     query: RuleGroupType
   ): RuleGroupType | false;
   /**

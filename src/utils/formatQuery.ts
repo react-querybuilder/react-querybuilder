@@ -218,7 +218,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     };
 
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): string => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id])) {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return outermost ? fallbackExpression : '';
       }
 
@@ -257,7 +257,7 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
     }
 
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id])) {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return outermost ? fallbackExpression : '';
       }
 
