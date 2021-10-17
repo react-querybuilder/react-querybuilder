@@ -319,7 +319,7 @@ describe('formatQuery', () => {
   });
 
   it('handles quoteFieldNamesWith correctly', () => {
-    const queryWithArrayValue: RuleGroupType = {
+    const queryToTest: RuleGroupType = {
       id: 'g-root',
       combinator: 'and',
       rules: [
@@ -337,25 +337,25 @@ describe('formatQuery', () => {
       not: false
     };
 
-    expect(formatQuery(queryWithArrayValue, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
+    expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
       "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai')"
     );
   });
 
   it('handles custom fallbackExpression correctly', () => {
-    const queryWithArrayValue: RuleGroupType = {
+    const queryToTest: RuleGroupType = {
       id: 'g-root',
       combinator: 'and',
       rules: []
     };
 
     expect(
-      formatQuery(queryWithArrayValue, { format: 'sql', fallbackExpression: 'fallbackExpression' })
+      formatQuery(queryToTest, { format: 'sql', fallbackExpression: 'fallbackExpression' })
     ).toBe('fallbackExpression');
   });
 
   it('handles json_without_ids correctly', () => {
-    const example_without_ids: RuleGroupType = {
+    const queryToTest: RuleGroupType = {
       id: 'root',
       combinator: 'and',
       rules: [
@@ -369,7 +369,7 @@ describe('formatQuery', () => {
     };
     const expectedResult =
       '{"rules":[{"field":"firstName","value":"","operator":"null"}],"combinator":"and","not":false}';
-    expect(formatQuery(example_without_ids, 'json_without_ids')).toBe(expectedResult);
+    expect(formatQuery(queryToTest, 'json_without_ids')).toBe(expectedResult);
   });
 
   describe('validation', () => {
