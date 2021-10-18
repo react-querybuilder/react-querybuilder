@@ -8,9 +8,7 @@ import { RuleGroup } from '../RuleGroup';
 import {
   ActionWithRulesProps,
   Classnames,
-  CombinatorSelectorProps,
   Controls,
-  NotToggleProps,
   RuleGroupProps,
   RuleGroupType,
   RuleType,
@@ -25,25 +23,17 @@ describe('<RuleGroup />', () => {
     props: RuleGroupProps;
   beforeEach(() => {
     controls = {
-      combinatorSelector: (props: CombinatorSelectorProps) => (
+      combinatorSelector: (props) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
           <option value="combinator">Combinator</option>
           <option value="any_combinator_value">Any Combinator</option>
         </select>
       ),
-      addRuleAction: (props: ActionWithRulesProps) => (
-        <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>
-      ),
-      addGroupAction: (props: ActionWithRulesProps) => (
-        <button onClick={(e) => props.handleOnClick(e)}>+Group</button>
-      ),
-      cloneGroupAction: (props: ActionWithRulesProps) => (
-        <button onClick={(e) => props.handleOnClick(e)}>⧉</button>
-      ),
-      removeGroupAction: (props: ActionWithRulesProps) => (
-        <button onClick={(e) => props.handleOnClick(e)}>x</button>
-      ),
-      notToggle: (props: NotToggleProps) => (
+      addRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>,
+      addGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Group</button>,
+      cloneGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>⧉</button>,
+      removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
+      notToggle: (props) => (
         <label>
           <input onChange={(e) => props.handleOnChange(e.target.checked)} />
           Not
@@ -72,8 +62,8 @@ describe('<RuleGroup />', () => {
       onPropChange: (_prop, _value, _path) => {},
       onRuleAdd: (_rule, _parentPath) => {},
       onGroupAdd: (_ruleGroup, _parentPath) => {},
-      createRule: () => _createRule(1),
-      createRuleGroup: () => _createRuleGroup(1, [], []),
+      createRule: () => _createRule(0),
+      createRuleGroup: () => _createRuleGroup(0, [], []),
       showCombinatorsBetweenRules: false,
       showNotToggle: false,
       showCloneButtons: false,
@@ -234,7 +224,7 @@ describe('<RuleGroup />', () => {
 
   describe('when 1 rule group exists', () => {
     beforeEach(() => {
-      props.rules = [_createRuleGroup(1, [], [])];
+      props.rules = [_createRuleGroup(0, [], [])];
       schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
     });
 
@@ -246,7 +236,7 @@ describe('<RuleGroup />', () => {
     it('has 1 <RuleGroup /> with expected properties', () => {
       const dom = shallow(<RuleGroup {...props} />);
       const groupProps = dom.find(RuleGroup).props();
-      expect(groupProps.id).toBe('rule_group_id_1');
+      expect(groupProps.id).toBe('rule_group_id_0');
       expect(groupProps.path).toEqual([0, 0]);
       expect(Array.isArray(groupProps.rules)).toBe(true);
       expect(groupProps.combinator).toBeUndefined();

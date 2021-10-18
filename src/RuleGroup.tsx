@@ -166,7 +166,7 @@ export const RuleGroup = ({
         {rules.map((r, idx) => {
           const thisPath = path.concat([idx]);
           return (
-            <Fragment key={r.id}>
+            <Fragment key={thisPath.join('-')}>
               {idx > 0 && showCombinatorsBetweenRules && (
                 <controls.combinatorSelector
                   options={combinators}
