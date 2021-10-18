@@ -557,17 +557,11 @@ describe('formatQuery', () => {
 
     it('should invalidate parameterized', () => {
       const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
+      expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual(
+        { sql: '(1 = 1)', params: [] }
+      );
       expect(
-        formatQuery(
-          queryToTest,
-          { format: 'parameterized', validator: () => false }
-        )
-      ).toEqual({ sql: '(1 = 1)', params: [] });
-      expect(
-        formatQuery(
-          queryToTest,
-          { format: 'parameterized_named', validator: () => false }
-        )
+        formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
       ).toEqual({ sql: '(1 = 1)', params: {} });
     });
 
