@@ -648,7 +648,7 @@ function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupTyp
 function formatQuery(
   query: RuleGroupType,
   options?: ExportFormat | FormatQueryOptions
-): string | ParameterizedSQL;
+): string | ParameterizedSQL | ParameterizedNamedSQL;
 ```
 
 `formatQuery` parses a given query into one of the following formats: SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `"!="` operator.
@@ -689,7 +689,8 @@ interface FormatQueryOptions {
   quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
   validator?: QueryValidator; // function to validate the entire query (see [validator](#validator-optional))
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[]; // This can be the same Field[] passed to <QueryBuilder />, but really all you need to provide is the name and validator for each field
-  fallbackExpression?: string; // this string will be inserted in place of invalid groups for "sql", "parameterized", and "mongodb" formats (defaults to '(1 = 1)' for "sql" and "parameterized", '$and:[{$expr:true}]' for "mongodb")
+  fallbackExpression?: string; // this string will be inserted in place of invalid groups for "sql", "parameterized", "parameterized_named", and "mongodb" formats (defaults to '(1 = 1)' for "sql"/"parameterized"/"parameterized_named", '$and:[{$expr:true}]' for "mongodb")
+  paramPrefix?: string; // this string will be placed in front of named parameters (aka bind variables) when using the "parameterized_named" format. Default is ":".
 }
 ```
 
@@ -749,24 +750,7 @@ const query = {
 };
 
 console.log(formatQuery(query, 'json_without_ids'));
-/*
-{
-  rules: [
-    {
-      field: 'instrument',
-      value: ['Guitar', 'Vocals'],
-      operator: 'in'
-    },
-    {
-      field: 'lastName',
-      value: 'Vai',
-      operator: '='
-    }
-  ],
-  combinator: 'and',
-  not: false
-}
-*/
+// '{"rules":[{"field":"instrument","value":["Guitar","Vocals"],"operator":"in"},{"field":"lastName","value":"Vai","operator":"="}],"combinator":"and","not":false}'
 ```
 
 The validation options (`validator` and `fields`) only affect the output when `format` is "sql", "parameterized", or "mongodb". If the `validator` function returns `false`, the "sql" and "parameterized" formats will return `"(1 = 1)"` and the `mongodb` format will return `"{$and:[{$expr:true}]}"` to maintain valid syntax while (hopefully) not affecting the query criteria. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.

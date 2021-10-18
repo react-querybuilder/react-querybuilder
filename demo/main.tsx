@@ -13,6 +13,7 @@ import QueryBuilder, {
   Field,
   formatQuery,
   FormatQueryOptions,
+  ParameterizedNamedSQL,
   ParameterizedSQL,
   QueryBuilderProps,
   RuleGroupType,
@@ -53,6 +54,7 @@ const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('json_without_ids', json);
 SyntaxHighlighter.registerLanguage('parameterized', json);
+SyntaxHighlighter.registerLanguage('parameterized_named', json);
 SyntaxHighlighter.registerLanguage('sql', sql);
 
 const shStyle = {
@@ -226,6 +228,7 @@ const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
   { fmt: 'sql', lbl: 'SQL' },
   { fmt: 'parameterized', lbl: 'Parameterized SQL' },
+  { fmt: 'parameterized_named', lbl: 'Parameterized (Named) SQL' },
   { fmt: 'mongodb', lbl: 'MongoDB' }
 ];
 
@@ -318,8 +321,12 @@ const RootView = () => {
   const formatString =
     format === 'json_without_ids'
       ? JSON.stringify(JSON.parse(formatQuery(query, formatOptions) as string), null, 2)
-      : format === 'parameterized'
-      ? JSON.stringify(formatQuery(query, formatOptions) as ParameterizedSQL, null, 2)
+      : format === 'parameterized' || format === 'parameterized_named'
+      ? JSON.stringify(
+          formatQuery(query, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
+          null,
+          2
+        )
       : (formatQuery(query, formatOptions) as string);
 
   const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();

@@ -5,5 +5,6 @@ export { default as generateID } from './generateID';
 export { default as generateValidQueryObject } from './generateValidQueryObject';
 export { default as getValidationClassNames } from './getValidationClassNames';
 export { default as isRuleGroup } from './isRuleGroup';
+export { default as isRuleOrGroupValid } from './isRuleOrGroupValid';
 export { default as regenerateIDs } from './regenerateIDs';
 export { default as defaultValidator } from './defaultValidator';

@@ -1,20 +1,18 @@
 import uniqWith from 'lodash/uniqWith';
-import { isRuleGroup } from '.';
-import {
-  ParameterizedSQL,
-  QueryValidator,
-  RuleValidator,
-  ValidationMap,
-  ValidationResult
-} from '..';
+import { isRuleGroup, isRuleOrGroupValid } from '.';
 import {
   ExportFormat,
   FormatQueryOptions,
+  ParameterizedNamedSQL,
+  ParameterizedSQL,
+  QueryValidator,
   RuleGroupType,
   RuleType,
+  RuleValidator,
+  ValidationMap,
+  ValidationResult,
   ValueProcessor
-} from '../types';
-import isRuleOrGroupValid from './isRuleOrGroupValid';
+} from '..';
 
 const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
 
@@ -88,12 +86,12 @@ export const defaultValueProcessor: ValueProcessor = (
 };
 
 /**
- * Formats a query in the requested output format.  The optional
- * `valueProcessor` argument can be used to format the values differently
- * based on a given field, operator, and value.  By default, values are
- * processed assuming the default operators are being used.
+ * Formats a query in the requested output format.
  */
-const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | ExportFormat) => {
+const formatQuery = (
+  ruleGroup: RuleGroupType,
+  options?: FormatQueryOptions | ExportFormat
+): string | ParameterizedSQL | ParameterizedNamedSQL => {
   let format: ExportFormat = 'json';
   let valueProcessor = defaultValueProcessor;
   let quoteFieldNamesWith = '';
@@ -101,34 +99,42 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
   let fields: { name: string; validator?: RuleValidator; [k: string]: any }[] = [];
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
+  let paramPrefix = ':';
 
   if (typeof options === 'object' && options !== null) {
-    format = options.format ?? 'json';
+    format = (options.format ?? 'json').toLowerCase() as ExportFormat;
     valueProcessor = options.valueProcessor ?? defaultValueProcessor;
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
     fallbackExpression = options.fallbackExpression ?? '';
+    paramPrefix = options.paramPrefix ?? ':';
   } else if (typeof options === 'string') {
-    format = options;
+    format = options.toLowerCase() as ExportFormat;
   }
   if (!fallbackExpression) {
-    if (['parameterized', 'sql'].includes(format)) {
+    if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
       fallbackExpression = '(1 = 1)';
     } else if (format === 'mongodb') {
       fallbackExpression = '$and:[{$expr:true}]';
     }
   }
 
-  const formatLowerCase = format.toLowerCase() as ExportFormat;
-
-  if (formatLowerCase === 'json') {
+  if (format === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
-  } else if (formatLowerCase === 'json_without_ids') {
+  } else if (format === 'json_without_ids') {
     return JSON.stringify(ruleGroup, ['rules', 'field', 'value', 'operator', 'combinator', 'not']);
-  } else if (formatLowerCase === 'sql' || formatLowerCase === 'parameterized') {
-    const parameterized = formatLowerCase === 'parameterized';
+  } else if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
+    const parameterized = format === 'parameterized';
+    const parameterized_named = format === 'parameterized_named';
     const params: any[] = [];
+    const params_named: { [p: string]: any } = {};
+    const fieldParamIndexes: { [f: string]: number } = {};
+
+    const getNextNamedParam = (field: string) => {
+      fieldParamIndexes[field] = (fieldParamIndexes[field] ?? 0) + 1;
+      return `${field}_${fieldParamIndexes[field]}`;
+    };
 
     // istanbul ignore else
     if (typeof validator === 'function') {
@@ -136,7 +142,9 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       if (typeof validationResult === 'boolean') {
         if (validationResult === false) {
           return parameterized
-            ? ({ sql: fallbackExpression, params: [] } as ParameterizedSQL)
+            ? { sql: fallbackExpression, params: [] }
+            : parameterized_named
+            ? { sql: fallbackExpression, params: {} }
             : fallbackExpression;
         }
       } else {
@@ -176,16 +184,27 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
       const value = valueProcessor(rule.field, rule.operator, rule.value);
       const operator = mapOperator(rule.operator);
 
-      if (parameterized) {
+      if (parameterized || parameterized_named) {
         if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
           return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
         } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
           if (value) {
             const splitValue = (rule.value as string).split(',').map((v) => v.trim());
-            splitValue.forEach((v) => params.push(v));
+            if (parameterized) {
+              splitValue.forEach((v) => params.push(v));
+              return `${quoteFieldNamesWith}${
+                rule.field
+              }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+            }
+            const inParams: string[] = [];
+            splitValue.forEach((v) => {
+              const thisParamName = getNextNamedParam(rule.field);
+              inParams.push(`${paramPrefix}${thisParamName}`);
+              params_named[thisParamName] = v;
+            });
             return `${quoteFieldNamesWith}${
               rule.field
-            }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+            }${quoteFieldNamesWith} ${operator} (${inParams.join(', ')})`;
           } else {
             return '';
           }
@@ -195,26 +214,39 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
         ) {
           if (value) {
             const [first, second] = toArray(rule.value).map((v) => v.trim());
-            params.push(first);
-            params.push(second);
-            return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ? and ?`;
+            if (parameterized) {
+              params.push(first);
+              params.push(second);
+              return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ? and ?`;
+            }
+            const firstParamName = getNextNamedParam(rule.field);
+            const secondParamName = getNextNamedParam(rule.field);
+            params_named[firstParamName] = first;
+            params_named[secondParamName] = second;
+            return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
           } else {
             return '';
           }
         }
-        params.push(
-          ['boolean', 'number'].includes(typeof rule.value)
-            ? rule.value
-            : (value as string).match(/^'?(.*?)'?$/)![1]
-        );
+        const thisValue = ['boolean', 'number'].includes(typeof rule.value)
+          ? rule.value
+          : (value as string).match(/^'?(.*?)'?$/)![1];
+        let thisParamName = '';
+        if (parameterized) {
+          params.push(thisValue);
+        } else {
+          thisParamName = getNextNamedParam(rule.field);
+          params_named[thisParamName] = thisValue;
+        }
+        return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
+          parameterized ? '?' : `${paramPrefix}${thisParamName}`
+        }`.trim();
       } else {
         if (['in', 'not in', 'between', 'not between'].includes(operator.toLowerCase()) && !value) {
           return '';
         }
       }
-      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
-        parameterized ? '?' : value
-      }`.trim();
+      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${value}`.trim();
     };
 
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): string => {
@@ -240,10 +272,12 @@ const formatQuery = (ruleGroup: RuleGroupType, options?: FormatQueryOptions | Ex
 
     if (parameterized) {
       return { sql: processRuleGroup(ruleGroup, true), params };
+    } else if (parameterized_named) {
+      return { sql: processRuleGroup(ruleGroup, true), params: params_named };
     } else {
       return processRuleGroup(ruleGroup, true);
     }
-  } else if (formatLowerCase === 'mongodb') {
+  } else if (format === 'mongodb') {
     // istanbul ignore else
     if (typeof validator === 'function') {
       const validationResult = validator(ruleGroup);
