@@ -1,6 +1,5 @@
-import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
-import uniqWith from 'lodash/uniqWith';
+import uniqBy from 'lodash/uniqBy';
 import { useEffect, useState } from 'react';
 import {
   defaultCombinators,
@@ -12,7 +11,14 @@ import {
 } from './defaults';
 import './query-builder.scss';
 import { Field, QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
-import { c, findPath, generateID, generateValidQueryObject, isRuleGroup } from './utils';
+import {
+  c,
+  findPath,
+  generateID,
+  generateValidQueryObject,
+  getParentPath,
+  isRuleGroup
+} from './utils';
 
 export const QueryBuilder = ({
   query,
@@ -48,7 +54,7 @@ export const QueryBuilder = ({
   }
 
   const fieldMap: { [k: string]: Field } = {};
-  fields = uniqWith(fields, (a, b) => a.name === b.name);
+  fields = uniqBy(fields, 'name');
   fields.forEach((f) => (fieldMap[f.name] = f));
 
   /**
@@ -264,8 +270,8 @@ export const QueryBuilder = ({
    */
   const onRuleRemove = (path: number[]) => {
     const rootCopy = cloneDeep(root);
-    const parentPath = clone(path);
-    const index = parentPath.pop();
+    const parentPath = getParentPath(path);
+    const index = path[path.length - 1];
     const parent = findPath(parentPath, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {
@@ -281,8 +287,8 @@ export const QueryBuilder = ({
    */
   const onGroupRemove = (path: number[]) => {
     const rootCopy = cloneDeep(root);
-    const parentPath = clone(path);
-    const index = parentPath.pop();
+    const parentPath = getParentPath(path);
+    const index = path[path.length - 1];
     const parent = findPath(parentPath, rootCopy) as RuleGroupType;
     /* istanbul ignore else */
     if (parent) {

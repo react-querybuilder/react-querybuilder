@@ -1,9 +1,8 @@
-import clone from 'lodash/clone';
 import * as React from 'react';
 import { Fragment } from 'react';
 import { standardClassnames } from './defaults';
 import { RuleGroupProps, RuleGroupType } from './types';
-import { c, getValidationClassNames, regenerateIDs } from './utils';
+import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
 
 export const RuleGroup = ({
   id,
@@ -67,8 +66,7 @@ export const RuleGroup = ({
       not
     };
     const newGroup = regenerateIDs(thisGroup);
-    const parentPath = clone(path);
-    parentPath.pop();
+    const parentPath = getParentPath(path);
     onGroupAdd(newGroup, parentPath);
   };
 

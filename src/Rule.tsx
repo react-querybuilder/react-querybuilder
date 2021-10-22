@@ -1,10 +1,9 @@
-import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import { RuleType } from '.';
 import { standardClassnames } from './defaults';
 import { Field, RuleProps } from './types';
-import { c, generateID, getValidationClassNames } from './utils';
+import { c, generateID, getParentPath, getValidationClassNames } from './utils';
 
 export const Rule = ({
   id,
@@ -46,8 +45,7 @@ export const Rule = ({
       operator,
       value
     });
-    const parentPath = clone(path);
-    parentPath.pop();
+    const parentPath = getParentPath(path);
     onRuleAdd(newRule, parentPath);
   };
 

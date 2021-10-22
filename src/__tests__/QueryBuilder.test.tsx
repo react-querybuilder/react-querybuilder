@@ -1,5 +1,5 @@
 import { mount, ReactWrapper } from 'enzyme';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { act } from 'react-dom/test-utils';
 import { defaultValidator, RuleType, ValidationMap } from '..';
 import { ActionElement } from '../controls';
