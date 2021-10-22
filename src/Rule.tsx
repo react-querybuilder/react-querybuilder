@@ -1,3 +1,4 @@
+import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import { RuleType } from '.';
@@ -7,7 +8,7 @@ import { c, generateID, getValidationClassNames } from './utils';
 
 export const Rule = ({
   id,
-  parentId,
+  path,
   field,
   operator,
   value,
@@ -18,7 +19,6 @@ export const Rule = ({
     fields,
     fieldMap,
     getInputType,
-    getLevel,
     getOperators,
     getValueEditorType,
     getValues,
@@ -31,9 +31,10 @@ export const Rule = ({
   },
   context
 }: RuleProps) => {
-  const generateOnChangeHandler = (prop: Exclude<keyof RuleType, 'id'>) => (value: any) => {
-    onPropChange(prop, value, id);
-  };
+  const generateOnChangeHandler =
+    (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
+      onPropChange(prop, value, path);
+    };
 
   const cloneRule = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
@@ -45,14 +46,16 @@ export const Rule = ({
       operator,
       value
     });
-    onRuleAdd(newRule, parentId);
+    const parentPath = clone(path);
+    parentPath.pop();
+    onRuleAdd(newRule, parentPath);
   };
 
   const removeRule = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
-    onRuleRemove(id, parentId);
+    onRuleRemove(path);
   };
 
   const fieldData = fieldMap?.[field] ?? ({} as Field);
@@ -60,10 +63,10 @@ export const Rule = ({
   const operators = fieldData.operators ?? getOperators(field);
   const valueEditorType = fieldData.valueEditorType ?? getValueEditorType(field, operator);
   const values = fieldData.values ?? getValues(field, operator);
-  const level = getLevel(id);
+  const level = path.length;
 
   const validationResult =
-    validationMap[id] ??
+    validationMap[id ?? /* istanbul ignore next */ ''] ??
     (typeof fieldData.validator === 'function'
       ? fieldData.validator({ id, field, operator, value })
       : null);
@@ -71,7 +74,11 @@ export const Rule = ({
   const outerClassName = c(standardClassnames.rule, classNames.rule, validationClassName);
 
   return (
-    <div className={outerClassName} data-rule-id={id} data-level={level}>
+    <div
+      className={outerClassName}
+      data-rule-id={id}
+      data-level={level}
+      data-path={JSON.stringify(path)}>
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}

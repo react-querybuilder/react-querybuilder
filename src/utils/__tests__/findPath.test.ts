@@ -1,7 +1,7 @@
-import { findRule } from '..';
+import { findPath } from '..';
 import { RuleGroupType } from '../..';
 
-describe('findRule', () => {
+describe('findPath', () => {
   const query: RuleGroupType = {
     combinator: 'and',
     id: '111',
@@ -34,14 +34,14 @@ describe('findRule', () => {
   };
 
   it('should find a root rule', () => {
-    expect(findRule('111', query)).toBeDefined();
+    expect(findPath([], query).id).toBe('111');
   });
 
   it('should find a sub rule', () => {
-    expect(findRule('555', query)).toBeDefined();
+    expect(findPath([2, 0], query).id).toBe('555');
   });
 
-  it('should not find an invalid id', () => {
-    expect(findRule('777', query)).toBeUndefined();
+  it('should not find an invalid path', () => {
+    expect(findPath([7, 7, 7], query)).toBeUndefined();
   });
 });

@@ -44,27 +44,33 @@ describe('<QueryBuilder />', () => {
     });
   });
 
-  describe('when rendered with queryChange callback', () => {
-    let wrapper: ReactWrapper, queryChange: jest.Mock;
+  describe('when rendered with onQueryChange callback', () => {
+    let wrapper: ReactWrapper, onQueryChange: jest.Mock;
 
     beforeEach(() => {
-      queryChange = jest.fn();
+      onQueryChange = jest.fn();
       act(() => {
-        wrapper = mount(<QueryBuilder {...props} onQueryChange={queryChange} />);
+        wrapper = mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
       });
     });
 
     afterEach(() => {
       wrapper.unmount();
-      queryChange.mockReset();
+      onQueryChange.mockReset();
     });
 
     it('should call onQueryChange with query', () => {
       // Spy is called initially when mounting component (once)
-      expect(queryChange).toHaveBeenCalledTimes(1);
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
       const initialID = wrapper.find(RuleGroup).props().id;
-      const query: RuleGroupType = { id: initialID, combinator: 'and', rules: [], not: false };
-      expect(queryChange).toHaveBeenCalledWith(query);
+      const query: RuleGroupType = {
+        id: initialID,
+        path: [],
+        combinator: 'and',
+        rules: [],
+        not: false
+      };
+      expect(onQueryChange).toHaveBeenCalledWith(query);
     });
   });
 
@@ -140,7 +146,6 @@ describe('<QueryBuilder />', () => {
   describe('when initial query, without ID, is provided', () => {
     let wrapper: ReactWrapper;
     const queryWithoutID: RuleGroupType = {
-      id: undefined,
       combinator: 'and',
       not: false,
       rules: [
@@ -211,7 +216,6 @@ describe('<QueryBuilder />', () => {
     ];
 
     const newQuery: RuleGroupType = {
-      id: undefined,
       combinator: 'and',
       not: false,
       rules: [
@@ -273,10 +277,8 @@ describe('<QueryBuilder />', () => {
     const query: RuleGroupType = {
       combinator: 'and',
       not: false,
-      id: '111',
       rules: [
         {
-          id: '222',
           field: 'firstName',
           value: 'Test',
           operator: '='
@@ -318,12 +320,10 @@ describe('<QueryBuilder />', () => {
     ];
 
     const query: RuleGroupType = {
-      id: 'g-012345',
       combinator: 'or',
       not: false,
       rules: [
         {
-          id: 'r-0123456789',
           field: 'lastName',
           value: 'Another Test',
           operator: '='
@@ -371,12 +371,10 @@ describe('<QueryBuilder />', () => {
     ];
 
     const query: RuleGroupType = {
-      id: 'g-012345',
       combinator: 'or',
       not: false,
       rules: [
         {
-          id: 'r-0123456789',
           field: 'lastName',
           value: 'Another Test',
           operator: '='
@@ -425,12 +423,10 @@ describe('<QueryBuilder />', () => {
     ];
 
     const query: RuleGroupType = {
-      id: 'g-012345',
       combinator: 'or',
       not: false,
       rules: [
         {
-          id: 'r-0123456789',
           field: 'lastName',
           value: 'Another Test',
           operator: '='
@@ -475,12 +471,10 @@ describe('<QueryBuilder />', () => {
     ];
 
     const query: RuleGroupType = {
-      id: 'g-012345',
       combinator: 'or',
       not: false,
       rules: [
         {
-          id: 'r-0123456789',
           field: 'lastName',
           value: 'Another Test',
           operator: '='
@@ -954,7 +948,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('modifies the group addition', () => {
-      const group: RuleGroupType = { id: 'new', combinator: 'fake', rules: [] };
+      const group: RuleGroupType = { combinator: 'fake', rules: [] };
       wrapper.setProps({ onAddGroup: () => group });
       wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
 
@@ -1124,7 +1118,7 @@ describe('<QueryBuilder />', () => {
 
   describe('add rule to new groups', () => {
     let wrapper: ReactWrapper;
-    const query: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
+    const query: RuleGroupType = { combinator: 'and', rules: [] };
 
     beforeEach(() => {
       wrapper = mount(<QueryBuilder {...props} query={query} addRuleToNewGroups />);

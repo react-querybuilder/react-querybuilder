@@ -65,9 +65,7 @@ const fields = [
 
 export const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({
-    id: 'root',
     combinator: 'and',
-    not: false,
     rules: []
   });
 
@@ -351,8 +349,8 @@ interface NotToggleProps {
 
 ```ts
 interface RuleGroupProps {
-  id: string; // Unique identifier for this rule group
-  parentId: string; // Identifier of the parent group
+  id?: string; // Unique identifier for this rule group
+  path: number[]; // path of indexes through a rule group hierarchy
   combinator: string; // Combinator for this group, e.g. "and" / "or"
   rules: (RuleType | RuleGroupType)[]; // List of rules and/or sub-groups for this group
   translations: Translations; // The full translations object
@@ -366,8 +364,8 @@ interface RuleGroupProps {
 
 ```ts
 interface RuleProps {
-  id: string; // Unique identifier for this rule
-  parentId: string; // Identifier of the parent group
+  id?: string; // Unique identifier for this rule
+  path: number[]; // path of indexes through a rule group hierarchy
   field: string; // Field name for this rule
   operator: string; // Operator name for this rule
   value: any; // Value for this rule
@@ -388,17 +386,16 @@ interface Schema {
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupType;
-  getLevel(id: string): number;
   getOperators(field: string): { name: string; label: string }[];
   getValueEditorType(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): { name: string; label: string }[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
-  onGroupAdd(group: RuleGroupType, parentId: string): void;
-  onGroupRemove(groupId: string, parentId: string): void;
-  onPropChange(prop: string, value: any, ruleId: string): void;
-  onRuleAdd(rule: RuleType, parentId: string): void;
-  onRuleRemove(id: string, parentId: string): void;
+  onGroupAdd(group: RuleGroupType, parentPath: number[]): void;
+  onGroupRemove(path: number[]): void;
+  onPropChange(prop: string, value: any, path: number[]): void;
+  onRuleAdd(rule: RuleType, parentPath: number[]): void;
+  onRuleRemove(path: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -452,13 +449,13 @@ This function returns the default value for new rules.
 
 #### `onAddRule` _(Optional)_
 
-`(rule: RuleType, parentId: string, query: RuleGroupType) => RuleType | false`
+`(rule: RuleType, parentPath: number[], query: RuleGroupType) => RuleType | false`
 
 This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. _(To completely prevent the addition of new rules, pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.
 
 #### `onAddGroup` _(Optional)_
 
-`(ruleGroup: RuleGroupType, parentId: string, query: RuleGroupType) => RuleGroupType | false`
+`(ruleGroup: RuleGroupType, parentPath: number[], query: RuleGroupType) => RuleGroupType | false`
 
 This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. _(To completely prevent the addition of new groups, pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.
 
@@ -630,20 +627,20 @@ This is a callback function that is executed each time `QueryBuilder` renders. T
 #### `defaultValidator`
 
 ```ts
-function defaultValidator(query: RuleGroupType) => {
-  [id: string]: { valid: boolean; reasons: string[]; }
-}
+function defaultValidator(query: RuleGroupType): {
+  [id: string]: { valid: boolean; reasons: string[] };
+};
 ```
 
 Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](#demo) -- empty groups will have bold text on the "+Rule" button.
 
-#### `findRule`
+#### `findPath`
 
 ```ts
-function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupType;
+function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
 ```
 
-`findRule` is a utility function for finding the rule or group within the query hierarchy that has a given `id`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
+`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
 
 #### `formatQuery`
 
@@ -651,7 +648,7 @@ function findRule(parentId: string, query: RuleGroupType): RuleType | RuleGroupT
 function formatQuery(
   query: RuleGroupType,
   options?: ExportFormat | FormatQueryOptions
-): string | ParameterizedSQL;
+): string | ParameterizedSQL | ParameterizedNamedSQL;
 ```
 
 `formatQuery` parses a given query into one of the following formats: SQL, parameterized SQL, JSON, MongoDB, or JSON without IDs (which can be useful if you need to serialize the rules). The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `"!="` operator.
@@ -662,23 +659,20 @@ Example:
 import { formatQuery } from 'react-querybuilder';
 
 const query = {
-  id: 'root',
+  combinator: 'and',
+  not: false,
   rules: [
     {
-      id: 'r1',
       field: 'firstName',
       value: 'Steve',
       operator: '='
     },
     {
-      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
     }
-  ],
-  combinator: 'and',
-  not: false
+  ]
 };
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
@@ -695,7 +689,8 @@ interface FormatQueryOptions {
   quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
   validator?: QueryValidator; // function to validate the entire query (see [validator](#validator-optional))
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[]; // This can be the same Field[] passed to <QueryBuilder />, but really all you need to provide is the name and validator for each field
-  fallbackExpression?: string; // this string will be inserted in place of invalid groups for "sql", "parameterized", and "mongodb" formats (defaults to '(1 = 1)' for "sql" and "parameterized", '$and:[{$expr:true}]' for "mongodb")
+  fallbackExpression?: string; // this string will be inserted in place of invalid groups for "sql", "parameterized", "parameterized_named", and "mongodb" formats (defaults to '(1 = 1)' for "sql"/"parameterized"/"parameterized_named", '$and:[{$expr:true}]' for "mongodb")
+  paramPrefix?: string; // this string will be placed in front of named parameters (aka bind variables) when using the "parameterized_named" format. Default is ":".
 }
 ```
 
@@ -703,23 +698,20 @@ For example, if you need to control the way the value portion of the output is p
 
 ```ts
 const query = {
-  id: 'root',
+  combinator: 'and',
+  not: false,
   rules: [
     {
-      id: 'r1',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
       operator: 'in'
     },
     {
-      id: 'r2',
       field: 'lastName',
       value: 'Vai',
       operator: '='
     }
-  ],
-  combinator: 'and',
-  not: false
+  ]
 };
 
 const valueProcessor = (field, operator, value) => {
@@ -758,24 +750,7 @@ const query = {
 };
 
 console.log(formatQuery(query, 'json_without_ids'));
-/*
-{
-  rules: [
-    {
-      field: 'instrument',
-      value: ['Guitar', 'Vocals'],
-      operator: 'in'
-    },
-    {
-      field: 'lastName',
-      value: 'Vai',
-      operator: '='
-    }
-  ],
-  combinator: 'and',
-  not: false
-}
-*/
+// '{"rules":[{"field":"instrument","value":["Guitar","Vocals"],"operator":"in"},{"field":"lastName","value":"Vai","operator":"="}],"combinator":"and","not":false}'
 ```
 
 The validation options (`validator` and `fields`) only affect the output when `format` is "sql", "parameterized", or "mongodb". If the `validator` function returns `false`, the "sql" and "parameterized" formats will return `"(1 = 1)"` and the `mongodb` format will return `"{$and:[{$expr:true}]}"` to maintain valid syntax while (hopefully) not affecting the query criteria. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.

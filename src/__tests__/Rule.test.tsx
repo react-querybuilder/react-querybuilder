@@ -77,9 +77,8 @@ describe('<Rule />', () => {
         { name: 'one', label: 'One' },
         { name: 'two', label: 'Two' }
       ],
-      onPropChange: (_field, _value, _id) => {},
-      onRuleRemove: (_ruleId, _parentId) => {},
-      getLevel: () => 0,
+      onPropChange: (_field, _value, _path) => {},
+      onRuleRemove: (_path) => {},
       showCloneButtons: false,
       validationMap: {}
     };
@@ -89,7 +88,7 @@ describe('<Rule />', () => {
       value: 'value',
       operator: 'operator',
       schema: schema as Schema,
-      parentId: 'parentId',
+      path: [0],
       translations: {
         fields: {
           title: 'Fields'
@@ -312,17 +311,17 @@ describe('<Rule />', () => {
   });
 
   describe('onElementChanged methods', () => {
-    let actualProperty: string, actualValue: any, actualId: string;
+    let actualProperty: string, actualValue: any, actualPath: number[];
     beforeEach(() => {
-      schema.onPropChange = (property, value, id) => {
+      schema.onPropChange = (property, value, path) => {
         actualProperty = property;
         actualValue = value;
-        actualId = id;
+        actualPath = path;
       };
     });
 
     describe('onFieldChanged', () => {
-      it('should call onPropChange with the rule id', () => {
+      it('should call onPropChange with the rule path', () => {
         const dom = mount(<Rule {...props} />);
         dom
           .find(`.${standardClassnames.fields}`)
@@ -330,12 +329,12 @@ describe('<Rule />', () => {
 
         expect(actualProperty).toBe('field');
         expect(actualValue).toBe('any_field');
-        expect(actualId).toBe('id');
+        expect(actualPath).toEqual([0]);
       });
     });
 
     describe('onOperatorChanged', () => {
-      it('should call onPropChange with the rule id', () => {
+      it('should call onPropChange with the rule path', () => {
         const dom = mount(<Rule {...props} />);
         dom
           .find(`.${standardClassnames.operators}`)
@@ -343,12 +342,12 @@ describe('<Rule />', () => {
 
         expect(actualProperty).toBe('operator');
         expect(actualValue).toBe('any_operator');
-        expect(actualId).toBe('id');
+        expect(actualPath).toEqual([0]);
       });
     });
 
     describe('onValueChanged', () => {
-      it('should call onPropChange with the rule id', () => {
+      it('should call onPropChange with the rule path', () => {
         const dom = mount(<Rule {...props} />);
         dom
           .find(`.${standardClassnames.value}`)
@@ -356,7 +355,7 @@ describe('<Rule />', () => {
 
         expect(actualProperty).toBe('value');
         expect(actualValue).toBe('any_value');
-        expect(actualId).toBe('id');
+        expect(actualPath).toEqual([0]);
       });
     });
   });
@@ -366,32 +365,30 @@ describe('<Rule />', () => {
       schema.showCloneButtons = true;
     });
 
-    it('should call onRuleAdd with the rule and parent id', () => {
-      let myRule: RuleType, myParentId: string;
-      schema.onRuleAdd = (rule, parentId) => {
+    it('should call onRuleAdd with the rule and parent path', () => {
+      let myRule: RuleType, myParentPath: number[];
+      schema.onRuleAdd = (rule, parentPath) => {
         myRule = rule;
-        myParentId = parentId;
+        myParentPath = parentPath;
       };
       const dom = mount(<Rule {...props} />);
       dom.find(`.${standardClassnames.cloneRule}`).simulate('click');
 
       expect(myRule).toBeDefined();
-      expect(myParentId).toBe('parentId');
+      expect(myParentPath).toEqual([]);
     });
   });
 
   describe('removeRule', () => {
-    it('should call onRuleRemove with the rule and parent id', () => {
-      let myRuleId: string, myParentId: string;
-      schema.onRuleRemove = (ruleId, parentId) => {
-        myRuleId = ruleId;
-        myParentId = parentId;
+    it('should call onRuleRemove with the rule and path', () => {
+      let myPath: number[];
+      schema.onRuleRemove = (path) => {
+        myPath = path;
       };
       const dom = mount(<Rule {...props} />);
       dom.find(`.${standardClassnames.removeRule}`).simulate('click');
 
-      expect(myRuleId).toBe('id');
-      expect(myParentId).toBe('parentId');
+      expect(myPath).toEqual([0]);
     });
   });
 
@@ -461,7 +458,7 @@ describe('<Rule />', () => {
 
     it('should have the level of the Rule', () => {
       const dom = shallow(<Rule {...props} />);
-      expect(dom.find(ValueSelector).props().level).toBe(0);
+      expect(dom.find(ValueSelector).props().level).toBe(1);
     });
   }
 });

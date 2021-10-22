@@ -32,6 +32,7 @@ export interface Field extends NameLabelPair {
 }
 
 export interface RuleType {
+  path?: number[];
   id?: string;
   field: string;
   operator: string;
@@ -39,14 +40,20 @@ export interface RuleType {
 }
 
 export interface RuleGroupType {
-  id: string;
-  parentId?: string;
+  path?: number[];
+  id?: string;
   combinator: string;
   rules: (RuleType | RuleGroupType)[];
   not?: boolean;
 }
 
-export type ExportFormat = 'json' | 'sql' | 'json_without_ids' | 'parameterized' | 'mongodb';
+export type ExportFormat =
+  | 'json'
+  | 'sql'
+  | 'json_without_ids'
+  | 'parameterized'
+  | 'parameterized_named'
+  | 'mongodb';
 
 export type ValueProcessor = (field: string, operator: string, value: any) => string;
 
@@ -217,21 +224,20 @@ export interface Schema {
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupType;
-  getLevel(id: string): number;
   getOperators(field: string): NameLabelPair[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
-  onGroupAdd(group: RuleGroupType, parentId: string): void;
-  onGroupRemove(groupId: string, parentId: string): void;
+  onGroupAdd(group: RuleGroupType, parentPath: number[]): void;
+  onGroupRemove(path: number[]): void;
   onPropChange(
-    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id'>,
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
     value: any,
-    ruleId: string
+    path: number[]
   ): void;
-  onRuleAdd(rule: RuleType, parentId: string): void;
-  onRuleRemove(id: string, parentId: string): void;
+  onRuleAdd(rule: RuleType, parentPath: number[]): void;
+  onRuleRemove(path: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -284,9 +290,26 @@ export interface Translations {
 }
 
 export interface FormatQueryOptions {
+  /**
+   * The export format.
+   */
   format?: ExportFormat;
+  /**
+   * This function will be used to process the `value` from each rule
+   * when using the "sql"/"parameterized"/"parameterized_named" export
+   * formats. If not defined, `defaultValueProcessor` will be used.
+   */
   valueProcessor?: ValueProcessor;
+  /**
+   * In the "sql"/"parameterized"/"parameterized_named" export formats,
+   * field names will be bracketed by this string. Defaults to the empty
+   * string (''). A common value for this option is the backtick ('`').
+   */
   quoteFieldNamesWith?: string;
+  /**
+   * Validator function for the entire query. Can be the same function passed
+   * as `validator` prop to `<QueryBuilder />`.
+   */
   validator?: QueryValidator;
   /**
    * This can be the same Field[] passed to <QueryBuilder />, but really
@@ -295,10 +318,16 @@ export interface FormatQueryOptions {
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
   /**
    * This string will be inserted in place of invalid groups for "sql",
-   * "parameterized", and "mongodb" formats. Defaults to '(1 = 1)' for "sql"
-   * and "parameterized", '$and:[{$expr:true}]' for "mongodb".
+   * "parameterized", "parameterized_named", and "mongodb" formats.
+   * Defaults to '(1 = 1)' for "sql"/"parameterized"/"parameterized_named",
+   * '$and:[{$expr:true}]' for "mongodb".
    */
   fallbackExpression?: string;
+  /**
+   * This string will be placed in front of named parameters (aka bind variables)
+   * when using the "parameterized_named" export format. Default is ":".
+   */
+  paramPrefix?: string;
 }
 
 export interface ParameterizedSQL {
@@ -306,11 +335,16 @@ export interface ParameterizedSQL {
   params: any[];
 }
 
+export interface ParameterizedNamedSQL {
+  sql: string;
+  params: { [p: string]: any };
+}
+
 export interface RuleGroupProps {
-  id: string;
-  parentId?: string;
+  id?: string;
+  path: number[];
   combinator?: string;
-  rules?: (RuleType | RuleGroupType)[];
+  rules: (RuleType | RuleGroupType)[];
   translations: Translations;
   schema: Schema;
   not?: boolean;
@@ -318,8 +352,8 @@ export interface RuleGroupProps {
 }
 
 export interface RuleProps {
-  id: string;
-  parentId: string;
+  id?: string;
+  path: number[];
   field: string;
   operator: string;
   value: any;
@@ -413,14 +447,14 @@ export interface QueryBuilderProps {
    * This callback is invoked before a new rule is added. The function should either manipulate
    * the rule and return it, or return `false` to cancel the addition of the rule.
    */
-  onAddRule?(rule: RuleType, parentId: string, query: RuleGroupType): RuleType | false;
+  onAddRule?(rule: RuleType, parentPath: number[], query: RuleGroupType): RuleType | false;
   /**
    * This callback is invoked before a new group is added. The function should either manipulate
    * the group and return it, or return `false` to cancel the addition of the group.
    */
   onAddGroup?(
     ruleGroup: RuleGroupType,
-    parentId: string,
+    parentPath: number[],
     query: RuleGroupType
   ): RuleGroupType | false;
   /**

@@ -1,7 +1,7 @@
-import generateValidQuery from '../generateValidQuery';
+import generateValidQueryObject from '../generateValidQueryObject';
 import { RuleGroupType } from '../../types';
 
-describe('generateValidQuery', () => {
+describe('generateValidQueryObject', () => {
   describe('when initial query, with ID, is provided', () => {
     const queryWithID: RuleGroupType = {
       id: 'g-12345',
@@ -17,9 +17,11 @@ describe('generateValidQuery', () => {
     };
 
     it('should not generate new ID if query provides ID', () => {
-      const validQuery = generateValidQuery(queryWithID) as RuleGroupType;
+      const validQuery = generateValidQueryObject(queryWithID) as RuleGroupType;
       expect(validQuery.id).toBe('g-12345');
+      expect(validQuery.path).toEqual([]);
       expect(validQuery.rules[0].id).toBe('r-12345');
+      expect(validQuery.rules[0].path).toEqual([0]);
     });
   });
 
@@ -37,9 +39,11 @@ describe('generateValidQuery', () => {
 
     it('should generate IDs if missing in query', () => {
       expect(queryWithoutID).not.toHaveProperty('id');
-      const validQuery = generateValidQuery(queryWithoutID as RuleGroupType) as RuleGroupType;
+      const validQuery = generateValidQueryObject(queryWithoutID as RuleGroupType) as RuleGroupType;
       expect(validQuery).toHaveProperty('id');
+      expect(validQuery.path).toEqual([]);
       expect(validQuery.rules[0]).toHaveProperty('id');
+      expect(validQuery.rules[0].path).toEqual([0]);
     });
   });
 });

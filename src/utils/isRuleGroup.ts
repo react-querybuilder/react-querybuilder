@@ -5,7 +5,7 @@ import { RuleType, RuleGroupType } from '../types';
  */
 const isRuleGroup = (ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType => {
   const rg = ruleOrGroup as RuleGroupType;
-  return !!(rg.combinator && rg.rules);
+  return rg && !!(rg.combinator && rg.rules);
 };
 
 export default isRuleGroup;

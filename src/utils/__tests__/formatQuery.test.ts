@@ -1,5 +1,10 @@
 import { formatQuery } from '..';
-import { ParameterizedSQL, RuleGroupType, ValueProcessor } from '../../types';
+import {
+  ParameterizedNamedSQL,
+  ParameterizedSQL,
+  RuleGroupType,
+  ValueProcessor
+} from '../../types';
 
 const query: RuleGroupType = {
   id: 'g-root',
@@ -235,6 +240,8 @@ const mongoQuery: RuleGroupType = {
 const sqlString = `(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age = '26' and isMusician = TRUE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))`;
 const parameterizedSQLString =
   '(firstName is null and lastName is not null and firstName in (?, ?) and lastName not in (?, ?) and firstName between ? and ? and firstName between ? and ? and lastName not between ? and ? and age = ? and isMusician = ? and NOT (gender = ? or job != ? or email like ?) and (lastName not like ? or job like ? or email like ? or job not like ? or email not like ?))';
+const parameterizedNamedSQLString =
+  '(firstName is null and lastName is not null and firstName in (:firstName_1, :firstName_2) and lastName not in (:lastName_1, :lastName_2) and firstName between :firstName_3 and :firstName_4 and firstName between :firstName_5 and :firstName_6 and lastName not between :lastName_3 and :lastName_4 and age = :age_1 and isMusician = :isMusician_1 and NOT (gender = :gender_1 or job != :job_1 or email like :email_1) and (lastName not like :lastName_5 or job like :job_2 or email like :email_2 or job not like :job_3 or email not like :email_3))';
 const params = [
   'Test',
   'This',
@@ -257,6 +264,28 @@ const params = [
   'Man%',
   '%fr'
 ];
+const params_named = {
+  firstName_1: 'Test',
+  firstName_2: 'This',
+  lastName_1: 'Test',
+  lastName_2: 'This',
+  firstName_3: 'Test',
+  firstName_4: 'This',
+  firstName_5: 'Test',
+  firstName_6: 'This',
+  lastName_3: 'Test',
+  lastName_4: 'This',
+  age_1: '26',
+  isMusician_1: true,
+  gender_1: 'M',
+  job_1: 'Programmer',
+  email_1: '%@%',
+  lastName_5: '%ab%',
+  job_2: 'Prog%',
+  email_2: '%com',
+  job_3: 'Man%',
+  email_3: '%fr'
+};
 const mongoQueryString =
   '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{$and:[{firstName:{$gte:"Test"}},{firstName:{$lte:"This"}}]},{$and:[{firstName:{$gte:"Test"}},{firstName:{$lte:"This"}}]},{$or:[{lastName:{$lt:"Test"}},{lastName:{$gt:"This"}}]},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
 
@@ -276,6 +305,13 @@ describe('formatQuery', () => {
     expect(parameterized).toHaveProperty('sql', parameterizedSQLString);
     expect(parameterized).toHaveProperty('params');
     expect(parameterized.params).toEqual(params);
+  });
+
+  it('formats parameterized named SQL correctly', () => {
+    const parameterizedNamed = formatQuery(query, 'parameterized_named') as ParameterizedNamedSQL;
+    expect(parameterizedNamed).toHaveProperty('sql', parameterizedNamedSQLString);
+    expect(parameterizedNamed).toHaveProperty('params');
+    expect(parameterizedNamed.params).toEqual(params_named);
   });
 
   it('formats to mongo query correctly', () => {
@@ -319,7 +355,7 @@ describe('formatQuery', () => {
   });
 
   it('handles quoteFieldNamesWith correctly', () => {
-    const queryWithArrayValue: RuleGroupType = {
+    const queryToTest: RuleGroupType = {
       id: 'g-root',
       combinator: 'and',
       rules: [
@@ -337,25 +373,25 @@ describe('formatQuery', () => {
       not: false
     };
 
-    expect(formatQuery(queryWithArrayValue, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
+    expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
       "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai')"
     );
   });
 
   it('handles custom fallbackExpression correctly', () => {
-    const queryWithArrayValue: RuleGroupType = {
+    const queryToTest: RuleGroupType = {
       id: 'g-root',
       combinator: 'and',
       rules: []
     };
 
     expect(
-      formatQuery(queryWithArrayValue, { format: 'sql', fallbackExpression: 'fallbackExpression' })
+      formatQuery(queryToTest, { format: 'sql', fallbackExpression: 'fallbackExpression' })
     ).toBe('fallbackExpression');
   });
 
   it('handles json_without_ids correctly', () => {
-    const example_without_ids: RuleGroupType = {
+    const queryToTest: RuleGroupType = {
       id: 'root',
       combinator: 'and',
       rules: [
@@ -369,7 +405,18 @@ describe('formatQuery', () => {
     };
     const expectedResult =
       '{"rules":[{"field":"firstName","value":"","operator":"null"}],"combinator":"and","not":false}';
-    expect(formatQuery(example_without_ids, 'json_without_ids')).toBe(expectedResult);
+    expect(formatQuery(queryToTest, 'json_without_ids')).toBe(expectedResult);
+  });
+
+  it('uses paramPrefix correctly', () => {
+    const queryToTest: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'firstName', operator: '=', value: 'Test' }]
+    };
+    expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix: '$' })).toEqual({
+      sql: '(firstName = $firstName_1)',
+      params: { firstName_1: 'Test' }
+    });
   });
 
   describe('validation', () => {
@@ -485,31 +532,37 @@ describe('formatQuery', () => {
     });
 
     it('should invalidate parameterized rule', () => {
+      const queryToTest: RuleGroupType = {
+        id: 'root',
+        combinator: 'and',
+        rules: [
+          { field: 'field', operator: '=', value: '' },
+          { field: 'field2', operator: '=', value: '' }
+        ]
+      };
+      const fields = [{ name: 'field', validator: () => false }];
       expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'field2', operator: '=', value: '' }
-            ]
-          },
-          {
-            format: 'parameterized',
-            fields: [{ name: 'field', validator: () => false }]
-          }
-        )
-      ).toEqual({ sql: `(field2 = ?)`, params: [''] } as ParameterizedSQL);
+        formatQuery(queryToTest, {
+          format: 'parameterized',
+          fields
+        })
+      ).toEqual({ sql: `(field2 = ?)`, params: [''] });
+      expect(
+        formatQuery(queryToTest, {
+          format: 'parameterized_named',
+          fields
+        })
+      ).toEqual({ sql: '(field2 = :field2_1)', params: { field2_1: '' } });
     });
 
     it('should invalidate parameterized', () => {
+      const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
+      expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual(
+        { sql: '(1 = 1)', params: [] }
+      );
       expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'parameterized', validator: () => false }
-        )
-      ).toEqual({ sql: '(1 = 1)', params: [] } as ParameterizedSQL);
+        formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
+      ).toEqual({ sql: '(1 = 1)', params: {} });
     });
 
     it('should invalidate a mongob query', () => {
