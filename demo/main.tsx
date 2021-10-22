@@ -224,8 +224,8 @@ const initialQuery: RuleGroupType = {
 };
 
 const formatMap: { fmt: ExportFormat; lbl: string }[] = [
-  { fmt: 'json', lbl: 'JSON' },
   { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
+  { fmt: 'json', lbl: 'JSON' },
   { fmt: 'sql', lbl: 'SQL' },
   { fmt: 'parameterized', lbl: 'Parameterized SQL' },
   { fmt: 'parameterized_named', lbl: 'Parameterized (Named) SQL' },
@@ -234,7 +234,7 @@ const formatMap: { fmt: ExportFormat; lbl: string }[] = [
 
 const RootView = () => {
   const [query, setQuery] = useState(initialQuery);
-  const [format, setFormat] = useState<ExportFormat>('json');
+  const [format, setFormat] = useState<ExportFormat>('json_without_ids');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
   const [showCloneButtons, setShowCloneButtons] = useState(false);
