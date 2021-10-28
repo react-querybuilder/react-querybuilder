@@ -1,4 +1,5 @@
 export { default as c } from './c';
+export { default as defaultValidator } from './defaultValidator';
 export { default as findPath } from './findPath';
 export { default as formatQuery, defaultValueProcessor } from './formatQuery';
 export { default as generateID } from './generateID';
@@ -7,5 +8,5 @@ export { default as getParentPath } from './getParentPath';
 export { default as getValidationClassNames } from './getValidationClassNames';
 export { default as isRuleGroup } from './isRuleGroup';
 export { default as isRuleOrGroupValid } from './isRuleOrGroupValid';
+export { default as parseSQL } from './parseSQL';
 export { default as regenerateIDs } from './regenerateIDs';
-export { default as defaultValidator } from './defaultValidator';

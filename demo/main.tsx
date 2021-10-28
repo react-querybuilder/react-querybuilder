@@ -15,6 +15,7 @@ import QueryBuilder, {
   FormatQueryOptions,
   ParameterizedNamedSQL,
   ParameterizedSQL,
+  parseSQL,
   QueryBuilderProps,
   RuleGroupType,
   RuleType
@@ -451,6 +452,13 @@ const RootView = () => {
                 {formatString}
               </SyntaxHighlighter>
             )}
+            <Divider />
+            <pre>
+              {JSON.stringify(parseSQL('SELECT * FROM table WHERE firstName is not null'), null, 2)}
+            </pre>
+            <pre>
+              {JSON.stringify(parseSQL(`SELECT * FROM table WHERE firstName = 'Steve'`), null, 2)}
+            </pre>
           </Content>
         </Layout>
       </Layout>

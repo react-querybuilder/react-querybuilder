@@ -340,6 +340,11 @@ export interface ParameterizedNamedSQL {
   params: { [p: string]: any };
 }
 
+export interface ParseSQLOptions {
+  paramPrefix?: string;
+  params?: any[] | { [p: string]: any };
+}
+
 export interface RuleGroupProps {
   id?: string;
   path: number[];
