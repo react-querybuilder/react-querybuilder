@@ -1,2 +1,2 @@
-src/utils/sqlParser.js
+sqlParser.js
 *.jison

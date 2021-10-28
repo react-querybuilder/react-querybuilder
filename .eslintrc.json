@@ -8,7 +8,7 @@
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": "src/utils/sqlParser.js",
+  "ignorePatterns": "sqlParser.js",
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
