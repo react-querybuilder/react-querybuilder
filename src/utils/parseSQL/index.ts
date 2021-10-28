@@ -1,7 +1,14 @@
 import { isRuleGroup } from '..';
 import { RuleType } from '../..';
 import { ParseSQLOptions, RuleGroupType } from '../../types';
-import sqlParser, { WhereObject } from './sqlParser';
+import sqlParser from './sqlParser';
+import {
+  isSQLIdentifier,
+  isSQLLiteralValue,
+  SQLExpression,
+  SQLIdentifier,
+  SQLLiteralValue
+} from './types';
 
 const getParamString = (param: any) => {
   switch (typeof param) {
@@ -14,48 +21,85 @@ const getParamString = (param: any) => {
   }
 };
 
-const processWhereObject = (token: WhereObject): RuleType | RuleGroupType | null => {
-  if (token.type === 'IsNullBooleanPrimary') {
-    if (
-      !Array.isArray(token.value) &&
-      typeof token.value === 'object' &&
-      token.value.type === 'Identifier'
-    ) {
+const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
+  valueObj.type === 'String'
+    ? valueObj.value.replace(/(^'|'$)/g, '').replace(/(^"|"$)/g, '')
+    : valueObj.type === 'Boolean'
+    ? valueObj.value.toLowerCase() === 'true'
+    : parseFloat(valueObj.value);
+
+const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | null => {
+  if (expr.type === 'IsNullBooleanPrimary') {
+    if (isSQLIdentifier(expr.value)) {
       return {
-        field: token.value.value as string,
-        operator: token.hasNot ? 'notNull' : 'null',
+        field: expr.value.value,
+        operator: expr.hasNot ? 'notNull' : 'null',
         value: null
       };
     }
-  } else if (token.type === 'ComparisonBooleanPrimary') {
+  } else if (expr.type === 'ComparisonBooleanPrimary') {
     if (
-      (token.left?.type === 'Identifier' || token.right?.type === 'Identifier') &&
-      token.left?.type !== token.right?.type
+      (isSQLIdentifier(expr.left) && !isSQLIdentifier(expr.right)) ||
+      (!isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right))
     ) {
-      const field = [token.left, token.right].find((t) => t?.type === 'Identifier')
-        ?.value as string;
-      const valueObj = [token.left, token.right].find((t) => t?.type !== 'Identifier');
-      return {
-        field,
-        operator: token.operator!,
-        value:
-          valueObj?.type === 'String'
-            ? (valueObj.value as string).replace(/(^'|'$)/g, '')
-            : valueObj?.value
-      };
+      const identifier = isSQLIdentifier(expr.left)
+        ? expr.left.value
+        : (expr.right as SQLIdentifier).value;
+      const valueObj = [expr.left, expr.right].find((t) => !isSQLIdentifier(t));
+      if (isSQLLiteralValue(valueObj)) {
+        return {
+          field: identifier,
+          operator: expr.operator.replace('<>', '!='),
+          value: evalSQLLiteralValue(valueObj)
+        };
+      }
+    }
+  } else if (expr.type === 'InExpressionListPredicate') {
+    if (isSQLIdentifier(expr.left)) {
+      const value = (expr.right.value.filter((ex) => isSQLLiteralValue(ex)) as SQLLiteralValue[])
+        .map((ex) => evalSQLLiteralValue(ex))
+        .join(', ');
+      const operator = expr.hasNot ? 'notIn' : 'in';
+      return { field: expr.left.value, operator, value };
+    }
+  } else if (expr.type === 'BetweenPredicate') {
+    if (
+      isSQLIdentifier(expr.left) &&
+      isSQLLiteralValue(expr.right.left) &&
+      isSQLLiteralValue(expr.right.right)
+    ) {
+      const value = `${evalSQLLiteralValue(expr.right.left)},${evalSQLLiteralValue(
+        expr.right.right
+      )}`;
+      const operator = expr.hasNot ? 'notBetween' : 'between';
+      return { field: expr.left.value, operator, value };
+    }
+  } else if (expr.type === 'LikePredicate') {
+    if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
+      const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
+      const valueWithoutWildcards = valueWithWildcards.replace(/(^%)|(%$)/g, '');
+      let operator = '=';
+      if (/^%.*%$/.test(valueWithWildcards)) {
+        operator = expr.hasNot ? 'doesNotContain' : 'contains';
+      } else if (/%$/.test(valueWithWildcards)) {
+        operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
+      } else if (/^%/.test(valueWithWildcards)) {
+        operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
+      }
+      return { field: expr.left.value, operator, value: valueWithoutWildcards };
     }
   }
   return null;
 };
 
 const parseSQL = (sql: string, options?: ParseSQLOptions): RuleGroupType => {
-  let sqlString = /^[ \t\n\r]?SELECT\b/i.test(sql) ? sql : `SELECT * FROM mesa WHERE ${sql}`;
+  let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM mesa WHERE ${sql}`;
   if (options) {
     const { params, paramPrefix } = options;
     if (params) {
       if (Array.isArray(params)) {
         let i = 0;
-        sqlString = sqlString.replace(/\b\?\b/g, () => {
+        sqlString = sqlString.replace(/\?/g, () => {
           const paramString = getParamString(params[i]);
           i++;
           return paramString;
@@ -65,20 +109,23 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): RuleGroupType => {
         const prefix = paramPrefix ?? ':';
         keys.forEach((p) => {
           sqlString = sqlString.replace(
-            new RegExp(`\\b\\${prefix}${p}\\b`, 'ig'),
+            new RegExp(`\\${prefix}${p}\\b`, 'ig'),
             getParamString(params[p])
           );
         });
       }
     }
   }
+
   const { where } = sqlParser.parse(sqlString).value;
-  const result = processWhereObject(where);
-  if (result) {
-    if (isRuleGroup(result)) {
-      return result;
+  if (where) {
+    const result = processSQLExpression(where);
+    if (result) {
+      if (isRuleGroup(result)) {
+        return result;
+      }
+      return { combinator: 'and', rules: [result] };
     }
-    return { combinator: 'and', rules: [result] };
   }
   return { combinator: 'and', rules: [] };
 };

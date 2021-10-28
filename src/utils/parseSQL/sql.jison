@@ -405,9 +405,9 @@ comparison_operator
   | '!=' { $$ = $1 }
   ;
 sub_query_data_set_opt
- : ALL { $$ = $1 }
- | ANY { $$ = $1 }
- ;
+  : ALL { $$ = $1 }
+  | ANY { $$ = $1 }
+  ;
 boolean_primary
   : predicate { $$ = $1 }
   | boolean_primary IS not_opt NULL { $$ = { type: 'IsNullBooleanPrimary', hasNot: $3 , value: $1 } }

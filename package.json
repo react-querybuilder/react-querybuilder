@@ -98,6 +98,9 @@
     "moduleNameMapper": {
       "\\.(css|less|sass|scss)$": "<rootDir>src/__mocks__/styleMock.ts"
     },
+    "coveragePathIgnorePatterns": [
+      "sqlParser.js"
+    ],
     "testEnvironment": "jsdom"
   },
   "scripts": {
@@ -112,7 +115,7 @@
     "lint": "eslint src/",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison -o src/utils/parseSQL/sqlParser.js -m amd",
+    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison -o src/utils/parseSQL/sqlParser.js -m commonjs",
     "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   }
 }
