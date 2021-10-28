@@ -21,6 +21,8 @@ const getParamString = (param: any) => {
   }
 };
 
+const getFieldName = (f: string) => f.replace(/(^`|`$)/g, '');
+
 const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
   valueObj.type === 'String'
     ? valueObj.value.replace(/(^'|'$)/g, '').replace(/(^"|"$)/g, '')
@@ -32,7 +34,7 @@ const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | n
   if (expr.type === 'IsNullBooleanPrimary') {
     if (isSQLIdentifier(expr.value)) {
       return {
-        field: expr.value.value,
+        field: getFieldName(expr.value.value),
         operator: expr.hasNot ? 'notNull' : 'null',
         value: null
       };
@@ -48,7 +50,7 @@ const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | n
       const valueObj = [expr.left, expr.right].find((t) => !isSQLIdentifier(t));
       if (isSQLLiteralValue(valueObj)) {
         return {
-          field: identifier,
+          field: getFieldName(identifier),
           operator: expr.operator.replace('<>', '!='),
           value: evalSQLLiteralValue(valueObj)
         };
@@ -60,7 +62,7 @@ const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | n
         .map((ex) => evalSQLLiteralValue(ex))
         .join(', ');
       const operator = expr.hasNot ? 'notIn' : 'in';
-      return { field: expr.left.value, operator, value };
+      return { field: getFieldName(expr.left.value), operator, value };
     }
   } else if (expr.type === 'BetweenPredicate') {
     if (
@@ -72,7 +74,7 @@ const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | n
         expr.right.right
       )}`;
       const operator = expr.hasNot ? 'notBetween' : 'between';
-      return { field: expr.left.value, operator, value };
+      return { field: getFieldName(expr.left.value), operator, value };
     }
   } else if (expr.type === 'LikePredicate') {
     if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
@@ -86,7 +88,7 @@ const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | n
       } else if (/^%/.test(valueWithWildcards)) {
         operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
       }
-      return { field: expr.left.value, operator, value: valueWithoutWildcards };
+      return { field: getFieldName(expr.left.value), operator, value: valueWithoutWildcards };
     }
   }
   return null;
