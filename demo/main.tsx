@@ -1,6 +1,6 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, Tooltip } from '@chakra-ui/react';
-import { Button, Checkbox, Divider, Layout, Radio, Select, Typography } from 'antd';
+import { Button, Checkbox, Divider, Input, Layout, Modal, Radio, Select, Typography } from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -8,6 +8,7 @@ import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import QueryBuilder, {
+  DefaultRuleGroupType,
   defaultValidator,
   ExportFormat,
   Field,
@@ -15,6 +16,7 @@ import QueryBuilder, {
   FormatQueryOptions,
   ParameterizedNamedSQL,
   ParameterizedSQL,
+  parseSQL,
   QueryBuilderProps,
   RuleGroupType,
   RuleType
@@ -42,6 +44,7 @@ import './styles/with-chakra.scss';
 import './styles/with-default.scss';
 import './styles/with-material.scss';
 
+const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
 const { Link, Title } = Typography;
@@ -243,6 +246,9 @@ const RootView = () => {
   const [autoSelectField, setAutoSelectField] = useState(true);
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [useValidation, setUseValidation] = useState(false);
+  const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
+  const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
+  const [sqlParseError, setSQLParseError] = useState('');
   const [style, setStyle] = useState<StyleName>('default');
 
   const optionsInfo = [
@@ -331,6 +337,18 @@ const RootView = () => {
 
   const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();
 
+  const loadFromSQL = () => {
+    let q: DefaultRuleGroupType;
+    try {
+      q = parseSQL(sql);
+      setQuery(q);
+      setIsSQLModalVisible(false);
+      setSQLParseError('');
+    } catch (err) {
+      setSQLParseError(err.message);
+    }
+  };
+
   return (
     <ChakraProvider resetCSS={style === 'chakra'}>
       <Layout>
@@ -387,11 +405,11 @@ const RootView = () => {
             </div>
             <Divider />
             <Title level={4}>
-              Output
+              Export
               {'\u00a0'}
               <a href={`${repoLink}#formatquery`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`The output format of the formatQuery function (click for documentation)`}
+                  label={`The export format of the formatQuery function (click for documentation)`}
                   fontSize="small"
                   placement="right">
                   <QuestionCircleOutlined />
@@ -413,6 +431,20 @@ const RootView = () => {
                 </Radio>
               ))}
             </div>
+            <Divider />
+            <Title level={4}>
+              Import
+              {'\u00a0'}
+              <a href={`${repoLink}#parsesql`} target="_blank" rel="noreferrer">
+                <Tooltip
+                  label={`Set the query from SQL (click for documentation)`}
+                  fontSize="small"
+                  placement="right">
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              </a>
+            </Title>
+            <Button onClick={() => setIsSQLModalVisible(true)}>Load from SQL</Button>
             <Divider />
             <Title level={4}>
               Installation{'\u00a0'}
@@ -454,6 +486,19 @@ const RootView = () => {
           </Content>
         </Layout>
       </Layout>
+      <Modal
+        title="Load Query From SQL"
+        visible={isSQLModalVisible}
+        onOk={loadFromSQL}
+        onCancel={() => setIsSQLModalVisible(false)}>
+        <TextArea
+          value={sql}
+          onChange={(e) => setSQL(e.target.value)}
+          spellCheck={false}
+          style={{ height: 200 }}
+        />
+        {!!sqlParseError && <pre>{sqlParseError}</pre>}
+      </Modal>
     </ChakraProvider>
   );
 };

@@ -22,7 +22,10 @@ const defaultValidator: QueryValidator = (query) => {
     if (rg.rules.length === 0) {
       reasons.push(groupInvalidReasons.empty);
     }
-    if (!defaultCombinators.map((c) => c.name).includes(rg.combinator) && rg.rules.length >= 2) {
+    if (
+      !defaultCombinators.map((c) => c.name as string).includes(rg.combinator) &&
+      rg.rules.length >= 2
+    ) {
       reasons.push(groupInvalidReasons.invalidCombinator);
     }
     /* istanbul ignore else */
