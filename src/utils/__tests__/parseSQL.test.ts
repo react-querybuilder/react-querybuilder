@@ -44,6 +44,11 @@ describe('parseSQL', () => {
       expect(parseSQL(`age <= 14`)).toEqual(wrapRule({ field: 'age', operator: '<=', value: 14 }));
       expect(parseSQL(`age < 14`)).toEqual(wrapRule({ field: 'age', operator: '<', value: 14 }));
     });
+    it('handles reversed identifier and value', () => {
+      expect(parseSQL(`'Steve' = firstName`)).toEqual(
+        wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
+      );
+    });
     it('handles booleans', () => {
       expect(parseSQL(`isMusician = TRUE`)).toEqual(
         wrapRule({ field: 'isMusician', operator: '=', value: true })
@@ -116,6 +121,45 @@ describe('parseSQL', () => {
       expect(parseSQL(`firstName = $p1`, { params: { p1: 'Steve' }, paramPrefix: '$' })).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
+    });
+  });
+
+  describe('simple AND/OR expressions', () => {
+    it('handles AND', () => {
+      expect(parseSQL(`firstName = 'Steve' AND lastName = 'Vai'`)).toEqual({
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' }
+        ]
+      });
+    });
+    it('handles OR', () => {
+      expect(parseSQL(`firstName = 'Steve' OR lastName = 'Vai'`)).toEqual({
+        combinator: 'or',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' }
+        ]
+      });
+    });
+  });
+
+  describe('simple parenthetical groups', () => {
+    it('handles opening parentheses', () => {
+      expect(parseSQL(`(firstName = 'Steve')`)).toEqual(
+        wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
+      );
+    });
+    // TODO: only create new group for AND expressions if necessary
+    it.skip('handles parentheses with AND', () => {
+      expect(parseSQL(`(firstName = 'Steve' AND lastName = 'Vai')`)).toEqual({
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' }
+        ]
+      });
     });
   });
 });

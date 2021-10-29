@@ -31,7 +31,17 @@ const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
     : parseFloat(valueObj.value);
 
 const processSQLExpression = (expr: SQLExpression): RuleType | RuleGroupType | null => {
-  if (expr.type === 'IsNullBooleanPrimary') {
+  if (expr.type === 'SimpleExprParentheses') {
+    const rule = processSQLExpression(expr.value.value[0]);
+    if (rule) {
+      return { combinator: 'and', rules: [rule] };
+    }
+  } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
+    const rules = [expr.left, expr.right]
+      .map((e) => processSQLExpression(e))
+      .filter((r) => !!r) as (RuleGroupType | RuleType)[];
+    return { combinator: expr.operator.toLowerCase(), rules };
+  } else if (expr.type === 'IsNullBooleanPrimary') {
     if (isSQLIdentifier(expr.value)) {
       return {
         field: getFieldName(expr.value.value),

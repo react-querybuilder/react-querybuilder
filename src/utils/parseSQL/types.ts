@@ -133,7 +133,6 @@ export interface SQLComparisonBooleanPrimary extends SQLWhereObject {
   operator: ComparisonOperator;
   right: SQLPredicate;
 }
-
 export interface SQLIsExpression extends SQLWhereObject {
   type: 'IsExpression';
   hasNot: NotOpt;
@@ -202,7 +201,8 @@ export type SQLSimpleExpression =
   | SQLPrefix
   | SQLSubQuery
   | SQLIdentifierExpr
-  | SQLBitExpression;
+  | SQLBitExpression
+  | SQLSimpleExprParentheses;
 export type SQLPredicate =
   | SQLSimpleExpression
   | SQLInExpressionListPredicate
