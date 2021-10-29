@@ -213,7 +213,7 @@ const processSQLExpression = (
 };
 
 const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupType => {
-  let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM mesa WHERE ${sql}`;
+  let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
   if (options) {
     const { params, paramPrefix } = options;
     /* istanbul ignore else */

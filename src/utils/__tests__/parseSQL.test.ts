@@ -26,6 +26,11 @@ describe('parseSQL', () => {
         wrapRule()
       );
     });
+    it('UNIONs', () => {
+      expect(parseSQL(`SELECT * FROM t WHERE x = 1 UNION ALL SELECT * FROM u WHERE y = 2`)).toEqual(
+        wrapRule()
+      );
+    });
   });
 
   describe('boolean operators', () => {
@@ -298,6 +303,12 @@ describe('parseSQL', () => {
     });
     it('nested parentheses with ignored expressions', () => {
       expect(parseSQL(`((((firstName = CASE x WHEN y THEN z END))))`)).toEqual(wrapRule());
+    });
+  });
+
+  describe('errors', () => {
+    it('throws on bad SQL', () => {
+      expect(() => parseSQL(`SELECT blah blah blah`)).toThrow();
     });
   });
 });

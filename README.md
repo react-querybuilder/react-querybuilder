@@ -793,6 +793,62 @@ A basic form of validation will be used by `formatQuery` for the "in", "notIn", 
 - Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
 - Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array of length two (`value.length === 2`) nor a string with exactly one comma that isn't the first or last character (`value.split(',').length === 2` and neither element is an empty string).
 
+#### `parseSQL`
+
+```ts
+function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupType;
+```
+
+`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.github.io/react-querybuilder/) by clicking the "Load from SQL" button, and look at the examples below.
+
+The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables.
+
+```ts
+interface ParseSQLOptions {
+  paramPrefix?: string;
+  params?: any[] | { [p: string]: any };
+}
+```
+
+Examples:
+
+```ts
+const standardSQL = parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`);
+const paramsArray = parseSQL(`SELECT * FROM t WHERE firstName = ? AND lastName = ?`, {
+  params: ['Steve', 'Vai']
+});
+const paramsObject = parseSQL(`SELECT * FROM t WHERE firstName = :p1 AND lastName = :p2`, {
+  params: { p1: 'Steve', p2: 'Vai' }
+});
+const paramsObject$ = parseSQL(`SELECT * FROM t WHERE firstName = $p1 AND lastName = $p2`, {
+  params: { p1: 'Steve', p2: 'Vai' },
+  paramPrefix: '$'
+});
+
+// Running any of the following statements will log the same result (see below)
+console.log(JSON.stringify(standardSQL, null, 2));
+console.log(JSON.stringify(paramsArray, null, 2));
+console.log(JSON.stringify(paramsObject, null, 2));
+console.log(JSON.stringify(paramsObject$, null, 2));
+/*
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
+}
+*/
+```
+
 ### Defaults
 
 The following default configuration objects are exported for convenience.
