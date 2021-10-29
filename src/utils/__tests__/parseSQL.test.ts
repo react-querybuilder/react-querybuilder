@@ -1,25 +1,25 @@
-import { RuleGroupType, RuleType } from '../../types';
+import { DefaultRuleGroupType, DefaultRuleType } from '../../types';
 import parseSQL from '../parseSQL';
 
-const wrapRule = (rule?: RuleType): RuleGroupType => ({
+const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
   combinator: 'and',
   rules: rule ? [rule] : []
 });
 
 describe('parseSQL', () => {
-  describe('invalid/ignored/missing WHERE clauses', () => {
-    it('handles SELECT statement without WHERE clause', () => {
+  describe('ignored/missing WHERE clauses', () => {
+    it('SELECT statement without WHERE clause', () => {
       expect(parseSQL('SELECT * FROM t')).toEqual(wrapRule());
     });
-    it('handles SELECT statement with semicolon', () => {
+    it('SELECT statement with semicolon', () => {
       expect(parseSQL('SELECT * FROM t;')).toEqual(wrapRule());
     });
-    it('handles SELECT statement with multiple fields and tables', () => {
+    it('SELECT statement with multiple fields and tables', () => {
       expect(
         parseSQL('SELECT t1.this, t2.that FROM t1 INNER JOIN t2 ON t1.this = t2.that;')
       ).toEqual(wrapRule());
     });
-    it('ignores invalid/complex clauses', () => {
+    it('invalid/complex clauses', () => {
       expect(parseSQL(`firstName = CASE x WHEN y THEN z ELSE a END`)).toEqual(wrapRule());
       expect(parseSQL(`firstName = someFunc('Steve', 'Vai')`)).toEqual(wrapRule());
       expect(parseSQL(`firstName IN (SELECT val FROM otherTable WHERE name = 'Steve')`)).toEqual(
@@ -28,8 +28,8 @@ describe('parseSQL', () => {
     });
   });
 
-  describe('simple WHERE clauses', () => {
-    it('handles basic comparisons of strings and numbers', () => {
+  describe('boolean operators', () => {
+    it('basic comparisons of strings and numbers', () => {
       expect(parseSQL(`firstName = 'Steve'`)).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
@@ -44,12 +44,12 @@ describe('parseSQL', () => {
       expect(parseSQL(`age <= 14`)).toEqual(wrapRule({ field: 'age', operator: '<=', value: 14 }));
       expect(parseSQL(`age < 14`)).toEqual(wrapRule({ field: 'age', operator: '<', value: 14 }));
     });
-    it('handles reversed identifier and value', () => {
+    it('reversed identifier and value', () => {
       expect(parseSQL(`'Steve' = firstName`)).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
     });
-    it('handles booleans', () => {
+    it('booleans', () => {
       expect(parseSQL(`isMusician = TRUE`)).toEqual(
         wrapRule({ field: 'isMusician', operator: '=', value: true })
       );
@@ -57,12 +57,12 @@ describe('parseSQL', () => {
         wrapRule({ field: 'isMusician', operator: '=', value: false })
       );
     });
-    it('handles quoted field names', () => {
+    it('quoted field names', () => {
       expect(parseSQL('`isMusician` = TRUE')).toEqual(
         wrapRule({ field: 'isMusician', operator: '=', value: true })
       );
     });
-    it('handles null/notNull', () => {
+    it('null/notNull', () => {
       expect(parseSQL(`firstName is null`)).toEqual(
         wrapRule({ field: 'firstName', operator: 'null', value: null })
       );
@@ -70,7 +70,7 @@ describe('parseSQL', () => {
         wrapRule({ field: 'firstName', operator: 'notNull', value: null })
       );
     });
-    it('handles in/notIn', () => {
+    it('in/notIn', () => {
       expect(parseSQL(`firstName IN ('Test', 12, true, lastName)`)).toEqual(
         wrapRule({ field: 'firstName', operator: 'in', value: 'Test, 12, true' })
       );
@@ -78,7 +78,7 @@ describe('parseSQL', () => {
         wrapRule({ field: 'firstName', operator: 'notIn', value: 'Test, 12, true' })
       );
     });
-    it('handles like/not like', () => {
+    it('like/not like', () => {
       expect(parseSQL(`firstName LIKE '%Steve%'`)).toEqual(
         wrapRule({ field: 'firstName', operator: 'contains', value: 'Steve' })
       );
@@ -98,12 +98,15 @@ describe('parseSQL', () => {
         wrapRule({ field: 'firstName', operator: 'doesNotEndWith', value: 'Steve' })
       );
     });
-    it('handles between/notBetween', () => {
+    it('between/notBetween', () => {
       expect(parseSQL(`age BETWEEN 12 AND 14`)).toEqual(
-        wrapRule({ field: 'age', operator: 'between', value: '12,14' })
+        wrapRule({ field: 'age', operator: 'between', value: '12, 14' })
+      );
+      expect(parseSQL(`age NOT BETWEEN 12 AND 14`)).toEqual(
+        wrapRule({ field: 'age', operator: 'notBetween', value: '12, 14' })
       );
     });
-    it('handles params as array', () => {
+    it('params as array', () => {
       expect(parseSQL(`firstName = ?`, { params: ['Steve'] })).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
@@ -113,8 +116,11 @@ describe('parseSQL', () => {
       expect(parseSQL(`isMusician = ?`, { params: [true] })).toEqual(
         wrapRule({ field: 'isMusician', operator: '=', value: true })
       );
+      expect(parseSQL(`isMusician = ?`, { params: [false] })).toEqual(
+        wrapRule({ field: 'isMusician', operator: '=', value: false })
+      );
     });
-    it('handles params as object', () => {
+    it('params as object', () => {
       expect(parseSQL(`firstName = :p1`, { params: { p1: 'Steve' } })).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
@@ -124,35 +130,164 @@ describe('parseSQL', () => {
     });
   });
 
-  describe('simple AND/OR expressions', () => {
-    it('handles AND', () => {
-      expect(parseSQL(`firstName = 'Steve' AND lastName = 'Vai'`)).toEqual({
+  describe('AND/OR expressions', () => {
+    it('AND', () => {
+      expect(parseSQL(`firstName = 'Steve' AND lastName = 'Vai' AND middleName IS NULL`)).toEqual({
         combinator: 'and',
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' }
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'middleName', operator: 'null', value: null }
         ]
       });
     });
-    it('handles OR', () => {
-      expect(parseSQL(`firstName = 'Steve' OR lastName = 'Vai'`)).toEqual({
+    it('OR', () => {
+      expect(parseSQL(`firstName = 'Steve' OR lastName = 'Vai' OR middleName IS NULL`)).toEqual({
         combinator: 'or',
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' }
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'middleName', operator: 'null', value: null }
+        ]
+      });
+    });
+    it('mixed AND/OR', () => {
+      expect(parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`)).toEqual({
+        combinator: 'or',
+        rules: [
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              { field: 'lastName', operator: '=', value: 'Vai' }
+            ]
+          },
+          { field: 'middleName', operator: 'null', value: null }
+        ]
+      });
+      expect(
+        parseSQL(
+          `firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL OR isMusician = TRUE`
+        )
+      ).toEqual({
+        combinator: 'or',
+        rules: [
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              { field: 'lastName', operator: '=', value: 'Vai' }
+            ]
+          },
+          { field: 'middleName', operator: 'null', value: null },
+          { field: 'isMusician', operator: '=', value: true }
+        ]
+      });
+      expect(
+        parseSQL(
+          `firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL OR isMusician = TRUE OR fieldName = 'Test'`
+        )
+      ).toEqual({
+        combinator: 'or',
+        rules: [
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              { field: 'lastName', operator: '=', value: 'Vai' }
+            ]
+          },
+          { field: 'middleName', operator: 'null', value: null },
+          { field: 'isMusician', operator: '=', value: true },
+          { field: 'fieldName', operator: '=', value: 'Test' }
+        ]
+      });
+      expect(parseSQL(`firstName = 'Steve' OR lastName = 'Vai' AND middleName IS NULL`)).toEqual({
+        combinator: 'or',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'lastName', operator: '=', value: 'Vai' },
+              { field: 'middleName', operator: 'null', value: null }
+            ]
+          }
         ]
       });
     });
   });
 
-  describe('simple parenthetical groups', () => {
-    it('handles opening parentheses', () => {
+  describe('NOT expressions', () => {
+    const expectedRuleGroup: DefaultRuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+      not: true
+    };
+    it('NOT expressions', () => {
+      expect(parseSQL(`NOT firstName = 'Steve'`)).toEqual(expectedRuleGroup);
+      expect(parseSQL(`NOT (firstName = 'Steve')`)).toEqual(expectedRuleGroup);
+      expect(parseSQL(`NOT (firstName = someFunc('Steve'))`)).toEqual(wrapRule());
+      expect(parseSQL(`NOT (firstName = 'Steve' OR lastName = 'Vai')`)).toEqual({
+        combinator: 'or',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' }
+        ],
+        not: true
+      });
+    });
+  });
+
+  describe('parenthetical groups', () => {
+    it('opening parentheses', () => {
       expect(parseSQL(`(firstName = 'Steve')`)).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
     });
-    // TODO: only create new group for AND expressions if necessary
-    it.skip('handles parentheses with AND', () => {
+    it('non-opening parentheses', () => {
+      expect(parseSQL(`firstName = 'Steve' AND (lastName = 'Vai' AND middleName IS NULL)`)).toEqual(
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            {
+              combinator: 'and',
+              rules: [
+                { field: 'lastName', operator: '=', value: 'Vai' },
+                { field: 'middleName', operator: 'null', value: null }
+              ]
+            }
+          ]
+        }
+      );
+    });
+    it('nested parentheses', () => {
+      expect(
+        parseSQL(
+          `firstName = 'Steve' AND ((testField = 'TestValue' AND (lastName = 'Vai')) AND middleName IS NULL)`
+        )
+      ).toEqual({
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          {
+            combinator: 'and',
+            rules: [
+              {
+                combinator: 'and',
+                rules: [
+                  { field: 'testField', operator: '=', value: 'TestValue' },
+                  { combinator: 'and', rules: [{ field: 'lastName', operator: '=', value: 'Vai' }] }
+                ]
+              },
+              { field: 'middleName', operator: 'null', value: null }
+            ]
+          }
+        ]
+      });
+    });
+    it('parentheses with AND', () => {
       expect(parseSQL(`(firstName = 'Steve' AND lastName = 'Vai')`)).toEqual({
         combinator: 'and',
         rules: [
@@ -160,6 +295,9 @@ describe('parseSQL', () => {
           { field: 'lastName', operator: '=', value: 'Vai' }
         ]
       });
+    });
+    it('nested parentheses with ignored expressions', () => {
+      expect(parseSQL(`((((firstName = CASE x WHEN y THEN z END))))`)).toEqual(wrapRule());
     });
   });
 });

@@ -64,10 +64,10 @@ type TokenType =
   | 'WhenThenList'
   | 'XORExpression';
 
-type ComparisonOperator = '=' | '>=' | '>' | '<=' | '<' | '<>' | '!=';
-type NotOpt = AnyCase<'NOT'> | null;
-type AndOperator = AnyCase<'AND'> | '&&';
-type OrOperator = AnyCase<'OR'> | '||';
+export type ComparisonOperator = '=' | '>=' | '>' | '<=' | '<' | '<>' | '!=';
+export type NotOpt = AnyCase<'NOT'> | null;
+export type AndOperator = AnyCase<'AND'> | '&&';
+export type OrOperator = AnyCase<'OR'> | '||';
 
 export interface SQLWhereObject {
   type: TokenType;
@@ -225,6 +225,8 @@ export type SQLExpression =
   | SQLXORExpression;
 
 // Utility functions
+export const isSQLExpressionNotString = (v?: string | SQLExpression): v is SQLExpression =>
+  !!v && typeof v !== 'string';
 export const isSQLLiteralValue = (v?: SQLWhereObjectAny): v is SQLLiteralValue =>
   !!v && (v.type === 'String' || v.type === 'Number' || v.type === 'Boolean');
 export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>

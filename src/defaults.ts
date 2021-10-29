@@ -1,7 +1,8 @@
+import { DefaultCombinator, DefaultOperator } from '.';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
-import { Classnames, Controls, NameLabelPair, Translations } from './types';
+import { Classnames, Controls, Translations } from './types';
 
 export const defaultTranslations: Translations = {
   fields: {
@@ -46,7 +47,7 @@ export const defaultTranslations: Translations = {
   }
 };
 
-export const defaultOperators: NameLabelPair[] = [
+export const defaultOperators: DefaultOperator[] = [
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
   { name: '<', label: '<' },
@@ -67,7 +68,7 @@ export const defaultOperators: NameLabelPair[] = [
   { name: 'notBetween', label: 'not between' }
 ];
 
-export const defaultCombinators: NameLabelPair[] = [
+export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' }
 ];
