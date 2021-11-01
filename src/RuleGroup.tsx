@@ -213,19 +213,17 @@ export const RuleGroup = ({
                   context={context}
                   validation={validationResult}
                 />
-              ) : 'combinator' in r ? (
+              ) : 'rules' in r ? (
                 <controls.ruleGroup
                   id={r.id}
                   schema={schema}
                   path={thisPath}
-                  combinator={r.combinator}
+                  combinator={'combinator' in r ? r.combinator : undefined}
                   translations={translations}
                   rules={r.rules}
                   not={!!r.not}
                   context={context}
                 />
-              ) : 'rules' in r ? (
-                <></>
               ) : (
                 <controls.rule
                   id={r.id!}
