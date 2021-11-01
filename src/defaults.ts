@@ -132,5 +132,6 @@ export const defaultControlElements: Controls = {
 
 export const groupInvalidReasons = {
   empty: 'empty',
-  invalidCombinator: 'invalid combinator'
+  invalidCombinator: 'invalid combinator',
+  invalidInlineCombinators: 'invalid inline combinators'
 } as const;

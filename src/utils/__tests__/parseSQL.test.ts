@@ -111,6 +111,9 @@ describe('parseSQL', () => {
         wrapRule({ field: 'age', operator: 'notBetween', value: '12, 14' })
       );
     });
+  });
+
+  describe('options', () => {
     it('params as array', () => {
       expect(parseSQL(`firstName = ?`, { params: ['Steve'] })).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
@@ -132,6 +135,21 @@ describe('parseSQL', () => {
       expect(parseSQL(`firstName = $p1`, { params: { p1: 'Steve' }, paramPrefix: '$' })).toEqual(
         wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
       );
+    });
+    it('inline combinators', () => {
+      expect(
+        parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`, {
+          inlineCombinators: true
+        })
+      ).toEqual({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'or',
+          { field: 'middleName', operator: 'null', value: null }
+        ]
+      });
     });
   });
 

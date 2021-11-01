@@ -1,5 +1,4 @@
-import { isRuleGroup } from '.';
-import { RuleGroupType, RuleType, RuleValidator } from '..';
+import { RuleGroupTypeAny, RuleType, RuleValidator } from '..';
 import { ValidationResult } from '../types';
 
 /**
@@ -9,7 +8,7 @@ const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
   typeof vr === 'object' && vr !== null && typeof vr.valid === 'boolean';
 
 const isRuleOrGroupValid = (
-  rg: RuleType | RuleGroupType,
+  rg: RuleType | RuleGroupTypeAny,
   validationResult?: boolean | ValidationResult,
   validator?: RuleValidator
 ) => {
@@ -19,7 +18,7 @@ const isRuleOrGroupValid = (
   if (isValidationResult(validationResult)) {
     return validationResult.valid;
   }
-  if (typeof validator === 'function' && !isRuleGroup(rg)) {
+  if (typeof validator === 'function' && !('rules' in rg)) {
     const vr = validator(rg);
     if (typeof vr === 'boolean') {
       return vr;

@@ -1,5 +1,5 @@
 import uniqWith from 'lodash/uniqWith';
-import { isRuleGroup, isRuleOrGroupValid } from '.';
+import { isRuleOrGroupValid } from '.';
 import {
   ExportFormat,
   FormatQueryOptions,
@@ -7,12 +7,13 @@ import {
   ParameterizedSQL,
   QueryValidator,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleType,
   RuleValidator,
   ValidationMap,
   ValidationResult,
   ValueProcessor
-} from '..';
+} from '../types';
 
 const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
 
@@ -89,7 +90,7 @@ export const defaultValueProcessor: ValueProcessor = (
  * Formats a query in the requested output format.
  */
 const formatQuery = (
-  ruleGroup: RuleGroupType,
+  ruleGroup: RuleGroupTypeAny,
   options?: FormatQueryOptions | ExportFormat
 ): string | ParameterizedSQL | ParameterizedNamedSQL => {
   let format: ExportFormat = 'json';
@@ -249,13 +250,16 @@ const formatQuery = (
       return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${value}`.trim();
     };
 
-    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): string => {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return outermost ? fallbackExpression : '';
       }
 
       const processedRules = rg.rules.map((rule) => {
-        if (isRuleGroup(rule)) {
+        if (typeof rule === 'string') {
+          return rule;
+        }
+        if ('rules' in rule) {
           return processRuleGroup(rule);
         }
         return processRule(rule);
@@ -267,7 +271,7 @@ const formatQuery = (
 
       return `${rg.not ? 'NOT ' : ''}(${processedRules
         .filter((r) => !!r)
-        .join(` ${rg.combinator} `)})`;
+        .join('combinator' in rg ? ` ${rg.combinator} ` : ' ')})`;
     };
 
     if (parameterized) {
@@ -299,7 +303,7 @@ const formatQuery = (
 
       const expression: string = rg.rules
         .map((rule) => {
-          if (isRuleGroup(rule)) {
+          if ('rules' in rule) {
             const processedRuleGroup = processRuleGroup(rule);
             return processedRuleGroup ? `{${processedRuleGroup}}` : '';
           } else {
@@ -364,7 +368,11 @@ const formatQuery = (
       return expression ? `${combinator}:[${expression}]` : fallbackExpression;
     };
 
-    return `{${processRuleGroup(ruleGroup, true)}}`;
+    // "mongodb" export type doesn't support inline combinators
+    if ('combinator' in ruleGroup) {
+      return `{${processRuleGroup(ruleGroup, true)}}`;
+    }
+    return `{${fallbackExpression}}`;
   } else {
     return '';
   }

@@ -6,7 +6,7 @@ describe('isRuleOrGroupValid', () => {
     expect(isRuleOrGroupValid({ field: 'field', operator: '=', value: '' })).toBe(true);
   });
   it('should validate a group with no validationResult or validator', () => {
-    expect(isRuleOrGroupValid({ id: 'root', combinator: 'and', rules: [] })).toBe(true);
+    expect(isRuleOrGroupValid({ combinator: 'and', rules: [] })).toBe(true);
   });
 
   // boolean validationResult
@@ -14,13 +14,13 @@ describe('isRuleOrGroupValid', () => {
     expect(isRuleOrGroupValid({ field: 'field', operator: '=', value: '' }, true)).toBe(true);
   });
   it('should validate a group with validationResult = true', () => {
-    expect(isRuleOrGroupValid({ id: 'root', combinator: 'and', rules: [] }, true)).toBe(true);
+    expect(isRuleOrGroupValid({ combinator: 'and', rules: [] }, true)).toBe(true);
   });
   it('should invalidate a rule with validationResult = false', () => {
     expect(isRuleOrGroupValid({ field: 'field', operator: '=', value: '' }, false)).toBe(false);
   });
   it('should invalidate a group with validationResult = false', () => {
-    expect(isRuleOrGroupValid({ id: 'root', combinator: 'and', rules: [] }, false)).toBe(false);
+    expect(isRuleOrGroupValid({ combinator: 'and', rules: [] }, false)).toBe(false);
   });
 
   // object validationResult
@@ -30,9 +30,7 @@ describe('isRuleOrGroupValid', () => {
     );
   });
   it('should validate a group with validationResult.valid = true', () => {
-    expect(isRuleOrGroupValid({ id: 'root', combinator: 'and', rules: [] }, { valid: true })).toBe(
-      true
-    );
+    expect(isRuleOrGroupValid({ combinator: 'and', rules: [] }, { valid: true })).toBe(true);
   });
   it('should invalidate a rule with validationResult.valid = false', () => {
     expect(isRuleOrGroupValid({ field: 'field', operator: '=', value: '' }, { valid: false })).toBe(
@@ -40,16 +38,15 @@ describe('isRuleOrGroupValid', () => {
     );
   });
   it('should invalidate a group with validationResult.valid = false', () => {
-    expect(isRuleOrGroupValid({ id: 'root', combinator: 'and', rules: [] }, { valid: false })).toBe(
-      false
-    );
+    expect(isRuleOrGroupValid({ combinator: 'and', rules: [] }, { valid: false })).toBe(false);
   });
 
   // validator function - groups
   it('should validate a group with validator function', () => {
-    expect(
-      isRuleOrGroupValid({ id: 'root', combinator: 'and', rules: [] }, undefined, () => false)
-    ).toBe(true);
+    expect(isRuleOrGroupValid({ combinator: 'and', rules: [] }, undefined, () => false)).toBe(true);
+  });
+  it('should validate an IC group with validator function', () => {
+    expect(isRuleOrGroupValid({ rules: [] }, undefined, () => false)).toBe(true);
   });
 
   // validator function - rules

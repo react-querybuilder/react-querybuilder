@@ -235,7 +235,7 @@ const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'mongodb', lbl: 'MongoDB' }
 ];
 
-const RootView = () => {
+const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
@@ -340,7 +340,7 @@ const RootView = () => {
   const loadFromSQL = () => {
     let q: DefaultRuleGroupType;
     try {
-      q = parseSQL(sql);
+      q = parseSQL(sql) as DefaultRuleGroupType;
       setQuery(q);
       setIsSQLModalVisible(false);
       setSQLParseError('');
@@ -462,7 +462,7 @@ const RootView = () => {
                 <QueryBuilder
                   query={query}
                   fields={fields}
-                  onQueryChange={setQuery}
+                  onQueryChange={(q) => setQuery(q)}
                   showCombinatorsBetweenRules={showCombinatorsBetweenRules}
                   showNotToggle={showNotToggle}
                   showCloneButtons={showCloneButtons}
@@ -503,4 +503,4 @@ const RootView = () => {
   );
 };
 
-ReactDOM.render(<RootView />, document.querySelector('.container'));
+ReactDOM.render(<App />, document.querySelector('.container'));

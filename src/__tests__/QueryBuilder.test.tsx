@@ -255,7 +255,7 @@ describe('<QueryBuilder />', () => {
       expect(wrapper.props().query.id).toBeUndefined();
 
       expect(typeof wrapper.find(RuleGroup).props().id).toBe('string');
-      expect(typeof wrapper.find(RuleGroup).props().rules[0].id).toBe('string');
+      expect(typeof (wrapper.find(RuleGroup).props().rules[0] as RuleGroupType).id).toBe('string');
     });
   });
 

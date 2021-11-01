@@ -11,6 +11,7 @@ import {
   Controls,
   RuleGroupProps,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleType,
   Schema,
   ValueSelectorProps
@@ -337,7 +338,7 @@ describe('<RuleGroup />', () => {
 
   describe('addGroup', () => {
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup: RuleGroupType, actualPath: number[];
+      let actualRuleGroup: RuleGroupTypeAny, actualPath: number[];
       schema.onGroupAdd = (ruleGroup, path) => {
         actualRuleGroup = ruleGroup;
         actualPath = path;
@@ -357,7 +358,7 @@ describe('<RuleGroup />', () => {
     });
 
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup: RuleGroupType, actualPath: number[];
+      let actualRuleGroup: RuleGroupTypeAny, actualPath: number[];
       schema.onGroupAdd = (ruleGroup, path) => {
         actualRuleGroup = ruleGroup;
         actualPath = path;
@@ -365,7 +366,7 @@ describe('<RuleGroup />', () => {
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.cloneGroup}`).simulate('click');
 
-      expect(actualRuleGroup.combinator).toBe('and');
+      expect((actualRuleGroup as RuleGroupType).combinator).toBe('and');
       expect(actualRuleGroup.not).toBeUndefined();
       expect(actualRuleGroup.rules).toHaveLength(0);
       expect(actualPath).toEqual([]);

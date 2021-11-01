@@ -1,11 +1,12 @@
-import { RuleType, RuleGroupType } from '../types';
+import { RuleType, RuleGroupTypeAny } from '../types';
 
 /**
  * Determines if this is a RuleType or RuleGroupType
+ * @deprecated
  */
-const isRuleGroup = (ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType => {
-  const rg = ruleOrGroup as RuleGroupType;
-  return rg && !!(rg.combinator && rg.rules);
+const isRuleGroup = (ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny => {
+  const rg = ruleOrGroup as RuleGroupTypeAny;
+  return rg && Array.isArray(rg.rules);
 };
 
 export default isRuleGroup;

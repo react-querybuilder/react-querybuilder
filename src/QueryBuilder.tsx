@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
 import { useEffect, useState } from 'react';
+import { QueryBuilderPropsInternal } from '.';
 import {
   defaultCombinators,
   defaultControlClassnames,
@@ -10,7 +11,15 @@ import {
   standardClassnames
 } from './defaults';
 import './query-builder.scss';
-import { Field, QueryBuilderProps, RuleGroupType, RuleType, Schema } from './types';
+import {
+  Field,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleType,
+  Schema
+} from './types';
 import {
   c,
   findPath,
@@ -20,7 +29,16 @@ import {
   isRuleGroup
 } from './utils';
 
-export const QueryBuilder = ({
+export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
+  props: QueryBuilderProps<RG>
+) => {
+  if (!props.inlineCombinators) {
+    return QueryBuilderImpl({ ...props, inlineCombinators: false } as QueryBuilderPropsInternal);
+  }
+  return QueryBuilderImpl<RuleGroupTypeIC>({ ...props, inlineCombinators: true });
+};
+
+const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({
   query,
   fields = [],
   operators = defaultOperators,
@@ -46,9 +64,10 @@ export const QueryBuilder = ({
   resetOnOperatorChange = false,
   autoSelectField = true,
   addRuleToNewGroups = false,
+  inlineCombinators,
   validator,
   context
-}: QueryBuilderProps) => {
+}: QueryBuilderPropsInternal<RG>) => {
   if (!autoSelectField) {
     fields = [{ id: '~', name: '~', label: '------' } as Field].concat(fields);
   }
@@ -60,8 +79,11 @@ export const QueryBuilder = ({
   /**
    * Gets the initial query
    */
-  const getInitialQuery = () => {
-    return generateValidQueryObject(query || createRuleGroup());
+  const getInitialQuery = (): RG => {
+    if (query) {
+      return generateValidQueryObject(query) as any;
+    }
+    return generateValidQueryObject(createRuleGroup()) as any;
   };
 
   const createRule = (): RuleType => {
@@ -91,13 +113,20 @@ export const QueryBuilder = ({
     return { ...newRule, value };
   };
 
-  const createRuleGroup = (): RuleGroupType => {
+  const createRuleGroup = (): RG => {
+    if (inlineCombinators) {
+      return {
+        id: `g-${generateID()}`,
+        rules: addRuleToNewGroups ? [createRule()] : [],
+        not: false
+      } as any;
+    }
     return {
       id: `g-${generateID()}`,
       rules: addRuleToNewGroups ? [createRule()] : [],
       combinator: combinators[0].name,
       not: false
-    };
+    } as any;
   };
 
   /**
@@ -205,12 +234,31 @@ export const QueryBuilder = ({
    * Adds a rule to the query
    */
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
-    const newRule = typeof onAddRule === 'function' ? onAddRule(rule, parentPath, root) : rule;
+    const newRule =
+      typeof onAddRule === 'function'
+        ? (onAddRule as (rule: RuleType, parentPath: number[], root: RG) => RuleType | false)(
+            rule,
+            parentPath,
+            root as any
+          )
+        : rule;
     if (!newRule) return;
     const rootCopy = cloneDeep(root);
-    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
-    const thisPath = parentPath.concat([parent.rules.length]);
-    parent.rules.push(generateValidQueryObject(newRule, thisPath));
+    const parent = findPath(parentPath, rootCopy) as RG;
+    if ('combinator' in parent) {
+      const thisPath = parentPath.concat([parent.rules.length]);
+      parent.rules.push(generateValidQueryObject(newRule, thisPath));
+    } else {
+      let thisPath: number[];
+      if (parent.rules.length === 0) {
+        thisPath = parentPath.concat([0]);
+      } else {
+        const prevCombinator = parent.rules[parent.rules.length - 2];
+        parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+        thisPath = parentPath.concat([parent.rules.length]);
+      }
+      parent.rules.push(generateValidQueryObject(newRule, thisPath));
+    }
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
   };
@@ -218,13 +266,26 @@ export const QueryBuilder = ({
   /**
    * Adds a rule group to the query
    */
-  const onGroupAdd = (group: RuleGroupType, parentPath: number[]) => {
-    const newGroup = typeof onAddGroup === 'function' ? onAddGroup(group, parentPath, root) : group;
+  const onGroupAdd = (group: RG, parentPath: number[]) => {
+    const newGroup =
+      typeof onAddGroup === 'function' ? onAddGroup(group, parentPath, root as any) : group;
     if (!newGroup) return;
     const rootCopy = cloneDeep(root);
-    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
-    const thisPath = parentPath.concat([parent.rules.length]);
-    parent.rules.push(generateValidQueryObject(newGroup, thisPath));
+    const parent = findPath(parentPath, rootCopy) as RG;
+    if ('combinator' in newGroup) {
+      const thisPath = parentPath.concat([parent.rules.length]);
+      parent.rules.push(generateValidQueryObject(newGroup, thisPath) as any);
+    } else if (!('combinator' in parent)) {
+      let thisPath: number[];
+      if (parent.rules.length === 0) {
+        thisPath = parentPath.concat([0]);
+      } else {
+        const prevCombinator = parent.rules[parent.rules.length - 2];
+        parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+        thisPath = parentPath.concat([parent.rules.length]);
+      }
+      parent.rules.push(generateValidQueryObject(newGroup, thisPath));
+    }
     setRoot(rootCopy);
     _notifyQueryChange(rootCopy);
   };
@@ -238,11 +299,11 @@ export const QueryBuilder = ({
     const rule = findPath(path, rootCopy);
     /* istanbul ignore else */
     if (rule) {
-      const isGroup = isRuleGroup(rule);
+      const isGroup = 'rules' in rule;
 
       // TODO: there has to be a better way to do this
       if (isGroup) {
-        (rule[prop as keyof RuleGroupType] as any) = value;
+        (rule[prop as keyof RuleGroupTypeAny] as any) = value;
       } else {
         rule[prop as keyof RuleType] = value;
       }
@@ -265,6 +326,17 @@ export const QueryBuilder = ({
     }
   };
 
+  const updateInlineCombinator = (value: string, path: number[]) => {
+    const rootCopy = cloneDeep(root);
+    const index = path[path.length - 1];
+    const parentPath = getParentPath(path);
+    // `path` is now the parent path
+    const parent = findPath(parentPath, rootCopy) as RuleGroupTypeIC;
+    parent.rules[index] = value;
+    setRoot(rootCopy);
+    _notifyQueryChange(rootCopy);
+  };
+
   /**
    * Removes a rule from the query
    */
@@ -272,10 +344,15 @@ export const QueryBuilder = ({
     const rootCopy = cloneDeep(root);
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
-    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
+    const parent = findPath(parentPath, rootCopy) as RG;
     /* istanbul ignore else */
     if (parent) {
-      parent.rules.splice(index!, 1);
+      if (!('combinator' in parent) && parent.rules.length > 1) {
+        const idxStartDelete = index === 0 ? 0 : index - 1;
+        parent.rules.splice(idxStartDelete, 2);
+      } else {
+        parent.rules.splice(index, 1);
+      }
 
       setRoot(rootCopy);
       _notifyQueryChange(rootCopy);
@@ -289,10 +366,15 @@ export const QueryBuilder = ({
     const rootCopy = cloneDeep(root);
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
-    const parent = findPath(parentPath, rootCopy) as RuleGroupType;
+    const parent = findPath(parentPath, rootCopy) as RG;
     /* istanbul ignore else */
     if (parent) {
-      parent.rules.splice(index!, 1);
+      if (!('combinator' in parent) && parent.rules.length > 1) {
+        const idxStartDelete = index === 0 ? 0 : index - 1;
+        parent.rules.splice(idxStartDelete, 2);
+      } else {
+        parent.rules.splice(index, 1);
+      }
 
       setRoot(rootCopy);
       _notifyQueryChange(rootCopy);
@@ -302,7 +384,7 @@ export const QueryBuilder = ({
   /**
    * Executes the `onQueryChange` function, if provided
    */
-  const _notifyQueryChange = (newRoot: RuleGroupType) => {
+  const _notifyQueryChange = (newRoot: RG) => {
     /* istanbul ignore else */
     if (onQueryChange) {
       const newQuery = cloneDeep(newRoot);
@@ -310,7 +392,7 @@ export const QueryBuilder = ({
     }
   };
 
-  const [root, setRoot] = useState(getInitialQuery() as RuleGroupType);
+  const [root, setRoot] = useState(getInitialQuery());
 
   const validationResult = typeof validator === 'function' ? validator(root) : {};
   const validationMap = typeof validationResult === 'object' ? validationResult : {};
@@ -333,17 +415,20 @@ export const QueryBuilder = ({
     getValueEditorType: getValueEditorTypeMain,
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
+    updateInlineCombinator,
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
     autoSelectField,
     addRuleToNewGroups,
+    inlineCombinators: !!inlineCombinators,
     validationMap
   };
 
   // Set the query state when a new query prop comes in
   useEffect(() => {
-    setRoot(generateValidQueryObject(query || getInitialQuery()));
+    const newRoot: RG = generateValidQueryObject(query ?? getInitialQuery()) as any;
+    setRoot(newRoot);
   }, [query]);
 
   // Notify a query change on mount
@@ -369,7 +454,7 @@ export const QueryBuilder = ({
       <schema.controls.ruleGroup
         translations={{ ...defaultTranslations, ...translations }}
         rules={root.rules}
-        combinator={root.combinator}
+        combinator={'combinator' in root ? root.combinator : undefined}
         schema={schema}
         id={root.id}
         path={[]}

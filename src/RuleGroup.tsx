@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Fragment } from 'react';
+import { RuleGroupTypeIC } from '.';
 import { standardClassnames } from './defaults';
 import { RuleGroupProps, RuleGroupType } from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
@@ -20,7 +21,7 @@ export const RuleGroup = ({
     controls,
     createRule,
     createRuleGroup,
-    isRuleGroup,
+    inlineCombinators,
     onGroupAdd,
     onGroupRemove,
     onPropChange,
@@ -28,11 +29,16 @@ export const RuleGroup = ({
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
+    updateInlineCombinator,
     validationMap
   } = schema;
 
   const onCombinatorChange = (value: any) => {
     onPropChange('combinator', value, path);
+  };
+
+  const onInlineCombinatorChange = (value: any, index: number) => {
+    updateInlineCombinator(value, path.concat([index]));
   };
 
   const onNotToggleChange = (checked: boolean) => {
@@ -59,12 +65,21 @@ export const RuleGroup = ({
     event.preventDefault();
     event.stopPropagation();
 
-    const thisGroup: RuleGroupType = {
-      id,
-      combinator,
-      rules,
-      not
-    };
+    let thisGroup: RuleGroupType | RuleGroupTypeIC;
+    if (inlineCombinators) {
+      thisGroup = {
+        id,
+        not,
+        rules
+      } as RuleGroupTypeIC;
+    } else {
+      thisGroup = {
+        id,
+        combinator,
+        rules,
+        not
+      } as RuleGroupType;
+    }
     const newGroup = regenerateIDs(thisGroup);
     const parentPath = getParentPath(path);
     onGroupAdd(newGroup, parentPath);
@@ -90,7 +105,7 @@ export const RuleGroup = ({
       data-level={level}
       data-path={JSON.stringify(path)}>
       <div className={c(standardClassnames.header, classNames.header)}>
-        {!showCombinatorsBetweenRules && (
+        {!showCombinatorsBetweenRules && !inlineCombinators && (
           <controls.combinatorSelector
             options={combinators}
             value={combinator}
@@ -165,7 +180,7 @@ export const RuleGroup = ({
           const thisPath = path.concat([idx]);
           return (
             <Fragment key={thisPath.join('-')}>
-              {idx > 0 && showCombinatorsBetweenRules && (
+              {idx > 0 && !inlineCombinators && showCombinatorsBetweenRules && (
                 <controls.combinatorSelector
                   options={combinators}
                   value={combinator}
@@ -182,7 +197,23 @@ export const RuleGroup = ({
                   validation={validationResult}
                 />
               )}
-              {isRuleGroup(r) ? (
+              {typeof r === 'string' ? (
+                <controls.combinatorSelector
+                  options={combinators}
+                  value={r}
+                  title={translations.combinators.title}
+                  className={c(
+                    standardClassnames.combinators,
+                    standardClassnames.betweenRules,
+                    classNames.combinators
+                  )}
+                  handleOnChange={(val) => onInlineCombinatorChange(val, idx)}
+                  rules={rules}
+                  level={level}
+                  context={context}
+                  validation={validationResult}
+                />
+              ) : 'combinator' in r ? (
                 <controls.ruleGroup
                   id={r.id}
                   schema={schema}
@@ -193,6 +224,8 @@ export const RuleGroup = ({
                   not={!!r.not}
                   context={context}
                 />
+              ) : 'rules' in r ? (
+                <></>
               ) : (
                 <controls.rule
                   id={r.id!}
