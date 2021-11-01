@@ -4,11 +4,12 @@ import { Button, Checkbox, Divider, Input, Layout, Modal, Radio, Select, Typogra
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
+import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import QueryBuilder, {
   DefaultRuleGroupType,
+  DefaultRuleGroupTypeIC,
   defaultValidator,
   ExportFormat,
   Field,
@@ -19,6 +20,8 @@ import QueryBuilder, {
   parseSQL,
   QueryBuilderProps,
   RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
   RuleType
 } from '../src';
 import '../src/query-builder.scss';
@@ -226,6 +229,45 @@ const initialQuery: RuleGroupType = {
   not: false
 };
 
+const initialQueryIC: RuleGroupTypeIC = {
+  rules: [
+    {
+      field: 'firstName',
+      value: 'Stev',
+      operator: 'beginsWith'
+    },
+    'and',
+    {
+      field: 'lastName',
+      value: 'Vai, Vaughan',
+      operator: 'in'
+    },
+    'and',
+    {
+      field: 'age',
+      operator: '>',
+      value: '28'
+    },
+    'and',
+    {
+      rules: [
+        {
+          field: 'isMusician',
+          operator: '=',
+          value: true
+        },
+        'or',
+        {
+          field: 'instrument',
+          operator: '=',
+          value: 'Guitar'
+        }
+      ]
+    }
+  ],
+  not: false
+};
+
 const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
   { fmt: 'json', lbl: 'JSON' },
@@ -237,6 +279,7 @@ const formatMap: { fmt: ExportFormat; lbl: string }[] = [
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
+  const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
@@ -246,6 +289,7 @@ const App = () => {
   const [autoSelectField, setAutoSelectField] = useState(true);
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [useValidation, setUseValidation] = useState(false);
+  const [inlineCombinators, setInlineCombinators] = useState(false);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -317,6 +361,14 @@ const App = () => {
       label: 'Use validation',
       title:
         'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups'
+    },
+    {
+      checked: inlineCombinators,
+      default: false,
+      setter: setInlineCombinators,
+      link: '#inlinecombinators-optional',
+      label: 'Inline combinators',
+      title: 'When checked, the query builder supports independent combinators between rules'
     }
   ];
 
@@ -324,24 +376,26 @@ const App = () => {
     optionsInfo.forEach((opt) => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
 
   const formatOptions = useValidation ? ({ format, fields } as FormatQueryOptions) : format;
+  const q: RuleGroupTypeAny = inlineCombinators ? queryIC : query;
   const formatString =
     format === 'json_without_ids'
-      ? JSON.stringify(JSON.parse(formatQuery(query, formatOptions) as string), null, 2)
+      ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions) as string), null, 2)
       : format === 'parameterized' || format === 'parameterized_named'
       ? JSON.stringify(
-          formatQuery(query, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
+          formatQuery(q, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
           null,
           2
         )
-      : (formatQuery(query, formatOptions) as string);
+      : (formatQuery(q, formatOptions) as string);
 
   const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();
 
   const loadFromSQL = () => {
-    let q: DefaultRuleGroupType;
     try {
-      q = parseSQL(sql) as DefaultRuleGroupType;
+      const q = parseSQL(sql) as DefaultRuleGroupType;
+      const qIC = parseSQL(sql, { inlineCombinators: true }) as DefaultRuleGroupTypeIC;
       setQuery(q);
+      setQueryIC(qIC);
       setIsSQLModalVisible(false);
       setSQLParseError('');
     } catch (err) {
@@ -460,9 +514,13 @@ const App = () => {
             <div className={qbWrapperClassName}>
               <form className="form-inline" style={{ marginTop: '1rem' }}>
                 <QueryBuilder
-                  query={query}
+                  query={inlineCombinators ? queryIC : query}
                   fields={fields}
-                  onQueryChange={(q) => setQuery(q)}
+                  onQueryChange={(q) =>
+                    inlineCombinators
+                      ? setQueryIC(q as RuleGroupTypeIC)
+                      : setQuery(q as RuleGroupType)
+                  }
                   showCombinatorsBetweenRules={showCombinatorsBetweenRules}
                   showNotToggle={showNotToggle}
                   showCloneButtons={showCloneButtons}
@@ -471,6 +529,7 @@ const App = () => {
                   autoSelectField={autoSelectField}
                   addRuleToNewGroups={addRuleToNewGroups}
                   validator={useValidation && defaultValidator}
+                  inlineCombinators={inlineCombinators}
                   {...styleOptions[style]}
                 />
               </form>
