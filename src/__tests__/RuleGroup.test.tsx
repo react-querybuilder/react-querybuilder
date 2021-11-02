@@ -1,6 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import * as React from 'react';
-import { ValidationResult } from '..';
+import { RuleGroupTypeIC, ValidationResult } from '..';
 import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
 import { standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
@@ -33,13 +33,18 @@ describe('<RuleGroup />', () => {
       addRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>,
       addGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Group</button>,
       cloneGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>⧉</button>,
+      cloneRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>⧉</button>,
       removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
+      removeRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
       notToggle: (props) => (
         <label>
           <input onChange={(e) => props.handleOnChange(e.target.checked)} />
           Not
         </label>
       ),
+      fieldSelector: () => null,
+      operatorSelector: () => null,
+      valueEditor: () => null,
       rule: Rule,
       ruleGroup: RuleGroup
     };
@@ -57,6 +62,10 @@ describe('<RuleGroup />', () => {
       combinators: [],
       controls: controls as Controls,
       classNames: classNames as Classnames,
+      getInputType: () => 'text',
+      getOperators: () => [],
+      getValueEditorType: () => 'text',
+      getValues: () => [],
       isRuleGroup: (_rule): _rule is RuleGroupType => {
         return false;
       },
@@ -68,6 +77,7 @@ describe('<RuleGroup />', () => {
       showCombinatorsBetweenRules: false,
       showNotToggle: false,
       showCloneButtons: false,
+      inlineCombinators: false,
       validationMap: {}
     };
     props = {
@@ -226,7 +236,6 @@ describe('<RuleGroup />', () => {
   describe('when 1 rule group exists', () => {
     beforeEach(() => {
       props.rules = [_createRuleGroup(0, [], [])];
-      schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
     });
 
     it('has 1 <RuleGroup /> element', () => {
@@ -247,12 +256,7 @@ describe('<RuleGroup />', () => {
   describe('when no combinator prop exists', () => {
     it('has default props', () => {
       const dom = mount(
-        <RuleGroup
-          path={[]}
-          rules={[]}
-          schema={{ ...props.schema, isRuleGroup: (_rule): _rule is RuleGroupType => true }}
-          translations={props.translations}
-        />
+        <RuleGroup path={[]} rules={[]} schema={props.schema} translations={props.translations} />
       );
       const groupProps = dom.find(RuleGroup).props();
       expect(groupProps.combinator).toBeUndefined();
@@ -292,7 +296,6 @@ describe('<RuleGroup />', () => {
           }
         ]
       };
-      propsWithNestedRuleGroup.schema.isRuleGroup = (_rule): _rule is RuleGroupType => true;
 
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
 
@@ -458,6 +461,48 @@ describe('<RuleGroup />', () => {
       expect(dom.find(`.${standardClassnames.cloneGroup}`).props().className).toContain(
         'custom-cloneGroup-class'
       );
+    });
+  });
+
+  describe('inline combinators', () => {
+    beforeEach(() => {
+      schema.inlineCombinators = true;
+    });
+
+    it('should render combinator selector for string elements', () => {
+      schema.controls.combinatorSelector = ValueSelector;
+      const rules: (RuleGroupTypeIC | RuleType | string)[] = [
+        { field: 'firstName', operator: '=', value: 'Test' },
+        'and',
+        { rules: [] }
+      ];
+      const dom = shallow(<RuleGroup {...props} rules={rules} />);
+      expect(dom.find(ValueSelector).props().className).toMatch(
+        new RegExp(standardClassnames.betweenRules)
+      );
+      expect(dom.find(ValueSelector).props().value).toBe('and');
+    });
+
+    it('should call handleOnChange for string elements', () => {
+      schema.controls.combinatorSelector = ValueSelector;
+      schema.updateInlineCombinator = jest.fn();
+      const rules: (RuleGroupTypeIC | RuleType | string)[] = [
+        { field: 'firstName', operator: '=', value: 'Test' },
+        'and',
+        { field: 'lastName', operator: '=', value: 'Test' }
+      ];
+      const dom = mount(<RuleGroup {...props} rules={rules} />);
+      dom.find(ValueSelector).simulate('change', { target: { value: 'or' } });
+      expect(schema.updateInlineCombinator).toHaveBeenCalledWith('or', [0, 1]);
+    });
+
+    it('should clone inline combinator groups', () => {
+      schema.controls.cloneGroupAction = ActionElement;
+      schema.onGroupAdd = jest.fn();
+      schema.showCloneButtons = true;
+      const dom = mount(<RuleGroup {...props} />);
+      dom.find(`.${standardClassnames.cloneGroup}`).at(1).simulate('click');
+      expect((schema.onGroupAdd as jest.Mock).mock.calls[0][1]).toEqual([]);
     });
   });
 

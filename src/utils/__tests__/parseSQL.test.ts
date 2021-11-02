@@ -138,6 +138,11 @@ describe('parseSQL', () => {
     });
     it('inline combinators', () => {
       expect(
+        parseSQL(`firstName = 'Steve' AND lastName = someFunc('Vai') OR middleName IS NULL`, {
+          inlineCombinators: true
+        })
+      ).toEqual(wrapRule());
+      expect(
         parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`, {
           inlineCombinators: true
         })
