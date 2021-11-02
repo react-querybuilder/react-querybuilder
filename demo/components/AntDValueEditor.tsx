@@ -15,10 +15,6 @@ const AntDValueEditor = ({
   inputType,
   values
 }: ValueEditorProps) => {
-  if (operator === 'null' || operator === 'notNull') {
-    return null;
-  }
-
   useEffect(() => {
     if (
       inputType === 'number' &&
@@ -29,6 +25,10 @@ const AntDValueEditor = ({
       handleOnChange('');
     }
   }, [inputType, operator, value, handleOnChange]);
+
+  if (operator === 'null' || operator === 'notNull') {
+    return null;
+  }
 
   const placeHolderText = fieldData?.placeholder ?? '';
   const inputTypeCoerced = ['between', 'notBetween'].includes(operator)

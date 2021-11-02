@@ -12,10 +12,6 @@ const ValueEditor = ({
   values,
   fieldData
 }: ValueEditorProps) => {
-  if (operator === 'null' || operator === 'notNull') {
-    return null;
-  }
-
   // This side effect blanks out the value if the inputType is "number",
   // the operator is not "between" and not "notBetween",
   // and the value contains a comma.
@@ -29,6 +25,10 @@ const ValueEditor = ({
       handleOnChange('');
     }
   }, [inputType, operator, value, handleOnChange]);
+
+  if (operator === 'null' || operator === 'notNull') {
+    return null;
+  }
 
   const placeHolderText = fieldData?.placeholder ?? '';
   const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
