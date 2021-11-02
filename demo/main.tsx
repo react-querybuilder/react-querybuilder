@@ -1,6 +1,17 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { ChakraProvider, Tooltip } from '@chakra-ui/react';
-import { Button, Checkbox, Divider, Input, Layout, Modal, Radio, Select, Typography } from 'antd';
+import { ChakraProvider } from '@chakra-ui/react';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Input,
+  Layout,
+  Modal,
+  Radio,
+  Select,
+  Tooltip,
+  Typography
+} from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -41,7 +52,7 @@ import MaterialValueEditor from './components/MaterialValueEditor';
 import MaterialValueSelector from './components/MaterialValueSelector';
 import './styles/common.scss';
 import './styles/github-fork-ribbon.scss';
-import './styles/with-antd.less';
+import './styles/with-antd.scss';
 import './styles/with-bootstrap.scss';
 import './styles/with-chakra.scss';
 import './styles/with-default.scss';
@@ -429,8 +440,7 @@ const App = () => {
               {'\u00a0'}
               <a href={`${repoLink}#api`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`Boolean props on the QueryBuilder component (click for documentation)`}
-                  fontSize="small"
+                  title={`Boolean props on the QueryBuilder component (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
@@ -443,10 +453,7 @@ const App = () => {
                     {label}
                     {'\u00a0'}
                     <a href={`${repoLink}${link}`} target="_blank" rel="noreferrer">
-                      <Tooltip
-                        label={`${title} (click for documentation)`}
-                        fontSize="small"
-                        placement="right">
+                      <Tooltip title={`${title} (click for documentation)`} placement="right">
                         <QuestionCircleOutlined />
                       </Tooltip>
                     </a>
@@ -463,8 +470,7 @@ const App = () => {
               {'\u00a0'}
               <a href={`${repoLink}#formatquery`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`The export format of the formatQuery function (click for documentation)`}
-                  fontSize="small"
+                  title={`The export format of the formatQuery function (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
@@ -476,10 +482,7 @@ const App = () => {
                 <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
                   {lbl}
                   {'\u00a0'}
-                  <Tooltip
-                    label={`formatQuery(query, "${fmt}")`}
-                    fontSize="small"
-                    placement="right">
+                  <Tooltip title={`formatQuery(query, "${fmt}")`} placement="right">
                     <QuestionCircleOutlined />
                   </Tooltip>
                 </Radio>
@@ -491,8 +494,7 @@ const App = () => {
               {'\u00a0'}
               <a href={`${repoLink}#parsesql`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`Set the query from SQL (click for documentation)`}
-                  fontSize="small"
+                  title={`Set the query from SQL (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
