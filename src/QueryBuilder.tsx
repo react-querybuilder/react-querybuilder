@@ -249,14 +249,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const thisPath = parentPath.concat([parent.rules.length]);
       parent.rules.push(generateValidQueryObject(newRule, thisPath));
     } else {
-      let thisPath: number[];
-      if (parent.rules.length === 0) {
-        thisPath = parentPath.concat([0]);
-      } else {
+      if (parent.rules.length > 0) {
         const prevCombinator = parent.rules[parent.rules.length - 2];
         parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
-        thisPath = parentPath.concat([parent.rules.length]);
       }
+      const thisPath = parentPath.concat([parent.rules.length]);
       parent.rules.push(generateValidQueryObject(newRule, thisPath));
     }
     setRoot(rootCopy);
@@ -272,18 +269,16 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     if (!newGroup) return;
     const rootCopy = cloneDeep(root);
     const parent = findPath(parentPath, rootCopy) as RG;
+    // istanbul ignore else
     if ('combinator' in newGroup) {
       const thisPath = parentPath.concat([parent.rules.length]);
       parent.rules.push(generateValidQueryObject(newGroup, thisPath) as any);
     } else if (!('combinator' in parent)) {
-      let thisPath: number[];
-      if (parent.rules.length === 0) {
-        thisPath = parentPath.concat([0]);
-      } else {
+      if (parent.rules.length > 0) {
         const prevCombinator = parent.rules[parent.rules.length - 2];
         parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
-        thisPath = parentPath.concat([parent.rules.length]);
       }
+      const thisPath = parentPath.concat([parent.rules.length]);
       parent.rules.push(generateValidQueryObject(newGroup, thisPath));
     }
     setRoot(rootCopy);

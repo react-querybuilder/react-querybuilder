@@ -27,12 +27,12 @@ defaultFields.forEach((f) => {
 });
 
 describe('<Rule />', () => {
-  let controls: Partial<Controls>,
-    classNames: Partial<Classnames>,
-    schema: Partial<Schema>,
-    props: RuleProps;
+  let controls: Partial<Controls>;
+  let classNames: Partial<Classnames>;
+  let schema: Partial<Schema>;
+  let props: RuleProps;
+
   beforeEach(() => {
-    //set defaults
     controls = {
       cloneRuleAction: (props: ActionProps) => (
         <button onClick={(e) => props.handleOnClick(e)}>⧉</button>

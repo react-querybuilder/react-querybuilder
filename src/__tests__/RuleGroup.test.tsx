@@ -11,17 +11,17 @@ import {
   Controls,
   RuleGroupProps,
   RuleGroupType,
-  RuleGroupTypeAny,
   RuleType,
   Schema,
   ValueSelectorProps
 } from '../types';
 
 describe('<RuleGroup />', () => {
-  let controls: Partial<Controls>,
-    classNames: Partial<Classnames>,
-    schema: Partial<Schema>,
-    props: RuleGroupProps;
+  let controls: Partial<Controls>;
+  let classNames: Partial<Classnames>;
+  let schema: Partial<Schema>;
+  let props: RuleGroupProps;
+
   beforeEach(() => {
     controls = {
       combinatorSelector: (props) => (
@@ -265,20 +265,16 @@ describe('<RuleGroup />', () => {
 
   describe('onCombinatorChange', () => {
     it('calls onPropChange from the schema with expected values', () => {
-      let actualProperty: string, actualValue: any, actualPath: number[];
-      schema.onPropChange = (prop, value, path) => {
-        actualProperty = prop;
-        actualValue = value;
-        actualPath = path;
-      };
+      schema.onPropChange = jest.fn();
       const dom = mount(<RuleGroup {...props} />);
       dom
         .find(`.${standardClassnames.combinators}`)
         .simulate('change', { target: { value: 'any_combinator_value' } });
 
-      expect(actualProperty).toBe('combinator');
-      expect(actualValue).toBe('any_combinator_value');
-      expect(actualPath).toEqual([0]);
+      const call0 = (schema.onPropChange as jest.Mock).mock.calls[0];
+      expect(call0[0]).toBe('combinator');
+      expect(call0[1]).toBe('any_combinator_value');
+      expect(call0[2]).toEqual([0]);
     });
   });
 
@@ -303,55 +299,45 @@ describe('<RuleGroup />', () => {
     });
 
     it('calls onPropChange from the schema with expected values', () => {
-      let actualProperty: string, actualValue: any, actualPath: number[];
-      schema.onPropChange = (prop, value, path) => {
-        actualProperty = prop;
-        actualValue = value;
-        actualPath = path;
-      };
+      schema.onPropChange = jest.fn();
       schema.showNotToggle = true;
       const dom = mount(<RuleGroup {...props} />);
       dom
         .find(`.${standardClassnames.notToggle} input`)
         .simulate('change', { target: { checked: true } });
 
-      expect(actualProperty).toBe('not');
-      expect(actualValue).toBe(true);
-      expect(actualPath).toEqual([0]);
+      const call0 = (schema.onPropChange as jest.Mock).mock.calls[0];
+      expect(call0[0]).toBe('not');
+      expect(call0[1]).toBe(true);
+      expect(call0[2]).toEqual([0]);
     });
   });
 
   describe('addRule', () => {
     it('calls onRuleAdd from the schema with expected values', () => {
-      let actualRule: RuleType, actualPath: number[];
-      schema.onRuleAdd = (rule, path) => {
-        actualRule = rule;
-        actualPath = path;
-      };
+      schema.onRuleAdd = jest.fn();
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.addRule}`).simulate('click');
 
-      expect(actualRule).toHaveProperty('id');
-      expect(actualRule).toHaveProperty('field');
-      expect(actualRule).toHaveProperty('operator');
-      expect(actualRule).toHaveProperty('value');
-      expect(actualPath).toEqual([0]);
+      const call0 = (schema.onRuleAdd as jest.Mock).mock.calls[0];
+      expect(call0[0]).toHaveProperty('id');
+      expect(call0[0]).toHaveProperty('field');
+      expect(call0[0]).toHaveProperty('operator');
+      expect(call0[0]).toHaveProperty('value');
+      expect(call0[1]).toEqual([0]);
     });
   });
 
   describe('addGroup', () => {
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup: RuleGroupTypeAny, actualPath: number[];
-      schema.onGroupAdd = (ruleGroup, path) => {
-        actualRuleGroup = ruleGroup;
-        actualPath = path;
-      };
+      schema.onGroupAdd = jest.fn();
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.addGroup}`).simulate('click');
 
-      expect(actualRuleGroup).toHaveProperty('id');
-      expect(actualRuleGroup).toHaveProperty('rules');
-      expect(actualPath).toEqual([0]);
+      const call0 = (schema.onGroupAdd as jest.Mock).mock.calls[0];
+      expect(call0[0]).toHaveProperty('id');
+      expect(call0[0]).toHaveProperty('rules');
+      expect(call0[1]).toEqual([0]);
     });
   });
 
@@ -361,31 +347,25 @@ describe('<RuleGroup />', () => {
     });
 
     it('calls onGroupAdd from the schema with expected values', () => {
-      let actualRuleGroup: RuleGroupTypeAny, actualPath: number[];
-      schema.onGroupAdd = (ruleGroup, path) => {
-        actualRuleGroup = ruleGroup;
-        actualPath = path;
-      };
+      schema.onGroupAdd = jest.fn();
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.cloneGroup}`).simulate('click');
 
-      expect((actualRuleGroup as RuleGroupType).combinator).toBe('and');
-      expect(actualRuleGroup.not).toBeUndefined();
-      expect(actualRuleGroup.rules).toHaveLength(0);
-      expect(actualPath).toEqual([]);
+      const call0 = (schema.onGroupAdd as jest.Mock).mock.calls[0];
+      expect((call0[0] as RuleGroupType).combinator).toBe('and');
+      expect(call0[0].not).toBeUndefined();
+      expect(call0[0].rules).toHaveLength(0);
+      expect(call0[1]).toEqual([]);
     });
   });
 
   describe('removeGroup', () => {
     it('calls onGroupRemove from the schema with expected values', () => {
-      let actualPath: number[];
-      schema.onGroupRemove = (path) => {
-        actualPath = path;
-      };
+      schema.onGroupRemove = jest.fn();
       const dom = mount(<RuleGroup {...props} />);
       dom.find(`.${standardClassnames.removeGroup}`).simulate('click');
 
-      expect(actualPath).toEqual([0]);
+      expect((schema.onGroupRemove as jest.Mock).mock.calls[0][0]).toEqual([0]);
     });
   });
 

@@ -1,13 +1,21 @@
 import { mount, ReactWrapper } from 'enzyme';
 import cloneDeep from 'lodash/cloneDeep';
 import { act } from 'react-dom/test-utils';
-import { defaultValidator, RuleType, ValidationMap } from '..';
 import { ActionElement } from '../controls';
 import { standardClassnames } from '../defaults';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
-import { Field, NameLabelPair, QueryBuilderProps, RuleGroupType } from '../types';
+import {
+  Field,
+  NameLabelPair,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+  ValidationMap
+} from '../types';
+import { defaultValidator } from '../utils';
 
 describe('<QueryBuilder />', () => {
   const props: QueryBuilderProps = {
@@ -60,17 +68,14 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should call onQueryChange with query', () => {
-      // Spy is called initially when mounting component (once)
       expect(onQueryChange).toHaveBeenCalledTimes(1);
-      const initialID = wrapper.find(RuleGroup).props().id;
       const query: RuleGroupType = {
-        id: initialID,
         path: [],
         combinator: 'and',
         rules: [],
         not: false
       };
-      expect(onQueryChange).toHaveBeenCalledWith(query);
+      expect(onQueryChange.mock.calls[0][0]).toMatchObject(query);
     });
   });
 
@@ -1143,6 +1148,110 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
 
       expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(1);
+    });
+  });
+
+  describe('inline combinators', () => {
+    beforeEach(() => {
+      props.inlineCombinators = true;
+    });
+
+    it('should render a rule group with inline combinators', () => {
+      const onQueryChange = jest.fn();
+      const wrapper = mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
+      expect(wrapper.find(RuleGroup)).toHaveLength(1);
+      expect(onQueryChange.mock.calls[0][0]).not.toHaveProperty('combinator');
+    });
+
+    it('should render a rule group with addRuleToNewGroups', () => {
+      const wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
+      expect(wrapper.find(Rule)).toHaveLength(1);
+    });
+
+    it('should call onQueryChange with query', () => {
+      const onQueryChange = jest.fn();
+      mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
+      expect(onQueryChange).toHaveBeenCalledTimes(1);
+      const query: RuleGroupTypeIC = {
+        path: [],
+        rules: [],
+        not: false
+      };
+      expect(onQueryChange.mock.calls[0][0]).toMatchObject(query);
+    });
+
+    it('should add rules with inline combinators', () => {
+      const wrapper = mount(<QueryBuilder {...props} />);
+      expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
+      wrapper.find(`button.${standardClassnames.addRule}`).simulate('click');
+      expect(wrapper.find(Rule)).toHaveLength(1);
+      expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
+      wrapper.find(`button.${standardClassnames.addRule}`).simulate('click');
+      expect(wrapper.find(Rule)).toHaveLength(2);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`).props().value).toBe('and');
+      wrapper
+        .find(`select.${standardClassnames.combinators}`)
+        .simulate('change', { target: { value: 'or' } });
+      wrapper.find(`button.${standardClassnames.addRule}`).simulate('click');
+      const combinatorSelectors = wrapper.find(`select.${standardClassnames.combinators}`);
+      expect(combinatorSelectors.at(0).props().value).toBe(combinatorSelectors.at(1).props().value);
+    });
+
+    it('should add groups with inline combinators', () => {
+      const wrapper = mount(<QueryBuilder {...props} />);
+      expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
+      wrapper.find(`button.${standardClassnames.addGroup}`).at(0).simulate('click');
+      expect(wrapper.find(RuleGroup)).toHaveLength(2);
+      expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
+      wrapper.find(`button.${standardClassnames.addGroup}`).at(0).simulate('click');
+      expect(wrapper.find(RuleGroup)).toHaveLength(3);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`).props().value).toBe('and');
+      wrapper
+        .find(`select.${standardClassnames.combinators}`)
+        .simulate('change', { target: { value: 'or' } });
+      wrapper.find(`button.${standardClassnames.addGroup}`).at(0).simulate('click');
+      const combinatorSelectors = wrapper.find(`select.${standardClassnames.combinators}`);
+      expect(combinatorSelectors.at(0).props().value).toBe(combinatorSelectors.at(1).props().value);
+    });
+
+    it('should remove rules along with inline combinators', () => {
+      const query: RuleGroupTypeIC = {
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'or',
+          { field: 'firstName', operator: '=', value: 'Steve' }
+        ]
+      };
+      const wrapper = mount(<QueryBuilder {...props} query={query} />);
+      expect(wrapper.find(Rule)).toHaveLength(3);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(2);
+      wrapper.find(`button.${standardClassnames.removeRule}`).at(1).simulate('click');
+      expect(wrapper.find(Rule)).toHaveLength(2);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`).props().value).toBe('or');
+      wrapper.find(`button.${standardClassnames.removeRule}`).at(0).simulate('click');
+      expect(wrapper.find(Rule)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(0);
+    });
+
+    it('should remove groups along with inline combinators', () => {
+      const query: RuleGroupTypeIC = {
+        rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }]
+      };
+      const wrapper = mount(<QueryBuilder {...props} query={query} />);
+      expect(wrapper.find(RuleGroup)).toHaveLength(4);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(2);
+      wrapper.find(`button.${standardClassnames.removeGroup}`).at(1).simulate('click');
+      expect(wrapper.find(RuleGroup)).toHaveLength(3);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(1);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`).props().value).toBe('or');
+      wrapper.find(`button.${standardClassnames.removeGroup}`).at(0).simulate('click');
+      expect(wrapper.find(RuleGroup)).toHaveLength(2);
+      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(0);
     });
   });
 
