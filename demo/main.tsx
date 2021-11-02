@@ -530,7 +530,7 @@ const App = () => {
                   resetOnOperatorChange={resetOnOperatorChange}
                   autoSelectField={autoSelectField}
                   addRuleToNewGroups={addRuleToNewGroups}
-                  validator={useValidation && defaultValidator}
+                  validator={useValidation ? defaultValidator : undefined}
                   inlineCombinators={inlineCombinators}
                   {...styleOptions[style]}
                 />
