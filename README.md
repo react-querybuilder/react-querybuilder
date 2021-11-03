@@ -385,23 +385,25 @@ interface Schema {
   combinators: { name: string; label: string }[];
   controls: Controls;
   createRule(): RuleType;
-  createRuleGroup(): RuleGroupType;
+  createRuleGroup(): RuleGroupTypeAny;
   getOperators(field: string): { name: string; label: string }[];
-  getValueEditorType(field: string, operator: string): 'text' | 'select' | 'checkbox' | 'radio';
+  getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): { name: string; label: string }[];
-  isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
-  onGroupAdd(group: RuleGroupType, parentPath: number[]): void;
+  isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
+  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
   onGroupRemove(path: number[]): void;
   onPropChange(prop: string, value: any, path: number[]): void;
   onRuleAdd(rule: RuleType, parentPath: number[]): void;
   onRuleRemove(path: number[]): void;
+  updateInlineCombinator(value: string, path: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
   validationMap: ValidationMap;
+  inlineCombinators: boolean;
 }
 ```
 
@@ -616,6 +618,12 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
+#### `inlineCombinators` _(Optional)_
+
+`boolean`
+
+Pass `true` to insert an independent combinator (and/or) selector between each rule/group in a rule group. (The combinator selector at the group level will not be available.) This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules-optional) option, except that each combinator selector is independent. You may find that users take to this configuration more naturally, as it allows them to express queries more like they would in their own language.
+
 #### `validator` _(Optional)_
 
 `(query: RuleGroupType) => boolean | { [id: string]: boolean | { valid: boolean; reasons?: any[] } }`
@@ -799,12 +807,13 @@ A basic form of validation will be used by `formatQuery` for the "in", "notIn", 
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupType;
 ```
 
-`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.github.io/react-querybuilder/) by clicking the "Load from SQL" button, and look at the examples below.
+`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.github.io/react-querybuilder/) by clicking the "Load from SQL" button.
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables.
 
 ```ts
 interface ParseSQLOptions {
+  inlineCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }
@@ -839,6 +848,33 @@ console.log(JSON.stringify(paramsObject$, null, 2));
       "operator": "=",
       "value": "Steve"
     },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
+}
+*/
+```
+
+When the `inlineCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between each rule/group.
+
+```ts
+const standardSQLinlineCombinators = parseSQL(
+  `SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`,
+  { inlineCombinators: true }
+);
+console.log(JSON.stringify(standardSQLinlineCombinators, null, 2));
+/*
+{
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    "and",
     {
       "field": "lastName",
       "operator": "=",

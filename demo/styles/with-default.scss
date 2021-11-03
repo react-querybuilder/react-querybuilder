@@ -151,8 +151,6 @@
   all: initial;
   all: unset;
 
-  @import '../../src/query-builder.scss';
-
   .ruleGroup-notToggle {
     margin-left: 0.5rem;
   }

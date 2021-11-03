@@ -1,5 +1,4 @@
-import { isRuleGroup } from '.';
-import { defaultCombinators, QueryValidator, RuleGroupType, RuleType, ValidationMap } from '..';
+import { defaultCombinators, QueryValidator, RuleGroupTypeAny, RuleType, ValidationMap } from '..';
 import { groupInvalidReasons } from '../defaults';
 
 /**
@@ -17,12 +16,31 @@ const defaultValidator: QueryValidator = (query) => {
     // for an invalid rule.
   };
 
-  const validateGroup = (rg: RuleGroupType) => {
+  const validateGroup = (rg: RuleGroupTypeAny) => {
     const reasons: any[] = [];
     if (rg.rules.length === 0) {
       reasons.push(groupInvalidReasons.empty);
+    } else if (!('combinator' in rg)) {
+      // TODO: check if rules are separated by valid combinators
+      // Odd indexes should be combinators and even indexes should be rules or groups
+      let invalidICs = false;
+      for (let i = 0; i < rg.rules.length && !invalidICs; i++) {
+        if (
+          (i % 2 === 0 && typeof rg.rules[i] === 'string') ||
+          (i % 2 === 1 && typeof rg.rules[i] !== 'string') ||
+          (i % 2 === 1 &&
+            typeof rg.rules[i] === 'string' &&
+            !defaultCombinators.map((c) => c.name as string).includes(rg.rules[i] as string))
+        ) {
+          invalidICs = true;
+        }
+      }
+      if (invalidICs) {
+        reasons.push(groupInvalidReasons.invalidInlineCombinators);
+      }
     }
     if (
+      'combinator' in rg &&
       !defaultCombinators.map((c) => c.name as string).includes(rg.combinator) &&
       rg.rules.length >= 2
     ) {
@@ -37,7 +55,9 @@ const defaultValidator: QueryValidator = (query) => {
       }
     }
     rg.rules.forEach((r) => {
-      if (isRuleGroup(r)) {
+      if (typeof r === 'string') {
+        // no-op
+      } else if ('rules' in r) {
         validateGroup(r);
       } else {
         validateRule(r);

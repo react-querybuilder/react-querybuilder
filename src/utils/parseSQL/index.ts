@@ -1,6 +1,10 @@
-import { isRuleGroup } from '..';
-import { DefaultCombinatorName, DefaultOperatorName } from '../..';
-import { DefaultRuleGroupType, DefaultRuleType, ParseSQLOptions } from '../../types';
+import { DefaultCombinatorName, DefaultOperatorName, DefaultRuleGroupTypeIC } from '../..';
+import {
+  DefaultRuleGroupType,
+  DefaultRuleGroupTypeAny,
+  DefaultRuleType,
+  ParseSQLOptions
+} from '../../types';
 import sqlParser from './sqlParser';
 import {
   AndOperator,
@@ -92,130 +96,12 @@ const generateMixedAndOrList = (expr: SQLAndExpression | SQLOrExpression) => {
   return returnArray;
 };
 
-const processSQLExpression = (
-  expr: SQLExpression
-): DefaultRuleType | DefaultRuleGroupType | null => {
-  if (expr.type === 'NotExpression') {
-    const val =
-      expr.value.type === 'SimpleExprParentheses' ? expr.value.value.value[0] : expr.value;
-    const rule = processSQLExpression(val);
-    /* instanbul ignore else */
-    if (rule) {
-      if (isRuleGroup(rule)) {
-        return { ...rule, not: true };
-      }
-      return { combinator: 'and', rules: [rule], not: true };
-    }
-  } else if (expr.type === 'SimpleExprParentheses') {
-    const ex = expr.value.value[0];
-    if (ex.type === 'AndExpression' || ex.type === 'OrExpression') {
-      return processSQLExpression(ex);
-    }
-    const rule = processSQLExpression(ex);
-    return rule ? { combinator: 'and', rules: [rule] } : null;
-  } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
-    const andOrList = generateMixedAndOrList(expr);
-    const combinator = andOrList[1] as DefaultCombinatorName;
-    const filteredList = andOrList
-      .filter((v) => Array.isArray(v) || isSQLExpressionNotString(v))
-      .map((v) => (Array.isArray(v) ? v.filter(isSQLExpressionNotString) : v)) as (
-      | SQLExpression
-      | SQLExpression[]
-    )[];
-    const rules = filteredList
-      .map((exp): DefaultRuleGroupType | DefaultRuleType | null => {
-        if (Array.isArray(exp)) {
-          return {
-            combinator: 'and',
-            rules: exp.map(processSQLExpression).filter((r) => !!r) as (
-              | DefaultRuleGroupType
-              | DefaultRuleType
-            )[]
-          };
-        }
-        return processSQLExpression(exp);
-      })
-      .filter((r) => !!r) as (DefaultRuleGroupType | DefaultRuleType)[];
-    /* istanbul ignore else */
-    if (rules.length > 0) {
-      return { combinator, rules };
-    }
-  } else if (expr.type === 'IsNullBooleanPrimary') {
-    /* istanbul ignore else */
-    if (isSQLIdentifier(expr.value)) {
-      return {
-        field: getFieldName(expr.value.value),
-        operator: expr.hasNot ? 'notNull' : 'null',
-        value: null
-      };
-    }
-  } else if (expr.type === 'ComparisonBooleanPrimary') {
-    /* istanbul ignore else */
-    if (
-      (isSQLIdentifier(expr.left) && !isSQLIdentifier(expr.right)) ||
-      (!isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right))
-    ) {
-      const identifier = isSQLIdentifier(expr.left)
-        ? expr.left.value
-        : (expr.right as SQLIdentifier).value;
-      const valueObj = [expr.left, expr.right].find((t) => !isSQLIdentifier(t));
-      if (isSQLLiteralValue(valueObj)) {
-        return {
-          field: getFieldName(identifier),
-          operator: normalizeOperator(expr.operator),
-          value: evalSQLLiteralValue(valueObj)
-        };
-      }
-    }
-  } else if (expr.type === 'InExpressionListPredicate') {
-    /* istanbul ignore else */
-    if (isSQLIdentifier(expr.left)) {
-      const value = expr.right.value
-        .filter(isSQLLiteralValue)
-        .map(evalSQLLiteralValue)
-        // TODO: if this should be an array, delete the following line
-        .join(', ');
-      const operator = expr.hasNot ? 'notIn' : 'in';
-      return { field: getFieldName(expr.left.value), operator, value };
-    }
-  } else if (expr.type === 'BetweenPredicate') {
-    /* istanbul ignore else */
-    if (
-      isSQLIdentifier(expr.left) &&
-      isSQLLiteralValue(expr.right.left) &&
-      isSQLLiteralValue(expr.right.right)
-    ) {
-      const value = [expr.right.left, expr.right.right]
-        .map(evalSQLLiteralValue)
-        // TODO: if this should be an array, delete the following line
-        .join(', ');
-      const operator = expr.hasNot ? 'notBetween' : 'between';
-      return { field: getFieldName(expr.left.value), operator, value };
-    }
-  } else if (expr.type === 'LikePredicate') {
-    /* istanbul ignore else */
-    if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
-      const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
-      const valueWithoutWildcards = valueWithWildcards.replace(/(^%)|(%$)/g, '');
-      let operator: DefaultOperatorName = '=';
-      /* istanbul ignore else */
-      if (/^%.*%$/.test(valueWithWildcards)) {
-        operator = expr.hasNot ? 'doesNotContain' : 'contains';
-      } else if (/%$/.test(valueWithWildcards)) {
-        operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
-      } else if (/^%/.test(valueWithWildcards)) {
-        operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
-      }
-      return { field: getFieldName(expr.left.value), operator, value: valueWithoutWildcards };
-    }
-  }
-  return null;
-};
-
-const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupType => {
+const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny => {
   let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
+  let ic = false;
   if (options) {
-    const { params, paramPrefix } = options;
+    const { params, paramPrefix, inlineCombinators } = options;
+    ic = inlineCombinators || false;
     /* istanbul ignore else */
     if (params) {
       if (Array.isArray(params)) {
@@ -238,11 +124,148 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupType 
     }
   }
 
+  const processSQLExpression = (
+    expr: SQLExpression
+  ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
+    if (expr.type === 'NotExpression') {
+      const val =
+        expr.value.type === 'SimpleExprParentheses' ? expr.value.value.value[0] : expr.value;
+      const rule = processSQLExpression(val);
+      /* instanbul ignore else */
+      if (rule) {
+        if ('rules' in rule) {
+          return { ...rule, not: true };
+        }
+        return { combinator: 'and', rules: [rule], not: true };
+      }
+    } else if (expr.type === 'SimpleExprParentheses') {
+      const ex = expr.value.value[0];
+      if (ex.type === 'AndExpression' || ex.type === 'OrExpression') {
+        return processSQLExpression(ex);
+      }
+      const rule = processSQLExpression(ex);
+      return rule ? { combinator: 'and', rules: [rule] } : null;
+    } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
+      if (ic) {
+        const andOrList = generateFlatAndOrList(expr);
+        const rules = andOrList.map((v) => {
+          if (typeof v === 'string') {
+            return v;
+          }
+          return processSQLExpression(v);
+        });
+        // Bail out completely if any rules in the list were invalid
+        // so as not to return an incorrect and/or sequence
+        if (rules.includes(null)) {
+          return null;
+        }
+        return {
+          rules: rules as (DefaultCombinatorName | DefaultRuleType | DefaultRuleGroupTypeIC)[]
+        };
+      }
+      const andOrList = generateMixedAndOrList(expr);
+      const combinator = andOrList[1] as DefaultCombinatorName;
+      const filteredList = andOrList
+        .filter((v) => Array.isArray(v) || isSQLExpressionNotString(v))
+        .map((v) => (Array.isArray(v) ? v.filter(isSQLExpressionNotString) : v)) as (
+        | SQLExpression
+        | SQLExpression[]
+      )[];
+      const rules = filteredList
+        .map((exp): DefaultRuleGroupType | DefaultRuleType | null => {
+          if (Array.isArray(exp)) {
+            return {
+              combinator: 'and',
+              rules: exp.map((e) => processSQLExpression(e)).filter((r) => !!r) as (
+                | DefaultRuleGroupType
+                | DefaultRuleType
+              )[]
+            };
+          }
+          return processSQLExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
+        })
+        .filter((r) => !!r) as (DefaultRuleGroupType | DefaultRuleType)[];
+      /* istanbul ignore else */
+      if (rules.length > 0) {
+        return { combinator, rules };
+      }
+    } else if (expr.type === 'IsNullBooleanPrimary') {
+      /* istanbul ignore else */
+      if (isSQLIdentifier(expr.value)) {
+        return {
+          field: getFieldName(expr.value.value),
+          operator: expr.hasNot ? 'notNull' : 'null',
+          value: null
+        };
+      }
+    } else if (expr.type === 'ComparisonBooleanPrimary') {
+      /* istanbul ignore else */
+      if (
+        (isSQLIdentifier(expr.left) && !isSQLIdentifier(expr.right)) ||
+        (!isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right))
+      ) {
+        const identifier = isSQLIdentifier(expr.left)
+          ? expr.left.value
+          : (expr.right as SQLIdentifier).value;
+        const valueObj = [expr.left, expr.right].find((t) => !isSQLIdentifier(t));
+        if (isSQLLiteralValue(valueObj)) {
+          return {
+            field: getFieldName(identifier),
+            operator: normalizeOperator(expr.operator),
+            value: evalSQLLiteralValue(valueObj)
+          };
+        }
+      }
+    } else if (expr.type === 'InExpressionListPredicate') {
+      /* istanbul ignore else */
+      if (isSQLIdentifier(expr.left)) {
+        const value = expr.right.value
+          .filter(isSQLLiteralValue)
+          .map(evalSQLLiteralValue)
+          // TODO: if this should be an array, delete the following line
+          .join(', ');
+        const operator = expr.hasNot ? 'notIn' : 'in';
+        return { field: getFieldName(expr.left.value), operator, value };
+      }
+    } else if (expr.type === 'BetweenPredicate') {
+      /* istanbul ignore else */
+      if (
+        isSQLIdentifier(expr.left) &&
+        isSQLLiteralValue(expr.right.left) &&
+        isSQLLiteralValue(expr.right.right)
+      ) {
+        const value = [expr.right.left, expr.right.right]
+          .map(evalSQLLiteralValue)
+          // TODO: if this should be an array, delete the following line
+          .join(', ');
+        const operator = expr.hasNot ? 'notBetween' : 'between';
+        return { field: getFieldName(expr.left.value), operator, value };
+      }
+    } else if (expr.type === 'LikePredicate') {
+      /* istanbul ignore else */
+      if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
+        const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
+        const valueWithoutWildcards = valueWithWildcards.replace(/(^%)|(%$)/g, '');
+        let operator: DefaultOperatorName = '=';
+        /* istanbul ignore else */
+        if (/^%.*%$/.test(valueWithWildcards)) {
+          operator = expr.hasNot ? 'doesNotContain' : 'contains';
+        } else if (/%$/.test(valueWithWildcards)) {
+          operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
+        } else if (/^%/.test(valueWithWildcards)) {
+          operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
+        }
+        return { field: getFieldName(expr.left.value), operator, value: valueWithoutWildcards };
+      }
+    }
+    return null;
+  };
+
   const { where } = sqlParser.parse(sqlString).value;
   if (where) {
     const result = processSQLExpression(where);
     if (result) {
-      if (isRuleGroup(result)) {
+      if ('rules' in result) {
         return result;
       }
       return { combinator: 'and', rules: [result] };

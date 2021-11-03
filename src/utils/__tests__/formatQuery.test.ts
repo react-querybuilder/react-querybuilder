@@ -420,6 +420,32 @@ describe('formatQuery', () => {
     });
   });
 
+  describe('inline combinators', () => {
+    it('handles inline combinators', () => {
+      expect(
+        formatQuery(
+          {
+            rules: [
+              { field: 'firstName', value: 'Test', operator: '=' },
+              'and',
+              { field: 'lastName', value: 'Test', operator: '=' }
+            ]
+          },
+          'sql'
+        )
+      ).toBe(`(firstName = 'Test' and lastName = 'Test')`);
+    });
+
+    it('does not support inline combinators for mongodb', () => {
+      expect(
+        formatQuery(
+          { id: 'root', rules: [{ field: 'firstName', value: 'Test', operator: '=' }] },
+          'mongodb'
+        )
+      ).toBe('{$and:[{$expr:true}]}');
+    });
+  });
+
   describe('validation', () => {
     it('should invalidate sql', () => {
       expect(

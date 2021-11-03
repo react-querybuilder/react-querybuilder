@@ -1,44 +1,51 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { ChakraProvider, Tooltip } from '@chakra-ui/react';
-import { Button, Checkbox, Divider, Input, Layout, Modal, Radio, Select, Typography } from 'antd';
+import { ChakraProvider } from '@chakra-ui/react';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Input,
+  Layout,
+  Modal,
+  Radio,
+  Select,
+  Tooltip,
+  Typography
+} from 'antd';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
+import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import QueryBuilder, {
   DefaultRuleGroupType,
+  DefaultRuleGroupTypeIC,
   defaultValidator,
   ExportFormat,
-  Field,
   formatQuery,
   FormatQueryOptions,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   parseSQL,
-  QueryBuilderProps,
   RuleGroupType,
-  RuleType
+  RuleGroupTypeAny,
+  RuleGroupTypeIC
 } from '../src';
 import '../src/query-builder.scss';
-import AntDActionElement from './components/AntDActionElement';
-import AntDNotToggle from './components/AntDNotToggle';
-import AntDValueEditor from './components/AntDValueEditor';
-import AntDValueSelector from './components/AntDValueSelector';
-import BootstrapNotToggle from './components/BootstrapNotToggle';
-import BootstrapValueEditor from './components/BootstrapValueEditor';
-import ChakraActionElement from './components/ChakraActionElement';
-import ChakraNotToggle from './components/ChakraNotToggle';
-import ChakraValueEditor from './components/ChakraValueEditor';
-import ChakraValueSelector from './components/ChakraValueSelector';
-import MaterialActionElement from './components/MaterialActionElement';
-import MaterialNotToggle from './components/MaterialNotToggle';
-import MaterialValueEditor from './components/MaterialValueEditor';
-import MaterialValueSelector from './components/MaterialValueSelector';
+import {
+  fields,
+  formatMap,
+  initialQuery,
+  initialQueryIC,
+  npmLink,
+  repoLink,
+  StyleName,
+  styleOptions
+} from './constants';
 import './styles/common.scss';
 import './styles/github-fork-ribbon.scss';
-import './styles/with-antd.less';
+import './styles/with-antd.scss';
 import './styles/with-bootstrap.scss';
 import './styles/with-chakra.scss';
 import './styles/with-default.scss';
@@ -48,11 +55,6 @@ const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
 const { Link, Title } = Typography;
-
-type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
-
-const repoLink = 'https://github.com/react-querybuilder/react-querybuilder';
-const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('json_without_ids', json);
@@ -75,168 +77,9 @@ const shStyle = {
   }
 };
 
-const validator = (r: RuleType) => !!r.value;
-
-const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
-  default: {},
-  bootstrap: {
-    controlClassnames: {
-      addGroup: 'btn btn-secondary btn-sm',
-      addRule: 'btn btn-primary btn-sm',
-      cloneGroup: 'btn btn-secondary btn-sm',
-      cloneRule: 'btn btn-secondary btn-sm',
-      removeGroup: 'btn btn-danger btn-sm',
-      removeRule: 'btn btn-danger btn-sm',
-      combinators: 'form-select form-select-sm',
-      fields: 'form-select form-select-sm',
-      operators: 'form-select form-select-sm',
-      value: 'form-control form-control-sm'
-    },
-    controlElements: {
-      notToggle: BootstrapNotToggle,
-      valueEditor: BootstrapValueEditor
-    }
-  },
-  antd: {
-    controlElements: {
-      addGroupAction: AntDActionElement,
-      addRuleAction: AntDActionElement,
-      cloneGroupAction: AntDActionElement,
-      cloneRuleAction: AntDActionElement,
-      combinatorSelector: AntDValueSelector,
-      fieldSelector: AntDValueSelector,
-      notToggle: AntDNotToggle,
-      operatorSelector: AntDValueSelector,
-      removeGroupAction: AntDActionElement,
-      removeRuleAction: AntDActionElement,
-      valueEditor: AntDValueEditor
-    }
-  },
-  material: {
-    controlElements: {
-      addGroupAction: MaterialActionElement,
-      addRuleAction: MaterialActionElement,
-      cloneGroupAction: MaterialActionElement,
-      cloneRuleAction: MaterialActionElement,
-      combinatorSelector: MaterialValueSelector,
-      fieldSelector: MaterialValueSelector,
-      notToggle: MaterialNotToggle,
-      operatorSelector: MaterialValueSelector,
-      removeGroupAction: MaterialActionElement,
-      removeRuleAction: MaterialActionElement,
-      valueEditor: MaterialValueEditor
-    }
-  },
-  chakra: {
-    controlElements: {
-      addGroupAction: ChakraActionElement,
-      addRuleAction: ChakraActionElement,
-      cloneGroupAction: ChakraActionElement,
-      cloneRuleAction: ChakraActionElement,
-      combinatorSelector: ChakraValueSelector,
-      fieldSelector: ChakraValueSelector,
-      notToggle: ChakraNotToggle,
-      operatorSelector: ChakraValueSelector,
-      removeGroupAction: ChakraActionElement,
-      removeRuleAction: ChakraActionElement,
-      valueEditor: ChakraValueEditor
-    }
-  }
-};
-
-const fields: Field[] = [
-  { name: 'firstName', label: 'First Name', placeholder: 'Enter first name', validator },
-  {
-    name: 'lastName',
-    label: 'Last Name',
-    placeholder: 'Enter last name',
-    defaultOperator: 'beginsWith',
-    validator
-  },
-  { name: 'age', label: 'Age', inputType: 'number', validator },
-  {
-    name: 'isMusician',
-    label: 'Is a musician',
-    valueEditorType: 'checkbox',
-    operators: [{ name: '=', label: 'is' }],
-    defaultValue: false
-  },
-  {
-    name: 'instrument',
-    label: 'Instrument',
-    valueEditorType: 'select',
-    values: [
-      { name: 'Guitar', label: 'Guitar' },
-      { name: 'Piano', label: 'Piano' },
-      { name: 'Vocals', label: 'Vocals' },
-      { name: 'Drums', label: 'Drums' }
-    ],
-    defaultValue: 'Piano',
-    operators: [{ name: '=', label: 'is' }]
-  },
-  {
-    name: 'gender',
-    label: 'Gender',
-    operators: [{ name: '=', label: 'is' }],
-    valueEditorType: 'radio',
-    values: [
-      { name: 'M', label: 'Male' },
-      { name: 'F', label: 'Female' },
-      { name: 'O', label: 'Other' }
-    ]
-  },
-  { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator }
-];
-
-const initialQuery: RuleGroupType = {
-  rules: [
-    {
-      field: 'firstName',
-      value: 'Stev',
-      operator: 'beginsWith'
-    },
-    {
-      field: 'lastName',
-      value: 'Vai, Vaughan',
-      operator: 'in'
-    },
-    {
-      field: 'age',
-      operator: '>',
-      value: '28'
-    },
-    {
-      combinator: 'or',
-      rules: [
-        {
-          field: 'isMusician',
-          operator: '=',
-          value: true
-        },
-        {
-          field: 'instrument',
-          operator: '=',
-          value: 'Guitar'
-        }
-      ]
-    }
-  ],
-  combinator: 'and',
-  not: false
-};
-
-const formatMap: { fmt: ExportFormat; lbl: string }[] = [
-  { fmt: 'json_without_ids', lbl: 'JSON Without IDs' },
-  { fmt: 'json', lbl: 'JSON' },
-  { fmt: 'sql', lbl: 'SQL' },
-  { fmt: 'parameterized', lbl: 'Parameterized SQL' },
-  { fmt: 'parameterized_named', lbl: 'Parameterized (Named) SQL' },
-  { fmt: 'mongodb', lbl: 'MongoDB' }
-];
-
-const RootView = () => {
+const App = () => {
   const [query, setQuery] = useState(initialQuery);
+  const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
   const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
   const [showNotToggle, setShowNotToggle] = useState(false);
@@ -246,6 +89,7 @@ const RootView = () => {
   const [autoSelectField, setAutoSelectField] = useState(true);
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [useValidation, setUseValidation] = useState(false);
+  const [inlineCombinators, setInlineCombinators] = useState(false);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -317,6 +161,14 @@ const RootView = () => {
       label: 'Use validation',
       title:
         'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups'
+    },
+    {
+      checked: inlineCombinators,
+      default: false,
+      setter: setInlineCombinators,
+      link: '#inlinecombinators-optional',
+      label: 'Inline combinators',
+      title: 'When checked, the query builder supports independent combinators between rules'
     }
   ];
 
@@ -324,24 +176,26 @@ const RootView = () => {
     optionsInfo.forEach((opt) => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
 
   const formatOptions = useValidation ? ({ format, fields } as FormatQueryOptions) : format;
+  const q: RuleGroupTypeAny = inlineCombinators ? queryIC : query;
   const formatString =
     format === 'json_without_ids'
-      ? JSON.stringify(JSON.parse(formatQuery(query, formatOptions) as string), null, 2)
+      ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions) as string), null, 2)
       : format === 'parameterized' || format === 'parameterized_named'
       ? JSON.stringify(
-          formatQuery(query, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
+          formatQuery(q, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
           null,
           2
         )
-      : (formatQuery(query, formatOptions) as string);
+      : (formatQuery(q, formatOptions) as string);
 
   const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();
 
   const loadFromSQL = () => {
-    let q: DefaultRuleGroupType;
     try {
-      q = parseSQL(sql);
+      const q = parseSQL(sql) as DefaultRuleGroupType;
+      const qIC = parseSQL(sql, { inlineCombinators: true }) as DefaultRuleGroupTypeIC;
       setQuery(q);
+      setQueryIC(qIC);
       setIsSQLModalVisible(false);
       setSQLParseError('');
     } catch (err) {
@@ -369,14 +223,12 @@ const RootView = () => {
               <Option value="antd">Ant Design</Option>
               <Option value="chakra">Chakra UI</Option>
             </Select>
-            <Divider />
-            <Title level={4}>
+            <Title level={4} style={{ marginTop: '1rem' }}>
               Options
               {'\u00a0'}
               <a href={`${repoLink}#api`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`Boolean props on the QueryBuilder component (click for documentation)`}
-                  fontSize="small"
+                  title={`Boolean props on the QueryBuilder component (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
@@ -389,10 +241,7 @@ const RootView = () => {
                     {label}
                     {'\u00a0'}
                     <a href={`${repoLink}${link}`} target="_blank" rel="noreferrer">
-                      <Tooltip
-                        label={`${title} (click for documentation)`}
-                        fontSize="small"
-                        placement="right">
+                      <Tooltip title={`${title} (click for documentation)`} placement="right">
                         <QuestionCircleOutlined />
                       </Tooltip>
                     </a>
@@ -403,14 +252,12 @@ const RootView = () => {
                 Defaults
               </Button>
             </div>
-            <Divider />
-            <Title level={4}>
+            <Title level={4} style={{ marginTop: '1rem' }}>
               Export
               {'\u00a0'}
               <a href={`${repoLink}#formatquery`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`The export format of the formatQuery function (click for documentation)`}
-                  fontSize="small"
+                  title={`The export format of the formatQuery function (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
@@ -422,31 +269,25 @@ const RootView = () => {
                 <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
                   {lbl}
                   {'\u00a0'}
-                  <Tooltip
-                    label={`formatQuery(query, "${fmt}")`}
-                    fontSize="small"
-                    placement="right">
+                  <Tooltip title={`formatQuery(query, "${fmt}")`} placement="right">
                     <QuestionCircleOutlined />
                   </Tooltip>
                 </Radio>
               ))}
             </div>
-            <Divider />
-            <Title level={4}>
+            <Title level={4} style={{ marginTop: '1rem' }}>
               Import
               {'\u00a0'}
               <a href={`${repoLink}#parsesql`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  label={`Set the query from SQL (click for documentation)`}
-                  fontSize="small"
+                  title={`Set the query from SQL (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
               </a>
             </Title>
             <Button onClick={() => setIsSQLModalVisible(true)}>Load from SQL</Button>
-            <Divider />
-            <Title level={4}>
+            <Title level={4} style={{ marginTop: '1rem' }}>
               Installation{'\u00a0'}
               <Link href={npmLink} target="_blank">
                 <LinkOutlined />
@@ -460,9 +301,13 @@ const RootView = () => {
             <div className={qbWrapperClassName}>
               <form className="form-inline" style={{ marginTop: '1rem' }}>
                 <QueryBuilder
-                  query={query}
+                  query={inlineCombinators ? queryIC : query}
                   fields={fields}
-                  onQueryChange={setQuery}
+                  onQueryChange={(q) =>
+                    inlineCombinators
+                      ? setQueryIC(q as RuleGroupTypeIC)
+                      : setQuery(q as RuleGroupType)
+                  }
                   showCombinatorsBetweenRules={showCombinatorsBetweenRules}
                   showNotToggle={showNotToggle}
                   showCloneButtons={showCloneButtons}
@@ -470,7 +315,8 @@ const RootView = () => {
                   resetOnOperatorChange={resetOnOperatorChange}
                   autoSelectField={autoSelectField}
                   addRuleToNewGroups={addRuleToNewGroups}
-                  validator={useValidation && defaultValidator}
+                  validator={useValidation ? defaultValidator : undefined}
+                  inlineCombinators={inlineCombinators}
                   {...styleOptions[style]}
                 />
               </form>
@@ -503,4 +349,4 @@ const RootView = () => {
   );
 };
 
-ReactDOM.render(<RootView />, document.querySelector('.container'));
+ReactDOM.render(<App />, document.querySelector('.container'));
