@@ -1,5 +1,5 @@
 ---
-title: QueryBuilder API
+title: <QueryBuilder />
 sidebar_position: 4
 ---
 
@@ -35,7 +35,7 @@ interface Field {
   defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
-  validator?: RuleValidator; // Called when a rule specifies this field (see the [main validator prop](#validator) for more information)
+  validator?: RuleValidator; // Called when a rule specifies this field
 }
 ```
 
@@ -657,4 +657,4 @@ Pass `true` to insert an independent combinator selector between each rule/group
 
 `QueryValidator`
 
-This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](validation) documentation for more information.
+This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](./validation) documentation for more information.
