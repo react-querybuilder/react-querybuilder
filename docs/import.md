@@ -1,8 +1,15 @@
 ---
 title: Import
+sidebar_position: 6
 ---
 
-Use the `parseSQL` function to convert SQL `SELECT` statements into a format suitable for the `<QueryBuilder />` component's `query` prop. The function signature is:
+import TypeScriptAdmonition from './_ts_admonition.md'
+
+<TypeScriptAdmonition />
+
+Use the `parseSQL` function to convert SQL `SELECT` statements into a format suitable for the `<QueryBuilder />` component's `query` prop.
+
+The function signature is:
 
 ```ts
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
@@ -11,14 +18,6 @@ function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 `parseSQL` takes a SQL `SELECT` statement (either the full statement or the `WHERE` clause by itself). Try it out in the [demo](https://react-querybuilder.github.io/react-querybuilder/) by clicking the "Load from SQL" button.
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables within the SQL string.
-
-```ts
-interface ParseSQLOptions {
-  inlineCombinators?: boolean;
-  paramPrefix?: string;
-  params?: any[] | { [p: string]: any };
-}
-```
 
 ## Basic usage
 

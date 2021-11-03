@@ -1,10 +1,15 @@
 ---
 title: Export
+sidebar_position: 5
 ---
 
-<!-- TODO: verify the quotation marks (single vs double) in "sql"-ish outputs -->
+import TypeScriptAdmonition from './_ts_admonition.md'
 
-Use the `formatQuery` function to export queries in various formats. The function signature is:
+<TypeScriptAdmonition />
+
+Use the `formatQuery` function to export queries in various formats.
+
+The function signature is:
 
 ```ts
 function formatQuery(
@@ -174,19 +179,7 @@ Output:
 
 ## Configuration
 
-An object can be passed as the second argument instead of a string in order to have more detailed control over the output. The options object takes the following form:
-
-```ts
-interface FormatQueryOptions {
-  format?: ExportFormat;
-  valueProcessor?: (field: string, operator: string, value: any) => string;
-  quoteFieldNamesWith?: string;
-  validator?: QueryValidator;
-  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
-  fallbackExpression?: string;
-  paramPrefix?: string;
-}
-```
+An object can be passed as the second argument instead of a string in order to have more detailed control over the output.
 
 ### Value processor
 
