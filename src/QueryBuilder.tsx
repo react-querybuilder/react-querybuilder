@@ -6,6 +6,7 @@ import {
   defaultCombinators,
   defaultControlClassnames,
   defaultControlElements,
+  defaultFields,
   defaultOperators,
   defaultTranslations,
   standardClassnames
@@ -40,7 +41,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGr
 
 const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({
   query,
-  fields = [],
+  fields = defaultFields,
   operators = defaultOperators,
   combinators = defaultCombinators,
   translations = defaultTranslations,
@@ -69,7 +70,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   context
 }: QueryBuilderPropsInternal<RG>) => {
   if (!autoSelectField) {
-    fields = [{ id: '~', name: '~', label: '------' } as Field].concat(fields);
+    fields = defaultFields.concat(fields);
   }
 
   const fieldMap: { [k: string]: Field } = {};
@@ -88,7 +89,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const createRule = (): RuleType => {
     let field = '';
-    if (fields?.length && fields[0]) {
+    /* istanbul ignore else */
+    if (fields?.length > 0 && fields[0]) {
       field = fields[0].name;
     }
     if (getDefaultField) {

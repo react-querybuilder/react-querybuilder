@@ -2,7 +2,9 @@ import { DefaultCombinator, DefaultOperator } from '.';
 import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
-import { Classnames, Controls, Translations } from './types';
+import { Classnames, Controls, Field, Translations } from './types';
+
+export const defaultFields: Field[] = [{ id: '~', name: '~', label: '------' }];
 
 export const defaultTranslations: Translations = {
   fields: {

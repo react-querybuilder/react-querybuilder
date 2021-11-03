@@ -442,7 +442,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      * The array of fields that should be used. Each field should be an object
      * with {name: String, label: String}
      */
-    fields: Field[];
+    fields?: Field[];
     /**
      * The array of operators that should be used.
      * @default
@@ -532,9 +532,9 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      */
     onAddGroup?(ruleGroup: RG, parentPath: number[], query: RG): RG | false;
     /**
-     * This is a notification that is invoked anytime the query configuration changes.
+     * This is a callback function that is invoked anytime the query configuration changes.
      */
-    onQueryChange(query: RG): void;
+    onQueryChange?(query: RG): void;
     /**
      * This can be used to assign specific CSS classes to various controls
      * that are created by the `<QueryBuilder />`.
