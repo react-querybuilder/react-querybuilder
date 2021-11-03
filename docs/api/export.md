@@ -34,7 +34,7 @@ The inversion operator (setting `not: true` for a rule group) is currently unsup
 For the next few sections, assume the `query` variable has been defined as:
 
 ```ts
-const query = {
+const query: RuleGroupType = {
   id: 'root',
   combinator: 'and',
   not: false,
@@ -186,7 +186,7 @@ An object can be passed as the second argument instead of a string in order to h
 If you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for "sql" format).
 
 ```ts
-const query = {
+const query: RuleGroupType = {
   combinator: 'and',
   not: false,
   rules: [
@@ -247,7 +247,7 @@ The validation options (`validator` and `fields` – see [Validation](./validati
 Example:
 
 ```ts
-const query = {
+const query: RuleGroupType = {
   id: 'root',
   rules: [
     {

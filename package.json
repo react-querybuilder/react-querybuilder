@@ -24,6 +24,7 @@
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "remark-typescript-tools": "^1.0.10",
     "url-loader": "^4.1.1"
   },
   "devDependencies": {

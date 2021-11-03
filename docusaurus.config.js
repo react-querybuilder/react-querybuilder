@@ -1,5 +1,8 @@
 // @ts-check
 
+const { resolve } = require('path');
+const {  transpileCodeblocks } = require('remark-typescript-tools');
+
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
@@ -25,13 +28,24 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder.github.io/',
+          remarkPlugins: [
+            [
+              transpileCodeblocks,
+              {
+                compilerSettings: {
+                  tsconfig: resolve(__dirname, '../docs/tsconfig.json'),
+                  externalResolutions: {},
+                },
+              },
+            ],
+          ],
         },
-        blog: false,
         // blog: {
         //   showReadingTime: true,
         //   editUrl:
         //     'https://github.com/react-querybuilder/react-querybuilder.github.io/blog/',
         // },
+        blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },

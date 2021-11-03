@@ -40,7 +40,7 @@ parseSQL(`SELECT * FROM t WHERE firstName = $p1 AND lastName = $p2`, {
 });
 ```
 
-Output:
+Output (`RuleGroupType`):
 
 ```ts
 {
@@ -71,7 +71,7 @@ parseSQL(
 );
 ```
 
-Output:
+Output (`RuleGroupTypeIC`):
 
 ```ts
 {
