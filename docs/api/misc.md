@@ -25,7 +25,7 @@ Pass `validator={defaultValidator}` to automatically validate groups (rules will
 function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
 ```
 
-`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](./api#onAddRule) and [`onAddGroup`](./api#onAddGroup) functions.
+`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](./querybuilder#onaddrule) and [`onAddGroup`](./querybuilder#onaddgroup) functions.
 
 ### Defaults
 

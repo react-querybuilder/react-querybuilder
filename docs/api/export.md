@@ -55,7 +55,7 @@ const query = {
 };
 ```
 
-## Basic Usage
+## Basic usage
 
 ### JSON
 
@@ -242,7 +242,7 @@ By default, `fallbackExpression` is `"(1 = 1)"` for the "sql", "parameterized", 
 
 ### Validation
 
-The validation options (`validator` and `fields`) only affect the output when `format` is "sql", "parameterized", "parameterized_named", or "mongodb". If the `validator` function returns `false`, the `fallbackExpression` will be returned. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
+The validation options (`validator` and `fields` – see [Validation](./validation) for more information) only affect the output when `format` is "sql", "parameterized", "parameterized_named", or "mongodb". If the `validator` function returns `false`, the `fallbackExpression` will be returned. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
 
 Example:
 

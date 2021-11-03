@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'React Query Builder',
-  tagline: 'The Query Builder component for React',
+  tagline: 'The Query Builder Component for React',
   url: 'https://react-querybuilder.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -53,11 +53,11 @@ const config = {
             type: 'doc',
             docId: 'intro',
             position: 'right',
-            label: 'Tutorial',
+            label: 'Quick Start',
           },
           {
             type: 'doc',
-            docId: 'api/api',
+            docId: 'api/querybuilder',
             position: 'right',
             label: 'Docs',
           },
@@ -81,8 +81,12 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Quick Start',
                 to: '/docs/intro',
+              },
+              {
+                label: 'API',
+                to: '/docs/api/querybuilder',
               },
             ],
           },
@@ -112,7 +116,11 @@ const config = {
               // },
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/react-querybuilder/react-querybuilder',
+              },
+              {
+                label: 'npm',
+                href: 'https://www.npmjs.com/package/react-querybuilder',
               },
             ],
           },

@@ -3,14 +3,20 @@ title: Validation
 sidebar_position: 7
 ---
 
+:::caution This page is under construction
+
+:::
+
 import TypeScriptAdmonition from './_ts_admonition.md'
 
 <TypeScriptAdmonition />
 
-:::caution Under construction
+## Query validation
 
-:::
+## Effects of validation on exports
 
-### Default validation
+See the [validation section on the Export page](./export#validation) for more information
 
-You can pass the provided [`defaultValidator`](./misc#defaultvalidator) to the `validator` prop to check for invalid combinators, empty groups, or out-of-sequence `rules` arrays (when `inlineCombinators` is true).
+## Default validator
+
+You can pass the provided [`defaultValidator`](./misc#defaultvalidator) to the `validator` prop to check for invalid combinators, empty groups, or (if `inlineCombinators` is true) out-of-sequence `rules` arrays.

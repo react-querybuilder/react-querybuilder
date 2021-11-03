@@ -509,7 +509,7 @@ To completely prevent the addition of new rules, pass `controlElements={{ addRul
 
 ### `onAddGroup`
 
-`(ruleGroup: RuleGroupTypeAny, parentPath: number[], query: RuleGroupTypeAny) => RuleGroupTypeAny | false`
+`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG) => RG | false`
 
 This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use `findPath(parentPath, query)` to locate the parent group to which the new group will be added within the query hierarchy.
 

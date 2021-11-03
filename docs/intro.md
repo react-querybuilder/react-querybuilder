@@ -1,12 +1,15 @@
 ---
+title: Getting Started
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+:::caution This page is under construction
+
+:::
 
 Let's discover **React Query Builder in less than 5 minutes**.
 
-## Getting Started
+## Installation
 
 Get started by **...**
 
