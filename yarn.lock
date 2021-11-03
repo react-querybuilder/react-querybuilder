@@ -6281,6 +6281,13 @@ react-loadable-ssr-addon-v5-slorber@^1.0.1:
   dependencies:
     "@babel/runtime" "^7.10.3"
 
+react-querybuilder@4.0.0-beta.4:
+  version "4.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/react-querybuilder/-/react-querybuilder-4.0.0-beta.4.tgz#7ca639854313a8f970607e17fd713e3a34bbc658"
+  integrity sha512-Xh6hReBYt0sIF5VD3oZaiF+UA3czV1roBkHY/vW7Xd+7vemheGv75jEASR6sxSkEBen6Nudfw6hAyqQ4osovEw==
+  dependencies:
+    lodash "^4.17.20"
+
 react-router-config@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-router-config/-/react-router-config-5.1.1.tgz#0f4263d1a80c6b2dc7b9c1902c9526478194a988"

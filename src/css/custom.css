@@ -26,3 +26,11 @@
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+@import 'react-querybuilder/dist/query-builder.css';
+
+.queryBuilder {
+  /* border-radius: 4px; */
+  /* background-color: white; */
+  margin-bottom: 1rem;
+}

@@ -117,7 +117,7 @@ If the `inlineCombinators` prop is provided, then the `query` argument will be o
 
 `RuleGroupTypeAny`
 
-The query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`inlineCombinators`](#inlinecombinators) is also provided). If `query` is provided, `<QueryBuilder />` will be a controlled component. If not, then the component will be uncontrolled.
+The initial query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`inlineCombinators`](#inlinecombinators) is also provided). If `query` is provided, `<QueryBuilder />` will be a controlled component. If not, then the component will be uncontrolled.
 
 The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/demo/main.tsx) for examples.
 
@@ -461,7 +461,7 @@ This is a callback function invoked to get the list of allowed operators for the
 
 ### `getValueEditorType`
 
-`(field: string, operator: string) => 'text' | 'select' | 'checkbox' | 'radio' | null`
+`(field: string, operator: string) => ValueEditorType`
 
 This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
 

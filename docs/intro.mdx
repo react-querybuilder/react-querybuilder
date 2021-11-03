@@ -1,0 +1,107 @@
+---
+title: Getting Started
+sidebar_position: 1
+---
+
+import QueryBuilder from 'react-querybuilder'
+
+:::caution This page is under construction
+
+:::
+
+## Installation
+
+To install `react-querybuilder`, use npm or yarn.
+
+```bash
+# npm
+npm i react-querybuilder
+
+# Yarn
+yarn add react-querybuilder
+```
+
+## Getting started
+
+The simplest way to create a query builder is to render the QueryBuilder component with no props.
+
+```tsx
+import QueryBuilder from "react-querybuilder";
+
+export const BasicExample = () => (
+  <QueryBuilder />
+);
+```
+
+That component will render this query builder:
+
+<QueryBuilder />
+
+Functional, but not really useful. To really get value out of the query builder, we'll first need to define a set of fields for the user to choose from.
+
+```ts
+import { Field } from "react-querybuilder";
+
+const fields: Field[] = [
+  { name: "firstName", label: "First Name" },
+  { name: "lastName", label: "Last Name" },
+];
+```
+
+We can pass the `fields` array into the query builder through the `fields` prop.
+
+```tsx
+import QueryBuilder from "react-querybuilder";
+
+const FieldsExample = () => (
+  <QueryBuilder fields={fields} />
+);
+```
+
+That will render the query builder below. Click the "+Rule" button and then the fields selector to see the field choices.
+
+<QueryBuilder fields={[{ name: "firstName", label: "First Name" },{ name: "lastName", label: "Last Name" }]} />
+
+Much more useful, but you probably want to monitor and control what users do with the query builder. Let's set up a state variable using the React Hook `useState`. This will store our query object and allow us to pass it on to other components, event handlers, etc.
+
+The state variable `query` will be passed to the `query` prop, and the setter method `setQuery` will be used in the `onQueryChange` callback. Let's also seed the query object with a couple of rules, making sure that the `field` property of each rule matches the `name` property of one of our fields.
+
+```tsx
+import { useState } from "react";
+import QueryBuilder, { RuleGroupType } from "react-querybuilder";
+
+const FirstUsefulExample = () => {
+  const [query, setQuery] = useState<RuleGroupType>({
+    combinator: 'and',
+    rules: [
+      { field: "firstName", operator: "=", value: "Steve" },
+      { field: "lastName", operator: "=", value: "Vai" }
+    ]
+  });
+
+  return (
+    <QueryBuilder
+      fields={fields}
+      query={query}
+      onQueryChange={(q) => setQuery(q)}
+    />
+  );
+};
+```
+
+Which renders this:
+
+<QueryBuilder
+  fields={[
+    { name: "firstName", label: "First Name" },
+    { name: "lastName", label: "Last Name" }
+  ]}
+  query={{
+    combinator: "and",
+    rules: [
+      { field: "firstName", operator: "=", value: "Steve" },
+      { field: "lastName", operator: "=", value: "Vai" }
+    ]
+  }}
+  onQueryChange={console.log}
+/>
