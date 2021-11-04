@@ -91,4 +91,36 @@ interface ParseSQLOptions {
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }
+
+interface Schema {
+  fields: Field[];
+  fieldMap: { [k: string]: Field };
+  classNames: Classnames;
+  combinators: NameLabelPair[];
+  controls: Controls;
+  createRule(): RuleType;
+  createRuleGroup(): RuleGroupTypeAny;
+  getOperators(field: string): NameLabelPair[];
+  getValueEditorType(field: string, operator: string): ValueEditorType;
+  getInputType(field: string, operator: string): string | null;
+  getValues(field: string, operator: string): NameLabelPair[];
+  isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
+  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
+  onGroupRemove(path: number[]): void;
+  onPropChange(
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
+    value: any,
+    path: number[]
+  ): void;
+  onRuleAdd(rule: RuleType, parentPath: number[]): void;
+  onRuleRemove(path: number[]): void;
+  updateInlineCombinator(value: string, path: number[]): void;
+  showCombinatorsBetweenRules: boolean;
+  showNotToggle: boolean;
+  showCloneButtons: boolean;
+  autoSelectField: boolean;
+  addRuleToNewGroups: boolean;
+  validationMap: ValidationMap;
+  inlineCombinators: boolean;
+}
 ```
