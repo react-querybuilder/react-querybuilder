@@ -27,7 +27,7 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/react-querybuilder/react-querybuilder.github.io/blob/main/',
+          editUrl: 'https://github.com/react-querybuilder/react-querybuilder.github.io/edit/main/',
           remarkPlugins: [
             [
               transpileCodeblocks,
@@ -43,7 +43,7 @@ const config = {
         // blog: {
         //   showReadingTime: true,
         //   editUrl:
-        //     'https://github.com/react-querybuilder/react-querybuilder.github.io/blob/main/',
+        //     'https://github.com/react-querybuilder/react-querybuilder.github.io/edit/main/',
         // },
         blog: false,
         theme: {
