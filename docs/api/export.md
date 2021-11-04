@@ -1,6 +1,5 @@
 ---
 title: Export
-sidebar_position: 5
 ---
 
 import TypeScriptAdmonition from './_ts_admonition.md'
@@ -240,7 +239,7 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 
 By default, `fallbackExpression` is `"(1 = 1)"` for the "sql", "parameterized", and "parameterized_named" formats, and `"{$and:[{$expr:true}]}"` for the "mongodb" format.
 
-### Validation
+## Validation
 
 The validation options (`validator` and `fields` – see [Validation](./validation) for more information) only affect the output when `format` is "sql", "parameterized", "parameterized_named", or "mongodb". If the `validator` function returns `false`, the `fallbackExpression` will be returned. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
 
@@ -288,6 +287,8 @@ formatQuery(query, {
 });
 // Output: "(lastName = 'Vai')" <-- skipped `firstName` rule because field validator returned `false`
 ```
+
+### Automatic validation
 
 A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", "parameterized_named", or "mongodb". This validation is used regardless of the presence of any `validator` options either at the query or field level:
 

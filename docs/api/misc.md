@@ -1,6 +1,5 @@
 ---
 title: Miscellaneous
-sidebar_position: 8
 ---
 
 import TypeScriptAdmonition from './_ts_admonition.md'

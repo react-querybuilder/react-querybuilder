@@ -1,6 +1,5 @@
 ---
 title: TypeScript
-sidebar_position: 9
 ---
 
 These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript (you really should! 😊), you can use the information below to understand the required shape of the props and function parameters. To see the full type definitions for the `react-querybuilder` library, [click here](https://github.com/react-querybuilder/react-querybuilder/blob/master/src/types.ts).

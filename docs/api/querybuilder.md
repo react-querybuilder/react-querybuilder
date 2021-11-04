@@ -1,6 +1,5 @@
 ---
 title: <QueryBuilder />
-sidebar_position: 4
 ---
 
 import TypeScriptAdmonition from './_ts_admonition.md'

@@ -1,6 +1,5 @@
 ---
 title: Import
-sidebar_position: 6
 ---
 
 import TypeScriptAdmonition from './_ts_admonition.md'
