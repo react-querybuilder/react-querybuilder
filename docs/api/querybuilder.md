@@ -21,31 +21,19 @@ All props are optional.
 
 `Field[]`
 
-The array of fields that should be used. Each field should be an object with the following signature:
+The array of [fields](../typescript#fields) that should be used.
 
-```ts
-interface Field {
-  id?: string; // The field identifier (if not provided, then `name` will be used)
-  name: string; // REQUIRED - the field name
-  label: string; // REQUIRED - the field label
-  operators?: NameLabelPair[]; // Array of operators (if not provided, then `getOperators()` will be used)
-  valueEditorType?: ValueEditorType; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
-  inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
-  values?: NameLabelPair[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
-  defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
-  defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
-  placeholder?: string; // Value to be displayed in the placeholder of the text field
-  validator?: RuleValidator; // Called when a rule specifies this field
-}
-```
+:::tip
 
-:::warning
+Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements)).
+
+:::
+
+:::caution
 
 Although not strictly required, a missing or empty `fields` array severely limits the functionality of the `<QueryBuilder />` component.
 
 :::
-
-Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements)).
 
 ### `onQueryChange`
 
@@ -117,7 +105,7 @@ If the `inlineCombinators` prop is provided, then the `query` argument will be o
 
 `RuleGroupTypeAny`
 
-The initial query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`inlineCombinators`](#inlinecombinators) is also provided). If `query` is provided, `<QueryBuilder />` will be a controlled component. If not, then the component will be uncontrolled.
+The initial query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`inlineCombinators`](#inlinecombinators) is also provided).
 
 The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/demo/main.tsx) for examples.
 

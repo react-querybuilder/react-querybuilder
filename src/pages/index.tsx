@@ -17,7 +17,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Get started in 5 min ⏱️
+            Get Started
           </Link>
         </div>
       </div>
@@ -26,10 +26,8 @@ function HomepageHeader() {
 }
 
 export default function Home(): JSX.Element {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={siteConfig.title}
       description="The Query Builder Component for React">
       <HomepageHeader />
       <main>
