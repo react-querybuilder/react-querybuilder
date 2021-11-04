@@ -28,17 +28,18 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder.github.io/edit/main/',
-          remarkPlugins: [
-            [
-              transpileCodeblocks,
-              {
-                compilerSettings: {
-                  tsconfig: resolve(__dirname, '../docs/tsconfig.json'),
-                  externalResolutions: {},
-                },
-              },
-            ],
-          ],
+          // Re-enable this when we get it working properly
+          // remarkPlugins: [
+          //   [
+          //     transpileCodeblocks,
+          //     {
+          //       compilerSettings: {
+          //         tsconfig: resolve(__dirname, '../docs/tsconfig.json'),
+          //         externalResolutions: {},
+          //       },
+          //     },
+          //   ],
+          // ],
         },
         // blog: {
         //   showReadingTime: true,

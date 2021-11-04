@@ -1,0 +1,171 @@
+---
+title: Custom components with fallbacks
+---
+
+import QueryBuilder, { Field, RuleGroupType, ValueEditor, ValueEditorProps } from "react-querybuilder";
+
+You may run into a situation where the default components _almost_ meet your requirements, but you don't want to recreate the entire component just to slightly modify the behavior. Falling back to the default component after implementing your custom behavior is a good way to keep your code up to date with the current version's standard features while retaining the flexibility of a fully custom solution.
+
+For example, let's say you need a value editor that uses a `<select>` element with `<optgroup>`s to organize the options -- but only for certain fields. The default `ValueEditor` does not support option groups, so you'll need to use a custom component.
+
+However, you don't need to copy/paste the default `ValueEditor` code to take advantage of its functionality. Simply spread the same props that were passed in to your custom component (`<ValueEditor {...props} />`) and return that if your custom behavior is not applicable.
+
+```tsx
+import { useState } from "react";
+import QueryBuilder, {
+  Field,
+  RuleGroupType,
+  ValueEditor,
+  ValueEditorProps,
+} from "react-querybuilder";
+import "react-querybuilder/dist/query-builder.css";
+
+const CustomValueEditor = (props: ValueEditorProps) => {
+  if (props.type === "select") {
+    // For all 'select' types, use custom logic:
+    return (
+      <select
+        value={props.value}
+        onChange={(e) => props.handleOnChange(e.target.value)}
+      >
+        {props.context.optionGroups[props.field].map(
+          (og: {
+            label: string;
+            options: { value: string; label: string }[];
+          }) => (
+            <optgroup key={og.label} label={og.label}>
+              {og.options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </optgroup>
+          )
+        )}
+      </select>
+    );
+  }
+
+  // If props.type is not "select", then let the default component handle everything.
+  return <ValueEditor {...props} />;
+};
+
+// Field 1 will be handled by our custom <select>, and
+// Field 2 will be handled by the default component.
+const fields: Field[] = [
+  { name: "field1", label: "Field 1", valueEditorType: "select" },
+  { name: "field2", label: "Field 2" },
+];
+
+// There are other ways to pass custom data to your components, but `context` is the most flexible.
+const context = {
+  optionGroups: {
+    field1: [
+      {
+        label: "First Group",
+        options: [
+          { value: "item1", label: "First Item" },
+          { value: "item2", label: "Second Item" },
+        ],
+      },
+      {
+        label: "Second Group",
+        options: [
+          { value: "item3", label: "Third Item" },
+          { value: "item4", label: "Fourth Item" },
+        ],
+      },
+    ],
+  },
+};
+
+export const App = () => {
+  const [query, setQuery] = useState<RuleGroupType>({
+    id: "root",
+    combinator: "and",
+    rules: [
+      {
+        field: "field1",
+        operator: "=",
+        value: "item2",
+      },
+      {
+        field: "field2",
+        operator: "=",
+        value: "",
+      },
+    ],
+  });
+
+  return (
+    <QueryBuilder
+      fields={fields}
+      query={query}
+      onQueryChange={setQuery}
+      context={context}
+      controlElements={{
+        valueEditor: CustomValueEditor,
+      }}
+    />
+  );
+};
+```
+
+The code above generates the following query builder:
+
+<QueryBuilder
+  fields={[{ name: "field1", label: "Field 1", valueEditorType: "select" },{ name: "field2", label: "Field 2" }]}
+  query={{ combinator: "and", rules: [{field: "field1", operator: "=", value: "item2"}, {field: "field2", operator: "=", value: ""} ] }}
+  controlElements={{ valueEditor: (props) => {
+    if (props.type === "select") {
+      // For all 'select' types, use custom logic:
+      return (
+        <select
+          value={props.value}
+          onChange={(e) => props.handleOnChange(e.target.value)}
+        >
+          {props.context.optionGroups[props.field].map(
+            (og) => (
+              <optgroup key={og.label} label={og.label}>
+                {og.options.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </optgroup>
+            )
+          )}
+        </select>
+      );
+    }
+    return (<ValueEditor {...props} />);
+  }}}
+  context = {{
+    optionGroups: {
+      field1: [
+        {
+          label: "First Group",
+          options: [
+            { value: "item1", label: "First Item" },
+            { value: "item2", label: "Second Item" },
+          ],
+        },
+        {
+          label: "Second Group",
+          options: [
+            { value: "item3", label: "Third Item" },
+            { value: "item4", label: "Fourth Item" },
+          ],
+        },
+      ],
+    },
+  }}
+/>
+
+:::note
+
+[This CodeSandbox](https://codesandbox.io/s/react-querybuilder-optgroups-fnd13) is another interactive demo of the code above.
+
+Other examples of this technique can be seen in the [Limit rule groups](./limit-groups#conditionally-allow-new-groups) page and [these](https://stackoverflow.com/questions/68447510/react-query-builder-question-is-there-a-way-to-disable-a-field-option-when-addi/69443288#69443288) [two](https://stackoverflow.com/questions/61768845/progamatically-show-hide-operator-rule-and-group-button-in-react-querybuilder/69443467#69443467) StackOverflow answers.
+
+:::

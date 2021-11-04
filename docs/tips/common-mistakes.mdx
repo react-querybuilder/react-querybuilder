@@ -1,0 +1,57 @@
+---
+title: Common mistakes
+---
+
+## Custom component as closure
+
+A common mistake when defining custom components for React Query Builder is to define them within the body of another function component, like this:
+
+```tsx title="App.tsx"
+const App = () => {
+  // Other stuff ...
+
+  // highlight-start
+  const CustomValueEditor = (props) => {
+    // Custom logic here ...
+    return <input />;
+  };
+  // highlight-end
+
+  return (
+    <QueryBuilder
+      fields={fields}
+      query={query}
+      handleOnChange={(q) => setQuery(q)}
+      controlElements={{
+        valueEditor: CustomValueEditor
+      }}
+    />
+  )
+}
+```
+
+This is wrong and can lead to undesirable behavior, such as the value editor losing focus after each keystroke. This happens because the `CustomValueEditor` component is being redefined each time the `App` component renders. Fortunately, the fix is very simple: move the custom component declaration outside of the other function component (it can still be in the same file, just not within the function body):
+
+```tsx title="App.tsx"
+// highlight-start
+const CustomValueEditor = (props) => {
+  // Custom logic here ...
+  return <input />;
+};
+// highlight-end
+
+const App = () => {
+  // Other stuff ...
+
+  return (
+    <QueryBuilder
+      fields={fields}
+      query={query}
+      handleOnChange={(q) => setQuery(q)}
+      controlElements={{
+        valueEditor: CustomValueEditor
+      }}
+    />
+  )
+}
+```
