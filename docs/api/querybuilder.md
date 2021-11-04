@@ -467,7 +467,7 @@ This callback is invoked before a new rule is added. The function should either 
 
 :::tip
 
-To completely prevent the addition of new rules, pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.
+To completely [prevent the addition of new rules](../tips/limit-groups), pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.
 
 :::
 
@@ -479,7 +479,7 @@ This callback is invoked before a new group is added. The function should either
 
 :::tip
 
-To completely prevent the addition of new groups, pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.
+To completely [prevent the addition of new groups](../tips/limit-groups), pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.
 
 :::
 

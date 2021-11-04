@@ -20,12 +20,12 @@ const FeatureList: FeatureItem[] = [
     image: '/img/screenshot.png',
     description : (
       <>
-        Build complex queries with extensive out-of-the-box features.
+        Build complex queries with robust out-of-the-box features.
       </>
     )
   },
   {
-    title: 'Easy to Extend',
+    title: 'Extensible',
     image: '/img/screenshot.png',
     description: (
       <>
@@ -34,11 +34,11 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Native TypeScript',
     image: '/img/screenshot.png',
     description: (
       <>
-        Extend or customize your query builder using React.
+        First-class TypeScript support.
       </>
     ),
   },
