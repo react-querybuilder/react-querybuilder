@@ -15,7 +15,7 @@ module.exports = merge(webpackCommon, {
 
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, '../dist/demo')
+    path: path.resolve(__dirname, '../dist_demo')
   },
 
   module: {
