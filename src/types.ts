@@ -193,6 +193,7 @@ export interface ValueEditorProps extends SelectorEditorProps {
 
 export interface DragHandleProps extends CommonProps {
   label?: string;
+  enabled: boolean;
 }
 
 export interface Controls {

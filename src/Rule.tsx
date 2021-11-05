@@ -112,15 +112,14 @@ export const Rule = ({
       data-rule-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      {enableDragAndDrop && (
-        <controls.dragHandle
-          ref={dragRef}
-          level={level}
-          title={translations.dragHandle.title}
-          label={translations.dragHandle.label}
-          className={c(standardClassnames.dragHandle, classNames.dragHandle)}
-        />
-      )}
+      <controls.dragHandle
+        ref={dragRef}
+        enabled={enableDragAndDrop}
+        level={level}
+        title={translations.dragHandle.title}
+        label={translations.dragHandle.label}
+        className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+      />
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}

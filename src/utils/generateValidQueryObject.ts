@@ -16,7 +16,7 @@ const generateValidQueryObject = <T extends RuleGroupTypeAny | RuleType>(
   if ('combinator' in queryObject) {
     const rules = queryObject.rules.map((r, idx) => {
       const thisPath = path.concat([idx]);
-      return generateValidQueryObject(r as RuleType, thisPath);
+      return generateValidQueryObject(r, thisPath);
     });
     return {
       ...queryObject,
@@ -29,7 +29,7 @@ const generateValidQueryObject = <T extends RuleGroupTypeAny | RuleType>(
   } else if ('rules' in queryObject) {
     const rules = queryObject.rules.map((r, idx) => {
       const thisPath = path.concat([idx]);
-      return typeof r === 'string' ? r : generateValidQueryObject(r as RuleType, thisPath);
+      return typeof r === 'string' ? r : generateValidQueryObject(r, thisPath);
     });
     return {
       ...queryObject,

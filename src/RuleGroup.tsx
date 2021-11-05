@@ -48,7 +48,7 @@ export const RuleGroup = ({
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
-      isOver: monitor.isOver()
+      isOver: monitor.isOver({ shallow: true })
       // canDrop: monitor.canDrop()
     })
   }));
@@ -139,15 +139,14 @@ export const RuleGroup = ({
       data-level={level}
       data-path={JSON.stringify(path)}>
       <div className={c(standardClassnames.header, classNames.header)}>
-        {enableDragAndDrop && level > 0 && (
-          <controls.dragHandle
-            ref={dragRef}
-            level={level}
-            title={translations.dragHandle.title}
-            label={translations.dragHandle.label}
-            className={c(standardClassnames.dragHandle, classNames.dragHandle)}
-          />
-        )}
+        <controls.dragHandle
+          ref={dragRef}
+          enabled={enableDragAndDrop && level > 0}
+          level={level}
+          title={translations.dragHandle.title}
+          label={translations.dragHandle.label}
+          className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+        />
         {!showCombinatorsBetweenRules && !inlineCombinators && (
           <controls.combinatorSelector
             options={combinators}

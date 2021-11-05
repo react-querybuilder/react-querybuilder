@@ -28,4 +28,8 @@
   &.dndDragging {
     opacity: 0.5;
   }
+
+  .queryBuilder-dragHandle {
+    cursor: move;
+  }
 }
