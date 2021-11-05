@@ -35,16 +35,13 @@ export const RuleGroup = ({
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
-  const [{ isDragging }, drag, preview] = useDrag(
-    () => ({
-      type: dndTypes.ruleGroup,
-      item: { id, path, combinator, not },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id
-      })
-    }),
-    []
-  );
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
+    type: dndTypes.ruleGroup,
+    item: { id, path, combinator, not },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id
+    })
+  }));
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
@@ -70,7 +67,7 @@ export const RuleGroup = ({
     onPropChange('not', checked, path);
   };
 
-  const addRule = (event: ReactMouseEvent<Element, MouseEvent>) => {
+  const addRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -78,7 +75,7 @@ export const RuleGroup = ({
     onRuleAdd(newRule, path);
   };
 
-  const addGroup = (event: ReactMouseEvent<Element, MouseEvent>) => {
+  const addGroup = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -86,7 +83,7 @@ export const RuleGroup = ({
     onGroupAdd(newGroup, path);
   };
 
-  const cloneGroup = (event: ReactMouseEvent<Element, MouseEvent>) => {
+  const cloneGroup = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -110,7 +107,7 @@ export const RuleGroup = ({
     onGroupAdd(newGroup, parentPath);
   };
 
-  const removeGroup = (event: ReactMouseEvent<Element, MouseEvent>) => {
+  const removeGroup = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 

@@ -34,16 +34,13 @@ export const Rule = ({
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
-  const [{ isDragging }, drag, preview] = useDrag(
-    () => ({
-      type: dndTypes.rule,
-      item: { id, path, field, operator, value },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging()
-      })
-    }),
-    []
-  );
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
+    type: dndTypes.rule,
+    item: { id, path, field, operator, value },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging()
+    })
+  }));
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
@@ -59,7 +56,7 @@ export const Rule = ({
       onPropChange(prop, value, path);
     };
 
-  const cloneRule = (event: ReactMouseEvent<Element, MouseEvent>) => {
+  const cloneRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -75,7 +72,7 @@ export const Rule = ({
     onRuleAdd(newRule, parentPath);
   };
 
-  const removeRule = (event: ReactMouseEvent<Element, MouseEvent>) => {
+  const removeRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
