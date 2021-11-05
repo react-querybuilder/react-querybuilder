@@ -1,9 +1,8 @@
-import cloneDeep from 'lodash/cloneDeep';
+import update from 'immutability-helper';
 import uniqBy from 'lodash/uniqBy';
 import { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { QueryBuilderPropsInternal } from '.';
 import {
   defaultCombinators,
   defaultControlClassnames,
@@ -13,13 +12,13 @@ import {
   defaultTranslations,
   standardClassnames
 } from './defaults';
-import './query-builder.scss';
 import {
   Field,
   QueryBuilderProps,
+  QueryBuilderPropsInternal,
   RuleGroupType,
-  RuleGroupTypeAny,
   RuleGroupTypeIC,
+  RuleOrGroupArray,
   RuleType,
   Schema
 } from './types';
@@ -31,6 +30,9 @@ import {
   getParentPath,
   isRuleGroup
 } from './utils';
+import './query-builder.scss';
+
+const reduceRightToSpec = (prev: any, curr: number) => ({ rules: { [curr]: prev } } as any);
 
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
   props: QueryBuilderProps<RG>
@@ -56,8 +58,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   getValueEditorType,
   getInputType,
   getValues,
-  onAddRule,
-  onAddGroup,
+  onAddRule = (r) => r,
+  onAddGroup = (rg) => rg,
   onQueryChange,
   controlClassnames,
   showCombinatorsBetweenRules = false,
@@ -239,55 +241,51 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
    * Adds a rule to the query
    */
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
-    const newRule =
-      typeof onAddRule === 'function'
-        ? (onAddRule as (rule: RuleType, parentPath: number[], root: RG) => RuleType | false)(
-            rule,
-            parentPath,
-            root as any
-          )
-        : rule;
+    const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
-    const rootCopy = cloneDeep(root);
-    const parent = findPath(parentPath, rootCopy) as RG;
+    const $push: RuleOrGroupArray = [];
+    const parent = findPath(parentPath, root) as RG;
     if ('combinator' in parent) {
       const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newRule, thisPath));
+      $push.push(generateValidQueryObject(newRule, thisPath));
     } else {
       if (parent.rules.length > 0) {
         const prevCombinator = parent.rules[parent.rules.length - 2];
-        parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+        $push.push((typeof prevCombinator === 'string' ? prevCombinator : 'and') as any);
       }
       const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newRule, thisPath));
+      $push.push(generateValidQueryObject(newRule, thisPath));
     }
-    setRoot(rootCopy);
-    _notifyQueryChange(rootCopy);
+    const $spec = parentPath.reduceRight(reduceRightToSpec, { rules: { $push } });
+    const newRoot = update(root, $spec);
+    setRoot(newRoot);
+    _notifyQueryChange(newRoot);
   };
 
   /**
    * Adds a rule group to the query
    */
   const onGroupAdd = (group: RG, parentPath: number[]) => {
-    const newGroup =
-      typeof onAddGroup === 'function' ? onAddGroup(group, parentPath, root as any) : group;
+    const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
-    const rootCopy = cloneDeep(root);
-    const parent = findPath(parentPath, rootCopy) as RG;
+    const $push: RuleOrGroupArray = [];
+    const parent = findPath(parentPath, root) as RG;
     // istanbul ignore else
     if ('combinator' in newGroup) {
       const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newGroup, thisPath) as any);
+      $push.push(generateValidQueryObject(newGroup, thisPath) as any);
     } else if (!('combinator' in parent)) {
       if (parent.rules.length > 0) {
         const prevCombinator = parent.rules[parent.rules.length - 2];
-        parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+        $push.push((typeof prevCombinator === 'string' ? prevCombinator : 'and') as any);
       }
       const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newGroup, thisPath));
+      $push.push(generateValidQueryObject(newGroup, thisPath) as any);
     }
-    setRoot(rootCopy);
-    _notifyQueryChange(rootCopy);
+    const $spec = parentPath.reduceRight(reduceRightToSpec, { rules: { $push } });
+    const newRoot = update(root, $spec);
+    setRoot(newRoot);
+    _notifyQueryChange(newRoot);
   };
 
   const onPropChange = (
@@ -295,89 +293,59 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     value: any,
     path: number[]
   ) => {
-    const rootCopy = cloneDeep(root);
-    const rule = findPath(path, rootCopy);
-    /* istanbul ignore else */
-    if (rule) {
-      const isGroup = 'rules' in rule;
+    const ruleOrGroup = findPath(path, root);
 
-      // TODO: there has to be a better way to do this
-      if (isGroup) {
-        (rule[prop as keyof RuleGroupTypeAny] as any) = value;
-      } else {
-        rule[prop as keyof RuleType] = value;
+    if (!ruleOrGroup) return;
+
+    const isGroup = 'rules' in ruleOrGroup;
+    const $rgSpec = { [prop]: { $set: value } };
+
+    if (!isGroup) {
+      // Reset operator and set default value for field change
+      if (resetOnFieldChange && prop === 'field') {
+        $rgSpec.operator = { $set: getRuleDefaultOperator(value) };
+        $rgSpec.value = { $set: getRuleDefaultValue({ ...ruleOrGroup, field: value }) };
       }
 
-      if (!isGroup) {
-        // Reset operator and set default value for field change
-        if (resetOnFieldChange && prop === 'field') {
-          const operator = getRuleDefaultOperator(rule.field);
-          rule.operator = operator;
-          rule.value = getRuleDefaultValue(rule);
-        }
-
-        if (resetOnOperatorChange && prop === 'operator') {
-          rule.value = getRuleDefaultValue(rule);
-        }
+      // Set default value for operator change
+      if (resetOnOperatorChange && prop === 'operator') {
+        $rgSpec.value = { $set: getRuleDefaultValue({ ...ruleOrGroup, operator: value }) };
       }
-
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
     }
+    const $spec = path.reduceRight(reduceRightToSpec, $rgSpec);
+    const newRoot = update(root, $spec);
+    setRoot(newRoot);
+    _notifyQueryChange(newRoot);
   };
 
   const updateInlineCombinator = (value: string, path: number[]) => {
-    const rootCopy = cloneDeep(root);
-    const index = path[path.length - 1];
     const parentPath = getParentPath(path);
-    // `path` is now the parent path
-    const parent = findPath(parentPath, rootCopy) as RuleGroupTypeIC;
-    parent.rules[index] = value;
-    setRoot(rootCopy);
-    _notifyQueryChange(rootCopy);
+    const index = path[path.length - 1];
+    const $icSpec = { rules: { $splice: [[index, 1, value]] } };
+    const $spec = parentPath.reduceRight(reduceRightToSpec, $icSpec);
+    const newRoot = update(root, $spec);
+    setRoot(newRoot);
+    _notifyQueryChange(newRoot);
   };
 
-  /**
-   * Removes a rule from the query
-   */
-  const onRuleRemove = (path: number[]) => {
-    const rootCopy = cloneDeep(root);
+  const onRuleOrGroupRemove = (path: number[]) => {
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
-    const parent = findPath(parentPath, rootCopy) as RG;
+    const parent = findPath(parentPath, root) as RG;
+    const $splice: [number, 1 | 2] = [0, 1];
     /* istanbul ignore else */
     if (parent) {
       if (!('combinator' in parent) && parent.rules.length > 1) {
         const idxStartDelete = index === 0 ? 0 : index - 1;
-        parent.rules.splice(idxStartDelete, 2);
+        $splice[0] = idxStartDelete;
+        $splice[1] = 2;
       } else {
-        parent.rules.splice(index, 1);
+        $splice[0] = index;
       }
-
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
-    }
-  };
-
-  /**
-   * Removes a rule group from the query
-   */
-  const onGroupRemove = (path: number[]) => {
-    const rootCopy = cloneDeep(root);
-    const parentPath = getParentPath(path);
-    const index = path[path.length - 1];
-    const parent = findPath(parentPath, rootCopy) as RG;
-    /* istanbul ignore else */
-    if (parent) {
-      if (!('combinator' in parent) && parent.rules.length > 1) {
-        const idxStartDelete = index === 0 ? 0 : index - 1;
-        parent.rules.splice(idxStartDelete, 2);
-      } else {
-        parent.rules.splice(index, 1);
-      }
-
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
+      const $spec = parentPath.reduceRight(reduceRightToSpec, { rules: { $splice: [$splice] } });
+      const newRoot = update(root, $spec);
+      setRoot(newRoot);
+      _notifyQueryChange(newRoot);
     }
   };
 
@@ -387,8 +355,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   const _notifyQueryChange = (newRoot: RG) => {
     /* istanbul ignore else */
     if (onQueryChange) {
-      const newQuery = cloneDeep(newRoot);
-      onQueryChange(newQuery);
+      onQueryChange(newRoot);
     }
   };
 
@@ -406,8 +373,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     createRuleGroup,
     onRuleAdd,
     onGroupAdd,
-    onRuleRemove,
-    onGroupRemove,
+    onRuleRemove: onRuleOrGroupRemove,
+    onGroupRemove: onRuleOrGroupRemove,
     onPropChange,
     isRuleGroup,
     controls: { ...defaultControlElements, ...controlElements },

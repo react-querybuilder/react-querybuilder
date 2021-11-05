@@ -1,5 +1,4 @@
 import { mount, ReactWrapper } from 'enzyme';
-import cloneDeep from 'lodash/cloneDeep';
 import { act } from 'react-dom/test-utils';
 import { ActionElement } from '../controls';
 import { standardClassnames } from '../defaults';
@@ -83,7 +82,7 @@ describe('<QueryBuilder />', () => {
     let wrapper: ReactWrapper;
 
     beforeEach(() => {
-      const newProps = cloneDeep(props);
+      const newProps = { ...props };
       delete newProps.fields;
       act(() => {
         wrapper = mount(<QueryBuilder {...newProps} />);
@@ -107,7 +106,7 @@ describe('<QueryBuilder />', () => {
     let wrapper: ReactWrapper;
 
     beforeEach(() => {
-      const newProps = cloneDeep(props);
+      const newProps = { ...props };
       delete newProps.fields;
       act(() => {
         wrapper = mount(<QueryBuilder {...newProps} />);

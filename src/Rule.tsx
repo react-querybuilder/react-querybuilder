@@ -1,9 +1,7 @@
-import cloneDeep from 'lodash/cloneDeep';
-import * as React from 'react';
+import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { RuleType } from '.';
 import { dndTypes, standardClassnames } from './defaults';
-import { Field, RuleProps } from './types';
+import { Field, RuleProps, RuleType } from './types';
 import { c, generateID, getParentPath, getValidationClassNames } from './utils';
 
 export const Rule = ({
@@ -34,7 +32,9 @@ export const Rule = ({
     validationMap
   } = schema;
 
-  const [{ isDragging }, dragRef] = useDrag(
+  const dndRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLSpanElement>(null);
+  const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: dndTypes.rule,
       item: { id, path, field, operator, value },
@@ -44,42 +44,38 @@ export const Rule = ({
     }),
     []
   );
-
-  const [{ isOver }, dropRef] = useDrop(() => ({
+  const [{ isOver }, drop] = useDrop(() => ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
       isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
       // canDrop: monitor.canDrop()
     })
   }));
-
-  const attachDnDRef = (el: HTMLDivElement) => {
-    if (path.length > 0) {
-      dragRef(el);
-    }
-    dropRef(el);
-  };
+  drag(dragRef);
+  preview(drop(dndRef));
 
   const generateOnChangeHandler =
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
       onPropChange(prop, value, path);
     };
 
-  const cloneRule = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const cloneRule = (event: ReactMouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newRule: RuleType = cloneDeep({
-      id: `r-${generateID()}`,
-      field,
-      operator,
-      value
-    });
+    const newRule: RuleType = JSON.parse(
+      JSON.stringify({
+        id: `r-${generateID()}`,
+        field,
+        operator,
+        value
+      })
+    );
     const parentPath = getParentPath(path);
     onRuleAdd(newRule, parentPath);
   };
 
-  const removeRule = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const removeRule = (event: ReactMouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -111,12 +107,20 @@ export const Rule = ({
 
   return (
     <div
-      ref={attachDnDRef}
+      ref={dndRef}
       className={outerClassName}
       data-rule-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      {enableDragAndDrop && <controls.dragHandle schema={schema} />}
+      {enableDragAndDrop && (
+        <controls.dragHandle
+          ref={dragRef}
+          level={level}
+          title={translations.dragHandle.title}
+          label={translations.dragHandle.label}
+          className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+        />
+      )}
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}

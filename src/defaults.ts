@@ -46,6 +46,10 @@ export const defaultTranslations: Translations = {
   cloneRuleGroup: {
     label: '⧉',
     title: 'Clone group'
+  },
+  dragHandle: {
+    label: '☰',
+    title: 'Drag handle'
   }
 };
 

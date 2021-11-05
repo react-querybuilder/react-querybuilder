@@ -42,7 +42,6 @@
     "@material-ui/core": "^4.11.2",
     "@types/enzyme": "^3.10.8",
     "@types/jest": "^27.0.1",
-    "@types/lodash": "^4.14.168",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
@@ -81,7 +80,7 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
-    "lodash": "^4.17.20",
+    "immutability-helper": "^3.1.1",
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2"
   },

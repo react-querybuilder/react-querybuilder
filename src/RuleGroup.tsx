@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { Fragment } from 'react';
+import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { RuleGroupTypeIC } from '.';
 import { dndTypes, standardClassnames } from './defaults';
-import { RuleGroupProps, RuleGroupType } from './types';
+import { RuleGroupProps, RuleGroupType, RuleGroupTypeIC } from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
 
 export const RuleGroup = ({
@@ -35,7 +33,9 @@ export const RuleGroup = ({
     validationMap
   } = schema;
 
-  const [{ isDragging }, dragRef] = useDrag(
+  const dndRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLSpanElement>(null);
+  const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: dndTypes.ruleGroup,
       item: { id, path, combinator, not },
@@ -45,21 +45,18 @@ export const RuleGroup = ({
     }),
     []
   );
-
-  const [{ isOver }, dropRef] = useDrop(() => ({
+  const [{ isOver }, drop] = useDrop(() => ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
       isOver: monitor.isOver()
       // canDrop: monitor.canDrop()
     })
   }));
-
-  const attachDnDRef = (el: HTMLDivElement) => {
-    if (path.length > 0) {
-      dragRef(el);
-    }
-    dropRef(el);
-  };
+  if (path.length > 0) {
+    drag(dragRef);
+    preview(dndRef);
+  }
+  drop(dndRef);
 
   const onCombinatorChange = (value: any) => {
     onPropChange('combinator', value, path);
@@ -73,7 +70,7 @@ export const RuleGroup = ({
     onPropChange('not', checked, path);
   };
 
-  const addRule = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const addRule = (event: ReactMouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -81,7 +78,7 @@ export const RuleGroup = ({
     onRuleAdd(newRule, path);
   };
 
-  const addGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const addGroup = (event: ReactMouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -89,7 +86,7 @@ export const RuleGroup = ({
     onGroupAdd(newGroup, path);
   };
 
-  const cloneGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const cloneGroup = (event: ReactMouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -113,7 +110,7 @@ export const RuleGroup = ({
     onGroupAdd(newGroup, parentPath);
   };
 
-  const removeGroup = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const removeGroup = (event: ReactMouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -136,13 +133,21 @@ export const RuleGroup = ({
 
   return (
     <div
-      ref={attachDnDRef}
+      ref={dndRef}
       className={outerClassName}
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
       <div className={c(standardClassnames.header, classNames.header)}>
-        {enableDragAndDrop && level > 0 && <controls.dragHandle schema={schema} />}
+        {enableDragAndDrop && level > 0 && (
+          <controls.dragHandle
+            ref={dragRef}
+            level={level}
+            title={translations.dragHandle.title}
+            label={translations.dragHandle.label}
+            className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+          />
+        )}
         {!showCombinatorsBetweenRules && !inlineCombinators && (
           <controls.combinatorSelector
             options={combinators}

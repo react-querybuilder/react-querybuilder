@@ -191,8 +191,8 @@ export interface ValueEditorProps extends SelectorEditorProps {
   value?: any;
 }
 
-export interface DragHandleProps {
-  schema: Schema;
+export interface DragHandleProps extends CommonProps {
+  label?: string;
 }
 
 export interface Controls {
@@ -201,7 +201,9 @@ export interface Controls {
   cloneGroupAction: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction: React.ComponentType<ActionProps>;
   combinatorSelector: React.ComponentType<CombinatorSelectorProps>;
-  dragHandle: React.ComponentType<DragHandleProps>;
+  dragHandle: React.ForwardRefExoticComponent<
+    DragHandleProps & React.RefAttributes<HTMLSpanElement>
+  >;
   fieldSelector: React.ComponentType<FieldSelectorProps>;
   notToggle: React.ComponentType<NotToggleProps>;
   operatorSelector: React.ComponentType<OperatorSelectorProps>;
@@ -354,6 +356,10 @@ export interface Translations {
     title: string;
   };
   cloneRuleGroup: {
+    label: string;
+    title: string;
+  };
+  dragHandle: {
     label: string;
     title: string;
   };
