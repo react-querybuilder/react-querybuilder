@@ -81,7 +81,9 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "react-dnd": "^14.0.4",
+    "react-dnd-html5-backend": "^14.0.2"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
