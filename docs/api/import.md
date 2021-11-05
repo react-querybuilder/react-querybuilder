@@ -6,9 +6,7 @@ import TypeScriptAdmonition from './_ts_admonition.md'
 
 <TypeScriptAdmonition />
 
-Use the `parseSQL` function to convert SQL `SELECT` statements into a format suitable for the `<QueryBuilder />` component's `query` prop.
-
-The function signature is:
+Use the `parseSQL` function to convert SQL `SELECT` statements into a format suitable for the `<QueryBuilder />` component's `query` prop. The function signature is:
 
 ```ts
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;

@@ -29,4 +29,6 @@ For example, if `formatQuery(query, "parameterized")` produced the following obj
 
 ...then the code above would assign the following string to the `sql` variable:
 
-`"(firstName = $1 and lastName = $2)"`
+```ts
+"(firstName = $1 and lastName = $2)"
+```

@@ -6,9 +6,7 @@ import TypeScriptAdmonition from './_ts_admonition.md'
 
 <TypeScriptAdmonition />
 
-Use the `formatQuery` function to export queries in various formats.
-
-The function signature is:
+Use the `formatQuery` function to export queries in various formats. The function signature is:
 
 ```ts
 function formatQuery(
@@ -206,9 +204,8 @@ const valueProcessor = (field, operator, value) => {
   if (operator === 'in') {
     // Assuming `value` is an array, such as from a multi-select
     return `(${value.map((v) => `"${v.trim()}"`).join(',')})`;
-  } else {
-    return defaultValueProcessor(field, operator, value);
   }
+  return defaultValueProcessor(field, operator, value);
 };
 
 formatQuery(query, { format: 'sql', valueProcessor });
