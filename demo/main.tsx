@@ -90,6 +90,7 @@ const App = () => {
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [useValidation, setUseValidation] = useState(false);
   const [inlineCombinators, setInlineCombinators] = useState(false);
+  const [dnd, setDnD] = useState(false);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -169,6 +170,14 @@ const App = () => {
       link: '#inlinecombinators-optional',
       label: 'Inline combinators',
       title: 'When checked, the query builder supports independent combinators between rules'
+    },
+    {
+      checked: dnd,
+      default: false,
+      setter: setDnD,
+      link: '#drag-and-drop',
+      label: 'Enable drag-and-drop',
+      title: 'When checked, rules and groups can be reordered and dragged to different groups'
     }
   ];
 
@@ -317,6 +326,7 @@ const App = () => {
                   addRuleToNewGroups={addRuleToNewGroups}
                   validator={useValidation ? defaultValidator : undefined}
                   inlineCombinators={inlineCombinators}
+                  enableDragAndDrop={dnd}
                   {...styleOptions[style]}
                 />
               </form>

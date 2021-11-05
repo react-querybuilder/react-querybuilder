@@ -18,3 +18,14 @@
     margin-right: 0.5rem;
   }
 }
+
+.ruleGroup,
+.rule {
+  &.dndOver {
+    border: 2px solid rebeccapurple;
+  }
+
+  &.dndDragging {
+    opacity: 0.5;
+  }
+}

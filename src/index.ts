@@ -3,5 +3,5 @@ export default QueryBuilder;
 export { defaultCombinators, defaultOperators, defaultTranslations } from './defaults';
 export { defaultValidator, defaultValueProcessor, findPath, formatQuery, parseSQL } from './utils';
 export { Rule } from './Rule';
-export { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls/';
+export { ActionElement, DragHandle, NotToggle, ValueEditor, ValueSelector } from './controls/';
 export * from './types';

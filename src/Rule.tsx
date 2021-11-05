@@ -1,7 +1,8 @@
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import { RuleType } from '.';
-import { standardClassnames } from './defaults';
+import { dndTypes, standardClassnames } from './defaults';
 import { Field, RuleProps } from './types';
 import { c, generateID, getParentPath, getValidationClassNames } from './utils';
 
@@ -12,7 +13,10 @@ export const Rule = ({
   operator,
   value,
   translations,
-  schema: {
+  schema,
+  context
+}: RuleProps) => {
+  const {
     classNames,
     controls,
     fields,
@@ -26,10 +30,36 @@ export const Rule = ({
     onRuleRemove,
     autoSelectField,
     showCloneButtons,
+    enableDragAndDrop,
     validationMap
-  },
-  context
-}: RuleProps) => {
+  } = schema;
+
+  const [{ isDragging }, dragRef] = useDrag(
+    () => ({
+      type: dndTypes.rule,
+      item: { id, path, field, operator, value },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging()
+      })
+    }),
+    []
+  );
+
+  const [{ isOver }, dropRef] = useDrop(() => ({
+    accept: [dndTypes.rule, dndTypes.ruleGroup],
+    collect: (monitor) => ({
+      isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
+      // canDrop: monitor.canDrop()
+    })
+  }));
+
+  const attachDnDRef = (el: HTMLDivElement) => {
+    if (path.length > 0) {
+      dragRef(el);
+    }
+    dropRef(el);
+  };
+
   const generateOnChangeHandler =
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
       onPropChange(prop, value, path);
@@ -69,14 +99,24 @@ export const Rule = ({
       ? fieldData.validator({ id, field, operator, value })
       : null);
   const validationClassName = getValidationClassNames(validationResult);
-  const outerClassName = c(standardClassnames.rule, classNames.rule, validationClassName);
+  const dndDragging = isDragging ? standardClassnames.dndDragging : '';
+  const dndOver = isOver ? standardClassnames.dndOver : '';
+  const outerClassName = c(
+    standardClassnames.rule,
+    classNames.rule,
+    validationClassName,
+    dndDragging,
+    dndOver
+  );
 
   return (
     <div
+      ref={attachDnDRef}
       className={outerClassName}
       data-rule-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
+      {enableDragAndDrop && <controls.dragHandle schema={schema} />}
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}

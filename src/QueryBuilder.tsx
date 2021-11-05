@@ -1,6 +1,8 @@
 import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
 import { useEffect, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { QueryBuilderPropsInternal } from '.';
 import {
   defaultCombinators,
@@ -65,6 +67,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   resetOnOperatorChange = false,
   autoSelectField = true,
   addRuleToNewGroups = false,
+  enableDragAndDrop = false,
   inlineCombinators,
   validator,
   context
@@ -418,6 +421,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     showCloneButtons,
     autoSelectField,
     addRuleToNewGroups,
+    enableDragAndDrop,
     inlineCombinators: !!inlineCombinators,
     validationMap
   };
@@ -447,18 +451,20 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   );
 
   return (
-    <div className={className}>
-      <schema.controls.ruleGroup
-        translations={{ ...defaultTranslations, ...translations }}
-        rules={root.rules}
-        combinator={'combinator' in root ? root.combinator : undefined}
-        schema={schema}
-        id={root.id}
-        path={[]}
-        not={!!root.not}
-        context={context}
-      />
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div className={className}>
+        <schema.controls.ruleGroup
+          translations={{ ...defaultTranslations, ...translations }}
+          rules={root.rules}
+          combinator={'combinator' in root ? root.combinator : undefined}
+          schema={schema}
+          id={root.id}
+          path={[]}
+          not={!!root.not}
+          context={context}
+        />
+      </div>
+    </DndProvider>
   );
 };
 

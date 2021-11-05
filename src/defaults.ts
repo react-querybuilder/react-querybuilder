@@ -1,5 +1,5 @@
 import { DefaultCombinator, DefaultOperator } from '.';
-import { ActionElement, NotToggle, ValueEditor, ValueSelector } from './controls';
+import { ActionElement, DragHandle, NotToggle, ValueEditor, ValueSelector } from './controls';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
 import { Classnames, Controls, Field, Translations } from './types';
@@ -94,7 +94,10 @@ export const standardClassnames = {
   removeRule: 'rule-remove',
   betweenRules: 'betweenRules',
   valid: 'queryBuilder-valid',
-  invalid: 'queryBuilder-invalid'
+  invalid: 'queryBuilder-invalid',
+  dndDragging: 'dndDragging',
+  dndOver: 'dndOver',
+  dragHandle: 'queryBuilder-dragHandle'
 } as const;
 
 export const defaultControlClassnames: Classnames = {
@@ -113,7 +116,8 @@ export const defaultControlClassnames: Classnames = {
   fields: '',
   operators: '',
   value: '',
-  removeRule: ''
+  removeRule: '',
+  dragHandle: ''
 };
 
 export const defaultControlElements: Controls = {
@@ -129,11 +133,17 @@ export const defaultControlElements: Controls = {
   valueEditor: ValueEditor,
   notToggle: NotToggle,
   ruleGroup: RuleGroup,
-  rule: Rule
+  rule: Rule,
+  dragHandle: DragHandle
 };
 
 export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
   invalidInlineCombinators: 'invalid inline combinators'
+} as const;
+
+export const dndTypes = {
+  rule: 'rule',
+  ruleGroup: 'ruleGroup'
 } as const;

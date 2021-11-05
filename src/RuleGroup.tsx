@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Fragment } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import { RuleGroupTypeIC } from '.';
-import { standardClassnames } from './defaults';
+import { dndTypes, standardClassnames } from './defaults';
 import { RuleGroupProps, RuleGroupType } from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
 
@@ -29,9 +30,36 @@ export const RuleGroup = ({
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
+    enableDragAndDrop,
     updateInlineCombinator,
     validationMap
   } = schema;
+
+  const [{ isDragging }, dragRef] = useDrag(
+    () => ({
+      type: dndTypes.ruleGroup,
+      item: { id, path, combinator, not },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id
+      })
+    }),
+    []
+  );
+
+  const [{ isOver }, dropRef] = useDrop(() => ({
+    accept: [dndTypes.rule, dndTypes.ruleGroup],
+    collect: (monitor) => ({
+      isOver: monitor.isOver()
+      // canDrop: monitor.canDrop()
+    })
+  }));
+
+  const attachDnDRef = (el: HTMLDivElement) => {
+    if (path.length > 0) {
+      dragRef(el);
+    }
+    dropRef(el);
+  };
 
   const onCombinatorChange = (value: any) => {
     onPropChange('combinator', value, path);
@@ -96,15 +124,25 @@ export const RuleGroup = ({
 
   const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
   const validationClassName = getValidationClassNames(validationResult);
-  const outerClassName = c(standardClassnames.ruleGroup, classNames.ruleGroup, validationClassName);
+  const dndDragging = isDragging ? standardClassnames.dndDragging : '';
+  const dndOver = isOver ? standardClassnames.dndOver : '';
+  const outerClassName = c(
+    standardClassnames.ruleGroup,
+    classNames.ruleGroup,
+    validationClassName,
+    dndDragging,
+    dndOver
+  );
 
   return (
     <div
+      ref={attachDnDRef}
       className={outerClassName}
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
       <div className={c(standardClassnames.header, classNames.header)}>
+        {enableDragAndDrop && <controls.dragHandle schema={schema} />}
         {!showCombinatorsBetweenRules && !inlineCombinators && (
           <controls.combinatorSelector
             options={combinators}

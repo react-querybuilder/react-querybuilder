@@ -191,12 +191,17 @@ export interface ValueEditorProps extends SelectorEditorProps {
   value?: any;
 }
 
+export interface DragHandleProps {
+  schema: Schema;
+}
+
 export interface Controls {
   addGroupAction: React.ComponentType<ActionWithRulesProps>;
   addRuleAction: React.ComponentType<ActionWithRulesProps>;
   cloneGroupAction: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction: React.ComponentType<ActionProps>;
   combinatorSelector: React.ComponentType<CombinatorSelectorProps>;
+  dragHandle: React.ComponentType<DragHandleProps>;
   fieldSelector: React.ComponentType<FieldSelectorProps>;
   notToggle: React.ComponentType<NotToggleProps>;
   operatorSelector: React.ComponentType<OperatorSelectorProps>;
@@ -272,6 +277,10 @@ export interface Classnames {
    * `<label>` on the "not" toggle
    */
   notToggle: string;
+  /**
+   * `<span>` handle for dragging rules/groups
+   */
+  dragHandle: string;
 }
 
 export interface Schema {
@@ -302,6 +311,7 @@ export interface Schema {
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
+  enableDragAndDrop: boolean;
   validationMap: ValidationMap;
   inlineCombinators: boolean;
 }
@@ -573,6 +583,10 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      * Adds a new default rule automatically to each new group
      */
     addRuleToNewGroups?: boolean;
+    /**
+     * Enables drag-and-drop features
+     */
+    enableDragAndDrop?: boolean;
     /**
      * Query validation function
      */
