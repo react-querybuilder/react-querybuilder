@@ -1,4 +1,4 @@
-import uniqWith from 'lodash/uniqWith';
+import uniqBy from 'lodash/uniqBy';
 import { isRuleOrGroupValid } from '.';
 import {
   ExportFormat,
@@ -154,7 +154,7 @@ const formatQuery = (
     }
 
     const validatorMap: { [f: string]: RuleValidator } = {};
-    const uniqueFields = uniqWith(fields, (a, b) => a.name === b.name);
+    const uniqueFields = uniqBy(fields, 'name');
     uniqueFields.forEach((f) => {
       // istanbul ignore else
       if (typeof f.validator === 'function') {
