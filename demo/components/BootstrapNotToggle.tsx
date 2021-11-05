@@ -1,4 +1,4 @@
-import { NotToggleProps } from '../../src/types';
+import type { NotToggleProps } from '../../src/types';
 
 const BootstrapNotToggle = ({
   className,

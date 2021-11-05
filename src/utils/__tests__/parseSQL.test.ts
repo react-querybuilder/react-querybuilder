@@ -1,4 +1,4 @@
-import { DefaultRuleGroupType, DefaultRuleType } from '../../types';
+import type { DefaultRuleGroupType, DefaultRuleType } from '../../types';
 import parseSQL from '../parseSQL';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({

@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import { ValueSelector } from '..';
-import { ValueSelectorProps } from '../../types';
+import type { ValueSelectorProps } from '../../types';
 
 describe('<ValueSelector />', () => {
   const props: ValueSelectorProps = {

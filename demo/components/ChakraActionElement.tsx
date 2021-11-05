@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react';
-import { ActionProps } from '../../src/types';
+import type { ActionProps } from '../../src/types';
 
 const ChakraActionElement = ({ className, handleOnClick, label, title }: ActionProps) => (
   <Button

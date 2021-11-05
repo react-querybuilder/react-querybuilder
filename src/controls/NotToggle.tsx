@@ -1,4 +1,4 @@
-import { NotToggleProps } from '../types';
+import type { NotToggleProps } from '../types';
 
 const NotToggle = ({ className, handleOnChange, title, label, checked }: NotToggleProps) => (
   <label className={className} title={title}>

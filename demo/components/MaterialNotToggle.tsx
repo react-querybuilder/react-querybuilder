@@ -1,6 +1,6 @@
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { NotToggleProps } from '../../src/types';
+import type { NotToggleProps } from '../../src/types';
 
 const MaterialNotToggle = ({
   className,

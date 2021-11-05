@@ -1,6 +1,5 @@
 import { generateID } from '.';
-import { RuleGroupType, RuleGroupTypeAny } from '..';
-import { RuleGroupTypeIC, RuleType } from '../types';
+import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC, RuleType } from '../types';
 
 /**
  * Generates a valid query object

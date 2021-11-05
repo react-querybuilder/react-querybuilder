@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ValueEditorProps } from '../../src/types';
+import type { ValueEditorProps } from '../../src/types';
 
 const BootstrapValueEditor = ({
   fieldData,

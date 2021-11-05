@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { ActionProps } from '../../src/types';
+import type { ActionProps } from '../../src/types';
 
 const MaterialActionElement = ({ className, handleOnClick, label, title }: ActionProps) => (
   <Button

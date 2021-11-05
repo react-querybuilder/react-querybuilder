@@ -1,6 +1,5 @@
 import { isRuleGroup } from '..';
-import { RuleGroupTypeIC } from '../..';
-import { RuleGroupType, RuleType } from '../../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../../types';
 
 const rule: RuleType = {
   field: 'test',

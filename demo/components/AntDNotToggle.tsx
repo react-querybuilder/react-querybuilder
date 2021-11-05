@@ -1,5 +1,5 @@
 import { Checkbox } from 'antd';
-import { NotToggleProps } from '../../src/types';
+import type { NotToggleProps } from '../../src/types';
 
 const AntDNotToggle = ({ className, handleOnChange, label, checked }: NotToggleProps) => {
   return (

@@ -1,7 +1,7 @@
 import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import { Field, RuleProps, RuleType } from './types';
+import type { Field, RuleProps, RuleType } from './types';
 import { c, generateID, getParentPath, getValidationClassNames } from './utils';
 
 export const Rule = ({

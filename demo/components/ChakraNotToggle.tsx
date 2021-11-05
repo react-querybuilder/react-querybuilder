@@ -1,5 +1,5 @@
 import { Checkbox } from '@chakra-ui/react';
-import { NotToggleProps } from '../../src/types';
+import type { NotToggleProps } from '../../src/types';
 
 const ChakraNotToggle = ({ className, handleOnChange, label, checked, title }: NotToggleProps) => {
   return (

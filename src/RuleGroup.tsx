@@ -1,7 +1,7 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import { RuleGroupProps, RuleGroupType, RuleGroupTypeIC } from './types';
+import type { RuleGroupProps, RuleGroupType, RuleGroupTypeIC } from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
 
 export const RuleGroup = ({

@@ -1,5 +1,3 @@
-import uniqBy from 'lodash/uniqBy';
-import { isRuleOrGroupValid } from '.';
 import {
   ExportFormat,
   FormatQueryOptions,
@@ -14,6 +12,8 @@ import {
   ValidationResult,
   ValueProcessor
 } from '../types';
+import isRuleOrGroupValid from './isRuleOrGroupValid';
+import uniqByName from './uniqByName';
 
 const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
 
@@ -154,7 +154,7 @@ const formatQuery = (
     }
 
     const validatorMap: { [f: string]: RuleValidator } = {};
-    const uniqueFields = uniqBy(fields, 'name');
+    const uniqueFields = uniqByName(fields);
     uniqueFields.forEach((f) => {
       // istanbul ignore else
       if (typeof f.validator === 'function') {

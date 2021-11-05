@@ -1,5 +1,5 @@
 import { generateID } from '.';
-import { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 
 const regenerateID = (rule: RuleType) =>
   JSON.parse(JSON.stringify({ ...rule, id: `r-${generateID()}` }));

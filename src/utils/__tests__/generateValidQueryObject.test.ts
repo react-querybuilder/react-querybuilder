@@ -1,6 +1,6 @@
 import generateValidQueryObject from '../generateValidQueryObject';
-import { RuleGroupType, RuleGroupTypeIC } from '../../types';
-import { RuleType } from '../..';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../../types';
+
 
 describe('generateValidQueryObject', () => {
   describe('when initial query, with ID, is provided', () => {

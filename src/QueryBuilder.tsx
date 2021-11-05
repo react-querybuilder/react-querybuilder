@@ -1,5 +1,4 @@
 import update from 'immutability-helper';
-import uniqBy from 'lodash/uniqBy';
 import { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -12,6 +11,7 @@ import {
   defaultTranslations,
   standardClassnames
 } from './defaults';
+import './query-builder.scss';
 import {
   Field,
   QueryBuilderProps,
@@ -28,9 +28,9 @@ import {
   generateID,
   generateValidQueryObject,
   getParentPath,
-  isRuleGroup
+  isRuleGroup,
+  uniqByName
 } from './utils';
-import './query-builder.scss';
 
 const reduceRightToSpec = (prev: any, curr: number) => ({ rules: { [curr]: prev } } as any);
 
@@ -79,7 +79,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   }
 
   const fieldMap: { [k: string]: Field } = {};
-  fields = uniqBy(fields, 'name');
+  fields = uniqByName(fields);
   fields.forEach((f) => (fieldMap[f.name] = f));
 
   /**
