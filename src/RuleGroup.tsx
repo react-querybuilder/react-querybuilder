@@ -142,7 +142,7 @@ export const RuleGroup = ({
       data-level={level}
       data-path={JSON.stringify(path)}>
       <div className={c(standardClassnames.header, classNames.header)}>
-        {enableDragAndDrop && <controls.dragHandle schema={schema} />}
+        {enableDragAndDrop && level > 0 && <controls.dragHandle schema={schema} />}
         {!showCombinatorsBetweenRules && !inlineCombinators && (
           <controls.combinatorSelector
             options={combinators}
