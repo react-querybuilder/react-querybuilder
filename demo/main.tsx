@@ -1,5 +1,7 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider } from '@chakra-ui/react';
+import { ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import {
   Button,
   Checkbox,
@@ -12,7 +14,7 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
@@ -55,6 +57,8 @@ const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
 const { Link, Title } = Typography;
+
+const muiTheme = createTheme();
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('json_without_ids', json);
@@ -212,6 +216,8 @@ const App = () => {
     }
   };
 
+  const MUIThemeProvider = style === 'material' ? ThemeProvider : Fragment;
+
   return (
     <ChakraProvider resetCSS={style === 'chakra'}>
       <Layout>
@@ -307,30 +313,32 @@ const App = () => {
             <pre>yarn add react-querybuilder</pre>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
-            <div className={qbWrapperClassName}>
-              <form className="form-inline" style={{ marginTop: '1rem' }}>
-                <QueryBuilder
-                  query={inlineCombinators ? queryIC : query}
-                  fields={fields}
-                  onQueryChange={(q) =>
-                    inlineCombinators
-                      ? setQueryIC(q as RuleGroupTypeIC)
-                      : setQuery(q as RuleGroupType)
-                  }
-                  showCombinatorsBetweenRules={showCombinatorsBetweenRules}
-                  showNotToggle={showNotToggle}
-                  showCloneButtons={showCloneButtons}
-                  resetOnFieldChange={resetOnFieldChange}
-                  resetOnOperatorChange={resetOnOperatorChange}
-                  autoSelectField={autoSelectField}
-                  addRuleToNewGroups={addRuleToNewGroups}
-                  validator={useValidation ? defaultValidator : undefined}
-                  inlineCombinators={inlineCombinators}
-                  enableDragAndDrop={dnd}
-                  {...styleOptions[style]}
-                />
-              </form>
-            </div>
+            <MUIThemeProvider theme={muiTheme}>
+              <div className={qbWrapperClassName}>
+                <form className="form-inline" style={{ marginTop: '1rem' }}>
+                  <QueryBuilder
+                    query={inlineCombinators ? queryIC : query}
+                    fields={fields}
+                    onQueryChange={(q) =>
+                      inlineCombinators
+                        ? setQueryIC(q as RuleGroupTypeIC)
+                        : setQuery(q as RuleGroupType)
+                    }
+                    showCombinatorsBetweenRules={showCombinatorsBetweenRules}
+                    showNotToggle={showNotToggle}
+                    showCloneButtons={showCloneButtons}
+                    resetOnFieldChange={resetOnFieldChange}
+                    resetOnOperatorChange={resetOnOperatorChange}
+                    autoSelectField={autoSelectField}
+                    addRuleToNewGroups={addRuleToNewGroups}
+                    validator={useValidation ? defaultValidator : undefined}
+                    inlineCombinators={inlineCombinators}
+                    enableDragAndDrop={dnd}
+                    {...styleOptions[style]}
+                  />
+                </form>
+              </div>
+            </MUIThemeProvider>
             <Divider />
             {format === 'mongodb' ? (
               <pre id="formatQuery-output">{formatString}</pre>

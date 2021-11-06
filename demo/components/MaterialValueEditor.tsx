@@ -43,7 +43,7 @@ const MaterialValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <FormControl className={className}>
+        <FormControl variant="standard" className={className}>
           <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
             {values.map((v) => (
               <MenuItem key={v.name} value={v.name}>

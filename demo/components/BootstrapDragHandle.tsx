@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import type { DragHandleProps } from '../../src/types';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-export default forwardRef<HTMLSpanElement, DragHandleProps>(function AntDDragHandle(
+export default forwardRef<HTMLSpanElement, DragHandleProps>(function BootstrapDragHandle(
   { enabled, className, title },
   dragRef
 ) {
