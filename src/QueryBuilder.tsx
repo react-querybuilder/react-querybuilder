@@ -349,6 +349,21 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     }
   };
 
+  const moveRule = (rule: Required<RuleType>, newPath: number[]) => {
+    const parentPath = getParentPath(newPath);
+    const $spec = parentPath.reduceRight(reduceRightToSpec, {
+      rules: {
+        $splice: [
+          [rule.path[rule.path.length - 1], 1],
+          [newPath[newPath.length - 1], 0, rule]
+        ]
+      }
+    });
+    const newRoot = update(root, $spec);
+    setRoot(newRoot);
+    _notifyQueryChange(newRoot);
+  };
+
   /**
    * Executes the `onQueryChange` function, if provided
    */
@@ -383,6 +398,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
     updateInlineCombinator,
+    moveRule,
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
