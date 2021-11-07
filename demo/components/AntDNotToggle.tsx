@@ -1,16 +1,16 @@
-import { Checkbox } from 'antd';
+import { Switch } from 'antd';
 import type { NotToggleProps } from '../../src/types';
 
-const AntDNotToggle = ({ className, handleOnChange, label, checked }: NotToggleProps) => {
-  return (
-    <Checkbox
-      className={className}
-      onChange={(e) => handleOnChange(e.target.checked)}
-      checked={!!checked}>
-      {label}
-    </Checkbox>
-  );
-};
+const AntDNotToggle = ({ className, handleOnChange, label, checked, title }: NotToggleProps) => (
+  <Switch
+    title={title}
+    className={className}
+    onChange={(checked) => handleOnChange(checked)}
+    checked={!!checked}
+    checkedChildren={label}
+    unCheckedChildren="="
+  />
+);
 
 AntDNotToggle.displayName = 'AntDNotToggle';
 
