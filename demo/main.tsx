@@ -1,5 +1,5 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import {
@@ -59,6 +59,12 @@ const { Option } = Select;
 const { Link, Title } = Typography;
 
 const muiTheme = createTheme();
+const chakraTheme = extendTheme({
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false
+  }
+});
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('json_without_ids', json);
@@ -217,9 +223,10 @@ const App = () => {
   };
 
   const MUIThemeProvider = style === 'material' ? ThemeProvider : Fragment;
+  const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : Fragment;
 
   return (
-    <ChakraProvider resetCSS={style === 'chakra'}>
+    <>
       <Layout>
         <Header>
           <Title level={3} style={{ display: 'inline-block' }}>
@@ -313,32 +320,34 @@ const App = () => {
             <pre>yarn add react-querybuilder</pre>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
-            <MUIThemeProvider theme={muiTheme}>
-              <div className={qbWrapperClassName}>
-                <form className="form-inline" style={{ marginTop: '1rem' }}>
-                  <QueryBuilder
-                    query={inlineCombinators ? queryIC : query}
-                    fields={fields}
-                    onQueryChange={(q) =>
-                      inlineCombinators
-                        ? setQueryIC(q as RuleGroupTypeIC)
-                        : setQuery(q as RuleGroupType)
-                    }
-                    showCombinatorsBetweenRules={showCombinatorsBetweenRules}
-                    showNotToggle={showNotToggle}
-                    showCloneButtons={showCloneButtons}
-                    resetOnFieldChange={resetOnFieldChange}
-                    resetOnOperatorChange={resetOnOperatorChange}
-                    autoSelectField={autoSelectField}
-                    addRuleToNewGroups={addRuleToNewGroups}
-                    validator={useValidation ? defaultValidator : undefined}
-                    inlineCombinators={inlineCombinators}
-                    enableDragAndDrop={dnd}
-                    {...styleOptions[style]}
-                  />
-                </form>
-              </div>
-            </MUIThemeProvider>
+            <ChakraStyleProvider theme={chakraTheme}>
+              <MUIThemeProvider theme={muiTheme}>
+                <div className={qbWrapperClassName}>
+                  <form className="form-inline" style={{ marginTop: '1rem' }}>
+                    <QueryBuilder
+                      query={inlineCombinators ? queryIC : query}
+                      fields={fields}
+                      onQueryChange={(q) =>
+                        inlineCombinators
+                          ? setQueryIC(q as RuleGroupTypeIC)
+                          : setQuery(q as RuleGroupType)
+                      }
+                      showCombinatorsBetweenRules={showCombinatorsBetweenRules}
+                      showNotToggle={showNotToggle}
+                      showCloneButtons={showCloneButtons}
+                      resetOnFieldChange={resetOnFieldChange}
+                      resetOnOperatorChange={resetOnOperatorChange}
+                      autoSelectField={autoSelectField}
+                      addRuleToNewGroups={addRuleToNewGroups}
+                      validator={useValidation ? defaultValidator : undefined}
+                      inlineCombinators={inlineCombinators}
+                      enableDragAndDrop={dnd}
+                      {...styleOptions[style]}
+                    />
+                  </form>
+                </div>
+              </MUIThemeProvider>
+            </ChakraStyleProvider>
             <Divider />
             {format === 'mongodb' ? (
               <pre id="formatQuery-output">{formatString}</pre>
@@ -363,7 +372,7 @@ const App = () => {
         />
         {!!sqlParseError && <pre>{sqlParseError}</pre>}
       </Modal>
-    </ChakraProvider>
+    </>
   );
 };
 
