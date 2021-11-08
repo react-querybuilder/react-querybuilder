@@ -5,11 +5,13 @@ const { merge } = require('webpack-merge');
 const webpackCommon = require('./webpack-common.config');
 const path = require('path');
 
+const pages = ['main', 'ie11'];
+
 module.exports = merge(webpackCommon, {
   mode: 'development',
-  entry: {
-    demo: './demo/main.tsx'
-  },
+
+  entry: pages.reduce((prev, curr) => ({ ...prev, [curr]: `./demo/${curr}.tsx` }), {}),
+
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../dist_demo')
@@ -20,10 +22,12 @@ module.exports = merge(webpackCommon, {
     historyApiFallback: true
   },
 
-  plugins: [
-    new HtmlPlugin({
-      title: 'react-querybuilder (DEMO)',
-      template: './demo/index.html'
-    })
-  ]
+  plugins: pages.map(
+    (p) =>
+      new HtmlPlugin({
+        template: `./demo/${p.replace('main', 'index')}.html`,
+        filename: `${p.replace('main', 'index')}.html`,
+        chunks: [p]
+      })
+  )
 });

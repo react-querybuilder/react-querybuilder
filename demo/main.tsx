@@ -34,8 +34,8 @@ import QueryBuilder, {
   RuleGroupTypeAny,
   RuleGroupTypeIC
 } from '../src';
-import '../src/query-builder.scss';
 import {
+  docsLink,
   fields,
   formatMap,
   initialQuery,
@@ -230,9 +230,7 @@ const App = () => {
       <Layout>
         <Header>
           <Title level={3} style={{ display: 'inline-block' }}>
-            <a href="https://github.com/react-querybuilder/react-querybuilder">
-              React Query Builder
-            </a>
+            <a href={docsLink}>React Query Builder</a>
           </Title>
         </Header>
         <Layout>
@@ -376,4 +374,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.querySelector('.container'));
+ReactDOM.render(<App />, document.getElementById('app'));
