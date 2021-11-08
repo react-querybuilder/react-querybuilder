@@ -82,6 +82,7 @@ interface Schema {
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
+  enableDragAndDrop: boolean;
   validationMap: ValidationMap;
   inlineCombinators: boolean;
 }

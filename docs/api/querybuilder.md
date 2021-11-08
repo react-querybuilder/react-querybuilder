@@ -165,6 +165,7 @@ interface Controls {
   cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction?: React.ComponentType<ActionProps>;
   combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
+  dragHandle?: React.ForwardRefExoticComponent<DragHandleProps & React.RefAttributes<HTMLSpanElement>>;
   fieldSelector?: React.ComponentType<FieldSelectorProps>;
   notToggle?: React.ComponentType<NotToggleProps>;
   operatorSelector?: React.ComponentType<OperatorSelectorProps>;
@@ -292,6 +293,22 @@ interface CombinatorSelectorProps {
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
+}
+```
+
+#### `dragHandle`
+
+By default a `<span />` is used. Note that this component must be based on `React.forwardRef`, and must always render an element (i.e. never return `null`). The following props are passed:
+
+```ts
+interface DragHandleProps {
+  title: string; // translations.dragHandle.title, e.g. "Drag handle"
+  className: string; // CSS classNames to be applied
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  label: string; // translations.dragHandle.label, e.g. "⁞⁞"
+  enabled: boolean; // Whether the enableDragAndDrop top-level prop is true
 }
 ```
 
@@ -492,6 +509,7 @@ interface Classnames {
   operators?: string; // <select> control for operators
   value?: string; // <input> for the field value
   removeRule?: string; // <button> to remove a Rule
+  dragHandle?: string; // <span> as drag-and-drop handle
 }
 ```
 
@@ -540,6 +558,10 @@ This prop can be used to override translatable texts applied to various controls
   cloneRuleGroup: {
     label: '⧉',
     title: 'Clone group'
+  },
+  dragHandle: {
+    label: '⁞⁞',
+    title: 'Drag handle'
   }
 }
 ```
@@ -603,6 +625,12 @@ Pass `true` to automatically add a rule to new groups. If a `query` prop is not 
 `boolean` (default `false`)
 
 Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independent. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+
+### `enableDragAndDrop`
+
+`boolean` (default `false`)
+
+Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
 
 ### `validator`
 
