@@ -52,7 +52,7 @@ const BootstrapValueEditor = ({
       return (
         <input
           type="checkbox"
-          className="form-check-input"
+          className={`form-check-input ${className}`}
           title={title}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}

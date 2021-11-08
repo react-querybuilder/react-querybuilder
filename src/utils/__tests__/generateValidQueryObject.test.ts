@@ -1,7 +1,6 @@
 import generateValidQueryObject from '../generateValidQueryObject';
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../../types';
 
-
 describe('generateValidQueryObject', () => {
   describe('when initial query, with ID, is provided', () => {
     const queryWithID: RuleGroupType = {
