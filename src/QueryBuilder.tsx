@@ -32,7 +32,7 @@ import {
   uniqByName
 } from './utils';
 
-const reduceRightToSpec = (prev: any, curr: number) => ({ rules: { [curr]: prev } } as any);
+const reducePathToSpec = (prev: any, curr: number) => ({ rules: { [curr]: prev } } as any);
 
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
   props: QueryBuilderProps<RG>
@@ -256,7 +256,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const thisPath = parentPath.concat([parent.rules.length]);
       $push.push(generateValidQueryObject(newRule, thisPath));
     }
-    const $spec = parentPath.reduceRight(reduceRightToSpec, { rules: { $push } });
+    const $spec = parentPath.reduceRight(reducePathToSpec, { rules: { $push } });
     const newRoot = update(root, $spec);
     setRoot(newRoot);
     _notifyQueryChange(newRoot);
@@ -282,7 +282,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const thisPath = parentPath.concat([parent.rules.length]);
       $push.push(generateValidQueryObject(newGroup, thisPath) as any);
     }
-    const $spec = parentPath.reduceRight(reduceRightToSpec, { rules: { $push } });
+    const $spec = parentPath.reduceRight(reducePathToSpec, { rules: { $push } });
     const newRoot = update(root, $spec);
     setRoot(newRoot);
     _notifyQueryChange(newRoot);
@@ -312,7 +312,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         $rgSpec.value = { $set: getRuleDefaultValue({ ...ruleOrGroup, operator: value }) };
       }
     }
-    const $spec = path.reduceRight(reduceRightToSpec, $rgSpec);
+    const $spec = path.reduceRight(reducePathToSpec, $rgSpec);
     const newRoot = update(root, $spec);
     setRoot(newRoot);
     _notifyQueryChange(newRoot);
@@ -322,7 +322,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
     const $icSpec = { rules: { $splice: [[index, 1, value]] } };
-    const $spec = parentPath.reduceRight(reduceRightToSpec, $icSpec);
+    const $spec = parentPath.reduceRight(reducePathToSpec, $icSpec);
     const newRoot = update(root, $spec);
     setRoot(newRoot);
     _notifyQueryChange(newRoot);
@@ -342,7 +342,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       } else {
         $splice[0] = index;
       }
-      const $spec = parentPath.reduceRight(reduceRightToSpec, { rules: { $splice: [$splice] } });
+      const $spec = parentPath.reduceRight(reducePathToSpec, { rules: { $splice: [$splice] } });
       const newRoot = update(root, $spec);
       setRoot(newRoot);
       _notifyQueryChange(newRoot);
@@ -351,7 +351,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const moveRule = (rule: Required<RuleType>, newPath: number[]) => {
     const parentPath = getParentPath(newPath);
-    const $spec = parentPath.reduceRight(reduceRightToSpec, {
+    const $spec = parentPath.reduceRight(reducePathToSpec, {
       rules: {
         $splice: [
           [rule.path[rule.path.length - 1], 1],

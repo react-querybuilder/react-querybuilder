@@ -31,7 +31,7 @@ export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra'
 
 export const repoLink = 'https://github.com/react-querybuilder/react-querybuilder';
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
-export const docsLink = 'https://react-querybuilder.github.io/';
+export const docsLink = 'https://react-querybuilder.github.io';
 
 export const validator = (r: RuleType) => !!r.value;
 
