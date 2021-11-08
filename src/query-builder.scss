@@ -1,16 +1,19 @@
+// Variables
+$rqb-padding: 0.5rem !default;
+
 // Default styles
 .ruleGroup {
-  padding: 0.5rem 0.5rem 0.5rem 0;
+  padding: $rqb-padding $rqb-padding $rqb-padding 0;
   border: 1px solid #7f81a2;
   border-radius: 4px;
   background: rgba(0, 75, 183, 0.2);
 
   .ruleGroup-body {
-    margin-top: 0.5rem;
-    padding-left: 0.5rem;
+    margin-top: $rqb-padding;
+    padding-left: $rqb-padding;
     display: flex;
     flex-direction: column;
-    row-gap: 0.5rem;
+    row-gap: $rqb-padding;
 
     .ruleGroup-combinators.betweenRules {
       align-self: flex-start;
@@ -21,7 +24,7 @@
   .rule {
     display: flex;
     justify-content: flex-start;
-    column-gap: 0.5rem;
+    column-gap: $rqb-padding;
   }
 }
 
