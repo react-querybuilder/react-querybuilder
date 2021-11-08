@@ -105,6 +105,19 @@ const config = {
               },
             ],
           },
+          {
+            title: 'Demos',
+            items: [
+              {
+                label: 'Kitchen Sink',
+                href: 'https://react-querybuilder.github.io/react-querybuilder/',
+              },
+              {
+                label: 'IE Compatible',
+                href: 'https://react-querybuilder.github.io/react-querybuilder/ie11.html',
+              },
+            ],
+          },
           // {
           //   title: 'Community',
           //   items: [
