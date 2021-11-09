@@ -308,7 +308,7 @@ export interface Schema {
   onRuleAdd(rule: RuleType, parentPath: number[]): void;
   onRuleRemove(path: number[]): void;
   updateInlineCombinator(value: string, path: number[]): void;
-  moveRule(rule: RuleType, newPath: number[]): void;
+  moveRule(oldPath: number[], newPath: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;

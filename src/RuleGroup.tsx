@@ -1,7 +1,13 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import type { RuleGroupProps, RuleGroupType, RuleGroupTypeIC } from './types';
+import type {
+  RuleGroupProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleType
+} from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
 
 export const RuleGroup = ({
@@ -25,6 +31,7 @@ export const RuleGroup = ({
     onGroupRemove,
     onPropChange,
     onRuleAdd,
+    moveRule,
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
@@ -46,8 +53,18 @@ export const RuleGroup = ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
       isOver: monitor.isOver({ shallow: true })
-      // canDrop: monitor.canDrop()
-    })
+    }),
+    drop(item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) {
+      const parentItemPath = getParentPath(item.path);
+      const itemIndex = item.path[item.path.length - 1];
+
+      // No-op if rule is first child and is dropped on its own group header
+      if (path.join('-') === parentItemPath.join('-') && itemIndex === 0) {
+        return;
+      }
+
+      moveRule(item.path, [...path, 0]);
+    }
   }));
   if (path.length > 0) {
     drag(dragRef);

@@ -1,7 +1,7 @@
 import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import type { Field, RuleProps, RuleType } from './types';
+import type { Field, RuleGroupTypeAny, RuleProps, RuleType } from './types';
 import { c, generateID, getParentPath, getValidationClassNames } from './utils';
 
 export const Rule = ({
@@ -23,6 +23,7 @@ export const Rule = ({
     getOperators,
     getValueEditorType,
     getValues,
+    moveRule,
     onPropChange,
     onRuleAdd,
     onRuleRemove,
@@ -44,9 +45,23 @@ export const Rule = ({
     accept: [dndTypes.rule, dndTypes.ruleGroup],
     collect: (monitor) => ({
       isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
-      // canDrop: monitor.canDrop()
     }),
-    drop(_item, _monitor) {}
+    drop(item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) {
+      const parentHoverPath = getParentPath(path);
+      const parentItemPath = getParentPath(item.path);
+      const hoverIndex = path[path.length - 1];
+      const itemIndex = item.path[item.path.length - 1];
+
+      // No-op if rule is dropped on itself or the rule before it
+      if (
+        parentHoverPath.join('-') === parentItemPath.join('-') &&
+        (hoverIndex === itemIndex || hoverIndex === itemIndex - 1)
+      ) {
+        return;
+      }
+
+      moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
+    }
   }));
   drag(dragRef);
   preview(drop(dndRef));
