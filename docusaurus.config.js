@@ -57,6 +57,13 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      algolia: {
+        appId: 'BH4D9OD16A',
+        apiKey: 'd404e8a48fdbb7f72b29347763876f70',
+        indexName: 'react-querybuilder',
+        // contextualSearch: true,
+        // searchParameters: {},
+      },
       navbar: {
         title: 'React Query Builder',
         // logo: {
