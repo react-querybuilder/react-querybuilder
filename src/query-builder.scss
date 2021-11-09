@@ -38,13 +38,19 @@ $rqb-border-width: 1px !default;
 }
 
 // Drag-and-drop styles
+.dndOver {
+  &.rule,
+  .ruleGroup-header {
+    &::after {
+      display: block;
+      content: '\0000a0';
+      border: 2px solid rebeccapurple;
+    }
+  }
+}
+
 .ruleGroup,
 .rule {
-  // TODO: remove this rule -- it's just for debugging
-  &.dndOver {
-    border: 2px solid rebeccapurple;
-  }
-
   &.dndDragging {
     opacity: 0.5;
   }

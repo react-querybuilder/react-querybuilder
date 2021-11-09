@@ -33,8 +33,9 @@ export const RuleGroup = ({
     validationMap
   } = schema;
 
-  const dndRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
+  const dropRef = useRef<HTMLDivElement>(null);
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: dndTypes.ruleGroup,
     item: { id, path, combinator, not },
@@ -51,9 +52,9 @@ export const RuleGroup = ({
   }));
   if (path.length > 0) {
     drag(dragRef);
-    preview(dndRef);
+    preview(previewRef);
   }
-  drop(dndRef);
+  drop(dropRef);
 
   const onCombinatorChange = (value: any) => {
     onPropChange('combinator', value, path);
@@ -128,12 +129,12 @@ export const RuleGroup = ({
 
   return (
     <div
-      ref={dndRef}
+      ref={previewRef}
       className={outerClassName}
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      <div className={c(standardClassnames.header, classNames.header)}>
+      <div ref={dropRef} className={c(standardClassnames.header, classNames.header)}>
         <controls.dragHandle
           ref={dragRef}
           enabled={enableDragAndDrop && level > 0}
