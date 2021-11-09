@@ -308,7 +308,6 @@ interface DragHandleProps {
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
   label: string; // translations.dragHandle.label, e.g. "⁞⁞"
-  enabled: boolean; // Whether the enableDragAndDrop top-level prop is true
 }
 ```
 
