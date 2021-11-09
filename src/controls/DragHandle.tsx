@@ -2,12 +2,12 @@ import { forwardRef } from 'react';
 import type { DragHandleProps } from '../types';
 
 export default forwardRef<HTMLSpanElement, DragHandleProps>(function DragHandle(
-  { enabled, className, label, title },
+  { className, label, title },
   dragRef
 ) {
   return (
     <span ref={dragRef} className={className} title={title}>
-      {enabled ? label : ''}
+      {label}
     </span>
   );
 });

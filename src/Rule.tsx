@@ -26,10 +26,8 @@ export const Rule = ({
     onPropChange,
     onRuleAdd,
     onRuleRemove,
-    moveRule,
     autoSelectField,
     showCloneButtons,
-    enableDragAndDrop,
     validationMap
   } = schema;
 
@@ -48,64 +46,7 @@ export const Rule = ({
       isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
       // canDrop: monitor.canDrop()
     }),
-    hover(item: Required<RuleType>, monitor) {
-      // This function is based on https://github.com/react-dnd/react-dnd/blob/gh-pages/examples_hooks_ts/04-sortable/simple/src/Card.tsx#L36
-      if (!dndRef.current) {
-        return;
-      }
-      const dragPath = item.path;
-      const hoverPath = path;
-      const parentDragPath = getParentPath(dragPath);
-      const parentHoverPath = getParentPath(hoverPath);
-
-      // For now, only support reordering within the same group
-      if (parentDragPath.join('-') !== parentHoverPath.join('-')) {
-        return;
-      }
-
-      const dragIndex = item.path[item.path.length - 1];
-      const hoverIndex = path[path.length - 1];
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      // Determine rectangle on screen
-      const hoverBoundingRect = dndRef.current.getBoundingClientRect();
-
-      // Get vertical middle
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-
-      // Get pixels to the top
-      const hoverClientY = clientOffset!.y - hoverBoundingRect.top;
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-
-      // Time to actually perform the action
-      moveRule(item, hoverPath);
-
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      item.path = [...parentHoverPath, hoverIndex];
-    }
+    drop(_item, _monitor) {}
   }));
   drag(dragRef);
   preview(drop(dndRef));
@@ -170,7 +111,6 @@ export const Rule = ({
       data-path={JSON.stringify(path)}>
       <controls.dragHandle
         ref={dragRef}
-        enabled={enableDragAndDrop}
         level={level}
         title={translations.dragHandle.title}
         label={translations.dragHandle.label}

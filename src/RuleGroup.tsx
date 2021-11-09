@@ -28,7 +28,6 @@ export const RuleGroup = ({
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
-    enableDragAndDrop,
     updateInlineCombinator,
     validationMap
   } = schema;
@@ -123,8 +122,7 @@ export const RuleGroup = ({
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
     validationClassName,
-    dndDragging,
-    dndOver
+    dndDragging
   );
 
   return (
@@ -134,15 +132,16 @@ export const RuleGroup = ({
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      <div ref={dropRef} className={c(standardClassnames.header, classNames.header)}>
-        <controls.dragHandle
-          ref={dragRef}
-          enabled={enableDragAndDrop && level > 0}
-          level={level}
-          title={translations.dragHandle.title}
-          label={translations.dragHandle.label}
-          className={c(standardClassnames.dragHandle, classNames.dragHandle)}
-        />
+      <div ref={dropRef} className={c(standardClassnames.header, classNames.header, dndOver)}>
+        {level > 0 && (
+          <controls.dragHandle
+            ref={dragRef}
+            level={level}
+            title={translations.dragHandle.title}
+            label={translations.dragHandle.label}
+            className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+          />
+        )}
         {!showCombinatorsBetweenRules && !inlineCombinators && (
           <controls.combinatorSelector
             options={combinators}

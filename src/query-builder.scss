@@ -5,6 +5,9 @@ $rqb-border-color: #7f81a2 !default;
 $rqb-border-style: solid !default;
 $rqb-border-radius: 4px !default;
 $rqb-border-width: 1px !default;
+$rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
+$rqb-dnd-hover-border-bottom-style: dashed !default;
+$rqb-dnd-hover-border-bottom-width: 2px !default;
 
 // Default styles
 .ruleGroup {
@@ -24,7 +27,7 @@ $rqb-border-width: 1px !default;
     row-gap: $rqb-spacing;
 
     .ruleGroup-combinators.betweenRules {
-      // Otherwise the selects are strecthed to 100% width
+      // Otherwise selects stretch to 100% width
       align-self: flex-start;
     }
   }
@@ -32,23 +35,22 @@ $rqb-border-width: 1px !default;
   .ruleGroup-header,
   .rule {
     display: flex;
-    justify-content: flex-start;
     column-gap: $rqb-spacing;
   }
 }
 
-// Drag-and-drop styles
+// Drag-and-drop hover styles
 .dndOver {
   &.rule,
-  .ruleGroup-header {
-    &::after {
-      display: block;
-      content: '\0000a0';
-      border: 2px solid rebeccapurple;
-    }
+  &.ruleGroup-header {
+    border-bottom-width: $rqb-dnd-hover-border-bottom-width;
+    border-bottom-style: $rqb-dnd-hover-border-bottom-style;
+    border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+    padding-bottom: $rqb-spacing;
   }
 }
 
+// Drag-and-drop drag styles
 .ruleGroup,
 .rule {
   &.dndDragging {
@@ -60,12 +62,7 @@ $rqb-border-width: 1px !default;
   }
 }
 
-// When dnd is disabled, shift the (empty) drag handle to the left edge
+// When drag-and-drop is disabled, hide all drag handles
 [data-dnd='disabled'] .queryBuilder-dragHandle {
-  margin-left: -$rqb-spacing;
-}
-
-// The root group should always be $rqb-spacing away from the left edge, even if dnd is enabled
-[data-dnd='enabled'] [data-level='0'] > .ruleGroup-header > .queryBuilder-dragHandle {
-  margin-left: -$rqb-spacing;
+  display: none;
 }

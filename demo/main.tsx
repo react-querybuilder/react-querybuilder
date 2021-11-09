@@ -322,6 +322,7 @@ const App = () => {
                 <div className={qbWrapperClassName}>
                   <form className="form-inline" style={{ marginTop: '1rem' }}>
                     <QueryBuilder
+                      key={style}
                       query={inlineCombinators ? queryIC : query}
                       fields={fields}
                       onQueryChange={(q) =>

@@ -3,12 +3,12 @@ import { forwardRef } from 'react';
 import type { DragHandleProps } from '../../src/types';
 
 export default forwardRef<HTMLSpanElement, DragHandleProps>(function MaterialDragHandle(
-  { enabled, className, title },
+  { className, title },
   dragRef
 ) {
   return (
     <span ref={dragRef} className={className} title={title}>
-      {enabled ? <DragIndicatorIcon /> : ''}
+      <DragIndicatorIcon />
     </span>
   );
 });
