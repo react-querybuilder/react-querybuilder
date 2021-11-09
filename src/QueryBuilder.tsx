@@ -29,6 +29,7 @@ import {
   generateValidQueryObject,
   getParentPath,
   isRuleGroup,
+  resetPaths,
   uniqByName
 } from './utils';
 
@@ -351,6 +352,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const moveRule = (rule: Required<RuleType>, newPath: number[]) => {
     const parentPath = getParentPath(newPath);
+    // const hoverRule = findPath(newPath, root);
     const $spec = parentPath.reduceRight(reducePathToSpec, {
       rules: {
         $splice: [
@@ -359,7 +361,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         ]
       }
     });
-    const newRoot = update(root, $spec);
+    const newRoot = resetPaths(update(root, $spec));
     setRoot(newRoot);
     _notifyQueryChange(newRoot);
   };
@@ -435,7 +437,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={className}>
+      <div className={className} data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}>
         <schema.controls.ruleGroup
           translations={{ ...defaultTranslations, ...translations }}
           rules={root.rules}

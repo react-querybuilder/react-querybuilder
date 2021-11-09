@@ -1,5 +1,5 @@
 import { MouseEvent as ReactMouseEvent, useRef } from 'react';
-import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd';
+import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
 import type { Field, RuleProps, RuleType } from './types';
 import { c, generateID, getParentPath, getValidationClassNames } from './utils';
@@ -48,16 +48,18 @@ export const Rule = ({
       isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
       // canDrop: monitor.canDrop()
     }),
-    hover(item: Required<RuleType>, monitor: DropTargetMonitor) {
+    hover(item: Required<RuleType>, monitor) {
       // This function is based on https://github.com/react-dnd/react-dnd/blob/gh-pages/examples_hooks_ts/04-sortable/simple/src/Card.tsx#L36
       if (!dndRef.current) {
         return;
       }
       const dragPath = item.path;
       const hoverPath = path;
+      const parentDragPath = getParentPath(dragPath);
+      const parentHoverPath = getParentPath(hoverPath);
 
       // For now, only support reordering within the same group
-      if (getParentPath(dragPath).join('-') !== getParentPath(hoverPath).join('-')) {
+      if (parentDragPath.join('-') !== parentHoverPath.join('-')) {
         return;
       }
 
@@ -102,7 +104,7 @@ export const Rule = ({
       // Generally it's better to avoid mutations,
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
-      item.path = [...getParentPath(hoverPath), hoverIndex];
+      item.path = [...parentHoverPath, hoverIndex];
     }
   }));
   drag(dragRef);
