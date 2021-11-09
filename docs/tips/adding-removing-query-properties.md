@@ -24,7 +24,7 @@ console.log(JSON.stringify(query, ["rules", "field", "operator", "value"]));
 // '{"rules":[{"field":"firstName","operator":"=","value":"Steve"}]}'
 ```
 
-The `formatQuery` function also provides a shortcut for producing a JSON string representing everything in the query except the `id` and `path` properties:
+The `formatQuery` function also provides a shortcut for producing a JSON string representing everything in the query except the `id` properties:
 
 ```ts
 console.log(formatQuery(query, "json_without_ids"));

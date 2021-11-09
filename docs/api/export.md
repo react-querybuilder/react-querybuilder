@@ -17,7 +17,7 @@ function formatQuery(
 
 `formatQuery` parses a given query into one of the following formats:
 
-- JSON (with or without `id`s and `path`s)
+- JSON (with or without `id`s)
 - SQL `WHERE` clause
 - Parameterized SQL (with anonymous or named parameters)
 - MongoDB
@@ -69,24 +69,17 @@ The output will be a multi-line string representation of the query using 2 space
 ```ts
 `{
   "id": "root",
-  "path": [],
   "combinator": "and",
   "not": false,
   "rules": [
     {
       "id": "rule1",
-      "path": [
-        0
-      ],
       "field": "firstName",
       "value": "Steve",
       "operator": "="
     },
     {
       "id": "rule2",
-      "path": [
-        1
-      ],
       "field": "lastName",
       "value": "Vai",
       "operator": "="
@@ -97,7 +90,7 @@ The output will be a multi-line string representation of the query using 2 space
 
 ### JSON without identifiers
 
-To export the internal query representation without formatting (single-line, no indentation) and without the `id` and `path` attributes on each object, use the "json_without_ids" format. This is useful if you need to serialize the query for storage.
+To export the internal query representation without formatting (single-line, no indentation) and without the `id` attribute on each object, use the "json_without_ids" format. This is useful if you need to serialize the query for storage.
 
 ```ts
 formatQuery(query, 'json_without_ids');
