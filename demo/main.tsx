@@ -14,7 +14,7 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import { Fragment, useState } from 'react';
+import { FC, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
@@ -85,6 +85,8 @@ const shStyle = {
     whiteSpace: 'pre-wrap'
   }
 };
+
+const CustomFragment: FC = ({ children }) => <>{children}</>;
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -221,8 +223,8 @@ const App = () => {
     }
   };
 
-  const MUIThemeProvider = style === 'material' ? ThemeProvider : Fragment;
-  const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : Fragment;
+  const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
+  const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
 
   return (
     <>
