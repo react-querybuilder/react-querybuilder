@@ -1,19 +1,19 @@
 // Variables
-$rqb-padding: 0.5rem !default;
+$rqb-spacing: 0.5rem !default;
 
 // Default styles
 .ruleGroup {
-  padding: $rqb-padding $rqb-padding $rqb-padding 0;
+  padding: $rqb-spacing $rqb-spacing $rqb-spacing 0;
   border: 1px solid #7f81a2;
   border-radius: 4px;
   background: rgba(0, 75, 183, 0.2);
 
   .ruleGroup-body {
-    margin-top: $rqb-padding;
-    padding-left: $rqb-padding;
+    margin-top: $rqb-spacing;
+    padding-left: $rqb-spacing;
     display: flex;
     flex-direction: column;
-    row-gap: $rqb-padding;
+    row-gap: $rqb-spacing;
 
     .ruleGroup-combinators.betweenRules {
       align-self: flex-start;
@@ -24,7 +24,7 @@ $rqb-padding: 0.5rem !default;
   .rule {
     display: flex;
     justify-content: flex-start;
-    column-gap: $rqb-padding;
+    column-gap: $rqb-spacing;
   }
 }
 
