@@ -90,13 +90,11 @@ export const RuleGroup = ({
     let thisGroup: RuleGroupType | RuleGroupTypeIC;
     if (inlineCombinators) {
       thisGroup = {
-        id,
         not,
         rules
       } as RuleGroupTypeIC;
     } else {
       thisGroup = {
-        id,
         combinator,
         rules,
         not

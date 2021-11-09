@@ -29,7 +29,6 @@ import {
   generateValidQueryObject,
   getParentPath,
   isRuleGroup,
-  resetPaths,
   uniqByName
 } from './utils';
 
@@ -247,15 +246,13 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     const $push: RuleOrGroupArray = [];
     const parent = findPath(parentPath, root) as RG;
     if ('combinator' in parent) {
-      const thisPath = parentPath.concat([parent.rules.length]);
-      $push.push(generateValidQueryObject(newRule, thisPath));
+      $push.push(generateValidQueryObject(newRule));
     } else {
       if (parent.rules.length > 0) {
         const prevCombinator = parent.rules[parent.rules.length - 2];
         $push.push((typeof prevCombinator === 'string' ? prevCombinator : 'and') as any);
       }
-      const thisPath = parentPath.concat([parent.rules.length]);
-      $push.push(generateValidQueryObject(newRule, thisPath));
+      $push.push(generateValidQueryObject(newRule));
     }
     const $spec = parentPath.reduceRight(reducePathToSpec, { rules: { $push } });
     const newRoot = update(root, $spec);
@@ -273,15 +270,13 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     const parent = findPath(parentPath, root) as RG;
     // istanbul ignore else
     if ('combinator' in newGroup) {
-      const thisPath = parentPath.concat([parent.rules.length]);
-      $push.push(generateValidQueryObject(newGroup, thisPath) as any);
+      $push.push(generateValidQueryObject(newGroup) as any);
     } else if (!('combinator' in parent)) {
       if (parent.rules.length > 0) {
         const prevCombinator = parent.rules[parent.rules.length - 2];
         $push.push((typeof prevCombinator === 'string' ? prevCombinator : 'and') as any);
       }
-      const thisPath = parentPath.concat([parent.rules.length]);
-      $push.push(generateValidQueryObject(newGroup, thisPath) as any);
+      $push.push(generateValidQueryObject(newGroup) as any);
     }
     const $spec = parentPath.reduceRight(reducePathToSpec, { rules: { $push } });
     const newRoot = update(root, $spec);
@@ -361,7 +356,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         ]
       }
     });
-    const newRoot = resetPaths(update(root, $spec));
+    const newRoot = update(root, $spec);
     setRoot(newRoot);
     _notifyQueryChange(newRoot);
   };
