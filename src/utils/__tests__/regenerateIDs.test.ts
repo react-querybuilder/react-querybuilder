@@ -1,67 +1,68 @@
 import { regenerateIDs } from '..';
 import { RuleGroupType, RuleGroupTypeIC } from '../..';
 
-describe('when generating IDs', () => {
-  it('should generate different IDs', () => {
-    const ruleGroup: RuleGroupType = {
-      id: 'root',
-      path: [],
+const ruleGroup: RuleGroupType = {
+  id: 'root',
+  path: [],
+  combinator: 'and',
+  rules: [
+    {
+      id: 'innerGroup',
+      path: [0],
       combinator: 'and',
       rules: [
         {
-          id: 'innerGroup',
-          path: [0],
-          combinator: 'and',
-          rules: [
-            {
-              id: 'innerRule',
-              path: [0, 0],
-              field: 'TEST',
-              operator: '=',
-              value: ''
-            }
-          ]
+          id: 'innerRule',
+          path: [0, 0],
+          field: 'TEST',
+          operator: '=',
+          value: ''
         }
       ]
-    };
+    }
+  ]
+};
 
-    const ruleGroupIC: RuleGroupTypeIC = {
-      id: 'root',
-      path: [],
+const ruleGroupIC: RuleGroupTypeIC = {
+  id: 'root',
+  path: [],
+  rules: [
+    {
+      id: 'innerGroup',
+      path: [0],
       rules: [
         {
-          id: 'innerGroup',
-          path: [0],
-          rules: [
-            {
-              id: 'innerRule',
-              path: [0, 0],
-              field: 'TEST',
-              operator: '=',
-              value: ''
-            },
-            'and',
-            {
-              id: 'innerRule',
-              path: [0, 0],
-              field: 'TEST',
-              operator: '=',
-              value: ''
-            }
-          ]
+          id: 'innerRule',
+          path: [0, 0],
+          field: 'TEST',
+          operator: '=',
+          value: ''
+        },
+        'and',
+        {
+          id: 'innerRule',
+          path: [0, 0],
+          field: 'TEST',
+          operator: '=',
+          value: ''
         }
       ]
-    };
+    }
+  ]
+};
 
+describe('when generating IDs', () => {
+  it('should generate different IDs for standard queries', () => {
     const newRuleGroup = regenerateIDs(ruleGroup);
-
     expect(newRuleGroup.id).not.toBe(ruleGroup.id);
     expect((newRuleGroup.rules[0] as RuleGroupType).id).not.toBe(ruleGroup.rules[0].id);
     expect((newRuleGroup.rules[0] as RuleGroupType).rules[0].id).not.toBe(
       (ruleGroup.rules[0] as RuleGroupType).rules[0].id
     );
     expect((newRuleGroup.rules[0] as RuleGroupType).rules[0].path).toEqual([0, 0]);
+  });
 
+  it('should generate different IDs for inline combinators', () => {
     const newRuleGroupIC = regenerateIDs(ruleGroupIC);
     expect(newRuleGroupIC.id).not.toBe(ruleGroupIC.id);
     expect((newRuleGroupIC.rules[0] as RuleGroupTypeIC).id).not.toBe(

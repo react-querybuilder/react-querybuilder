@@ -12,6 +12,7 @@ describe('uniqByName', () => {
       { id: 2, name: 'test2' }
     ]);
   });
+
   it('removes second duplicate', () => {
     expect(
       uniqByName([
