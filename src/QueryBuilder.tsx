@@ -126,8 +126,13 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     } as any;
   };
 
+  const [isFirstRender, setIsFirstRender] = useState(true);
   const [queryState, setQueryState] = useState(createRuleGroup());
-  const root: RG = query ? (prepareRuleGroup(query) as any) : queryState;
+  // We assume here that if a query is passed in, and it's not the first render,
+  // that the query has already been prepared, i.e. the user is just passing back
+  // the onQueryChange callback parameter as query. This appears to have a huge
+  // performance impact.
+  const root: RG = query ? (isFirstRender ? (prepareRuleGroup(query) as any) : query) : queryState;
 
   // Notify a query change on mount
   /* istanbul ignore next */
@@ -135,6 +140,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     if (enableMountQueryChange) {
       onQueryChange(root);
     }
+    setIsFirstRender(false);
   }, []);
 
   /**
