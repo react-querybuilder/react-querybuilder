@@ -1,7 +1,7 @@
 import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import type { Field, RuleGroupTypeAny, RuleProps, RuleType } from './types';
+import type { DraggedItem, Field, RuleProps, RuleType } from './types';
 import { c, generateID, getParentPath, getValidationClassNames } from './utils';
 
 export const Rule = ({
@@ -34,20 +34,22 @@ export const Rule = ({
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
-  const [{ isDragging }, drag, preview] = useDrag(() => ({
+  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(() => ({
     type: dndTypes.rule,
-    item: () => ({ id, path, field, operator, value }),
+    item: (): DraggedItem => ({ path }),
     collect: (monitor) => ({
-      isDragging: monitor.isDragging()
+      isDragging: monitor.isDragging(),
+      dragMonitorId: monitor.getHandlerId()
     })
   }));
-  const [{ isOver }, drop] = useDrop(
+  const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
       collect: (monitor) => ({
-        isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
+        isOver: monitor.isOver() && (monitor.getItem() as any).id !== id,
+        dropMonitorId: monitor.getHandlerId()
       }),
-      drop: (item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) => {
+      drop: (item: DraggedItem, _monitor) => {
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
         const hoverIndex = path[path.length - 1];
@@ -123,6 +125,9 @@ export const Rule = ({
   return (
     <div
       ref={dndRef}
+      data-testid="rule"
+      data-dragmonitorid={dragMonitorId}
+      data-dropmonitorid={dropMonitorId}
       className={outerClassName}
       data-rule-id={id}
       data-level={level}

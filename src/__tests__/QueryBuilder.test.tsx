@@ -1,7 +1,9 @@
+import { render } from '@testing-library/react';
 import { mount, ReactWrapper } from 'enzyme';
+import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
 import { standardClassnames } from '../defaults';
-import { QueryBuilder } from '../QueryBuilder';
+import { QueryBuilder as QueryBuilderOriginal } from '../QueryBuilder';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
 import {
@@ -13,6 +15,11 @@ import {
   ValidationMap
 } from '../types';
 import { defaultValidator } from '../utils';
+
+const [QueryBuilder, getDndBackend] = wrapWithTestBackend(QueryBuilderOriginal);
+
+const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
+  el.getAttribute(`data-${dragDrop}monitorid`);
 
 describe('<QueryBuilder />', () => {
   it('should exist', () => {
@@ -1208,6 +1215,88 @@ describe('<QueryBuilder />', () => {
       const valMap: ValidationMap = { id: { valid: false, reasons: ['invalid'] } };
       const dom = mount(<QueryBuilder validator={() => valMap} />);
       expect(dom.find(RuleGroup).props().schema.validationMap).toEqual(valMap);
+    });
+  });
+
+  describe('enableDragAndDrop', () => {
+    it('should set data-dnd attribute appropriately', () => {
+      const wrapperDisabled = mount(<QueryBuilder />);
+      expect(wrapperDisabled.find('div').first().getDOMNode().getAttribute('data-dnd')).toBe(
+        'disabled'
+      );
+      wrapperDisabled.unmount();
+      const wrapperEnabled = mount(<QueryBuilder enableDragAndDrop />);
+      expect(wrapperEnabled.find('div').first().getDOMNode().getAttribute('data-dnd')).toBe(
+        'enabled'
+      );
+    });
+
+    it('moves a rule down within the same group', () => {
+      const onQueryChange = jest.fn();
+      const { getAllByTestId } = render(
+        <QueryBuilder
+          onQueryChange={onQueryChange}
+          enableDragAndDrop
+          query={{
+            combinator: 'and',
+            rules: [
+              { id: '0', field: 'field0', operator: '=', value: '0' },
+              { id: '1', field: 'field1', operator: '=', value: '1' }
+            ]
+          }}
+        />
+      );
+      const rules = getAllByTestId('rule');
+      simulateDragDrop(
+        getHandlerId(rules[0], 'drag'),
+        getHandlerId(rules[1], 'drop'),
+        getDndBackend()
+      );
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules.map((r) => r.id)).toEqual([
+        '1',
+        '0'
+      ]);
+    });
+
+    it('moves a rule to a different group with a common ancestor', () => {
+      const onQueryChange = jest.fn();
+      const { getAllByTestId } = render(
+        <QueryBuilder
+          onQueryChange={onQueryChange}
+          enableDragAndDrop
+          query={{
+            combinator: 'and',
+            rules: [
+              {
+                id: '0',
+                combinator: 'and',
+                rules: [
+                  { id: '1', field: 'field0', operator: '=', value: '1' },
+                  { id: '2', field: 'field0', operator: '=', value: '2' },
+                  { id: '3', combinator: 'and', rules: [] }
+                ]
+              }
+            ]
+          }}
+        />
+      );
+      const rule = getAllByTestId('rule')[1]; // id 2
+      const ruleGroup = getAllByTestId('rule-group')[2]; // id 3
+      simulateDragDrop(
+        getHandlerId(rule, 'drag'),
+        getHandlerId(ruleGroup, 'drop'),
+        getDndBackend()
+      );
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules).toHaveLength(1);
+      expect(
+        ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType).rules
+      ).toHaveLength(2);
+      expect(
+        (
+          ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType)
+            .rules[1] as RuleGroupType
+        ).rules[0]
+      ).toHaveProperty('id', '2');
     });
   });
 });

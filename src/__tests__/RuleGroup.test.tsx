@@ -1,25 +1,30 @@
-import { mount as mountOriginal } from 'enzyme';
-import { ComponentType, forwardRef, ReactElement } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { ActionProps, RuleGroupTypeIC, ValidationResult } from '..';
-import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
-import { standardClassnames } from '../defaults';
+import { render } from '@testing-library/react';
+import { mount } from 'enzyme';
+import { ComponentType, forwardRef } from 'react';
+import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
+import { act } from 'react-dom/test-utils';
+import { ActionElement, NotToggle, ValueSelector } from '../controls';
+import { defaultTranslations, standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
-import { RuleGroup } from '../RuleGroup';
+import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
 import {
+  ActionProps,
   ActionWithRulesProps,
   Classnames,
   Controls,
   RuleGroupProps,
   RuleGroupType,
+  RuleGroupTypeIC,
   RuleType,
   Schema,
+  ValidationResult,
   ValueSelectorProps
 } from '../types';
 
-const mount = (e: ReactElement) =>
-  mountOriginal(<DndProvider backend={HTML5Backend}>{e}</DndProvider>);
+const [RuleGroup, getDndBackend] = wrapWithTestBackend(RuleGroupOriginal);
+
+const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
+  el.getAttribute(`data-${dragDrop}monitorid`);
 
 describe('<RuleGroup />', () => {
   let controls: Partial<Controls>;
@@ -92,52 +97,7 @@ describe('<RuleGroup />', () => {
       rules: [],
       combinator: 'and',
       schema: schema as Schema,
-      translations: {
-        fields: {
-          title: 'Fields'
-        },
-        operators: {
-          title: 'Operators'
-        },
-        value: {
-          title: 'Value'
-        },
-        removeRule: {
-          label: 'x',
-          title: 'Remove rule'
-        },
-        removeGroup: {
-          label: 'x',
-          title: 'Remove group'
-        },
-        addRule: {
-          label: '+Rule',
-          title: 'Add rule'
-        },
-        addGroup: {
-          label: '+Group',
-          title: 'Add group'
-        },
-        combinators: {
-          title: 'Combinators'
-        },
-        notToggle: {
-          label: 'Not',
-          title: 'Invert this group'
-        },
-        cloneRule: {
-          label: '⧉',
-          title: 'Clone rule'
-        },
-        cloneRuleGroup: {
-          label: '⧉',
-          title: 'Clone group'
-        },
-        dragHandle: {
-          label: '☰',
-          title: 'Drag handle'
-        }
-      }
+      translations: defaultTranslations
     };
   });
 
@@ -301,7 +261,7 @@ describe('<RuleGroup />', () => {
 
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
 
-      expect(dom.find(RuleGroup).find({ id: idOfNestedRuleGroup }).props().not).toBe(true);
+      expect(dom.find(RuleGroup).filter({ id: idOfNestedRuleGroup }).props().not).toBe(true);
     });
 
     it('calls onPropChange from the schema with expected values', () => {
@@ -510,6 +470,72 @@ describe('<RuleGroup />', () => {
       const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(ValueSelector).props().validation).toEqual(valRes);
       expect(dom.find(ActionElement).props().validation).toEqual(valRes);
+    });
+  });
+
+  describe('enableDragAndDrop', () => {
+    it('should not have the drag class if not dragging', () => {
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      const ruleGroup = getByTestId('rule-group');
+      expect(ruleGroup.className).not.toContain(standardClassnames.dndDragging);
+    });
+
+    it('should have the drag class if dragging', () => {
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      const ruleGroup = getByTestId('rule-group');
+      simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
+      expect(ruleGroup.className).toContain(standardClassnames.dndDragging);
+      act(() => {
+        getDndBackend().simulateEndDrag();
+      });
+    });
+
+    it('should handle a dropped rule group', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(
+        <div>
+          <RuleGroup {...props} path={[0]} />
+          <RuleGroup {...props} path={[1]} />
+        </div>
+      );
+      const ruleGroups = getAllByTestId('rule-group');
+      simulateDragDrop(
+        getHandlerId(ruleGroups[1], 'drag'),
+        getHandlerId(ruleGroups[0], 'drop'),
+        getDndBackend()
+      );
+      expect(ruleGroups[0].className).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroups[1].className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
+    });
+
+    it('should abort move if dropped on itself', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      const ruleGroup = getByTestId('rule-group');
+      simulateDragDrop(
+        getHandlerId(ruleGroup, 'drag'),
+        getHandlerId(ruleGroup, 'drop'),
+        getDndBackend()
+      );
+      expect(ruleGroup.className).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroup.className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).not.toHaveBeenCalled();
+    });
+
+    it('should abort move if source item is first child of this group', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(<RuleGroup {...props} rules={[{ rules: [] }]} />);
+      const ruleGroups = getAllByTestId('rule-group');
+      simulateDragDrop(
+        getHandlerId(ruleGroups[1], 'drag'),
+        getHandlerId(ruleGroups[0], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).not.toHaveBeenCalled();
     });
   });
 

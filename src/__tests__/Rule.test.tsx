@@ -1,10 +1,16 @@
-import { mount as mountOriginal } from 'enzyme';
-import { forwardRef, ReactElement } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
-import { standardClassnames } from '../defaults';
-import { Rule } from '../Rule';
+import { cleanup, render } from '@testing-library/react';
+import { mount } from 'enzyme';
+import { forwardRef } from 'react';
+import {
+  simulateDrag,
+  simulateDragDrop,
+  simulateDragHover,
+  wrapWithTestBackend
+} from 'react-dnd-test-utils';
+import { act } from 'react-dom/test-utils';
+import { ActionElement, DragHandle, ValueEditor, ValueSelector } from '../controls';
+import { defaultTranslations, standardClassnames } from '../defaults';
+import { Rule as RuleOriginal } from '../Rule';
 import {
   ActionProps,
   Classnames,
@@ -20,8 +26,10 @@ import {
   ValueEditorProps
 } from '../types';
 
-const mount = (e: ReactElement) =>
-  mountOriginal(<DndProvider backend={HTML5Backend}>{e}</DndProvider>);
+const [Rule, getDndBackend] = wrapWithTestBackend(RuleOriginal);
+
+const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
+  el.getAttribute(`data-${dragDrop}monitorid`);
 
 const defaultFields: Field[] = [
   { name: 'field1', label: 'Field 1' },
@@ -61,10 +69,15 @@ describe('<Rule />', () => {
       removeRuleAction: (props: ActionProps) => (
         <button onClick={(e) => props.handleOnClick(e)}>x</button>
       ),
-      dragHandle: forwardRef(() => <span>:</span>)
+      dragHandle: forwardRef(({ className, label }, ref) => (
+        <span ref={ref} className={className}>
+          {label}
+        </span>
+      ))
     };
     classNames = {
       cloneRule: 'custom-cloneRule-class',
+      dragHandle: 'custom-dragHandle-class',
       fields: 'custom-fields-class',
       operators: 'custom-operators-class',
       removeRule: 'custom-removeRule-class'
@@ -96,52 +109,7 @@ describe('<Rule />', () => {
       operator: 'operator',
       schema: schema as Schema,
       path: [0],
-      translations: {
-        fields: {
-          title: 'Fields'
-        },
-        operators: {
-          title: 'Operators'
-        },
-        value: {
-          title: 'Value'
-        },
-        removeRule: {
-          label: 'x',
-          title: 'Remove rule'
-        },
-        removeGroup: {
-          label: 'x',
-          title: 'Remove group'
-        },
-        addRule: {
-          label: '+Rule',
-          title: 'Add rule'
-        },
-        addGroup: {
-          label: '+Group',
-          title: 'Add group'
-        },
-        combinators: {
-          title: 'Combinators'
-        },
-        notToggle: {
-          label: 'Not',
-          title: 'Invert this group'
-        },
-        cloneRule: {
-          label: '⧉',
-          title: 'Clone rule'
-        },
-        cloneRuleGroup: {
-          label: '⧉',
-          title: 'Clone group'
-        },
-        dragHandle: {
-          label: '☰',
-          title: 'Drag handle'
-        }
-      }
+      translations: defaultTranslations
     };
   });
 
@@ -153,6 +121,18 @@ describe('<Rule />', () => {
     const dom = mount(<Rule {...props} />);
 
     expect(dom.find('div').hasClass(standardClassnames.rule)).toBe(true);
+  });
+
+  describe('drag handle as <DragHandle />', () => {
+    beforeEach(() => {
+      controls.dragHandle = DragHandle;
+    });
+
+    it('should have custom class', () => {
+      const dom = mount(<Rule {...props} />);
+      expect(dom.find(DragHandle).hasClass(standardClassnames.dragHandle)).toBe(true);
+      expect(dom.find(DragHandle).hasClass('custom-dragHandle-class')).toBe(true);
+    });
   });
 
   describe('field selector as <ValueSelector />', () => {
@@ -446,6 +426,78 @@ describe('<Rule />', () => {
     });
   });
 
+  describe('enableDragAndDrop', () => {
+    afterEach(() => {
+      cleanup();
+    });
+
+    it('should not have the drag class if not dragging', () => {
+      const { getByTestId } = render(<Rule {...props} />);
+      const rule = getByTestId('rule');
+      expect(rule.className).not.toContain(standardClassnames.dndDragging);
+    });
+
+    it('should have the drag class if dragging', () => {
+      const { getByTestId } = render(<Rule {...props} />);
+      const rule = getByTestId('rule');
+      simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
+      expect(rule.className).toContain(standardClassnames.dndDragging);
+      act(() => {
+        getDndBackend().simulateEndDrag();
+      });
+    });
+
+    it('should have the over class if hovered', () => {
+      const { getAllByTestId } = render(
+        <div>
+          <Rule {...props} path={[0]} />
+          <Rule {...props} path={[1]} />
+        </div>
+      );
+      const rules = getAllByTestId('rule');
+      simulateDragHover(
+        getHandlerId(rules[0], 'drag'),
+        getHandlerId(rules[1], 'drop'),
+        getDndBackend()
+      );
+      expect(rules[1].className).toContain(standardClassnames.dndOver);
+      act(() => {
+        getDndBackend().simulateEndDrag();
+      });
+    });
+
+    it('should handle a dropped rule', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(
+        <div>
+          <Rule {...props} path={[0]} />
+          <Rule {...props} path={[1]} />
+        </div>
+      );
+      const rules = getAllByTestId('rule');
+      simulateDragDrop(
+        getHandlerId(rules[0], 'drag'),
+        getHandlerId(rules[1], 'drop'),
+        getDndBackend()
+      );
+      expect(rules[0].className).not.toContain(standardClassnames.dndDragging);
+      expect(rules[1].className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).toHaveBeenCalledWith([0], [2]);
+    });
+
+    it('should abort move if dropped on itself', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getByTestId } = render(<Rule {...props} />);
+      const rule = getByTestId('rule');
+      simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
+      expect(rule.className).not.toContain(standardClassnames.dndDragging);
+      expect(rule.className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).not.toHaveBeenCalled();
+    });
+  });
+
   function behavesLikeASelector(value: string, defaultClassName: string, customClassName: string) {
     it('should have the selected value set correctly', () => {
       const dom = mount(<Rule {...props} />);
@@ -454,12 +506,12 @@ describe('<Rule />', () => {
 
     it('should have the default className', () => {
       const dom = mount(<Rule {...props} />);
-      expect(dom.find(ValueSelector).props().className).toContain(defaultClassName);
+      expect(dom.find(ValueSelector).hasClass(defaultClassName)).toBe(true);
     });
 
     it('should have the custom className', () => {
       const dom = mount(<Rule {...props} />);
-      expect(dom.find(ValueSelector).props().className).toContain(customClassName);
+      expect(dom.find(ValueSelector).hasClass(customClassName)).toBe(true);
     });
 
     it('should have the onChange method handler', () => {

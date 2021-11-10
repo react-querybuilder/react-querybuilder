@@ -270,6 +270,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     if (!newGroup) return;
     const newQuery = produce(root, (draft) => {
       const parent = findPath(parentPath, draft) as RG;
+      /* istanbul ignore else */
       if ('combinator' in parent) {
         parent.rules.push(prepareRuleGroup(newGroup) as any);
       } else if (!('combinator' in parent)) {
@@ -290,6 +291,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   ) => {
     const newQuery = produce(root, (draft) => {
       const ruleOrGroup = findPath(path, draft);
+      /* istanbul ignore if */
       if (!ruleOrGroup) return;
       const isGroup = 'rules' in ruleOrGroup;
       (ruleOrGroup as any)[prop] = value;
@@ -335,7 +337,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const moveRule = (oldPath: number[], newPath: number[]) => {
-    // No-op if the old and new paths are the same
+    // No-op if the old and new paths are the same.
+    // Ignore in test coverage since Rule/RuleGroup already avoid this case.
+    /* istanbul ignore if */
     if (oldPath.join('-') === newPath.join('-')) {
       return;
     }
@@ -358,6 +362,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const parentOfRuleToRemove = findPath(parentOldPath, draft) as RG;
       parentOfRuleToRemove.rules.splice(oldPath[oldPath.length - 1], 1);
       const newNewPath = [...newPath];
+      /* istanbul ignore else */
       if (!movedUp) {
         newNewPath[commonAncestorPath.length] -= 1;
       }

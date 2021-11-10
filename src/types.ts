@@ -75,6 +75,10 @@ export interface DefaultRuleType extends RuleType {
   operator: DefaultOperatorName;
 }
 
+export interface DraggedItem {
+  path: number[];
+}
+
 export type DefaultCombinatorName = 'and' | 'or';
 
 export type DefaultOperatorName =

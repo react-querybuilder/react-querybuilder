@@ -1,13 +1,7 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import type {
-  RuleGroupProps,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-  RuleType
-} from './types';
+import type { DraggedItem, RuleGroupProps, RuleGroupType, RuleGroupTypeIC } from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
 
 export const RuleGroup = ({
@@ -42,25 +36,31 @@ export const RuleGroup = ({
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
-  const [{ isDragging }, drag, preview] = useDrag(() => ({
+  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(() => ({
     type: dndTypes.ruleGroup,
-    item: () => ({ id, path, combinator, not }),
+    item: (): DraggedItem => ({ path }),
     collect: (monitor) => ({
-      isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id
+      isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id,
+      dragMonitorId: monitor.getHandlerId()
     })
   }));
-  const [{ isOver }, drop] = useDrop(
+  const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
       collect: (monitor) => ({
-        isOver: monitor.isOver({ shallow: true })
+        isOver: monitor.isOver({ shallow: true }),
+        dropMonitorId: monitor.getHandlerId()
       }),
-      drop: (item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) => {
+      drop: (item: DraggedItem, _monitor) => {
         const parentItemPath = getParentPath(item.path);
         const itemIndex = item.path[item.path.length - 1];
 
-        // No-op if rule is first child and is dropped on its own group header
-        if (path.join('-') === parentItemPath.join('-') && itemIndex === 0) {
+        // No-op if 1) rule is first child and is dropped on its own group header,
+        // or 2) the group is dropped on itself
+        if (
+          (path.join('-') === parentItemPath.join('-') && itemIndex === 0) ||
+          path.join('-') === item.path.join('-')
+        ) {
           return;
         }
 
@@ -149,6 +149,9 @@ export const RuleGroup = ({
     <div
       ref={previewRef}
       className={outerClassName}
+      data-testid="rule-group"
+      data-dragmonitorid={dragMonitorId}
+      data-dropmonitorid={dropMonitorId}
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
