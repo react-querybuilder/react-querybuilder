@@ -1,5 +1,5 @@
 import { mount as mountOriginal } from 'enzyme';
-import { ReactElement } from 'react';
+import { forwardRef, ReactElement } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
@@ -60,7 +60,8 @@ describe('<Rule />', () => {
       ),
       removeRuleAction: (props: ActionProps) => (
         <button onClick={(e) => props.handleOnClick(e)}>x</button>
-      )
+      ),
+      dragHandle: forwardRef(() => <span>:</span>)
     };
     classNames = {
       cloneRule: 'custom-cloneRule-class',

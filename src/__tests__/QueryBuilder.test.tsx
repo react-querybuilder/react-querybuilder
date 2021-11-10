@@ -69,7 +69,6 @@ describe('<QueryBuilder />', () => {
     it('should call onQueryChange with query', () => {
       expect(onQueryChange).toHaveBeenCalledTimes(1);
       const query: RuleGroupType = {
-        path: [],
         combinator: 'and',
         rules: [],
         not: false
@@ -1172,7 +1171,6 @@ describe('<QueryBuilder />', () => {
       mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
       expect(onQueryChange).toHaveBeenCalledTimes(1);
       const query: RuleGroupTypeIC = {
-        path: [],
         rules: [],
         not: false
       };

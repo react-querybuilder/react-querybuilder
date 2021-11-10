@@ -82,6 +82,104 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   fields = uniqByName(fields);
   fields.forEach((f) => (fieldMap[f.name] = f));
 
+  const getOperatorsMain = (field: string) => {
+    const fieldData = fieldMap[field];
+    if (fieldData?.operators) {
+      return fieldData.operators;
+    }
+    if (getOperators) {
+      const ops = getOperators(field);
+      if (ops) return ops;
+    }
+
+    return operators;
+  };
+
+  const getRuleDefaultOperator = (field: string) => {
+    const fieldData = fieldMap[field];
+    if (fieldData?.defaultOperator) {
+      return fieldData.defaultOperator;
+    }
+
+    if (getDefaultOperator) {
+      if (typeof getDefaultOperator === 'function') {
+        return getDefaultOperator(field);
+      } else {
+        return getDefaultOperator;
+      }
+    }
+
+    const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
+    return operators.length ? operators[0].name : /* istanbul ignore next */ '';
+  };
+
+  const getRuleDefaultValue = (rule: RuleType) => {
+    const fieldData = fieldMap[rule.field];
+    /* istanbul ignore next */
+    if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
+      return fieldData.defaultValue;
+    } else if (getDefaultValue) {
+      return getDefaultValue(rule);
+    }
+
+    let value: any = '';
+
+    const values = getValuesMain(rule.field, rule.operator);
+
+    if (values.length) {
+      value = values[0].name;
+    } else {
+      const editorType = getValueEditorTypeMain(rule.field, rule.operator);
+
+      if (editorType === 'checkbox') {
+        value = false;
+      }
+    }
+
+    return value;
+  };
+
+  /**
+   * Gets the ValueEditor type for a given field and operator
+   */
+  const getValueEditorTypeMain = (field: string, operator: string) => {
+    if (getValueEditorType) {
+      const vet = getValueEditorType(field, operator);
+      if (vet) return vet;
+    }
+
+    return 'text';
+  };
+
+  /**
+   * Gets the `<input />` type for a given field and operator
+   */
+  const getInputTypeMain = (field: string, operator: string) => {
+    if (getInputType) {
+      const inputType = getInputType(field, operator);
+      if (inputType) return inputType;
+    }
+
+    return 'text';
+  };
+
+  /**
+   * Gets the list of valid values for a given field and operator
+   */
+  const getValuesMain = (field: string, operator: string) => {
+    const fieldData = fieldMap[field];
+    /* istanbul ignore if */
+    if (fieldData?.values) {
+      return fieldData.values;
+    }
+    if (getValues) {
+      const vals = getValues(field, operator);
+      if (vals) return vals;
+    }
+
+    return [];
+  };
+
   const createRule = (): RuleType => {
     let field = '';
     /* istanbul ignore else */
@@ -142,107 +240,6 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     }
     setIsFirstRender(false);
   }, []);
-
-  /**
-   * Gets the ValueEditor type for a given field and operator
-   */
-  const getValueEditorTypeMain = (field: string, operator: string) => {
-    if (getValueEditorType) {
-      const vet = getValueEditorType(field, operator);
-      if (vet) return vet;
-    }
-
-    return 'text';
-  };
-
-  /**
-   * Gets the `<input />` type for a given field and operator
-   */
-  const getInputTypeMain = (field: string, operator: string) => {
-    if (getInputType) {
-      const inputType = getInputType(field, operator);
-      if (inputType) return inputType;
-    }
-
-    return 'text';
-  };
-
-  /**
-   * Gets the list of valid values for a given field and operator
-   */
-  const getValuesMain = (field: string, operator: string) => {
-    const fieldData = fieldMap[field];
-    /* istanbul ignore if */
-    if (fieldData?.values) {
-      return fieldData.values;
-    }
-    if (getValues) {
-      const vals = getValues(field, operator);
-      if (vals) return vals;
-    }
-
-    return [];
-  };
-
-  /**
-   * Gets the operators for a given field
-   */
-  const getOperatorsMain = (field: string) => {
-    const fieldData = fieldMap[field];
-    if (fieldData?.operators) {
-      return fieldData.operators;
-    }
-    if (getOperators) {
-      const ops = getOperators(field);
-      if (ops) return ops;
-    }
-
-    return operators;
-  };
-
-  const getRuleDefaultOperator = (field: string) => {
-    const fieldData = fieldMap[field];
-    if (fieldData?.defaultOperator) {
-      return fieldData.defaultOperator;
-    }
-
-    if (getDefaultOperator) {
-      if (typeof getDefaultOperator === 'function') {
-        return getDefaultOperator(field);
-      } else {
-        return getDefaultOperator;
-      }
-    }
-
-    const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-    return operators.length ? operators[0].name : /* istanbul ignore next */ '';
-  };
-
-  const getRuleDefaultValue = (rule: RuleType) => {
-    const fieldData = fieldMap[rule.field];
-    /* istanbul ignore next */
-    if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
-      return fieldData.defaultValue;
-    } else if (getDefaultValue) {
-      return getDefaultValue(rule);
-    }
-
-    let value: any = '';
-
-    const values = getValuesMain(rule.field, rule.operator);
-
-    if (values.length) {
-      value = values[0].name;
-    } else {
-      const editorType = getValueEditorTypeMain(rule.field, rule.operator);
-
-      if (editorType === 'checkbox') {
-        value = false;
-      }
-    }
-
-    return value;
-  };
 
   /**
    * Adds a rule to the query

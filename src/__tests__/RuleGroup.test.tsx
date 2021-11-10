@@ -1,5 +1,5 @@
 import { mount as mountOriginal } from 'enzyme';
-import { ComponentType, ReactElement } from 'react';
+import { ComponentType, forwardRef, ReactElement } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ActionProps, RuleGroupTypeIC, ValidationResult } from '..';
@@ -51,7 +51,8 @@ describe('<RuleGroup />', () => {
       operatorSelector: () => null,
       valueEditor: () => null,
       rule: Rule,
-      ruleGroup: RuleGroup
+      ruleGroup: RuleGroup,
+      dragHandle: forwardRef(() => <span>:</span>)
     };
     classNames = {
       header: 'custom-header-class',

@@ -2,6 +2,28 @@ import { prepareRule, prepareRuleGroup } from '../prepareQueryObjects';
 import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
 
 describe('prepareQueryObjects', () => {
+  describe('prepareRule', () => {
+    it('should not generate new ID if rule provides it', () => {
+      expect(
+        prepareRule({
+          id: 'r-12345',
+          field: 'firstName',
+          value: 'Test with ID',
+          operator: '='
+        }).id
+      ).toBe('r-12345');
+    });
+    it('should generate new ID if missing in rule', () => {
+      expect(
+        prepareRule({
+          field: 'firstName',
+          value: 'Test without ID',
+          operator: '='
+        })
+      ).toHaveProperty('id');
+    });
+  });
+
   describe('when initial query, with ID, is provided', () => {
     const queryWithID: RuleGroupType = {
       id: 'g-12345',
