@@ -1,6 +1,5 @@
 import { mount, ReactWrapper } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import { ActionElement } from '../controls';
 import { standardClassnames } from '../defaults';
 import { QueryBuilder } from '../QueryBuilder';
 import { Rule } from '../Rule';
@@ -8,7 +7,6 @@ import { RuleGroup } from '../RuleGroup';
 import {
   Field,
   NameLabelPair,
-  QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
@@ -17,11 +15,6 @@ import {
 import { defaultValidator } from '../utils';
 
 describe('<QueryBuilder />', () => {
-  const props: QueryBuilderProps = {
-    fields: [],
-    onQueryChange: () => {}
-  };
-
   it('should exist', () => {
     expect(QueryBuilder).toBeDefined();
   });
@@ -30,7 +23,7 @@ describe('<QueryBuilder />', () => {
     let wrapper: ReactWrapper;
 
     beforeEach(() => {
-      wrapper = mount(<QueryBuilder {...props} />);
+      wrapper = mount(<QueryBuilder />);
     });
 
     afterEach(() => {
@@ -57,7 +50,7 @@ describe('<QueryBuilder />', () => {
     beforeEach(() => {
       onQueryChange = jest.fn();
       act(() => {
-        wrapper = mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
+        wrapper = mount(<QueryBuilder onQueryChange={onQueryChange} />);
       });
     });
 
@@ -77,38 +70,12 @@ describe('<QueryBuilder />', () => {
     });
   });
 
-  describe('when initial query, without fields, is provided', () => {
-    let wrapper: ReactWrapper;
-
-    beforeEach(() => {
-      const newProps = { ...props };
-      delete newProps.fields;
-      act(() => {
-        wrapper = mount(<QueryBuilder {...newProps} />);
-      });
-    });
-
-    afterEach(() => {
-      wrapper.unmount();
-    });
-
-    it('should not contain a <Rule />', () => {
-      expect(wrapper.find(Rule)).toHaveLength(0);
-    });
-
-    it('should contain the addRuleAction and addGroupAction components', () => {
-      expect(wrapper.find(ActionElement)).toHaveLength(2);
-    });
-  });
-
   describe('when initial query, without fields, is provided create rule should work', () => {
     let wrapper: ReactWrapper;
 
     beforeEach(() => {
-      const newProps = { ...props };
-      delete newProps.fields;
       act(() => {
-        wrapper = mount(<QueryBuilder {...newProps} />);
+        wrapper = mount(<QueryBuilder />);
       });
     });
 
@@ -126,12 +93,15 @@ describe('<QueryBuilder />', () => {
     let wrapper: ReactWrapper;
 
     beforeEach(() => {
-      props.fields = [
-        { name: 'dupe', label: 'One' },
-        { name: 'dupe', label: 'Two' }
-      ];
       act(() => {
-        wrapper = mount(<QueryBuilder {...props} />);
+        wrapper = mount(
+          <QueryBuilder
+            fields={[
+              { name: 'dupe', label: 'One' },
+              { name: 'dupe', label: 'Two' }
+            ]}
+          />
+        );
       });
     });
 
@@ -168,9 +138,7 @@ describe('<QueryBuilder />', () => {
 
     beforeEach(() => {
       act(() => {
-        wrapper = mount(
-          <QueryBuilder {...props} query={queryWithoutID as RuleGroupType} fields={fields} />
-        );
+        wrapper = mount(<QueryBuilder query={queryWithoutID as RuleGroupType} fields={fields} />);
       });
     });
 
@@ -211,57 +179,6 @@ describe('<QueryBuilder />', () => {
     });
   });
 
-  describe('when receiving new props', () => {
-    let wrapper: ReactWrapper<QueryBuilderProps>;
-    const newFields: Field[] = [
-      { name: 'domainName', label: 'Domain Name' },
-      { name: 'ownerName', label: 'Owner Name' }
-    ];
-
-    const newQuery: RuleGroupType = {
-      combinator: 'and',
-      not: false,
-      rules: [
-        {
-          field: 'domainName',
-          value: 'www.example.com',
-          operator: '!='
-        }
-      ]
-    };
-
-    beforeEach(() => {
-      act(() => {
-        wrapper = mount(<QueryBuilder {...props} />);
-      });
-    });
-
-    afterEach(() => {
-      wrapper.unmount();
-    });
-
-    it('should generate new ID in state when receiving new props (query) with missing IDs', () => {
-      const initialID = wrapper.find(RuleGroup).props().id;
-
-      expect(wrapper.props().query).toBeUndefined();
-      expect(initialID).not.toBeUndefined();
-      expect(typeof initialID).toBe('string');
-
-      wrapper.setProps({
-        query: newQuery as RuleGroupType,
-        fields: newFields
-      });
-      wrapper.update();
-
-      expect(wrapper.props().query).not.toBeNull();
-      expect(typeof wrapper.props().query).toBe('object');
-      expect(wrapper.props().query.id).toBeUndefined();
-
-      expect(typeof wrapper.find(RuleGroup).props().id).toBe('string');
-      expect(typeof (wrapper.find(RuleGroup).props().rules[0] as RuleGroupType).id).toBe('string');
-    });
-  });
-
   describe('when initial operators are provided', () => {
     let wrapper: ReactWrapper;
     const operators: NameLabelPair[] = [
@@ -290,9 +207,7 @@ describe('<QueryBuilder />', () => {
     };
 
     beforeEach(() => {
-      wrapper = mount(
-        <QueryBuilder {...props} operators={operators} fields={fields} query={query} />
-      );
+      wrapper = mount(<QueryBuilder operators={operators} fields={fields} query={query} />);
     });
 
     afterEach(() => {
@@ -340,9 +255,7 @@ describe('<QueryBuilder />', () => {
         { name: 'custom-operator-2', label: 'Op. 2' },
         { name: 'custom-operator-3', label: 'Op. 3' }
       ]);
-      wrapper = mount(
-        <QueryBuilder {...props} query={query} fields={fields} getOperators={getOperators} />
-      );
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
     });
 
     afterEach(() => {
@@ -356,9 +269,7 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getOperators function', () => {
       wrapper.unmount();
-      wrapper = mount(
-        <QueryBuilder {...props} query={query} fields={fields} getOperators={() => null} />
-      );
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
       const operators = wrapper.find(`.${standardClassnames.operators} option`);
       expect(operators.first().props().value).toBe('=');
     });
@@ -388,12 +299,7 @@ describe('<QueryBuilder />', () => {
     beforeEach(() => {
       getValueEditorType = jest.fn(() => 'text');
       wrapper = mount(
-        <QueryBuilder
-          {...props}
-          query={query}
-          fields={fields}
-          getValueEditorType={getValueEditorType}
-        />
+        <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
       );
     });
 
@@ -409,7 +315,7 @@ describe('<QueryBuilder />', () => {
     it('should handle invalid getValueEditorType function', () => {
       wrapper.unmount();
       wrapper = mount(
-        <QueryBuilder {...props} query={query} fields={fields} getValueEditorType={() => null} />
+        <QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />
       );
       const valueEditor = wrapper.find(`.${standardClassnames.value}`);
       expect(valueEditor.first().props().type).toBe('text');
@@ -439,9 +345,7 @@ describe('<QueryBuilder />', () => {
 
     beforeEach(() => {
       getInputType = jest.fn(() => 'text');
-      wrapper = mount(
-        <QueryBuilder {...props} query={query} fields={fields} getInputType={getInputType} />
-      );
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
     });
 
     afterEach(() => {
@@ -455,9 +359,7 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getInputType function', () => {
       wrapper.unmount();
-      wrapper = mount(
-        <QueryBuilder {...props} query={query} fields={fields} getInputType={() => null} />
-      );
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
       const valueEditor = wrapper.find(`.${standardClassnames.value}`);
       expect(valueEditor.first().props().type).toBe('text');
     });
@@ -489,7 +391,6 @@ describe('<QueryBuilder />', () => {
       getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
       wrapper = mount(
         <QueryBuilder
-          {...props}
           query={query}
           fields={fields}
           getValueEditorType={getValueEditorType}
@@ -514,9 +415,7 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getValues function', () => {
       wrapper.unmount();
-      wrapper = mount(
-        <QueryBuilder {...props} query={query} fields={fields} getValues={() => null} />
-      );
+      wrapper = mount(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
       const select = wrapper.find(`.${standardClassnames.value}`);
       expect(select.length).toBeGreaterThan(0);
       const opts = wrapper.find(`.${standardClassnames.value} option`);
@@ -897,9 +796,7 @@ describe('<QueryBuilder />', () => {
     beforeEach(() => {
       onQueryChange = jest.fn();
       onAddRule = jest.fn(() => false as const);
-      wrapper = mount(
-        <QueryBuilder {...props} onAddRule={onAddRule} onQueryChange={onQueryChange} />
-      );
+      wrapper = mount(<QueryBuilder onAddRule={onAddRule} onQueryChange={onQueryChange} />);
     });
 
     afterEach(() => {
@@ -931,9 +828,7 @@ describe('<QueryBuilder />', () => {
     beforeEach(() => {
       onQueryChange = jest.fn();
       onAddGroup = jest.fn(() => false as const);
-      wrapper = mount(
-        <QueryBuilder {...props} onAddGroup={onAddGroup} onQueryChange={onQueryChange} />
-      );
+      wrapper = mount(<QueryBuilder onAddGroup={onAddGroup} onQueryChange={onQueryChange} />);
     });
 
     afterEach(() => {
@@ -1122,9 +1017,12 @@ describe('<QueryBuilder />', () => {
   describe('add rule to new groups', () => {
     let wrapper: ReactWrapper;
     const query: RuleGroupType = { combinator: 'and', rules: [] };
+    const onQueryChange = jest.fn();
 
     beforeEach(() => {
-      wrapper = mount(<QueryBuilder {...props} query={query} addRuleToNewGroups />);
+      wrapper = mount(
+        <QueryBuilder query={query} onQueryChange={onQueryChange} addRuleToNewGroups />
+      );
     });
 
     afterEach(() => {
@@ -1137,38 +1035,35 @@ describe('<QueryBuilder />', () => {
 
     it('adds a rule when a new group is created', () => {
       wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
-
-      expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(1);
+      expect(
+        ((onQueryChange.mock.calls[2][0] as RuleGroupType).rules[0] as RuleGroupType).rules[0]
+      ).toHaveProperty('field');
     });
 
     it('adds a rule when mounted if no initial query is provided', () => {
       wrapper.unmount();
-      wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
+      wrapper = mount(<QueryBuilder addRuleToNewGroups />);
 
-      expect(wrapper.find(`.${standardClassnames.rule}`)).toHaveLength(1);
+      expect(wrapper.find(Rule)).toHaveLength(1);
     });
   });
 
   describe('inline combinators', () => {
-    beforeEach(() => {
-      props.inlineCombinators = true;
-    });
-
     it('should render a rule group with inline combinators', () => {
       const onQueryChange = jest.fn();
-      const wrapper = mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
+      const wrapper = mount(<QueryBuilder onQueryChange={onQueryChange} inlineCombinators />);
       expect(wrapper.find(RuleGroup)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0]).not.toHaveProperty('combinator');
     });
 
     it('should render a rule group with addRuleToNewGroups', () => {
-      const wrapper = mount(<QueryBuilder {...props} addRuleToNewGroups />);
+      const wrapper = mount(<QueryBuilder addRuleToNewGroups inlineCombinators />);
       expect(wrapper.find(Rule)).toHaveLength(1);
     });
 
     it('should call onQueryChange with query', () => {
       const onQueryChange = jest.fn();
-      mount(<QueryBuilder {...props} onQueryChange={onQueryChange} />);
+      mount(<QueryBuilder onQueryChange={onQueryChange} inlineCombinators />);
       expect(onQueryChange).toHaveBeenCalledTimes(1);
       const query: RuleGroupTypeIC = {
         rules: [],
@@ -1178,7 +1073,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should add rules with inline combinators', () => {
-      const wrapper = mount(<QueryBuilder {...props} />);
+      const wrapper = mount(<QueryBuilder inlineCombinators />);
       expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
       wrapper.find(`button.${standardClassnames.addRule}`).simulate('click');
       expect(wrapper.find(Rule)).toHaveLength(1);
@@ -1196,7 +1091,7 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should add groups with inline combinators', () => {
-      const wrapper = mount(<QueryBuilder {...props} />);
+      const wrapper = mount(<QueryBuilder inlineCombinators />);
       expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
       wrapper.find(`button.${standardClassnames.addGroup}`).at(0).simulate('click');
       expect(wrapper.find(RuleGroup)).toHaveLength(2);
@@ -1214,55 +1109,74 @@ describe('<QueryBuilder />', () => {
     });
 
     it('should remove rules along with inline combinators', () => {
+      const onQueryChange = jest.fn();
       const query: RuleGroupTypeIC = {
         rules: [
-          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'firstName', operator: '=', value: '1' },
           'and',
-          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'firstName', operator: '=', value: '2' },
           'or',
-          { field: 'firstName', operator: '=', value: 'Steve' }
+          { field: 'firstName', operator: '=', value: '3' }
         ]
       };
-      const wrapper = mount(<QueryBuilder {...props} query={query} />);
+      const wrapper = mount(
+        <QueryBuilder query={query} onQueryChange={onQueryChange} inlineCombinators />
+      );
       expect(wrapper.find(Rule)).toHaveLength(3);
       expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(2);
       wrapper.find(`button.${standardClassnames.removeRule}`).at(1).simulate('click');
-      expect(wrapper.find(Rule)).toHaveLength(2);
-      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(1);
-      expect(wrapper.find(`select.${standardClassnames.combinators}`).props().value).toBe('or');
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0]).toHaveProperty(
+        'value',
+        '1'
+      );
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[1]).toBe('or');
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[2]).toHaveProperty(
+        'value',
+        '3'
+      );
+
+      wrapper.setProps({ query: onQueryChange.mock.calls[1][0] });
       wrapper.find(`button.${standardClassnames.removeRule}`).at(0).simulate('click');
-      expect(wrapper.find(Rule)).toHaveLength(1);
-      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(0);
+      expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules).toHaveLength(1);
+      expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules[0]).toHaveProperty(
+        'value',
+        '3'
+      );
     });
 
     it('should remove groups along with inline combinators', () => {
+      const onQueryChange = jest.fn();
       const query: RuleGroupTypeIC = {
         rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }]
       };
-      const wrapper = mount(<QueryBuilder {...props} query={query} />);
+      const wrapper = mount(
+        <QueryBuilder query={query} onQueryChange={onQueryChange} inlineCombinators />
+      );
+
       expect(wrapper.find(RuleGroup)).toHaveLength(4);
       expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(2);
       wrapper.find(`button.${standardClassnames.removeGroup}`).at(1).simulate('click');
-      expect(wrapper.find(RuleGroup)).toHaveLength(3);
-      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(1);
-      expect(wrapper.find(`select.${standardClassnames.combinators}`).props().value).toBe('or');
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0]).toHaveProperty('rules');
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[1]).toBe('or');
+      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[2]).toHaveProperty('rules');
+
+      wrapper.setProps({ query: onQueryChange.mock.calls[1][0] });
       wrapper.find(`button.${standardClassnames.removeGroup}`).at(0).simulate('click');
-      expect(wrapper.find(RuleGroup)).toHaveLength(2);
-      expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(0);
+      expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules).toHaveLength(1);
+      expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules[0]).toHaveProperty('rules');
     });
   });
 
   describe('validation', () => {
     it('should not validate if no validator function is provided', () => {
-      const wrapper = mount(<QueryBuilder {...props} />);
+      const wrapper = mount(<QueryBuilder />);
       expect(wrapper.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
       expect(wrapper.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
       expect(wrapper.find(RuleGroup).props().schema.validationMap).toEqual({});
     });
 
     it('should validate groups if default validator function is provided', () => {
-      props.validator = defaultValidator;
-      const wrapper = mount(<QueryBuilder {...props} />);
+      const wrapper = mount(<QueryBuilder validator={defaultValidator} />);
       wrapper.find(`.${standardClassnames.addGroup}`).first().simulate('click');
       // Expect the root group to be valid (contains the inner group)
       expect(
@@ -1276,8 +1190,7 @@ describe('<QueryBuilder />', () => {
 
     it('should use custom validator function returning false', () => {
       const validator = jest.fn(() => false);
-      props.validator = validator;
-      const wrapper = mount(<QueryBuilder {...props} />);
+      const wrapper = mount(<QueryBuilder validator={validator} />);
       expect(validator).toHaveBeenCalled();
       expect(wrapper.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
       expect(wrapper.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
@@ -1285,8 +1198,7 @@ describe('<QueryBuilder />', () => {
 
     it('should use custom validator function returning true', () => {
       const validator = jest.fn(() => true);
-      props.validator = validator;
-      const wrapper = mount(<QueryBuilder {...props} />);
+      const wrapper = mount(<QueryBuilder validator={validator} />);
       expect(validator).toHaveBeenCalled();
       expect(wrapper.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
       expect(wrapper.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
@@ -1294,8 +1206,7 @@ describe('<QueryBuilder />', () => {
 
     it('should pass down validationMap to children', () => {
       const valMap: ValidationMap = { id: { valid: false, reasons: ['invalid'] } };
-      props.validator = () => valMap;
-      const dom = mount(<QueryBuilder {...props} />);
+      const dom = mount(<QueryBuilder validator={() => valMap} />);
       expect(dom.find(RuleGroup).props().schema.validationMap).toEqual(valMap);
     });
   });
