@@ -30,9 +30,7 @@ import QueryBuilder, {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   parseSQL,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC
+  RuleGroupTypeAny
 } from '../src';
 import {
   docsLink,
@@ -101,7 +99,7 @@ const App = () => {
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [useValidation, setUseValidation] = useState(false);
   const [inlineCombinators, setInlineCombinators] = useState(false);
-  const [enableDnD, setEnableDnD] = useState(false);
+  const [enableDragAndDrop, setEnableDragAndDrop] = useState(false);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -183,9 +181,9 @@ const App = () => {
       title: 'When checked, the query builder supports independent combinators between rules'
     },
     {
-      checked: enableDnD,
+      checked: enableDragAndDrop,
       default: false,
-      setter: setEnableDnD,
+      setter: setEnableDragAndDrop,
       link: '/docs/api/querybuilder#enabledraganddrop',
       label: 'Enable drag-and-drop',
       title: 'When checked, rules and groups can be reordered and dragged to different groups'
@@ -225,6 +223,22 @@ const App = () => {
 
   const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
   const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
+
+  const commonRQBProps = {
+    ...styleOptions[style],
+    key: style,
+    fields,
+    showCombinatorsBetweenRules,
+    showNotToggle,
+    showCloneButtons,
+    resetOnFieldChange,
+    resetOnOperatorChange,
+    autoSelectField,
+    addRuleToNewGroups,
+    inlineCombinators,
+    validator: useValidation ? defaultValidator : undefined,
+    enableDragAndDrop
+  };
 
   return (
     <>
@@ -323,27 +337,19 @@ const App = () => {
               <MUIThemeProvider theme={muiTheme}>
                 <div className={qbWrapperClassName}>
                   <form className="form-inline" style={{ marginTop: '1rem' }}>
-                    <QueryBuilder
-                      key={style}
-                      query={inlineCombinators ? queryIC : query}
-                      fields={fields}
-                      onQueryChange={(q) =>
-                        inlineCombinators
-                          ? setQueryIC(q as RuleGroupTypeIC)
-                          : setQuery(q as RuleGroupType)
-                      }
-                      showCombinatorsBetweenRules={showCombinatorsBetweenRules}
-                      showNotToggle={showNotToggle}
-                      showCloneButtons={showCloneButtons}
-                      resetOnFieldChange={resetOnFieldChange}
-                      resetOnOperatorChange={resetOnOperatorChange}
-                      autoSelectField={autoSelectField}
-                      addRuleToNewGroups={addRuleToNewGroups}
-                      validator={useValidation ? defaultValidator : undefined}
-                      inlineCombinators={inlineCombinators}
-                      enableDragAndDrop={enableDnD}
-                      {...styleOptions[style]}
-                    />
+                    {inlineCombinators ? (
+                      <QueryBuilder
+                        {...commonRQBProps}
+                        query={queryIC}
+                        onQueryChange={(q) => setQueryIC(q)}
+                      />
+                    ) : (
+                      <QueryBuilder
+                        {...commonRQBProps}
+                        query={query}
+                        onQueryChange={(q) => setQuery(q)}
+                      />
+                    )}
                   </form>
                 </div>
               </MUIThemeProvider>

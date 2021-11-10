@@ -3,7 +3,7 @@ export { default as defaultValidator } from './defaultValidator';
 export { default as findPath } from './findPath';
 export { default as formatQuery, defaultValueProcessor } from './formatQuery';
 export { default as generateID } from './generateID';
-export { default as generateValidQueryObject } from './generateValidQueryObject';
+export { prepareRule, prepareRuleGroup } from './prepareQueryObjects';
 export { default as getParentPath } from './getParentPath';
 export { default as getValidationClassNames } from './getValidationClassNames';
 export { default as isRuleGroup } from './isRuleGroup';

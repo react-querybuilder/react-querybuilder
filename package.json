@@ -84,7 +84,7 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
-    "immutability-helper": "^3.1.1",
+    "immer": "^9.0.6",
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2"
   },

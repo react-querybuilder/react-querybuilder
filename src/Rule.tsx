@@ -36,33 +36,36 @@ export const Rule = ({
   const dragRef = useRef<HTMLSpanElement>(null);
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: dndTypes.rule,
-    item: { id, path, field, operator, value },
+    item: () => ({ id, path, field, operator, value }),
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })
   }));
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: [dndTypes.rule, dndTypes.ruleGroup],
-    collect: (monitor) => ({
-      isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
-    }),
-    drop(item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) {
-      const parentHoverPath = getParentPath(path);
-      const parentItemPath = getParentPath(item.path);
-      const hoverIndex = path[path.length - 1];
-      const itemIndex = item.path[item.path.length - 1];
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      collect: (monitor) => ({
+        isOver: monitor.isOver() && (monitor.getItem() as any).id !== id
+      }),
+      drop: (item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) => {
+        const parentHoverPath = getParentPath(path);
+        const parentItemPath = getParentPath(item.path);
+        const hoverIndex = path[path.length - 1];
+        const itemIndex = item.path[item.path.length - 1];
 
-      // No-op if rule is dropped on itself or the rule before it
-      if (
-        parentHoverPath.join('-') === parentItemPath.join('-') &&
-        (hoverIndex === itemIndex || hoverIndex === itemIndex - 1)
-      ) {
-        return;
+        // No-op if rule is dropped on itself or the rule before it
+        if (
+          parentHoverPath.join('-') === parentItemPath.join('-') &&
+          (hoverIndex === itemIndex || hoverIndex === itemIndex - 1)
+        ) {
+          return;
+        }
+
+        moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
       }
-
-      moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
-    }
-  }));
+    }),
+    [moveRule]
+  );
   drag(dragRef);
   preview(drop(dndRef));
 

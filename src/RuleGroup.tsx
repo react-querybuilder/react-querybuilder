@@ -44,28 +44,31 @@ export const RuleGroup = ({
   const dropRef = useRef<HTMLDivElement>(null);
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: dndTypes.ruleGroup,
-    item: { id, path, combinator, not },
+    item: () => ({ id, path, combinator, not }),
     collect: (monitor) => ({
       isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id
     })
   }));
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: [dndTypes.rule, dndTypes.ruleGroup],
-    collect: (monitor) => ({
-      isOver: monitor.isOver({ shallow: true })
-    }),
-    drop(item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) {
-      const parentItemPath = getParentPath(item.path);
-      const itemIndex = item.path[item.path.length - 1];
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      collect: (monitor) => ({
+        isOver: monitor.isOver({ shallow: true })
+      }),
+      drop: (item: Required<RuleType> | Required<RuleGroupTypeAny>, _monitor) => {
+        const parentItemPath = getParentPath(item.path);
+        const itemIndex = item.path[item.path.length - 1];
 
-      // No-op if rule is first child and is dropped on its own group header
-      if (path.join('-') === parentItemPath.join('-') && itemIndex === 0) {
-        return;
+        // No-op if rule is first child and is dropped on its own group header
+        if (path.join('-') === parentItemPath.join('-') && itemIndex === 0) {
+          return;
+        }
+
+        moveRule(item.path, [...path, 0]);
       }
-
-      moveRule(item.path, [...path, 0]);
-    }
-  }));
+    }),
+    [moveRule]
+  );
   if (path.length > 0) {
     drag(dragRef);
     preview(previewRef);

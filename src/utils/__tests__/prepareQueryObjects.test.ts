@@ -1,7 +1,7 @@
-import generateValidQueryObject from '../generateValidQueryObject';
+import { prepareRule, prepareRuleGroup } from '../prepareQueryObjects';
 import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
 
-describe('generateValidQueryObject', () => {
+describe('prepareQueryObjects', () => {
   describe('when initial query, with ID, is provided', () => {
     const queryWithID: RuleGroupType = {
       id: 'g-12345',
@@ -17,7 +17,7 @@ describe('generateValidQueryObject', () => {
     };
 
     it('should not generate new ID if query provides ID', () => {
-      const validQuery = generateValidQueryObject(queryWithID);
+      const validQuery = prepareRuleGroup(queryWithID);
       expect(validQuery.id).toBe('g-12345');
       expect(validQuery.rules[0].id).toBe('r-12345');
     });
@@ -52,14 +52,14 @@ describe('generateValidQueryObject', () => {
 
     it('should generate IDs if missing in query', () => {
       expect(queryWithoutID).not.toHaveProperty('id');
-      const validQuery = generateValidQueryObject(queryWithoutID);
+      const validQuery = prepareRuleGroup(queryWithoutID);
       expect(validQuery).toHaveProperty('id');
       expect(validQuery.rules[0]).toHaveProperty('id');
     });
 
     it('should generate IDs only for valid query objects', () => {
       expect(queryICWithoutID).not.toHaveProperty('id');
-      const validQuery = generateValidQueryObject(queryICWithoutID);
+      const validQuery = prepareRuleGroup(queryICWithoutID);
       expect(validQuery).toHaveProperty('id');
       expect(validQuery.rules[0]).toHaveProperty('id');
       expect(validQuery.rules[1]).toBe('and');
