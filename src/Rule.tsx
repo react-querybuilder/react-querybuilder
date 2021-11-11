@@ -46,7 +46,8 @@ export const Rule = ({
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
       collect: (monitor) => ({
-        isOver: monitor.isOver() && (monitor.getItem() as any).id !== id,
+        isOver:
+          monitor.isOver() && (monitor.getItem() as DraggedItem).path.join('-') !== path.join('-'),
         dropMonitorId: monitor.getHandlerId()
       }),
       drop: (item: DraggedItem, _monitor) => {

@@ -430,7 +430,10 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={className} data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}>
+      <div
+        className={className}
+        data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
+        data-inlinecombinators={inlineCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'}>
         <schema.controls.ruleGroup
           translations={{ ...defaultTranslations, ...translations }}
           rules={root.rules}

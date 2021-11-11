@@ -40,7 +40,7 @@ export const RuleGroup = ({
     type: dndTypes.ruleGroup,
     item: (): DraggedItem => ({ path }),
     collect: (monitor) => ({
-      isDragging: monitor.isDragging() && (monitor.getItem() as any).id !== id,
+      isDragging: monitor.isDragging(),
       dragMonitorId: monitor.getHandlerId()
     })
   }));
@@ -48,7 +48,8 @@ export const RuleGroup = ({
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
       collect: (monitor) => ({
-        isOver: monitor.isOver({ shallow: true }),
+        isOver:
+          monitor.isOver() && (monitor.getItem() as DraggedItem).path.join('-') !== path.join('-'),
         dropMonitorId: monitor.getHandlerId()
       }),
       drop: (item: DraggedItem, _monitor) => {
@@ -241,38 +242,42 @@ export const RuleGroup = ({
           return (
             <Fragment key={thisPath.join('-')}>
               {idx > 0 && !inlineCombinators && showCombinatorsBetweenRules && (
-                <controls.combinatorSelector
-                  options={combinators}
-                  value={combinator}
-                  title={translations.combinators.title}
-                  className={c(
-                    standardClassnames.combinators,
-                    standardClassnames.betweenRules,
-                    classNames.combinators
-                  )}
-                  handleOnChange={onCombinatorChange}
-                  rules={rules}
-                  level={level}
-                  context={context}
-                  validation={validationResult}
-                />
+                <div>
+                  <controls.combinatorSelector
+                    options={combinators}
+                    value={combinator}
+                    title={translations.combinators.title}
+                    className={c(
+                      standardClassnames.combinators,
+                      standardClassnames.betweenRules,
+                      classNames.combinators
+                    )}
+                    handleOnChange={onCombinatorChange}
+                    rules={rules}
+                    level={level}
+                    context={context}
+                    validation={validationResult}
+                  />
+                </div>
               )}
               {typeof r === 'string' ? (
-                <controls.combinatorSelector
-                  options={combinators}
-                  value={r}
-                  title={translations.combinators.title}
-                  className={c(
-                    standardClassnames.combinators,
-                    standardClassnames.betweenRules,
-                    classNames.combinators
-                  )}
-                  handleOnChange={(val) => onInlineCombinatorChange(val, idx)}
-                  rules={rules}
-                  level={level}
-                  context={context}
-                  validation={validationResult}
-                />
+                <div>
+                  <controls.combinatorSelector
+                    options={combinators}
+                    value={r}
+                    title={translations.combinators.title}
+                    className={c(
+                      standardClassnames.combinators,
+                      standardClassnames.betweenRules,
+                      classNames.combinators
+                    )}
+                    handleOnChange={(val) => onInlineCombinatorChange(val, idx)}
+                    rules={rules}
+                    level={level}
+                    context={context}
+                    validation={validationResult}
+                  />
+                </div>
               ) : 'rules' in r ? (
                 <controls.ruleGroup
                   id={r.id}

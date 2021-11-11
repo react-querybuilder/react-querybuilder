@@ -25,11 +25,6 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
     display: flex;
     flex-direction: column;
     row-gap: $rqb-spacing;
-
-    .ruleGroup-combinators.betweenRules {
-      // Otherwise selects stretch to 100% width
-      align-self: flex-start;
-    }
   }
 
   .ruleGroup-header,
@@ -40,13 +35,27 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
 }
 
 // Drag-and-drop hover styles
-.dndOver {
-  &.rule,
-  &.ruleGroup-header {
-    border-bottom-width: $rqb-dnd-hover-border-bottom-width;
-    border-bottom-style: $rqb-dnd-hover-border-bottom-style;
-    border-bottom-color: $rqb-dnd-hover-border-bottom-color;
-    padding-bottom: $rqb-spacing;
+[data-inlinecombinators='disabled'] {
+  .dndOver {
+    &.rule,
+    &.ruleGroup-header {
+      border-bottom-width: $rqb-dnd-hover-border-bottom-width;
+      border-bottom-style: $rqb-dnd-hover-border-bottom-style;
+      border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+      padding-bottom: $rqb-spacing;
+    }
+  }
+}
+[data-inlinecombinators='enabled'] {
+  .dndOver {
+    &.rule:last-child,
+    &.ruleGroup-header,
+    &.rule + div {
+      border-bottom-width: $rqb-dnd-hover-border-bottom-width;
+      border-bottom-style: $rqb-dnd-hover-border-bottom-style;
+      border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+      padding-bottom: $rqb-spacing;
+    }
   }
 }
 
