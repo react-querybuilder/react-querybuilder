@@ -458,6 +458,13 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
 
 export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
   {
+    /**
+     * Initial query object for uncontrolled components
+     */
+    defaultQuery?: RG;
+    /**
+     * Query object for controlled components
+     */
     query?: RG;
     /**
      * The array of fields that should be used. Each field should be an object

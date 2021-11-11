@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { mount, ReactWrapper } from 'enzyme';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
@@ -48,6 +48,22 @@ describe('<QueryBuilder />', () => {
     it('should show the list of combinators in the RuleGroup', () => {
       const options = wrapper.find('select option');
       expect(options).toHaveLength(2); // and, or
+    });
+  });
+
+  describe('when rendered with defaultQuery only', () => {
+    it('changes the query in uncontrolled state', () => {
+      const { container } = render(
+        <QueryBuilder
+          defaultQuery={{
+            combinator: 'and',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }]
+          }}
+        />
+      );
+      expect(container.getElementsByClassName(standardClassnames.rule)).toHaveLength(1);
+      fireEvent.click(container.getElementsByClassName(standardClassnames.addRule)[0]);
+      expect(container.getElementsByClassName(standardClassnames.rule)).toHaveLength(2);
     });
   });
 

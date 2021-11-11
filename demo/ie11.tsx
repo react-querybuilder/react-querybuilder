@@ -1,5 +1,4 @@
 import 'core-js';
-import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, { defaultValidator, Field, RuleGroupType, RuleType } from '../src';
 import './styles/ie11.scss';
@@ -88,21 +87,16 @@ const initialQuery: RuleGroupType = {
   not: false
 };
 
-const IE11Test = () => {
-  const [query, setQuery] = useState(initialQuery);
-
-  return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={(q) => setQuery(q)}
-      addRuleToNewGroups
-      enableDragAndDrop
-      showCloneButtons
-      showNotToggle
-      validator={defaultValidator}
-    />
-  );
-};
+const IE11Test = () => (
+  <QueryBuilder
+    fields={fields}
+    defaultQuery={initialQuery}
+    addRuleToNewGroups
+    enableDragAndDrop
+    showCloneButtons
+    showNotToggle
+    validator={defaultValidator}
+  />
+);
 
 ReactDOM.render(<IE11Test />, document.getElementById('ie11'));
