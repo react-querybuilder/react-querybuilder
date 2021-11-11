@@ -1,8 +1,42 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import type { DraggedItem, RuleGroupProps, RuleGroupType, RuleGroupTypeIC } from './types';
+import type {
+  CombinatorSelectorProps,
+  DraggedItem,
+  RuleGroupProps,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  Schema
+} from './types';
 import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
+
+interface InlineCombinatorProps extends CombinatorSelectorProps {
+  component: Schema['controls']['combinatorSelector'];
+}
+
+const InlineCombinator = ({
+  component: CombinatorSelectorComponent,
+  ...rest
+}: InlineCombinatorProps) => {
+  const [{ isOver, dropMonitorId }, drop] = useDrop(() => ({
+    accept: [dndTypes.rule, dndTypes.ruleGroup],
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      dropMonitorId: monitor.getHandlerId()
+    })
+    // drop: (_item: DraggedItem, _monitor) => {}
+  }));
+
+  const dndOver = isOver ? standardClassnames.dndOver : '';
+  const wrapperClassName = c(dndOver, standardClassnames.betweenRules);
+
+  return (
+    <div ref={drop} className={wrapperClassName} data-dropmonitorid={dropMonitorId}>
+      <CombinatorSelectorComponent {...rest} />
+    </div>
+  );
+};
 
 export const RuleGroup = ({
   id,
@@ -242,42 +276,32 @@ export const RuleGroup = ({
           return (
             <Fragment key={thisPath.join('-')}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
-                <div>
-                  <controls.combinatorSelector
-                    options={combinators}
-                    value={combinator}
-                    title={translations.combinators.title}
-                    className={c(
-                      standardClassnames.combinators,
-                      standardClassnames.betweenRules,
-                      classNames.combinators
-                    )}
-                    handleOnChange={onCombinatorChange}
-                    rules={rules}
-                    level={level}
-                    context={context}
-                    validation={validationResult}
-                  />
-                </div>
+                <InlineCombinator
+                  options={combinators}
+                  value={combinator}
+                  title={translations.combinators.title}
+                  className={c(standardClassnames.combinators, classNames.combinators)}
+                  handleOnChange={onCombinatorChange}
+                  rules={rules}
+                  level={level}
+                  context={context}
+                  validation={validationResult}
+                  component={controls.combinatorSelector}
+                />
               )}
               {typeof r === 'string' ? (
-                <div>
-                  <controls.combinatorSelector
-                    options={combinators}
-                    value={r}
-                    title={translations.combinators.title}
-                    className={c(
-                      standardClassnames.combinators,
-                      standardClassnames.betweenRules,
-                      classNames.combinators
-                    )}
-                    handleOnChange={(val) => onIndependentCombinatorChange(val, idx)}
-                    rules={rules}
-                    level={level}
-                    context={context}
-                    validation={validationResult}
-                  />
-                </div>
+                <InlineCombinator
+                  options={combinators}
+                  value={r}
+                  title={translations.combinators.title}
+                  className={c(standardClassnames.combinators, classNames.combinators)}
+                  handleOnChange={(val) => onIndependentCombinatorChange(val, idx)}
+                  rules={rules}
+                  level={level}
+                  context={context}
+                  validation={validationResult}
+                  component={controls.combinatorSelector}
+                />
               ) : 'rules' in r ? (
                 <controls.ruleGroup
                   id={r.id}

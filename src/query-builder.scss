@@ -34,7 +34,7 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
   }
 }
 
-// Drag-and-drop hover styles
+// Hover styles
 [data-inlinecombinators='disabled'] {
   .dndOver {
     &.rule,
@@ -50,7 +50,8 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
   .dndOver {
     &.rule:last-child,
     &.ruleGroup-header,
-    &.rule + div {
+    &.rule + .betweenRules,
+    &.betweenRules {
       border-bottom-width: $rqb-dnd-hover-border-bottom-width;
       border-bottom-style: $rqb-dnd-hover-border-bottom-style;
       border-bottom-color: $rqb-dnd-hover-border-bottom-color;
@@ -59,7 +60,7 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
   }
 }
 
-// Drag-and-drop drag styles
+// Drag styles
 .ruleGroup,
 .rule {
   &.dndDragging {
@@ -70,7 +71,6 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
     cursor: move;
   }
 }
-
 // When drag-and-drop is disabled, hide all drag handles
 [data-dnd='disabled'] .queryBuilder-dragHandle {
   display: none;

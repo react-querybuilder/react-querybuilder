@@ -1,10 +1,11 @@
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { mount } from 'enzyme';
 import { ComponentType, forwardRef } from 'react';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
 import { ActionElement, NotToggle, ValueSelector } from '../controls';
-import { defaultTranslations, standardClassnames } from '../defaults';
+import { defaultCombinators, defaultTranslations, standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
 import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
 import {
@@ -70,7 +71,7 @@ describe('<RuleGroup />', () => {
       notToggle: 'custom-notToggle-class'
     };
     schema = {
-      combinators: [],
+      combinators: defaultCombinators,
       controls: controls as Controls,
       classNames: classNames as Classnames,
       getInputType: () => 'text',
@@ -352,7 +353,7 @@ describe('<RuleGroup />', () => {
         { rules: [], combinator: 'and' }
       ];
       const dom = mount(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.combinators}`);
+      const sc = dom.find(`.${standardClassnames.betweenRules}`);
       expect(sc).toHaveLength(2);
     });
   });
@@ -412,7 +413,7 @@ describe('<RuleGroup />', () => {
         { rules: [] }
       ];
       const dom = mount(<RuleGroup {...props} rules={rules} />);
-      expect(dom.find(ValueSelector).props().className).toMatch(
+      expect(dom.find(ValueSelector).parent().props().className).toMatch(
         new RegExp(standardClassnames.betweenRules)
       );
       expect(dom.find(ValueSelector).props().value).toBe('and');
@@ -426,8 +427,8 @@ describe('<RuleGroup />', () => {
         'and',
         { field: 'lastName', operator: '=', value: 'Test' }
       ];
-      const dom = mount(<RuleGroup {...props} rules={rules} />);
-      dom.find(ValueSelector).simulate('change', { target: { value: 'or' } });
+      const { getByText, getByTitle } = render(<RuleGroup {...props} rules={rules} />);
+      userEvent.selectOptions(getByTitle(props.translations.combinators.title), [getByText('OR')]);
       expect(schema.updateIndependentCombinator).toHaveBeenCalledWith('or', [0, 1]);
     });
 
@@ -536,6 +537,38 @@ describe('<RuleGroup />', () => {
         getDndBackend()
       );
       expect(moveRule).not.toHaveBeenCalled();
+    });
+
+    it('should handle drops on inline combinators', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      props.schema.controls.combinatorSelector = ValueSelector;
+      props.schema.independentCombinators = true;
+      const { getAllByTestId, getByTitle } = render(
+        <div>
+          <RuleGroup
+            {...props}
+            rules={[
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'firstName', operator: '=', value: 'Steve' }
+            ]}
+            path={[0]}
+          />
+          <RuleGroup {...props} path={[1]} />
+        </div>
+      );
+      const ruleGroups = getAllByTestId('rule-group');
+      const combinatorEl = getByTitle(props.translations.combinators.title).parentElement;
+      simulateDragDrop(
+        getHandlerId(ruleGroups[1], 'drag'),
+        getHandlerId(combinatorEl, 'drop'),
+        getDndBackend()
+      );
+      expect(ruleGroups[1].className).not.toContain(standardClassnames.dndDragging);
+      expect(combinatorEl.className).not.toContain(standardClassnames.dndOver);
+      // TODO: re-enable this after implementing drop action in InlineCombinator
+      // expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
     });
   });
 
