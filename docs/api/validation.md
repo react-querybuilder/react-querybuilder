@@ -125,4 +125,4 @@ See the [validation section on the Export page](./export#validation) for more in
 
 ## Default validator
 
-You can pass the provided [`defaultValidator`](./misc#defaultvalidator) to the `validator` prop to check for invalid combinators, empty groups, or (if `inlineCombinators` is true) out-of-sequence `rules` arrays. The [demo](https://react-querybuilder.github.io/react-querybuilder/) uses the default validator.
+You can pass the provided [`defaultValidator`](./misc#defaultvalidator) to the `validator` prop to check for invalid combinators, empty groups, or (if `independendCombinators` is true) out-of-sequence `rules` arrays. The [demo](https://react-querybuilder.github.io/react-querybuilder/) uses the default validator.

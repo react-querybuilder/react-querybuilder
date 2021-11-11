@@ -76,7 +76,7 @@ interface Schema {
   ): void;
   onRuleAdd(rule: RuleType, parentPath: number[]): void;
   onRuleRemove(path: number[]): void;
-  updateInlineCombinator(value: string, path: number[]): void;
+  updateIndependentCombinator(value: string, path: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -84,7 +84,7 @@ interface Schema {
   addRuleToNewGroups: boolean;
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;
-  inlineCombinators: boolean;
+  independentCombinators: boolean;
 }
 ```
 
@@ -126,7 +126,7 @@ interface ParameterizedNamedSQL {
 
 ```ts
 interface ParseSQLOptions {
-  inlineCombinators?: boolean;
+  independendCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }

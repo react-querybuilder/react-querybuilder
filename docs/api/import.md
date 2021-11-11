@@ -57,14 +57,14 @@ Output (`RuleGroupType`):
 }
 ```
 
-## Inline combinators
+## Independent combinators
 
-When the `inlineCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
+When the `independendCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
 
 ```ts
 parseSQL(
   `SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`,
-  { inlineCombinators: true }
+  { independendCombinators: true }
 );
 ```
 
