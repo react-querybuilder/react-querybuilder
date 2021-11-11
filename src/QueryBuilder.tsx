@@ -37,10 +37,13 @@ enableES5();
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
   props: QueryBuilderProps<RG>
 ) => {
-  if (!props.inlineCombinators) {
-    return QueryBuilderImpl({ ...props, inlineCombinators: false } as QueryBuilderPropsInternal);
+  if (!props.independentCombinators) {
+    return QueryBuilderImpl({
+      ...props,
+      independentCombinators: false
+    } as QueryBuilderPropsInternal);
   }
-  return QueryBuilderImpl<RuleGroupTypeIC>({ ...props, inlineCombinators: true });
+  return QueryBuilderImpl<RuleGroupTypeIC>({ ...props, independentCombinators: true });
 };
 
 const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({
@@ -71,7 +74,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   autoSelectField = true,
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
-  inlineCombinators,
+  independentCombinators,
   validator,
   context
 }: QueryBuilderPropsInternal<RG>) => {
@@ -210,7 +213,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const createRuleGroup = (): RG => {
-    if (inlineCombinators) {
+    if (independentCombinators) {
       return {
         id: `g-${generateID()}`,
         rules: addRuleToNewGroups ? [createRule()] : [],
@@ -312,7 +315,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     _notifyQueryChange(newQuery);
   };
 
-  const updateInlineCombinator = (value: string, path: number[]) => {
+  const updateIndependentCombinator = (value: string, path: number[]) => {
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
     const newQuery = produce(root, (draft) => {
@@ -407,7 +410,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     getValueEditorType: getValueEditorTypeMain,
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
-    updateInlineCombinator,
+    updateIndependentCombinator,
     moveRule,
     showCombinatorsBetweenRules,
     showNotToggle,
@@ -415,7 +418,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     autoSelectField,
     addRuleToNewGroups,
     enableDragAndDrop,
-    inlineCombinators: !!inlineCombinators,
+    independentCombinators: !!independentCombinators,
     validationMap
   };
 
@@ -435,7 +438,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         className={className}
         data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
         data-inlinecombinators={
-          inlineCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
+          independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
         }>
         <schema.controls.ruleGroup
           translations={{ ...defaultTranslations, ...translations }}

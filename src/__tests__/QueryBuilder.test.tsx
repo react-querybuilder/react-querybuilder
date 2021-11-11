@@ -1071,22 +1071,22 @@ describe('<QueryBuilder />', () => {
     });
   });
 
-  describe('inline combinators', () => {
-    it('should render a rule group with inline combinators', () => {
+  describe('independent combinators', () => {
+    it('should render a rule group with independent combinators', () => {
       const onQueryChange = jest.fn();
-      const wrapper = mount(<QueryBuilder onQueryChange={onQueryChange} inlineCombinators />);
+      const wrapper = mount(<QueryBuilder onQueryChange={onQueryChange} independentCombinators />);
       expect(wrapper.find(RuleGroup)).toHaveLength(1);
       expect(onQueryChange.mock.calls[0][0]).not.toHaveProperty('combinator');
     });
 
     it('should render a rule group with addRuleToNewGroups', () => {
-      const wrapper = mount(<QueryBuilder addRuleToNewGroups inlineCombinators />);
+      const wrapper = mount(<QueryBuilder addRuleToNewGroups independentCombinators />);
       expect(wrapper.find(Rule)).toHaveLength(1);
     });
 
     it('should call onQueryChange with query', () => {
       const onQueryChange = jest.fn();
-      mount(<QueryBuilder onQueryChange={onQueryChange} inlineCombinators />);
+      mount(<QueryBuilder onQueryChange={onQueryChange} independentCombinators />);
       expect(onQueryChange).toHaveBeenCalledTimes(1);
       const query: RuleGroupTypeIC = {
         rules: [],
@@ -1095,8 +1095,8 @@ describe('<QueryBuilder />', () => {
       expect(onQueryChange.mock.calls[0][0]).toMatchObject(query);
     });
 
-    it('should add rules with inline combinators', () => {
-      const wrapper = mount(<QueryBuilder inlineCombinators />);
+    it('should add rules with independent combinators', () => {
+      const wrapper = mount(<QueryBuilder independentCombinators />);
       expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
       wrapper.find(`button.${standardClassnames.addRule}`).simulate('click');
       expect(wrapper.find(Rule)).toHaveLength(1);
@@ -1113,8 +1113,8 @@ describe('<QueryBuilder />', () => {
       expect(combinatorSelectors.at(0).props().value).toBe(combinatorSelectors.at(1).props().value);
     });
 
-    it('should add groups with inline combinators', () => {
-      const wrapper = mount(<QueryBuilder inlineCombinators />);
+    it('should add groups with independent combinators', () => {
+      const wrapper = mount(<QueryBuilder independentCombinators />);
       expect(wrapper.find(`.${standardClassnames.combinators}`)).toHaveLength(0);
       wrapper.find(`button.${standardClassnames.addGroup}`).at(0).simulate('click');
       expect(wrapper.find(RuleGroup)).toHaveLength(2);
@@ -1131,7 +1131,7 @@ describe('<QueryBuilder />', () => {
       expect(combinatorSelectors.at(0).props().value).toBe(combinatorSelectors.at(1).props().value);
     });
 
-    it('should remove rules along with inline combinators', () => {
+    it('should remove rules along with independent combinators', () => {
       const onQueryChange = jest.fn();
       const query: RuleGroupTypeIC = {
         rules: [
@@ -1143,7 +1143,7 @@ describe('<QueryBuilder />', () => {
         ]
       };
       const wrapper = mount(
-        <QueryBuilder query={query} onQueryChange={onQueryChange} inlineCombinators />
+        <QueryBuilder query={query} onQueryChange={onQueryChange} independentCombinators />
       );
       expect(wrapper.find(Rule)).toHaveLength(3);
       expect(wrapper.find(`select.${standardClassnames.combinators}`)).toHaveLength(2);
@@ -1167,13 +1167,13 @@ describe('<QueryBuilder />', () => {
       );
     });
 
-    it('should remove groups along with inline combinators', () => {
+    it('should remove groups along with independent combinators', () => {
       const onQueryChange = jest.fn();
       const query: RuleGroupTypeIC = {
         rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }]
       };
       const wrapper = mount(
-        <QueryBuilder query={query} onQueryChange={onQueryChange} inlineCombinators />
+        <QueryBuilder query={query} onQueryChange={onQueryChange} independentCombinators />
       );
 
       expect(wrapper.find(RuleGroup)).toHaveLength(4);

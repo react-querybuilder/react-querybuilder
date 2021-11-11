@@ -98,7 +98,7 @@ const App = () => {
   const [autoSelectField, setAutoSelectField] = useState(true);
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
   const [useValidation, setUseValidation] = useState(false);
-  const [inlineCombinators, setInlineCombinators] = useState(false);
+  const [independentCombinators, setIndependentCombinators] = useState(false);
   const [enableDragAndDrop, setEnableDragAndDrop] = useState(false);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
@@ -173,11 +173,11 @@ const App = () => {
         'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups'
     },
     {
-      checked: inlineCombinators,
+      checked: independentCombinators,
       default: false,
-      setter: setInlineCombinators,
+      setter: setIndependentCombinators,
       link: '/docs/api/querybuilder#inlinecombinators',
-      label: 'Inline combinators',
+      label: 'Independent combinators',
       title: 'When checked, the query builder supports independent combinators between rules'
     },
     {
@@ -194,7 +194,7 @@ const App = () => {
     optionsInfo.forEach((opt) => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
 
   const formatOptions = useValidation ? ({ format, fields } as FormatQueryOptions) : format;
-  const q: RuleGroupTypeAny = inlineCombinators ? queryIC : query;
+  const q: RuleGroupTypeAny = independentCombinators ? queryIC : query;
   const formatString =
     format === 'json_without_ids'
       ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions) as string), null, 2)
@@ -211,7 +211,7 @@ const App = () => {
   const loadFromSQL = () => {
     try {
       const q = parseSQL(sql) as DefaultRuleGroupType;
-      const qIC = parseSQL(sql, { inlineCombinators: true }) as DefaultRuleGroupTypeIC;
+      const qIC = parseSQL(sql, { independentCombinators: true }) as DefaultRuleGroupTypeIC;
       setQuery(q);
       setQueryIC(qIC);
       setIsSQLModalVisible(false);
@@ -235,7 +235,7 @@ const App = () => {
     resetOnOperatorChange,
     autoSelectField,
     addRuleToNewGroups,
-    inlineCombinators,
+    independentCombinators,
     validator: useValidation ? defaultValidator : undefined,
     enableDragAndDrop
   };
@@ -337,7 +337,7 @@ const App = () => {
               <MUIThemeProvider theme={muiTheme}>
                 <div className={qbWrapperClassName}>
                   <form className="form-inline" style={{ marginTop: '1rem' }}>
-                    {inlineCombinators ? (
+                    {independentCombinators ? (
                       <QueryBuilder
                         {...commonRQBProps}
                         query={queryIC}

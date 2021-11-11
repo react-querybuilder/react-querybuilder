@@ -88,7 +88,7 @@ describe('<RuleGroup />', () => {
       showCombinatorsBetweenRules: false,
       showNotToggle: false,
       showCloneButtons: false,
-      inlineCombinators: false,
+      independentCombinators: false,
       validationMap: {}
     };
     props = {
@@ -399,9 +399,9 @@ describe('<RuleGroup />', () => {
     });
   });
 
-  describe('inline combinators', () => {
+  describe('independent combinators', () => {
     beforeEach(() => {
-      schema.inlineCombinators = true;
+      schema.independentCombinators = true;
     });
 
     it('should render combinator selector for string elements', () => {
@@ -420,7 +420,7 @@ describe('<RuleGroup />', () => {
 
     it('should call handleOnChange for string elements', () => {
       schema.controls.combinatorSelector = ValueSelector;
-      schema.updateInlineCombinator = jest.fn();
+      schema.updateIndependentCombinator = jest.fn();
       const rules: (RuleGroupTypeIC | RuleType | string)[] = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
@@ -428,10 +428,10 @@ describe('<RuleGroup />', () => {
       ];
       const dom = mount(<RuleGroup {...props} rules={rules} />);
       dom.find(ValueSelector).simulate('change', { target: { value: 'or' } });
-      expect(schema.updateInlineCombinator).toHaveBeenCalledWith('or', [0, 1]);
+      expect(schema.updateIndependentCombinator).toHaveBeenCalledWith('or', [0, 1]);
     });
 
-    it('should clone inline combinator groups', () => {
+    it('should clone independent combinator groups', () => {
       schema.controls.cloneGroupAction = ActionElement;
       schema.onGroupAdd = jest.fn();
       schema.showCloneButtons = true;

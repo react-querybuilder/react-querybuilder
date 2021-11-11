@@ -420,8 +420,8 @@ describe('formatQuery', () => {
     });
   });
 
-  describe('inline combinators', () => {
-    it('handles inline combinators', () => {
+  describe('independent combinators', () => {
+    it('handles independent combinators', () => {
       expect(
         formatQuery(
           {
@@ -436,7 +436,7 @@ describe('formatQuery', () => {
       ).toBe(`(firstName = 'Test' and lastName = 'Test')`);
     });
 
-    it('does not support inline combinators for mongodb', () => {
+    it('does not support independent combinators for mongodb', () => {
       expect(
         formatQuery(
           { id: 'root', rules: [{ field: 'firstName', value: 'Test', operator: '=' }] },

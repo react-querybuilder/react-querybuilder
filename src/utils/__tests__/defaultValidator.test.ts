@@ -61,7 +61,7 @@ const queryWithOneGroupWithOneRule: RuleGroupType = {
 };
 const queryWithOneGroupWithOneRuleValidationMap: ValidationMap = { root: true, innerGroup: true };
 
-// inline combinators
+// independent combinators
 const emptyQueryIC: RuleGroupTypeIC = { id: 'root', rules: [] };
 const emptyQueryValidationMapIC: ValidationMap = {
   root: { valid: false, reasons: [groupInvalidReasons.empty] }
@@ -85,7 +85,7 @@ const queryWithRulesAndInvalidCombinatorIC: RuleGroupTypeIC = {
   ]
 };
 const queryWithRulesValidationMapIC: ValidationMap = {
-  root: { valid: false, reasons: [groupInvalidReasons.invalidInlineCombinators] }
+  root: { valid: false, reasons: [groupInvalidReasons.invalidIndependentCombinators] }
 };
 const queryWithOneGroupWithOneRuleIC: RuleGroupTypeIC = {
   id: 'root',
@@ -127,7 +127,7 @@ describe('defaultValidator', () => {
     });
   });
 
-  describe('inline combinators', () => {
+  describe('independent combinators', () => {
     it('should invalidate an empty query', () => {
       expect(defaultValidator(emptyQueryIC)).toEqual(emptyQueryValidationMapIC);
     });

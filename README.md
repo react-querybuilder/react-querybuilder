@@ -396,14 +396,14 @@ interface Schema {
   onPropChange(prop: string, value: any, path: number[]): void;
   onRuleAdd(rule: RuleType, parentPath: number[]): void;
   onRuleRemove(path: number[]): void;
-  updateInlineCombinator(value: string, path: number[]): void;
+  updateIndependentCombinator(value: string, path: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
   validationMap: ValidationMap;
-  inlineCombinators: boolean;
+  independentCombinators: boolean;
 }
 ```
 
@@ -618,7 +618,7 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-#### `inlineCombinators` _(Optional)_
+#### `independentCombinators` _(Optional)_
 
 `boolean`
 
@@ -813,7 +813,7 @@ The optional second parameter to `parseSQL` is an options object that configures
 
 ```ts
 interface ParseSQLOptions {
-  inlineCombinators?: boolean;
+  independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }
@@ -858,12 +858,12 @@ console.log(JSON.stringify(paramsObject$, null, 2));
 */
 ```
 
-When the `inlineCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between each rule/group.
+When the `independentCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between each rule/group.
 
 ```ts
 const standardSQLinlineCombinators = parseSQL(
   `SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`,
-  { inlineCombinators: true }
+  { independentCombinators: true }
 );
 console.log(JSON.stringify(standardSQLinlineCombinators, null, 2));
 /*

@@ -36,7 +36,7 @@ const defaultValidator: QueryValidator = (query) => {
         }
       }
       if (invalidICs) {
-        reasons.push(groupInvalidReasons.invalidInlineCombinators);
+        reasons.push(groupInvalidReasons.invalidIndependentCombinators);
       }
     }
     if (

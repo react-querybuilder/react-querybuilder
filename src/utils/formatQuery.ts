@@ -368,7 +368,7 @@ const formatQuery = (
       return expression ? `${combinator}:[${expression}]` : fallbackExpression;
     };
 
-    // "mongodb" export type doesn't support inline combinators
+    // "mongodb" export type doesn't support independent combinators
     if ('combinator' in ruleGroup) {
       return `{${processRuleGroup(ruleGroup, true)}}`;
     }

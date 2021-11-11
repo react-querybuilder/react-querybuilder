@@ -150,7 +150,7 @@ export const defaultControlElements: Controls = {
 export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
-  invalidInlineCombinators: 'invalid inline combinators'
+  invalidIndependentCombinators: 'invalid independent combinators'
 } as const;
 
 export const dndTypes = {

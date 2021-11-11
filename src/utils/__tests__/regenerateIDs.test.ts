@@ -62,7 +62,7 @@ describe('when generating IDs', () => {
     expect((newRuleGroup.rules[0] as RuleGroupType).rules[0].path).toEqual([0, 0]);
   });
 
-  it('should generate different IDs for inline combinators', () => {
+  it('should generate different IDs for independent combinators', () => {
     const newRuleGroupIC = regenerateIDs(ruleGroupIC);
     expect(newRuleGroupIC.id).not.toBe(ruleGroupIC.id);
     expect((newRuleGroupIC.rules[0] as RuleGroupTypeIC).id).not.toBe(

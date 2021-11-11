@@ -25,7 +25,7 @@ describe('isRuleGroup', () => {
     expect(isRuleGroup(ruleGroup)).toBe(true);
   });
 
-  it('identifies a rule group with inline combinators', () => {
+  it('identifies a rule group with independent combinators', () => {
     expect(isRuleGroup(ruleGroupIC)).toBe(true);
   });
 });

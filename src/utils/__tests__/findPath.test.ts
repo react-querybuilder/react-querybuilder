@@ -68,7 +68,7 @@ describe('findPath', () => {
     });
   });
 
-  describe('inline combinators', () => {
+  describe('independent combinators', () => {
     it('should find a root rule', () => {
       expect(findPath([], queryIC).id).toBe('111');
     });

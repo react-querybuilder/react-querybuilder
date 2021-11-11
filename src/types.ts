@@ -311,7 +311,7 @@ export interface Schema {
   ): void;
   onRuleAdd(rule: RuleType, parentPath: number[]): void;
   onRuleRemove(path: number[]): void;
-  updateInlineCombinator(value: string, path: number[]): void;
+  updateIndependentCombinator(value: string, path: number[]): void;
   moveRule(oldPath: number[], newPath: number[]): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
@@ -320,7 +320,7 @@ export interface Schema {
   addRuleToNewGroups: boolean;
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;
-  inlineCombinators: boolean;
+  independentCombinators: boolean;
 }
 
 export interface Translations {
@@ -422,7 +422,7 @@ export interface ParameterizedNamedSQL {
 }
 
 export interface ParseSQLOptions {
-  inlineCombinators?: boolean;
+  independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }
@@ -451,9 +451,9 @@ export interface RuleProps {
 
 export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> = Omit<
   QueryBuilderPropsInternal<RG>,
-  'inlineCombinators'
+  'independentCombinators'
 > & {
-  inlineCombinators?: boolean;
+  independentCombinators?: boolean;
 };
 
 export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
@@ -548,7 +548,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
     /**
      * Allows and/or configuration between rules
      */
-    inlineCombinators: RG extends RuleGroupType ? false : true;
+    independentCombinators: RG extends RuleGroupType ? false : true;
     /**
      * This callback is invoked before a new rule is added. The function should either manipulate
      * the rule and return it, or return `false` to cancel the addition of the rule.

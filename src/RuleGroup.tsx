@@ -20,7 +20,7 @@ export const RuleGroup = ({
     controls,
     createRule,
     createRuleGroup,
-    inlineCombinators,
+    independentCombinators,
     onGroupAdd,
     onGroupRemove,
     onPropChange,
@@ -29,7 +29,7 @@ export const RuleGroup = ({
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
-    updateInlineCombinator,
+    updateIndependentCombinator,
     validationMap
   } = schema;
 
@@ -80,8 +80,8 @@ export const RuleGroup = ({
     onPropChange('combinator', value, path);
   };
 
-  const onInlineCombinatorChange = (value: any, index: number) => {
-    updateInlineCombinator(value, path.concat([index]));
+  const onIndependentCombinatorChange = (value: any, index: number) => {
+    updateIndependentCombinator(value, path.concat([index]));
   };
 
   const onNotToggleChange = (checked: boolean) => {
@@ -109,7 +109,7 @@ export const RuleGroup = ({
     event.stopPropagation();
 
     let thisGroup: RuleGroupType | RuleGroupTypeIC;
-    if (inlineCombinators) {
+    if (independentCombinators) {
       thisGroup = {
         not,
         rules
@@ -166,7 +166,7 @@ export const RuleGroup = ({
             className={c(standardClassnames.dragHandle, classNames.dragHandle)}
           />
         )}
-        {!showCombinatorsBetweenRules && !inlineCombinators && (
+        {!showCombinatorsBetweenRules && !independentCombinators && (
           <controls.combinatorSelector
             options={combinators}
             value={combinator}
@@ -241,7 +241,7 @@ export const RuleGroup = ({
           const thisPath = path.concat([idx]);
           return (
             <Fragment key={thisPath.join('-')}>
-              {idx > 0 && !inlineCombinators && showCombinatorsBetweenRules && (
+              {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
                 <div>
                   <controls.combinatorSelector
                     options={combinators}
@@ -271,7 +271,7 @@ export const RuleGroup = ({
                       standardClassnames.betweenRules,
                       classNames.combinators
                     )}
-                    handleOnChange={(val) => onInlineCombinatorChange(val, idx)}
+                    handleOnChange={(val) => onIndependentCombinatorChange(val, idx)}
                     rules={rules}
                     level={level}
                     context={context}
