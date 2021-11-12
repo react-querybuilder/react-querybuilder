@@ -1497,6 +1497,58 @@ describe('<QueryBuilder />', () => {
           ]
         });
       });
+
+      it('moves a middle-child rule to a different group as a middle child', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' },
+                'and',
+                {
+                  rules: [
+                    { field: 'field3', operator: '=', value: '3' },
+                    'and',
+                    { field: 'field4', operator: '=', value: '4' }
+                  ]
+                }
+              ]
+            }}
+          />
+        );
+        const ruleDrag = getAllByTestId('rule')[1];
+        const ruleDrop = getAllByTestId('rule')[3];
+        simulateDragDrop(
+          getHandlerId(ruleDrag, 'drag'),
+          getHandlerId(ruleDrop, 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            {
+              rules: [
+                { field: 'field3', operator: '=', value: '3' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field4', operator: '=', value: '4' }
+              ]
+            }
+          ]
+        });
+      });
     });
   });
 });

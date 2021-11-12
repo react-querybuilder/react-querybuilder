@@ -352,9 +352,6 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     }
 
     const parentOldPath = getParentPath(oldPath);
-    const parentNewPath = getParentPath(newPath);
-    const isGoingToEndOfNewGroup =
-      (findPath(parentNewPath, root) as RG).rules.length >= newPath[newPath.length - 1];
     const ruleOrGroup = findPath(oldPath, root);
     /* istanbul ignore if */
     if (!ruleOrGroup) return;
@@ -383,8 +380,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const newNewPath = [...newPath];
       /* istanbul ignore else */
       if (!movingOnUp) {
-        newNewPath[commonAncestorPath.length] -=
-          !independentCombinators || isGoingToEndOfNewGroup ? 1 : 2;
+        newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
       }
       const newNewParentPath = getParentPath(newNewPath);
       const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
@@ -399,17 +395,20 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
             parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, oldNextCombinator);
           } else {
             const newNextCombinator =
-              parentToInsertInto.rules[1] || oldPrevCombinator || combinators[0].name;
+              parentToInsertInto.rules[1] ||
+              oldPrevCombinator ||
+              /* istanbul ignore next */ combinators[0].name;
             parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, newNextCombinator);
           }
         } else {
-          // TODO: this block is the only one that seems to have problems
           if (oldPrevCombinator) {
-            parentToInsertInto.rules.splice(newIndex - 1, 0, oldPrevCombinator, ruleOrGroup);
+            parentToInsertInto.rules.splice(newIndex, 0, oldPrevCombinator, ruleOrGroup);
           } else {
             const newPrevCombinator =
-              parentToInsertInto.rules[newIndex - 1] || oldNextCombinator || combinators[0].name;
-            parentToInsertInto.rules.splice(newIndex - 1, 0, newPrevCombinator, ruleOrGroup);
+              parentToInsertInto.rules[newIndex - 2] ||
+              oldNextCombinator ||
+              /* istanbul ignore next */ combinators[0].name;
+            parentToInsertInto.rules.splice(newIndex, 0, newPrevCombinator, ruleOrGroup);
           }
         }
       }
