@@ -14,7 +14,8 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import { FC, useState } from 'react';
+import queryString from 'query-string';
+import { FC, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
@@ -86,24 +87,81 @@ const shStyle = {
 
 const CustomFragment: FC = ({ children }) => <>{children}</>;
 
+const permalinkText = 'Copy permalink';
+const permalinkCopiedText = 'Copied!';
+
+// Initialize options from URL hash
+const initialOptions = {
+  showCombinatorsBetweenRules: false,
+  showNotToggle: false,
+  showCloneButtons: false,
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false,
+  autoSelectField: true,
+  addRuleToNewGroups: false,
+  useValidation: false,
+  independentCombinators: false,
+  enableDragAndDrop: false
+};
+const hash = queryString.parse(location.hash);
+Object.keys(hash).forEach((opt) => (initialOptions[opt] = hash[opt] === 'true'));
+
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
-  const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
-  const [showNotToggle, setShowNotToggle] = useState(false);
-  const [showCloneButtons, setShowCloneButtons] = useState(false);
-  const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
-  const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
-  const [autoSelectField, setAutoSelectField] = useState(true);
-  const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
-  const [useValidation, setUseValidation] = useState(false);
-  const [independentCombinators, setIndependentCombinators] = useState(false);
-  const [enableDragAndDrop, setEnableDragAndDrop] = useState(false);
+  const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(
+    initialOptions.showCombinatorsBetweenRules
+  );
+  const [showNotToggle, setShowNotToggle] = useState(initialOptions.showNotToggle);
+  const [showCloneButtons, setShowCloneButtons] = useState(initialOptions.showCloneButtons);
+  const [resetOnFieldChange, setResetOnFieldChange] = useState(initialOptions.resetOnFieldChange);
+  const [resetOnOperatorChange, setResetOnOperatorChange] = useState(
+    initialOptions.resetOnOperatorChange
+  );
+  const [autoSelectField, setAutoSelectField] = useState(initialOptions.autoSelectField);
+  const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(initialOptions.addRuleToNewGroups);
+  const [useValidation, setUseValidation] = useState(initialOptions.useValidation);
+  const [independentCombinators, setIndependentCombinators] = useState(
+    initialOptions.independentCombinators
+  );
+  const [enableDragAndDrop, setEnableDragAndDrop] = useState(initialOptions.enableDragAndDrop);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
   const [sqlParseError, setSQLParseError] = useState('');
   const [style, setStyle] = useState<StyleName>('default');
+  const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
+
+  useEffect(() => {
+    history.pushState(
+      null,
+      null,
+      '#' +
+        queryString.stringify({
+          showCombinatorsBetweenRules,
+          showNotToggle,
+          showCloneButtons,
+          resetOnFieldChange,
+          resetOnOperatorChange,
+          autoSelectField,
+          addRuleToNewGroups,
+          useValidation,
+          independentCombinators,
+          enableDragAndDrop
+        })
+    );
+  }, [
+    showCombinatorsBetweenRules,
+    showNotToggle,
+    showCloneButtons,
+    resetOnFieldChange,
+    resetOnOperatorChange,
+    autoSelectField,
+    addRuleToNewGroups,
+    useValidation,
+    independentCombinators,
+    enableDragAndDrop
+  ]);
 
   const optionsInfo = [
     {
@@ -221,6 +279,18 @@ const App = () => {
     }
   };
 
+  const onClickCopyPermalink = async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      setCopyPermalinkText(permalinkCopiedText);
+    } catch (e) {
+      console.error('Clipboard error', e);
+    }
+    setTimeout(() => {
+      setCopyPermalinkText(permalinkText);
+    }, 1500);
+  };
+
   const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
   const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
 
@@ -245,7 +315,7 @@ const App = () => {
       <Layout>
         <Header>
           <Title level={3} style={{ display: 'inline-block' }}>
-            <a href={docsLink}>React Query Builder</a>
+            <a href={docsLink}>React Query Builder Demo</a>
           </Title>
         </Header>
         <Layout>
@@ -283,9 +353,16 @@ const App = () => {
                   </Checkbox>
                 </div>
               ))}
-              <Button type="default" onClick={resetOptions}>
-                Defaults
-              </Button>
+              <div style={{ marginTop: '0.5rem' }}>
+                <Button type="default" onClick={resetOptions}>
+                  Reset default options
+                </Button>
+              </div>
+              <div style={{ marginTop: '0.5rem' }}>
+                <Button type="default" onClick={onClickCopyPermalink}>
+                  {copyPermalinkText}
+                </Button>
+              </div>
             </div>
             <Title level={4} style={{ marginTop: '1rem' }}>
               Export

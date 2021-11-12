@@ -75,6 +75,7 @@
     "postcss-cssnext": "^3.0.2",
     "postcss-loader": "^6.1.1",
     "prettier": "2.4.1",
+    "query-string": "^7.0.1",
     "react": "^17.0.1",
     "react-dnd-test-backend": "^14.0.1",
     "react-dnd-test-utils": "^14.0.2",
