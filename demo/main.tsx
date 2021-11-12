@@ -15,7 +15,7 @@ import {
   Typography
 } from 'antd';
 import queryString from 'query-string';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
@@ -54,7 +54,7 @@ import './styles/with-material.scss';
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
-const { Link, Title } = Typography;
+const { Link, Text, Title } = Typography;
 
 const muiTheme = createTheme();
 const chakraTheme = extendTheme({
@@ -127,41 +127,45 @@ const App = () => {
   );
   const [enableDragAndDrop, setEnableDragAndDrop] = useState(initialOptions.enableDragAndDrop);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
-  const [sql, setSQL] = useState(formatQuery(initialQuery, 'sql') as string);
+  const [sql, setSQL] = useState(
+    `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`
+  );
   const [sqlParseError, setSQLParseError] = useState('');
   const [style, setStyle] = useState<StyleName>('default');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
 
-  useEffect(() => {
-    history.pushState(
-      null,
-      null,
+  const permalinkHash = useMemo(
+    () =>
       '#' +
-        queryString.stringify({
-          showCombinatorsBetweenRules,
-          showNotToggle,
-          showCloneButtons,
-          resetOnFieldChange,
-          resetOnOperatorChange,
-          autoSelectField,
-          addRuleToNewGroups,
-          useValidation,
-          independentCombinators,
-          enableDragAndDrop
-        })
-    );
-  }, [
-    showCombinatorsBetweenRules,
-    showNotToggle,
-    showCloneButtons,
-    resetOnFieldChange,
-    resetOnOperatorChange,
-    autoSelectField,
-    addRuleToNewGroups,
-    useValidation,
-    independentCombinators,
-    enableDragAndDrop
-  ]);
+      queryString.stringify({
+        showCombinatorsBetweenRules,
+        showNotToggle,
+        showCloneButtons,
+        resetOnFieldChange,
+        resetOnOperatorChange,
+        autoSelectField,
+        addRuleToNewGroups,
+        useValidation,
+        independentCombinators,
+        enableDragAndDrop
+      }),
+    [
+      showCombinatorsBetweenRules,
+      showNotToggle,
+      showCloneButtons,
+      resetOnFieldChange,
+      resetOnOperatorChange,
+      autoSelectField,
+      addRuleToNewGroups,
+      useValidation,
+      independentCombinators,
+      enableDragAndDrop
+    ]
+  );
+
+  useEffect(() => {
+    history.pushState(null, null, permalinkHash);
+  });
 
   const optionsInfo = [
     {
@@ -281,7 +285,7 @@ const App = () => {
 
   const onClickCopyPermalink = async () => {
     try {
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.writeText(`${location.origin}${location.pathname}${permalinkHash}`);
       setCopyPermalinkText(permalinkCopiedText);
     } catch (e) {
       console.error('Clipboard error', e);
@@ -354,14 +358,20 @@ const App = () => {
                 </div>
               ))}
               <div style={{ marginTop: '0.5rem' }}>
-                <Button type="default" onClick={resetOptions}>
-                  Reset default options
-                </Button>
+                <Tooltip title="Reset the options above to their default values" placement="right">
+                  <Button type="default" onClick={resetOptions}>
+                    Reset default options
+                  </Button>
+                </Tooltip>
               </div>
               <div style={{ marginTop: '0.5rem' }}>
-                <Button type="default" onClick={onClickCopyPermalink}>
-                  {copyPermalinkText}
-                </Button>
+                <Tooltip
+                  title="Copy a URL that will load this demo with the options set as they are currently"
+                  placement="right">
+                  <Button type="default" onClick={onClickCopyPermalink}>
+                    {copyPermalinkText}
+                  </Button>
+                </Tooltip>
               </div>
             </div>
             <Title level={4} style={{ marginTop: '1rem' }}>
@@ -392,7 +402,7 @@ const App = () => {
               {'\u00a0'}
               <a href={`${docsLink}/docs/api/import`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  title={`Set the query from SQL (click for documentation)`}
+                  title={`Use the parseSQL method to set the query from SQL (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
@@ -451,8 +461,13 @@ const App = () => {
           value={sql}
           onChange={(e) => setSQL(e.target.value)}
           spellCheck={false}
-          style={{ height: 200 }}
+          style={{ height: 200, fontFamily: 'monospace' }}
         />
+        <Text italic>
+          SQL string can either be the full <Text code>SELECT</Text> statement or the{' '}
+          <Text code>WHERE</Text> clause by itself (without the word &quot;WHERE&quot; -- just the
+          clauses). Semicolon is also optional.
+        </Text>
         {!!sqlParseError && <pre>{sqlParseError}</pre>}
       </Modal>
     </>
