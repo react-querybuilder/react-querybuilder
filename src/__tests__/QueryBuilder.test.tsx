@@ -14,12 +14,14 @@ import {
   RuleType,
   ValidationMap
 } from '../types';
-import { defaultValidator } from '../utils';
+import { defaultValidator, formatQuery } from '../utils';
 
 const [QueryBuilder, getDndBackend] = wrapWithTestBackend(QueryBuilderOriginal);
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
+
+const stripQueryIds = (query: any) => JSON.parse(formatQuery(query, 'json_without_ids') as string);
 
 describe('<QueryBuilder />', () => {
   it('should exist', () => {
@@ -1235,84 +1237,266 @@ describe('<QueryBuilder />', () => {
   });
 
   describe('enableDragAndDrop', () => {
-    it('should set data-dnd attribute appropriately', () => {
-      const wrapperDisabled = mount(<QueryBuilder />);
-      expect(wrapperDisabled.find('div').first().getDOMNode().getAttribute('data-dnd')).toBe(
-        'disabled'
-      );
-      wrapperDisabled.unmount();
-      const wrapperEnabled = mount(<QueryBuilder enableDragAndDrop />);
-      expect(wrapperEnabled.find('div').first().getDOMNode().getAttribute('data-dnd')).toBe(
-        'enabled'
-      );
+    describe('group level combinators', () => {
+      it('should set data-dnd attribute appropriately', () => {
+        const wrapperDisabled = mount(<QueryBuilder />);
+        expect(wrapperDisabled.find('div').first().getDOMNode().getAttribute('data-dnd')).toBe(
+          'disabled'
+        );
+        wrapperDisabled.unmount();
+        const wrapperEnabled = mount(<QueryBuilder enableDragAndDrop />);
+        expect(wrapperEnabled.find('div').first().getDOMNode().getAttribute('data-dnd')).toBe(
+          'enabled'
+        );
+      });
+
+      it('moves a rule down within the same group', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              combinator: 'and',
+              rules: [
+                { id: '0', field: 'field0', operator: '=', value: '0' },
+                { id: '1', field: 'field1', operator: '=', value: '1' }
+              ]
+            }}
+          />
+        );
+        const rules = getAllByTestId('rule');
+        simulateDragDrop(
+          getHandlerId(rules[0], 'drag'),
+          getHandlerId(rules[1], 'drop'),
+          getDndBackend()
+        );
+        expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules.map((r) => r.id)).toEqual([
+          '1',
+          '0'
+        ]);
+      });
+
+      it('moves a rule to a different group with a common ancestor', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              combinator: 'and',
+              rules: [
+                {
+                  id: '0',
+                  combinator: 'and',
+                  rules: [
+                    { id: '1', field: 'field0', operator: '=', value: '1' },
+                    { id: '2', field: 'field0', operator: '=', value: '2' },
+                    { id: '3', combinator: 'and', rules: [] }
+                  ]
+                }
+              ]
+            }}
+          />
+        );
+        const rule = getAllByTestId('rule')[1]; // id 2
+        const ruleGroup = getAllByTestId('rule-group')[2]; // id 3
+        simulateDragDrop(
+          getHandlerId(rule, 'drag'),
+          getHandlerId(ruleGroup, 'drop'),
+          getDndBackend()
+        );
+        expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules).toHaveLength(1);
+        expect(
+          ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType).rules
+        ).toHaveLength(2);
+        expect(
+          (
+            ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType)
+              .rules[1] as RuleGroupType
+          ).rules[0]
+        ).toHaveProperty('id', '2');
+      });
     });
 
-    it('moves a rule down within the same group', () => {
-      const onQueryChange = jest.fn();
-      const { getAllByTestId } = render(
-        <QueryBuilder
-          onQueryChange={onQueryChange}
-          enableDragAndDrop
-          query={{
-            combinator: 'and',
-            rules: [
-              { id: '0', field: 'field0', operator: '=', value: '0' },
-              { id: '1', field: 'field1', operator: '=', value: '1' }
-            ]
-          }}
-        />
-      );
-      const rules = getAllByTestId('rule');
-      simulateDragDrop(
-        getHandlerId(rules[0], 'drag'),
-        getHandlerId(rules[1], 'drop'),
-        getDndBackend()
-      );
-      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules.map((r) => r.id)).toEqual([
-        '1',
-        '0'
-      ]);
-    });
+    describe('independent combinators', () => {
+      it('swaps the first rule with the last within the same group', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' }
+              ]
+            }}
+          />
+        );
+        const rules = getAllByTestId('rule');
+        simulateDragDrop(
+          getHandlerId(rules[0], 'drag'),
+          getHandlerId(rules[1], 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' }
+          ]
+        });
+      });
 
-    it('moves a rule to a different group with a common ancestor', () => {
-      const onQueryChange = jest.fn();
-      const { getAllByTestId } = render(
-        <QueryBuilder
-          onQueryChange={onQueryChange}
-          enableDragAndDrop
-          query={{
-            combinator: 'and',
-            rules: [
-              {
-                id: '0',
-                combinator: 'and',
-                rules: [
-                  { id: '1', field: 'field0', operator: '=', value: '1' },
-                  { id: '2', field: 'field0', operator: '=', value: '2' },
-                  { id: '3', combinator: 'and', rules: [] }
-                ]
-              }
-            ]
-          }}
-        />
-      );
-      const rule = getAllByTestId('rule')[1]; // id 2
-      const ruleGroup = getAllByTestId('rule-group')[2]; // id 3
-      simulateDragDrop(
-        getHandlerId(rule, 'drag'),
-        getHandlerId(ruleGroup, 'drop'),
-        getDndBackend()
-      );
-      expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules).toHaveLength(1);
-      expect(
-        ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType).rules
-      ).toHaveLength(2);
-      expect(
-        (
-          ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType)
-            .rules[1] as RuleGroupType
-        ).rules[0]
-      ).toHaveProperty('id', '2');
+      it('swaps the last rule with the first within the same group', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' }
+              ]
+            }}
+          />
+        );
+        const rules = getAllByTestId('rule');
+        const ruleGroup = getAllByTestId('rule-group')[0];
+        simulateDragDrop(
+          getHandlerId(rules[1], 'drag'),
+          getHandlerId(ruleGroup, 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' }
+          ]
+        });
+      });
+
+      it('moves a rule from first to last within the same group', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' }
+              ]
+            }}
+          />
+        );
+        const rules = getAllByTestId('rule');
+        simulateDragDrop(
+          getHandlerId(rules[0], 'drag'),
+          getHandlerId(rules[2], 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' }
+          ]
+        });
+      });
+
+      it('moves a rule from last to first within the same group', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' }
+              ]
+            }}
+          />
+        );
+        const rules = getAllByTestId('rule');
+        const ruleGroup = getAllByTestId('rule-group')[0];
+        simulateDragDrop(
+          getHandlerId(rules[2], 'drag'),
+          getHandlerId(ruleGroup, 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' }
+          ]
+        });
+      });
+
+      it('moves a first-child rule to a different group as the first child', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                {
+                  rules: [
+                    { field: 'field1', operator: '=', value: '1' },
+                    'and',
+                    { field: 'field2', operator: '=', value: '2' }
+                  ]
+                }
+              ]
+            }}
+          />
+        );
+        const rule = getAllByTestId('rule')[0];
+        const ruleGroup = getAllByTestId('rule-group')[1];
+        simulateDragDrop(
+          getHandlerId(rule, 'drag'),
+          getHandlerId(ruleGroup, 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            {
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' }
+              ]
+            }
+          ]
+        });
+      });
     });
   });
 });

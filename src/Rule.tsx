@@ -2,7 +2,14 @@ import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
 import type { DraggedItem, Field, RuleProps, RuleType } from './types';
-import { c, generateID, getParentPath, getValidationClassNames } from './utils';
+import {
+  c,
+  generateID,
+  getParentPath,
+  getValidationClassNames,
+  isAncestor,
+  pathsAreEqual
+} from './utils';
 
 export const Rule = ({
   id,
@@ -29,6 +36,7 @@ export const Rule = ({
     onRuleRemove,
     autoSelectField,
     showCloneButtons,
+    independentCombinators,
     validationMap
   } = schema;
 
@@ -45,29 +53,34 @@ export const Rule = ({
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
-      collect: (monitor) => ({
-        isOver:
-          monitor.isOver() && (monitor.getItem() as DraggedItem).path.join('-') !== path.join('-'),
-        dropMonitorId: monitor.getHandlerId()
-      }),
-      drop: (item: DraggedItem, _monitor) => {
+      canDrop: (item: DraggedItem) => {
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
         const hoverIndex = path[path.length - 1];
         const itemIndex = item.path[item.path.length - 1];
 
-        // No-op if rule is dropped on itself or the rule before it
-        if (
-          parentHoverPath.join('-') === parentItemPath.join('-') &&
-          (hoverIndex === itemIndex || hoverIndex === itemIndex - 1)
-        ) {
-          return;
-        }
+        // Don't allow drop if 1) item is ancestor of drop target,
+        // or 2) item is hovered over itself or the previous item
+        return !(
+          isAncestor(item.path, path) ||
+          (pathsAreEqual(parentHoverPath, parentItemPath) &&
+            (hoverIndex === itemIndex ||
+              hoverIndex === itemIndex - 1 ||
+              (independentCombinators && hoverIndex === itemIndex - 2)))
+        );
+      },
+      collect: (monitor) => ({
+        isOver: monitor.canDrop() && monitor.isOver(),
+        dropMonitorId: monitor.getHandlerId()
+      }),
+      drop: (item: DraggedItem, _monitor) => {
+        const parentHoverPath = getParentPath(path);
+        const hoverIndex = path[path.length - 1];
 
         moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
       }
     }),
-    [moveRule]
+    [moveRule, path]
   );
   drag(dragRef);
   preview(drop(dndRef));

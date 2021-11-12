@@ -9,31 +9,75 @@ import type {
   RuleGroupTypeIC,
   Schema
 } from './types';
-import { c, getParentPath, getValidationClassNames, regenerateIDs } from './utils';
+import {
+  c,
+  getParentPath,
+  getValidationClassNames,
+  isAncestor,
+  pathsAreEqual,
+  regenerateIDs
+} from './utils';
 
 interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
+  path: number[];
+  moveRule: Schema['moveRule'];
+  independentCombinators: boolean;
 }
 
 const InlineCombinator = ({
   component: CombinatorSelectorComponent,
-  ...rest
+  path,
+  moveRule,
+  independentCombinators,
+  ...props
 }: InlineCombinatorProps) => {
-  const [{ isOver, dropMonitorId }, drop] = useDrop(() => ({
-    accept: [dndTypes.rule, dndTypes.ruleGroup],
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      dropMonitorId: monitor.getHandlerId()
-    })
-    // drop: (_item: DraggedItem, _monitor) => {}
-  }));
+  const [{ isOver, dropMonitorId }, drop] = useDrop(
+    () => ({
+      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      canDrop: (item: DraggedItem) => {
+        const parentHoverPath = getParentPath(path);
+        const parentItemPath = getParentPath(item.path);
+        const hoverIndex = path[path.length - 1];
+        const itemIndex = item.path[item.path.length - 1];
+
+        // Don't allow drop if 1) item is ancestor of drop target,
+        // 2) item is hovered over itself (this should never happen since
+        // combinators don't have drag handles), or 3) combinators are
+        // independent and the drop target is just above the hovering item.
+        return !(
+          isAncestor(item.path, path) ||
+          pathsAreEqual(item.path, path) ||
+          (pathsAreEqual(parentHoverPath, parentItemPath) && hoverIndex - 1 === itemIndex) ||
+          (independentCombinators &&
+            pathsAreEqual(parentHoverPath, parentItemPath) &&
+            hoverIndex === itemIndex - 1)
+        );
+      },
+      collect: (monitor) => ({
+        isOver: monitor.canDrop() && monitor.isOver(),
+        dropMonitorId: monitor.getHandlerId()
+      }),
+      drop: (item: DraggedItem, _monitor) => {
+        const parentPath = getParentPath(path);
+        const index = path[path.length - 1];
+        const toIndex = independentCombinators ? index + 1 : index;
+        moveRule(item.path, [...parentPath, toIndex]);
+      }
+    }),
+    [moveRule, path, independentCombinators]
+  );
 
   const dndOver = isOver ? standardClassnames.dndOver : '';
   const wrapperClassName = c(dndOver, standardClassnames.betweenRules);
 
   return (
-    <div ref={drop} className={wrapperClassName} data-dropmonitorid={dropMonitorId}>
-      <CombinatorSelectorComponent {...rest} />
+    <div
+      ref={drop}
+      className={wrapperClassName}
+      data-dropmonitorid={dropMonitorId}
+      data-testid="inline-combinator">
+      <CombinatorSelectorComponent {...props} />
     </div>
   );
 };
@@ -70,39 +114,39 @@ export const RuleGroup = ({
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
-  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(() => ({
-    type: dndTypes.ruleGroup,
-    item: (): DraggedItem => ({ path }),
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-      dragMonitorId: monitor.getHandlerId()
-    })
-  }));
+  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(
+    () => ({
+      type: dndTypes.ruleGroup,
+      item: (): DraggedItem => ({ path }),
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+        dragMonitorId: monitor.getHandlerId()
+      })
+    }),
+    [path]
+  );
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
-      collect: (monitor) => ({
-        isOver:
-          monitor.isOver() && (monitor.getItem() as DraggedItem).path.join('-') !== path.join('-'),
-        dropMonitorId: monitor.getHandlerId()
-      }),
-      drop: (item: DraggedItem, _monitor) => {
+      canDrop: (item: DraggedItem) => {
         const parentItemPath = getParentPath(item.path);
         const itemIndex = item.path[item.path.length - 1];
-
-        // No-op if 1) rule is first child and is dropped on its own group header,
-        // or 2) the group is dropped on itself
-        if (
-          (path.join('-') === parentItemPath.join('-') && itemIndex === 0) ||
-          path.join('-') === item.path.join('-')
-        ) {
-          return;
-        }
-
-        moveRule(item.path, [...path, 0]);
-      }
+        // Don't allow drop if 1) item is ancestor of drop target,
+        // 2) item is first child and is dropped on its own group header,
+        // or 3) the group is dropped on itself
+        return !(
+          isAncestor(item.path, path) ||
+          (pathsAreEqual(path, parentItemPath) && itemIndex === 0) ||
+          pathsAreEqual(path, item.path)
+        );
+      },
+      collect: (monitor) => ({
+        isOver: monitor.canDrop() && monitor.isOver(),
+        dropMonitorId: monitor.getHandlerId()
+      }),
+      drop: (item: DraggedItem, _monitor) => moveRule(item.path, [...path, 0])
     }),
-    [moveRule]
+    [moveRule, path]
   );
   if (path.length > 0) {
     drag(dragRef);
@@ -287,6 +331,9 @@ export const RuleGroup = ({
                   context={context}
                   validation={validationResult}
                   component={controls.combinatorSelector}
+                  moveRule={moveRule}
+                  path={thisPath}
+                  independentCombinators={independentCombinators}
                 />
               )}
               {typeof r === 'string' ? (
@@ -301,6 +348,9 @@ export const RuleGroup = ({
                   context={context}
                   validation={validationResult}
                   component={controls.combinatorSelector}
+                  moveRule={moveRule}
+                  path={thisPath}
+                  independentCombinators={independentCombinators}
                 />
               ) : 'rules' in r ? (
                 <controls.ruleGroup

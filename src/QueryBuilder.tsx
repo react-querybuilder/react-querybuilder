@@ -12,7 +12,7 @@ import {
   standardClassnames
 } from './defaults';
 import './query-builder.scss';
-import {
+import type {
   Field,
   QueryBuilderProps,
   QueryBuilderPropsInternal,
@@ -25,11 +25,13 @@ import {
   c,
   findPath,
   generateID,
+  getCommonAncestorPath,
   prepareRule,
   prepareRuleGroup,
   getParentPath,
   isRuleGroup,
-  uniqByName
+  uniqByName,
+  pathsAreEqual
 } from './utils';
 
 enableES5();
@@ -342,37 +344,75 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const moveRule = (oldPath: number[], newPath: number[]) => {
     // No-op if the old and new paths are the same.
-    // Ignore in test coverage since Rule/RuleGroup already avoid this case.
+    // Ignore in test coverage since components that call this method
+    // already prevent this case via their respective canDrop tests.
     /* istanbul ignore if */
-    if (oldPath.join('-') === newPath.join('-')) {
+    if (pathsAreEqual(oldPath, newPath)) {
       return;
     }
 
     const parentOldPath = getParentPath(oldPath);
     const parentNewPath = getParentPath(newPath);
-    const ruleOrGroup = findPath(oldPath, root)!;
+    const isGoingToEndOfNewGroup =
+      (findPath(parentNewPath, root) as RG).rules.length >= newPath[newPath.length - 1];
+    const ruleOrGroup = findPath(oldPath, root);
+    /* istanbul ignore if */
+    if (!ruleOrGroup) return;
 
-    const commonAncestorPath: number[] = [];
-    for (
-      let i = 0;
-      i < parentOldPath.length && i < parentNewPath.length && parentOldPath[i] === parentNewPath[i];
-      i++
-    ) {
-      commonAncestorPath.push(parentNewPath[i]);
-    }
-    const movedUp = newPath[commonAncestorPath.length] < oldPath[commonAncestorPath.length];
+    const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
+    const movingOnUp = newPath[commonAncestorPath.length] <= oldPath[commonAncestorPath.length];
 
     const newQuery = produce(root, (draft) => {
       const parentOfRuleToRemove = findPath(parentOldPath, draft) as RG;
-      parentOfRuleToRemove.rules.splice(oldPath[oldPath.length - 1], 1);
+      const ruleToRemoveIndex = oldPath[oldPath.length - 1];
+      const oldPrevCombinator =
+        independentCombinators && ruleToRemoveIndex > 0
+          ? (parentOfRuleToRemove.rules[ruleToRemoveIndex - 1] as string)
+          : null;
+      const oldNextCombinator =
+        independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
+          ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
+          : null;
+      const idxStartDelete = independentCombinators
+        ? Math.max(0, ruleToRemoveIndex - 1)
+        : ruleToRemoveIndex;
+      const deleteLength = independentCombinators ? 2 : 1;
+      // Remove the source item
+      parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+
       const newNewPath = [...newPath];
       /* istanbul ignore else */
-      if (!movedUp) {
-        newNewPath[commonAncestorPath.length] -= 1;
+      if (!movingOnUp) {
+        newNewPath[commonAncestorPath.length] -=
+          !independentCombinators || isGoingToEndOfNewGroup ? 1 : 2;
       }
       const newNewParentPath = getParentPath(newNewPath);
       const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
-      parentToInsertInto.rules.splice(newNewPath[newNewPath.length - 1], 0, ruleOrGroup);
+      const newIndex = newNewPath[newNewPath.length - 1];
+
+      // Insert the source item at the target path
+      if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
+        parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup);
+      } else {
+        if (newIndex === 0) {
+          if (ruleToRemoveIndex === 0 && oldNextCombinator) {
+            parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, oldNextCombinator);
+          } else {
+            const newNextCombinator =
+              parentToInsertInto.rules[1] || oldPrevCombinator || combinators[0].name;
+            parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, newNextCombinator);
+          }
+        } else {
+          // TODO: this block is the only one that seems to have problems
+          if (oldPrevCombinator) {
+            parentToInsertInto.rules.splice(newIndex - 1, 0, oldPrevCombinator, ruleOrGroup);
+          } else {
+            const newPrevCombinator =
+              parentToInsertInto.rules[newIndex - 1] || oldNextCombinator || combinators[0].name;
+            parentToInsertInto.rules.splice(newIndex - 1, 0, newPrevCombinator, ruleOrGroup);
+          }
+        }
+      }
     });
     _notifyQueryChange(newQuery);
   };

@@ -539,12 +539,46 @@ describe('<RuleGroup />', () => {
       expect(moveRule).not.toHaveBeenCalled();
     });
 
-    it('should handle drops on inline combinators', () => {
+    it('should handle drops on combinator between rules', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      props.schema.controls.combinatorSelector = ValueSelector;
+      props.schema.showCombinatorsBetweenRules = true;
+      const { getAllByTestId } = render(
+        <div>
+          <RuleGroup
+            {...props}
+            rules={[
+              { field: 'firstName', operator: '=', value: '0' },
+              { field: 'firstName', operator: '=', value: '1' },
+              { field: 'firstName', operator: '=', value: '2' }
+            ]}
+            path={[0]}
+          />
+        </div>
+      );
+      const rules = getAllByTestId('rule');
+      const combinatorEls = getAllByTestId('inline-combinator');
+      simulateDragDrop(
+        getHandlerId(rules[2], 'drag'),
+        getHandlerId(combinatorEls[1], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).not.toHaveBeenCalled();
+      simulateDragDrop(
+        getHandlerId(rules[2], 'drag'),
+        getHandlerId(combinatorEls[0], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1]);
+    });
+
+    it('should handle drops on independent combinators', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
       props.schema.controls.combinatorSelector = ValueSelector;
       props.schema.independentCombinators = true;
-      const { getAllByTestId, getByTitle } = render(
+      const { getAllByTestId, getByTestId } = render(
         <div>
           <RuleGroup
             {...props}
@@ -559,7 +593,7 @@ describe('<RuleGroup />', () => {
         </div>
       );
       const ruleGroups = getAllByTestId('rule-group');
-      const combinatorEl = getByTitle(props.translations.combinators.title).parentElement;
+      const combinatorEl = getByTestId('inline-combinator');
       simulateDragDrop(
         getHandlerId(ruleGroups[1], 'drag'),
         getHandlerId(combinatorEl, 'drop'),
@@ -567,8 +601,7 @@ describe('<RuleGroup />', () => {
       );
       expect(ruleGroups[1].className).not.toContain(standardClassnames.dndDragging);
       expect(combinatorEl.className).not.toContain(standardClassnames.dndOver);
-      // TODO: re-enable this after implementing drop action in InlineCombinator
-      // expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
+      expect(moveRule).toHaveBeenCalledWith([1], [0, 2]);
     });
   });
 
