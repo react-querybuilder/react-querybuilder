@@ -47,13 +47,13 @@ This is a callback function that is invoked anytime the query configuration chan
   "rules": [
     {
       "field": "firstName",
-      "operator": "null",
-      "value": ""
+      "operator": "=",
+      "value": "Steve"
     },
     {
       "field": "lastName",
-      "operator": "null",
-      "value": ""
+      "operator": "=",
+      "value": "Vai"
     },
     {
       "combinator": "and",
@@ -77,14 +77,14 @@ If the `independentCombinators` prop is provided, then the `query` argument will
   "rules": [
     {
       "field": "firstName",
-      "operator": "null",
-      "value": ""
+      "operator": "=",
+      "value": "Steve"
     },
     "and",
     {
       "field": "lastName",
-      "operator": "null",
-      "value": ""
+      "operator": "=",
+      "value": "Vai"
     },
     "and",
     {
@@ -104,9 +104,15 @@ If the `independentCombinators` prop is provided, then the `query` argument will
 
 `RuleGroupTypeAny`
 
-The initial query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`independentCombinators`](#independentCombinators) is also provided).
+The query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`independentCombinators`](#independentCombinators) is also provided). If this prop is provided, `<QueryBuilder />` will be a controlled component.
 
 The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/demo/main.tsx) for examples.
+
+### `defaultQuery`
+
+`RuleGroupTypeAny`
+
+The initial query for uncontrolled components. Ignored if `query` prop is also present.
 
 ### `context`
 
@@ -575,11 +581,15 @@ The `translations` prop is optional, and each top-level property in the `transla
 
 `boolean` (default `false`)
 
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#showCombinatorsBetweenRules=true)
+
 Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
 
 ### `showNotToggle`
 
 `boolean` (default `false`)
+
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#showNotToggle=true)
 
 Pass `true` to show the "Not" (aka inversion) toggle switch for each rule group.
 
@@ -587,17 +597,23 @@ Pass `true` to show the "Not" (aka inversion) toggle switch for each rule group.
 
 `boolean` (default `false`)
 
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#showCloneButtons=true)
+
 Pass `true` to show the "Clone rule" and "Clone group" buttons.
 
 ### `resetOnFieldChange`
 
 `boolean` (default `true`)
 
+[Demo with this feature disabled](https://react-querybuilder.github.io/react-querybuilder/#resetOnFieldChange=false)
+
 Pass `false` to avoid resetting the operator and value when the field changes.
 
 ### `resetOnOperatorChange`
 
 `boolean` (default `false`)
+
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#resetOnOperatorChange=true)
 
 Pass `true` to reset the value when the operator changes.
 
@@ -611,11 +627,15 @@ Pass `false` to disable the `onQueryChange` call on mount of the component which
 
 `boolean` (default `true`)
 
+[Demo with this feature disabled](https://react-querybuilder.github.io/react-querybuilder/#autoSelectField=false)
+
 Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which will be selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
 
 ### `addRuleToNewGroups`
 
 `boolean` (default `false`)
+
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#addRuleToNewGroups=true)
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
@@ -623,16 +643,22 @@ Pass `true` to automatically add a rule to new groups. If a `query` prop is not 
 
 `boolean` (default `false`)
 
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#independentCombinators=true)
+
 Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. Visually, this is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
 
 ### `enableDragAndDrop`
 
 `boolean` (default `false`)
 
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#enableDragAndDrop=true)
+
 Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
 
 ### `validator`
 
 `QueryValidator`
+
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#useValidation=true)
 
 This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](./validation) documentation for more information.
