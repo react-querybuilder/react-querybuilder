@@ -1,9 +1,15 @@
-import cloneDeep from 'lodash/cloneDeep';
-import * as React from 'react';
-import { RuleType } from '.';
-import { standardClassnames } from './defaults';
-import { Field, RuleProps } from './types';
-import { c, generateID, getParentPath, getValidationClassNames } from './utils';
+import { MouseEvent as ReactMouseEvent, useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import { dndTypes, standardClassnames } from './defaults';
+import type { DraggedItem, Field, RuleProps, RuleType } from './types';
+import {
+  c,
+  generateID,
+  getParentPath,
+  getValidationClassNames,
+  isAncestor,
+  pathsAreEqual
+} from './utils';
 
 export const Rule = ({
   id,
@@ -12,7 +18,10 @@ export const Rule = ({
   operator,
   value,
   translations,
-  schema: {
+  schema,
+  context
+}: RuleProps) => {
+  const {
     classNames,
     controls,
     fields,
@@ -21,35 +30,83 @@ export const Rule = ({
     getOperators,
     getValueEditorType,
     getValues,
+    moveRule,
     onPropChange,
     onRuleAdd,
     onRuleRemove,
     autoSelectField,
     showCloneButtons,
+    independentCombinators,
     validationMap
-  },
-  context
-}: RuleProps) => {
+  } = schema;
+
+  const dndRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLSpanElement>(null);
+  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(() => ({
+    type: dndTypes.rule,
+    item: (): DraggedItem => ({ path }),
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+      dragMonitorId: monitor.getHandlerId()
+    })
+  }));
+  const [{ isOver, dropMonitorId }, drop] = useDrop(
+    () => ({
+      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      canDrop: (item: DraggedItem) => {
+        const parentHoverPath = getParentPath(path);
+        const parentItemPath = getParentPath(item.path);
+        const hoverIndex = path[path.length - 1];
+        const itemIndex = item.path[item.path.length - 1];
+
+        // Don't allow drop if 1) item is ancestor of drop target,
+        // or 2) item is hovered over itself or the previous item
+        return !(
+          isAncestor(item.path, path) ||
+          (pathsAreEqual(parentHoverPath, parentItemPath) &&
+            (hoverIndex === itemIndex ||
+              hoverIndex === itemIndex - 1 ||
+              (independentCombinators && hoverIndex === itemIndex - 2)))
+        );
+      },
+      collect: (monitor) => ({
+        isOver: monitor.canDrop() && monitor.isOver(),
+        dropMonitorId: monitor.getHandlerId()
+      }),
+      drop: (item: DraggedItem, _monitor) => {
+        const parentHoverPath = getParentPath(path);
+        const hoverIndex = path[path.length - 1];
+
+        moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
+      }
+    }),
+    [moveRule, path]
+  );
+  drag(dragRef);
+  preview(drop(dndRef));
+
   const generateOnChangeHandler =
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
       onPropChange(prop, value, path);
     };
 
-  const cloneRule = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const cloneRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newRule: RuleType = cloneDeep({
-      id: `r-${generateID()}`,
-      field,
-      operator,
-      value
-    });
+    const newRule: RuleType = JSON.parse(
+      JSON.stringify({
+        id: `r-${generateID()}`,
+        field,
+        operator,
+        value
+      })
+    );
     const parentPath = getParentPath(path);
     onRuleAdd(newRule, parentPath);
   };
 
-  const removeRule = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const removeRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -69,14 +126,33 @@ export const Rule = ({
       ? fieldData.validator({ id, field, operator, value })
       : null);
   const validationClassName = getValidationClassNames(validationResult);
-  const outerClassName = c(standardClassnames.rule, classNames.rule, validationClassName);
+  const dndDragging = isDragging ? standardClassnames.dndDragging : '';
+  const dndOver = isOver ? standardClassnames.dndOver : '';
+  const outerClassName = c(
+    standardClassnames.rule,
+    classNames.rule,
+    validationClassName,
+    dndDragging,
+    dndOver
+  );
 
   return (
     <div
+      ref={dndRef}
+      data-testid="rule"
+      data-dragmonitorid={dragMonitorId}
+      data-dropmonitorid={dropMonitorId}
       className={outerClassName}
       data-rule-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
+      <controls.dragHandle
+        ref={dragRef}
+        level={level}
+        title={translations.dragHandle.title}
+        label={translations.dragHandle.label}
+        className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+      />
       <controls.fieldSelector
         options={fields}
         title={translations.fields.title}

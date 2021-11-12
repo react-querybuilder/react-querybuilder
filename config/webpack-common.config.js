@@ -45,5 +45,9 @@ module.exports = {
     }
   },
 
-  plugins: [new MiniCssExtractPlugin({ filename: 'query-builder.css' })]
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: ({ chunk: { name } }) => (name === 'index' ? 'query-builder.css' : `[name].css`)
+    })
+  ]
 };

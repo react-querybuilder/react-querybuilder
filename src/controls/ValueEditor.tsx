@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ValueEditorProps } from '../types';
+import type { ValueEditorProps } from '../types';
 
 const ValueEditor = ({
   operator,

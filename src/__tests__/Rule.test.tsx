@@ -1,7 +1,16 @@
-import { mount, shallow } from 'enzyme';
-import { ActionElement, ValueEditor, ValueSelector } from '../controls/index';
-import { standardClassnames } from '../defaults';
-import { Rule } from '../Rule';
+import { cleanup, render } from '@testing-library/react';
+import { mount } from 'enzyme';
+import { forwardRef } from 'react';
+import {
+  simulateDrag,
+  simulateDragDrop,
+  simulateDragHover,
+  wrapWithTestBackend
+} from 'react-dnd-test-utils';
+import { act } from 'react-dom/test-utils';
+import { ActionElement, DragHandle, ValueEditor, ValueSelector } from '../controls';
+import { defaultTranslations, standardClassnames } from '../defaults';
+import { Rule as RuleOriginal } from '../Rule';
 import {
   ActionProps,
   Classnames,
@@ -16,6 +25,11 @@ import {
   ValidationResult,
   ValueEditorProps
 } from '../types';
+
+const [Rule, getDndBackend] = wrapWithTestBackend(RuleOriginal);
+
+const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
+  el.getAttribute(`data-${dragDrop}monitorid`);
 
 const defaultFields: Field[] = [
   { name: 'field1', label: 'Field 1' },
@@ -54,10 +68,16 @@ describe('<Rule />', () => {
       ),
       removeRuleAction: (props: ActionProps) => (
         <button onClick={(e) => props.handleOnClick(e)}>x</button>
-      )
+      ),
+      dragHandle: forwardRef(({ className, label }, ref) => (
+        <span ref={ref} className={className}>
+          {label}
+        </span>
+      ))
     };
     classNames = {
       cloneRule: 'custom-cloneRule-class',
+      dragHandle: 'custom-dragHandle-class',
       fields: 'custom-fields-class',
       operators: 'custom-operators-class',
       removeRule: 'custom-removeRule-class'
@@ -89,48 +109,7 @@ describe('<Rule />', () => {
       operator: 'operator',
       schema: schema as Schema,
       path: [0],
-      translations: {
-        fields: {
-          title: 'Fields'
-        },
-        operators: {
-          title: 'Operators'
-        },
-        value: {
-          title: 'Value'
-        },
-        removeRule: {
-          label: 'x',
-          title: 'Remove rule'
-        },
-        removeGroup: {
-          label: 'x',
-          title: 'Remove group'
-        },
-        addRule: {
-          label: '+Rule',
-          title: 'Add rule'
-        },
-        addGroup: {
-          label: '+Group',
-          title: 'Add group'
-        },
-        combinators: {
-          title: 'Combinators'
-        },
-        notToggle: {
-          label: 'Not',
-          title: 'Invert this group'
-        },
-        cloneRule: {
-          label: '⧉',
-          title: 'Clone rule'
-        },
-        cloneRuleGroup: {
-          label: '⧉',
-          title: 'Clone group'
-        }
-      }
+      translations: defaultTranslations
     };
   });
 
@@ -139,9 +118,21 @@ describe('<Rule />', () => {
   });
 
   it('should have correct className', () => {
-    const dom = shallow(<Rule {...props} />);
+    const dom = mount(<Rule {...props} />);
 
     expect(dom.find('div').hasClass(standardClassnames.rule)).toBe(true);
+  });
+
+  describe('drag handle as <DragHandle />', () => {
+    beforeEach(() => {
+      controls.dragHandle = DragHandle;
+    });
+
+    it('should have custom class', () => {
+      const dom = mount(<Rule {...props} />);
+      expect(dom.find(DragHandle).hasClass(standardClassnames.dragHandle)).toBe(true);
+      expect(dom.find(DragHandle).hasClass('custom-dragHandle-class')).toBe(true);
+    });
   });
 
   describe('field selector as <ValueSelector />', () => {
@@ -155,7 +146,7 @@ describe('<Rule />', () => {
         { name: 'secondName', label: 'Second Label' }
       ];
       schema.fields = expected_fields;
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ValueSelector).props().options).toEqual(expected_fields);
     });
@@ -174,14 +165,14 @@ describe('<Rule />', () => {
         { name: '!=', label: '!=' }
       ];
       schema.getOperators = () => expected_operators;
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ValueSelector).props().options).toEqual(expected_operators);
     });
 
     it('should have field set to selected field', () => {
       props.field = 'selected_field';
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect((dom.find(ValueSelector).props() as OperatorSelectorProps).field).toBe(
         'selected_field'
@@ -198,14 +189,14 @@ describe('<Rule />', () => {
 
     it('should have field set to selected field', () => {
       props.field = 'selected_field';
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ValueEditor).props().field).toBe('selected_field');
     });
 
     it('should have fieldData set to selected field data', () => {
       props.field = 'field1';
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ValueEditor).props().fieldData.name).toBe('field1');
       expect(dom.find(ValueEditor).props().fieldData.label).toBe('Field 1');
@@ -213,20 +204,20 @@ describe('<Rule />', () => {
 
     it('should have operator set to selected operator', () => {
       props.operator = 'selected_operator';
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ValueEditor).props().operator).toBe('selected_operator');
     });
 
     it('should have value set to specified value', () => {
       props.value = 'specified_value';
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ValueEditor).props().value).toBe('specified_value');
     });
 
     it('should have the onChange method handler', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(typeof dom.find(ValueEditor).props().handleOnChange).toBe('function');
     });
@@ -234,7 +225,7 @@ describe('<Rule />', () => {
     it('should trigger change handler', () => {
       const mockEvent = { target: { value: 'foo' } };
       const onChange = jest.fn();
-      const dom = shallow(
+      const dom = mount(
         <ValueEditor
           level={0}
           handleOnChange={onChange}
@@ -255,23 +246,23 @@ describe('<Rule />', () => {
     });
 
     it('should have label set to "x"', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ActionElement).props().label).toBe('x');
     });
 
     it('should have the default className', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ActionElement).props().className).toContain(standardClassnames.removeRule);
     });
 
     it('should have the custom className', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ActionElement).props().className).toContain('custom-removeRule-class');
     });
 
     it('should have the onChange method handler', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(typeof dom.find(ActionElement).props().handleOnClick).toBe('function');
     });
@@ -286,23 +277,23 @@ describe('<Rule />', () => {
     });
 
     it('should have label set to "⧉"', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(dom.find(ActionElement).props().label).toBe('⧉');
     });
 
     it('should have the default className', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ActionElement).props().className).toContain(standardClassnames.cloneRule);
     });
 
     it('should have the custom className', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ActionElement).props().className).toContain('custom-cloneRule-class');
     });
 
     it('should have the onChange method handler', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
 
       expect(typeof dom.find(ActionElement).props().handleOnClick).toBe('function');
     });
@@ -394,7 +385,7 @@ describe('<Rule />', () => {
 
   describe('validation', () => {
     it('should not validate if no validationMap[id] value exists and no validator function is provided', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
     });
@@ -403,7 +394,7 @@ describe('<Rule />', () => {
       const validator = jest.fn(() => true);
       schema.fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
       schema.validationMap = { id: false };
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
       expect(validator).not.toHaveBeenCalled();
@@ -411,7 +402,7 @@ describe('<Rule />', () => {
 
     it('should validate to true if validationMap[id] = true', () => {
       schema.validationMap = { id: true };
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
     });
@@ -420,7 +411,7 @@ describe('<Rule />', () => {
       const validator = jest.fn(() => true);
       props.field = 'field1';
       schema.fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
       expect(validator).toHaveBeenCalled();
@@ -430,34 +421,106 @@ describe('<Rule />', () => {
       const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
       schema.controls.fieldSelector = ValueSelector;
       schema.validationMap = { id: valRes };
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ValueSelector).props().validation).toEqual(valRes);
+    });
+  });
+
+  describe('enableDragAndDrop', () => {
+    afterEach(() => {
+      cleanup();
+    });
+
+    it('should not have the drag class if not dragging', () => {
+      const { getByTestId } = render(<Rule {...props} />);
+      const rule = getByTestId('rule');
+      expect(rule.className).not.toContain(standardClassnames.dndDragging);
+    });
+
+    it('should have the drag class if dragging', () => {
+      const { getByTestId } = render(<Rule {...props} />);
+      const rule = getByTestId('rule');
+      simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
+      expect(rule.className).toContain(standardClassnames.dndDragging);
+      act(() => {
+        getDndBackend().simulateEndDrag();
+      });
+    });
+
+    it('should have the over class if hovered', () => {
+      const { getAllByTestId } = render(
+        <div>
+          <Rule {...props} path={[0]} />
+          <Rule {...props} path={[1]} />
+        </div>
+      );
+      const rules = getAllByTestId('rule');
+      simulateDragHover(
+        getHandlerId(rules[0], 'drag'),
+        getHandlerId(rules[1], 'drop'),
+        getDndBackend()
+      );
+      expect(rules[1].className).toContain(standardClassnames.dndOver);
+      act(() => {
+        getDndBackend().simulateEndDrag();
+      });
+    });
+
+    it('should handle a dropped rule', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(
+        <div>
+          <Rule {...props} path={[0]} />
+          <Rule {...props} path={[1]} />
+        </div>
+      );
+      const rules = getAllByTestId('rule');
+      simulateDragDrop(
+        getHandlerId(rules[0], 'drag'),
+        getHandlerId(rules[1], 'drop'),
+        getDndBackend()
+      );
+      expect(rules[0].className).not.toContain(standardClassnames.dndDragging);
+      expect(rules[1].className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).toHaveBeenCalledWith([0], [2]);
+    });
+
+    it('should abort move if dropped on itself', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getByTestId } = render(<Rule {...props} />);
+      const rule = getByTestId('rule');
+      simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
+      expect(rule.className).not.toContain(standardClassnames.dndDragging);
+      expect(rule.className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).not.toHaveBeenCalled();
     });
   });
 
   function behavesLikeASelector(value: string, defaultClassName: string, customClassName: string) {
     it('should have the selected value set correctly', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ValueSelector).props().value).toBe(value);
     });
 
     it('should have the default className', () => {
-      const dom = shallow(<Rule {...props} />);
-      expect(dom.find(ValueSelector).props().className).toContain(defaultClassName);
+      const dom = mount(<Rule {...props} />);
+      expect(dom.find(ValueSelector).hasClass(defaultClassName)).toBe(true);
     });
 
     it('should have the custom className', () => {
-      const dom = shallow(<Rule {...props} />);
-      expect(dom.find(ValueSelector).props().className).toContain(customClassName);
+      const dom = mount(<Rule {...props} />);
+      expect(dom.find(ValueSelector).hasClass(customClassName)).toBe(true);
     });
 
     it('should have the onChange method handler', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(typeof dom.find(ValueSelector).props().handleOnChange).toBe('function');
     });
 
     it('should have the level of the Rule', () => {
-      const dom = shallow(<Rule {...props} />);
+      const dom = mount(<Rule {...props} />);
       expect(dom.find(ValueSelector).props().level).toBe(1);
     });
   }

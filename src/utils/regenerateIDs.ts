@@ -1,8 +1,8 @@
-import cloneDeep from 'lodash/cloneDeep';
 import { generateID } from '.';
-import { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 
-const regenerateID = (rule: RuleType) => ({ ...cloneDeep(rule), id: `r-${generateID()}` });
+const regenerateID = (rule: RuleType) =>
+  JSON.parse(JSON.stringify({ ...rule, id: `r-${generateID()}` }));
 
 const regenerateIDs = (
   ruleGroup: RuleGroupType | RuleGroupTypeIC

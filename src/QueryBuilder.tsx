@@ -1,7 +1,7 @@
-import cloneDeep from 'lodash/cloneDeep';
-import uniqBy from 'lodash/uniqBy';
+import produce, { enableES5 } from 'immer';
 import { useEffect, useState } from 'react';
-import { QueryBuilderPropsInternal } from '.';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   defaultCombinators,
   defaultControlClassnames,
@@ -12,11 +12,11 @@ import {
   standardClassnames
 } from './defaults';
 import './query-builder.scss';
-import {
+import type {
   Field,
   QueryBuilderProps,
+  QueryBuilderPropsInternal,
   RuleGroupType,
-  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   Schema
@@ -25,21 +25,31 @@ import {
   c,
   findPath,
   generateID,
-  generateValidQueryObject,
+  getCommonAncestorPath,
+  prepareRule,
+  prepareRuleGroup,
   getParentPath,
-  isRuleGroup
+  isRuleGroup,
+  uniqByName,
+  pathsAreEqual
 } from './utils';
+
+enableES5();
 
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
   props: QueryBuilderProps<RG>
 ) => {
-  if (!props.inlineCombinators) {
-    return QueryBuilderImpl({ ...props, inlineCombinators: false } as QueryBuilderPropsInternal);
+  if (!props.independentCombinators) {
+    return QueryBuilderImpl({
+      ...props,
+      independentCombinators: false
+    } as QueryBuilderPropsInternal);
   }
-  return QueryBuilderImpl<RuleGroupTypeIC>({ ...props, inlineCombinators: true });
+  return QueryBuilderImpl<RuleGroupTypeIC>({ ...props, independentCombinators: true });
 };
 
 const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({
+  defaultQuery,
   query,
   fields = defaultFields,
   operators = defaultOperators,
@@ -54,9 +64,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   getValueEditorType,
   getInputType,
   getValues,
-  onAddRule,
-  onAddGroup,
-  onQueryChange,
+  onAddRule = (r) => r,
+  onAddGroup = (rg) => rg,
+  onQueryChange = () => {},
   controlClassnames,
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
@@ -65,7 +75,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   resetOnOperatorChange = false,
   autoSelectField = true,
   addRuleToNewGroups = false,
-  inlineCombinators,
+  enableDragAndDrop = false,
+  independentCombinators,
   validator,
   context
 }: QueryBuilderPropsInternal<RG>) => {
@@ -74,107 +85,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   }
 
   const fieldMap: { [k: string]: Field } = {};
-  fields = uniqBy(fields, 'name');
+  fields = uniqByName(fields);
   fields.forEach((f) => (fieldMap[f.name] = f));
 
-  /**
-   * Gets the initial query
-   */
-  const getInitialQuery = (): RG => {
-    if (query) {
-      return generateValidQueryObject(query) as any;
-    }
-    return generateValidQueryObject(createRuleGroup()) as any;
-  };
-
-  const createRule = (): RuleType => {
-    let field = '';
-    /* istanbul ignore else */
-    if (fields?.length > 0 && fields[0]) {
-      field = fields[0].name;
-    }
-    if (getDefaultField) {
-      if (typeof getDefaultField === 'function') {
-        field = getDefaultField(fields);
-      } else {
-        field = getDefaultField;
-      }
-    }
-
-    const operator = getRuleDefaultOperator(field);
-
-    const newRule: RuleType = {
-      id: `r-${generateID()}`,
-      field,
-      value: '',
-      operator
-    };
-
-    const value = getRuleDefaultValue(newRule);
-
-    return { ...newRule, value };
-  };
-
-  const createRuleGroup = (): RG => {
-    if (inlineCombinators) {
-      return {
-        id: `g-${generateID()}`,
-        rules: addRuleToNewGroups ? [createRule()] : [],
-        not: false
-      } as any;
-    }
-    return {
-      id: `g-${generateID()}`,
-      rules: addRuleToNewGroups ? [createRule()] : [],
-      combinator: combinators[0].name,
-      not: false
-    } as any;
-  };
-
-  /**
-   * Gets the ValueEditor type for a given field and operator
-   */
-  const getValueEditorTypeMain = (field: string, operator: string) => {
-    if (getValueEditorType) {
-      const vet = getValueEditorType(field, operator);
-      if (vet) return vet;
-    }
-
-    return 'text';
-  };
-
-  /**
-   * Gets the `<input />` type for a given field and operator
-   */
-  const getInputTypeMain = (field: string, operator: string) => {
-    if (getInputType) {
-      const inputType = getInputType(field, operator);
-      if (inputType) return inputType;
-    }
-
-    return 'text';
-  };
-
-  /**
-   * Gets the list of valid values for a given field and operator
-   */
-  const getValuesMain = (field: string, operator: string) => {
-    const fieldData = fieldMap[field];
-    /* istanbul ignore if */
-    if (fieldData?.values) {
-      return fieldData.values;
-    }
-    if (getValues) {
-      const vals = getValues(field, operator);
-      if (vals) return vals;
-    }
-
-    return [];
-  };
-
-  /**
-   * Gets the operators for a given field
-   */
   const getOperatorsMain = (field: string) => {
     const fieldData = fieldMap[field];
     if (fieldData?.operators) {
@@ -233,58 +146,148 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   /**
+   * Gets the ValueEditor type for a given field and operator
+   */
+  const getValueEditorTypeMain = (field: string, operator: string) => {
+    if (getValueEditorType) {
+      const vet = getValueEditorType(field, operator);
+      if (vet) return vet;
+    }
+
+    return 'text';
+  };
+
+  /**
+   * Gets the `<input />` type for a given field and operator
+   */
+  const getInputTypeMain = (field: string, operator: string) => {
+    if (getInputType) {
+      const inputType = getInputType(field, operator);
+      if (inputType) return inputType;
+    }
+
+    return 'text';
+  };
+
+  /**
+   * Gets the list of valid values for a given field and operator
+   */
+  const getValuesMain = (field: string, operator: string) => {
+    const fieldData = fieldMap[field];
+    /* istanbul ignore if */
+    if (fieldData?.values) {
+      return fieldData.values;
+    }
+    if (getValues) {
+      const vals = getValues(field, operator);
+      if (vals) return vals;
+    }
+
+    return [];
+  };
+
+  const createRule = (): RuleType => {
+    let field = '';
+    /* istanbul ignore else */
+    if (fields?.length > 0 && fields[0]) {
+      field = fields[0].name;
+    }
+    if (getDefaultField) {
+      if (typeof getDefaultField === 'function') {
+        field = getDefaultField(fields);
+      } else {
+        field = getDefaultField;
+      }
+    }
+
+    const operator = getRuleDefaultOperator(field);
+
+    const newRule: RuleType = {
+      id: `r-${generateID()}`,
+      field,
+      value: '',
+      operator
+    };
+
+    const value = getRuleDefaultValue(newRule);
+
+    return { ...newRule, value };
+  };
+
+  const createRuleGroup = (): RG => {
+    if (independentCombinators) {
+      return {
+        id: `g-${generateID()}`,
+        rules: addRuleToNewGroups ? [createRule()] : [],
+        not: false
+      } as any;
+    }
+    return {
+      id: `g-${generateID()}`,
+      rules: addRuleToNewGroups ? [createRule()] : [],
+      combinator: combinators[0].name,
+      not: false
+    } as any;
+  };
+
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [queryState, setQueryState] = useState(defaultQuery ?? createRuleGroup());
+  // We assume here that if a query is passed in, and it's not the first render,
+  // that the query has already been prepared, i.e. the user is just passing back
+  // the onQueryChange callback parameter as query. This appears to have a huge
+  // performance impact.
+  const root: RG = query ? (isFirstRender ? (prepareRuleGroup(query) as any) : query) : queryState;
+
+  // Notify a query change on mount
+  /* istanbul ignore next */
+  useEffect(() => {
+    if (enableMountQueryChange) {
+      onQueryChange(root);
+    }
+    setIsFirstRender(false);
+  }, []);
+
+  /**
    * Adds a rule to the query
    */
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
-    const newRule =
-      typeof onAddRule === 'function'
-        ? (onAddRule as (rule: RuleType, parentPath: number[], root: RG) => RuleType | false)(
-            rule,
-            parentPath,
-            root as any
-          )
-        : rule;
+    const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
-    const rootCopy = cloneDeep(root);
-    const parent = findPath(parentPath, rootCopy) as RG;
-    if ('combinator' in parent) {
-      const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newRule, thisPath));
-    } else {
-      if (parent.rules.length > 0) {
-        const prevCombinator = parent.rules[parent.rules.length - 2];
-        parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+    const newQuery = produce(root, (draft) => {
+      const parent = findPath(parentPath, draft) as RG;
+      if ('combinator' in parent) {
+        parent.rules.push(prepareRule(newRule));
+      } else {
+        if (parent.rules.length > 0) {
+          const prevCombinator = parent.rules[parent.rules.length - 2];
+          parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+        }
+        parent.rules.push(prepareRule(newRule));
       }
-      const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newRule, thisPath));
-    }
-    setRoot(rootCopy);
-    _notifyQueryChange(rootCopy);
+    });
+    _notifyQueryChange(newQuery);
   };
 
   /**
    * Adds a rule group to the query
    */
   const onGroupAdd = (group: RG, parentPath: number[]) => {
-    const newGroup =
-      typeof onAddGroup === 'function' ? onAddGroup(group, parentPath, root as any) : group;
+    const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
-    const rootCopy = cloneDeep(root);
-    const parent = findPath(parentPath, rootCopy) as RG;
-    // istanbul ignore else
-    if ('combinator' in newGroup) {
-      const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newGroup, thisPath) as any);
-    } else if (!('combinator' in parent)) {
-      if (parent.rules.length > 0) {
-        const prevCombinator = parent.rules[parent.rules.length - 2];
-        parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+    const newQuery = produce(root, (draft) => {
+      const parent = findPath(parentPath, draft) as RG;
+      /* istanbul ignore else */
+      if ('combinator' in parent) {
+        parent.rules.push(prepareRuleGroup(newGroup) as any);
+      } else if (!('combinator' in parent)) {
+        if (parent.rules.length > 0) {
+          const prevCombinator = parent.rules[parent.rules.length - 2];
+          parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+        }
+        parent.rules.push(prepareRuleGroup(newGroup) as any);
       }
-      const thisPath = parentPath.concat([parent.rules.length]);
-      parent.rules.push(generateValidQueryObject(newGroup, thisPath));
-    }
-    setRoot(rootCopy);
-    _notifyQueryChange(rootCopy);
+    });
+    _notifyQueryChange(newQuery);
   };
 
   const onPropChange = (
@@ -292,104 +295,138 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     value: any,
     path: number[]
   ) => {
-    const rootCopy = cloneDeep(root);
-    const rule = findPath(path, rootCopy);
-    /* istanbul ignore else */
-    if (rule) {
-      const isGroup = 'rules' in rule;
-
-      // TODO: there has to be a better way to do this
-      if (isGroup) {
-        (rule[prop as keyof RuleGroupTypeAny] as any) = value;
-      } else {
-        rule[prop as keyof RuleType] = value;
-      }
-
+    const newQuery = produce(root, (draft) => {
+      const ruleOrGroup = findPath(path, draft);
+      /* istanbul ignore if */
+      if (!ruleOrGroup) return;
+      const isGroup = 'rules' in ruleOrGroup;
+      (ruleOrGroup as any)[prop] = value;
       if (!isGroup) {
         // Reset operator and set default value for field change
         if (resetOnFieldChange && prop === 'field') {
-          const operator = getRuleDefaultOperator(rule.field);
-          rule.operator = operator;
-          rule.value = getRuleDefaultValue(rule);
+          ruleOrGroup.operator = getRuleDefaultOperator(value);
+          ruleOrGroup.value = getRuleDefaultValue({ ...ruleOrGroup, field: value });
         }
 
+        // Set default value for operator change
         if (resetOnOperatorChange && prop === 'operator') {
-          rule.value = getRuleDefaultValue(rule);
+          ruleOrGroup.value = getRuleDefaultValue({ ...ruleOrGroup, operator: value });
         }
       }
-
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
-    }
+    });
+    _notifyQueryChange(newQuery);
   };
 
-  const updateInlineCombinator = (value: string, path: number[]) => {
-    const rootCopy = cloneDeep(root);
-    const index = path[path.length - 1];
+  const updateIndependentCombinator = (value: string, path: number[]) => {
     const parentPath = getParentPath(path);
-    // `path` is now the parent path
-    const parent = findPath(parentPath, rootCopy) as RuleGroupTypeIC;
-    parent.rules[index] = value;
-    setRoot(rootCopy);
-    _notifyQueryChange(rootCopy);
+    const index = path[path.length - 1];
+    const newQuery = produce(root, (draft) => {
+      const parentRules = (findPath(parentPath, draft) as RG).rules;
+      parentRules[index] = value;
+    });
+    _notifyQueryChange(newQuery);
   };
 
-  /**
-   * Removes a rule from the query
-   */
-  const onRuleRemove = (path: number[]) => {
-    const rootCopy = cloneDeep(root);
+  const onRuleOrGroupRemove = (path: number[]) => {
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
-    const parent = findPath(parentPath, rootCopy) as RG;
-    /* istanbul ignore else */
-    if (parent) {
+    const newQuery = produce(root, (draft) => {
+      const parent = findPath(parentPath, draft) as RG;
       if (!('combinator' in parent) && parent.rules.length > 1) {
         const idxStartDelete = index === 0 ? 0 : index - 1;
         parent.rules.splice(idxStartDelete, 2);
       } else {
         parent.rules.splice(index, 1);
       }
-
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
-    }
+    });
+    _notifyQueryChange(newQuery);
   };
 
-  /**
-   * Removes a rule group from the query
-   */
-  const onGroupRemove = (path: number[]) => {
-    const rootCopy = cloneDeep(root);
-    const parentPath = getParentPath(path);
-    const index = path[path.length - 1];
-    const parent = findPath(parentPath, rootCopy) as RG;
-    /* istanbul ignore else */
-    if (parent) {
-      if (!('combinator' in parent) && parent.rules.length > 1) {
-        const idxStartDelete = index === 0 ? 0 : index - 1;
-        parent.rules.splice(idxStartDelete, 2);
-      } else {
-        parent.rules.splice(index, 1);
+  const moveRule = (oldPath: number[], newPath: number[]) => {
+    // No-op if the old and new paths are the same.
+    // Ignore in test coverage since components that call this method
+    // already prevent this case via their respective canDrop tests.
+    /* istanbul ignore if */
+    if (pathsAreEqual(oldPath, newPath)) {
+      return;
+    }
+
+    const parentOldPath = getParentPath(oldPath);
+    const ruleOrGroup = findPath(oldPath, root);
+    /* istanbul ignore if */
+    if (!ruleOrGroup) return;
+
+    const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
+    const movingOnUp = newPath[commonAncestorPath.length] <= oldPath[commonAncestorPath.length];
+
+    const newQuery = produce(root, (draft) => {
+      const parentOfRuleToRemove = findPath(parentOldPath, draft) as RG;
+      const ruleToRemoveIndex = oldPath[oldPath.length - 1];
+      const oldPrevCombinator =
+        independentCombinators && ruleToRemoveIndex > 0
+          ? (parentOfRuleToRemove.rules[ruleToRemoveIndex - 1] as string)
+          : null;
+      const oldNextCombinator =
+        independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
+          ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
+          : null;
+      const idxStartDelete = independentCombinators
+        ? Math.max(0, ruleToRemoveIndex - 1)
+        : ruleToRemoveIndex;
+      const deleteLength = independentCombinators ? 2 : 1;
+      // Remove the source item
+      parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+
+      const newNewPath = [...newPath];
+      /* istanbul ignore else */
+      if (!movingOnUp) {
+        newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
       }
+      const newNewParentPath = getParentPath(newNewPath);
+      const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
+      const newIndex = newNewPath[newNewPath.length - 1];
 
-      setRoot(rootCopy);
-      _notifyQueryChange(rootCopy);
-    }
+      // Insert the source item at the target path
+      if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
+        parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup);
+      } else {
+        if (newIndex === 0) {
+          if (ruleToRemoveIndex === 0 && oldNextCombinator) {
+            parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, oldNextCombinator);
+          } else {
+            const newNextCombinator =
+              parentToInsertInto.rules[1] ||
+              oldPrevCombinator ||
+              /* istanbul ignore next */ combinators[0].name;
+            parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, newNextCombinator);
+          }
+        } else {
+          if (oldPrevCombinator) {
+            parentToInsertInto.rules.splice(newIndex, 0, oldPrevCombinator, ruleOrGroup);
+          } else {
+            const newPrevCombinator =
+              parentToInsertInto.rules[newIndex - 2] ||
+              oldNextCombinator ||
+              /* istanbul ignore next */ combinators[0].name;
+            parentToInsertInto.rules.splice(newIndex, 0, newPrevCombinator, ruleOrGroup);
+          }
+        }
+      }
+    });
+    _notifyQueryChange(newQuery);
   };
 
   /**
-   * Executes the `onQueryChange` function, if provided
+   * Executes the `onQueryChange` function if provided,
+   * and sets the state for uncontrolled components
    */
-  const _notifyQueryChange = (newRoot: RG) => {
-    /* istanbul ignore else */
-    if (onQueryChange) {
-      const newQuery = cloneDeep(newRoot);
-      onQueryChange(newQuery);
+  const _notifyQueryChange = (newQuery: RG) => {
+    // State variable only used when component is uncontrolled
+    if (!query) {
+      setQueryState(newQuery);
     }
+    onQueryChange(newQuery);
   };
-
-  const [root, setRoot] = useState(getInitialQuery());
 
   const validationResult = typeof validator === 'function' ? validator(root) : {};
   const validationMap = typeof validationResult === 'object' ? validationResult : {};
@@ -403,8 +440,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     createRuleGroup,
     onRuleAdd,
     onGroupAdd,
-    onRuleRemove,
-    onGroupRemove,
+    onRuleRemove: onRuleOrGroupRemove,
+    onGroupRemove: onRuleOrGroupRemove,
     onPropChange,
     isRuleGroup,
     controls: { ...defaultControlElements, ...controlElements },
@@ -412,29 +449,17 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     getValueEditorType: getValueEditorTypeMain,
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
-    updateInlineCombinator,
+    updateIndependentCombinator,
+    moveRule,
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
     autoSelectField,
     addRuleToNewGroups,
-    inlineCombinators: !!inlineCombinators,
+    enableDragAndDrop,
+    independentCombinators: !!independentCombinators,
     validationMap
   };
-
-  // Set the query state when a new query prop comes in
-  useEffect(() => {
-    const newRoot: RG = generateValidQueryObject(query ?? getInitialQuery()) as any;
-    setRoot(newRoot);
-  }, [query]);
-
-  // Notify a query change on mount
-  /* istanbul ignore next */
-  useEffect(() => {
-    if (enableMountQueryChange) {
-      _notifyQueryChange(root);
-    }
-  }, []);
 
   const className = c(
     standardClassnames.queryBuilder,
@@ -447,18 +472,25 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   );
 
   return (
-    <div className={className}>
-      <schema.controls.ruleGroup
-        translations={{ ...defaultTranslations, ...translations }}
-        rules={root.rules}
-        combinator={'combinator' in root ? root.combinator : undefined}
-        schema={schema}
-        id={root.id}
-        path={[]}
-        not={!!root.not}
-        context={context}
-      />
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div
+        className={className}
+        data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
+        data-inlinecombinators={
+          independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
+        }>
+        <schema.controls.ruleGroup
+          translations={{ ...defaultTranslations, ...translations }}
+          rules={root.rules}
+          combinator={'combinator' in root ? root.combinator : undefined}
+          schema={schema}
+          id={root.id}
+          path={[]}
+          not={!!root.not}
+          context={context}
+        />
+      </div>
+    </DndProvider>
   );
 };
 

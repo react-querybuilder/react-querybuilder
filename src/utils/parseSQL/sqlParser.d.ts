@@ -1,4 +1,4 @@
-import { ParsedSQL } from './types';
+import type { ParsedSQL } from './types';
 
 export function parse(input: string): ParsedSQL;
 export const yy: Record<string, unknown>;

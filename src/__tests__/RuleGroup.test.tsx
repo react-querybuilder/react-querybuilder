@@ -1,20 +1,31 @@
-import { mount, shallow } from 'enzyme';
-import * as React from 'react';
-import { RuleGroupTypeIC, ValidationResult } from '..';
-import { ActionElement, NotToggle, ValueSelector } from '../controls/index';
-import { standardClassnames } from '../defaults';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mount } from 'enzyme';
+import { ComponentType, forwardRef } from 'react';
+import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
+import { act } from 'react-dom/test-utils';
+import { ActionElement, NotToggle, ValueSelector } from '../controls';
+import { defaultCombinators, defaultTranslations, standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
-import { RuleGroup } from '../RuleGroup';
+import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
 import {
+  ActionProps,
   ActionWithRulesProps,
   Classnames,
   Controls,
   RuleGroupProps,
   RuleGroupType,
+  RuleGroupTypeIC,
   RuleType,
   Schema,
+  ValidationResult,
   ValueSelectorProps
 } from '../types';
+
+const [RuleGroup, getDndBackend] = wrapWithTestBackend(RuleGroupOriginal);
+
+const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
+  el.getAttribute(`data-${dragDrop}monitorid`);
 
 describe('<RuleGroup />', () => {
   let controls: Partial<Controls>;
@@ -46,7 +57,8 @@ describe('<RuleGroup />', () => {
       operatorSelector: () => null,
       valueEditor: () => null,
       rule: Rule,
-      ruleGroup: RuleGroup
+      ruleGroup: RuleGroup,
+      dragHandle: forwardRef(() => <span>:</span>)
     };
     classNames = {
       header: 'custom-header-class',
@@ -59,7 +71,7 @@ describe('<RuleGroup />', () => {
       notToggle: 'custom-notToggle-class'
     };
     schema = {
-      combinators: [],
+      combinators: defaultCombinators,
       controls: controls as Controls,
       classNames: classNames as Classnames,
       getInputType: () => 'text',
@@ -77,7 +89,7 @@ describe('<RuleGroup />', () => {
       showCombinatorsBetweenRules: false,
       showNotToggle: false,
       showCloneButtons: false,
-      inlineCombinators: false,
+      independentCombinators: false,
       validationMap: {}
     };
     props = {
@@ -86,48 +98,7 @@ describe('<RuleGroup />', () => {
       rules: [],
       combinator: 'and',
       schema: schema as Schema,
-      translations: {
-        fields: {
-          title: 'Fields'
-        },
-        operators: {
-          title: 'Operators'
-        },
-        value: {
-          title: 'Value'
-        },
-        removeRule: {
-          label: 'x',
-          title: 'Remove rule'
-        },
-        removeGroup: {
-          label: 'x',
-          title: 'Remove group'
-        },
-        addRule: {
-          label: '+Rule',
-          title: 'Add rule'
-        },
-        addGroup: {
-          label: '+Group',
-          title: 'Add group'
-        },
-        combinators: {
-          title: 'Combinators'
-        },
-        notToggle: {
-          label: 'Not',
-          title: 'Invert this group'
-        },
-        cloneRule: {
-          label: '⧉',
-          title: 'Clone rule'
-        },
-        cloneRuleGroup: {
-          label: '⧉',
-          title: 'Clone group'
-        }
-      }
+      translations: defaultTranslations
     };
   });
 
@@ -136,7 +107,7 @@ describe('<RuleGroup />', () => {
   });
 
   it('should have correct classNames', () => {
-    const dom = shallow(<RuleGroup {...props} />);
+    const dom = mount(<RuleGroup {...props} />);
     expect(dom.find('div').first().hasClass(standardClassnames.ruleGroup)).toBe(true);
     expect(dom.find(`.${standardClassnames.header}.${classNames.header}`)).toHaveLength(1);
     expect(dom.find(`.${standardClassnames.body}.${classNames.body}`)).toHaveLength(1);
@@ -153,17 +124,17 @@ describe('<RuleGroup />', () => {
         { name: 'or', label: 'OR' }
       ];
       schema.combinators = expected_combinators;
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(ValueSelector).props().options).toEqual(expected_combinators);
     });
 
     it('should have the default selected value set to "and"', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(ValueSelector).props().value).toBe('and');
     });
 
     it('should have the onChange method handler', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(typeof dom.find(ValueSelector).props().handleOnChange).toBe('function');
     });
 
@@ -206,7 +177,7 @@ describe('<RuleGroup />', () => {
 
     it('does not exist if it does not have a parent', () => {
       props.path = [];
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(ActionElement)).toHaveLength(0);
     });
 
@@ -219,12 +190,12 @@ describe('<RuleGroup />', () => {
     });
 
     it('has 2 <Rule /> elements', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(Rule)).toHaveLength(2);
     });
 
     it('has the first rule with the correct values', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       const ruleProps = dom.find(Rule).first().props();
       expect(ruleProps.id).toBe('rule_id_1');
       expect(ruleProps.field).toBe('field_1');
@@ -234,22 +205,18 @@ describe('<RuleGroup />', () => {
   });
 
   describe('when 1 rule group exists', () => {
-    beforeEach(() => {
-      props.rules = [_createRuleGroup(0, [], [])];
-    });
-
     it('has 1 <RuleGroup /> element', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(RuleGroup)).toHaveLength(1);
     });
 
     it('has 1 <RuleGroup /> with expected properties', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       const groupProps = dom.find(RuleGroup).props();
-      expect(groupProps.id).toBe('rule_group_id_0');
-      expect(groupProps.path).toEqual([0, 0]);
+      expect(groupProps.id).toBe('id');
+      expect(groupProps.path).toEqual([0]);
       expect(Array.isArray(groupProps.rules)).toBe(true);
-      expect(groupProps.combinator).toBeUndefined();
+      expect(groupProps.combinator).toBe('and');
     });
   });
 
@@ -295,7 +262,7 @@ describe('<RuleGroup />', () => {
 
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
 
-      expect(dom.find(RuleGroup).find({ id: idOfNestedRuleGroup }).props().not).toBe(true);
+      expect(dom.find(RuleGroup).filter({ id: idOfNestedRuleGroup }).props().not).toBe(true);
     });
 
     it('calls onPropChange from the schema with expected values', () => {
@@ -373,7 +340,7 @@ describe('<RuleGroup />', () => {
     it('does not display combinators when there is only one rule', () => {
       schema.showCombinatorsBetweenRules = true;
       props.rules = [{ field: 'test', value: 'Test', operator: '=' }];
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       const sc = dom.find(`.${standardClassnames.combinators}`);
       expect(sc).toHaveLength(0);
     });
@@ -385,8 +352,8 @@ describe('<RuleGroup />', () => {
         { field: 'test', value: 'Test', operator: '=' },
         { rules: [], combinator: 'and' }
       ];
-      const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.combinators}`);
+      const dom = mount(<RuleGroup {...props} />);
+      const sc = dom.find(`.${standardClassnames.betweenRules}`);
       expect(sc).toHaveLength(2);
     });
   });
@@ -399,54 +366,43 @@ describe('<RuleGroup />', () => {
 
     it('does not display NOT toggle by default', () => {
       schema.showNotToggle = false;
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       const sc = dom.find(`.${standardClassnames.notToggle}`);
       expect(sc).toHaveLength(0);
     });
 
-    it('displays NOT toggle when showNotToggle is set to true', () => {
-      const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.notToggle}`);
-      expect(sc).toHaveLength(1);
-    });
-
     it('has the correct classNames', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(NotToggle).props().className).toContain(standardClassnames.notToggle);
       expect(dom.find(NotToggle).props().className).toContain('custom-notToggle-class');
     });
   });
 
   describe('showCloneButtons', () => {
+    const CloneButton = (props: ActionProps) => <ActionElement {...props} />;
+
     beforeEach(() => {
       schema.showCloneButtons = true;
-      controls.cloneGroupAction = ActionElement;
+      controls.cloneGroupAction = CloneButton;
     });
 
     it('does not display clone buttons by default', () => {
       schema.showCloneButtons = false;
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       const sc = dom.find(`.${standardClassnames.cloneGroup}`);
       expect(sc).toHaveLength(0);
     });
 
-    it('displays clone buttons when showCloneButtons is set to true', () => {
-      const dom = shallow(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.cloneGroup}`);
-      expect(sc).toHaveLength(1);
-    });
-
     it('has the correct classNames', () => {
-      const dom = shallow(<RuleGroup {...props} />);
-      expect(dom.find(`.${standardClassnames.cloneGroup}`).props().className).toContain(
-        'custom-cloneGroup-class'
-      );
+      const dom = mount(<RuleGroup {...props} />);
+      expect(dom.find(CloneButton).props().className).toContain(standardClassnames.cloneGroup);
+      expect(dom.find(CloneButton).props().className).toContain('custom-cloneGroup-class');
     });
   });
 
-  describe('inline combinators', () => {
+  describe('independent combinators', () => {
     beforeEach(() => {
-      schema.inlineCombinators = true;
+      schema.independentCombinators = true;
     });
 
     it('should render combinator selector for string elements', () => {
@@ -456,8 +412,8 @@ describe('<RuleGroup />', () => {
         'and',
         { rules: [] }
       ];
-      const dom = shallow(<RuleGroup {...props} rules={rules} />);
-      expect(dom.find(ValueSelector).props().className).toMatch(
+      const dom = mount(<RuleGroup {...props} rules={rules} />);
+      expect(dom.find(ValueSelector).parent().props().className).toMatch(
         new RegExp(standardClassnames.betweenRules)
       );
       expect(dom.find(ValueSelector).props().value).toBe('and');
@@ -465,18 +421,18 @@ describe('<RuleGroup />', () => {
 
     it('should call handleOnChange for string elements', () => {
       schema.controls.combinatorSelector = ValueSelector;
-      schema.updateInlineCombinator = jest.fn();
+      schema.updateIndependentCombinator = jest.fn();
       const rules: (RuleGroupTypeIC | RuleType | string)[] = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
         { field: 'lastName', operator: '=', value: 'Test' }
       ];
-      const dom = mount(<RuleGroup {...props} rules={rules} />);
-      dom.find(ValueSelector).simulate('change', { target: { value: 'or' } });
-      expect(schema.updateInlineCombinator).toHaveBeenCalledWith('or', [0, 1]);
+      const { getByText, getByTitle } = render(<RuleGroup {...props} rules={rules} />);
+      userEvent.selectOptions(getByTitle(props.translations.combinators.title), [getByText('OR')]);
+      expect(schema.updateIndependentCombinator).toHaveBeenCalledWith('or', [0, 1]);
     });
 
-    it('should clone inline combinator groups', () => {
+    it('should clone independent combinator groups', () => {
       schema.controls.cloneGroupAction = ActionElement;
       schema.onGroupAdd = jest.fn();
       schema.showCloneButtons = true;
@@ -488,21 +444,21 @@ describe('<RuleGroup />', () => {
 
   describe('validation', () => {
     it('should not validate if no validationMap[id] value exists', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
     });
 
     it('should validate to false if validationMap[id] = false', () => {
       schema.validationMap = { id: false };
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
     });
 
     it('should validate to true if validationMap[id] = true', () => {
       schema.validationMap = { id: true };
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
       expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
     });
@@ -512,9 +468,140 @@ describe('<RuleGroup />', () => {
       schema.controls.combinatorSelector = ValueSelector;
       schema.controls.addRuleAction = ActionElement;
       schema.validationMap = { id: valRes };
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(ValueSelector).props().validation).toEqual(valRes);
       expect(dom.find(ActionElement).props().validation).toEqual(valRes);
+    });
+  });
+
+  describe('enableDragAndDrop', () => {
+    it('should not have the drag class if not dragging', () => {
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      const ruleGroup = getByTestId('rule-group');
+      expect(ruleGroup.className).not.toContain(standardClassnames.dndDragging);
+    });
+
+    it('should have the drag class if dragging', () => {
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      const ruleGroup = getByTestId('rule-group');
+      simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
+      expect(ruleGroup.className).toContain(standardClassnames.dndDragging);
+      act(() => {
+        getDndBackend().simulateEndDrag();
+      });
+    });
+
+    it('should handle a dropped rule group', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(
+        <div>
+          <RuleGroup {...props} path={[0]} />
+          <RuleGroup {...props} path={[1]} />
+        </div>
+      );
+      const ruleGroups = getAllByTestId('rule-group');
+      simulateDragDrop(
+        getHandlerId(ruleGroups[1], 'drag'),
+        getHandlerId(ruleGroups[0], 'drop'),
+        getDndBackend()
+      );
+      expect(ruleGroups[0].className).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroups[1].className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
+    });
+
+    it('should abort move if dropped on itself', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      const ruleGroup = getByTestId('rule-group');
+      simulateDragDrop(
+        getHandlerId(ruleGroup, 'drag'),
+        getHandlerId(ruleGroup, 'drop'),
+        getDndBackend()
+      );
+      expect(ruleGroup.className).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroup.className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).not.toHaveBeenCalled();
+    });
+
+    it('should abort move if source item is first child of this group', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(<RuleGroup {...props} rules={[{ rules: [] }]} />);
+      const ruleGroups = getAllByTestId('rule-group');
+      simulateDragDrop(
+        getHandlerId(ruleGroups[1], 'drag'),
+        getHandlerId(ruleGroups[0], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).not.toHaveBeenCalled();
+    });
+
+    it('should handle drops on combinator between rules', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      props.schema.controls.combinatorSelector = ValueSelector;
+      props.schema.showCombinatorsBetweenRules = true;
+      const { getAllByTestId } = render(
+        <div>
+          <RuleGroup
+            {...props}
+            rules={[
+              { field: 'firstName', operator: '=', value: '0' },
+              { field: 'firstName', operator: '=', value: '1' },
+              { field: 'firstName', operator: '=', value: '2' }
+            ]}
+            path={[0]}
+          />
+        </div>
+      );
+      const rules = getAllByTestId('rule');
+      const combinatorEls = getAllByTestId('inline-combinator');
+      simulateDragDrop(
+        getHandlerId(rules[2], 'drag'),
+        getHandlerId(combinatorEls[1], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).not.toHaveBeenCalled();
+      simulateDragDrop(
+        getHandlerId(rules[2], 'drag'),
+        getHandlerId(combinatorEls[0], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1]);
+    });
+
+    it('should handle drops on independent combinators', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      props.schema.controls.combinatorSelector = ValueSelector;
+      props.schema.independentCombinators = true;
+      const { getAllByTestId, getByTestId } = render(
+        <div>
+          <RuleGroup
+            {...props}
+            rules={[
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'firstName', operator: '=', value: 'Steve' }
+            ]}
+            path={[0]}
+          />
+          <RuleGroup {...props} path={[1]} />
+        </div>
+      );
+      const ruleGroups = getAllByTestId('rule-group');
+      const combinatorEl = getByTestId('inline-combinator');
+      simulateDragDrop(
+        getHandlerId(ruleGroups[1], 'drag'),
+        getHandlerId(combinatorEl, 'drop'),
+        getDndBackend()
+      );
+      expect(ruleGroups[1].className).not.toContain(standardClassnames.dndDragging);
+      expect(combinatorEl.className).not.toContain(standardClassnames.dndOver);
+      expect(moveRule).toHaveBeenCalledWith([1], [0, 2]);
     });
   });
 
@@ -525,12 +612,12 @@ describe('<RuleGroup />', () => {
     customClassName: string
   ) {
     it('should have the correct label', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(ActionElement).props().label).toBe(label);
     });
 
     it('should have the onClick method handler', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(typeof dom.find(ActionElement).props().handleOnClick).toBe('function');
     });
 
@@ -538,29 +625,29 @@ describe('<RuleGroup />', () => {
   }
 
   function behavesLikeAnElementWithClassNames(
-    element: React.ComponentType<ActionWithRulesProps & ValueSelectorProps>,
+    element: ComponentType<ActionWithRulesProps & ValueSelectorProps>,
     defaultClassName: string,
     customClassName: string
   ) {
     it('should have the default className', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(element).props().className).toContain(defaultClassName);
     });
 
     it('should have the custom className', () => {
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(element).props().className).toContain(customClassName);
     });
 
     it('should pass down the existing rules array', () => {
       props.rules = [_createRule(1), _createRule(2)];
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(element).props().rules).toEqual(props.rules);
     });
 
     it('should pass down the level of the element', () => {
       props.rules = [_createRule(1), _createRule(2)];
-      const dom = shallow(<RuleGroup {...props} />);
+      const dom = mount(<RuleGroup {...props} />);
       expect(dom.find(element).props().level).toBe(1);
     });
   }

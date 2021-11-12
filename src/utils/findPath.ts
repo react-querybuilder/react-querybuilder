@@ -1,4 +1,4 @@
-import { RuleGroupTypeAny, RuleType } from '../types';
+import type { RuleGroupTypeAny, RuleType } from '../types';
 
 type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 

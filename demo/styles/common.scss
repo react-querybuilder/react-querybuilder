@@ -37,23 +37,19 @@ pre {
   }
 }
 
-// all styles except for default
+// In all styles except for default, push the clone and remove buttons to the right edge.
 .with-antd,
 .with-bootstrap,
 .with-chakra,
 .with-material {
-  .ruleGroup-cloneGroup,
-  .rule-cloneRule,
-  .rule-remove,
-  .ruleGroup-remove {
-    float: right;
-  }
-
-  .ruleGroup-addRule,
-  .ruleGroup-addGroup,
-  .rule-cloneRule,
-  .ruleGroup-cloneGroup,
-  .ruleGroup-notToggle {
-    margin-left: 0.5rem;
+  .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
+  .ruleGroup-addGroup + button.ruleGroup-remove,
+  .rule-operators + button.rule-cloneRule,
+  .rule-operators + button.rule-remove,
+  .rule-value + button.rule-cloneRule,
+  .rule-value + button.rule-remove,
+  .chakra-select__wrapper + button.rule-cloneRule,
+  .chakra-select__wrapper + button.rule-remove {
+    margin-left: auto;
   }
 }

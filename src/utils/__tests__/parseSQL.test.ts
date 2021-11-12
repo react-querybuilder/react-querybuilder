@@ -1,4 +1,4 @@
-import { DefaultRuleGroupType, DefaultRuleType } from '../../types';
+import type { DefaultRuleGroupType, DefaultRuleType } from '../../types';
 import parseSQL from '../parseSQL';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
@@ -149,15 +149,15 @@ describe('parseSQL', () => {
       );
     });
 
-    it('inline combinators', () => {
+    it('independent combinators', () => {
       expect(
         parseSQL(`firstName = 'Steve' AND lastName = someFunc('Vai') OR middleName IS NULL`, {
-          inlineCombinators: true
+          independentCombinators: true
         })
       ).toEqual(wrapRule());
       expect(
         parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`, {
-          inlineCombinators: true
+          independentCombinators: true
         })
       ).toEqual({
         rules: [

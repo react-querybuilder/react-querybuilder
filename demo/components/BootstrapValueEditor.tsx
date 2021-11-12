@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ValueEditorProps } from '../../src/types';
+import type { ValueEditorProps } from '../../src/types';
 
 const BootstrapValueEditor = ({
   fieldData,
@@ -52,7 +52,7 @@ const BootstrapValueEditor = ({
       return (
         <input
           type="checkbox"
-          className="form-check-input"
+          className={`form-check-input ${className}`}
           title={title}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}

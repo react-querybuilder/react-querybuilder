@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import { NotToggle } from '..';
-import { NotToggleProps } from '../../types';
+import type { NotToggleProps } from '../../types';
 
 describe('<NotToggle />', () => {
   const props: NotToggleProps = {

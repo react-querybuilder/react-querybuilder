@@ -1,8 +1,29 @@
-import generateValidQueryObject from '../generateValidQueryObject';
-import { RuleGroupType, RuleGroupTypeIC } from '../../types';
-import { RuleType } from '../..';
+import { prepareRule, prepareRuleGroup } from '../prepareQueryObjects';
+import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
 
-describe('generateValidQueryObject', () => {
+describe('prepareQueryObjects', () => {
+  describe('prepareRule', () => {
+    it('should not generate new ID if rule provides it', () => {
+      expect(
+        prepareRule({
+          id: 'r-12345',
+          field: 'firstName',
+          value: 'Test with ID',
+          operator: '='
+        }).id
+      ).toBe('r-12345');
+    });
+    it('should generate new ID if missing in rule', () => {
+      expect(
+        prepareRule({
+          field: 'firstName',
+          value: 'Test without ID',
+          operator: '='
+        })
+      ).toHaveProperty('id');
+    });
+  });
+
   describe('when initial query, with ID, is provided', () => {
     const queryWithID: RuleGroupType = {
       id: 'g-12345',
@@ -18,11 +39,9 @@ describe('generateValidQueryObject', () => {
     };
 
     it('should not generate new ID if query provides ID', () => {
-      const validQuery = generateValidQueryObject(queryWithID);
+      const validQuery = prepareRuleGroup(queryWithID);
       expect(validQuery.id).toBe('g-12345');
-      expect(validQuery.path).toEqual([]);
       expect(validQuery.rules[0].id).toBe('r-12345');
-      expect(validQuery.rules[0].path).toEqual([0]);
     });
   });
 
@@ -55,22 +74,18 @@ describe('generateValidQueryObject', () => {
 
     it('should generate IDs if missing in query', () => {
       expect(queryWithoutID).not.toHaveProperty('id');
-      const validQuery = generateValidQueryObject(queryWithoutID);
+      const validQuery = prepareRuleGroup(queryWithoutID);
       expect(validQuery).toHaveProperty('id');
-      expect(validQuery.path).toEqual([]);
       expect(validQuery.rules[0]).toHaveProperty('id');
-      expect(validQuery.rules[0].path).toEqual([0]);
     });
 
     it('should generate IDs only for valid query objects', () => {
       expect(queryICWithoutID).not.toHaveProperty('id');
-      const validQuery = generateValidQueryObject(queryICWithoutID);
+      const validQuery = prepareRuleGroup(queryICWithoutID);
       expect(validQuery).toHaveProperty('id');
-      expect(validQuery.path).toEqual([]);
       expect(validQuery.rules[0]).toHaveProperty('id');
-      expect((validQuery.rules[0] as RuleType).path).toEqual([0]);
-      expect(validQuery.rules[1] as string).toBe('and');
-      expect((validQuery.rules[2] as RuleType).path).toEqual([2]);
+      expect(validQuery.rules[1]).toBe('and');
+      expect(validQuery.rules[2]).toHaveProperty('id');
     });
   });
 });

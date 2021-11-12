@@ -1,16 +1,23 @@
-import { Checkbox } from '@chakra-ui/react';
-import { NotToggleProps } from '../../src/types';
+import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
+import { useState } from 'react';
+import type { NotToggleProps } from '../../src/types';
 
 const ChakraNotToggle = ({ className, handleOnChange, label, checked, title }: NotToggleProps) => {
+  const [id] = useState(`notToggle-${Math.random()}`);
+
   return (
-    <Checkbox
-      className={className}
-      title={title}
-      size="sm"
-      onChange={(e) => handleOnChange(e.target.checked)}
-      checked={checked}>
-      {label}
-    </Checkbox>
+    <div style={{ display: 'inline-block' }}>
+      <FormControl display="flex" alignItems="center" className={className} title={title}>
+        <Switch
+          id={id}
+          size="sm"
+          colorScheme="red"
+          checked={checked}
+          onChange={(e) => handleOnChange(e.target.checked)}
+        />
+        <FormLabel htmlFor={id}>{label}</FormLabel>
+      </FormControl>
+    </div>
   );
 };
 

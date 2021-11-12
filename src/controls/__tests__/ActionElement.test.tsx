@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import { ActionElement } from '..';
-import { ActionProps } from '../../types';
+import type { ActionProps } from '../../types';
 
 describe('<ActionElement />', () => {
   const props: ActionProps = {

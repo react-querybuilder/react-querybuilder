@@ -1,7 +1,7 @@
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import { ValueSelectorProps } from '../../src/types';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import type { ValueSelectorProps } from '../../src/types';
 
 const MaterialValueSelector = ({
   className,
@@ -10,7 +10,7 @@ const MaterialValueSelector = ({
   value,
   title
 }: ValueSelectorProps) => (
-  <FormControl className={className} title={title}>
+  <FormControl variant="standard" className={className} title={title}>
     <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
       {options.map((option) => {
         const key = `key-${option.id ?? option.name}`;

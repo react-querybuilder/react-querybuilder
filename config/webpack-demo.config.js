@@ -6,12 +6,12 @@ const webpackCommon = require('./webpack-common.config');
 const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 
+const pages = ['main', 'ie11'];
+
 module.exports = merge(webpackCommon, {
   mode: 'production',
 
-  entry: {
-    demo: './demo/main.tsx'
-  },
+  entry: pages.reduce((prev, curr) => ({ ...prev, [curr]: `./demo/${curr}.tsx` }), {}),
 
   output: {
     filename: '[name].bundle.js',
@@ -44,10 +44,12 @@ module.exports = merge(webpackCommon, {
     historyApiFallback: true
   },
 
-  plugins: [
-    new HtmlPlugin({
-      title: 'react-querybuilder (DEMO)',
-      template: './demo/index.html'
-    })
-  ]
+  plugins: pages.map(
+    (p) =>
+      new HtmlPlugin({
+        template: `./demo/${p.replace('main', 'index')}.html`,
+        filename: `${p.replace('main', 'index')}.html`,
+        chunks: [p]
+      })
+  )
 });

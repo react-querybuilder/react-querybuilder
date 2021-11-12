@@ -1,7 +1,7 @@
 import { mount, shallow } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import { ValueEditor } from '..';
-import { ValueEditorProps } from '../../types';
+import type { ValueEditorProps } from '../../types';
 
 describe('<ValueEditor />', () => {
   const props: ValueEditorProps = {

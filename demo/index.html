@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>React Query Builder</title>
+    <title>React Query Builder Demo</title>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
@@ -11,6 +11,35 @@
         background-color: #090 !important;
       }
     </style>
+    <script>
+      (function setScript(initialValue) {
+        var mql = window.matchMedia('(prefers-color-scheme: dark)');
+        var systemPreference = mql.matches ? 'dark' : 'light';
+        var persistedPreference;
+
+        try {
+          persistedPreference = localStorage.getItem('chakra-ui-color-mode');
+        } catch (error) {
+          console.log(
+            'Chakra UI: localStorage is not available. Color mode persistence might not work as expected'
+          );
+        }
+
+        var isInStorage = typeof persistedPreference === 'string';
+        var colorMode;
+
+        if (isInStorage) {
+          colorMode = persistedPreference;
+        } else {
+          colorMode = initialValue === 'system' ? systemPreference : initialValue;
+        }
+
+        if (colorMode) {
+          var root = document.documentElement;
+          root.style.setProperty('--chakra-ui-color-mode', colorMode);
+        }
+      })('light');
+    </script>
   </head>
   <body>
     <a
@@ -20,6 +49,9 @@
       title="Fork me on GitHub"
       >Fork me on GitHub</a
     >
-    <div class="container"></div>
+    <div id="app">
+      You may be using a legacy browser. <a href="ie11.html">Click here</a> for a demo that should
+      be compatible.
+    </div>
   </body>
 </html>

@@ -1,4 +1,5 @@
-import { NotToggleProps } from '../../src/types';
+import { useState } from 'react';
+import type { NotToggleProps } from '../../src/types';
 
 const BootstrapNotToggle = ({
   className,
@@ -6,20 +7,24 @@ const BootstrapNotToggle = ({
   title,
   label,
   checked
-}: NotToggleProps) => (
-  <div className={`form-check-inline ${className}`}>
-    <input
-      id="notToggle"
-      className="form-check-input"
-      type="checkbox"
-      onChange={(e) => handleOnChange(e.target.checked)}
-      checked={!!checked}
-    />
-    <label title={title} htmlFor="notToggle">
-      {label}
-    </label>
-  </div>
-);
+}: NotToggleProps) => {
+  const [id] = useState(`notToggle-${Math.random()}`);
+
+  return (
+    <div className={`form-check-inline form-switch ${className}`}>
+      <input
+        id={id}
+        className="form-check-input"
+        type="checkbox"
+        onChange={(e) => handleOnChange(e.target.checked)}
+        checked={!!checked}
+      />
+      <label title={title} htmlFor={id} className="form-check-label">
+        {label}
+      </label>
+    </div>
+  );
+};
 
 BootstrapNotToggle.displayName = 'BootstrapNotToggle';
 

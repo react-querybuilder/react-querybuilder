@@ -1,5 +1,5 @@
 import { Select } from 'antd';
-import { ValueSelectorProps } from '../../src/types';
+import type { ValueSelectorProps } from '../../src/types';
 
 const { Option } = Select;
 

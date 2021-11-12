@@ -100,8 +100,8 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
   let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
   if (options) {
-    const { params, paramPrefix, inlineCombinators } = options;
-    ic = inlineCombinators || false;
+    const { params, paramPrefix, independentCombinators } = options;
+    ic = independentCombinators || false;
     /* istanbul ignore else */
     if (params) {
       if (Array.isArray(params)) {

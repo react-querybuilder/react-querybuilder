@@ -8,16 +8,20 @@ import {
 } from '../src';
 import {
   AntDActionElement,
+  AntDDragHandle,
   AntDNotToggle,
   AntDValueEditor,
   AntDValueSelector,
+  BootstrapDragHandle,
   BootstrapNotToggle,
   BootstrapValueEditor,
   ChakraActionElement,
+  ChakraDragHandle,
   ChakraNotToggle,
   ChakraValueEditor,
   ChakraValueSelector,
   MaterialActionElement,
+  MaterialDragHandle,
   MaterialNotToggle,
   MaterialValueEditor,
   MaterialValueSelector
@@ -27,10 +31,11 @@ export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra'
 
 export const repoLink = 'https://github.com/react-querybuilder/react-querybuilder';
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
+export const docsLink = 'https://react-querybuilder.github.io';
 
 export const validator = (r: RuleType) => !!r.value;
 
-export const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
+export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
   default: {},
   bootstrap: {
     controlClassnames: {
@@ -46,6 +51,7 @@ export const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
       value: 'form-control form-control-sm'
     },
     controlElements: {
+      dragHandle: BootstrapDragHandle,
       notToggle: BootstrapNotToggle,
       valueEditor: BootstrapValueEditor
     }
@@ -62,7 +68,8 @@ export const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
       operatorSelector: AntDValueSelector,
       removeGroupAction: AntDActionElement,
       removeRuleAction: AntDActionElement,
-      valueEditor: AntDValueEditor
+      valueEditor: AntDValueEditor,
+      dragHandle: AntDDragHandle
     }
   },
   material: {
@@ -77,7 +84,8 @@ export const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
       operatorSelector: MaterialValueSelector,
       removeGroupAction: MaterialActionElement,
       removeRuleAction: MaterialActionElement,
-      valueEditor: MaterialValueEditor
+      valueEditor: MaterialValueEditor,
+      dragHandle: MaterialDragHandle
     }
   },
   chakra: {
@@ -92,7 +100,8 @@ export const styleOptions: { [s in StyleName]: Partial<QueryBuilderProps> } = {
       operatorSelector: ChakraValueSelector,
       removeGroupAction: ChakraActionElement,
       removeRuleAction: ChakraActionElement,
-      valueEditor: ChakraValueEditor
+      valueEditor: ChakraValueEditor,
+      dragHandle: ChakraDragHandle
     }
   }
 };

@@ -1,5 +1,5 @@
 import { Select } from '@chakra-ui/react';
-import { ValueSelectorProps } from '../../src/types';
+import type { ValueSelectorProps } from '../../src/types';
 
 const ChakraValueSelector = ({
   className,
