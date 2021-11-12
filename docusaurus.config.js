@@ -10,7 +10,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'React Query Builder',
   tagline: 'The Query Builder Component for React',
-  url: 'https://react-querybuilder.github.io',
+  url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
