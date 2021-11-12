@@ -242,6 +242,8 @@ export const RuleGroup = ({
             title={translations.dragHandle.title}
             label={translations.dragHandle.label}
             className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+            context={context}
+            validation={validationResult}
           />
         )}
         {!showCombinatorsBetweenRules && !independentCombinators && (

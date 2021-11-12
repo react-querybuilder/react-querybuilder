@@ -152,6 +152,8 @@ export const Rule = ({
         title={translations.dragHandle.title}
         label={translations.dragHandle.label}
         className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+        context={context}
+        validation={validationResult}
       />
       <controls.fieldSelector
         options={fields}
