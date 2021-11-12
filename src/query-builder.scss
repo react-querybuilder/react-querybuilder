@@ -25,6 +25,10 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
     display: flex;
     flex-direction: column;
     row-gap: $rqb-spacing;
+
+    &:empty {
+      display: none;
+    }
   }
 
   .ruleGroup-header,
