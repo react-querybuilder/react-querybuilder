@@ -24,7 +24,7 @@ const ValueEditor = ({
     ) {
       handleOnChange('');
     }
-  }, [inputType, operator, value, handleOnChange]);
+  }, [handleOnChange, inputType, operator, value]);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

@@ -1,5 +1,5 @@
 import produce, { enableES5 } from 'immer';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
@@ -51,7 +51,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGr
 const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({
   defaultQuery,
   query,
-  fields = defaultFields,
+  fields: fieldsProp = defaultFields,
   operators = defaultOperators,
   combinators = defaultCombinators,
   translations = defaultTranslations,
@@ -80,13 +80,19 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   validator,
   context
 }: QueryBuilderPropsInternal<RG>) => {
-  if (!autoSelectField) {
-    fields = defaultFields.concat(fields);
-  }
+  const fields = useMemo(() => {
+    let f = fieldsProp;
+    if (!autoSelectField) {
+      f = defaultFields.concat(fieldsProp);
+    }
+    return uniqByName(f);
+  }, [autoSelectField, fieldsProp]);
 
-  const fieldMap: { [k: string]: Field } = {};
-  fields = uniqByName(fields);
-  fields.forEach((f) => (fieldMap[f.name] = f));
+  const fieldMap = useMemo(() => {
+    const fm: { [k: string]: Field } = {};
+    fields.forEach((f) => (fm[f.name] = f));
+    return fm;
+  }, [fields]);
 
   const getOperatorsMain = (field: string) => {
     const fieldData = fieldMap[field];
@@ -245,6 +251,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       onQueryChange(root);
     }
     setIsFirstRender(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -428,7 +435,10 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     onQueryChange(newQuery);
   };
 
-  const validationResult = typeof validator === 'function' ? validator(root) : {};
+  const validationResult = useMemo(
+    () => (typeof validator === 'function' ? validator(root) : {}),
+    [root, validator]
+  );
   const validationMap = typeof validationResult === 'object' ? validationResult : {};
 
   const schema: Schema = {
@@ -461,14 +471,18 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     validationMap
   };
 
-  const className = c(
-    standardClassnames.queryBuilder,
-    schema.classNames.queryBuilder,
-    typeof validationResult === 'boolean'
-      ? validationResult
-        ? standardClassnames.valid
-        : standardClassnames.invalid
-      : ''
+  const className = useMemo(
+    () =>
+      c(
+        standardClassnames.queryBuilder,
+        schema.classNames.queryBuilder,
+        typeof validationResult === 'boolean'
+          ? validationResult
+            ? standardClassnames.valid
+            : standardClassnames.invalid
+          : ''
+      ),
+    [schema.classNames.queryBuilder, validationResult]
   );
 
   return (
