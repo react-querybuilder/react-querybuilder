@@ -59,12 +59,12 @@ Output (`RuleGroupType`):
 
 ## Independent combinators
 
-When the `independendCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
+When the `independentCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
 
 ```ts
 parseSQL(
   `SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`,
-  { independendCombinators: true }
+  { independentCombinators: true }
 );
 ```
 

@@ -1,0 +1,35 @@
+@use "sass:color";
+
+/**
+ * This is the effective color of a level 3 group when using
+ * the default stylesheet on a white background.
+ */
+$primary-color: #82a7dd;
+$primary-color-dark: color.scale($primary-color, $lightness: -10%);
+$primary-color-darker: color.scale($primary-color-dark, $lightness: -10%);
+$primary-color-darkest: color.scale($primary-color-darker, $lightness: -10%);
+$primary-color-light: color.scale($primary-color, $lightness: 10%);
+$primary-color-lighter: color.scale($primary-color-light, $lightness: 10%);
+$primary-color-lightest: color.scale($primary-color-lighter, $lightness: 10%);
+
+:root {
+  --ifm-color-primary: #{$primary-color};
+  --ifm-color-primary-dark: #{$primary-color-dark};
+  --ifm-color-primary-darker: #{$primary-color-darker};
+  --ifm-color-primary-darkest: #{$primary-color-darkest};
+  --ifm-color-primary-light: #{$primary-color-light};
+  --ifm-color-primary-lighter: #{$primary-color-lighter};
+  --ifm-color-primary-lightest: #{$primary-color-lightest};
+  --ifm-code-font-size: 95%;
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}

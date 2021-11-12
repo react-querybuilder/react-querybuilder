@@ -69,7 +69,7 @@ This is a callback function that is invoked anytime the query configuration chan
 }
 ```
 
-If the `independendCombinators` prop is provided, then the `query` argument will be of type `RuleGroupTypeIC`, which looks like this:
+If the `independentCombinators` prop is provided, then the `query` argument will be of type `RuleGroupTypeIC`, which looks like this:
 
 ```json
 {
@@ -104,7 +104,7 @@ If the `independendCombinators` prop is provided, then the `query` argument will
 
 `RuleGroupTypeAny`
 
-The initial query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`independendCombinators`](#independendCombinators) is also provided).
+The initial query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`independentCombinators`](#independentCombinators) is also provided).
 
 The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/demo/main.tsx) for examples.
 
@@ -619,11 +619,11 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-### `independendCombinators`
+### `independentCombinators`
 
 `boolean` (default `false`)
 
-Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independent. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. Visually, this is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
 
 ### `enableDragAndDrop`
 

@@ -1,0 +1,8 @@
+.queryBuilderEmbed {
+  margin-bottom: var(--ifm-leading);
+
+  // This is only necessary until 4.0.0 final is released
+  .ruleGroup-body:empty {
+    display: none;
+  }
+}

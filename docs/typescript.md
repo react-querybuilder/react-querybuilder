@@ -126,7 +126,7 @@ interface ParameterizedNamedSQL {
 
 ```ts
 interface ParseSQLOptions {
-  independendCombinators?: boolean;
+  independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }
