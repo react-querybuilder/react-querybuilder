@@ -31,7 +31,9 @@ import {
   getParentPath,
   isRuleGroup,
   uniqByName,
-  pathsAreEqual
+  pathsAreEqual,
+  regenerateIDs,
+  regenerateID
 } from './utils';
 
 enableES5();
@@ -349,7 +351,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     _notifyQueryChange(newQuery);
   };
 
-  const moveRule = (oldPath: number[], newPath: number[]) => {
+  const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
     // No-op if the old and new paths are the same.
     // Ignore in test coverage since components that call this method
     // already prevent this case via their respective canDrop tests.
@@ -359,9 +361,14 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     }
 
     const parentOldPath = getParentPath(oldPath);
-    const ruleOrGroup = findPath(oldPath, root);
+    const ruleOrGroupOriginal = findPath(oldPath, root);
     /* istanbul ignore if */
-    if (!ruleOrGroup) return;
+    if (!ruleOrGroupOriginal) return;
+    const ruleOrGroup = clone
+      ? 'rules' in ruleOrGroupOriginal
+        ? regenerateIDs(ruleOrGroupOriginal)
+        : regenerateID(ruleOrGroupOriginal)
+      : ruleOrGroupOriginal;
 
     const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
     const movingOnUp = newPath[commonAncestorPath.length] <= oldPath[commonAncestorPath.length];
@@ -377,16 +384,19 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
           ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
           : null;
-      const idxStartDelete = independentCombinators
-        ? Math.max(0, ruleToRemoveIndex - 1)
-        : ruleToRemoveIndex;
-      const deleteLength = independentCombinators ? 2 : 1;
-      // Remove the source item
-      parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+      /* istanbul ignore else */
+      if (!clone) {
+        const idxStartDelete = independentCombinators
+          ? Math.max(0, ruleToRemoveIndex - 1)
+          : ruleToRemoveIndex;
+        const deleteLength = independentCombinators ? 2 : 1;
+        // Remove the source item
+        parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+      }
 
       const newNewPath = [...newPath];
       /* istanbul ignore else */
-      if (!movingOnUp) {
+      if (!movingOnUp && !clone) {
         newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
       }
       const newNewParentPath = getParentPath(newNewPath);
@@ -412,9 +422,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
             parentToInsertInto.rules.splice(newIndex, 0, oldPrevCombinator, ruleOrGroup);
           } else {
             const newPrevCombinator =
-              parentToInsertInto.rules[newIndex - 2] ||
-              oldNextCombinator ||
-              /* istanbul ignore next */ combinators[0].name;
+              parentToInsertInto.rules[newIndex - 2] || oldNextCombinator || combinators[0].name;
             parentToInsertInto.rules.splice(newIndex, 0, newPrevCombinator, ruleOrGroup);
           }
         }

@@ -2,14 +2,7 @@ import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
 import type { DraggedItem, Field, RuleProps, RuleType } from './types';
-import {
-  c,
-  generateID,
-  getParentPath,
-  getValidationClassNames,
-  isAncestor,
-  pathsAreEqual
-} from './utils';
+import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
 
 export const Rule = ({
   id,
@@ -32,7 +25,6 @@ export const Rule = ({
     getValues,
     moveRule,
     onPropChange,
-    onRuleAdd,
     onRuleRemove,
     autoSelectField,
     showCloneButtons,
@@ -94,16 +86,8 @@ export const Rule = ({
     event.preventDefault();
     event.stopPropagation();
 
-    const newRule: RuleType = JSON.parse(
-      JSON.stringify({
-        id: `r-${generateID()}`,
-        field,
-        operator,
-        value
-      })
-    );
-    const parentPath = getParentPath(path);
-    onRuleAdd(newRule, parentPath);
+    const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+    moveRule(path, newPath, true);
   };
 
   const removeRule = (event: ReactMouseEvent) => {

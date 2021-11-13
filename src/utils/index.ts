@@ -9,5 +9,5 @@ export { default as isRuleOrGroupValid } from './isRuleOrGroupValid';
 export { default as parseSQL } from './parseSQL';
 export { getCommonAncestorPath, getParentPath, isAncestor, pathsAreEqual } from './pathUtils';
 export { prepareRule, prepareRuleGroup } from './prepareQueryObjects';
-export { default as regenerateIDs } from './regenerateIDs';
+export { regenerateID, regenerateIDs } from './regenerateIDs';
 export { default as uniqByName } from './uniqByName';

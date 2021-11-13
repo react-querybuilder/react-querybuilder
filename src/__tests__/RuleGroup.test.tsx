@@ -313,16 +313,11 @@ describe('<RuleGroup />', () => {
       schema.showCloneButtons = true;
     });
 
-    it('calls onGroupAdd from the schema with expected values', () => {
-      schema.onGroupAdd = jest.fn();
-      const dom = mount(<RuleGroup {...props} />);
-      dom.find(`.${standardClassnames.cloneGroup}`).simulate('click');
-
-      const call0 = (schema.onGroupAdd as jest.Mock).mock.calls[0];
-      expect((call0[0] as RuleGroupType).combinator).toBe('and');
-      expect(call0[0].not).toBeUndefined();
-      expect(call0[0].rules).toHaveLength(0);
-      expect(call0[1]).toEqual([]);
+    it('calls moveRule from the schema with expected values', () => {
+      schema.moveRule = jest.fn();
+      const { getByText } = render(<RuleGroup {...props} />);
+      userEvent.click(getByText('⧉'));
+      expect(schema.moveRule).toHaveBeenCalledWith([0], [1], true);
     });
   });
 
@@ -434,11 +429,11 @@ describe('<RuleGroup />', () => {
 
     it('should clone independent combinator groups', () => {
       schema.controls.cloneGroupAction = ActionElement;
-      schema.onGroupAdd = jest.fn();
+      schema.moveRule = jest.fn();
       schema.showCloneButtons = true;
-      const dom = mount(<RuleGroup {...props} />);
-      dom.find(`.${standardClassnames.cloneGroup}`).at(1).simulate('click');
-      expect((schema.onGroupAdd as jest.Mock).mock.calls[0][1]).toEqual([]);
+      const { getByText } = render(<RuleGroup {...props} />);
+      userEvent.click(getByText('⧉'));
+      expect(schema.moveRule).toHaveBeenCalledWith([0], [1], true);
     });
   });
 

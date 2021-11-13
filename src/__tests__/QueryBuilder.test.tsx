@@ -1,7 +1,9 @@
 import { fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { mount, ReactWrapper } from 'enzyme';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
+import { defaultTranslations } from '..';
 import { standardClassnames } from '../defaults';
 import { QueryBuilder as QueryBuilderOriginal } from '../QueryBuilder';
 import { Rule } from '../Rule';
@@ -1070,6 +1072,146 @@ describe('<QueryBuilder />', () => {
       wrapper = mount(<QueryBuilder addRuleToNewGroups />);
 
       expect(wrapper.find(Rule)).toHaveLength(1);
+    });
+  });
+
+  describe('showCloneButtons', () => {
+    const onQueryChange = jest.fn();
+
+    afterEach(() => {
+      onQueryChange.mockReset();
+    });
+
+    describe('standard rule groups', () => {
+      it('should clone rules', () => {
+        const { getAllByText } = render(
+          <QueryBuilder
+            showCloneButtons
+            onQueryChange={onQueryChange}
+            defaultQuery={{
+              combinator: 'and',
+              rules: [
+                { field: 'firstName', operator: '=', value: 'Steve' },
+                { field: 'lastName', operator: '=', value: 'Vai' }
+              ]
+            }}
+          />
+        );
+        userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[0]);
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' }
+          ]
+        });
+      });
+
+      it('should clone rule groups', () => {
+        const { getAllByText } = render(
+          <QueryBuilder
+            showCloneButtons
+            onQueryChange={onQueryChange}
+            defaultQuery={{
+              combinator: 'and',
+              rules: [
+                {
+                  combinator: 'or',
+                  rules: [{ field: 'firstName', operator: '=', value: 'Steve' }]
+                },
+                { field: 'lastName', operator: '=', value: 'Vai' }
+              ]
+            }}
+          />
+        );
+        userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[0]);
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          combinator: 'and',
+          rules: [
+            { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
+            { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
+            { field: 'lastName', operator: '=', value: 'Vai' }
+          ]
+        });
+      });
+    });
+
+    describe('independent combinators', () => {
+      it('should clone a single rule with independent combinators', () => {
+        const { getByText } = render(
+          <QueryBuilder
+            showCloneButtons
+            independentCombinators
+            onQueryChange={onQueryChange}
+            defaultQuery={{
+              rules: [{ field: 'firstName', operator: '=', value: 'Steve' }]
+            }}
+          />
+        );
+        userEvent.click(getByText(defaultTranslations.cloneRule.label));
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'firstName', operator: '=', value: 'Steve' }
+          ]
+        });
+      });
+
+      it('should clone first rule with independent combinators', () => {
+        const { getAllByText } = render(
+          <QueryBuilder
+            showCloneButtons
+            independentCombinators
+            onQueryChange={onQueryChange}
+            defaultQuery={{
+              rules: [
+                { field: 'firstName', operator: '=', value: 'Steve' },
+                'and',
+                { field: 'lastName', operator: '=', value: 'Vai' }
+              ]
+            }}
+          />
+        );
+        userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[0]);
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' }
+          ]
+        });
+      });
+
+      it('should clone last rule with independent combinators', () => {
+        const { getAllByText } = render(
+          <QueryBuilder
+            showCloneButtons
+            independentCombinators
+            onQueryChange={onQueryChange}
+            defaultQuery={{
+              rules: [
+                { field: 'firstName', operator: '=', value: 'Steve' },
+                'or',
+                { field: 'lastName', operator: '=', value: 'Vai' }
+              ]
+            }}
+          />
+        );
+        userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[1]);
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'or',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            'or',
+            { field: 'lastName', operator: '=', value: 'Vai' }
+          ]
+        });
+      });
     });
   });
 

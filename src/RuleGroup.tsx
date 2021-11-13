@@ -1,22 +1,8 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndTypes, standardClassnames } from './defaults';
-import type {
-  CombinatorSelectorProps,
-  DraggedItem,
-  RuleGroupProps,
-  RuleGroupType,
-  RuleGroupTypeIC,
-  Schema
-} from './types';
-import {
-  c,
-  getParentPath,
-  getValidationClassNames,
-  isAncestor,
-  pathsAreEqual,
-  regenerateIDs
-} from './utils';
+import type { CombinatorSelectorProps, DraggedItem, RuleGroupProps, Schema } from './types';
+import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
 
 interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
@@ -186,22 +172,8 @@ export const RuleGroup = ({
     event.preventDefault();
     event.stopPropagation();
 
-    let thisGroup: RuleGroupType | RuleGroupTypeIC;
-    if (independentCombinators) {
-      thisGroup = {
-        not,
-        rules
-      } as RuleGroupTypeIC;
-    } else {
-      thisGroup = {
-        combinator,
-        rules,
-        not
-      } as RuleGroupType;
-    }
-    const newGroup = regenerateIDs(thisGroup);
-    const parentPath = getParentPath(path);
-    onGroupAdd(newGroup, parentPath);
+    const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+    moveRule(path, newPath, true);
   };
 
   const removeGroup = (event: ReactMouseEvent) => {

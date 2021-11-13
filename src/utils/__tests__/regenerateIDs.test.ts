@@ -3,17 +3,14 @@ import { RuleGroupType, RuleGroupTypeIC } from '../..';
 
 const ruleGroup: RuleGroupType = {
   id: 'root',
-  path: [],
   combinator: 'and',
   rules: [
     {
       id: 'innerGroup',
-      path: [0],
       combinator: 'and',
       rules: [
         {
           id: 'innerRule',
-          path: [0, 0],
           field: 'TEST',
           operator: '=',
           value: ''
@@ -25,15 +22,12 @@ const ruleGroup: RuleGroupType = {
 
 const ruleGroupIC: RuleGroupTypeIC = {
   id: 'root',
-  path: [],
   rules: [
     {
       id: 'innerGroup',
-      path: [0],
       rules: [
         {
           id: 'innerRule',
-          path: [0, 0],
           field: 'TEST',
           operator: '=',
           value: ''
@@ -41,7 +35,6 @@ const ruleGroupIC: RuleGroupTypeIC = {
         'and',
         {
           id: 'innerRule',
-          path: [0, 0],
           field: 'TEST',
           operator: '=',
           value: ''
@@ -59,7 +52,6 @@ describe('when generating IDs', () => {
     expect((newRuleGroup.rules[0] as RuleGroupType).rules[0].id).not.toBe(
       (ruleGroup.rules[0] as RuleGroupType).rules[0].id
     );
-    expect((newRuleGroup.rules[0] as RuleGroupType).rules[0].path).toEqual([0, 0]);
   });
 
   it('should generate different IDs for independent combinators', () => {
@@ -73,9 +65,6 @@ describe('when generating IDs', () => {
     );
     expect(((newRuleGroupIC.rules[0] as RuleGroupTypeIC).rules[2] as RuleGroupTypeIC).id).not.toBe(
       ((ruleGroupIC.rules[0] as RuleGroupTypeIC).rules[2] as RuleGroupTypeIC).id
-    );
-    expect(((newRuleGroupIC.rules[0] as RuleGroupTypeIC).rules[0] as RuleGroupTypeIC).path).toEqual(
-      [0, 0]
     );
   });
 });

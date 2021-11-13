@@ -1,10 +1,10 @@
 import { generateID } from '.';
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 
-const regenerateID = (rule: RuleType) =>
+export const regenerateID = (rule: RuleType): RuleType =>
   JSON.parse(JSON.stringify({ ...rule, id: `r-${generateID()}` }));
 
-const regenerateIDs = (
+export const regenerateIDs = (
   ruleGroup: RuleGroupType | RuleGroupTypeIC
 ): RuleGroupType | RuleGroupTypeIC => {
   if ('combinator' in ruleGroup) {
@@ -18,5 +18,3 @@ const regenerateIDs = (
   );
   return { id: `g-${generateID()}`, rules, not };
 };
-
-export default regenerateIDs;

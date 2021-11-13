@@ -1,4 +1,5 @@
 import { cleanup, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { mount } from 'enzyme';
 import { forwardRef } from 'react';
 import {
@@ -20,7 +21,6 @@ import {
   NameLabelPair,
   OperatorSelectorProps,
   RuleProps,
-  RuleType,
   Schema,
   ValidationResult,
   ValueEditorProps
@@ -49,7 +49,9 @@ describe('<Rule />', () => {
   beforeEach(() => {
     controls = {
       cloneRuleAction: (props: ActionProps) => (
-        <button onClick={(e) => props.handleOnClick(e)}>⧉</button>
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          ⧉
+        </button>
       ),
       fieldSelector: (props: FieldSelectorProps) => (
         <select onChange={(e) => props.handleOnChange(e.target.value)}>
@@ -356,17 +358,11 @@ describe('<Rule />', () => {
       schema.showCloneButtons = true;
     });
 
-    it('should call onRuleAdd with the rule and parent path', () => {
-      let myRule: RuleType, myParentPath: number[];
-      schema.onRuleAdd = (rule, parentPath) => {
-        myRule = rule;
-        myParentPath = parentPath;
-      };
-      const dom = mount(<Rule {...props} />);
-      dom.find(`.${standardClassnames.cloneRule}`).simulate('click');
-
-      expect(myRule).toBeDefined();
-      expect(myParentPath).toEqual([]);
+    it('should call moveRule with the right paths', () => {
+      schema.moveRule = jest.fn();
+      const { getByText } = render(<Rule {...props} />);
+      userEvent.click(getByText('⧉'));
+      expect(schema.moveRule).toHaveBeenCalledWith([0], [1], true);
     });
   });
 
