@@ -43,13 +43,6 @@ import {
   StyleName,
   styleOptions
 } from './constants';
-import './styles/common.scss';
-import './styles/github-fork-ribbon.scss';
-import './styles/with-antd.scss';
-import './styles/with-bootstrap.scss';
-import './styles/with-chakra.scss';
-import './styles/with-default.scss';
-import './styles/with-material.scss';
 
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
@@ -91,7 +84,7 @@ const permalinkText = 'Copy permalink';
 const permalinkCopiedText = 'Copied!';
 
 // Initialize options from URL hash
-const initialOptions = {
+const initialOptions: { [opt: string]: boolean } = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
@@ -164,7 +157,7 @@ const App = () => {
   );
 
   useEffect(() => {
-    history.pushState(null, null, permalinkHash);
+    history.pushState(null, '', permalinkHash);
   });
 
   const optionsInfo = [
@@ -279,7 +272,7 @@ const App = () => {
       setIsSQLModalVisible(false);
       setSQLParseError('');
     } catch (err) {
-      setSQLParseError(err.message);
+      setSQLParseError((err as Error).message);
     }
   };
 

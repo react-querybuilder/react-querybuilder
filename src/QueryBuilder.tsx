@@ -11,7 +11,6 @@ import {
   defaultTranslations,
   standardClassnames
 } from './defaults';
-import './query-builder.scss';
 import type {
   Field,
   QueryBuilderProps,

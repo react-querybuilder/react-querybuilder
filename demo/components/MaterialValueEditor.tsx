@@ -45,11 +45,12 @@ const MaterialValueEditor = ({
       return (
         <FormControl variant="standard" className={className}>
           <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
-            {values.map((v) => (
-              <MenuItem key={v.name} value={v.name}>
-                {v.label}
-              </MenuItem>
-            ))}
+            {values &&
+              values.map((v) => (
+                <MenuItem key={v.name} value={v.name}>
+                  {v.label}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       );

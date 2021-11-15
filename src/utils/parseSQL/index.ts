@@ -1,7 +1,9 @@
-import { DefaultCombinatorName, DefaultOperatorName, DefaultRuleGroupTypeIC } from '../..';
 import {
+  DefaultCombinatorName,
+  DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
+  DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ParseSQLOptions
 } from '../../types';

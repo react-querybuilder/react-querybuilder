@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "./types/",
     "declaration": true,
     "sourceMap": true,
     "strictNullChecks": true,
@@ -8,7 +7,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "target": "es5",
+    "target": "esnext",
     "esModuleInterop": true
   },
   "include": ["./src/"],

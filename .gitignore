@@ -7,3 +7,4 @@ coverage
 dist
 dist_demo
 types
+.parcel-cache

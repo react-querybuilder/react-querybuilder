@@ -9,7 +9,7 @@ export default forwardRef<HTMLSpanElement, DragHandleProps>(function ChakraDragH
 ) {
   return (
     <span ref={dragRef} className={className} title={title}>
-      <IconButton aria-label={title} size="xs" icon={<DragHandleIcon />} />
+      <IconButton aria-label={title ?? ''} size="xs" icon={<DragHandleIcon />} />
     </span>
   );
 });

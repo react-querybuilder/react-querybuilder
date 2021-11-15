@@ -2,11 +2,12 @@
   "name": "react-querybuilder",
   "version": "4.0.0-beta.5",
   "description": "The React <QueryBuilder /> component for constructing queries",
+  "source": "src/index.ts",
   "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "types/index.d.ts",
   "files": [
-    "dist/query-builder.scss",
-    "dist/query-builder.css",
+    "dist",
     "types"
   ],
   "repository": {
@@ -42,6 +43,9 @@
     "@emotion/styled": "^11",
     "@mui/icons-material": "^5.0.5",
     "@mui/material": "^5.0.6",
+    "@parcel/packager-ts": "^2.0.1",
+    "@parcel/transformer-sass": "^2.0.1",
+    "@parcel/transformer-typescript-types": "^2.0.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/enzyme": "^3.10.8",
@@ -72,6 +76,7 @@
     "jest": "^27.0.6",
     "mini-css-extract-plugin": "^2.1.0",
     "np": "^7.2.0",
+    "parcel": "^2.0.1",
     "postcss-cssnext": "^3.0.2",
     "postcss-loader": "^6.1.1",
     "prettier": "2.4.1",
@@ -90,6 +95,7 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
+    "@swc/helpers": "^0.2.14",
     "immer": "^9.0.6",
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2"
@@ -113,8 +119,10 @@
     "testEnvironment": "jsdom"
   },
   "scripts": {
-    "start": "webpack serve --config config/webpack-dev.config.js",
-    "build": "npm run build:types && del dist && del dist_demo && webpack",
+    "start": "parcel demo/index.html --port 8080",
+    "build": "npm run build:types && del dist && npm run build:css && parcel build",
+    "build:css": "sass src/query-builder.scss dist/query-builder.css",
+    "build:demo": "del dist_demo && parcel build demo/index.html --dist-dir dist_demo --target module",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
     "build:types": "del types && tsc --emitDeclarationOnly",
@@ -124,7 +132,7 @@
     "lint": "eslint src/",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison -o src/utils/parseSQL/sqlParser.js -m commonjs",
+    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js",
     "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   }
 }
