@@ -43,22 +43,38 @@ export interface RuleGroupType {
   path?: number[];
   id?: string;
   combinator: string;
-  rules: (RuleType | RuleGroupType)[];
+  rules: RuleGroupArray;
   not?: boolean;
 }
 
 export interface RuleGroupTypeIC {
   path?: number[];
   id?: string;
-  rules: (RuleType | RuleGroupTypeIC | string)[];
+  rules: RuleGroupICArray;
   not?: boolean;
 }
 
 export type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;
 
-export type RuleOrGroupArray =
-  | (RuleType | RuleGroupType)[]
-  | (RuleType | RuleGroupTypeIC | string)[];
+// Utility for repeating the rule-combinator-rule pattern of the RuleGroupIC types
+type MAXIMUM_ALLOWED_BOUNDARY = 80;
+type Mapped<
+  Tuple extends Array<unknown>,
+  Result extends Array<unknown> = [],
+  Count extends ReadonlyArray<number> = []
+> = Count['length'] extends MAXIMUM_ALLOWED_BOUNDARY
+  ? Result
+  : Tuple extends []
+  ? []
+  : Result extends []
+  ? Mapped<Tuple, Tuple, [...Count, 1]>
+  : Mapped<Tuple, Result | [...Result, ...Tuple], [...Count, 1]>;
+
+export type RuleGroupArray = (RuleType | RuleGroupType)[];
+export type RuleGroupICArray =
+  | [RuleType | RuleGroupTypeIC]
+  | [RuleType | RuleGroupTypeIC, ...Mapped<[string, RuleType | RuleGroupTypeIC]>];
+export type RuleOrGroupArray = RuleGroupArray | RuleGroupICArray;
 
 export interface DefaultRuleGroupType extends RuleGroupType {
   combinator: DefaultCombinatorName;
@@ -66,7 +82,12 @@ export interface DefaultRuleGroupType extends RuleGroupType {
 }
 
 export interface DefaultRuleGroupTypeIC extends RuleGroupTypeIC {
-  rules: (DefaultRuleGroupTypeIC | DefaultRuleType | DefaultCombinatorName)[];
+  rules:
+    | [DefaultRuleType | DefaultRuleGroupTypeIC]
+    | [
+        DefaultRuleType | DefaultRuleGroupTypeIC,
+        ...Mapped<[DefaultCombinatorName, DefaultRuleType | DefaultRuleGroupTypeIC]>
+      ];
 }
 
 export type DefaultRuleGroupTypeAny = DefaultRuleGroupType | DefaultRuleGroupTypeIC;

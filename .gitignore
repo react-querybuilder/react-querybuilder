@@ -3,7 +3,7 @@ node_modules
 *.log
 .tmp
 coverage
-/.DS_Store
+.DS_Store
 dist
 dist_demo
 types
