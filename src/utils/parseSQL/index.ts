@@ -1,4 +1,4 @@
-import {
+import type {
   DefaultCombinatorName,
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -10,17 +10,17 @@ import {
 } from '../../types';
 import sqlParser from './sqlParser';
 import {
-  AndOperator,
-  ComparisonOperator,
+  type AndOperator,
+  type ComparisonOperator,
   isSQLExpressionNotString,
   isSQLIdentifier,
   isSQLLiteralValue,
-  OrOperator,
-  SQLAndExpression,
-  SQLExpression,
-  SQLIdentifier,
-  SQLLiteralValue,
-  SQLOrExpression
+  type OrOperator,
+  type SQLAndExpression,
+  type SQLExpression,
+  type SQLIdentifier,
+  type SQLLiteralValue,
+  type SQLOrExpression
 } from './types';
 
 const getParamString = (param: any) => {

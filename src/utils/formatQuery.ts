@@ -1,17 +1,17 @@
-import {
+import type {
   ExportFormat,
   FormatQueryOptions,
   ParameterizedNamedSQL,
   ParameterizedSQL,
+  ValueProcessor
+} from '../types/importExport';
+import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '../types/ruleGroups';
+import type {
   QueryValidator,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleType,
   RuleValidator,
   ValidationMap,
-  ValidationResult,
-  ValueProcessor
-} from '../types';
+  ValidationResult
+} from '../types/validation';
 import isRuleOrGroupValid from './isRuleOrGroupValid';
 import uniqByName from './uniqByName';
 
@@ -368,7 +368,7 @@ const formatQuery = (
       return expression ? `${combinator}:[${expression}]` : fallbackExpression;
     };
 
-    // "mongodb" export type doesn't support independent combinators
+    // "mongodb" export type doesn't currently support independent combinators
     if ('combinator' in ruleGroup) {
       return `{${processRuleGroup(ruleGroup, true)}}`;
     }
