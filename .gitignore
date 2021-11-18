@@ -6,5 +6,5 @@ coverage
 .DS_Store
 dist
 dist_demo
-types
+/types
 .parcel-cache
