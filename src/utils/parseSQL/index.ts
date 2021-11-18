@@ -1,9 +1,10 @@
 import {
   DefaultCombinatorName,
   DefaultOperatorName,
+  DefaultRuleGroupArray,
+  DefaultRuleGroupICArray,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
-  DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ParseSQLOptions
 } from '../../types';
@@ -145,7 +146,7 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
       if (ex.type === 'AndExpression' || ex.type === 'OrExpression') {
         return processSQLExpression(ex);
       }
-      const rule = processSQLExpression(ex);
+      const rule = processSQLExpression(ex) as DefaultRuleType;
       return rule ? { combinator: 'and', rules: [rule] } : null;
     } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
       if (ic) {
@@ -162,7 +163,7 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           return null;
         }
         return {
-          rules: rules as (DefaultCombinatorName | DefaultRuleType | DefaultRuleGroupTypeIC)[]
+          rules: rules as DefaultRuleGroupICArray
         };
       }
       const andOrList = generateMixedAndOrList(expr);
@@ -178,15 +179,14 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           if (Array.isArray(exp)) {
             return {
               combinator: 'and',
-              rules: exp.map((e) => processSQLExpression(e)).filter((r) => !!r) as (
-                | DefaultRuleGroupType
-                | DefaultRuleType
-              )[]
+              rules: exp
+                .map((e) => processSQLExpression(e))
+                .filter((r) => !!r) as DefaultRuleGroupArray
             };
           }
           return processSQLExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
-        .filter((r) => !!r) as (DefaultRuleGroupType | DefaultRuleType)[];
+        .filter((r) => !!r) as DefaultRuleGroupArray;
       /* istanbul ignore else */
       if (rules.length > 0) {
         return { combinator, rules };

@@ -46,7 +46,10 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGr
       independentCombinators: false
     } as QueryBuilderPropsInternal);
   }
-  return QueryBuilderImpl<RuleGroupTypeIC>({ ...props, independentCombinators: true });
+  return QueryBuilderImpl<RuleGroupTypeIC>({
+    ...props,
+    independentCombinators: true
+  } as QueryBuilderPropsInternal<RuleGroupTypeIC>);
 };
 
 const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({

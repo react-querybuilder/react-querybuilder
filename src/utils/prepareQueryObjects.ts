@@ -1,7 +1,10 @@
 import produce from 'immer';
 import { generateID } from '.';
-import type { RuleGroupTypeAny, RuleType } from '../types';
+import type { RuleGroupArray, RuleGroupICArray, RuleGroupTypeAny, RuleType } from '../types';
 
+/**
+ * Generates a valid rule
+ */
 export const prepareRule = (rule: RuleType) =>
   produce(rule, (draft) => {
     if (!draft.id) {
@@ -10,7 +13,7 @@ export const prepareRule = (rule: RuleType) =>
   });
 
 /**
- * Generates a valid query object
+ * Generates a valid rule group
  */
 export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(queryObject: RG): RG =>
   produce(queryObject, (draft) => {
@@ -19,6 +22,6 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(queryObject: RG): 
     }
     draft.rules = draft.rules.map((r) =>
       typeof r === 'string' ? r : 'rules' in r ? prepareRuleGroup(r) : prepareRule(r)
-    );
+    ) as RuleGroupArray | RuleGroupICArray;
     draft.not = !!draft.not;
   });
