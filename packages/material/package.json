@@ -1,7 +1,6 @@
 {
   "name": "@react-querybuilder/material",
-  "version": "1.0.0",
-  "private": true,
+  "version": "4.0.0-beta.5",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

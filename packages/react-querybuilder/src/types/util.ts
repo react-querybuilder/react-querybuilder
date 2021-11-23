@@ -23,6 +23,7 @@ type Compare<Num extends number> = Num extends number
 type OddRange = Compare<NumberRange>;
 export type OddRangeWithZero = OddRange | 0;
 
+/* istanbul ignore next */
 export const isOddOrZero = (n: number): n is OddRangeWithZero => n >= 0 && (n === 0 || n % 2 === 1);
 
 // Utility for repeating the rule-combinator-rule pattern of the RuleGroupIC types

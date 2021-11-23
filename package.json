@@ -1,9 +1,11 @@
 {
+  "name": "react-querybuilder",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
+    "test": "jest",
     "pretty-print": "prettier --write packages/*/src/** && prettier --write ./*.js"
   },
   "devDependencies": {
@@ -12,16 +14,27 @@
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
     "@parcel/transformer-sass": "^2.0.1",
+    "@testing-library/dom": "^8.11.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/enzyme": "^3.10.8",
+    "@types/jest": "^27.0.1",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
     "all-contributors-cli": "^6.19.0",
+    "enzyme": "^3.11.0",
     "eslint": "^8.2.0",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "gh-pages": "^3.1.0",
     "github-changes": "^2.0.2",
+    "jest": "^27.0.6",
+    "lerna": "^4.0.0",
     "np": "^7.2.0",
     "prettier": "2.4.1",
+    "react-dnd-test-backend": "^14.0.1",
+    "react-dnd-test-utils": "^14.0.2",
     "typescript": "^4.5.0"
   }
 }

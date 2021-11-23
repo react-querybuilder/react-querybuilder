@@ -1,0 +1,4 @@
+{
+  "presets": ["@babel/env", ["@babel/react", { "runtime": "automatic" }], "@babel/typescript"],
+  "env": { "development": { "compact": false } }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/demo",
-  "version": "1.0.0",
+  "version": "4.0.0-beta.5",
   "private": true,
   "source": "src/index.html",
   "targets": {
@@ -19,10 +19,10 @@
     "@ant-design/icons": "^4.7.0",
     "@chakra-ui/react": "^1.6.5",
     "@mui/material": "^5.0.6",
-    "@react-querybuilder/antd": "1.0.0",
-    "@react-querybuilder/bootstrap": "1.0.0",
-    "@react-querybuilder/chakra": "1.0.0",
-    "@react-querybuilder/material": "1.0.0",
+    "@react-querybuilder/antd": "4.0.0-beta.5",
+    "@react-querybuilder/bootstrap": "4.0.0-beta.5",
+    "@react-querybuilder/chakra": "4.0.0-beta.5",
+    "@react-querybuilder/material": "4.0.0-beta.5",
     "antd": "^4.10.3",
     "bootstrap": "^5.0.2",
     "core-js": "^2.6.12",

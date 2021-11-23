@@ -52,22 +52,12 @@
     "@babel/preset-typescript": "^7.12.7",
     "@parcel/packager-ts": "^2.0.1",
     "@parcel/transformer-typescript-types": "^2.0.1",
-    "@testing-library/dom": "^8.11.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/enzyme": "^3.10.8",
     "@types/hoist-non-react-statics": "^3.3.1",
-    "@types/jest": "^27.0.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
     "babel-plugin-istanbul": "^6.0.0",
-    "enzyme": "^3.11.0",
-    "jest": "^27.0.6",
     "parcel": "^2.0.1",
     "react": "^17.0.1",
-    "react-dnd-test-backend": "^14.0.1",
-    "react-dnd-test-utils": "^14.0.2",
     "react-dom": "^17.0.1",
     "rimraf": "^3.0.2",
     "sass": "^1.40.0",
@@ -84,19 +74,6 @@
     "react-dom": ">=16.8.0"
   },
   "browserslist": "> 0.25%, not dead",
-  "jest": {
-    "coverageDirectory": "coverage",
-    "setupFilesAfterEnv": [
-      "<rootDir>src/setupTests.ts"
-    ],
-    "moduleNameMapper": {
-      "\\.(c|sa|sc)ss$": "<rootDir>src/__mocks__/styleMock.ts"
-    },
-    "coveragePathIgnorePatterns": [
-      "sqlParser.js"
-    ],
-    "testEnvironment": "jsdom"
-  },
   "scripts": {
     "build": "rimraf dist && npm run build:css && npm run build:types && npm run build:main",
     "build:css": "sass src/query-builder.scss dist/query-builder.css",
@@ -106,9 +83,6 @@
     "type-check:watch": "npm run type-check -- --watch",
     "publish:demo": "npm run build && node gh-pages.publish.js",
     "publish:npm": "np",
-    "lint": "eslint src/",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
     "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js",
     "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   }
