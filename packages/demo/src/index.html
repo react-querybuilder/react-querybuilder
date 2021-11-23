@@ -1,44 +1,39 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        name="viewport">
-  <title>React Query Builder Demo</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-        rel="stylesheet">
-  <link href="/node_modules/react-querybuilder/src/query-builder.scss"
-        rel="stylesheet">
-  <link href="/node_modules/antd/dist/antd.compact.css"
-        rel="stylesheet">
-  <link href="./styles/common.scss"
-        rel="stylesheet">
-  <link href="./styles/github-fork-ribbon.scss"
-        rel="stylesheet">
-  <link href="./styles/with-antd.scss"
-        rel="stylesheet">
-  <link href="./styles/with-bootstrap.scss"
-        rel="stylesheet">
-  <link href="./styles/with-chakra.scss"
-        rel="stylesheet">
-  <link href="./styles/with-default.scss"
-        rel="stylesheet">
-  <link href="./styles/with-material.scss"
-        rel="stylesheet">
-  <style>
+  <head>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <title>React Query Builder Demo</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet" />
+    <link href="/node_modules/react-querybuilder/src/query-builder.scss" rel="stylesheet" />
+    <link href="/node_modules/antd/dist/antd.compact.css" rel="stylesheet" />
+    <link href="./styles/common.scss" rel="stylesheet" />
+    <link href="./styles/github-fork-ribbon.scss" rel="stylesheet" />
+    <link href="./styles/with-antd.scss" rel="stylesheet" />
+    <link href="./styles/with-bootstrap.scss" rel="stylesheet" />
+    <link href="./styles/with-chakra.scss" rel="stylesheet" />
+    <link href="./styles/with-default.scss" rel="stylesheet" />
+    <link href="./styles/with-material.scss" rel="stylesheet" />
+    <style>
       .github-fork-ribbon:before {
         background-color: #090 !important;
       }
-  </style>
-</head>
-<body>
-  <a class="github-fork-ribbon"
-        data-ribbon="Fork me on GitHub"
-        href="https://github.com/react-querybuilder/react-querybuilder"
-        title="Fork me on GitHub">Fork me on GitHub</a>
-  <div id="app">
-    You may be using a legacy browser. <a href="ie11.html">Click here</a> for a demo that should be compatible.
-  </div>
-  <script>
+    </style>
+  </head>
+  <body>
+    <a
+      class="github-fork-ribbon"
+      data-ribbon="Fork me on GitHub"
+      href="https://github.com/react-querybuilder/react-querybuilder"
+      title="Fork me on GitHub"
+      >Fork me on GitHub</a
+    >
+    <div id="app">
+      You may be using a legacy browser. <a href="ie11.html">Click here</a> for a demo that should
+      be compatible.
+    </div>
+    <script>
       (function setScript(initialValue) {
         var mql = window.matchMedia('(prefers-color-scheme: dark)');
         var systemPreference = mql.matches ? 'dark' : 'light';
@@ -66,8 +61,7 @@
           root.style.setProperty('--chakra-ui-color-mode', colorMode);
         }
       })('light');
-  </script> 
-  <script src="main.tsx"
-        type="module"></script>
-</body>
+    </script>
+    <script src="main.tsx" type="module"></script>
+  </body>
 </html>

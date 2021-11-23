@@ -9,19 +9,17 @@ import type {
   ParseSQLOptions
 } from '../../types';
 import sqlParser from './sqlParser';
-import {
-  type AndOperator,
-  type ComparisonOperator,
-  isSQLExpressionNotString,
-  isSQLIdentifier,
-  isSQLLiteralValue,
-  type OrOperator,
-  type SQLAndExpression,
-  type SQLExpression,
-  type SQLIdentifier,
-  type SQLLiteralValue,
-  type SQLOrExpression
+import type {
+  AndOperator,
+  ComparisonOperator,
+  OrOperator,
+  SQLAndExpression,
+  SQLExpression,
+  SQLIdentifier,
+  SQLLiteralValue,
+  SQLOrExpression
 } from './types';
+import { isSQLExpressionNotString, isSQLIdentifier, isSQLLiteralValue } from './utils';
 
 const getParamString = (param: any) => {
   switch (typeof param) {
