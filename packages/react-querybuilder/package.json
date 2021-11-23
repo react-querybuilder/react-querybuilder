@@ -6,8 +6,20 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/types/index.d.ts",
+  "formatQuery": "dist/formatQuery.js",
+  "parseSQL": "dist/parseSQL.js",
   "targets": {
-    "types": false
+    "types": false,
+    "formatQuery": {
+      "source": "src/utils/formatQuery.ts",
+      "outputFormat": "esmodule",
+      "isLibrary": true
+    },
+    "parseSQL": {
+      "source": "src/utils/parseSQL/index.ts",
+      "outputFormat": "esmodule",
+      "isLibrary": true
+    }
   },
   "files": [
     "dist"
