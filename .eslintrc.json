@@ -9,7 +9,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended"
   ],
-  "ignorePatterns": ["dist", "dist_demo", "sqlParser.js"],
+  "ignorePatterns": ["dist", "sqlParser.js"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {

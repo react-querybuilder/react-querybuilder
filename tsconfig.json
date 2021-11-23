@@ -9,7 +9,5 @@
     "jsx": "react-jsx",
     "target": "esnext",
     "esModuleInterop": true
-  },
-  "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*", "./src/setupTests.ts"]
+  }
 }
