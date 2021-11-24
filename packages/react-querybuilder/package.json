@@ -5,7 +5,7 @@
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "formatQuery": "dist/formatQuery.js",
   "parseSQL": "dist/parseSQL.js",
   "targets": {
