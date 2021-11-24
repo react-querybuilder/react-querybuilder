@@ -22,7 +22,7 @@ To run the demo yourself, go through the following steps:
 
 1. _Clone this repo_
 2. `yarn` _Install dependencies_
-3. `yarn lerna run start` _Run a local server_
+3. `yarn start` _Run a local server_
 4. _Visit http://localhost:8080 in your browser_
 
 ## Basic usage

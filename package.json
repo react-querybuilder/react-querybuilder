@@ -5,6 +5,8 @@
     "packages/*"
   ],
   "scripts": {
+    "start": "lerna run start",
+    "build": "lerna run build",
     "test": "jest",
     "publish:demo": "lerna run build && node gh-pages.publish.js",
     "pretty-print": "prettier --write packages/*/src/** ./*.js",
@@ -33,7 +35,6 @@
     "github-changes": "^2.0.2",
     "jest": "^27.0.6",
     "lerna": "^4.0.0",
-    "np": "^7.2.0",
     "prettier": "2.4.1",
     "react-dnd-test-backend": "^14.0.1",
     "react-dnd-test-utils": "^14.0.2",
