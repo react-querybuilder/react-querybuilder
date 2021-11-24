@@ -44,7 +44,7 @@
     "react-syntax-highlighter": "^15.4.4"
   },
   "scripts": {
-    "start": "parcel --port 8080",
+    "start": "parcel src/index.html src/ie11.html --port 8080",
     "build": "rimraf dist && parcel build"
   }
 }
