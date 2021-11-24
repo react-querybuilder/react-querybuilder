@@ -6,7 +6,9 @@
   ],
   "scripts": {
     "test": "jest",
-    "pretty-print": "prettier --write packages/*/src/** && prettier --write ./*.js"
+    "publish:demo": "lerna run build && node gh-pages.publish.js",
+    "pretty-print": "prettier --write packages/*/src/** ./*.js",
+    "generate-changelog": "node node_modules/github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
