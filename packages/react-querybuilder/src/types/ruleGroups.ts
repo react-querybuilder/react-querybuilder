@@ -1,4 +1,4 @@
-import type { NameLabelPair } from '.';
+import type { NameLabelPair } from './basic';
 import type { MappedTuple } from './util';
 
 export interface RuleType {

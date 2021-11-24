@@ -1,4 +1,4 @@
-import { generateID } from '.';
+import generateID from './generateID';
 import type {
   RuleGroupArray,
   RuleGroupICArray,

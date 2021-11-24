@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { generateID } from '.';
+import generateID from './generateID';
 import type { RuleGroupArray, RuleGroupICArray, RuleGroupTypeAny, RuleType } from '../types';
 
 /**
