@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import type { DragHandleProps } from '../types';
+import type { DragHandleProps } from '../types/props';
 
 export default forwardRef<HTMLSpanElement, DragHandleProps>(function DragHandle(
   { className, label, title },

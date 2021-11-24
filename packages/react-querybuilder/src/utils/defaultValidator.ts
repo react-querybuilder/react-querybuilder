@@ -1,5 +1,6 @@
-import type { QueryValidator, RuleGroupTypeAny, RuleType, ValidationMap } from '../types';
 import { defaultCombinators, groupInvalidReasons } from '../defaults';
+import type { RuleGroupTypeAny, RuleType } from '../types/ruleGroups';
+import type { QueryValidator, ValidationMap } from '../types/validation';
 
 /**
  * This is an example validation function you can pass to QueryBuilder in the

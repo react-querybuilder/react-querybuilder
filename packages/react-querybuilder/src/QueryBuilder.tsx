@@ -11,28 +11,22 @@ import {
   defaultTranslations,
   standardClassnames
 } from './defaults';
-import type {
-  Field,
-  QueryBuilderProps,
-  QueryBuilderPropsInternal,
-  RuleGroupType,
-  RuleGroupTypeIC,
-  RuleType,
-  Schema
-} from './types';
+import type { Field } from './types/basic';
+import type { QueryBuilderProps, QueryBuilderPropsInternal, Schema } from './types/props';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from './types/ruleGroups';
 import {
   c,
   findPath,
   generateID,
   getCommonAncestorPath,
-  prepareRule,
-  prepareRuleGroup,
   getParentPath,
   isRuleGroup,
-  uniqByName,
   pathsAreEqual,
+  prepareRule,
+  prepareRuleGroup,
+  regenerateID,
   regenerateIDs,
-  regenerateID
+  uniqByName
 } from './utils';
 
 enableES5();

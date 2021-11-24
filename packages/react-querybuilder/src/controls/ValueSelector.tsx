@@ -1,4 +1,4 @@
-import type { ValueSelectorProps } from '../types';
+import type { ValueSelectorProps } from '../types/props';
 
 const ValueSelector = ({
   className,

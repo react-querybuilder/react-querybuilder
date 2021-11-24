@@ -5,11 +5,12 @@
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types.d.ts",
   "formatQuery": "dist/formatQuery.js",
   "parseSQL": "dist/parseSQL.js",
   "targets": {
-    "types": false,
+    "main": {},
+    "module": {},
     "formatQuery": {
       "source": "src/utils/formatQuery.ts",
       "outputFormat": "esmodule",
@@ -75,10 +76,9 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "build": "rimraf dist && npm run build:css && npm run build:types && npm run build:main",
+    "build": "rimraf dist && npm run build:css && npm run build:main",
     "build:css": "sass src/query-builder.scss dist/query-builder.css",
     "build:main": "parcel build",
-    "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
     "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js"

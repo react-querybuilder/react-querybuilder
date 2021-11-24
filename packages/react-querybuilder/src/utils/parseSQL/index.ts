@@ -1,3 +1,4 @@
+import type { ParseSQLOptions } from '../../types/importExport';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -5,9 +6,8 @@ import type {
   DefaultRuleGroupICArray,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
-  DefaultRuleType,
-  ParseSQLOptions
-} from '../../types';
+  DefaultRuleType
+} from '../../types/ruleGroups';
 import sqlParser from './sqlParser';
 import type {
   AndOperator,
