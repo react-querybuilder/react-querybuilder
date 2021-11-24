@@ -32,6 +32,7 @@ import {
   MaterialValueEditor,
   MaterialValueSelector
 } from '@react-querybuilder/material';
+import { generateID } from 'react-querybuilder';
 
 export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
 
@@ -157,79 +158,92 @@ export const fields: Field[] = [
 ];
 
 export const initialQuery: RuleGroupType = {
+  id: generateID(),
+  combinator: 'and',
+  not: false,
   rules: [
     {
+      id: generateID(),
       field: 'firstName',
       value: 'Stev',
       operator: 'beginsWith'
     },
     {
+      id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
       operator: 'in'
     },
     {
+      id: generateID(),
       field: 'age',
       operator: '>',
       value: '28'
     },
     {
+      id: generateID(),
       combinator: 'or',
       rules: [
         {
+          id: generateID(),
           field: 'isMusician',
           operator: '=',
           value: true
         },
         {
+          id: generateID(),
           field: 'instrument',
           operator: '=',
           value: 'Guitar'
         }
       ]
     }
-  ],
-  combinator: 'and',
-  not: false
+  ]
 };
 
 export const initialQueryIC: RuleGroupTypeIC = {
+  not: false,
   rules: [
     {
+      id: generateID(),
       field: 'firstName',
       value: 'Stev',
       operator: 'beginsWith'
     },
     'and',
     {
+      id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
       operator: 'in'
     },
     'and',
     {
+      id: generateID(),
       field: 'age',
       operator: '>',
       value: '28'
     },
     'and',
     {
+      id: generateID(),
       rules: [
         {
+          id: generateID(),
           field: 'isMusician',
           operator: '=',
           value: true
         },
         'or',
         {
+          id: generateID(),
           field: 'instrument',
           operator: '=',
           value: 'Guitar'
         }
       ]
     }
-  ],
-  not: false
+  ]
 };
 
 export const formatMap: { fmt: ExportFormat; lbl: string }[] = [

@@ -6,6 +6,10 @@ body {
 .queryBuilder {
   min-width: 405px;
 
+  .queryBuilder-dragHandle {
+    cursor: move;
+  }
+
   .ruleGroup,
   .ruleGroup-header,
   .ruleGroup-body,
@@ -56,7 +60,7 @@ body {
   }
 
   // Message to user about empty groups
-  .ruleGroup.queryBuilder-invalid > .ruleGroup-body::before {
+  .ruleGroup.queryBuilder-invalid > .ruleGroup-header::after {
     content: 'Empty groups are considered invalid. Avoid them by using addRuleToNewGroups.';
   }
 }

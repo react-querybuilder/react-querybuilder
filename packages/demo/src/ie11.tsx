@@ -1,6 +1,12 @@
 import 'core-js';
 import ReactDOM from 'react-dom';
-import QueryBuilder, { defaultValidator, Field, RuleGroupType, RuleType } from 'react-querybuilder';
+import QueryBuilder, {
+  defaultValidator,
+  Field,
+  generateID,
+  RuleGroupType,
+  RuleType
+} from 'react-querybuilder';
 
 const validator = (r: RuleType) => !!r.value;
 
@@ -50,43 +56,50 @@ const fields: Field[] = [
 ];
 
 const initialQuery: RuleGroupType = {
+  id: generateID(),
+  combinator: 'and',
+  not: false,
   rules: [
     {
+      id: generateID(),
       field: 'firstName',
       value: 'Stev',
       operator: 'beginsWith'
     },
     {
+      id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
       operator: 'in'
     },
     {
+      id: generateID(),
       field: 'age',
       operator: '>',
       value: '28'
     },
     {
+      id: generateID(),
       combinator: 'or',
       rules: [
         {
+          id: generateID(),
           field: 'isMusician',
           operator: '=',
           value: true
         },
         {
+          id: generateID(),
           field: 'instrument',
           operator: '=',
           value: 'Guitar'
         }
       ]
     }
-  ],
-  combinator: 'and',
-  not: false
+  ]
 };
 
-const IE11Test = () => (
+const IE11 = () => (
   <QueryBuilder
     fields={fields}
     defaultQuery={initialQuery}
@@ -98,4 +111,4 @@ const IE11Test = () => (
   />
 );
 
-ReactDOM.render(<IE11Test />, document.getElementById('ie11'));
+ReactDOM.render(<IE11 />, document.getElementById('ie11'));

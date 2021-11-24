@@ -30,10 +30,11 @@
       >Fork me on GitHub</a
     >
     <div id="app">
-      You may be using a legacy browser. <a href="ie11.html">Click here</a> for a demo that should
-      be compatible.
+      You may be using a legacy browser. <a href="#">Click here</a> for a demo that should be
+      compatible.
     </div>
     <script>
+      document.getElementById('app').getElementsByTagName('a')[0].href = 'ie11.html';
       (function setScript(initialValue) {
         var mql = window.matchMedia('(prefers-color-scheme: dark)');
         var systemPreference = mql.matches ? 'dark' : 'light';

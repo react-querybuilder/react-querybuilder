@@ -31,7 +31,9 @@ import QueryBuilder, {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   parseSQL,
-  RuleGroupTypeAny
+  QueryBuilderProps,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC
 } from 'react-querybuilder';
 import {
   docsLink,
@@ -291,9 +293,8 @@ const App = () => {
   const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
   const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
 
-  const commonRQBProps = {
+  const commonRQBProps: QueryBuilderProps = {
     ...styleOptions[style],
-    key: style,
     fields,
     showCombinatorsBetweenRules,
     showNotToggle,
@@ -419,13 +420,15 @@ const App = () => {
                   <form className="form-inline" style={{ marginTop: '1rem' }}>
                     {independentCombinators ? (
                       <QueryBuilder
-                        {...commonRQBProps}
+                        {...(commonRQBProps as QueryBuilderProps<RuleGroupTypeIC>)}
+                        key={style}
                         query={queryIC}
                         onQueryChange={(q) => setQueryIC(q)}
                       />
                     ) : (
                       <QueryBuilder
                         {...commonRQBProps}
+                        key={style}
                         query={query}
                         onQueryChange={(q) => setQuery(q)}
                       />
