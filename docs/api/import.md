@@ -57,6 +57,32 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Lists as arrays
+
+To generate actual arrays instead of comma-separated strings for lists of values following `IN` and `BETWEEN` operators, use the `listsAsArrays` option.
+
+```ts
+parseSQL(`SELECT * FROM t WHERE lastName IN ('Vai', 'Vaughan') AND age BETWEEN 20 AND 100`, {
+  listsAsArrays: true;
+});
+// Output:
+{
+  combinator: "and",
+  rules: [
+    {
+      field: "lastName",
+      operator: "in",
+      value: ["Vai", "Vaughan"]
+    },
+    {
+      field: "age",
+      operator: "between",
+      value: [20, 100]
+    }
+  ]
+}
+```
+
 ## Independent combinators
 
 When the `independentCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
