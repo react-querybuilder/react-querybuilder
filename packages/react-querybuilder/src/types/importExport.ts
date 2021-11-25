@@ -65,4 +65,5 @@ export interface ParseSQLOptions {
   independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
+  listsAsArrays?: boolean;
 }

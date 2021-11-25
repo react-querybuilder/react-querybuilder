@@ -149,6 +149,15 @@ describe('parseSQL', () => {
       );
     });
 
+    it('lists as arrays', () => {
+      expect(parseSQL(`lastName IN ('Vai', 'Vaughan')`, { listsAsArrays: true })).toEqual(
+        wrapRule({ field: 'lastName', operator: 'in', value: ['Vai', 'Vaughan'] })
+      );
+      expect(parseSQL(`age BETWEEN 20 AND 100`, { listsAsArrays: true })).toEqual(
+        wrapRule({ field: 'age', operator: 'between', value: [20, 100] })
+      );
+    });
+
     it('independent combinators', () => {
       expect(
         parseSQL(`firstName = 'Steve' AND lastName = someFunc('Vai') OR middleName IS NULL`, {

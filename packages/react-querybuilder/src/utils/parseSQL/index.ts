@@ -219,11 +219,8 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
     } else if (expr.type === 'InExpressionListPredicate') {
       /* istanbul ignore else */
       if (isSQLIdentifier(expr.left)) {
-        const value = expr.right.value
-          .filter(isSQLLiteralValue)
-          .map(evalSQLLiteralValue)
-          // TODO: if this should be an array, delete the following line
-          .join(', ');
+        const valueArray = expr.right.value.filter(isSQLLiteralValue).map(evalSQLLiteralValue);
+        const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
         const operator = expr.hasNot ? 'notIn' : 'in';
         return { field: getFieldName(expr.left.value), operator, value };
       }
@@ -234,10 +231,8 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         isSQLLiteralValue(expr.right.left) &&
         isSQLLiteralValue(expr.right.right)
       ) {
-        const value = [expr.right.left, expr.right.right]
-          .map(evalSQLLiteralValue)
-          // TODO: if this should be an array, delete the following line
-          .join(', ');
+        const valueArray = [expr.right.left, expr.right.right].map(evalSQLLiteralValue);
+        const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
         const operator = expr.hasNot ? 'notBetween' : 'between';
         return { field: getFieldName(expr.left.value), operator, value };
       }
