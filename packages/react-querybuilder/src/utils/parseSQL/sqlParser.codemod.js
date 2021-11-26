@@ -3,15 +3,12 @@ export default (file, api) => {
   const root = j(file.source);
 
   root
-    .find(j.AssignmentExpression)
-    .filter(
-      (e) => e.node?.left?.object?.name === 'exports' && e.node?.left?.property?.name === 'main'
-    )
-    .remove();
-
-  root
     .find(j.IfStatement)
-    .filter((e) => e.node?.test?.right?.left?.object?.name === 'require')
+    .filter(
+      (e) =>
+        e.node?.test?.left?.left?.argument?.name === 'require' &&
+        e.node?.test?.right?.left?.argument?.name === 'exports'
+    )
     .remove();
 
   return root.toSource();

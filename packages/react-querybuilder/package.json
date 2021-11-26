@@ -66,6 +66,6 @@
     "build:main": "vite build",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
-    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t https://unpkg.com/commonjs-to-es-module-codemod src/utils/parseSQL/sqlParser.js"
+    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js && echo \"\\nexport default sqlParser;\" >> src/utils/parseSQL/sqlParser.js"
   }
 }

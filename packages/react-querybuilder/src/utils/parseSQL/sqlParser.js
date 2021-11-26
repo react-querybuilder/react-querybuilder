@@ -1157,10 +1157,4 @@ function Parser () {
 Parser.prototype = parser;parser.Parser = Parser;
 return new Parser;
 })();
-
-
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-    exports.parser = sqlParser;
-    exports.Parser = sqlParser.Parser;
-    exports.parse = function () { return sqlParser.parse.apply(sqlParser, arguments); };
-}
+export default sqlParser;
