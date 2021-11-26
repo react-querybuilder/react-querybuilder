@@ -1,14 +1,11 @@
-// vite.config.js
-const path = require('path');
-const { defineConfig } = require('vite');
+import path from 'path';
+import { defineConfig } from 'vite';
 
-module.exports = defineConfig({
+export default defineConfig({
   build: {
-    sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'ReactQueryBuilder',
-      fileName: (format) => `react-querybuilder.${format}.js`,
+      fileName: (format) => `index.${format}.js`,
       formats: ['es', 'cjs']
     },
     rollupOptions: {

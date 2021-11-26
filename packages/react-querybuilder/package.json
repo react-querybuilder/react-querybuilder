@@ -2,16 +2,16 @@
   "name": "react-querybuilder",
   "version": "4.0.0-beta.5",
   "description": "The React <QueryBuilder /> component for constructing queries",
-  "main": "dist/react-querybuilder.umd.js",
-  "module": "dist/react-querybuilder.es.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "import": "./dist/react-querybuilder.es.js",
-      "require": "./dist/react-querybuilder.umd.js"
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
     }
   },
   "repository": {
@@ -61,9 +61,10 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "build": "npm run build:main && npm run build:css",
-    "build:css": "sass src/query-builder.scss dist/query-builder.css",
+    "build": "npm run build:main && npm run build:css && npm run build:types && cp src/query-builder.scss dist",
+    "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css",
     "build:main": "vite build",
+    "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
     "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js && echo \"\\nexport default sqlParser;\" >> src/utils/parseSQL/sqlParser.js"
