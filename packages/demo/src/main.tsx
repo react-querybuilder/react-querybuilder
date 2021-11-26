@@ -15,7 +15,7 @@ import {
   Typography
 } from 'antd';
 import queryString from 'query-string';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, Suspense, useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
@@ -43,6 +43,7 @@ import {
   initialQueryIC,
   npmLink,
   StyleName,
+  styleNameMap,
   styleOptions
 } from './constants';
 import 'react-querybuilder/dist/query-builder.scss';
@@ -322,11 +323,11 @@ const App = () => {
           <Sider theme="light" width={260} style={{ padding: '1rem' }}>
             <Title level={4}>Style</Title>
             <Select value={style} onChange={(v) => setStyle(v as StyleName)}>
-              <Option value="default">Default</Option>
-              <Option value="bootstrap">Bootstrap</Option>
-              <Option value="material">Material</Option>
-              <Option value="antd">Ant Design</Option>
-              <Option value="chakra">Chakra UI</Option>
+              <Option value="default">{styleNameMap.default}</Option>
+              <Option value="bootstrap">{styleNameMap.bootstrap}</Option>
+              <Option value="material">{styleNameMap.material}</Option>
+              <Option value="antd">{styleNameMap.antd}</Option>
+              <Option value="chakra">{styleNameMap.chakra}</Option>
             </Select>
             <Title level={4} style={{ marginTop: '1rem' }}>
               Options
@@ -418,25 +419,27 @@ const App = () => {
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
             <ChakraStyleProvider theme={chakraTheme}>
               <MUIThemeProvider theme={muiTheme}>
-                <div className={qbWrapperClassName}>
-                  <form className="form-inline" style={{ marginTop: '1rem' }}>
-                    {independentCombinators ? (
-                      <QueryBuilder
-                        {...(commonRQBProps as QueryBuilderProps<RuleGroupTypeIC>)}
-                        key={style}
-                        query={queryIC}
-                        onQueryChange={(q) => setQueryIC(q)}
-                      />
-                    ) : (
-                      <QueryBuilder
-                        {...commonRQBProps}
-                        key={style}
-                        query={query}
-                        onQueryChange={(q) => setQuery(q)}
-                      />
-                    )}
-                  </form>
-                </div>
+                <Suspense fallback={<div>Loading {styleNameMap[style]} components...</div>}>
+                  <div className={qbWrapperClassName}>
+                    <form className="form-inline" style={{ marginTop: '1rem' }}>
+                      {independentCombinators ? (
+                        <QueryBuilder
+                          {...(commonRQBProps as QueryBuilderProps<RuleGroupTypeIC>)}
+                          key={style}
+                          query={queryIC}
+                          onQueryChange={(q) => setQueryIC(q)}
+                        />
+                      ) : (
+                        <QueryBuilder
+                          {...commonRQBProps}
+                          key={style}
+                          query={query}
+                          onQueryChange={(q) => setQuery(q)}
+                        />
+                      )}
+                    </form>
+                  </div>
+                </Suspense>
               </MUIThemeProvider>
             </ChakraStyleProvider>
             <Divider />

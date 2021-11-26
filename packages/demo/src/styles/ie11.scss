@@ -63,4 +63,14 @@ body {
   .ruleGroup.queryBuilder-invalid > .ruleGroup-header::after {
     content: 'Empty groups are considered invalid. Avoid them by using addRuleToNewGroups.';
   }
+
+  .dndOver {
+    &.rule,
+    &.ruleGroup-header {
+      border-bottom-width: 2px;
+      border-bottom-style: dashed;
+      border-bottom-color: rebeccapurple;
+      padding-bottom: 0.5rem;
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import type {
   ExportFormat,
   Field,
@@ -6,33 +7,26 @@ import type {
   RuleGroupTypeIC,
   RuleType
 } from 'react-querybuilder/src/types';
-import {
-  AntDActionElement,
-  AntDDragHandle,
-  AntDNotToggle,
-  AntDValueEditor,
-  AntDValueSelector
-} from '@react-querybuilder/antd';
-import {
-  BootstrapDragHandle,
-  BootstrapNotToggle,
-  BootstrapValueEditor
-} from '@react-querybuilder/bootstrap';
-import {
-  ChakraActionElement,
-  ChakraDragHandle,
-  ChakraNotToggle,
-  ChakraValueEditor,
-  ChakraValueSelector
-} from '@react-querybuilder/chakra';
-import {
-  MaterialActionElement,
-  MaterialDragHandle,
-  MaterialNotToggle,
-  MaterialValueEditor,
-  MaterialValueSelector
-} from '@react-querybuilder/material';
 import { generateID } from 'react-querybuilder';
+
+const AntDActionElement = lazy(() => import('./components/AntDActionElement'));
+const AntDDragHandle = lazy(() => import('./components/AntDDragHandle'));
+const AntDNotToggle = lazy(() => import('./components/AntDNotToggle'));
+const AntDValueEditor = lazy(() => import('./components/AntDValueEditor'));
+const AntDValueSelector = lazy(() => import('./components/AntDValueSelector'));
+const BootstrapDragHandle = lazy(() => import('./components/BootstrapDragHandle'));
+const BootstrapNotToggle = lazy(() => import('./components/BootstrapNotToggle'));
+const BootstrapValueEditor = lazy(() => import('./components/BootstrapValueEditor'));
+const ChakraActionElement = lazy(() => import('./components/ChakraActionElement'));
+const ChakraDragHandle = lazy(() => import('./components/ChakraDragHandle'));
+const ChakraNotToggle = lazy(() => import('./components/ChakraNotToggle'));
+const ChakraValueEditor = lazy(() => import('./components/ChakraValueEditor'));
+const ChakraValueSelector = lazy(() => import('./components/ChakraValueSelector'));
+const MaterialActionElement = lazy(() => import('./components/MaterialActionElement'));
+const MaterialDragHandle = lazy(() => import('./components/MaterialDragHandle'));
+const MaterialNotToggle = lazy(() => import('./components/MaterialNotToggle'));
+const MaterialValueEditor = lazy(() => import('./components/MaterialValueEditor'));
+const MaterialValueSelector = lazy(() => import('./components/MaterialValueSelector'));
 
 export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
 
@@ -40,6 +34,14 @@ export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 export const docsLink = 'https://react-querybuilder.js.org';
 
 export const validator = (r: RuleType) => !!r.value;
+
+export const styleNameMap: Record<StyleName, string> = {
+  default: 'Default',
+  bootstrap: 'Bootstrap',
+  material: 'Material',
+  antd: 'Ant Design',
+  chakra: 'Chakra UI'
+};
 
 export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
   default: {},
