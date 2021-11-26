@@ -1,11 +1,13 @@
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from '@mui/material/Input';
-import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Select from '@mui/material/Select';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  Input,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select
+} from '@mui/material';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 

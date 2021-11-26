@@ -8,12 +8,6 @@
   "files": [
     "dist"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder"
@@ -46,7 +40,6 @@
     "babel-plugin-istanbul": "^6.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "rimraf": "^3.0.2",
     "sass": "^1.40.0",
     "typescript": "^4.5.0"
   },

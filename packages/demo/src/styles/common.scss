@@ -37,6 +37,16 @@ pre {
   }
 }
 
+.ant-layout-header {
+  background-color: #82a7dd !important;
+
+  .ant-typography {
+    a {
+      color: white;
+    }
+  }
+}
+
 // In all styles except for default, push the clone and remove buttons to the right edge.
 .with-antd,
 .with-bootstrap,

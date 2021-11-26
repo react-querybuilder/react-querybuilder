@@ -9,10 +9,7 @@ export default defineConfig({
       formats: ['es', 'cjs']
     },
     rollupOptions: {
-      external: ['react', 'react-dnd', 'react-dnd-html5-backend', 'immer'],
-      output: {
-        exports: 'named'
-      }
+      external: ['react', 'react-querybuilder', '@chakra-ui/react', '@chakra-ui/icons']
     }
   },
   esbuild: {

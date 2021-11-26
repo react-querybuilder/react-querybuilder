@@ -2,13 +2,9 @@
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
   "version": "4.0.0-beta.5",
-  "source": "src/index.ts",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
-  "targets": {
-    "types": false
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder"
@@ -16,18 +12,20 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
-    "build": "rimraf dist && parcel build && tsc --emitDeclarationOnly"
+    "build": "vite build && tsc --emitDeclarationOnly"
   },
-  "dependencies": {
+  "devDependencies": {
     "@ant-design/icons": "^4.7.0",
     "@types/react": "^17.0.0",
     "antd": "^4.10.3",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-querybuilder": "4.0.0-beta.5"
-  },
-  "devDependencies": {
-    "rimraf": "^3.0.2",
+    "react-querybuilder": "4.0.0-beta.5",
     "typescript": "^4.5.0"
+  },
+  "peerDependencies": {
+    "@ant-design/icons": ">=4.7.0",
+    "antd": ">=4.10.0",
+    "react": ">=16.8.0",
+    "react-querybuilder": "4.0.0-beta.5"
   }
 }

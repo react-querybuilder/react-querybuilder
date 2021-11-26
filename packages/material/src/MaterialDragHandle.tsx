@@ -1,4 +1,4 @@
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { DragIndicator } from '@mui/icons-material';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
@@ -8,7 +8,7 @@ export default forwardRef<HTMLSpanElement, DragHandleProps>(function MaterialDra
 ) {
   return (
     <span ref={dragRef} className={className} title={title}>
-      <DragIndicatorIcon />
+      <DragIndicator />
     </span>
   );
 });

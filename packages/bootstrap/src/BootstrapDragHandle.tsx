@@ -1,6 +1,5 @@
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default forwardRef<HTMLSpanElement, DragHandleProps>(function BootstrapDragHandle(
   { className, title },

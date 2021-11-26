@@ -1,5 +1,4 @@
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { FormControlLabel, Switch } from '@mui/material';
 import type { NotToggleProps } from 'react-querybuilder';
 
 const MaterialNotToggle = ({

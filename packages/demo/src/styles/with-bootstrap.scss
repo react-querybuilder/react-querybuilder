@@ -1,12 +1,12 @@
 .with-bootstrap {
-  @import 'npm:bootstrap/scss/functions';
-  @import 'npm:bootstrap/scss/variables';
-  @import 'npm:bootstrap/scss/mixins';
-  @import 'npm:bootstrap/scss/reboot';
-  @import 'npm:bootstrap/scss/type';
-  @import 'npm:bootstrap/scss/forms';
-  @import 'npm:bootstrap/scss/buttons';
-  @import 'npm:bootstrap/scss/dropdown';
+  @import 'bootstrap/scss/functions';
+  @import 'bootstrap/scss/variables';
+  @import 'bootstrap/scss/mixins';
+  @import 'bootstrap/scss/reboot';
+  @import 'bootstrap/scss/type';
+  @import 'bootstrap/scss/forms';
+  @import 'bootstrap/scss/buttons';
+  @import 'bootstrap/scss/dropdown';
 
   .form-control,
   .form-select {

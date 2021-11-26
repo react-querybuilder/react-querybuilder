@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import { Button } from '@mui/material';
 import type { ActionProps } from 'react-querybuilder';
 
 const MaterialActionElement = ({ className, handleOnClick, label, title }: ActionProps) => (

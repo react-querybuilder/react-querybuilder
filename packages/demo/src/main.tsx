@@ -45,6 +45,8 @@ import {
   StyleName,
   styleOptions
 } from './constants';
+import 'react-querybuilder/dist/query-builder.scss';
+import 'antd/dist/antd.compact.css';
 
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
