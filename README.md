@@ -18,6 +18,8 @@ To get started, see the [main package readme](packages/react-querybuilder/README
 
 Full documentation is available at https://react-querybuilder.js.org.
 
+_For documentation on v3.12.1, see [README.old.md](README.old.md)_
+
 ## Development
 
 #### Changelog Generation
