@@ -8,7 +8,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleType
 } from '../../types/ruleGroups';
-import sqlParser from './sqlParser';
+import * as Parser from './sqlParser';
 import type {
   AndOperator,
   ComparisonOperator,
@@ -256,7 +256,7 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
     return null;
   };
 
-  const { where } = sqlParser.parse(sqlString).value;
+  const { where } = Parser.parse(sqlString).value;
   if (where) {
     const result = processSQLExpression(where);
     if (result) {
