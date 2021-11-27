@@ -2,6 +2,9 @@
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
   "version": "4.0.0-beta.5",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
