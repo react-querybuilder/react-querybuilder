@@ -1,8 +1,8 @@
 # Archived v3.12.1 documentation
 
-THIS IS SAVED FOR POSTERITY. IT IS LIKELY OUT OF DATE.
+THIS DOCUMENTATION IS FOR v3.12.1.
 
-PLEASE VISIT https://react-querybuilder.js.org/ FOR THE LATEST DOCUMENTATION.
+PLEASE VISIT https://react-querybuilder.js.org/ FOR THE LATEST DOCUMENTATION (v4+).
 
 ## Usage
 
