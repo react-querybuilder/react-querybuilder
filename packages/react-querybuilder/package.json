@@ -54,10 +54,12 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "build": "npm run build:main && npm run build:css && npm run build:types && cp src/query-builder.scss dist",
-    "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css",
+    "build": "npm run build:main && npm run build:css && npm run build:types && cp src/query-builder.scss dist && npm run build:formatQuery && npm run build:parseSQL",
     "build:main": "vite build",
+    "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css",
     "build:types": "tsc --emitDeclarationOnly",
+    "build:formatQuery": "vite build --config vite.config.formatQuery.js",
+    "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
     "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js && echo \"\\nexport default sqlParser;\" >> src/utils/parseSQL/sqlParser.js"
