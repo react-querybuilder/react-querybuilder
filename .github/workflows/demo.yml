@@ -23,4 +23,4 @@ jobs:
           git config --global user.email "jakeboone02@gmail.com"
           git config --global user.name "Jake Boone"
           yarn install --frozen-lockfile
-          npm run publish:demo
+          yarn publish:demo

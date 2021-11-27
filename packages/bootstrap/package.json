@@ -1,0 +1,32 @@
+{
+  "name": "@react-querybuilder/bootstrap",
+  "description": "Custom Bootstrap components for react-querybuilder",
+  "version": "4.0.0-beta.5",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.0",
+    "bootstrap-icons": "^1.7.0",
+    "react": "^17.0.1",
+    "react-querybuilder": "4.0.0-beta.5",
+    "typescript": "^4.5.0"
+  },
+  "peerDependencies": {
+    "bootstrap-icons": ">=1.7.0",
+    "react": ">=16.8.0",
+    "react-querybuilder": "4.0.0-beta.5"
+  }
+}

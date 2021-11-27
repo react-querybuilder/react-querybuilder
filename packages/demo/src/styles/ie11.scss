@@ -1,0 +1,76 @@
+html,
+body {
+  padding: 0.5rem;
+}
+
+.queryBuilder {
+  min-width: 405px;
+
+  .queryBuilder-dragHandle {
+    cursor: move;
+  }
+
+  .ruleGroup,
+  .ruleGroup-header,
+  .ruleGroup-body,
+  .rule {
+    display: block;
+  }
+
+  .ruleGroup-body {
+    padding-left: 0;
+  }
+
+  .ruleGroup-header,
+  .rule {
+    & > * {
+      margin-left: 0.5rem;
+    }
+  }
+
+  .ruleGroup {
+    padding: 0.5rem;
+    border: 1px solid #7f81a2;
+    border-radius: 4px;
+    background: rgba(0, 75, 183, 0.2);
+
+    .rule,
+    .ruleGroup {
+      margin-top: 0.5rem;
+      margin-left: 0.5rem;
+    }
+
+    .ruleGroup-combinators.betweenRules {
+      margin-top: 0.5rem;
+    }
+
+    .ruleGroup-notToggle {
+      margin-right: 0.5rem;
+    }
+  }
+
+  // Bold the +Rule button if the group has no child rules or groups
+  .ruleGroup.queryBuilder-invalid .ruleGroup-addRule {
+    font-weight: bold !important;
+  }
+
+  // Purple outline for empty text fields
+  .rule.queryBuilder-invalid .rule-value {
+    border: 2px solid rebeccapurple;
+  }
+
+  // Message to user about empty groups
+  .ruleGroup.queryBuilder-invalid > .ruleGroup-header::after {
+    content: 'Empty groups are considered invalid. Avoid them by using addRuleToNewGroups.';
+  }
+
+  .dndOver {
+    &.rule,
+    &.ruleGroup-header {
+      border-bottom-width: 2px;
+      border-bottom-style: dashed;
+      border-bottom-color: rebeccapurple;
+      padding-bottom: 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "@react-querybuilder/demo",
+  "version": "4.0.0-beta.5",
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-syntax-highlighter": "^13.5.2"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@chakra-ui/icons": "^1.0.17",
+    "@chakra-ui/react": "^1.6.5",
+    "@chakra-ui/system": "^1.8.2",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@mui/icons-material": "^5.0.5",
+    "@mui/material": "^5.0.6",
+    "@react-querybuilder/antd": "4.0.0-beta.5",
+    "@react-querybuilder/bootstrap": "4.0.0-beta.5",
+    "@react-querybuilder/chakra": "4.0.0-beta.5",
+    "@react-querybuilder/material": "4.0.0-beta.5",
+    "antd": "^4.10.3",
+    "bootstrap": "^5.0.2",
+    "bootstrap-icons": "^1.7.0",
+    "core-js": "^2.6.12",
+    "framer-motion": "^4",
+    "query-string": "^7.0.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-querybuilder": "4.0.0-beta.5",
+    "react-syntax-highlighter": "^15.4.4"
+  },
+  "scripts": {
+    "start": "vite --port 8080",
+    "build": "vite build"
+  }
+}

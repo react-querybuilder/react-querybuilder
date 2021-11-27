@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <title>React Query Builder Demo</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet" />
+    <link href="./src/styles/common.scss" rel="stylesheet" />
+    <link href="./src/styles/github-fork-ribbon.scss" rel="stylesheet" />
+    <link href="./src/styles/with-antd.scss" rel="stylesheet" />
+    <link href="./src/styles/with-bootstrap.scss" rel="stylesheet" />
+    <link href="./src/styles/with-chakra.scss" rel="stylesheet" />
+    <link href="./src/styles/with-default.scss" rel="stylesheet" />
+    <link href="./src/styles/with-material.scss" rel="stylesheet" />
+    <style>
+      .github-fork-ribbon:before {
+        background-color: #090 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <a
+      class="github-fork-ribbon"
+      data-ribbon="Fork me on GitHub"
+      href="https://github.com/react-querybuilder/react-querybuilder"
+      title="Fork me on GitHub"
+      >Fork me on GitHub</a
+    >
+    <div id="app">
+      <p style="display: none">
+        You may be using a legacy browser. <a href="ie11.html">Click here</a> for a demo that should
+        be compatible.
+      </p>
+      <p>Loading...</p>
+    </div>
+    <script>
+      if (window.document.documentMode) {
+        document.getElementById('app').getElementsByTagName('p')[0].style.display = 'block';
+      }
+      (function setScript(initialValue) {
+        var mql = window.matchMedia('(prefers-color-scheme: dark)');
+        var systemPreference = mql.matches ? 'dark' : 'light';
+        var persistedPreference;
+
+        try {
+          persistedPreference = localStorage.getItem('chakra-ui-color-mode');
+        } catch (error) {
+          console.log(
+            'Chakra UI: localStorage is not available. Color mode persistence might not work as expected'
+          );
+        }
+
+        var isInStorage = typeof persistedPreference === 'string';
+        var colorMode;
+
+        if (isInStorage) {
+          colorMode = persistedPreference;
+        } else {
+          colorMode = initialValue === 'system' ? systemPreference : initialValue;
+        }
+
+        if (colorMode) {
+          var root = document.documentElement;
+          root.style.setProperty('--chakra-ui-color-mode', colorMode);
+        }
+      })('light');
+    </script>
+    <script src="./src/main.tsx" type="module"></script>
+  </body>
+</html>

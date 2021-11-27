@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist/types",
+    "module": "esnext"
+  },
+  "include": ["./src/"],
+  "exclude": ["**/*.test.*", "./src/__mocks__/*.*", "./src/setupTests.ts"]
+}

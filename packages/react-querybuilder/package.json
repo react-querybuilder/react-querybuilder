@@ -1,0 +1,67 @@
+{
+  "name": "react-querybuilder",
+  "version": "4.0.0-beta.5",
+  "description": "The React <QueryBuilder /> component for constructing queries",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder"
+  },
+  "keywords": [
+    "react",
+    "query",
+    "builder",
+    "operators",
+    "ui",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
+  "contributors": [
+    "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
+    "Jake Boone"
+  ],
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@babel/preset-typescript": "^7.12.7",
+    "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "babel-plugin-istanbul": "^6.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "sass": "^1.40.0",
+    "typescript": "^4.5.0"
+  },
+  "dependencies": {
+    "immer": "^9.0.6",
+    "react-dnd": "^14.0.4",
+    "react-dnd-html5-backend": "^14.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "browserslist": "> 0.25%, not dead",
+  "scripts": {
+    "build": "npm run build:main && npm run build:css && npm run build:types && cp src/query-builder.scss dist && npm run build:formatQuery && npm run build:parseSQL",
+    "build:main": "vite build",
+    "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:formatQuery": "vite build --config vite.config.formatQuery.js",
+    "build:parseSQL": "vite build --config vite.config.parseSQL.js",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch",
+    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js && echo \"\\nexport default sqlParser;\" >> src/utils/parseSQL/sqlParser.js"
+  }
+}

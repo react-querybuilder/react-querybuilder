@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./types/",
+    "isolatedModules": true,
     "declaration": true,
     "sourceMap": true,
     "strictNullChecks": true,
@@ -8,9 +8,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "target": "es5",
+    "target": "esnext",
     "esModuleInterop": true
-  },
-  "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*", "./src/setupTests.ts"]
+  }
 }

@@ -1,5 +1,39 @@
 ## Change Log
 
+### v4.0.0-beta.5 (2021-11-12)
+- [#235](https://github.com/react-querybuilder/react-querybuilder/pull/235) Add drag-and-drop (@jakeboone02)
+- [#233](https://github.com/react-querybuilder/react-querybuilder/pull/233) GitHub Actions to deploy demo on release (@jakeboone02)
+
+### v4.0.0-beta.3 (2021-11-03)
+- [#231](https://github.com/react-querybuilder/react-querybuilder/pull/231) Add support for inline combinators (#231) (@jakeboone02)
+
+### v4.0.0-beta.2 (2021-10-29)
+- [#230](https://github.com/react-querybuilder/react-querybuilder/pull/230) Add parseSQL method (#230) (@jakeboone02)
+
+### v4.0.0-beta.1 (2021-10-23)
+- [#229](https://github.com/react-querybuilder/react-querybuilder/pull/229) Path-based query management (@jakeboone02)
+- [#228](https://github.com/react-querybuilder/react-querybuilder/pull/228) Add CodeSandbox CI (@jakeboone02)
+- [#227](https://github.com/react-querybuilder/react-querybuilder/pull/227) Add syntax highlighting to the demo (@jakeboone02)
+
+### v3.12.0 (2021-10-04)
+- [#225](https://github.com/react-querybuilder/react-querybuilder/pull/225) Add validation options (@jakeboone02)
+- [#224](https://github.com/react-querybuilder/react-querybuilder/pull/224) Implement addRuleToNewGroups, onAddRule, onAddGroup, getDefaultOperator props (@jakeboone02)
+- [#223](https://github.com/react-querybuilder/react-querybuilder/pull/223) Implement clone rule/group buttons (@jakeboone02)
+
+### v3.11.0 (2021-08-24)
+- [#218](https://github.com/react-querybuilder/react-querybuilder/pull/218) Add autoSelectField prop (@jakeboone02)
+
+### v3.10.1 (2021-08-19)
+- [#216](https://github.com/react-querybuilder/react-querybuilder/pull/216) docs: add CodMonk as a contributor for code, doc, test (@allcontributors[bot])
+- [#214](https://github.com/react-querybuilder/react-querybuilder/pull/214) Enable MongoDB query format (@CodMonk)
+
+### v3.10.0 (2021-07-27)
+- [#210](https://github.com/react-querybuilder/react-querybuilder/pull/210) Add customizable label for "not" toggle component (@jakeboone02)
+- [#209](https://github.com/react-querybuilder/react-querybuilder/pull/209) Add Chakra UI demo (@jakeboone02)
+
+### v3.9.8 (2021-02-22)
+- [#190](https://github.com/react-querybuilder/react-querybuilder/pull/190) Expose default components (@jakeboone02)
+
 ### v3.9.7 (2021-02-18)
 - [#189](https://github.com/react-querybuilder/react-querybuilder/pull/189) Convert tests to Jest (@jakeboone02)
 - [#188](https://github.com/react-querybuilder/react-querybuilder/pull/188) Include extra attributes in valid query (@jakeboone02)

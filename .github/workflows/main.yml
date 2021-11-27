@@ -20,7 +20,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.1
         with:
-          prettier_options: --write ./{src,demo,config}/**
+          prettier_options: --write packages/*/src/** ./*.js
           prettier_version: 2.4.1
           commit_message: 'Prettified code'
         env:
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: '14'
       - run: yarn install --frozen-lockfile
-      - run: yarn lint
+      # - run: yarn lint
       - run: yarn build
       - run: yarn test
       - name: Upload coverage to Codecov
