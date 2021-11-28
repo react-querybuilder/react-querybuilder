@@ -26,7 +26,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Extensible',
-    image: '/img/screenshot.png',
+    image: '/img/date-picker.png',
     description: (
       <>
         Provide custom components for maximum flexibility.
@@ -35,7 +35,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Native TypeScript',
-    image: '/img/screenshot.png',
+    image: '/img/typescript.png',
     description: (
       <>
         First-class TypeScript support.

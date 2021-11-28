@@ -2,7 +2,8 @@
 title: Custom components with fallbacks
 ---
 
-import QueryBuilder, { Field, RuleGroupType, ValueEditor, ValueEditorProps } from "react-querybuilder";
+import { Field, RuleGroupType, ValueEditor, ValueEditorProps } from "react-querybuilder";
+import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed'
 
 You may run into a situation where the default components _almost_ meet your requirements, but you don't want to recreate the entire component just to slightly modify the behavior. Falling back to the default component after implementing your custom behavior is a good way to keep your code up to date with the current version's standard features while retaining the flexibility of a fully custom solution.
 
@@ -113,7 +114,7 @@ export const App = () => {
 
 The code above generates the following query builder:
 
-<QueryBuilder
+<QueryBuilderEmbed
   fields={[{ name: "field1", label: "Field 1", valueEditorType: "select" },{ name: "field2", label: "Field 2" }]}
   query={{ combinator: "and", rules: [{field: "field1", operator: "=", value: "item2"}, {field: "field2", operator: "=", value: ""} ] }}
   controlElements={{ valueEditor: (props) => {

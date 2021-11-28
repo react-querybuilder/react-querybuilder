@@ -119,11 +119,11 @@ const config = {
             items: [
               {
                 label: "Kitchen Sink",
-                href: "https://react-querybuilder.github.io/react-querybuilder/",
+                href: "https://react-querybuilder.js.org/react-querybuilder/",
               },
               {
                 label: "IE Compatible",
-                href: "https://react-querybuilder.github.io/react-querybuilder/ie11.html",
+                href: "https://react-querybuilder.js.org/react-querybuilder/ie11.html",
               },
             ],
           },
