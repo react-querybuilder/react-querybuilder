@@ -16,7 +16,7 @@ yarn add react-querybuilder
 
 ## Demo
 
-[Click here to see a live, interactive demo](https://react-querybuilder.github.io/react-querybuilder/).
+[Click here to see a live, interactive demo](https://react-querybuilder.js.org/react-querybuilder/).
 
 To run the demo yourself, go through the following steps:
 
@@ -24,6 +24,8 @@ To run the demo yourself, go through the following steps:
 2. `yarn` _Install dependencies_
 3. `yarn start` _Run a local server_
 4. _Visit http://localhost:8080 in your browser_
+
+To use the official replacement components as seen in the demo, take a look at the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder).
 
 ## Basic usage
 

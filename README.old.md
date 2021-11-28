@@ -39,7 +39,7 @@ The default export of this library is the `QueryBuilder` React component, which 
 
 `{ id?: string; combinator: string; rules: ({ field: string; operator: string; value: any; } | { combinator: string; rules: ...[]; })[]; }`
 
-The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](demo/main.tsx) for examples.
+The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](packages/demo/src/main.tsx) for examples.
 
 #### `fields` _(Required)_
 
@@ -765,7 +765,7 @@ A basic form of validation will be used by `formatQuery` for the "in", "notIn", 
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupType;
 ```
 
-`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.github.io/react-querybuilder/) by clicking the "Load from SQL" button.
+`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.js.org/react-querybuilder/) by clicking the "Load from SQL" button.
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables.
 
