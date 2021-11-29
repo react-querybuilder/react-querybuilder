@@ -1,5 +1,5 @@
-import { regenerateIDs } from '..';
-import { RuleGroupType, RuleGroupTypeIC } from '../..';
+import { regenerateIDs } from '../regenerateIDs';
+import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
 
 const ruleGroup: RuleGroupType = {
   id: 'root',

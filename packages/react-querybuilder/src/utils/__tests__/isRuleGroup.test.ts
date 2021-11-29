@@ -1,4 +1,4 @@
-import { isRuleGroup } from '..';
+import isRuleGroup from '../isRuleGroup';
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../../types';
 
 const rule: RuleType = {

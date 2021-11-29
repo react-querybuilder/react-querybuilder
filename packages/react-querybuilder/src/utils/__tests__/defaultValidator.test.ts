@@ -1,4 +1,4 @@
-import { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../..';
+import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../../types';
 import { groupInvalidReasons } from '../../defaults';
 import defaultValidator from '../defaultValidator';
 

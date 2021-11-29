@@ -1,5 +1,5 @@
-import { formatQuery } from '..';
-import {
+import formatQuery from '../formatQuery';
+import type {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   RuleGroupType,

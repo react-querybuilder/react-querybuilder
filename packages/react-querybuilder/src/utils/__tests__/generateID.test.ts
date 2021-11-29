@@ -1,4 +1,4 @@
-import { generateID } from '..';
+import generateID from '../generateID';
 
 describe('when generating IDs', () => {
   it('should generate different IDs', () => {

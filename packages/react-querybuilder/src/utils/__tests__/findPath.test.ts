@@ -1,5 +1,5 @@
-import { findPath } from '..';
-import { RuleGroupType, RuleGroupTypeIC } from '../..';
+import findPath from '../findPath';
+import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
 
 const query: RuleGroupType = {
   combinator: 'and',
