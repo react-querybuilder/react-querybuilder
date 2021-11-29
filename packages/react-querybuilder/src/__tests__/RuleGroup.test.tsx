@@ -1,16 +1,13 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mount } from 'enzyme';
-import { ComponentType, forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
-import { ActionElement, NotToggle, ValueSelector } from '../controls';
 import { defaultCombinators, defaultTranslations, standardClassnames } from '../defaults';
 import { Rule } from '../Rule';
 import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
-import {
+import type {
   ActionProps,
-  ActionWithRulesProps,
   Classnames,
   Controls,
   RuleGroupArray,
@@ -37,26 +34,75 @@ describe('<RuleGroup />', () => {
   beforeEach(() => {
     controls = {
       combinatorSelector: (props) => (
-        <select onChange={(e) => props.handleOnChange(e.target.value)}>
-          <option value="combinator">Combinator</option>
+        <select
+          className={props.className}
+          title={props.title}
+          value={props.value}
+          onChange={(e) => props.handleOnChange(e.target.value)}>
+          <option value="and">AND</option>
+          <option value="or">OR</option>
           <option value="any_combinator_value">Any Combinator</option>
         </select>
       ),
-      addRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Rule</button>,
-      addGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>+Group</button>,
-      cloneGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>⧉</button>,
-      cloneRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>⧉</button>,
-      removeGroupAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
-      removeRuleAction: (props) => <button onClick={(e) => props.handleOnClick(e)}>x</button>,
+      addRuleAction: (props) => (
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          +Rule
+        </button>
+      ),
+      addGroupAction: (props) => (
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          +Group
+        </button>
+      ),
+      cloneGroupAction: (props) => (
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          ⧉
+        </button>
+      ),
+      cloneRuleAction: (props) => (
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          ⧉
+        </button>
+      ),
+      removeGroupAction: (props) => (
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          x
+        </button>
+      ),
+      removeRuleAction: (props) => (
+        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+          x
+        </button>
+      ),
       notToggle: (props) => (
-        <label>
-          <input onChange={(e) => props.handleOnChange(e.target.checked)} />
+        <label className={props.className}>
+          <input type="checkbox" onChange={(e) => props.handleOnChange(e.target.checked)} />
           Not
         </label>
       ),
-      fieldSelector: () => null,
-      operatorSelector: () => null,
-      valueEditor: () => null,
+      fieldSelector: (props) => (
+        <select
+          className={props.className}
+          value={props.value}
+          onChange={(e) => props.handleOnChange(e.target.value)}>
+          <option value={props.options[0].name}>{props.options[0].label}</option>
+        </select>
+      ),
+      operatorSelector: (props) => (
+        <select
+          className={props.className}
+          value={props.value}
+          onChange={(e) => props.handleOnChange(e.target.value)}>
+          <option value={props.options[0].name}>{props.options[0].label}</option>
+        </select>
+      ),
+      valueEditor: (props) => (
+        <input
+          className={props.className}
+          value={props.value}
+          onChange={(e) => props.handleOnChange(e.target.value)}
+        />
+      ),
       rule: Rule,
       ruleGroup: RuleGroup,
       dragHandle: forwardRef(() => <span>:</span>)
@@ -69,14 +115,16 @@ describe('<RuleGroup />', () => {
       addGroup: 'custom-addGroup-class',
       cloneGroup: 'custom-cloneGroup-class',
       removeGroup: 'custom-removeGroup-class',
-      notToggle: 'custom-notToggle-class'
+      notToggle: 'custom-notToggle-class',
+      ruleGroup: 'custom-ruleGroup-class'
     };
     schema = {
+      fields: [{ name: 'field1', label: 'Field 1' }],
       combinators: defaultCombinators,
       controls: controls as Controls,
       classNames: classNames as Classnames,
       getInputType: () => 'text',
-      getOperators: () => [],
+      getOperators: () => [{ name: 'operator1', label: 'Operator 1' }],
       getValueEditorType: () => 'text',
       getValues: () => [],
       isRuleGroup: (_rule): _rule is RuleGroupType => {
@@ -103,86 +151,16 @@ describe('<RuleGroup />', () => {
     };
   });
 
-  it('should exist', () => {
-    expect(RuleGroup).toBeDefined();
-  });
-
   it('should have correct classNames', () => {
-    const dom = mount(<RuleGroup {...props} />);
-    expect(dom.find('div').first().hasClass(standardClassnames.ruleGroup)).toBe(true);
-    expect(dom.find(`.${standardClassnames.header}.${classNames.header}`)).toHaveLength(1);
-    expect(dom.find(`.${standardClassnames.body}.${classNames.body}`)).toHaveLength(1);
-  });
-
-  describe('combinator selector as <ValueSelector />', () => {
-    beforeEach(() => {
-      controls.combinatorSelector = ValueSelector;
-    });
-
-    it('should have options set to expected combinators', () => {
-      const expected_combinators = [
-        { name: 'and', label: 'AND' },
-        { name: 'or', label: 'OR' }
-      ];
-      schema.combinators = expected_combinators;
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(ValueSelector).props().options).toEqual(expected_combinators);
-    });
-
-    it('should have the default selected value set to "and"', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(ValueSelector).props().value).toBe('and');
-    });
-
-    it('should have the onChange method handler', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(typeof dom.find(ValueSelector).props().handleOnChange).toBe('function');
-    });
-
-    behavesLikeAnElementWithClassNames(
-      ValueSelector,
-      standardClassnames.combinators,
-      'custom-combinators-class'
-    );
-  });
-
-  describe('add rule action as an <ActionElement />', () => {
-    beforeEach(() => {
-      controls.addRuleAction = ActionElement;
-    });
-
-    behavesLikeAnActionElement('+Rule', standardClassnames.addRule, 'custom-addRule-class');
-  });
-
-  describe('add group action as an <ActionElement />', () => {
-    beforeEach(() => {
-      controls.addGroupAction = ActionElement;
-    });
-
-    behavesLikeAnActionElement('+Group', standardClassnames.addGroup, 'custom-addGroup-class');
-  });
-
-  describe('clone group action as an <ActionElement />', () => {
-    beforeEach(() => {
-      schema.showCloneButtons = true;
-      controls.cloneGroupAction = ActionElement;
-    });
-
-    behavesLikeAnActionElement('⧉', standardClassnames.cloneGroup, 'custom-cloneGroup-class');
-  });
-
-  describe('remove group action as an <ActionElement />', () => {
-    beforeEach(() => {
-      controls.removeGroupAction = ActionElement;
-    });
-
-    it('does not exist if it does not have a parent', () => {
-      props.path = [];
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(ActionElement)).toHaveLength(0);
-    });
-
-    behavesLikeAnActionElement('x', standardClassnames.removeGroup, 'custom-removeGroup-class');
+    const { getByTestId } = render(<RuleGroup {...props} />);
+    expect(getByTestId('rule-group').classList).toContain(standardClassnames.ruleGroup);
+    expect(getByTestId('rule-group').classList).toContain('custom-ruleGroup-class');
+    expect(
+      getByTestId('rule-group').querySelector(`.${standardClassnames.header}`).classList
+    ).toContain(classNames.header);
+    expect(
+      getByTestId('rule-group').querySelector(`.${standardClassnames.body}`).classList
+    ).toContain(classNames.body);
   });
 
   describe('when 2 rules exist', () => {
@@ -191,107 +169,58 @@ describe('<RuleGroup />', () => {
     });
 
     it('has 2 <Rule /> elements', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(Rule)).toHaveLength(2);
+      const { getAllByTestId } = render(<RuleGroup {...props} />);
+      expect(getAllByTestId('rule')).toHaveLength(2);
     });
 
     it('has the first rule with the correct values', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      const ruleProps = dom.find(Rule).first().props();
-      expect(ruleProps.id).toBe('rule_id_1');
-      expect(ruleProps.field).toBe('field_1');
-      expect(ruleProps.operator).toBe('operator_1');
-      expect(ruleProps.value).toBe('value_1');
-    });
-  });
-
-  describe('when 1 rule group exists', () => {
-    it('has 1 <RuleGroup /> element', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(RuleGroup)).toHaveLength(1);
-    });
-
-    it('has 1 <RuleGroup /> with expected properties', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      const groupProps = dom.find(RuleGroup).props();
-      expect(groupProps.id).toBe('id');
-      expect(groupProps.path).toEqual([0]);
-      expect(Array.isArray(groupProps.rules)).toBe(true);
-      expect(groupProps.combinator).toBe('and');
-    });
-  });
-
-  describe('when no combinator prop exists', () => {
-    it('has default props', () => {
-      const dom = mount(
-        <RuleGroup path={[]} rules={[]} schema={props.schema} translations={props.translations} />
-      );
-      const groupProps = dom.find(RuleGroup).props();
-      expect(groupProps.combinator).toBeUndefined();
+      const { getAllByTestId } = render(<RuleGroup {...props} />);
+      const firstRule = getAllByTestId('rule')[0];
+      expect(firstRule.dataset.ruleId).toBe('rule_id_1');
+      expect(
+        (firstRule.querySelector(`.${standardClassnames.fields}`) as HTMLSelectElement).value
+      ).toBe('field1');
+      expect(
+        (firstRule.querySelector(`.${standardClassnames.operators}`) as HTMLSelectElement).value
+      ).toBe('operator1');
+      expect(
+        (firstRule.querySelector(`.${standardClassnames.value}`) as HTMLInputElement).value
+      ).toBe('value_1');
     });
   });
 
   describe('onCombinatorChange', () => {
     it('calls onPropChange from the schema with expected values', () => {
       schema.onPropChange = jest.fn();
-      const dom = mount(<RuleGroup {...props} />);
-      dom
-        .find(`.${standardClassnames.combinators}`)
-        .simulate('change', { target: { value: 'any_combinator_value' } });
-
-      const call0 = (schema.onPropChange as jest.Mock).mock.calls[0];
-      expect(call0[0]).toBe('combinator');
-      expect(call0[1]).toBe('any_combinator_value');
-      expect(call0[2]).toEqual([0]);
+      const { container } = render(<RuleGroup {...props} />);
+      userEvent.selectOptions(
+        container.querySelector(`.${standardClassnames.combinators}`),
+        'any_combinator_value'
+      );
+      expect(schema.onPropChange).toHaveBeenCalledWith('combinator', 'any_combinator_value', [0]);
     });
   });
 
   describe('onNotToggleChange', () => {
-    it('should set NOT property on ruleGroups below root', () => {
-      const idOfNestedRuleGroup = 'nested';
-      const propsWithNestedRuleGroup = {
-        ...props,
-        rules: [
-          {
-            id: idOfNestedRuleGroup,
-            combinator: 'and',
-            rules: [],
-            not: true
-          }
-        ] as RuleGroupArray
-      };
-
-      const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
-
-      expect(dom.find(RuleGroup).filter({ id: idOfNestedRuleGroup }).props().not).toBe(true);
-    });
-
     it('calls onPropChange from the schema with expected values', () => {
       schema.onPropChange = jest.fn();
       schema.showNotToggle = true;
-      const dom = mount(<RuleGroup {...props} />);
-      dom
-        .find(`.${standardClassnames.notToggle} input`)
-        .simulate('change', { target: { checked: true } });
-
-      const call0 = (schema.onPropChange as jest.Mock).mock.calls[0];
-      expect(call0[0]).toBe('not');
-      expect(call0[1]).toBe(true);
-      expect(call0[2]).toEqual([0]);
+      const { getByLabelText } = render(<RuleGroup {...props} />);
+      userEvent.click(getByLabelText('Not'));
+      expect(schema.onPropChange).toHaveBeenCalledWith('not', true, [0]);
     });
   });
 
   describe('addRule', () => {
     it('calls onRuleAdd from the schema with expected values', () => {
       schema.onRuleAdd = jest.fn();
-      const dom = mount(<RuleGroup {...props} />);
-      dom.find(`.${standardClassnames.addRule}`).simulate('click');
-
+      const { container } = render(<RuleGroup {...props} />);
+      userEvent.click(container.querySelector(`.${standardClassnames.addRule}`));
       const call0 = (schema.onRuleAdd as jest.Mock).mock.calls[0];
       expect(call0[0]).toHaveProperty('id');
-      expect(call0[0]).toHaveProperty('field');
-      expect(call0[0]).toHaveProperty('operator');
-      expect(call0[0]).toHaveProperty('value');
+      expect(call0[0]).toHaveProperty('field', 'field_0');
+      expect(call0[0]).toHaveProperty('operator', 'operator_0');
+      expect(call0[0]).toHaveProperty('value', 'value_0');
       expect(call0[1]).toEqual([0]);
     });
   });
@@ -299,12 +228,11 @@ describe('<RuleGroup />', () => {
   describe('addGroup', () => {
     it('calls onGroupAdd from the schema with expected values', () => {
       schema.onGroupAdd = jest.fn();
-      const dom = mount(<RuleGroup {...props} />);
-      dom.find(`.${standardClassnames.addGroup}`).simulate('click');
-
+      const { container } = render(<RuleGroup {...props} />);
+      userEvent.click(container.querySelector(`.${standardClassnames.addGroup}`));
       const call0 = (schema.onGroupAdd as jest.Mock).mock.calls[0];
       expect(call0[0]).toHaveProperty('id');
-      expect(call0[0]).toHaveProperty('rules');
+      expect(call0[0]).toHaveProperty('rules', []);
       expect(call0[1]).toEqual([0]);
     });
   });
@@ -325,10 +253,9 @@ describe('<RuleGroup />', () => {
   describe('removeGroup', () => {
     it('calls onGroupRemove from the schema with expected values', () => {
       schema.onGroupRemove = jest.fn();
-      const dom = mount(<RuleGroup {...props} />);
-      dom.find(`.${standardClassnames.removeGroup}`).simulate('click');
-
-      expect((schema.onGroupRemove as jest.Mock).mock.calls[0][0]).toEqual([0]);
+      const { container } = render(<RuleGroup {...props} />);
+      userEvent.click(container.querySelector(`.${standardClassnames.removeGroup}`));
+      expect(schema.onGroupRemove).toHaveBeenCalledWith([0]);
     });
   });
 
@@ -336,9 +263,8 @@ describe('<RuleGroup />', () => {
     it('does not display combinators when there is only one rule', () => {
       schema.showCombinatorsBetweenRules = true;
       props.rules = [{ field: 'test', value: 'Test', operator: '=' }];
-      const dom = mount(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.combinators}`);
-      expect(sc).toHaveLength(0);
+      const { container } = render(<RuleGroup {...props} />);
+      expect(container.querySelectorAll(`.${standardClassnames.combinators}`)).toHaveLength(0);
     });
 
     it('displays combinators when there is more than one rule', () => {
@@ -348,51 +274,52 @@ describe('<RuleGroup />', () => {
         { field: 'test', value: 'Test', operator: '=' },
         { rules: [], combinator: 'and' }
       ];
-      const dom = mount(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.betweenRules}`);
-      expect(sc).toHaveLength(2);
+      const { container } = render(<RuleGroup {...props} />);
+      expect(container.querySelectorAll(`.${standardClassnames.combinators}`)).toHaveLength(2);
     });
   });
 
   describe('showNotToggle', () => {
     beforeEach(() => {
       schema.showNotToggle = true;
-      controls.notToggle = NotToggle;
     });
 
     it('does not display NOT toggle by default', () => {
       schema.showNotToggle = false;
-      const dom = mount(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.notToggle}`);
-      expect(sc).toHaveLength(0);
+      const { container } = render(<RuleGroup {...props} />);
+      expect(container.querySelectorAll(`.${standardClassnames.notToggle}`)).toHaveLength(0);
     });
 
     it('has the correct classNames', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(NotToggle).props().className).toContain(standardClassnames.notToggle);
-      expect(dom.find(NotToggle).props().className).toContain('custom-notToggle-class');
+      const { container } = render(<RuleGroup {...props} />);
+      expect(container.querySelector(`.${standardClassnames.notToggle}`).classList).toContain(
+        standardClassnames.notToggle
+      );
+      expect(container.querySelector(`.${standardClassnames.notToggle}`).classList).toContain(
+        'custom-notToggle-class'
+      );
     });
   });
 
   describe('showCloneButtons', () => {
-    const CloneButton = (props: ActionProps) => <ActionElement {...props} />;
-
     beforeEach(() => {
       schema.showCloneButtons = true;
-      controls.cloneGroupAction = CloneButton;
     });
 
     it('does not display clone buttons by default', () => {
       schema.showCloneButtons = false;
-      const dom = mount(<RuleGroup {...props} />);
-      const sc = dom.find(`.${standardClassnames.cloneGroup}`);
-      expect(sc).toHaveLength(0);
+      const { container } = render(<RuleGroup {...props} />);
+      expect(container.querySelectorAll(`.${standardClassnames.cloneGroup}`)).toHaveLength(0);
     });
 
     it('has the correct classNames', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(CloneButton).props().className).toContain(standardClassnames.cloneGroup);
-      expect(dom.find(CloneButton).props().className).toContain('custom-cloneGroup-class');
+      const { container } = render(<RuleGroup {...props} />);
+      expect(container.querySelector(`.${standardClassnames.cloneGroup}`).classList).toContain(
+        standardClassnames.cloneGroup
+      );
+      expect(container.querySelector(`.${standardClassnames.cloneGroup}`).classList).toContain(
+        'custom-cloneGroup-class'
+      );
     });
   });
 
@@ -402,21 +329,20 @@ describe('<RuleGroup />', () => {
     });
 
     it('should render combinator selector for string elements', () => {
-      schema.controls.combinatorSelector = ValueSelector;
       const rules: RuleGroupICArray = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
         { rules: [] }
       ];
-      const dom = mount(<RuleGroup {...props} rules={rules} />);
-      expect(dom.find(ValueSelector).parent().props().className).toMatch(
-        new RegExp(standardClassnames.betweenRules)
-      );
-      expect(dom.find(ValueSelector).props().value).toBe('and');
+      const { container } = render(<RuleGroup {...props} rules={rules} />);
+      const combinatorSelector = container.querySelector(
+        `.${standardClassnames.combinators}`
+      ) as HTMLSelectElement;
+      expect(combinatorSelector.parentElement.classList).toContain(standardClassnames.betweenRules);
+      expect(combinatorSelector.value).toBe('and');
     });
 
     it('should call handleOnChange for string elements', () => {
-      schema.controls.combinatorSelector = ValueSelector;
       schema.updateIndependentCombinator = jest.fn();
       const rules: RuleGroupICArray = [
         { field: 'firstName', operator: '=', value: 'Test' },
@@ -429,44 +355,47 @@ describe('<RuleGroup />', () => {
     });
 
     it('should clone independent combinator groups', () => {
-      schema.controls.cloneGroupAction = ActionElement;
       schema.moveRule = jest.fn();
       schema.showCloneButtons = true;
       const { getByText } = render(<RuleGroup {...props} />);
-      userEvent.click(getByText('⧉'));
+      userEvent.click(getByText(props.translations.cloneRuleGroup.label));
       expect(schema.moveRule).toHaveBeenCalledWith([0], [1], true);
     });
   });
 
   describe('validation', () => {
     it('should not validate if no validationMap[id] value exists', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
-      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.valid);
+      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.invalid);
     });
 
     it('should validate to false if validationMap[id] = false', () => {
       schema.validationMap = { id: false };
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(false);
-      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(true);
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.valid);
+      expect(getByTestId('rule-group').classList).toContain(standardClassnames.invalid);
     });
 
     it('should validate to true if validationMap[id] = true', () => {
       schema.validationMap = { id: true };
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find('div').first().hasClass(standardClassnames.valid)).toBe(true);
-      expect(dom.find('div').first().hasClass(standardClassnames.invalid)).toBe(false);
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      expect(getByTestId('rule-group').classList).toContain(standardClassnames.valid);
+      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.invalid);
     });
 
     it('should pass down validationResult as validation to children', () => {
       const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
-      schema.controls.combinatorSelector = ValueSelector;
-      schema.controls.addRuleAction = ActionElement;
+      schema.controls.combinatorSelector = ({ validation }: ValueSelectorProps) => (
+        <div title="ValueSelector">{JSON.stringify(validation)}</div>
+      );
+      schema.controls.addRuleAction = ({ validation }: ActionProps) => (
+        <div title="ActionElement">{JSON.stringify(validation)}</div>
+      );
       schema.validationMap = { id: valRes };
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(ValueSelector).props().validation).toEqual(valRes);
-      expect(dom.find(ActionElement).props().validation).toEqual(valRes);
+      const { getByTitle } = render(<RuleGroup {...props} />);
+      expect(getByTitle('ValueSelector').innerHTML).toEqual(JSON.stringify(valRes));
+      expect(getByTitle('ActionElement').innerHTML).toEqual(JSON.stringify(valRes));
     });
   });
 
@@ -538,7 +467,6 @@ describe('<RuleGroup />', () => {
     it('should handle drops on combinator between rules', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
-      props.schema.controls.combinatorSelector = ValueSelector;
       props.schema.showCombinatorsBetweenRules = true;
       const { getAllByTestId } = render(
         <div>
@@ -572,7 +500,6 @@ describe('<RuleGroup />', () => {
     it('should handle drops on independent combinators', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
-      props.schema.controls.combinatorSelector = ValueSelector;
       props.schema.independentCombinators = true;
       const { getAllByTestId, getByTestId } = render(
         <div>
@@ -601,54 +528,7 @@ describe('<RuleGroup />', () => {
     });
   });
 
-  //shared examples
-  function behavesLikeAnActionElement(
-    label: string,
-    defaultClassName: string,
-    customClassName: string
-  ) {
-    it('should have the correct label', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(ActionElement).props().label).toBe(label);
-    });
-
-    it('should have the onClick method handler', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(typeof dom.find(ActionElement).props().handleOnClick).toBe('function');
-    });
-
-    behavesLikeAnElementWithClassNames(ActionElement, defaultClassName, customClassName);
-  }
-
-  function behavesLikeAnElementWithClassNames(
-    element: ComponentType<ActionWithRulesProps & ValueSelectorProps>,
-    defaultClassName: string,
-    customClassName: string
-  ) {
-    it('should have the default className', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(element).props().className).toContain(defaultClassName);
-    });
-
-    it('should have the custom className', () => {
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(element).props().className).toContain(customClassName);
-    });
-
-    it('should pass down the existing rules array', () => {
-      props.rules = [_createRule(1), _createRule(2)];
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(element).props().rules).toEqual(props.rules);
-    });
-
-    it('should pass down the level of the element', () => {
-      props.rules = [_createRule(1), _createRule(2)];
-      const dom = mount(<RuleGroup {...props} />);
-      expect(dom.find(element).props().level).toBe(1);
-    });
-  }
-
-  //helper functions
+  // helper functions
   const _createRule = (index: number): RuleType => {
     return {
       id: `rule_id_${index}`,
