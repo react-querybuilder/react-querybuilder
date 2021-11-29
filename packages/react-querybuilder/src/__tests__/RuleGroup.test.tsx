@@ -13,9 +13,10 @@ import {
   ActionWithRulesProps,
   Classnames,
   Controls,
+  RuleGroupArray,
+  RuleGroupICArray,
   RuleGroupProps,
   RuleGroupType,
-  RuleGroupTypeIC,
   RuleType,
   Schema,
   ValidationResult,
@@ -257,7 +258,7 @@ describe('<RuleGroup />', () => {
             rules: [],
             not: true
           }
-        ]
+        ] as RuleGroupArray
       };
 
       const dom = mount(<RuleGroup {...propsWithNestedRuleGroup} />);
@@ -402,7 +403,7 @@ describe('<RuleGroup />', () => {
 
     it('should render combinator selector for string elements', () => {
       schema.controls.combinatorSelector = ValueSelector;
-      const rules: (RuleGroupTypeIC | RuleType | string)[] = [
+      const rules: RuleGroupICArray = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
         { rules: [] }
@@ -417,7 +418,7 @@ describe('<RuleGroup />', () => {
     it('should call handleOnChange for string elements', () => {
       schema.controls.combinatorSelector = ValueSelector;
       schema.updateIndependentCombinator = jest.fn();
-      const rules: (RuleGroupTypeIC | RuleType | string)[] = [
+      const rules: RuleGroupICArray = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
         { field: 'lastName', operator: '=', value: 'Test' }
@@ -660,7 +661,7 @@ describe('<RuleGroup />', () => {
   const _createRuleGroup = (
     index: number,
     parentPath: number[],
-    rules: RuleType[]
+    rules: RuleGroupArray
   ): RuleGroupType => {
     const thisPath = parentPath.concat([index]);
     return {
