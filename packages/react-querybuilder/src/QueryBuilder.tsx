@@ -265,7 +265,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       } else {
         if (parent.rules.length > 0) {
           const prevCombinator = parent.rules[parent.rules.length - 2];
-          parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+          parent.rules.push((typeof prevCombinator === 'string' ? prevCombinator : 'and') as any);
         }
         parent.rules.push(prepareRule(newRule));
       }
@@ -287,7 +287,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       } else if (!('combinator' in parent)) {
         if (parent.rules.length > 0) {
           const prevCombinator = parent.rules[parent.rules.length - 2];
-          parent.rules.push(typeof prevCombinator === 'string' ? prevCombinator : 'and');
+          parent.rules.push((typeof prevCombinator === 'string' ? prevCombinator : 'and') as any);
         }
         parent.rules.push(prepareRuleGroup(newGroup) as any);
       }

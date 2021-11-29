@@ -30,6 +30,7 @@ export type RuleGroupArray =
   | [RuleType | RuleGroupType, ...(RuleType | RuleGroupType)[]]
   | (any[] & { length: 0 });
 export type RuleGroupICArray =
+  | [RuleType | RuleGroupTypeIC]
   | [RuleType | RuleGroupTypeIC, ...MappedTuple<[string, RuleType | RuleGroupTypeIC]>]
   | (any[] & { length: 0 });
 export type RuleOrGroupArray = RuleGroupArray | RuleGroupICArray;

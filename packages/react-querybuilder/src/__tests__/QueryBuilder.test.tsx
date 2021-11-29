@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mount, ReactWrapper } from 'enzyme';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
@@ -66,7 +66,7 @@ describe('<QueryBuilder />', () => {
         />
       );
       expect(container.getElementsByClassName(standardClassnames.rule)).toHaveLength(1);
-      fireEvent.click(container.getElementsByClassName(standardClassnames.addRule)[0]);
+      userEvent.click(container.getElementsByClassName(standardClassnames.addRule)[0]);
       expect(container.getElementsByClassName(standardClassnames.rule)).toHaveLength(2);
     });
   });

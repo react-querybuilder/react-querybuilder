@@ -1,23 +1,15 @@
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import { DragHandle } from '..';
 import type { DragHandleProps } from '../../types';
 
 describe('<DragHandle />', () => {
   const props: DragHandleProps = {
+    title: 'DragHandle',
     level: 1
   };
 
-  it('should exist', () => {
-    expect(DragHandle).toBeDefined();
-  });
-
-  it('should have a <span /> element', () => {
-    const dom = mount(<DragHandle {...props} />);
-    expect(dom.find('span')).toHaveLength(1);
-  });
-
   it('should have the className passed into the <span />', () => {
-    const dom = mount(<DragHandle {...props} className="foo" />);
-    expect(dom.find('span').hasClass('foo')).toBe(true);
+    const { getByTitle } = render(<DragHandle {...props} className="foo" />);
+    expect(getByTitle('DragHandle').className).toMatch(/\bfoo\b/);
   });
 });
