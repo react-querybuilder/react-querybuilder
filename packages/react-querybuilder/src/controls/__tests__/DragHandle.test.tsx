@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { DragHandle } from '..';
+import DragHandle from '../DragHandle';
 import type { DragHandleProps } from '../../types';
 
 describe('<DragHandle />', () => {

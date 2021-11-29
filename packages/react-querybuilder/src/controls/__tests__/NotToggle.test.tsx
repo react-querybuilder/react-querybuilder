@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { NotToggle } from '..';
+import NotToggle from '../NotToggle';
 import type { NotToggleProps } from '../../types';
 
 describe('<NotToggle />', () => {

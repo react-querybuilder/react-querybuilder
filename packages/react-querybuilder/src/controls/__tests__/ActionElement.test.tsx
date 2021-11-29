@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ActionElement } from '..';
+import ActionElement from '../ActionElement';
 import type { ActionProps } from '../../types';
 
 describe('<ActionElement />', () => {
