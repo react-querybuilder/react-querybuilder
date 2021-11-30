@@ -5,7 +5,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType
-} from '../types/ruleGroups';
+} from '../types';
 
 export const regenerateID = (rule: RuleType): RuleType =>
   JSON.parse(JSON.stringify({ ...rule, id: `r-${generateID()}` }));

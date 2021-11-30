@@ -1,5 +1,5 @@
 import { standardClassnames } from '../defaults';
-import type { ValidationResult } from '../types/validation';
+import type { ValidationResult } from '../types';
 
 const getValidationClassNames = (validationResult: boolean | ValidationResult) => {
   const valid =

@@ -11,9 +11,15 @@ import {
   defaultTranslations,
   standardClassnames
 } from './defaults';
-import type { Field } from './types/basic';
-import type { QueryBuilderProps, QueryBuilderPropsInternal, Schema } from './types/props';
-import type { RuleGroupType, RuleGroupTypeIC, RuleType } from './types/ruleGroups';
+import type {
+  Field,
+  QueryBuilderProps,
+  QueryBuilderPropsInternal,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+  Schema
+} from './types';
 import {
   c,
   findPath,

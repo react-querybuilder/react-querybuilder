@@ -1,4 +1,4 @@
-import { AnyCase } from '../../types/util';
+import { AnyCase } from '../../types';
 
 type TokenType =
   | 'AndExpression'

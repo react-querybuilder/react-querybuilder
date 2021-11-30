@@ -3,15 +3,15 @@ import type {
   FormatQueryOptions,
   ParameterizedNamedSQL,
   ParameterizedSQL,
-  ValueProcessor
-} from '../types/importExport';
-import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '../types/ruleGroups';
-import type {
   QueryValidator,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleType,
   RuleValidator,
   ValidationMap,
-  ValidationResult
-} from '../types/validation';
+  ValidationResult,
+  ValueProcessor
+} from '../types';
 import isRuleOrGroupValid from './isRuleOrGroupValid';
 import uniqByName from './uniqByName';
 
