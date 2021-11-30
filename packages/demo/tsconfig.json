@@ -5,5 +5,5 @@
     "module": "esnext"
   },
   "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*", "./src/setupTests.ts"]
+  "exclude": ["**/*.test.*", "./src/__mocks__/*.*"]
 }

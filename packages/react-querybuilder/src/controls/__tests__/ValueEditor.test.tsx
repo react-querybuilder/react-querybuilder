@@ -40,7 +40,7 @@ describe('<ValueEditor />', () => {
       const { getByTitle } = render(
         <ValueEditor {...props} inputType="number" operator="between" />
       );
-      expect(getByTitle('ValueEditor').attributes.getNamedItem('type').value).toBe('text');
+      expect(getByTitle('ValueEditor').getAttribute('type')).toBe('text');
     });
 
     it('should set the value to "" if operator is not "between" or "notBetween" and inputType is "number" and value contains a comma', () => {
@@ -112,7 +112,7 @@ describe('<ValueEditor />', () => {
       );
 
       expect(getByTitle('ValueEditor').tagName).toBe('INPUT');
-      expect(getByTitle('ValueEditor').attributes.getNamedItem('type').value).toBe('checkbox');
+      expect(getByTitle('ValueEditor').getAttribute('type')).toBe('checkbox');
 
       userEvent.click(getByTitle('ValueEditor'));
       expect(handleOnChange).toHaveBeenCalledWith(true);
@@ -127,9 +127,7 @@ describe('<ValueEditor />', () => {
 
       expect(getByTitle('ValueEditor').querySelectorAll('input')).toHaveLength(1);
       expect(
-        getByTitle('ValueEditor')
-          .querySelector('input[type="radio"]')
-          .attributes.getNamedItem('type').value
+        getByTitle('ValueEditor').querySelector('input[type="radio"]').getAttribute('type')
       ).toBe('radio');
     });
 
