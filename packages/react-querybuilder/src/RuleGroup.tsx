@@ -148,6 +148,7 @@ export const RuleGroup = ({
           <controls.dragHandle
             ref={dragRef}
             level={level}
+            path={path}
             title={translations.dragHandle.title}
             label={translations.dragHandle.label}
             className={c(standardClassnames.dragHandle, classNames.dragHandle)}
@@ -164,6 +165,7 @@ export const RuleGroup = ({
             handleOnChange={onCombinatorChange}
             rules={rules}
             level={level}
+            path={path}
             context={context}
             validation={validationResult}
           />
@@ -176,6 +178,7 @@ export const RuleGroup = ({
             checked={not}
             handleOnChange={onNotToggleChange}
             level={level}
+            path={path}
             context={context}
             validation={validationResult}
           />
@@ -187,6 +190,7 @@ export const RuleGroup = ({
           handleOnClick={addRule}
           rules={rules}
           level={level}
+          path={path}
           context={context}
           validation={validationResult}
         />
@@ -197,6 +201,7 @@ export const RuleGroup = ({
           handleOnClick={addGroup}
           rules={rules}
           level={level}
+          path={path}
           context={context}
           validation={validationResult}
         />
@@ -208,6 +213,7 @@ export const RuleGroup = ({
             handleOnClick={cloneGroup}
             rules={rules}
             level={level}
+            path={path}
             context={context}
             validation={validationResult}
           />
@@ -220,6 +226,7 @@ export const RuleGroup = ({
             handleOnClick={removeGroup}
             rules={rules}
             level={level}
+            path={path}
             context={context}
             validation={validationResult}
           />

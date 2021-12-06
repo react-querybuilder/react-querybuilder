@@ -62,7 +62,7 @@ export const InlineCombinator = ({
       className={wrapperClassName}
       data-dropmonitorid={dropMonitorId}
       data-testid="inline-combinator">
-      <CombinatorSelectorComponent {...props} />
+      <CombinatorSelectorComponent {...props} path={path} />
     </div>
   );
 };

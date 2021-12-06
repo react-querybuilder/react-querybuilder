@@ -133,6 +133,7 @@ export const Rule = ({
       <controls.dragHandle
         ref={dragRef}
         level={level}
+        path={path}
         title={translations.dragHandle.title}
         label={translations.dragHandle.label}
         className={c(standardClassnames.dragHandle, classNames.dragHandle)}
@@ -147,6 +148,7 @@ export const Rule = ({
         className={c(standardClassnames.fields, classNames.fields)}
         handleOnChange={generateOnChangeHandler('field')}
         level={level}
+        path={path}
         context={context}
         validation={validationResult}
       />
@@ -161,6 +163,7 @@ export const Rule = ({
             className={c(standardClassnames.operators, classNames.operators)}
             handleOnChange={generateOnChangeHandler('operator')}
             level={level}
+            path={path}
             context={context}
             validation={validationResult}
           />
@@ -176,6 +179,7 @@ export const Rule = ({
             className={c(standardClassnames.value, classNames.value)}
             handleOnChange={generateOnChangeHandler('value')}
             level={level}
+            path={path}
             context={context}
             validation={validationResult}
           />
@@ -188,6 +192,7 @@ export const Rule = ({
           className={c(standardClassnames.cloneRule, classNames.cloneRule)}
           handleOnClick={cloneRule}
           level={level}
+          path={path}
           context={context}
           validation={validationResult}
         />
@@ -198,6 +203,7 @@ export const Rule = ({
         className={c(standardClassnames.removeRule, classNames.removeRule)}
         handleOnClick={removeRule}
         level={level}
+        path={path}
         context={context}
         validation={validationResult}
       />
