@@ -1484,6 +1484,42 @@ describe('<QueryBuilder />', () => {
         });
       });
 
+      it('moves a rule from last to middle by dropping on inline combinator', () => {
+        const onQueryChange = jest.fn();
+        const { getAllByTestId } = render(
+          <QueryBuilder
+            independentCombinators
+            onQueryChange={onQueryChange}
+            enableDragAndDrop
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' }
+              ]
+            }}
+          />
+        );
+        const rules = getAllByTestId('rule');
+        const combinators = getAllByTestId('inline-combinator');
+        simulateDragDrop(
+          getHandlerId(rules[2], 'drag'),
+          getHandlerId(combinators[0], 'drop'),
+          getDndBackend()
+        );
+        expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' }
+          ]
+        });
+      });
+
       it('moves a first-child rule to a different group as the first child', () => {
         const onQueryChange = jest.fn();
         const { getAllByTestId } = render(

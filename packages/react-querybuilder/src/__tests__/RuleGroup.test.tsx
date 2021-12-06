@@ -403,14 +403,14 @@ describe('<RuleGroup />', () => {
     it('should not have the drag class if not dragging', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
       const ruleGroup = getByTestId('rule-group');
-      expect(ruleGroup.className).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroup.classList).not.toContain(standardClassnames.dndDragging);
     });
 
     it('should have the drag class if dragging', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
       const ruleGroup = getByTestId('rule-group');
       simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
-      expect(ruleGroup.className).toContain(standardClassnames.dndDragging);
+      expect(ruleGroup.classList).toContain(standardClassnames.dndDragging);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -431,8 +431,8 @@ describe('<RuleGroup />', () => {
         getHandlerId(ruleGroups[0], 'drop'),
         getDndBackend()
       );
-      expect(ruleGroups[0].className).not.toContain(standardClassnames.dndDragging);
-      expect(ruleGroups[1].className).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroups[0].classList).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
     });
 
@@ -446,8 +446,8 @@ describe('<RuleGroup />', () => {
         getHandlerId(ruleGroup, 'drop'),
         getDndBackend()
       );
-      expect(ruleGroup.className).not.toContain(standardClassnames.dndDragging);
-      expect(ruleGroup.className).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroup.classList).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroup.classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).not.toHaveBeenCalled();
     });
 
@@ -497,7 +497,7 @@ describe('<RuleGroup />', () => {
       expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1]);
     });
 
-    it('should handle drops on independent combinators', () => {
+    it('should handle rule group drops on independent combinators', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
       props.schema.independentCombinators = true;
@@ -508,7 +508,7 @@ describe('<RuleGroup />', () => {
             rules={[
               { field: 'firstName', operator: '=', value: 'Steve' },
               'and',
-              { field: 'firstName', operator: '=', value: 'Steve' }
+              { field: 'lastName', operator: '=', value: 'Vai' }
             ]}
             path={[0]}
           />
@@ -522,9 +522,36 @@ describe('<RuleGroup />', () => {
         getHandlerId(combinatorEl, 'drop'),
         getDndBackend()
       );
-      expect(ruleGroups[1].className).not.toContain(standardClassnames.dndDragging);
-      expect(combinatorEl.className).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndDragging);
+      expect(combinatorEl.classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([1], [0, 2]);
+    });
+
+    it('should handle rule drops on independent combinators', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      props.schema.independentCombinators = true;
+      const { getAllByTestId } = render(
+        <RuleGroup
+          {...props}
+          rules={[
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            'and',
+            { field: 'age', operator: '>', value: 28 }
+          ]}
+          path={[0]}
+        />
+      );
+      const rules = getAllByTestId('rule');
+      const combinatorEls = getAllByTestId('inline-combinator');
+      simulateDragDrop(
+        getHandlerId(rules[2], 'drag'),
+        getHandlerId(combinatorEls[0], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 2]);
     });
   });
 
