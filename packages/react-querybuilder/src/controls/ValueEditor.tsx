@@ -12,13 +12,13 @@ const ValueEditor = ({
   values,
   fieldData
 }: ValueEditorProps) => {
-  // This side effect blanks out the value if the inputType is "number",
-  // the operator is not "between" and not "notBetween",
-  // and the value contains a comma.
+  // This side effect blanks out the value if 1) the inputType is "number",
+  // 2) the operator is not "between", "notBetween", "in", or "notIn", and
+  // 3) the value contains a comma.
   useEffect(() => {
     if (
       inputType === 'number' &&
-      !['between', 'notBetween'].includes(operator) &&
+      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
       typeof value === 'string' &&
       value.includes(',')
     ) {
@@ -31,7 +31,7 @@ const ValueEditor = ({
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
     ? 'text'
     : inputType || 'text';
 
