@@ -15,7 +15,7 @@ const BootstrapValueEditor = ({
   useEffect(() => {
     if (
       inputType === 'number' &&
-      !['between', 'notBetween'].includes(operator) &&
+      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
       typeof value === 'string' &&
       value.includes(',')
     ) {
@@ -28,7 +28,7 @@ const BootstrapValueEditor = ({
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween'].includes(operator)
+  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
     ? 'text'
     : inputType || 'text';
 
