@@ -17,7 +17,7 @@ import type {
   RuleType,
   Schema,
   ValidationResult,
-  ValueSelectorProps
+  ValueSelectorProps,
 } from '../types';
 
 const [RuleGroup, getDndBackend] = wrapWithTestBackend(RuleGroupOriginal);
@@ -33,79 +33,79 @@ describe('<RuleGroup />', () => {
 
   beforeEach(() => {
     controls = {
-      combinatorSelector: (props) => (
+      combinatorSelector: props => (
         <select
           className={props.className}
           title={props.title}
           value={props.value}
-          onChange={(e) => props.handleOnChange(e.target.value)}>
+          onChange={e => props.handleOnChange(e.target.value)}>
           <option value="and">AND</option>
           <option value="or">OR</option>
           <option value="any_combinator_value">Any Combinator</option>
         </select>
       ),
-      addRuleAction: (props) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+      addRuleAction: props => (
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           +Rule
         </button>
       ),
-      addGroupAction: (props) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+      addGroupAction: props => (
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           +Group
         </button>
       ),
-      cloneGroupAction: (props) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+      cloneGroupAction: props => (
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           ⧉
         </button>
       ),
-      cloneRuleAction: (props) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+      cloneRuleAction: props => (
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           ⧉
         </button>
       ),
-      removeGroupAction: (props) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+      removeGroupAction: props => (
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           x
         </button>
       ),
-      removeRuleAction: (props) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+      removeRuleAction: props => (
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           x
         </button>
       ),
-      notToggle: (props) => (
+      notToggle: props => (
         <label className={props.className}>
-          <input type="checkbox" onChange={(e) => props.handleOnChange(e.target.checked)} />
+          <input type="checkbox" onChange={e => props.handleOnChange(e.target.checked)} />
           Not
         </label>
       ),
-      fieldSelector: (props) => (
+      fieldSelector: props => (
         <select
           className={props.className}
           value={props.value}
-          onChange={(e) => props.handleOnChange(e.target.value)}>
+          onChange={e => props.handleOnChange(e.target.value)}>
           <option value={props.options[0].name}>{props.options[0].label}</option>
         </select>
       ),
-      operatorSelector: (props) => (
+      operatorSelector: props => (
         <select
           className={props.className}
           value={props.value}
-          onChange={(e) => props.handleOnChange(e.target.value)}>
+          onChange={e => props.handleOnChange(e.target.value)}>
           <option value={props.options[0].name}>{props.options[0].label}</option>
         </select>
       ),
-      valueEditor: (props) => (
+      valueEditor: props => (
         <input
           className={props.className}
           value={props.value}
-          onChange={(e) => props.handleOnChange(e.target.value)}
+          onChange={e => props.handleOnChange(e.target.value)}
         />
       ),
       rule: Rule,
       ruleGroup: RuleGroup,
-      dragHandle: forwardRef(() => <span>:</span>)
+      dragHandle: forwardRef(() => <span>:</span>),
     };
     classNames = {
       header: 'custom-header-class',
@@ -116,7 +116,7 @@ describe('<RuleGroup />', () => {
       cloneGroup: 'custom-cloneGroup-class',
       removeGroup: 'custom-removeGroup-class',
       notToggle: 'custom-notToggle-class',
-      ruleGroup: 'custom-ruleGroup-class'
+      ruleGroup: 'custom-ruleGroup-class',
     };
     schema = {
       fields: [{ name: 'field1', label: 'Field 1' }],
@@ -139,7 +139,7 @@ describe('<RuleGroup />', () => {
       showNotToggle: false,
       showCloneButtons: false,
       independentCombinators: false,
-      validationMap: {}
+      validationMap: {},
     };
     props = {
       id: 'id',
@@ -147,7 +147,7 @@ describe('<RuleGroup />', () => {
       rules: [],
       combinator: 'and',
       schema: schema as Schema,
-      translations: defaultTranslations
+      translations: defaultTranslations,
     };
   });
 
@@ -272,7 +272,7 @@ describe('<RuleGroup />', () => {
       props.rules = [
         { rules: [], combinator: 'and' },
         { field: 'test', value: 'Test', operator: '=' },
-        { rules: [], combinator: 'and' }
+        { rules: [], combinator: 'and' },
       ];
       const { container } = render(<RuleGroup {...props} />);
       expect(container.querySelectorAll(`.${standardClassnames.combinators}`)).toHaveLength(2);
@@ -332,7 +332,7 @@ describe('<RuleGroup />', () => {
       const rules: RuleGroupICArray = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
-        { rules: [] }
+        { rules: [] },
       ];
       const { container } = render(<RuleGroup {...props} rules={rules} />);
       const combinatorSelector = container.querySelector(
@@ -347,7 +347,7 @@ describe('<RuleGroup />', () => {
       const rules: RuleGroupICArray = [
         { field: 'firstName', operator: '=', value: 'Test' },
         'and',
-        { field: 'lastName', operator: '=', value: 'Test' }
+        { field: 'lastName', operator: '=', value: 'Test' },
       ];
       const { getByText, getByTitle } = render(<RuleGroup {...props} rules={rules} />);
       userEvent.selectOptions(getByTitle(props.translations.combinators.title), [getByText('OR')]);
@@ -475,7 +475,7 @@ describe('<RuleGroup />', () => {
             rules={[
               { field: 'firstName', operator: '=', value: '0' },
               { field: 'firstName', operator: '=', value: '1' },
-              { field: 'firstName', operator: '=', value: '2' }
+              { field: 'firstName', operator: '=', value: '2' },
             ]}
             path={[0]}
           />
@@ -508,7 +508,7 @@ describe('<RuleGroup />', () => {
             rules={[
               { field: 'firstName', operator: '=', value: 'Steve' },
               'and',
-              { field: 'lastName', operator: '=', value: 'Vai' }
+              { field: 'lastName', operator: '=', value: 'Vai' },
             ]}
             path={[0]}
           />
@@ -539,7 +539,7 @@ describe('<RuleGroup />', () => {
             'and',
             { field: 'lastName', operator: '=', value: 'Vai' },
             'and',
-            { field: 'age', operator: '>', value: 28 }
+            { field: 'age', operator: '>', value: 28 },
           ]}
           path={[0]}
         />
@@ -561,7 +561,7 @@ describe('<RuleGroup />', () => {
       id: `rule_id_${index}`,
       field: `field_${index}`,
       operator: `operator_${index}`,
-      value: `value_${index}`
+      value: `value_${index}`,
     };
   };
 
@@ -575,7 +575,7 @@ describe('<RuleGroup />', () => {
       id: 'rule_group_id_' + index,
       path: thisPath,
       rules,
-      combinator: undefined
+      combinator: undefined,
     };
   };
 });

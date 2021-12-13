@@ -9,7 +9,7 @@ describe('prepareQueryObjects', () => {
           id: 'r-12345',
           field: 'firstName',
           value: 'Test with ID',
-          operator: '='
+          operator: '=',
         }).id
       ).toBe('r-12345');
     });
@@ -18,7 +18,7 @@ describe('prepareQueryObjects', () => {
         prepareRule({
           field: 'firstName',
           value: 'Test without ID',
-          operator: '='
+          operator: '=',
         })
       ).toHaveProperty('id');
     });
@@ -33,9 +33,9 @@ describe('prepareQueryObjects', () => {
           id: 'r-12345',
           field: 'firstName',
           value: 'Test',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     it('should not generate new ID if query provides ID', () => {
@@ -52,24 +52,24 @@ describe('prepareQueryObjects', () => {
         {
           field: 'firstName',
           value: 'Test without ID',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
     const queryICWithoutID: RuleGroupTypeIC = {
       rules: [
         {
           field: 'firstName',
           value: 'Test without ID',
-          operator: '='
+          operator: '=',
         },
         'and',
         {
           field: 'firstName',
           value: 'Test without ID',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     it('should generate IDs if missing in query', () => {

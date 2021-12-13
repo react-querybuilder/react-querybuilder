@@ -2,5 +2,5 @@
 module.exports = {
   projects: ['packages/react-querybuilder'],
   collectCoverage: true,
-  coverageDirectory: 'coverage'
+  coverageDirectory: 'coverage',
 };

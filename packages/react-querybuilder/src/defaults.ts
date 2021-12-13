@@ -7,56 +7,56 @@ import type {
   DefaultCombinator,
   DefaultOperator,
   Field,
-  Translations
+  Translations,
 } from './types';
 
 export const defaultFields: Field[] = [{ id: '~', name: '~', label: '------' }];
 
 export const defaultTranslations: Translations = {
   fields: {
-    title: 'Fields'
+    title: 'Fields',
   },
   operators: {
-    title: 'Operators'
+    title: 'Operators',
   },
   value: {
-    title: 'Value'
+    title: 'Value',
   },
   removeRule: {
     label: 'x',
-    title: 'Remove rule'
+    title: 'Remove rule',
   },
   removeGroup: {
     label: 'x',
-    title: 'Remove group'
+    title: 'Remove group',
   },
   addRule: {
     label: '+Rule',
-    title: 'Add rule'
+    title: 'Add rule',
   },
   addGroup: {
     label: '+Group',
-    title: 'Add group'
+    title: 'Add group',
   },
   combinators: {
-    title: 'Combinators'
+    title: 'Combinators',
   },
   notToggle: {
     label: 'Not',
-    title: 'Invert this group'
+    title: 'Invert this group',
   },
   cloneRule: {
     label: '⧉',
-    title: 'Clone rule'
+    title: 'Clone rule',
   },
   cloneRuleGroup: {
     label: '⧉',
-    title: 'Clone group'
+    title: 'Clone group',
   },
   dragHandle: {
     label: '⁞⁞',
-    title: 'Drag handle'
-  }
+    title: 'Drag handle',
+  },
 };
 
 export const defaultOperators: DefaultOperator[] = [
@@ -77,12 +77,12 @@ export const defaultOperators: DefaultOperator[] = [
   { name: 'in', label: 'in' },
   { name: 'notIn', label: 'not in' },
   { name: 'between', label: 'between' },
-  { name: 'notBetween', label: 'not between' }
+  { name: 'notBetween', label: 'not between' },
 ];
 
 export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },
-  { name: 'or', label: 'OR' }
+  { name: 'or', label: 'OR' },
 ];
 
 export const standardClassnames = {
@@ -107,7 +107,7 @@ export const standardClassnames = {
   invalid: 'queryBuilder-invalid',
   dndDragging: 'dndDragging',
   dndOver: 'dndOver',
-  dragHandle: 'queryBuilder-dragHandle'
+  dragHandle: 'queryBuilder-dragHandle',
 } as const;
 
 export const defaultControlClassnames: Classnames = {
@@ -127,7 +127,7 @@ export const defaultControlClassnames: Classnames = {
   operators: '',
   value: '',
   removeRule: '',
-  dragHandle: ''
+  dragHandle: '',
 };
 
 export const defaultControlElements: Controls = {
@@ -144,16 +144,16 @@ export const defaultControlElements: Controls = {
   notToggle: NotToggle,
   ruleGroup: RuleGroup,
   rule: Rule,
-  dragHandle: DragHandle
+  dragHandle: DragHandle,
 };
 
 export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
-  invalidIndependentCombinators: 'invalid independent combinators'
+  invalidIndependentCombinators: 'invalid independent combinators',
 } as const;
 
 export const dndTypes = {
   rule: 'rule',
-  ruleGroup: 'ruleGroup'
+  ruleGroup: 'ruleGroup',
 } as const;

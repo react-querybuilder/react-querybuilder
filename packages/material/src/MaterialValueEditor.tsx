@@ -6,7 +6,7 @@ import {
   MenuItem,
   Radio,
   RadioGroup,
-  Select
+  Select,
 } from '@mui/material';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
@@ -20,7 +20,8 @@ const MaterialValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  disabled,
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -45,10 +46,10 @@ const MaterialValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <FormControl variant="standard" className={className}>
-          <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
+        <FormControl variant="standard" className={className} disabled={disabled}>
+          <Select value={value} onChange={e => handleOnChange(e.target.value)}>
             {values &&
-              values.map((v) => (
+              values.map(v => (
                 <MenuItem key={v.name} value={v.name}>
                   {v.label}
                 </MenuItem>
@@ -61,16 +62,17 @@ const MaterialValueEditor = ({
       return (
         <Checkbox
           className={className}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
+          disabled={disabled}
         />
       );
 
     case 'radio':
       return (
-        <FormControl className={className} title={title} component="fieldset">
-          <RadioGroup value={value} onChange={(e) => handleOnChange(e.target.value)}>
-            {values!.map((v) => (
+        <FormControl className={className} title={title} component="fieldset" disabled={disabled}>
+          <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
+            {values!.map(v => (
               <FormControlLabel key={v.name} value={v.name} control={<Radio />} label={v.label} />
             ))}
           </RadioGroup>
@@ -83,9 +85,10 @@ const MaterialValueEditor = ({
           type={inputTypeCoerced}
           value={value}
           title={title}
+          disabled={disabled}
           className={className}
           placeholder={placeHolderText}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

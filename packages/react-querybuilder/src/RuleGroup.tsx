@@ -12,8 +12,9 @@ export const RuleGroup = ({
   rules,
   translations,
   schema,
+  disabled,
   not,
-  context
+  context,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -31,7 +32,7 @@ export const RuleGroup = ({
     showNotToggle,
     showCloneButtons,
     updateIndependentCombinator,
-    validationMap
+    validationMap,
   } = schema;
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -41,17 +42,18 @@ export const RuleGroup = ({
     () => ({
       type: dndTypes.ruleGroup,
       item: (): DraggedItem => ({ path }),
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId()
-      })
+      collect: monitor => ({
+        isDragging: !disabled && monitor.isDragging(),
+        dragMonitorId: monitor.getHandlerId(),
+      }),
     }),
-    [path]
+    [disabled, path]
   );
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
       canDrop: (item: DraggedItem) => {
+        if (disabled) return false;
         const parentItemPath = getParentPath(item.path);
         const itemIndex = item.path[item.path.length - 1];
         // Don't allow drop if 1) item is ancestor of drop target,
@@ -63,13 +65,13 @@ export const RuleGroup = ({
           pathsAreEqual(path, item.path)
         );
       },
-      collect: (monitor) => ({
+      collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId()
+        dropMonitorId: monitor.getHandlerId(),
       }),
-      drop: (item: DraggedItem, _monitor) => moveRule(item.path, [...path, 0])
+      drop: (item: DraggedItem, _monitor) => !disabled && moveRule(item.path, [...path, 0]),
     }),
-    [moveRule, path]
+    [disabled, moveRule, path]
   );
   if (path.length > 0) {
     drag(dragRef);
@@ -152,6 +154,7 @@ export const RuleGroup = ({
             title={translations.dragHandle.title}
             label={translations.dragHandle.label}
             className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+            disabled={disabled}
             context={context}
             validation={validationResult}
           />
@@ -166,6 +169,7 @@ export const RuleGroup = ({
             rules={rules}
             level={level}
             path={path}
+            disabled={disabled}
             context={context}
             validation={validationResult}
           />
@@ -178,6 +182,7 @@ export const RuleGroup = ({
             checked={not}
             handleOnChange={onNotToggleChange}
             level={level}
+            disabled={disabled}
             path={path}
             context={context}
             validation={validationResult}
@@ -191,6 +196,7 @@ export const RuleGroup = ({
           rules={rules}
           level={level}
           path={path}
+          disabled={disabled}
           context={context}
           validation={validationResult}
         />
@@ -202,6 +208,7 @@ export const RuleGroup = ({
           rules={rules}
           level={level}
           path={path}
+          disabled={disabled}
           context={context}
           validation={validationResult}
         />
@@ -214,6 +221,7 @@ export const RuleGroup = ({
             rules={rules}
             level={level}
             path={path}
+            disabled={disabled}
             context={context}
             validation={validationResult}
           />
@@ -227,6 +235,7 @@ export const RuleGroup = ({
             rules={rules}
             level={level}
             path={path}
+            disabled={disabled}
             context={context}
             validation={validationResult}
           />
@@ -251,6 +260,7 @@ export const RuleGroup = ({
                   component={controls.combinatorSelector}
                   moveRule={moveRule}
                   path={thisPath}
+                  disabled={disabled}
                   independentCombinators={independentCombinators}
                 />
               )}
@@ -260,7 +270,7 @@ export const RuleGroup = ({
                   value={r}
                   title={translations.combinators.title}
                   className={c(standardClassnames.combinators, classNames.combinators)}
-                  handleOnChange={(val) => onIndependentCombinatorChange(val, idx)}
+                  handleOnChange={val => onIndependentCombinatorChange(val, idx)}
                   rules={rules}
                   level={level}
                   context={context}
@@ -268,6 +278,7 @@ export const RuleGroup = ({
                   component={controls.combinatorSelector}
                   moveRule={moveRule}
                   path={thisPath}
+                  disabled={disabled}
                   independentCombinators={independentCombinators}
                 />
               ) : 'rules' in r ? (
@@ -278,6 +289,7 @@ export const RuleGroup = ({
                   combinator={'combinator' in r ? r.combinator : undefined}
                   translations={translations}
                   rules={r.rules}
+                  disabled={disabled}
                   not={!!r.not}
                   context={context}
                 />
@@ -289,6 +301,7 @@ export const RuleGroup = ({
                   operator={r.operator}
                   schema={schema}
                   path={thisPath}
+                  disabled={disabled}
                   translations={translations}
                   context={context}
                 />

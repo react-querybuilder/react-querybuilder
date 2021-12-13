@@ -5,7 +5,7 @@ import QueryBuilder, {
   Field,
   generateID,
   RuleGroupType,
-  RuleType
+  RuleType,
 } from 'react-querybuilder';
 
 const validator = (r: RuleType) => !!r.value;
@@ -17,7 +17,7 @@ const fields: Field[] = [
     label: 'Last Name',
     placeholder: 'Enter last name',
     defaultOperator: 'beginsWith',
-    validator
+    validator,
   },
   { name: 'age', label: 'Age', inputType: 'number', validator },
   {
@@ -25,7 +25,7 @@ const fields: Field[] = [
     label: 'Is a musician',
     valueEditorType: 'checkbox',
     operators: [{ name: '=', label: 'is' }],
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: 'instrument',
@@ -35,10 +35,10 @@ const fields: Field[] = [
       { name: 'Guitar', label: 'Guitar' },
       { name: 'Piano', label: 'Piano' },
       { name: 'Vocals', label: 'Vocals' },
-      { name: 'Drums', label: 'Drums' }
+      { name: 'Drums', label: 'Drums' },
     ],
     defaultValue: 'Piano',
-    operators: [{ name: '=', label: 'is' }]
+    operators: [{ name: '=', label: 'is' }],
   },
   {
     name: 'gender',
@@ -48,11 +48,11 @@ const fields: Field[] = [
     values: [
       { name: 'M', label: 'Male' },
       { name: 'F', label: 'Female' },
-      { name: 'O', label: 'Other' }
-    ]
+      { name: 'O', label: 'Other' },
+    ],
   },
   { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator }
+  { name: 'job', label: 'Job', validator },
 ];
 
 const initialQuery: RuleGroupType = {
@@ -64,19 +64,19 @@ const initialQuery: RuleGroupType = {
       id: generateID(),
       field: 'firstName',
       value: 'Stev',
-      operator: 'beginsWith'
+      operator: 'beginsWith',
     },
     {
       id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
-      operator: 'in'
+      operator: 'in',
     },
     {
       id: generateID(),
       field: 'age',
       operator: '>',
-      value: '28'
+      value: '28',
     },
     {
       id: generateID(),
@@ -86,17 +86,17 @@ const initialQuery: RuleGroupType = {
           id: generateID(),
           field: 'isMusician',
           operator: '=',
-          value: true
+          value: true,
         },
         {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar'
-        }
-      ]
-    }
-  ]
+          value: 'Guitar',
+        },
+      ],
+    },
+  ],
 };
 
 const IE11 = () => (

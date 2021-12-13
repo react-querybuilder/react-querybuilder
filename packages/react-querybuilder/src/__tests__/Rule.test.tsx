@@ -5,7 +5,7 @@ import {
   simulateDrag,
   simulateDragDrop,
   simulateDragHover,
-  wrapWithTestBackend
+  wrapWithTestBackend,
 } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
 import { defaultTranslations, standardClassnames } from '../defaults';
@@ -21,7 +21,7 @@ import type {
   Schema,
   ValidationResult,
   ValueEditorProps,
-  ValueSelectorProps
+  ValueSelectorProps,
 } from '../types';
 
 const [Rule, getDndBackend] = wrapWithTestBackend(RuleOriginal);
@@ -31,10 +31,10 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
 
 const defaultFields: Field[] = [
   { name: 'field1', label: 'Field 1' },
-  { name: 'field2', label: 'Field 2' }
+  { name: 'field2', label: 'Field 2' },
 ];
 const fieldMap: { [k: string]: Field } = {};
-defaultFields.forEach((f) => {
+defaultFields.forEach(f => {
   fieldMap[f.name] = f;
 });
 
@@ -47,18 +47,18 @@ describe('<Rule />', () => {
   beforeEach(() => {
     controls = {
       cloneRuleAction: (props: ActionProps) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           ⧉
         </button>
       ),
       fieldSelector: (props: FieldSelectorProps) => (
-        <select className={props.className} onChange={(e) => props.handleOnChange(e.target.value)}>
+        <select className={props.className} onChange={e => props.handleOnChange(e.target.value)}>
           <option value="field">Field</option>
           <option value="any_field">Any Field</option>
         </select>
       ),
       operatorSelector: (props: OperatorSelectorProps) => (
-        <select className={props.className} onChange={(e) => props.handleOnChange(e.target.value)}>
+        <select className={props.className} onChange={e => props.handleOnChange(e.target.value)}>
           <option value="operator">Operator</option>
           <option value="any_operator">Any Operator</option>
         </select>
@@ -67,11 +67,11 @@ describe('<Rule />', () => {
         <input
           className={props.className}
           type="text"
-          onChange={(e) => props.handleOnChange(e.target.value)}
+          onChange={e => props.handleOnChange(e.target.value)}
         />
       ),
       removeRuleAction: (props: ActionProps) => (
-        <button className={props.className} onClick={(e) => props.handleOnClick(e)}>
+        <button className={props.className} onClick={e => props.handleOnClick(e)}>
           x
         </button>
       ),
@@ -79,7 +79,7 @@ describe('<Rule />', () => {
         <span ref={ref} className={className}>
           {label}
         </span>
-      ))
+      )),
     };
     classNames = {
       cloneRule: 'custom-cloneRule-class',
@@ -87,27 +87,27 @@ describe('<Rule />', () => {
       fields: 'custom-fields-class',
       operators: 'custom-operators-class',
       removeRule: 'custom-removeRule-class',
-      rule: 'custom-rule-class'
+      rule: 'custom-rule-class',
     };
     schema = {
       fields: defaultFields,
       fieldMap,
       controls: controls as Controls,
       classNames: classNames as Classnames,
-      getOperators: (_field) => [
+      getOperators: _field => [
         { name: '=', label: 'is' },
-        { name: '!=', label: 'is not' }
+        { name: '!=', label: 'is not' },
       ],
       getValueEditorType: (_field, _operator) => 'text',
       getInputType: (_field, _operator) => 'text',
       getValues: (_field, _operator) => [
         { name: 'one', label: 'One' },
-        { name: 'two', label: 'Two' }
+        { name: 'two', label: 'Two' },
       ],
       onPropChange: (_field, _value, _path) => {},
-      onRuleRemove: (_path) => {},
+      onRuleRemove: _path => {},
       showCloneButtons: false,
-      validationMap: {}
+      validationMap: {},
     };
     props = {
       id: 'id',
@@ -116,7 +116,7 @@ describe('<Rule />', () => {
       operator: 'operator',
       schema: schema as Schema,
       path: [0],
-      translations: defaultTranslations
+      translations: defaultTranslations,
     };
   });
 
@@ -240,14 +240,14 @@ describe('<Rule />', () => {
     it('should not have the drag class if not dragging', () => {
       const { getByTestId } = render(<Rule {...props} />);
       const rule = getByTestId('rule');
-      expect(rule.className).not.toContain(standardClassnames.dndDragging);
+      expect(rule.classList).not.toContain(standardClassnames.dndDragging);
     });
 
     it('should have the drag class if dragging', () => {
       const { getByTestId } = render(<Rule {...props} />);
       const rule = getByTestId('rule');
       simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
-      expect(rule.className).toContain(standardClassnames.dndDragging);
+      expect(rule.classList).toContain(standardClassnames.dndDragging);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -266,7 +266,7 @@ describe('<Rule />', () => {
         getHandlerId(rules[1], 'drop'),
         getDndBackend()
       );
-      expect(rules[1].className).toContain(standardClassnames.dndOver);
+      expect(rules[1].classList).toContain(standardClassnames.dndOver);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -287,8 +287,8 @@ describe('<Rule />', () => {
         getHandlerId(rules[1], 'drop'),
         getDndBackend()
       );
-      expect(rules[0].className).not.toContain(standardClassnames.dndDragging);
-      expect(rules[1].className).not.toContain(standardClassnames.dndOver);
+      expect(rules[0].classList).not.toContain(standardClassnames.dndDragging);
+      expect(rules[1].classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([0], [2]);
     });
 
@@ -298,8 +298,8 @@ describe('<Rule />', () => {
       const { getByTestId } = render(<Rule {...props} />);
       const rule = getByTestId('rule');
       simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
-      expect(rule.className).not.toContain(standardClassnames.dndDragging);
-      expect(rule.className).not.toContain(standardClassnames.dndOver);
+      expect(rule.classList).not.toContain(standardClassnames.dndDragging);
+      expect(rule.classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).not.toHaveBeenCalled();
     });
   });

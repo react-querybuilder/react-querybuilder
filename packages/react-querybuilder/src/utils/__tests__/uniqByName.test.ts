@@ -5,11 +5,11 @@ describe('uniqByName', () => {
     expect(
       uniqByName([
         { id: 1, name: 'test1' },
-        { id: 2, name: 'test2' }
+        { id: 2, name: 'test2' },
       ])
     ).toEqual([
       { id: 1, name: 'test1' },
-      { id: 2, name: 'test2' }
+      { id: 2, name: 'test2' },
     ]);
   });
 
@@ -17,7 +17,7 @@ describe('uniqByName', () => {
     expect(
       uniqByName([
         { id: 1, name: 'test' },
-        { id: 2, name: 'test' }
+        { id: 2, name: 'test' },
       ])
     ).toEqual([{ id: 1, name: 'test' }]);
   });

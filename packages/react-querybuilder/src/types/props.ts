@@ -4,7 +4,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleOrGroupArray,
-  RuleType
+  RuleType,
 } from './ruleGroups';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
 
@@ -25,6 +25,10 @@ export interface CommonSubComponentProps {
    * The title for this control
    */
   title?: string;
+  /**
+   * Disables the control
+   */
+  disabled?: boolean;
   /**
    * Container for custom props that are passed to all components
    */
@@ -268,6 +272,7 @@ export interface RuleGroupProps {
   rules: RuleOrGroupArray;
   translations: Translations;
   schema: Schema;
+  disabled?: boolean;
   not?: boolean;
   context?: any;
 }
@@ -280,6 +285,7 @@ export interface RuleProps {
   value: any;
   translations: Translations;
   schema: Schema;
+  disabled?: boolean;
   context?: any;
 }
 
@@ -439,6 +445,10 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      * Enables drag-and-drop features
      */
     enableDragAndDrop?: boolean;
+    /**
+     * Disables all subcomponents and prevents changes to the query
+     */
+    disabled?: boolean;
     /**
      * Query validation function
      */

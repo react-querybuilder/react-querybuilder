@@ -1,13 +1,13 @@
 import { lazy } from 'react';
+import { generateID } from 'react-querybuilder';
 import type {
   ExportFormat,
   Field,
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
-  RuleType
+  RuleType,
 } from 'react-querybuilder/src/types';
-import { generateID } from 'react-querybuilder';
 
 const AntDActionElement = lazy(() => import('./components/AntDActionElement'));
 const AntDDragHandle = lazy(() => import('./components/AntDDragHandle'));
@@ -40,7 +40,7 @@ export const styleNameMap: Record<StyleName, string> = {
   bootstrap: 'Bootstrap',
   material: 'Material',
   antd: 'Ant Design',
-  chakra: 'Chakra UI'
+  chakra: 'Chakra UI',
 };
 
 export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
@@ -56,13 +56,13 @@ export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
       combinators: 'form-select form-select-sm',
       fields: 'form-select form-select-sm',
       operators: 'form-select form-select-sm',
-      value: 'form-control form-control-sm'
+      value: 'form-control form-control-sm',
     },
     controlElements: {
       dragHandle: BootstrapDragHandle,
       notToggle: BootstrapNotToggle,
-      valueEditor: BootstrapValueEditor
-    }
+      valueEditor: BootstrapValueEditor,
+    },
   },
   antd: {
     controlElements: {
@@ -77,8 +77,8 @@ export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
       removeGroupAction: AntDActionElement,
       removeRuleAction: AntDActionElement,
       valueEditor: AntDValueEditor,
-      dragHandle: AntDDragHandle
-    }
+      dragHandle: AntDDragHandle,
+    },
   },
   material: {
     controlElements: {
@@ -93,8 +93,8 @@ export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
       removeGroupAction: MaterialActionElement,
       removeRuleAction: MaterialActionElement,
       valueEditor: MaterialValueEditor,
-      dragHandle: MaterialDragHandle
-    }
+      dragHandle: MaterialDragHandle,
+    },
   },
   chakra: {
     controlElements: {
@@ -109,9 +109,9 @@ export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
       removeGroupAction: ChakraActionElement,
       removeRuleAction: ChakraActionElement,
       valueEditor: ChakraValueEditor,
-      dragHandle: ChakraDragHandle
-    }
-  }
+      dragHandle: ChakraDragHandle,
+    },
+  },
 };
 
 export const fields: Field[] = [
@@ -121,7 +121,7 @@ export const fields: Field[] = [
     label: 'Last Name',
     placeholder: 'Enter last name',
     defaultOperator: 'beginsWith',
-    validator
+    validator,
   },
   { name: 'age', label: 'Age', inputType: 'number', validator },
   {
@@ -129,7 +129,7 @@ export const fields: Field[] = [
     label: 'Is a musician',
     valueEditorType: 'checkbox',
     operators: [{ name: '=', label: 'is' }],
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: 'instrument',
@@ -139,10 +139,10 @@ export const fields: Field[] = [
       { name: 'Guitar', label: 'Guitar' },
       { name: 'Piano', label: 'Piano' },
       { name: 'Vocals', label: 'Vocals' },
-      { name: 'Drums', label: 'Drums' }
+      { name: 'Drums', label: 'Drums' },
     ],
     defaultValue: 'Piano',
-    operators: [{ name: '=', label: 'is' }]
+    operators: [{ name: '=', label: 'is' }],
   },
   {
     name: 'gender',
@@ -152,11 +152,11 @@ export const fields: Field[] = [
     values: [
       { name: 'M', label: 'Male' },
       { name: 'F', label: 'Female' },
-      { name: 'O', label: 'Other' }
-    ]
+      { name: 'O', label: 'Other' },
+    ],
   },
   { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator }
+  { name: 'job', label: 'Job', validator },
 ];
 
 export const initialQuery: RuleGroupType = {
@@ -168,19 +168,19 @@ export const initialQuery: RuleGroupType = {
       id: generateID(),
       field: 'firstName',
       value: 'Stev',
-      operator: 'beginsWith'
+      operator: 'beginsWith',
     },
     {
       id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
-      operator: 'in'
+      operator: 'in',
     },
     {
       id: generateID(),
       field: 'age',
       operator: '>',
-      value: '28'
+      value: '28',
     },
     {
       id: generateID(),
@@ -190,17 +190,17 @@ export const initialQuery: RuleGroupType = {
           id: generateID(),
           field: 'isMusician',
           operator: '=',
-          value: true
+          value: true,
         },
         {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar'
-        }
-      ]
-    }
-  ]
+          value: 'Guitar',
+        },
+      ],
+    },
+  ],
 };
 
 export const initialQueryIC: RuleGroupTypeIC = {
@@ -210,21 +210,21 @@ export const initialQueryIC: RuleGroupTypeIC = {
       id: generateID(),
       field: 'firstName',
       value: 'Stev',
-      operator: 'beginsWith'
+      operator: 'beginsWith',
     },
     'and',
     {
       id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
-      operator: 'in'
+      operator: 'in',
     },
     'and',
     {
       id: generateID(),
       field: 'age',
       operator: '>',
-      value: '28'
+      value: '28',
     },
     'and',
     {
@@ -234,18 +234,18 @@ export const initialQueryIC: RuleGroupTypeIC = {
           id: generateID(),
           field: 'isMusician',
           operator: '=',
-          value: true
+          value: true,
         },
         'or',
         {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar'
-        }
-      ]
-    }
-  ]
+          value: 'Guitar',
+        },
+      ],
+    },
+  ],
 };
 
 export const formatMap: { fmt: ExportFormat; lbl: string }[] = [
@@ -254,5 +254,5 @@ export const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'sql', lbl: 'SQL' },
   { fmt: 'parameterized', lbl: 'Parameterized SQL' },
   { fmt: 'parameterized_named', lbl: 'Parameterized (named) SQL' },
-  { fmt: 'mongodb', lbl: 'MongoDB' }
+  { fmt: 'mongodb', lbl: 'MongoDB' },
 ];

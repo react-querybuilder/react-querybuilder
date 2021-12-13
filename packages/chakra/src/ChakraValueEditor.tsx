@@ -1,4 +1,4 @@
-import { Checkbox, Input, RadioGroup, Radio, Select, Stack } from '@chakra-ui/react';
+import { Checkbox, Input, Radio, RadioGroup, Select, Stack } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 
@@ -11,7 +11,8 @@ const ChakraValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  disabled,
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -41,9 +42,10 @@ const ChakraValueEditor = ({
           value={value}
           size="xs"
           variant="filled"
-          onChange={(e) => handleOnChange(e.target.value)}>
+          isDisabled={disabled}
+          onChange={e => handleOnChange(e.target.value)}>
           {values &&
-            values.map((v) => (
+            values.map(v => (
               <option key={v.name} value={v.name}>
                 {v.label}
               </option>
@@ -56,16 +58,22 @@ const ChakraValueEditor = ({
         <Checkbox
           className={className}
           size="sm"
-          onChange={(e) => handleOnChange(e.target.checked)}
+          isDisabled={disabled}
+          onChange={e => handleOnChange(e.target.checked)}
           isChecked={!!value}
         />
       );
 
     case 'radio':
       return (
-        <RadioGroup className={className} title={title} value={value} onChange={handleOnChange}>
+        <RadioGroup
+          className={className}
+          title={title}
+          value={value}
+          onChange={handleOnChange}
+          isDisabled={disabled}>
           <Stack direction="row">
-            {values!.map((v) => (
+            {values!.map(v => (
               <Radio key={v.name} value={v.name} size="sm">
                 {v.label}
               </Radio>
@@ -82,9 +90,10 @@ const ChakraValueEditor = ({
           title={title}
           size="xs"
           variant="filled"
+          isDisabled={disabled}
           className={className}
           placeholder={placeHolderText}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

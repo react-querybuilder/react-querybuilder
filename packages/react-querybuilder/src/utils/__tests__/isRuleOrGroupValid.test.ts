@@ -69,14 +69,14 @@ describe('isRuleOrGroupValid', () => {
     it('should validate a rule with validator().valid = true', () => {
       expect(
         isRuleOrGroupValid({ field: 'field', operator: '=', value: '' }, undefined, () => ({
-          valid: true
+          valid: true,
         }))
       ).toBe(true);
     });
     it('should invalidate a rule with validator().valid = false', () => {
       expect(
         isRuleOrGroupValid({ field: 'field', operator: '=', value: '' }, undefined, () => ({
-          valid: false
+          valid: false,
         }))
       ).toBe(false);
     });

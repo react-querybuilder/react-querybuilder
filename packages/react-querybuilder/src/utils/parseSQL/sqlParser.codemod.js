@@ -5,7 +5,7 @@ export default (file, api) => {
   root
     .find(j.IfStatement)
     .filter(
-      (e) =>
+      e =>
         e.node?.test?.left?.left?.argument?.name === 'require' &&
         e.node?.test?.right?.left?.argument?.name === 'exports'
     )

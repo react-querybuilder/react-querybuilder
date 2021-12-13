@@ -4,7 +4,7 @@ import type {
   RuleGroupICArray,
   RuleGroupType,
   RuleGroupTypeIC,
-  RuleType
+  RuleType,
 } from '../types';
 
 export const regenerateID = (rule: RuleType): RuleType =>
@@ -15,13 +15,13 @@ export const regenerateIDs = (
 ): RuleGroupType | RuleGroupTypeIC => {
   if ('combinator' in ruleGroup) {
     const { combinator, not } = ruleGroup;
-    const rules = ruleGroup.rules.map((r) =>
+    const rules = ruleGroup.rules.map(r =>
       'rules' in r ? regenerateIDs(r) : regenerateID(r)
     ) as RuleGroupArray;
     return { id: `g-${generateID()}`, combinator, rules, not };
   }
   const { not } = ruleGroup;
-  const rules = ruleGroup.rules.map((r) =>
+  const rules = ruleGroup.rules.map(r =>
     typeof r === 'string' ? r : 'rules' in r ? regenerateIDs(r) : regenerateID(r)
   ) as RuleGroupICArray;
   return { id: `g-${generateID()}`, rules, not };

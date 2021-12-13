@@ -9,7 +9,7 @@ import {
   defaultFields,
   defaultOperators,
   defaultTranslations,
-  standardClassnames
+  standardClassnames,
 } from './defaults';
 import type {
   Field,
@@ -18,7 +18,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-  Schema
+  Schema,
 } from './types';
 import {
   c,
@@ -32,7 +32,7 @@ import {
   prepareRuleGroup,
   regenerateID,
   regenerateIDs,
-  uniqByName
+  uniqByName,
 } from './utils';
 
 enableES5();
@@ -43,12 +43,12 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGr
   if (!props.independentCombinators) {
     return QueryBuilderImpl({
       ...props,
-      independentCombinators: false
+      independentCombinators: false,
     } as QueryBuilderPropsInternal);
   }
   return QueryBuilderImpl<RuleGroupTypeIC>({
     ...props,
-    independentCombinators: true
+    independentCombinators: true,
   } as QueryBuilderPropsInternal<RuleGroupTypeIC>);
 };
 
@@ -68,8 +68,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   getValueEditorType,
   getInputType,
   getValues,
-  onAddRule = (r) => r,
-  onAddGroup = (rg) => rg,
+  onAddRule = r => r,
+  onAddGroup = rg => rg,
   onQueryChange = () => {},
   controlClassnames,
   showCombinatorsBetweenRules = false,
@@ -81,8 +81,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
+  disabled,
   validator,
-  context
+  context,
 }: QueryBuilderPropsInternal<RG>) => {
   const fields = useMemo(() => {
     let f = fieldsProp;
@@ -94,7 +95,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const fieldMap = useMemo(() => {
     const fm: { [k: string]: Field } = {};
-    fields.forEach((f) => (fm[f.name] = f));
+    fields.forEach(f => (fm[f.name] = f));
     return fm;
   }, [fields]);
 
@@ -216,7 +217,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       id: `r-${generateID()}`,
       field,
       value: '',
-      operator
+      operator,
     };
 
     const value = getRuleDefaultValue(newRule);
@@ -229,14 +230,14 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       return {
         id: `g-${generateID()}`,
         rules: addRuleToNewGroups ? [createRule()] : [],
-        not: false
+        not: false,
       } as any;
     }
     return {
       id: `g-${generateID()}`,
       rules: addRuleToNewGroups ? [createRule()] : [],
       combinator: combinators[0].name,
-      not: false
+      not: false,
     } as any;
   };
 
@@ -262,9 +263,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
    * Adds a rule to the query
    */
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
-    const newQuery = produce(root, (draft) => {
+    const newQuery = produce(root, draft => {
       const parent = findPath(parentPath, draft) as RG;
       if ('combinator' in parent) {
         parent.rules.push(prepareRule(newRule));
@@ -283,9 +286,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
    * Adds a rule group to the query
    */
   const onGroupAdd = (group: RG, parentPath: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
-    const newQuery = produce(root, (draft) => {
+    const newQuery = produce(root, draft => {
       const parent = findPath(parentPath, draft) as RG;
       /* istanbul ignore else */
       if ('combinator' in parent) {
@@ -306,7 +311,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     value: any,
     path: number[]
   ) => {
-    const newQuery = produce(root, (draft) => {
+    /* istanbul ignore next */
+    if (disabled) return;
+    const newQuery = produce(root, draft => {
       const ruleOrGroup = findPath(path, draft);
       /* istanbul ignore if */
       if (!ruleOrGroup) return;
@@ -329,9 +336,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const updateIndependentCombinator = (value: string, path: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
-    const newQuery = produce(root, (draft) => {
+    const newQuery = produce(root, draft => {
       const parentRules = (findPath(parentPath, draft) as RG).rules;
       parentRules[index] = value;
     });
@@ -339,9 +348,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const onRuleOrGroupRemove = (path: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
-    const newQuery = produce(root, (draft) => {
+    const newQuery = produce(root, draft => {
       const parent = findPath(parentPath, draft) as RG;
       if (!('combinator' in parent) && parent.rules.length > 1) {
         const idxStartDelete = index === 0 ? 0 : index - 1;
@@ -354,11 +365,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    // No-op if the old and new paths are the same.
+    // No-op if disabled or the old and new paths are the same.
     // Ignore in test coverage since components that call this method
     // already prevent this case via their respective canDrop tests.
     /* istanbul ignore if */
-    if (pathsAreEqual(oldPath, newPath)) {
+    if (disabled || pathsAreEqual(oldPath, newPath)) {
       return;
     }
 
@@ -375,7 +386,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
     const movingOnUp = newPath[commonAncestorPath.length] <= oldPath[commonAncestorPath.length];
 
-    const newQuery = produce(root, (draft) => {
+    const newQuery = produce(root, draft => {
       const parentOfRuleToRemove = findPath(parentOldPath, draft) as RG;
       const ruleToRemoveIndex = oldPath[oldPath.length - 1];
       const oldPrevCombinator =
@@ -478,7 +489,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     addRuleToNewGroups,
     enableDragAndDrop,
     independentCombinators: !!independentCombinators,
-    validationMap
+    validationMap,
   };
 
   const className = useMemo(
@@ -511,6 +522,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
           id={root.id}
           path={[]}
           not={!!root.not}
+          disabled={disabled}
           context={context}
         />
       </div>

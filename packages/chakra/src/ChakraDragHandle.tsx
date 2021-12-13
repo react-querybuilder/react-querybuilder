@@ -4,12 +4,17 @@ import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
 export default forwardRef<HTMLSpanElement, DragHandleProps>(function ChakraDragHandle(
-  { className, title },
+  { className, title, disabled },
   dragRef
 ) {
   return (
     <span ref={dragRef} className={className} title={title}>
-      <IconButton aria-label={title ?? ''} size="xs" icon={<DragHandleIcon />} />
+      <IconButton
+        isDisabled={disabled}
+        aria-label={title ?? ''}
+        size="xs"
+        icon={<DragHandleIcon />}
+      />
     </span>
   );
 });

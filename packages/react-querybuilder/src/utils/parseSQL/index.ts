@@ -6,7 +6,7 @@ import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleType,
-  ParseSQLOptions
+  ParseSQLOptions,
 } from '../../types';
 import sqlParser from './sqlParser';
 import type {
@@ -17,7 +17,7 @@ import type {
   SQLExpression,
   SQLIdentifier,
   SQLLiteralValue,
-  SQLOrExpression
+  SQLOrExpression,
 } from './types';
 import { isSQLExpressionNotString, isSQLIdentifier, isSQLLiteralValue } from './utils';
 
@@ -115,7 +115,7 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
       } else {
         const keys = Object.keys(params);
         const prefix = paramPrefix ?? ':';
-        keys.forEach((p) => {
+        keys.forEach(p => {
           sqlString = sqlString.replace(
             new RegExp(`\\${prefix}${p}\\b`, 'ig'),
             getParamString(params[p])
@@ -149,7 +149,7 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
     } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
       if (ic) {
         const andOrList = generateFlatAndOrList(expr);
-        const rules = andOrList.map((v) => {
+        const rules = andOrList.map(v => {
           if (typeof v === 'string') {
             return v;
           }
@@ -161,14 +161,14 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           return null;
         }
         return {
-          rules: rules as DefaultRuleGroupICArray
+          rules: rules as DefaultRuleGroupICArray,
         };
       }
       const andOrList = generateMixedAndOrList(expr);
       const combinator = andOrList[1] as DefaultCombinatorName;
       const filteredList = andOrList
-        .filter((v) => Array.isArray(v) || isSQLExpressionNotString(v))
-        .map((v) => (Array.isArray(v) ? v.filter(isSQLExpressionNotString) : v)) as (
+        .filter(v => Array.isArray(v) || isSQLExpressionNotString(v))
+        .map(v => (Array.isArray(v) ? v.filter(isSQLExpressionNotString) : v)) as (
         | SQLExpression
         | SQLExpression[]
       )[];
@@ -178,13 +178,13 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
             return {
               combinator: 'and',
               rules: exp
-                .map((e) => processSQLExpression(e))
-                .filter((r) => !!r) as DefaultRuleGroupArray
+                .map(e => processSQLExpression(e))
+                .filter(r => !!r) as DefaultRuleGroupArray,
             };
           }
           return processSQLExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
-        .filter((r) => !!r) as DefaultRuleGroupArray;
+        .filter(r => !!r) as DefaultRuleGroupArray;
       /* istanbul ignore else */
       if (rules.length > 0) {
         return { combinator, rules };
@@ -195,7 +195,7 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         return {
           field: getFieldName(expr.value.value),
           operator: expr.hasNot ? 'notNull' : 'null',
-          value: null
+          value: null,
         };
       }
     } else if (expr.type === 'ComparisonBooleanPrimary') {
@@ -207,12 +207,12 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         const identifier = isSQLIdentifier(expr.left)
           ? expr.left.value
           : (expr.right as SQLIdentifier).value;
-        const valueObj = [expr.left, expr.right].find((t) => !isSQLIdentifier(t));
+        const valueObj = [expr.left, expr.right].find(t => !isSQLIdentifier(t));
         if (isSQLLiteralValue(valueObj)) {
           return {
             field: getFieldName(identifier),
             operator: normalizeOperator(expr.operator),
-            value: evalSQLLiteralValue(valueObj)
+            value: evalSQLLiteralValue(valueObj),
           };
         }
       }
