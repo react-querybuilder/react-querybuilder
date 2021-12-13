@@ -46,8 +46,7 @@ export const InlineCombinator = ({
       drop: (item: DraggedItem, _monitor) => {
         const parentPath = getParentPath(path);
         const index = path[path.length - 1];
-        const toIndex = independentCombinators ? index + 1 : index;
-        moveRule(item.path, [...parentPath, toIndex]);
+        moveRule(item.path, [...parentPath, index]);
       }
     }),
     [moveRule, path, independentCombinators]

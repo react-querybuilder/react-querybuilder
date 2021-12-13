@@ -8,6 +8,7 @@
     "start": "lerna run start",
     "build": "lerna run build",
     "test": "jest",
+    "test:watch": "jest --watch",
     "publish:demo": "lerna run build && node gh-pages.publish.js",
     "pretty-print": "prettier --write packages/*/src/** ./*.js",
     "generate-changelog": "github-changes -o react-querybuilder -r react-querybuilder -a --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\""
