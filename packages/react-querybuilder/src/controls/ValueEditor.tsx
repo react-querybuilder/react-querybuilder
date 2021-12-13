@@ -10,7 +10,8 @@ const ValueEditor = ({
   type,
   inputType,
   values,
-  fieldData
+  fieldData,
+  disabled
 }: ValueEditorProps) => {
   // This side effect blanks out the value if 1) the inputType is "number",
   // 2) the operator is not "between", "notBetween", "in", or "notIn", and
@@ -42,6 +43,7 @@ const ValueEditor = ({
           className={className}
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
+          disabled={disabled}
           value={value}>
           {values &&
             values.map((v) => (
@@ -60,6 +62,7 @@ const ValueEditor = ({
           title={title}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}
+          disabled={disabled}
         />
       );
 
@@ -72,6 +75,7 @@ const ValueEditor = ({
                 <input
                   type="radio"
                   value={v.name}
+                  disabled={disabled}
                   checked={value === v.name}
                   onChange={(e) => handleOnChange(e.target.value)}
                 />
@@ -89,6 +93,7 @@ const ValueEditor = ({
           value={value}
           title={title}
           className={className}
+          disabled={disabled}
           onChange={(e) => handleOnChange(e.target.value)}
         />
       );

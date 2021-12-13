@@ -6,9 +6,10 @@ const MaterialValueSelector = ({
   handleOnChange,
   options,
   value,
+  disabled,
   title
 }: ValueSelectorProps) => (
-  <FormControl variant="standard" className={className} title={title}>
+  <FormControl variant="standard" className={className} title={title} disabled={disabled}>
     <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
       {options.map((option) => {
         const key = `key-${option.id ?? option.name}`;

@@ -13,7 +13,8 @@ const AntDValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  disabled
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -38,7 +39,11 @@ const AntDValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <Select className={className} onChange={(v) => handleOnChange(v)} value={value}>
+        <Select
+          className={className}
+          onChange={(v) => handleOnChange(v)}
+          value={value}
+          disabled={disabled}>
           {values!.map((v) => (
             <Option key={v.name} value={v.name}>
               {v.label}
@@ -52,6 +57,7 @@ const AntDValueEditor = ({
         <Checkbox
           type="checkbox"
           className={className}
+          disabled={disabled}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}
         />
@@ -65,6 +71,7 @@ const AntDValueEditor = ({
               key={v.name}
               value={v.name}
               checked={value === v.name}
+              disabled={disabled}
               onChange={(e) => handleOnChange(e.target.value)}>
               {v.label}
             </Radio>
@@ -79,6 +86,7 @@ const AntDValueEditor = ({
           value={value}
           title={title}
           className={className}
+          disabled={disabled}
           placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}
         />

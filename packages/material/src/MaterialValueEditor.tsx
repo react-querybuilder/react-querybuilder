@@ -20,7 +20,8 @@ const MaterialValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  disabled
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -45,7 +46,7 @@ const MaterialValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <FormControl variant="standard" className={className}>
+        <FormControl variant="standard" className={className} disabled={disabled}>
           <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
             {values &&
               values.map((v) => (
@@ -63,12 +64,13 @@ const MaterialValueEditor = ({
           className={className}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}
+          disabled={disabled}
         />
       );
 
     case 'radio':
       return (
-        <FormControl className={className} title={title} component="fieldset">
+        <FormControl className={className} title={title} component="fieldset" disabled={disabled}>
           <RadioGroup value={value} onChange={(e) => handleOnChange(e.target.value)}>
             {values!.map((v) => (
               <FormControlLabel key={v.name} value={v.name} control={<Radio />} label={v.label} />
@@ -83,6 +85,7 @@ const MaterialValueEditor = ({
           type={inputTypeCoerced}
           value={value}
           title={title}
+          disabled={disabled}
           className={className}
           placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}

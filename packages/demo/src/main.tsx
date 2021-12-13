@@ -14,13 +14,10 @@ import {
   Tooltip,
   Typography
 } from 'antd';
+import 'antd/dist/antd.compact.css';
 import queryString from 'query-string';
 import { FC, Suspense, useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
-import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
-import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import QueryBuilder, {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
@@ -35,6 +32,11 @@ import QueryBuilder, {
   RuleGroupTypeAny,
   RuleGroupTypeIC
 } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.scss';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
+import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
+import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
   docsLink,
   fields,
@@ -46,8 +48,6 @@ import {
   styleNameMap,
   styleOptions
 } from './constants';
-import 'react-querybuilder/dist/query-builder.scss';
-import 'antd/dist/antd.compact.css';
 
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
@@ -99,7 +99,8 @@ const initialOptions: { [opt: string]: boolean } = {
   addRuleToNewGroups: false,
   useValidation: false,
   independentCombinators: false,
-  enableDragAndDrop: false
+  enableDragAndDrop: false,
+  disabled: false
 };
 const hash = queryString.parse(location.hash);
 Object.keys(hash).forEach((opt) => (initialOptions[opt] = hash[opt] === 'true'));
@@ -124,6 +125,7 @@ const App = () => {
     initialOptions.independentCombinators
   );
   const [enableDragAndDrop, setEnableDragAndDrop] = useState(initialOptions.enableDragAndDrop);
+  const [disabled, setDisabled] = useState(initialOptions.disabled);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(
     `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`
@@ -145,7 +147,8 @@ const App = () => {
         addRuleToNewGroups,
         useValidation,
         independentCombinators,
-        enableDragAndDrop
+        enableDragAndDrop,
+        disabled
       }),
     [
       showCombinatorsBetweenRules,
@@ -157,7 +160,8 @@ const App = () => {
       addRuleToNewGroups,
       useValidation,
       independentCombinators,
-      enableDragAndDrop
+      enableDragAndDrop,
+      disabled
     ]
   );
 
@@ -247,6 +251,14 @@ const App = () => {
       link: '/docs/api/querybuilder#enabledraganddrop',
       label: 'Enable drag-and-drop',
       title: 'When checked, rules and groups can be reordered and dragged to different groups'
+    },
+    {
+      checked: disabled,
+      default: false,
+      setter: setDisabled,
+      link: '/docs/api/querybuilder#disabled',
+      label: 'Disabled',
+      title: 'When checked, all components within the query builder will be disabled'
     }
   ];
 
@@ -308,7 +320,8 @@ const App = () => {
     addRuleToNewGroups,
     independentCombinators,
     validator: useValidation ? defaultValidator : undefined,
-    enableDragAndDrop
+    enableDragAndDrop,
+    disabled
   };
 
   return (

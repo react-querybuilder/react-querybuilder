@@ -240,14 +240,14 @@ describe('<Rule />', () => {
     it('should not have the drag class if not dragging', () => {
       const { getByTestId } = render(<Rule {...props} />);
       const rule = getByTestId('rule');
-      expect(rule.className).not.toContain(standardClassnames.dndDragging);
+      expect(rule.classList).not.toContain(standardClassnames.dndDragging);
     });
 
     it('should have the drag class if dragging', () => {
       const { getByTestId } = render(<Rule {...props} />);
       const rule = getByTestId('rule');
       simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
-      expect(rule.className).toContain(standardClassnames.dndDragging);
+      expect(rule.classList).toContain(standardClassnames.dndDragging);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -266,7 +266,7 @@ describe('<Rule />', () => {
         getHandlerId(rules[1], 'drop'),
         getDndBackend()
       );
-      expect(rules[1].className).toContain(standardClassnames.dndOver);
+      expect(rules[1].classList).toContain(standardClassnames.dndOver);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -287,8 +287,8 @@ describe('<Rule />', () => {
         getHandlerId(rules[1], 'drop'),
         getDndBackend()
       );
-      expect(rules[0].className).not.toContain(standardClassnames.dndDragging);
-      expect(rules[1].className).not.toContain(standardClassnames.dndOver);
+      expect(rules[0].classList).not.toContain(standardClassnames.dndDragging);
+      expect(rules[1].classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([0], [2]);
     });
 
@@ -298,8 +298,8 @@ describe('<Rule />', () => {
       const { getByTestId } = render(<Rule {...props} />);
       const rule = getByTestId('rule');
       simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
-      expect(rule.className).not.toContain(standardClassnames.dndDragging);
-      expect(rule.className).not.toContain(standardClassnames.dndOver);
+      expect(rule.classList).not.toContain(standardClassnames.dndDragging);
+      expect(rule.classList).not.toContain(standardClassnames.dndOver);
       expect(moveRule).not.toHaveBeenCalled();
     });
   });

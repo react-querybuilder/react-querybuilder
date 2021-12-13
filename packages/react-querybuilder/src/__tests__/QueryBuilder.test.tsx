@@ -1617,4 +1617,63 @@ describe('<QueryBuilder />', () => {
       });
     });
   });
+
+  describe('disabled', () => {
+    it('prevents changes when disabled', () => {
+      const onQueryChange = jest.fn();
+      const { getAllByLabelText, getAllByTestId, getAllByTitle, getAllByDisplayValue } = render(
+        <QueryBuilder
+          fields={[
+            { name: 'field0', label: 'Field 0' },
+            { name: 'field1', label: 'Field 1' },
+            { name: 'field2', label: 'Field 2' },
+            { name: 'field3', label: 'Field 3' },
+            { name: 'field4', label: 'Field 4' }
+          ]}
+          enableMountQueryChange={false}
+          independentCombinators
+          onQueryChange={onQueryChange}
+          enableDragAndDrop
+          showCloneButtons
+          showNotToggle
+          disabled
+          query={{
+            rules: [
+              { field: 'field0', operator: '=', value: '0' },
+              'and',
+              { field: 'field1', operator: '=', value: '1' },
+              'and',
+              { field: 'field2', operator: '=', value: '2' },
+              'and',
+              {
+                rules: [
+                  { field: 'field3', operator: '=', value: '3' },
+                  'and',
+                  { field: 'field4', operator: '=', value: '4' }
+                ]
+              }
+            ]
+          }}
+        />
+      );
+      userEvent.click(getAllByTitle(defaultTranslations.addRule.title)[0]);
+      userEvent.click(getAllByTitle(defaultTranslations.addGroup.title)[0]);
+      userEvent.click(getAllByTitle(defaultTranslations.removeRule.title)[0]);
+      userEvent.click(getAllByTitle(defaultTranslations.removeGroup.title)[0]);
+      userEvent.click(getAllByTitle(defaultTranslations.cloneRule.title)[0]);
+      userEvent.click(getAllByTitle(defaultTranslations.cloneRuleGroup.title)[0]);
+      userEvent.click(getAllByLabelText(defaultTranslations.notToggle.label)[0]);
+      userEvent.selectOptions(getAllByDisplayValue('Field 0')[0], 'field1');
+      userEvent.selectOptions(getAllByDisplayValue('=')[0], '>');
+      userEvent.selectOptions(getAllByDisplayValue('=')[0], '>');
+      const ruleDrag = getAllByTestId('rule')[1];
+      const ruleDrop = getAllByTestId('rule')[3];
+      simulateDragDrop(
+        getHandlerId(ruleDrag, 'drag'),
+        getHandlerId(ruleDrop, 'drop'),
+        getDndBackend()
+      );
+      expect(onQueryChange).not.toHaveBeenCalled();
+    });
+  });
 });

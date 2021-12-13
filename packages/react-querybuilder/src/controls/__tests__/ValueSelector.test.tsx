@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ValueSelector from '../ValueSelector';
 import type { ValueSelectorProps } from '../../types';
+import ValueSelector from '../ValueSelector';
 
 describe('<ValueSelector />', () => {
   const props: ValueSelectorProps = {
@@ -11,7 +11,8 @@ describe('<ValueSelector />', () => {
       { name: 'foo', label: 'foo label' },
       { name: 'bar', label: 'bar label' }
     ],
-    level: 0
+    level: 0,
+    path: []
   };
 
   it('should have the options passed into the <select />', () => {
@@ -26,7 +27,7 @@ describe('<ValueSelector />', () => {
 
   it('should have the className passed into the <select />', () => {
     const { getByTitle } = render(<ValueSelector {...props} className="foo" />);
-    expect(getByTitle('ValueSelector').className).toMatch(/\bfoo\b/);
+    expect(getByTitle('ValueSelector').classList).toContain('foo');
   });
 
   it('should call the onChange method passed in', () => {
@@ -34,5 +35,12 @@ describe('<ValueSelector />', () => {
     const { getByTitle } = render(<ValueSelector {...props} handleOnChange={onChange} />);
     userEvent.selectOptions(getByTitle('ValueSelector'), 'foo');
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it('should be disabled by the disabled prop', () => {
+    const onChange = jest.fn();
+    const { getByTitle } = render(<ValueSelector {...props} handleOnChange={onChange} disabled />);
+    userEvent.selectOptions(getByTitle('ValueSelector'), 'foo');
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

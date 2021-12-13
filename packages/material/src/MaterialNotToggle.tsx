@@ -6,11 +6,13 @@ const MaterialNotToggle = ({
   handleOnChange,
   label,
   checked,
-  title
+  title,
+  disabled
 }: NotToggleProps) => (
   <FormControlLabel
     className={className}
     title={title}
+    disabled={disabled}
     control={<Switch checked={!!checked} onChange={(e) => handleOnChange(e.target.checked)} />}
     label={label ?? ''}
   />

@@ -12,6 +12,7 @@ export const Rule = ({
   value,
   translations,
   schema,
+  disabled,
   context
 }: RuleProps) => {
   const {
@@ -34,18 +35,22 @@ export const Rule = ({
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
-  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(() => ({
-    type: dndTypes.rule,
-    item: (): DraggedItem => ({ path }),
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-      dragMonitorId: monitor.getHandlerId()
-    })
-  }));
+  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(
+    () => ({
+      type: dndTypes.rule,
+      item: (): DraggedItem => ({ path }),
+      collect: (monitor) => ({
+        isDragging: !disabled && monitor.isDragging(),
+        dragMonitorId: monitor.getHandlerId()
+      })
+    }),
+    [disabled, path]
+  );
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
       accept: [dndTypes.rule, dndTypes.ruleGroup],
       canDrop: (item: DraggedItem) => {
+        if (disabled) return false;
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
         const hoverIndex = path[path.length - 1];
@@ -66,13 +71,15 @@ export const Rule = ({
         dropMonitorId: monitor.getHandlerId()
       }),
       drop: (item: DraggedItem, _monitor) => {
+        /* istanbul ignore next */
+        if (disabled) return;
         const parentHoverPath = getParentPath(path);
         const hoverIndex = path[path.length - 1];
 
         moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
       }
     }),
-    [moveRule, path]
+    [disabled, moveRule, path]
   );
   drag(dragRef);
   preview(drop(dndRef));
@@ -137,6 +144,7 @@ export const Rule = ({
         title={translations.dragHandle.title}
         label={translations.dragHandle.label}
         className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+        disabled={disabled}
         context={context}
         validation={validationResult}
       />
@@ -149,6 +157,7 @@ export const Rule = ({
         handleOnChange={generateOnChangeHandler('field')}
         level={level}
         path={path}
+        disabled={disabled}
         context={context}
         validation={validationResult}
       />
@@ -164,6 +173,7 @@ export const Rule = ({
             handleOnChange={generateOnChangeHandler('operator')}
             level={level}
             path={path}
+            disabled={disabled}
             context={context}
             validation={validationResult}
           />
@@ -180,6 +190,7 @@ export const Rule = ({
             handleOnChange={generateOnChangeHandler('value')}
             level={level}
             path={path}
+            disabled={disabled}
             context={context}
             validation={validationResult}
           />
@@ -193,6 +204,7 @@ export const Rule = ({
           handleOnClick={cloneRule}
           level={level}
           path={path}
+          disabled={disabled}
           context={context}
           validation={validationResult}
         />
@@ -204,6 +216,7 @@ export const Rule = ({
         handleOnClick={removeRule}
         level={level}
         path={path}
+        disabled={disabled}
         context={context}
         validation={validationResult}
       />

@@ -1,4 +1,4 @@
-import { Checkbox, Input, RadioGroup, Radio, Select, Stack } from '@chakra-ui/react';
+import { Checkbox, Input, Radio, RadioGroup, Select, Stack } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 
@@ -11,7 +11,8 @@ const ChakraValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  disabled
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -41,6 +42,7 @@ const ChakraValueEditor = ({
           value={value}
           size="xs"
           variant="filled"
+          isDisabled={disabled}
           onChange={(e) => handleOnChange(e.target.value)}>
           {values &&
             values.map((v) => (
@@ -56,6 +58,7 @@ const ChakraValueEditor = ({
         <Checkbox
           className={className}
           size="sm"
+          isDisabled={disabled}
           onChange={(e) => handleOnChange(e.target.checked)}
           isChecked={!!value}
         />
@@ -63,7 +66,12 @@ const ChakraValueEditor = ({
 
     case 'radio':
       return (
-        <RadioGroup className={className} title={title} value={value} onChange={handleOnChange}>
+        <RadioGroup
+          className={className}
+          title={title}
+          value={value}
+          onChange={handleOnChange}
+          isDisabled={disabled}>
           <Stack direction="row">
             {values!.map((v) => (
               <Radio key={v.name} value={v.name} size="sm">
@@ -82,6 +90,7 @@ const ChakraValueEditor = ({
           title={title}
           size="xs"
           variant="filled"
+          isDisabled={disabled}
           className={className}
           placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}

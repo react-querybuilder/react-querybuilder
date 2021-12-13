@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ValueEditor from '../ValueEditor';
 import type { ValueEditorProps } from '../../types';
+import ValueEditor from '../ValueEditor';
 
 describe('<ValueEditor />', () => {
   const props: ValueEditorProps = {
@@ -10,7 +10,8 @@ describe('<ValueEditor />', () => {
     fieldData: { name: 'TEST', label: 'Test' },
     operator: '=',
     handleOnChange: () => {},
-    level: 0
+    level: 0,
+    path: []
   };
 
   describe('when using default rendering', () => {
@@ -102,6 +103,22 @@ describe('<ValueEditor />', () => {
       userEvent.selectOptions(getByTitle('ValueEditor'), 'test');
       expect(handleOnChange).toHaveBeenCalledWith('test');
     });
+
+    it('should be disabled by the disabled prop', () => {
+      const handleOnChange = jest.fn();
+      const { getByTitle } = render(
+        <ValueEditor
+          {...props}
+          type="select"
+          handleOnChange={handleOnChange}
+          values={[{ name: 'test', label: 'Test' }]}
+          disabled
+        />
+      );
+
+      userEvent.selectOptions(getByTitle('ValueEditor'), 'test');
+      expect(handleOnChange).not.toHaveBeenCalled();
+    });
   });
 
   describe('when rendering a checkbox', () => {
@@ -116,6 +133,16 @@ describe('<ValueEditor />', () => {
 
       userEvent.click(getByTitle('ValueEditor'));
       expect(handleOnChange).toHaveBeenCalledWith(true);
+    });
+
+    it('should be disabled by the disabled prop', () => {
+      const handleOnChange = jest.fn();
+      const { getByTitle } = render(
+        <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} disabled />
+      );
+
+      userEvent.click(getByTitle('ValueEditor'));
+      expect(handleOnChange).not.toHaveBeenCalled();
     });
   });
 
@@ -144,6 +171,22 @@ describe('<ValueEditor />', () => {
 
       userEvent.click(getByTitle('ValueEditor').querySelector('input[type="radio"]'));
       expect(handleOnChange).toHaveBeenCalledWith('test');
+    });
+
+    it('should be disabled by the disabled prop', () => {
+      const handleOnChange = jest.fn();
+      const { getByTitle } = render(
+        <ValueEditor
+          {...props}
+          type="radio"
+          handleOnChange={handleOnChange}
+          values={[{ name: 'test', label: 'Test' }]}
+          disabled
+        />
+      );
+
+      userEvent.click(getByTitle('ValueEditor').querySelector('input[type="radio"]'));
+      expect(handleOnChange).not.toHaveBeenCalled();
     });
   });
 });

@@ -10,7 +10,8 @@ const BootstrapValueEditor = ({
   className,
   type,
   inputType,
-  values
+  values,
+  disabled
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -39,7 +40,8 @@ const BootstrapValueEditor = ({
           className={`${className} form-select form-select-sm`}
           title={title}
           onChange={(e) => handleOnChange(e.target.value)}
-          value={value}>
+          value={value}
+          disabled={disabled}>
           {values!.map((v) => (
             <option key={v.name} value={v.name}>
               {v.label}
@@ -54,6 +56,7 @@ const BootstrapValueEditor = ({
           type="checkbox"
           className={`form-check-input ${className}`}
           title={title}
+          disabled={disabled}
           onChange={(e) => handleOnChange(e.target.checked)}
           checked={!!value}
         />
@@ -70,6 +73,7 @@ const BootstrapValueEditor = ({
                 id={v.name}
                 value={v.name}
                 checked={value === v.name}
+                disabled={disabled}
                 onChange={(e) => handleOnChange(e.target.value)}
               />
               <label className="form-check-label" htmlFor={v.name}>
@@ -87,6 +91,7 @@ const BootstrapValueEditor = ({
           value={value}
           title={title}
           className={className}
+          disabled={disabled}
           placeholder={placeHolderText}
           onChange={(e) => handleOnChange(e.target.value)}
         />

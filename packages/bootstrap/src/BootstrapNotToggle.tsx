@@ -6,7 +6,8 @@ const BootstrapNotToggle = ({
   handleOnChange,
   title,
   label,
-  checked
+  checked,
+  disabled
 }: NotToggleProps) => {
   const [id] = useState(`notToggle-${Math.random()}`);
 
@@ -18,6 +19,7 @@ const BootstrapNotToggle = ({
         type="checkbox"
         onChange={(e) => handleOnChange(e.target.checked)}
         checked={!!checked}
+        disabled={disabled}
       />
       <label title={title} htmlFor={id} className="form-check-label">
         {label}

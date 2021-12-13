@@ -1,7 +1,7 @@
 import type { ActionProps } from '../types';
 
-const ActionElement = ({ className, handleOnClick, label, title }: ActionProps) => (
-  <button className={className} title={title} onClick={(e) => handleOnClick(e)}>
+const ActionElement = ({ className, handleOnClick, label, title, disabled }: ActionProps) => (
+  <button disabled={disabled} className={className} title={title} onClick={(e) => handleOnClick(e)}>
     {label}
   </button>
 );

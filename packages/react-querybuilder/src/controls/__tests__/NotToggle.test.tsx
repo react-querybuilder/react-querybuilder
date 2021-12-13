@@ -1,14 +1,15 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import NotToggle from '../NotToggle';
 import type { NotToggleProps } from '../../types';
+import NotToggle from '../NotToggle';
 
 describe('<NotToggle />', () => {
   const props: NotToggleProps = {
     label: 'Not',
     title: 'NotToggle',
     handleOnChange: () => {},
-    level: 0
+    level: 0,
+    path: []
   };
 
   it('should have the value passed into the <input />', () => {
@@ -26,5 +27,12 @@ describe('<NotToggle />', () => {
     const { getByLabelText } = render(<NotToggle {...props} handleOnChange={onChange} />);
     userEvent.click(getByLabelText('Not'));
     expect(onChange).toHaveBeenCalledWith(true);
+  });
+
+  it('should be disabled by disabled prop', () => {
+    const onChange = jest.fn();
+    const { getByLabelText } = render(<NotToggle {...props} handleOnChange={onChange} disabled />);
+    userEvent.click(getByLabelText('Not'));
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

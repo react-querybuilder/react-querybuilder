@@ -8,7 +8,8 @@ describe('<ActionElement />', () => {
     title: 'ActionElement',
     handleOnClick: () => {},
     className: '',
-    level: 0
+    level: 0,
+    path: []
   };
 
   it('should have the label passed into the <button />', () => {
@@ -26,5 +27,12 @@ describe('<ActionElement />', () => {
     const { getByTitle } = render(<ActionElement {...props} handleOnClick={onClick} />);
     userEvent.click(getByTitle('ActionElement'));
     expect(onClick).toHaveBeenCalled();
+  });
+
+  it('should be disabled by disabled prop', () => {
+    const onClick = jest.fn();
+    const { getByTitle } = render(<ActionElement {...props} handleOnClick={onClick} disabled />);
+    userEvent.click(getByTitle('ActionElement'));
+    expect(onClick).not.toHaveBeenCalled();
   });
 });

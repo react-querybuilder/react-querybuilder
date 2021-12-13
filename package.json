@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "lerna run start",
+    "start": "yarn workspace @react-querybuilder/demo start",
     "build": "lerna run build",
     "test": "jest",
     "test:watch": "jest --watch",

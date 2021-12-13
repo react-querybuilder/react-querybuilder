@@ -81,6 +81,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
+  disabled,
   validator,
   context
 }: QueryBuilderPropsInternal<RG>) => {
@@ -262,6 +263,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
    * Adds a rule to the query
    */
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
     const newQuery = produce(root, (draft) => {
@@ -283,6 +286,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
    * Adds a rule group to the query
    */
   const onGroupAdd = (group: RG, parentPath: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
     const newQuery = produce(root, (draft) => {
@@ -306,6 +311,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     value: any,
     path: number[]
   ) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const newQuery = produce(root, (draft) => {
       const ruleOrGroup = findPath(path, draft);
       /* istanbul ignore if */
@@ -329,6 +336,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const updateIndependentCombinator = (value: string, path: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
     const newQuery = produce(root, (draft) => {
@@ -339,6 +348,8 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const onRuleOrGroupRemove = (path: number[]) => {
+    /* istanbul ignore next */
+    if (disabled) return;
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
     const newQuery = produce(root, (draft) => {
@@ -354,11 +365,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    // No-op if the old and new paths are the same.
+    // No-op if disabled or the old and new paths are the same.
     // Ignore in test coverage since components that call this method
     // already prevent this case via their respective canDrop tests.
     /* istanbul ignore if */
-    if (pathsAreEqual(oldPath, newPath)) {
+    if (disabled || pathsAreEqual(oldPath, newPath)) {
       return;
     }
 
@@ -511,6 +522,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
           id={root.id}
           path={[]}
           not={!!root.not}
+          disabled={disabled}
           context={context}
         />
       </div>

@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { generateID } from 'react-querybuilder';
 import type {
   ExportFormat,
   Field,
@@ -7,7 +8,6 @@ import type {
   RuleGroupTypeIC,
   RuleType
 } from 'react-querybuilder/src/types';
-import { generateID } from 'react-querybuilder';
 
 const AntDActionElement = lazy(() => import('./components/AntDActionElement'));
 const AntDDragHandle = lazy(() => import('./components/AntDDragHandle'));
