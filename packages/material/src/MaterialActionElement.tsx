@@ -6,7 +6,7 @@ const MaterialActionElement = ({
   handleOnClick,
   label,
   title,
-  disabled
+  disabled,
 }: ActionProps) => (
   <Button
     variant="contained"
@@ -15,7 +15,7 @@ const MaterialActionElement = ({
     title={title}
     size="small"
     disabled={disabled}
-    onClick={(e) => handleOnClick(e)}>
+    onClick={e => handleOnClick(e)}>
     {label}
   </Button>
 );

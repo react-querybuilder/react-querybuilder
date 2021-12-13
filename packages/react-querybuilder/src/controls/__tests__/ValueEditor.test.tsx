@@ -11,7 +11,7 @@ describe('<ValueEditor />', () => {
     operator: '=',
     handleOnChange: () => {},
     level: 0,
-    path: []
+    path: [],
   };
 
   describe('when using default rendering', () => {

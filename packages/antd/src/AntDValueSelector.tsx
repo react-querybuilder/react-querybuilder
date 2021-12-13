@@ -8,14 +8,10 @@ const AntDValueSelector = ({
   handleOnChange,
   options,
   value,
-  disabled
+  disabled,
 }: ValueSelectorProps) => (
-  <Select
-    disabled={disabled}
-    className={className}
-    value={value}
-    onChange={(v) => handleOnChange(v)}>
-    {options.map((option) => {
+  <Select disabled={disabled} className={className} value={value} onChange={v => handleOnChange(v)}>
+    {options.map(option => {
       const key = `key-${option.id ?? option.name}`;
       return (
         <Option key={key} value={option.name}>

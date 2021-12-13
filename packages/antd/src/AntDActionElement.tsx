@@ -6,7 +6,7 @@ const AntDActionElement = ({ className, handleOnClick, label, title, disabled }:
     type="primary"
     className={className}
     title={title}
-    onClick={(e) => handleOnClick(e)}
+    onClick={e => handleOnClick(e)}
     disabled={disabled}>
     {label}
   </Button>

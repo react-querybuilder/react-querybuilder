@@ -14,7 +14,7 @@ export const RuleGroup = ({
   schema,
   disabled,
   not,
-  context
+  context,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -32,7 +32,7 @@ export const RuleGroup = ({
     showNotToggle,
     showCloneButtons,
     updateIndependentCombinator,
-    validationMap
+    validationMap,
   } = schema;
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -42,10 +42,10 @@ export const RuleGroup = ({
     () => ({
       type: dndTypes.ruleGroup,
       item: (): DraggedItem => ({ path }),
-      collect: (monitor) => ({
+      collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId()
-      })
+        dragMonitorId: monitor.getHandlerId(),
+      }),
     }),
     [disabled, path]
   );
@@ -65,11 +65,11 @@ export const RuleGroup = ({
           pathsAreEqual(path, item.path)
         );
       },
-      collect: (monitor) => ({
+      collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId()
+        dropMonitorId: monitor.getHandlerId(),
       }),
-      drop: (item: DraggedItem, _monitor) => !disabled && moveRule(item.path, [...path, 0])
+      drop: (item: DraggedItem, _monitor) => !disabled && moveRule(item.path, [...path, 0]),
     }),
     [disabled, moveRule, path]
   );
@@ -270,7 +270,7 @@ export const RuleGroup = ({
                   value={r}
                   title={translations.combinators.title}
                   className={c(standardClassnames.combinators, classNames.combinators)}
-                  handleOnChange={(val) => onIndependentCombinatorChange(val, idx)}
+                  handleOnChange={val => onIndependentCombinatorChange(val, idx)}
                   rules={rules}
                   level={level}
                   context={context}

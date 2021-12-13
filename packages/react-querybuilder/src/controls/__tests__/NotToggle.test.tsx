@@ -9,7 +9,7 @@ describe('<NotToggle />', () => {
     title: 'NotToggle',
     handleOnChange: () => {},
     level: 0,
-    path: []
+    path: [],
   };
 
   it('should have the value passed into the <input />', () => {

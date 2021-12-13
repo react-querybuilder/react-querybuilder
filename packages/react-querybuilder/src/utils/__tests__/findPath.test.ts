@@ -9,13 +9,13 @@ const query: RuleGroupType = {
       id: '222',
       field: 'firstName',
       value: 'Test',
-      operator: '='
+      operator: '=',
     },
     {
       id: '333',
       field: 'firstName',
       value: 'Test',
-      operator: '='
+      operator: '=',
     },
     {
       combinator: 'and',
@@ -25,11 +25,11 @@ const query: RuleGroupType = {
           id: '555',
           field: 'firstName',
           value: 'Test',
-          operator: '='
-        }
-      ]
-    }
-  ]
+          operator: '=',
+        },
+      ],
+    },
+  ],
 };
 
 const queryIC: RuleGroupTypeIC = {
@@ -46,11 +46,11 @@ const queryIC: RuleGroupTypeIC = {
           id: '555',
           field: 'firstName',
           value: 'Test',
-          operator: '='
-        }
-      ]
-    }
-  ]
+          operator: '=',
+        },
+      ],
+    },
+  ],
 };
 
 describe('findPath', () => {

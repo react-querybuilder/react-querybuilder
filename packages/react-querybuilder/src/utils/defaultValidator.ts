@@ -6,7 +6,7 @@ import type { QueryValidator, RuleGroupTypeAny, RuleType, ValidationMap } from '
  * `validator` prop. It assumes that you want to validate groups, and has a no-op
  * for validating rules which you should replace with your own implementation.
  */
-const defaultValidator: QueryValidator = (query) => {
+const defaultValidator: QueryValidator = query => {
   const result: ValidationMap = {};
 
   const validateRule = (_rule: RuleType) => {
@@ -30,7 +30,7 @@ const defaultValidator: QueryValidator = (query) => {
           (i % 2 === 1 && typeof rg.rules[i] !== 'string') ||
           (i % 2 === 1 &&
             typeof rg.rules[i] === 'string' &&
-            !defaultCombinators.map((c) => c.name as string).includes(rg.rules[i] as string))
+            !defaultCombinators.map(c => c.name as string).includes(rg.rules[i] as string))
         ) {
           invalidICs = true;
         }
@@ -41,7 +41,7 @@ const defaultValidator: QueryValidator = (query) => {
     }
     if (
       'combinator' in rg &&
-      !defaultCombinators.map((c) => c.name as string).includes(rg.combinator) &&
+      !defaultCombinators.map(c => c.name as string).includes(rg.combinator) &&
       rg.rules.length >= 2
     ) {
       reasons.push(groupInvalidReasons.invalidCombinator);
@@ -54,7 +54,7 @@ const defaultValidator: QueryValidator = (query) => {
         result[rg.id] = true;
       }
     }
-    rg.rules.forEach((r) => {
+    rg.rules.forEach(r => {
       if (typeof r === 'string') {
         // no-op
       } else if ('rules' in r) {

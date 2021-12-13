@@ -11,7 +11,7 @@ const ValueEditor = ({
   inputType,
   values,
   fieldData,
-  disabled
+  disabled,
 }: ValueEditorProps) => {
   // This side effect blanks out the value if 1) the inputType is "number",
   // 2) the operator is not "between", "notBetween", "in", or "notIn", and
@@ -42,11 +42,11 @@ const ValueEditor = ({
         <select
           className={className}
           title={title}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
           disabled={disabled}
           value={value}>
           {values &&
-            values.map((v) => (
+            values.map(v => (
               <option key={v.name} value={v.name}>
                 {v.label}
               </option>
@@ -60,7 +60,7 @@ const ValueEditor = ({
           type="checkbox"
           className={className}
           title={title}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
           disabled={disabled}
         />
@@ -70,14 +70,14 @@ const ValueEditor = ({
       return (
         <span className={className} title={title}>
           {values &&
-            values.map((v) => (
+            values.map(v => (
               <label key={v.name}>
                 <input
                   type="radio"
                   value={v.name}
                   disabled={disabled}
                   checked={value === v.name}
-                  onChange={(e) => handleOnChange(e.target.value)}
+                  onChange={e => handleOnChange(e.target.value)}
                 />
                 {v.label}
               </label>
@@ -94,7 +94,7 @@ const ValueEditor = ({
           title={title}
           className={className}
           disabled={disabled}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

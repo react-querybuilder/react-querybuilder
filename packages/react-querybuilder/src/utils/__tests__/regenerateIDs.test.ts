@@ -13,11 +13,11 @@ const ruleGroup: RuleGroupType = {
           id: 'innerRule',
           field: 'TEST',
           operator: '=',
-          value: ''
-        }
-      ]
-    }
-  ]
+          value: '',
+        },
+      ],
+    },
+  ],
 };
 
 const ruleGroupIC: RuleGroupTypeIC = {
@@ -30,18 +30,18 @@ const ruleGroupIC: RuleGroupTypeIC = {
           id: 'innerRule',
           field: 'TEST',
           operator: '=',
-          value: ''
+          value: '',
         },
         'and',
         {
           id: 'innerRule',
           field: 'TEST',
           operator: '=',
-          value: ''
-        }
-      ]
-    }
-  ]
+          value: '',
+        },
+      ],
+    },
+  ],
 };
 
 describe('when generating IDs', () => {

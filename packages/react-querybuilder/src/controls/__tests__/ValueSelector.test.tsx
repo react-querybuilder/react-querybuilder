@@ -9,10 +9,10 @@ describe('<ValueSelector />', () => {
     title: 'ValueSelector',
     options: [
       { name: 'foo', label: 'foo label' },
-      { name: 'bar', label: 'bar label' }
+      { name: 'bar', label: 'bar label' },
     ],
     level: 0,
-    path: []
+    path: [],
   };
 
   it('should have the options passed into the <select />', () => {

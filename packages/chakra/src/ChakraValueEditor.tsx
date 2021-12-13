@@ -12,7 +12,7 @@ const ChakraValueEditor = ({
   type,
   inputType,
   values,
-  disabled
+  disabled,
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -43,9 +43,9 @@ const ChakraValueEditor = ({
           size="xs"
           variant="filled"
           isDisabled={disabled}
-          onChange={(e) => handleOnChange(e.target.value)}>
+          onChange={e => handleOnChange(e.target.value)}>
           {values &&
-            values.map((v) => (
+            values.map(v => (
               <option key={v.name} value={v.name}>
                 {v.label}
               </option>
@@ -59,7 +59,7 @@ const ChakraValueEditor = ({
           className={className}
           size="sm"
           isDisabled={disabled}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
           isChecked={!!value}
         />
       );
@@ -73,7 +73,7 @@ const ChakraValueEditor = ({
           onChange={handleOnChange}
           isDisabled={disabled}>
           <Stack direction="row">
-            {values!.map((v) => (
+            {values!.map(v => (
               <Radio key={v.name} value={v.name} size="sm">
                 {v.label}
               </Radio>
@@ -93,7 +93,7 @@ const ChakraValueEditor = ({
           isDisabled={disabled}
           className={className}
           placeholder={placeHolderText}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

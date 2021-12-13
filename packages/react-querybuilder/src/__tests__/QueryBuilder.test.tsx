@@ -11,7 +11,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-  ValidationMap
+  ValidationMap,
 } from '../types';
 import { defaultValidator, formatQuery } from '../utils';
 
@@ -43,7 +43,7 @@ describe('<QueryBuilder />', () => {
         <QueryBuilder
           defaultQuery={{
             combinator: 'and',
-            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }]
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
           }}
         />
       );
@@ -61,7 +61,7 @@ describe('<QueryBuilder />', () => {
       const query: RuleGroupType = {
         combinator: 'and',
         rules: [],
-        not: false
+        not: false,
       };
       expect(onQueryChange.mock.calls[0][0]).toMatchObject(query);
     });
@@ -81,7 +81,7 @@ describe('<QueryBuilder />', () => {
         <QueryBuilder
           fields={[
             { name: 'dupe', label: 'One' },
-            { name: 'dupe', label: 'Two' }
+            { name: 'dupe', label: 'Two' },
           ]}
         />
       );
@@ -100,14 +100,14 @@ describe('<QueryBuilder />', () => {
         {
           field: 'firstName',
           value: 'Test without ID',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
-      { name: 'age', label: 'Age' }
+      { name: 'age', label: 'Age' },
     ];
 
     beforeEach(() => {
@@ -176,12 +176,12 @@ describe('<QueryBuilder />', () => {
       { name: 'null', label: 'Custom Is Null' },
       { name: 'notNull', label: 'Is Not Null' },
       { name: 'in', label: 'In' },
-      { name: 'notIn', label: 'Not In' }
+      { name: 'notIn', label: 'Not In' },
     ];
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
-      { name: 'age', label: 'Age' }
+      { name: 'age', label: 'Age' },
     ];
     const query: RuleGroupType = {
       combinator: 'and',
@@ -190,9 +190,9 @@ describe('<QueryBuilder />', () => {
         {
           field: 'firstName',
           value: 'Test',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     beforeEach(() => {
@@ -217,7 +217,7 @@ describe('<QueryBuilder />', () => {
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
-      { name: 'age', label: 'Age' }
+      { name: 'age', label: 'Age' },
     ];
     const query: RuleGroupType = {
       combinator: 'or',
@@ -226,9 +226,9 @@ describe('<QueryBuilder />', () => {
         {
           field: 'lastName',
           value: 'Another Test',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     it('should invoke custom getOperators function', () => {
@@ -255,7 +255,7 @@ describe('<QueryBuilder />', () => {
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
-      { name: 'age', label: 'Age' }
+      { name: 'age', label: 'Age' },
     ];
     const query: RuleGroupType = {
       combinator: 'or',
@@ -264,9 +264,9 @@ describe('<QueryBuilder />', () => {
         {
           field: 'lastName',
           value: 'Another Test',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     it('should invoke custom getValueEditorType function', () => {
@@ -290,7 +290,7 @@ describe('<QueryBuilder />', () => {
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
-      { name: 'age', label: 'Age' }
+      { name: 'age', label: 'Age' },
     ];
     const query: RuleGroupType = {
       combinator: 'or',
@@ -299,9 +299,9 @@ describe('<QueryBuilder />', () => {
         {
           field: 'lastName',
           value: 'Another Test',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     it('should invoke custom getInputType function', () => {
@@ -324,7 +324,7 @@ describe('<QueryBuilder />', () => {
     const fields: Field[] = [
       { name: 'firstName', label: 'First Name' },
       { name: 'lastName', label: 'Last Name' },
-      { name: 'age', label: 'Age' }
+      { name: 'age', label: 'Age' },
     ];
     const query: RuleGroupType = {
       combinator: 'or',
@@ -333,9 +333,9 @@ describe('<QueryBuilder />', () => {
         {
           field: 'lastName',
           value: 'Another Test',
-          operator: '='
-        }
-      ]
+          operator: '=',
+        },
+      ],
     };
 
     it('should invoke custom getValues function', () => {
@@ -385,7 +385,7 @@ describe('<QueryBuilder />', () => {
     const onQueryChange = jest.fn();
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
-      { name: 'field2', label: 'Field 2' }
+      { name: 'field2', label: 'Field 2' },
     ];
 
     beforeEach(() => {
@@ -472,7 +472,7 @@ describe('<QueryBuilder />', () => {
             if (field === 'field1') {
               return [
                 { name: 'value1', label: 'Value 1' },
-                { name: 'value2', label: 'Value 2' }
+                { name: 'value2', label: 'Value 2' },
               ];
             }
 
@@ -523,7 +523,7 @@ describe('<QueryBuilder />', () => {
     const onQueryChange = jest.fn();
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
-      { name: 'field2', label: 'Field 2' }
+      { name: 'field2', label: 'Field 2' },
     ];
 
     beforeEach(() => {
@@ -584,7 +584,7 @@ describe('<QueryBuilder />', () => {
     const onQueryChange = jest.fn();
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
-      { name: 'field2', label: 'Field 2' }
+      { name: 'field2', label: 'Field 2' },
     ];
 
     afterEach(() => {
@@ -638,7 +638,7 @@ describe('<QueryBuilder />', () => {
     const onQueryChange = jest.fn();
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
-      { name: 'field2', label: 'Field 2' }
+      { name: 'field2', label: 'Field 2' },
     ];
 
     afterEach(() => {
@@ -714,7 +714,7 @@ describe('<QueryBuilder />', () => {
       const onQueryChange = jest.fn();
       const fields: Field[] = [
         { name: 'field1', label: 'Field 1' },
-        { name: 'field2', label: 'Field 2' }
+        { name: 'field2', label: 'Field 2' },
       ];
       const { container } = render(
         <QueryBuilder
@@ -789,7 +789,7 @@ describe('<QueryBuilder />', () => {
     it('sets the default value', () => {
       const fields: Field[] = [
         { name: 'field1', label: 'Field 1', defaultValue: 'Test Value 1' },
-        { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' }
+        { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' },
       ];
       const onQueryChange = jest.fn();
       const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
@@ -807,14 +807,14 @@ describe('<QueryBuilder />', () => {
           name: 'field1',
           label: 'Field 1',
           defaultValue: 'test',
-          values: [{ name: 'test', label: 'Test' }]
+          values: [{ name: 'test', label: 'Test' }],
         },
         {
           name: 'field2',
           label: 'Field 2',
           defaultValue: 'test',
-          values: [{ name: 'test', label: 'Test' }]
-        }
+          values: [{ name: 'test', label: 'Test' }],
+        },
       ];
       const onQueryChange = jest.fn();
       const { container } = render(
@@ -859,7 +859,7 @@ describe('<QueryBuilder />', () => {
     it('sets the operators options', () => {
       const fields: Field[] = [
         { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
-        { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] }
+        { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] },
       ];
       const onQueryChange = jest.fn();
       const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
@@ -877,7 +877,7 @@ describe('<QueryBuilder />', () => {
     it('hides the operator selector and value editor', () => {
       const fields: Field[] = [
         { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
-        { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] }
+        { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] },
       ];
       const onQueryChange = jest.fn();
       const { container } = render(
@@ -937,8 +937,8 @@ describe('<QueryBuilder />', () => {
               combinator: 'and',
               rules: [
                 { field: 'firstName', operator: '=', value: 'Steve' },
-                { field: 'lastName', operator: '=', value: 'Vai' }
-              ]
+                { field: 'lastName', operator: '=', value: 'Vai' },
+              ],
             }}
           />
         );
@@ -948,8 +948,8 @@ describe('<QueryBuilder />', () => {
           rules: [
             { field: 'firstName', operator: '=', value: 'Steve' },
             { field: 'firstName', operator: '=', value: 'Steve' },
-            { field: 'lastName', operator: '=', value: 'Vai' }
-          ]
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
         });
       });
 
@@ -963,10 +963,10 @@ describe('<QueryBuilder />', () => {
               rules: [
                 {
                   combinator: 'or',
-                  rules: [{ field: 'firstName', operator: '=', value: 'Steve' }]
+                  rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
                 },
-                { field: 'lastName', operator: '=', value: 'Vai' }
-              ]
+                { field: 'lastName', operator: '=', value: 'Vai' },
+              ],
             }}
           />
         );
@@ -976,8 +976,8 @@ describe('<QueryBuilder />', () => {
           rules: [
             { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
             { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
-            { field: 'lastName', operator: '=', value: 'Vai' }
-          ]
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
         });
       });
     });
@@ -990,7 +990,7 @@ describe('<QueryBuilder />', () => {
             independentCombinators
             onQueryChange={onQueryChange}
             defaultQuery={{
-              rules: [{ field: 'firstName', operator: '=', value: 'Steve' }]
+              rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
             }}
           />
         );
@@ -999,8 +999,8 @@ describe('<QueryBuilder />', () => {
           rules: [
             { field: 'firstName', operator: '=', value: 'Steve' },
             'and',
-            { field: 'firstName', operator: '=', value: 'Steve' }
-          ]
+            { field: 'firstName', operator: '=', value: 'Steve' },
+          ],
         });
       });
 
@@ -1014,8 +1014,8 @@ describe('<QueryBuilder />', () => {
               rules: [
                 { field: 'firstName', operator: '=', value: 'Steve' },
                 'and',
-                { field: 'lastName', operator: '=', value: 'Vai' }
-              ]
+                { field: 'lastName', operator: '=', value: 'Vai' },
+              ],
             }}
           />
         );
@@ -1026,8 +1026,8 @@ describe('<QueryBuilder />', () => {
             'and',
             { field: 'firstName', operator: '=', value: 'Steve' },
             'and',
-            { field: 'lastName', operator: '=', value: 'Vai' }
-          ]
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
         });
       });
 
@@ -1041,8 +1041,8 @@ describe('<QueryBuilder />', () => {
               rules: [
                 { field: 'firstName', operator: '=', value: 'Steve' },
                 'or',
-                { field: 'lastName', operator: '=', value: 'Vai' }
-              ]
+                { field: 'lastName', operator: '=', value: 'Vai' },
+              ],
             }}
           />
         );
@@ -1053,8 +1053,8 @@ describe('<QueryBuilder />', () => {
             'or',
             { field: 'lastName', operator: '=', value: 'Vai' },
             'or',
-            { field: 'lastName', operator: '=', value: 'Vai' }
-          ]
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
         });
       });
     });
@@ -1078,7 +1078,7 @@ describe('<QueryBuilder />', () => {
     it('should call onQueryChange with query', () => {
       const query: RuleGroupTypeIC = {
         rules: [],
-        not: false
+        not: false,
       };
       const onQueryChange = jest.fn();
       render(<QueryBuilder onQueryChange={onQueryChange} independentCombinators />);
@@ -1140,8 +1140,8 @@ describe('<QueryBuilder />', () => {
           'and',
           { field: 'firstName', operator: '=', value: '2' },
           'or',
-          { field: 'firstName', operator: '=', value: '3' }
-        ]
+          { field: 'firstName', operator: '=', value: '3' },
+        ],
       };
       const { container, getAllByTestId, rerender } = render(
         <QueryBuilder query={query} onQueryChange={onQueryChange} independentCombinators />
@@ -1177,7 +1177,7 @@ describe('<QueryBuilder />', () => {
     it('should remove groups along with independent combinators', () => {
       const onQueryChange = jest.fn();
       const query: RuleGroupTypeIC = {
-        rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }]
+        rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }],
       };
       const { container, getAllByTestId, rerender } = render(
         <QueryBuilder query={query} onQueryChange={onQueryChange} independentCombinators />
@@ -1290,8 +1290,8 @@ describe('<QueryBuilder />', () => {
               combinator: 'and',
               rules: [
                 { id: '0', field: 'field0', operator: '=', value: '0' },
-                { id: '1', field: 'field1', operator: '=', value: '1' }
-              ]
+                { id: '1', field: 'field1', operator: '=', value: '1' },
+              ],
             }}
           />
         );
@@ -1301,9 +1301,9 @@ describe('<QueryBuilder />', () => {
           getHandlerId(rules[1], 'drop'),
           getDndBackend()
         );
-        expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules.map((r) => r.id)).toEqual([
+        expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules.map(r => r.id)).toEqual([
           '1',
-          '0'
+          '0',
         ]);
       });
 
@@ -1322,10 +1322,10 @@ describe('<QueryBuilder />', () => {
                   rules: [
                     { id: '1', field: 'field0', operator: '=', value: '1' },
                     { id: '2', field: 'field0', operator: '=', value: '2' },
-                    { id: '3', combinator: 'and', rules: [] }
-                  ]
-                }
-              ]
+                    { id: '3', combinator: 'and', rules: [] },
+                  ],
+                },
+              ],
             }}
           />
         );
@@ -1361,8 +1361,8 @@ describe('<QueryBuilder />', () => {
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
                 'and',
-                { field: 'field1', operator: '=', value: '1' }
-              ]
+                { field: 'field1', operator: '=', value: '1' },
+              ],
             }}
           />
         );
@@ -1376,8 +1376,8 @@ describe('<QueryBuilder />', () => {
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
-            { field: 'field0', operator: '=', value: '0' }
-          ]
+            { field: 'field0', operator: '=', value: '0' },
+          ],
         });
       });
 
@@ -1392,8 +1392,8 @@ describe('<QueryBuilder />', () => {
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
                 'and',
-                { field: 'field1', operator: '=', value: '1' }
-              ]
+                { field: 'field1', operator: '=', value: '1' },
+              ],
             }}
           />
         );
@@ -1408,8 +1408,8 @@ describe('<QueryBuilder />', () => {
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
-            { field: 'field0', operator: '=', value: '0' }
-          ]
+            { field: 'field0', operator: '=', value: '0' },
+          ],
         });
       });
 
@@ -1426,8 +1426,8 @@ describe('<QueryBuilder />', () => {
                 'and',
                 { field: 'field1', operator: '=', value: '1' },
                 'and',
-                { field: 'field2', operator: '=', value: '2' }
-              ]
+                { field: 'field2', operator: '=', value: '2' },
+              ],
             }}
           />
         );
@@ -1443,8 +1443,8 @@ describe('<QueryBuilder />', () => {
             'and',
             { field: 'field2', operator: '=', value: '2' },
             'and',
-            { field: 'field0', operator: '=', value: '0' }
-          ]
+            { field: 'field0', operator: '=', value: '0' },
+          ],
         });
       });
 
@@ -1461,8 +1461,8 @@ describe('<QueryBuilder />', () => {
                 'and',
                 { field: 'field1', operator: '=', value: '1' },
                 'and',
-                { field: 'field2', operator: '=', value: '2' }
-              ]
+                { field: 'field2', operator: '=', value: '2' },
+              ],
             }}
           />
         );
@@ -1479,8 +1479,8 @@ describe('<QueryBuilder />', () => {
             'and',
             { field: 'field0', operator: '=', value: '0' },
             'and',
-            { field: 'field1', operator: '=', value: '1' }
-          ]
+            { field: 'field1', operator: '=', value: '1' },
+          ],
         });
       });
 
@@ -1497,8 +1497,8 @@ describe('<QueryBuilder />', () => {
                 'and',
                 { field: 'field1', operator: '=', value: '1' },
                 'and',
-                { field: 'field2', operator: '=', value: '2' }
-              ]
+                { field: 'field2', operator: '=', value: '2' },
+              ],
             }}
           />
         );
@@ -1515,8 +1515,8 @@ describe('<QueryBuilder />', () => {
             'and',
             { field: 'field2', operator: '=', value: '2' },
             'and',
-            { field: 'field1', operator: '=', value: '1' }
-          ]
+            { field: 'field1', operator: '=', value: '1' },
+          ],
         });
       });
 
@@ -1535,10 +1535,10 @@ describe('<QueryBuilder />', () => {
                   rules: [
                     { field: 'field1', operator: '=', value: '1' },
                     'and',
-                    { field: 'field2', operator: '=', value: '2' }
-                  ]
-                }
-              ]
+                    { field: 'field2', operator: '=', value: '2' },
+                  ],
+                },
+              ],
             }}
           />
         );
@@ -1557,10 +1557,10 @@ describe('<QueryBuilder />', () => {
                 'and',
                 { field: 'field1', operator: '=', value: '1' },
                 'and',
-                { field: 'field2', operator: '=', value: '2' }
-              ]
-            }
-          ]
+                { field: 'field2', operator: '=', value: '2' },
+              ],
+            },
+          ],
         });
       });
 
@@ -1583,10 +1583,10 @@ describe('<QueryBuilder />', () => {
                   rules: [
                     { field: 'field3', operator: '=', value: '3' },
                     'and',
-                    { field: 'field4', operator: '=', value: '4' }
-                  ]
-                }
-              ]
+                    { field: 'field4', operator: '=', value: '4' },
+                  ],
+                },
+              ],
             }}
           />
         );
@@ -1609,10 +1609,10 @@ describe('<QueryBuilder />', () => {
                 'and',
                 { field: 'field1', operator: '=', value: '1' },
                 'and',
-                { field: 'field4', operator: '=', value: '4' }
-              ]
-            }
-          ]
+                { field: 'field4', operator: '=', value: '4' },
+              ],
+            },
+          ],
         });
       });
     });
@@ -1628,7 +1628,7 @@ describe('<QueryBuilder />', () => {
             { name: 'field1', label: 'Field 1' },
             { name: 'field2', label: 'Field 2' },
             { name: 'field3', label: 'Field 3' },
-            { name: 'field4', label: 'Field 4' }
+            { name: 'field4', label: 'Field 4' },
           ]}
           enableMountQueryChange={false}
           independentCombinators
@@ -1649,10 +1649,10 @@ describe('<QueryBuilder />', () => {
                 rules: [
                   { field: 'field3', operator: '=', value: '3' },
                   'and',
-                  { field: 'field4', operator: '=', value: '4' }
-                ]
-              }
-            ]
+                  { field: 'field4', operator: '=', value: '4' },
+                ],
+              },
+            ],
           }}
         />
       );

@@ -6,7 +6,7 @@ import {
   MenuItem,
   Radio,
   RadioGroup,
-  Select
+  Select,
 } from '@mui/material';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
@@ -21,7 +21,7 @@ const MaterialValueEditor = ({
   type,
   inputType,
   values,
-  disabled
+  disabled,
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -47,9 +47,9 @@ const MaterialValueEditor = ({
     case 'select':
       return (
         <FormControl variant="standard" className={className} disabled={disabled}>
-          <Select value={value} onChange={(e) => handleOnChange(e.target.value)}>
+          <Select value={value} onChange={e => handleOnChange(e.target.value)}>
             {values &&
-              values.map((v) => (
+              values.map(v => (
                 <MenuItem key={v.name} value={v.name}>
                   {v.label}
                 </MenuItem>
@@ -62,7 +62,7 @@ const MaterialValueEditor = ({
       return (
         <Checkbox
           className={className}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
           disabled={disabled}
         />
@@ -71,8 +71,8 @@ const MaterialValueEditor = ({
     case 'radio':
       return (
         <FormControl className={className} title={title} component="fieldset" disabled={disabled}>
-          <RadioGroup value={value} onChange={(e) => handleOnChange(e.target.value)}>
-            {values!.map((v) => (
+          <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
+            {values!.map(v => (
               <FormControlLabel key={v.name} value={v.name} control={<Radio />} label={v.label} />
             ))}
           </RadioGroup>
@@ -88,7 +88,7 @@ const MaterialValueEditor = ({
           disabled={disabled}
           className={className}
           placeholder={placeHolderText}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

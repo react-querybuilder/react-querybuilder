@@ -11,7 +11,7 @@ const BootstrapValueEditor = ({
   type,
   inputType,
   values,
-  disabled
+  disabled,
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -39,10 +39,10 @@ const BootstrapValueEditor = ({
         <select
           className={`${className} form-select form-select-sm`}
           title={title}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
           value={value}
           disabled={disabled}>
-          {values!.map((v) => (
+          {values!.map(v => (
             <option key={v.name} value={v.name}>
               {v.label}
             </option>
@@ -57,7 +57,7 @@ const BootstrapValueEditor = ({
           className={`form-check-input ${className}`}
           title={title}
           disabled={disabled}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
         />
       );
@@ -65,7 +65,7 @@ const BootstrapValueEditor = ({
     case 'radio':
       return (
         <span title={title}>
-          {values!.map((v) => (
+          {values!.map(v => (
             <div key={v.name} className="form-check form-check-inline">
               <input
                 className="form-check-input"
@@ -74,7 +74,7 @@ const BootstrapValueEditor = ({
                 value={v.name}
                 checked={value === v.name}
                 disabled={disabled}
-                onChange={(e) => handleOnChange(e.target.value)}
+                onChange={e => handleOnChange(e.target.value)}
               />
               <label className="form-check-label" htmlFor={v.name}>
                 {v.label}
@@ -93,7 +93,7 @@ const BootstrapValueEditor = ({
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

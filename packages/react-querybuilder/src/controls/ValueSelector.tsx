@@ -6,15 +6,15 @@ const ValueSelector = ({
   options,
   title,
   value,
-  disabled
+  disabled,
 }: ValueSelectorProps) => (
   <select
     className={className}
     value={value}
     title={title}
     disabled={disabled}
-    onChange={(e) => handleOnChange(e.target.value)}>
-    {options.map((option) => {
+    onChange={e => handleOnChange(e.target.value)}>
+    {options.map(option => {
       const key = `key-${option.id ?? option.name}`;
       return (
         <option key={key} value={option.name}>

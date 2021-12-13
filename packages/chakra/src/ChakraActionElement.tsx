@@ -7,7 +7,7 @@ const ChakraActionElement = ({ className, handleOnClick, label, title, disabled 
     title={title}
     colorScheme="gray"
     variant="solid"
-    onClick={(e) => handleOnClick(e)}
+    onClick={e => handleOnClick(e)}
     size="xs"
     isDisabled={disabled}>
     {label}

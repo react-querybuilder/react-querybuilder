@@ -39,15 +39,15 @@ export const InlineCombinator = ({
             hoverIndex === itemIndex - 1)
         );
       },
-      collect: (monitor) => ({
+      collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId()
+        dropMonitorId: monitor.getHandlerId(),
       }),
       drop: (item: DraggedItem, _monitor) => {
         const parentPath = getParentPath(path);
         const index = path[path.length - 1];
         moveRule(item.path, [...parentPath, index]);
-      }
+      },
     }),
     [moveRule, path, independentCombinators]
   );

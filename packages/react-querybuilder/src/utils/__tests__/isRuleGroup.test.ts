@@ -4,16 +4,16 @@ import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../../types';
 const rule: RuleType = {
   field: 'test',
   operator: '=',
-  value: 'test value'
+  value: 'test value',
 };
 
 const ruleGroup: RuleGroupType = {
   combinator: 'and',
-  rules: []
+  rules: [],
 };
 
 const ruleGroupIC: RuleGroupTypeIC = {
-  rules: []
+  rules: [],
 };
 
 describe('isRuleGroup', () => {

@@ -6,12 +6,12 @@ const NotToggle = ({
   title,
   label,
   checked,
-  disabled
+  disabled,
 }: NotToggleProps) => (
   <label className={className} title={title}>
     <input
       type="checkbox"
-      onChange={(e) => handleOnChange(e.target.checked)}
+      onChange={e => handleOnChange(e.target.checked)}
       checked={!!checked}
       disabled={disabled}
     />

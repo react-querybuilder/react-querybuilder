@@ -8,7 +8,7 @@ const ChakraNotToggle = ({
   label,
   checked,
   title,
-  disabled
+  disabled,
 }: NotToggleProps) => {
   const [id] = useState(`notToggle-${Math.random()}`);
 
@@ -26,7 +26,7 @@ const ChakraNotToggle = ({
           colorScheme="red"
           checked={checked}
           isDisabled={disabled}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
         />
         <FormLabel htmlFor={id}>{label}</FormLabel>
       </FormControl>

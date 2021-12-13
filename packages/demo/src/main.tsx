@@ -12,7 +12,7 @@ import {
   Radio,
   Select,
   Tooltip,
-  Typography
+  Typography,
 } from 'antd';
 import 'antd/dist/antd.compact.css';
 import queryString from 'query-string';
@@ -30,7 +30,7 @@ import QueryBuilder, {
   parseSQL,
   QueryBuilderProps,
   RuleGroupTypeAny,
-  RuleGroupTypeIC
+  RuleGroupTypeIC,
 } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -46,7 +46,7 @@ import {
   npmLink,
   StyleName,
   styleNameMap,
-  styleOptions
+  styleOptions,
 } from './constants';
 
 const { TextArea } = Input;
@@ -58,8 +58,8 @@ const muiTheme = createTheme();
 const chakraTheme = extendTheme({
   config: {
     initialColorMode: 'light',
-    useSystemColorMode: false
-  }
+    useSystemColorMode: false,
+  },
 });
 
 SyntaxHighlighter.registerLanguage('json', json);
@@ -79,8 +79,8 @@ const shStyle = {
     fontSize: 'small',
     padding: '1rem',
     minWidth: 405,
-    whiteSpace: 'pre-wrap'
-  }
+    whiteSpace: 'pre-wrap',
+  },
 };
 
 const CustomFragment: FC = ({ children }) => <>{children}</>;
@@ -100,10 +100,10 @@ const initialOptions: { [opt: string]: boolean } = {
   useValidation: false,
   independentCombinators: false,
   enableDragAndDrop: false,
-  disabled: false
+  disabled: false,
 };
 const hash = queryString.parse(location.hash);
-Object.keys(hash).forEach((opt) => (initialOptions[opt] = hash[opt] === 'true'));
+Object.keys(hash).forEach(opt => (initialOptions[opt] = hash[opt] === 'true'));
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -148,7 +148,7 @@ const App = () => {
         useValidation,
         independentCombinators,
         enableDragAndDrop,
-        disabled
+        disabled,
       }),
     [
       showCombinatorsBetweenRules,
@@ -161,7 +161,7 @@ const App = () => {
       useValidation,
       independentCombinators,
       enableDragAndDrop,
-      disabled
+      disabled,
     ]
   );
 
@@ -177,7 +177,7 @@ const App = () => {
       link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
       label: 'Combinators between rules',
       title:
-        'When checked, combinator (and/or) selectors will appear between rules instead of in the group header'
+        'When checked, combinator (and/or) selectors will appear between rules instead of in the group header',
     },
     {
       checked: showNotToggle,
@@ -185,7 +185,7 @@ const App = () => {
       setter: setShowNotToggle,
       link: '/docs/api/querybuilder#shownottoggle',
       label: 'Show "not" toggle',
-      title: `When checked, the check box to invert a group's rules, by default labelled "Not", will be visible`
+      title: `When checked, the check box to invert a group's rules, by default labelled "Not", will be visible`,
     },
     {
       checked: showCloneButtons,
@@ -193,7 +193,7 @@ const App = () => {
       setter: setShowCloneButtons,
       link: '/docs/api/querybuilder#showclonebuttons',
       label: 'Show clone buttons',
-      title: 'When checked, the buttons to clone rules and groups will be visible'
+      title: 'When checked, the buttons to clone rules and groups will be visible',
     },
     {
       checked: resetOnFieldChange,
@@ -201,7 +201,7 @@ const App = () => {
       setter: setResetOnFieldChange,
       link: '/docs/api/querybuilder#resetonfieldchange',
       label: 'Reset on field change',
-      title: `When checked, operator and value will be reset when a rule's field selection changes`
+      title: `When checked, operator and value will be reset when a rule's field selection changes`,
     },
     {
       checked: resetOnOperatorChange,
@@ -209,7 +209,7 @@ const App = () => {
       setter: setResetOnOperatorChange,
       link: '/docs/api/querybuilder#resetonoperatorchange',
       label: 'Reset on operator change',
-      title: 'When checked, the value will reset when the operator changes'
+      title: 'When checked, the value will reset when the operator changes',
     },
     {
       checked: autoSelectField,
@@ -217,7 +217,7 @@ const App = () => {
       setter: setAutoSelectField,
       link: '/docs/api/querybuilder#autoselectfield',
       label: 'Auto-select field',
-      title: 'When checked, the default field will be automatically selected for new rules'
+      title: 'When checked, the default field will be automatically selected for new rules',
     },
     {
       checked: addRuleToNewGroups,
@@ -225,7 +225,7 @@ const App = () => {
       setter: setAddRuleToNewGroups,
       link: '/docs/api/querybuilder#addruletonewgroups',
       label: 'Add rule to new groups',
-      title: 'When checked, a rule will be automatically added to new groups'
+      title: 'When checked, a rule will be automatically added to new groups',
     },
     {
       checked: useValidation,
@@ -234,7 +234,7 @@ const App = () => {
       link: '/docs/api/validation',
       label: 'Use validation',
       title:
-        'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups'
+        'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups',
     },
     {
       checked: independentCombinators,
@@ -242,7 +242,7 @@ const App = () => {
       setter: setIndependentCombinators,
       link: '/docs/api/querybuilder#inlinecombinators',
       label: 'Independent combinators',
-      title: 'When checked, the query builder supports independent combinators between rules'
+      title: 'When checked, the query builder supports independent combinators between rules',
     },
     {
       checked: enableDragAndDrop,
@@ -250,7 +250,7 @@ const App = () => {
       setter: setEnableDragAndDrop,
       link: '/docs/api/querybuilder#enabledraganddrop',
       label: 'Enable drag-and-drop',
-      title: 'When checked, rules and groups can be reordered and dragged to different groups'
+      title: 'When checked, rules and groups can be reordered and dragged to different groups',
     },
     {
       checked: disabled,
@@ -258,12 +258,12 @@ const App = () => {
       setter: setDisabled,
       link: '/docs/api/querybuilder#disabled',
       label: 'Disabled',
-      title: 'When checked, all components within the query builder will be disabled'
-    }
+      title: 'When checked, all components within the query builder will be disabled',
+    },
   ];
 
   const resetOptions = () =>
-    optionsInfo.forEach((opt) => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
+    optionsInfo.forEach(opt => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
 
   const formatOptions = useValidation ? ({ format, fields } as FormatQueryOptions) : format;
   const q: RuleGroupTypeAny = independentCombinators ? queryIC : query;
@@ -321,7 +321,7 @@ const App = () => {
     independentCombinators,
     validator: useValidation ? defaultValidator : undefined,
     enableDragAndDrop,
-    disabled
+    disabled,
   };
 
   return (
@@ -335,7 +335,7 @@ const App = () => {
         <Layout>
           <Sider theme="light" width={260} style={{ padding: '1rem' }}>
             <Title level={4}>Style</Title>
-            <Select value={style} onChange={(v) => setStyle(v as StyleName)}>
+            <Select value={style} onChange={v => setStyle(v as StyleName)}>
               <Option value="default">{styleNameMap.default}</Option>
               <Option value="bootstrap">{styleNameMap.bootstrap}</Option>
               <Option value="material">{styleNameMap.material}</Option>
@@ -356,7 +356,7 @@ const App = () => {
             <div>
               {optionsInfo.map(({ checked, label, link, setter, title }) => (
                 <div key={label}>
-                  <Checkbox checked={checked} onChange={(e) => setter(e.target.checked)}>
+                  <Checkbox checked={checked} onChange={e => setter(e.target.checked)}>
                     {label}
                     {'\u00a0'}
                     <a href={`${docsLink}${link}`} target="_blank" rel="noreferrer">
@@ -440,14 +440,14 @@ const App = () => {
                           {...(commonRQBProps as QueryBuilderProps<RuleGroupTypeIC>)}
                           key={style}
                           query={queryIC}
-                          onQueryChange={(q) => setQueryIC(q)}
+                          onQueryChange={q => setQueryIC(q)}
                         />
                       ) : (
                         <QueryBuilder
                           {...commonRQBProps}
                           key={style}
                           query={query}
-                          onQueryChange={(q) => setQuery(q)}
+                          onQueryChange={q => setQuery(q)}
                         />
                       )}
                     </form>
@@ -473,7 +473,7 @@ const App = () => {
         onCancel={() => setIsSQLModalVisible(false)}>
         <TextArea
           value={sql}
-          onChange={(e) => setSQL(e.target.value)}
+          onChange={e => setSQL(e.target.value)}
           spellCheck={false}
           style={{ height: 200, fontFamily: 'monospace' }}
         />

@@ -9,7 +9,7 @@ describe('<ActionElement />', () => {
     handleOnClick: () => {},
     className: '',
     level: 0,
-    path: []
+    path: [],
   };
 
   it('should have the label passed into the <button />', () => {

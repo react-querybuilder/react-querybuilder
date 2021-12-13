@@ -3,7 +3,7 @@ import type {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   RuleGroupType,
-  ValueProcessor
+  ValueProcessor,
 } from '../../types';
 
 const query: RuleGroupType = {
@@ -12,57 +12,57 @@ const query: RuleGroupType = {
     {
       field: 'firstName',
       value: '',
-      operator: 'null'
+      operator: 'null',
     },
     {
       field: 'lastName',
       value: '',
-      operator: 'notNull'
+      operator: 'notNull',
     },
     {
       field: 'firstName',
       value: 'Test,This',
-      operator: 'in'
+      operator: 'in',
     },
     {
       field: 'lastName',
       value: 'Test,This',
-      operator: 'notIn'
+      operator: 'notIn',
     },
     {
       field: 'firstName',
       value: false,
-      operator: 'in'
+      operator: 'in',
     },
     {
       field: 'firstName',
       value: 'Test,This',
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'firstName',
       value: ['Test', 'This'],
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'lastName',
       value: 'Test,This',
-      operator: 'notBetween'
+      operator: 'notBetween',
     },
     {
       field: 'firstName',
       value: 'MissingComma',
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'age',
       value: '26',
-      operator: '='
+      operator: '=',
     },
     {
       field: 'isMusician',
       value: true,
-      operator: '='
+      operator: '=',
     },
     {
       id: 'g-sub1',
@@ -71,20 +71,20 @@ const query: RuleGroupType = {
         {
           field: 'gender',
           value: 'M',
-          operator: '='
+          operator: '=',
         },
         {
           field: 'job',
           value: 'Programmer',
-          operator: '!='
+          operator: '!=',
         },
         {
           field: 'email',
           value: '@',
-          operator: 'contains'
-        }
+          operator: 'contains',
+        },
       ],
-      not: true
+      not: true,
     },
     {
       id: 'g-sub2',
@@ -93,34 +93,34 @@ const query: RuleGroupType = {
         {
           field: 'lastName',
           value: 'ab',
-          operator: 'doesNotContain'
+          operator: 'doesNotContain',
         },
         {
           field: 'job',
           value: 'Prog',
-          operator: 'beginsWith'
+          operator: 'beginsWith',
         },
         {
           field: 'email',
           value: 'com',
-          operator: 'endsWith'
+          operator: 'endsWith',
         },
         {
           field: 'job',
           value: 'Man',
-          operator: 'doesNotBeginWith'
+          operator: 'doesNotBeginWith',
         },
         {
           field: 'email',
           value: 'fr',
-          operator: 'doesNotEndWith'
-        }
+          operator: 'doesNotEndWith',
+        },
       ],
-      not: false
-    }
+      not: false,
+    },
   ],
   combinator: 'and',
-  not: false
+  not: false,
 };
 const mongoQuery: RuleGroupType = {
   id: 'g-root',
@@ -129,97 +129,97 @@ const mongoQuery: RuleGroupType = {
     {
       field: 'invalid',
       value: '',
-      operator: 'invalid'
+      operator: 'invalid',
     },
     {
       field: 'firstName',
       value: '',
-      operator: 'null'
+      operator: 'null',
     },
     {
       field: 'lastName',
       value: '',
-      operator: 'notNull'
+      operator: 'notNull',
     },
     {
       field: 'firstName',
       value: 'Test,This',
-      operator: 'in'
+      operator: 'in',
     },
     {
       field: 'lastName',
       value: 'Test,This',
-      operator: 'notIn'
+      operator: 'notIn',
     },
     {
       field: 'firstName',
       value: false,
-      operator: 'in'
+      operator: 'in',
     },
     {
       field: 'firstName',
       value: 'Test,This',
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'firstName',
       value: ['Test', 'This'],
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'lastName',
       value: 'Test,This',
-      operator: 'notBetween'
+      operator: 'notBetween',
     },
     {
       field: 'firstName',
       value: '',
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'firstName',
       value: false,
-      operator: 'between'
+      operator: 'between',
     },
     {
       field: 'age',
       value: '26',
-      operator: '='
+      operator: '=',
     },
     {
       field: 'isMusician',
       value: true,
-      operator: '='
+      operator: '=',
     },
     {
       field: 'email',
       value: '@',
-      operator: 'contains'
+      operator: 'contains',
     },
     {
       field: 'email',
       value: 'ab',
-      operator: 'beginsWith'
+      operator: 'beginsWith',
     },
     {
       field: 'email',
       value: 'com',
-      operator: 'endsWith'
+      operator: 'endsWith',
     },
     {
       field: 'hello',
       value: 'com',
-      operator: 'doesNotContain'
+      operator: 'doesNotContain',
     },
     {
       field: 'job',
       value: 'Man',
-      operator: 'doesNotBeginWith'
+      operator: 'doesNotBeginWith',
     },
     {
       field: 'job',
       value: 'ger',
-      operator: 'doesNotEndWith'
+      operator: 'doesNotEndWith',
     },
     {
       id: 'g-sub1',
@@ -228,13 +228,13 @@ const mongoQuery: RuleGroupType = {
         {
           field: 'job',
           value: 'Sales Executive',
-          operator: '='
-        }
+          operator: '=',
+        },
       ],
-      not: false
-    }
+      not: false,
+    },
   ],
-  not: false
+  not: false,
 };
 
 const sqlString =
@@ -263,7 +263,7 @@ const params = [
   'Prog%',
   '%com',
   'Man%',
-  '%fr'
+  '%fr',
 ];
 const params_named = {
   firstName_1: 'Test',
@@ -285,7 +285,7 @@ const params_named = {
   job_2: 'Prog%',
   email_2: '%com',
   job_3: 'Man%',
-  email_3: '%fr'
+  email_3: '%fr',
 };
 const mongoQueryString =
   '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{$and:[{firstName:{$gte:"Test"}},{firstName:{$lte:"This"}}]},{$and:[{firstName:{$gte:"Test"}},{firstName:{$lte:"This"}}]},{$or:[{lastName:{$lt:"Test"}},{lastName:{$gt:"This"}}]},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
@@ -331,15 +331,15 @@ describe('formatQuery', () => {
         {
           field: 'instrument',
           value: ['Guitar', 'Vocals'],
-          operator: 'in'
+          operator: 'in',
         },
         {
           field: 'lastName',
           value: 'Vai',
-          operator: '='
-        }
+          operator: '=',
+        },
       ],
-      not: false
+      not: false,
     };
 
     const valueProcessor: ValueProcessor = (_field, operator, value) => {
@@ -363,15 +363,15 @@ describe('formatQuery', () => {
         {
           field: 'instrument',
           value: 'Guitar, Vocals',
-          operator: 'in'
+          operator: 'in',
         },
         {
           field: 'lastName',
           value: 'Vai',
-          operator: '='
-        }
+          operator: '=',
+        },
       ],
-      not: false
+      not: false,
     };
 
     expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
@@ -383,7 +383,7 @@ describe('formatQuery', () => {
     const queryToTest: RuleGroupType = {
       id: 'g-root',
       combinator: 'and',
-      rules: []
+      rules: [],
     };
 
     expect(
@@ -399,10 +399,10 @@ describe('formatQuery', () => {
         {
           field: 'firstName',
           value: '',
-          operator: 'null'
-        }
+          operator: 'null',
+        },
       ],
-      not: false
+      not: false,
     };
     const expectedResult =
       '{"rules":[{"field":"firstName","value":"","operator":"null"}],"combinator":"and","not":false}';
@@ -412,11 +412,11 @@ describe('formatQuery', () => {
   it('uses paramPrefix correctly', () => {
     const queryToTest: RuleGroupType = {
       combinator: 'and',
-      rules: [{ field: 'firstName', operator: '=', value: 'Test' }]
+      rules: [{ field: 'firstName', operator: '=', value: 'Test' }],
     };
     expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix: '$' })).toEqual({
       sql: '(firstName = $firstName_1)',
-      params: { firstName_1: 'Test' }
+      params: { firstName_1: 'Test' },
     });
   });
 
@@ -428,8 +428,8 @@ describe('formatQuery', () => {
             rules: [
               { field: 'firstName', value: 'Test', operator: '=' },
               'and',
-              { field: 'lastName', value: 'Test', operator: '=' }
-            ]
+              { field: 'lastName', value: 'Test', operator: '=' },
+            ],
           },
           'sql'
         )
@@ -463,7 +463,7 @@ describe('formatQuery', () => {
           {
             format: 'sql',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }]
+            fields: [{ name: 'field', validator: () => true }],
           }
         )
       ).toBe('(1 = 1)');
@@ -477,15 +477,15 @@ describe('formatQuery', () => {
             combinator: 'and',
             rules: [
               { field: 'field', operator: '=', value: '' },
-              { field: 'field2', operator: '=', value: '' }
-            ]
+              { field: 'field2', operator: '=', value: '' },
+            ],
           },
           {
             format: 'sql',
             fields: [
               { name: 'field', validator: () => false },
-              { name: 'field3', validator: () => false }
-            ]
+              { name: 'field3', validator: () => false },
+            ],
           }
         )
       ).toBe(`(field2 = '')`);
@@ -499,12 +499,12 @@ describe('formatQuery', () => {
             combinator: 'and',
             rules: [
               { id: 'f1', field: 'field', operator: '=', value: '' },
-              { id: 'f2', field: 'field2', operator: '=', value: '' }
-            ]
+              { id: 'f2', field: 'field2', operator: '=', value: '' },
+            ],
           },
           {
             format: 'sql',
-            validator: () => ({ f1: false })
+            validator: () => ({ f1: false }),
           }
         )
       ).toBe(`(field2 = '')`);
@@ -516,11 +516,11 @@ describe('formatQuery', () => {
           {
             id: 'root',
             combinator: 'and',
-            rules: []
+            rules: [],
           },
           {
             format: 'sql',
-            validator: () => ({ root: false })
+            validator: () => ({ root: false }),
           }
         )
       ).toBe('(1 = 1)');
@@ -532,11 +532,11 @@ describe('formatQuery', () => {
           {
             id: 'root',
             combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }]
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
           },
           {
             format: 'sql',
-            validator: () => ({ inner: false })
+            validator: () => ({ inner: false }),
           }
         )
       ).toBe('()');
@@ -550,8 +550,8 @@ describe('formatQuery', () => {
             combinator: 'and',
             rules: [
               { field: 'field', operator: '=', value: '' },
-              { id: 'inner', combinator: 'and', rules: [] }
-            ]
+              { id: 'inner', combinator: 'and', rules: [] },
+            ],
           },
           'sql'
         )
@@ -564,20 +564,20 @@ describe('formatQuery', () => {
         combinator: 'and',
         rules: [
           { field: 'field', operator: '=', value: '' },
-          { field: 'field2', operator: '=', value: '' }
-        ]
+          { field: 'field2', operator: '=', value: '' },
+        ],
       };
       const fields = [{ name: 'field', validator: () => false }];
       expect(
         formatQuery(queryToTest, {
           format: 'parameterized',
-          fields
+          fields,
         })
       ).toEqual({ sql: `(field2 = ?)`, params: [''] });
       expect(
         formatQuery(queryToTest, {
           format: 'parameterized_named',
-          fields
+          fields,
         })
       ).toEqual({ sql: '(field2 = :field2_1)', params: { field2_1: '' } });
     });
@@ -617,7 +617,7 @@ describe('formatQuery', () => {
           {
             format: 'mongodb',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }]
+            fields: [{ name: 'field', validator: () => true }],
           }
         )
       ).toBe('{$and:[{$expr:true}]}');
@@ -629,11 +629,11 @@ describe('formatQuery', () => {
           {
             id: 'root',
             combinator: 'and',
-            rules: []
+            rules: [],
           },
           {
             format: 'mongodb',
-            validator: () => ({ root: false })
+            validator: () => ({ root: false }),
           }
         )
       ).toBe('{$and:[{$expr:true}]}');
@@ -645,11 +645,11 @@ describe('formatQuery', () => {
           {
             id: 'root',
             combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }]
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
           },
           {
             format: 'mongodb',
-            validator: () => ({ inner: false })
+            validator: () => ({ inner: false }),
           }
         )
       ).toBe('{$and:[{$expr:true}]}');

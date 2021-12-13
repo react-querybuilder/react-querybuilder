@@ -4,7 +4,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleOrGroupArray,
-  RuleType
+  RuleType,
 } from './ruleGroups';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
 

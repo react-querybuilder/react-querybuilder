@@ -3,7 +3,7 @@ import parseSQL from '../parseSQL';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
   combinator: 'and',
-  rules: rule ? [rule] : []
+  rules: rule ? [rule] : [],
 });
 
 describe('parseSQL', () => {
@@ -161,12 +161,12 @@ describe('parseSQL', () => {
     it('independent combinators', () => {
       expect(
         parseSQL(`firstName = 'Steve' AND lastName = someFunc('Vai') OR middleName IS NULL`, {
-          independentCombinators: true
+          independentCombinators: true,
         })
       ).toEqual(wrapRule());
       expect(
         parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`, {
-          independentCombinators: true
+          independentCombinators: true,
         })
       ).toEqual({
         rules: [
@@ -174,8 +174,8 @@ describe('parseSQL', () => {
           'and',
           { field: 'lastName', operator: '=', value: 'Vai' },
           'or',
-          { field: 'middleName', operator: 'null', value: null }
-        ]
+          { field: 'middleName', operator: 'null', value: null },
+        ],
       });
     });
   });
@@ -187,8 +187,8 @@ describe('parseSQL', () => {
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
           { field: 'lastName', operator: '=', value: 'Vai' },
-          { field: 'middleName', operator: 'null', value: null }
-        ]
+          { field: 'middleName', operator: 'null', value: null },
+        ],
       });
     });
 
@@ -198,8 +198,8 @@ describe('parseSQL', () => {
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
           { field: 'lastName', operator: '=', value: 'Vai' },
-          { field: 'middleName', operator: 'null', value: null }
-        ]
+          { field: 'middleName', operator: 'null', value: null },
+        ],
       });
     });
 
@@ -211,11 +211,11 @@ describe('parseSQL', () => {
             combinator: 'and',
             rules: [
               { field: 'firstName', operator: '=', value: 'Steve' },
-              { field: 'lastName', operator: '=', value: 'Vai' }
-            ]
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
           },
-          { field: 'middleName', operator: 'null', value: null }
-        ]
+          { field: 'middleName', operator: 'null', value: null },
+        ],
       });
       expect(
         parseSQL(
@@ -228,12 +228,12 @@ describe('parseSQL', () => {
             combinator: 'and',
             rules: [
               { field: 'firstName', operator: '=', value: 'Steve' },
-              { field: 'lastName', operator: '=', value: 'Vai' }
-            ]
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
           },
           { field: 'middleName', operator: 'null', value: null },
-          { field: 'isMusician', operator: '=', value: true }
-        ]
+          { field: 'isMusician', operator: '=', value: true },
+        ],
       });
       expect(
         parseSQL(
@@ -246,13 +246,13 @@ describe('parseSQL', () => {
             combinator: 'and',
             rules: [
               { field: 'firstName', operator: '=', value: 'Steve' },
-              { field: 'lastName', operator: '=', value: 'Vai' }
-            ]
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
           },
           { field: 'middleName', operator: 'null', value: null },
           { field: 'isMusician', operator: '=', value: true },
-          { field: 'fieldName', operator: '=', value: 'Test' }
-        ]
+          { field: 'fieldName', operator: '=', value: 'Test' },
+        ],
       });
       expect(parseSQL(`firstName = 'Steve' OR lastName = 'Vai' AND middleName IS NULL`)).toEqual({
         combinator: 'or',
@@ -262,10 +262,10 @@ describe('parseSQL', () => {
             combinator: 'and',
             rules: [
               { field: 'lastName', operator: '=', value: 'Vai' },
-              { field: 'middleName', operator: 'null', value: null }
-            ]
-          }
-        ]
+              { field: 'middleName', operator: 'null', value: null },
+            ],
+          },
+        ],
       });
     });
   });
@@ -274,7 +274,7 @@ describe('parseSQL', () => {
     const expectedRuleGroup: DefaultRuleGroupType = {
       combinator: 'and',
       rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-      not: true
+      not: true,
     };
 
     it('NOT expressions', () => {
@@ -285,9 +285,9 @@ describe('parseSQL', () => {
         combinator: 'or',
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' }
+          { field: 'lastName', operator: '=', value: 'Vai' },
         ],
-        not: true
+        not: true,
       });
     });
   });
@@ -309,10 +309,10 @@ describe('parseSQL', () => {
               combinator: 'and',
               rules: [
                 { field: 'lastName', operator: '=', value: 'Vai' },
-                { field: 'middleName', operator: 'null', value: null }
-              ]
-            }
-          ]
+                { field: 'middleName', operator: 'null', value: null },
+              ],
+            },
+          ],
         }
       );
     });
@@ -333,13 +333,16 @@ describe('parseSQL', () => {
                 combinator: 'and',
                 rules: [
                   { field: 'testField', operator: '=', value: 'TestValue' },
-                  { combinator: 'and', rules: [{ field: 'lastName', operator: '=', value: 'Vai' }] }
-                ]
+                  {
+                    combinator: 'and',
+                    rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
+                  },
+                ],
               },
-              { field: 'middleName', operator: 'null', value: null }
-            ]
-          }
-        ]
+              { field: 'middleName', operator: 'null', value: null },
+            ],
+          },
+        ],
       });
     });
 
@@ -348,8 +351,8 @@ describe('parseSQL', () => {
         combinator: 'and',
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' }
-        ]
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
       });
     });
 

@@ -10,7 +10,7 @@ import type {
   RuleValidator,
   ValidationMap,
   ValidationResult,
-  ValueProcessor
+  ValueProcessor,
 } from '../types';
 import isRuleOrGroupValid from './isRuleOrGroupValid';
 import uniqByName from './uniqByName';
@@ -48,7 +48,7 @@ const mongoOperators: { [op: string]: string } = {
   '>': '$gt',
   '>=': 'gte',
   in: '$in',
-  notIn: '$nin'
+  notIn: '$nin',
 };
 
 export const defaultValueProcessor: ValueProcessor = (
@@ -155,7 +155,7 @@ const formatQuery = (
 
     const validatorMap: { [f: string]: RuleValidator } = {};
     const uniqueFields = uniqByName(fields);
-    uniqueFields.forEach((f) => {
+    uniqueFields.forEach(f => {
       // istanbul ignore else
       if (typeof f.validator === 'function') {
         validatorMap[f.name] = f.validator;
@@ -169,7 +169,7 @@ const formatQuery = (
         validationResult = validationMap[rule.id];
       }
       if (fields.length) {
-        const fieldArr = fields.filter((f) => f.name === rule.field);
+        const fieldArr = fields.filter(f => f.name === rule.field);
         if (fieldArr.length) {
           const field = fieldArr[0];
           // istanbul ignore else
@@ -190,15 +190,15 @@ const formatQuery = (
           return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
         } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
           if (value) {
-            const splitValue = (rule.value as string).split(',').map((v) => v.trim());
+            const splitValue = (rule.value as string).split(',').map(v => v.trim());
             if (parameterized) {
-              splitValue.forEach((v) => params.push(v));
+              splitValue.forEach(v => params.push(v));
               return `${quoteFieldNamesWith}${
                 rule.field
               }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
             }
             const inParams: string[] = [];
-            splitValue.forEach((v) => {
+            splitValue.forEach(v => {
               const thisParamName = getNextNamedParam(rule.field);
               inParams.push(`${paramPrefix}${thisParamName}`);
               params_named[thisParamName] = v;
@@ -214,7 +214,7 @@ const formatQuery = (
           operator.toLowerCase() === 'not between'
         ) {
           if (value) {
-            const [first, second] = toArray(rule.value).map((v) => v.trim());
+            const [first, second] = toArray(rule.value).map(v => v.trim());
             if (parameterized) {
               params.push(first);
               params.push(second);
@@ -255,7 +255,7 @@ const formatQuery = (
         return outermost ? fallbackExpression : '';
       }
 
-      const processedRules = rg.rules.map((rule) => {
+      const processedRules = rg.rules.map(rule => {
         if (typeof rule === 'string') {
           return rule;
         }
@@ -270,7 +270,7 @@ const formatQuery = (
       }
 
       return `${rg.not ? 'NOT ' : ''}(${processedRules
-        .filter((r) => !!r)
+        .filter(r => !!r)
         .join('combinator' in rg ? ` ${rg.combinator} ` : ' ')})`;
     };
 
@@ -302,7 +302,7 @@ const formatQuery = (
       const combinator = `$${rg.combinator}`;
 
       const expression: string = rg.rules
-        .map((rule) => {
+        .map(rule => {
           if ('rules' in rule) {
             const processedRuleGroup = processRuleGroup(rule);
             return processedRuleGroup ? `{${processedRuleGroup}}` : '';
@@ -362,7 +362,7 @@ const formatQuery = (
 
           return '';
         })
-        .filter((e) => !!e)
+        .filter(e => !!e)
         .join(',');
 
       return expression ? `${combinator}:[${expression}]` : fallbackExpression;

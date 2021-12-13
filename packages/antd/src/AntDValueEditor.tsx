@@ -14,7 +14,7 @@ const AntDValueEditor = ({
   type,
   inputType,
   values,
-  disabled
+  disabled,
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -41,10 +41,10 @@ const AntDValueEditor = ({
       return (
         <Select
           className={className}
-          onChange={(v) => handleOnChange(v)}
+          onChange={v => handleOnChange(v)}
           value={value}
           disabled={disabled}>
-          {values!.map((v) => (
+          {values!.map(v => (
             <Option key={v.name} value={v.name}>
               {v.label}
             </Option>
@@ -58,7 +58,7 @@ const AntDValueEditor = ({
           type="checkbox"
           className={className}
           disabled={disabled}
-          onChange={(e) => handleOnChange(e.target.checked)}
+          onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
         />
       );
@@ -66,13 +66,13 @@ const AntDValueEditor = ({
     case 'radio':
       return (
         <span className={className} title={title}>
-          {values!.map((v) => (
+          {values!.map(v => (
             <Radio
               key={v.name}
               value={v.name}
               checked={value === v.name}
               disabled={disabled}
-              onChange={(e) => handleOnChange(e.target.value)}>
+              onChange={e => handleOnChange(e.target.value)}>
               {v.label}
             </Radio>
           ))}
@@ -88,7 +88,7 @@ const AntDValueEditor = ({
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}
-          onChange={(e) => handleOnChange(e.target.value)}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
   }

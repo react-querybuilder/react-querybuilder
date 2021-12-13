@@ -6,7 +6,7 @@ describe('<DragHandle />', () => {
   const props: DragHandleProps = {
     title: 'DragHandle',
     level: 1,
-    path: [0]
+    path: [0],
   };
 
   it('should have the className passed into the <span />', () => {

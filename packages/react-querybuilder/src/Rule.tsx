@@ -13,7 +13,7 @@ export const Rule = ({
   translations,
   schema,
   disabled,
-  context
+  context,
 }: RuleProps) => {
   const {
     classNames,
@@ -30,7 +30,7 @@ export const Rule = ({
     autoSelectField,
     showCloneButtons,
     independentCombinators,
-    validationMap
+    validationMap,
   } = schema;
 
   const dndRef = useRef<HTMLDivElement>(null);
@@ -39,10 +39,10 @@ export const Rule = ({
     () => ({
       type: dndTypes.rule,
       item: (): DraggedItem => ({ path }),
-      collect: (monitor) => ({
+      collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId()
-      })
+        dragMonitorId: monitor.getHandlerId(),
+      }),
     }),
     [disabled, path]
   );
@@ -66,9 +66,9 @@ export const Rule = ({
               (independentCombinators && hoverIndex === itemIndex - 2)))
         );
       },
-      collect: (monitor) => ({
+      collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId()
+        dropMonitorId: monitor.getHandlerId(),
       }),
       drop: (item: DraggedItem, _monitor) => {
         /* istanbul ignore next */
@@ -77,7 +77,7 @@ export const Rule = ({
         const hoverIndex = path[path.length - 1];
 
         moveRule(item.path, [...parentHoverPath, hoverIndex + 1]);
-      }
+      },
     }),
     [disabled, moveRule, path]
   );

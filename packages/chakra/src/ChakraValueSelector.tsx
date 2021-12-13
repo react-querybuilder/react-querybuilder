@@ -7,7 +7,7 @@ const ChakraValueSelector = ({
   options,
   value,
   title,
-  disabled
+  disabled,
 }: ValueSelectorProps) => (
   <Select
     className={className}
@@ -16,8 +16,8 @@ const ChakraValueSelector = ({
     size="xs"
     variant="filled"
     disabled={disabled}
-    onChange={(e) => handleOnChange(e.target.value)}>
-    {options.map((option) => {
+    onChange={e => handleOnChange(e.target.value)}>
+    {options.map(option => {
       const key = `key-${option.id ?? option.name}`;
       return (
         <option key={key} value={option.name}>
