@@ -655,6 +655,14 @@ Pass `true` to insert an independent combinator selector between each rule/group
 
 Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
 
+### `disabled`
+
+`boolean` (default `false`)
+
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#disabled=true)
+
+Pass `true` to disable all subcomponents and prevent changes to the query.
+
 ### `validator`
 
 `QueryValidator`

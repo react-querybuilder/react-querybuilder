@@ -17,7 +17,12 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Get Started
+            Get started
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            to="/react-querybuilder">
+            Try it out
           </Link>
         </div>
       </div>
