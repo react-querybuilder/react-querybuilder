@@ -524,7 +524,7 @@ describe('<RuleGroup />', () => {
       );
       expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndDragging);
       expect(combinatorEl.classList).not.toContain(standardClassnames.dndOver);
-      expect(moveRule).toHaveBeenCalledWith([1], [0, 2]);
+      expect(moveRule).toHaveBeenCalledWith([1], [0, 1]);
     });
 
     it('should handle rule drops on independent combinators', () => {
@@ -551,7 +551,7 @@ describe('<RuleGroup />', () => {
         getHandlerId(combinatorEls[0], 'drop'),
         getDndBackend()
       );
-      expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 2]);
+      expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 1]);
     });
   });
 
