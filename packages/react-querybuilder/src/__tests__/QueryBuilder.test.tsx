@@ -1373,6 +1373,7 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
@@ -1405,6 +1406,7 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
@@ -1438,6 +1440,7 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
@@ -1474,6 +1477,7 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             { field: 'field2', operator: '=', value: '2' },
             'and',
@@ -1510,6 +1514,7 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             { field: 'field0', operator: '=', value: '0' },
             'and',
@@ -1550,8 +1555,10 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             {
+              not: false,
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
                 'and',
@@ -1598,12 +1605,14 @@ describe('<QueryBuilder />', () => {
           getDndBackend()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+          not: false,
           rules: [
             { field: 'field0', operator: '=', value: '0' },
             'and',
             { field: 'field2', operator: '=', value: '2' },
             'and',
             {
+              not: false,
               rules: [
                 { field: 'field3', operator: '=', value: '3' },
                 'and',

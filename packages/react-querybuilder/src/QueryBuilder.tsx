@@ -1,5 +1,5 @@
 import produce, { enableES5 } from 'immer';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
@@ -99,105 +99,114 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     return fm;
   }, [fields]);
 
-  const getOperatorsMain = (field: string) => {
-    const fieldData = fieldMap[field];
-    if (fieldData?.operators) {
-      return fieldData.operators;
-    }
-    if (getOperators) {
-      const ops = getOperators(field);
-      if (ops) return ops;
-    }
+  const getOperatorsMain = useCallback(
+    (field: string) => {
+      const fieldData = fieldMap[field];
+      if (fieldData?.operators) {
+        return fieldData.operators;
+      }
+      if (getOperators) {
+        const ops = getOperators(field);
+        if (ops) return ops;
+      }
 
-    return operators;
-  };
+      return operators;
+    },
+    [fieldMap, getOperators, operators]
+  );
 
-  const getRuleDefaultOperator = (field: string) => {
-    const fieldData = fieldMap[field];
-    if (fieldData?.defaultOperator) {
-      return fieldData.defaultOperator;
-    }
+  const getRuleDefaultOperator = useCallback(
+    (field: string) => {
+      const fieldData = fieldMap[field];
+      if (fieldData?.defaultOperator) {
+        return fieldData.defaultOperator;
+      }
 
-    if (getDefaultOperator) {
-      if (typeof getDefaultOperator === 'function') {
-        return getDefaultOperator(field);
+      if (getDefaultOperator) {
+        if (typeof getDefaultOperator === 'function') {
+          return getDefaultOperator(field);
+        } else {
+          return getDefaultOperator;
+        }
+      }
+
+      const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
+      return operators.length ? operators[0].name : /* istanbul ignore next */ '';
+    },
+    [fieldMap, getDefaultOperator, getOperatorsMain]
+  );
+
+  const getValueEditorTypeMain = useCallback(
+    (field: string, operator: string) => {
+      if (getValueEditorType) {
+        const vet = getValueEditorType(field, operator);
+        if (vet) return vet;
+      }
+
+      return 'text';
+    },
+    [getValueEditorType]
+  );
+
+  const getValuesMain = useCallback(
+    (field: string, operator: string) => {
+      const fieldData = fieldMap[field];
+      /* istanbul ignore if */
+      if (fieldData?.values) {
+        return fieldData.values;
+      }
+      if (getValues) {
+        const vals = getValues(field, operator);
+        if (vals) return vals;
+      }
+
+      return [];
+    },
+    [fieldMap, getValues]
+  );
+
+  const getRuleDefaultValue = useCallback(
+    (rule: RuleType) => {
+      const fieldData = fieldMap[rule.field];
+      /* istanbul ignore next */
+      if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
+        return fieldData.defaultValue;
+      } else if (getDefaultValue) {
+        return getDefaultValue(rule);
+      }
+
+      let value: any = '';
+
+      const values = getValuesMain(rule.field, rule.operator);
+
+      if (values.length) {
+        value = values[0].name;
       } else {
-        return getDefaultOperator;
+        const editorType = getValueEditorTypeMain(rule.field, rule.operator);
+
+        if (editorType === 'checkbox') {
+          value = false;
+        }
       }
-    }
 
-    const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-    return operators.length ? operators[0].name : /* istanbul ignore next */ '';
-  };
+      return value;
+    },
+    [fieldMap, getDefaultValue, getValueEditorTypeMain, getValuesMain]
+  );
 
-  const getRuleDefaultValue = (rule: RuleType) => {
-    const fieldData = fieldMap[rule.field];
-    /* istanbul ignore next */
-    if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
-      return fieldData.defaultValue;
-    } else if (getDefaultValue) {
-      return getDefaultValue(rule);
-    }
-
-    let value: any = '';
-
-    const values = getValuesMain(rule.field, rule.operator);
-
-    if (values.length) {
-      value = values[0].name;
-    } else {
-      const editorType = getValueEditorTypeMain(rule.field, rule.operator);
-
-      if (editorType === 'checkbox') {
-        value = false;
+  const getInputTypeMain = useCallback(
+    (field: string, operator: string) => {
+      if (getInputType) {
+        const inputType = getInputType(field, operator);
+        if (inputType) return inputType;
       }
-    }
 
-    return value;
-  };
+      return 'text';
+    },
+    [getInputType]
+  );
 
-  /**
-   * Gets the ValueEditor type for a given field and operator
-   */
-  const getValueEditorTypeMain = (field: string, operator: string) => {
-    if (getValueEditorType) {
-      const vet = getValueEditorType(field, operator);
-      if (vet) return vet;
-    }
-
-    return 'text';
-  };
-
-  /**
-   * Gets the `<input />` type for a given field and operator
-   */
-  const getInputTypeMain = (field: string, operator: string) => {
-    if (getInputType) {
-      const inputType = getInputType(field, operator);
-      if (inputType) return inputType;
-    }
-
-    return 'text';
-  };
-
-  /**
-   * Gets the list of valid values for a given field and operator
-   */
-  const getValuesMain = (field: string, operator: string) => {
-    const fieldData = fieldMap[field];
-    /* istanbul ignore if */
-    if (fieldData?.values) {
-      return fieldData.values;
-    }
-    if (getValues) {
-      const vals = getValues(field, operator);
-      if (vals) return vals;
-    }
-
-    return [];
-  };
-
-  const createRule = (): RuleType => {
+  const createRule = useCallback((): RuleType => {
     let field = '';
     /* istanbul ignore else */
     if (fields?.length > 0 && fields[0]) {
@@ -223,9 +232,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     const value = getRuleDefaultValue(newRule);
 
     return { ...newRule, value };
-  };
+  }, [fields, getDefaultField, getRuleDefaultOperator, getRuleDefaultValue]);
 
-  const createRuleGroup = (): RG => {
+  const createRuleGroup = useCallback((): RG => {
     if (independentCombinators) {
       return {
         id: `g-${generateID()}`,
@@ -239,15 +248,20 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       combinator: combinators[0].name,
       not: false,
     } as any;
-  };
+  }, [addRuleToNewGroups, combinators, createRule, independentCombinators]);
 
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRender = useRef(true);
   const [queryState, setQueryState] = useState(defaultQuery ?? createRuleGroup());
   // We assume here that if a query is passed in, and it's not the first render,
   // that the query has already been prepared, i.e. the user is just passing back
   // the onQueryChange callback parameter as query. This appears to have a huge
   // performance impact.
-  const root: RG = query ? (isFirstRender ? (prepareRuleGroup(query) as any) : query) : queryState;
+  const root: RG = query
+    ? isFirstRender.current
+      ? (prepareRuleGroup(query) as any)
+      : query
+    : queryState;
+  isFirstRender.current = false;
 
   // Notify a query change on mount
   /* istanbul ignore next */
@@ -255,13 +269,21 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     if (enableMountQueryChange) {
       onQueryChange(root);
     }
-    setIsFirstRender(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
-   * Adds a rule to the query
+   * Executes the `onQueryChange` function if provided,
+   * and sets the state for uncontrolled components
    */
+  const dispatch = (newQuery: RG) => {
+    // State variable only used when component is uncontrolled
+    if (!query) {
+      setQueryState(newQuery);
+    }
+    onQueryChange(newQuery);
+  };
+
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
     /* istanbul ignore next */
     if (disabled) return;
@@ -279,12 +301,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         parent.rules.push(prepareRule(newRule));
       }
     });
-    _notifyQueryChange(newQuery);
+    dispatch(newQuery);
   };
 
-  /**
-   * Adds a rule group to the query
-   */
   const onGroupAdd = (group: RG, parentPath: number[]) => {
     /* istanbul ignore next */
     if (disabled) return;
@@ -303,7 +322,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         parent.rules.push(prepareRuleGroup(newGroup) as any);
       }
     });
-    _notifyQueryChange(newQuery);
+    dispatch(newQuery);
   };
 
   const onPropChange = (
@@ -332,7 +351,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         }
       }
     });
-    _notifyQueryChange(newQuery);
+    dispatch(newQuery);
   };
 
   const updateIndependentCombinator = (value: string, path: number[]) => {
@@ -344,7 +363,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const parentRules = (findPath(parentPath, draft) as RG).rules;
       parentRules[index] = value;
     });
-    _notifyQueryChange(newQuery);
+    dispatch(newQuery);
   };
 
   const onRuleOrGroupRemove = (path: number[]) => {
@@ -361,7 +380,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         parent.rules.splice(index, 1);
       }
     });
-    _notifyQueryChange(newQuery);
+    dispatch(newQuery);
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
@@ -441,19 +460,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
         }
       }
     });
-    _notifyQueryChange(newQuery);
-  };
-
-  /**
-   * Executes the `onQueryChange` function if provided,
-   * and sets the state for uncontrolled components
-   */
-  const _notifyQueryChange = (newQuery: RG) => {
-    // State variable only used when component is uncontrolled
-    if (!query) {
-      setQueryState(newQuery);
-    }
-    onQueryChange(newQuery);
+    dispatch(newQuery);
   };
 
   const validationResult = useMemo(
