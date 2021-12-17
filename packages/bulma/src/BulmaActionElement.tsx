@@ -1,16 +1,13 @@
-import { MouseEvent } from 'react';
-import { Button } from 'react-bulma-components';
 import type { ActionProps } from 'react-querybuilder';
 
 const BulmaActionElement = ({ className, handleOnClick, label, title, disabled }: ActionProps) => (
-  <Button
-    className={className}
+  <button
+    className={`${className} button is-small`}
     title={title}
-    onClick={(e: MouseEvent) => handleOnClick(e)}
-    size="small"
+    onClick={e => handleOnClick(e)}
     disabled={disabled}>
     {label}
-  </Button>
+  </button>
 );
 
 BulmaActionElement.displayName = 'BulmaActionElement';

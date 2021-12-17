@@ -1,8 +1,5 @@
 import { useEffect } from 'react';
-import { Form } from 'react-bulma-components';
 import type { ValueEditorProps } from 'react-querybuilder';
-
-const { Control, Select, Input, Checkbox, Radio } = Form;
 
 const BulmaValueEditor = ({
   fieldData,
@@ -39,60 +36,61 @@ const BulmaValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <Control className={className}>
-          <Select
-            value={value}
-            size="small"
-            disabled={disabled}
-            onChange={e => handleOnChange(e.target.value)}>
+        <div className={`${className} select is-small`}>
+          <select value={value} disabled={disabled} onChange={e => handleOnChange(e.target.value)}>
             {values &&
               values.map(v => (
                 <option key={v.name} value={v.name}>
                   {v.label}
                 </option>
               ))}
-          </Select>
-        </Control>
+          </select>
+        </div>
       );
 
     case 'checkbox':
       return (
-        <Checkbox
-          className={className}
-          disabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
-          checked={!!value}
-        />
+        <label className={`${className} checkbox`}>
+          <input
+            type="checkbox"
+            checked={!!value}
+            disabled={disabled}
+            onChange={e => handleOnChange(e.target.checked)}
+          />
+        </label>
       );
 
     case 'radio':
       return (
-        <Control className={className} title={title}>
+        <div className={`${className} control`} title={title}>
           {values!.map(v => (
-            <Radio
-              key={v.name}
-              value={v.name}
-              checked={value === v.name}
-              onChange={() => handleOnChange(v.name)}
-              disabled={disabled}>
+            <label key={v.name} className="radio" title={title}>
+              <input
+                type="radio"
+                value={v.name}
+                checked={value === v.name}
+                onChange={() => handleOnChange(v.name)}
+                disabled={disabled}
+              />
               {v.label}
-            </Radio>
+            </label>
           ))}
-        </Control>
+        </div>
       );
 
     default:
       return (
-        <Input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          size="small"
-          disabled={disabled}
-          className={className}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
+        <div className={`${className} control`}>
+          <input
+            type={inputTypeCoerced}
+            value={value}
+            title={title}
+            disabled={disabled}
+            className="input is-small"
+            placeholder={placeHolderText}
+            onChange={e => handleOnChange(e.target.value)}
+          />
+        </div>
       );
   }
 };

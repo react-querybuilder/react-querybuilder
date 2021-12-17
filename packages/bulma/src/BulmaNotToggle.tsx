@@ -1,7 +1,4 @@
-import { Form } from 'react-bulma-components';
 import type { NotToggleProps } from 'react-querybuilder';
-
-const { Checkbox, Control } = Form;
 
 const BulmaNotToggle = ({
   className,
@@ -11,15 +8,15 @@ const BulmaNotToggle = ({
   title,
   disabled,
 }: NotToggleProps) => (
-  <Control title={title}>
-    <Checkbox
-      className={className}
+  <label className={`${className} checkbox`} title={title}>
+    <input
+      type="checkbox"
       disabled={disabled}
       checked={checked}
-      onChange={e => handleOnChange(e.target.checked)}>
-      {label}
-    </Checkbox>
-  </Control>
+      onChange={e => handleOnChange(e.target.checked)}
+    />
+    {label}
+  </label>
 );
 
 BulmaNotToggle.displayName = 'BulmaNotToggle';

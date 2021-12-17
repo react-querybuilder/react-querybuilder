@@ -1,7 +1,4 @@
-import { Form } from 'react-bulma-components';
 import type { ValueSelectorProps } from 'react-querybuilder';
-
-const { Select } = Form;
 
 const BulmaValueSelector = ({
   className,
@@ -11,22 +8,18 @@ const BulmaValueSelector = ({
   title,
   disabled,
 }: ValueSelectorProps) => (
-  <Select
-    className={className}
-    title={title}
-    value={value}
-    size="small"
-    disabled={disabled}
-    onChange={e => handleOnChange(e.target.value)}>
-    {options.map(option => {
-      const key = `key-${option.id ?? option.name}`;
-      return (
-        <option key={key} value={option.name}>
-          {option.label}
-        </option>
-      );
-    })}
-  </Select>
+  <div title={title} className={`${className} select is-small`}>
+    <select value={value} disabled={disabled} onChange={e => handleOnChange(e.target.value)}>
+      {options.map(option => {
+        const key = `key-${option.id ?? option.name}`;
+        return (
+          <option key={key} value={option.name}>
+            {option.label}
+          </option>
+        );
+      })}
+    </select>
+  </div>
 );
 
 BulmaValueSelector.displayName = 'BulmaValueSelector';
