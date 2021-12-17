@@ -667,6 +667,6 @@ Pass `true` to disable all subcomponents and prevent changes to the query.
 
 `QueryValidator`
 
-[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#useValidation=true)
+[Demo with this feature enabled](https://react-querybuilder.github.io/react-querybuilder/#validateQuery=true)
 
 This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](./validation) documentation for more information.
