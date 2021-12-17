@@ -7,18 +7,18 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        ie11: resolve(__dirname, 'ie11.html')
-      }
-    }
+        ie11: resolve(__dirname, 'ie11.html'),
+      },
+    },
   },
   css: { preprocessorOptions: { css: { charset: false }, scss: { charset: false } } },
   esbuild: {
-    jsxInject: `import React from 'react'`
+    jsxInject: `import React from 'react'`,
   },
   plugins: [
     legacy({
       targets: ['ie >= 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
-    })
-  ]
+      additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
+    }),
+  ],
 });

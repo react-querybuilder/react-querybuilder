@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import 'antd/dist/antd.compact.css';
 import queryString from 'query-string';
-import { FC, Suspense, useEffect, useMemo, useState } from 'react';
+import { FC, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import QueryBuilder, {
   DefaultRuleGroupType,
@@ -169,116 +169,140 @@ const App = () => {
     history.pushState(null, '', permalinkHash);
   });
 
-  const optionsInfo = [
-    {
-      checked: showCombinatorsBetweenRules,
-      default: false,
-      setter: setShowCombinatorsBetweenRules,
-      link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
-      label: 'Combinators between rules',
-      title:
-        'When checked, combinator (and/or) selectors will appear between rules instead of in the group header',
-    },
-    {
-      checked: showNotToggle,
-      default: false,
-      setter: setShowNotToggle,
-      link: '/docs/api/querybuilder#shownottoggle',
-      label: 'Show "not" toggle',
-      title: `When checked, the check box to invert a group's rules, by default labelled "Not", will be visible`,
-    },
-    {
-      checked: showCloneButtons,
-      default: false,
-      setter: setShowCloneButtons,
-      link: '/docs/api/querybuilder#showclonebuttons',
-      label: 'Show clone buttons',
-      title: 'When checked, the buttons to clone rules and groups will be visible',
-    },
-    {
-      checked: resetOnFieldChange,
-      default: true,
-      setter: setResetOnFieldChange,
-      link: '/docs/api/querybuilder#resetonfieldchange',
-      label: 'Reset on field change',
-      title: `When checked, operator and value will be reset when a rule's field selection changes`,
-    },
-    {
-      checked: resetOnOperatorChange,
-      default: false,
-      setter: setResetOnOperatorChange,
-      link: '/docs/api/querybuilder#resetonoperatorchange',
-      label: 'Reset on operator change',
-      title: 'When checked, the value will reset when the operator changes',
-    },
-    {
-      checked: autoSelectField,
-      default: true,
-      setter: setAutoSelectField,
-      link: '/docs/api/querybuilder#autoselectfield',
-      label: 'Auto-select field',
-      title: 'When checked, the default field will be automatically selected for new rules',
-    },
-    {
-      checked: addRuleToNewGroups,
-      default: false,
-      setter: setAddRuleToNewGroups,
-      link: '/docs/api/querybuilder#addruletonewgroups',
-      label: 'Add rule to new groups',
-      title: 'When checked, a rule will be automatically added to new groups',
-    },
-    {
-      checked: useValidation,
-      default: false,
-      setter: setUseValidation,
-      link: '/docs/api/validation',
-      label: 'Use validation',
-      title:
-        'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups',
-    },
-    {
-      checked: independentCombinators,
-      default: false,
-      setter: setIndependentCombinators,
-      link: '/docs/api/querybuilder#inlinecombinators',
-      label: 'Independent combinators',
-      title: 'When checked, the query builder supports independent combinators between rules',
-    },
-    {
-      checked: enableDragAndDrop,
-      default: false,
-      setter: setEnableDragAndDrop,
-      link: '/docs/api/querybuilder#enabledraganddrop',
-      label: 'Enable drag-and-drop',
-      title: 'When checked, rules and groups can be reordered and dragged to different groups',
-    },
-    {
-      checked: disabled,
-      default: false,
-      setter: setDisabled,
-      link: '/docs/api/querybuilder#disabled',
-      label: 'Disabled',
-      title: 'When checked, all components within the query builder will be disabled',
-    },
-  ];
+  const optionsInfo = useMemo(
+    () => [
+      {
+        checked: showCombinatorsBetweenRules,
+        default: false,
+        setter: setShowCombinatorsBetweenRules,
+        link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
+        label: 'Combinators between rules',
+        title:
+          'When checked, combinator (and/or) selectors will appear between rules instead of in the group header',
+      },
+      {
+        checked: showNotToggle,
+        default: false,
+        setter: setShowNotToggle,
+        link: '/docs/api/querybuilder#shownottoggle',
+        label: 'Show "not" toggle',
+        title: `When checked, the check box to invert a group's rules, by default labelled "Not", will be visible`,
+      },
+      {
+        checked: showCloneButtons,
+        default: false,
+        setter: setShowCloneButtons,
+        link: '/docs/api/querybuilder#showclonebuttons',
+        label: 'Show clone buttons',
+        title: 'When checked, the buttons to clone rules and groups will be visible',
+      },
+      {
+        checked: resetOnFieldChange,
+        default: true,
+        setter: setResetOnFieldChange,
+        link: '/docs/api/querybuilder#resetonfieldchange',
+        label: 'Reset on field change',
+        title: `When checked, operator and value will be reset when a rule's field selection changes`,
+      },
+      {
+        checked: resetOnOperatorChange,
+        default: false,
+        setter: setResetOnOperatorChange,
+        link: '/docs/api/querybuilder#resetonoperatorchange',
+        label: 'Reset on operator change',
+        title: 'When checked, the value will reset when the operator changes',
+      },
+      {
+        checked: autoSelectField,
+        default: true,
+        setter: setAutoSelectField,
+        link: '/docs/api/querybuilder#autoselectfield',
+        label: 'Auto-select field',
+        title: 'When checked, the default field will be automatically selected for new rules',
+      },
+      {
+        checked: addRuleToNewGroups,
+        default: false,
+        setter: setAddRuleToNewGroups,
+        link: '/docs/api/querybuilder#addruletonewgroups',
+        label: 'Add rule to new groups',
+        title: 'When checked, a rule will be automatically added to new groups',
+      },
+      {
+        checked: useValidation,
+        default: false,
+        setter: setUseValidation,
+        link: '/docs/api/validation',
+        label: 'Use validation',
+        title:
+          'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups',
+      },
+      {
+        checked: independentCombinators,
+        default: false,
+        setter: setIndependentCombinators,
+        link: '/docs/api/querybuilder#inlinecombinators',
+        label: 'Independent combinators',
+        title: 'When checked, the query builder supports independent combinators between rules',
+      },
+      {
+        checked: enableDragAndDrop,
+        default: false,
+        setter: setEnableDragAndDrop,
+        link: '/docs/api/querybuilder#enabledraganddrop',
+        label: 'Enable drag-and-drop',
+        title: 'When checked, rules and groups can be reordered and dragged to different groups',
+      },
+      {
+        checked: disabled,
+        default: false,
+        setter: setDisabled,
+        link: '/docs/api/querybuilder#disabled',
+        label: 'Disabled',
+        title: 'When checked, all components within the query builder will be disabled',
+      },
+    ],
+    [
+      addRuleToNewGroups,
+      autoSelectField,
+      disabled,
+      enableDragAndDrop,
+      independentCombinators,
+      resetOnFieldChange,
+      resetOnOperatorChange,
+      showCloneButtons,
+      showCombinatorsBetweenRules,
+      showNotToggle,
+      useValidation,
+    ]
+  );
 
-  const resetOptions = () =>
-    optionsInfo.forEach(opt => (opt.checked !== opt.default ? opt.setter(opt.default) : null));
+  const resetOptions = useCallback(
+    () =>
+      optionsInfo.forEach(opt => (opt.checked !== opt.default ? opt.setter(opt.default) : null)),
+    [optionsInfo]
+  );
 
-  const formatOptions = useValidation ? ({ format, fields } as FormatQueryOptions) : format;
+  const formatOptions = useMemo(
+    () => (useValidation ? ({ format, fields } as FormatQueryOptions) : format),
+    [format, useValidation]
+  );
   const q: RuleGroupTypeAny = independentCombinators ? queryIC : query;
-  const formatString =
-    format === 'json_without_ids'
-      ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions) as string), null, 2)
-      : format === 'parameterized' || format === 'parameterized_named'
-      ? JSON.stringify(
-          formatQuery(q, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
-          null,
-          2
-        )
-      : (formatQuery(q, formatOptions) as string);
+  const formatString = useMemo(
+    () =>
+      format === 'json_without_ids'
+        ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions) as string), null, 2)
+        : format === 'parameterized' || format === 'parameterized_named'
+        ? JSON.stringify(
+            formatQuery(q, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
+            null,
+            2
+          )
+        : (formatQuery(q, formatOptions) as string),
+    [format, formatOptions, q]
+  );
 
-  const qbWrapperClassName = `with-${style} ${useValidation ? 'useValidation' : ''}`.trim();
+  const qbWrapperClassName = `with-${style}${useValidation ? ' useValidation' : ''}`;
 
   const loadFromSQL = () => {
     try {
@@ -341,6 +365,7 @@ const App = () => {
               <Option value="material">{styleNameMap.material}</Option>
               <Option value="antd">{styleNameMap.antd}</Option>
               <Option value="chakra">{styleNameMap.chakra}</Option>
+              <Option value="bulma">{styleNameMap.bulma}</Option>
             </Select>
             <Title level={4} style={{ marginTop: '1rem' }}>
               Options
