@@ -17,6 +17,10 @@ const AntDValueSelector = lazy(() => import('./components/AntDValueSelector'));
 const BootstrapDragHandle = lazy(() => import('./components/BootstrapDragHandle'));
 const BootstrapNotToggle = lazy(() => import('./components/BootstrapNotToggle'));
 const BootstrapValueEditor = lazy(() => import('./components/BootstrapValueEditor'));
+const BulmaActionElement = lazy(() => import('./components/BulmaActionElement'));
+const BulmaNotToggle = lazy(() => import('./components/BulmaNotToggle'));
+const BulmaValueEditor = lazy(() => import('./components/BulmaValueEditor'));
+const BulmaValueSelector = lazy(() => import('./components/BulmaValueSelector'));
 const ChakraActionElement = lazy(() => import('./components/ChakraActionElement'));
 const ChakraDragHandle = lazy(() => import('./components/ChakraDragHandle'));
 const ChakraNotToggle = lazy(() => import('./components/ChakraNotToggle'));
@@ -28,7 +32,7 @@ const MaterialNotToggle = lazy(() => import('./components/MaterialNotToggle'));
 const MaterialValueEditor = lazy(() => import('./components/MaterialValueEditor'));
 const MaterialValueSelector = lazy(() => import('./components/MaterialValueSelector'));
 
-export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra';
+export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra' | 'bulma';
 
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 export const docsLink = 'https://react-querybuilder.js.org';
@@ -41,6 +45,7 @@ export const styleNameMap: Record<StyleName, string> = {
   material: 'Material',
   antd: 'Ant Design',
   chakra: 'Chakra UI',
+  bulma: 'Bulma',
 };
 
 export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
@@ -110,6 +115,21 @@ export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
       removeRuleAction: ChakraActionElement,
       valueEditor: ChakraValueEditor,
       dragHandle: ChakraDragHandle,
+    },
+  },
+  bulma: {
+    controlElements: {
+      addGroupAction: BulmaActionElement,
+      addRuleAction: BulmaActionElement,
+      cloneGroupAction: BulmaActionElement,
+      cloneRuleAction: BulmaActionElement,
+      combinatorSelector: BulmaValueSelector,
+      fieldSelector: BulmaValueSelector,
+      notToggle: BulmaNotToggle,
+      operatorSelector: BulmaValueSelector,
+      removeGroupAction: BulmaActionElement,
+      removeRuleAction: BulmaActionElement,
+      valueEditor: BulmaValueEditor,
     },
   },
 };

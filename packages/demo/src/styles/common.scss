@@ -50,6 +50,7 @@ pre {
 // In all styles except for default, push the clone and remove buttons to the right edge.
 .with-antd,
 .with-bootstrap,
+.with-bulma,
 .with-chakra,
 .with-material {
   .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
@@ -58,6 +59,8 @@ pre {
   .rule-operators + button.rule-remove,
   .rule-value + button.rule-cloneRule,
   .rule-value + button.rule-remove,
+  .control + button.rule-cloneRule,
+  .control + button.rule-remove,
   .chakra-select__wrapper + button.rule-cloneRule,
   .chakra-select__wrapper + button.rule-remove {
     margin-left: auto;
