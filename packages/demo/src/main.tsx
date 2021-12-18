@@ -47,9 +47,9 @@ import {
   initialQuery,
   initialQueryIC,
   npmLink,
+  styleConfigs,
   StyleName,
   styleNameMap,
-  styleOptions,
 } from './constants';
 
 const { TextArea } = Input;
@@ -120,23 +120,7 @@ const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
-  const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(
-    initialOptions.showCombinatorsBetweenRules
-  );
-  const [showNotToggle, setShowNotToggle] = useState(initialOptions.showNotToggle);
-  const [showCloneButtons, setShowCloneButtons] = useState(initialOptions.showCloneButtons);
-  const [resetOnFieldChange, setResetOnFieldChange] = useState(initialOptions.resetOnFieldChange);
-  const [resetOnOperatorChange, setResetOnOperatorChange] = useState(
-    initialOptions.resetOnOperatorChange
-  );
-  const [autoSelectField, setAutoSelectField] = useState(initialOptions.autoSelectField);
-  const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(initialOptions.addRuleToNewGroups);
-  const [validateQuery, setValidateQuery] = useState(initialOptions.validateQuery);
-  const [independentCombinators, setIndependentCombinators] = useState(
-    initialOptions.independentCombinators
-  );
-  const [enableDragAndDrop, setEnableDragAndDrop] = useState(initialOptions.enableDragAndDrop);
-  const [disabled, setDisabled] = useState(initialOptions.disabled);
+  const [options, setOptions] = useState<DemoOptions>(initialOptions);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(
     `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`
@@ -145,35 +129,7 @@ const App = () => {
   const [style, setStyle] = useState<StyleName>('default');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
 
-  const permalinkHash = useMemo(
-    () =>
-      `#${queryString.stringify({
-        showCombinatorsBetweenRules,
-        showNotToggle,
-        showCloneButtons,
-        resetOnFieldChange,
-        resetOnOperatorChange,
-        autoSelectField,
-        addRuleToNewGroups,
-        validateQuery,
-        independentCombinators,
-        enableDragAndDrop,
-        disabled,
-      })}`,
-    [
-      showCombinatorsBetweenRules,
-      showNotToggle,
-      showCloneButtons,
-      resetOnFieldChange,
-      resetOnOperatorChange,
-      autoSelectField,
-      addRuleToNewGroups,
-      validateQuery,
-      independentCombinators,
-      enableDragAndDrop,
-      disabled,
-    ]
-  );
+  const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
 
   useEffect(() => {
     history.pushState(null, '', permalinkHash);
@@ -183,128 +139,111 @@ const App = () => {
           queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
         )
       );
-      setShowCombinatorsBetweenRules(opts.showCombinatorsBetweenRules);
-      setShowNotToggle(opts.showNotToggle);
-      setShowCloneButtons(opts.showCloneButtons);
-      setResetOnFieldChange(opts.resetOnFieldChange);
-      setResetOnOperatorChange(opts.resetOnOperatorChange);
-      setAutoSelectField(opts.autoSelectField);
-      setAddRuleToNewGroups(opts.addRuleToNewGroups);
-      setValidateQuery(opts.validateQuery);
-      setIndependentCombinators(opts.independentCombinators);
-      setEnableDragAndDrop(opts.enableDragAndDrop);
-      setDisabled(opts.disabled);
+      setOptions(opts);
     };
     window.addEventListener('hashchange', updateOptionsFromHash);
 
     return () => window.removeEventListener('hashchange', updateOptionsFromHash);
   }, [permalinkHash]);
 
+  const optionSetter = useCallback(
+    (opt: keyof DemoOptions) => (v: boolean) => setOptions(opts => ({ ...opts, [opt]: v })),
+    []
+  );
+
   const optionsInfo = useMemo(
     () => [
       {
-        checked: showCombinatorsBetweenRules,
+        checked: options.showCombinatorsBetweenRules,
         default: defaultOptions.showCombinatorsBetweenRules,
-        setter: setShowCombinatorsBetweenRules,
+        setter: optionSetter('showCombinatorsBetweenRules'),
         link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
         label: 'Combinators between rules',
         title: 'Display combinator (and/or) selectors between rules instead of in the group header',
       },
       {
-        checked: showNotToggle,
+        checked: options.showNotToggle,
         default: defaultOptions.showNotToggle,
-        setter: setShowNotToggle,
+        setter: optionSetter('showNotToggle'),
         link: '/docs/api/querybuilder#shownottoggle',
         label: 'Show "not" toggle',
         title: `Display a checkbox to invert a group's rules (labelled "Not" by default)`,
       },
       {
-        checked: showCloneButtons,
+        checked: options.showCloneButtons,
         default: defaultOptions.showCloneButtons,
-        setter: setShowCloneButtons,
+        setter: optionSetter('showCloneButtons'),
         link: '/docs/api/querybuilder#showclonebuttons',
         label: 'Show clone buttons',
         title: 'Display buttons to clone rules and groups',
       },
       {
-        checked: resetOnFieldChange,
+        checked: options.resetOnFieldChange,
         default: defaultOptions.resetOnFieldChange,
-        setter: setResetOnFieldChange,
+        setter: optionSetter('resetOnFieldChange'),
         link: '/docs/api/querybuilder#resetonfieldchange',
         label: 'Reset on field change',
         title: `Operator and value will be reset when a rule's field selection changes`,
       },
       {
-        checked: resetOnOperatorChange,
+        checked: options.resetOnOperatorChange,
         default: defaultOptions.resetOnOperatorChange,
-        setter: setResetOnOperatorChange,
+        setter: optionSetter('resetOnOperatorChange'),
         link: '/docs/api/querybuilder#resetonoperatorchange',
         label: 'Reset on operator change',
         title: 'The value will reset when the operator changes',
       },
       {
-        checked: autoSelectField,
+        checked: options.autoSelectField,
         default: defaultOptions.autoSelectField,
-        setter: setAutoSelectField,
+        setter: optionSetter('autoSelectField'),
         link: '/docs/api/querybuilder#autoselectfield',
         label: 'Auto-select field',
         title: 'The default field will be automatically selected for new rules',
       },
       {
-        checked: addRuleToNewGroups,
+        checked: options.addRuleToNewGroups,
         default: defaultOptions.addRuleToNewGroups,
-        setter: setAddRuleToNewGroups,
+        setter: optionSetter('addRuleToNewGroups'),
         link: '/docs/api/querybuilder#addruletonewgroups',
         label: 'Add rule to new groups',
         title: 'A rule will be automatically added to new groups',
       },
       {
-        checked: validateQuery,
+        checked: options.validateQuery,
         default: defaultOptions.validateQuery,
-        setter: setValidateQuery,
+        setter: optionSetter('validateQuery'),
         link: '/docs/api/validation',
         label: 'Use validation',
         title:
           'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+Rule" button for empty groups',
       },
       {
-        checked: independentCombinators,
+        checked: options.independentCombinators,
         default: defaultOptions.independentCombinators,
-        setter: setIndependentCombinators,
+        setter: optionSetter('independentCombinators'),
         link: '/docs/api/querybuilder#inlinecombinators',
         label: 'Independent combinators',
         title: 'Combinators between rules can be independently updated',
       },
       {
-        checked: enableDragAndDrop,
+        checked: options.enableDragAndDrop,
         default: defaultOptions.enableDragAndDrop,
-        setter: setEnableDragAndDrop,
+        setter: optionSetter('enableDragAndDrop'),
         link: '/docs/api/querybuilder#enabledraganddrop',
         label: 'Enable drag-and-drop',
         title: 'Rules and groups can be reordered and dragged to different groups',
       },
       {
-        checked: disabled,
+        checked: options.disabled,
         default: defaultOptions.disabled,
-        setter: setDisabled,
+        setter: optionSetter('disabled'),
         link: '/docs/api/querybuilder#disabled',
         label: 'Disabled',
         title: 'Disable all components within the query builder',
       },
     ],
-    [
-      addRuleToNewGroups,
-      autoSelectField,
-      disabled,
-      enableDragAndDrop,
-      independentCombinators,
-      resetOnFieldChange,
-      resetOnOperatorChange,
-      showCloneButtons,
-      showCombinatorsBetweenRules,
-      showNotToggle,
-      validateQuery,
-    ]
+    [options, optionSetter]
   );
 
   const resetOptions = useCallback(
@@ -314,10 +253,10 @@ const App = () => {
   );
 
   const formatOptions = useMemo(
-    () => (validateQuery ? ({ format, fields } as FormatQueryOptions) : format),
-    [format, validateQuery]
+    () => (options.validateQuery ? ({ format, fields } as FormatQueryOptions) : format),
+    [format, options.validateQuery]
   );
-  const q: RuleGroupTypeAny = independentCombinators ? queryIC : query;
+  const q: RuleGroupTypeAny = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(
     () =>
       format === 'json_without_ids'
@@ -332,7 +271,7 @@ const App = () => {
     [format, formatOptions, q]
   );
 
-  const qbWrapperClassName = `with-${style}${validateQuery ? ' validateQuery' : ''}`;
+  const qbWrapperClassName = `with-${style}${options.validateQuery ? ' validateQuery' : ''}`;
 
   const loadFromSQL = useCallback(() => {
     try {
@@ -360,21 +299,15 @@ const App = () => {
   const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
   const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
 
-  const commonRQBProps: QueryBuilderProps = {
-    ...styleOptions[style],
-    fields,
-    showCombinatorsBetweenRules,
-    showNotToggle,
-    showCloneButtons,
-    resetOnFieldChange,
-    resetOnOperatorChange,
-    autoSelectField,
-    addRuleToNewGroups,
-    independentCombinators,
-    validator: validateQuery ? defaultValidator : undefined,
-    enableDragAndDrop,
-    disabled,
-  };
+  const commonRQBProps = useMemo(
+    (): QueryBuilderProps => ({
+      ...styleConfigs[style],
+      fields,
+      ...options,
+      validator: options.validateQuery ? defaultValidator : undefined,
+    }),
+    [style, options]
+  );
 
   const loadingPlaceholder = useMemo(
     () => (
@@ -498,7 +431,7 @@ const App = () => {
                 <Suspense fallback={loadingPlaceholder}>
                   <div className={qbWrapperClassName}>
                     <form className="form-inline" style={{ marginTop: '1rem' }}>
-                      {independentCombinators ? (
+                      {options.independentCombinators ? (
                         <QueryBuilder
                           {...(commonRQBProps as QueryBuilderProps<RuleGroupTypeIC>)}
                           key={style}

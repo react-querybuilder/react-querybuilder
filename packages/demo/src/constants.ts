@@ -53,15 +53,6 @@ export const docsLink = 'https://react-querybuilder.js.org';
 
 export const validator = (r: RuleType) => !!r.value;
 
-export const styleNameMap: Record<StyleName, string> = {
-  default: 'Default',
-  bootstrap: 'Bootstrap',
-  material: 'Material',
-  antd: 'Ant Design',
-  chakra: 'Chakra UI',
-  bulma: 'Bulma',
-};
-
 export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
@@ -76,7 +67,16 @@ export const defaultOptions: DemoOptions = {
   disabled: false,
 };
 
-export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
+export const styleNameMap: Record<StyleName, string> = {
+  default: 'Default',
+  bootstrap: 'Bootstrap',
+  material: 'Material',
+  antd: 'Ant Design',
+  chakra: 'Chakra UI',
+  bulma: 'Bulma',
+};
+
+export const styleConfigs: { [s in StyleName]: QueryBuilderProps } = {
   default: {},
   bootstrap: {
     controlClassnames: {
