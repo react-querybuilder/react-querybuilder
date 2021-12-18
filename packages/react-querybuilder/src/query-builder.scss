@@ -35,6 +35,7 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
   .rule {
     display: flex;
     column-gap: $rqb-spacing;
+    align-items: center;
   }
 }
 

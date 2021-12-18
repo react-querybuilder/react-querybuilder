@@ -11,6 +11,7 @@ import {
   Modal,
   Radio,
   Select,
+  Spin,
   Tooltip,
   Typography,
 } from 'antd';
@@ -38,6 +39,8 @@ import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
+  defaultOptions,
+  DemoOptions,
   docsLink,
   fields,
   formatMap,
@@ -88,22 +91,30 @@ const CustomFragment: FC = ({ children }) => <>{children}</>;
 const permalinkText = 'Copy permalink';
 const permalinkCopiedText = 'Copied!';
 
+const getOptionsFromHash = (hash: queryString.ParsedQuery): DemoOptions => ({
+  showCombinatorsBetweenRules:
+    (hash['showCombinatorsBetweenRules'] ?? `${defaultOptions.showCombinatorsBetweenRules}`) ===
+    'true',
+  showNotToggle: (hash['showNotToggle'] ?? `${defaultOptions.showNotToggle}`) === 'true',
+  showCloneButtons: (hash['showCloneButtons'] ?? `${defaultOptions.showCloneButtons}`) === 'true',
+  resetOnFieldChange:
+    (hash['resetOnFieldChange'] ?? `${defaultOptions.resetOnFieldChange}`) === 'true' ?? true,
+  resetOnOperatorChange:
+    (hash['resetOnOperatorChange'] ?? `${defaultOptions.resetOnOperatorChange}`) === 'true',
+  autoSelectField:
+    (hash['autoSelectField'] ?? `${defaultOptions.autoSelectField}`) === 'true' ?? true,
+  addRuleToNewGroups:
+    (hash['addRuleToNewGroups'] ?? `${defaultOptions.addRuleToNewGroups}`) === 'true',
+  validateQuery: (hash['validateQuery'] ?? `${defaultOptions.validateQuery}`) === 'true',
+  independentCombinators:
+    (hash['independentCombinators'] ?? `${defaultOptions.independentCombinators}`) === 'true',
+  enableDragAndDrop:
+    (hash['enableDragAndDrop'] ?? `${defaultOptions.enableDragAndDrop}`) === 'true',
+  disabled: (hash['disabled'] ?? `${defaultOptions.disabled}`) === 'true',
+});
+
 // Initialize options from URL hash
-const initialOptions: { [opt: string]: boolean } = {
-  showCombinatorsBetweenRules: false,
-  showNotToggle: false,
-  showCloneButtons: false,
-  resetOnFieldChange: true,
-  resetOnOperatorChange: false,
-  autoSelectField: true,
-  addRuleToNewGroups: false,
-  useValidation: false,
-  independentCombinators: false,
-  enableDragAndDrop: false,
-  disabled: false,
-};
-const hash = queryString.parse(location.hash);
-Object.keys(hash).forEach(opt => (initialOptions[opt] = hash[opt] === 'true'));
+const initialOptions = getOptionsFromHash(queryString.parse(location.hash));
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -120,7 +131,7 @@ const App = () => {
   );
   const [autoSelectField, setAutoSelectField] = useState(initialOptions.autoSelectField);
   const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(initialOptions.addRuleToNewGroups);
-  const [useValidation, setUseValidation] = useState(initialOptions.useValidation);
+  const [validateQuery, setValidateQuery] = useState(initialOptions.validateQuery);
   const [independentCombinators, setIndependentCombinators] = useState(
     initialOptions.independentCombinators
   );
@@ -136,8 +147,7 @@ const App = () => {
 
   const permalinkHash = useMemo(
     () =>
-      '#' +
-      queryString.stringify({
+      `#${queryString.stringify({
         showCombinatorsBetweenRules,
         showNotToggle,
         showCloneButtons,
@@ -145,11 +155,11 @@ const App = () => {
         resetOnOperatorChange,
         autoSelectField,
         addRuleToNewGroups,
-        useValidation,
+        validateQuery,
         independentCombinators,
         enableDragAndDrop,
         disabled,
-      }),
+      })}`,
     [
       showCombinatorsBetweenRules,
       showNotToggle,
@@ -158,7 +168,7 @@ const App = () => {
       resetOnOperatorChange,
       autoSelectField,
       addRuleToNewGroups,
-      useValidation,
+      validateQuery,
       independentCombinators,
       enableDragAndDrop,
       disabled,
@@ -167,99 +177,119 @@ const App = () => {
 
   useEffect(() => {
     history.pushState(null, '', permalinkHash);
-  });
+    const updateOptionsFromHash = (e: HashChangeEvent) => {
+      const opts = getOptionsFromHash(
+        queryString.parse(
+          queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
+        )
+      );
+      setShowCombinatorsBetweenRules(opts.showCombinatorsBetweenRules);
+      setShowNotToggle(opts.showNotToggle);
+      setShowCloneButtons(opts.showCloneButtons);
+      setResetOnFieldChange(opts.resetOnFieldChange);
+      setResetOnOperatorChange(opts.resetOnOperatorChange);
+      setAutoSelectField(opts.autoSelectField);
+      setAddRuleToNewGroups(opts.addRuleToNewGroups);
+      setValidateQuery(opts.validateQuery);
+      setIndependentCombinators(opts.independentCombinators);
+      setEnableDragAndDrop(opts.enableDragAndDrop);
+      setDisabled(opts.disabled);
+    };
+    window.addEventListener('hashchange', updateOptionsFromHash);
+
+    return () => window.removeEventListener('hashchange', updateOptionsFromHash);
+  }, [permalinkHash]);
 
   const optionsInfo = useMemo(
     () => [
       {
         checked: showCombinatorsBetweenRules,
-        default: false,
+        default: defaultOptions.showCombinatorsBetweenRules,
         setter: setShowCombinatorsBetweenRules,
         link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
         label: 'Combinators between rules',
-        title:
-          'When checked, combinator (and/or) selectors will appear between rules instead of in the group header',
+        title: 'Display combinator (and/or) selectors between rules instead of in the group header',
       },
       {
         checked: showNotToggle,
-        default: false,
+        default: defaultOptions.showNotToggle,
         setter: setShowNotToggle,
         link: '/docs/api/querybuilder#shownottoggle',
         label: 'Show "not" toggle',
-        title: `When checked, the check box to invert a group's rules, by default labelled "Not", will be visible`,
+        title: `Display a checkbox to invert a group's rules (labelled "Not" by default)`,
       },
       {
         checked: showCloneButtons,
-        default: false,
+        default: defaultOptions.showCloneButtons,
         setter: setShowCloneButtons,
         link: '/docs/api/querybuilder#showclonebuttons',
         label: 'Show clone buttons',
-        title: 'When checked, the buttons to clone rules and groups will be visible',
+        title: 'Display buttons to clone rules and groups',
       },
       {
         checked: resetOnFieldChange,
-        default: true,
+        default: defaultOptions.resetOnFieldChange,
         setter: setResetOnFieldChange,
         link: '/docs/api/querybuilder#resetonfieldchange',
         label: 'Reset on field change',
-        title: `When checked, operator and value will be reset when a rule's field selection changes`,
+        title: `Operator and value will be reset when a rule's field selection changes`,
       },
       {
         checked: resetOnOperatorChange,
-        default: false,
+        default: defaultOptions.resetOnOperatorChange,
         setter: setResetOnOperatorChange,
         link: '/docs/api/querybuilder#resetonoperatorchange',
         label: 'Reset on operator change',
-        title: 'When checked, the value will reset when the operator changes',
+        title: 'The value will reset when the operator changes',
       },
       {
         checked: autoSelectField,
-        default: true,
+        default: defaultOptions.autoSelectField,
         setter: setAutoSelectField,
         link: '/docs/api/querybuilder#autoselectfield',
         label: 'Auto-select field',
-        title: 'When checked, the default field will be automatically selected for new rules',
+        title: 'The default field will be automatically selected for new rules',
       },
       {
         checked: addRuleToNewGroups,
-        default: false,
+        default: defaultOptions.addRuleToNewGroups,
         setter: setAddRuleToNewGroups,
         link: '/docs/api/querybuilder#addruletonewgroups',
         label: 'Add rule to new groups',
-        title: 'When checked, a rule will be automatically added to new groups',
+        title: 'A rule will be automatically added to new groups',
       },
       {
-        checked: useValidation,
-        default: false,
-        setter: setUseValidation,
+        checked: validateQuery,
+        default: defaultOptions.validateQuery,
+        setter: setValidateQuery,
         link: '/docs/api/validation',
         label: 'Use validation',
         title:
-          'When checked, the validator functions will be used to put a purple outline around empty text fields and bold the +Rule button for empty groups',
+          'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+Rule" button for empty groups',
       },
       {
         checked: independentCombinators,
-        default: false,
+        default: defaultOptions.independentCombinators,
         setter: setIndependentCombinators,
         link: '/docs/api/querybuilder#inlinecombinators',
         label: 'Independent combinators',
-        title: 'When checked, the query builder supports independent combinators between rules',
+        title: 'Combinators between rules can be independently updated',
       },
       {
         checked: enableDragAndDrop,
-        default: false,
+        default: defaultOptions.enableDragAndDrop,
         setter: setEnableDragAndDrop,
         link: '/docs/api/querybuilder#enabledraganddrop',
         label: 'Enable drag-and-drop',
-        title: 'When checked, rules and groups can be reordered and dragged to different groups',
+        title: 'Rules and groups can be reordered and dragged to different groups',
       },
       {
         checked: disabled,
-        default: false,
+        default: defaultOptions.disabled,
         setter: setDisabled,
         link: '/docs/api/querybuilder#disabled',
         label: 'Disabled',
-        title: 'When checked, all components within the query builder will be disabled',
+        title: 'Disable all components within the query builder',
       },
     ],
     [
@@ -273,7 +303,7 @@ const App = () => {
       showCloneButtons,
       showCombinatorsBetweenRules,
       showNotToggle,
-      useValidation,
+      validateQuery,
     ]
   );
 
@@ -284,8 +314,8 @@ const App = () => {
   );
 
   const formatOptions = useMemo(
-    () => (useValidation ? ({ format, fields } as FormatQueryOptions) : format),
-    [format, useValidation]
+    () => (validateQuery ? ({ format, fields } as FormatQueryOptions) : format),
+    [format, validateQuery]
   );
   const q: RuleGroupTypeAny = independentCombinators ? queryIC : query;
   const formatString = useMemo(
@@ -302,9 +332,9 @@ const App = () => {
     [format, formatOptions, q]
   );
 
-  const qbWrapperClassName = `with-${style}${useValidation ? ' useValidation' : ''}`;
+  const qbWrapperClassName = `with-${style}${validateQuery ? ' validateQuery' : ''}`;
 
-  const loadFromSQL = () => {
+  const loadFromSQL = useCallback(() => {
     try {
       const q = parseSQL(sql) as DefaultRuleGroupType;
       const qIC = parseSQL(sql, { independentCombinators: true }) as DefaultRuleGroupTypeIC;
@@ -315,7 +345,7 @@ const App = () => {
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
-  };
+  }, [sql]);
 
   const onClickCopyPermalink = async () => {
     try {
@@ -324,9 +354,7 @@ const App = () => {
     } catch (e) {
       console.error('Clipboard error', e);
     }
-    setTimeout(() => {
-      setCopyPermalinkText(permalinkText);
-    }, 1500);
+    setTimeout(() => setCopyPermalinkText(permalinkText), 1214);
   };
 
   const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
@@ -343,10 +371,20 @@ const App = () => {
     autoSelectField,
     addRuleToNewGroups,
     independentCombinators,
-    validator: useValidation ? defaultValidator : undefined,
+    validator: validateQuery ? defaultValidator : undefined,
     enableDragAndDrop,
     disabled,
   };
+
+  const loadingPlaceholder = useMemo(
+    () => (
+      <div className="loading-placeholder">
+        <Spin />
+        <div>Loading {styleNameMap[style]} components...</div>
+      </div>
+    ),
+    [style]
+  );
 
   return (
     <>
@@ -457,7 +495,7 @@ const App = () => {
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
             <ChakraStyleProvider theme={chakraTheme}>
               <MUIThemeProvider theme={muiTheme}>
-                <Suspense fallback={<div>Loading {styleNameMap[style]} components...</div>}>
+                <Suspense fallback={loadingPlaceholder}>
                   <div className={qbWrapperClassName}>
                     <form className="form-inline" style={{ marginTop: '1rem' }}>
                       {independentCombinators ? (

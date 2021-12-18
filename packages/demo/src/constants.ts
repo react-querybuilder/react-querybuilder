@@ -34,6 +34,20 @@ const MaterialValueSelector = lazy(() => import('./components/MaterialValueSelec
 
 export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra' | 'bulma';
 
+export interface DemoOptions {
+  showCombinatorsBetweenRules: boolean;
+  showNotToggle: boolean;
+  showCloneButtons: boolean;
+  resetOnFieldChange: boolean;
+  resetOnOperatorChange: boolean;
+  autoSelectField: boolean;
+  addRuleToNewGroups: boolean;
+  validateQuery: boolean;
+  independentCombinators: boolean;
+  enableDragAndDrop: boolean;
+  disabled: boolean;
+}
+
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 export const docsLink = 'https://react-querybuilder.js.org';
 
@@ -46,6 +60,20 @@ export const styleNameMap: Record<StyleName, string> = {
   antd: 'Ant Design',
   chakra: 'Chakra UI',
   bulma: 'Bulma',
+};
+
+export const defaultOptions: DemoOptions = {
+  showCombinatorsBetweenRules: false,
+  showNotToggle: false,
+  showCloneButtons: false,
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false,
+  autoSelectField: true,
+  addRuleToNewGroups: false,
+  validateQuery: false,
+  independentCombinators: false,
+  enableDragAndDrop: false,
+  disabled: false,
 };
 
 export const styleOptions: { [s in StyleName]: QueryBuilderProps } = {
