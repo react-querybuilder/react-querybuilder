@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
 const ChakraNotToggle = ({
@@ -10,7 +10,7 @@ const ChakraNotToggle = ({
   title,
   disabled,
 }: NotToggleProps) => {
-  const [id] = useState(`notToggle-${Math.random()}`);
+  const id = useRef(`notToggle-${Math.random()}`);
 
   return (
     <div style={{ display: 'inline-block' }}>
@@ -21,14 +21,14 @@ const ChakraNotToggle = ({
         title={title}
         isDisabled={disabled}>
         <Switch
-          id={id}
+          id={id.current}
           size="sm"
           colorScheme="red"
           checked={checked}
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />
-        <FormLabel htmlFor={id}>{label}</FormLabel>
+        <FormLabel htmlFor={id.current}>{label}</FormLabel>
       </FormControl>
     </div>
   );
