@@ -93,8 +93,9 @@ const config = {
           // {to: '/blog', label: 'Blog', position: 'right'},
           {
             href: "https://github.com/react-querybuilder/react-querybuilder",
-            label: "GitHub",
+            "aria-label": "GitHub repository",
             position: "right",
+            className: "header-github-link",
           },
         ],
       },
