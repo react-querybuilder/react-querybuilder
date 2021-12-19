@@ -5,7 +5,14 @@ const sidebars = {
   mySidebar: [
     "intro",
     {
-      "API": [
+      type: "category",
+      label: "API",
+      link: {
+        type: "generated-index",
+        title: "API",
+        description: "Complete documentation for React Query Builder.",
+      },
+      items: [
         "api/querybuilder",
         "api/export",
         "api/import",
@@ -14,13 +21,20 @@ const sidebars = {
       ],
     },
     {
-      "Tips & Tricks": [
+      type: "category",
+      label: "Tips & Tricks",
+      link: {
+        type: "generated-index",
+        title: "Tips & Tricks",
+        description: "Miscellaneous advice and advanced configurations.",
+      },
+      items: [
         "tips/limit-groups",
         "tips/custom-with-fallback",
         "tips/custom-bind-variables",
         "tips/adding-removing-query-properties",
         "tips/common-mistakes",
-      ]
+      ],
     },
     "typescript",
   ],
