@@ -259,13 +259,14 @@ const App = () => {
         <Layout>
           <Sider theme="light" width={260} style={{ padding: '1rem' }}>
             <Title level={4}>Style</Title>
-            <Select value={style} onChange={v => setStyle(v as StyleName)}>
-              <Option value="default">{styleNameMap.default}</Option>
-              <Option value="bootstrap">{styleNameMap.bootstrap}</Option>
-              <Option value="material">{styleNameMap.material}</Option>
-              <Option value="antd">{styleNameMap.antd}</Option>
-              <Option value="chakra">{styleNameMap.chakra}</Option>
-              <Option value="bulma">{styleNameMap.bulma}</Option>
+            <Select value={style} onChange={setStyle}>
+              {(['default', 'bootstrap', 'material', 'antd', 'chakra', 'bulma'] as StyleName[]).map(
+                s => (
+                  <Option key={s} value={s}>
+                    {styleNameMap[s]}
+                  </Option>
+                )
+              )}
             </Select>
             <Title level={4} style={{ marginTop: '1rem' }}>
               Options

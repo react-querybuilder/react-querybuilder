@@ -67,13 +67,14 @@ export const defaultOptions: DemoOptions = {
   disabled: false,
 };
 
-export const optionsMetadata: {
-  [o in keyof DemoOptions]: {
+export const optionsMetadata: Record<
+  keyof DemoOptions,
+  {
     link: string;
     label: string;
     title: string;
-  };
-} = {
+  }
+> = {
   showCombinatorsBetweenRules: {
     link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
     label: 'Combinators between rules',
@@ -141,7 +142,7 @@ export const styleNameMap: Record<StyleName, string> = {
   bulma: 'Bulma',
 };
 
-export const styleConfigs: { [s in StyleName]: QueryBuilderProps } = {
+export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
   default: {},
   bootstrap: {
     controlClassnames: {
