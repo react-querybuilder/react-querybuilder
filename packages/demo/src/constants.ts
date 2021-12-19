@@ -67,6 +67,71 @@ export const defaultOptions: DemoOptions = {
   disabled: false,
 };
 
+export const optionsMetadata: {
+  [o in keyof DemoOptions]: {
+    link: string;
+    label: string;
+    title: string;
+  };
+} = {
+  showCombinatorsBetweenRules: {
+    link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
+    label: 'Combinators between rules',
+    title: 'Display combinator (and/or) selectors between rules instead of in the group header',
+  },
+  showNotToggle: {
+    link: '/docs/api/querybuilder#shownottoggle',
+    label: 'Show "not" toggle',
+    title: `Display a checkbox to invert a group's rules (labelled "Not" by default)`,
+  },
+  showCloneButtons: {
+    link: '/docs/api/querybuilder#showclonebuttons',
+    label: 'Show clone buttons',
+    title: 'Display buttons to clone rules and groups',
+  },
+  resetOnFieldChange: {
+    link: '/docs/api/querybuilder#resetonfieldchange',
+    label: 'Reset on field change',
+    title: `Operator and value will be reset when a rule's field selection changes`,
+  },
+  resetOnOperatorChange: {
+    link: '/docs/api/querybuilder#resetonoperatorchange',
+    label: 'Reset on operator change',
+    title: 'The value will reset when the operator changes',
+  },
+  autoSelectField: {
+    link: '/docs/api/querybuilder#autoselectfield',
+    label: 'Auto-select field',
+    title: 'The default field will be automatically selected for new rules',
+  },
+  addRuleToNewGroups: {
+    link: '/docs/api/querybuilder#addruletonewgroups',
+    label: 'Add rule to new groups',
+    title: 'A rule will be automatically added to new groups',
+  },
+  validateQuery: {
+    link: '/docs/api/validation',
+    label: 'Use validation',
+    title:
+      'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+Rule" button for empty groups',
+  },
+  independentCombinators: {
+    link: '/docs/api/querybuilder#independentcombinators',
+    label: 'Independent combinators',
+    title: 'Combinators between rules can be independently updated',
+  },
+  enableDragAndDrop: {
+    link: '/docs/api/querybuilder#enabledraganddrop',
+    label: 'Enable drag-and-drop',
+    title: 'Rules and groups can be reordered and dragged to different groups',
+  },
+  disabled: {
+    link: '/docs/api/querybuilder#disabled',
+    label: 'Disabled',
+    title: 'Disable all components within the query builder',
+  },
+};
+
 export const styleNameMap: Record<StyleName, string> = {
   default: 'Default',
   bootstrap: 'Bootstrap',
