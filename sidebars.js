@@ -36,6 +36,7 @@ const sidebars = {
         "tips/common-mistakes",
       ],
     },
+    "compat",
     "typescript",
   ],
 };
