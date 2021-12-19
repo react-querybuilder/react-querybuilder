@@ -2,7 +2,7 @@
 title: Import
 ---
 
-import TypeScriptAdmonition from './_ts_admonition.md'
+import TypeScriptAdmonition from "./_ts_admonition.md";
 
 <TypeScriptAdmonition />
 
@@ -24,16 +24,16 @@ Running any of the following statements will produce the same result (see below)
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`);
 
 parseSQL(`SELECT * FROM t WHERE firstName = ? AND lastName = ?`, {
-  params: ['Steve', 'Vai']
+  params: ["Steve", "Vai"],
 });
 
 parseSQL(`SELECT * FROM t WHERE firstName = :p1 AND lastName = :p2`, {
-  params: { p1: 'Steve', p2: 'Vai' }
+  params: { p1: "Steve", p2: "Vai" },
 });
 
 parseSQL(`SELECT * FROM t WHERE firstName = $p1 AND lastName = $p2`, {
-  params: { p1: 'Steve', p2: 'Vai' },
-  paramPrefix: '$'
+  params: { p1: "Steve", p2: "Vai" },
+  paramPrefix: "$",
 });
 ```
 
@@ -88,10 +88,9 @@ parseSQL(`SELECT * FROM t WHERE lastName IN ('Vai', 'Vaughan') AND age BETWEEN 2
 When the `independentCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
 
 ```ts
-parseSQL(
-  `SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`,
-  { independentCombinators: true }
-);
+parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`, {
+  independentCombinators: true,
+});
 ```
 
 Output (`RuleGroupTypeIC`):
@@ -102,14 +101,14 @@ Output (`RuleGroupTypeIC`):
     {
       field: "firstName",
       operator: "=",
-      value: "Steve"
+      value: "Steve",
     },
     "and",
     {
       field: "lastName",
       operator: "=",
-      value: "Vai"
-    }
-  ]
+      value: "Vai",
+    },
+  ];
 }
 ```

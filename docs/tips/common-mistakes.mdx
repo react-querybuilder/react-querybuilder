@@ -1,5 +1,6 @@
 ---
 title: Common mistakes
+hide_table_of_contents: true
 ---
 
 ## Custom component as closure
@@ -23,11 +24,11 @@ const App = () => {
       query={query}
       handleOnChange={(q) => setQuery(q)}
       controlElements={{
-        valueEditor: CustomValueEditor
+        valueEditor: CustomValueEditor,
       }}
     />
-  )
-}
+  );
+};
 ```
 
 This is wrong and can lead to undesirable behavior, such as the value editor losing focus after each keystroke. This happens because the `CustomValueEditor` component is being redefined each time the `App` component renders. Fortunately, the fix is very simple: move the custom component declaration outside of the other function component (it can still be in the same file, just not within the function body):
@@ -49,9 +50,9 @@ const App = () => {
       query={query}
       handleOnChange={(q) => setQuery(q)}
       controlElements={{
-        valueEditor: CustomValueEditor
+        valueEditor: CustomValueEditor,
       }}
     />
-  )
-}
+  );
+};
 ```

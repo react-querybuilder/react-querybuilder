@@ -1,9 +1,15 @@
 ---
 title: Custom components with fallbacks
+hide_table_of_contents: true
 ---
 
-import { Field, RuleGroupType, ValueEditor, ValueEditorProps } from "react-querybuilder";
-import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed'
+import {
+  Field,
+  RuleGroupType,
+  ValueEditor,
+  ValueEditorProps,
+} from "react-querybuilder";
+import { QueryBuilderEmbed } from "../../src/components/QueryBuilderEmbed";
 
 You may run into a situation where the default components _almost_ meet your requirements, but you don't want to recreate the entire component just to slightly modify the behavior. Falling back to the default component after implementing your custom behavior is a good way to keep your code up to date with the current version's standard features while retaining the flexibility of a fully custom solution.
 
@@ -115,18 +121,27 @@ export const App = () => {
 The code above generates the following query builder:
 
 <QueryBuilderEmbed
-  fields={[{ name: "field1", label: "Field 1", valueEditorType: "select" },{ name: "field2", label: "Field 2" }]}
-  query={{ combinator: "and", rules: [{field: "field1", operator: "=", value: "item2"}, {field: "field2", operator: "=", value: ""} ] }}
-  controlElements={{ valueEditor: (props) => {
-    if (props.type === "select") {
-      // For all 'select' types, use custom logic:
-      return (
-        <select
-          value={props.value}
-          onChange={(e) => props.handleOnChange(e.target.value)}
-        >
-          {props.context.optionGroups[props.field].map(
-            (og) => (
+  fields={[
+    { name: "field1", label: "Field 1", valueEditorType: "select" },
+    { name: "field2", label: "Field 2" },
+  ]}
+  query={{
+    combinator: "and",
+    rules: [
+      { field: "field1", operator: "=", value: "item2" },
+      { field: "field2", operator: "=", value: "" },
+    ],
+  }}
+  controlElements={{
+    valueEditor: (props) => {
+      if (props.type === "select") {
+        // For all 'select' types, use custom logic:
+        return (
+          <select
+            value={props.value}
+            onChange={(e) => props.handleOnChange(e.target.value)}
+          >
+            {props.context.optionGroups[props.field].map((og) => (
               <optgroup key={og.label} label={og.label}>
                 {og.options.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -134,14 +149,14 @@ The code above generates the following query builder:
                   </option>
                 ))}
               </optgroup>
-            )
-          )}
-        </select>
-      );
-    }
-    return (<ValueEditor {...props} />);
-  }}}
-  context = {{
+            ))}
+          </select>
+        );
+      }
+      return <ValueEditor {...props} />;
+    },
+  }}
+  context={{
     optionGroups: {
       field1: [
         {

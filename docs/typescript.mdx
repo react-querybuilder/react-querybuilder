@@ -66,11 +66,13 @@ interface Schema {
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[];
-  isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
+  isRuleGroup(
+    ruleOrGroup: RuleType | RuleGroupTypeAny
+  ): ruleOrGroup is RuleGroupTypeAny;
   onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
   onGroupRemove(path: number[]): void;
   onPropChange(
-    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, "id" | "path">,
     value: any,
     path: number[]
   ): void;
@@ -92,12 +94,12 @@ interface Schema {
 
 ```ts
 type ExportFormat =
-  | 'json'
-  | 'sql'
-  | 'json_without_ids'
-  | 'parameterized'
-  | 'parameterized_named'
-  | 'mongodb';
+  | "json"
+  | "sql"
+  | "json_without_ids"
+  | "parameterized"
+  | "parameterized_named"
+  | "mongodb";
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
 
@@ -159,5 +161,5 @@ interface NameLabelPair {
   [x: string]: any;
 }
 
-type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio' | null;
+type ValueEditorType = "text" | "select" | "checkbox" | "radio" | null;
 ```

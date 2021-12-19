@@ -1,8 +1,9 @@
 ---
 title: Miscellaneous
+hide_table_of_contents: true
 ---
 
-import TypeScriptAdmonition from './_ts_admonition.md'
+import TypeScriptAdmonition from "./_ts_admonition.md";
 
 <TypeScriptAdmonition />
 
@@ -23,7 +24,10 @@ You can see an example of the default validator in action in the [demo](https://
 ### `findPath`
 
 ```ts
-function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
+function findPath(
+  path: number[],
+  query: RuleGroupType
+): RuleType | RuleGroupType;
 ```
 
 `findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](./querybuilder#onaddrule) and [`onAddGroup`](./querybuilder#onaddgroup) functions.

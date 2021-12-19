@@ -1,5 +1,6 @@
 ---
 title: Custom bind variables
+hide_table_of_contents: true
 ---
 
 Different SQL flavors have different requirements for bind variable placeholders. Some use a simple `?` character (which is what `formatQuery(query, 'parameterized')` produces by default), and others require a bind variable placeholder to start with `$` and be followed by a unique string.
@@ -30,5 +31,5 @@ For example, if `formatQuery(query, "parameterized")` produced the following obj
 ...then the code above would assign the following string to the `sql` variable:
 
 ```ts
-"(firstName = $1 and lastName = $2)"
+"(firstName = $1 and lastName = $2)";
 ```

@@ -1,5 +1,6 @@
 ---
 title: Adding and removing query properties
+hide_table_of_contents: true
 ---
 
 ## Removing properties
@@ -36,26 +37,26 @@ console.log(formatQuery(query, "json_without_ids"));
 To produce a query object with additional properties, you can loop through the `rules` array recursively. In the example below (from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)), the `inputType` from the `fields` array is added to each rule.
 
 ```ts
-import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
+import type { Field, RuleGroupType, RuleType } from "react-querybuilder";
 
 const fields: Field[] = [
-  { name: 'description', label: 'Description', inputType: 'string' },
-  { name: 'price', label: 'Price', inputType: 'number' }
+  { name: "description", label: "Description", inputType: "string" },
+  { name: "price", label: "Price", inputType: "number" },
 ];
 
 const processRule = (r: RuleType): RuleType & { inputType?: string } => ({
   ...r,
-  inputType: fields.find((f) => f.name === r.field)?.inputType
+  inputType: fields.find((f) => f.name === r.field)?.inputType,
 });
 
 const processGroup = (rg: RuleGroupType): RuleGroupType => ({
   ...rg,
   rules: rg.rules.map((r) => {
-    if ('field' in r) {
+    if ("field" in r) {
       return processRule(r);
     }
     return processGroup(r);
-  })
+  }),
 });
 
 const result = processGroup(query);

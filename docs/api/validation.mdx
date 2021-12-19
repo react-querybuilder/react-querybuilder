@@ -2,7 +2,7 @@
 title: Validation
 ---
 
-import TypeScriptAdmonition from './_ts_admonition.md'
+import TypeScriptAdmonition from "./_ts_admonition.md";
 
 <TypeScriptAdmonition />
 
@@ -23,9 +23,7 @@ import QueryBuilder, { RuleGroupType } from "react-querybuilder";
 const validator = (q: RuleGroupType) => q.rules.length > 0;
 
 const App = () => {
-  return (
-    <QueryBuilder validator={validator} />
-  );
+  return <QueryBuilder validator={validator} />;
 };
 ```
 
@@ -42,24 +40,22 @@ import QueryBuilder, { RuleGroupType, ValidationMap } from "react-querybuilder";
 const validator: QueryValidator = (q): ValidationMap => ({
   r1: true, // valid rule
   r2: false, // invalid rule
-  r3: { valid: true, reasons: ['awesome rule'] }, // valid rule
-  r4: { valid: false, reasons: ['lame rule'] }, // invalid rule
+  r3: { valid: true, reasons: ["awesome rule"] }, // valid rule
+  r4: { valid: false, reasons: ["lame rule"] }, // invalid rule
 });
 
 const query: RuleGroupType = {
-  combinator: 'and',
+  combinator: "and",
   rules: [
-    { id: 'r1', field: 'field1', operator: '=', value: 'Value 1' },
-    { id: 'r2', field: 'field2', operator: '=', value: 'Value 2' },
-    { id: 'r3', field: 'field3', operator: '=', value: 'Value 3' },
-    { id: 'r4', field: 'field4', operator: '=', value: 'Value 4' },
-  ]
+    { id: "r1", field: "field1", operator: "=", value: "Value 1" },
+    { id: "r2", field: "field2", operator: "=", value: "Value 2" },
+    { id: "r3", field: "field3", operator: "=", value: "Value 3" },
+    { id: "r4", field: "field4", operator: "=", value: "Value 4" },
+  ],
 };
 
 const App = () => {
-  return (
-    <QueryBuilder query={query} validator={validator} />
-  );
+  return <QueryBuilder query={query} validator={validator} />;
 };
 ```
 
@@ -82,30 +78,28 @@ import QueryBuilder, {
  */
 const validator: RuleValidator = (q): ValidationResult => ({
   valid: false,
-  reasons: ['this field is always invalid'],
+  reasons: ["this field is always invalid"],
 });
 
 const fields: Field[] = [
-  { name: 'field1', label: 'Field 1' },
-  { name: 'field2', label: 'Field 2', validator },
-  { name: 'field3', label: 'Field 3' },
-  { name: 'field4', label: 'Field 4' },
+  { name: "field1", label: "Field 1" },
+  { name: "field2", label: "Field 2", validator },
+  { name: "field3", label: "Field 3" },
+  { name: "field4", label: "Field 4" },
 ];
 
 const query: RuleGroupType = {
-  combinator: 'and',
+  combinator: "and",
   rules: [
-    { field: 'field1', operator: '=', value: 'Value 1' },
-    { field: 'field2', operator: '=', value: 'Value 2' },
-    { field: 'field3', operator: '=', value: 'Value 3' },
-    { field: 'field4', operator: '=', value: 'Value 4' },
-  ]
+    { field: "field1", operator: "=", value: "Value 1" },
+    { field: "field2", operator: "=", value: "Value 2" },
+    { field: "field3", operator: "=", value: "Value 3" },
+    { field: "field4", operator: "=", value: "Value 4" },
+  ],
 };
 
 const App = () => {
-  return (
-    <QueryBuilder query={query} fields={fields} />
-  );
+  return <QueryBuilder query={query} fields={fields} />;
 };
 ```
 
