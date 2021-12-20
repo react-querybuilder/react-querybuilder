@@ -1,4 +1,4 @@
-export { default as BulmaActionElement } from './BulmaActionElement';
-export { default as BulmaNotToggle } from './BulmaNotToggle';
-export { default as BulmaValueEditor } from './BulmaValueEditor';
-export { default as BulmaValueSelector } from './BulmaValueSelector';
+export { BulmaActionElement } from './BulmaActionElement';
+export { BulmaNotToggle } from './BulmaNotToggle';
+export { BulmaValueEditor } from './BulmaValueEditor';
+export { BulmaValueSelector } from './BulmaValueSelector';

@@ -19,7 +19,7 @@ describe('<NotToggle />', () => {
 
   it('should have the className passed into the <label />', () => {
     const { getByLabelText } = render(<NotToggle {...props} className="foo" />);
-    expect(getByLabelText('Not').parentElement.classList).toContain('foo');
+    expect(getByLabelText('Not').parentElement!.classList).toContain('foo');
   });
 
   it('should call the onChange method passed in', () => {

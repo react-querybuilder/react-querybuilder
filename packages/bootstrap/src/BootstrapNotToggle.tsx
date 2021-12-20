@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
-const BootstrapNotToggle = ({
+export const BootstrapNotToggle = ({
   className,
   handleOnChange,
   title,
@@ -29,5 +29,3 @@ const BootstrapNotToggle = ({
 };
 
 BootstrapNotToggle.displayName = 'BootstrapNotToggle';
-
-export default BootstrapNotToggle;

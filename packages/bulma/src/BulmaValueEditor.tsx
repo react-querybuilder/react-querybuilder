@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 
-const BulmaValueEditor = ({
+export const BulmaValueEditor = ({
   fieldData,
   operator,
   value,
@@ -36,7 +36,7 @@ const BulmaValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <div className={`${className} select is-small`}>
+        <div title={title} className={`${className} select is-small`}>
           <select value={value} disabled={disabled} onChange={e => handleOnChange(e.target.value)}>
             {values &&
               values.map(v => (
@@ -50,7 +50,7 @@ const BulmaValueEditor = ({
 
     case 'checkbox':
       return (
-        <label className={`${className} checkbox`}>
+        <label title={title} className={`${className} checkbox`}>
           <input
             type="checkbox"
             checked={!!value}
@@ -64,7 +64,7 @@ const BulmaValueEditor = ({
       return (
         <div className={`${className} control`} title={title}>
           {values!.map(v => (
-            <label key={v.name} className="radio" title={title}>
+            <label key={v.name} className="radio">
               <input
                 type="radio"
                 value={v.name}
@@ -96,5 +96,3 @@ const BulmaValueEditor = ({
 };
 
 BulmaValueEditor.displayName = 'BulmaValueEditor';
-
-export default BulmaValueEditor;

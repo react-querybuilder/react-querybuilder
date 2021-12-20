@@ -1,6 +1,6 @@
 import type { NotToggleProps } from 'react-querybuilder';
 
-const BulmaNotToggle = ({
+export const BulmaNotToggle = ({
   className,
   handleOnChange,
   label,
@@ -20,5 +20,3 @@ const BulmaNotToggle = ({
 );
 
 BulmaNotToggle.displayName = 'BulmaNotToggle';
-
-export default BulmaNotToggle;

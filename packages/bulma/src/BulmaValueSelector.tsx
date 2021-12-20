@@ -1,6 +1,6 @@
 import type { ValueSelectorProps } from 'react-querybuilder';
 
-const BulmaValueSelector = ({
+export const BulmaValueSelector = ({
   className,
   handleOnChange,
   options,
@@ -23,5 +23,3 @@ const BulmaValueSelector = ({
 );
 
 BulmaValueSelector.displayName = 'BulmaValueSelector';
-
-export default BulmaValueSelector;

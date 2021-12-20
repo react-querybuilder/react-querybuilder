@@ -154,7 +154,7 @@ describe('<ValueEditor />', () => {
 
       expect(getByTitle('ValueEditor').querySelectorAll('input')).toHaveLength(1);
       expect(
-        getByTitle('ValueEditor').querySelector('input[type="radio"]').getAttribute('type')
+        getByTitle('ValueEditor').querySelector('input[type="radio"]')!.getAttribute('type')
       ).toBe('radio');
     });
 
@@ -169,7 +169,7 @@ describe('<ValueEditor />', () => {
         />
       );
 
-      userEvent.click(getByTitle('ValueEditor').querySelector('input[type="radio"]'));
+      userEvent.click(getByTitle('ValueEditor').querySelector('input[type="radio"]')!);
       expect(handleOnChange).toHaveBeenCalledWith('test');
     });
 
@@ -185,7 +185,7 @@ describe('<ValueEditor />', () => {
         />
       );
 
-      userEvent.click(getByTitle('ValueEditor').querySelector('input[type="radio"]'));
+      userEvent.click(getByTitle('ValueEditor').querySelector('input[type="radio"]')!);
       expect(handleOnChange).not.toHaveBeenCalled();
     });
   });
