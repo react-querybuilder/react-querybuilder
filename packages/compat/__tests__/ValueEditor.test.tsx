@@ -6,17 +6,17 @@ import { findInput, findSelect } from './utils';
 export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProps>) => {
   const componentName = ValueEditor.displayName ?? 'ValueEditor';
 
-  describe(componentName, () => {
-    const props: ValueEditorProps = {
-      title: componentName,
-      field: 'TEST',
-      fieldData: { name: 'TEST', label: 'Test' },
-      operator: '=',
-      handleOnChange: () => {},
-      level: 0,
-      path: [],
-    };
+  const props: ValueEditorProps = {
+    title: componentName,
+    field: 'TEST',
+    fieldData: { name: 'TEST', label: 'Test' },
+    operator: '=',
+    handleOnChange: () => {},
+    level: 0,
+    path: [],
+  };
 
+  describe(componentName, () => {
     describe('when using default rendering', () => {
       it('should have the value passed into the <input />', () => {
         const { getByTitle } = render(<ValueEditor {...props} value="test" />);

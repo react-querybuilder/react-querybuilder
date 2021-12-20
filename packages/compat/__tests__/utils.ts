@@ -3,3 +3,25 @@ export const findInput = (el: HTMLElement) =>
 
 export const findSelect = (el: HTMLElement) =>
   (el.tagName === 'SELECT' ? el : el.querySelector('select')) as HTMLSelectElement;
+
+export const hasOrInheritsClass = (
+  el: HTMLElement | null,
+  className: string,
+  attempt = 1
+): boolean => {
+  if (!el || el.tagName === 'BODY') return false;
+  if (el.classList.contains(className)) return true;
+  if (attempt >= 10) return false;
+  return hasOrInheritsClass(el.parentElement, className, attempt + 1);
+};
+
+export const hasOrInheritsData = (
+  el: HTMLElement | null,
+  dataAttr: string,
+  attempt = 1
+): boolean => {
+  if (!el || el.tagName === 'BODY') return false;
+  if (typeof el.dataset[dataAttr] !== 'undefined') return true;
+  if (attempt >= 10) return false;
+  return hasOrInheritsData(el.parentElement, dataAttr, attempt + 1);
+};

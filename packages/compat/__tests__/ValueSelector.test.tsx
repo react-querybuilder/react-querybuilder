@@ -6,18 +6,18 @@ import { findSelect } from './utils';
 export const testValueSelector = (ValueSelector: React.ComponentType<ValueSelectorProps>) => {
   const componentName = ValueSelector.displayName ?? 'ValueSelector';
 
-  describe(componentName, () => {
-    const props: ValueSelectorProps = {
-      handleOnChange: () => {},
-      title: componentName,
-      options: [
-        { name: 'foo', label: 'foo label' },
-        { name: 'bar', label: 'bar label' },
-      ],
-      level: 0,
-      path: [],
-    };
+  const props: ValueSelectorProps = {
+    handleOnChange: () => {},
+    title: componentName,
+    options: [
+      { name: 'foo', label: 'foo label' },
+      { name: 'bar', label: 'bar label' },
+    ],
+    level: 0,
+    path: [],
+  };
 
+  describe(componentName, () => {
     it('should have the options passed into the <select />', () => {
       const { getByTitle } = render(<ValueSelector {...props} />);
       expect(getByTitle(componentName).querySelectorAll('option')).toHaveLength(2);

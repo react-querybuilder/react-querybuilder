@@ -11,7 +11,7 @@ export default forwardRef<HTMLSpanElement, DragHandleProps>(function ChakraDragH
     <span ref={dragRef} className={className} title={title}>
       <IconButton
         isDisabled={disabled}
-        aria-label={title ?? ''}
+        aria-label={title ?? /* istanbul ignore next */ ''}
         size="xs"
         icon={<DragHandleIcon />}
       />

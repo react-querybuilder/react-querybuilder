@@ -46,7 +46,7 @@ const MaterialValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <FormControl variant="standard" className={className} disabled={disabled}>
+        <FormControl title={title} variant="standard" className={className} disabled={disabled}>
           <Select value={value} onChange={e => handleOnChange(e.target.value)}>
             {values &&
               values.map(v => (
@@ -62,6 +62,7 @@ const MaterialValueEditor = ({
       return (
         <Checkbox
           className={className}
+          title={title}
           onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
           disabled={disabled}

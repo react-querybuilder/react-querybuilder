@@ -15,8 +15,8 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
 
   describe(componentName, () => {
     it('should have the label passed into the <button />', () => {
-      const { getByTitle } = render(<ActionElement {...props} label="test" />);
-      expect(getByTitle(componentName).innerHTML).toBe('test');
+      const { getByText } = render(<ActionElement {...props} label="test" />);
+      expect(() => getByText('test')).not.toThrow();
     });
 
     it('should have the className passed into the <button />', () => {

@@ -39,6 +39,7 @@ const ChakraValueEditor = ({
       return (
         <Select
           className={className}
+          title={title}
           value={value}
           size="xs"
           variant="filled"
@@ -57,6 +58,7 @@ const ChakraValueEditor = ({
       return (
         <Checkbox
           className={className}
+          title={title}
           size="sm"
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}

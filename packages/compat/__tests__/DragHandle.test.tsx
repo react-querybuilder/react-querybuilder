@@ -8,13 +8,13 @@ export const testDragHandle = (
 ) => {
   const componentName = DragHandle.displayName ?? 'DragHandle';
 
-  describe(componentName, () => {
-    const props: DragHandleProps = {
-      title: componentName,
-      level: 1,
-      path: [0],
-    };
+  const props: DragHandleProps = {
+    title: componentName,
+    level: 1,
+    path: [0],
+  };
 
+  describe(componentName, () => {
     it('should have the className passed into the <span />', () => {
       const { getByTitle } = render(<DragHandle {...props} className="foo" />);
       expect(getByTitle(componentName).classList).toContain('foo');

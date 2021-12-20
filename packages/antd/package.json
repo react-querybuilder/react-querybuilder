@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@react-querybuilder/compat": "4.0.0-beta.7",
     "@types/react": "^17.0.0",
     "antd": "^4.10.3",
     "react": "^17.0.1",
