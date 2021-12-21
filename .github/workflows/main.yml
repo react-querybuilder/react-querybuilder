@@ -13,9 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          # Make sure the actual branch is checked out when running on pull requests
-          ref: ${{ github.head_ref }}
-          # This is important to fetch the changes to the previous commit
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - name: Prettify code
         uses: creyD/prettier_action@v3.1
