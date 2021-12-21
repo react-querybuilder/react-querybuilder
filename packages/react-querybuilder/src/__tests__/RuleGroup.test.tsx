@@ -153,8 +153,8 @@ describe('<RuleGroup />', () => {
 
   it('should have correct classNames', () => {
     const { getByTestId } = render(<RuleGroup {...props} />);
-    expect(getByTestId('rule-group').classList).toContain(standardClassnames.ruleGroup);
-    expect(getByTestId('rule-group').classList).toContain('custom-ruleGroup-class');
+    expect(getByTestId('rule-group')).toHaveClass(standardClassnames.ruleGroup);
+    expect(getByTestId('rule-group')).toHaveClass('custom-ruleGroup-class');
     expect(
       getByTestId('rule-group').querySelector(`.${standardClassnames.header}`).classList
     ).toContain(classNames.header);
@@ -292,10 +292,10 @@ describe('<RuleGroup />', () => {
 
     it('has the correct classNames', () => {
       const { container } = render(<RuleGroup {...props} />);
-      expect(container.querySelector(`.${standardClassnames.notToggle}`).classList).toContain(
+      expect(container.querySelector(`.${standardClassnames.notToggle}`)).toHaveClass(
         standardClassnames.notToggle
       );
-      expect(container.querySelector(`.${standardClassnames.notToggle}`).classList).toContain(
+      expect(container.querySelector(`.${standardClassnames.notToggle}`)).toHaveClass(
         'custom-notToggle-class'
       );
     });
@@ -314,10 +314,10 @@ describe('<RuleGroup />', () => {
 
     it('has the correct classNames', () => {
       const { container } = render(<RuleGroup {...props} />);
-      expect(container.querySelector(`.${standardClassnames.cloneGroup}`).classList).toContain(
+      expect(container.querySelector(`.${standardClassnames.cloneGroup}`)).toHaveClass(
         standardClassnames.cloneGroup
       );
-      expect(container.querySelector(`.${standardClassnames.cloneGroup}`).classList).toContain(
+      expect(container.querySelector(`.${standardClassnames.cloneGroup}`)).toHaveClass(
         'custom-cloneGroup-class'
       );
     });
@@ -338,7 +338,7 @@ describe('<RuleGroup />', () => {
       const combinatorSelector = container.querySelector(
         `.${standardClassnames.combinators}`
       ) as HTMLSelectElement;
-      expect(combinatorSelector.parentElement.classList).toContain(standardClassnames.betweenRules);
+      expect(combinatorSelector.parentElement).toHaveClass(standardClassnames.betweenRules);
       expect(combinatorSelector.value).toBe('and');
     });
 
@@ -366,22 +366,22 @@ describe('<RuleGroup />', () => {
   describe('validation', () => {
     it('should not validate if no validationMap[id] value exists', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.valid);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.invalid);
+      expect(getByTestId('rule-group')).not.toHaveClass(standardClassnames.valid);
+      expect(getByTestId('rule-group')).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate to false if validationMap[id] = false', () => {
       schema.validationMap = { id: false };
       const { getByTestId } = render(<RuleGroup {...props} />);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.valid);
-      expect(getByTestId('rule-group').classList).toContain(standardClassnames.invalid);
+      expect(getByTestId('rule-group')).not.toHaveClass(standardClassnames.valid);
+      expect(getByTestId('rule-group')).toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate to true if validationMap[id] = true', () => {
       schema.validationMap = { id: true };
       const { getByTestId } = render(<RuleGroup {...props} />);
-      expect(getByTestId('rule-group').classList).toContain(standardClassnames.valid);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.invalid);
+      expect(getByTestId('rule-group')).toHaveClass(standardClassnames.valid);
+      expect(getByTestId('rule-group')).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should pass down validationResult as validation to children', () => {
@@ -403,14 +403,14 @@ describe('<RuleGroup />', () => {
     it('should not have the drag class if not dragging', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
       const ruleGroup = getByTestId('rule-group');
-      expect(ruleGroup.classList).not.toContain(standardClassnames.dndDragging);
+      expect(ruleGroup).not.toHaveClass(standardClassnames.dndDragging);
     });
 
     it('should have the drag class if dragging', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
       const ruleGroup = getByTestId('rule-group');
       simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
-      expect(ruleGroup.classList).toContain(standardClassnames.dndDragging);
+      expect(ruleGroup).toHaveClass(standardClassnames.dndDragging);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -431,8 +431,8 @@ describe('<RuleGroup />', () => {
         getHandlerId(ruleGroups[0], 'drop'),
         getDndBackend()
       );
-      expect(ruleGroups[0].classList).not.toContain(standardClassnames.dndDragging);
-      expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroups[0]).not.toHaveClass(standardClassnames.dndDragging);
+      expect(ruleGroups[1]).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
     });
 
@@ -446,8 +446,8 @@ describe('<RuleGroup />', () => {
         getHandlerId(ruleGroup, 'drop'),
         getDndBackend()
       );
-      expect(ruleGroup.classList).not.toContain(standardClassnames.dndDragging);
-      expect(ruleGroup.classList).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroup).not.toHaveClass(standardClassnames.dndDragging);
+      expect(ruleGroup).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).not.toHaveBeenCalled();
     });
 
@@ -522,8 +522,8 @@ describe('<RuleGroup />', () => {
         getHandlerId(combinatorEl, 'drop'),
         getDndBackend()
       );
-      expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndDragging);
-      expect(combinatorEl.classList).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroups[1]).not.toHaveClass(standardClassnames.dndDragging);
+      expect(combinatorEl).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([1], [0, 1]);
     });
 

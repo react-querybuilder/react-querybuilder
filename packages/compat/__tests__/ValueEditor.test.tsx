@@ -3,40 +3,40 @@ import userEvent from '@testing-library/user-event';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { findInput, findSelect } from './utils';
 
+const defaultProps: ValueEditorProps = {
+  field: 'TEST',
+  fieldData: { name: 'TEST', label: 'Test' },
+  operator: '=',
+  handleOnChange: () => {},
+  level: 0,
+  path: [],
+};
+
 export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProps>) => {
-  const componentName = ValueEditor.displayName ?? 'ValueEditor';
+  const title = ValueEditor.displayName ?? 'ValueEditor';
+  const props = { ...defaultProps, title };
 
-  const props: ValueEditorProps = {
-    title: componentName,
-    field: 'TEST',
-    fieldData: { name: 'TEST', label: 'Test' },
-    operator: '=',
-    handleOnChange: () => {},
-    level: 0,
-    path: [],
-  };
-
-  describe(componentName, () => {
+  describe(title, () => {
     describe('when using default rendering', () => {
       it('should have the value passed into the <input />', () => {
         const { getByTitle } = render(<ValueEditor {...props} value="test" />);
-        expect((getByTitle(componentName) as HTMLInputElement).value).toBe('test');
+        expect((getByTitle(title) as HTMLInputElement).value).toBe('test');
       });
 
       it('should render nothing for operator "null"', () => {
         const { getByTitle } = render(<ValueEditor {...props} operator="null" />);
-        expect(() => getByTitle(componentName)).toThrow();
+        expect(() => getByTitle(title)).toThrow();
       });
 
       it('should render nothing for operator "notNull"', () => {
         const { getByTitle } = render(<ValueEditor {...props} operator="notNull" />);
-        expect(() => getByTitle(componentName)).toThrow();
+        expect(() => getByTitle(title)).toThrow();
       });
 
       it('should call the onChange method passed in', () => {
         const onChange = jest.fn();
         const { getByTitle } = render(<ValueEditor {...props} handleOnChange={onChange} />);
-        userEvent.type(findInput(getByTitle(componentName)), 'foo');
+        userEvent.type(findInput(getByTitle(title)), 'foo');
         expect(onChange).toHaveBeenCalledWith('foo');
       });
 
@@ -44,7 +44,7 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
         const { getByTitle } = render(
           <ValueEditor {...props} inputType="number" operator="between" />
         );
-        expect(findInput(getByTitle(componentName)).getAttribute('type')).toBe('text');
+        expect(findInput(getByTitle(title)).getAttribute('type')).toBe('text');
       });
 
       it('should set the value to "" if operator is not "between" or "notBetween" and inputType is "number" and value contains a comma', () => {
@@ -86,8 +86,8 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
         const { getByTitle } = render(
           <ValueEditor {...props} type="select" values={[{ name: 'test', label: 'Test' }]} />
         );
-        expect(() => findSelect(getByTitle(componentName))).not.toThrow();
-        expect(findSelect(getByTitle(componentName)).querySelectorAll('option')).toHaveLength(1);
+        expect(() => findSelect(getByTitle(title))).not.toThrow();
+        expect(findSelect(getByTitle(title)).querySelectorAll('option')).toHaveLength(1);
       });
 
       it('should call the onChange method passed in', () => {
@@ -100,7 +100,7 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             values={[{ name: 'test', label: 'Test' }]}
           />
         );
-        userEvent.selectOptions(findSelect(getByTitle(componentName)), 'test');
+        userEvent.selectOptions(findSelect(getByTitle(title)), 'test');
         expect(handleOnChange).toHaveBeenCalledWith('test');
       });
 
@@ -115,7 +115,7 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             disabled
           />
         );
-        userEvent.selectOptions(findSelect(getByTitle(componentName)), 'test');
+        userEvent.selectOptions(findSelect(getByTitle(title)), 'test');
         expect(handleOnChange).not.toHaveBeenCalled();
       });
     });
@@ -126,9 +126,9 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
         const { getByTitle } = render(
           <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} />
         );
-        expect(() => findInput(getByTitle(componentName))).not.toThrow();
-        expect(findInput(getByTitle(componentName)).getAttribute('type')).toBe('checkbox');
-        userEvent.click(findInput(getByTitle(componentName)));
+        expect(() => findInput(getByTitle(title))).not.toThrow();
+        expect(findInput(getByTitle(title)).getAttribute('type')).toBe('checkbox');
+        userEvent.click(findInput(getByTitle(title)));
         expect(handleOnChange).toHaveBeenCalledWith(true);
       });
 
@@ -137,7 +137,7 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
         const { getByTitle } = render(
           <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} disabled />
         );
-        userEvent.click(findInput(getByTitle(componentName)));
+        userEvent.click(findInput(getByTitle(title)));
         expect(handleOnChange).not.toHaveBeenCalled();
       });
     });
@@ -147,10 +147,10 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
         const { getByTitle } = render(
           <ValueEditor {...props} type="radio" values={[{ name: 'test', label: 'Test' }]} />
         );
-        expect(getByTitle(componentName).querySelectorAll('input')).toHaveLength(1);
-        expect(
-          getByTitle(componentName).querySelector('input[type="radio"]')!.getAttribute('type')
-        ).toBe('radio');
+        expect(getByTitle(title).querySelectorAll('input')).toHaveLength(1);
+        expect(getByTitle(title).querySelector('input[type="radio"]')!.getAttribute('type')).toBe(
+          'radio'
+        );
       });
 
       it('should call the onChange handler', () => {
@@ -163,7 +163,7 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             values={[{ name: 'test', label: 'Test' }]}
           />
         );
-        userEvent.click(getByTitle(componentName).querySelector('input[type="radio"]')!);
+        userEvent.click(getByTitle(title).querySelector('input[type="radio"]')!);
         expect(handleOnChange).toHaveBeenCalledWith('test');
       });
 
@@ -178,7 +178,7 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             disabled
           />
         );
-        userEvent.click(getByTitle(componentName).querySelector('input[type="radio"]')!);
+        userEvent.click(getByTitle(title).querySelector('input[type="radio"]')!);
         expect(handleOnChange).not.toHaveBeenCalled();
       });
     });

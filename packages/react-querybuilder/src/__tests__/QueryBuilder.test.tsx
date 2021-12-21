@@ -26,9 +26,7 @@ describe('<QueryBuilder />', () => {
   describe('when rendered', () => {
     it('should have the correct className', () => {
       const { container } = render(<QueryBuilder />);
-      expect(container.querySelectorAll('div')[0].classList).toContain(
-        standardClassnames.queryBuilder
-      );
+      expect(container.querySelectorAll('div')[0]).toHaveClass(standardClassnames.queryBuilder);
     });
 
     it('should render the root RuleGroup', () => {
@@ -1215,12 +1213,8 @@ describe('<QueryBuilder />', () => {
   describe('validation', () => {
     it('should not validate if no validator function is provided', () => {
       const { container } = render(<QueryBuilder />);
-      expect(container.querySelectorAll('div')[0].classList).not.toContain(
-        standardClassnames.valid
-      );
-      expect(container.querySelectorAll('div')[0].classList).not.toContain(
-        standardClassnames.invalid
-      );
+      expect(container.querySelectorAll('div')[0]).not.toHaveClass(standardClassnames.valid);
+      expect(container.querySelectorAll('div')[0]).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate groups if default validator function is provided', () => {
@@ -1240,20 +1234,16 @@ describe('<QueryBuilder />', () => {
       const validator = jest.fn(() => false);
       const { container } = render(<QueryBuilder validator={validator} />);
       expect(validator).toHaveBeenCalled();
-      expect(container.querySelectorAll('div')[0].classList).not.toContain(
-        standardClassnames.valid
-      );
-      expect(container.querySelectorAll('div')[0].classList).toContain(standardClassnames.invalid);
+      expect(container.querySelectorAll('div')[0]).not.toHaveClass(standardClassnames.valid);
+      expect(container.querySelectorAll('div')[0]).toHaveClass(standardClassnames.invalid);
     });
 
     it('should use custom validator function returning true', () => {
       const validator = jest.fn(() => true);
       const { container } = render(<QueryBuilder validator={validator} />);
       expect(validator).toHaveBeenCalled();
-      expect(container.querySelectorAll('div')[0].classList).toContain(standardClassnames.valid);
-      expect(container.querySelectorAll('div')[0].classList).not.toContain(
-        standardClassnames.invalid
-      );
+      expect(container.querySelectorAll('div')[0]).toHaveClass(standardClassnames.valid);
+      expect(container.querySelectorAll('div')[0]).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should pass down validationMap to children', () => {

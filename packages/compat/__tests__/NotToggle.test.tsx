@@ -3,19 +3,18 @@ import userEvent from '@testing-library/user-event';
 import type { NotToggleProps } from 'react-querybuilder';
 import { findInput, hasOrInheritsClass, isOrInheritsChecked } from './utils';
 
+const defaultProps: NotToggleProps = {
+  handleOnChange: () => {},
+  level: 0,
+  path: [],
+};
+
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {
-  const componentName = NotToggle.displayName ?? 'NotToggle';
+  const title = NotToggle.displayName ?? 'NotToggle';
   const label = 'Not';
+  const props = { ...defaultProps, label, title };
 
-  const props: NotToggleProps = {
-    label,
-    title: componentName,
-    handleOnChange: () => {},
-    level: 0,
-    path: [],
-  };
-
-  describe(componentName, () => {
+  describe(title, () => {
     it('should have the value passed into the <input />', () => {
       const { getByLabelText } = render(<NotToggle {...props} checked />);
       isOrInheritsChecked(findInput(getByLabelText(label)));
