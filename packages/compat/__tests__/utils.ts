@@ -9,9 +9,15 @@ export const hasOrInheritsClass = (
   className: string,
   attempt = 1
 ): boolean => {
-  if (!el || el.tagName === 'BODY') return false;
-  if (el.classList.contains(className)) return true;
-  if (attempt >= 10) return false;
+  if (!el || el.tagName === 'BODY') {
+    return false;
+  }
+  if (el.classList.contains(className)) {
+    return true;
+  }
+  if (attempt >= 10) {
+    return false;
+  }
   return hasOrInheritsClass(el.parentElement, className, attempt + 1);
 };
 
@@ -20,8 +26,28 @@ export const hasOrInheritsData = (
   dataAttr: string,
   attempt = 1
 ): boolean => {
-  if (!el || el.tagName === 'BODY') return false;
-  if (typeof el.dataset[dataAttr] !== 'undefined') return true;
-  if (attempt >= 10) return false;
+  if (!el || el.tagName === 'BODY') {
+    return false;
+  }
+  if (typeof el.dataset[dataAttr] !== 'undefined') {
+    return true;
+  }
+  if (attempt >= 10) {
+    return false;
+  }
   return hasOrInheritsData(el.parentElement, dataAttr, attempt + 1);
+};
+
+export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolean => {
+  if (!el || el.tagName === 'BODY') {
+    return false;
+  }
+  try {
+    expect(el).toBeChecked();
+  } catch (er) {
+    if (attempt < 10) {
+      return isOrInheritsChecked(el.parentElement, attempt + 1);
+    }
+  }
+  return false;
 };

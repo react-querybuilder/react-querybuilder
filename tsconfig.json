@@ -10,5 +10,6 @@
     "jsx": "react-jsx",
     "target": "esnext",
     "esModuleInterop": true
-  }
+  },
+  "include": ["./jestSetup.ts"]
 }

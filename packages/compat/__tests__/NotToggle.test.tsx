@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { NotToggleProps } from 'react-querybuilder';
-import { hasOrInheritsClass, findInput } from './utils';
+import { findInput, hasOrInheritsClass, isOrInheritsChecked } from './utils';
 
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {
   const componentName = NotToggle.displayName ?? 'NotToggle';
@@ -18,7 +18,7 @@ export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) =>
   describe(componentName, () => {
     it('should have the value passed into the <input />', () => {
       const { getByLabelText } = render(<NotToggle {...props} checked />);
-      expect(findInput(getByLabelText(label)).checked).toBe(true);
+      isOrInheritsChecked(findInput(getByLabelText(label)));
     });
 
     it('should have the className passed into the <label />', () => {
