@@ -1,6 +1,8 @@
 name: demo
 
 on:
+  workflow_dispatch:
+    branches: [master]
   release:
     branches: [master]
 
