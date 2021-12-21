@@ -10,7 +10,7 @@ import { forwardRef } from 'react';
 import { DragHandleProps } from 'react-querybuilder';
 import {
   ChakraActionElement,
-  ChakraDragHandle as ChakraDragHandleOriginal,
+  ChakraDragHandle,
   ChakraNotToggle,
   ChakraValueEditor,
   ChakraValueSelector,
@@ -25,16 +25,12 @@ const generateWrapper = (RQBComponent: any) => {
   Wrapper.displayName = RQBComponent.displayName;
   return Wrapper;
 };
-const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>(function ChakraDragHandle(
-  props,
-  ref
-) {
-  return (
-    <ThemeProvider theme={{}}>
-      <ChakraDragHandleOriginal {...props} ref={ref} />
-    </ThemeProvider>
-  );
-});
+const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
+  <ThemeProvider theme={{}}>
+    <ChakraDragHandle {...props} ref={ref} />
+  </ThemeProvider>
+));
+WrapperDH.displayName = ChakraDragHandle.displayName;
 
 testActionElement(generateWrapper(ChakraActionElement));
 testDragHandle(WrapperDH);

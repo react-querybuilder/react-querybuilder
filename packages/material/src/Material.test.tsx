@@ -11,14 +11,13 @@ import { forwardRef } from 'react';
 import { DragHandleProps } from 'react-querybuilder';
 import {
   MaterialActionElement,
-  MaterialDragHandle as MaterialDragHandleOriginal,
+  MaterialDragHandle,
   MaterialNotToggle,
   MaterialValueEditor,
   MaterialValueSelector,
 } from '.';
 
 const theme = createTheme();
-
 const generateWrapper = (RQBComponent: any) => {
   const Wrapper = (props: any) => (
     <ThemeProvider theme={theme}>
@@ -28,17 +27,12 @@ const generateWrapper = (RQBComponent: any) => {
   Wrapper.displayName = RQBComponent.displayName;
   return Wrapper;
 };
-
-const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>(function MaterialDragHandle(
-  props,
-  ref
-) {
-  return (
-    <ThemeProvider theme={theme}>
-      <MaterialDragHandleOriginal {...props} ref={ref} />
-    </ThemeProvider>
-  );
-});
+const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
+  <ThemeProvider theme={theme}>
+    <MaterialDragHandle {...props} ref={ref} />
+  </ThemeProvider>
+));
+WrapperDH.displayName = MaterialDragHandle.displayName;
 
 testActionElement(generateWrapper(MaterialActionElement));
 testDragHandle(WrapperDH);
