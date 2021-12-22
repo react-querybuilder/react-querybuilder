@@ -315,27 +315,27 @@ const formatQuery = (
             }
 
             if (['<', '<=', '=', '!=', '>', '>='].includes(rule.operator)) {
-              return `{${rule.field}:{${mongoOperator}:${value}}}`;
+              return `{"${rule.field}":{"${mongoOperator}":${value}}}`;
             } else if (rule.operator === 'contains') {
-              return `{${rule.field}:/${rule.value}/}`;
+              return `{"${rule.field}":/${rule.value}/}`;
             } else if (rule.operator === 'beginsWith') {
-              return `{${rule.field}:/^${rule.value}/}`;
+              return `{"${rule.field}":/^${rule.value}/}`;
             } else if (rule.operator === 'endsWith') {
-              return `{${rule.field}:/${rule.value}$/}`;
+              return `{"${rule.field}":/${rule.value}$/}`;
             } else if (rule.operator === 'doesNotContain') {
-              return `{${rule.field}:{$not:/${rule.value}/}}`;
+              return `{"${rule.field}":{"$not":/${rule.value}/}}`;
             } else if (rule.operator === 'doesNotBeginWith') {
-              return `{${rule.field}:{$not:/^${rule.value}/}}`;
+              return `{"${rule.field}":{"$not":/^${rule.value}/}}`;
             } else if (rule.operator === 'doesNotEndWith') {
-              return `{${rule.field}:{$not:/${rule.value}$/}}`;
+              return `{"${rule.field}":{"$not":/${rule.value}$/}}`;
             } else if (rule.operator === 'null') {
-              return `{${rule.field}:null}`;
+              return `{"${rule.field}":null}`;
             } else if (rule.operator === 'notNull') {
-              return `{${rule.field}:{$ne:null}}`;
+              return `{"${rule.field}":{"$ne":null}}`;
             } else if (rule.operator === 'in' || rule.operator === 'notIn') {
               const valArray = toArray(rule.value);
               if (valArray.length) {
-                return `{${rule.field}:{${mongoOperator}:[${valArray.map((val: any) => {
+                return `{"${rule.field}":{"${mongoOperator}":[${valArray.map((val: any) => {
                   return `"${val.trim()}"`;
                 })}]}}`;
               } else {
@@ -346,13 +346,11 @@ const formatQuery = (
               if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
                 const [first, second] = valArray;
                 if (rule.operator === 'between') {
-                  return `{$and:[{${rule.field}:{$gte:"${first.trim()}"}},{${
-                    rule.field
-                  }:{$lte:"${second.trim()}"}}]}`;
+                  return `{"$and":[{${rule.field}:{"$gte":"${first.trim()}"}},{${rule.field
+                    }:{"$lte":"${second.trim()}"}}]}`;
                 } else {
-                  return `{$or:[{${rule.field}:{$lt:"${first.trim()}"}},{${
-                    rule.field
-                  }:{$gt:"${second.trim()}"}}]}`;
+                  return `{"$or":[{${rule.field}:{"$lt":"${first.trim()}"}},{${rule.field
+                    }:{"$gt":"${second.trim()}"}}]}`;
                 }
               } else {
                 return '';
