@@ -46,7 +46,7 @@ const mongoOperators: { [op: string]: string } = {
   '<': '$lt',
   '<=': '$lte',
   '>': '$gt',
-  '>=': 'gte',
+  '>=': '$gte',
   in: '$in',
   notIn: '$nin',
 };
