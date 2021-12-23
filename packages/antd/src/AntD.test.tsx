@@ -1,67 +1,48 @@
-import { ThemeProvider } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
 import {
+  defaultNotToggleProps,
   defaultValueEditorProps,
   defaultValueSelectorProps,
   testActionElement,
   testDragHandle,
-  testNotToggle,
   testValueEditor,
 } from '@react-querybuilder/compat';
 import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { forwardRef } from 'react';
 import {
-  DragHandleProps,
+  defaultTranslations,
   NameLabelPair,
+  NotToggleProps,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
 import {
-  MaterialActionElement,
-  MaterialDragHandle,
-  MaterialNotToggle,
-  MaterialValueEditor,
-  MaterialValueSelector,
+  AntDActionElement,
+  AntDDragHandle,
+  AntDNotToggle,
+  AntDValueEditor,
+  AntDValueSelector,
 } from '.';
 
-interface MaterialValueEditorProps extends ValueEditorProps {
+interface AntDValueEditorProps extends ValueEditorProps {
   values: NameLabelPair[];
 }
 
-const theme = createTheme();
-const generateWrapper = (RQBComponent: any) => {
-  const Wrapper = (props: any) => (
-    <ThemeProvider theme={theme}>
-      <RQBComponent {...props} />
-    </ThemeProvider>
-  );
-  Wrapper.displayName = RQBComponent.displayName;
-  return Wrapper;
-};
-const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
-  <ThemeProvider theme={theme}>
-    <MaterialDragHandle {...props} ref={ref} />
-  </ThemeProvider>
-));
-WrapperDH.displayName = MaterialDragHandle.displayName;
-
-const materialValueSelectorProps: ValueSelectorProps = {
+const antdValueSelectorProps: ValueSelectorProps = {
   ...defaultValueSelectorProps,
-  title: MaterialValueSelector.displayName,
+  title: AntDValueSelector.displayName,
 };
-const materialValueEditorProps: MaterialValueEditorProps = {
+const antdValueEditorProps: AntDValueEditorProps = {
   ...defaultValueEditorProps,
   type: 'select',
-  title: MaterialValueEditor.displayName,
+  title: AntDValueEditor.displayName,
   values: defaultValueSelectorProps.options,
 };
 
-const testMaterialSelect = (
+const testAntDSelect = (
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
-  const testValues: NameLabelPair[] = props.values ?? props.options;
+  const testValues = props.values ?? props.options;
   const testVal = testValues[1];
 
   it('should render the correct number of options', () => {
@@ -107,28 +88,60 @@ const testMaterialSelect = (
   });
 };
 
-describe('Material compatible components', () => {
-  testActionElement(generateWrapper(MaterialActionElement));
-  testDragHandle(WrapperDH);
-  testNotToggle(generateWrapper(MaterialNotToggle));
-  testValueEditor(generateWrapper(MaterialValueEditor), { select: true });
+describe('AntD compatible components', () => {
+  testActionElement(AntDActionElement);
+  testDragHandle(AntDDragHandle);
+  testValueEditor(AntDValueEditor, { select: true });
 
   (
     [
       {
-        desc: `${materialValueEditorProps.title} as select`,
-        comp: MaterialValueEditor,
-        prop: materialValueEditorProps,
+        desc: `${antdValueEditorProps.title} as select`,
+        comp: AntDValueEditor,
+        prop: antdValueEditorProps,
       },
       {
-        desc: materialValueSelectorProps.title,
-        comp: MaterialValueSelector,
-        prop: materialValueSelectorProps,
+        desc: antdValueSelectorProps.title,
+        comp: AntDValueSelector,
+        prop: antdValueSelectorProps,
       },
     ] as const
   ).forEach(t => {
     describe(t.desc, () => {
-      testMaterialSelect(t.comp, t.prop);
+      testAntDSelect(t.comp, t.prop);
+    });
+  });
+
+  const title = AntDNotToggle.displayName;
+  describe(title, () => {
+    const { label } = defaultTranslations.notToggle;
+    const props: NotToggleProps = { ...defaultNotToggleProps, label, title };
+
+    it('should have the value passed in', () => {
+      const { getByLabelText } = render(<AntDNotToggle {...props} checked />);
+      expect(getByLabelText(label)).toBeDefined();
+    });
+
+    it('should have the className passed into the <label />', () => {
+      const { getByLabelText } = render(<AntDNotToggle {...props} className="foo" />);
+      expect(getByLabelText(label)).toHaveClass('foo');
+    });
+
+    it('should call the onChange method passed in', () => {
+      const onChange = jest.fn();
+      const { getByLabelText } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
+      userEvent.click(getByLabelText(label));
+      expect(onChange).toHaveBeenCalledWith(true);
+    });
+
+    it('should be disabled by disabled prop', () => {
+      const onChange = jest.fn();
+      const { getByLabelText } = render(
+        <AntDNotToggle {...props} handleOnChange={onChange} disabled />
+      );
+      expect(getByLabelText(label)).toBeDisabled();
+      userEvent.click(getByLabelText(label));
+      expect(onChange).not.toHaveBeenCalled();
     });
   });
 });
