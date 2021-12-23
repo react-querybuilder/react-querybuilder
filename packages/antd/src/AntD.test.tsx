@@ -8,8 +8,7 @@ import {
 } from '@react-querybuilder/compat';
 import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  defaultTranslations,
+import type {
   NameLabelPair,
   NotToggleProps,
   ValueEditorProps,
@@ -109,7 +108,7 @@ describe('AntD compatible components', () => {
 
   const title = AntDNotToggle.displayName;
   describe(title, () => {
-    const { label } = defaultTranslations.notToggle;
+    const label = 'Not';
     const props: NotToggleProps = { ...defaultNotToggleProps, label, title };
 
     it('should have the value passed in', () => {

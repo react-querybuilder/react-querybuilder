@@ -11,7 +11,7 @@ import {
 import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
-import {
+import type {
   DragHandleProps,
   NameLabelPair,
   ValueEditorProps,

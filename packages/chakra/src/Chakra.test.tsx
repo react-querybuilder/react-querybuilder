@@ -7,7 +7,7 @@ import {
   testValueSelector,
 } from '@react-querybuilder/compat';
 import { forwardRef } from 'react';
-import { DragHandleProps } from 'react-querybuilder';
+import type { DragHandleProps } from 'react-querybuilder';
 import {
   ChakraActionElement,
   ChakraDragHandle,
