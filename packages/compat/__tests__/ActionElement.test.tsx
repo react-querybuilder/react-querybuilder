@@ -1,8 +1,9 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ActionWithRulesProps } from 'react-querybuilder';
+import { errorMessageIsAboutPointerEventsNone } from './utils';
 
-const defaultProps: ActionWithRulesProps = {
+export const defaultActionElementProps: ActionWithRulesProps = {
   handleOnClick: () => {},
   className: '',
   level: 0,
@@ -11,7 +12,7 @@ const defaultProps: ActionWithRulesProps = {
 
 export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {
   const title = ActionElement.displayName ?? 'ActionElement';
-  const props = { ...defaultProps, title };
+  const props = { ...defaultActionElementProps, title };
 
   describe(title, () => {
     it('should have the label passed into the <button />', () => {
@@ -34,7 +35,14 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
     it('should be disabled by disabled prop', () => {
       const onClick = jest.fn();
       const { getByTitle } = render(<ActionElement {...props} handleOnClick={onClick} disabled />);
-      userEvent.click(getByTitle(title));
+      expect(getByTitle(title)).toBeDisabled();
+      try {
+        userEvent.click(getByTitle(title));
+      } catch (e) {
+        if (!errorMessageIsAboutPointerEventsNone(e)) {
+          throw e;
+        }
+      }
       expect(onClick).not.toHaveBeenCalled();
     });
   });

@@ -13,8 +13,10 @@ import {
   AntDValueSelector,
 } from '.';
 
-testActionElement(AntDActionElement);
-testDragHandle(AntDDragHandle);
-testNotToggle(AntDNotToggle);
-testValueEditor(AntDValueEditor);
-testValueSelector(AntDValueSelector);
+describe('AntD compatible components', () => {
+  testActionElement(AntDActionElement);
+  testDragHandle(AntDDragHandle);
+  testNotToggle(AntDNotToggle);
+  testValueEditor(AntDValueEditor, { select: true });
+  testValueSelector(AntDValueSelector);
+});

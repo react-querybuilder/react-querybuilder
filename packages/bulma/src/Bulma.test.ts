@@ -6,7 +6,9 @@ import {
 } from '@react-querybuilder/compat';
 import { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector } from '.';
 
-testActionElement(BulmaActionElement);
-testNotToggle(BulmaNotToggle);
-testValueEditor(BulmaValueEditor);
-testValueSelector(BulmaValueSelector);
+describe('Bulma compatible components', () => {
+  testActionElement(BulmaActionElement);
+  testNotToggle(BulmaNotToggle);
+  testValueEditor(BulmaValueEditor);
+  testValueSelector(BulmaValueSelector);
+});

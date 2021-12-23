@@ -32,8 +32,10 @@ const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
 ));
 WrapperDH.displayName = ChakraDragHandle.displayName;
 
-testActionElement(generateWrapper(ChakraActionElement));
-testDragHandle(WrapperDH);
-testNotToggle(generateWrapper(ChakraNotToggle));
-testValueEditor(generateWrapper(ChakraValueEditor));
-testValueSelector(generateWrapper(ChakraValueSelector));
+describe('Chakra compatible components', () => {
+  testActionElement(generateWrapper(ChakraActionElement));
+  testDragHandle(WrapperDH);
+  testNotToggle(generateWrapper(ChakraNotToggle));
+  testValueEditor(generateWrapper(ChakraValueEditor));
+  testValueSelector(generateWrapper(ChakraValueSelector));
+});

@@ -1,9 +1,14 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { NotToggleProps } from 'react-querybuilder';
-import { findInput, hasOrInheritsClass, isOrInheritsChecked } from './utils';
+import {
+  errorMessageIsAboutPointerEventsNone,
+  findInput,
+  hasOrInheritsClass,
+  isOrInheritsChecked,
+} from './utils';
 
-const defaultProps: NotToggleProps = {
+export const defaultNotToggleProps: NotToggleProps = {
   handleOnChange: () => {},
   level: 0,
   path: [],
@@ -12,12 +17,12 @@ const defaultProps: NotToggleProps = {
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {
   const title = NotToggle.displayName ?? 'NotToggle';
   const label = 'Not';
-  const props = { ...defaultProps, label, title };
+  const props = { ...defaultNotToggleProps, label, title };
 
   describe(title, () => {
     it('should have the value passed into the <input />', () => {
       const { getByLabelText } = render(<NotToggle {...props} checked />);
-      isOrInheritsChecked(findInput(getByLabelText(label)));
+      expect(isOrInheritsChecked(findInput(getByLabelText(label)))).toBe(true);
     });
 
     it('should have the className passed into the <label />', () => {
@@ -37,7 +42,14 @@ export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) =>
       const { getByLabelText } = render(
         <NotToggle {...props} handleOnChange={onChange} disabled />
       );
-      userEvent.click(getByLabelText(label));
+      expect(getByLabelText(label)).toBeDisabled();
+      try {
+        userEvent.click(getByLabelText(label));
+      } catch (e) {
+        if (!errorMessageIsAboutPointerEventsNone(e)) {
+          throw e;
+        }
+      }
       expect(onChange).not.toHaveBeenCalled();
     });
   });

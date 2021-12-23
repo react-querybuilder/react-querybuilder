@@ -14,7 +14,7 @@ const MaterialNotToggle = ({
     title={title}
     disabled={disabled}
     control={<Switch checked={!!checked} onChange={e => handleOnChange(e.target.checked)} />}
-    label={label ?? ''}
+    label={label ?? /* istanbul ignore next */ ''}
   />
 );
 

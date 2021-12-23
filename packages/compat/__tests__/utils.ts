@@ -44,6 +44,7 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   }
   try {
     expect(el).toBeChecked();
+    return true;
   } catch (er) {
     if (attempt < 10) {
       return isOrInheritsChecked(el.parentElement, attempt + 1);
@@ -51,3 +52,6 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   }
   return false;
 };
+
+export const errorMessageIsAboutPointerEventsNone = (e: Error) =>
+  e.message.includes('pointer-events set to "none"');

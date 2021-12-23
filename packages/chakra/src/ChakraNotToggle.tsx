@@ -24,7 +24,7 @@ const ChakraNotToggle = ({
           id={id.current}
           size="sm"
           colorScheme="red"
-          checked={checked}
+          isChecked={checked}
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />

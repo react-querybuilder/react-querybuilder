@@ -1,9 +1,16 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { findInput, findSelect } from './utils';
+import { errorMessageIsAboutPointerEventsNone, findInput, findSelect } from './utils';
 
-const defaultProps: ValueEditorProps = {
+type ValueEditorTestsToSkip = Partial<{
+  def: boolean;
+  select: boolean;
+  checkbox: boolean;
+  radio: boolean;
+}>;
+
+export const defaultValueEditorProps: ValueEditorProps = {
   field: 'TEST',
   fieldData: { name: 'TEST', label: 'Test' },
   operator: '=',
@@ -12,15 +19,18 @@ const defaultProps: ValueEditorProps = {
   path: [],
 };
 
-export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProps>) => {
+export const testValueEditor = (
+  ValueEditor: React.ComponentType<ValueEditorProps>,
+  skip: ValueEditorTestsToSkip = {}
+) => {
   const title = ValueEditor.displayName ?? 'ValueEditor';
-  const props = { ...defaultProps, title };
+  const props = { ...defaultValueEditorProps, title };
 
   describe(title, () => {
-    describe('when using default rendering', () => {
+    (skip.def ? describe.skip : describe)('when using default rendering', () => {
       it('should have the value passed into the <input />', () => {
         const { getByTitle } = render(<ValueEditor {...props} value="test" />);
-        expect((getByTitle(title) as HTMLInputElement).value).toBe('test');
+        expect(findInput(getByTitle(title))).toHaveValue('test');
       });
 
       it('should render nothing for operator "null"', () => {
@@ -81,13 +91,14 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
       });
     });
 
-    describe('when rendering a select', () => {
+    (skip.select ? describe.skip : describe)('when rendering a select', () => {
       it('should render the correct number of options', () => {
         const { getByTitle } = render(
           <ValueEditor {...props} type="select" values={[{ name: 'test', label: 'Test' }]} />
         );
-        expect(() => findSelect(getByTitle(title))).not.toThrow();
-        expect(findSelect(getByTitle(title)).querySelectorAll('option')).toHaveLength(1);
+        const getSelect = () => findSelect(getByTitle(title));
+        expect(getSelect).not.toThrow();
+        expect(getSelect().querySelectorAll('option')).toHaveLength(1);
       });
 
       it('should call the onChange method passed in', () => {
@@ -115,12 +126,19 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             disabled
           />
         );
-        userEvent.selectOptions(findSelect(getByTitle(title)), 'test');
+        expect(findSelect(getByTitle(title))).toBeDisabled();
+        try {
+          userEvent.selectOptions(findSelect(getByTitle(title)), 'test');
+        } catch (e) {
+          if (!errorMessageIsAboutPointerEventsNone(e)) {
+            throw e;
+          }
+        }
         expect(handleOnChange).not.toHaveBeenCalled();
       });
     });
 
-    describe('when rendering a checkbox', () => {
+    (skip.checkbox ? describe.skip : describe)('when rendering a checkbox', () => {
       it('should render the checkbox and react to changes', () => {
         const handleOnChange = jest.fn();
         const { getByTitle } = render(
@@ -137,20 +155,35 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
         const { getByTitle } = render(
           <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} disabled />
         );
-        userEvent.click(findInput(getByTitle(title)));
+        expect(findInput(getByTitle(title))).toBeDisabled();
+        try {
+          userEvent.click(findInput(getByTitle(title)));
+        } catch (e) {
+          if (!errorMessageIsAboutPointerEventsNone(e)) {
+            throw e;
+          }
+        }
         expect(handleOnChange).not.toHaveBeenCalled();
       });
     });
 
-    describe('when rendering a radio button set', () => {
+    (skip.radio ? describe.skip : describe)('when rendering a radio button set', () => {
       it('should render the radio buttons with labels', () => {
         const { getByTitle } = render(
-          <ValueEditor {...props} type="radio" values={[{ name: 'test', label: 'Test' }]} />
+          <ValueEditor
+            {...props}
+            type="radio"
+            values={[
+              { name: 'test1', label: 'Test 1' },
+              { name: 'test2', label: 'Test 2' },
+            ]}
+          />
         );
-        expect(getByTitle(title).querySelectorAll('input')).toHaveLength(1);
-        expect(getByTitle(title).querySelector('input[type="radio"]')!.getAttribute('type')).toBe(
-          'radio'
-        );
+        const radioButtons = getByTitle(title).querySelectorAll('input[type="radio"]');
+        expect(radioButtons).toHaveLength(2);
+        radioButtons.forEach(r => {
+          expect(r.getAttribute('type')).toBe('radio');
+        });
       });
 
       it('should call the onChange handler', () => {
@@ -160,11 +193,19 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             {...props}
             type="radio"
             handleOnChange={handleOnChange}
-            values={[{ name: 'test', label: 'Test' }]}
+            values={[
+              { name: 'test1', label: 'Test 1' },
+              { name: 'test2', label: 'Test 2' },
+            ]}
           />
         );
-        userEvent.click(getByTitle(title).querySelector('input[type="radio"]')!);
-        expect(handleOnChange).toHaveBeenCalledWith('test');
+        getByTitle(title)
+          .querySelectorAll('input[type="radio"]')
+          .forEach(r => {
+            userEvent.click(r);
+          });
+        expect(handleOnChange).toHaveBeenCalledWith('test1');
+        expect(handleOnChange).toHaveBeenCalledWith('test2');
       });
 
       it('should be disabled by the disabled prop', () => {
@@ -174,11 +215,25 @@ export const testValueEditor = (ValueEditor: React.ComponentType<ValueEditorProp
             {...props}
             type="radio"
             handleOnChange={handleOnChange}
-            values={[{ name: 'test', label: 'Test' }]}
+            values={[
+              { name: 'test1', label: 'Test 1' },
+              { name: 'test2', label: 'Test 2' },
+            ]}
             disabled
           />
         );
-        userEvent.click(getByTitle(title).querySelector('input[type="radio"]')!);
+        getByTitle(title)
+          .querySelectorAll('input[type="radio"]')
+          .forEach(r => {
+            expect(r).toBeDisabled();
+            try {
+              userEvent.click(r);
+            } catch (e) {
+              if (!errorMessageIsAboutPointerEventsNone(e)) {
+                throw e;
+              }
+            }
+          });
         expect(handleOnChange).not.toHaveBeenCalled();
       });
     });

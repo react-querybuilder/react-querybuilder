@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-const defaultProps: DragHandleProps = {
+export const defaultDragHandleProps: DragHandleProps = {
   level: 1,
   path: [0],
 };
@@ -12,7 +12,7 @@ export const testDragHandle = (
   >
 ) => {
   const title = DragHandle.displayName ?? 'DragHandle';
-  const props = { ...defaultProps, title };
+  const props = { ...defaultDragHandleProps, title };
 
   describe(title, () => {
     it('should have the className passed into the <span />', () => {
