@@ -6,7 +6,7 @@ import {
   testDragHandle,
   testValueEditor,
 } from '@react-querybuilder/compat';
-import { render, within } from '@testing-library/react';
+import { act, fireEvent, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type {
   NameLabelPair,
@@ -46,16 +46,22 @@ const testAntDSelect = (
   const testVal = testValues[1];
 
   describe(title, () => {
-    it('should render the correct number of options', () => {
+    it('should render the correct number of options', async () => {
       const { getByRole } = render(<Component {...props} />);
-      userEvent.click(getByRole('combobox'));
+      await act(async () => {
+        userEvent.click(getByRole('combobox'));
+        await new Promise(r => setTimeout(r, 500));
+      });
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option')).toHaveLength(2);
     });
 
-    it('should have the options passed into the <select />', () => {
+    it('should have the options passed into the <select />', async () => {
       const { getByRole } = render(<Component {...props} />);
-      userEvent.click(getByRole('combobox'));
+      await act(async () => {
+        userEvent.click(getByRole('combobox'));
+        await new Promise(r => setTimeout(r, 500));
+      });
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
     });
@@ -65,12 +71,18 @@ const testAntDSelect = (
       expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
     });
 
-    it('should call the onChange method passed in', () => {
+    it('should call the onChange method passed in', async () => {
       const handleOnChange = jest.fn();
-      const { getByRole } = render(<Component {...props} handleOnChange={handleOnChange} />);
-      userEvent.click(getByRole('combobox'));
-      const listbox = within(getByRole('listbox'));
-      userEvent.click(listbox.getByText(testVal.label));
+      const { getByRole, getByText } = render(
+        <Component {...props} handleOnChange={handleOnChange} />
+      );
+      await act(async () => {
+        userEvent.click(getByRole('combobox'));
+        await new Promise(r => setTimeout(r, 500));
+      });
+      // Using fireEvent.click here instead of userEvent.click
+      // because antd sets `pointer-events: none` on the options.
+      fireEvent.click(getByText(testVal.label));
       expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
     });
 

@@ -63,46 +63,48 @@ const testMaterialSelect = (
   props: any
 ) => {
   const testValues: NameLabelPair[] = props.values ?? props.options;
-  const testVal = testValues[1];
+  const [firstVal, secondVal] = testValues;
 
   describe(title, () => {
     it('should render the correct number of options', () => {
-      const { getByRole } = render(<Component {...props} />);
+      const { getByRole } = render(<Component {...props} value={firstVal.name} />);
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option')).toHaveLength(2);
     });
 
     it('should have the options passed into the <select />', () => {
-      const { getByRole } = render(<Component {...props} />);
+      const { getByRole } = render(<Component {...props} value={firstVal.name} />);
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
-      expect(() => listbox.getByText(testVal.label)).not.toThrow();
+      expect(() => listbox.getByText(secondVal.label)).not.toThrow();
     });
 
     it('should have the value passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} value={testVal.name} />);
-      expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
+      const { getByTitle } = render(<Component {...props} value={secondVal.name} />);
+      expect(getByTitle(props.title)).toHaveTextContent(secondVal.label);
     });
 
     it('should call the onChange method passed in', () => {
       const handleOnChange = jest.fn();
-      const { getByRole } = render(<Component {...props} handleOnChange={handleOnChange} />);
+      const { getByRole } = render(
+        <Component {...props} value={firstVal.name} handleOnChange={handleOnChange} />
+      );
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
-      userEvent.click(listbox.getByText(testVal.label));
-      expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
+      userEvent.click(listbox.getByText(secondVal.label));
+      expect(handleOnChange).toHaveBeenCalledWith(secondVal.name);
     });
 
     it('should have the className passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} className="foo" />);
+      const { getByTitle } = render(<Component {...props} className="foo" value={firstVal.name} />);
       expect(getByTitle(props.title)).toHaveClass('foo');
     });
 
     it('should be disabled by the disabled prop', () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(
-        <Component {...props} handleOnChange={handleOnChange} disabled />
+        <Component {...props} handleOnChange={handleOnChange} disabled value={firstVal.name} />
       );
       expect(getByRole('button')).toHaveAttribute('aria-disabled', 'true');
       userEvent.click(getByRole('button'));
