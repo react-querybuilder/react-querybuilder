@@ -42,22 +42,22 @@ const testAntDSelect = (
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
-  const testValues = props.values ?? props.options;
+  const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 
   describe(title, () => {
     it('should render the correct number of options', () => {
       const { getByRole } = render(<Component {...props} />);
-      userEvent.click(getByRole('button'));
+      userEvent.click(getByRole('combobox'));
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option')).toHaveLength(2);
     });
 
     it('should have the options passed into the <select />', () => {
       const { getByRole } = render(<Component {...props} />);
-      userEvent.click(getByRole('button'));
+      userEvent.click(getByRole('combobox'));
       const listbox = within(getByRole('listbox'));
-      expect(() => listbox.getByText(testVal.label)).not.toThrow();
+      expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
     });
 
     it('should have the value passed into the <select />', () => {
@@ -68,7 +68,7 @@ const testAntDSelect = (
     it('should call the onChange method passed in', () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(<Component {...props} handleOnChange={handleOnChange} />);
-      userEvent.click(getByRole('button'));
+      userEvent.click(getByRole('combobox'));
       const listbox = within(getByRole('listbox'));
       userEvent.click(listbox.getByText(testVal.label));
       expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
@@ -84,8 +84,8 @@ const testAntDSelect = (
       const { getByRole } = render(
         <Component {...props} handleOnChange={handleOnChange} disabled />
       );
-      expect(getByRole('button')).toHaveAttribute('aria-disabled', 'true');
-      userEvent.click(getByRole('button'));
+      expect(getByRole('combobox')).toHaveAttribute('aria-disabled', 'true');
+      userEvent.click(getByRole('combobox'));
       expect(() => getByRole('listbox')).toThrow();
       expect(handleOnChange).not.toHaveBeenCalled();
     });
@@ -112,29 +112,29 @@ describe('AntD compatible components', () => {
     const props: NotToggleProps = { ...defaultNotToggleProps, label, title };
 
     it('should have the value passed in', () => {
-      const { getByLabelText } = render(<AntDNotToggle {...props} checked />);
-      expect(getByLabelText(label)).toBeDefined();
+      const { getByTitle } = render(<AntDNotToggle {...props} checked />);
+      expect(getByTitle(title)).toBeDefined();
     });
 
     it('should have the className passed into the <label />', () => {
-      const { getByLabelText } = render(<AntDNotToggle {...props} className="foo" />);
-      expect(getByLabelText(label)).toHaveClass('foo');
+      const { getByTitle } = render(<AntDNotToggle {...props} className="foo" />);
+      expect(getByTitle(title)).toHaveClass('foo');
     });
 
     it('should call the onChange method passed in', () => {
       const onChange = jest.fn();
-      const { getByLabelText } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
-      userEvent.click(getByLabelText(label));
+      const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
+      userEvent.click(getByTitle(title));
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
     it('should be disabled by disabled prop', () => {
       const onChange = jest.fn();
-      const { getByLabelText } = render(
+      const { getByTitle } = render(
         <AntDNotToggle {...props} handleOnChange={onChange} disabled />
       );
-      expect(getByLabelText(label)).toBeDisabled();
-      userEvent.click(getByLabelText(label));
+      expect(getByTitle(title)).toBeDisabled();
+      userEvent.click(getByTitle(title));
       expect(onChange).not.toHaveBeenCalled();
     });
   });
