@@ -317,17 +317,17 @@ const formatQuery = (
             if (['<', '<=', '=', '!=', '>', '>='].includes(rule.operator)) {
               return `{"${rule.field}":{"${mongoOperator}":${value}}}`;
             } else if (rule.operator === 'contains') {
-              return `{"${rule.field}":"/${rule.value}/"}`;
+              return `{"${rule.field}":"${rule.value}"}`;
             } else if (rule.operator === 'beginsWith') {
-              return `{"${rule.field}":"/^${rule.value}/"}`;
+              return `{"${rule.field}":"^${rule.value}"}`;
             } else if (rule.operator === 'endsWith') {
-              return `{"${rule.field}":"/${rule.value}$/"}`;
+              return `{"${rule.field}":"${rule.value}$"}`;
             } else if (rule.operator === 'doesNotContain') {
-              return `{"${rule.field}":{"$not":"/${rule.value}/"}}`;
+              return `{"${rule.field}":{"$not":"${rule.value}"}}`;
             } else if (rule.operator === 'doesNotBeginWith') {
-              return `{"${rule.field}":{"$not":"/^${rule.value}/"}}`;
+              return `{"${rule.field}":{"$not":"^${rule.value}"}}`;
             } else if (rule.operator === 'doesNotEndWith') {
-              return `{"${rule.field}":{"$not":"/${rule.value}$/"}}`;
+              return `{"${rule.field}":{"$not":"${rule.value}$"}}`;
             } else if (rule.operator === 'null') {
               return `{"${rule.field}":null}`;
             } else if (rule.operator === 'notNull') {
