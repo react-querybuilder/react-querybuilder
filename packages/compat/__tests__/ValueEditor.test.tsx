@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ValueEditorProps } from 'react-querybuilder';
-import { errorMessageIsAboutPointerEventsNone, findInput, findSelect } from './utils';
+import type { NameLabelPair, ValueEditorProps } from 'react-querybuilder';
+import { errorMessageIsAboutPointerEventsNone, findInput } from './utils';
+import { defaultValueSelectorProps, testSelect } from './ValueSelector.test';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
@@ -9,6 +10,9 @@ type ValueEditorTestsToSkip = Partial<{
   checkbox: boolean;
   radio: boolean;
 }>;
+interface ValueEditorAsSelectProps extends ValueEditorProps {
+  values: NameLabelPair[];
+}
 
 export const defaultValueEditorProps: ValueEditorProps = {
   field: 'TEST',
@@ -91,52 +95,15 @@ export const testValueEditor = (
       });
     });
 
-    (skip.select ? describe.skip : describe)('when rendering a select', () => {
-      it('should render the correct number of options', () => {
-        const { getByTitle } = render(
-          <ValueEditor {...props} type="select" values={[{ name: 'test', label: 'Test' }]} />
-        );
-        const getSelect = () => findSelect(getByTitle(title));
-        expect(getSelect).not.toThrow();
-        expect(getSelect().querySelectorAll('option')).toHaveLength(1);
-      });
-
-      it('should call the onChange method passed in', () => {
-        const handleOnChange = jest.fn();
-        const { getByTitle } = render(
-          <ValueEditor
-            {...props}
-            type="select"
-            handleOnChange={handleOnChange}
-            values={[{ name: 'test', label: 'Test' }]}
-          />
-        );
-        userEvent.selectOptions(findSelect(getByTitle(title)), 'test');
-        expect(handleOnChange).toHaveBeenCalledWith('test');
-      });
-
-      it('should be disabled by the disabled prop', () => {
-        const handleOnChange = jest.fn();
-        const { getByTitle } = render(
-          <ValueEditor
-            {...props}
-            type="select"
-            handleOnChange={handleOnChange}
-            values={[{ name: 'test', label: 'Test' }]}
-            disabled
-          />
-        );
-        expect(findSelect(getByTitle(title))).toBeDisabled();
-        try {
-          userEvent.selectOptions(findSelect(getByTitle(title)), 'test');
-        } catch (e) {
-          if (!errorMessageIsAboutPointerEventsNone(e)) {
-            throw e;
-          }
-        }
-        expect(handleOnChange).not.toHaveBeenCalled();
-      });
-    });
+    const valueEditorAsSelectProps: ValueEditorAsSelectProps = {
+      ...defaultValueEditorProps,
+      type: 'select',
+      values: defaultValueSelectorProps.options,
+      title,
+    };
+    if (!skip.select) {
+      testSelect(title, ValueEditor, valueEditorAsSelectProps);
+    }
 
     (skip.checkbox ? describe.skip : describe)('when rendering a checkbox', () => {
       it('should render the checkbox and react to changes', () => {
