@@ -346,9 +346,13 @@ const formatQuery = (
               if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
                 const [first, second] = valArray;
                 if (rule.operator === 'between') {
-                  return `{"$and":[{"${rule.field}":{"$gte":"${first.trim()}"}},{"${rule.field}":{"$lte":"${second.trim()}"}}]}`;
+                  return `{"$and":[{"${rule.field}":{"$gte":"${first.trim()}"}},{"${
+                    rule.field
+                  }":{"$lte":"${second.trim()}"}}]}`;
                 } else {
-                  return `{"$or":[{"${rule.field}":{"$lt":"${first.trim()}"}},{"${rule.field}":{"$gt":"${second.trim()}"}}]}`;
+                  return `{"$or":[{"${rule.field}":{"$lt":"${first.trim()}"}},{"${
+                    rule.field
+                  }":{"$gt":"${second.trim()}"}}]}`;
                 }
               } else {
                 return '';
