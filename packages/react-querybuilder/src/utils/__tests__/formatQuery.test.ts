@@ -288,7 +288,7 @@ const params_named = {
   email_3: '%fr',
 };
 const mongoQueryString =
-  '{$and:[{firstName:null},{lastName:{$ne:null}},{firstName:{$in:["Test","This"]}},{lastName:{$nin:["Test","This"]}},{$and:[{firstName:{$gte:"Test"}},{firstName:{$lte:"This"}}]},{$and:[{firstName:{$gte:"Test"}},{firstName:{$lte:"This"}}]},{$or:[{lastName:{$lt:"Test"}},{lastName:{$gt:"This"}}]},{age:{$eq:"26"}},{isMusician:{$eq:true}},{email:/@/},{email:/^ab/},{email:/com$/},{hello:{$not:/com/}},{job:{$not:/^Man/}},{job:{$not:/ger$/}},{$or:[{job:{$eq:"Sales Executive"}}]}]}';
+  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"age":{"$eq":"26"}},{"isMusician":{"$eq":true}},{"email":"/@/"},{"email":"/^ab/"},{"email":"/com$/"},{"hello":{"$not":"/com/"}},{"job":{"$not":"/^Man/"}},{"job":{"$not":"/ger$/"}},{"$or":[{"job":{"$eq":"Sales Executive"}}]}]}';
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
@@ -442,7 +442,7 @@ describe('formatQuery', () => {
           { id: 'root', rules: [{ field: 'firstName', value: 'Test', operator: '=' }] },
           'mongodb'
         )
-      ).toBe('{$and:[{$expr:true}]}');
+      ).toBe('{"$and":[{"$expr":true}]}');
     });
   });
 
@@ -598,7 +598,7 @@ describe('formatQuery', () => {
           { id: 'root', combinator: 'and', rules: [] },
           { format: 'mongodb', validator: () => false }
         )
-      ).toBe('{$and:[{$expr:true}]}');
+      ).toBe('{"$and":[{"$expr":true}]}');
     });
 
     it('should invalidate a mongob rule', () => {
@@ -607,7 +607,7 @@ describe('formatQuery', () => {
           { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
           { format: 'mongodb', fields: [{ name: 'field', validator: () => false }] }
         )
-      ).toBe('{$and:[{field:{$eq:""}}]}');
+      ).toBe('{"$and":[{"field":{"$eq":""}}]}');
     });
 
     it('should invalidate mongoedb even if fields are valid', () => {
@@ -620,7 +620,7 @@ describe('formatQuery', () => {
             fields: [{ name: 'field', validator: () => true }],
           }
         )
-      ).toBe('{$and:[{$expr:true}]}');
+      ).toBe('{"$and":[{"$expr":true}]}');
     });
 
     it('should invalidate mongodb outermost group', () => {
@@ -636,7 +636,7 @@ describe('formatQuery', () => {
             validator: () => ({ root: false }),
           }
         )
-      ).toBe('{$and:[{$expr:true}]}');
+      ).toBe('{"$and":[{"$expr":true}]}');
     });
 
     it('should invalidate mongodb inner group', () => {
@@ -652,7 +652,7 @@ describe('formatQuery', () => {
             validator: () => ({ inner: false }),
           }
         )
-      ).toBe('{$and:[{$expr:true}]}');
+      ).toBe('{"$and":[{"$expr":true}]}');
     });
   });
 });
