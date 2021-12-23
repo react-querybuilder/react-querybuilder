@@ -288,7 +288,7 @@ const params_named = {
   email_3: '%fr',
 };
 const mongoQueryString =
-  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"age":{"$eq":"26"}},{"isMusician":{"$eq":true}},{"email":"/@/"},{"email":"/^ab/"},{"email":"/com$/"},{"hello":{"$not":"/com/"}},{"job":{"$not":"/^Man/"}},{"job":{"$not":"/ger$/"}},{"$or":[{"job":{"$eq":"Sales Executive"}}]}]}';
+  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"age":{"$eq":"26"}},{"isMusician":{"$eq":true}},{"email":"@"},{"email":"^ab"},{"email":"com$"},{"hello":{"$not":"com"}},{"job":{"$not":"^Man"}},{"job":{"$not":"ger$"}},{"$or":[{"job":{"$eq":"Sales Executive"}}]}]}';
 
 describe('formatQuery', () => {
   it('formats JSON correctly', () => {
