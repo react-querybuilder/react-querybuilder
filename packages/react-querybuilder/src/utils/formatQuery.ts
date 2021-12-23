@@ -117,7 +117,7 @@ const formatQuery = (
     if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
       fallbackExpression = '(1 = 1)';
     } else if (format === 'mongodb') {
-      fallbackExpression = '$and:[{$expr:true}]';
+      fallbackExpression = '"$and":[{"$expr":true}]';
     }
   }
 
@@ -299,7 +299,7 @@ const formatQuery = (
         return outermost ? fallbackExpression : '';
       }
 
-      const combinator = `$${rg.combinator}`;
+      const combinator = `"$${rg.combinator}"`;
 
       const expression: string = rg.rules
         .map(rule => {
@@ -317,17 +317,17 @@ const formatQuery = (
             if (['<', '<=', '=', '!=', '>', '>='].includes(rule.operator)) {
               return `{"${rule.field}":{"${mongoOperator}":${value}}}`;
             } else if (rule.operator === 'contains') {
-              return `{"${rule.field}":/${rule.value}/}`;
+              return `{"${rule.field}":"/${rule.value}/"}`;
             } else if (rule.operator === 'beginsWith') {
-              return `{"${rule.field}":/^${rule.value}/}`;
+              return `{"${rule.field}":"/^${rule.value}/"}`;
             } else if (rule.operator === 'endsWith') {
-              return `{"${rule.field}":/${rule.value}$/}`;
+              return `{"${rule.field}":"/${rule.value}$/"}`;
             } else if (rule.operator === 'doesNotContain') {
-              return `{"${rule.field}":{"$not":/${rule.value}/}}`;
+              return `{"${rule.field}":{"$not":"/${rule.value}/"}}`;
             } else if (rule.operator === 'doesNotBeginWith') {
-              return `{"${rule.field}":{"$not":/^${rule.value}/}}`;
+              return `{"${rule.field}":{"$not":"/^${rule.value}/"}}`;
             } else if (rule.operator === 'doesNotEndWith') {
-              return `{"${rule.field}":{"$not":/${rule.value}$/}}`;
+              return `{"${rule.field}":{"$not":"/${rule.value}$/"}}`;
             } else if (rule.operator === 'null') {
               return `{"${rule.field}":null}`;
             } else if (rule.operator === 'notNull') {
