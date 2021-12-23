@@ -7,8 +7,9 @@ const NotToggle = ({
   label,
   checked,
   disabled,
+  testID,
 }: NotToggleProps) => (
-  <label className={className} title={title}>
+  <label data-testid={testID} className={className} title={title}>
     <input
       type="checkbox"
       onChange={e => handleOnChange(e.target.checked)}

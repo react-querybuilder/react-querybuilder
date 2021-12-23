@@ -37,6 +37,10 @@ export interface CommonSubComponentProps {
    * Validation result of the parent component
    */
   validation?: boolean | ValidationResult;
+  /**
+   * Test ID for this component
+   */
+  testID?: string;
 }
 
 export interface ActionProps extends CommonSubComponentProps {

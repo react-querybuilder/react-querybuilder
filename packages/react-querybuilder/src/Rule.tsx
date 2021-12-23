@@ -138,6 +138,7 @@ export const Rule = ({
       data-level={level}
       data-path={JSON.stringify(path)}>
       <controls.dragHandle
+        testID={TestID.dragHandle}
         ref={dragRef}
         level={level}
         path={path}
@@ -149,6 +150,7 @@ export const Rule = ({
         validation={validationResult}
       />
       <controls.fieldSelector
+        testID={TestID.fields}
         options={fields}
         title={translations.fields.title}
         value={field}
@@ -164,6 +166,7 @@ export const Rule = ({
       {(autoSelectField || fieldData.name !== '~') && (
         <>
           <controls.operatorSelector
+            testID={TestID.operators}
             field={field}
             fieldData={fieldData}
             title={translations.operators.title}
@@ -178,6 +181,7 @@ export const Rule = ({
             validation={validationResult}
           />
           <controls.valueEditor
+            testID={TestID.valueEditor}
             field={field}
             fieldData={fieldData}
             title={translations.value.title}
@@ -198,6 +202,7 @@ export const Rule = ({
       )}
       {showCloneButtons && (
         <controls.cloneRuleAction
+          testID={TestID.cloneRule}
           label={translations.cloneRule.label}
           title={translations.cloneRule.title}
           className={c(standardClassnames.cloneRule, classNames.cloneRule)}
@@ -210,6 +215,7 @@ export const Rule = ({
         />
       )}
       <controls.removeRuleAction
+        testID={TestID.removeRule}
         label={translations.removeRule.label}
         title={translations.removeRule.title}
         className={c(standardClassnames.removeRule, classNames.removeRule)}

@@ -12,6 +12,7 @@ type ValueEditorTestsToSkip = Partial<{
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: NameLabelPair[];
+  testID: string;
 }
 
 export const defaultValueEditorProps: ValueEditorProps = {
@@ -101,6 +102,7 @@ export const testValueEditor = (
         type: 'select',
         values: defaultValueSelectorProps.options,
         title,
+        testID: 'value-editor',
       };
       testSelect(title, ValueEditor, valueEditorAsSelectProps);
     }

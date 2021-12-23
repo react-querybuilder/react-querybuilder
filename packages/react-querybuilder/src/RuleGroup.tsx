@@ -149,6 +149,7 @@ export const RuleGroup = ({
       <div ref={dropRef} className={c(standardClassnames.header, classNames.header, dndOver)}>
         {level > 0 && (
           <controls.dragHandle
+            testID={TestID.dragHandle}
             ref={dragRef}
             level={level}
             path={path}
@@ -162,6 +163,7 @@ export const RuleGroup = ({
         )}
         {!showCombinatorsBetweenRules && !independentCombinators && (
           <controls.combinatorSelector
+            testID={TestID.combinators}
             options={combinators}
             value={combinator}
             title={translations.combinators.title}
@@ -177,6 +179,7 @@ export const RuleGroup = ({
         )}
         {showNotToggle && (
           <controls.notToggle
+            testID={TestID.notToggle}
             className={c(standardClassnames.notToggle, classNames.notToggle)}
             title={translations.notToggle.title}
             label={translations.notToggle.label}
@@ -190,6 +193,7 @@ export const RuleGroup = ({
           />
         )}
         <controls.addRuleAction
+          testID={TestID.addRule}
           label={translations.addRule.label}
           title={translations.addRule.title}
           className={c(standardClassnames.addRule, classNames.addRule)}
@@ -202,6 +206,7 @@ export const RuleGroup = ({
           validation={validationResult}
         />
         <controls.addGroupAction
+          testID={TestID.addGroup}
           label={translations.addGroup.label}
           title={translations.addGroup.title}
           className={c(standardClassnames.addGroup, classNames.addGroup)}
@@ -215,6 +220,7 @@ export const RuleGroup = ({
         />
         {showCloneButtons && path.length >= 1 && (
           <controls.cloneGroupAction
+            testID={TestID.cloneGroup}
             label={translations.cloneRuleGroup.label}
             title={translations.cloneRuleGroup.title}
             className={c(standardClassnames.cloneGroup, classNames.cloneGroup)}
@@ -229,6 +235,7 @@ export const RuleGroup = ({
         )}
         {path.length >= 1 && (
           <controls.removeGroupAction
+            testID={TestID.removeGroup}
             label={translations.removeGroup.label}
             title={translations.removeGroup.title}
             className={c(standardClassnames.removeGroup, classNames.removeGroup)}

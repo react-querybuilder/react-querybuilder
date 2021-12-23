@@ -7,8 +7,10 @@ const ValueSelector = ({
   title,
   value,
   disabled,
+  testID,
 }: ValueSelectorProps) => (
   <select
+    data-testid={testID}
     className={className}
     value={value}
     title={title}

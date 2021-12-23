@@ -122,8 +122,7 @@ describe('<Rule />', () => {
 
   it('should have correct classNames', () => {
     const { getByTestId } = render(<Rule {...props} />);
-    expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.rule);
-    expect(getByTestId(TestID.rule)).toHaveClass('custom-rule-class');
+    expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.rule, 'custom-rule-class');
   });
 
   describe('onElementChanged methods', () => {
@@ -173,7 +172,7 @@ describe('<Rule />', () => {
     it('should call moveRule with the right paths', () => {
       schema.moveRule = jest.fn();
       const { getByText } = render(<Rule {...props} />);
-      userEvent.click(getByText('⧉'));
+      userEvent.click(getByText(props.translations.cloneRule.label));
       expect(schema.moveRule).toHaveBeenCalledWith([0], [1], true);
     });
   });
@@ -181,8 +180,8 @@ describe('<Rule />', () => {
   describe('removeRule', () => {
     it('should call onRuleRemove with the rule and path', () => {
       schema.onRuleRemove = jest.fn();
-      const { getByTestId } = render(<Rule {...props} />);
-      userEvent.click(getByTestId(TestID.rule).querySelector(`.${standardClassnames.removeRule}`));
+      const { getByText } = render(<Rule {...props} />);
+      userEvent.click(getByText(props.translations.removeRule.label));
       expect(schema.onRuleRemove).toHaveBeenCalledWith([0]);
     });
   });
