@@ -1,5 +1,5 @@
 import { useDrop } from 'react-dnd';
-import { dndTypes, standardClassnames } from './defaults';
+import { DNDType, standardClassnames, TestID } from './defaults';
 import { CombinatorSelectorProps, DraggedItem, Schema } from './types';
 import { c, getParentPath, isAncestor, pathsAreEqual } from './utils';
 
@@ -19,7 +19,7 @@ export const InlineCombinator = ({
 }: InlineCombinatorProps) => {
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
-      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      accept: [DNDType.rule, DNDType.ruleGroup],
       canDrop: (item: DraggedItem) => {
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
@@ -60,8 +60,8 @@ export const InlineCombinator = ({
       ref={drop}
       className={wrapperClassName}
       data-dropmonitorid={dropMonitorId}
-      data-testid="inline-combinator">
-      <CombinatorSelectorComponent {...props} path={path} />
+      data-testid={TestID.inlineCombinator}>
+      <CombinatorSelectorComponent {...props} path={path} testID={TestID.combinators} />
     </div>
   );
 };

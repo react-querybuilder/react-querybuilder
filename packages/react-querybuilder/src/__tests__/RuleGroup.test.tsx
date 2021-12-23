@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
-import { defaultCombinators, defaultTranslations, standardClassnames } from '../defaults';
+import { defaultCombinators, defaultTranslations, standardClassnames, TestID } from '../defaults';
 import { Rule } from '../Rule';
 import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
 import type {
@@ -35,6 +35,7 @@ describe('<RuleGroup />', () => {
     controls = {
       combinatorSelector: props => (
         <select
+          data-testid={TestID.combinators}
           className={props.className}
           title={props.title}
           value={props.value}
@@ -45,43 +46,62 @@ describe('<RuleGroup />', () => {
         </select>
       ),
       addRuleAction: props => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.addRule}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           +Rule
         </button>
       ),
       addGroupAction: props => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.addGroup}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           +Group
         </button>
       ),
       cloneGroupAction: props => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.cloneGroup}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           ⧉
         </button>
       ),
       cloneRuleAction: props => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.cloneRule}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           ⧉
         </button>
       ),
       removeGroupAction: props => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.removeGroup}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           x
         </button>
       ),
       removeRuleAction: props => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.removeRule}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           x
         </button>
       ),
       notToggle: props => (
-        <label className={props.className}>
+        <label data-testid={TestID.notToggle} className={props.className}>
           <input type="checkbox" onChange={e => props.handleOnChange(e.target.checked)} />
           Not
         </label>
       ),
       fieldSelector: props => (
         <select
+          data-testid={TestID.fields}
           className={props.className}
           value={props.value}
           onChange={e => props.handleOnChange(e.target.value)}>
@@ -90,6 +110,7 @@ describe('<RuleGroup />', () => {
       ),
       operatorSelector: props => (
         <select
+          data-testid={TestID.operators}
           className={props.className}
           value={props.value}
           onChange={e => props.handleOnChange(e.target.value)}>
@@ -98,6 +119,7 @@ describe('<RuleGroup />', () => {
       ),
       valueEditor: props => (
         <input
+          data-testid={TestID.valueEditor}
           className={props.className}
           value={props.value}
           onChange={e => props.handleOnChange(e.target.value)}
@@ -153,13 +175,13 @@ describe('<RuleGroup />', () => {
 
   it('should have correct classNames', () => {
     const { getByTestId } = render(<RuleGroup {...props} />);
-    expect(getByTestId('rule-group').classList).toContain(standardClassnames.ruleGroup);
-    expect(getByTestId('rule-group').classList).toContain('custom-ruleGroup-class');
+    expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.ruleGroup);
+    expect(getByTestId(TestID.ruleGroup)).toHaveClass('custom-ruleGroup-class');
     expect(
-      getByTestId('rule-group').querySelector(`.${standardClassnames.header}`).classList
+      getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.header}`).classList
     ).toContain(classNames.header);
     expect(
-      getByTestId('rule-group').querySelector(`.${standardClassnames.body}`).classList
+      getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.body}`).classList
     ).toContain(classNames.body);
   });
 
@@ -170,22 +192,16 @@ describe('<RuleGroup />', () => {
 
     it('has 2 <Rule /> elements', () => {
       const { getAllByTestId } = render(<RuleGroup {...props} />);
-      expect(getAllByTestId('rule')).toHaveLength(2);
+      expect(getAllByTestId(TestID.rule)).toHaveLength(2);
     });
 
     it('has the first rule with the correct values', () => {
       const { getAllByTestId } = render(<RuleGroup {...props} />);
-      const firstRule = getAllByTestId('rule')[0];
+      const firstRule = getAllByTestId(TestID.rule)[0];
       expect(firstRule.dataset.ruleId).toBe('rule_id_1');
-      expect(
-        (firstRule.querySelector(`.${standardClassnames.fields}`) as HTMLSelectElement).value
-      ).toBe('field1');
-      expect(
-        (firstRule.querySelector(`.${standardClassnames.operators}`) as HTMLSelectElement).value
-      ).toBe('operator1');
-      expect(
-        (firstRule.querySelector(`.${standardClassnames.value}`) as HTMLInputElement).value
-      ).toBe('value_1');
+      expect(firstRule.querySelector(`.${standardClassnames.fields}`)).toHaveValue('field1');
+      expect(firstRule.querySelector(`.${standardClassnames.operators}`)).toHaveValue('operator1');
+      expect(firstRule.querySelector(`.${standardClassnames.value}`)).toHaveValue('value_1');
     });
   });
 
@@ -214,8 +230,8 @@ describe('<RuleGroup />', () => {
   describe('addRule', () => {
     it('calls onRuleAdd from the schema with expected values', () => {
       schema.onRuleAdd = jest.fn();
-      const { container } = render(<RuleGroup {...props} />);
-      userEvent.click(container.querySelector(`.${standardClassnames.addRule}`));
+      const { getByText } = render(<RuleGroup {...props} />);
+      userEvent.click(getByText(props.translations.addRule.label));
       const call0 = (schema.onRuleAdd as jest.Mock).mock.calls[0];
       expect(call0[0]).toHaveProperty('id');
       expect(call0[0]).toHaveProperty('field', 'field_0');
@@ -228,8 +244,8 @@ describe('<RuleGroup />', () => {
   describe('addGroup', () => {
     it('calls onGroupAdd from the schema with expected values', () => {
       schema.onGroupAdd = jest.fn();
-      const { container } = render(<RuleGroup {...props} />);
-      userEvent.click(container.querySelector(`.${standardClassnames.addGroup}`));
+      const { getByText } = render(<RuleGroup {...props} />);
+      userEvent.click(getByText(props.translations.addGroup.label));
       const call0 = (schema.onGroupAdd as jest.Mock).mock.calls[0];
       expect(call0[0]).toHaveProperty('id');
       expect(call0[0]).toHaveProperty('rules', []);
@@ -245,7 +261,7 @@ describe('<RuleGroup />', () => {
     it('calls moveRule from the schema with expected values', () => {
       schema.moveRule = jest.fn();
       const { getByText } = render(<RuleGroup {...props} />);
-      userEvent.click(getByText('⧉'));
+      userEvent.click(getByText(props.translations.cloneRuleGroup.label));
       expect(schema.moveRule).toHaveBeenCalledWith([0], [1], true);
     });
   });
@@ -253,8 +269,8 @@ describe('<RuleGroup />', () => {
   describe('removeGroup', () => {
     it('calls onGroupRemove from the schema with expected values', () => {
       schema.onGroupRemove = jest.fn();
-      const { container } = render(<RuleGroup {...props} />);
-      userEvent.click(container.querySelector(`.${standardClassnames.removeGroup}`));
+      const { getByText } = render(<RuleGroup {...props} />);
+      userEvent.click(getByText(props.translations.removeGroup.label));
       expect(schema.onGroupRemove).toHaveBeenCalledWith([0]);
     });
   });
@@ -291,11 +307,9 @@ describe('<RuleGroup />', () => {
     });
 
     it('has the correct classNames', () => {
-      const { container } = render(<RuleGroup {...props} />);
-      expect(container.querySelector(`.${standardClassnames.notToggle}`).classList).toContain(
-        standardClassnames.notToggle
-      );
-      expect(container.querySelector(`.${standardClassnames.notToggle}`).classList).toContain(
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      expect(getByTestId(TestID.notToggle)).toHaveClass(
+        standardClassnames.notToggle,
         'custom-notToggle-class'
       );
     });
@@ -313,11 +327,9 @@ describe('<RuleGroup />', () => {
     });
 
     it('has the correct classNames', () => {
-      const { container } = render(<RuleGroup {...props} />);
-      expect(container.querySelector(`.${standardClassnames.cloneGroup}`).classList).toContain(
-        standardClassnames.cloneGroup
-      );
-      expect(container.querySelector(`.${standardClassnames.cloneGroup}`).classList).toContain(
+      const { getByTestId } = render(<RuleGroup {...props} />);
+      expect(getByTestId(TestID.cloneGroup)).toHaveClass(
+        standardClassnames.cloneGroup,
         'custom-cloneGroup-class'
       );
     });
@@ -334,12 +346,11 @@ describe('<RuleGroup />', () => {
         'and',
         { rules: [] },
       ];
-      const { container } = render(<RuleGroup {...props} rules={rules} />);
-      const combinatorSelector = container.querySelector(
-        `.${standardClassnames.combinators}`
-      ) as HTMLSelectElement;
-      expect(combinatorSelector.parentElement.classList).toContain(standardClassnames.betweenRules);
-      expect(combinatorSelector.value).toBe('and');
+      const { getByTestId } = render(<RuleGroup {...props} rules={rules} />);
+      const inlineCombinator = getByTestId(TestID.inlineCombinator);
+      const combinatorSelector = getByTestId(TestID.combinators);
+      expect(inlineCombinator).toHaveClass(standardClassnames.betweenRules);
+      expect(combinatorSelector).toHaveValue('and');
     });
 
     it('should call handleOnChange for string elements', () => {
@@ -366,22 +377,22 @@ describe('<RuleGroup />', () => {
   describe('validation', () => {
     it('should not validate if no validationMap[id] value exists', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.valid);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.invalid);
+      expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate to false if validationMap[id] = false', () => {
       schema.validationMap = { id: false };
       const { getByTestId } = render(<RuleGroup {...props} />);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.valid);
-      expect(getByTestId('rule-group').classList).toContain(standardClassnames.invalid);
+      expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate to true if validationMap[id] = true', () => {
       schema.validationMap = { id: true };
       const { getByTestId } = render(<RuleGroup {...props} />);
-      expect(getByTestId('rule-group').classList).toContain(standardClassnames.valid);
-      expect(getByTestId('rule-group').classList).not.toContain(standardClassnames.invalid);
+      expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should pass down validationResult as validation to children', () => {
@@ -402,15 +413,15 @@ describe('<RuleGroup />', () => {
   describe('enableDragAndDrop', () => {
     it('should not have the drag class if not dragging', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
-      const ruleGroup = getByTestId('rule-group');
-      expect(ruleGroup.classList).not.toContain(standardClassnames.dndDragging);
+      const ruleGroup = getByTestId(TestID.ruleGroup);
+      expect(ruleGroup).not.toHaveClass(standardClassnames.dndDragging);
     });
 
     it('should have the drag class if dragging', () => {
       const { getByTestId } = render(<RuleGroup {...props} />);
-      const ruleGroup = getByTestId('rule-group');
+      const ruleGroup = getByTestId(TestID.ruleGroup);
       simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
-      expect(ruleGroup.classList).toContain(standardClassnames.dndDragging);
+      expect(ruleGroup).toHaveClass(standardClassnames.dndDragging);
       act(() => {
         getDndBackend().simulateEndDrag();
       });
@@ -425,14 +436,14 @@ describe('<RuleGroup />', () => {
           <RuleGroup {...props} path={[1]} />
         </div>
       );
-      const ruleGroups = getAllByTestId('rule-group');
+      const ruleGroups = getAllByTestId(TestID.ruleGroup);
       simulateDragDrop(
         getHandlerId(ruleGroups[1], 'drag'),
         getHandlerId(ruleGroups[0], 'drop'),
         getDndBackend()
       );
-      expect(ruleGroups[0].classList).not.toContain(standardClassnames.dndDragging);
-      expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroups[0]).not.toHaveClass(standardClassnames.dndDragging);
+      expect(ruleGroups[1]).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
     });
 
@@ -440,14 +451,14 @@ describe('<RuleGroup />', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
       const { getByTestId } = render(<RuleGroup {...props} />);
-      const ruleGroup = getByTestId('rule-group');
+      const ruleGroup = getByTestId(TestID.ruleGroup);
       simulateDragDrop(
         getHandlerId(ruleGroup, 'drag'),
         getHandlerId(ruleGroup, 'drop'),
         getDndBackend()
       );
-      expect(ruleGroup.classList).not.toContain(standardClassnames.dndDragging);
-      expect(ruleGroup.classList).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroup).not.toHaveClass(standardClassnames.dndDragging);
+      expect(ruleGroup).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).not.toHaveBeenCalled();
     });
 
@@ -455,7 +466,7 @@ describe('<RuleGroup />', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
       const { getAllByTestId } = render(<RuleGroup {...props} rules={[{ rules: [] }]} />);
-      const ruleGroups = getAllByTestId('rule-group');
+      const ruleGroups = getAllByTestId(TestID.ruleGroup);
       simulateDragDrop(
         getHandlerId(ruleGroups[1], 'drag'),
         getHandlerId(ruleGroups[0], 'drop'),
@@ -481,8 +492,8 @@ describe('<RuleGroup />', () => {
           />
         </div>
       );
-      const rules = getAllByTestId('rule');
-      const combinatorEls = getAllByTestId('inline-combinator');
+      const rules = getAllByTestId(TestID.rule);
+      const combinatorEls = getAllByTestId(TestID.inlineCombinator);
       simulateDragDrop(
         getHandlerId(rules[2], 'drag'),
         getHandlerId(combinatorEls[1], 'drop'),
@@ -515,15 +526,15 @@ describe('<RuleGroup />', () => {
           <RuleGroup {...props} path={[1]} />
         </div>
       );
-      const ruleGroups = getAllByTestId('rule-group');
-      const combinatorEl = getByTestId('inline-combinator');
+      const ruleGroups = getAllByTestId(TestID.ruleGroup);
+      const combinatorEl = getByTestId(TestID.inlineCombinator);
       simulateDragDrop(
         getHandlerId(ruleGroups[1], 'drag'),
         getHandlerId(combinatorEl, 'drop'),
         getDndBackend()
       );
-      expect(ruleGroups[1].classList).not.toContain(standardClassnames.dndDragging);
-      expect(combinatorEl.classList).not.toContain(standardClassnames.dndOver);
+      expect(ruleGroups[1]).not.toHaveClass(standardClassnames.dndDragging);
+      expect(combinatorEl).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).toHaveBeenCalledWith([1], [0, 1]);
     });
 
@@ -544,8 +555,8 @@ describe('<RuleGroup />', () => {
           path={[0]}
         />
       );
-      const rules = getAllByTestId('rule');
-      const combinatorEls = getAllByTestId('inline-combinator');
+      const rules = getAllByTestId(TestID.rule);
+      const combinatorEls = getAllByTestId(TestID.inlineCombinator);
       simulateDragDrop(
         getHandlerId(rules[2], 'drag'),
         getHandlerId(combinatorEls[0], 'drop'),

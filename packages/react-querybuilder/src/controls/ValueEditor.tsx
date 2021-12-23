@@ -12,6 +12,7 @@ const ValueEditor = ({
   values,
   fieldData,
   disabled,
+  testID,
 }: ValueEditorProps) => {
   // This side effect blanks out the value if 1) the inputType is "number",
   // 2) the operator is not "between", "notBetween", "in", or "notIn", and
@@ -40,6 +41,7 @@ const ValueEditor = ({
     case 'select':
       return (
         <select
+          data-testid={testID}
           className={className}
           title={title}
           onChange={e => handleOnChange(e.target.value)}
@@ -57,6 +59,7 @@ const ValueEditor = ({
     case 'checkbox':
       return (
         <input
+          data-testid={testID}
           type="checkbox"
           className={className}
           title={title}
@@ -68,7 +71,7 @@ const ValueEditor = ({
 
     case 'radio':
       return (
-        <span className={className} title={title}>
+        <span data-testid={testID} className={className} title={title}>
           {values &&
             values.map(v => (
               <label key={v.name}>
@@ -88,6 +91,7 @@ const ValueEditor = ({
     default:
       return (
         <input
+          data-testid={testID}
           type={inputTypeCoerced}
           placeholder={placeHolderText}
           value={value}

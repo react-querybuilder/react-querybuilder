@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 
-const BootstrapValueEditor = ({
+export const BootstrapValueEditor = ({
   fieldData,
   operator,
   value,
@@ -100,5 +100,3 @@ const BootstrapValueEditor = ({
 };
 
 BootstrapValueEditor.displayName = 'ValueEditor';
-
-export default BootstrapValueEditor;

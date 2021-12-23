@@ -12,7 +12,7 @@ const AntDNotToggle = ({
   <Switch
     title={title}
     className={className}
-    onChange={checked => handleOnChange(checked)}
+    onChange={v => handleOnChange(v)}
     checked={!!checked}
     disabled={disabled}
     checkedChildren={label}

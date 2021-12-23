@@ -1,20 +1,21 @@
-import { IconButton } from '@chakra-ui/react';
 import { DragHandleIcon } from '@chakra-ui/icons';
+import { IconButton } from '@chakra-ui/react';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-export default forwardRef<HTMLSpanElement, DragHandleProps>(function ChakraDragHandle(
-  { className, title, disabled },
-  dragRef
-) {
-  return (
+const ChakraDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
+  ({ className, title, disabled }, dragRef) => (
     <span ref={dragRef} className={className} title={title}>
       <IconButton
         isDisabled={disabled}
-        aria-label={title ?? ''}
+        aria-label={title ?? /* istanbul ignore next */ ''}
         size="xs"
         icon={<DragHandleIcon />}
       />
     </span>
-  );
-});
+  )
+);
+
+ChakraDragHandle.displayName = 'ChakraDragHandle';
+
+export default ChakraDragHandle;

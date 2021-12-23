@@ -39,28 +39,28 @@ const AntDValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <Select
-          className={className}
-          onChange={v => handleOnChange(v)}
-          value={value}
-          disabled={disabled}>
-          {values!.map(v => (
-            <Option key={v.name} value={v.name}>
-              {v.label}
-            </Option>
-          ))}
-        </Select>
+        <span title={title} className={className}>
+          <Select onChange={v => handleOnChange(v)} value={value} disabled={disabled}>
+            {values!.map(v => (
+              <Option key={v.name} value={v.name}>
+                {v.label}
+              </Option>
+            ))}
+          </Select>
+        </span>
       );
 
     case 'checkbox':
       return (
-        <Checkbox
-          type="checkbox"
-          className={className}
-          disabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
-          checked={!!value}
-        />
+        <span title={title}>
+          <Checkbox
+            type="checkbox"
+            className={className}
+            disabled={disabled}
+            onChange={e => handleOnChange(e.target.checked)}
+            checked={!!value}
+          />
+        </span>
       );
 
     case 'radio':

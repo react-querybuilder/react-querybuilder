@@ -8,18 +8,21 @@ const AntDValueSelector = ({
   handleOnChange,
   options,
   value,
+  title,
   disabled,
 }: ValueSelectorProps) => (
-  <Select disabled={disabled} className={className} value={value} onChange={v => handleOnChange(v)}>
-    {options.map(option => {
-      const key = `key-${option.id ?? option.name}`;
-      return (
-        <Option key={key} value={option.name}>
-          {option.label}
-        </Option>
-      );
-    })}
-  </Select>
+  <span title={title} className={className}>
+    <Select disabled={disabled} value={value} onChange={v => handleOnChange(v)}>
+      {options.map(option => {
+        const key = `key-${option.id ?? option.name}`;
+        return (
+          <Option key={key} value={option.name}>
+            {option.label}
+          </Option>
+        );
+      })}
+    </Select>
+  </span>
 );
 
 AntDValueSelector.displayName = 'AntDValueSelector';
