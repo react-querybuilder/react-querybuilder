@@ -84,7 +84,7 @@ const testAntDSelect = (
       const { getByRole } = render(
         <Component {...props} handleOnChange={handleOnChange} disabled />
       );
-      expect(getByRole('combobox')).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('combobox')).toBeDisabled();
       userEvent.click(getByRole('combobox'));
       expect(() => getByRole('listbox')).toThrow();
       expect(handleOnChange).not.toHaveBeenCalled();

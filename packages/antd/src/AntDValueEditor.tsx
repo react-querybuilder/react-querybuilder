@@ -39,12 +39,8 @@ const AntDValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <span title={title}>
-          <Select
-            className={className}
-            onChange={v => handleOnChange(v)}
-            value={value}
-            disabled={disabled}>
+        <span title={title} className={className}>
+          <Select onChange={v => handleOnChange(v)} value={value} disabled={disabled}>
             {values!.map(v => (
               <Option key={v.name} value={v.name}>
                 {v.label}
