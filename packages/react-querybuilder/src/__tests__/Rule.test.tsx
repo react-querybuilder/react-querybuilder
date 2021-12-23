@@ -8,7 +8,7 @@ import {
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
-import { defaultTranslations, standardClassnames } from '../defaults';
+import { defaultTranslations, standardClassnames, TestID } from '../defaults';
 import { Rule as RuleOriginal } from '../Rule';
 import type {
   ActionProps,
@@ -122,8 +122,8 @@ describe('<Rule />', () => {
 
   it('should have correct classNames', () => {
     const { getByTestId } = render(<Rule {...props} />);
-    expect(getByTestId('rule')).toHaveClass(standardClassnames.rule);
-    expect(getByTestId('rule')).toHaveClass('custom-rule-class');
+    expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.rule);
+    expect(getByTestId(TestID.rule)).toHaveClass('custom-rule-class');
   });
 
   describe('onElementChanged methods', () => {
@@ -135,7 +135,7 @@ describe('<Rule />', () => {
       it('should call onPropChange with the rule path', () => {
         const { getByTestId } = render(<Rule {...props} />);
         userEvent.selectOptions(
-          getByTestId('rule').querySelector(`select.${standardClassnames.fields}`),
+          getByTestId(TestID.rule).querySelector(`select.${standardClassnames.fields}`),
           'any_field'
         );
         expect(schema.onPropChange).toHaveBeenCalledWith('field', 'any_field', [0]);
@@ -146,7 +146,7 @@ describe('<Rule />', () => {
       it('should call onPropChange with the rule path', () => {
         const { getByTestId } = render(<Rule {...props} />);
         userEvent.selectOptions(
-          getByTestId('rule').querySelector(`select.${standardClassnames.operators}`),
+          getByTestId(TestID.rule).querySelector(`select.${standardClassnames.operators}`),
           'any_operator'
         );
         expect(schema.onPropChange).toHaveBeenCalledWith('operator', 'any_operator', [0]);
@@ -157,7 +157,7 @@ describe('<Rule />', () => {
       it('should call onPropChange with the rule path', () => {
         const { getByTestId } = render(<Rule {...props} />);
         userEvent.type(
-          getByTestId('rule').querySelector(`input.${standardClassnames.value}`),
+          getByTestId(TestID.rule).querySelector(`input.${standardClassnames.value}`),
           'any_value'
         );
         expect(schema.onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
@@ -182,7 +182,7 @@ describe('<Rule />', () => {
     it('should call onRuleRemove with the rule and path', () => {
       schema.onRuleRemove = jest.fn();
       const { getByTestId } = render(<Rule {...props} />);
-      userEvent.click(getByTestId('rule').querySelector(`.${standardClassnames.removeRule}`));
+      userEvent.click(getByTestId(TestID.rule).querySelector(`.${standardClassnames.removeRule}`));
       expect(schema.onRuleRemove).toHaveBeenCalledWith([0]);
     });
   });
@@ -190,8 +190,8 @@ describe('<Rule />', () => {
   describe('validation', () => {
     it('should not validate if no validationMap[id] value exists and no validator function is provided', () => {
       const { getByTestId } = render(<Rule {...props} />);
-      expect(getByTestId('rule')).not.toHaveClass(standardClassnames.valid);
-      expect(getByTestId('rule')).not.toHaveClass(standardClassnames.invalid);
+      expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
@@ -199,16 +199,16 @@ describe('<Rule />', () => {
       schema.fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
       schema.validationMap = { id: false };
       const { getByTestId } = render(<Rule {...props} />);
-      expect(getByTestId('rule')).not.toHaveClass(standardClassnames.valid);
-      expect(getByTestId('rule')).toHaveClass(standardClassnames.invalid);
+      expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.invalid);
       expect(validator).not.toHaveBeenCalled();
     });
 
     it('should validate to true if validationMap[id] = true', () => {
       schema.validationMap = { id: true };
       const { getByTestId } = render(<Rule {...props} />);
-      expect(getByTestId('rule')).toHaveClass(standardClassnames.valid);
-      expect(getByTestId('rule')).not.toHaveClass(standardClassnames.invalid);
+      expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.invalid);
     });
 
     it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
@@ -216,8 +216,8 @@ describe('<Rule />', () => {
       props.field = 'field1';
       schema.fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
       const { getByTestId } = render(<Rule {...props} />);
-      expect(getByTestId('rule')).toHaveClass(standardClassnames.valid);
-      expect(getByTestId('rule')).not.toHaveClass(standardClassnames.invalid);
+      expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.valid);
+      expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.invalid);
       expect(validator).toHaveBeenCalled();
     });
 
@@ -239,13 +239,13 @@ describe('<Rule />', () => {
 
     it('should not have the drag class if not dragging', () => {
       const { getByTestId } = render(<Rule {...props} />);
-      const rule = getByTestId('rule');
+      const rule = getByTestId(TestID.rule);
       expect(rule).not.toHaveClass(standardClassnames.dndDragging);
     });
 
     it('should have the drag class if dragging', () => {
       const { getByTestId } = render(<Rule {...props} />);
-      const rule = getByTestId('rule');
+      const rule = getByTestId(TestID.rule);
       simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
       expect(rule).toHaveClass(standardClassnames.dndDragging);
       act(() => {
@@ -260,7 +260,7 @@ describe('<Rule />', () => {
           <Rule {...props} path={[1]} />
         </div>
       );
-      const rules = getAllByTestId('rule');
+      const rules = getAllByTestId(TestID.rule);
       simulateDragHover(
         getHandlerId(rules[0], 'drag'),
         getHandlerId(rules[1], 'drop'),
@@ -281,7 +281,7 @@ describe('<Rule />', () => {
           <Rule {...props} path={[1]} />
         </div>
       );
-      const rules = getAllByTestId('rule');
+      const rules = getAllByTestId(TestID.rule);
       simulateDragDrop(
         getHandlerId(rules[0], 'drag'),
         getHandlerId(rules[1], 'drop'),
@@ -296,7 +296,7 @@ describe('<Rule />', () => {
       const moveRule = jest.fn();
       props.schema.moveRule = moveRule;
       const { getByTestId } = render(<Rule {...props} />);
-      const rule = getByTestId('rule');
+      const rule = getByTestId(TestID.rule);
       simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
       expect(rule).not.toHaveClass(standardClassnames.dndDragging);
       expect(rule).not.toHaveClass(standardClassnames.dndOver);

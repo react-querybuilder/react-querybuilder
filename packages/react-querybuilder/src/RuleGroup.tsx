@@ -1,6 +1,7 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { dndTypes, standardClassnames } from './defaults';
+import { TestID } from '.';
+import { DNDType, standardClassnames } from './defaults';
 import { InlineCombinator } from './InlineCombinator';
 import type { DraggedItem, RuleGroupProps } from './types';
 import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
@@ -40,7 +41,7 @@ export const RuleGroup = ({
   const dropRef = useRef<HTMLDivElement>(null);
   const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(
     () => ({
-      type: dndTypes.ruleGroup,
+      type: DNDType.ruleGroup,
       item: (): DraggedItem => ({ path }),
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
@@ -51,7 +52,7 @@ export const RuleGroup = ({
   );
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
-      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      accept: [DNDType.rule, DNDType.ruleGroup],
       canDrop: (item: DraggedItem) => {
         if (disabled) return false;
         const parentItemPath = getParentPath(item.path);
@@ -139,7 +140,7 @@ export const RuleGroup = ({
     <div
       ref={previewRef}
       className={outerClassName}
-      data-testid="rule-group"
+      data-testid={TestID.ruleGroup}
       data-dragmonitorid={dragMonitorId}
       data-dropmonitorid={dropMonitorId}
       data-rule-group-id={id}

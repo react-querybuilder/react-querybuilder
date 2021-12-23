@@ -153,7 +153,25 @@ export const groupInvalidReasons = {
   invalidIndependentCombinators: 'invalid independent combinators',
 } as const;
 
-export const dndTypes = {
-  rule: 'rule',
-  ruleGroup: 'ruleGroup',
-} as const;
+export enum DNDType {
+  rule = 'rule',
+  ruleGroup = 'ruleGroup',
+}
+
+export enum TestID {
+  rule = 'rule',
+  ruleGroup = 'rule-group',
+  inlineCombinator = 'inline-combinator',
+  addGroup = 'add-group',
+  removeGroup = 'remove-group',
+  cloneGroup = 'clone-group',
+  cloneRule = 'clone-rule',
+  addRule = 'add-rule',
+  removeRule = 'remove-rule',
+  standardCombinator = 'standard-combinator',
+  fields = 'fields',
+  operators = 'operators',
+  valueEditor = 'value-editor',
+  notToggle = 'not-toggle',
+  dragHandle = 'drag-handle',
+}

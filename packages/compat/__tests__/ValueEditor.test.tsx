@@ -58,7 +58,7 @@ export const testValueEditor = (
         const { getByTitle } = render(
           <ValueEditor {...props} inputType="number" operator="between" />
         );
-        expect(findInput(getByTitle(title)).getAttribute('type')).toBe('text');
+        expect(findInput(getByTitle(title))).toHaveAttribute('type', 'text');
       });
 
       it('should set the value to "" if operator is not "between" or "notBetween" and inputType is "number" and value contains a comma', () => {
@@ -95,13 +95,13 @@ export const testValueEditor = (
       });
     });
 
-    const valueEditorAsSelectProps: ValueEditorAsSelectProps = {
-      ...defaultValueEditorProps,
-      type: 'select',
-      values: defaultValueSelectorProps.options,
-      title,
-    };
     if (!skip.select) {
+      const valueEditorAsSelectProps: ValueEditorAsSelectProps = {
+        ...defaultValueEditorProps,
+        type: 'select',
+        values: defaultValueSelectorProps.options,
+        title,
+      };
       testSelect(title, ValueEditor, valueEditorAsSelectProps);
     }
 
@@ -112,7 +112,7 @@ export const testValueEditor = (
           <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} />
         );
         expect(() => findInput(getByTitle(title))).not.toThrow();
-        expect(findInput(getByTitle(title)).getAttribute('type')).toBe('checkbox');
+        expect(findInput(getByTitle(title))).toHaveAttribute('type', 'checkbox');
         userEvent.click(findInput(getByTitle(title)));
         expect(handleOnChange).toHaveBeenCalledWith(true);
       });
@@ -149,7 +149,7 @@ export const testValueEditor = (
         const radioButtons = getByTitle(title).querySelectorAll('input[type="radio"]');
         expect(radioButtons).toHaveLength(2);
         radioButtons.forEach(r => {
-          expect(r.getAttribute('type')).toBe('radio');
+          expect(r).toHaveAttribute('type', 'radio');
         });
       });
 

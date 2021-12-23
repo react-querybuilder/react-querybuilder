@@ -1,6 +1,6 @@
 import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { dndTypes, standardClassnames } from './defaults';
+import { DNDType, standardClassnames, TestID } from './defaults';
 import type { DraggedItem, Field, RuleProps, RuleType } from './types';
 import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
 
@@ -37,7 +37,7 @@ export const Rule = ({
   const dragRef = useRef<HTMLSpanElement>(null);
   const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(
     () => ({
-      type: dndTypes.rule,
+      type: DNDType.rule,
       item: (): DraggedItem => ({ path }),
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
@@ -48,7 +48,7 @@ export const Rule = ({
   );
   const [{ isOver, dropMonitorId }, drop] = useDrop(
     () => ({
-      accept: [dndTypes.rule, dndTypes.ruleGroup],
+      accept: [DNDType.rule, DNDType.ruleGroup],
       canDrop: (item: DraggedItem) => {
         if (disabled) return false;
         const parentHoverPath = getParentPath(path);
@@ -130,7 +130,7 @@ export const Rule = ({
   return (
     <div
       ref={dndRef}
-      data-testid="rule"
+      data-testid={TestID.rule}
       data-dragmonitorid={dragMonitorId}
       data-dropmonitorid={dropMonitorId}
       className={outerClassName}
