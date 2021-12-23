@@ -58,52 +58,57 @@ const materialValueEditorProps: MaterialValueEditorProps = {
 };
 
 const testMaterialSelect = (
+  title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 
-  it('should render the correct number of options', () => {
-    const { getByRole } = render(<Component {...props} />);
-    userEvent.click(getByRole('button'));
-    const listbox = within(getByRole('listbox'));
-    expect(listbox.getAllByRole('option')).toHaveLength(2);
-  });
+  describe(title, () => {
+    it('should render the correct number of options', () => {
+      const { getByRole } = render(<Component {...props} />);
+      userEvent.click(getByRole('button'));
+      const listbox = within(getByRole('listbox'));
+      expect(listbox.getAllByRole('option')).toHaveLength(2);
+    });
 
-  it('should have the options passed into the <select />', () => {
-    const { getByRole } = render(<Component {...props} />);
-    userEvent.click(getByRole('button'));
-    const listbox = within(getByRole('listbox'));
-    expect(() => listbox.getByText(testVal.label)).not.toThrow();
-  });
+    it('should have the options passed into the <select />', () => {
+      const { getByRole } = render(<Component {...props} />);
+      userEvent.click(getByRole('button'));
+      const listbox = within(getByRole('listbox'));
+      expect(() => listbox.getByText(testVal.label)).not.toThrow();
+    });
 
-  it('should have the value passed into the <select />', () => {
-    const { getByTitle } = render(<Component {...props} value={testVal.name} />);
-    expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
-  });
+    it('should have the value passed into the <select />', () => {
+      const { getByTitle } = render(<Component {...props} value={testVal.name} />);
+      expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
+    });
 
-  it('should call the onChange method passed in', () => {
-    const handleOnChange = jest.fn();
-    const { getByRole } = render(<Component {...props} handleOnChange={handleOnChange} />);
-    userEvent.click(getByRole('button'));
-    const listbox = within(getByRole('listbox'));
-    userEvent.click(listbox.getByText(testVal.label));
-    expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
-  });
+    it('should call the onChange method passed in', () => {
+      const handleOnChange = jest.fn();
+      const { getByRole } = render(<Component {...props} handleOnChange={handleOnChange} />);
+      userEvent.click(getByRole('button'));
+      const listbox = within(getByRole('listbox'));
+      userEvent.click(listbox.getByText(testVal.label));
+      expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
+    });
 
-  it('should have the className passed into the <select />', () => {
-    const { getByTitle } = render(<Component {...props} className="foo" />);
-    expect(getByTitle(props.title)).toHaveClass('foo');
-  });
+    it('should have the className passed into the <select />', () => {
+      const { getByTitle } = render(<Component {...props} className="foo" />);
+      expect(getByTitle(props.title)).toHaveClass('foo');
+    });
 
-  it('should be disabled by the disabled prop', () => {
-    const handleOnChange = jest.fn();
-    const { getByRole } = render(<Component {...props} handleOnChange={handleOnChange} disabled />);
-    expect(getByRole('button')).toHaveAttribute('aria-disabled', 'true');
-    userEvent.click(getByRole('button'));
-    expect(() => getByRole('listbox')).toThrow();
-    expect(handleOnChange).not.toHaveBeenCalled();
+    it('should be disabled by the disabled prop', () => {
+      const handleOnChange = jest.fn();
+      const { getByRole } = render(
+        <Component {...props} handleOnChange={handleOnChange} disabled />
+      );
+      expect(getByRole('button')).toHaveAttribute('aria-disabled', 'true');
+      userEvent.click(getByRole('button'));
+      expect(() => getByRole('listbox')).toThrow();
+      expect(handleOnChange).not.toHaveBeenCalled();
+    });
   });
 };
 
@@ -115,20 +120,14 @@ describe('Material compatible components', () => {
 
   (
     [
-      {
-        desc: `${materialValueEditorProps.title} as select`,
-        comp: MaterialValueEditor,
-        prop: materialValueEditorProps,
-      },
-      {
-        desc: materialValueSelectorProps.title,
-        comp: MaterialValueSelector,
-        prop: materialValueSelectorProps,
-      },
+      [
+        `${materialValueEditorProps.title} as select`,
+        MaterialValueEditor,
+        materialValueEditorProps,
+      ],
+      [materialValueSelectorProps.title, MaterialValueSelector, materialValueSelectorProps],
     ] as const
-  ).forEach(t => {
-    describe(t.desc, () => {
-      testMaterialSelect(t.comp, t.prop);
-    });
-  });
+  )
+    // eslint-disable-next-line prefer-spread
+    .forEach(t => testMaterialSelect.apply(undefined, t));
 });
