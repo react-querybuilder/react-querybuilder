@@ -26,11 +26,8 @@ import QueryBuilder, {
   ExportFormat,
   formatQuery,
   FormatQueryOptions,
-  ParameterizedNamedSQL,
-  ParameterizedSQL,
   parseSQL,
   QueryBuilderProps,
-  RuleGroupTypeAny,
   RuleGroupTypeIC,
 } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
@@ -182,22 +179,18 @@ const App = () => {
   );
 
   const formatOptions = useMemo(
-    () => (options.validateQuery ? ({ format, fields } as FormatQueryOptions) : format),
+    (): FormatQueryOptions => (options.validateQuery ? { format, fields } : { format }),
     [format, options.validateQuery]
   );
-  const q: RuleGroupTypeAny = options.independentCombinators ? queryIC : query;
+  const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(
     () =>
-      format === 'json_without_ids'
-        ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions) as string), null, 2)
-        : format === 'parameterized' || format === 'parameterized_named'
-        ? JSON.stringify(
-            formatQuery(q, formatOptions) as ParameterizedSQL | ParameterizedNamedSQL,
-            null,
-            2
-          )
-        : (formatQuery(q, formatOptions) as string),
-    [format, formatOptions, q]
+      formatOptions.format === 'json_without_ids'
+        ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions)), null, 2)
+        : formatOptions.format === 'parameterized' || formatOptions.format === 'parameterized_named'
+        ? JSON.stringify(formatQuery(q, formatOptions), null, 2)
+        : formatQuery(q, formatOptions),
+    [formatOptions, q]
   );
 
   const qbWrapperClassName = `with-${style}${options.validateQuery ? ' validateQuery' : ''}`;

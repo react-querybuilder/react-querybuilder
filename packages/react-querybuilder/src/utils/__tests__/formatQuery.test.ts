@@ -1,10 +1,5 @@
 import formatQuery from '../formatQuery';
-import type {
-  ParameterizedNamedSQL,
-  ParameterizedSQL,
-  RuleGroupType,
-  ValueProcessor,
-} from '../../types';
+import type { RuleGroupType, ValueProcessor } from '../../types';
 
 const query: RuleGroupType = {
   id: 'g-root',
@@ -302,14 +297,14 @@ describe('formatQuery', () => {
   });
 
   it('formats parameterized SQL correctly', () => {
-    const parameterized = formatQuery(query, 'parameterized') as ParameterizedSQL;
+    const parameterized = formatQuery(query, 'parameterized');
     expect(parameterized).toHaveProperty('sql', parameterizedSQLString);
     expect(parameterized).toHaveProperty('params');
     expect(parameterized.params).toEqual(params);
   });
 
   it('formats parameterized named SQL correctly', () => {
-    const parameterizedNamed = formatQuery(query, 'parameterized_named') as ParameterizedNamedSQL;
+    const parameterizedNamed = formatQuery(query, 'parameterized_named');
     expect(parameterizedNamed).toHaveProperty('sql', parameterizedNamedSQLString);
     expect(parameterizedNamed).toHaveProperty('params');
     expect(parameterizedNamed.params).toEqual(params_named);
