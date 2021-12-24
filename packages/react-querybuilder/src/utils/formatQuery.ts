@@ -89,10 +89,32 @@ export const defaultValueProcessor: ValueProcessor = (
 /**
  * Formats a query in the requested output format.
  */
-const formatQuery = (
+function formatQuery(ruleGroup: RuleGroupTypeAny): string;
+function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options?: FormatQueryOptions | ExportFormat
-): string | ParameterizedSQL | ParameterizedNamedSQL => {
+  options: 'parameterized' | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized' })
+): ParameterizedSQL;
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options:
+    | 'parameterized_named'
+    | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized_named' })
+): ParameterizedNamedSQL;
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: Omit<FormatQueryOptions, 'format'>
+): string;
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>
+): string;
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: Omit<FormatQueryOptions, 'format'> & {
+    format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>;
+  }
+): string;
+function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions | ExportFormat) {
   let format: ExportFormat = 'json';
   let valueProcessor = defaultValueProcessor;
   let quoteFieldNamesWith = '';
@@ -376,6 +398,6 @@ const formatQuery = (
   } else {
     return '';
   }
-};
+}
 
 export default formatQuery;
