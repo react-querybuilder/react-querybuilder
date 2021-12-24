@@ -1,5 +1,22 @@
 ## Change Log
 
+### v4.0.0-beta.8 (2021-12-24)
+- [#261](https://github.com/react-querybuilder/react-querybuilder/pull/261) Implement valueProcessor for "mongodb" export format (@jakeboone02)
+- [#258](https://github.com/react-querybuilder/react-querybuilder/pull/258) Make `formatQuery` output for "mongodb" type `JSON.parse`-able (@mylawacad)
+- [#251](https://github.com/react-querybuilder/react-querybuilder/pull/251) Add tests for compatibility components (@jakeboone02)
+- [#257](https://github.com/react-querybuilder/react-querybuilder/pull/257) docs: add mylawacad as a contributor for code (@allcontributors[bot])
+- [#255](https://github.com/react-querybuilder/react-querybuilder/pull/255) Fix ">=" operator for mongodb format (@mylawacad)
+- [#253](https://github.com/react-querybuilder/react-querybuilder/pull/253) docs: add ZigZagT as a contributor for code (@allcontributors[bot])
+- [#252](https://github.com/react-querybuilder/react-querybuilder/pull/252) Export `RuleGroup` just like `Rule` (@jakeboone02, @ZigZagT)
+- [#250](https://github.com/react-querybuilder/react-querybuilder/pull/250) Add Bulma component package and demo (@jakeboone02)
+- [#248](https://github.com/react-querybuilder/react-querybuilder/pull/248) Add disabled prop; update prettier config with trailing commas and no unnecessary arrow function parentheses (@jakeboone02)
+
+### v4.0.0-beta.7 (2021-12-13)
+- [#247](https://github.com/react-querybuilder/react-querybuilder/pull/247) Fix drag-and-drop for independent combinators (@jakeboone02)
+
+### v4.0.0-beta.6 (2021-11-27)
+- [#239](https://github.com/react-querybuilder/react-querybuilder/pull/239) Convert to monorepo with Vite (@jakeboone02)
+
 ### v4.0.0-beta.5 (2021-11-12)
 - [#235](https://github.com/react-querybuilder/react-querybuilder/pull/235) Add drag-and-drop (@jakeboone02)
 - [#233](https://github.com/react-querybuilder/react-querybuilder/pull/233) GitHub Actions to deploy demo on release (@jakeboone02)
