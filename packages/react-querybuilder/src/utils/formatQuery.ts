@@ -86,6 +86,69 @@ export const defaultValueProcessor: ValueProcessor = (
   return `'${value}'`;
 };
 
+export const defaultMongodbValueProcessor: ValueProcessor = (
+  _field: string,
+  operator: string,
+  value: any
+) => {
+  if (['<', '<=', '=', '!=', '>', '>='].includes(operator)) {
+    if (typeof value === 'boolean') {
+      return `${value}`;
+    }
+
+    if (typeof value === 'number') {
+      return `${value}`;
+    }
+
+    return `"${value}"`;
+  } else if (operator === 'contains' || operator === 'doesNotContain') {
+    return `"${value}"`;
+  } else if (operator === 'beginsWith' || operator === 'doesNotBeginWith') {
+    return `"^${value}"`;
+  } else if (operator === 'endsWith' || operator === 'doesNotEndWith') {
+    return `"${value}$"`;
+  } else if (operator === 'null' || operator === 'notNull') {
+    return 'null';
+  } else if (operator === 'in' || operator === 'notIn') {
+    const valArray = toArray(value);
+    if (valArray.length) {
+      let isNumber = true;
+      for (let i = 0; i < valArray.length; i++) {
+        if (typeof (valArray[i].trim()) !== 'number') {
+          isNumber = false;
+          break;
+        }
+      }
+
+      return valArray.map((val: any) => {
+        if (isNumber) {
+          return `${val.trim()}`;
+        }
+        return `"${val.trim()}"`;
+      }).join(',');
+    } else {
+      return '';
+    }
+  } else if (operator === 'between' || operator === 'notBetween') {
+    const valArray = toArray(value);
+    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
+      let [first, second] = valArray;
+      first = first.trim()
+      second = second.trim()
+
+      if ((typeof first === 'number') && (typeof second === 'number')) {
+        return [first, second].join(',')
+      }
+
+      return [`"${first}"`, `"${second}"`].join(',')
+    } else {
+      return '';
+    }
+  }
+
+  return `${value}`;
+};
+
 /**
  * Formats a query in the requested output format.
  */
@@ -294,6 +357,14 @@ const formatQuery = (
       }
     }
 
+    let mongodbValueProcessor = defaultMongodbValueProcessor;
+    if (typeof options === 'object' && options !== null) {
+      if (options.valueProcessor) {
+        mongodbValueProcessor = options.valueProcessor;
+      }
+    }
+
+
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return outermost ? fallbackExpression : '';
@@ -308,51 +379,47 @@ const formatQuery = (
             return processedRuleGroup ? `{${processedRuleGroup}}` : '';
           } else {
             const mongoOperator = mongoOperators[rule.operator];
-            let value = rule.value;
-
-            if (typeof rule.value !== 'boolean') {
-              value = `"${rule.value}"`;
-            }
+            const value = mongodbValueProcessor(rule.field, rule.operator, rule.value);
 
             if (['<', '<=', '=', '!=', '>', '>='].includes(rule.operator)) {
               return `{"${rule.field}":{"${mongoOperator}":${value}}}`;
-            } else if (rule.operator === 'contains') {
-              return `{"${rule.field}":{"$regex":"${rule.value}"}}`;
-            } else if (rule.operator === 'beginsWith') {
-              return `{"${rule.field}":{"$regex":"^${rule.value}"}}`;
-            } else if (rule.operator === 'endsWith') {
-              return `{"${rule.field}":{"$regex":"${rule.value}$"}}`;
-            } else if (rule.operator === 'doesNotContain') {
-              return `{"${rule.field}":{"$not":{"$regex":"${rule.value}"}}}`;
-            } else if (rule.operator === 'doesNotBeginWith') {
-              return `{"${rule.field}":{"$not":{"$regex":"^${rule.value}"}}}`;
-            } else if (rule.operator === 'doesNotEndWith') {
-              return `{"${rule.field}":{"$not":{"$regex":"${rule.value}$"}}}`;
-            } else if (rule.operator === 'null') {
-              return `{"${rule.field}":null}`;
-            } else if (rule.operator === 'notNull') {
-              return `{"${rule.field}":{"$ne":null}}`;
-            } else if (rule.operator === 'in' || rule.operator === 'notIn') {
-              const valArray = toArray(rule.value);
-              if (valArray.length) {
+            }
+
+            if (['contains', 'beginsWith', 'endsWith'].includes(rule.operator)) {
+              return `{"${rule.field}":{"$regex":${value}}}`;
+            }
+
+            if (['doesNotContain', 'doesNotBeginWith', 'doesNotEndWith'].includes(rule.operator)) {
+              return `{"${rule.field}":{"$not":{"$regex":${value}}}}`;
+            }
+
+            if (rule.operator === 'null') {
+              return `{"${rule.field}":${value}}`;
+            }
+
+            if (rule.operator === 'notNull') {
+              return `{"${rule.field}":{"$ne":${value}}}`;
+            }
+
+            if (rule.operator === 'in' || rule.operator === 'notIn') {
+              const valArray = toArray(value);
+              if (value && valArray.length) {
                 return `{"${rule.field}":{"${mongoOperator}":[${valArray.map((val: any) => {
-                  return `"${val.trim()}"`;
+                  return `${val}`;
                 })}]}}`;
               } else {
                 return '';
               }
-            } else if (rule.operator === 'between' || rule.operator === 'notBetween') {
-              const valArray = toArray(rule.value);
+            }
+
+            if (rule.operator === 'between' || rule.operator === 'notBetween') {
+              const valArray = toArray(value);
               if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
                 const [first, second] = valArray;
                 if (rule.operator === 'between') {
-                  return `{"$and":[{"${rule.field}":{"$gte":"${first.trim()}"}},{"${
-                    rule.field
-                  }":{"$lte":"${second.trim()}"}}]}`;
+                  return `{"$and":[{"${rule.field}":{"$gte":${first}}},{"${rule.field}":{"$lte":${second}}}]}`;
                 } else {
-                  return `{"$or":[{"${rule.field}":{"$lt":"${first.trim()}"}},{"${
-                    rule.field
-                  }":{"$gt":"${second.trim()}"}}]}`;
+                  return `{"$or":[{"${rule.field}":{"$lt":${first}}},{"${rule.field}":{"$gt":${second}}}]}`;
                 }
               } else {
                 return '';
