@@ -114,18 +114,20 @@ export const defaultMongodbValueProcessor: ValueProcessor = (
     if (valArray.length) {
       let isNumber = true;
       for (let i = 0; i < valArray.length; i++) {
-        if (typeof (valArray[i].trim()) !== 'number') {
+        if (typeof valArray[i].trim() !== 'number') {
           isNumber = false;
           break;
         }
       }
 
-      return valArray.map((val: any) => {
-        if (isNumber) {
-          return `${val.trim()}`;
-        }
-        return `"${val.trim()}"`;
-      }).join(',');
+      return valArray
+        .map((val: any) => {
+          if (isNumber) {
+            return `${val.trim()}`;
+          }
+          return `"${val.trim()}"`;
+        })
+        .join(',');
     } else {
       return '';
     }
@@ -133,14 +135,14 @@ export const defaultMongodbValueProcessor: ValueProcessor = (
     const valArray = toArray(value);
     if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
       let [first, second] = valArray;
-      first = first.trim()
-      second = second.trim()
+      first = first.trim();
+      second = second.trim();
 
-      if ((typeof first === 'number') && (typeof second === 'number')) {
-        return [first, second].join(',')
+      if (typeof first === 'number' && typeof second === 'number') {
+        return [first, second].join(',');
       }
 
-      return [`"${first}"`, `"${second}"`].join(',')
+      return [`"${first}"`, `"${second}"`].join(',');
     } else {
       return '';
     }
@@ -363,7 +365,6 @@ const formatQuery = (
         mongodbValueProcessor = options.valueProcessor;
       }
     }
-
 
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
