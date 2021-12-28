@@ -220,6 +220,7 @@ export interface Schema {
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;
   independentCombinators: boolean;
+  disabledPaths: number[][];
 }
 
 export interface Translations {
@@ -450,9 +451,12 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      */
     enableDragAndDrop?: boolean;
     /**
-     * Disables all subcomponents and prevents changes to the query
+     * Disables the entire query builder if true, or the rules and groups at
+     * the specified paths (as well as all child rules/groups and subcomponents)
+     * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
+     * no changes to the query are allowed.
      */
-    disabled?: boolean;
+    disabled?: boolean | number[][];
     /**
      * Query validation function
      */

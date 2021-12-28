@@ -71,8 +71,6 @@ export const Rule = ({
         dropMonitorId: monitor.getHandlerId(),
       }),
       drop: (item: DraggedItem, _monitor) => {
-        /* istanbul ignore next */
-        if (disabled) return;
         const parentHoverPath = getParentPath(path);
         const hoverIndex = path[path.length - 1];
 
@@ -86,22 +84,28 @@ export const Rule = ({
 
   const generateOnChangeHandler =
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
-      onPropChange(prop, value, path);
+      if (!disabled) {
+        onPropChange(prop, value, path);
+      }
     };
 
   const cloneRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newPath = [...getParentPath(path), path[path.length - 1] + 1];
-    moveRule(path, newPath, true);
+    if (!disabled) {
+      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+      moveRule(path, newPath, true);
+    }
   };
 
   const removeRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    onRuleRemove(path);
+    if (!disabled) {
+      onRuleRemove(path);
+    }
   };
 
   const fieldData = fieldMap?.[field] ?? ({} as Field);

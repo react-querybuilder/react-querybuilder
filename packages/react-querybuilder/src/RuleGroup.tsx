@@ -34,6 +34,7 @@ export const RuleGroup = ({
     showCloneButtons,
     updateIndependentCombinator,
     validationMap,
+    disabledPaths,
   } = schema;
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -81,46 +82,60 @@ export const RuleGroup = ({
   drop(dropRef);
 
   const onCombinatorChange = (value: any) => {
-    onPropChange('combinator', value, path);
+    if (!disabled) {
+      onPropChange('combinator', value, path);
+    }
   };
 
   const onIndependentCombinatorChange = (value: any, index: number) => {
-    updateIndependentCombinator(value, path.concat([index]));
+    if (!disabled) {
+      updateIndependentCombinator(value, path.concat([index]));
+    }
   };
 
   const onNotToggleChange = (checked: boolean) => {
-    onPropChange('not', checked, path);
+    if (!disabled) {
+      onPropChange('not', checked, path);
+    }
   };
 
   const addRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newRule = createRule();
-    onRuleAdd(newRule, path);
+    if (!disabled) {
+      const newRule = createRule();
+      onRuleAdd(newRule, path);
+    }
   };
 
   const addGroup = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newGroup = createRuleGroup();
-    onGroupAdd(newGroup, path);
+    if (!disabled) {
+      const newGroup = createRuleGroup();
+      onGroupAdd(newGroup, path);
+    }
   };
 
   const cloneGroup = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newPath = [...getParentPath(path), path[path.length - 1] + 1];
-    moveRule(path, newPath, true);
+    if (!disabled) {
+      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+      moveRule(path, newPath, true);
+    }
   };
 
   const removeGroup = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    onGroupRemove(path);
+    if (!disabled) {
+      onGroupRemove(path);
+    }
   };
 
   const level = path.length;
@@ -252,6 +267,7 @@ export const RuleGroup = ({
       <div className={c(standardClassnames.body, classNames.body)}>
         {rules.map((r, idx) => {
           const thisPath = path.concat([idx]);
+          const thisPathDisabled = disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p));
           return (
             <Fragment key={thisPath.join('-')}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
@@ -268,7 +284,7 @@ export const RuleGroup = ({
                   component={controls.combinatorSelector}
                   moveRule={moveRule}
                   path={thisPath}
-                  disabled={disabled}
+                  disabled={thisPathDisabled}
                   independentCombinators={independentCombinators}
                 />
               )}
@@ -286,7 +302,7 @@ export const RuleGroup = ({
                   component={controls.combinatorSelector}
                   moveRule={moveRule}
                   path={thisPath}
-                  disabled={disabled}
+                  disabled={thisPathDisabled}
                   independentCombinators={independentCombinators}
                 />
               ) : 'rules' in r ? (
@@ -297,7 +313,7 @@ export const RuleGroup = ({
                   combinator={'combinator' in r ? r.combinator : undefined}
                   translations={translations}
                   rules={r.rules}
-                  disabled={disabled}
+                  disabled={thisPathDisabled}
                   not={!!r.not}
                   context={context}
                 />
@@ -309,7 +325,7 @@ export const RuleGroup = ({
                   operator={r.operator}
                   schema={schema}
                   path={thisPath}
-                  disabled={disabled}
+                  disabled={thisPathDisabled}
                   translations={translations}
                   context={context}
                 />

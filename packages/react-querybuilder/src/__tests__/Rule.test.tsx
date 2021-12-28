@@ -47,31 +47,44 @@ describe('<Rule />', () => {
   beforeEach(() => {
     controls = {
       cloneRuleAction: (props: ActionProps) => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.cloneRule}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           ⧉
         </button>
       ),
       fieldSelector: (props: FieldSelectorProps) => (
-        <select className={props.className} onChange={e => props.handleOnChange(e.target.value)}>
+        <select
+          data-testid={TestID.fields}
+          className={props.className}
+          onChange={e => props.handleOnChange(e.target.value)}>
           <option value="field">Field</option>
           <option value="any_field">Any Field</option>
         </select>
       ),
       operatorSelector: (props: OperatorSelectorProps) => (
-        <select className={props.className} onChange={e => props.handleOnChange(e.target.value)}>
+        <select
+          data-testid={TestID.operators}
+          className={props.className}
+          onChange={e => props.handleOnChange(e.target.value)}>
           <option value="operator">Operator</option>
           <option value="any_operator">Any Operator</option>
         </select>
       ),
       valueEditor: (props: ValueEditorProps) => (
         <input
+          data-testid={TestID.valueEditor}
           className={props.className}
           type="text"
           onChange={e => props.handleOnChange(e.target.value)}
         />
       ),
       removeRuleAction: (props: ActionProps) => (
-        <button className={props.className} onClick={e => props.handleOnClick(e)}>
+        <button
+          data-testid={TestID.removeRule}
+          className={props.className}
+          onClick={e => props.handleOnClick(e)}>
           x
         </button>
       ),
@@ -300,6 +313,45 @@ describe('<Rule />', () => {
       expect(rule).not.toHaveClass(standardClassnames.dndDragging);
       expect(rule).not.toHaveClass(standardClassnames.dndOver);
       expect(moveRule).not.toHaveBeenCalled();
+    });
+
+    it('should not try to update query if disabled', () => {
+      const moveRule = jest.fn();
+      props.schema.moveRule = moveRule;
+      const { getAllByTestId } = render(
+        <div>
+          <Rule {...props} path={[0]} />
+          <Rule disabled {...props} path={[1]} />
+        </div>
+      );
+      const rules = getAllByTestId(TestID.rule);
+      simulateDragDrop(
+        getHandlerId(rules[0], 'drag'),
+        getHandlerId(rules[1], 'drop'),
+        getDndBackend()
+      );
+      expect(moveRule).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('disabled', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+      schema.onRuleRemove = jest.fn();
+      schema.onPropChange = jest.fn();
+      schema.moveRule = jest.fn();
+    });
+
+    it('does not try to update the query', () => {
+      const { getByTestId } = render(<Rule {...props} disabled />);
+      userEvent.selectOptions(getByTestId(TestID.fields), 'any_field');
+      userEvent.selectOptions(getByTestId(TestID.operators), 'any_operator');
+      userEvent.type(getByTestId(TestID.valueEditor), 'Test');
+      userEvent.click(getByTestId(TestID.cloneRule));
+      userEvent.click(getByTestId(TestID.removeRule));
+      expect(schema.onRuleRemove).not.toHaveBeenCalled();
+      expect(schema.onPropChange).not.toHaveBeenCalled();
+      expect(schema.moveRule).not.toHaveBeenCalled();
     });
   });
 });

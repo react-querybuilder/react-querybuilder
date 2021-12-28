@@ -81,7 +81,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
-  disabled,
+  disabled = false,
   validator,
   context,
 }: QueryBuilderPropsInternal<RG>) => {
@@ -98,6 +98,12 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     fields.forEach(f => (fm[f.name] = f));
     return fm;
   }, [fields]);
+
+  const queryDisabled = useMemo(
+    () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
+    [disabled]
+  );
+  const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
   const getOperatorsMain = useCallback(
     (field: string) => {
@@ -286,7 +292,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
     /* istanbul ignore next */
-    if (disabled) return;
+    if (queryDisabled) return;
     const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
     const newQuery = produce(root, draft => {
@@ -306,7 +312,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const onGroupAdd = (group: RG, parentPath: number[]) => {
     /* istanbul ignore next */
-    if (disabled) return;
+    if (queryDisabled) return;
     const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
     const newQuery = produce(root, draft => {
@@ -331,7 +337,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     path: number[]
   ) => {
     /* istanbul ignore next */
-    if (disabled) return;
+    if (queryDisabled) return;
     const newQuery = produce(root, draft => {
       const ruleOrGroup = findPath(path, draft);
       /* istanbul ignore if */
@@ -356,7 +362,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const updateIndependentCombinator = (value: string, path: number[]) => {
     /* istanbul ignore next */
-    if (disabled) return;
+    if (queryDisabled) return;
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
     const newQuery = produce(root, draft => {
@@ -368,7 +374,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
 
   const onRuleOrGroupRemove = (path: number[]) => {
     /* istanbul ignore next */
-    if (disabled) return;
+    if (queryDisabled) return;
     const parentPath = getParentPath(path);
     const index = path[path.length - 1];
     const newQuery = produce(root, draft => {
@@ -384,11 +390,11 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    // No-op if disabled or the old and new paths are the same.
+    // No-op if entire query is disabled or the old and new paths are the same.
     // Ignore in test coverage since components that call this method
     // already prevent this case via their respective canDrop tests.
     /* istanbul ignore if */
-    if (disabled || pathsAreEqual(oldPath, newPath)) {
+    if (queryDisabled || pathsAreEqual(oldPath, newPath)) {
       return;
     }
 
@@ -497,6 +503,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     enableDragAndDrop,
     independentCombinators: !!independentCombinators,
     validationMap,
+    disabledPaths,
   };
 
   const className = useMemo(
@@ -529,7 +536,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
           id={root.id}
           path={[]}
           not={!!root.not}
-          disabled={disabled}
+          disabled={queryDisabled}
           context={context}
         />
       </div>

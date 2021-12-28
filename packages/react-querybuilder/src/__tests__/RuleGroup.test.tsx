@@ -162,6 +162,7 @@ describe('<RuleGroup />', () => {
       showCloneButtons: false,
       independentCombinators: false,
       validationMap: {},
+      disabledPaths: [],
     };
     props = {
       id: 'id',
@@ -170,6 +171,7 @@ describe('<RuleGroup />', () => {
       combinator: 'and',
       schema: schema as Schema,
       translations: defaultTranslations,
+      disabled: false,
     };
   });
 
@@ -563,6 +565,64 @@ describe('<RuleGroup />', () => {
         getDndBackend()
       );
       expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 1]);
+    });
+  });
+
+  describe('disabled', () => {
+    beforeEach(() => {
+      schema.showCloneButtons = true;
+      schema.showNotToggle = true;
+      schema.onRuleAdd = jest.fn();
+      schema.onRuleRemove = jest.fn();
+      schema.onGroupAdd = jest.fn();
+      schema.onGroupRemove = jest.fn();
+      schema.onPropChange = jest.fn();
+      schema.moveRule = jest.fn();
+    });
+
+    it('does not try to update the query', () => {
+      const { getAllByTestId, getByTestId } = render(
+        <RuleGroup
+          {...props}
+          disabled
+          combinator="and"
+          rules={[
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ]}
+        />
+      );
+      userEvent.click(getByTestId(TestID.addRule));
+      userEvent.click(getByTestId(TestID.addGroup));
+      userEvent.click(getByTestId(TestID.cloneGroup));
+      userEvent.click(getByTestId(TestID.removeGroup));
+      userEvent.click(getByTestId(TestID.notToggle));
+      userEvent.click(getAllByTestId(TestID.cloneRule)[0]);
+      userEvent.click(getAllByTestId(TestID.removeRule)[0]);
+      userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
+      expect(schema.onRuleAdd).not.toHaveBeenCalled();
+      expect(schema.onGroupAdd).not.toHaveBeenCalled();
+      expect(schema.onGroupRemove).not.toHaveBeenCalled();
+      expect(schema.onPropChange).not.toHaveBeenCalled();
+      expect(schema.moveRule).not.toHaveBeenCalled();
+    });
+
+    it('does not try to update independent combinators', () => {
+      schema.independentCombinators = true;
+      schema.updateIndependentCombinator = jest.fn();
+      const { getByTestId } = render(
+        <RuleGroup
+          {...props}
+          disabled
+          rules={[
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ]}
+        />
+      );
+      userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
+      expect(schema.updateIndependentCombinator).not.toHaveBeenCalled();
     });
   });
 

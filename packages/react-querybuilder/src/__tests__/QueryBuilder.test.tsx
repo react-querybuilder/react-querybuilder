@@ -1592,5 +1592,35 @@ describe('<QueryBuilder />', () => {
       );
       expect(onQueryChange).not.toHaveBeenCalled();
     });
+
+    it('disables specific path and its children', () => {
+      const { getAllByTestId } = render(
+        <QueryBuilder
+          disabled={[[2]]}
+          query={{
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              { field: 'lastName', operator: '=', value: 'Vai' },
+              { combinator: 'and', rules: [{ field: 'age', operator: '>', value: 28 }] },
+            ],
+          }}
+        />
+      );
+      // First two rules (paths [0] and [1]) are enabled
+      expect(getAllByTestId(TestID.fields)[0]).not.toBeDisabled();
+      expect(getAllByTestId(TestID.operators)[0]).not.toBeDisabled();
+      expect(getAllByTestId(TestID.valueEditor)[0]).not.toBeDisabled();
+      expect(getAllByTestId(TestID.fields)[1]).not.toBeDisabled();
+      expect(getAllByTestId(TestID.operators)[1]).not.toBeDisabled();
+      expect(getAllByTestId(TestID.valueEditor)[1]).not.toBeDisabled();
+      // Rule group at path [2] is disabled
+      expect(getAllByTestId(TestID.combinators)[1]).toBeDisabled();
+      expect(getAllByTestId(TestID.addRule)[1]).toBeDisabled();
+      expect(getAllByTestId(TestID.addGroup)[1]).toBeDisabled();
+      expect(getAllByTestId(TestID.fields)[2]).toBeDisabled();
+      expect(getAllByTestId(TestID.operators)[2]).toBeDisabled();
+      expect(getAllByTestId(TestID.valueEditor)[2]).toBeDisabled();
+    });
   });
 });
