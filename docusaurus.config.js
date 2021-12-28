@@ -14,7 +14,7 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon: "img/react-querybuilder.png",
   organizationName: "react-querybuilder",
   projectName: "react-querybuilder.github.io",
   trailingSlash: false,
@@ -68,10 +68,10 @@ const config = {
       },
       navbar: {
         title: "React Query Builder",
-        // logo: {
-        //   alt: 'React Query Builder Logo',
-        //   src: 'img/logo.svg',
-        // },
+        logo: {
+          alt: "React Query Builder Logo",
+          src: "img/react-querybuilder.svg",
+        },
         items: [
           {
             type: "doc",
