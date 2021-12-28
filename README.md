@@ -7,7 +7,7 @@
 <!-- prettier-ignore-end -->
 
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
-![workflow status](https://github.com/react-querybuilder/react-querybuilder/workflows/Continuous%20Integration/badge.svg)
+[![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
 
 ![Screenshot](_assets/screenshot.png)
