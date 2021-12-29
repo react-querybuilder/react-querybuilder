@@ -14,15 +14,13 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
-      - uses: webfactory/ssh-agent@v0.5.0
-        with:
-          ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
-      - name: Release to GitHub Pages
-        env:
-          USE_SSH: true
-          GIT_USER: git
+      - name: Install and build
         run: |
-          git config --global user.email "jakeboone02@gmail.com"
-          git config --global user.name "Jake Boone"
           yarn install --frozen-lockfile
-          yarn publish:demo
+          yarn build
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.8
+        with:
+          branch: gh-pages
+          folder: packages/demo/dist
+          ssh-key: ${{ secrets.GH_PAGES_DEPLOY }}

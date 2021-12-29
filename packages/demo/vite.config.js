@@ -3,6 +3,7 @@ import legacy from '@vitejs/plugin-legacy';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/react-querybuilder/',
   build: {
     rollupOptions: {
       input: {
