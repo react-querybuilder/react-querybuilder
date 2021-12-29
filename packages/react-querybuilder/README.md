@@ -1,16 +1,16 @@
 # react-querybuilder
 
-[Complete documentation](https://react-querybuilder.js.org)
+_The Query Builder component for React_
+
+![Screenshot](../../_assets/screenshot.png)
+
+Complete documentation is available at https://react-querybuilder.js.org.
 
 ## Getting Started
 
 ```shell
 npm install react-querybuilder --save
-```
-
-OR
-
-```shell
+# OR
 yarn add react-querybuilder
 ```
 
@@ -18,14 +18,17 @@ yarn add react-querybuilder
 
 [Click here to see a live, interactive demo](https://react-querybuilder.js.org/react-querybuilder/).
 
-To run the demo yourself, go through the following steps:
+<detail>
+<summary>To run the demo yourself...</summary>
 
 1. _Clone this repo_
 2. `yarn` _Install dependencies_
 3. `yarn start` _Run a local server_
 4. _Visit http://localhost:8080 in your browser_
 
-To use the official replacement components as seen in the demo, take a look at the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder).
+</detail>
+
+To use the official compatibility components as seen in the demo (select different options in the Style dropdown), take a look at the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder).
 
 ## Basic usage
 
@@ -41,15 +44,15 @@ const fields = [
   { name: 'phone', label: 'Phone' },
   { name: 'email', label: 'Email', validator: ({ value }) => /^[^@]+@[^@]+/.test(value) },
   { name: 'twitter', label: 'Twitter' },
-  { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false }
+  { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false },
 ];
 
 export const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({
     combinator: 'and',
-    rules: []
+    rules: [],
   });
 
-  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
+  return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
 };
 ```
