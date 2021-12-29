@@ -16,23 +16,9 @@
 
 To get started, see the [main package readme](packages/react-querybuilder/README.md).
 
-Full documentation is available at https://react-querybuilder.js.org.
+**Full documentation is available at https://react-querybuilder.js.org**.
 
 _For documentation on v3.12.1, see [README.old.md](README.old.md)_
-
-## Development
-
-#### Changelog Generation
-
-We are using [github-changes](https://github.com/lalitkapoor/github-changes) to generate the changelog.
-
-To use it:
-
-1. tag your commit using [semantic versioning](http://semver.org/)
-2. run `yarn generate-changelog`
-3. enter your github credentials at the prompt
-4. commit
-5. push your commit and tags
 
 ## Credits
 
