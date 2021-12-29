@@ -347,6 +347,12 @@ const App = () => {
             <pre>npm i react-querybuilder</pre>
             OR
             <pre>yarn add react-querybuilder</pre>
+            <Title level={4} style={{ marginTop: '1rem' }}>
+              Links
+            </Title>
+            <p>
+              <a href="ie11.html">IE-compatible demo</a>
+            </p>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
             <ChakraStyleProvider theme={chakraTheme}>
