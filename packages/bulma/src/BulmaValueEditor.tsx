@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { toOptions } from './utils';
+import { BulmaValueSelector } from './BulmaValueSelector';
 
 export const BulmaValueEditor = ({
   fieldData,
@@ -13,6 +13,7 @@ export const BulmaValueEditor = ({
   inputType,
   values,
   disabled,
+  ...props
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -37,11 +38,15 @@ export const BulmaValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <div title={title} className={`${className} select is-small`}>
-          <select value={value} disabled={disabled} onChange={e => handleOnChange(e.target.value)}>
-            {toOptions(values)}
-          </select>
-        </div>
+        <BulmaValueSelector
+          {...props}
+          title={title}
+          className={className}
+          handleOnChange={handleOnChange}
+          options={values!}
+          value={value}
+          disabled={disabled}
+        />
       );
 
     case 'checkbox':

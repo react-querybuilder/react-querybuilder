@@ -1,15 +1,7 @@
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  Input,
-  Radio,
-  RadioGroup,
-  Select,
-} from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, Input, Radio, RadioGroup } from '@mui/material';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { toOptions } from './utils';
+import MaterialValueSelector from './MaterialValueSelector';
 
 const MaterialValueEditor = ({
   fieldData,
@@ -22,6 +14,7 @@ const MaterialValueEditor = ({
   inputType,
   values,
   disabled,
+  ...props
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -46,11 +39,15 @@ const MaterialValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <FormControl title={title} variant="standard" className={className} disabled={disabled}>
-          <Select value={value} onChange={e => handleOnChange(e.target.value)}>
-            {toOptions(values)}
-          </Select>
-        </FormControl>
+        <MaterialValueSelector
+          {...props}
+          className={className}
+          handleOnChange={handleOnChange}
+          options={values!}
+          value={value}
+          disabled={disabled}
+          title={title}
+        />
       );
 
     case 'checkbox':
