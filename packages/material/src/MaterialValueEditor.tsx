@@ -3,13 +3,13 @@ import {
   FormControl,
   FormControlLabel,
   Input,
-  MenuItem,
   Radio,
   RadioGroup,
   Select,
 } from '@mui/material';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
+import { toOptions } from './utils';
 
 const MaterialValueEditor = ({
   fieldData,
@@ -48,12 +48,7 @@ const MaterialValueEditor = ({
       return (
         <FormControl title={title} variant="standard" className={className} disabled={disabled}>
           <Select value={value} onChange={e => handleOnChange(e.target.value)}>
-            {values &&
-              values.map(v => (
-                <MenuItem key={v.name} value={v.name}>
-                  {v.label}
-                </MenuItem>
-              ))}
+            {toOptions(values)}
           </Select>
         </FormControl>
       );

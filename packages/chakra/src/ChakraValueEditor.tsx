@@ -1,6 +1,7 @@
 import { Checkbox, Input, Radio, RadioGroup, Select, Stack } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
+import { toOptions } from './utils';
 
 const ChakraValueEditor = ({
   fieldData,
@@ -45,12 +46,7 @@ const ChakraValueEditor = ({
           variant="filled"
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.value)}>
-          {values &&
-            values.map(v => (
-              <option key={v.name} value={v.name}>
-                {v.label}
-              </option>
-            ))}
+          {toOptions(values)}
         </Select>
       );
 

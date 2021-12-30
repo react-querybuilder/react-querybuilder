@@ -1,8 +1,7 @@
 import { Checkbox, Input, Radio, Select } from 'antd';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-
-const { Option } = Select;
+import { toOptions } from './utils';
 
 const AntDValueEditor = ({
   fieldData,
@@ -41,11 +40,7 @@ const AntDValueEditor = ({
       return (
         <span title={title} className={className}>
           <Select onChange={v => handleOnChange(v)} value={value} disabled={disabled}>
-            {values!.map(v => (
-              <Option key={v.name} value={v.name}>
-                {v.label}
-              </Option>
-            ))}
+            {toOptions(values)}
           </Select>
         </span>
       );

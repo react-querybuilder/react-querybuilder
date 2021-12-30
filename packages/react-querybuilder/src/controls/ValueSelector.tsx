@@ -1,6 +1,7 @@
+import { toOptions } from '../utils';
 import type { ValueSelectorProps } from '../types';
 
-const ValueSelector = ({
+export const ValueSelector = ({
   className,
   handleOnChange,
   options,
@@ -16,17 +17,8 @@ const ValueSelector = ({
     title={title}
     disabled={disabled}
     onChange={e => handleOnChange(e.target.value)}>
-    {options.map(option => {
-      const key = `key-${option.id ?? option.name}`;
-      return (
-        <option key={key} value={option.name}>
-          {option.label}
-        </option>
-      );
-    })}
+    {toOptions(options)}
   </select>
 );
 
 ValueSelector.displayName = 'ValueSelector';
-
-export default ValueSelector;

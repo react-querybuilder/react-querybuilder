@@ -45,7 +45,7 @@ export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) =>
       expect(getByLabelText(label)).toBeDisabled();
       try {
         userEvent.click(getByLabelText(label));
-      } catch (e) {
+      } catch (e: any) {
         if (!errorMessageIsAboutPointerEventsNone(e)) {
           throw e;
         }

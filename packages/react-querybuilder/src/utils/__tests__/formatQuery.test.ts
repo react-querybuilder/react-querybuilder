@@ -1,5 +1,5 @@
-import formatQuery from '../formatQuery';
 import type { RuleGroupType, ValueProcessor } from '../../types';
+import { formatQuery } from '../formatQuery';
 
 const query: RuleGroupType = {
   id: 'g-root',

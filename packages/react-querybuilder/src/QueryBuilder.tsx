@@ -11,7 +11,7 @@ import {
   defaultTranslations,
   standardClassnames,
 } from './defaults';
-import type {
+import {
   Field,
   QueryBuilderProps,
   QueryBuilderPropsInternal,
@@ -25,7 +25,9 @@ import {
   findPath,
   generateID,
   getCommonAncestorPath,
+  getFirstOption,
   getParentPath,
+  isOptionGroupArray,
   isRuleGroup,
   pathsAreEqual,
   prepareRule,
@@ -33,6 +35,7 @@ import {
   regenerateID,
   regenerateIDs,
   uniqByName,
+  uniqOptGroups,
 } from './utils';
 
 enableES5();
@@ -88,14 +91,22 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   const fields = useMemo(() => {
     let f = fieldsProp;
     if (!autoSelectField) {
-      f = defaultFields.concat(fieldsProp);
+      if (isOptionGroupArray(fieldsProp)) {
+        f = [{ label: '------', options: defaultFields }].concat(fieldsProp);
+      } else {
+        f = defaultFields.concat(fieldsProp);
+      }
     }
-    return uniqByName(f);
+    return isOptionGroupArray(f) ? uniqOptGroups(f) : uniqByName(f);
   }, [autoSelectField, fieldsProp]);
 
   const fieldMap = useMemo(() => {
     const fm: { [k: string]: Field } = {};
-    fields.forEach(f => (fm[f.name] = f));
+    if (isOptionGroupArray(fields)) {
+      fields.forEach(f => f.options.forEach(opt => (fm[opt.name] = opt)));
+    } else {
+      fields.forEach(f => (fm[f.name] = f));
+    }
     return fm;
   }, [fields]);
 
@@ -137,7 +148,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       }
 
       const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-      return operators.length ? operators[0].name : /* istanbul ignore next */ '';
+      return operators.length
+        ? getFirstOption(operators) ?? /* istanbul ignore next */ ''
+        : /* istanbul ignore next */ '';
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
@@ -186,7 +199,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
       const values = getValuesMain(rule.field, rule.operator);
 
       if (values.length) {
-        value = values[0].name;
+        value = getFirstOption(values);
       } else {
         const editorType = getValueEditorTypeMain(rule.field, rule.operator);
 
@@ -216,7 +229,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     let field = '';
     /* istanbul ignore else */
     if (fields?.length > 0 && fields[0]) {
-      field = fields[0].name;
+      field = getFirstOption(fields) ?? /* istanbul ignore next */ '';
     }
     if (getDefaultField) {
       if (typeof getDefaultField === 'function') {
@@ -251,7 +264,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     return {
       id: `g-${generateID()}`,
       rules: addRuleToNewGroups ? [createRule()] : [],
-      combinator: combinators[0].name,
+      combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
       not: false,
     } as any;
   }, [addRuleToNewGroups, combinators, createRule, independentCombinators]);
@@ -452,7 +465,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
             const newNextCombinator =
               parentToInsertInto.rules[1] ||
               oldPrevCombinator ||
-              /* istanbul ignore next */ combinators[0].name;
+              /* istanbul ignore next */ getFirstOption(combinators);
             parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, newNextCombinator);
           }
         } else {
@@ -460,7 +473,9 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
             parentToInsertInto.rules.splice(newIndex, 0, oldPrevCombinator, ruleOrGroup);
           } else {
             const newPrevCombinator =
-              parentToInsertInto.rules[newIndex - 2] || oldNextCombinator || combinators[0].name;
+              parentToInsertInto.rules[newIndex - 2] ||
+              oldNextCombinator ||
+              getFirstOption(combinators);
             parentToInsertInto.rules.splice(newIndex, 0, newPrevCombinator, ruleOrGroup);
           }
         }

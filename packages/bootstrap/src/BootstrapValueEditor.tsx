@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
+import { toOptions } from './utils';
 
 export const BootstrapValueEditor = ({
   fieldData,
@@ -42,11 +43,7 @@ export const BootstrapValueEditor = ({
           onChange={e => handleOnChange(e.target.value)}
           value={value}
           disabled={disabled}>
-          {values!.map(v => (
-            <option key={v.name} value={v.name}>
-              {v.label}
-            </option>
-          ))}
+          {toOptions(values)}
         </select>
       );
 

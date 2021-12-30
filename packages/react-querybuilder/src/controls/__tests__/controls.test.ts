@@ -5,7 +5,11 @@ import {
   testValueEditor,
   testValueSelector,
 } from '@react-querybuilder/compat';
-import { ActionElement, DragHandle, NotToggle, ValueEditor, ValueSelector } from '..';
+import { ActionElement } from '../ActionElement';
+import { DragHandle } from '../DragHandle';
+import { NotToggle } from '../NotToggle';
+import { ValueEditor } from '../ValueEditor';
+import { ValueSelector } from '../ValueSelector';
 
 testActionElement(ActionElement);
 testDragHandle(DragHandle);

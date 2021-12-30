@@ -7,9 +7,9 @@ import type { RuleType, RuleGroupTypeAny } from '../types';
  *
  * @deprecated
  */
-const isRuleGroup = (ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny => {
+export const isRuleGroup = (
+  ruleOrGroup: RuleType | RuleGroupTypeAny
+): ruleOrGroup is RuleGroupTypeAny => {
   const rg = ruleOrGroup as RuleGroupTypeAny;
   return rg && Array.isArray(rg.rules);
 };
-
-export default isRuleGroup;

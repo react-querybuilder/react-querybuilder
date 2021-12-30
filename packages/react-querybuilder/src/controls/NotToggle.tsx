@@ -1,6 +1,6 @@
 import type { NotToggleProps } from '../types';
 
-const NotToggle = ({
+export const NotToggle = ({
   className,
   handleOnChange,
   title,
@@ -21,5 +21,3 @@ const NotToggle = ({
 );
 
 NotToggle.displayName = 'NotToggle';
-
-export default NotToggle;

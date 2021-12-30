@@ -97,7 +97,7 @@ const generateMixedAndOrList = (expr: SQLAndExpression | SQLOrExpression) => {
   return returnArray;
 };
 
-const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny => {
+export const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny => {
   let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
   if (options) {
@@ -268,5 +268,3 @@ const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
   }
   return { combinator: 'and', rules: [] };
 };
-
-export default parseSQL;

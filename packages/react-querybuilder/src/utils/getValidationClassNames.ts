@@ -1,7 +1,7 @@
 import { standardClassnames } from '../defaults';
 import type { ValidationResult } from '../types';
 
-const getValidationClassNames = (validationResult: boolean | ValidationResult) => {
+export const getValidationClassNames = (validationResult: boolean | ValidationResult) => {
   const valid =
     typeof validationResult === 'boolean'
       ? validationResult
@@ -14,5 +14,3 @@ const getValidationClassNames = (validationResult: boolean | ValidationResult) =
       : standardClassnames.invalid
     : '';
 };
-
-export default getValidationClassNames;

@@ -1,5 +1,6 @@
 import { Select } from '@chakra-ui/react';
 import type { ValueSelectorProps } from 'react-querybuilder';
+import { toOptions } from './utils';
 
 const ChakraValueSelector = ({
   className,
@@ -17,14 +18,7 @@ const ChakraValueSelector = ({
     variant="filled"
     disabled={disabled}
     onChange={e => handleOnChange(e.target.value)}>
-    {options.map(option => {
-      const key = `key-${option.id ?? option.name}`;
-      return (
-        <option key={key} value={option.name}>
-          {option.label}
-        </option>
-      );
-    })}
+    {toOptions(options)}
   </Select>
 );
 

@@ -1,3 +1,1 @@
-const generateID = () => Math.random().toString();
-
-export default generateID;
+export const generateID = () => Math.random().toString();

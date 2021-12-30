@@ -1,5 +1,6 @@
-import { FormControl, MenuItem, Select } from '@mui/material';
+import { FormControl, Select } from '@mui/material';
 import type { ValueSelectorProps } from 'react-querybuilder';
+import { toOptions } from './utils';
 
 const MaterialValueSelector = ({
   className,
@@ -11,14 +12,7 @@ const MaterialValueSelector = ({
 }: ValueSelectorProps) => (
   <FormControl variant="standard" className={className} title={title} disabled={disabled}>
     <Select value={value} onChange={e => handleOnChange(e.target.value)}>
-      {options.map(option => {
-        const key = `key-${option.id ?? option.name}`;
-        return (
-          <MenuItem key={key} value={option.name}>
-            {option.label}
-          </MenuItem>
-        );
-      })}
+      {toOptions(options)}
     </Select>
   </FormControl>
 );

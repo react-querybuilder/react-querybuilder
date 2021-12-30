@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { NameLabelPair, ValueEditorProps } from 'react-querybuilder';
+import type { NameLabelPair, OptionGroup, ValueEditorProps } from 'react-querybuilder';
 import { errorMessageIsAboutPointerEventsNone, findInput } from './utils';
 import { defaultValueSelectorProps, testSelect } from './ValueSelector.test';
 
@@ -11,7 +11,7 @@ type ValueEditorTestsToSkip = Partial<{
   radio: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
-  values: NameLabelPair[];
+  values: NameLabelPair[] | OptionGroup[];
   testID: string;
 }
 
@@ -127,7 +127,7 @@ export const testValueEditor = (
         expect(findInput(getByTitle(title))).toBeDisabled();
         try {
           userEvent.click(findInput(getByTitle(title)));
-        } catch (e) {
+        } catch (e: any) {
           if (!errorMessageIsAboutPointerEventsNone(e)) {
             throw e;
           }
@@ -197,7 +197,7 @@ export const testValueEditor = (
             expect(r).toBeDisabled();
             try {
               userEvent.click(r);
-            } catch (e) {
+            } catch (e: any) {
               if (!errorMessageIsAboutPointerEventsNone(e)) {
                 throw e;
               }

@@ -8,12 +8,17 @@ export interface NameLabelPair {
   [x: string]: any;
 }
 
+export type OptionGroup<O extends NameLabelPair = NameLabelPair> = {
+  label: string;
+  options: O[];
+};
+
 export interface Field extends NameLabelPair {
   id?: string;
   operators?: NameLabelPair[];
   valueEditorType?: ValueEditorType;
   inputType?: string | null;
-  values?: NameLabelPair[];
+  values?: NameLabelPair[] | OptionGroup[];
   defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;

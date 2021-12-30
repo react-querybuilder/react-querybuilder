@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
+import { toOptions } from './utils';
 
 export const BulmaValueEditor = ({
   fieldData,
@@ -38,12 +39,7 @@ export const BulmaValueEditor = ({
       return (
         <div title={title} className={`${className} select is-small`}>
           <select value={value} disabled={disabled} onChange={e => handleOnChange(e.target.value)}>
-            {values &&
-              values.map(v => (
-                <option key={v.name} value={v.name}>
-                  {v.label}
-                </option>
-              ))}
+            {toOptions(values)}
           </select>
         </div>
       );
