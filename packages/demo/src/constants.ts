@@ -8,6 +8,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from 'react-querybuilder/src/types';
+import { musicalInstruments } from './musicalInstruments';
 
 const AntDActionElement = lazy(() => import('./components/AntDActionElement'));
 const AntDDragHandle = lazy(() => import('./components/AntDDragHandle'));
@@ -249,12 +250,7 @@ export const fields: Field[] = [
     name: 'instrument',
     label: 'Instrument',
     valueEditorType: 'select',
-    values: [
-      { name: 'Guitar', label: 'Guitar' },
-      { name: 'Piano', label: 'Piano' },
-      { name: 'Vocals', label: 'Vocals' },
-      { name: 'Drums', label: 'Drums' },
-    ],
+    values: musicalInstruments,
     defaultValue: 'Piano',
     operators: [{ name: '=', label: 'is' }],
   },
