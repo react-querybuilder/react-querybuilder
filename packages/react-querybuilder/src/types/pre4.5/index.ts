@@ -19,10 +19,10 @@ export type {
   DefaultRuleGroupTypeAny,
 };
 
-import type { QueryValidator } from './validation';
-export type { QueryValidator };
+/* begin temp
+import type { ValidationResult, ValidationMap, QueryValidator, RuleValidator } from './validation';
+export type { ValidationResult, ValidationMap, QueryValidator, RuleValidator };
 
-/* begin props
 import type {
   CommonSubComponentProps,
   ActionProps,
@@ -65,6 +65,6 @@ export type {
   QueryBuilderProps,
   QueryBuilderPropsInternal,
 };
-end props */
+end temp */
 
 export * from '..';
