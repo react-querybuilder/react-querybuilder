@@ -13,8 +13,8 @@ export const SandpackRQB: React.FC = ({ children }) => {
     <div className="sandpackrqb">
       <Sandpack
         files={{
-          '/src/App.tsx': appCode,
-          '/src/styles.css': {
+          '/App.tsx': appCode,
+          '/styles.css': {
             code: `body{background-color:${bkgdColor};}`,
             hidden: true,
           },
@@ -23,7 +23,7 @@ export const SandpackRQB: React.FC = ({ children }) => {
         template="react-ts"
         customSetup={{
           dependencies: {
-            'react-querybuilder': '4.0.0-beta.7',
+            'react-querybuilder': '4.0.0',
           },
         }}
       />
