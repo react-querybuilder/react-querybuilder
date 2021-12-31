@@ -11,5 +11,5 @@
     "target": "esnext",
     "esModuleInterop": true
   },
-  "include": ["./jestSetup.ts"]
+  "include": ["./*.ts"]
 }

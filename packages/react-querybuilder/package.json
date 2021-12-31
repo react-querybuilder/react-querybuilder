@@ -5,6 +5,13 @@
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
+  "typesVersions": {
+    "<4.5": {
+      "dist/types/*": [
+        "dist/types/pre4.5/*"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
@@ -42,6 +49,8 @@
     "copyfiles": "^2.4.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "replace": "^1.2.1",
+    "rimraf": "^3.0.2",
     "sass": "^1.40.0",
     "typescript": "^4.5.0"
   },
@@ -59,7 +68,7 @@
     "build": "npm run build:main && npm run build:css && npm run build:types && npm run build:formatQuery && npm run build:parseSQL",
     "build:main": "vite build",
     "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "copyfiles -f src/types/props.ts src/types/pre4.5 && replace './basic' '../basic' src/types/pre4.5/props.ts --silent && replace '\\/\\* begin props' '/* begin props */' src/types/pre4.5/index.ts --silent && replace 'end props \\*\\/' '/* end props */' src/types/pre4.5/index.ts --silent && tsc --project ./tsconfig.build.json --emitDeclarationOnly && replace 'import type' 'import' ./dist/types -r --silent && replace '\\/\\* begin props \\*\\/' '/* begin props' src/types/pre4.5/index.ts --silent && replace '\\/\\* end props \\*\\/' 'end props */' src/types/pre4.5/index.ts --silent && rimraf src/types/pre4.5/props.ts",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",

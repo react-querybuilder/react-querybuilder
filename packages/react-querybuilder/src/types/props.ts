@@ -337,6 +337,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      *   { name: 'in', label: 'in' },
      *   { name: 'notIn', label: 'not in' },
      *   { name: 'between', label: 'between' },
+     *   { name: 'notBetween', label: 'not between' },
      * ]
      */
     operators?: NameLabelPair[] | OptionGroup[];
