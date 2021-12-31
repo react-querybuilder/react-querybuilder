@@ -61,7 +61,8 @@ jobs:
         run: yarn install
 
       - name: Install TypeScript ${{ matrix.ts }}
-        run: yarn add typescript@${{ matrix.ts }}
+        run: yarn add -W -D typescript@${{ matrix.ts }}
+        run: yarn workspace react-querybuilder add -D typescript@${{ matrix.ts }}
 
       - name: Test types
         run: |
