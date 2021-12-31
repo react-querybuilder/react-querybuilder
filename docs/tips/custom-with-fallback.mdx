@@ -4,13 +4,8 @@ description: Adding functionality without replacing default components
 hide_table_of_contents: true
 ---
 
-import {
-  Field,
-  RuleGroupType,
-  ValueEditor,
-  ValueEditorProps,
-} from "react-querybuilder";
-import { QueryBuilderEmbed } from "../../src/components/QueryBuilderEmbed";
+import { Field, RuleGroupType, ValueEditor, ValueEditorProps } from 'react-querybuilder';
+import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed';
 
 You may run into a situation where the default components _almost_ meet your requirements, but you don't want to recreate the entire component just to slightly modify the behavior. Falling back to the default component after implementing your custom behavior is a good way to keep your code up to date with the current version's standard features while retaining the flexibility of a fully custom solution.
 
@@ -19,30 +14,24 @@ For example, let's say you need a value editor that uses a `<select>` element wi
 However, you don't need to copy/paste the default `ValueEditor` code to take advantage of its functionality. Simply spread the same props that were passed in to your custom component (`<ValueEditor {...props} />`) and return that if your custom behavior is not applicable.
 
 ```tsx
-import { useState } from "react";
+import { useState } from 'react';
 import QueryBuilder, {
   Field,
   RuleGroupType,
   ValueEditor,
   ValueEditorProps,
-} from "react-querybuilder";
-import "react-querybuilder/dist/query-builder.css";
+} from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
 
 const CustomValueEditor = (props: ValueEditorProps) => {
-  if (props.type === "select") {
+  if (props.type === 'select') {
     // For all 'select' types, use custom logic:
     return (
-      <select
-        value={props.value}
-        onChange={(e) => props.handleOnChange(e.target.value)}
-      >
+      <select value={props.value} onChange={e => props.handleOnChange(e.target.value)}>
         {props.context.optionGroups[props.field].map(
-          (og: {
-            label: string;
-            options: { value: string; label: string }[];
-          }) => (
+          (og: { label: string; options: { value: string; label: string }[] }) => (
             <optgroup key={og.label} label={og.label}>
-              {og.options.map((opt) => (
+              {og.options.map(opt => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
@@ -61,8 +50,8 @@ const CustomValueEditor = (props: ValueEditorProps) => {
 // Field 1 will be handled by our custom <select>, and
 // Field 2 will be handled by the default component.
 const fields: Field[] = [
-  { name: "field1", label: "Field 1", valueEditorType: "select" },
-  { name: "field2", label: "Field 2" },
+  { name: 'field1', label: 'Field 1', valueEditorType: 'select' },
+  { name: 'field2', label: 'Field 2' },
 ];
 
 // There are other ways to pass custom data to your components, but `context` is the most flexible.
@@ -70,17 +59,17 @@ const context = {
   optionGroups: {
     field1: [
       {
-        label: "First Group",
+        label: 'First Group',
         options: [
-          { value: "item1", label: "First Item" },
-          { value: "item2", label: "Second Item" },
+          { value: 'item1', label: 'First Item' },
+          { value: 'item2', label: 'Second Item' },
         ],
       },
       {
-        label: "Second Group",
+        label: 'Second Group',
         options: [
-          { value: "item3", label: "Third Item" },
-          { value: "item4", label: "Fourth Item" },
+          { value: 'item3', label: 'Third Item' },
+          { value: 'item4', label: 'Fourth Item' },
         ],
       },
     ],
@@ -89,18 +78,18 @@ const context = {
 
 export const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({
-    id: "root",
-    combinator: "and",
+    id: 'root',
+    combinator: 'and',
     rules: [
       {
-        field: "field1",
-        operator: "=",
-        value: "item2",
+        field: 'field1',
+        operator: '=',
+        value: 'item2',
       },
       {
-        field: "field2",
-        operator: "=",
-        value: "",
+        field: 'field2',
+        operator: '=',
+        value: '',
       },
     ],
   });
@@ -123,28 +112,25 @@ The code above generates the following query builder:
 
 <QueryBuilderEmbed
   fields={[
-    { name: "field1", label: "Field 1", valueEditorType: "select" },
-    { name: "field2", label: "Field 2" },
+    { name: 'field1', label: 'Field 1', valueEditorType: 'select' },
+    { name: 'field2', label: 'Field 2' },
   ]}
   query={{
-    combinator: "and",
+    combinator: 'and',
     rules: [
-      { field: "field1", operator: "=", value: "item2" },
-      { field: "field2", operator: "=", value: "" },
+      { field: 'field1', operator: '=', value: 'item2' },
+      { field: 'field2', operator: '=', value: '' },
     ],
   }}
   controlElements={{
-    valueEditor: (props) => {
-      if (props.type === "select") {
+    valueEditor: props => {
+      if (props.type === 'select') {
         // For all 'select' types, use custom logic:
         return (
-          <select
-            value={props.value}
-            onChange={(e) => props.handleOnChange(e.target.value)}
-          >
-            {props.context.optionGroups[props.field].map((og) => (
+          <select value={props.value} onChange={e => props.handleOnChange(e.target.value)}>
+            {props.context.optionGroups[props.field].map(og => (
               <optgroup key={og.label} label={og.label}>
-                {og.options.map((opt) => (
+                {og.options.map(opt => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
@@ -161,17 +147,17 @@ The code above generates the following query builder:
     optionGroups: {
       field1: [
         {
-          label: "First Group",
+          label: 'First Group',
           options: [
-            { value: "item1", label: "First Item" },
-            { value: "item2", label: "Second Item" },
+            { value: 'item1', label: 'First Item' },
+            { value: 'item2', label: 'Second Item' },
           ],
         },
         {
-          label: "Second Group",
+          label: 'Second Group',
           options: [
-            { value: "item3", label: "Third Item" },
-            { value: "item4", label: "Fourth Item" },
+            { value: 'item3', label: 'Third Item' },
+            { value: 'item4', label: 'Fourth Item' },
           ],
         },
       ],

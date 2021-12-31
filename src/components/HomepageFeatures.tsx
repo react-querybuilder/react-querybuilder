@@ -4,9 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React from "react";
-import clsx from "clsx";
-import styles from "./HomepageFeatures.module.css";
+import React from 'react';
+import clsx from 'clsx';
+import styles from './HomepageFeatures.module.css';
 
 type FeatureItem = {
   title: string;
@@ -16,27 +16,25 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: "Sensible Defaults",
-    image: "/img/screenshot.png",
-    description: (
-      <>Build complex queries with robust out-of-the-box features.</>
-    ),
+    title: 'Sensible Defaults',
+    image: '/img/screenshot.png',
+    description: <>Build complex queries with robust out-of-the-box features.</>,
   },
   {
-    title: "Extensible",
-    image: "/img/date-picker.png",
+    title: 'Extensible',
+    image: '/img/date-picker.png',
     description: <>Provide custom components for maximum flexibility.</>,
   },
   {
-    title: "Native TypeScript",
-    image: "/img/typescript.png",
+    title: 'Native TypeScript',
+    image: '/img/typescript.png',
     description: <>First-class TypeScript support.</>,
   },
 ];
 
 function Feature({ title, image, description }: FeatureItem) {
   return (
-    <div className={clsx("col col--4")}>
+    <div className={clsx('col col--4')}>
       <div className="text--center">
         <img alt={title} src={image} />
       </div>

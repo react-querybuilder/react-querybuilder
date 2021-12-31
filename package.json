@@ -12,7 +12,8 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "pretty-print": "prettier --write docs/* docs/**/* src/**/*"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^0.10.6",

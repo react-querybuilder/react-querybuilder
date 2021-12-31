@@ -3,7 +3,7 @@ title: Getting Started
 hide_table_of_contents: true
 ---
 
-import { SandpackRQB } from "../src/components/SandpackRQB";
+import { SandpackRQB } from '../src/components/SandpackRQB';
 
 To install `react-querybuilder`, use [npm](https://www.npmjs.com/package/react-querybuilder) or [Yarn](https://yarnpkg.com/package/react-querybuilder).
 
@@ -26,8 +26,8 @@ The simplest way to create a query builder is to render the `QueryBuilder` compo
 <SandpackRQB>
 
 ```tsx
-import QueryBuilder from "react-querybuilder";
-import "react-querybuilder/dist/query-builder.scss";
+import QueryBuilder from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.scss';
 
 export default () => <QueryBuilder />;
 ```
@@ -41,12 +41,12 @@ In the query builder below, click the "+Rule" button and then the fields selecto
 <SandpackRQB>
 
 ```tsx
-import QueryBuilder from "react-querybuilder";
-import "react-querybuilder/dist/query-builder.scss";
+import QueryBuilder from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.scss';
 
 const fields: Field[] = [
-  { name: "firstName", label: "First Name" },
-  { name: "lastName", label: "Last Name" },
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
 ];
 
 export default () => <QueryBuilder fields={fields} />;
@@ -61,31 +61,25 @@ The state variable `query` will be passed to the `query` prop, and the setter me
 <SandpackRQB>
 
 ```tsx
-import { useState } from "react";
-import QueryBuilder, { Field, RuleGroupType } from "react-querybuilder";
-import "react-querybuilder/dist/query-builder.scss";
+import { useState } from 'react';
+import QueryBuilder, { Field, RuleGroupType } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.scss';
 
 const fields: Field[] = [
-  { name: "firstName", label: "First Name" },
-  { name: "lastName", label: "Last Name" },
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
 ];
 
 export default () => {
   const [query, setQuery] = useState<RuleGroupType>({
-    combinator: "and",
+    combinator: 'and',
     rules: [
-      { field: "firstName", operator: "=", value: "Steve" },
-      { field: "lastName", operator: "=", value: "Vai" },
+      { field: 'firstName', operator: '=', value: 'Steve' },
+      { field: 'lastName', operator: '=', value: 'Vai' },
     ],
   });
 
-  return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={(q) => setQuery(q)}
-    />
-  );
+  return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
 };
 ```
 

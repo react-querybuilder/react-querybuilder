@@ -4,8 +4,8 @@ description: Methods to prevent new groups
 hide_table_of_contents: true
 ---
 
-import { ActionElement } from "react-querybuilder";
-import { QueryBuilderEmbed } from "../../src/components/QueryBuilderEmbed";
+import { ActionElement } from 'react-querybuilder';
+import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed';
 
 Some query builder implementations are required to maintain a flat, rule-only hierarchy, or perhaps allow group creation only under certain conditions like one level deep. There are several ways to meet these requirements.
 
@@ -17,7 +17,7 @@ The simplest way to prevent creation of new groups is to unconditionally hide th
 <QueryBuilder
   fields={fields}
   query={query}
-  onQueryChange={(q) => setQuery(q)}
+  onQueryChange={q => setQuery(q)}
   controlElements={{
     // highlight-start
     addGroupAction: () => null,
@@ -46,11 +46,10 @@ To show the "+Group" button at the top level, but hide it in sub-groups, spread 
 <QueryBuilder
   fields={fields}
   query={query}
-  onQueryChange={(q) => setQuery(q)}
+  onQueryChange={q => setQuery(q)}
   controlElements={{
     // highlight-start
-    addGroupAction: (props) =>
-      props.level === 0 ? <ActionElement {...props} /> : null,
+    addGroupAction: props => (props.level === 0 ? <ActionElement {...props} /> : null),
     // highlight-end
   }}
 />
@@ -68,15 +67,14 @@ Either of those methods will generate a query builder like this:
 
 <QueryBuilderEmbed
   query={{
-    combinator: "and",
+    combinator: 'and',
     rules: [
-      { combinator: "and", rules: [] },
-      { combinator: "and", rules: [] },
+      { combinator: 'and', rules: [] },
+      { combinator: 'and', rules: [] },
     ],
   }}
   controlElements={{
-    addGroupAction: (props) =>
-      props.level === 0 ? <ActionElement {...props} /> : null,
+    addGroupAction: props => (props.level === 0 ? <ActionElement {...props} /> : null),
   }}
 />
 
@@ -94,7 +92,7 @@ On its own, this configuration may be a little confusing to the user since they 
 <QueryBuilder
   fields={fields}
   query={query}
-  onQueryChange={(q) => setQuery(q)}
+  onQueryChange={q => setQuery(q)}
   // highlight-start
   onAddGroup={() => false}
   // highlight-end
