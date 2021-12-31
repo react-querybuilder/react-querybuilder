@@ -31,5 +31,3 @@ export interface DefaultRuleGroupTypeIC extends RuleGroupTypeIC {
   rules: (DefaultCombinatorName | DefaultRuleType | DefaultRuleGroupTypeIC)[];
 }
 export type DefaultRuleGroupTypeAny = DefaultRuleGroupType | DefaultRuleGroupTypeIC;
-
-export * from '../ruleGroups';

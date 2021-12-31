@@ -6,5 +6,4 @@ export { Rule } from './Rule';
 export { RuleGroup } from './RuleGroup';
 export { InlineCombinator } from './InlineCombinator';
 export * from './controls/';
-export * from './types';
 export default QueryBuilder;

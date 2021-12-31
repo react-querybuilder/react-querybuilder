@@ -1,4 +1,5 @@
-import type { RuleGroupTypeAny, RuleType } from './ruleGroups';
+import type { RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny } from './ruleGroupsIC';
 
 export interface ValidationResult {
   valid: boolean;
