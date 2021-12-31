@@ -34,6 +34,19 @@ export const testSelect = (
       expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
     });
 
+    it('should render optgroups', () => {
+      const optGroups = [
+        { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
+      ];
+      const newProps =
+        'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
+      const { getByTitle } = render(<Component {...newProps} />);
+      const getSelect = () => findSelect(getByTitle(title));
+      expect(getSelect).not.toThrow();
+      expect(getSelect().querySelectorAll('optgroup')).toHaveLength(optGroups.length);
+      expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
+    });
+
     it('should have the value passed into the <select />', () => {
       const { getByTitle } = render(<Component {...props} value={testVal.name} />);
       expect(findSelect(getByTitle(title))).toHaveValue(testVal.name);

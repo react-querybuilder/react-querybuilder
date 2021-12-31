@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from '../types';
+import { ValueSelector } from './ValueSelector';
 
-const ValueEditor = ({
+export const ValueEditor = ({
   operator,
   value,
   handleOnChange,
@@ -13,6 +14,7 @@ const ValueEditor = ({
   fieldData,
   disabled,
   testID,
+  ...props
 }: ValueEditorProps) => {
   // This side effect blanks out the value if 1) the inputType is "number",
   // 2) the operator is not "between", "notBetween", "in", or "notIn", and
@@ -40,20 +42,16 @@ const ValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <select
-          data-testid={testID}
+        <ValueSelector
+          {...props}
+          testID={testID}
           className={className}
           title={title}
-          onChange={e => handleOnChange(e.target.value)}
+          handleOnChange={handleOnChange}
           disabled={disabled}
-          value={value}>
-          {values &&
-            values.map(v => (
-              <option key={v.name} value={v.name}>
-                {v.label}
-              </option>
-            ))}
-        </select>
+          value={value}
+          options={values!}
+        />
       );
 
     case 'checkbox':
@@ -105,5 +103,3 @@ const ValueEditor = ({
 };
 
 ValueEditor.displayName = 'ValueEditor';
-
-export default ValueEditor;

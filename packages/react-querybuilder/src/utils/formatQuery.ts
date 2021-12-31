@@ -12,8 +12,8 @@ import type {
   ValidationResult,
   ValueProcessor,
 } from '../types';
-import isRuleOrGroupValid from './isRuleOrGroupValid';
-import uniqByName from './uniqByName';
+import { isRuleOrGroupValid } from './isRuleOrGroupValid';
+import { uniqByName } from './uniq';
 
 const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
 
@@ -128,32 +128,35 @@ export const defaultMongoDBValueProcessor: ValueProcessor = (
 /**
  * Formats a query in the requested output format.
  */
-function formatQuery(ruleGroup: RuleGroupTypeAny): string;
-function formatQuery(
+export function formatQuery(ruleGroup: RuleGroupTypeAny): string;
+export function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'parameterized' | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized' })
 ): ParameterizedSQL;
-function formatQuery(
+export function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options:
     | 'parameterized_named'
     | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized_named' })
 ): ParameterizedNamedSQL;
-function formatQuery(
+export function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'>
 ): string;
-function formatQuery(
+export function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>
 ): string;
-function formatQuery(
+export function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'> & {
     format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>;
   }
 ): string;
-function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions | ExportFormat) {
+export function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options?: FormatQueryOptions | ExportFormat
+) {
   let format: ExportFormat = 'json';
   let valueProcessor = defaultValueProcessor;
   let quoteFieldNamesWith = '';
@@ -438,5 +441,3 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
     return '';
   }
 }
-
-export default formatQuery;

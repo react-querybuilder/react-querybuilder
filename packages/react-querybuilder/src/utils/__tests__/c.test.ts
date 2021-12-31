@@ -1,4 +1,4 @@
-import c from '../c';
+import { c } from '../c';
 
 describe('c', () => {
   it('should work', () => {

@@ -1,4 +1,4 @@
-import isRuleOrGroupValid from '../isRuleOrGroupValid';
+import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 
 describe('isRuleOrGroupValid', () => {
   describe('no validationResult or validator', () => {

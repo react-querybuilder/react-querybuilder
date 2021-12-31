@@ -38,7 +38,7 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
       expect(getByTitle(title)).toBeDisabled();
       try {
         userEvent.click(getByTitle(title));
-      } catch (e) {
+      } catch (e: any) {
         if (!errorMessageIsAboutPointerEventsNone(e)) {
           throw e;
         }

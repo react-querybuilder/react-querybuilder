@@ -1,7 +1,6 @@
 import { Select } from 'antd';
 import type { ValueSelectorProps } from 'react-querybuilder';
-
-const { Option } = Select;
+import { toOptions } from './utils';
 
 const AntDValueSelector = ({
   className,
@@ -13,14 +12,7 @@ const AntDValueSelector = ({
 }: ValueSelectorProps) => (
   <span title={title} className={className}>
     <Select disabled={disabled} value={value} onChange={v => handleOnChange(v)}>
-      {options.map(option => {
-        const key = `key-${option.id ?? option.name}`;
-        return (
-          <Option key={key} value={option.name}>
-            {option.label}
-          </Option>
-        );
-      })}
+      {toOptions(options)}
     </Select>
   </span>
 );

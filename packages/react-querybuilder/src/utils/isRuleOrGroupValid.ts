@@ -1,12 +1,9 @@
 import type { RuleGroupTypeAny, RuleType, RuleValidator, ValidationResult } from '../types';
 
-/**
- * Determines if this is a valid ValidationResult
- */
-const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
+export const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
   typeof vr === 'object' && vr !== null && typeof vr.valid === 'boolean';
 
-const isRuleOrGroupValid = (
+export const isRuleOrGroupValid = (
   rg: RuleType | RuleGroupTypeAny,
   validationResult?: boolean | ValidationResult,
   validator?: RuleValidator
@@ -29,5 +26,3 @@ const isRuleOrGroupValid = (
   }
   return true;
 };
-
-export default isRuleOrGroupValid;

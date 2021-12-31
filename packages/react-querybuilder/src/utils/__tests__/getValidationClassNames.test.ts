@@ -1,5 +1,5 @@
 import { standardClassnames } from '../../defaults';
-import getValidationClassNames from '../getValidationClassNames';
+import { getValidationClassNames } from '../getValidationClassNames';
 
 describe('getValidationClassNames', () => {
   it('should work', () => {

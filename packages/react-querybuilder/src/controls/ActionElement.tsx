@@ -1,6 +1,6 @@
 import type { ActionProps } from '../types';
 
-const ActionElement = ({
+export const ActionElement = ({
   className,
   handleOnClick,
   label,
@@ -19,5 +19,3 @@ const ActionElement = ({
 );
 
 ActionElement.displayName = 'ActionElement';
-
-export default ActionElement;

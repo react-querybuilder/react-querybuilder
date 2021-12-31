@@ -1,5 +1,5 @@
-import { prepareRule, prepareRuleGroup } from '../prepareQueryObjects';
 import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
+import { prepareRule, prepareRuleGroup } from '../prepareQueryObjects';
 
 describe('prepareQueryObjects', () => {
   describe('prepareRule', () => {

@@ -7,6 +7,7 @@ import { QueryBuilder as QueryBuilderOriginal } from '../QueryBuilder';
 import type {
   Field,
   NameLabelPair,
+  OptionGroup,
   RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeIC,
@@ -135,6 +136,52 @@ describe('<QueryBuilder />', () => {
       expect(selectors.getByTestId(TestID.rule).querySelector('input')).toHaveValue(
         'Test without ID'
       );
+    });
+  });
+
+  describe('when fields are provided with optgroups', () => {
+    let selectors: RenderResult;
+    const query: RuleGroupType = {
+      combinator: 'and',
+      not: false,
+      rules: [
+        {
+          field: 'firstName',
+          value: 'Test without ID',
+          operator: '=',
+        },
+      ],
+    };
+    const fields: OptionGroup<Field>[] = [
+      {
+        label: 'Names',
+        options: [
+          { name: 'firstName', label: 'First Name' },
+          { name: 'lastName', label: 'Last Name' },
+        ],
+      },
+      { label: 'Numbers', options: [{ name: 'age', label: 'Age' }] },
+    ];
+
+    beforeEach(() => {
+      selectors = render(<QueryBuilder defaultQuery={query} fields={fields} />);
+    });
+
+    it('renders correctly', () => {
+      expect(selectors.getByTestId(TestID.fields).querySelectorAll('optgroup')).toHaveLength(2);
+    });
+
+    it('selects the correct field', () => {
+      userEvent.click(selectors.getByTestId(TestID.addRule));
+      expect(selectors.getAllByTestId(TestID.fields)[1]).toHaveValue('firstName');
+    });
+
+    it('selects the default option', () => {
+      selectors.rerender(
+        <QueryBuilder defaultQuery={query} fields={fields} autoSelectField={false} />
+      );
+      userEvent.click(selectors.getByTestId(TestID.addRule));
+      expect(selectors.getAllByTestId(TestID.fields)[1]).toHaveValue('~');
     });
   });
 

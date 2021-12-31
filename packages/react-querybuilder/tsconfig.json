@@ -4,5 +4,5 @@
     "outDir": "./dist/types"
   },
   "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*"]
+  "exclude": ["**/*.test.*", "./src/__mocks__/*.*", "./dist/**/*"]
 }

@@ -1,4 +1,4 @@
-import type { Field, NameLabelPair, ValueEditorType } from './basic';
+import type { Field, NameLabelPair, OptionGroup, ValueEditorType } from './basic';
 import type {
   RuleGroupType,
   RuleGroupTypeAny,
@@ -61,7 +61,7 @@ export interface SelectorEditorProps extends CommonSubComponentProps {
 }
 
 export interface ValueSelectorProps extends SelectorEditorProps {
-  options: NameLabelPair[];
+  options: NameLabelPair[] | OptionGroup[];
 }
 
 export interface NotToggleProps extends CommonSubComponentProps {
@@ -75,7 +75,7 @@ export interface CombinatorSelectorProps extends ValueSelectorProps {
 }
 
 export interface FieldSelectorProps extends ValueSelectorProps {
-  options: Field[];
+  options: Field[] | OptionGroup<Field>[];
   operator?: string;
 }
 
@@ -189,17 +189,17 @@ export interface Classnames {
 }
 
 export interface Schema {
-  fields: Field[];
+  fields: Field[] | OptionGroup<Field>[];
   fieldMap: { [k: string]: Field };
   classNames: Classnames;
-  combinators: { name: string; label: string }[];
+  combinators: NameLabelPair[] | OptionGroup[];
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
-  getOperators(field: string): NameLabelPair[];
+  getOperators(field: string): NameLabelPair[] | OptionGroup[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
-  getValues(field: string, operator: string): NameLabelPair[];
+  getValues(field: string, operator: string): NameLabelPair[] | OptionGroup[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
   onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
   onGroupRemove(path: number[]): void;
@@ -315,7 +315,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      * The array of fields that should be used. Each field should be an object
      * with {name: String, label: String}
      */
-    fields?: Field[];
+    fields?: Field[] | OptionGroup<Field>[];
     /**
      * The array of operators that should be used.
      * @default
@@ -339,7 +339,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      *   { name: 'between', label: 'between' },
      * ]
      */
-    operators?: NameLabelPair[];
+    operators?: NameLabelPair[] | OptionGroup[];
     /**
      * The array of combinators that should be used for RuleGroups.
      * @default
@@ -348,14 +348,14 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      *     {name: 'or', label: 'OR'},
      * ]
      */
-    combinators?: NameLabelPair[];
+    combinators?: NameLabelPair[] | OptionGroup[];
     controlElements?: Partial<Controls>;
     enableMountQueryChange?: boolean;
     /**
      * The default field for new rules. This can be a string identifying the
      * default field, or a function that returns a field name.
      */
-    getDefaultField?: string | ((fieldsData: Field[]) => string);
+    getDefaultField?: string | ((fieldsData: Field[] | OptionGroup<Field>[]) => string);
     /**
      * The default operator for new rules. This can be a string identifying the
      * default operator, or a function that returns an operator name.
@@ -370,7 +370,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      * operators for the given field. If `null` is returned, the default
      * operators are used.
      */
-    getOperators?(field: string): NameLabelPair[] | null;
+    getOperators?(field: string): NameLabelPair[] | OptionGroup[] | null;
     /**
      * This is a callback function invoked to get the type of `ValueEditor`
      * for the given field and operator.
@@ -389,7 +389,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      * `getValueEditorType` returns `"select"` or `"radio"`). If no
      * function is provided, an empty array is used as the default.
      */
-    getValues?(field: string, operator: string): NameLabelPair[];
+    getValues?(field: string, operator: string): NameLabelPair[] | OptionGroup[];
     /**
      * Allows and/or configuration between rules
      */

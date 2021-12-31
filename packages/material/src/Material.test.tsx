@@ -14,9 +14,11 @@ import { forwardRef } from 'react';
 import type {
   DragHandleProps,
   NameLabelPair,
+  OptionGroup,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
+import 'regenerator-runtime/runtime';
 import {
   MaterialActionElement,
   MaterialDragHandle,
@@ -26,7 +28,7 @@ import {
 } from '.';
 
 interface MaterialValueEditorProps extends ValueEditorProps {
-  values: NameLabelPair[];
+  values: NameLabelPair[] | OptionGroup[];
 }
 
 const theme = createTheme();
@@ -99,6 +101,21 @@ const testMaterialSelect = (
     it('should have the className passed into the <select />', () => {
       const { getByTitle } = render(<Component {...props} className="foo" value={firstVal.name} />);
       expect(getByTitle(props.title)).toHaveClass('foo');
+    });
+
+    it('should render optgroups', async () => {
+      const optGroups = [
+        { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
+      ];
+      const newProps =
+        'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
+      const { getByRole } = render(<Component {...newProps} />);
+      userEvent.click(getByRole('button'));
+      const listbox = within(getByRole('listbox'));
+      expect(() => listbox.getByText(secondVal.label)).not.toThrow();
+      expect(getByRole('listbox').querySelectorAll('li')).toHaveLength(3);
+      expect(listbox.getAllByRole('option')).toHaveLength(3);
+      expect(listbox.getAllByRole('option')[2]).toHaveTextContent(secondVal.label);
     });
 
     it('should be disabled by the disabled prop', () => {

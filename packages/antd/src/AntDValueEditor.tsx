@@ -1,8 +1,7 @@
-import { Checkbox, Input, Radio, Select } from 'antd';
+import { Checkbox, Input, Radio } from 'antd';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-
-const { Option } = Select;
+import AntDValueSelector from './AntDValueSelector';
 
 const AntDValueEditor = ({
   fieldData,
@@ -15,6 +14,7 @@ const AntDValueEditor = ({
   inputType,
   values,
   disabled,
+  ...props
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -39,15 +39,15 @@ const AntDValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <span title={title} className={className}>
-          <Select onChange={v => handleOnChange(v)} value={value} disabled={disabled}>
-            {values!.map(v => (
-              <Option key={v.name} value={v.name}>
-                {v.label}
-              </Option>
-            ))}
-          </Select>
-        </span>
+        <AntDValueSelector
+          {...props}
+          className={className}
+          handleOnChange={handleOnChange}
+          options={values!}
+          value={value}
+          title={title}
+          disabled={disabled}
+        />
       );
 
     case 'checkbox':

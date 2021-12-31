@@ -1,5 +1,5 @@
 import type { DefaultRuleGroupType, DefaultRuleType } from '../../types';
-import parseSQL from '../parseSQL';
+import { parseSQL } from '../parseSQL';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
   combinator: 'and',

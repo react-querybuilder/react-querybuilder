@@ -11,6 +11,7 @@ import userEvent from '@testing-library/user-event';
 import type {
   NameLabelPair,
   NotToggleProps,
+  OptionGroup,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
@@ -23,7 +24,7 @@ import {
 } from '.';
 
 interface AntDValueEditorProps extends ValueEditorProps {
-  values: NameLabelPair[];
+  values: NameLabelPair[] | OptionGroup[];
 }
 
 const antdValueSelectorProps: ValueSelectorProps = {
@@ -89,6 +90,22 @@ const testAntDSelect = (
     it('should have the className passed into the <select />', () => {
       const { getByTitle } = render(<Component {...props} className="foo" />);
       expect(getByTitle(props.title)).toHaveClass('foo');
+    });
+
+    it('should render optgroups', async () => {
+      const optGroups = [
+        { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
+      ];
+      const newProps =
+        'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
+      const { getByRole } = render(<Component {...newProps} />);
+      await act(async () => {
+        userEvent.click(getByRole('combobox'));
+        await new Promise(r => setTimeout(r, 500));
+      });
+      const listbox = within(getByRole('listbox'));
+      expect(listbox.getAllByRole('option')).toHaveLength(3);
+      expect(listbox.getAllByRole('option')[2]).toHaveTextContent(testVal.name);
     });
 
     it('should be disabled by the disabled prop', () => {

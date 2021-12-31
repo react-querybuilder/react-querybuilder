@@ -6,7 +6,7 @@ import type { QueryValidator, RuleGroupTypeAny, RuleType, ValidationMap } from '
  * `validator` prop. It assumes that you want to validate groups, and has a no-op
  * for validating rules which you should replace with your own implementation.
  */
-const defaultValidator: QueryValidator = query => {
+export const defaultValidator: QueryValidator = query => {
   const result: ValidationMap = {};
 
   const validateRule = (_rule: RuleType) => {
@@ -74,5 +74,3 @@ const defaultValidator: QueryValidator = query => {
   //   return Object.values(result).map(rv => (typeof rv !== 'boolean')).includes(true);
   // That will return `true` if no errors were found.
 };
-
-export default defaultValidator;
