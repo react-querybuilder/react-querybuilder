@@ -4,5 +4,5 @@
     "outDir": "./dist/types"
   },
   "files": ["./src/types/pre4.5/index.ts"],
-  "exclude": ["../../*.ts", "./src/**/*", "./src/types/ruleGroupsIC.ts", "./src/types/util.ts"]
+  "exclude": ["../../*.ts", "./src/**/*"]
 }
