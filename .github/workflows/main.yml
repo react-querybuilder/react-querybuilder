@@ -57,13 +57,12 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
 
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Install TypeScript ${{ matrix.ts }}
-        run: yarn add -W -D typescript@${{ matrix.ts }} && yarn workspace react-querybuilder add -D typescript@${{ matrix.ts }}
-
-      - name: Test types
+      - name: Install Dependencies and Build with Latest TypeScript
         run: |
-          yarn tsc --version
-          yarn workspace react-querybuilder build:typesPre45
+          yarn install
+          yarn build
+
+      - name: Install TypeScript ${{ matrix.ts }} in Demo and Test
+        run: |
+          yarn workspace @react-querybuilder/demo add -D typescript@${{ matrix.ts }}
+          yarn workspace @react-querybuilder/demo type-check

@@ -3,6 +3,6 @@
   "compilerOptions": {
     "outDir": "./dist/types"
   },
-  "files": ["./src/types/index.ts", "./src/types/pre4.5/index.ts"],
+  "files": ["./src/index.ts"],
   "exclude": ["../../*.ts", "./src/**/*"]
 }

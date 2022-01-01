@@ -8,7 +8,7 @@
   "typesVersions": {
     "<4.5": {
       "dist/types/*": [
-        "dist/types/pre4.5/*"
+        "dist/typesPre4.5/*"
       ]
     }
   },
@@ -66,13 +66,11 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "build": "yarn build:main && yarn build:css && yarn build:types && yarn build:formatQuery && yarn build:parseSQL",
+    "build": "yarn build:main && yarn build:css && yarn build:formatQuery && yarn build:parseSQL && yarn build:types",
     "build:main": "vite build",
     "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "prepare:build:types": "copyfiles -f ./src/types/{basic,importExport,index,props,ruleGroups,ruleGroupsIC.pre45,validation}.ts ./src/types/pre4.5 && renamer --find ruleGroupsIC.pre45 --replace ruleGroupsIC ./src/types/pre4.5/* && replace 'export . from .\\./util.;' '' src/types/pre4.5/index.ts --silent",
-    "finalize:build:types": "replace 'import type' 'import' ./dist/types -r --silent && rimraf ./src/types/pre4.5",
-    "build:types": "yarn prepare:build:types && tsc --project ./tsconfig.build.json --emitDeclarationOnly && yarn finalize:build:types",
-    "build:typesPre45": "yarn prepare:build:types && tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && yarn finalize:build:types",
+    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && yarn build:typesPre45",
+    "build:typesPre45": "replace '\\./ruleGroupsIC' './ruleGroupsIC.pre45' ./src/types/* -r --silent && tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace '\\.pre45' '' ./src/types/* -r --silent && replace 'import type' 'import' ./dist/typesPre45/types/*.d.ts -r --silent",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",

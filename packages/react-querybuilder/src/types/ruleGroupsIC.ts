@@ -7,7 +7,7 @@ import type {
   RuleGroupType,
   RuleType,
 } from './ruleGroups';
-import type { MappedTuple } from './util';
+import type { MappedTuple } from './ruleGroupsICutils';
 
 export interface RuleGroupTypeIC {
   path?: number[];
