@@ -6,7 +6,7 @@ import type {
   RuleGroupArray,
   RuleGroupType,
   RuleType,
-} from '../ruleGroups';
+} from './ruleGroups';
 
 export interface RuleGroupTypeIC {
   path?: number[];
