@@ -35,7 +35,6 @@
   },
   "scripts": {
     "start": "vite --port 8080",
-    "build": "vite build",
-    "type-check": "tsc --noEmit"
+    "build": "vite build"
   }
 }

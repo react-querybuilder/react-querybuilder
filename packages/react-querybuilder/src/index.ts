@@ -1,9 +1,9 @@
 import { QueryBuilder } from './QueryBuilder';
 export * from './controls/';
 export * from './defaults';
-export { InlineCombinator } from './InlineCombinator';
-export { Rule } from './Rule';
-export { RuleGroup } from './RuleGroup';
+export * from './InlineCombinator';
+export * from './Rule';
+export * from './RuleGroup';
 export * from './types';
 export * from './utils';
 export { QueryBuilder };
