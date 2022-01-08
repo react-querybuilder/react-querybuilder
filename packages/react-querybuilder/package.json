@@ -8,7 +8,7 @@
   "typesVersions": {
     "<4.5": {
       "dist/types/*": [
-        "dist/typesPre4.5/*"
+        "dist/typesPre45/*"
       ]
     }
   },
