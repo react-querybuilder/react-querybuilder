@@ -1,10 +1,10 @@
 import { QueryBuilder } from './QueryBuilder';
-export { QueryBuilder };
-export * from './defaults';
-export * from './utils';
-export { Rule } from './Rule';
-export { RuleGroup } from './RuleGroup';
-export { InlineCombinator } from './InlineCombinator';
 export * from './controls/';
+export * from './defaults';
+export * from './InlineCombinator';
+export * from './Rule';
+export * from './RuleGroup';
 export * from './types';
+export * from './utils';
+export { QueryBuilder };
 export default QueryBuilder;

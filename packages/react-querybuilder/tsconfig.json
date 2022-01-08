@@ -1,8 +1,5 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist/types"
-  },
   "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*", "./dist/**/*"]
+  "exclude": ["**/*.test.*", "./src/__mocks__/*.*"]
 }

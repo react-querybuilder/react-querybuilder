@@ -1,11 +1,6 @@
 import type { Field, NameLabelPair, OptionGroup, ValueEditorType } from './basic';
-import type {
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-  RuleOrGroupArray,
-  RuleType,
-} from './ruleGroups';
+import type { RuleGroupType, RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
 
 export interface CommonSubComponentProps {
@@ -337,6 +332,7 @@ export type QueryBuilderPropsInternal<RG extends RuleGroupType | RuleGroupTypeIC
      *   { name: 'in', label: 'in' },
      *   { name: 'notIn', label: 'not in' },
      *   { name: 'between', label: 'between' },
+     *   { name: 'notBetween', label: 'not between' },
      * ]
      */
     operators?: NameLabelPair[] | OptionGroup[];

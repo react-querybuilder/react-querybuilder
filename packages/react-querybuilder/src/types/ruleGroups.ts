@@ -1,5 +1,4 @@
 import type { NameLabelPair } from './basic';
-import type { MappedTuple } from './util';
 
 export interface RuleType {
   path?: number[];
@@ -17,34 +16,13 @@ export interface RuleGroupType {
   not?: boolean;
 }
 
-export interface RuleGroupTypeIC {
-  path?: number[];
-  id?: string;
-  rules: RuleGroupICArray;
-  not?: boolean;
-}
-
-export type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;
-
 export type RuleGroupArray =
   | [RuleType | RuleGroupType, ...(RuleType | RuleGroupType)[]]
   | (any[] & { length: 0 });
-export type RuleGroupICArray =
-  | [RuleType | RuleGroupTypeIC]
-  | [RuleType | RuleGroupTypeIC, ...MappedTuple<[string, RuleType | RuleGroupTypeIC]>]
-  | (any[] & { length: 0 });
-export type RuleOrGroupArray = RuleGroupArray | RuleGroupICArray;
 
 export type DefaultRuleGroupArray =
   | [DefaultRuleType | DefaultRuleGroupType, ...(DefaultRuleType | DefaultRuleGroupType)[]]
   | (any[] & { length: 0 });
-export type DefaultRuleGroupICArray =
-  | [
-      DefaultRuleType | DefaultRuleGroupTypeIC,
-      ...MappedTuple<[DefaultCombinatorName, DefaultRuleType | DefaultRuleGroupTypeIC]>
-    ]
-  | (any[] & { length: 0 });
-export type DefaultRuleOrGroupArray = DefaultRuleGroupArray | DefaultRuleGroupICArray;
 
 export interface DefaultRuleGroupType extends RuleGroupType {
   combinator: DefaultCombinatorName;
@@ -52,17 +30,6 @@ export interface DefaultRuleGroupType extends RuleGroupType {
     | [DefaultRuleGroupType | DefaultRuleType, ...(DefaultRuleGroupType | DefaultRuleType)[]]
     | (any[] & { length: 0 });
 }
-
-export interface DefaultRuleGroupTypeIC extends RuleGroupTypeIC {
-  rules:
-    | [
-        DefaultRuleType | DefaultRuleGroupTypeIC,
-        ...MappedTuple<[DefaultCombinatorName, DefaultRuleType | DefaultRuleGroupTypeIC]>
-      ]
-    | (any[] & { length: 0 });
-}
-
-export type DefaultRuleGroupTypeAny = DefaultRuleGroupType | DefaultRuleGroupTypeIC;
 
 export interface DefaultRuleType extends RuleType {
   operator: DefaultOperatorName;

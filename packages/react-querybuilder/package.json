@@ -5,6 +5,13 @@
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
+  "typesVersions": {
+    "<4.5": {
+      "dist/types/*": [
+        "dist/typesPre45/*"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
@@ -42,6 +49,8 @@
     "copyfiles": "^2.4.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "replace": "^1.2.1",
+    "rimraf": "^3.0.2",
     "sass": "^1.40.0",
     "typescript": "^4.5.0"
   },
@@ -56,14 +65,15 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "build": "npm run build:main && npm run build:css && npm run build:types && npm run build:formatQuery && npm run build:parseSQL",
+    "build": "yarn build:main && yarn build:css && yarn build:formatQuery && yarn build:parseSQL && yarn build:types",
     "build:main": "vite build",
     "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && yarn build:typesPre45",
+    "build:typesPre45": "replace '\\./ruleGroupsIC' './ruleGroupsIC.pre45' ./src/types/* -r --silent && tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace '\\.pre45' '' ./src/types/* -r --silent && replace 'import type' 'import' ./dist/typesPre45/types/*.d.ts -r --silent",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "npm run type-check -- --watch",
+    "type-check:watch": "yarn type-check --watch",
     "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js && echo \"\\nexport default sqlParser;\" >> src/utils/parseSQL/sqlParser.js"
   }
 }
