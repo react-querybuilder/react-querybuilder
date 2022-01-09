@@ -49,6 +49,11 @@ export interface DemoOptions {
   disabled: boolean;
 }
 
+export type CommonRQBProps = Pick<
+  QueryBuilderProps,
+  'fields' | 'validator' | Exclude<keyof DemoOptions, 'validateQuery' | 'independentCombinators'>
+> & { independentCombinators?: boolean };
+
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 export const docsLink = 'https://react-querybuilder.js.org';
 

@@ -17,18 +17,17 @@ import {
 } from 'antd';
 import 'antd/dist/antd.compact.css';
 import queryString from 'query-string';
-import { FC, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState, FC } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder, {
+import {
+  defaultValidator,
+  formatQuery,
+  parseSQL,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
-  defaultValidator,
   ExportFormat,
-  formatQuery,
   FormatQueryOptions,
-  parseSQL,
-  QueryBuilderProps,
-  RuleGroupTypeIC,
+  QueryBuilder,
 } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -36,8 +35,8 @@ import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
+  CommonRQBProps,
   defaultOptions,
-  DemoOptions,
   docsLink,
   fields,
   formatMap,
@@ -46,8 +45,9 @@ import {
   npmLink,
   optionsMetadata,
   styleConfigs,
-  StyleName,
   styleNameMap,
+  DemoOptions,
+  StyleName,
 } from './constants';
 
 const { TextArea } = Input;
@@ -222,7 +222,7 @@ const App = () => {
   const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
 
   const commonRQBProps = useMemo(
-    (): QueryBuilderProps => ({
+    (): CommonRQBProps => ({
       ...styleConfigs[style],
       fields,
       ...options,
@@ -362,7 +362,7 @@ const App = () => {
                     <form className="form-inline" style={{ marginTop: '1rem' }}>
                       {options.independentCombinators ? (
                         <QueryBuilder
-                          {...(commonRQBProps as QueryBuilderProps<RuleGroupTypeIC>)}
+                          {...commonRQBProps}
                           key={style}
                           query={queryIC}
                           onQueryChange={q => setQueryIC(q)}

@@ -14,7 +14,6 @@ import {
 import {
   Field,
   QueryBuilderProps,
-  QueryBuilderPropsInternal,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
@@ -40,22 +39,7 @@ import {
 
 enableES5();
 
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
-  props: QueryBuilderProps<RG>
-) => {
-  if (!props.independentCombinators) {
-    return QueryBuilderImpl({
-      ...props,
-      independentCombinators: false,
-    } as QueryBuilderPropsInternal<RuleGroupType>);
-  }
-  return QueryBuilderImpl<RuleGroupTypeIC>({
-    ...props,
-    independentCombinators: true,
-  } as QueryBuilderPropsInternal<RuleGroupTypeIC>);
-};
-
-const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>({
+export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   defaultQuery,
   query,
   fields: fieldsProp = defaultFields,
@@ -87,7 +71,7 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
   disabled = false,
   validator,
   context,
-}: QueryBuilderPropsInternal<RG>) => {
+}: QueryBuilderProps<RG>) => {
   const fields = useMemo(() => {
     let f = fieldsProp;
     if (!autoSelectField) {
@@ -558,5 +542,3 @@ const QueryBuilderImpl = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroup
     </DndProvider>
   );
 };
-
-QueryBuilder.displayName = 'QueryBuilder';
