@@ -9,36 +9,32 @@ import type {
 } from './ruleGroups';
 import type { MappedTuple } from './ruleGroupsICutils';
 
-export interface RuleGroupTypeIC {
+export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = {
   path?: number[];
   id?: string;
-  rules: RuleGroupICArray;
+  rules: RuleGroupICArray<RuleGroupTypeIC, R, C>;
   not?: boolean;
-}
+};
 
 export type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;
 
-export type RuleGroupICArray =
-  | [RuleType | RuleGroupTypeIC]
-  | [RuleType | RuleGroupTypeIC, ...MappedTuple<[string, RuleType | RuleGroupTypeIC]>]
-  | (any[] & { length: 0 });
+export type RuleGroupICArray<
+  RG extends RuleGroupTypeIC = RuleGroupTypeIC,
+  R extends RuleType = RuleType,
+  C extends string = string
+> = [R | RG] | [R | RG, ...MappedTuple<[C, R | RG]>] | ((R | RG)[] & { length: 0 });
 export type RuleOrGroupArray = RuleGroupArray | RuleGroupICArray;
 
-export type DefaultRuleGroupICArray =
-  | [
-      DefaultRuleType | DefaultRuleGroupTypeIC,
-      ...MappedTuple<[DefaultCombinatorName, DefaultRuleType | DefaultRuleGroupTypeIC]>
-    ]
-  | (any[] & { length: 0 });
+export type DefaultRuleGroupICArray = RuleGroupICArray<
+  DefaultRuleGroupTypeIC,
+  DefaultRuleType,
+  DefaultCombinatorName
+>;
+
 export type DefaultRuleOrGroupArray = DefaultRuleGroupArray | DefaultRuleGroupICArray;
 
 export interface DefaultRuleGroupTypeIC extends RuleGroupTypeIC {
-  rules:
-    | [
-        DefaultRuleType | DefaultRuleGroupTypeIC,
-        ...MappedTuple<[DefaultCombinatorName, DefaultRuleType | DefaultRuleGroupTypeIC]>
-      ]
-    | (any[] & { length: 0 });
+  rules: DefaultRuleGroupICArray;
 }
 
 export type DefaultRuleGroupTypeAny = DefaultRuleGroupType | DefaultRuleGroupTypeIC;

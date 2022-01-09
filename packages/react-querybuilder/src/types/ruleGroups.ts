@@ -1,39 +1,35 @@
 import type { NameLabelPair } from './basic';
 
-export interface RuleType {
+export type RuleType<F extends string = string, O extends string = string, V = any> = {
   path?: number[];
   id?: string;
-  field: string;
-  operator: string;
-  value: any;
-}
+  field: F;
+  operator: O;
+  value: V;
+};
 
-export interface RuleGroupType {
+export type RuleGroupType<R extends RuleType = RuleType, C extends string = string> = {
   path?: number[];
   id?: string;
-  combinator: string;
-  rules: RuleGroupArray;
+  combinator: C;
+  rules: RuleGroupArray<RuleGroupType, R>;
   not?: boolean;
-}
+};
 
-export type RuleGroupArray =
-  | [RuleType | RuleGroupType, ...(RuleType | RuleGroupType)[]]
-  | (any[] & { length: 0 });
+export type RuleGroupArray<
+  RG extends RuleGroupType = RuleGroupType,
+  R extends RuleType = RuleType
+> = [R | RG, ...(R | RG)[]] | (any[] & { length: 0 });
+// TODO: why can't the line before this just be:
+// > = (R | RG)[];
 
-export type DefaultRuleGroupArray =
-  | [DefaultRuleType | DefaultRuleGroupType, ...(DefaultRuleType | DefaultRuleGroupType)[]]
-  | (any[] & { length: 0 });
+export type DefaultRuleGroupArray = RuleGroupArray<DefaultRuleGroupType, DefaultRuleType>;
 
-export interface DefaultRuleGroupType extends RuleGroupType {
-  combinator: DefaultCombinatorName;
-  rules:
-    | [DefaultRuleGroupType | DefaultRuleType, ...(DefaultRuleGroupType | DefaultRuleType)[]]
-    | (any[] & { length: 0 });
-}
+export type DefaultRuleGroupType = RuleGroupType<DefaultRuleType, DefaultCombinatorName> & {
+  rules: DefaultRuleGroupArray;
+};
 
-export interface DefaultRuleType extends RuleType {
-  operator: DefaultOperatorName;
-}
+export type DefaultRuleType = RuleType<string, DefaultOperatorName>;
 
 export type DefaultCombinatorName = 'and' | 'or';
 

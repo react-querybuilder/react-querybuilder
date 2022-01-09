@@ -289,6 +289,17 @@ export interface RuleProps {
   context?: any;
 }
 
+// TODO: use this logic in the component props types
+export type GetRuleGroupTypeFromProps<P extends QueryBuilderProps> = P extends {
+  independentCombinators: true;
+}
+  ? RuleGroupTypeIC
+  : P extends { query: infer Q }
+  ? Q
+  : P extends { defaultQuery: infer DQ }
+  ? DQ
+  : RuleGroupType;
+
 export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> = Omit<
   QueryBuilderPropsInternal<RG>,
   'independentCombinators'
