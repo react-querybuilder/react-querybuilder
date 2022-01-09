@@ -23,7 +23,7 @@ export const findPath = (path: number[], query: RuleGroupTypeAny): FindPathRetur
 export const getParentPath = (path: number[]) => path.slice(0, path.length - 1);
 
 export const pathsAreEqual = (path1: number[], path2: number[]) =>
-  path1.join('-') === path2.join('-');
+  path1.length === path2.length && path1.every((val, idx) => val === path2[idx]);
 
 export const isAncestor = (maybeAncestor: number[], path: number[]) =>
   maybeAncestor.length < path.length && RegExp(`^${maybeAncestor.join('-')}`).test(path.join('-'));
