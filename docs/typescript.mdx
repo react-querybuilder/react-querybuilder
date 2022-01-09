@@ -1,8 +1,8 @@
 ---
-title: TypeScript
+title: TypeScript reference
 ---
 
-These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript (you really should! 😊), you can use the information below to understand the required shape of the props and function parameters. To see the full type definitions for the `react-querybuilder` library, [click here](https://github.com/react-querybuilder/react-querybuilder/blob/master/src/types.ts).
+These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript (you really should! 😊), you can use the information below to understand the required shape of the props and function parameters. To see the full type definitions for the `react-querybuilder` library, [click here](https://github.com/react-querybuilder/react-querybuilder/tree/master/packages/react-querybuilder/src/types).
 
 ## Fields
 
@@ -25,33 +25,71 @@ interface Field {
 ## Rules and groups
 
 ```ts
-interface RuleType {
+type RuleType = {
   path?: number[];
   id?: string;
   field: string;
   operator: string;
   value: any;
-}
+};
 
-interface RuleGroupType {
+type RuleGroupType = {
   path?: number[];
   id?: string;
   combinator: string;
   rules: (RuleType | RuleGroupType)[];
   not?: boolean;
-}
+};
 
-interface RuleGroupTypeIC {
+type RuleGroupTypeIC = {
   path?: number[];
   id?: string;
-  rules: (RuleType | RuleGroupTypeIC | string)[];
+  rules: (RuleType | RuleGroupTypeIC | string)[]; // see note below
   not?: boolean;
-}
+};
 
 type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;
 
-type RuleOrGroupArray = (RuleType | RuleGroupType)[] | (RuleType | RuleGroupTypeIC | string)[];
+type RuleOrGroupArray = RuleGroupType['rules'] | RuleGroupTypeIC['rules'];
 ```
+
+:::note
+
+`RuleGroupTypeIC` is greatly simplified here for brevity. In reality:
+
+- Only even-numbered indexes in the `rules` array can be `RuleType | RuleGroupTypeIC`
+- Only odd-numbered indexes can be `string`
+- The `rules` array length must be odd or zero
+
+For example, the following would be invalid because the first element (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string` and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also the length (2) is even.
+
+```ts
+const ruleGroup: RuleGroupTypeIC = {
+  rules: ['and', { field: 'firstName', operator: '=', value: 'Steve' }],
+};
+```
+
+Either removing the first element or inserting another rule before it will resolve the issue:
+
+```ts
+const ruleGroupFixed1: RuleGroupTypeIC = {
+  rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+};
+```
+
+or
+
+```ts
+const ruleGroupFixed2: RuleGroupTypeIC = {
+  rules: [
+    { field: 'lastName', operator: '=', value: 'Vai' },
+    'and',
+    { field: 'firstName', operator: '=', value: 'Steve' },
+  ],
+};
+```
+
+:::
 
 ## Export
 

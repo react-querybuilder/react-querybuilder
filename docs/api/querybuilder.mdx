@@ -9,13 +9,15 @@ import TypeScriptAdmonition from './_ts_admonition.md';
 
 The default export of `react-querybuilder` is the `<QueryBuilder />` React component.
 
-## Props
+All props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
 
 :::note
 
-All props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
+When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. However, if the type is `RuleGroupTypeIC`, then the [`independentCombinators` prop](#independentcombinators) must be set to `true`. Likewise, if the type is `RuleGroupType` then `independentCombinators` must be `false` or `undefined`.
 
 :::
+
+## Props
 
 ### `fields`
 
