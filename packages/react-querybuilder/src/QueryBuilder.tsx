@@ -542,3 +542,5 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     </DndProvider>
   );
 };
+
+QueryBuilder.displayName = 'QueryBuilder';
