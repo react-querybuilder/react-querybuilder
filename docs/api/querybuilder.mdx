@@ -3,25 +3,27 @@ title: <QueryBuilder />
 description: Props and other configuration for the main component
 ---
 
-import TypeScriptAdmonition from "./_ts_admonition.md";
+import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
 The default export of `react-querybuilder` is the `<QueryBuilder />` React component.
 
-## Props
+All props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
 
 :::note
 
-All props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
+When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. However, if the type is `RuleGroupTypeIC`, then the [`independentCombinators` prop](#independentcombinators) must be set to `true`. Likewise, if the type is `RuleGroupType` then `independentCombinators` must be `false` or `undefined`.
 
 :::
 
+## Props
+
 ### `fields`
 
-`Field[]`
+`Field[] | OptionGroup<Field>[]`
 
-The array of [fields](../typescript#fields) that should be used.
+The array of [fields](../typescript#fields) that should be used, or an array of [option groups](../typescript#miscellaneous) containing arrays of fields.
 
 :::tip
 
@@ -101,7 +103,7 @@ If the `independentCombinators` prop is provided, then the `query` argument will
 
 The query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`independentCombinators`](#independentCombinators) is also provided). If this prop is provided, `<QueryBuilder />` will be a controlled component.
 
-The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/demo/main.tsx) for examples.
+The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/packages/demo/src/main.tsx) for examples.
 
 ### `defaultQuery`
 
@@ -117,43 +119,43 @@ A "bucket" for passing arbitrary props down to custom components (default compon
 
 ### `operators`
 
-`NameLabelPair[]`
+`NameLabelPair[] | OptionGroup<NameLabelPair>[]`
 
 The array of operators that should be used. The default operators include:
 
 ```ts
 [
-  { name: "=", label: "=" },
-  { name: "!=", label: "!=" },
-  { name: "<", label: "<" },
-  { name: ">", label: ">" },
-  { name: "<=", label: "<=" },
-  { name: ">=", label: ">=" },
-  { name: "contains", label: "contains" },
-  { name: "beginsWith", label: "begins with" },
-  { name: "endsWith", label: "ends with" },
-  { name: "doesNotContain", label: "does not contain" },
-  { name: "doesNotBeginWith", label: "does not begin with" },
-  { name: "doesNotEndWith", label: "does not end with" },
-  { name: "null", label: "is null" },
-  { name: "notNull", label: "is not null" },
-  { name: "in", label: "in" },
-  { name: "notIn", label: "not in" },
-  { name: "between", label: "between" },
-  { name: "notBetween", label: "not between" },
+  { name: '=', label: '=' },
+  { name: '!=', label: '!=' },
+  { name: '<', label: '<' },
+  { name: '>', label: '>' },
+  { name: '<=', label: '<=' },
+  { name: '>=', label: '>=' },
+  { name: 'contains', label: 'contains' },
+  { name: 'beginsWith', label: 'begins with' },
+  { name: 'endsWith', label: 'ends with' },
+  { name: 'doesNotContain', label: 'does not contain' },
+  { name: 'doesNotBeginWith', label: 'does not begin with' },
+  { name: 'doesNotEndWith', label: 'does not end with' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' },
+  { name: 'between', label: 'between' },
+  { name: 'notBetween', label: 'not between' },
 ];
 ```
 
 ### `combinators`
 
-`NameLabelPair[]`
+`NameLabelPair[] | OptionGroup<NameLabelPair>[]`
 
 The array of combinators that should be used for RuleGroups. The default set includes:
 
 ```ts
 [
-  { name: "and", label: "AND" },
-  { name: "or", label: "OR" },
+  { name: 'and', label: 'AND' },
+  { name: 'or', label: 'OR' },
 ];
 ```
 
@@ -288,7 +290,7 @@ By default a `<select />` is used. The following props are passed:
 
 ```ts
 interface CombinatorSelectorProps {
-  options: NameLabelPair[]; // Same as 'combinators' passed into QueryBuilder
+  options: NameLabelPair[] | OptionGroup<NameLabelPair>[]; // Same as 'combinators' passed into QueryBuilder
   value: string; // Selected combinator from the existing query representation, if any
   className: string; // CSS classNames to be applied
   handleOnChange: (value: any) => void; // Callback function to update query representation
@@ -340,7 +342,7 @@ By default a `<select />` is used. The following props are passed:
 interface OperatorSelectorProps {
   field: string; // Field name corresponding to this rule
   fieldData: Field; // The entire object from the fields array for this field
-  options: NameLabelPair[]; // Return value of getOperators(field)
+  options: NameLabelPair[] | OptionGroup<NameLabelPair>[]; // Return value of getOperators(field)
   value: string; // Selected operator from the existing query representation, if any
   title: string; // translations.operators.title, e.g. "Operators"
   className: string; // CSS classNames to be applied
@@ -363,7 +365,7 @@ interface ValueEditorProps {
   value: string; // Value from the existing query representation, if any
   title: string; // translations.value.title, e.g. "Value"
   handleOnChange: (value: any) => void; // Callback function to update the query representation
-  type: "text" | "select" | "checkbox" | "radio"; // Type of editor to be displayed
+  type: 'text' | 'select' | 'checkbox' | 'radio'; // Type of editor to be displayed
   inputType: string; // @type of <input> if `type` is "text"
   values: any[]; // List of available values for this rule
   level: number; // The level the group this rule belongs to
@@ -425,7 +427,7 @@ interface RuleProps {
 
 ### `getOperators`
 
-`(field: string) => NameLabelPair[] | null`
+`(field: string) => NameLabelPair[] | OptionGroup<NameLabelPair>[] | null`
 
 This is a callback function invoked to get the list of allowed operators for the given field. If `null` is returned, the default operators are used.
 
@@ -443,7 +445,7 @@ This is a callback function invoked to get the `type` of `<input />` for the giv
 
 ### `getValues`
 
-`(field: string, operator: string) => NameLabelPair[]`
+`(field: string, operator: string) => NameLabelPair[] | OptionGroup<NameLabelPair>[]`
 
 This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
@@ -491,7 +493,7 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 
 ### `controlClassnames`
 
-This prop can be used to assign specific `CSS` classes to various controls that are rendered by the `<QueryBuilder />` component. This is an object with the following signature:
+This prop can be used to assign specific CSS classes to various controls that are rendered by the `<QueryBuilder />` component. This is an object with the following signature:
 
 ```ts
 interface Classnames {

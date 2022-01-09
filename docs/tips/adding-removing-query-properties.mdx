@@ -10,26 +10,26 @@ To convert a standard query object to a JSON string containing only certain prop
 
 ```ts
 const query: RuleGroupType = {
-  id: "root",
-  combinator: "and",
+  id: 'root',
+  combinator: 'and',
   rules: [
     {
-      field: "firstName",
-      operator: "=",
-      value: "Steve",
+      field: 'firstName',
+      operator: '=',
+      value: 'Steve',
     },
   ],
 };
 
 // This will leave off the `id` and `combinator` properties:
-console.log(JSON.stringify(query, ["rules", "field", "operator", "value"]));
+console.log(JSON.stringify(query, ['rules', 'field', 'operator', 'value']));
 // '{"rules":[{"field":"firstName","operator":"=","value":"Steve"}]}'
 ```
 
 The `formatQuery` function also provides a shortcut for producing a JSON string representing everything in the query except the `id` properties:
 
 ```ts
-console.log(formatQuery(query, "json_without_ids"));
+console.log(formatQuery(query, 'json_without_ids'));
 // '{"combinator":"and","rules":[{"field":"firstName","operator":"=","value":"Steve"}]}'
 ```
 
@@ -38,22 +38,22 @@ console.log(formatQuery(query, "json_without_ids"));
 To produce a query object with additional properties, you can loop through the `rules` array recursively. In the example below (from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)), the `inputType` from the `fields` array is added to each rule.
 
 ```ts
-import type { Field, RuleGroupType, RuleType } from "react-querybuilder";
+import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
 
 const fields: Field[] = [
-  { name: "description", label: "Description", inputType: "string" },
-  { name: "price", label: "Price", inputType: "number" },
+  { name: 'description', label: 'Description', inputType: 'string' },
+  { name: 'price', label: 'Price', inputType: 'number' },
 ];
 
 const processRule = (r: RuleType): RuleType & { inputType?: string } => ({
   ...r,
-  inputType: fields.find((f) => f.name === r.field)?.inputType,
+  inputType: fields.find(f => f.name === r.field)?.inputType,
 });
 
 const processGroup = (rg: RuleGroupType): RuleGroupType => ({
   ...rg,
-  rules: rg.rules.map((r) => {
-    if ("field" in r) {
+  rules: rg.rules.map(r => {
+    if ('field' in r) {
       return processRule(r);
     }
     return processGroup(r);

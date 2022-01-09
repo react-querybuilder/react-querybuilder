@@ -12,9 +12,7 @@ The following code will produce a SQL string with each bind variable placeholder
 
 ```ts
 let i = 0;
-const sql = (
-  formatQuery(query, "parameterized") as ParameterizedSQL
-).sql.replaceAll("?", () => {
+const sql = (formatQuery(query, 'parameterized') as ParameterizedSQL).sql.replaceAll('?', () => {
   i++;
   return `$${i}`;
 });
@@ -32,5 +30,5 @@ For example, if `formatQuery(query, "parameterized")` produced the following obj
 ...then the code above would assign the following string to the `sql` variable:
 
 ```ts
-"(firstName = $1 and lastName = $2)";
+'(firstName = $1 and lastName = $2)';
 ```

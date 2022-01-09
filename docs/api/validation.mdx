@@ -3,7 +3,7 @@ title: Validation
 description: Query validation methods and configuration
 ---
 
-import TypeScriptAdmonition from "./_ts_admonition.md";
+import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
@@ -16,7 +16,7 @@ Validating at the query level can result in the entire query being treated as va
 To mark an entire query as valid or invalid, return a `boolean` value from the `validator` callback function (`true` for valid, `false` for invalid).
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from "react-querybuilder";
+import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 
 /**
  * This function returns false (indicating "invalid") if there are no rules present.
@@ -31,7 +31,7 @@ const App = () => {
 The alternate return value from a query-level validator is a validation map, which is an object where each key represents the `id` of a rule or group. Associated values are either `boolean` (`true` for valid, `false` for invalid) or a validation result. Validation results are objects with two keys: a required `boolean` `valid` key and an optional `reasons` array specifying why that rule/group is valid or invalid. (Reasons are assumed to be strings, but the type is `any[]` since the QueryBuilder default components ignore them. Feel free to use them any way you please in your custom components.)
 
 ```tsx
-import QueryBuilder, { RuleGroupType, ValidationMap } from "react-querybuilder";
+import QueryBuilder, { RuleGroupType, ValidationMap } from 'react-querybuilder';
 
 /**
  * This function returns a validation map. A real validator function would
@@ -41,17 +41,17 @@ import QueryBuilder, { RuleGroupType, ValidationMap } from "react-querybuilder";
 const validator: QueryValidator = (q): ValidationMap => ({
   r1: true, // valid rule
   r2: false, // invalid rule
-  r3: { valid: true, reasons: ["awesome rule"] }, // valid rule
-  r4: { valid: false, reasons: ["lame rule"] }, // invalid rule
+  r3: { valid: true, reasons: ['awesome rule'] }, // valid rule
+  r4: { valid: false, reasons: ['lame rule'] }, // invalid rule
 });
 
 const query: RuleGroupType = {
-  combinator: "and",
+  combinator: 'and',
   rules: [
-    { id: "r1", field: "field1", operator: "=", value: "Value 1" },
-    { id: "r2", field: "field2", operator: "=", value: "Value 2" },
-    { id: "r3", field: "field3", operator: "=", value: "Value 3" },
-    { id: "r4", field: "field4", operator: "=", value: "Value 4" },
+    { id: 'r1', field: 'field1', operator: '=', value: 'Value 1' },
+    { id: 'r2', field: 'field2', operator: '=', value: 'Value 2' },
+    { id: 'r3', field: 'field3', operator: '=', value: 'Value 3' },
+    { id: 'r4', field: 'field4', operator: '=', value: 'Value 4' },
   ],
 };
 
@@ -72,30 +72,30 @@ import QueryBuilder, {
   RuleGroupType,
   RuleValidator,
   ValidationResult,
-} from "react-querybuilder";
+} from 'react-querybuilder';
 
 /**
  * This function returns a validation result.
  */
 const validator: RuleValidator = (q): ValidationResult => ({
   valid: false,
-  reasons: ["this field is always invalid"],
+  reasons: ['this field is always invalid'],
 });
 
 const fields: Field[] = [
-  { name: "field1", label: "Field 1" },
-  { name: "field2", label: "Field 2", validator },
-  { name: "field3", label: "Field 3" },
-  { name: "field4", label: "Field 4" },
+  { name: 'field1', label: 'Field 1' },
+  { name: 'field2', label: 'Field 2', validator },
+  { name: 'field3', label: 'Field 3' },
+  { name: 'field4', label: 'Field 4' },
 ];
 
 const query: RuleGroupType = {
-  combinator: "and",
+  combinator: 'and',
   rules: [
-    { field: "field1", operator: "=", value: "Value 1" },
-    { field: "field2", operator: "=", value: "Value 2" },
-    { field: "field3", operator: "=", value: "Value 3" },
-    { field: "field4", operator: "=", value: "Value 4" },
+    { field: 'field1', operator: '=', value: 'Value 1' },
+    { field: 'field2', operator: '=', value: 'Value 2' },
+    { field: 'field3', operator: '=', value: 'Value 3' },
+    { field: 'field4', operator: '=', value: 'Value 4' },
   ],
 };
 
