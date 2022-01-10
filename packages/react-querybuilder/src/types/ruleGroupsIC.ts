@@ -12,7 +12,7 @@ import type { MappedTuple } from './ruleGroupsICutils';
 export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = {
   path?: number[];
   id?: string;
-  rules: RuleGroupICArray<RuleGroupTypeIC, R, C>;
+  rules: RuleGroupICArray<RuleGroupTypeIC<R, C>, R, C>;
   not?: boolean;
 };
 

@@ -12,7 +12,7 @@ export type RuleGroupType<R extends RuleType = RuleType, C extends string = stri
   path?: number[];
   id?: string;
   combinator: C;
-  rules: RuleGroupArray<RuleGroupType, R>;
+  rules: RuleGroupArray<RuleGroupType<R, C>, R>;
   not?: boolean;
 };
 
