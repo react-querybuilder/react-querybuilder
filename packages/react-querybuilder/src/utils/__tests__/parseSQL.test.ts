@@ -1,10 +1,14 @@
-import type { DefaultRuleGroupType, DefaultRuleType } from '../../types';
+import type { DefaultRuleGroupType, DefaultRuleGroupTypeIC, DefaultRuleType } from '../../types';
 import { parseSQL } from '../parseSQL';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
   combinator: 'and',
   rules: rule ? [rule] : [],
 });
+const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
+  rules: rule ? [rule] : [],
+});
+const icOpts = { independentCombinators: true } as const;
 
 describe('parseSQL', () => {
   describe('ignored/missing WHERE clauses', () => {
@@ -159,15 +163,17 @@ describe('parseSQL', () => {
     });
 
     it('independent combinators', () => {
+      expect(parseSQL(`firstName = 'Steve'`, icOpts)).toEqual(
+        wrapRuleIC({ field: 'firstName', operator: '=', value: 'Steve' })
+      );
       expect(
-        parseSQL(`firstName = 'Steve' AND lastName = someFunc('Vai') OR middleName IS NULL`, {
-          independentCombinators: true,
-        })
-      ).toEqual(wrapRule());
+        parseSQL(`firstName = 'Steve' AND lastName = someFunc('Vai') OR middleName IS NULL`, icOpts)
+      ).toEqual(wrapRuleIC());
+      expect(parseSQL(`(firstName = 'Steve')`, icOpts)).toEqual(
+        wrapRuleIC({ field: 'firstName', operator: '=', value: 'Steve' })
+      );
       expect(
-        parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`, {
-          independentCombinators: true,
-        })
+        parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`, icOpts)
       ).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -271,13 +277,12 @@ describe('parseSQL', () => {
   });
 
   describe('NOT expressions', () => {
-    const expectedRuleGroup: DefaultRuleGroupType = {
-      combinator: 'and',
-      rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-      not: true,
-    };
-
-    it('NOT expressions', () => {
+    it('standard rule groups', () => {
+      const expectedRuleGroup: DefaultRuleGroupType = {
+        combinator: 'and',
+        rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+        not: true,
+      };
       expect(parseSQL(`NOT firstName = 'Steve'`)).toEqual(expectedRuleGroup);
       expect(parseSQL(`NOT (firstName = 'Steve')`)).toEqual(expectedRuleGroup);
       expect(parseSQL(`NOT (firstName = someFunc('Steve'))`)).toEqual(wrapRule());
@@ -288,6 +293,31 @@ describe('parseSQL', () => {
           { field: 'lastName', operator: '=', value: 'Vai' },
         ],
         not: true,
+      });
+    });
+
+    it('independent combinators', () => {
+      const expectedRuleGroupIC: DefaultRuleGroupTypeIC = {
+        rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+        not: true,
+      };
+      expect(parseSQL(`NOT firstName = 'Steve'`, icOpts)).toEqual(expectedRuleGroupIC);
+      expect(parseSQL(`NOT (firstName = 'Steve')`, icOpts)).toEqual(expectedRuleGroupIC);
+      expect(parseSQL(`NOT (firstName = someFunc('Steve'))`, icOpts)).toEqual(wrapRuleIC());
+      expect(parseSQL(`NOT (firstName = 'Steve' OR lastName = 'Vai')`, icOpts)).toEqual({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'or',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+        not: true,
+      });
+      expect(parseSQL(`firstName = 'Steve' OR NOT lastName = 'Vai'`, icOpts)).toEqual({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'or',
+          { rules: [{ field: 'lastName', operator: '=', value: 'Vai' }], not: true },
+        ],
       });
     });
   });
