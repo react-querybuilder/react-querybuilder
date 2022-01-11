@@ -5,6 +5,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '../types';
+import { isRuleGroupTypeIC } from './isRuleGroup';
 
 const processRuleOrStringOrRuleGroupIC = (r: string | RuleType | RuleGroupTypeIC) =>
   typeof r === 'object' && 'rules' in r ? generateRuleGroupICWithConsistentCombinators(r) : r;
@@ -57,20 +58,20 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
   return { ...rg, rules: returnArray };
 };
 
-const convertFromIC = (rg: RuleGroupTypeIC): RuleGroupType => {
+export const convertFromIC = (rg: RuleGroupTypeIC): RuleGroupType => {
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
   const rulesAsMixedList = processedRG.rules.map(r =>
-    typeof r === 'string' ? r : 'rules' in r ? convertFromIC(r) : r
+    typeof r === 'string' || !('rules' in r) ? r : convertFromIC(r)
   );
   const combinator = rulesAsMixedList.length < 2 ? 'and' : (rulesAsMixedList[1] as string);
   const rules = rulesAsMixedList.filter(r => typeof r !== 'string') as RuleGroupArray;
   return { ...processedRG, combinator, rules };
 };
 
-const convertToIC = (query: RuleGroupType): RuleGroupTypeIC => {
-  const { combinator, ...queryWithoutCombinator } = query;
+export const convertToIC = (rg: RuleGroupType): RuleGroupTypeIC => {
+  const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
-  query.rules.forEach((r, idx, arr) => {
+  rg.rules.forEach((r, idx, arr) => {
     if ('rules' in r) {
       rules.push(convertToIC(r));
     } else {
@@ -86,7 +87,7 @@ const convertToIC = (query: RuleGroupType): RuleGroupTypeIC => {
 function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
 function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 function convertQuery(query: RuleGroupType | RuleGroupTypeIC): RuleGroupType | RuleGroupTypeIC {
-  return 'combinator' in query ? convertToIC(query) : convertFromIC(query);
+  return isRuleGroupTypeIC(query) ? convertFromIC(query) : convertToIC(query);
 }
 
 export { convertQuery };
