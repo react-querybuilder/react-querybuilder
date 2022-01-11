@@ -5,6 +5,7 @@ import type {
   DefaultRuleGroupICArray,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
+  DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ParseSQLOptions,
 } from '../../types';
@@ -97,7 +98,20 @@ const generateMixedAndOrList = (expr: SQLAndExpression | SQLOrExpression) => {
   return returnArray;
 };
 
-export const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny => {
+/**
+ * Converts a SQL `SELECT` statement into a query suitable for
+ * the QueryBuilder component's `query` or `defaultQuery` props.
+ */
+function parseSQL(sql: string): DefaultRuleGroupType;
+function parseSQL(
+  sql: string,
+  options: Omit<ParseSQLOptions, 'independentCombinators'> & { independentCombinators?: false }
+): DefaultRuleGroupType;
+function parseSQL(
+  sql: string,
+  options: Omit<ParseSQLOptions, 'independentCombinators'> & { independentCombinators: true }
+): DefaultRuleGroupTypeIC;
+function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny {
   let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
   if (options) {
@@ -137,7 +151,7 @@ export const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGro
         if ('rules' in rule) {
           return { ...rule, not: true };
         }
-        return { combinator: 'and', rules: [rule], not: true };
+        return { rules: [rule], not: true, ...(ic ? {} : { combinator: 'and' }) };
       }
     } else if (expr.type === 'SimpleExprParentheses') {
       const ex = expr.value.value[0];
@@ -145,7 +159,7 @@ export const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGro
         return processSQLExpression(ex);
       }
       const rule = processSQLExpression(ex) as DefaultRuleType;
-      return rule ? { combinator: 'and', rules: [rule] } : null;
+      return rule ? { rules: [rule], ...(ic ? {} : { combinator: 'and' }) } : null;
     } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
       if (ic) {
         const andOrList = generateFlatAndOrList(expr);
@@ -263,8 +277,10 @@ export const parseSQL = (sql: string, options?: ParseSQLOptions): DefaultRuleGro
       if ('rules' in result) {
         return result;
       }
-      return { combinator: 'and', rules: [result] };
+      return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
     }
   }
-  return { combinator: 'and', rules: [] };
-};
+  return { rules: [], ...(ic ? {} : { combinator: 'and' }) };
+}
+
+export { parseSQL };

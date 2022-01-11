@@ -128,35 +128,32 @@ export const defaultMongoDBValueProcessor: ValueProcessor = (
 /**
  * Formats a query in the requested output format.
  */
-export function formatQuery(ruleGroup: RuleGroupTypeAny): string;
-export function formatQuery(
+function formatQuery(ruleGroup: RuleGroupTypeAny): string;
+function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'parameterized' | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized' })
 ): ParameterizedSQL;
-export function formatQuery(
+function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options:
     | 'parameterized_named'
     | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized_named' })
 ): ParameterizedNamedSQL;
-export function formatQuery(
+function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'>
 ): string;
-export function formatQuery(
+function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>
 ): string;
-export function formatQuery(
+function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'> & {
     format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>;
   }
 ): string;
-export function formatQuery(
-  ruleGroup: RuleGroupTypeAny,
-  options?: FormatQueryOptions | ExportFormat
-) {
+function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions | ExportFormat) {
   let format: ExportFormat = 'json';
   let valueProcessor = defaultValueProcessor;
   let quoteFieldNamesWith = '';
@@ -441,3 +438,5 @@ export function formatQuery(
     return '';
   }
 }
+
+export { formatQuery };
