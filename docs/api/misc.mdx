@@ -30,6 +30,18 @@ function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupTyp
 
 `findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](./querybuilder#onaddrule) and [`onAddGroup`](./querybuilder#onaddgroup) functions.
 
+### `convertQuery`
+
+```ts
+function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
+// OR
+function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
+```
+
+`convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](./querybuilder#independentcombinators)).
+
+`convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in one direction.
+
 ### Defaults
 
 The following default configuration objects are exported for convenience.
