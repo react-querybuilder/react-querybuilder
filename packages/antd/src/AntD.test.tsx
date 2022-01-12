@@ -104,7 +104,6 @@ const testAntDSelect = (
         await new Promise(r => setTimeout(r, 500));
       });
       const listbox = within(getByRole('listbox'));
-      console.log(getByRole('listbox').parentElement.outerHTML);
       expect(listbox.getAllByRole('option')).toHaveLength(2);
       expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
     });
