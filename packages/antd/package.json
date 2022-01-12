@@ -24,7 +24,7 @@
     "@ant-design/icons": "^4.7.0",
     "@react-querybuilder/compat": "^4.1.1",
     "@types/react": "^17.0.0",
-    "antd": "^4.10.3",
+    "antd": "4.17.3",
     "react": "^17.0.1",
     "react-querybuilder": "^4.1.1",
     "typescript": "^4.5.0"
