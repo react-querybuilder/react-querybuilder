@@ -104,8 +104,9 @@ const testAntDSelect = (
         await new Promise(r => setTimeout(r, 500));
       });
       const listbox = within(getByRole('listbox'));
-      expect(listbox.getAllByRole('option')).toHaveLength(3);
-      expect(listbox.getAllByRole('option')[2]).toHaveTextContent(testVal.name);
+      console.log(getByRole('listbox').parentElement.outerHTML);
+      expect(listbox.getAllByRole('option')).toHaveLength(2);
+      expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
     });
 
     it('should be disabled by the disabled prop', () => {

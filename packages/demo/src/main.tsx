@@ -363,6 +363,7 @@ const App = () => {
                       {options.independentCombinators ? (
                         <QueryBuilder
                           {...commonRQBProps}
+                          independentCombinators
                           key={style}
                           query={queryIC}
                           onQueryChange={q => setQueryIC(q)}
@@ -370,6 +371,7 @@ const App = () => {
                       ) : (
                         <QueryBuilder
                           {...commonRQBProps}
+                          independentCombinators={false}
                           key={style}
                           query={query}
                           onQueryChange={q => setQuery(q)}
