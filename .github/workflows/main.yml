@@ -19,7 +19,7 @@ jobs:
         uses: creyD/prettier_action@v3.1
         with:
           prettier_options: --write packages/*/src/** ./*.js
-          prettier_version: 2.4.1
+          prettier_version: 2.5.1
           commit_message: 'Prettified code'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
