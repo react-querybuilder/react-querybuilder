@@ -7,6 +7,7 @@ import QueryBuilder, {
   RuleGroupType,
   RuleType,
 } from 'react-querybuilder';
+import { musicalInstruments } from './musicalInstruments';
 
 const validator = (r: RuleType) => !!r.value;
 
@@ -31,12 +32,7 @@ const fields: Field[] = [
     name: 'instrument',
     label: 'Instrument',
     valueEditorType: 'select',
-    values: [
-      { name: 'Guitar', label: 'Guitar' },
-      { name: 'Piano', label: 'Piano' },
-      { name: 'Vocals', label: 'Vocals' },
-      { name: 'Drums', label: 'Drums' },
-    ],
+    values: musicalInstruments,
     defaultValue: 'Piano',
     operators: [{ name: '=', label: 'is' }],
   },
