@@ -438,29 +438,34 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
       const newIndex = newNewPath[newNewPath.length - 1];
 
+      // This function 1) glosses over the need for type assertions to splice directly
+      // into parentToInsertInto.rules, and 2) simplifies the actual insertion code.
+      const insertRuleOrGroup = (...args: any[]) =>
+        parentToInsertInto.rules.splice(newIndex, 0, ...args);
+
       // Insert the source item at the target path
       if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
-        parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup);
+        insertRuleOrGroup(ruleOrGroup);
       } else {
         if (newIndex === 0) {
           if (ruleToRemoveIndex === 0 && oldNextCombinator) {
-            parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, oldNextCombinator);
+            insertRuleOrGroup(ruleOrGroup, oldNextCombinator);
           } else {
             const newNextCombinator =
               parentToInsertInto.rules[1] ||
               oldPrevCombinator ||
               /* istanbul ignore next */ getFirstOption(combinators);
-            parentToInsertInto.rules.splice(newIndex, 0, ruleOrGroup, newNextCombinator);
+            insertRuleOrGroup(ruleOrGroup, newNextCombinator);
           }
         } else {
           if (oldPrevCombinator) {
-            parentToInsertInto.rules.splice(newIndex, 0, oldPrevCombinator, ruleOrGroup);
+            insertRuleOrGroup(oldPrevCombinator, ruleOrGroup);
           } else {
             const newPrevCombinator =
               parentToInsertInto.rules[newIndex - 2] ||
               oldNextCombinator ||
               getFirstOption(combinators);
-            parentToInsertInto.rules.splice(newIndex, 0, newPrevCombinator, ruleOrGroup);
+            insertRuleOrGroup(newPrevCombinator, ruleOrGroup);
           }
         }
       }

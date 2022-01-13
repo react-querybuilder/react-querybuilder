@@ -19,9 +19,7 @@ export type RuleGroupType<R extends RuleType = RuleType, C extends string = stri
 export type RuleGroupArray<
   RG extends RuleGroupType = RuleGroupType,
   R extends RuleType = RuleType
-> = [R | RG, ...(R | RG)[]] | (any[] & { length: 0 });
-// TODO: why can't the line before this just be:
-// > = (R | RG)[];
+> = (R | RG)[];
 
 export type DefaultRuleGroupArray = RuleGroupArray<DefaultRuleGroupType, DefaultRuleType>;
 
