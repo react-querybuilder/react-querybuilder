@@ -69,7 +69,7 @@
     "build:main": "vite build",
     "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
     "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && yarn build:typesPre45",
-    "build:typesPre45": "replace '\\./ruleGroupsIC' './ruleGroupsIC.pre45' ./src/types/* -r --silent && tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace '\\.pre45' '' ./src/types/* -r --silent && replace 'import type' 'import' ./dist/typesPre45/types/*.d.ts -r --silent",
+    "build:typesPre45": "replace \"\\./ruleGroupsIC'\" \"./ruleGroupsIC.pre45'\" ./src/types -r --silent && tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace \"\\.pre45'\" \"'\" ./src/types -r --silent && replace \"import type\" \"import\" ./dist/typesPre45/types -r --silent",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",
