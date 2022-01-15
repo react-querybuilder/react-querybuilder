@@ -34,6 +34,7 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { styleConfigs } from './components';
 import {
   CommonRQBProps,
   defaultOptions,
@@ -44,7 +45,6 @@ import {
   initialQueryIC,
   npmLink,
   optionsMetadata,
-  styleConfigs,
   styleNameMap,
   DemoOptions,
   StyleName,
@@ -289,7 +289,7 @@ const App = () => {
               <div style={{ marginTop: '0.5rem' }}>
                 <Tooltip title="Reset the options above to their default values" placement="right">
                   <Button type="default" onClick={resetOptions}>
-                    Reset default options
+                    Default options
                   </Button>
                 </Tooltip>
               </div>

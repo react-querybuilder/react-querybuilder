@@ -1,4 +1,3 @@
-import { lazy } from 'react';
 import { generateID } from 'react-querybuilder';
 import type {
   ExportFormat,
@@ -9,29 +8,6 @@ import type {
   RuleType,
 } from 'react-querybuilder/src/types';
 import { musicalInstruments } from './musicalInstruments';
-
-const AntDActionElement = lazy(() => import('./components/AntDActionElement'));
-const AntDDragHandle = lazy(() => import('./components/AntDDragHandle'));
-const AntDNotToggle = lazy(() => import('./components/AntDNotToggle'));
-const AntDValueEditor = lazy(() => import('./components/AntDValueEditor'));
-const AntDValueSelector = lazy(() => import('./components/AntDValueSelector'));
-const BootstrapDragHandle = lazy(() => import('./components/BootstrapDragHandle'));
-const BootstrapNotToggle = lazy(() => import('./components/BootstrapNotToggle'));
-const BootstrapValueEditor = lazy(() => import('./components/BootstrapValueEditor'));
-const BulmaActionElement = lazy(() => import('./components/BulmaActionElement'));
-const BulmaNotToggle = lazy(() => import('./components/BulmaNotToggle'));
-const BulmaValueEditor = lazy(() => import('./components/BulmaValueEditor'));
-const BulmaValueSelector = lazy(() => import('./components/BulmaValueSelector'));
-const ChakraActionElement = lazy(() => import('./components/ChakraActionElement'));
-const ChakraDragHandle = lazy(() => import('./components/ChakraDragHandle'));
-const ChakraNotToggle = lazy(() => import('./components/ChakraNotToggle'));
-const ChakraValueEditor = lazy(() => import('./components/ChakraValueEditor'));
-const ChakraValueSelector = lazy(() => import('./components/ChakraValueSelector'));
-const MaterialActionElement = lazy(() => import('./components/MaterialActionElement'));
-const MaterialDragHandle = lazy(() => import('./components/MaterialDragHandle'));
-const MaterialNotToggle = lazy(() => import('./components/MaterialNotToggle'));
-const MaterialValueEditor = lazy(() => import('./components/MaterialValueEditor'));
-const MaterialValueSelector = lazy(() => import('./components/MaterialValueSelector'));
 
 export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra' | 'bulma';
 
@@ -146,92 +122,6 @@ export const styleNameMap: Record<StyleName, string> = {
   antd: 'Ant Design',
   chakra: 'Chakra UI',
   bulma: 'Bulma',
-};
-
-export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
-  default: {},
-  bootstrap: {
-    controlClassnames: {
-      addGroup: 'btn btn-secondary btn-sm',
-      addRule: 'btn btn-primary btn-sm',
-      cloneGroup: 'btn btn-secondary btn-sm',
-      cloneRule: 'btn btn-secondary btn-sm',
-      removeGroup: 'btn btn-danger btn-sm',
-      removeRule: 'btn btn-danger btn-sm',
-      combinators: 'form-select form-select-sm',
-      fields: 'form-select form-select-sm',
-      operators: 'form-select form-select-sm',
-      value: 'form-control form-control-sm',
-    },
-    controlElements: {
-      dragHandle: BootstrapDragHandle,
-      notToggle: BootstrapNotToggle,
-      valueEditor: BootstrapValueEditor,
-    },
-  },
-  antd: {
-    controlElements: {
-      addGroupAction: AntDActionElement,
-      addRuleAction: AntDActionElement,
-      cloneGroupAction: AntDActionElement,
-      cloneRuleAction: AntDActionElement,
-      combinatorSelector: AntDValueSelector,
-      fieldSelector: AntDValueSelector,
-      notToggle: AntDNotToggle,
-      operatorSelector: AntDValueSelector,
-      removeGroupAction: AntDActionElement,
-      removeRuleAction: AntDActionElement,
-      valueEditor: AntDValueEditor,
-      dragHandle: AntDDragHandle,
-    },
-  },
-  material: {
-    controlElements: {
-      addGroupAction: MaterialActionElement,
-      addRuleAction: MaterialActionElement,
-      cloneGroupAction: MaterialActionElement,
-      cloneRuleAction: MaterialActionElement,
-      combinatorSelector: MaterialValueSelector,
-      fieldSelector: MaterialValueSelector,
-      notToggle: MaterialNotToggle,
-      operatorSelector: MaterialValueSelector,
-      removeGroupAction: MaterialActionElement,
-      removeRuleAction: MaterialActionElement,
-      valueEditor: MaterialValueEditor,
-      dragHandle: MaterialDragHandle,
-    },
-  },
-  chakra: {
-    controlElements: {
-      addGroupAction: ChakraActionElement,
-      addRuleAction: ChakraActionElement,
-      cloneGroupAction: ChakraActionElement,
-      cloneRuleAction: ChakraActionElement,
-      combinatorSelector: ChakraValueSelector,
-      fieldSelector: ChakraValueSelector,
-      notToggle: ChakraNotToggle,
-      operatorSelector: ChakraValueSelector,
-      removeGroupAction: ChakraActionElement,
-      removeRuleAction: ChakraActionElement,
-      valueEditor: ChakraValueEditor,
-      dragHandle: ChakraDragHandle,
-    },
-  },
-  bulma: {
-    controlElements: {
-      addGroupAction: BulmaActionElement,
-      addRuleAction: BulmaActionElement,
-      cloneGroupAction: BulmaActionElement,
-      cloneRuleAction: BulmaActionElement,
-      combinatorSelector: BulmaValueSelector,
-      fieldSelector: BulmaValueSelector,
-      notToggle: BulmaNotToggle,
-      operatorSelector: BulmaValueSelector,
-      removeGroupAction: BulmaActionElement,
-      removeRuleAction: BulmaActionElement,
-      valueEditor: BulmaValueEditor,
-    },
-  },
 };
 
 export const fields: Field[] = [

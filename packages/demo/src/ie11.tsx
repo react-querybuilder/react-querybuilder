@@ -1,110 +1,108 @@
 import 'core-js';
+import { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder, {
-  defaultValidator,
-  Field,
-  generateID,
-  RuleGroupType,
-  RuleType,
-} from 'react-querybuilder';
-import { musicalInstruments } from './musicalInstruments';
+import QueryBuilder, { defaultValidator } from 'react-querybuilder';
+import {
+  CommonRQBProps,
+  defaultOptions,
+  DemoOptions,
+  docsLink,
+  fields,
+  initialQuery,
+  initialQueryIC,
+  optionsMetadata,
+} from './constants';
 
-const validator = (r: RuleType) => !!r.value;
+const IE11 = () => {
+  const [options, setOptions] = useState(defaultOptions);
 
-const fields: Field[] = [
-  { name: 'firstName', label: 'First Name', placeholder: 'Enter first name', validator },
-  {
-    name: 'lastName',
-    label: 'Last Name',
-    placeholder: 'Enter last name',
-    defaultOperator: 'beginsWith',
-    validator,
-  },
-  { name: 'age', label: 'Age', inputType: 'number', validator },
-  {
-    name: 'isMusician',
-    label: 'Is a musician',
-    valueEditorType: 'checkbox',
-    operators: [{ name: '=', label: 'is' }],
-    defaultValue: false,
-  },
-  {
-    name: 'instrument',
-    label: 'Instrument',
-    valueEditorType: 'select',
-    values: musicalInstruments,
-    defaultValue: 'Piano',
-    operators: [{ name: '=', label: 'is' }],
-  },
-  {
-    name: 'gender',
-    label: 'Gender',
-    operators: [{ name: '=', label: 'is' }],
-    valueEditorType: 'radio',
-    values: [
-      { name: 'M', label: 'Male' },
-      { name: 'F', label: 'Female' },
-      { name: 'O', label: 'Other' },
-    ],
-  },
-  { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator },
-];
+  const optionSetter = useCallback(
+    (opt: keyof DemoOptions) => (v: boolean) => setOptions(opts => ({ ...opts, [opt]: v })),
+    []
+  );
 
-const initialQuery: RuleGroupType = {
-  id: generateID(),
-  combinator: 'and',
-  not: false,
-  rules: [
-    {
-      id: generateID(),
-      field: 'firstName',
-      value: 'Stev',
-      operator: 'beginsWith',
-    },
-    {
-      id: generateID(),
-      field: 'lastName',
-      value: 'Vai, Vaughan',
-      operator: 'in',
-    },
-    {
-      id: generateID(),
-      field: 'age',
-      operator: '>',
-      value: '28',
-    },
-    {
-      id: generateID(),
-      combinator: 'or',
-      rules: [
-        {
-          id: generateID(),
-          field: 'isMusician',
-          operator: '=',
-          value: true,
-        },
-        {
-          id: generateID(),
-          field: 'instrument',
-          operator: '=',
-          value: 'Guitar',
-        },
-      ],
-    },
-  ],
+  const optionsInfo = useMemo(
+    () =>
+      (
+        [
+          'showCombinatorsBetweenRules',
+          'showNotToggle',
+          'showCloneButtons',
+          'resetOnFieldChange',
+          'resetOnOperatorChange',
+          'autoSelectField',
+          'addRuleToNewGroups',
+          'validateQuery',
+          'independentCombinators',
+          'enableDragAndDrop',
+          'disabled',
+        ] as (keyof DemoOptions)[]
+      ).map(opt => ({
+        ...optionsMetadata[opt],
+        default: defaultOptions[opt],
+        checked: options[opt],
+        setter: optionSetter(opt),
+      })),
+    [options, optionSetter]
+  );
+
+  const resetOptions = useCallback(
+    () =>
+      optionsInfo.forEach(opt => (opt.checked !== opt.default ? opt.setter(opt.default) : null)),
+    [optionsInfo]
+  );
+
+  const qbWrapperClassName = options.validateQuery ? 'validateQuery' : '';
+
+  const commonRQBProps = useMemo(
+    (): CommonRQBProps => ({
+      fields,
+      ...options,
+      validator: options.validateQuery ? defaultValidator : undefined,
+    }),
+    [options]
+  );
+
+  const getQBWrapperStyle = useCallback(
+    (icQueryBuilder: boolean) => ({
+      display: icQueryBuilder !== !!options.independentCombinators ? 'none' : 'block',
+    }),
+    [options.independentCombinators]
+  );
+
+  return (
+    <div>
+      <div className={qbWrapperClassName}>
+        <div style={getQBWrapperStyle(false)}>
+          <QueryBuilder
+            {...commonRQBProps}
+            independentCombinators={false}
+            defaultQuery={initialQuery}
+          />
+        </div>
+        <div style={getQBWrapperStyle(true)}>
+          <QueryBuilder {...commonRQBProps} independentCombinators defaultQuery={initialQueryIC} />
+        </div>
+      </div>
+      <div style={{ marginTop: '1rem' }}>
+        {optionsInfo.map(({ checked, label, link, setter, title }) => (
+          <div key={label}>
+            <label>
+              <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
+              {label}
+              {'\u00a0'}
+              <a href={`${docsLink}${link}`} title={title} target="_blank" rel="noreferrer">
+                (?)
+              </a>
+            </label>
+          </div>
+        ))}
+        <button type="button" style={{ marginTop: '0.5rem' }} onClick={resetOptions}>
+          Default options
+        </button>
+      </div>
+    </div>
+  );
 };
-
-const IE11 = () => (
-  <QueryBuilder
-    fields={fields}
-    defaultQuery={initialQuery}
-    addRuleToNewGroups
-    enableDragAndDrop
-    showCloneButtons
-    showNotToggle
-    validator={defaultValidator}
-  />
-);
 
 ReactDOM.render(<IE11 />, document.getElementById('ie11'));
