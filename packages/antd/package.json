@@ -18,7 +18,9 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
-    "build": "vite build && tsc --emitDeclarationOnly"
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "yarn type-check --watch"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",

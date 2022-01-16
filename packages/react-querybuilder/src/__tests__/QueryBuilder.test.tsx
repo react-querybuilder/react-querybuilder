@@ -1,8 +1,7 @@
-import { render, RenderResult } from '@testing-library/react';
+import { render, type RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { defaultTranslations } from '..';
-import { standardClassnames, TestID } from '../defaults';
+import { defaultTranslations, standardClassnames, TestID } from '../defaults';
 import { QueryBuilder as QueryBuilderOriginal } from '../QueryBuilder';
 import type {
   Field,
@@ -16,7 +15,9 @@ import type {
 } from '../types';
 import { defaultValidator, formatQuery } from '../utils';
 
-const [QueryBuilder, getDndBackend] = wrapWithTestBackend(QueryBuilderOriginal);
+const [QueryBuilder, getDndBackendOriginal] = wrapWithTestBackend(QueryBuilderOriginal);
+// This is just a type guard against `undefined`
+const getDndBackend = () => getDndBackendOriginal()!;
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
@@ -297,22 +298,21 @@ describe('<QueryBuilder />', () => {
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' },
     ];
+    const rule: RuleType = {
+      field: 'lastName',
+      value: 'Another Test',
+      operator: '=',
+    };
     const query: RuleGroupType = {
       combinator: 'or',
       not: false,
-      rules: [
-        {
-          field: 'lastName',
-          value: 'Another Test',
-          operator: '=',
-        },
-      ],
+      rules: [rule],
     };
 
     it('should invoke custom getInputType function', () => {
       const getInputType = jest.fn(() => 'text' as const);
       render(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
-      expect(getInputType).toHaveBeenCalledWith(query.rules[0].field, query.rules[0].operator);
+      expect(getInputType).toHaveBeenCalledWith(rule.field, rule.operator);
     });
 
     it('should handle invalid getInputType function', () => {
@@ -330,16 +330,15 @@ describe('<QueryBuilder />', () => {
       { name: 'lastName', label: 'Last Name' },
       { name: 'age', label: 'Age' },
     ];
+    const rule: RuleType = {
+      field: 'lastName',
+      operator: '=',
+      value: 'Another Test',
+    };
     const query: RuleGroupType = {
       combinator: 'or',
       not: false,
-      rules: [
-        {
-          field: 'lastName',
-          operator: '=',
-          value: 'Another Test',
-        },
-      ],
+      rules: [rule],
     };
 
     it('should invoke custom getValues function', () => {
@@ -352,7 +351,7 @@ describe('<QueryBuilder />', () => {
           getValues={getValues}
         />
       );
-      expect(getValues).toHaveBeenCalledWith(query.rules[0].field, query.rules[0].operator);
+      expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator);
     });
 
     it('should generate the correct number of options', () => {
@@ -371,7 +370,7 @@ describe('<QueryBuilder />', () => {
 
     it('should handle invalid getValues function', () => {
       const { getByTestId } = render(
-        <QueryBuilder query={query} fields={fields} getValues={() => null} />
+        <QueryBuilder query={query} fields={fields} getValues={() => null as any} />
       );
       const select = getByTestId(TestID.valueEditor);
       const opts = select.querySelectorAll('option');

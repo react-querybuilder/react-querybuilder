@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/types"
+    "baseUrl": ".",
+    "outDir": "./dist/types",
+    "paths": {
+      "ruleGroupsIC": ["src/types/ruleGroupsIC.ts"]
+    }
   },
   "files": ["./src/index.ts"],
   "exclude": ["../../*.ts", "./src/**/*"]

@@ -10,6 +10,8 @@ import type {
   ActionProps,
   Classnames,
   Controls,
+  Field,
+  NameLabelPair,
   RuleGroupArray,
   RuleGroupICArray,
   RuleGroupProps,
@@ -20,7 +22,9 @@ import type {
   ValueSelectorProps,
 } from '../types';
 
-const [RuleGroup, getDndBackend] = wrapWithTestBackend(RuleGroupOriginal);
+const [RuleGroup, getDndBackendOriginal] = wrapWithTestBackend(RuleGroupOriginal);
+// This is just a type guard against `undefined`
+const getDndBackend = () => getDndBackendOriginal()!;
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
@@ -28,7 +32,7 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
 describe('<RuleGroup />', () => {
   let controls: Partial<Controls>;
   let classNames: Partial<Classnames>;
-  let schema: Partial<Schema>;
+  let schema: Partial<Schema> = {};
   let props: RuleGroupProps;
 
   beforeEach(() => {
@@ -105,7 +109,7 @@ describe('<RuleGroup />', () => {
           className={props.className}
           value={props.value}
           onChange={e => props.handleOnChange(e.target.value)}>
-          <option value={props.options[0].name}>{props.options[0].label}</option>
+          <option value={(props.options[0] as Field).name}>{props.options[0].label}</option>
         </select>
       ),
       operatorSelector: props => (
@@ -114,7 +118,7 @@ describe('<RuleGroup />', () => {
           className={props.className}
           value={props.value}
           onChange={e => props.handleOnChange(e.target.value)}>
-          <option value={props.options[0].name}>{props.options[0].label}</option>
+          <option value={(props.options[0] as NameLabelPair).name}>{props.options[0].label}</option>
         </select>
       ),
       valueEditor: props => (
@@ -180,10 +184,10 @@ describe('<RuleGroup />', () => {
     expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.ruleGroup);
     expect(getByTestId(TestID.ruleGroup)).toHaveClass('custom-ruleGroup-class');
     expect(
-      getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.header}`).classList
+      getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.header}`)!.classList
     ).toContain(classNames.header);
     expect(
-      getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.body}`).classList
+      getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.body}`)!.classList
     ).toContain(classNames.body);
   });
 
@@ -212,7 +216,7 @@ describe('<RuleGroup />', () => {
       schema.onPropChange = jest.fn();
       const { container } = render(<RuleGroup {...props} />);
       userEvent.selectOptions(
-        container.querySelector(`.${standardClassnames.combinators}`),
+        container.querySelector(`.${standardClassnames.combinators}`)!,
         'any_combinator_value'
       );
       expect(schema.onPropChange).toHaveBeenCalledWith('combinator', 'any_combinator_value', [0]);
@@ -399,10 +403,10 @@ describe('<RuleGroup />', () => {
 
     it('should pass down validationResult as validation to children', () => {
       const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
-      schema.controls.combinatorSelector = ({ validation }: ValueSelectorProps) => (
+      schema.controls!.combinatorSelector = ({ validation }: ValueSelectorProps) => (
         <div title="ValueSelector">{JSON.stringify(validation)}</div>
       );
-      schema.controls.addRuleAction = ({ validation }: ActionProps) => (
+      schema.controls!.addRuleAction = ({ validation }: ActionProps) => (
         <div title="ActionElement">{JSON.stringify(validation)}</div>
       );
       schema.validationMap = { id: valRes };
@@ -646,7 +650,7 @@ describe('<RuleGroup />', () => {
       id: 'rule_group_id_' + index,
       path: thisPath,
       rules,
-      combinator: undefined,
+      combinator: 'and',
     };
   };
 });

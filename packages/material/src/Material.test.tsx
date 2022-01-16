@@ -144,9 +144,7 @@ describe('Material compatible components', () => {
         MaterialValueEditor,
         materialValueEditorProps,
       ],
-      [materialValueSelectorProps.title, MaterialValueSelector, materialValueSelectorProps],
+      [materialValueSelectorProps.title!, MaterialValueSelector, materialValueSelectorProps],
     ] as const
-  )
-    // eslint-disable-next-line prefer-spread
-    .forEach(t => testMaterialSelect.apply(undefined, t));
+  ).forEach(t => testMaterialSelect(t[0], t[1], t[2]));
 });

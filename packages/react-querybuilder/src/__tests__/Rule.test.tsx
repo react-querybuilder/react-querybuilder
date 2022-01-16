@@ -24,7 +24,9 @@ import type {
   ValueSelectorProps,
 } from '../types';
 
-const [Rule, getDndBackend] = wrapWithTestBackend(RuleOriginal);
+const [Rule, getDndBackendOriginal] = wrapWithTestBackend(RuleOriginal);
+// This is just a type guard against `undefined`
+const getDndBackend = () => getDndBackendOriginal()!;
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
@@ -41,7 +43,7 @@ defaultFields.forEach(f => {
 describe('<Rule />', () => {
   let controls: Partial<Controls>;
   let classNames: Partial<Classnames>;
-  let schema: Partial<Schema>;
+  let schema: Partial<Schema> = {};
   let props: RuleProps;
 
   beforeEach(() => {
@@ -147,7 +149,7 @@ describe('<Rule />', () => {
       it('should call onPropChange with the rule path', () => {
         const { getByTestId } = render(<Rule {...props} />);
         userEvent.selectOptions(
-          getByTestId(TestID.rule).querySelector(`select.${standardClassnames.fields}`),
+          getByTestId(TestID.rule).querySelector(`select.${standardClassnames.fields}`)!,
           'any_field'
         );
         expect(schema.onPropChange).toHaveBeenCalledWith('field', 'any_field', [0]);
@@ -158,7 +160,7 @@ describe('<Rule />', () => {
       it('should call onPropChange with the rule path', () => {
         const { getByTestId } = render(<Rule {...props} />);
         userEvent.selectOptions(
-          getByTestId(TestID.rule).querySelector(`select.${standardClassnames.operators}`),
+          getByTestId(TestID.rule).querySelector(`select.${standardClassnames.operators}`)!,
           'any_operator'
         );
         expect(schema.onPropChange).toHaveBeenCalledWith('operator', 'any_operator', [0]);
@@ -169,7 +171,7 @@ describe('<Rule />', () => {
       it('should call onPropChange with the rule path', () => {
         const { getByTestId } = render(<Rule {...props} />);
         userEvent.type(
-          getByTestId(TestID.rule).querySelector(`input.${standardClassnames.value}`),
+          getByTestId(TestID.rule).querySelector(`input.${standardClassnames.value}`)!,
           'any_value'
         );
         expect(schema.onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
@@ -235,7 +237,7 @@ describe('<Rule />', () => {
 
     it('should pass down validationResult as validation to children', () => {
       const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
-      schema.controls.fieldSelector = ({ validation }: ValueSelectorProps) => (
+      schema.controls!.fieldSelector = ({ validation }: ValueSelectorProps) => (
         <div title="ValueSelector">{JSON.stringify(validation)}</div>
       );
       schema.validationMap = { id: valRes };

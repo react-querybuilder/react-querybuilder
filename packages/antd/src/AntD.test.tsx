@@ -129,11 +129,9 @@ describe('AntD compatible components', () => {
   (
     [
       [`${antdValueEditorProps.title} as select`, AntDValueEditor, antdValueEditorProps],
-      [antdValueSelectorProps.title, AntDValueSelector, antdValueSelectorProps],
+      [antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps],
     ] as const
-  )
-    // eslint-disable-next-line prefer-spread
-    .forEach(t => testAntDSelect.apply(undefined, t));
+  ).forEach(t => testAntDSelect(t[0], t[1], t[2]));
 
   const title = AntDNotToggle.displayName;
   describe(title, () => {

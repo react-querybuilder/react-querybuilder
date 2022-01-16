@@ -9,7 +9,11 @@
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "target": "esnext",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "ruleGroupsIC": ["packages/react-querybuilder/src/types/ruleGroupsIC.ts"]
+    }
   },
   "include": ["./*.ts"]
 }
