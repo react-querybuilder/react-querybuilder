@@ -1,5 +1,11 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "ruleGroupsIC": ["src/types/ruleGroupsIC.ts"]
+    }
+  },
   "include": ["./src/"],
   "exclude": ["**/*.test.*", "./src/__mocks__/*.*"]
 }
