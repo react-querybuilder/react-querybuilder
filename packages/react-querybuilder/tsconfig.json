@@ -6,6 +6,5 @@
       "ruleGroupsIC": ["src/types/ruleGroupsIC.ts"]
     }
   },
-  "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*"]
+  "include": ["./src/"]
 }

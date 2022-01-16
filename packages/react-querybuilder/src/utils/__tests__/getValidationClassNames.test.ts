@@ -7,6 +7,6 @@ describe('getValidationClassNames', () => {
     expect(getValidationClassNames(false)).toBe(standardClassnames.invalid);
     expect(getValidationClassNames({ valid: true })).toBe(standardClassnames.valid);
     expect(getValidationClassNames({ valid: false })).toBe(standardClassnames.invalid);
-    expect(getValidationClassNames(null)).toBe('');
+    expect(getValidationClassNames(null as any)).toBe('');
   });
 });

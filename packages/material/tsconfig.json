@@ -3,6 +3,5 @@
   "compilerOptions": {
     "outDir": "dist/types"
   },
-  "include": ["./src/"],
-  "exclude": ["**/*.test.*", "./src/__mocks__/*.*"]
+  "include": ["./src/"]
 }
