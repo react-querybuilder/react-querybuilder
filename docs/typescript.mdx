@@ -6,9 +6,7 @@ These are some of the [TypeScript](https://www.typescriptlang.org/) types and in
 
 :::tip
 
-The minimum TypeScript version for this library is 4.1, but if you use TypeScript 4.5 or greater then the type `RuleGroupTypeIC` (used when `independentCombinators` is `true`) will be more accurate and helpful. Specifically, the `rules` property will 1) only allow zero- or odd-length arrays, 2) require all even indexes to be `RuleType` or `RuleGroupTypeIC`, and 3) require all odd indexes to be `string`.
-
-Using TypeScript >=4.1 and <4.5 allows the `rules` property to be an array of any length, with elements of `RuleType`, `RuleGroupTypeIC`, or `string` in any order. This can lead to invalid queries and unexpected behavior from the `<QueryBuilder />` component.
+The minimum TypeScript version for this library is 4.1, but if you use TypeScript 4.5 or greater then the type `RuleGroupTypeIC` (the type used for the `query` prop when `independentCombinators` is `true`) will be more accurate and helpful. See the note in the [Rules and groups](#rules-and-groups) section below.
 
 :::
 
@@ -61,18 +59,20 @@ type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;
 type RuleOrGroupArray = RuleGroupType['rules'] | RuleGroupTypeIC['rules'];
 ```
 
-:::note
+:::info
 
-`RuleGroupTypeIC` is greatly simplified here for brevity. In reality:
+`RuleGroupTypeIC` is greatly simplified here for brevity. In reality, the following conditions will be enforced by TypeScript:
 
-- Only even-numbered indexes in the `rules` array can be `RuleType | RuleGroupTypeIC`
-- Only odd-numbered indexes can be `string`
-- The `rules` array length must be odd or zero
+- All even indexes in the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`
+- All odd indexes in the `rules` array must be of type `string`
+- The first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC` (therefore the array length, unless it is zero, must be an odd number)
 
-For example, the following would be invalid because the first element (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string` and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also the length (2) is even.
+> That is, unless you're using a TypeScript version lower than 4.5, in which case what you see above is the actual type definition. I.e., the `rules` array can be of any length, with elements of `RuleType`, `RuleGroupTypeIC`, or `string` in any order, and TypeScript will not complain. However, invalid query objects can lead to unexpected behavior from the `<QueryBuilder />` component, so TypeScript 4.5 or greater is strongly recommended if the [`independentCombinators`](./api/querybuilder#independentcombinators) option will be used. In any case, make sure query objects meet the conditions listed above.
+
+For example, the following would be invalid because the first element in the `rules` array (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string`, and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also, the length (2) is an even number.
 
 ```ts
-const ruleGroup: RuleGroupTypeIC = {
+const ruleGroupInvalid: RuleGroupTypeIC = {
   rules: ['and', { field: 'firstName', operator: '=', value: 'Steve' }],
 };
 ```
@@ -80,15 +80,13 @@ const ruleGroup: RuleGroupTypeIC = {
 Either removing the first element or inserting another rule before it will resolve the issue:
 
 ```ts
-const ruleGroupFixed1: RuleGroupTypeIC = {
+const ruleGroupValid1: RuleGroupTypeIC = {
   rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
 };
-```
 
-or
+// OR
 
-```ts
-const ruleGroupFixed2: RuleGroupTypeIC = {
+const ruleGroupValid2: RuleGroupTypeIC = {
   rules: [
     { field: 'lastName', operator: '=', value: 'Vai' },
     'and',
