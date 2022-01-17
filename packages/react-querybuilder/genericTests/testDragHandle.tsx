@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import type { DragHandleProps } from 'react-querybuilder';
+import type { DragHandleProps } from '../src/types';
 
 export const defaultDragHandleProps: DragHandleProps = {
   level: 1,

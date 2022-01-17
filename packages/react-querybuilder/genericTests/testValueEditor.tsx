@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { NameLabelPair, OptionGroup, ValueEditorProps } from 'react-querybuilder';
+import type { NameLabelPair, OptionGroup, ValueEditorProps } from '../src/types';
+import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { errorMessageIsAboutPointerEventsNone, findInput } from './utils';
-import { defaultValueSelectorProps, testSelect } from './ValueSelector.test';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;

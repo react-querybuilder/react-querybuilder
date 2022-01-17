@@ -23,7 +23,6 @@
     "type-check:watch": "yarn type-check --watch"
   },
   "devDependencies": {
-    "@react-querybuilder/compat": "^4.1.2",
     "@types/react": "^17.0.0",
     "react": "^17.0.1",
     "react-querybuilder": "^4.1.2",

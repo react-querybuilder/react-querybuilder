@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { NotToggleProps } from 'react-querybuilder';
+import type { NotToggleProps } from '../src/types';
 import {
   errorMessageIsAboutPointerEventsNone,
   findInput,

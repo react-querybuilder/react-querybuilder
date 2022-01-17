@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '../src/types';
 import { findSelect } from './utils';
 
 export const defaultValueSelectorProps: ValueSelectorProps = {

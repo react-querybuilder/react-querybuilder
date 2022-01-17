@@ -1,6 +1,6 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
-  coveragePathIgnorePatterns: ['sqlParser.js'],
+  coveragePathIgnorePatterns: ['genericTests', 'sqlParser.js'],
   moduleNameMapper: {
     '^ruleGroupsIC$': '<rootDir>/src/types/ruleGroupsIC.ts',
   },

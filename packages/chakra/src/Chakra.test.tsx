@@ -5,7 +5,7 @@ import {
   testNotToggle,
   testValueEditor,
   testValueSelector,
-} from '@react-querybuilder/compat';
+} from 'react-querybuilder/genericTests';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 import {

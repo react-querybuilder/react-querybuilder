@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionWithRulesProps } from '../src/types';
 import { errorMessageIsAboutPointerEventsNone } from './utils';
 
 export const defaultActionElementProps: ActionWithRulesProps = {

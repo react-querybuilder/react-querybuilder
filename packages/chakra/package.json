@@ -28,7 +28,6 @@
     "@chakra-ui/system": "^1.8.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@react-querybuilder/compat": "^4.1.2",
     "@types/next": "^9.0.0",
     "@types/react": "^17.0.0",
     "framer-motion": "^4",

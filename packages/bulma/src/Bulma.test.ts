@@ -3,7 +3,7 @@ import {
   testNotToggle,
   testValueEditor,
   testValueSelector,
-} from '@react-querybuilder/compat';
+} from 'react-querybuilder/genericTests';
 import { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector } from '.';
 
 describe('Bulma compatible components', () => {

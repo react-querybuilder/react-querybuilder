@@ -4,7 +4,7 @@ import {
   testNotToggle,
   testValueEditor,
   testValueSelector,
-} from '@react-querybuilder/compat';
+} from '../../../genericTests';
 import { ActionElement } from '../ActionElement';
 import { DragHandle } from '../DragHandle';
 import { NotToggle } from '../NotToggle';

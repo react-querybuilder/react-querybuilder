@@ -7,7 +7,7 @@ import {
   testDragHandle,
   testNotToggle,
   testValueEditor,
-} from '@react-querybuilder/compat';
+} from 'react-querybuilder/genericTests';
 import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';

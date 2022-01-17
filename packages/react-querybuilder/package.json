@@ -41,7 +41,6 @@
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
-    "@react-querybuilder/compat": "^4.1.2",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
