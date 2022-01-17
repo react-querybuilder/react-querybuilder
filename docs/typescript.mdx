@@ -4,6 +4,14 @@ title: TypeScript reference
 
 These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript (you really should! 😊), you can use the information below to understand the required shape of the props and function parameters. To see the full type definitions for the `react-querybuilder` library, [click here](https://github.com/react-querybuilder/react-querybuilder/tree/master/packages/react-querybuilder/src/types).
 
+:::tip
+
+The minimum TypeScript version for this library is 4.1, but if you use TypeScript 4.5 or greater then the type `RuleGroupTypeIC` (used when `independentCombinators` is `true`) will be more accurate and helpful. Specifically, the `rules` property will 1) only allow zero- or odd-length arrays, 2) require all even indexes to be `RuleType` or `RuleGroupTypeIC`, and 3) require all odd indexes to be `string`.
+
+Using TypeScript >=4.1 and <4.5 allows the `rules` property to be an array of any length, with elements of `RuleType`, `RuleGroupTypeIC`, or `string` in any order. This can lead to invalid queries and unexpected behavior from the `<QueryBuilder />` component.
+
+:::
+
 ## Fields
 
 ```ts
