@@ -2,7 +2,7 @@
   "name": "react-querybuilder",
   "version": "4.1.2",
   "description": "The React <QueryBuilder /> component for constructing queries",
-  "main": "dist/index.umd.js",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
   "typesVersions": {
