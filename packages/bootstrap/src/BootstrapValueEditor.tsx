@@ -96,4 +96,4 @@ export const BootstrapValueEditor = ({
   }
 };
 
-BootstrapValueEditor.displayName = 'ValueEditor';
+BootstrapValueEditor.displayName = 'BootstrapValueEditor';

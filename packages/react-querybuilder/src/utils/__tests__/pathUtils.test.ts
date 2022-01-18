@@ -59,80 +59,78 @@ const queryIC: RuleGroupTypeIC = {
   ],
 };
 
-describe('pathUtils', () => {
-  describe('findPath', () => {
-    describe('standard rule groups', () => {
-      it('should find a root rule', () => {
-        expect(findPath([], query)).toHaveProperty('id', '111');
-      });
-
-      it('should find a sub rule', () => {
-        expect(findPath([2, 0], query)).toHaveProperty('id', '555');
-      });
-
-      it('should not find an invalid path', () => {
-        expect(findPath([7, 7, 7], query)).toBeUndefined();
-      });
+describe('findPath', () => {
+  describe('standard rule groups', () => {
+    it('should find a root rule', () => {
+      expect(findPath([], query)).toHaveProperty('id', '111');
     });
 
-    describe('independent combinators', () => {
-      it('should find a root rule', () => {
-        expect(findPath([], queryIC)).toHaveProperty('id', '111');
-      });
+    it('should find a sub rule', () => {
+      expect(findPath([2, 0], query)).toHaveProperty('id', '555');
+    });
 
-      it('should find a sub rule', () => {
-        expect(findPath([4, 0], queryIC)).toHaveProperty('id', '555');
-      });
-
-      it('should not find an invalid path', () => {
-        expect(findPath([7, 7, 7], queryIC)).toBeUndefined();
-      });
-
-      it('should return null for combinator elements', () => {
-        expect(findPath([1], queryIC)).toBeNull();
-        expect(findPath([3], queryIC)).toBeNull();
-      });
+    it('should not find an invalid path', () => {
+      expect(findPath([7, 7, 7], query)).toBeUndefined();
     });
   });
 
-  describe('getParentPath', () => {
-    it('should work', () => {
-      expect(getParentPath([])).toEqual([]);
-      expect(getParentPath([0])).toEqual([]);
-      expect(getParentPath([1, 2])).toEqual([1]);
-      expect(getParentPath([1, 2, 3])).toEqual([1, 2]);
+  describe('independent combinators', () => {
+    it('should find a root rule', () => {
+      expect(findPath([], queryIC)).toHaveProperty('id', '111');
+    });
+
+    it('should find a sub rule', () => {
+      expect(findPath([4, 0], queryIC)).toHaveProperty('id', '555');
+    });
+
+    it('should not find an invalid path', () => {
+      expect(findPath([7, 7, 7], queryIC)).toBeUndefined();
+    });
+
+    it('should return null for combinator elements', () => {
+      expect(findPath([1], queryIC)).toBeNull();
+      expect(findPath([3], queryIC)).toBeNull();
     });
   });
+});
 
-  describe('isAncestor', () => {
-    it('should work', () => {
-      expect(isAncestor([], [])).toBe(false);
-      expect(isAncestor([], [0])).toBe(true);
-      expect(isAncestor([], [0, 0])).toBe(true);
-      expect(isAncestor([0, 1, 2], [0, 1, 2, 3, 4, 5])).toBe(true);
-      expect(isAncestor([0, 1, 2, 4], [0, 1, 2, 3])).toBe(false);
-    });
+describe('getParentPath', () => {
+  it('should work', () => {
+    expect(getParentPath([])).toEqual([]);
+    expect(getParentPath([0])).toEqual([]);
+    expect(getParentPath([1, 2])).toEqual([1]);
+    expect(getParentPath([1, 2, 3])).toEqual([1, 2]);
   });
+});
 
-  describe('pathsAreEqual', () => {
-    it('should work', () => {
-      expect(pathsAreEqual([], [])).toBe(true);
-      expect(pathsAreEqual([0, 1, 2], [0, 1, 2])).toBe(true);
-      expect(pathsAreEqual([0, 1, 2, 3], [0, 1, 2, 4])).toBe(false);
-      expect(pathsAreEqual([0], [])).toBe(false);
-      expect(pathsAreEqual([], [0])).toBe(false);
-    });
+describe('isAncestor', () => {
+  it('should work', () => {
+    expect(isAncestor([], [])).toBe(false);
+    expect(isAncestor([], [0])).toBe(true);
+    expect(isAncestor([], [0, 0])).toBe(true);
+    expect(isAncestor([0, 1, 2], [0, 1, 2, 3, 4, 5])).toBe(true);
+    expect(isAncestor([0, 1, 2, 4], [0, 1, 2, 3])).toBe(false);
   });
+});
 
-  describe('getCommonAncestorPath', () => {
-    it('should work', () => {
-      expect(getCommonAncestorPath([], [])).toEqual([]);
-      expect(getCommonAncestorPath([0, 1, 2], [0, 1, 3])).toEqual([0, 1]);
-      expect(getCommonAncestorPath([0, 1, 2, 3], [0, 1, 2, 4])).toEqual([0, 1, 2]);
-      expect(getCommonAncestorPath([0], [])).toEqual([]);
-      expect(getCommonAncestorPath([], [0])).toEqual([]);
-      expect(getCommonAncestorPath([0], [1])).toEqual([]);
-      expect(getCommonAncestorPath([0, 2, 3, 4], [0, 3, 4, 5])).toEqual([0]);
-    });
+describe('pathsAreEqual', () => {
+  it('should work', () => {
+    expect(pathsAreEqual([], [])).toBe(true);
+    expect(pathsAreEqual([0, 1, 2], [0, 1, 2])).toBe(true);
+    expect(pathsAreEqual([0, 1, 2, 3], [0, 1, 2, 4])).toBe(false);
+    expect(pathsAreEqual([0], [])).toBe(false);
+    expect(pathsAreEqual([], [0])).toBe(false);
+  });
+});
+
+describe('getCommonAncestorPath', () => {
+  it('should work', () => {
+    expect(getCommonAncestorPath([], [])).toEqual([]);
+    expect(getCommonAncestorPath([0, 1, 2], [0, 1, 3])).toEqual([0, 1]);
+    expect(getCommonAncestorPath([0, 1, 2, 3], [0, 1, 2, 4])).toEqual([0, 1, 2]);
+    expect(getCommonAncestorPath([0], [])).toEqual([]);
+    expect(getCommonAncestorPath([], [0])).toEqual([]);
+    expect(getCommonAncestorPath([0], [1])).toEqual([]);
+    expect(getCommonAncestorPath([0, 2, 3, 4], [0, 3, 4, 5])).toEqual([0]);
   });
 });

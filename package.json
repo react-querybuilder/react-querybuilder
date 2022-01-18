@@ -34,6 +34,7 @@
     "gh-pages": "^3.1.0",
     "github-changes": "^2.0.2",
     "jest": "^27.0.6",
+    "jest-watch-typeahead": "^1.0.0",
     "lerna": "^4.0.0",
     "prettier": "2.5.1",
     "react-dnd-test-backend": "^14.0.1",

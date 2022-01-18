@@ -105,41 +105,39 @@ const queryWithOneGroupWithOneRuleIC: RuleGroupTypeIC = {
 };
 const queryWithOneGroupWithOneRuleValidationMapIC: ValidationMap = { root: true, innerGroup: true };
 
-describe('defaultValidator', () => {
-  describe('standard rule groups', () => {
-    it('should invalidate an empty query', () => {
-      expect(defaultValidator(emptyQuery)).toEqual(emptyQueryValidationMap);
-    });
-    it('should invalidate a group with invalid combinator and run the field validator', () => {
-      expect(defaultValidator(queryWithRulesAndInvalidCombinator)).toEqual(
-        queryWithRulesValidationMap
-      );
-    });
-    it('should validate a group with invalid combinator but no rules', () => {
-      expect(defaultValidator(queryWithOneRuleAndInvalidCombinator)).toEqual(
-        queryWithOneRuleValidationMap
-      );
-    });
-    it('should validate a group with only a sub group', () => {
-      expect(defaultValidator(queryWithOneGroupWithOneRule)).toEqual(
-        queryWithOneGroupWithOneRuleValidationMap
-      );
-    });
+describe('standard rule groups', () => {
+  it('should invalidate an empty query', () => {
+    expect(defaultValidator(emptyQuery)).toEqual(emptyQueryValidationMap);
   });
+  it('should invalidate a group with invalid combinator and run the field validator', () => {
+    expect(defaultValidator(queryWithRulesAndInvalidCombinator)).toEqual(
+      queryWithRulesValidationMap
+    );
+  });
+  it('should validate a group with invalid combinator but no rules', () => {
+    expect(defaultValidator(queryWithOneRuleAndInvalidCombinator)).toEqual(
+      queryWithOneRuleValidationMap
+    );
+  });
+  it('should validate a group with only a sub group', () => {
+    expect(defaultValidator(queryWithOneGroupWithOneRule)).toEqual(
+      queryWithOneGroupWithOneRuleValidationMap
+    );
+  });
+});
 
-  describe('independent combinators', () => {
-    it('should invalidate an empty query', () => {
-      expect(defaultValidator(emptyQueryIC)).toEqual(emptyQueryValidationMapIC);
-    });
-    it('should invalidate a group with invalid combinator and run the field validator', () => {
-      expect(defaultValidator(queryWithRulesAndInvalidCombinatorIC)).toEqual(
-        queryWithRulesValidationMapIC
-      );
-    });
-    it('should validate a group with only a sub group', () => {
-      expect(defaultValidator(queryWithOneGroupWithOneRuleIC)).toEqual(
-        queryWithOneGroupWithOneRuleValidationMapIC
-      );
-    });
+describe('independent combinators', () => {
+  it('should invalidate an empty query', () => {
+    expect(defaultValidator(emptyQueryIC)).toEqual(emptyQueryValidationMapIC);
+  });
+  it('should invalidate a group with invalid combinator and run the field validator', () => {
+    expect(defaultValidator(queryWithRulesAndInvalidCombinatorIC)).toEqual(
+      queryWithRulesValidationMapIC
+    );
+  });
+  it('should validate a group with only a sub group', () => {
+    expect(defaultValidator(queryWithOneGroupWithOneRuleIC)).toEqual(
+      queryWithOneGroupWithOneRuleValidationMapIC
+    );
   });
 });

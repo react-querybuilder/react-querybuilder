@@ -97,14 +97,15 @@ export const testValueEditor = (
     });
 
     if (!skip.select) {
+      const titleForSelectorTest = `${title} (as ValueSelector)`;
       const valueEditorAsSelectProps: ValueEditorAsSelectProps = {
         ...defaultValueEditorProps,
         type: 'select',
         values: defaultValueSelectorProps.options,
-        title,
+        title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(title, ValueEditor, valueEditorAsSelectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
     }
 
     (skip.checkbox ? describe.skip : describe)('when rendering a checkbox', () => {

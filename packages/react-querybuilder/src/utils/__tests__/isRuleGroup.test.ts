@@ -15,37 +15,35 @@ const ruleGroupIC: RuleGroupTypeIC = {
 };
 
 describe('isRuleGroup', () => {
-  describe('isRuleGroup', () => {
-    it('identifies a rule', () => {
-      expect(isRuleGroup(rule)).toBe(false);
-    });
-
-    it('identifies a rule group', () => {
-      expect(isRuleGroup(ruleGroup)).toBe(true);
-    });
-
-    it('identifies a rule group with independent combinators', () => {
-      expect(isRuleGroup(ruleGroupIC)).toBe(true);
-    });
+  it('identifies a rule', () => {
+    expect(isRuleGroup(rule)).toBe(false);
   });
 
-  describe('isRuleGroupType', () => {
-    it('identifies a rule group', () => {
-      expect(isRuleGroupType(ruleGroup)).toBe(true);
-    });
-
-    it('identifies a rule group with independent combinators', () => {
-      expect(isRuleGroupType(ruleGroupIC)).toBe(false);
-    });
+  it('identifies a rule group', () => {
+    expect(isRuleGroup(ruleGroup)).toBe(true);
   });
 
-  describe('isRuleGroupTypeIC', () => {
-    it('identifies a rule group', () => {
-      expect(isRuleGroupTypeIC(ruleGroup)).toBe(false);
-    });
+  it('identifies a rule group with independent combinators', () => {
+    expect(isRuleGroup(ruleGroupIC)).toBe(true);
+  });
+});
 
-    it('identifies a rule group with independent combinators', () => {
-      expect(isRuleGroupTypeIC(ruleGroupIC)).toBe(true);
-    });
+describe('isRuleGroupType', () => {
+  it('identifies a rule group', () => {
+    expect(isRuleGroupType(ruleGroup)).toBe(true);
+  });
+
+  it('identifies a rule group with independent combinators', () => {
+    expect(isRuleGroupType(ruleGroupIC)).toBe(false);
+  });
+});
+
+describe('isRuleGroupTypeIC', () => {
+  it('identifies a rule group', () => {
+    expect(isRuleGroupTypeIC(ruleGroup)).toBe(false);
+  });
+
+  it('identifies a rule group with independent combinators', () => {
+    expect(isRuleGroupTypeIC(ruleGroupIC)).toBe(true);
   });
 });

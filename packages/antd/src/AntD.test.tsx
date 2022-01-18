@@ -11,7 +11,6 @@ import userEvent from '@testing-library/user-event';
 import type {
   NameLabelPair,
   NotToggleProps,
-  OptionGroup,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
@@ -23,22 +22,18 @@ import {
   AntDValueSelector,
 } from '.';
 
-interface AntDValueEditorProps extends ValueEditorProps {
-  values: NameLabelPair[] | OptionGroup[];
-}
-
 const antdValueSelectorProps: ValueSelectorProps = {
   ...defaultValueSelectorProps,
   title: AntDValueSelector.displayName,
 };
-const antdValueEditorProps: AntDValueEditorProps = {
+const antdValueEditorProps: ValueEditorProps = {
   ...defaultValueEditorProps,
   type: 'select',
   title: AntDValueEditor.displayName,
   values: defaultValueSelectorProps.options,
 };
 
-const testAntDSelect = (
+const testAntDValueSelector = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
@@ -121,48 +116,43 @@ const testAntDSelect = (
   });
 };
 
-describe('AntD compatible components', () => {
-  testActionElement(AntDActionElement);
-  testDragHandle(AntDDragHandle);
-  testValueEditor(AntDValueEditor, { select: true });
+testActionElement(AntDActionElement);
+testDragHandle(AntDDragHandle);
+testValueEditor(AntDValueEditor, { select: true });
+testAntDValueSelector(
+  `${antdValueEditorProps.title} (as ValueSelector)`,
+  AntDValueEditor,
+  antdValueEditorProps
+);
+testAntDValueSelector(antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps);
 
-  (
-    [
-      [`${antdValueEditorProps.title} as select`, AntDValueEditor, antdValueEditorProps],
-      [antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps],
-    ] as const
-  ).forEach(t => testAntDSelect(t[0], t[1], t[2]));
+const title = AntDNotToggle.displayName;
+describe(title, () => {
+  const label = 'Not';
+  const props: NotToggleProps = { ...defaultNotToggleProps, label, title };
 
-  const title = AntDNotToggle.displayName;
-  describe(title, () => {
-    const label = 'Not';
-    const props: NotToggleProps = { ...defaultNotToggleProps, label, title };
+  it('should have the value passed in', () => {
+    const { getByTitle } = render(<AntDNotToggle {...props} checked />);
+    expect(getByTitle(title)).toBeDefined();
+  });
 
-    it('should have the value passed in', () => {
-      const { getByTitle } = render(<AntDNotToggle {...props} checked />);
-      expect(getByTitle(title)).toBeDefined();
-    });
+  it('should have the className passed into the <label />', () => {
+    const { getByTitle } = render(<AntDNotToggle {...props} className="foo" />);
+    expect(getByTitle(title)).toHaveClass('foo');
+  });
 
-    it('should have the className passed into the <label />', () => {
-      const { getByTitle } = render(<AntDNotToggle {...props} className="foo" />);
-      expect(getByTitle(title)).toHaveClass('foo');
-    });
+  it('should call the onChange method passed in', () => {
+    const onChange = jest.fn();
+    const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
+    userEvent.click(getByTitle(title));
+    expect(onChange).toHaveBeenCalledWith(true);
+  });
 
-    it('should call the onChange method passed in', () => {
-      const onChange = jest.fn();
-      const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
-      userEvent.click(getByTitle(title));
-      expect(onChange).toHaveBeenCalledWith(true);
-    });
-
-    it('should be disabled by disabled prop', () => {
-      const onChange = jest.fn();
-      const { getByTitle } = render(
-        <AntDNotToggle {...props} handleOnChange={onChange} disabled />
-      );
-      expect(getByTitle(title)).toBeDisabled();
-      userEvent.click(getByTitle(title));
-      expect(onChange).not.toHaveBeenCalled();
-    });
+  it('should be disabled by disabled prop', () => {
+    const onChange = jest.fn();
+    const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
+    expect(getByTitle(title)).toBeDisabled();
+    userEvent.click(getByTitle(title));
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

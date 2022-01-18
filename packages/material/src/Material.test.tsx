@@ -27,10 +27,6 @@ import {
   MaterialValueSelector,
 } from '.';
 
-interface MaterialValueEditorProps extends ValueEditorProps {
-  values: NameLabelPair[] | OptionGroup[];
-}
-
 const theme = createTheme();
 const generateWrapper = (RQBComponent: any) => {
   const Wrapper = (props: any) => (
@@ -52,14 +48,14 @@ const materialValueSelectorProps: ValueSelectorProps = {
   ...defaultValueSelectorProps,
   title: MaterialValueSelector.displayName,
 };
-const materialValueEditorProps: MaterialValueEditorProps = {
+const materialValueEditorProps: ValueEditorProps = {
   ...defaultValueEditorProps,
   type: 'select',
   title: MaterialValueEditor.displayName,
   values: defaultValueSelectorProps.options,
 };
 
-const testMaterialSelect = (
+const testMaterialValueSelector = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
@@ -104,11 +100,10 @@ const testMaterialSelect = (
     });
 
     it('should render optgroups', async () => {
-      const optGroups = [
-        { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
+      const optGroups: OptionGroup[] = [
+        { label: 'Test Option Group', options: props.values ?? props.options },
       ];
-      const newProps =
-        'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
+      const newProps = { ...props, values: optGroups, options: optGroups };
       const { getByRole } = render(<Component {...newProps} />);
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
@@ -131,20 +126,17 @@ const testMaterialSelect = (
   });
 };
 
-describe('Material compatible components', () => {
-  testActionElement(generateWrapper(MaterialActionElement));
-  testDragHandle(WrapperDH);
-  testNotToggle(generateWrapper(MaterialNotToggle));
-  testValueEditor(generateWrapper(MaterialValueEditor), { select: true });
-
-  (
-    [
-      [
-        `${materialValueEditorProps.title} as select`,
-        MaterialValueEditor,
-        materialValueEditorProps,
-      ],
-      [materialValueSelectorProps.title!, MaterialValueSelector, materialValueSelectorProps],
-    ] as const
-  ).forEach(t => testMaterialSelect(t[0], t[1], t[2]));
-});
+testActionElement(generateWrapper(MaterialActionElement));
+testDragHandle(WrapperDH);
+testNotToggle(generateWrapper(MaterialNotToggle));
+testValueEditor(generateWrapper(MaterialValueEditor), { select: true });
+testMaterialValueSelector(
+  `${materialValueEditorProps.title} (as ValueSelector)`,
+  MaterialValueEditor,
+  materialValueEditorProps
+);
+testMaterialValueSelector(
+  materialValueSelectorProps.title!,
+  MaterialValueSelector,
+  materialValueSelectorProps
+);
