@@ -70,6 +70,8 @@ const IE11 = () => {
     [options.independentCombinators]
   );
 
+  const qbClassname = commonRQBProps.enableDragAndDrop ? '' : 'dnd-disabled';
+
   return (
     <div>
       <div className={qbWrapperClassName}>
@@ -78,6 +80,9 @@ const IE11 = () => {
             {...commonRQBProps}
             independentCombinators={false}
             defaultQuery={initialQuery}
+            controlClassnames={{
+              queryBuilder: qbClassname,
+            }}
           />
         </div>
         <div style={getQBWrapperStyle(true)}>

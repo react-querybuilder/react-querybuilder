@@ -11,6 +11,11 @@ body {
   .queryBuilder-dragHandle {
     cursor: move;
   }
+  &.dnd-disabled {
+    .queryBuilder-dragHandle {
+      display: none;
+    }
+  }
 
   .ruleGroup,
   .ruleGroup-header,
