@@ -520,29 +520,29 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     disabledPaths,
   };
 
-  const className = useMemo(
+  const wrapperClassName = useMemo(
     () =>
       c(
         standardClassnames.queryBuilder,
-        schema.classNames.queryBuilder,
+        classNames.queryBuilder,
         typeof validationResult === 'boolean'
           ? validationResult
             ? standardClassnames.valid
             : standardClassnames.invalid
           : ''
       ),
-    [schema.classNames.queryBuilder, validationResult]
+    [classNames.queryBuilder, validationResult]
   );
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div
-        className={className}
+        className={wrapperClassName}
         data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
         data-inlinecombinators={
           independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
         }>
-        <schema.controls.ruleGroup
+        <controls.ruleGroup
           translations={{ ...defaultTranslations, ...translations }}
           rules={root.rules}
           combinator={'combinator' in root ? root.combinator : undefined}
