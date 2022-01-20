@@ -479,11 +479,21 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
   const validationMap = typeof validationResult === 'object' ? validationResult : {};
 
+  const classNames = useMemo(
+    () => ({ ...defaultControlClassnames, ...controlClassnames }),
+    [controlClassnames]
+  );
+
+  const controls = useMemo(
+    () => ({ ...defaultControlElements, ...controlElements }),
+    [controlElements]
+  );
+
   const schema: Schema = {
     fields,
     fieldMap,
     combinators,
-    classNames: { ...defaultControlClassnames, ...controlClassnames },
+    classNames,
     createRule,
     createRuleGroup,
     onRuleAdd,
@@ -492,7 +502,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     onGroupRemove: onRuleOrGroupRemove,
     onPropChange,
     isRuleGroup,
-    controls: { ...defaultControlElements, ...controlElements },
+    controls,
     getOperators: getOperatorsMain,
     getValueEditorType: getValueEditorTypeMain,
     getInputType: getInputTypeMain,
