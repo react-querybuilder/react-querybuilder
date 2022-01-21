@@ -3,7 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
-import { defaultCombinators, defaultTranslations, standardClassnames, TestID } from '../defaults';
+import {
+  defaultCombinators,
+  defaultTranslations as t,
+  standardClassnames as sc,
+  TestID,
+} from '../defaults';
 import { Rule } from '../Rule';
 import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
 import type {
@@ -190,20 +195,19 @@ const getProps = (mergeIntoSchema?: Partial<Schema>): RuleGroupProps => ({
   rules: [],
   combinator: 'and',
   schema: { ...schema, ...mergeIntoSchema } as Schema,
-  translations: defaultTranslations,
+  translations: t,
   disabled: false,
 });
 
 it('should have correct classNames', () => {
   const { getByTestId } = render(<RuleGroup {...getProps()} />);
-  expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.ruleGroup);
-  expect(getByTestId(TestID.ruleGroup)).toHaveClass('custom-ruleGroup-class');
-  expect(
-    getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.header}`)!.classList
-  ).toContain(classNames.header);
-  expect(
-    getByTestId(TestID.ruleGroup).querySelector(`.${standardClassnames.body}`)!.classList
-  ).toContain(classNames.body);
+  expect(getByTestId(TestID.ruleGroup)).toHaveClass(sc.ruleGroup, 'custom-ruleGroup-class');
+  expect(getByTestId(TestID.ruleGroup).querySelector(`.${sc.header}`)!.classList).toContain(
+    classNames.header
+  );
+  expect(getByTestId(TestID.ruleGroup).querySelector(`.${sc.body}`)!.classList).toContain(
+    classNames.body
+  );
 });
 
 describe('when 2 rules exist', () => {
@@ -220,9 +224,9 @@ describe('when 2 rules exist', () => {
     );
     const firstRule = getAllByTestId(TestID.rule)[0];
     expect(firstRule.dataset.ruleId).toBe('rule_id_1');
-    expect(firstRule.querySelector(`.${standardClassnames.fields}`)).toHaveValue('field1');
-    expect(firstRule.querySelector(`.${standardClassnames.operators}`)).toHaveValue('operator1');
-    expect(firstRule.querySelector(`.${standardClassnames.value}`)).toHaveValue('value_1');
+    expect(firstRule.querySelector(`.${sc.fields}`)).toHaveValue('field1');
+    expect(firstRule.querySelector(`.${sc.operators}`)).toHaveValue('operator1');
+    expect(firstRule.querySelector(`.${sc.value}`)).toHaveValue('value_1');
   });
 });
 
@@ -230,10 +234,7 @@ describe('onCombinatorChange', () => {
   it('calls onPropChange from the schema with expected values', () => {
     const onPropChange = jest.fn();
     const { container } = render(<RuleGroup {...getProps({ onPropChange })} />);
-    userEvent.selectOptions(
-      container.querySelector(`.${standardClassnames.combinators}`)!,
-      'any_combinator_value'
-    );
+    userEvent.selectOptions(container.querySelector(`.${sc.combinators}`)!, 'any_combinator_value');
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'any_combinator_value', [0]);
   });
 });
@@ -253,7 +254,7 @@ describe('addRule', () => {
   it('calls onRuleAdd from the schema with expected values', () => {
     const onRuleAdd = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ onRuleAdd })} />);
-    userEvent.click(getByText(defaultTranslations.addRule.label));
+    userEvent.click(getByText(t.addRule.label));
     const call0 = onRuleAdd.mock.calls[0];
     expect(call0[0]).toHaveProperty('id');
     expect(call0[0]).toHaveProperty('field', 'field_0');
@@ -267,7 +268,7 @@ describe('addGroup', () => {
   it('calls onGroupAdd from the schema with expected values', () => {
     const onGroupAdd = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ onGroupAdd })} />);
-    userEvent.click(getByText(defaultTranslations.addGroup.label));
+    userEvent.click(getByText(t.addGroup.label));
     const call0 = onGroupAdd.mock.calls[0];
     expect(call0[0]).toHaveProperty('id');
     expect(call0[0]).toHaveProperty('rules', []);
@@ -279,7 +280,7 @@ describe('cloneGroup', () => {
   it('calls moveRule from the schema with expected values', () => {
     const moveRule = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ moveRule, showCloneButtons: true })} />);
-    userEvent.click(getByText(defaultTranslations.cloneRuleGroup.label));
+    userEvent.click(getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
@@ -288,7 +289,7 @@ describe('removeGroup', () => {
   it('calls onGroupRemove from the schema with expected values', () => {
     const onGroupRemove = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ onGroupRemove })} />);
-    userEvent.click(getByText(defaultTranslations.removeGroup.label));
+    userEvent.click(getByText(t.removeGroup.label));
     expect(onGroupRemove).toHaveBeenCalledWith([0]);
   });
 });
@@ -301,7 +302,7 @@ describe('showCombinatorsBetweenRules', () => {
         rules={[{ field: 'test', value: 'Test', operator: '=' }]}
       />
     );
-    expect(container.querySelectorAll(`.${standardClassnames.combinators}`)).toHaveLength(0);
+    expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(0);
   });
 
   it('displays combinators when there is more than one rule', () => {
@@ -315,37 +316,31 @@ describe('showCombinatorsBetweenRules', () => {
         ]}
       />
     );
-    expect(container.querySelectorAll(`.${standardClassnames.combinators}`)).toHaveLength(2);
+    expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(2);
   });
 });
 
 describe('showNotToggle', () => {
   it('does not display "not" toggle by default', () => {
     const { container } = render(<RuleGroup {...getProps({ showNotToggle: false })} />);
-    expect(container.querySelectorAll(`.${standardClassnames.notToggle}`)).toHaveLength(0);
+    expect(container.querySelectorAll(`.${sc.notToggle}`)).toHaveLength(0);
   });
 
   it('has the correct classNames', () => {
     const { getByTestId } = render(<RuleGroup {...getProps({ showNotToggle: true })} />);
-    expect(getByTestId(TestID.notToggle)).toHaveClass(
-      standardClassnames.notToggle,
-      'custom-notToggle-class'
-    );
+    expect(getByTestId(TestID.notToggle)).toHaveClass(sc.notToggle, 'custom-notToggle-class');
   });
 });
 
 describe('showCloneButtons', () => {
   it('does not display clone buttons by default', () => {
     const { container } = render(<RuleGroup {...getProps({ showCloneButtons: false })} />);
-    expect(container.querySelectorAll(`.${standardClassnames.cloneGroup}`)).toHaveLength(0);
+    expect(container.querySelectorAll(`.${sc.cloneGroup}`)).toHaveLength(0);
   });
 
   it('has the correct classNames', () => {
     const { getByTestId } = render(<RuleGroup {...getProps({ showCloneButtons: true })} />);
-    expect(getByTestId(TestID.cloneGroup)).toHaveClass(
-      standardClassnames.cloneGroup,
-      'custom-cloneGroup-class'
-    );
+    expect(getByTestId(TestID.cloneGroup)).toHaveClass(sc.cloneGroup, 'custom-cloneGroup-class');
   });
 });
 
@@ -361,7 +356,7 @@ describe('independent combinators', () => {
     );
     const inlineCombinator = getByTestId(TestID.inlineCombinator);
     const combinatorSelector = getByTestId(TestID.combinators);
-    expect(inlineCombinator).toHaveClass(standardClassnames.betweenRules);
+    expect(inlineCombinator).toHaveClass(sc.betweenRules);
     expect(combinatorSelector).toHaveValue('and');
   });
 
@@ -378,7 +373,7 @@ describe('independent combinators', () => {
         rules={rules}
       />
     );
-    userEvent.selectOptions(getByTitle(defaultTranslations.combinators.title), [getByText('OR')]);
+    userEvent.selectOptions(getByTitle(t.combinators.title), [getByText('OR')]);
     expect(updateIndependentCombinator).toHaveBeenCalledWith('or', [0, 1]);
   });
 
@@ -389,7 +384,7 @@ describe('independent combinators', () => {
         {...getProps({ independentCombinators: true, moveRule, showCloneButtons: true })}
       />
     );
-    userEvent.click(getByText(defaultTranslations.cloneRuleGroup.label));
+    userEvent.click(getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
@@ -397,20 +392,20 @@ describe('independent combinators', () => {
 describe('validation', () => {
   it('should not validate if no validationMap[id] value exists', () => {
     const { getByTestId } = render(<RuleGroup {...getProps()} />);
-    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.valid);
+    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.invalid);
   });
 
   it('should validate to false if validationMap[id] = false', () => {
     const { getByTestId } = render(<RuleGroup {...getProps({ validationMap: { id: false } })} />);
-    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.valid);
+    expect(getByTestId(TestID.ruleGroup)).toHaveClass(sc.invalid);
   });
 
   it('should validate to true if validationMap[id] = true', () => {
     const { getByTestId } = render(<RuleGroup {...getProps({ validationMap: { id: true } })} />);
-    expect(getByTestId(TestID.ruleGroup)).toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.ruleGroup)).toHaveClass(sc.valid);
+    expect(getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.invalid);
   });
 
   it('should pass down validationResult as validation to children', () => {
@@ -437,14 +432,14 @@ describe('enableDragAndDrop', () => {
   it('should not have the drag class if not dragging', () => {
     const { getByTestId } = render(<RuleGroup {...getProps()} />);
     const ruleGroup = getByTestId(TestID.ruleGroup);
-    expect(ruleGroup).not.toHaveClass(standardClassnames.dndDragging);
+    expect(ruleGroup).not.toHaveClass(sc.dndDragging);
   });
 
   it('should have the drag class if dragging', () => {
     const { getByTestId } = render(<RuleGroup {...getProps()} />);
     const ruleGroup = getByTestId(TestID.ruleGroup);
     simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
-    expect(ruleGroup).toHaveClass(standardClassnames.dndDragging);
+    expect(ruleGroup).toHaveClass(sc.dndDragging);
     act(() => {
       getDndBackend().simulateEndDrag();
     });
@@ -464,8 +459,8 @@ describe('enableDragAndDrop', () => {
       getHandlerId(ruleGroups[0], 'drop'),
       getDndBackend()
     );
-    expect(ruleGroups[0]).not.toHaveClass(standardClassnames.dndDragging);
-    expect(ruleGroups[1]).not.toHaveClass(standardClassnames.dndOver);
+    expect(ruleGroups[0]).not.toHaveClass(sc.dndDragging);
+    expect(ruleGroups[1]).not.toHaveClass(sc.dndOver);
     expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
   });
 
@@ -478,8 +473,8 @@ describe('enableDragAndDrop', () => {
       getHandlerId(ruleGroup, 'drop'),
       getDndBackend()
     );
-    expect(ruleGroup).not.toHaveClass(standardClassnames.dndDragging);
-    expect(ruleGroup).not.toHaveClass(standardClassnames.dndOver);
+    expect(ruleGroup).not.toHaveClass(sc.dndDragging);
+    expect(ruleGroup).not.toHaveClass(sc.dndOver);
     expect(moveRule).not.toHaveBeenCalled();
   });
 
@@ -551,8 +546,8 @@ describe('enableDragAndDrop', () => {
       getHandlerId(combinatorEl, 'drop'),
       getDndBackend()
     );
-    expect(ruleGroups[1]).not.toHaveClass(standardClassnames.dndDragging);
-    expect(combinatorEl).not.toHaveClass(standardClassnames.dndOver);
+    expect(ruleGroups[1]).not.toHaveClass(sc.dndDragging);
+    expect(combinatorEl).not.toHaveClass(sc.dndOver);
     expect(moveRule).toHaveBeenCalledWith([1], [0, 1]);
   });
 
@@ -583,6 +578,11 @@ describe('enableDragAndDrop', () => {
 });
 
 describe('disabled', () => {
+  it('should have the correct classname', () => {
+    const { getByTestId } = render(<RuleGroup {...getProps()} disabled />);
+    expect(getByTestId(TestID.ruleGroup)).toHaveClass(sc.disabled);
+  });
+
   it('does not try to update the query', () => {
     const onRuleAdd = jest.fn();
     const onRuleRemove = jest.fn();

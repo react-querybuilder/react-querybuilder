@@ -8,7 +8,7 @@ import {
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
-import { defaultTranslations, standardClassnames, TestID } from '../defaults';
+import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
 import { Rule as RuleOriginal } from '../Rule';
 import type {
   ActionProps,
@@ -123,12 +123,12 @@ const getProps = (mergeIntoSchema?: Partial<Schema>): RuleProps => ({
   operator: 'operator',
   schema: { ...schema, ...mergeIntoSchema } as Schema,
   path: [0],
-  translations: defaultTranslations,
+  translations: t,
 });
 
 it('should have correct classNames', () => {
   const { getByTestId } = render(<Rule {...getProps()} />);
-  expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.rule, 'custom-rule-class');
+  expect(getByTestId(TestID.rule)).toHaveClass(sc.rule, 'custom-rule-class');
 });
 
 describe('onElementChanged methods', () => {
@@ -138,7 +138,7 @@ describe('onElementChanged methods', () => {
       const props = { ...getProps({ onPropChange }) };
       const { getByTestId } = render(<Rule {...props} />);
       userEvent.selectOptions(
-        getByTestId(TestID.rule).querySelector(`select.${standardClassnames.fields}`)!,
+        getByTestId(TestID.rule).querySelector(`select.${sc.fields}`)!,
         'any_field'
       );
       expect(onPropChange).toHaveBeenCalledWith('field', 'any_field', [0]);
@@ -151,7 +151,7 @@ describe('onElementChanged methods', () => {
       const props = { ...getProps({ onPropChange }) };
       const { getByTestId } = render(<Rule {...props} />);
       userEvent.selectOptions(
-        getByTestId(TestID.rule).querySelector(`select.${standardClassnames.operators}`)!,
+        getByTestId(TestID.rule).querySelector(`select.${sc.operators}`)!,
         'any_operator'
       );
       expect(onPropChange).toHaveBeenCalledWith('operator', 'any_operator', [0]);
@@ -163,10 +163,7 @@ describe('onElementChanged methods', () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
       const { getByTestId } = render(<Rule {...props} />);
-      userEvent.type(
-        getByTestId(TestID.rule).querySelector(`input.${standardClassnames.value}`)!,
-        'any_value'
-      );
+      userEvent.type(getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!, 'any_value');
       expect(onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
     });
   });
@@ -176,7 +173,7 @@ describe('cloneRule', () => {
   it('should call moveRule with the right paths', () => {
     const moveRule = jest.fn();
     const { getByText } = render(<Rule {...getProps({ moveRule, showCloneButtons: true })} />);
-    userEvent.click(getByText(defaultTranslations.cloneRule.label));
+    userEvent.click(getByText(t.cloneRule.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
@@ -185,7 +182,7 @@ describe('removeRule', () => {
   it('should call onRuleRemove with the rule and path', () => {
     const onRuleRemove = jest.fn();
     const { getByText } = render(<Rule {...getProps({ onRuleRemove })} />);
-    userEvent.click(getByText(defaultTranslations.removeRule.label));
+    userEvent.click(getByText(t.removeRule.label));
     expect(onRuleRemove).toHaveBeenCalledWith([0]);
   });
 });
@@ -193,8 +190,8 @@ describe('removeRule', () => {
 describe('validation', () => {
   it('should not validate if no validationMap[id] value exists and no validator function is provided', () => {
     const { getByTestId } = render(<Rule {...getProps()} />);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
+    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
   });
 
   it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
@@ -202,24 +199,24 @@ describe('validation', () => {
     const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
     const validationMap = { id: false };
     const { getByTestId } = render(<Rule {...getProps({ fieldMap, validationMap })} />);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
+    expect(getByTestId(TestID.rule)).toHaveClass(sc.invalid);
     expect(validator).not.toHaveBeenCalled();
   });
 
   it('should validate to true if validationMap[id] = true', () => {
     const validationMap = { id: true };
     const { getByTestId } = render(<Rule {...getProps({ validationMap })} />);
-    expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.rule)).toHaveClass(sc.valid);
+    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
   });
 
   it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
     const { getByTestId } = render(<Rule {...getProps({ fieldMap })} field="field1" />);
-    expect(getByTestId(TestID.rule)).toHaveClass(standardClassnames.valid);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(standardClassnames.invalid);
+    expect(getByTestId(TestID.rule)).toHaveClass(sc.valid);
+    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
     expect(validator).toHaveBeenCalled();
   });
 
@@ -246,14 +243,14 @@ describe('enableDragAndDrop', () => {
   it('should not have the drag class if not dragging', () => {
     const { getByTestId } = render(<Rule {...getProps()} />);
     const rule = getByTestId(TestID.rule);
-    expect(rule).not.toHaveClass(standardClassnames.dndDragging);
+    expect(rule).not.toHaveClass(sc.dndDragging);
   });
 
   it('should have the drag class if dragging', () => {
     const { getByTestId } = render(<Rule {...getProps()} />);
     const rule = getByTestId(TestID.rule);
     simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
-    expect(rule).toHaveClass(standardClassnames.dndDragging);
+    expect(rule).toHaveClass(sc.dndDragging);
     act(() => {
       getDndBackend().simulateEndDrag();
     });
@@ -272,7 +269,7 @@ describe('enableDragAndDrop', () => {
       getHandlerId(rules[1], 'drop'),
       getDndBackend()
     );
-    expect(rules[1]).toHaveClass(standardClassnames.dndOver);
+    expect(rules[1]).toHaveClass(sc.dndOver);
     act(() => {
       getDndBackend().simulateEndDrag();
     });
@@ -292,8 +289,8 @@ describe('enableDragAndDrop', () => {
       getHandlerId(rules[1], 'drop'),
       getDndBackend()
     );
-    expect(rules[0]).not.toHaveClass(standardClassnames.dndDragging);
-    expect(rules[1]).not.toHaveClass(standardClassnames.dndOver);
+    expect(rules[0]).not.toHaveClass(sc.dndDragging);
+    expect(rules[1]).not.toHaveClass(sc.dndOver);
     expect(moveRule).toHaveBeenCalledWith([0], [2]);
   });
 
@@ -302,8 +299,8 @@ describe('enableDragAndDrop', () => {
     const { getByTestId } = render(<Rule {...getProps({ moveRule })} />);
     const rule = getByTestId(TestID.rule);
     simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
-    expect(rule).not.toHaveClass(standardClassnames.dndDragging);
-    expect(rule).not.toHaveClass(standardClassnames.dndOver);
+    expect(rule).not.toHaveClass(sc.dndDragging);
+    expect(rule).not.toHaveClass(sc.dndOver);
     expect(moveRule).not.toHaveBeenCalled();
   });
 
@@ -326,6 +323,10 @@ describe('enableDragAndDrop', () => {
 });
 
 describe('disabled', () => {
+  it('should have the correct classname', () => {
+    const { getByTestId } = render(<Rule {...getProps()} disabled />);
+    expect(getByTestId(TestID.rule)).toHaveClass(sc.disabled);
+  });
   it('does not try to update the query', () => {
     const onRuleRemove = jest.fn();
     const onPropChange = jest.fn();

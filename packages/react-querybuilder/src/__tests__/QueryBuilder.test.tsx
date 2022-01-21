@@ -1540,6 +1540,10 @@ describe('enableDragAndDrop', () => {
 });
 
 describe('disabled', () => {
+  it('should have the correct classname', () => {
+    const { container } = render(<QueryBuilder disabled />);
+    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
+  });
   it('prevents changes when disabled', () => {
     const onQueryChange = jest.fn();
     const { getAllByLabelText, getAllByTestId, getAllByTitle, getAllByDisplayValue } = render(

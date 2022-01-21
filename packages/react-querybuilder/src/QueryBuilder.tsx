@@ -382,13 +382,14 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       c(
         standardClassnames.queryBuilder,
         classNames.queryBuilder,
+        queryDisabled ? standardClassnames.disabled : '',
         typeof validationResult === 'boolean'
           ? validationResult
             ? standardClassnames.valid
             : standardClassnames.invalid
           : ''
       ),
-    [classNames.queryBuilder, validationResult]
+    [classNames.queryBuilder, queryDisabled, validationResult]
   );
 
   return (
