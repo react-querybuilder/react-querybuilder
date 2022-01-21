@@ -18,6 +18,7 @@ import {
   RuleGroupTypeIC,
   RuleType,
   Schema,
+  UpdateableProperties,
 } from './types';
 import {
   add,
@@ -168,7 +169,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   const getRuleDefaultValue = useCallback(
     (rule: RuleType) => {
       const fieldData = fieldMap[rule.field];
-      /* istanbul ignore next */
+      /* istanbul ignore if */
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
         return fieldData.defaultValue;
       } else if (getDefaultValue) {
@@ -260,7 +261,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   isFirstRender.current = false;
 
   // Notify a query change on mount
-  /* istanbul ignore next */
   useEffect(() => {
     if (enableMountQueryChange) {
       onQueryChange(root);
@@ -284,7 +284,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
 
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
-    /* istanbul ignore next */
     if (queryDisabled) return;
     const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
@@ -293,7 +292,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const onGroupAdd = (group: RG, parentPath: number[]) => {
-    /* istanbul ignore next */
     if (queryDisabled) return;
     const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
@@ -301,12 +299,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     dispatch(newQuery);
   };
 
-  const onPropChange = (
-    prop: Exclude<keyof (RuleType & RuleGroupType), 'id' | 'path' | 'rules'>,
-    value: any,
-    path: number[]
-  ) => {
-    /* istanbul ignore next */
+  const onPropChange = (prop: UpdateableProperties, value: any, path: number[]) => {
     if (queryDisabled) return;
     const newQuery = update(root, prop, value, path, {
       resetOnFieldChange,
@@ -318,26 +311,18 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const updateIndependentCombinator = (value: string, path: number[]) => {
-    // TODO: merge this into onPropChange
-    /* istanbul ignore next */
-    if (queryDisabled) return;
-    const newQuery = update(root, 'combinator', value, path, {});
-    dispatch(newQuery);
+    // TODO: remove this and just use onPropChange
+    onPropChange('combinator', value, path);
   };
 
   const onRuleOrGroupRemove = (path: number[]) => {
-    /* istanbul ignore next */
     if (queryDisabled) return;
     const newQuery = remove(root, path);
     dispatch(newQuery);
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    /* istanbul ignore if */
-    if (queryDisabled) {
-      return;
-    }
-
+    if (queryDisabled) return;
     const newQuery = move(root, oldPath, newPath, { clone, combinators });
     dispatch(newQuery);
   };

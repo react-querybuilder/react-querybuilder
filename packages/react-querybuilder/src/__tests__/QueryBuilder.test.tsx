@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { defaultTranslations, standardClassnames, TestID } from '../defaults';
+import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
 import { QueryBuilder as QueryBuilderOriginal } from '../QueryBuilder';
 import type {
   Field,
@@ -27,7 +27,7 @@ const stripQueryIds = (query: any) => JSON.parse(formatQuery(query, 'json_withou
 describe('when rendered', () => {
   it('should have the correct className', () => {
     const { container } = render(<QueryBuilder />);
-    expect(container.querySelectorAll('div')[0]).toHaveClass(standardClassnames.queryBuilder);
+    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.queryBuilder);
   });
 
   it('should render the root RuleGroup', () => {
@@ -804,7 +804,7 @@ describe('valueEditorType property in field', () => {
 
     userEvent.click(getByTestId(TestID.addRule));
 
-    expect(container.querySelector(`select.${standardClassnames.value}`)).toBeDefined();
+    expect(container.querySelector(`select.${sc.value}`)).toBeDefined();
   });
 });
 
@@ -821,10 +821,8 @@ describe('operators property in field', () => {
 
     userEvent.click(getByTestId(TestID.addRule));
 
-    expect(container.querySelector(`select.${standardClassnames.operators}`)).toBeDefined();
-    expect(
-      container.querySelectorAll(`select.${standardClassnames.operators} option`)
-    ).toHaveLength(1);
+    expect(container.querySelector(`select.${sc.operators}`)).toBeDefined();
+    expect(container.querySelectorAll(`select.${sc.operators} option`)).toHaveLength(1);
   });
 });
 
@@ -841,9 +839,9 @@ describe('autoSelectField', () => {
 
     userEvent.click(getByTestId(TestID.addRule));
 
-    expect(container.querySelectorAll(`select.${standardClassnames.fields}`)).toHaveLength(1);
-    expect(container.querySelectorAll(`select.${standardClassnames.operators}`)).toHaveLength(0);
-    expect(container.querySelectorAll(`.${standardClassnames.value}`)).toHaveLength(0);
+    expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
+    expect(container.querySelectorAll(`select.${sc.operators}`)).toHaveLength(0);
+    expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
   });
 });
 
@@ -896,7 +894,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[0]);
+      userEvent.click(getAllByText(t.cloneRule.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         combinator: 'and',
         rules: [
@@ -925,7 +923,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[0]);
+      userEvent.click(getAllByText(t.cloneRule.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         combinator: 'and',
         rules: [
@@ -950,7 +948,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getByText(defaultTranslations.cloneRule.label));
+      userEvent.click(getByText(t.cloneRule.label));
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -976,7 +974,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[0]);
+      userEvent.click(getAllByText(t.cloneRule.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -1004,7 +1002,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(defaultTranslations.cloneRule.label)[1]);
+      userEvent.click(getAllByText(t.cloneRule.label)[1]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -1141,49 +1139,33 @@ describe('independent combinators', () => {
 describe('validation', () => {
   it('should not validate if no validator function is provided', () => {
     const { container } = render(<QueryBuilder />);
-    expect(container.querySelector(`div.${standardClassnames.queryBuilder}`)).not.toHaveClass(
-      standardClassnames.valid
-    );
-    expect(container.querySelector(`div.${standardClassnames.queryBuilder}`)).not.toHaveClass(
-      standardClassnames.invalid
-    );
+    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.valid);
+    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.invalid);
   });
 
   it('should validate groups if default validator function is provided', () => {
     const { container, getByTestId } = render(<QueryBuilder validator={defaultValidator} />);
     userEvent.click(getByTestId(TestID.addGroup));
     // Expect the root group to be valid (contains the inner group)
-    expect(
-      container.querySelectorAll(`.${standardClassnames.ruleGroup}.${standardClassnames.valid}`)
-    ).toHaveLength(1);
+    expect(container.querySelectorAll(`.${sc.ruleGroup}.${sc.valid}`)).toHaveLength(1);
     // Expect the inner group to be invalid (empty)
-    expect(
-      container.querySelectorAll(`.${standardClassnames.ruleGroup}.${standardClassnames.invalid}`)
-    ).toHaveLength(1);
+    expect(container.querySelectorAll(`.${sc.ruleGroup}.${sc.invalid}`)).toHaveLength(1);
   });
 
   it('should use custom validator function returning false', () => {
     const validator = jest.fn(() => false);
     const { container } = render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
-    expect(container.querySelector(`div.${standardClassnames.queryBuilder}`)).not.toHaveClass(
-      standardClassnames.valid
-    );
-    expect(container.querySelector(`div.${standardClassnames.queryBuilder}`)).toHaveClass(
-      standardClassnames.invalid
-    );
+    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.valid);
+    expect(container.querySelector(`div.${sc.queryBuilder}`)).toHaveClass(sc.invalid);
   });
 
   it('should use custom validator function returning true', () => {
     const validator = jest.fn(() => true);
     const { container } = render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
-    expect(container.querySelector(`div.${standardClassnames.queryBuilder}`)).toHaveClass(
-      standardClassnames.valid
-    );
-    expect(container.querySelector(`div.${standardClassnames.queryBuilder}`)).not.toHaveClass(
-      standardClassnames.invalid
-    );
+    expect(container.querySelector(`div.${sc.queryBuilder}`)).toHaveClass(sc.valid);
+    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.invalid);
   });
 
   it('should pass down validationMap to children', () => {
@@ -1527,11 +1509,11 @@ describe('enableDragAndDrop', () => {
           }}
         />
       );
-      const ruleDrag = getAllByTestId(TestID.rule)[1];
-      const ruleDrop = getAllByTestId(TestID.rule)[3];
+      const dragRule = getAllByTestId(TestID.rule)[1];
+      const dropRule = getAllByTestId(TestID.rule)[3];
       simulateDragDrop(
-        getHandlerId(ruleDrag, 'drag'),
-        getHandlerId(ruleDrop, 'drop'),
+        getHandlerId(dragRule, 'drag'),
+        getHandlerId(dropRule, 'drop'),
         getDndBackend()
       );
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
@@ -1595,21 +1577,21 @@ describe('disabled', () => {
         }}
       />
     );
-    userEvent.click(getAllByTitle(defaultTranslations.addRule.title)[0]);
-    userEvent.click(getAllByTitle(defaultTranslations.addGroup.title)[0]);
-    userEvent.click(getAllByTitle(defaultTranslations.removeRule.title)[0]);
-    userEvent.click(getAllByTitle(defaultTranslations.removeGroup.title)[0]);
-    userEvent.click(getAllByTitle(defaultTranslations.cloneRule.title)[0]);
-    userEvent.click(getAllByTitle(defaultTranslations.cloneRuleGroup.title)[0]);
-    userEvent.click(getAllByLabelText(defaultTranslations.notToggle.label)[0]);
+    userEvent.click(getAllByTitle(t.addRule.title)[0]);
+    userEvent.click(getAllByTitle(t.addGroup.title)[0]);
+    userEvent.click(getAllByTitle(t.removeRule.title)[0]);
+    userEvent.click(getAllByTitle(t.removeGroup.title)[0]);
+    userEvent.click(getAllByTitle(t.cloneRule.title)[0]);
+    userEvent.click(getAllByTitle(t.cloneRuleGroup.title)[0]);
+    userEvent.click(getAllByLabelText(t.notToggle.label)[0]);
     userEvent.selectOptions(getAllByDisplayValue('Field 0')[0], 'field1');
     userEvent.selectOptions(getAllByDisplayValue('=')[0], '>');
-    userEvent.selectOptions(getAllByDisplayValue('=')[0], '>');
-    const ruleDrag = getAllByTestId(TestID.rule)[1];
-    const ruleDrop = getAllByTestId(TestID.rule)[3];
+    userEvent.type(getAllByDisplayValue('4')[0], 'Not 4');
+    const dragRule = getAllByTestId(TestID.rule)[1];
+    const dropRule = getAllByTestId(TestID.rule)[3];
     simulateDragDrop(
-      getHandlerId(ruleDrag, 'drag'),
-      getHandlerId(ruleDrop, 'drop'),
+      getHandlerId(dragRule, 'drag'),
+      getHandlerId(dropRule, 'drop'),
       getDndBackend()
     );
     expect(onQueryChange).not.toHaveBeenCalled();
@@ -1643,5 +1625,63 @@ describe('disabled', () => {
     expect(getAllByTestId(TestID.fields)[2]).toBeDisabled();
     expect(getAllByTestId(TestID.operators)[2]).toBeDisabled();
     expect(getAllByTestId(TestID.valueEditor)[2]).toBeDisabled();
+  });
+
+  it('prevents changes from custom components when disabled', () => {
+    const onQueryChange = jest.fn();
+    const ruleToAdd: RuleType = { field: 'f1', operator: '=', value: 'v1' };
+    const groupToAdd: RuleGroupTypeIC = { rules: [] };
+    const { getByTestId } = render(
+      <QueryBuilder
+        fields={[
+          { name: 'field0', label: 'Field 0' },
+          { name: 'field1', label: 'Field 1' },
+          { name: 'field2', label: 'Field 2' },
+          { name: 'field3', label: 'Field 3' },
+          { name: 'field4', label: 'Field 4' },
+        ]}
+        enableMountQueryChange={false}
+        independentCombinators
+        onQueryChange={onQueryChange}
+        enableDragAndDrop
+        showCloneButtons
+        showNotToggle
+        disabled
+        controlElements={{
+          ruleGroup: ({ schema }) => (
+            <div data-testid={TestID.ruleGroup}>
+              <button onClick={() => schema.onRuleAdd(ruleToAdd, [])} />
+              <button onClick={() => schema.onGroupAdd(groupToAdd, [])} />
+              <button onClick={() => schema.onPropChange('field', 'f2', [0])} />
+              <button onClick={() => schema.updateIndependentCombinator('or', [1])} />
+              <button onClick={() => schema.onRuleRemove([0])} />
+              <button onClick={() => schema.onGroupRemove([6])} />
+              <button onClick={() => schema.moveRule([6], [0])} />
+              <button onClick={() => schema.moveRule([6], [0], true)} />
+            </div>
+          ),
+        }}
+        query={{
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            {
+              rules: [
+                { field: 'field3', operator: '=', value: '3' },
+                'and',
+                { field: 'field4', operator: '=', value: '4' },
+              ],
+            },
+          ],
+        }}
+      />
+    );
+    const rg = getByTestId(TestID.ruleGroup);
+    rg.querySelectorAll('button').forEach(b => userEvent.click(b));
+    expect(onQueryChange).not.toHaveBeenCalled();
   });
 });

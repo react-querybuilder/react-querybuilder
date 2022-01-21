@@ -1,12 +1,18 @@
 import produce from 'immer';
 import { defaultCombinators } from '../defaults';
-import { NameLabelPair, OptionGroup, RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
+import {
+  NameLabelPair,
+  OptionGroup,
+  RuleGroupTypeAny,
+  RuleType,
+  UpdateableProperties,
+} from '../types';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
-export const add = <RG extends RuleGroupType | RuleGroupTypeIC>(
+export const add = <RG extends RuleGroupTypeAny>(
   query: RG,
   ruleOrGroup: RG | RuleType,
   parentPath: number[]
@@ -28,9 +34,9 @@ interface UpdateOptions {
   getRuleDefaultOperator: (field: string) => string;
   getRuleDefaultValue: (rule: RuleType) => any;
 }
-export const update = <RG extends RuleGroupType | RuleGroupTypeIC>(
+export const update = <RG extends RuleGroupTypeAny>(
   query: RG,
-  prop: Exclude<keyof (RuleType & RuleGroupType), 'id' | 'path' | 'rules'>,
+  prop: UpdateableProperties,
   value: any,
   path: number[],
   {
@@ -70,7 +76,7 @@ export const update = <RG extends RuleGroupType | RuleGroupTypeIC>(
     }
   });
 
-export const remove = <RG extends RuleGroupType | RuleGroupTypeIC>(query: RG, path: number[]) => {
+export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) => {
   if (path.length === 0 || (!('combinator' in query) && !findPath(path, query))) {
     return query;
   }
@@ -90,7 +96,7 @@ interface MoveOptions {
   clone: boolean;
   combinators: NameLabelPair[] | OptionGroup[];
 }
-export const move = <RG extends RuleGroupType | RuleGroupTypeIC>(
+export const move = <RG extends RuleGroupTypeAny>(
   query: RG,
   oldPath: number[],
   newPath: number[],
