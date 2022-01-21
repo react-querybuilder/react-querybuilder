@@ -4,11 +4,12 @@ import { add, move, remove, update } from '../queryTools';
 
 const stripIDs = (query: RuleGroupTypeAny) => JSON.parse(formatQuery(query, 'json_without_ids'));
 
-const r1: RuleType = { field: 'f1', operator: '=', value: 'v1' };
-const r2: RuleType = { field: 'f2', operator: '=', value: 'v2' };
-const r3: RuleType = { field: 'f3', operator: '=', value: 'v3' };
-const rg1: RuleGroupType = { combinator: 'and', rules: [] };
-const rg2: RuleGroupType = { combinator: 'or', rules: [] };
+const [r1, r2, r3, r4, r5] = ['=', '<', '>', '<=', '>='].map<RuleType>((operator, i) => ({
+  field: `f${i + 1}`,
+  operator,
+  value: `v${i + 1}`,
+}));
+const [rg1, rg2] = ['and', 'or'].map<RuleGroupType>(combinator => ({ combinator, rules: [] }));
 const rg3: RuleGroupType = { combinator: 'and', rules: [r1, r2, r3] };
 const rgic1: RuleGroupTypeIC = { rules: [] };
 const rgic2: RuleGroupTypeIC = { rules: [r1, 'and', r2] };
@@ -176,7 +177,7 @@ describe('update', () => {
   });
 
   describe('independent combinators', () => {
-    // TODO: more tests
+    // TODO: add more tests
     it('does not alter the query if the path ends in an even number', () => {
       expect(update(rgic2, 'combinator', 'or', [2])).toBe(rgic2);
     });
@@ -185,13 +186,88 @@ describe('update', () => {
 
 describe('move', () => {
   describe('standard rule groups', () => {
-    // TODO: more tests
+    it('moves a rule down within the same group', () => {
+      expect(
+        stripIDs(
+          move(
+            {
+              combinator: 'and',
+              rules: [r1, r2],
+            },
+            [0],
+            [2]
+          )
+        )
+      ).toEqual({ combinator: 'and', rules: [r2, r1] });
+    });
+
+    it('moves a rule to a different group with a common ancestor', () => {
+      expect(stripIDs(move({ combinator: 'and', rules: [r1, r2, rg1] }, [1], [2, 0]))).toEqual({
+        combinator: 'and',
+        rules: [r1, { ...rg1, rules: [r2] }],
+      });
+    });
+
+    // TODO?: add more tests
+
     it('does not alter the query if the old and new paths are the same', () => {
       expect(move(rg3, [1], [1])).toBe(rg3);
     });
   });
 
   describe('independent combinators', () => {
-    // TODO: more tests
+    it('swaps the first rule with the last within the same group', () => {
+      expect(stripIDs(move(rgic2, [0], [3]))).toEqual({ rules: [r2, 'and', r1] });
+    });
+
+    it('swaps the last rule with the first within the same group', () => {
+      expect(stripIDs(move(rgic2, [2], [0]))).toEqual({ rules: [r2, 'and', r1] });
+    });
+
+    it('moves a rule from first to last within the same group', () => {
+      expect(stripIDs(move({ rules: [r1, 'and', r2, 'or', r3] }, [0], [5]))).toEqual({
+        rules: [r2, 'or', r3, 'or', r1],
+      });
+    });
+
+    it('moves a rule from last to first within the same group', () => {
+      expect(stripIDs(move({ rules: [r1, 'and', r2, 'or', r3] }, [4], [0]))).toEqual({
+        rules: [r3, 'and', r1, 'and', r2],
+      });
+    });
+
+    it('moves a rule from last to middle by dropping on inline combinator', () => {
+      expect(stripIDs(move({ rules: [r1, 'and', r2, 'or', r3] }, [4], [1]))).toEqual({
+        rules: [r1, 'or', r3, 'and', r2],
+      });
+    });
+
+    it('moves a first-child rule to a different group as the first child', () => {
+      expect(
+        stripIDs(move({ rules: [r1, 'and', { rules: [r2, 'and', r3] }] }, [0], [2, 0]))
+      ).toEqual({
+        rules: [{ rules: [r1, 'and', r2, 'and', r3] }],
+      });
+    });
+
+    it('moves a middle-child rule to a different group as a middle child', () => {
+      expect(
+        stripIDs(
+          move(
+            { rules: [r1, 'and', r2, 'and', r3, 'and', { rules: [r4, 'and', r5] }] },
+            [2],
+            [6, 1]
+          )
+        )
+      ).toEqual({
+        rules: [r1, 'and', r3, 'and', { rules: [r4, 'and', r2, 'and', r5] }],
+      });
+    });
+
+    // TODO?: add more tests
+
+    it('does not alter the query if the old path is to a combinator', () => {
+      expect(move(rgic2, [1], [0])).toBe(rgic2);
+    });
   });
 });

@@ -100,7 +100,6 @@ export const move = <RG extends RuleGroupType | RuleGroupTypeIC>(
     return query;
   }
   const ruleOrGroupOriginal = findPath(oldPath, query);
-  /* istanbul ignore if */
   if (!ruleOrGroupOriginal) {
     return query;
   }
