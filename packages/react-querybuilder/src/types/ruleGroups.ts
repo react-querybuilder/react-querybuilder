@@ -21,6 +21,11 @@ export type RuleGroupArray<
   R extends RuleType = RuleType
 > = (R | RG)[];
 
+export type UpdateableProperties = Exclude<
+  keyof (RuleType & RuleGroupType),
+  'id' | 'path' | 'rules'
+>;
+
 export type DefaultRuleGroupArray = RuleGroupArray<DefaultRuleGroupType, DefaultRuleType>;
 
 export type DefaultRuleGroupType = RuleGroupType<DefaultRuleType, DefaultCombinatorName> & {

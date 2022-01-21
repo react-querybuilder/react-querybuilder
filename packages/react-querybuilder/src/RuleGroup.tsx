@@ -147,6 +147,7 @@ export const RuleGroup = ({
   const outerClassName = c(
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
+    disabled ? standardClassnames.disabled : '',
     validationClassName,
     dndDragging
   );

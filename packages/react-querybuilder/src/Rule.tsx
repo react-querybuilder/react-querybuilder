@@ -126,6 +126,7 @@ export const Rule = ({
   const outerClassName = c(
     standardClassnames.rule,
     classNames.rule,
+    disabled ? standardClassnames.disabled : '',
     validationClassName,
     dndDragging,
     dndOver

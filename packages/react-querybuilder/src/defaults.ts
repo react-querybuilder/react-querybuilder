@@ -108,6 +108,7 @@ export const standardClassnames = {
   dndDragging: 'dndDragging',
   dndOver: 'dndOver',
   dragHandle: 'queryBuilder-dragHandle',
+  disabled: 'queryBuilder-disabled',
 } as const;
 
 export const defaultControlClassnames: Classnames = {

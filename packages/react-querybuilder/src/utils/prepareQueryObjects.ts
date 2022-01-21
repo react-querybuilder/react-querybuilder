@@ -25,3 +25,9 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(queryObject: RG): 
     ) as RuleGroupArray | RuleGroupICArray;
     draft.not = !!draft.not;
   });
+
+/**
+ * Generates a valid rule or group
+ */
+export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(rg: RG | RuleType) =>
+  'rules' in rg ? prepareRuleGroup(rg) : prepareRule(rg);
