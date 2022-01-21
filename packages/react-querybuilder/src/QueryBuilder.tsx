@@ -27,13 +27,11 @@ import {
   isOptionGroupArray,
   isRuleGroup,
   move,
-  pathsAreEqual,
   prepareRuleGroup,
   remove,
   uniqByName,
   uniqOptGroups,
   update,
-  updateCombinator,
 } from './utils';
 
 enableES5();
@@ -320,9 +318,10 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const updateIndependentCombinator = (value: string, path: number[]) => {
+    // TODO: merge this into onPropChange
     /* istanbul ignore next */
     if (queryDisabled) return;
-    const newQuery = updateCombinator(root, value, path);
+    const newQuery = update(root, 'combinator', value, path, {});
     dispatch(newQuery);
   };
 
@@ -334,15 +333,12 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    // No-op if entire query is disabled or the old and new paths are the same.
-    // Ignore in test coverage since components that call this method
-    // already prevent this case via their respective canDrop tests.
     /* istanbul ignore if */
-    if (queryDisabled || pathsAreEqual(oldPath, newPath)) {
+    if (queryDisabled) {
       return;
     }
 
-    const newQuery = move(root, oldPath, newPath, { clone, combinators, independentCombinators });
+    const newQuery = move(root, oldPath, newPath, { clone, combinators });
     dispatch(newQuery);
   };
 
