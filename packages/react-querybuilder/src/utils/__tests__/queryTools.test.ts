@@ -114,7 +114,7 @@ describe('remove', () => {
 describe('update', () => {
   describe('standard rule groups', () => {
     it('updates rules', () => {
-      expect(stripIDs(update(rg3, 'field', 'fu', [0], {}))).toEqual({
+      expect(stripIDs(update(rg3, 'field', 'fu', [0]))).toEqual({
         combinator: 'and',
         rules: [{ ...r1, field: 'fu', value: '' }, r2, r3],
       });
@@ -136,7 +136,7 @@ describe('update', () => {
         combinator: 'and',
         rules: [{ ...r1, field: 'fu' }, r2, r3],
       });
-      expect(stripIDs(update(rg3, 'operator', 'ou', [1], {}))).toEqual({
+      expect(stripIDs(update(rg3, 'operator', 'ou', [1]))).toEqual({
         combinator: 'and',
         rules: [r1, { ...r2, operator: 'ou' }, r3],
       });
@@ -146,7 +146,7 @@ describe('update', () => {
           rules: [r1, { ...r2, operator: 'ou', value: '' }, r3],
         }
       );
-      expect(stripIDs(update(rg3, 'value', 'vu', [2], {}))).toEqual({
+      expect(stripIDs(update(rg3, 'value', 'vu', [2]))).toEqual({
         combinator: 'and',
         rules: [r1, r2, { ...r3, value: 'vu' }],
       });
@@ -154,16 +154,16 @@ describe('update', () => {
 
     it('updates groups', () => {
       // Root group
-      expect(stripIDs(update(rg1, 'combinator', 'or', [], {}))).toEqual(rg2);
-      expect(stripIDs(update(rg1, 'not', true, [], {}))).toEqual({ ...rg1, not: true });
+      expect(stripIDs(update(rg1, 'combinator', 'or', []))).toEqual(rg2);
+      expect(stripIDs(update(rg1, 'not', true, []))).toEqual({ ...rg1, not: true });
       // Nested groups
       expect(
-        stripIDs(update({ combinator: 'and', rules: [rg1] }, 'combinator', 'or', [0], {}))
+        stripIDs(update({ combinator: 'and', rules: [rg1] }, 'combinator', 'or', [0]))
       ).toEqual({
         combinator: 'and',
         rules: [rg2],
       });
-      expect(stripIDs(update({ combinator: 'and', rules: [rg1] }, 'not', true, [0], {}))).toEqual({
+      expect(stripIDs(update({ combinator: 'and', rules: [rg1] }, 'not', true, [0]))).toEqual({
         combinator: 'and',
         rules: [{ ...rg1, not: true }],
       });
@@ -178,7 +178,7 @@ describe('update', () => {
   describe('independent combinators', () => {
     // TODO: more tests
     it('does not alter the query if the path ends in an even number', () => {
-      expect(update(rgic2, 'combinator', 'or', [2], {})).toBe(rgic2);
+      expect(update(rgic2, 'combinator', 'or', [2])).toBe(rgic2);
     });
   });
 });
@@ -187,7 +187,7 @@ describe('move', () => {
   describe('standard rule groups', () => {
     // TODO: more tests
     it('does not alter the query if the old and new paths are the same', () => {
-      expect(move(rg3, [1], [1], {})).toBe(rg3);
+      expect(move(rg3, [1], [1])).toBe(rg3);
     });
   });
 

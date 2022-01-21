@@ -38,7 +38,7 @@ export const update = <RG extends RuleGroupType | RuleGroupTypeIC>(
     resetOnOperatorChange = false,
     getRuleDefaultOperator = () => '=',
     getRuleDefaultValue = () => '',
-  }: Partial<UpdateOptions>
+  }: Partial<UpdateOptions> = {}
 ) =>
   produce(query, draft => {
     if (prop === 'combinator' && !('combinator' in draft)) {
@@ -86,17 +86,15 @@ export const remove = <RG extends RuleGroupType | RuleGroupTypeIC>(query: RG, pa
   });
 };
 
+interface MoveOptions {
+  clone: boolean;
+  combinators: NameLabelPair[] | OptionGroup[];
+}
 export const move = <RG extends RuleGroupType | RuleGroupTypeIC>(
   query: RG,
   oldPath: number[],
   newPath: number[],
-  {
-    clone = false,
-    combinators = defaultCombinators,
-  }: {
-    clone?: boolean;
-    combinators?: NameLabelPair[] | OptionGroup[];
-  }
+  { clone = false, combinators = defaultCombinators }: Partial<MoveOptions> = {}
 ) => {
   if (pathsAreEqual(oldPath, newPath)) {
     return query;
