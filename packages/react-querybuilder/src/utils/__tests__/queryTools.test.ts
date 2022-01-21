@@ -154,10 +154,8 @@ describe('update', () => {
     });
 
     it('updates groups', () => {
-      // Root group
       expect(stripIDs(update(rg1, 'combinator', 'or', []))).toEqual(rg2);
       expect(stripIDs(update(rg1, 'not', true, []))).toEqual({ ...rg1, not: true });
-      // Nested groups
       expect(
         stripIDs(update({ combinator: 'and', rules: [rg1] }, 'combinator', 'or', [0]))
       ).toEqual({
@@ -177,7 +175,10 @@ describe('update', () => {
   });
 
   describe('independent combinators', () => {
-    // TODO: add more tests
+    it('updates combinators', () => {
+      expect(stripIDs(update(rgic2, 'combinator', 'or', [1]))).toEqual({ rules: [r1, 'or', r2] });
+    });
+
     it('does not alter the query if the path ends in an even number', () => {
       expect(update(rgic2, 'combinator', 'or', [2])).toBe(rgic2);
     });
@@ -208,7 +209,52 @@ describe('move', () => {
       });
     });
 
-    // TODO?: add more tests
+    it("moves a rule up to its parent group's parent group", () => {
+      expect(stripIDs(move({ combinator: 'and', rules: [rg3] }, [0, 1], [0]))).toEqual({
+        combinator: 'and',
+        rules: [r2, { combinator: 'and', rules: [r1, r3] }],
+      });
+    });
+
+    it('moves a rule up to another group', () => {
+      expect(
+        stripIDs(
+          move(
+            {
+              combinator: 'and',
+              rules: [
+                { combinator: 'and', rules: [r1] },
+                { combinator: 'and', rules: [r2, r3] },
+              ],
+            },
+            [1, 1],
+            [0, 1]
+          )
+        )
+      ).toEqual({
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [r1, r3] },
+          { combinator: 'and', rules: [r2] },
+        ],
+      });
+    });
+
+    it('clones rules', () => {
+      expect(stripIDs(move(rg3, [1], [0], { clone: true }))).toEqual({
+        combinator: 'and',
+        rules: [r2, r1, r2, r3],
+      });
+    });
+
+    it('clones groups', () => {
+      expect(
+        stripIDs(move({ combinator: 'and', rules: [r1, rg3, r2] }, [1], [0], { clone: true }))
+      ).toEqual({
+        combinator: 'and',
+        rules: [rg3, r1, rg3, r2],
+      });
+    });
 
     it('does not alter the query if the old and new paths are the same', () => {
       expect(move(rg3, [1], [1])).toBe(rg3);
@@ -264,7 +310,32 @@ describe('move', () => {
       });
     });
 
-    // TODO?: add more tests
+    it('moves an only-child rule up to a different group with only one existing child', () => {
+      expect(
+        stripIDs(move({ rules: [{ rules: [r1] }, 'and', { rules: [r2] }] }, [2, 0], [0, 1]))
+      ).toEqual({
+        rules: [{ rules: [r1, 'and', r2] }, 'and', { rules: [] }],
+      });
+      expect(
+        stripIDs(move({ rules: [{ rules: [r1] }, 'and', { rules: [r2] }] }, [2, 0], [0, 0]))
+      ).toEqual({
+        rules: [{ rules: [r2, 'and', r1] }, 'and', { rules: [] }],
+      });
+    });
+
+    it('moves a middle-child rule up to a different group with only one existing child', () => {
+      expect(
+        stripIDs(
+          move(
+            { rules: [{ rules: [r1] }, 'and', { rules: [r2, 'and', r3, 'and', r4] }] },
+            [2, 2],
+            [0, 1]
+          )
+        )
+      ).toEqual({
+        rules: [{ rules: [r1, 'and', r3] }, 'and', { rules: [r2, 'and', r4] }],
+      });
+    });
 
     it('does not alter the query if the old path is to a combinator', () => {
       expect(move(rgic2, [1], [0])).toBe(rgic2);

@@ -124,7 +124,6 @@ export const move = <RG extends RuleGroupType | RuleGroupTypeIC>(
       independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
         ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
         : null;
-    /* istanbul ignore else */
     if (!clone) {
       const idxStartDelete = independentCombinators
         ? Math.max(0, ruleToRemoveIndex - 1)
@@ -135,7 +134,6 @@ export const move = <RG extends RuleGroupType | RuleGroupTypeIC>(
     }
 
     const newNewPath = [...newPath];
-    /* istanbul ignore else */
     if (!movingOnUp && !clone) {
       newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
     }
@@ -157,9 +155,7 @@ export const move = <RG extends RuleGroupType | RuleGroupTypeIC>(
           insertRuleOrGroup(ruleOrGroup, oldNextCombinator);
         } else {
           const newNextCombinator =
-            parentToInsertInto.rules[1] ||
-            oldPrevCombinator ||
-            /* istanbul ignore next */ getFirstOption(combinators);
+            parentToInsertInto.rules[1] || oldPrevCombinator || getFirstOption(combinators);
           insertRuleOrGroup(ruleOrGroup, newNextCombinator);
         }
       } else {
