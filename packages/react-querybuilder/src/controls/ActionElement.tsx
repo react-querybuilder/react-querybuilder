@@ -10,6 +10,7 @@ export const ActionElement = ({
   testID,
 }: ActionProps) => (
   <button
+    type="button"
     data-testid={testID}
     disabled={disabled && !disabledTranslation}
     className={className}
