@@ -4,15 +4,9 @@ _The Query Builder component for React_
 
 ![Screenshot](../../_assets/screenshot.png)
 
-Complete documentation is available at https://react-querybuilder.js.org.
+## Documentation
 
-## Getting Started
-
-```shell
-npm install react-querybuilder --save
-# OR
-yarn add react-querybuilder
-```
+Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org).
 
 ## Demo
 
@@ -28,13 +22,26 @@ yarn add react-querybuilder
 
 </detail>
 
-To use the official compatibility components as seen in the demo (select different options in the Style dropdown), take a look at the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder).
+To use the official compatibility components as seen in the demo (select options from the Style dropdown), take a look at the packages under the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder). We currently support:
+
+- [Ant Design](https://ant.design/) ([@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd))
+- [Bootstrap](https://getbootstrap.com/) ([@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap))
+- [Bulma](https://bulma.io/) ([@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma))
+- [Chakra UI](https://chakra-ui.com/) ([@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra))
+- [MUI](https://mui.com/) ([@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material))
 
 ## Basic usage
+
+```shell
+npm install react-querybuilder --save
+# OR
+yarn add react-querybuilder
+```
 
 ```tsx
 import { useState } from 'react';
 import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -55,4 +62,64 @@ export const App = () => {
 
   return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
 };
+```
+
+## Export/import
+
+To export queries as SQL, MongoDB, or [other formats](https://react-querybuilder.js.org/docs/api/export), use the `formatQuery` function.
+
+```ts
+const query = {
+  combinator: 'and',
+  rules: [
+    {
+      field: 'first_name',
+      operator: 'beginsWith',
+      value: 'Steve',
+    },
+    {
+      field: 'last_name',
+      operator: 'in',
+      value: 'Vai, Vaughan',
+    },
+  ],
+};
+const sqlWhere = formatQuery(query, 'sql');
+console.log(sqlWhere);
+/*
+`(first_name like 'Stev%' and last_name in ('Vai', 'Vaughan'))`
+*/
+```
+
+To [import queries from SQL](https://react-querybuilder.js.org/docs/api/import), use `parseSQL`. You can pass a full `SELECT` statement or the `WHERE` clause by itself.
+
+```ts
+const query = parseSQL(
+  `SELECT * FROM my_table WHERE first_name LIKE 'Stev%' AND last_name in ('Vai', 'Vaughan')`
+);
+console.log(query);
+/*
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "first_name",
+      "operator": "beginsWith",
+      "value": "Steve",
+    },
+    {
+      "field": "last_name",
+      "operator": "in",
+      "value": "Vai, Vaughan",
+    },
+  ],
+}
+*/
+```
+
+Note: `formatQuery` and `parseSQL` can be used without importing React (for example, on the server) like this:
+
+```js
+import { formatQuery } from 'react-querybuilder/dist/formatQuery';
+import { parseSQL } from 'react-querybuilder/dist/parseSQL';
 ```

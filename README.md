@@ -1,24 +1,43 @@
-# react-querybuilder
+# React Query Builder
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-24-orange.svg)](#contributors-)
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-24-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
+[![Docs](https://img.shields.io/badge/docs-blue)](https://react-querybuilder.js.org/)
+[![Full demo](https://img.shields.io/badge/demo-full-blue)](https://react-querybuilder.js.org/react-querybuilder/)
+[![IE11-compatible demo](https://img.shields.io/badge/demo-ie11-blue)](https://react-querybuilder.js.org/react-querybuilder/ie11.html)
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
+[![All Contributors][badge-all-contributors]](#contributors-)
+
+**Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**.
 
 ![Screenshot](_assets/screenshot.png)
 
-## Documentation
+## Getting started
 
-To get started, see the [main package readme](packages/react-querybuilder/README.md).
+To get started, import the main component and the default stylesheet, then render the component in your app:
 
-**Full documentation is available at https://react-querybuilder.js.org**.
+```tsx
+import QueryBuilder from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
 
-_For documentation on v3.12.1, see [README.old.md](README.old.md)_
+export const App = () => {
+  return <QueryBuilder />;
+};
+```
+
+For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md) or dive into the [full documentation](https://react-querybuilder.js.org/docs/api/querybuilder).
+
+_For documentation on `react-querybuilder` v3.12.1, [click here](README.old.md)._
+
+## Packages
+
+In addition to the [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts the official compatibility components for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), and [MUI](https://www.npmjs.com/package/@react-querybuilder/material).
 
 ## Credits
 
@@ -26,6 +45,7 @@ This component was inspired by prior work from:
 
 - [jQuery QueryBuilder](http://querybuilder.js.org/)
 - [Angular QueryBuilder](https://github.com/mfauveau/angular-query-builder)
+- [React Awesome Query Builder](https://github.com/ukrbublik/react-awesome-query-builder)
 
 ## Contributors ✨
 
