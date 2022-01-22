@@ -1,4 +1,4 @@
-import { DragIndicator } from '@mui/icons-material';
+import DragIndicator from '@mui/icons-material/DragIndicator';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 

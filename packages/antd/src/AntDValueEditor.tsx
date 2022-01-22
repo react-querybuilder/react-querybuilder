@@ -78,20 +78,32 @@ const AntDValueEditor = ({
           ))}
         </span>
       );
-
-    default:
-      return (
-        <Input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  if (inputTypeCoerced === 'textarea') {
+    return (
+      <Input.TextArea
+        value={value}
+        title={title}
+        className={className}
+        disabled={disabled}
+        placeholder={placeHolderText}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    );
+  }
+
+  return (
+    <Input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      className={className}
+      disabled={disabled}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 AntDValueEditor.displayName = 'AntDValueEditor';

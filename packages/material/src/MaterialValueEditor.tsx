@@ -1,4 +1,10 @@
-import { Checkbox, FormControl, FormControlLabel, Input, Radio, RadioGroup } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Input from '@mui/material/Input';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import MaterialValueSelector from './MaterialValueSelector';
@@ -71,20 +77,32 @@ const MaterialValueEditor = ({
           </RadioGroup>
         </FormControl>
       );
-
-    default:
-      return (
-        <Input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          disabled={disabled}
-          className={className}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  if (inputTypeCoerced === 'textarea') {
+    return (
+      <TextareaAutosize
+        value={value}
+        title={title}
+        disabled={disabled}
+        className={className}
+        placeholder={placeHolderText}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    );
+  }
+
+  return (
+    <Input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      disabled={disabled}
+      className={className}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 MaterialValueEditor.displayName = 'MaterialValueEditor';

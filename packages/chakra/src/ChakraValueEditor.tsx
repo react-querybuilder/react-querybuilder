@@ -1,4 +1,4 @@
-import { Checkbox, Input, Radio, RadioGroup, Stack } from '@chakra-ui/react';
+import { Checkbox, Input, Radio, RadioGroup, Stack, Textarea } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import ChakraValueSelector from './ChakraValueSelector';
@@ -79,22 +79,36 @@ const ChakraValueEditor = ({
           </Stack>
         </RadioGroup>
       );
-
-    default:
-      return (
-        <Input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          size="xs"
-          variant="filled"
-          isDisabled={disabled}
-          className={className}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  if (inputTypeCoerced === 'textarea') {
+    return (
+      <Textarea
+        value={value}
+        title={title}
+        size="xs"
+        variant="filled"
+        isDisabled={disabled}
+        className={className}
+        placeholder={placeHolderText}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    );
+  }
+
+  return (
+    <Input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      size="xs"
+      variant="filled"
+      isDisabled={disabled}
+      className={className}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 ChakraValueEditor.displayName = 'ChakraValueEditor';

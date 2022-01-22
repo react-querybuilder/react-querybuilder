@@ -1,4 +1,5 @@
-import { FormControl, Select } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 

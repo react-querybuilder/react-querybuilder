@@ -1,6 +1,9 @@
 export const findInput = (el: HTMLElement) =>
   (el.tagName === 'INPUT' ? el : el.querySelector('input')) as HTMLInputElement;
 
+export const findTextarea = (el: HTMLElement) =>
+  (el.tagName === 'TEXTAREA' ? el : el.querySelector('textarea')) as HTMLTextAreaElement;
+
 export const findSelect = (el: HTMLElement) =>
   (el.tagName === 'SELECT' ? el : el.querySelector('select')) as HTMLSelectElement;
 

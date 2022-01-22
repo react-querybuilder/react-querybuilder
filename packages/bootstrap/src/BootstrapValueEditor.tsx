@@ -80,20 +80,32 @@ export const BootstrapValueEditor = ({
           ))}
         </span>
       );
-
-    default:
-      return (
-        <input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  if (inputTypeCoerced === 'textarea') {
+    return (
+      <textarea
+        value={value}
+        title={title}
+        className={className}
+        disabled={disabled}
+        placeholder={placeHolderText}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    );
+  }
+
+  return (
+    <input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      className={className}
+      disabled={disabled}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 BootstrapValueEditor.displayName = 'BootstrapValueEditor';

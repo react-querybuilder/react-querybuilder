@@ -2,13 +2,14 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { NameLabelPair, OptionGroup, ValueEditorProps } from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
-import { errorMessageIsAboutPointerEventsNone, findInput } from './utils';
+import { errorMessageIsAboutPointerEventsNone, findInput, findTextarea } from './utils';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
   select: boolean;
   checkbox: boolean;
   radio: boolean;
+  textarea: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: NameLabelPair[] | OptionGroup[];
@@ -205,6 +206,22 @@ export const testValueEditor = (
             }
           });
         expect(handleOnChange).not.toHaveBeenCalled();
+      });
+    });
+
+    (skip.textarea ? describe.skip : describe)('when rendering a textarea', () => {
+      it('should have the value passed into the <input />', () => {
+        const { getByTitle } = render(<ValueEditor {...props} inputType="textarea" value="test" />);
+        expect(findTextarea(getByTitle(title))).toHaveValue('test');
+      });
+
+      it('should call the onChange method passed in', () => {
+        const onChange = jest.fn();
+        const { getByTitle } = render(
+          <ValueEditor {...props} inputType="textarea" handleOnChange={onChange} />
+        );
+        userEvent.type(findTextarea(getByTitle(title)), 'foo');
+        expect(onChange).toHaveBeenCalledWith('foo');
       });
     });
   });

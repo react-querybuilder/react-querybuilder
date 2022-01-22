@@ -85,21 +85,34 @@ export const ValueEditor = ({
             ))}
         </span>
       );
-
-    default:
-      return (
-        <input
-          data-testid={testID}
-          type={inputTypeCoerced}
-          placeholder={placeHolderText}
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  if (inputTypeCoerced === 'textarea') {
+    return (
+      <textarea
+        data-testid={testID}
+        placeholder={placeHolderText}
+        value={value}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    );
+  }
+
+  return (
+    <input
+      data-testid={testID}
+      type={inputTypeCoerced}
+      placeholder={placeHolderText}
+      value={value}
+      title={title}
+      className={className}
+      disabled={disabled}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 ValueEditor.displayName = 'ValueEditor';

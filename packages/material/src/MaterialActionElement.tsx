@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 import type { ActionProps } from 'react-querybuilder';
 
 const MaterialActionElement = ({

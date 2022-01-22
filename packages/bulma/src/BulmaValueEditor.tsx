@@ -78,22 +78,36 @@ export const BulmaValueEditor = ({
           ))}
         </div>
       );
-
-    default:
-      return (
-        <div className={`${className} control`}>
-          <input
-            type={inputTypeCoerced}
-            value={value}
-            title={title}
-            disabled={disabled}
-            className="input is-small"
-            placeholder={placeHolderText}
-            onChange={e => handleOnChange(e.target.value)}
-          />
-        </div>
-      );
   }
+
+  if (inputTypeCoerced === 'textarea') {
+    return (
+      <div className={`${className} control`}>
+        <textarea
+          value={value}
+          title={title}
+          disabled={disabled}
+          className="textarea"
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${className} control`}>
+      <input
+        type={inputTypeCoerced}
+        value={value}
+        title={title}
+        disabled={disabled}
+        className="input is-small"
+        placeholder={placeHolderText}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    </div>
+  );
 };
 
 BulmaValueEditor.displayName = 'BulmaValueEditor';
