@@ -1593,11 +1593,13 @@ describe('disabled', () => {
     userEvent.type(getAllByDisplayValue('4')[0], 'Not 4');
     const dragRule = getAllByTestId(TestID.rule)[1];
     const dropRule = getAllByTestId(TestID.rule)[3];
-    simulateDragDrop(
-      getHandlerId(dragRule, 'drag'),
-      getHandlerId(dropRule, 'drop'),
-      getDndBackend()
-    );
+    expect(() =>
+      simulateDragDrop(
+        getHandlerId(dragRule, 'drag'),
+        getHandlerId(dropRule, 'drop'),
+        getDndBackend()
+      )
+    ).toThrow();
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 
@@ -1657,7 +1659,7 @@ describe('disabled', () => {
               <button onClick={() => schema.onRuleAdd(ruleToAdd, [])} />
               <button onClick={() => schema.onGroupAdd(groupToAdd, [])} />
               <button onClick={() => schema.onPropChange('field', 'f2', [0])} />
-              <button onClick={() => schema.updateIndependentCombinator('or', [1])} />
+              <button onClick={() => schema.onPropChange('combinator', 'or', [1])} />
               <button onClick={() => schema.onRuleRemove([0])} />
               <button onClick={() => schema.onGroupRemove([6])} />
               <button onClick={() => schema.moveRule([6], [0])} />

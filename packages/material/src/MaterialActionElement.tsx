@@ -7,16 +7,17 @@ const MaterialActionElement = ({
   label,
   title,
   disabled,
+  disabledTranslation,
 }: ActionProps) => (
   <Button
     variant="contained"
     color="primary"
     className={className}
-    title={title}
+    title={disabledTranslation && disabled ? disabledTranslation.title : title}
     size="small"
-    disabled={disabled}
+    disabled={disabled && !disabledTranslation}
     onClick={e => handleOnClick(e)}>
-    {label}
+    {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
 

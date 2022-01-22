@@ -95,6 +95,7 @@ const getOptionsFromHash = (hash: Partial<DemoOptions>): DemoOptions => ({
     'true',
   showNotToggle: (hash.showNotToggle ?? `${defaultOptions.showNotToggle}`) === 'true',
   showCloneButtons: (hash.showCloneButtons ?? `${defaultOptions.showCloneButtons}`) === 'true',
+  showLockButtons: (hash.showLockButtons ?? `${defaultOptions.showLockButtons}`) === 'true',
   resetOnFieldChange:
     (hash.resetOnFieldChange ?? `${defaultOptions.resetOnFieldChange}`) === 'true' ?? true,
   resetOnOperatorChange:
@@ -154,6 +155,7 @@ const App = () => {
           'showCombinatorsBetweenRules',
           'showNotToggle',
           'showCloneButtons',
+          'showLockButtons',
           'resetOnFieldChange',
           'resetOnOperatorChange',
           'autoSelectField',

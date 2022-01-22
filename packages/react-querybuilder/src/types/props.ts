@@ -41,6 +41,7 @@ export interface CommonSubComponentProps {
 export interface ActionProps extends CommonSubComponentProps {
   label?: string;
   handleOnClick(e: React.MouseEvent): void;
+  disabledTranslation?: TranslationWithLabel;
 }
 
 export interface ActionWithRulesProps extends ActionProps {
@@ -105,6 +106,8 @@ export interface Controls {
   fieldSelector: React.ComponentType<FieldSelectorProps>;
   notToggle: React.ComponentType<NotToggleProps>;
   operatorSelector: React.ComponentType<OperatorSelectorProps>;
+  lockRuleAction: React.ComponentType<ActionWithRulesProps>;
+  lockGroupAction: React.ComponentType<ActionWithRulesProps>;
   removeGroupAction: React.ComponentType<ActionWithRulesProps>;
   removeRuleAction: React.ComponentType<ActionProps>;
   rule: React.ComponentType<RuleProps>;
@@ -181,6 +184,14 @@ export interface Classnames {
    * `<span>` handle for dragging rules/groups
    */
   dragHandle: string;
+  /**
+   * `<button>` to lock (i.e. disable) a Rule
+   */
+  lockRule: string;
+  /**
+   * `<button>` to lock (i.e. disable) a RuleGroup
+   */
+  lockGroup: string;
 }
 
 export interface Schema {
@@ -205,11 +216,11 @@ export interface Schema {
   ): void;
   onRuleAdd(rule: RuleType, parentPath: number[]): void;
   onRuleRemove(path: number[]): void;
-  updateIndependentCombinator(value: string, path: number[]): void;
   moveRule(oldPath: number[], newPath: number[], clone?: boolean): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
+  showLockButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
   enableDragAndDrop: boolean;
@@ -218,75 +229,51 @@ export interface Schema {
   disabledPaths: number[][];
 }
 
+interface Translation {
+  title: string;
+}
+interface TranslationWithLabel extends Translation {
+  label: string;
+}
 export interface Translations {
-  fields: {
-    title: string;
-  };
-  operators: {
-    title: string;
-  };
-  value: {
-    title: string;
-  };
-  removeRule: {
-    label: string;
-    title: string;
-  };
-  removeGroup: {
-    label: string;
-    title: string;
-  };
-  addRule: {
-    label: string;
-    title: string;
-  };
-  addGroup: {
-    label: string;
-    title: string;
-  };
-  combinators: {
-    title: string;
-  };
-  notToggle: {
-    label: string;
-    title: string;
-  };
-  cloneRule: {
-    label: string;
-    title: string;
-  };
-  cloneRuleGroup: {
-    label: string;
-    title: string;
-  };
-  dragHandle: {
-    label: string;
-    title: string;
-  };
+  fields: Translation;
+  operators: Translation;
+  value: Translation;
+  removeRule: TranslationWithLabel;
+  removeGroup: TranslationWithLabel;
+  addRule: TranslationWithLabel;
+  addGroup: TranslationWithLabel;
+  combinators: Translation;
+  notToggle: TranslationWithLabel;
+  cloneRule: TranslationWithLabel;
+  cloneRuleGroup: TranslationWithLabel;
+  dragHandle: TranslationWithLabel;
+  lockRule: TranslationWithLabel;
+  lockGroup: TranslationWithLabel;
+  lockRuleDisabled: TranslationWithLabel;
+  lockGroupDisabled: TranslationWithLabel;
 }
 
-export interface RuleGroupProps {
+interface CommonRuleAndGroupProps {
   id?: string;
   path: number[];
-  combinator?: string;
-  rules: RuleOrGroupArray;
+  parentDisabled?: boolean;
   translations: Translations;
   schema: Schema;
   disabled?: boolean;
-  not?: boolean;
   context?: any;
 }
 
-export interface RuleProps {
-  id?: string;
-  path: number[];
+export interface RuleGroupProps extends CommonRuleAndGroupProps {
+  combinator?: string;
+  rules: RuleOrGroupArray;
+  not?: boolean;
+}
+
+export interface RuleProps extends CommonRuleAndGroupProps {
   field: string;
   operator: string;
   value: any;
-  translations: Translations;
-  schema: Schema;
-  disabled?: boolean;
-  context?: any;
 }
 
 export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
@@ -427,6 +414,10 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
      */
     showCloneButtons?: boolean;
     /**
+     * Show the "Lock rule" and "Lock group" buttons
+     */
+    showLockButtons?: boolean;
+    /**
      * Reset the operator and value components when the `field` changes.
      */
     resetOnFieldChange?: boolean;
@@ -451,6 +442,9 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
      * the specified paths (as well as all child rules/groups and subcomponents)
      * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
      * no changes to the query are allowed.
+     *
+     * @deprecated This prop may be removed in a future major version. Use the `disabled`
+     * property on rules and groups within the `query`/`defaultQuery` instead.
      */
     disabled?: boolean | number[][];
     /**

@@ -361,20 +361,17 @@ describe('independent combinators', () => {
   });
 
   it('should call handleOnChange for string elements', () => {
-    const updateIndependentCombinator = jest.fn();
+    const onPropChange = jest.fn();
     const rules: RuleGroupICArray = [
       { field: 'firstName', operator: '=', value: 'Test' },
       'and',
       { field: 'lastName', operator: '=', value: 'Test' },
     ];
     const { getByText, getByTitle } = render(
-      <RuleGroup
-        {...getProps({ independentCombinators: true, updateIndependentCombinator })}
-        rules={rules}
-      />
+      <RuleGroup {...getProps({ independentCombinators: true, onPropChange })} rules={rules} />
     );
     userEvent.selectOptions(getByTitle(t.combinators.title), [getByText('OR')]);
-    expect(updateIndependentCombinator).toHaveBeenCalledWith('or', [0, 1]);
+    expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
   });
 
   it('should clone independent combinator groups', () => {
@@ -632,14 +629,12 @@ describe('disabled', () => {
     const onGroupRemove = jest.fn();
     const onPropChange = jest.fn();
     const moveRule = jest.fn();
-    const updateIndependentCombinator = jest.fn();
     const { getByTestId } = render(
       <RuleGroup
         {...getProps({
           showCloneButtons: true,
           showNotToggle: true,
           independentCombinators: true,
-          updateIndependentCombinator,
           onRuleAdd,
           onRuleRemove,
           onGroupAdd,
@@ -656,6 +651,6 @@ describe('disabled', () => {
       />
     );
     userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
-    expect(updateIndependentCombinator).not.toHaveBeenCalled();
+    expect(onPropChange).not.toHaveBeenCalled();
   });
 });

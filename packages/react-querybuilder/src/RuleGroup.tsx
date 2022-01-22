@@ -1,7 +1,6 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { TestID } from '.';
-import { DNDType, standardClassnames } from './defaults';
+import { DNDType, standardClassnames, TestID } from './defaults';
 import { InlineCombinator } from './InlineCombinator';
 import type { DraggedItem, RuleGroupProps } from './types';
 import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
@@ -13,7 +12,8 @@ export const RuleGroup = ({
   rules,
   translations,
   schema,
-  disabled,
+  disabled: disabledProp,
+  parentDisabled,
   not,
   context,
 }: RuleGroupProps) => {
@@ -32,10 +32,11 @@ export const RuleGroup = ({
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
-    updateIndependentCombinator,
+    showLockButtons,
     validationMap,
     disabledPaths,
   } = schema;
+  const disabled = !!parentDisabled || !!disabledProp;
 
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -44,6 +45,7 @@ export const RuleGroup = ({
     () => ({
       type: DNDType.ruleGroup,
       item: (): DraggedItem => ({ path }),
+      canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
         dragMonitorId: monitor.getHandlerId(),
@@ -89,7 +91,7 @@ export const RuleGroup = ({
 
   const onIndependentCombinatorChange = (value: any, index: number) => {
     if (!disabled) {
-      updateIndependentCombinator(value, path.concat([index]));
+      onPropChange('combinator', value, path.concat([index]));
     }
   };
 
@@ -127,6 +129,13 @@ export const RuleGroup = ({
       const newPath = [...getParentPath(path), path[path.length - 1] + 1];
       moveRule(path, newPath, true);
     }
+  };
+
+  const toggleLockGroup = (event: ReactMouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    onPropChange('disabled', !disabled, path);
   };
 
   const removeGroup = (event: ReactMouseEvent) => {
@@ -249,6 +258,22 @@ export const RuleGroup = ({
             validation={validationResult}
           />
         )}
+        {showLockButtons && (
+          <controls.lockGroupAction
+            testID={TestID.lockGroup}
+            label={translations.lockGroup.label}
+            title={translations.lockGroup.title}
+            className={c(standardClassnames.lockGroup, classNames.lockGroup)}
+            handleOnClick={toggleLockGroup}
+            rules={rules}
+            level={level}
+            path={path}
+            disabled={disabled}
+            disabledTranslation={parentDisabled ? undefined : translations.lockGroupDisabled}
+            context={context}
+            validation={validationResult}
+          />
+        )}
         {path.length >= 1 && (
           <controls.removeGroupAction
             testID={TestID.removeGroup}
@@ -268,7 +293,10 @@ export const RuleGroup = ({
       <div className={c(standardClassnames.body, classNames.body)}>
         {rules.map((r, idx) => {
           const thisPath = path.concat([idx]);
-          const thisPathDisabled = disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p));
+          const thisPathDisabled =
+            disabled ||
+            (typeof r !== 'string' && r.disabled) ||
+            disabledPaths.some(p => pathsAreEqual(thisPath, p));
           return (
             <Fragment key={thisPath.join('-')}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
@@ -315,6 +343,7 @@ export const RuleGroup = ({
                   translations={translations}
                   rules={r.rules}
                   disabled={thisPathDisabled}
+                  parentDisabled={parentDisabled || disabled}
                   not={!!r.not}
                   context={context}
                 />
@@ -327,6 +356,7 @@ export const RuleGroup = ({
                   schema={schema}
                   path={thisPath}
                   disabled={thisPathDisabled}
+                  parentDisabled={parentDisabled || disabled}
                   translations={translations}
                   context={context}
                 />

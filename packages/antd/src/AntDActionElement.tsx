@@ -1,14 +1,21 @@
 import { Button } from 'antd';
 import type { ActionProps } from 'react-querybuilder';
 
-const AntDActionElement = ({ className, handleOnClick, label, title, disabled }: ActionProps) => (
+const AntDActionElement = ({
+  className,
+  handleOnClick,
+  label,
+  title,
+  disabled,
+  disabledTranslation,
+}: ActionProps) => (
   <Button
     type="primary"
     className={className}
-    title={title}
+    title={disabledTranslation && disabled ? disabledTranslation.title : title}
     onClick={e => handleOnClick(e)}
-    disabled={disabled}>
-    {label}
+    disabled={disabled && !disabledTranslation}>
+    {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
 

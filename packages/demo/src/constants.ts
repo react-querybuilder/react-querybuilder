@@ -15,6 +15,7 @@ export interface DemoOptions {
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
+  showLockButtons: boolean;
   resetOnFieldChange: boolean;
   resetOnOperatorChange: boolean;
   autoSelectField: boolean;
@@ -39,6 +40,7 @@ export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
+  showLockButtons: false,
   resetOnFieldChange: true,
   resetOnOperatorChange: false,
   autoSelectField: true,
@@ -112,6 +114,11 @@ export const optionsMetadata: Record<
     link: '/docs/api/querybuilder#disabled',
     label: 'Disabled',
     title: 'Disable all components within the query builder',
+  },
+  showLockButtons: {
+    link: '/docs/api/querybuilder#showlockbuttons',
+    label: 'Show lock buttons',
+    title: 'Display buttons to lock/disable rules and groups',
   },
 };
 
