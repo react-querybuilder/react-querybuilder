@@ -4,6 +4,7 @@ import {
   getCommonAncestorPath,
   getParentPath,
   isAncestor,
+  pathIsDisabled,
   pathsAreEqual,
 } from '../pathUtils';
 
@@ -19,11 +20,13 @@ const query: RuleGroupType = {
     },
     {
       id: '333',
+      disabled: true,
       field: 'firstName',
       value: 'Test',
       operator: '=',
     },
     {
+      disabled: true,
       combinator: 'and',
       id: '444',
       rules: [
@@ -132,5 +135,16 @@ describe('getCommonAncestorPath', () => {
     expect(getCommonAncestorPath([], [0])).toEqual([]);
     expect(getCommonAncestorPath([0], [1])).toEqual([]);
     expect(getCommonAncestorPath([0, 2, 3, 4], [0, 3, 4, 5])).toEqual([0]);
+  });
+});
+
+describe('pathIsDisabled', () => {
+  it('should work', () => {
+    expect(pathIsDisabled([], { disabled: true, rules: [] })).toBe(true);
+    expect(pathIsDisabled([], query)).toBe(false);
+    expect(pathIsDisabled([0], query)).toBe(false);
+    expect(pathIsDisabled([1], query)).toBe(true);
+    expect(pathIsDisabled([2], query)).toBe(true);
+    expect(pathIsDisabled([2, 0], query)).toBe(true);
   });
 });

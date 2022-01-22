@@ -8,7 +8,13 @@ import {
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
 import { act } from 'react-dom/test-utils';
-import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
+import {
+  defaultControlClassnames,
+  defaultControlElements,
+  defaultTranslations as t,
+  standardClassnames as sc,
+  TestID,
+} from '../defaults';
 import { Rule as RuleOriginal } from '../Rule';
 import type {
   ActionProps,
@@ -99,8 +105,8 @@ const classNames: Partial<Classnames> = {
 const schema: Partial<Schema> = {
   fields: defaultFields,
   fieldMap,
-  controls: controls as Controls,
-  classNames: classNames as Classnames,
+  controls: { ...defaultControlElements, ...controls },
+  classNames: { ...defaultControlClassnames, ...classNames },
   getOperators: _field => [
     { name: '=', label: 'is' },
     { name: '!=', label: 'is not' },
@@ -309,7 +315,7 @@ describe('enableDragAndDrop', () => {
     const { getAllByTestId } = render(
       <div>
         <Rule {...getProps({ moveRule })} path={[0]} />
-        <Rule disabled {...getProps({ moveRule })} path={[1]} />
+        <Rule {...getProps({ moveRule })} path={[1]} disabled />
       </div>
     );
     const rules = getAllByTestId(TestID.rule);
@@ -327,6 +333,7 @@ describe('disabled', () => {
     const { getByTestId } = render(<Rule {...getProps()} disabled />);
     expect(getByTestId(TestID.rule)).toHaveClass(sc.disabled);
   });
+
   it('does not try to update the query', () => {
     const onRuleRemove = jest.fn();
     const onPropChange = jest.fn();
@@ -349,6 +356,56 @@ describe('disabled', () => {
     userEvent.click(getByTestId(TestID.removeRule));
     expect(onRuleRemove).not.toHaveBeenCalled();
     expect(onPropChange).not.toHaveBeenCalled();
+    expect(moveRule).not.toHaveBeenCalled();
+  });
+});
+
+describe('locked rule', () => {
+  it('does not disable the lock button if the parent group is not disabled', () => {
+    const { getByTestId } = render(<Rule {...getProps({ showLockButtons: true })} disabled />);
+    expect(getByTestId(TestID.lockRule)).toBeEnabled();
+  });
+
+  it('disables the lock button if the parent group is disabled even if the current rule is not', () => {
+    const onPropChange = jest.fn();
+    const { getByTestId } = render(
+      <Rule {...getProps({ showLockButtons: true, onPropChange })} disabled parentDisabled />
+    );
+    expect(getByTestId(TestID.lockRule)).toBeDisabled();
+    userEvent.click(getByTestId(TestID.lockRule));
+    expect(onPropChange).not.toHaveBeenCalled();
+  });
+
+  it('sets the disabled property', () => {
+    const onPropChange = jest.fn();
+    const { getByTestId } = render(<Rule {...getProps({ showLockButtons: true, onPropChange })} />);
+    userEvent.click(getByTestId(TestID.lockRule));
+    expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
+  });
+
+  it('unsets the disabled property', () => {
+    const onPropChange = jest.fn();
+    const { getByTestId } = render(
+      <Rule {...getProps({ showLockButtons: true, onPropChange })} disabled />
+    );
+    userEvent.click(getByTestId(TestID.lockRule));
+    expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
+  });
+
+  it('prevents drops', () => {
+    const moveRule = jest.fn();
+    const { getAllByTestId } = render(
+      <div>
+        <Rule {...getProps({ moveRule })} path={[0]} disabled />
+        <Rule {...getProps({ moveRule })} path={[1]} />
+      </div>
+    );
+    const rules = getAllByTestId(TestID.rule);
+    simulateDragDrop(
+      getHandlerId(rules[1], 'drag'),
+      getHandlerId(rules[0], 'drop'),
+      getDndBackend()
+    );
     expect(moveRule).not.toHaveBeenCalled();
   });
 });

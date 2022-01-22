@@ -28,6 +28,7 @@ import {
   isOptionGroupArray,
   isRuleGroup,
   move,
+  pathIsDisabled,
   prepareRuleGroup,
   remove,
   uniqByName,
@@ -285,7 +286,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
 
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
-    if (root.disabled || queryDisabled) return;
+    if (pathIsDisabled(parentPath, root) || queryDisabled) return;
     const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
     const newQuery = add(root, newRule, parentPath);
@@ -293,7 +294,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const onGroupAdd = (group: RG, parentPath: number[]) => {
-    if (root.disabled || queryDisabled) return;
+    if (pathIsDisabled(parentPath, root) || queryDisabled) return;
     const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
     const newQuery = add(root, newGroup, parentPath);
@@ -301,7 +302,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const onPropChange = (prop: UpdateableProperties, value: any, path: number[]) => {
-    if ((root.disabled && prop !== 'disabled') || queryDisabled) return;
+    if ((pathIsDisabled(path, root) && prop !== 'disabled') || queryDisabled) return;
     const newQuery = update(root, prop, value, path, {
       resetOnFieldChange,
       resetOnOperatorChange,
@@ -312,13 +313,13 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const onRuleOrGroupRemove = (path: number[]) => {
-    if (root.disabled || queryDisabled) return;
+    if (pathIsDisabled(path, root) || queryDisabled) return;
     const newQuery = remove(root, path);
     dispatch(newQuery);
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    if (root.disabled || queryDisabled) return;
+    if (pathIsDisabled(oldPath, root) || pathIsDisabled(newPath, root) || queryDisabled) return;
     const newQuery = move(root, oldPath, newPath, { clone, combinators });
     dispatch(newQuery);
   };

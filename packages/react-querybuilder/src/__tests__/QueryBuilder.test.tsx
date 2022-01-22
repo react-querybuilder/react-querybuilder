@@ -1660,6 +1660,7 @@ describe('disabled', () => {
               <button onClick={() => schema.onGroupAdd(groupToAdd, [])} />
               <button onClick={() => schema.onPropChange('field', 'f2', [0])} />
               <button onClick={() => schema.onPropChange('combinator', 'or', [1])} />
+              <button onClick={() => schema.onPropChange('not', true, [])} />
               <button onClick={() => schema.onRuleRemove([0])} />
               <button onClick={() => schema.onGroupRemove([6])} />
               <button onClick={() => schema.moveRule([6], [0])} />
@@ -1682,6 +1683,77 @@ describe('disabled', () => {
                 { field: 'field4', operator: '=', value: '4' },
               ],
             },
+          ],
+        }}
+      />
+    );
+    const rg = getByTestId(TestID.ruleGroup);
+    rg.querySelectorAll('button').forEach(b => userEvent.click(b));
+    expect(onQueryChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('locked rules', () => {
+  it('does not update the query when the root group is disabled', () => {
+    const onQueryChange = jest.fn();
+    const { getByTestId } = render(
+      <QueryBuilder
+        fields={[
+          { name: 'field0', label: 'Field 0' },
+          { name: 'field1', label: 'Field 1' },
+        ]}
+        enableMountQueryChange={false}
+        independentCombinators
+        onQueryChange={onQueryChange}
+        enableDragAndDrop
+        showCloneButtons
+        showNotToggle
+        controlElements={{
+          ruleGroup: ({ schema }) => (
+            <div data-testid={TestID.ruleGroup}>
+              <button onClick={() => schema.onPropChange('not', true, [])} />
+              <button onClick={() => schema.onPropChange('field', 'f1', [0])} />
+            </div>
+          ),
+        }}
+        query={{
+          disabled: true,
+          rules: [{ field: 'field0', operator: '=', value: '0' }],
+        }}
+      />
+    );
+    const rg = getByTestId(TestID.ruleGroup);
+    rg.querySelectorAll('button').forEach(b => userEvent.click(b));
+    expect(onQueryChange).not.toHaveBeenCalled();
+  });
+
+  it('does not update the query when an ancestor group is disabled', () => {
+    const onQueryChange = jest.fn();
+    const { getByTestId } = render(
+      <QueryBuilder
+        fields={[
+          { name: 'field0', label: 'Field 0' },
+          { name: 'field1', label: 'Field 1' },
+        ]}
+        enableMountQueryChange={false}
+        independentCombinators
+        onQueryChange={onQueryChange}
+        enableDragAndDrop
+        showCloneButtons
+        showNotToggle
+        controlElements={{
+          ruleGroup: ({ schema }) => (
+            <div data-testid={TestID.ruleGroup}>
+              <button onClick={() => schema.onPropChange('not', true, [2])} />
+              <button onClick={() => schema.onPropChange('field', 'f1', [2, 0])} />
+            </div>
+          ),
+        }}
+        query={{
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { disabled: true, rules: [{ field: 'field1', operator: '=', value: '1' }] },
           ],
         }}
       />
