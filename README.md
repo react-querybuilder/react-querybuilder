@@ -6,10 +6,10 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
+[![npm](https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=86400)](https://www.npmjs.com/package/react-querybuilder)
 [![Docs](https://img.shields.io/badge/docs-blue)](https://react-querybuilder.js.org/)
 [![Full demo](https://img.shields.io/badge/demo-full-blue)](https://react-querybuilder.js.org/react-querybuilder/)
 [![IE11-compatible demo](https://img.shields.io/badge/demo-ie11-blue)](https://react-querybuilder.js.org/react-querybuilder/ie11.html)
-[![npm](https://img.shields.io/npm/v/react-querybuilder.svg?maxAge=2592000)](https://www.npmjs.com/package/react-querybuilder)
 [![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
 [![All Contributors][badge-all-contributors]](#contributors-)
@@ -35,9 +35,15 @@ For a more complete introduction, see the [main package README](packages/react-q
 
 _For documentation on `react-querybuilder` v3.12.1, [click here](README.old.md)._
 
-## Packages
+## Compatibility packages
 
-In addition to the [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts the official compatibility components for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), and [MUI](https://www.npmjs.com/package/@react-querybuilder/material).
+[![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign)](https://www.npmjs.com/package/@react-querybuilder/antd)
+[![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
+[![Bulma](https://img.shields.io/badge/RQB-for_Bulma-blue?logo=bulma)](https://www.npmjs.com/package/@react-querybuilder/bulma)
+[![Chakra](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui)](https://www.npmjs.com/package/@react-querybuilder/chakra)
+[![MUI](https://img.shields.io/badge/RQB-for_MUI-blue?logo=mui)](https://www.npmjs.com/package/@react-querybuilder/material)
+
+In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), and [MUI](https://www.npmjs.com/package/@react-querybuilder/material).
 
 ## Credits
 
