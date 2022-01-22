@@ -9,11 +9,11 @@ import type {
 } from './ruleGroups';
 import type { MappedTuple } from './ruleGroupsICutils';
 
-export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = {
-  path?: number[];
-  id?: string;
+export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = Omit<
+  RuleGroupType<R, C>,
+  'combinator' | 'rules'
+> & {
   rules: RuleGroupICArray<RuleGroupTypeIC<R, C>, R, C>;
-  not?: boolean;
 };
 
 export type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;

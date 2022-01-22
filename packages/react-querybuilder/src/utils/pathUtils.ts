@@ -43,3 +43,17 @@ export const getCommonAncestorPath = (path1: number[], path2: number[]) => {
 
   return commonAncestorPath;
 };
+
+export const pathIsDisabled = (path: number[], query: RuleGroupTypeAny) => {
+  if (query.disabled) return true;
+  let disabled = false;
+  let target: RuleType | RuleGroupTypeAny = query;
+  for (let level = 0; level < path.length && !disabled && 'rules' in target; level++) {
+    const t: RuleGroupTypeAny | RuleType | string = target.rules[path[level]];
+    if (typeof t === 'object' && ('rules' in t || 'field' in t)) {
+      disabled = !!t.disabled;
+      target = t;
+    }
+  }
+  return disabled;
+};

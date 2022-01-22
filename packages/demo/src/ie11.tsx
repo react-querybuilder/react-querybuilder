@@ -28,6 +28,7 @@ const IE11 = () => {
           'showCombinatorsBetweenRules',
           'showNotToggle',
           'showCloneButtons',
+          'showLockButtons',
           'resetOnFieldChange',
           'resetOnOperatorChange',
           'autoSelectField',

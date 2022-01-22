@@ -57,6 +57,22 @@ export const defaultTranslations: Translations = {
     label: '⁞⁞',
     title: 'Drag handle',
   },
+  lockRule: {
+    label: '🔓',
+    title: 'Lock rule',
+  },
+  lockGroup: {
+    label: '🔓',
+    title: 'Lock group',
+  },
+  lockRuleDisabled: {
+    label: '🔒',
+    title: 'Unlock rule',
+  },
+  lockGroupDisabled: {
+    label: '🔒',
+    title: 'Unlock group',
+  },
 };
 
 export const defaultOperators: DefaultOperator[] = [
@@ -109,6 +125,8 @@ export const standardClassnames = {
   dndOver: 'dndOver',
   dragHandle: 'queryBuilder-dragHandle',
   disabled: 'queryBuilder-disabled',
+  lockRule: 'rule-lock',
+  lockGroup: 'ruleGroup-lock',
 } as const;
 
 export const defaultControlClassnames: Classnames = {
@@ -129,6 +147,8 @@ export const defaultControlClassnames: Classnames = {
   value: '',
   removeRule: '',
   dragHandle: '',
+  lockRule: '',
+  lockGroup: '',
 };
 
 export const defaultControlElements: Controls = {
@@ -146,6 +166,8 @@ export const defaultControlElements: Controls = {
   ruleGroup: RuleGroup,
   rule: Rule,
   dragHandle: DragHandle,
+  lockRuleAction: ActionElement,
+  lockGroupAction: ActionElement,
 };
 
 export const groupInvalidReasons = {
@@ -175,4 +197,6 @@ export const TestID = {
   valueEditor: 'value-editor',
   notToggle: 'not-toggle',
   dragHandle: 'drag-handle',
+  lockRule: 'lock-rule',
+  lockGroup: 'lock-group',
 } as const;

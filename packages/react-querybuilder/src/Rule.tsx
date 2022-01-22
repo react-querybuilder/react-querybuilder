@@ -12,7 +12,8 @@ export const Rule = ({
   value,
   translations,
   schema,
-  disabled,
+  disabled: disabledProp,
+  parentDisabled,
   context,
 }: RuleProps) => {
   const {
@@ -29,9 +30,11 @@ export const Rule = ({
     onRuleRemove,
     autoSelectField,
     showCloneButtons,
+    showLockButtons,
     independentCombinators,
     validationMap,
   } = schema;
+  const disabled = !!parentDisabled || !!disabledProp;
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -39,6 +42,7 @@ export const Rule = ({
     () => ({
       type: DNDType.rule,
       item: (): DraggedItem => ({ path }),
+      canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
         dragMonitorId: monitor.getHandlerId(),
@@ -97,6 +101,13 @@ export const Rule = ({
       const newPath = [...getParentPath(path), path[path.length - 1] + 1];
       moveRule(path, newPath, true);
     }
+  };
+
+  const toggleLockRule = (event: ReactMouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    onPropChange('disabled', !disabled, path);
   };
 
   const removeRule = (event: ReactMouseEvent) => {
@@ -215,6 +226,21 @@ export const Rule = ({
           level={level}
           path={path}
           disabled={disabled}
+          context={context}
+          validation={validationResult}
+        />
+      )}
+      {showLockButtons && (
+        <controls.lockRuleAction
+          testID={TestID.lockRule}
+          label={translations.lockRule.label}
+          title={translations.lockRule.title}
+          className={c(standardClassnames.lockRule, classNames.lockRule)}
+          handleOnClick={toggleLockRule}
+          level={level}
+          path={path}
+          disabled={disabled}
+          disabledTranslation={parentDisabled ? undefined : translations.lockRuleDisabled}
           context={context}
           validation={validationResult}
         />

@@ -1,16 +1,25 @@
 import type { NameLabelPair } from './basic';
 
-export type RuleType<F extends string = string, O extends string = string, V = any> = {
+interface CommonProperties {
   path?: number[];
   id?: string;
+  disabled?: boolean;
+}
+
+export type RuleType<
+  F extends string = string,
+  O extends string = string,
+  V = any
+> = CommonProperties & {
   field: F;
   operator: O;
   value: V;
 };
 
-export type RuleGroupType<R extends RuleType = RuleType, C extends string = string> = {
-  path?: number[];
-  id?: string;
+export type RuleGroupType<
+  R extends RuleType = RuleType,
+  C extends string = string
+> = CommonProperties & {
   combinator: C;
   rules: RuleGroupArray<RuleGroupType<R, C>, R>;
   not?: boolean;

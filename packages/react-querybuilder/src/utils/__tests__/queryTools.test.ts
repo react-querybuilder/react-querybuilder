@@ -43,21 +43,33 @@ const testQT = (
 describe('add', () => {
   describe('standard rule groups', () => {
     testQT('adds a rule', add(rg1, r1, []), { combinator: and, rules: [r1] });
-    testQT('adds another rule', add({ combinator: and, rules: [r1] }, r2, []), {
-      combinator: and,
-      rules: [r1, r2],
-    });
+    testQT(
+      'adds another rule',
+      add({ combinator: and, rules: [r1] } as DefaultRuleGroupType, r2, []),
+      {
+        combinator: and,
+        rules: [r1, r2],
+      }
+    );
     testQT('adds a group', add(rg1, rg2, []), { combinator: and, rules: [{ ...rg2, not: false }] });
   });
 
   describe('independent combinators', () => {
     testQT('adds a rule', add(rgic1, r1, []), { rules: [r1] });
-    testQT('adds a rule and the default combinator', add({ rules: [r1] }, r2, []), {
-      rules: [r1, and, r2],
-    });
-    testQT('adds a rule and copies existing combinator', add({ rules: [r1, or, r2] }, r3, []), {
-      rules: [r1, or, r2, or, r3],
-    });
+    testQT(
+      'adds a rule and the default combinator',
+      add({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, []),
+      {
+        rules: [r1, and, r2],
+      }
+    );
+    testQT(
+      'adds a rule and copies existing combinator',
+      add({ rules: [r1, or, r2] } as DefaultRuleGroupTypeIC, r3, []),
+      {
+        rules: [r1, or, r2, or, r3],
+      }
+    );
     testQT('adds a group', add(rgic1, rgic2, []), { rules: [{ ...rgic2, not: false }] });
   });
 });

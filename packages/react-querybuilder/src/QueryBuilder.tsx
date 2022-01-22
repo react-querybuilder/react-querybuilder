@@ -28,6 +28,7 @@ import {
   isOptionGroupArray,
   isRuleGroup,
   move,
+  pathIsDisabled,
   prepareRuleGroup,
   remove,
   uniqByName,
@@ -60,6 +61,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
   showCloneButtons = false,
+  showLockButtons = false,
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
   autoSelectField = true,
@@ -284,7 +286,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
 
   const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
-    if (queryDisabled) return;
+    if (pathIsDisabled(parentPath, root) || queryDisabled) return;
     const newRule = onAddRule(rule, parentPath, root);
     if (!newRule) return;
     const newQuery = add(root, newRule, parentPath);
@@ -292,7 +294,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const onGroupAdd = (group: RG, parentPath: number[]) => {
-    if (queryDisabled) return;
+    if (pathIsDisabled(parentPath, root) || queryDisabled) return;
     const newGroup = onAddGroup(group, parentPath, root);
     if (!newGroup) return;
     const newQuery = add(root, newGroup, parentPath);
@@ -300,7 +302,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const onPropChange = (prop: UpdateableProperties, value: any, path: number[]) => {
-    if (queryDisabled) return;
+    if ((pathIsDisabled(path, root) && prop !== 'disabled') || queryDisabled) return;
     const newQuery = update(root, prop, value, path, {
       resetOnFieldChange,
       resetOnOperatorChange,
@@ -310,19 +312,14 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     dispatch(newQuery);
   };
 
-  const updateIndependentCombinator = (value: string, path: number[]) => {
-    // TODO: remove this and just use onPropChange
-    onPropChange('combinator', value, path);
-  };
-
   const onRuleOrGroupRemove = (path: number[]) => {
-    if (queryDisabled) return;
+    if (pathIsDisabled(path, root) || queryDisabled) return;
     const newQuery = remove(root, path);
     dispatch(newQuery);
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    if (queryDisabled) return;
+    if (pathIsDisabled(oldPath, root) || pathIsDisabled(newPath, root) || queryDisabled) return;
     const newQuery = move(root, oldPath, newPath, { clone, combinators });
     dispatch(newQuery);
   };
@@ -364,11 +361,11 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     getValueEditorType: getValueEditorTypeMain,
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
-    updateIndependentCombinator,
     moveRule,
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
+    showLockButtons,
     autoSelectField,
     addRuleToNewGroups,
     enableDragAndDrop,
@@ -382,14 +379,14 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       c(
         standardClassnames.queryBuilder,
         classNames.queryBuilder,
-        queryDisabled ? standardClassnames.disabled : '',
+        root.disabled || queryDisabled ? standardClassnames.disabled : '',
         typeof validationResult === 'boolean'
           ? validationResult
             ? standardClassnames.valid
             : standardClassnames.invalid
           : ''
       ),
-    [classNames.queryBuilder, queryDisabled, validationResult]
+    [classNames.queryBuilder, queryDisabled, root.disabled, validationResult]
   );
 
   return (
@@ -408,7 +405,8 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
           id={root.id}
           path={[]}
           not={!!root.not}
-          disabled={queryDisabled}
+          disabled={!!root.disabled || queryDisabled}
+          parentDisabled={queryDisabled}
           context={context}
         />
       </div>

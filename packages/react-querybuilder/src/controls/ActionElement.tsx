@@ -6,15 +6,16 @@ export const ActionElement = ({
   label,
   title,
   disabled,
+  disabledTranslation,
   testID,
 }: ActionProps) => (
   <button
     data-testid={testID}
-    disabled={disabled}
+    disabled={disabled && !disabledTranslation}
     className={className}
-    title={title}
+    title={disabledTranslation && disabled ? disabledTranslation.title : title}
     onClick={e => handleOnClick(e)}>
-    {label}
+    {disabledTranslation && disabled ? disabledTranslation.label : label}
   </button>
 );
 
