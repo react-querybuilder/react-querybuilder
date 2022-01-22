@@ -1694,6 +1694,11 @@ describe('disabled', () => {
 });
 
 describe('locked rules', () => {
+  it('top level lock button is disabled when disabled prop is set on component', () => {
+    const { getByTestId } = render(<QueryBuilder showLockButtons disabled />);
+    expect(getByTestId(TestID.lockGroup)).toBeDisabled();
+  });
+
   it('does not update the query when the root group is disabled', () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(

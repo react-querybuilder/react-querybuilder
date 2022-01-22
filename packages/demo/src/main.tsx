@@ -86,7 +86,7 @@ const shStyle = {
 
 const CustomFragment: FC = ({ children }) => <>{children}</>;
 
-const permalinkText = 'Copy permalink';
+const permalinkText = 'Copy link';
 const permalinkCopiedText = 'Copied!';
 
 const getOptionsFromHash = (hash: Partial<DemoOptions>): DemoOptions => ({
@@ -180,6 +180,11 @@ const App = () => {
     [optionsInfo]
   );
 
+  const allTheFeatures = useCallback(
+    () => optionsInfo.forEach(opt => opt.setter(opt.label !== optionsMetadata.disabled.label)),
+    [optionsInfo]
+  );
+
   const formatOptions = useMemo(
     (): FormatQueryOptions => (options.validateQuery ? { format, fields } : { format }),
     [format, options.validateQuery]
@@ -253,8 +258,22 @@ const App = () => {
         </Header>
         <Layout>
           <Sider theme="light" width={260} style={{ padding: '1rem' }}>
-            <Title level={4}>Style</Title>
-            <Select value={style} onChange={setStyle}>
+            <Title level={4}>
+              Style
+              {'\u00a0'}
+              <a href={`${docsLink}/docs/compat`} target="_blank" rel="noreferrer">
+                <Tooltip
+                  title="Use first-party alternate QueryBuilder components designed for popular style libraries (click for documentation)"
+                  placement="right">
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              </a>
+            </Title>
+            <Select
+              value={style}
+              onChange={setStyle}
+              dropdownMatchSelectWidth={false}
+              style={{ minWidth: 100 }}>
               {(['default', 'bootstrap', 'material', 'antd', 'chakra', 'bulma'] as StyleName[]).map(
                 s => (
                   <Option key={s} value={s}>
@@ -268,7 +287,7 @@ const App = () => {
               {'\u00a0'}
               <a href={`${docsLink}/docs/api/querybuilder`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  title={`Boolean props on the QueryBuilder component (click for documentation)`}
+                  title="Boolean props on the QueryBuilder component (click for documentation)"
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
@@ -288,14 +307,25 @@ const App = () => {
                   </Checkbox>
                 </div>
               ))}
-              <div style={{ marginTop: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: '0.5rem',
+                }}>
                 <Tooltip title="Reset the options above to their default values" placement="right">
                   <Button type="default" onClick={resetOptions}>
-                    Default options
+                    Reset
                   </Button>
                 </Tooltip>
-              </div>
-              <div style={{ marginTop: '0.5rem' }}>
+                <Tooltip
+                  title={`Enable all features except "${optionsMetadata.disabled.label}"`}
+                  placement="right">
+                  <Button type="default" onClick={allTheFeatures}>
+                    Select all
+                  </Button>
+                </Tooltip>
                 <Tooltip
                   title="Copy a URL that will load this demo with the options set as they are currently"
                   placement="right">

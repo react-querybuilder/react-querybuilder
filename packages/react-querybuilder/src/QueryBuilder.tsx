@@ -406,6 +406,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
           path={[]}
           not={!!root.not}
           disabled={!!root.disabled || queryDisabled}
+          parentDisabled={queryDisabled}
           context={context}
         />
       </div>

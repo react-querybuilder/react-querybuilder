@@ -673,7 +673,7 @@ describe('lock buttons', () => {
   it('disables the lock button if the parent group is disabled even if the current group is not', () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(
-      <RuleGroup {...getProps({ showLockButtons: true, onPropChange })} disabled parentDisabled />
+      <RuleGroup {...getProps({ showLockButtons: true, onPropChange })} parentDisabled />
     );
     expect(getByTestId(TestID.lockGroup)).toBeDisabled();
     userEvent.click(getByTestId(TestID.lockGroup));
