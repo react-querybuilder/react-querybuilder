@@ -169,6 +169,9 @@ export const fields: Field[] = [
   { name: 'height', label: 'Height', validator },
   { name: 'job', label: 'Job', validator },
   { name: 'description', label: 'Description', inputType: 'textarea' },
+  { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
+  { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
+  { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
 ];
 
 export const initialQuery: RuleGroupType = {

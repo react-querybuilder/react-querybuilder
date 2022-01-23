@@ -79,17 +79,32 @@ const MaterialValueEditor = ({
       );
   }
 
-  if (inputTypeCoerced === 'textarea') {
-    return (
-      <TextareaAutosize
-        value={value}
-        title={title}
-        disabled={disabled}
-        className={className}
-        placeholder={placeHolderText}
-        onChange={e => handleOnChange(e.target.value)}
-      />
-    );
+  switch (inputTypeCoerced) {
+    case 'textarea':
+      return (
+        <TextareaAutosize
+          value={value}
+          title={title}
+          disabled={disabled}
+          className={className}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    /**
+     * TODO: support `inputType`s of "date" (`<DatePicker />`), "datetime-local"
+     * (`<DateTimePicker />`), and "time" (`<TimePicker />`) once the components are
+     * out of the MUI "lab" and into MUI core. Add something like this to the README:
+     *
+     * > If you intend to use an inputType of "date", "datetime-local", or "time",
+     * > wrap your `<QueryBuilder />` element in a `LocalizationProvider` (and install
+     * > the date library associated with the selected `dateAdapter`) like this:
+     * >
+     * > <LocalizationProvider dateAdapter={AdapterDateFns}>
+     * >   <QueryBuilder />
+     * > </LocalizationProvider>
+     */
   }
 
   return (

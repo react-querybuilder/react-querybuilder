@@ -1,4 +1,5 @@
-import { Checkbox, Input, Radio } from 'antd';
+import { Checkbox, DatePicker, Input, Radio, TimePicker } from 'antd';
+import moment from 'moment';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import AntDValueSelector from './AntDValueSelector';
@@ -32,9 +33,13 @@ const AntDValueEditor = ({
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
-    ? 'text'
-    : inputType || 'text';
+  const inputTypeCoerced =
+    ['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
+    // This next line is not in the default ValueEditor -- we can use
+    // antd's RangePicker to handle "between" and "notBetween".
+    !['date', 'datetime-local'].includes(`${inputType}`)
+      ? 'text'
+      : inputType || 'text';
 
   switch (type) {
     case 'select':
@@ -52,10 +57,9 @@ const AntDValueEditor = ({
 
     case 'checkbox':
       return (
-        <span title={title}>
+        <span title={title} className={className}>
           <Checkbox
             type="checkbox"
-            className={className}
             disabled={disabled}
             onChange={e => handleOnChange(e.target.checked)}
             checked={!!value}
@@ -80,17 +84,57 @@ const AntDValueEditor = ({
       );
   }
 
-  if (inputTypeCoerced === 'textarea') {
-    return (
-      <Input.TextArea
-        value={value}
-        title={title}
-        className={className}
-        disabled={disabled}
-        placeholder={placeHolderText}
-        onChange={e => handleOnChange(e.target.value)}
-      />
-    );
+  switch (inputTypeCoerced) {
+    case 'textarea':
+      return (
+        <Input.TextArea
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'date':
+    case 'datetime-local':
+      return operator === 'between' || operator === 'notBetween' ? (
+        <DatePicker.RangePicker
+          value={
+            typeof value === 'string' && /^[^,]+,[^,]+$/.test(value)
+              ? (value.split(',').map(v => moment(v)) as [moment.Moment, moment.Moment])
+              : undefined
+          }
+          showTime={inputTypeCoerced === 'datetime-local'}
+          className={className}
+          disabled={disabled}
+          placeholder={[placeHolderText, placeHolderText]}
+          onChange={dates => handleOnChange(dates?.map(d => d?.toISOString()).join(','))}
+        />
+      ) : (
+        <DatePicker
+          value={value ? moment(value) : null}
+          showTime={inputTypeCoerced === 'datetime-local'}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={(_d, dateString) => handleOnChange(dateString)}
+          onOk={d => handleOnChange(d.toISOString())}
+        />
+      );
+
+    case 'time':
+      return (
+        <TimePicker
+          value={value ? moment(value, 'HH:mm') : null}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={(_d, dateString) => handleOnChange(dateString)}
+          onOk={d => handleOnChange(d.format('HH:mm'))}
+        />
+      );
   }
 
   return (

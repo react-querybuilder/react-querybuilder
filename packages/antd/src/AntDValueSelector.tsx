@@ -11,7 +11,11 @@ const AntDValueSelector = ({
   disabled,
 }: ValueSelectorProps) => (
   <span title={title} className={className}>
-    <Select disabled={disabled} value={value} onChange={v => handleOnChange(v)}>
+    <Select
+      dropdownMatchSelectWidth={false}
+      disabled={disabled}
+      value={value}
+      onChange={v => handleOnChange(v)}>
       {toOptions(options)}
     </Select>
   </span>
