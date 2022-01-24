@@ -1,1 +1,1 @@
-export const c = (...classNames: string[]) => classNames.join(' ').trim();
+export const c = (...classNames: string[]) => classNames.filter(Boolean).join(' ');
