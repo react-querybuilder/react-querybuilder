@@ -110,7 +110,9 @@ const AntDValueEditor = ({
           className={className}
           disabled={disabled}
           placeholder={[placeHolderText, placeHolderText]}
-          onChange={dates => handleOnChange(dates?.map(d => d?.toISOString()).join(','))}
+          onChange={dates =>
+            handleOnChange(dates?.map(d => d?.format(moment.HTML5_FMT.DATE)).join(','))
+          }
         />
       ) : (
         <DatePicker
@@ -120,7 +122,6 @@ const AntDValueEditor = ({
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={(_d, dateString) => handleOnChange(dateString)}
-          onOk={d => handleOnChange(d.toISOString())}
         />
       );
 
@@ -131,8 +132,7 @@ const AntDValueEditor = ({
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}
-          onChange={(_d, dateString) => handleOnChange(dateString)}
-          onOk={d => handleOnChange(d.format('HH:mm'))}
+          onChange={d => handleOnChange(d?.format('HH:mm') ?? '')}
         />
       );
   }

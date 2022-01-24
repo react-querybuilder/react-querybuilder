@@ -1,19 +1,22 @@
-import {
-  defaultNotToggleProps,
-  defaultValueEditorProps,
-  defaultValueSelectorProps,
-  testActionElement,
-  testDragHandle,
-  testValueEditor,
-} from 'react-querybuilder/genericTests';
 import { act, fireEvent, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type {
+import moment from 'moment';
+import {
   NameLabelPair,
   NotToggleProps,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
+import {
+  defaultNotToggleProps,
+  defaultValueEditorProps,
+  defaultValueSelectorProps,
+  findInput,
+  hasOrInheritsClass,
+  testActionElement,
+  testDragHandle,
+  testValueEditor,
+} from 'react-querybuilder/genericTests';
 import {
   AntDActionElement,
   AntDDragHandle,
@@ -126,33 +129,159 @@ testAntDValueSelector(
 );
 testAntDValueSelector(antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps);
 
-const title = AntDNotToggle.displayName;
-describe(title, () => {
+const notToggleTitle = AntDNotToggle.displayName;
+describe(notToggleTitle, () => {
   const label = 'Not';
-  const props: NotToggleProps = { ...defaultNotToggleProps, label, title };
+  const props: NotToggleProps = { ...defaultNotToggleProps, label, title: notToggleTitle };
 
   it('should have the value passed in', () => {
     const { getByTitle } = render(<AntDNotToggle {...props} checked />);
-    expect(getByTitle(title)).toBeDefined();
+    expect(getByTitle(notToggleTitle)).toBeDefined();
   });
 
   it('should have the className passed into the <label />', () => {
     const { getByTitle } = render(<AntDNotToggle {...props} className="foo" />);
-    expect(getByTitle(title)).toHaveClass('foo');
+    expect(getByTitle(notToggleTitle)).toHaveClass('foo');
   });
 
   it('should call the onChange method passed in', () => {
     const onChange = jest.fn();
     const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
-    userEvent.click(getByTitle(title));
+    userEvent.click(getByTitle(notToggleTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('should be disabled by disabled prop', () => {
     const onChange = jest.fn();
     const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
-    expect(getByTitle(title)).toBeDisabled();
-    userEvent.click(getByTitle(title));
+    expect(getByTitle(notToggleTitle)).toBeDisabled();
+    userEvent.click(getByTitle(notToggleTitle));
     expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
+const valueEditorTitle = AntDValueEditor.displayName;
+describe(`${valueEditorTitle} date/time pickers`, () => {
+  const props: ValueEditorProps = { ...defaultValueEditorProps, title: valueEditorTitle };
+  const today = moment().format(moment.HTML5_FMT.DATE);
+  const tomorrow = moment().add(1, 'day').format(moment.HTML5_FMT.DATE);
+  // const rightNow = moment().format('HH:mm');
+
+  const turnOffPointerEventsNone = () =>
+    ((document.body.querySelector('.ant-picker-dropdown') as HTMLDivElement).style.pointerEvents =
+      'auto');
+
+  it('should render a date picker', async () => {
+    const onChange = jest.fn();
+    const { container, getByTitle } = render(
+      <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    turnOffPointerEventsNone();
+    userEvent.click(getByTitle(today));
+    expect(onChange).toHaveBeenCalledWith(today);
+  });
+
+  it('should render a date picker with a preset value', async () => {
+    const { container, getAllByTitle } = render(
+      <AntDValueEditor {...props} inputType="date" value={today} />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    expect(getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
+      'ant-picker-cell-selected'
+    );
+  });
+
+  it('should render a date range picker', async () => {
+    const onChange = jest.fn();
+    const { container, getByTitle } = render(
+      <AntDValueEditor {...props} inputType="date" operator="between" handleOnChange={onChange} />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    turnOffPointerEventsNone();
+    userEvent.click(getByTitle(today));
+    userEvent.click(getByTitle(tomorrow));
+    expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
+  });
+
+  it('should render a date range picker with a preset value', async () => {
+    const { container, getAllByTitle } = render(
+      <AntDValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        value={`${today},${tomorrow}`}
+      />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    expect(getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
+      'ant-picker-cell-range-start'
+    );
+    expect(getAllByTitle(tomorrow).find(el => el.tagName !== 'INPUT')).toHaveClass(
+      'ant-picker-cell-range-end'
+    );
+  });
+
+  it('should render a datetime picker', async () => {
+    const onChange = jest.fn();
+    const { container, getByText, getByTitle, getAllByText } = render(
+      <AntDValueEditor {...props} inputType="datetime-local" handleOnChange={onChange} />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    turnOffPointerEventsNone();
+    userEvent.click(getByTitle(today));
+    getAllByText('02').forEach(el => userEvent.click(el));
+    userEvent.click(getByText('Ok'));
+    expect(onChange).toHaveBeenCalledWith(`${today} 02:02:02`);
+  });
+
+  it('should render a time picker', async () => {
+    const onChange = jest.fn();
+    const { container, getByText, getAllByText } = render(
+      <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    turnOffPointerEventsNone();
+    getAllByText('02').forEach(el => userEvent.click(el));
+    userEvent.click(getByText('Ok'));
+    expect(onChange).toHaveBeenCalledWith('02:02');
+  });
+
+  it('should render a time picker with a preset value', async () => {
+    const { container, getAllByText } = render(
+      <AntDValueEditor {...props} inputType="time" value={'02:02'} />
+    );
+    await act(async () => {
+      userEvent.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    getAllByText('02').forEach(n => hasOrInheritsClass(n, 'ant-picker-time-panel-cell-selected'));
+  });
+
+  it('should render a time picker with a preset value and clear the value', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} value={'02:02'} />
+    );
+    userEvent.click(container.querySelector('.ant-picker-clear')!);
+    expect(onChange).toHaveBeenCalledWith('');
   });
 });
