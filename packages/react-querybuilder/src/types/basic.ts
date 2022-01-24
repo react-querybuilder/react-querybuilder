@@ -7,6 +7,7 @@ export type ValueEditorType =
   | 'radio'
   | 'textarea'
   | 'switch'
+  | 'multiselect'
   | null;
 
 export interface NameLabelPair {

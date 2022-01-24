@@ -18,6 +18,7 @@ export const testSelect = (
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
+  const testingValueEditor = /ValueEditor/.test(title);
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 
@@ -50,6 +51,14 @@ export const testSelect = (
     it('should have the value passed into the <select />', () => {
       const { getByTitle } = render(<Component {...props} value={testVal.name} />);
       expect(findSelect(getByTitle(title))).toHaveValue(testVal.name);
+    });
+
+    it('should have the values passed into the <select multiple />', () => {
+      const value = testValues.map(v => v.name).join(',');
+      const multiselectProps = testingValueEditor ? { type: 'multiselect' } : { multiple: true };
+      const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
+      expect(findSelect(getByTitle(title))).toHaveProperty('multiple', true);
+      expect(findSelect(getByTitle(title)).selectedOptions.length).toBe(testValues.length);
     });
 
     it('should have the className passed into the <select />', () => {

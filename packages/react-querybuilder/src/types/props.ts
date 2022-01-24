@@ -56,8 +56,12 @@ export interface SelectorEditorProps extends CommonSubComponentProps {
   handleOnChange(value: any): void;
 }
 
-export interface ValueSelectorProps extends SelectorEditorProps {
+export interface BaseSelectorProps extends SelectorEditorProps {
   options: NameLabelPair[] | OptionGroup[];
+}
+
+export interface ValueSelectorProps extends BaseSelectorProps {
+  multiple?: boolean;
 }
 
 export interface NotToggleProps extends CommonSubComponentProps {
@@ -66,16 +70,16 @@ export interface NotToggleProps extends CommonSubComponentProps {
   label?: string;
 }
 
-export interface CombinatorSelectorProps extends ValueSelectorProps {
+export interface CombinatorSelectorProps extends BaseSelectorProps {
   rules?: RuleOrGroupArray;
 }
 
-export interface FieldSelectorProps extends ValueSelectorProps {
+export interface FieldSelectorProps extends BaseSelectorProps {
   options: Field[] | OptionGroup<Field>[];
   operator?: string;
 }
 
-export interface OperatorSelectorProps extends ValueSelectorProps {
+export interface OperatorSelectorProps extends BaseSelectorProps {
   field: string;
   fieldData: Field;
 }

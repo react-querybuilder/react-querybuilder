@@ -41,6 +41,7 @@ export const ValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <ValueSelector
           {...props}
@@ -51,6 +52,7 @@ export const ValueEditor = ({
           disabled={disabled}
           value={value}
           options={values!}
+          multiple={type === 'multiselect'}
         />
       );
 
