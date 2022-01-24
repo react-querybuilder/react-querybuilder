@@ -7,11 +7,18 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       fileName: format => `index.${format}.js`,
-      formats: ['es', 'cjs'],
+      formats: ['es', 'cjs', 'umd'],
+      name: 'ReactQueryBuilder',
     },
     rollupOptions: {
-      external: ['react', 'react-dnd', 'react-dnd-html5-backend', 'immer'],
+      external: ['immer', 'react', 'react-dnd', 'react-dnd-html5-backend'],
       output: {
+        globals: {
+          immer: 'immer',
+          react: 'React',
+          'react-dnd': 'ReactDnD',
+          'react-dnd-html5-backend': 'ReactDnDHTML5Backend',
+        },
         exports: 'named',
       },
     },
