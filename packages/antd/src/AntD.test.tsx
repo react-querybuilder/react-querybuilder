@@ -121,7 +121,7 @@ const testAntDValueSelector = (
 
 testActionElement(AntDActionElement);
 testDragHandle(AntDDragHandle);
-testValueEditor(AntDValueEditor, { select: true });
+testValueEditor(AntDValueEditor, { select: true, switch: true });
 testAntDValueSelector(
   `${antdValueEditorProps.title} (as ValueSelector)`,
   AntDValueEditor,
@@ -161,6 +161,41 @@ describe(notToggleTitle, () => {
 });
 
 const valueEditorTitle = AntDValueEditor.displayName;
+describe(`${valueEditorTitle} as switch`, () => {
+  const props: ValueEditorProps = {
+    ...defaultValueEditorProps,
+    title: valueEditorTitle,
+    type: 'switch',
+  };
+
+  it('should have the value passed in', () => {
+    const { getByTitle } = render(<AntDValueEditor {...props} value />);
+    expect(getByTitle(valueEditorTitle)).toBeDefined();
+  });
+
+  it('should have the className passed into the <label />', () => {
+    const { getByTitle } = render(<AntDValueEditor {...props} className="foo" />);
+    expect(getByTitle(valueEditorTitle)).toHaveClass('foo');
+  });
+
+  it('should call the onChange method passed in', () => {
+    const onChange = jest.fn();
+    const { getByTitle } = render(<AntDValueEditor {...props} handleOnChange={onChange} />);
+    userEvent.click(getByTitle(valueEditorTitle));
+    expect(onChange).toHaveBeenCalledWith(true);
+  });
+
+  it('should be disabled by disabled prop', () => {
+    const onChange = jest.fn();
+    const { getByTitle } = render(
+      <AntDValueEditor {...props} handleOnChange={onChange} disabled />
+    );
+    expect(getByTitle(valueEditorTitle)).toBeDisabled();
+    userEvent.click(getByTitle(valueEditorTitle));
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
 describe(`${valueEditorTitle} date/time pickers`, () => {
   const props: ValueEditorProps = { ...defaultValueEditorProps, title: valueEditorTitle };
   const today = moment().format(moment.HTML5_FMT.DATE);

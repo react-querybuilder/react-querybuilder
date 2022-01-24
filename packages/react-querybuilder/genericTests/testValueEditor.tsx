@@ -10,6 +10,7 @@ type ValueEditorTestsToSkip = Partial<{
   checkbox: boolean;
   radio: boolean;
   textarea: boolean;
+  switch: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: NameLabelPair[] | OptionGroup[];
@@ -31,6 +32,35 @@ export const testValueEditor = (
 ) => {
   const title = ValueEditor.displayName ?? 'ValueEditor';
   const props = { ...defaultValueEditorProps, title };
+
+  const testCheckbox = (type: 'checkbox' | 'switch') => {
+    it('should render the checkbox and react to changes', () => {
+      const handleOnChange = jest.fn();
+      const { getByTitle } = render(
+        <ValueEditor {...props} type={type} handleOnChange={handleOnChange} />
+      );
+      expect(() => findInput(getByTitle(title))).not.toThrow();
+      expect(findInput(getByTitle(title))).toHaveAttribute('type', 'checkbox');
+      userEvent.click(findInput(getByTitle(title)));
+      expect(handleOnChange).toHaveBeenCalledWith(true);
+    });
+
+    it('should be disabled by the disabled prop', () => {
+      const handleOnChange = jest.fn();
+      const { getByTitle } = render(
+        <ValueEditor {...props} type={type} handleOnChange={handleOnChange} disabled />
+      );
+      expect(findInput(getByTitle(title))).toBeDisabled();
+      try {
+        userEvent.click(findInput(getByTitle(title)));
+      } catch (e: any) {
+        if (!errorMessageIsAboutPointerEventsNone(e)) {
+          throw e;
+        }
+      }
+      expect(handleOnChange).not.toHaveBeenCalled();
+    });
+  };
 
   describe(title, () => {
     (skip.def ? describe.skip : describe)('when using default rendering', () => {
@@ -109,34 +139,17 @@ export const testValueEditor = (
       testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
     }
 
-    (skip.checkbox ? describe.skip : describe)('when rendering a checkbox', () => {
-      it('should render the checkbox and react to changes', () => {
-        const handleOnChange = jest.fn();
-        const { getByTitle } = render(
-          <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} />
-        );
-        expect(() => findInput(getByTitle(title))).not.toThrow();
-        expect(findInput(getByTitle(title))).toHaveAttribute('type', 'checkbox');
-        userEvent.click(findInput(getByTitle(title)));
-        expect(handleOnChange).toHaveBeenCalledWith(true);
+    if (!skip.checkbox) {
+      describe('when rendering as a checkbox', () => {
+        testCheckbox('checkbox');
       });
+    }
 
-      it('should be disabled by the disabled prop', () => {
-        const handleOnChange = jest.fn();
-        const { getByTitle } = render(
-          <ValueEditor {...props} type="checkbox" handleOnChange={handleOnChange} disabled />
-        );
-        expect(findInput(getByTitle(title))).toBeDisabled();
-        try {
-          userEvent.click(findInput(getByTitle(title)));
-        } catch (e: any) {
-          if (!errorMessageIsAboutPointerEventsNone(e)) {
-            throw e;
-          }
-        }
-        expect(handleOnChange).not.toHaveBeenCalled();
+    if (!skip.switch) {
+      describe('when rendering as a switch', () => {
+        testCheckbox('switch');
       });
-    });
+    }
 
     (skip.radio ? describe.skip : describe)('when rendering a radio button set', () => {
       it('should render the radio buttons with labels', () => {
@@ -211,14 +224,14 @@ export const testValueEditor = (
 
     (skip.textarea ? describe.skip : describe)('when rendering a textarea', () => {
       it('should have the value passed into the <input />', () => {
-        const { getByTitle } = render(<ValueEditor {...props} inputType="textarea" value="test" />);
+        const { getByTitle } = render(<ValueEditor {...props} type="textarea" value="test" />);
         expect(findTextarea(getByTitle(title))).toHaveValue('test');
       });
 
       it('should call the onChange method passed in', () => {
         const onChange = jest.fn();
         const { getByTitle } = render(
-          <ValueEditor {...props} inputType="textarea" handleOnChange={onChange} />
+          <ValueEditor {...props} type="textarea" handleOnChange={onChange} />
         );
         userEvent.type(findTextarea(getByTitle(title)), 'foo');
         expect(onChange).toHaveBeenCalledWith('foo');

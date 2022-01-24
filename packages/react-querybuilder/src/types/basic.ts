@@ -1,6 +1,13 @@
 import type { RuleValidator } from './validation';
 
-export type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio' | null;
+export type ValueEditorType =
+  | 'text'
+  | 'select'
+  | 'checkbox'
+  | 'radio'
+  | 'textarea'
+  | 'switch'
+  | null;
 
 export interface NameLabelPair {
   name: string;

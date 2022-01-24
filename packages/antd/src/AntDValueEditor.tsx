@@ -1,4 +1,4 @@
-import { Checkbox, DatePicker, Input, Radio, TimePicker } from 'antd';
+import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
@@ -55,6 +55,29 @@ const AntDValueEditor = ({
         />
       );
 
+    case 'textarea':
+      return (
+        <Input.TextArea
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
+      return (
+        <Switch
+          checked={!!value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          onChange={v => handleOnChange(v)}
+        />
+      );
+
     case 'checkbox':
       return (
         <span title={title} className={className}>
@@ -85,18 +108,6 @@ const AntDValueEditor = ({
   }
 
   switch (inputTypeCoerced) {
-    case 'textarea':
-      return (
-        <Input.TextArea
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
-
     case 'date':
     case 'datetime-local':
       return operator === 'between' || operator === 'notBetween' ? (

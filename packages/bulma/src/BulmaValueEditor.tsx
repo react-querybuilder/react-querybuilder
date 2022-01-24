@@ -49,6 +49,21 @@ export const BulmaValueEditor = ({
         />
       );
 
+    case 'textarea':
+      return (
+        <div className={`${className} control`}>
+          <textarea
+            value={value}
+            title={title}
+            disabled={disabled}
+            className="textarea"
+            placeholder={placeHolderText}
+            onChange={e => handleOnChange(e.target.value)}
+          />
+        </div>
+      );
+
+    case 'switch':
     case 'checkbox':
       return (
         <label title={title} className={`${className} checkbox`}>
@@ -78,21 +93,6 @@ export const BulmaValueEditor = ({
           ))}
         </div>
       );
-  }
-
-  if (inputTypeCoerced === 'textarea') {
-    return (
-      <div className={`${className} control`}>
-        <textarea
-          value={value}
-          title={title}
-          disabled={disabled}
-          className="textarea"
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      </div>
-    );
   }
 
   return (

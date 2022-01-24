@@ -4,6 +4,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Input from '@mui/material/Input';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
@@ -56,6 +57,29 @@ const MaterialValueEditor = ({
         />
       );
 
+    case 'textarea':
+      return (
+        <TextareaAutosize
+          value={value}
+          title={title}
+          disabled={disabled}
+          className={className}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
+      return (
+        <Switch
+          checked={!!value}
+          title={title}
+          disabled={disabled}
+          className={className}
+          onChange={e => handleOnChange(e.target.checked)}
+        />
+      );
+
     case 'checkbox':
       return (
         <Checkbox
@@ -79,33 +103,19 @@ const MaterialValueEditor = ({
       );
   }
 
-  switch (inputTypeCoerced) {
-    case 'textarea':
-      return (
-        <TextareaAutosize
-          value={value}
-          title={title}
-          disabled={disabled}
-          className={className}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
-
-    /**
-     * TODO: support `inputType`s of "date" (`<DatePicker />`), "datetime-local"
-     * (`<DateTimePicker />`), and "time" (`<TimePicker />`) once the components are
-     * out of the MUI "lab" and into MUI core. Add something like this to the README:
-     *
-     * > If you intend to use an inputType of "date", "datetime-local", or "time",
-     * > wrap your `<QueryBuilder />` element in a `LocalizationProvider` (and install
-     * > the date library associated with the selected `dateAdapter`) like this:
-     * >
-     * > <LocalizationProvider dateAdapter={AdapterDateFns}>
-     * >   <QueryBuilder />
-     * > </LocalizationProvider>
-     */
-  }
+  /**
+   * TODO: support `inputType`s of "date" (`<DatePicker />`), "datetime-local"
+   * (`<DateTimePicker />`), and "time" (`<TimePicker />`) once the components are
+   * out of the MUI "lab" and into MUI core. Add something like this to the README:
+   *
+   * > If you intend to use an inputType of "date", "datetime-local", or "time",
+   * > wrap your `<QueryBuilder />` element in a `LocalizationProvider` (and install
+   * > the date library associated with the selected `dateAdapter`) like this:
+   * >
+   * > <LocalizationProvider dateAdapter={AdapterDateFns}>
+   * >   <QueryBuilder />
+   * > </LocalizationProvider>
+   */
 
   return (
     <Input

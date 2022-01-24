@@ -54,6 +54,20 @@ export const ValueEditor = ({
         />
       );
 
+    case 'textarea':
+      return (
+        <textarea
+          data-testid={testID}
+          placeholder={placeHolderText}
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
     case 'checkbox':
       return (
         <input
@@ -85,20 +99,6 @@ export const ValueEditor = ({
             ))}
         </span>
       );
-  }
-
-  if (inputTypeCoerced === 'textarea') {
-    return (
-      <textarea
-        data-testid={testID}
-        placeholder={placeHolderText}
-        value={value}
-        title={title}
-        className={className}
-        disabled={disabled}
-        onChange={e => handleOnChange(e.target.value)}
-      />
-    );
   }
 
   return (

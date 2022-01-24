@@ -47,6 +47,32 @@ export const BootstrapValueEditor = ({
         </select>
       );
 
+    case 'textarea':
+      return (
+        <textarea
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
+      return (
+        <span className={`custom-control custom-switch ${className}`}>
+          <input
+            type="checkbox"
+            className={`form-check-input custom-control-input`}
+            title={title}
+            disabled={disabled}
+            onChange={e => handleOnChange(e.target.checked)}
+            checked={!!value}
+          />
+        </span>
+      );
+
     case 'checkbox':
       return (
         <input
@@ -80,19 +106,6 @@ export const BootstrapValueEditor = ({
           ))}
         </span>
       );
-  }
-
-  if (inputTypeCoerced === 'textarea') {
-    return (
-      <textarea
-        value={value}
-        title={title}
-        className={className}
-        disabled={disabled}
-        placeholder={placeHolderText}
-        onChange={e => handleOnChange(e.target.value)}
-      />
-    );
   }
 
   return (
