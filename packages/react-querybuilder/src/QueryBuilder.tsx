@@ -73,12 +73,16 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   context,
 }: QueryBuilderProps<RG>) => {
   const fields = useMemo(() => {
-    let f = fieldsProp;
+    let f = Array.isArray(fieldsProp)
+      ? fieldsProp
+      : Object.keys(fieldsProp)
+          .map(fld => ({ ...fieldsProp[fld], name: fld }))
+          .sort((a, b) => a.label.localeCompare(b.label));
     if (!autoSelectField) {
-      if (isOptionGroupArray(fieldsProp)) {
-        f = [{ label: '------', options: defaultFields }].concat(fieldsProp);
+      if (isOptionGroupArray(f)) {
+        f = [{ label: '------', options: defaultFields }].concat(f);
       } else {
-        f = defaultFields.concat(fieldsProp);
+        f = defaultFields.concat(f);
       }
     }
     return isOptionGroupArray(f) ? uniqOptGroups(f) : uniqByName(f);

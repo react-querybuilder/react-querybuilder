@@ -305,7 +305,7 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
      * The array of fields that should be used. Each field should be an object
      * with {name: String, label: String}
      */
-    fields?: Field[] | OptionGroup<Field>[];
+    fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
     /**
      * The array of operators that should be used.
      * @default
