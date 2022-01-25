@@ -384,6 +384,9 @@ const App = () => {
             <p>
               <a href="ie11.html">IE-compatible demo</a>
             </p>
+            <p>
+              <a href="umd.html">UMD build demo</a>
+            </p>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
             <ChakraStyleProvider theme={chakraTheme}>
