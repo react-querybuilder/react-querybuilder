@@ -124,7 +124,7 @@ export const optionsMetadata: Record<
 export const styleNameMap: Record<StyleName, string> = {
   default: 'Default',
   bootstrap: 'Bootstrap',
-  material: 'Material',
+  material: 'MUI/Material',
   antd: 'Ant Design',
   chakra: 'Chakra UI',
   bulma: 'Bulma',

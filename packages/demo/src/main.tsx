@@ -413,6 +413,18 @@ const App = () => {
                 </Suspense>
               </MUIThemeProvider>
             </ChakraStyleProvider>
+            {style !== 'default' && (
+              <>
+                To use the official React Query Builder components for {styleNameMap[style]} in your
+                project, install{' '}
+                <Link
+                  target="_blank"
+                  href={`https://www.npmjs.com/package/@react-querybuilder/${style}`}>
+                  @react-querybuilder/{style}
+                </Link>
+                .
+              </>
+            )}
             <Divider />
             {format === 'mongodb' ? (
               <pre id="formatQuery-output">{formatString}</pre>
