@@ -2,9 +2,9 @@ import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import AntDValueSelector from './AntDValueSelector';
+import { AntDValueSelector } from './AntDValueSelector';
 
-const AntDValueEditor = ({
+export const AntDValueEditor = ({
   fieldData,
   operator,
   value,
@@ -43,6 +43,7 @@ const AntDValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <AntDValueSelector
           {...props}
@@ -52,6 +53,7 @@ const AntDValueEditor = ({
           value={value}
           title={title}
           disabled={disabled}
+          multiple={type === 'multiselect'}
         />
       );
 
@@ -162,5 +164,3 @@ const AntDValueEditor = ({
 };
 
 AntDValueEditor.displayName = 'AntDValueEditor';
-
-export default AntDValueEditor;

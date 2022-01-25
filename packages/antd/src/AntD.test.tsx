@@ -65,10 +65,23 @@ const testAntDValueSelector = (
       expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
     });
 
-    it('should have the value passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} value={testVal.name} />);
-      expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
-    });
+    if (('values' in props && props.type === 'multiselect') || 'options' in props) {
+      it('should have the values passed into the <select multiple />', () => {
+        const value = testValues.map(v => v.name).join(',');
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
+        expect(
+          getByTitle(props.title).querySelectorAll('.ant-select-selection-item-content')
+        ).toHaveLength(testValues.length);
+      });
+    }
+
+    if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
+      it('should have the value passed into the <select />', () => {
+        const { getByTitle } = render(<Component {...props} value={testVal.name} />);
+        expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
+      });
+    }
 
     it('should call the onChange method passed in', async () => {
       const handleOnChange = jest.fn();
@@ -118,16 +131,6 @@ const testAntDValueSelector = (
     });
   });
 };
-
-testActionElement(AntDActionElement);
-testDragHandle(AntDDragHandle);
-testValueEditor(AntDValueEditor, { select: true, switch: true });
-testAntDValueSelector(
-  `${antdValueEditorProps.title} (as ValueSelector)`,
-  AntDValueEditor,
-  antdValueEditorProps
-);
-testAntDValueSelector(antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps);
 
 const notToggleTitle = AntDNotToggle.displayName;
 describe(notToggleTitle, () => {
@@ -320,3 +323,19 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(onChange).toHaveBeenCalledWith('');
   });
 });
+
+testActionElement(AntDActionElement);
+testDragHandle(AntDDragHandle);
+testValueEditor(AntDValueEditor, { multiselect: true, select: true, switch: true });
+const valueEditorAsSelectTitle = `${antdValueEditorProps.title} (as ValueSelector)`;
+testAntDValueSelector(valueEditorAsSelectTitle, AntDValueEditor, {
+  ...antdValueEditorProps,
+  title: valueEditorAsSelectTitle,
+});
+const valueEditorAsMultiselectTitle = `${antdValueEditorProps.title} (as ValueSelector multiselect)`;
+testAntDValueSelector(valueEditorAsMultiselectTitle, AntDValueEditor, {
+  ...antdValueEditorProps,
+  title: valueEditorAsMultiselectTitle,
+  type: 'multiselect',
+});
+testAntDValueSelector(antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps);

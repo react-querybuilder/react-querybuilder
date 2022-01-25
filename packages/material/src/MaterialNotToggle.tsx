@@ -2,7 +2,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import type { NotToggleProps } from 'react-querybuilder';
 
-const MaterialNotToggle = ({
+export const MaterialNotToggle = ({
   className,
   handleOnChange,
   label,
@@ -20,5 +20,3 @@ const MaterialNotToggle = ({
 );
 
 MaterialNotToggle.displayName = 'MaterialNotToggle';
-
-export default MaterialNotToggle;

@@ -1,6 +1,6 @@
 ## @react-querybuilder/antd
 
-Official [Ant Design](https://ant.design/) components for [react-querybuilder](https://npmjs.com/package/react-querybuilder).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Ant Design](https://ant.design/).
 
 To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Ant Design" from the Style drop-down.
 
@@ -16,17 +16,11 @@ yarn add react-querybuilder @react-querybuilder/antd @ant-design/icons antd
 
 ```tsx
 import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
-import {
-  AntDActionElement,
-  AntDDragHandle,
-  AntDNotToggle,
-  AntDValueEditor,
-  AntDValueSelector
-} from '@react-querybuilder/antd';
+import { antdControlElements } from '@react-querybuilder/antd';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
-  { name: 'lastName', label: 'Last Name' }
+  { name: 'lastName', label: 'Last Name' },
 ];
 
 const App = () => {
@@ -36,21 +30,8 @@ const App = () => {
     <QueryBuilder
       fields={fields}
       query={query}
-      onQueryChange={(q) => setQuery(q)}
-      controlElements={{
-        addGroupAction: AntDActionElement,
-        addRuleAction: AntDActionElement,
-        cloneGroupAction: AntDActionElement,
-        cloneRuleAction: AntDActionElement,
-        combinatorSelector: AntDValueSelector,
-        fieldSelector: AntDValueSelector,
-        notToggle: AntDNotToggle,
-        operatorSelector: AntDValueSelector,
-        removeGroupAction: AntDActionElement,
-        removeRuleAction: AntDActionElement,
-        valueEditor: AntDValueEditor,
-        dragHandle: AntDDragHandle
-      }}
+      onQueryChange={q => setQuery(q)}
+      controlElements={antdControlElements}
     />
   );
 };

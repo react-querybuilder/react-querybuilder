@@ -36,4 +36,4 @@ testActionElement(generateWrapper(ChakraActionElement));
 testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(ChakraNotToggle));
 testValueEditor(generateWrapper(ChakraValueEditor));
-testValueSelector(generateWrapper(ChakraValueSelector));
+testValueSelector(generateWrapper(ChakraValueSelector), { multi: true });

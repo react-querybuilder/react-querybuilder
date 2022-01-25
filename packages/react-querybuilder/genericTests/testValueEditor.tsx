@@ -7,6 +7,7 @@ import { errorMessageIsAboutPointerEventsNone, findInput, findTextarea } from '.
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
   select: boolean;
+  multiselect: boolean;
   checkbox: boolean;
   radio: boolean;
   textarea: boolean;
@@ -137,6 +138,18 @@ export const testValueEditor = (
         testID: 'value-editor',
       };
       testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
+    }
+
+    if (!skip.multiselect) {
+      const titleForSelectorTest = `${title} (as ValueSelector multiselect)`;
+      const valueEditorAsMultiselectProps: ValueEditorAsSelectProps = {
+        ...defaultValueEditorProps,
+        type: 'multiselect',
+        values: defaultValueSelectorProps.options,
+        title: titleForSelectorTest,
+        testID: 'value-editor',
+      };
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps);
     }
 
     if (!skip.checkbox) {

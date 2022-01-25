@@ -2,8 +2,6 @@ import { useMemo, type ChangeEvent } from 'react';
 import type { ValueSelectorProps } from '../types';
 import { toOptions } from '../utils';
 
-type CE = ChangeEvent<HTMLSelectElement>;
-
 export const ValueSelector = ({
   className,
   handleOnChange,
@@ -16,7 +14,7 @@ export const ValueSelector = ({
 }: ValueSelectorProps) => {
   const onChange = useMemo(() => {
     if (multiple) {
-      return (e: CE) =>
+      return (e: ChangeEvent<HTMLSelectElement>) =>
         handleOnChange(
           [...e.target.options]
             .filter(o => o.selected)
@@ -24,7 +22,7 @@ export const ValueSelector = ({
             .join(',')
         );
     }
-    return (e: CE) => handleOnChange(e.target.value);
+    return (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value);
   }, [handleOnChange, multiple]);
 
   return (

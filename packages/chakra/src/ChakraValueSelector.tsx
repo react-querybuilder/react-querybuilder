@@ -2,7 +2,7 @@ import { Select } from '@chakra-ui/react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 
-const ChakraValueSelector = ({
+export const ChakraValueSelector = ({
   className,
   handleOnChange,
   options,
@@ -23,5 +23,3 @@ const ChakraValueSelector = ({
 );
 
 ChakraValueSelector.displayName = 'ChakraValueSelector';
-
-export default ChakraValueSelector;

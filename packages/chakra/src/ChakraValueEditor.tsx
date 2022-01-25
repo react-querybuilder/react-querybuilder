@@ -1,9 +1,9 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
-import ChakraValueSelector from './ChakraValueSelector';
+import { ValueEditorProps, ValueSelector } from 'react-querybuilder';
+import { ChakraValueSelector } from './ChakraValueSelector';
 
-const ChakraValueEditor = ({
+export const ChakraValueEditor = ({
   fieldData,
   operator,
   value,
@@ -47,6 +47,20 @@ const ChakraValueEditor = ({
           disabled={disabled}
           handleOnChange={handleOnChange}
           options={values!}
+        />
+      );
+
+    case 'multiselect':
+      return (
+        <ValueSelector
+          {...props}
+          className={className}
+          title={title}
+          value={value}
+          disabled={disabled}
+          handleOnChange={handleOnChange}
+          options={values!}
+          multiple
         />
       );
 
@@ -123,5 +137,3 @@ const ChakraValueEditor = ({
 };
 
 ChakraValueEditor.displayName = 'ChakraValueEditor';
-
-export default ChakraValueEditor;

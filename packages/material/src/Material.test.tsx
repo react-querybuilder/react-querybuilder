@@ -60,41 +60,56 @@ const testMaterialValueSelector = (
   props: any
 ) => {
   const testValues: NameLabelPair[] = props.values ?? props.options;
-  const [firstVal, secondVal] = testValues;
+  const [firstNameLabel, secondNameLabel] = testValues;
+  const isMulti = ('values' in props && props.type === 'multiselect') || props.multiple;
 
   describe(title, () => {
     it('should render the correct number of options', () => {
-      const { getByRole } = render(<Component {...props} value={firstVal.name} />);
+      const { getByRole } = render(<Component {...props} value={firstNameLabel.name} />);
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option')).toHaveLength(2);
     });
 
     it('should have the options passed into the <select />', () => {
-      const { getByRole } = render(<Component {...props} value={firstVal.name} />);
+      const { getByRole } = render(<Component {...props} value={firstNameLabel.name} />);
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
-      expect(() => listbox.getByText(secondVal.label)).not.toThrow();
+      expect(() => listbox.getByText(secondNameLabel.label)).not.toThrow();
     });
 
-    it('should have the value passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} value={secondVal.name} />);
-      expect(getByTitle(props.title)).toHaveTextContent(secondVal.label);
-    });
+    if (('values' in props && props.type === 'multiselect') || 'options' in props) {
+      it('should have the values passed into the <select multiple />', () => {
+        const value = testValues.map(v => v.name).join(',');
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
+        expect(getByTitle(title)).toHaveTextContent(testValues.map(v => v.label).join(', '));
+      });
+    }
+    if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
+      it('should have the value passed into the <select />', () => {
+        const { getByTitle } = render(<Component {...props} value={secondNameLabel.name} />);
+        expect(getByTitle(props.title)).toHaveTextContent(secondNameLabel.label);
+      });
+    }
 
     it('should call the onChange method passed in', () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(
-        <Component {...props} value={firstVal.name} handleOnChange={handleOnChange} />
+        <Component {...props} value={firstNameLabel.name} handleOnChange={handleOnChange} />
       );
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
-      userEvent.click(listbox.getByText(secondVal.label));
-      expect(handleOnChange).toHaveBeenCalledWith(secondVal.name);
+      userEvent.click(listbox.getByText(secondNameLabel.label));
+      expect(handleOnChange).toHaveBeenCalledWith(
+        isMulti ? `${firstNameLabel.name},${secondNameLabel.name}` : secondNameLabel.name
+      );
     });
 
     it('should have the className passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} className="foo" value={firstVal.name} />);
+      const { getByTitle } = render(
+        <Component {...props} className="foo" value={firstNameLabel.name} />
+      );
       expect(getByTitle(props.title)).toHaveClass('foo');
     });
 
@@ -103,19 +118,24 @@ const testMaterialValueSelector = (
         { label: 'Test Option Group', options: props.values ?? props.options },
       ];
       const newProps = { ...props, values: optGroups, options: optGroups };
-      const { getByRole } = render(<Component {...newProps} />);
+      const { getByRole } = render(<Component {...newProps} value={isMulti ? [] : undefined} />);
       userEvent.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
-      expect(() => listbox.getByText(secondVal.label)).not.toThrow();
+      expect(() => listbox.getByText(secondNameLabel.label)).not.toThrow();
       expect(getByRole('listbox').querySelectorAll('li')).toHaveLength(3);
       expect(listbox.getAllByRole('option')).toHaveLength(3);
-      expect(listbox.getAllByRole('option')[2]).toHaveTextContent(secondVal.label);
+      expect(listbox.getAllByRole('option')[2]).toHaveTextContent(secondNameLabel.label);
     });
 
     it('should be disabled by the disabled prop', () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(
-        <Component {...props} handleOnChange={handleOnChange} disabled value={firstVal.name} />
+        <Component
+          {...props}
+          handleOnChange={handleOnChange}
+          disabled
+          value={firstNameLabel.name}
+        />
       );
       expect(getByRole('button')).toHaveAttribute('aria-disabled', 'true');
       userEvent.click(getByRole('button'));
@@ -128,12 +148,18 @@ const testMaterialValueSelector = (
 testActionElement(generateWrapper(MaterialActionElement));
 testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(MaterialNotToggle));
-testValueEditor(generateWrapper(MaterialValueEditor), { select: true });
-testMaterialValueSelector(
-  `${materialValueEditorProps.title} (as ValueSelector)`,
-  MaterialValueEditor,
-  materialValueEditorProps
-);
+testValueEditor(generateWrapper(MaterialValueEditor), { select: true, multiselect: true });
+const valueEditorAsSelectTitle = `${materialValueEditorProps.title} (as ValueSelector)`;
+testMaterialValueSelector(valueEditorAsSelectTitle, MaterialValueEditor, {
+  ...materialValueEditorProps,
+  title: valueEditorAsSelectTitle,
+});
+const valueEditorAsMultiselectTitle = `${materialValueEditorProps.title} (as ValueSelector multiselect)`;
+testMaterialValueSelector(valueEditorAsMultiselectTitle, MaterialValueEditor, {
+  ...materialValueEditorProps,
+  title: valueEditorAsMultiselectTitle,
+  type: 'multiselect',
+});
 testMaterialValueSelector(
   materialValueSelectorProps.title!,
   MaterialValueSelector,

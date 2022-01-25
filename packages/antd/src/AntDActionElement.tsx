@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import type { ActionProps } from 'react-querybuilder';
 
-const AntDActionElement = ({
+export const AntDActionElement = ({
   className,
   handleOnClick,
   label,
@@ -20,5 +20,3 @@ const AntDActionElement = ({
 );
 
 AntDActionElement.displayName = 'AntDActionElement';
-
-export default AntDActionElement;

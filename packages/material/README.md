@@ -1,6 +1,6 @@
 ## @react-querybuilder/material
 
-Official [MUI](https://mui.com/)/[Material Design](https://material.io/design) components for [react-querybuilder](https://npmjs.com/package/react-querybuilder).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [MUI](https://mui.com/)/[Material Design](https://material.io/design).
 
 To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Material" from the Style drop-down.
 
@@ -16,17 +16,11 @@ yarn add react-querybuilder @react-querybuilder/material @mui/icons-material @mu
 
 ```tsx
 import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
-import {
-  MaterialActionElement,
-  MaterialDragHandle,
-  MaterialNotToggle,
-  MaterialValueEditor,
-  MaterialValueSelector
-} from '@react-querybuilder/material';
+import { materialControlElements } from '@react-querybuilder/material';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
-  { name: 'lastName', label: 'Last Name' }
+  { name: 'lastName', label: 'Last Name' },
 ];
 
 const App = () => {
@@ -36,21 +30,8 @@ const App = () => {
     <QueryBuilder
       fields={fields}
       query={query}
-      onQueryChange={(q) => setQuery(q)}
-      controlElements={{
-        addGroupAction: MaterialActionElement,
-        addRuleAction: MaterialActionElement,
-        cloneGroupAction: MaterialActionElement,
-        cloneRuleAction: MaterialActionElement,
-        combinatorSelector: MaterialValueSelector,
-        fieldSelector: MaterialValueSelector,
-        notToggle: MaterialNotToggle,
-        operatorSelector: MaterialValueSelector,
-        removeGroupAction: MaterialActionElement,
-        removeRuleAction: MaterialActionElement,
-        valueEditor: MaterialValueEditor,
-        dragHandle: MaterialDragHandle
-      }}
+      onQueryChange={q => setQuery(q)}
+      controlElements={materialControlElements}
     />
   );
 };

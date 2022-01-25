@@ -8,9 +8,9 @@ import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import MaterialValueSelector from './MaterialValueSelector';
+import { MaterialValueSelector } from './MaterialValueSelector';
 
-const MaterialValueEditor = ({
+export const MaterialValueEditor = ({
   fieldData,
   operator,
   value,
@@ -45,6 +45,7 @@ const MaterialValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <MaterialValueSelector
           {...props}
@@ -54,6 +55,7 @@ const MaterialValueEditor = ({
           value={value}
           disabled={disabled}
           title={title}
+          multiple={type === 'multiselect'}
         />
       );
 
@@ -131,5 +133,3 @@ const MaterialValueEditor = ({
 };
 
 MaterialValueEditor.displayName = 'MaterialValueEditor';
-
-export default MaterialValueEditor;

@@ -37,6 +37,7 @@ export const BulmaValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <BulmaValueSelector
           {...props}
@@ -46,6 +47,7 @@ export const BulmaValueEditor = ({
           options={values!}
           value={value}
           disabled={disabled}
+          multiple={type === 'multiselect'}
         />
       );
 

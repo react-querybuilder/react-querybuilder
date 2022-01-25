@@ -3,6 +3,10 @@ import userEvent from '@testing-library/user-event';
 import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '../src/types';
 import { findSelect } from './utils';
 
+type ValueSelectorTestsToSkip = Partial<{
+  multi: boolean;
+}>;
+
 export const defaultValueSelectorProps: ValueSelectorProps = {
   handleOnChange: () => {},
   options: [
@@ -16,9 +20,9 @@ export const defaultValueSelectorProps: ValueSelectorProps = {
 export const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  props: any
+  props: any,
+  skip: ValueSelectorTestsToSkip = {}
 ) => {
-  const testingValueEditor = /ValueEditor/.test(title);
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 
@@ -48,18 +52,27 @@ export const testSelect = (
       expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
     });
 
-    it('should have the value passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} value={testVal.name} />);
-      expect(findSelect(getByTitle(title))).toHaveValue(testVal.name);
-    });
+    // Test as multiselect for <ValueEditor type="multiselect" /> and <ValueSelector />
+    if (
+      !skip.multi &&
+      (('values' in props && props.type === 'multiselect') || 'options' in props)
+    ) {
+      it('should have the values passed into the <select multiple />', () => {
+        const value = testValues.map(v => v.name).join(',');
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
+        expect(findSelect(getByTitle(title))).toHaveProperty('multiple', true);
+        expect(findSelect(getByTitle(title)).selectedOptions.length).toBe(testValues.length);
+      });
+    }
 
-    it('should have the values passed into the <select multiple />', () => {
-      const value = testValues.map(v => v.name).join(',');
-      const multiselectProps = testingValueEditor ? { type: 'multiselect' } : { multiple: true };
-      const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
-      expect(findSelect(getByTitle(title))).toHaveProperty('multiple', true);
-      expect(findSelect(getByTitle(title)).selectedOptions.length).toBe(testValues.length);
-    });
+    // Test as single-value selector
+    if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
+      it('should have the value passed into the <select />', () => {
+        const { getByTitle } = render(<Component {...props} value={testVal.name} />);
+        expect(findSelect(getByTitle(title))).toHaveValue(testVal.name);
+      });
+    }
 
     it('should have the className passed into the <select />', () => {
       const { getByTitle } = render(<Component {...props} className="foo" />);
@@ -83,9 +96,12 @@ export const testSelect = (
   });
 };
 
-export const testValueSelector = (ValueSelector: React.ComponentType<ValueSelectorProps>) => {
+export const testValueSelector = (
+  ValueSelector: React.ComponentType<ValueSelectorProps>,
+  skip: ValueSelectorTestsToSkip = {}
+) => {
   const title = ValueSelector.displayName ?? 'ValueSelector';
   const props = { ...defaultValueSelectorProps, title };
 
-  testSelect(title, ValueSelector, props);
+  testSelect(title, ValueSelector, props, skip);
 };

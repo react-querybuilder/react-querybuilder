@@ -3,7 +3,7 @@ import { IconButton } from '@chakra-ui/react';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-const ChakraDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
+export const ChakraDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
   ({ className, title, disabled }, dragRef) => (
     <span ref={dragRef} className={className} title={title}>
       <IconButton
@@ -17,5 +17,3 @@ const ChakraDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
 );
 
 ChakraDragHandle.displayName = 'ChakraDragHandle';
-
-export default ChakraDragHandle;

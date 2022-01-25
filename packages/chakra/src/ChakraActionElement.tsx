@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import type { ActionProps } from 'react-querybuilder';
 
-const ChakraActionElement = ({
+export const ChakraActionElement = ({
   className,
   handleOnClick,
   label,
@@ -22,5 +22,3 @@ const ChakraActionElement = ({
 );
 
 ChakraActionElement.displayName = 'ChakraActionElement';
-
-export default ChakraActionElement;
