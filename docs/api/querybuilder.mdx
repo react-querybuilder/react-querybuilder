@@ -21,9 +21,9 @@ When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](
 
 ### `fields`
 
-`Field[] | OptionGroup<Field>[]`
+`Field[] | OptionGroup<Field>[] | Record<string, Field>`
 
-The array of [fields](../typescript#fields) that should be used, or an array of [option groups](../typescript#miscellaneous) containing arrays of fields.
+The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](#fieldselector) will be sorted alphabetically by the `label` property.)
 
 :::tip
 
