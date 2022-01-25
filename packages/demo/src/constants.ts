@@ -1,10 +1,9 @@
-import { generateID } from 'react-querybuilder';
+import { convertToIC, generateID } from 'react-querybuilder';
 import type {
   ExportFormat,
   Field,
   QueryBuilderProps,
   RuleGroupType,
-  RuleGroupTypeIC,
   RuleType,
 } from 'react-querybuilder/src/types';
 import { musicalInstruments } from './musicalInstruments';
@@ -169,6 +168,10 @@ export const fields: Field[] = [
   },
   { name: 'height', label: 'Height', validator },
   { name: 'job', label: 'Job', validator },
+  { name: 'description', label: 'Description', valueEditorType: 'textarea' },
+  { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
+  { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
+  { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
 ];
 
 export const initialQuery: RuleGroupType = {
@@ -215,50 +218,7 @@ export const initialQuery: RuleGroupType = {
   ],
 };
 
-export const initialQueryIC: RuleGroupTypeIC = {
-  not: false,
-  rules: [
-    {
-      id: generateID(),
-      field: 'firstName',
-      value: 'Stev',
-      operator: 'beginsWith',
-    },
-    'and',
-    {
-      id: generateID(),
-      field: 'lastName',
-      value: 'Vai, Vaughan',
-      operator: 'in',
-    },
-    'and',
-    {
-      id: generateID(),
-      field: 'age',
-      operator: '>',
-      value: '28',
-    },
-    'and',
-    {
-      id: generateID(),
-      rules: [
-        {
-          id: generateID(),
-          field: 'isMusician',
-          operator: '=',
-          value: true,
-        },
-        'or',
-        {
-          id: generateID(),
-          field: 'instrument',
-          operator: '=',
-          value: 'Guitar',
-        },
-      ],
-    },
-  ],
-};
+export const initialQueryIC = convertToIC(initialQuery);
 
 export const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'json_without_ids', lbl: 'JSON without identifiers' },

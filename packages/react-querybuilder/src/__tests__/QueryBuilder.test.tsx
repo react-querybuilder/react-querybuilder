@@ -90,6 +90,20 @@ describe('when initial query with duplicate fields is provided', () => {
   });
 });
 
+describe('when initial query with fields object is provided', () => {
+  it('passes down fields sorted by label using the key as name', () => {
+    const { getByTestId } = render(
+      <QueryBuilder
+        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
+      />
+    );
+    userEvent.click(getByTestId(TestID.addRule));
+    expect(() => getByTestId(TestID.rule)).not.toThrow();
+    expect(getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(2);
+    // TODO: test sort
+  });
+});
+
 describe('when initial query, without ID, is provided', () => {
   const queryWithoutID: RuleGroupType = {
     combinator: 'and',

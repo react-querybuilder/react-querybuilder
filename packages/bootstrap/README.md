@@ -1,6 +1,6 @@
 ## @react-querybuilder/bootstrap
 
-Official [Bootstrap](https://getbootstrap.com/) components for [react-querybuilder](https://npmjs.com/package/react-querybuilder).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Bootstrap](https://getbootstrap.com/).
 
 To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Bootstrap" from the Style drop-down.
 
@@ -17,14 +17,13 @@ yarn add react-querybuilder @react-querybuilder/bootstrap bootstrap bootstrap-ic
 ```tsx
 import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 import {
-  BootstrapDragHandle,
-  BootstrapNotToggle,
-  BootstrapValueEditor
+  bootstrapControlClassnames,
+  bootstrapControlElements,
 } from '@react-querybuilder/bootstrap';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
-  { name: 'lastName', label: 'Last Name' }
+  { name: 'lastName', label: 'Last Name' },
 ];
 
 const App = () => {
@@ -34,24 +33,9 @@ const App = () => {
     <QueryBuilder
       fields={fields}
       query={query}
-      onQueryChange={(q) => setQuery(q)}
-      controlClassnames={{
-        addGroup: 'btn btn-secondary btn-sm',
-        addRule: 'btn btn-primary btn-sm',
-        cloneGroup: 'btn btn-secondary btn-sm',
-        cloneRule: 'btn btn-secondary btn-sm',
-        removeGroup: 'btn btn-danger btn-sm',
-        removeRule: 'btn btn-danger btn-sm',
-        combinators: 'form-select form-select-sm',
-        fields: 'form-select form-select-sm',
-        operators: 'form-select form-select-sm',
-        value: 'form-control form-control-sm'
-      }}
-      controlElements={{
-        dragHandle: BootstrapDragHandle,
-        notToggle: BootstrapNotToggle,
-        valueEditor: BootstrapValueEditor
-      }}
+      onQueryChange={q => setQuery(q)}
+      controlClassnames={bootstrapControlClassnames}
+      controlElements={bootstrapControlElements}
     />
   );
 };

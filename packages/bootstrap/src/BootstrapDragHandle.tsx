@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-const BootstrapDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
+export const BootstrapDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
   ({ className, title }, dragRef) => (
     <span ref={dragRef} className={className} title={title}>
       <i className="bi bi-grip-vertical"></i>
@@ -10,5 +10,3 @@ const BootstrapDragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
 );
 
 BootstrapDragHandle.displayName = 'BootstrapDragHandle';
-
-export default BootstrapDragHandle;

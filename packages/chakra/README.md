@@ -1,6 +1,6 @@
 ## @react-querybuilder/chakra
 
-Official [Chakra UI](https://chakra-ui.com/) components for [react-querybuilder](https://npmjs.com/package/react-querybuilder).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Chakra UI](https://chakra-ui.com/).
 
 To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Chakra UI" from the Style drop-down.
 
@@ -16,17 +16,11 @@ yarn add react-querybuilder @react-querybuilder/chakra @chakra-ui/icons @chakra-
 
 ```tsx
 import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
-import {
-  ChakraActionElement,
-  ChakraDragHandle,
-  ChakraNotToggle,
-  ChakraValueEditor,
-  ChakraValueSelector
-} from '@react-querybuilder/chakra';
+import { chakraControlElements } from '@react-querybuilder/chakra';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
-  { name: 'lastName', label: 'Last Name' }
+  { name: 'lastName', label: 'Last Name' },
 ];
 
 const App = () => {
@@ -36,21 +30,8 @@ const App = () => {
     <QueryBuilder
       fields={fields}
       query={query}
-      onQueryChange={(q) => setQuery(q)}
-      controlElements={{
-        addGroupAction: ChakraActionElement,
-        addRuleAction: ChakraActionElement,
-        cloneGroupAction: ChakraActionElement,
-        cloneRuleAction: ChakraActionElement,
-        combinatorSelector: ChakraValueSelector,
-        fieldSelector: ChakraValueSelector,
-        notToggle: ChakraNotToggle,
-        operatorSelector: ChakraValueSelector,
-        removeGroupAction: ChakraActionElement,
-        removeRuleAction: ChakraActionElement,
-        valueEditor: ChakraValueEditor,
-        dragHandle: ChakraDragHandle
-      }}
+      onQueryChange={q => setQuery(q)}
+      controlElements={chakraControlElements}
     />
   );
 };

@@ -1,7 +1,7 @@
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 import type { ActionProps } from 'react-querybuilder';
 
-const MaterialActionElement = ({
+export const MaterialActionElement = ({
   className,
   handleOnClick,
   label,
@@ -22,5 +22,3 @@ const MaterialActionElement = ({
 );
 
 MaterialActionElement.displayName = 'MaterialActionElement';
-
-export default MaterialActionElement;

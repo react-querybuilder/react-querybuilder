@@ -1,9 +1,9 @@
-import { Checkbox, Input, Radio, RadioGroup, Stack } from '@chakra-ui/react';
+import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
-import ChakraValueSelector from './ChakraValueSelector';
+import { ValueEditorProps, ValueSelector } from 'react-querybuilder';
+import { ChakraValueSelector } from './ChakraValueSelector';
 
-const ChakraValueEditor = ({
+export const ChakraValueEditor = ({
   fieldData,
   operator,
   value,
@@ -50,6 +50,46 @@ const ChakraValueEditor = ({
         />
       );
 
+    case 'multiselect':
+      return (
+        <ValueSelector
+          {...props}
+          className={className}
+          title={title}
+          value={value}
+          disabled={disabled}
+          handleOnChange={handleOnChange}
+          options={values!}
+          multiple
+        />
+      );
+
+    case 'textarea':
+      return (
+        <Textarea
+          value={value}
+          title={title}
+          size="xs"
+          variant="filled"
+          isDisabled={disabled}
+          className={className}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
+      return (
+        <Switch
+          className={className}
+          isChecked={!!value}
+          title={title}
+          size="sm"
+          isDisabled={disabled}
+          onChange={e => handleOnChange(e.target.checked)}
+        />
+      );
+
     case 'checkbox':
       return (
         <Checkbox
@@ -79,24 +119,21 @@ const ChakraValueEditor = ({
           </Stack>
         </RadioGroup>
       );
-
-    default:
-      return (
-        <Input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          size="xs"
-          variant="filled"
-          isDisabled={disabled}
-          className={className}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  return (
+    <Input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      size="xs"
+      variant="filled"
+      isDisabled={disabled}
+      className={className}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 ChakraValueEditor.displayName = 'ChakraValueEditor';
-
-export default ChakraValueEditor;

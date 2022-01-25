@@ -1,7 +1,7 @@
 import { Switch } from 'antd';
 import type { NotToggleProps } from 'react-querybuilder';
 
-const AntDNotToggle = ({
+export const AntDNotToggle = ({
   className,
   handleOnChange,
   label,
@@ -21,5 +21,3 @@ const AntDNotToggle = ({
 );
 
 AntDNotToggle.displayName = 'AntDNotToggle';
-
-export default AntDNotToggle;

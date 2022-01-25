@@ -2,7 +2,7 @@ import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { useRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
-const ChakraNotToggle = ({
+export const ChakraNotToggle = ({
   className,
   handleOnChange,
   label,
@@ -35,5 +35,3 @@ const ChakraNotToggle = ({
 };
 
 ChakraNotToggle.displayName = 'ChakraNotToggle';
-
-export default ChakraNotToggle;

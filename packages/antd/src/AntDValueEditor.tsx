@@ -1,9 +1,10 @@
-import { Checkbox, Input, Radio } from 'antd';
+import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
+import moment from 'moment';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import AntDValueSelector from './AntDValueSelector';
+import { AntDValueSelector } from './AntDValueSelector';
 
-const AntDValueEditor = ({
+export const AntDValueEditor = ({
   fieldData,
   operator,
   value,
@@ -32,12 +33,17 @@ const AntDValueEditor = ({
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
-    ? 'text'
-    : inputType || 'text';
+  const inputTypeCoerced =
+    ['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
+    // This next line is not in the default ValueEditor -- we can use
+    // antd's RangePicker to handle "between" and "notBetween".
+    !['date', 'datetime-local'].includes(`${inputType}`)
+      ? 'text'
+      : inputType || 'text';
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <AntDValueSelector
           {...props}
@@ -47,15 +53,38 @@ const AntDValueEditor = ({
           value={value}
           title={title}
           disabled={disabled}
+          multiple={type === 'multiselect'}
+        />
+      );
+
+    case 'textarea':
+      return (
+        <Input.TextArea
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
+      return (
+        <Switch
+          checked={!!value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          onChange={v => handleOnChange(v)}
         />
       );
 
     case 'checkbox':
       return (
-        <span title={title}>
+        <span title={title} className={className}>
           <Checkbox
             type="checkbox"
-            className={className}
             disabled={disabled}
             onChange={e => handleOnChange(e.target.checked)}
             checked={!!value}
@@ -78,22 +107,60 @@ const AntDValueEditor = ({
           ))}
         </span>
       );
+  }
 
-    default:
-      return (
-        <Input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
+  switch (inputTypeCoerced) {
+    case 'date':
+    case 'datetime-local':
+      return operator === 'between' || operator === 'notBetween' ? (
+        <DatePicker.RangePicker
+          value={
+            typeof value === 'string' && /^[^,]+,[^,]+$/.test(value)
+              ? (value.split(',').map(v => moment(v)) as [moment.Moment, moment.Moment])
+              : undefined
+          }
+          showTime={inputTypeCoerced === 'datetime-local'}
+          className={className}
+          disabled={disabled}
+          placeholder={[placeHolderText, placeHolderText]}
+          onChange={dates =>
+            handleOnChange(dates?.map(d => d?.format(moment.HTML5_FMT.DATE)).join(','))
+          }
+        />
+      ) : (
+        <DatePicker
+          value={value ? moment(value) : null}
+          showTime={inputTypeCoerced === 'datetime-local'}
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
+          onChange={(_d, dateString) => handleOnChange(dateString)}
+        />
+      );
+
+    case 'time':
+      return (
+        <TimePicker
+          value={value ? moment(value, 'HH:mm') : null}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={d => handleOnChange(d?.format('HH:mm') ?? '')}
         />
       );
   }
+
+  return (
+    <Input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      className={className}
+      disabled={disabled}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 AntDValueEditor.displayName = 'AntDValueEditor';
-
-export default AntDValueEditor;

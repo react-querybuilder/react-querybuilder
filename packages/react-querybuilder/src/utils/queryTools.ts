@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import {
   NameLabelPair,

@@ -41,6 +41,7 @@ export const ValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <ValueSelector
           {...props}
@@ -51,9 +52,24 @@ export const ValueEditor = ({
           disabled={disabled}
           value={value}
           options={values!}
+          multiple={type === 'multiselect'}
         />
       );
 
+    case 'textarea':
+      return (
+        <textarea
+          data-testid={testID}
+          placeholder={placeHolderText}
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
     case 'checkbox':
       return (
         <input
@@ -85,21 +101,20 @@ export const ValueEditor = ({
             ))}
         </span>
       );
-
-    default:
-      return (
-        <input
-          data-testid={testID}
-          type={inputTypeCoerced}
-          placeholder={placeHolderText}
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  return (
+    <input
+      data-testid={testID}
+      type={inputTypeCoerced}
+      placeholder={placeHolderText}
+      value={value}
+      title={title}
+      className={className}
+      disabled={disabled}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 ValueEditor.displayName = 'ValueEditor';

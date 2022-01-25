@@ -37,6 +37,7 @@ export const BulmaValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
         <BulmaValueSelector
           {...props}
@@ -46,9 +47,25 @@ export const BulmaValueEditor = ({
           options={values!}
           value={value}
           disabled={disabled}
+          multiple={type === 'multiselect'}
         />
       );
 
+    case 'textarea':
+      return (
+        <div className={`${className} control`}>
+          <textarea
+            value={value}
+            title={title}
+            disabled={disabled}
+            className="textarea"
+            placeholder={placeHolderText}
+            onChange={e => handleOnChange(e.target.value)}
+          />
+        </div>
+      );
+
+    case 'switch':
     case 'checkbox':
       return (
         <label title={title} className={`${className} checkbox`}>
@@ -78,22 +95,21 @@ export const BulmaValueEditor = ({
           ))}
         </div>
       );
-
-    default:
-      return (
-        <div className={`${className} control`}>
-          <input
-            type={inputTypeCoerced}
-            value={value}
-            title={title}
-            disabled={disabled}
-            className="input is-small"
-            placeholder={placeHolderText}
-            onChange={e => handleOnChange(e.target.value)}
-          />
-        </div>
-      );
   }
+
+  return (
+    <div className={`${className} control`}>
+      <input
+        type={inputTypeCoerced}
+        value={value}
+        title={title}
+        disabled={disabled}
+        className="input is-small"
+        placeholder={placeHolderText}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+    </div>
+  );
 };
 
 BulmaValueEditor.displayName = 'BulmaValueEditor';

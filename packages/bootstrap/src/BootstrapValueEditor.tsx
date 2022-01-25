@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
-import { toOptions } from './utils';
+import { ValueEditorProps, ValueSelector } from 'react-querybuilder';
 
 export const BootstrapValueEditor = ({
   fieldData,
@@ -13,6 +12,7 @@ export const BootstrapValueEditor = ({
   inputType,
   values,
   disabled,
+  ...props
 }: ValueEditorProps) => {
   useEffect(() => {
     if (
@@ -36,15 +36,44 @@ export const BootstrapValueEditor = ({
 
   switch (type) {
     case 'select':
+    case 'multiselect':
       return (
-        <select
+        <ValueSelector
+          {...props}
           className={`${className} form-select form-select-sm`}
           title={title}
-          onChange={e => handleOnChange(e.target.value)}
+          handleOnChange={handleOnChange}
           value={value}
-          disabled={disabled}>
-          {toOptions(values)}
-        </select>
+          disabled={disabled}
+          multiple={type === 'multiselect'}
+          options={values!}
+        />
+      );
+
+    case 'textarea':
+      return (
+        <textarea
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={e => handleOnChange(e.target.value)}
+        />
+      );
+
+    case 'switch':
+      return (
+        <span className={`custom-control custom-switch ${className}`}>
+          <input
+            type="checkbox"
+            className={`form-check-input custom-control-input`}
+            title={title}
+            disabled={disabled}
+            onChange={e => handleOnChange(e.target.checked)}
+            checked={!!value}
+          />
+        </span>
       );
 
     case 'checkbox':
@@ -80,20 +109,19 @@ export const BootstrapValueEditor = ({
           ))}
         </span>
       );
-
-    default:
-      return (
-        <input
-          type={inputTypeCoerced}
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
-        />
-      );
   }
+
+  return (
+    <input
+      type={inputTypeCoerced}
+      value={value}
+      title={title}
+      className={className}
+      disabled={disabled}
+      placeholder={placeHolderText}
+      onChange={e => handleOnChange(e.target.value)}
+    />
+  );
 };
 
 BootstrapValueEditor.displayName = 'BootstrapValueEditor';

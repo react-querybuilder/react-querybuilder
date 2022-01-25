@@ -1,6 +1,6 @@
 ## @react-querybuilder/bulma
 
-Official [Bulma](https://bulma.io/) components for [react-querybuilder](https://npmjs.com/package/react-querybuilder).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Bulma](https://bulma.io/).
 
 To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Bulma" from the Style drop-down.
 
@@ -16,12 +16,7 @@ yarn add react-querybuilder @react-querybuilder/bulma bulma react-bulma-componen
 
 ```tsx
 import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
-import {
-  BulmaActionElement,
-  BulmaNotToggle,
-  BulmaValueEditor,
-  BulmaValueSelector,
-} from '@react-querybuilder/bulma';
+import { bulmaControlElements } from '@react-querybuilder/bulma';
 import 'bulma/bulma.sass';
 
 const fields = [
@@ -37,19 +32,7 @@ const App = () => {
       fields={fields}
       query={query}
       onQueryChange={q => setQuery(q)}
-      controlElements={{
-        addGroupAction: BulmaActionElement,
-        addRuleAction: BulmaActionElement,
-        cloneGroupAction: BulmaActionElement,
-        cloneRuleAction: BulmaActionElement,
-        combinatorSelector: BulmaValueSelector,
-        fieldSelector: BulmaValueSelector,
-        notToggle: BulmaNotToggle,
-        operatorSelector: BulmaValueSelector,
-        removeGroupAction: BulmaActionElement,
-        removeRuleAction: BulmaActionElement,
-        valueEditor: BulmaValueEditor,
-      }}
+      controlElements={bulmaControlElements}
     />
   );
 };
