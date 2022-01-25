@@ -12,9 +12,12 @@ The [compatibility packages](../compat) also implement these options using appro
 
 :::
 
-_To highlight the value editors, all other components have been disabled or hidden._
+The value actually stored in the rule object within the query is displayed to the right of each value editor. By default, every effort is made to keep the query object serializable. This means that editors that generate non-serializable values (like some date pickers) will store the value as a string, parsing it back into the required object type during the render process. Editors that allow (or require) multiple values, e.g. when the `operator` is "between", will typically store values as comma-separated strings.
+
+_(To highlight the value editors below, all other query builder components have been disabled or hidden.)_
 
 import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed';
+import { ValueEditor } from 'react-querybuilder';
 
 <QueryBuilderEmbed
   getOperators={() => [{ name: '=', label: '=' }]}
@@ -38,6 +41,19 @@ import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed';
     addGroupAction: () => null,
     removeRuleAction: () => null,
     removeGroupAction: () => null,
+    valueEditor: props => (
+      <div style={{ display: 'flex' }}>
+        <ValueEditor {...props} />
+        {'\u00a0'}
+        <span
+          style={{
+            fontSize: 'x-small',
+            opacity: 0.5,
+          }}>{`(stored value: ${
+          typeof props.value === 'boolean' ? props.value : `"${props.value}"`
+        })`}</span>
+      </div>
+    ),
   }}
   fields={[
     { name: 'f1', label: 'text', valueEditorType: 'text' },
@@ -78,11 +94,11 @@ import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed';
     combinator: 'and',
     rules: [
       { field: 'f1', operator: '=', value: '' },
-      { field: 'f2', operator: '=', value: '' },
-      { field: 'f3', operator: '=', value: '' },
-      { field: 'f4', operator: '=', value: '' },
+      { field: 'f2', operator: '=', value: 'opt2' },
+      { field: 'f3', operator: '=', value: true },
+      { field: 'f4', operator: '=', value: 'opt2' },
       { field: 'f5', operator: '=', value: '' },
-      { field: 'f6', operator: '=', value: '' },
+      { field: 'f6', operator: '=', value: 'opt1,opt2' },
       { field: 'f7', operator: '=', value: '' },
       { field: 'f8', operator: '=', value: '' },
       { field: 'f9', operator: '=', value: '' },
