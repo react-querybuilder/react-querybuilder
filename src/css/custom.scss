@@ -65,6 +65,7 @@ html[data-theme='dark'] .header-github-link:before {
   .ruleGroup {
     border: 2px solid maroon;
     padding: $structure-padding;
+    row-gap: $structure-padding !important;
   }
 
   .ruleGroup-header {
@@ -75,6 +76,7 @@ html[data-theme='dark'] .header-github-link:before {
   .ruleGroup-body {
     border: 2px solid blue;
     padding: $structure-padding;
+    row-gap: $structure-padding !important;
   }
 
   .rule {
