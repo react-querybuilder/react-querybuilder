@@ -12,7 +12,14 @@ const sidebars = {
         title: 'API',
         description: 'Complete documentation for React Query Builder.',
       },
-      items: ['api/querybuilder', 'api/export', 'api/import', 'api/validation', 'api/misc'],
+      items: [
+        'api/querybuilder',
+        'api/classnames',
+        'api/export',
+        'api/import',
+        'api/validation',
+        'api/misc',
+      ],
     },
     {
       type: 'category',

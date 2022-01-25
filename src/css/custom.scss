@@ -1,5 +1,7 @@
 @use 'sass:color';
 
+$structure-padding: 14px;
+
 /**
  * This is the effective color of a level 3 group when using
  * the default stylesheet on a white background.
@@ -52,4 +54,50 @@ html[data-theme='dark'] .header-github-link:before {
 }
 .admonition > .admonition-content > blockquote {
   font-style: italic;
+}
+
+.rqb-structure {
+  &.queryBuilder {
+    border: 2px solid black;
+    padding: $structure-padding;
+  }
+
+  .ruleGroup {
+    border: 2px solid maroon;
+    padding: $structure-padding;
+  }
+
+  .ruleGroup-header {
+    border: 2px solid rebeccapurple;
+    padding: $structure-padding;
+  }
+
+  .ruleGroup-body {
+    border: 2px solid blue;
+    padding: $structure-padding;
+  }
+
+  .rule {
+    border: 2px solid gray;
+    padding: $structure-padding;
+    column-gap: 1rem !important;
+
+    &.queryBuilder-disabled {
+      border-color: gray !important;
+    }
+
+    &.queryBuilder-valid {
+      border-color: green;
+    }
+
+    &.queryBuilder-invalid {
+      border-color: red;
+    }
+  }
+
+  .queryBuilder-dragHandle,
+  .ruleGroup-notToggle {
+    border: 2px dotted gray;
+    padding: 4px;
+  }
 }
