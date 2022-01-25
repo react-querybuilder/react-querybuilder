@@ -1,0 +1,91 @@
+---
+title: <ValueEditor />
+hide_table_of_contents: true
+description: ValueEditor types
+---
+
+`<ValueEditor />` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it's quite capable of handling many common scenarios without customization. The query builder below demonstrates each of the available options for the [`Field#valueEditorType` property](../typescript#fields).
+
+:::tip
+
+The [compatibility packages](../compat) also implement these options using appropriate components from the associated style library ([see the demo](https://react-querybuilder.github.io/react-querybuilder/)).
+
+:::
+
+_To highlight the value editors, all other components have been disabled or hidden._
+
+import { QueryBuilderEmbed } from '../../src/components/QueryBuilderEmbed';
+
+<QueryBuilderEmbed
+  getOperators={() => [{ name: '=', label: '=' }]}
+  controlElements={{
+    fieldSelector: ({ value, options }) => (
+      <select value={value} disabled>
+        {options.map(o => (
+          <option value={o.name}>{`valueEditorType: "${o.label}"`}</option>
+        ))}
+      </select>
+    ),
+    operatorSelector: ({ value, options }) => (
+      <select value={value} disabled>
+        {options.map(o => (
+          <option value={o.name}>{o.label}</option>
+        ))}
+      </select>
+    ),
+    combinatorSelector: () => null,
+    addRuleAction: () => null,
+    addGroupAction: () => null,
+    removeRuleAction: () => null,
+    removeGroupAction: () => null,
+  }}
+  fields={[
+    { name: 'f1', label: 'text', valueEditorType: 'text' },
+    {
+      name: 'f2',
+      label: 'select',
+      valueEditorType: 'select',
+      values: [
+        { name: 'opt1', label: 'Option 1' },
+        { name: 'opt2', label: 'Option 2' },
+      ],
+    },
+    { name: 'f3', label: 'checkbox', valueEditorType: 'checkbox' },
+    {
+      name: 'f4',
+      label: 'radio',
+      valueEditorType: 'radio',
+      values: [
+        { name: 'opt1', label: 'Option 1' },
+        { name: 'opt2', label: 'Option 2' },
+      ],
+    },
+    { name: 'f5', label: 'textarea', valueEditorType: 'textarea' },
+    {
+      name: 'f6',
+      label: 'multiselect',
+      valueEditorType: 'multiselect',
+      values: [
+        { name: 'opt1', label: 'Option 1' },
+        { name: 'opt2', label: 'Option 2' },
+      ],
+    },
+    { name: 'f7', label: 'date', valueEditorType: 'date' },
+    { name: 'f8', label: 'datetime-local', valueEditorType: 'datetime-local' },
+    { name: 'f9', label: 'time', valueEditorType: 'time' },
+  ]}
+  defaultQuery={{
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: '' },
+      { field: 'f2', operator: '=', value: '' },
+      { field: 'f3', operator: '=', value: '' },
+      { field: 'f4', operator: '=', value: '' },
+      { field: 'f5', operator: '=', value: '' },
+      { field: 'f6', operator: '=', value: '' },
+      { field: 'f7', operator: '=', value: '' },
+      { field: 'f8', operator: '=', value: '' },
+      { field: 'f9', operator: '=', value: '' },
+    ],
+  }}
+/>

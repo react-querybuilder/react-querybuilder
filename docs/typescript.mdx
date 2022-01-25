@@ -28,6 +28,8 @@ interface Field {
 }
 ```
 
+[Click here](./valueeditor) for documentation on the available options for `valueEditorType`.
+
 ## Rules and groups
 
 ```ts
@@ -173,7 +175,17 @@ interface OptionGroup {
   options: NameLabelPair[];
 }
 
-type ValueEditorType = 'text' | 'select' | 'checkbox' | 'radio' | null;
+type ValueEditorType =
+  | 'text'
+  | 'select'
+  | 'checkbox'
+  | 'radio'
+  | 'textarea'
+  | 'multiselect'
+  | 'date'
+  | 'datetime-local'
+  | 'time'
+  | null;
 
 interface Schema {
   fields: Field[] | OptionGroup<NameLabelPair>[];

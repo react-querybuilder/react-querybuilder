@@ -14,6 +14,7 @@ const sidebars = {
       },
       items: [
         'api/querybuilder',
+        'api/valueeditor',
         'api/classnames',
         'api/export',
         'api/import',

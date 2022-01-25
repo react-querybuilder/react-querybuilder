@@ -398,7 +398,7 @@ interface ValueEditorProps {
   value: string; // Value from the existing query representation, if any
   title: string; // translations.value.title, e.g. "Value"
   handleOnChange: (value: any) => void; // Callback function to update the query representation
-  type: 'text' | 'select' | 'checkbox' | 'radio'; // Type of editor to be displayed
+  type: ValueEditorType; // Type of editor to be displayed
   inputType: string; // @type of <input> if `type` is "text"
   values: any[]; // List of available values for this rule
   level: number; // The level the group this rule belongs to
