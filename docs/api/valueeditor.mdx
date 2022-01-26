@@ -25,14 +25,16 @@ import { ValueEditor } from 'react-querybuilder';
     fieldSelector: ({ value, options }) => (
       <select value={value} disabled>
         {options.map(o => (
-          <option value={o.name}>{`valueEditorType: "${o.label}"`}</option>
+          <option key={o.name} value={o.name}>{`valueEditorType: "${o.label}"`}</option>
         ))}
       </select>
     ),
     operatorSelector: ({ value, options }) => (
       <select value={value} disabled>
         {options.map(o => (
-          <option value={o.name}>{o.label}</option>
+          <option key={o.name} value={o.name}>
+            {o.label}
+          </option>
         ))}
       </select>
     ),
