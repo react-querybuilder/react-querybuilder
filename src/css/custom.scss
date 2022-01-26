@@ -63,6 +63,7 @@ html[data-theme='dark'] .header-github-link:before {
   }
 
   .ruleGroup {
+    background-color: #00000011;
     border: 2px solid maroon;
     padding: $structure-padding;
     row-gap: $structure-padding !important;
