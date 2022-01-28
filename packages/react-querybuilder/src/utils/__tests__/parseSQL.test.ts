@@ -57,10 +57,15 @@ describe('boolean operators', () => {
     expect(parseSQL(`age < 14`)).toEqual(wrapRule({ field: 'age', operator: '<', value: 14 }));
   });
 
-  it('reversed identifier and value', () => {
+  it('reversed identifier and value, or operator needs normalizing', () => {
     expect(parseSQL(`'Steve' = firstName`)).toEqual(
       wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
     );
+    expect(parseSQL(`21 <> age`)).toEqual(wrapRule({ field: 'age', operator: '!=', value: 21 }));
+    expect(parseSQL(`21 < age`)).toEqual(wrapRule({ field: 'age', operator: '>', value: 21 }));
+    expect(parseSQL(`21 <= age`)).toEqual(wrapRule({ field: 'age', operator: '>=', value: 21 }));
+    expect(parseSQL(`21 > age`)).toEqual(wrapRule({ field: 'age', operator: '<', value: 21 }));
+    expect(parseSQL(`21 >= age`)).toEqual(wrapRule({ field: 'age', operator: '<=', value: 21 }));
   });
 
   it('booleans', () => {
