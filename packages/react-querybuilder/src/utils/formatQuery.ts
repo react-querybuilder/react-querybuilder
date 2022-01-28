@@ -300,7 +300,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
       const value = valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
       const operator = mapOperator(rule.operator);
 
-      if (parameterized || parameterized_named) {
+      if (
+        (parameterized || parameterized_named) &&
+        (!rule.valueSource || rule.valueSource === 'value')
+      ) {
         if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
           return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
         } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
