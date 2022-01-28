@@ -1,3 +1,4 @@
+import { bootstrapControlClassnames } from '@react-querybuilder/bootstrap';
 import { lazy } from 'react';
 import { QueryBuilderProps } from 'react-querybuilder';
 import { StyleName } from '../constants';
@@ -28,20 +29,7 @@ const MaterialValueSelector = lazy(() => import('./MaterialValueSelector'));
 export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
   default: {},
   bootstrap: {
-    controlClassnames: {
-      addGroup: 'btn btn-secondary btn-sm',
-      addRule: 'btn btn-primary btn-sm',
-      cloneGroup: 'btn btn-secondary btn-sm',
-      cloneRule: 'btn btn-secondary btn-sm',
-      lockGroup: 'btn btn-secondary btn-sm',
-      lockRule: 'btn btn-secondary btn-sm',
-      removeGroup: 'btn btn-danger btn-sm',
-      removeRule: 'btn btn-danger btn-sm',
-      combinators: 'form-select form-select-sm',
-      fields: 'form-select form-select-sm',
-      operators: 'form-select form-select-sm',
-      value: 'form-control form-control-sm',
-    },
+    controlClassnames: bootstrapControlClassnames,
     controlElements: {
       dragHandle: BootstrapDragHandle,
       notToggle: BootstrapNotToggle,
@@ -64,6 +52,7 @@ export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
       removeRuleAction: AntDActionElement,
       valueEditor: AntDValueEditor,
       dragHandle: AntDDragHandle,
+      valueSourceSelector: AntDValueSelector,
     },
   },
   material: {
@@ -82,6 +71,7 @@ export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
       removeRuleAction: MaterialActionElement,
       valueEditor: MaterialValueEditor,
       dragHandle: MaterialDragHandle,
+      valueSourceSelector: MaterialValueSelector,
     },
   },
   chakra: {
@@ -100,6 +90,7 @@ export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
       removeRuleAction: ChakraActionElement,
       valueEditor: ChakraValueEditor,
       dragHandle: ChakraDragHandle,
+      valueSourceSelector: ChakraValueSelector,
     },
   },
   bulma: {
@@ -117,6 +108,7 @@ export const styleConfigs: Record<StyleName, QueryBuilderProps> = {
       removeGroupAction: BulmaActionElement,
       removeRuleAction: BulmaActionElement,
       valueEditor: BulmaValueEditor,
+      valueSourceSelector: BulmaValueSelector,
     },
   },
 };

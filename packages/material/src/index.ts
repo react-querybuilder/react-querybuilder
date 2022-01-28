@@ -20,6 +20,7 @@ export const materialControlElements: Partial<Controls> = {
   removeRuleAction: MaterialActionElement,
   valueEditor: MaterialValueEditor,
   dragHandle: MaterialDragHandle,
+  valueSourceSelector: MaterialValueSelector,
 };
 
 export {
