@@ -33,16 +33,26 @@ const getParamString = (param: any) => {
   }
 };
 
-const getFieldName = (f: string) => f.replace(/(^`|`$)/g, '');
+const getFieldName = (f: string | SQLIdentifier) =>
+  (typeof f === 'string' ? f : f.value).replace(/(^`|`$)/g, '');
 
 const normalizeCombinator = (c: AndOperator | OrOperator) =>
   c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorName;
 
-const normalizeOperator = (op: ComparisonOperator) => op.replace('<>', '!=') as DefaultOperatorName;
+const normalizeOperator = (op: ComparisonOperator, flip?: boolean): DefaultOperatorName => {
+  if (flip) {
+    if (op === '<') return '>';
+    if (op === '<=') return '>=';
+    if (op === '>') return '<';
+    if (op === '>=') return '<=';
+  }
+  if (op === '<>') return '!=';
+  return op;
+};
 
 const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
   valueObj.type === 'String'
-    ? valueObj.value.replace(/(^'|'$)/g, '').replace(/(^"|"$)/g, '')
+    ? valueObj.value.replace(/^(['"]?)(.+?)\1$/, '$2')
     : valueObj.type === 'Boolean'
     ? valueObj.value.toLowerCase() === 'true'
     : parseFloat(valueObj.value);
@@ -225,18 +235,34 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         if (isSQLLiteralValue(valueObj)) {
           return {
             field: getFieldName(identifier),
-            operator: normalizeOperator(expr.operator),
+            // flip the operator if the identifier was on the right,
+            // since it's now on the left (as `field`)
+            operator: normalizeOperator(expr.operator, isSQLIdentifier(expr.right)),
             value: evalSQLLiteralValue(valueObj),
           };
         }
+      } else if (isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right)) {
+        return {
+          field: getFieldName(expr.left.value),
+          operator: normalizeOperator(expr.operator),
+          value: getFieldName(expr.right.value),
+          valueSource: 'field',
+        };
       }
     } else if (expr.type === 'InExpressionListPredicate') {
       /* istanbul ignore else */
       if (isSQLIdentifier(expr.left)) {
         const valueArray = expr.right.value.filter(isSQLLiteralValue).map(evalSQLLiteralValue);
-        const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
-        const operator = expr.hasNot ? 'notIn' : 'in';
-        return { field: getFieldName(expr.left.value), operator, value };
+        const fieldArray = expr.right.value.filter(isSQLIdentifier).map(getFieldName);
+        if (valueArray.length > 0) {
+          const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+          const operator = expr.hasNot ? 'notIn' : 'in';
+          return { field: getFieldName(expr.left.value), operator, value };
+        } else if (fieldArray.length > 0) {
+          const value = options?.listsAsArrays ? fieldArray : fieldArray.join(', ');
+          const operator = expr.hasNot ? 'notIn' : 'in';
+          return { field: getFieldName(expr.left.value), operator, value, valueSource: 'field' };
+        }
       }
     } else if (expr.type === 'BetweenPredicate') {
       /* istanbul ignore else */
@@ -249,6 +275,15 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
         const operator = expr.hasNot ? 'notBetween' : 'between';
         return { field: getFieldName(expr.left.value), operator, value };
+      } else if (
+        isSQLIdentifier(expr.left) &&
+        isSQLIdentifier(expr.right.left) &&
+        isSQLIdentifier(expr.right.right)
+      ) {
+        const valueArray = [expr.right.left, expr.right.right].map(getFieldName);
+        const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+        const operator = expr.hasNot ? 'notBetween' : 'between';
+        return { field: getFieldName(expr.left.value), operator, value, valueSource: 'field' };
       }
     } else if (expr.type === 'LikePredicate') {
       /* istanbul ignore else */
@@ -257,7 +292,7 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         const valueWithoutWildcards = valueWithWildcards.replace(/(^%)|(%$)/g, '');
         let operator: DefaultOperatorName = '=';
         /* istanbul ignore else */
-        if (/^%.*%$/.test(valueWithWildcards)) {
+        if (/^%.*%$/.test(valueWithWildcards) || valueWithWildcards === '%') {
           operator = expr.hasNot ? 'doesNotContain' : 'contains';
         } else if (/%$/.test(valueWithWildcards)) {
           operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
