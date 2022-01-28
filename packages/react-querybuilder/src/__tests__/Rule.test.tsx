@@ -107,18 +107,19 @@ const schema: Partial<Schema> = {
   fieldMap,
   controls: { ...defaultControlElements, ...controls },
   classNames: { ...defaultControlClassnames, ...classNames },
-  getOperators: _field => [
+  getOperators: () => [
     { name: '=', label: 'is' },
     { name: '!=', label: 'is not' },
   ],
-  getValueEditorType: (_field, _operator) => 'text',
-  getInputType: (_field, _operator) => 'text',
-  getValues: (_field, _operator) => [
+  getValueEditorType: () => 'text',
+  getValueSources: () => ['value'],
+  getInputType: () => 'text',
+  getValues: () => [
     { name: 'one', label: 'One' },
     { name: 'two', label: 'Two' },
   ],
-  onPropChange: (_field, _value, _path) => {},
-  onRuleRemove: _path => {},
+  onPropChange: () => {},
+  onRuleRemove: () => {},
   showCloneButtons: false,
   validationMap: {},
 };
