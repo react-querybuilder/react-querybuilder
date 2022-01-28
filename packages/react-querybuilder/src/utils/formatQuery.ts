@@ -11,6 +11,7 @@ import type {
   ValidationMap,
   ValidationResult,
   ValueProcessor,
+  ValueSource,
 } from '../types';
 import { isRuleOrGroupValid } from './isRuleOrGroupValid';
 import { uniqByName } from './uniq';
@@ -54,15 +55,19 @@ const mongoOperators: { [op: string]: string } = {
 export const defaultValueProcessor: ValueProcessor = (
   _field: string,
   operator: string,
-  value: any
+  value: any,
+  valueSource?: ValueSource
 ) => {
+  const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
   if (operatorLowerCase === 'null' || operatorLowerCase === 'notnull') {
     return '';
   } else if (operatorLowerCase === 'in' || operatorLowerCase === 'notin') {
     const valArray = toArray(value);
     if (valArray.length > 0) {
-      return `(${valArray.map((v: string) => `'${v.trim()}'`).join(', ')})`;
+      return `(${valArray
+        .map((v: string) => (valueIsField ? `${v.trim()}` : `'${v.trim()}'`))
+        .join(', ')})`;
     } else {
       return '';
     }
@@ -70,16 +75,18 @@ export const defaultValueProcessor: ValueProcessor = (
     const valArray = toArray(value);
     if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
       const [first, second] = valArray;
-      return `'${first.trim()}' and '${second.trim()}'`;
+      return valueIsField
+        ? `${first.trim()} and ${second.trim()}`
+        : `'${first.trim()}' and '${second.trim()}'`;
     } else {
       return '';
     }
   } else if (operatorLowerCase === 'contains' || operatorLowerCase === 'doesnotcontain') {
-    return `'%${value}%'`;
+    return valueIsField ? `'%' || ${value} || '%'` : `'%${value}%'`;
   } else if (operatorLowerCase === 'beginswith' || operatorLowerCase === 'doesnotbeginwith') {
-    return `'${value}%'`;
+    return valueIsField ? `${value} || '%'` : `'${value}%'`;
   } else if (operatorLowerCase === 'endswith' || operatorLowerCase === 'doesnotendwith') {
-    return `'%${value}'`;
+    return valueIsField ? `'%' || ${value}` : `'%${value}'`;
   } else if (typeof value === 'boolean') {
     return `${value}`.toUpperCase();
   }
@@ -87,37 +94,75 @@ export const defaultValueProcessor: ValueProcessor = (
 };
 
 export const defaultMongoDBValueProcessor: ValueProcessor = (
-  _field: string,
+  field: string,
   operator: string,
-  value: any
+  value: any,
+  valueSource?: ValueSource
 ) => {
+  const valueIsField = valueSource === 'field';
+  const useBareValue = ['number', 'boolean', 'bigint'].includes(typeof value);
   const mongoOperator = mongoOperators[operator];
   if (['<', '<=', '=', '!=', '>', '>='].includes(operator)) {
-    return `{"${mongoOperator}":${typeof value === 'boolean' ? value : `"${value}"`}}`;
-  } else if (['between', 'notBetween'].includes(operator)) {
-    return typeof value === 'boolean' ? `${value}` : `"${value}"`;
+    return valueIsField
+      ? `{"$expr":{"${mongoOperator}":["$${field}","$${value}"]}}`
+      : `{"${field}":{"${mongoOperator}":${useBareValue ? value : `"${value}"`}}}`;
   } else if (operator === 'contains') {
-    return `{"$regex":"${value}"}`;
+    return valueIsField
+      ? `{"$where":"this.${field}.includes(this.${value})"}`
+      : `{"${field}":{"$regex":"${value}"}}`;
   } else if (operator === 'beginsWith') {
-    return `{"$regex":"^${value}"}`;
+    return valueIsField
+      ? `{"$where":"this.${field}.startsWith(this.${value})"}`
+      : `{"${field}":{"$regex":"^${value}"}}`;
   } else if (operator === 'endsWith') {
-    return `{"$regex":"${value}$"}`;
+    return valueIsField
+      ? `{"$where":"this.${field}.endsWith(this.${value})"}`
+      : `{"${field}":{"$regex":"${value}$"}}`;
   } else if (operator === 'doesNotContain') {
-    return `{"$not":{"$regex":"${value}"}}`;
+    return valueIsField
+      ? `{"$where":"!this.${field}.includes(this.${value})"}`
+      : `{"${field}":{"$not":{"$regex":"${value}"}}}`;
   } else if (operator === 'doesNotBeginWith') {
-    return `{"$not":{"$regex":"^${value}"}}`;
+    return valueIsField
+      ? `{"$where":"!this.${field}.startsWith(this.${value})"}`
+      : `{"${field}":{"$not":{"$regex":"^${value}"}}}`;
   } else if (operator === 'doesNotEndWith') {
-    return `{"$not":{"$regex":"${value}$"}}`;
+    return valueIsField
+      ? `{"$where":"!this.${field}.endsWith(this.${value})"}`
+      : `{"${field}":{"$not":{"$regex":"${value}$"}}}`;
   } else if (operator === 'null') {
-    return `null`;
+    return `{"${field}":null}`;
   } else if (operator === 'notNull') {
-    return `{"$ne":null}`;
+    return `{"${field}":{"$ne":null}}`;
   } else if (operator === 'in' || operator === 'notIn') {
     const valArray = toArray(value);
-    if (valArray.length) {
-      return `{"${mongoOperator}":[${valArray.map((val: any) => {
-        return `"${val.trim()}"`;
-      })}]}`;
+    if (valArray.length > 0) {
+      return valueIsField
+        ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valArray
+            .map(val => `this.${val.trim()}`)
+            .join(',')}].includes(this.${field})"}`
+        : `{"${field}":{"${mongoOperator}":[${valArray.map(val => `"${val.trim()}"`).join(',')}]}}`;
+    } else {
+      return '';
+    }
+  } else if (operator === 'between' || operator === 'notBetween') {
+    // return useBareValue ? `${value}` : `"${value}"`;
+    const valArray = toArray(value);
+    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
+      const [first, second] = valArray;
+      const firstNum = parseFloat(first);
+      const secondNum = parseFloat(second);
+      const firstValue = isNaN(firstNum) ? `"${first.trim()}"` : firstNum;
+      const secondValue = isNaN(secondNum) ? `"${second.trim()}"` : secondNum;
+      if (operator === 'between') {
+        return valueIsField
+          ? `{"$and":[{"$expr:{"$gte":["$${field}","$${firstValue}"]}},{"$expr:{"$lte":["$${field}","$${secondValue}"]}}]}`
+          : `{"$and":[{"${field}":{"$gte":${firstValue}}},{"${field}":{"$lte":${secondValue}}}]}`;
+      } else {
+        return valueIsField
+          ? `{"$or":[{"$expr:{"$lt":["$${field}","$${firstValue}"]}},{"$expr:{"$gt":["$${field}","$${secondValue}"]}}]}`
+          : `{"$or":[{"${field}":{"$lt":${firstValue}}},{"${field}":{"$gt":${secondValue}}}]}`;
+      }
     } else {
       return '';
     }
@@ -180,17 +225,21 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
     }
   }
   if (!fallbackExpression) {
-    if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
-      fallbackExpression = '(1 = 1)';
-    } else if (format === 'mongodb') {
-      fallbackExpression = '"$and":[{"$expr":true}]';
-    }
+    fallbackExpression = format === 'mongodb' ? '"$and":[{"$expr":true}]' : '(1 = 1)';
   }
 
   if (format === 'json') {
     return JSON.stringify(ruleGroup, null, 2);
   } else if (format === 'json_without_ids') {
-    return JSON.stringify(ruleGroup, ['rules', 'field', 'value', 'operator', 'combinator', 'not']);
+    return JSON.stringify(ruleGroup, [
+      'rules',
+      'field',
+      'value',
+      'operator',
+      'combinator',
+      'not',
+      'valueSource',
+    ]);
   } else if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
     const parameterized = format === 'parameterized';
     const parameterized_named = format === 'parameterized_named';
@@ -248,7 +297,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
         return '';
       }
 
-      const value = valueProcessor(rule.field, rule.operator, rule.value);
+      const value = valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
       const operator = mapOperator(rule.operator);
 
       if (parameterized || parameterized_named) {
@@ -373,7 +422,6 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
             const processedRuleGroup = processRuleGroup(rule);
             return processedRuleGroup ? `{${processedRuleGroup}}` : '';
           } else {
-            const value = valueProcessor(rule.field, rule.operator, rule.value);
             if (
               [
                 '<',
@@ -391,33 +439,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
                 'null',
                 'notNull',
               ].includes(rule.operator) ||
-              ((rule.operator === 'in' || rule.operator === 'notIn') && rule.value)
+              (['in', 'notIn'].includes(rule.operator) && !!rule.value) ||
+              (['between', 'notBetween'].includes(rule.operator) && !!rule.value)
             ) {
-              return `{"${rule.field}":${value}}`;
-            } else if (rule.operator === 'between' || rule.operator === 'notBetween') {
-              const valArray = toArray(rule.value);
-              if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
-                const [first, second] = valArray;
-                const firstValue = valueProcessor(
-                  rule.field,
-                  rule.operator,
-                  /* istanbul ignore next */
-                  typeof first === 'string' ? first.trim() : first
-                );
-                const secondValue = valueProcessor(
-                  rule.field,
-                  rule.operator,
-                  /* istanbul ignore next */
-                  typeof second === 'string' ? second.trim() : second
-                );
-                if (rule.operator === 'between') {
-                  return `{"$and":[{"${rule.field}":{"$gte":${firstValue}}},{"${rule.field}":{"$lte":${secondValue}}}]}`;
-                } else {
-                  return `{"$or":[{"${rule.field}":{"$lt":${firstValue}}},{"${rule.field}":{"$gt":${secondValue}}}]}`;
-                }
-              } else {
-                return '';
-              }
+              return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
             }
           }
 

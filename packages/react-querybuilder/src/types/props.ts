@@ -1,5 +1,18 @@
+import type {
+  ComponentType,
+  ForwardRefExoticComponent,
+  MouseEvent as ReactMouseEvent,
+  RefAttributes,
+} from 'react';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from 'ruleGroupsIC';
-import type { Field, NameLabelPair, OptionGroup, ValueEditorType } from './basic';
+import type {
+  Field,
+  NameLabelPair,
+  OptionGroup,
+  ValueEditorType,
+  ValueSource,
+  ValueSources,
+} from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
 
@@ -40,7 +53,7 @@ export interface CommonSubComponentProps {
 
 export interface ActionProps extends CommonSubComponentProps {
   label?: string;
-  handleOnClick(e: React.MouseEvent): void;
+  handleOnClick(e: ReactMouseEvent): void;
   disabledTranslation?: TranslationWithLabel;
 }
 
@@ -84,6 +97,11 @@ export interface OperatorSelectorProps extends BaseSelectorProps {
   fieldData: Field;
 }
 
+export interface ValueSourceSelectorProps extends BaseSelectorProps {
+  field: string;
+  fieldData: Field;
+}
+
 export interface ValueEditorProps extends SelectorEditorProps {
   field: string;
   fieldData: Field;
@@ -99,24 +117,23 @@ export interface DragHandleProps extends CommonSubComponentProps {
 }
 
 export interface Controls {
-  addGroupAction: React.ComponentType<ActionWithRulesProps>;
-  addRuleAction: React.ComponentType<ActionWithRulesProps>;
-  cloneGroupAction: React.ComponentType<ActionWithRulesProps>;
-  cloneRuleAction: React.ComponentType<ActionProps>;
-  combinatorSelector: React.ComponentType<CombinatorSelectorProps>;
-  dragHandle: React.ForwardRefExoticComponent<
-    DragHandleProps & React.RefAttributes<HTMLSpanElement>
-  >;
-  fieldSelector: React.ComponentType<FieldSelectorProps>;
-  notToggle: React.ComponentType<NotToggleProps>;
-  operatorSelector: React.ComponentType<OperatorSelectorProps>;
-  lockRuleAction: React.ComponentType<ActionWithRulesProps>;
-  lockGroupAction: React.ComponentType<ActionWithRulesProps>;
-  removeGroupAction: React.ComponentType<ActionWithRulesProps>;
-  removeRuleAction: React.ComponentType<ActionProps>;
-  rule: React.ComponentType<RuleProps>;
-  ruleGroup: React.ComponentType<RuleGroupProps>;
-  valueEditor: React.ComponentType<ValueEditorProps>;
+  addGroupAction: ComponentType<ActionWithRulesProps>;
+  addRuleAction: ComponentType<ActionWithRulesProps>;
+  cloneGroupAction: ComponentType<ActionWithRulesProps>;
+  cloneRuleAction: ComponentType<ActionProps>;
+  combinatorSelector: ComponentType<CombinatorSelectorProps>;
+  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLSpanElement>>;
+  fieldSelector: ComponentType<FieldSelectorProps>;
+  notToggle: ComponentType<NotToggleProps>;
+  operatorSelector: ComponentType<OperatorSelectorProps>;
+  lockRuleAction: ComponentType<ActionWithRulesProps>;
+  lockGroupAction: ComponentType<ActionWithRulesProps>;
+  removeGroupAction: ComponentType<ActionWithRulesProps>;
+  removeRuleAction: ComponentType<ActionProps>;
+  rule: ComponentType<RuleProps>;
+  ruleGroup: ComponentType<RuleGroupProps>;
+  valueEditor: ComponentType<ValueEditorProps>;
+  valueSourceSelector: ComponentType<ValueSourceSelectorProps>;
 }
 
 export interface Classnames {
@@ -196,6 +213,10 @@ export interface Classnames {
    * `<button>` to lock (i.e. disable) a RuleGroup
    */
   lockGroup: string;
+  /**
+   * Value source selector
+   */
+  valueSource: string;
 }
 
 export interface Schema {
@@ -208,6 +229,7 @@ export interface Schema {
   createRuleGroup(): RuleGroupTypeAny;
   getOperators(field: string): NameLabelPair[] | OptionGroup[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
+  getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[] | OptionGroup[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
@@ -256,6 +278,7 @@ export interface Translations {
   lockGroup: TranslationWithLabel;
   lockRuleDisabled: TranslationWithLabel;
   lockGroupDisabled: TranslationWithLabel;
+  valueSourceSelector: Translation;
 }
 
 interface CommonRuleAndGroupProps {
@@ -278,6 +301,7 @@ export interface RuleProps extends CommonRuleAndGroupProps {
   field: string;
   operator: string;
   value: any;
+  valueSource?: ValueSource;
 }
 
 export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
@@ -367,6 +391,13 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
      * for the given field and operator.
      */
     getValueEditorType?(field: string, operator: string): ValueEditorType;
+    /**
+     * This is a callback function invoked to get the list of valid
+     * value sources for a given field and operator. The return value must
+     * be an array that includes at least one of the valid value source:
+     * "value", "field", or both.
+     */
+    getValueSources?: (field: string, operator: string) => ValueSources;
     /**
      * This is a callback function invoked to get the `type` of `<input />`
      * for the given field and operator (only applicable when

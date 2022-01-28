@@ -73,6 +73,9 @@ export const defaultTranslations: Translations = {
     label: '🔒',
     title: 'Unlock group',
   },
+  valueSourceSelector: {
+    title: 'Value source',
+  },
 };
 
 export const defaultOperators: DefaultOperator[] = [
@@ -127,6 +130,7 @@ export const standardClassnames = {
   disabled: 'queryBuilder-disabled',
   lockRule: 'rule-lock',
   lockGroup: 'ruleGroup-lock',
+  valueSource: 'rule-valueSource',
 } as const;
 
 export const defaultControlClassnames: Classnames = {
@@ -149,6 +153,7 @@ export const defaultControlClassnames: Classnames = {
   dragHandle: '',
   lockRule: '',
   lockGroup: '',
+  valueSource: '',
 };
 
 export const defaultControlElements: Controls = {
@@ -168,6 +173,7 @@ export const defaultControlElements: Controls = {
   dragHandle: DragHandle,
   lockRuleAction: ActionElement,
   lockGroupAction: ActionElement,
+  valueSourceSelector: ValueSelector,
 };
 
 export const groupInvalidReasons = {
@@ -199,4 +205,5 @@ export const TestID = {
   dragHandle: 'drag-handle',
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',
+  valueSourceSelector: 'value-source-selector',
 } as const;

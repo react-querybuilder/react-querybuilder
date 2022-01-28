@@ -131,13 +131,24 @@ export const styleNameMap: Record<StyleName, string> = {
 };
 
 export const fields: Field[] = [
-  { name: 'firstName', label: 'First Name', placeholder: 'Enter first name', validator },
+  {
+    name: 'firstName',
+    label: 'First Name',
+    placeholder: 'Enter first name',
+    validator,
+    comparator: 'group',
+    group: 'strings',
+    valueSources: ['value', 'field'],
+  },
   {
     name: 'lastName',
     label: 'Last Name',
     placeholder: 'Enter last name',
     defaultOperator: 'beginsWith',
     validator,
+    comparator: 'group',
+    group: 'strings',
+    valueSources: ['value', 'field'],
   },
   { name: 'age', label: 'Age', inputType: 'number', validator },
   {
@@ -167,7 +178,7 @@ export const fields: Field[] = [
     ],
   },
   { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator },
+  { name: 'job', label: 'Job', validator, comparator: 'group', group: 'strings' },
   { name: 'description', label: 'Description', valueEditorType: 'textarea' },
   { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
   { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },

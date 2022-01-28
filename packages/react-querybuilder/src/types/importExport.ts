@@ -1,3 +1,4 @@
+import type { ValueSource } from './basic';
 import type { QueryValidator, RuleValidator } from './validation';
 
 export type ExportFormat =
@@ -49,7 +50,12 @@ export interface FormatQueryOptions {
   paramPrefix?: string;
 }
 
-export type ValueProcessor = (field: string, operator: string, value: any) => string;
+export type ValueProcessor = (
+  field: string,
+  operator: string,
+  value: any,
+  valueSource?: ValueSource
+) => string;
 
 export interface ParameterizedSQL {
   sql: string;

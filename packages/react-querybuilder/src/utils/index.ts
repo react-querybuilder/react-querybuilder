@@ -1,6 +1,7 @@
 export * from './c';
 export * from './convertQuery';
 export * from './defaultValidator';
+export * from './filterFieldsByComparator';
 export * from './formatQuery';
 export * from './generateID';
 export * from './getValidationClassNames';

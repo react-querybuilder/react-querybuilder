@@ -2,7 +2,14 @@ import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
 import type { DraggedItem, Field, RuleProps, RuleType } from './types';
-import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
+import {
+  c,
+  filterFieldsByComparator,
+  getParentPath,
+  getValidationClassNames,
+  isAncestor,
+  pathsAreEqual,
+} from './utils';
 
 export const Rule = ({
   id,
@@ -15,6 +22,7 @@ export const Rule = ({
   disabled: disabledProp,
   parentDisabled,
   context,
+  valueSource,
 }: RuleProps) => {
   const {
     classNames,
@@ -24,6 +32,7 @@ export const Rule = ({
     getInputType,
     getOperators,
     getValueEditorType,
+    getValueSources,
     getValues,
     moveRule,
     onPropChange,
@@ -122,8 +131,20 @@ export const Rule = ({
   const fieldData = fieldMap?.[field] ?? ({} as Field);
   const inputType = fieldData.inputType ?? getInputType(field, operator);
   const operators = fieldData.operators ?? getOperators(field);
-  const valueEditorType = fieldData.valueEditorType ?? getValueEditorType(field, operator);
-  const values = fieldData.values ?? getValues(field, operator);
+  const valueSources =
+    typeof fieldData.valueSources === 'function'
+      ? fieldData.valueSources(operator)
+      : fieldData.valueSources ?? getValueSources(field, operator);
+  const valueEditorType =
+    valueSource === 'field'
+      ? 'select'
+      : (typeof fieldData.valueEditorType === 'function'
+          ? fieldData.valueEditorType(operator)
+          : fieldData.valueEditorType) ?? getValueEditorType(field, operator);
+  const values =
+    valueSource === 'field'
+      ? filterFieldsByComparator(fieldData, fields)
+      : fieldData.values ?? getValues(field, operator);
   const level = path.length;
 
   const validationResult =
@@ -196,6 +217,23 @@ export const Rule = ({
             context={context}
             validation={validationResult}
           />
+          {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
+            <controls.valueSourceSelector
+              testID={TestID.valueSourceSelector}
+              field={field}
+              fieldData={fieldData}
+              title={translations.valueSourceSelector.title}
+              options={valueSources.map(vs => ({ name: vs, label: vs }))}
+              value={valueSource ?? 'value'}
+              className={c(standardClassnames.valueSource, classNames.valueSource)}
+              handleOnChange={generateOnChangeHandler('valueSource')}
+              level={level}
+              path={path}
+              disabled={disabled}
+              context={context}
+              validation={validationResult}
+            />
+          )}
           <controls.valueEditor
             testID={TestID.valueEditor}
             field={field}
