@@ -74,6 +74,6 @@
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch",
-    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js && echo \"\\nexport default sqlParser;\" >> src/utils/parseSQL/sqlParser.js"
+    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js"
   }
 }
