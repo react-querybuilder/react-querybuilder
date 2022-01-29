@@ -113,7 +113,7 @@ export interface SQLLikePredicate extends SQLWhereObject {
   type: 'LikePredicate';
   hasNot: NotOpt;
   left: SQLSimpleExpression;
-  right: SQLSimpleExpression;
+  right: SQLSimpleExpression | SQLOrExpression;
   escape: SQLStringValue | null;
 }
 export interface SQLIsNullBooleanPrimary extends SQLWhereObject {

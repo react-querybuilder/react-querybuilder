@@ -5,6 +5,7 @@ export * from './filterFieldsByComparator';
 export * from './formatQuery';
 export * from './generateID';
 export * from './getValidationClassNames';
+export * from './getValueSourcesUtil';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
 export * from './optGroupUtils';

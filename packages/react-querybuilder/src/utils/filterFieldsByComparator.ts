@@ -3,7 +3,11 @@ import { isOptionGroupArray } from './optGroupUtils';
 
 export const filterFieldsByComparator = (field: Field, fields: Field[] | OptionGroup<Field>[]) => {
   if (!field.comparator) {
-    return fields;
+    const filterOutSameName = (f: Field) => f.name !== field.name;
+    if (isOptionGroupArray(fields)) {
+      return fields.map(og => ({ ...og, options: og.options.filter(filterOutSameName) }));
+    }
+    return fields.filter(filterOutSameName);
   }
 
   const filterByComparator = (fieldToCompare: Field) => {
@@ -13,8 +17,7 @@ export const filterFieldsByComparator = (field: Field, fields: Field[] | OptionG
     if (typeof field.comparator === 'string') {
       return field[field.comparator] === fieldToCompare[field.comparator];
     }
-    const comparator = field.comparator ?? (() => true);
-    return comparator(fieldToCompare);
+    return field.comparator!(fieldToCompare);
   };
 
   if (isOptionGroupArray(fields)) {

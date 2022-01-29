@@ -1,4 +1,4 @@
-import { filterFieldsByComparator, isOptionGroupArray, uniqByName } from '..';
+import { filterFieldsByComparator, getValueSourcesUtil, isOptionGroupArray, uniqByName } from '..';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -22,6 +22,7 @@ import {
   isSQLExpressionNotString,
   isSQLIdentifier,
   isSQLLiteralValue,
+  isWildcardsOnly,
   normalizeOperator,
 } from './utils';
 
@@ -39,9 +40,10 @@ function parseSQL(
   options: Omit<ParseSQLOptions, 'independentCombinators'> & { independentCombinators: true }
 ): DefaultRuleGroupTypeIC;
 function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny {
-  let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
+  let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
   let fieldsFlat: Field[] = [];
+  const getValueSources = options?.getValueSources;
 
   if (options) {
     const { params, paramPrefix, independentCombinators, fields } = options;
@@ -67,35 +69,63 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
       }
     }
     if (fields) {
-      if (isOptionGroupArray(fields)) {
-        fieldsFlat = uniqByName(fieldsFlat.concat(...fields.map(opt => opt.options)));
+      const fieldsArray = Array.isArray(fields)
+        ? fields
+        : Object.keys(fields)
+            .map(fld => ({ ...fields[fld], name: fld }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+      if (isOptionGroupArray(fieldsArray)) {
+        fieldsFlat = uniqByName(fieldsFlat.concat(...fieldsArray.map(opt => opt.options)));
       } else {
-        fieldsFlat = uniqByName(fields);
+        fieldsFlat = uniqByName(fieldsArray);
       }
     }
   }
 
-  const fieldIsValid = (fieldName: string, subordinateFieldName?: string) => {
+  function fieldIsValid(
+    fieldName: string,
+    operator: DefaultOperatorName,
+    subordinateFieldName?: string
+  ) {
     // If fields option was an empty array or undefined, then all identifiers
     // are considered valid.
     if (fieldsFlat.length === 0) return true;
 
     let valid = false;
 
-    if (fieldsFlat.some(ff => ff.name === fieldName)) {
-      valid = true;
-    }
-
-    if (valid && !!subordinateFieldName) {
-      const primaryField = fieldsFlat.find(fld => fld.name === fieldName)!;
-      const validSubordinateFields = filterFieldsByComparator(primaryField, fieldsFlat) as Field[];
-      if (validSubordinateFields.every(vsf => vsf.name !== subordinateFieldName)) {
+    const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
+    if (primaryField) {
+      if (
+        !subordinateFieldName &&
+        operator !== 'notNull' &&
+        operator !== 'null' &&
+        !getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'value')
+      ) {
         valid = false;
+      } else {
+        valid = true;
+      }
+
+      if (valid && !!subordinateFieldName) {
+        if (
+          getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'field') &&
+          fieldName !== subordinateFieldName
+        ) {
+          const validSubordinateFields = filterFieldsByComparator(
+            primaryField,
+            fieldsFlat
+          ) as Field[];
+          if (validSubordinateFields.every(vsf => vsf.name !== subordinateFieldName)) {
+            valid = false;
+          }
+        } else {
+          valid = false;
+        }
       }
     }
 
     return valid;
-  };
+  }
 
   const processSQLExpression = (
     expr: SQLExpression
@@ -165,10 +195,11 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
       /* istanbul ignore else */
       if (isSQLIdentifier(expr.value)) {
         const f = getFieldName(expr.value);
-        if (fieldIsValid(f)) {
+        const operator = expr.hasNot ? 'notNull' : 'null';
+        if (fieldIsValid(f, operator)) {
           return {
             field: f,
-            operator: expr.hasNot ? 'notNull' : 'null',
+            operator,
             value: null,
           };
         }
@@ -185,24 +216,26 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         const valueObj = [expr.left, expr.right].find(t => !isSQLIdentifier(t));
         if (isSQLLiteralValue(valueObj)) {
           const f = getFieldName(identifier);
-          if (fieldIsValid(f)) {
+          // flip the operator if the identifier was on the right,
+          // since it's now on the left as `field`
+          const operator = normalizeOperator(expr.operator, isSQLIdentifier(expr.right));
+          if (fieldIsValid(f, operator)) {
             return {
               field: f,
-              // flip the operator if the identifier was on the right,
-              // since it's now on the left (as `field`)
-              operator: normalizeOperator(expr.operator, isSQLIdentifier(expr.right)),
+              operator,
               value: evalSQLLiteralValue(valueObj),
             };
           }
         }
       } else if (isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right)) {
         const f = getFieldName(expr.left);
-        const v = getFieldName(expr.right);
-        if (fieldIsValid(f, v)) {
+        const sf = getFieldName(expr.right);
+        const operator = normalizeOperator(expr.operator);
+        if (fieldIsValid(f, operator, sf)) {
           return {
             field: f,
-            operator: normalizeOperator(expr.operator),
-            value: v,
+            operator,
+            value: sf,
             valueSource: 'field',
           };
         }
@@ -212,17 +245,16 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
       if (isSQLIdentifier(expr.left)) {
         const f = getFieldName(expr.left);
         const valueArray = expr.right.value.filter(isSQLLiteralValue).map(evalSQLLiteralValue);
+        const operator = expr.hasNot ? 'notIn' : 'in';
         const fieldArray = expr.right.value
           .filter(isSQLIdentifier)
-          .filter(sf => fieldIsValid(f, sf.value))
+          .filter(sf => fieldIsValid(f, operator, sf.value))
           .map(getFieldName);
         if (valueArray.length > 0) {
           const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
-          const operator = expr.hasNot ? 'notIn' : 'in';
           return { field: getFieldName(expr.left), operator, value };
         } else if (fieldArray.length > 0) {
           const value = options?.listsAsArrays ? fieldArray : fieldArray.join(', ');
-          const operator = expr.hasNot ? 'notIn' : 'in';
           return { field: getFieldName(expr.left), operator, value, valueSource: 'field' };
         }
       }
@@ -244,9 +276,9 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
       ) {
         const f = getFieldName(expr.left);
         const valueArray = [expr.right.left, expr.right.right].map(getFieldName);
-        if (valueArray.every(sf => fieldIsValid(f, sf))) {
+        const operator = expr.hasNot ? 'notBetween' : 'between';
+        if (valueArray.every(sf => fieldIsValid(f, operator, sf))) {
           const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
-          const operator = expr.hasNot ? 'notBetween' : 'between';
           return { field: f, operator, value, valueSource: 'field' };
         }
       }
@@ -265,8 +297,55 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
         }
         const f = getFieldName(expr.left);
-        if (fieldIsValid(f)) {
+        if (fieldIsValid(f, operator)) {
           return { field: f, operator, value: valueWithoutWildcards };
+        }
+      } else if (
+        isSQLIdentifier(expr.left) &&
+        expr.right.type === 'OrExpression' &&
+        expr.right.operator === '||'
+      ) {
+        let subordinateFieldName = '';
+        let operator: DefaultOperatorName = '=';
+
+        if (isSQLIdentifier(expr.right.right) && isWildcardsOnly(expr.right.left)) {
+          subordinateFieldName = getFieldName(expr.right.right);
+          operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
+        } else if (isSQLIdentifier(expr.right.left) && isWildcardsOnly(expr.right.right)) {
+          subordinateFieldName = getFieldName(expr.right.left);
+          operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
+        } else if (
+          isWildcardsOnly(expr.right.right) &&
+          expr.right.left.type === 'OrExpression' &&
+          expr.right.left.operator === '||' &&
+          isWildcardsOnly(expr.right.left.left) &&
+          isSQLIdentifier(expr.right.left.right)
+        ) {
+          subordinateFieldName = getFieldName(expr.right.left.right);
+          operator = expr.hasNot ? 'doesNotContain' : 'contains';
+        }
+
+        const baseFieldName = getFieldName(expr.left);
+
+        if (operator !== '=' && fieldIsValid(baseFieldName, operator, subordinateFieldName)) {
+          return {
+            field: baseFieldName,
+            operator,
+            value: subordinateFieldName,
+            valueSource: 'field',
+          };
+        }
+      } else if (isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right)) {
+        const baseFieldName = getFieldName(expr.left);
+        const subordinateFieldName = getFieldName(expr.right);
+        const operator: DefaultOperatorName = '=';
+        if (fieldIsValid(baseFieldName, operator, subordinateFieldName)) {
+          return {
+            field: baseFieldName,
+            operator,
+            value: subordinateFieldName,
+            valueSource: 'field',
+          };
         }
       }
     }

@@ -1,4 +1,4 @@
-import type { Field, OptionGroup, ValueSource } from './basic';
+import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
 import type { QueryValidator, RuleValidator } from './validation';
 
 export type ExportFormat =
@@ -72,7 +72,8 @@ export interface ParseSQLOptions {
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
   listsAsArrays?: boolean;
-  fields?: Field[] | OptionGroup<Field>[];
+  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  getValueSources?: (field: string, operator: string) => ValueSources;
 }
 
 export type AnyCase<T extends string> = string extends T

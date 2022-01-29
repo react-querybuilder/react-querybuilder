@@ -20,6 +20,9 @@ export const isSQLLiteralValue = (v?: SQLWhereObjectAny): v is SQLLiteralValue =
 export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
   !!v && v.type === 'Identifier';
 
+export const isWildcardsOnly = (sqlExpr: SQLExpression) =>
+  isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^['"]?%+['"]?$/.test(sqlExpr.value);
+
 export const getParamString = (param: any) => {
   switch (typeof param) {
     case 'number':

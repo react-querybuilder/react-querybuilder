@@ -27,6 +27,7 @@ import {
   filterFieldsByComparator,
   generateID,
   getFirstOption,
+  getValueSourcesUtil,
   isOptionGroupArray,
   isRuleGroup,
   move,
@@ -92,14 +93,15 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   }, [autoSelectField, fieldsProp]);
 
   const fieldMap = useMemo(() => {
-    const fm: { [k: string]: Field } = {};
+    if (!Array.isArray(fieldsProp)) return fieldsProp;
+    const fm: Record<string, Field> = {};
     if (isOptionGroupArray(fields)) {
       fields.forEach(f => f.options.forEach(opt => (fm[opt.name] = opt)));
     } else {
       fields.forEach(f => (fm[f.name] = f));
     }
     return fm;
-  }, [fields]);
+  }, [fields, fieldsProp]);
 
   const queryDisabled = useMemo(
     () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
@@ -159,29 +161,14 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
 
   const getValueSourcesMain = useCallback(
-    (field: string, operator: string) => {
-      const fieldData = fieldMap[field];
-      /* istanbul ignore if */
-      if (fieldData?.valueSources) {
-        if (typeof fieldData.valueSources === 'function') {
-          return fieldData.valueSources(operator);
-        }
-        return fieldData.valueSources;
-      }
-      if (getValueSources) {
-        const vals = getValueSources(field, operator);
-        if (vals) return vals;
-      }
-
-      return ['value'] as ValueSources;
-    },
+    (field: string, operator: string): ValueSources =>
+      getValueSourcesUtil(fieldMap[field], operator, getValueSources),
     [fieldMap, getValueSources]
   );
 
   const getValuesMain = useCallback(
     (field: string, operator: string) => {
       const fieldData = fieldMap[field];
-      /* istanbul ignore if */
       if (fieldData?.values) {
         return fieldData.values;
       }
@@ -198,7 +185,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   const getRuleDefaultValue = useCallback(
     (rule: RuleType) => {
       const fieldData = fieldMap[rule.field];
-      /* istanbul ignore if */
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
         return fieldData.defaultValue;
       } else if (getDefaultValue) {

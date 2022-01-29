@@ -1,5 +1,13 @@
-import type { DefaultRuleGroupType, DefaultRuleGroupTypeIC, DefaultRuleType } from '../../types';
+import type {
+  DefaultRuleGroupType,
+  DefaultRuleGroupTypeIC,
+  DefaultRuleType,
+  Field,
+  OptionGroup,
+  ValueSources,
+} from '../../types';
 import { parseSQL } from '../parseSQL';
+import { isWildcardsOnly } from '../parseSQL/utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
   combinator: 'and',
@@ -186,6 +194,172 @@ describe('options', () => {
         'or',
         { field: 'middleName', operator: 'null', value: null },
       ],
+    });
+  });
+
+  describe('fields and getValueSources', () => {
+    const fields: Field[] = [
+      { name: 'f1', label: 'f1' },
+      { name: 'f2', label: 'f2', valueSources: ['value'] },
+      { name: 'f3', label: 'f3', valueSources: ['field'] },
+      { name: 'f4', label: 'f4', valueSources: () => ['value', 'field'] },
+      { name: 'f5', label: 'f5', comparator: 'group', group: 'g1' },
+      { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
+      { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
+      { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
+      { name: 'f9', label: 'f9', comparator: f => f.name === 'f1' },
+      { name: 'f10', label: 'f10', comparator: f => f.group === 'g2' },
+    ];
+    const optionGroups: OptionGroup[] = [{ label: 'Option Group1', options: fields }];
+    const fieldsObject: Record<string, Field> = {};
+    for (const f of fields) {
+      fieldsObject[f.name] = f;
+    }
+    const getValueSources = (): ValueSources => ['field'];
+
+    it('sets the valueSource when fields are valid', () => {
+      expect(parseSQL(`f1 = 'Steve'`, { fields })).toEqual(
+        wrapRule({ field: 'f1', operator: '=', value: 'Steve' })
+      );
+      // fields as option groups
+      expect(parseSQL(`f3 = f1`, { fields: optionGroups })).toEqual(
+        wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
+      );
+      // fields as object
+      expect(parseSQL(`f3 = f1`, { fields: fieldsObject })).toEqual(
+        wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
+      );
+      // `f3` and `f4` allow the valueSource "field" and have no filter
+      const baseFields = ['f3', 'f4'];
+      for (const baseField of baseFields) {
+        for (const f of fields) {
+          expect(parseSQL(`${baseField} = ${f.name}`, { fields })).toEqual(
+            f.name === baseField
+              ? wrapRule()
+              : wrapRule({ field: baseField, operator: '=', value: f.name, valueSource: 'field' })
+          );
+        }
+      }
+    });
+
+    it('uses the getValueSources option', () => {
+      expect(parseSQL(`f5 = f6`, { fields, getValueSources })).toEqual(
+        wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
+      );
+      expect(parseSQL(`f8 = f7`, { fields, getValueSources })).toEqual(
+        wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
+      );
+      expect(parseSQL(`f9 = f1`, { fields, getValueSources })).toEqual(
+        wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
+      );
+      expect(parseSQL(`f10 = f7`, { fields, getValueSources })).toEqual(
+        wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
+      );
+      expect(parseSQL(`f10 = f8`, { fields, getValueSources })).toEqual(
+        wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
+      );
+    });
+
+    it('ignores invalid fields', () => {
+      // `firstName` is not in the field list
+      expect(parseSQL(`firstName = 'Steve'`, { fields })).toEqual(wrapRule());
+      // A field cannot be compared to itself
+      expect(parseSQL(`f1 = f1`, { fields })).toEqual(wrapRule());
+      // `f1` implicitly forbids the valueSource "field"
+      expect(parseSQL(`f1 = f2`, { fields })).toEqual(wrapRule());
+      // `f2` explicitly forbids the valueSource "field"
+      expect(parseSQL(`f2 = f1`, { fields })).toEqual(wrapRule());
+      // `f3` explicitly forbids the valueSource "value"
+      expect(parseSQL(`f3 = 'Steve'`, { fields })).toEqual(wrapRule());
+      // `f5` implicitly allows the valueSource "field" through getValueSources,
+      // but `f7` is not a valid subordinate field
+      expect(parseSQL(`f5 = f7`, { fields, getValueSources })).toEqual(wrapRule());
+      // `f8` implicitly allows the valueSource "field" through getValueSources,
+      // but `f6` is not a valid subordinate field
+      expect(parseSQL(`f8 = f6`, { fields, getValueSources })).toEqual(wrapRule());
+      // `f9` implicitly allows the valueSource "field" through getValueSources,
+      // but `f10` is not a valid subordinate field
+      expect(parseSQL(`f9 = f10`, { fields, getValueSources })).toEqual(wrapRule());
+      // `f10` implicitly allows the valueSource "field" through getValueSources,
+      // but `f5` is not a valid subordinate field
+      expect(parseSQL(`f10 = f5`, { fields, getValueSources })).toEqual(wrapRule());
+    });
+
+    it('handles all operator types', () => {
+      const invalidField = 'firstName';
+      const baseField = 'f3';
+      const subField = 'f1';
+      const subField2 = 'f2';
+      const invalidSubField = 'lastName';
+      // IsNullBooleanPrimary
+      expect(parseSQL(`${invalidField} is null`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} is null`, { fields })).toEqual(
+        wrapRule({ field: baseField, operator: 'null', value: null })
+      );
+      // ComparisonBooleanPrimary
+      expect(parseSQL(`${invalidField} = ${subField}`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} = ${invalidSubField}`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} = ${subField}`, { fields })).toEqual(
+        wrapRule({ field: baseField, operator: '=', value: subField, valueSource: 'field' })
+      );
+      // InExpressionListPredicate
+      expect(parseSQL(`${invalidField} in (${subField})`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} in (${invalidSubField})`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} in (${subField}, ${subField2})`, { fields })).toEqual(
+        wrapRule({
+          field: baseField,
+          operator: 'in',
+          value: `${subField}, ${subField2}`,
+          valueSource: 'field',
+        })
+      );
+      expect(
+        parseSQL(`${baseField} in (${subField}, ${subField2})`, { fields, listsAsArrays: true })
+      ).toEqual(
+        wrapRule({
+          field: baseField,
+          operator: 'in',
+          value: [subField, subField2],
+          valueSource: 'field',
+        })
+      );
+      // BetweenPredicate
+      expect(parseSQL(`${invalidField} between ${subField} and ${subField2}`, { fields })).toEqual(
+        wrapRule()
+      );
+      expect(
+        parseSQL(`${baseField} between ${invalidSubField} and ${subField2}`, { fields })
+      ).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} between ${subField} and ${subField2}`, { fields })).toEqual(
+        wrapRule({
+          field: baseField,
+          operator: 'between',
+          value: `${subField}, ${subField2}`,
+          valueSource: 'field',
+        })
+      );
+      // LikePredicate (without wildcards)
+      expect(parseSQL(`${invalidField} like ${subField}`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} like ${invalidSubField}`, { fields })).toEqual(wrapRule());
+      expect(parseSQL(`${baseField} like ${subField}`, { fields })).toEqual(
+        wrapRule({ field: baseField, operator: '=', value: `${subField}`, valueSource: 'field' })
+      );
+    });
+
+    // TODO: enable when sqlParser properly handles the `||` (string concatenation) operator
+    it.skip('handles LIKE clauses with wildcards', () => {
+      expect(parseSQL(`f3 like '%' || f1 || '%'`, { fields })).toEqual(
+        wrapRule({ field: 'f3', operator: 'contains', value: 'f1', valueSource: 'field' })
+      );
+    });
+
+    // TODO: this can be removed when sqlParser properly handles the `||` operator
+    it('identifies wildcards', () => {
+      expect(isWildcardsOnly({ type: 'RegexpPredicate' })).toBe(false);
+      expect(isWildcardsOnly({ type: 'String', value: '""' })).toBe(false);
+      expect(isWildcardsOnly({ type: 'String', value: '"_"' })).toBe(false);
+      expect(isWildcardsOnly({ type: 'String', value: '"%"' })).toBe(true);
+      expect(isWildcardsOnly({ type: 'String', value: '"%%"' })).toBe(true);
     });
   });
 });
