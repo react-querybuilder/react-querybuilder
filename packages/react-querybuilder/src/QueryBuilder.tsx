@@ -169,6 +169,9 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   const getValuesMain = useCallback(
     (field: string, operator: string) => {
       const fieldData = fieldMap[field];
+      // Ignore this in tests because Rule already checks for
+      // the presence of the values property in fieldData.
+      /* istanbul ignore if */
       if (fieldData?.values) {
         return fieldData.values;
       }

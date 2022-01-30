@@ -32,7 +32,7 @@ describe('when rendered', () => {
 
   it('should render the root RuleGroup', () => {
     const { getByTestId } = render(<QueryBuilder />);
-    expect(() => getByTestId(TestID.ruleGroup)).not.toThrow();
+    expect(getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   });
 });
 
@@ -70,7 +70,7 @@ describe('when initial query without fields is provided, create rule should work
   it('should be able to create rule on add rule click', () => {
     const { getByTestId } = render(<QueryBuilder />);
     userEvent.click(getByTestId(TestID.addRule));
-    expect(() => getByTestId(TestID.rule)).not.toThrow();
+    expect(getByTestId(TestID.rule)).toBeInTheDocument();
   });
 });
 
@@ -85,7 +85,7 @@ describe('when initial query with duplicate fields is provided', () => {
       />
     );
     userEvent.click(getByTestId(TestID.addRule));
-    expect(() => getByTestId(TestID.rule)).not.toThrow();
+    expect(getByTestId(TestID.rule)).toBeInTheDocument();
     expect(getAllByTestId(TestID.fields)).toHaveLength(1);
   });
 });
@@ -98,7 +98,7 @@ describe('when initial query with fields object is provided', () => {
       />
     );
     userEvent.click(getByTestId(TestID.addRule));
-    expect(() => getByTestId(TestID.rule)).not.toThrow();
+    expect(getByTestId(TestID.rule)).toBeInTheDocument();
     expect(getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(2);
     // TODO: test sort
   });
@@ -128,7 +128,7 @@ describe('when initial query, without ID, is provided', () => {
 
   it('should contain a <Rule /> with the correct props', () => {
     const { selectors } = setup();
-    expect(() => selectors.getByTestId(TestID.rule)).not.toThrow();
+    expect(selectors.getByTestId(TestID.rule)).toBeInTheDocument();
     expect(selectors.getByTestId(TestID.fields)).toHaveValue('firstName');
     expect(selectors.getByTestId(TestID.operators)).toHaveValue('=');
     expect(selectors.getByTestId(TestID.valueEditor)).toHaveValue('Test without ID');
@@ -420,7 +420,7 @@ describe('actions', () => {
 
     userEvent.click(selectors.getByTestId(TestID.removeRule));
 
-    expect(() => selectors.getByTestId(TestID.rule)).toThrow();
+    expect(selectors.queryByTestId(TestID.rule)).toBeNull();
     expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
   });
 
@@ -770,7 +770,10 @@ describe('values property in field', () => {
         name: 'field1',
         label: 'Field 1',
         defaultValue: 'test',
-        values: [{ name: 'test', label: 'Test' }],
+        values: [
+          { name: 'test', label: 'Test value 1' },
+          { name: 'test2', label: 'Test2' },
+        ],
       },
       {
         name: 'field2',
@@ -780,7 +783,7 @@ describe('values property in field', () => {
       },
     ];
     const onQueryChange = jest.fn();
-    const { getByTestId, getAllByTestId } = render(
+    const { getByDisplayValue, getByTestId, getAllByTestId } = render(
       <QueryBuilder
         getValueEditorType={() => 'select'}
         fields={fields}
@@ -789,8 +792,9 @@ describe('values property in field', () => {
     );
 
     userEvent.click(getByTestId(TestID.addRule));
-
     expect(getAllByTestId(TestID.valueEditor)).toHaveLength(1);
+    expect(getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(2);
+    expect(getByDisplayValue('Test value 1')).toBeInTheDocument();
   });
 });
 
@@ -874,7 +878,7 @@ describe('addRuleToNewGroups', () => {
 
   it('does not add a rule when the component is created', () => {
     const { selectors } = setup();
-    expect(() => selectors.getByTestId(TestID.rule)).toThrow();
+    expect(selectors.queryByTestId(TestID.rule)).toBeNull();
   });
 
   it('adds a rule when a new group is created', () => {
@@ -1057,11 +1061,13 @@ describe('independent combinators', () => {
   });
 
   it('should add rules with independent combinators', () => {
-    const { getAllByTestId, getByTestId } = render(<QueryBuilder independentCombinators />);
-    expect(() => getAllByTestId(TestID.combinators)).toThrow;
+    const { getAllByTestId, getByTestId, queryAllByTestId } = render(
+      <QueryBuilder independentCombinators />
+    );
+    expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
     userEvent.click(getByTestId(TestID.addRule));
     expect(getByTestId(TestID.rule)).toBeDefined();
-    expect(() => getAllByTestId(TestID.combinators)).toThrow();
+    expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
     userEvent.click(getByTestId(TestID.addRule));
     expect(getAllByTestId(TestID.rule)).toHaveLength(2);
     expect(getAllByTestId(TestID.combinators)).toHaveLength(1);
@@ -1073,11 +1079,13 @@ describe('independent combinators', () => {
   });
 
   it('should add groups with independent combinators', () => {
-    const { getAllByTestId, getByTestId } = render(<QueryBuilder independentCombinators />);
-    expect(() => getAllByTestId(TestID.combinators)).toThrow();
+    const { getAllByTestId, getByTestId, queryAllByTestId } = render(
+      <QueryBuilder independentCombinators />
+    );
+    expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
     userEvent.click(getByTestId(TestID.addGroup));
     expect(getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
-    expect(() => getAllByTestId(TestID.combinators)).toThrow();
+    expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
     userEvent.click(getAllByTestId(TestID.addGroup)[0]);
     expect(getAllByTestId(TestID.ruleGroup)).toHaveLength(3);
     expect(getAllByTestId(TestID.combinators)).toHaveLength(1);
@@ -1780,5 +1788,36 @@ describe('locked rules', () => {
     const rg = getByTestId(TestID.ruleGroup);
     rg.querySelectorAll('button').forEach(b => userEvent.click(b));
     expect(onQueryChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('value source field', () => {
+  const fields: Field[] = [
+    { name: 'f1', label: 'Field 1', valueSources: ['field'] },
+    { name: 'f2', label: 'Field 2', valueSources: ['field'] },
+    { name: 'f3', label: 'Field 3', valueSources: ['field'], comparator: () => false },
+    { name: 'f4', label: 'Field 4', valueSources: [] as any },
+  ];
+
+  it('sets the right default value', () => {
+    const { getByDisplayValue, getByTestId } = render(
+      <QueryBuilder fields={fields} getDefaultField="f1" />
+    );
+    userEvent.click(getByTestId(TestID.addRule));
+    expect(getByDisplayValue(fields.filter(f => f.name !== 'f1')[0].label)).toHaveClass(sc.value);
+  });
+
+  it('handles empty comparator results', () => {
+    const { getByTestId } = render(<QueryBuilder fields={fields} getDefaultField="f3" />);
+    userEvent.click(getByTestId(TestID.addRule));
+    expect(getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(0);
+  });
+
+  it('handles invalid valueSources property', () => {
+    const { getByTestId, queryByDisplayValue } = render(
+      <QueryBuilder fields={fields} getDefaultField="f4" />
+    );
+    userEvent.click(getByTestId(TestID.addRule));
+    expect(queryByDisplayValue('Field 1')).toBeNull();
   });
 });
