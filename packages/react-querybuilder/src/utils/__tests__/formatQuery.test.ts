@@ -710,12 +710,13 @@ it('handles json_without_ids correctly', () => {
         field: 'firstName',
         value: '',
         operator: 'null',
+        valueSource: 'value',
       },
     ],
     not: false,
   };
   const expectedResult =
-    '{"rules":[{"field":"firstName","value":"","operator":"null"}],"combinator":"and","not":false}';
+    '{"rules":[{"field":"firstName","value":"","operator":"null","valueSource":"value"}],"combinator":"and","not":false}';
   expect(formatQuery(queryToTest, 'json_without_ids')).toBe(expectedResult);
 });
 
