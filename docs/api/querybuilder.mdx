@@ -179,6 +179,7 @@ interface Controls {
   rule?: React.ComponentType<RuleProps>;
   ruleGroup?: React.ComponentType<RuleGroupProps>;
   valueEditor?: React.ComponentType<ValueEditorProps>;
+  valueSourceSelector?: React.ComponentType<ValueSourceSelectorProps>;
 }
 ```
 
@@ -408,6 +409,25 @@ interface ValueEditorProps {
 }
 ```
 
+#### `valueSourceSelector`
+
+By default a `<select />` is used. The following props are passed:
+
+```ts
+interface ValueSourceSelectorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  options: ValueSourceOption[] | OptionGroup<ValueSourceOption>[]; // Return value of getValueSources(field, operator)
+  value: ValueSource; // Selected value source from the existing query representation, if any
+  title: string; // translations.valueSourceSelector.title, e.g. "Value source"
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Callback function to update query representation
+  level: number; // The level the group this rule belongs to
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+}
+```
+
 #### `notToggle`
 
 By default, `<label><input type="checkbox" />Not</label>` is used. The following props are passed:
@@ -438,6 +458,8 @@ interface RuleGroupProps {
   schema: Schema; // See `Schema` on the TypeScript page
   not: boolean; // Whether or not to invert this group
   context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
 }
 ```
 
@@ -452,9 +474,12 @@ interface RuleProps {
   field: string; // Field name for this rule
   operator: string; // Operator name for this rule
   value: any; // Value for this rule
+  valueSource?: ValueSource; // Value source for this rule's value
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` on the TypeScript page
   context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
 }
 ```
 
@@ -469,6 +494,12 @@ This is a callback function invoked to get the list of allowed operators for the
 `(field: string, operator: string) => ValueEditorType`
 
 This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
+
+### `getValueSources`
+
+`(field: string, operator: string) => ValueSources`;
+
+This is a callback function invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in any order). If this function is not provided, `() => ["value"]` is used.
 
 ### `getInputType`
 

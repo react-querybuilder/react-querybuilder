@@ -25,6 +25,8 @@ interface Field {
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
   validator?: RuleValidator; // Called when a rule specifies this field
+  valueSources?: ValueSources | ((operator: string) => ValueSources); // List of allowed value sources (must contain "value", "field", or both)
+  comparator?: string | ((f: Field) => boolean); // Determines which (other) fields to include in the list when valueSource is "field"
 }
 ```
 
@@ -36,14 +38,17 @@ interface Field {
 type RuleType = {
   path?: number[];
   id?: string;
+  disabled?: boolean;
   field: string;
   operator: string;
   value: any;
+  valueSource?: ValueSource;
 };
 
 type RuleGroupType = {
   path?: number[];
   id?: string;
+  disabled?: boolean;
   combinator: string;
   rules: (RuleType | RuleGroupType)[];
   not?: boolean;
@@ -52,6 +57,7 @@ type RuleGroupType = {
 type RuleGroupTypeIC = {
   path?: number[];
   id?: string;
+  disabled?: boolean;
   rules: (RuleType | RuleGroupTypeIC | string)[]; // see note below
   not?: boolean;
 };
@@ -141,6 +147,8 @@ interface ParseSQLOptions {
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
   listsAsArrays?: boolean;
+  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  getValueSources?: (field: string, operator: string) => ValueSources;
 }
 ```
 
@@ -186,6 +194,10 @@ type ValueEditorType =
   | 'datetime-local'
   | 'time'
   | null;
+
+type ValueSource = 'value' | 'field';
+
+type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
 interface Schema {
   fields: Field[] | OptionGroup<NameLabelPair>[];

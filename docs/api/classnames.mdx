@@ -39,6 +39,11 @@ import { standardClassnames as sc } from 'react-querybuilder';
       defaultValue: 'This rule is invalid',
       validator: () => false,
     },
+    {
+      name: 'f3',
+      label: `.${sc.valueSource}`,
+      valueSources: ['value', 'field'],
+    },
   ]}
   combinators={[{ name: 'and', label: `.${sc.combinators}` }]}
   getOperators={() => [{ name: '=', label: `.${sc.operators}` }]}
@@ -106,6 +111,9 @@ import { standardClassnames as sc } from 'react-querybuilder';
       label: `.${sc.lockGroupDisabled}`,
       title: `.${sc.lockGroupDisabled}`,
     },
+    valueSourceSelector: {
+      title: `.${sc.valueSource}`,
+    },
   }}
   defaultQuery={{
     combinator: 'and',
@@ -129,6 +137,7 @@ import { standardClassnames as sc } from 'react-querybuilder';
           },
         ],
       },
+      { field: 'f3', operator: '=', value: 'f1' },
     ],
   }}
 />
