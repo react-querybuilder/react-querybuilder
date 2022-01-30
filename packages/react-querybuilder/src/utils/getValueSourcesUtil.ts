@@ -13,6 +13,7 @@ export const getValueSourcesUtil = (
   }
   if (getValueSources) {
     const vals = getValueSources(fieldData.name, operator);
+    /* istanbul ignore else */
     if (vals) return vals;
   }
 

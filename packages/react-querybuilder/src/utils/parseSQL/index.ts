@@ -297,6 +297,7 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
         }
         const f = getFieldName(expr.left);
+        /* istanbul ignore else */
         if (fieldIsValid(f, operator)) {
           return { field: f, operator, value: valueWithoutWildcards };
         }
