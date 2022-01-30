@@ -97,9 +97,14 @@ export interface OperatorSelectorProps extends BaseSelectorProps {
   fieldData: Field;
 }
 
+interface ValueSourceOption extends NameLabelPair {
+  name: ValueSource;
+}
+
 export interface ValueSourceSelectorProps extends BaseSelectorProps {
   field: string;
   fieldData: Field;
+  options: ValueSourceOption[] | OptionGroup<ValueSourceOption>[];
 }
 
 export interface ValueEditorProps extends SelectorEditorProps {
