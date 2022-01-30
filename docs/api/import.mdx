@@ -122,6 +122,8 @@ Output (`RuleGroupTypeIC`):
 
 When the `fields` option (which accepts the same types as the [`fields` prop](./querybuilder#fields)) is provided, and _only_ if it is provided, then `parseSQL` will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function can also be provided to help validate rules.
 
+In order for such a rule to be considered valid, either the `getValueSources` return value, the field's `valueSources` property return value, or the field's `valueSources` property itself must be an array that includes the string "field".
+
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = lastName`, {
   fields: [
