@@ -104,12 +104,13 @@ export interface ValueSourceSelectorProps extends BaseSelectorProps {
 
 export interface ValueEditorProps extends SelectorEditorProps {
   field: string;
-  fieldData: Field;
   operator: string;
+  value?: any;
+  valueSource: ValueSource;
+  fieldData: Field;
   type?: ValueEditorType;
   inputType?: string | null;
   values?: any[];
-  value?: any;
 }
 
 export interface DragHandleProps extends CommonSubComponentProps {

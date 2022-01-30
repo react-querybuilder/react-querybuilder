@@ -28,6 +28,7 @@ import type {
   ValidationResult,
   ValueEditorProps,
   ValueSelectorProps,
+  ValueSources,
 } from '../types';
 
 const [Rule, getDndBackendOriginal] = wrapWithTestBackend(RuleOriginal);
@@ -37,14 +38,19 @@ const getDndBackend = () => getDndBackendOriginal()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
+const getFieldMapFromArray = (fa: Field[]) => {
+  const map: Record<string, Field> = {};
+  for (const f of fa) {
+    map[f.name] = f;
+  }
+  return map;
+};
+
 const defaultFields: Field[] = [
   { name: 'field1', label: 'Field 1' },
   { name: 'field2', label: 'Field 2' },
 ];
-const fieldMap: { [k: string]: Field } = {};
-defaultFields.forEach(f => {
-  fieldMap[f.name] = f;
-});
+const fieldMap = getFieldMapFromArray(defaultFields);
 const controls: Partial<Controls> = {
   cloneRuleAction: (props: ActionProps) => (
     <button
@@ -173,6 +179,21 @@ describe('onElementChanged methods', () => {
       userEvent.type(getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!, 'any_value');
       expect(onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
     });
+  });
+});
+
+describe('valueEditorType as function', () => {
+  it('should determine the correct value editor type', () => {
+    const fields: Field[] = [{ name: 'f1', label: 'Field 1', valueEditorType: () => 'radio' }];
+    const fieldMap = getFieldMapFromArray(fields);
+    const controls = getProps().schema.controls;
+    const props = getProps({
+      fields,
+      fieldMap,
+      controls: { ...controls, valueEditor: ({ type }) => <button>{type}</button> },
+    });
+    const { getByText } = render(<Rule {...props} field="f1" />);
+    expect(getByText('radio')).toBeInTheDocument();
   });
 });
 
@@ -408,5 +429,101 @@ describe('locked rule', () => {
       getDndBackend()
     );
     expect(moveRule).not.toHaveBeenCalled();
+  });
+});
+
+describe('valueSource', () => {
+  const valueSources: ValueSources = ['value', 'field'];
+  const fields: Field[] = [
+    {
+      name: 'fvsa',
+      label: 'Field w/ valueSources array',
+      valueSources,
+      comparator: f => f.label.includes('comparator'),
+    },
+    {
+      name: 'fvsf',
+      label: 'Field w/ valueSources function',
+      valueSources: () => valueSources,
+    },
+    { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
+    { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
+  ];
+  const fieldMap = getFieldMapFromArray(fields);
+  const getValueSources = (): ValueSources => valueSources;
+
+  it('does not display value source selector by default', () => {
+    const { queryByTestId } = render(<Rule {...getProps()} />);
+    expect(queryByTestId(TestID.valueSourceSelector)).toBeNull();
+  });
+
+  it('sets the value source to "value" by default', () => {
+    const controls = getProps().schema.controls;
+    const props = getProps({
+      getValueSources,
+      controls: {
+        ...controls,
+        valueEditor: ({ valueSource }) => <button>{`vs=${valueSource}`}</button>,
+      },
+    });
+    const { getByText } = render(<Rule {...props} />);
+    expect(getByText('vs=value')).toBeInTheDocument();
+  });
+
+  it('valueSource "field"', () => {
+    const { getByDisplayValue } = render(
+      <Rule {...getProps({ getValueSources })} valueSource="field" />
+    );
+    expect(getByDisplayValue('field')).toBeInTheDocument();
+  });
+
+  it('valueSources as array', () => {
+    const { getByTestId } = render(
+      <Rule
+        {...getProps({ getValueSources: () => ['value'], fields, fieldMap })}
+        field="fvsa"
+        valueSource="field"
+      />
+    );
+    expect(getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')).toHaveLength(2);
+    expect(getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
+  });
+
+  it('valueSources as function', () => {
+    const { getByTestId } = render(
+      <Rule
+        {...getProps({ getValueSources: () => ['value'], fields, fieldMap })}
+        field="fvsf"
+        valueSource="field"
+      />
+    );
+    expect(getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')).toHaveLength(2);
+    expect(getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
+  });
+
+  it('filters fields by comparator', () => {
+    const controls = getProps().schema.controls;
+    const props = getProps({
+      fields,
+      fieldMap,
+      getValueSources,
+      controls: {
+        ...controls,
+        valueEditor: ({ value, values }) => (
+          <select value={value} onChange={() => {}}>
+            {values?.map(v => (
+              <option key={v.name} value={v.name}>
+                {v.label}
+              </option>
+            ))}
+          </select>
+        ),
+      },
+    });
+    const { getByDisplayValue } = render(
+      <Rule {...props} field="fvsa" value="fc2" valueSource="field" />
+    );
+    expect(getByDisplayValue(fieldMap['fc2'].label).getElementsByTagName('option')).toHaveLength(2);
+    expect(getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
   });
 });

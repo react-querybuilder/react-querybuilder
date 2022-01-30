@@ -146,6 +146,7 @@ export const Rule = ({
       ? filterFieldsByComparator(fieldData, fields)
       : fieldData.values ?? getValues(field, operator);
   const level = path.length;
+  const vsOptions = valueSources.map(vs => ({ name: vs, label: vs }));
 
   const validationResult =
     validationMap[id ?? /* istanbul ignore next */ ''] ??
@@ -223,7 +224,7 @@ export const Rule = ({
               field={field}
               fieldData={fieldData}
               title={translations.valueSourceSelector.title}
-              options={valueSources.map(vs => ({ name: vs, label: vs }))}
+              options={vsOptions}
               value={valueSource ?? 'value'}
               className={c(standardClassnames.valueSource, classNames.valueSource)}
               handleOnChange={generateOnChangeHandler('valueSource')}
@@ -241,6 +242,7 @@ export const Rule = ({
             title={translations.value.title}
             operator={operator}
             value={value}
+            valueSource={valueSource ?? 'value'}
             type={valueEditorType}
             inputType={inputType}
             values={values}
