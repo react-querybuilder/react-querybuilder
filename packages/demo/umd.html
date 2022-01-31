@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Query Builder UMD Build</title>
+    <!-- <link rel="stylesheet" href="../react-querybuilder/dist/query-builder.css" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/react-querybuilder@4/dist/query-builder.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/immer@6/dist/immer.umd.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dnd@14/dist/umd/ReactDnD.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dnd-html5-backend@14/dist/umd/ReactDnDHTML5Backend.min.js"></script>
+    <!-- <script type="module" src="../react-querybuilder/dist/index.umd.js"></script> -->
+    <script crossorigin src="https://unpkg.com/react-querybuilder@4/dist/index.umd.js"></script>
+    <script>
+      const fields = [
+        { name: 'firstName', label: 'First Name', placeholder: 'Enter first name' },
+        {
+          name: 'lastName',
+          label: 'Last Name',
+          placeholder: 'Enter last name',
+          defaultOperator: 'beginsWith',
+        },
+        { name: 'age', label: 'Age', inputType: 'number' },
+        {
+          name: 'isMusician',
+          label: 'Is a musician',
+          valueEditorType: 'checkbox',
+          operators: [{ name: '=', label: 'is' }],
+          defaultValue: false,
+        },
+        {
+          name: 'instrument',
+          label: 'Instrument',
+          valueEditorType: 'select',
+          values: ['Guitar', 'Piano', 'Vocals', 'Drums'],
+          defaultValue: 'Piano',
+          operators: [{ name: '=', label: 'is' }],
+        },
+        {
+          name: 'gender',
+          label: 'Gender',
+          operators: [{ name: '=', label: 'is' }],
+          valueEditorType: 'radio',
+          values: [
+            { name: 'M', label: 'Male' },
+            { name: 'F', label: 'Female' },
+            { name: 'O', label: 'Other' },
+          ],
+        },
+        { name: 'height', label: 'Height' },
+        { name: 'job', label: 'Job' },
+        { name: 'description', label: 'Description', valueEditorType: 'textarea' },
+        { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
+        { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
+        { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
+      ];
+      const defaultQuery = {
+        combinator: 'and',
+        rules: [
+          {
+            field: 'firstName',
+            operator: '=',
+            value: 'Steve',
+          },
+          {
+            field: 'lastName',
+            operator: '=',
+            value: 'Vai',
+          },
+        ],
+      };
+      ReactDOM.render(
+        React.createElement(ReactQueryBuilder.QueryBuilder, {
+          fields,
+          defaultQuery,
+          enableDragAndDrop: true,
+        }),
+        document.getElementById('root')
+      );
+    </script>
+  </body>
+</html>

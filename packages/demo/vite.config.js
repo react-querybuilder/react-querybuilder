@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         ie11: resolve(__dirname, 'ie11.html'),
+        umd: resolve(__dirname, 'umd.html'),
       },
     },
   },
