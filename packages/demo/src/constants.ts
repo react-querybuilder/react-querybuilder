@@ -136,9 +136,6 @@ export const fields: Field[] = [
     label: 'First Name',
     placeholder: 'Enter first name',
     validator,
-    comparator: 'group',
-    group: 'strings',
-    valueSources: ['value', 'field'],
   },
   {
     name: 'lastName',
@@ -146,9 +143,6 @@ export const fields: Field[] = [
     placeholder: 'Enter last name',
     defaultOperator: 'beginsWith',
     validator,
-    comparator: 'group',
-    group: 'strings',
-    valueSources: ['value', 'field'],
   },
   { name: 'age', label: 'Age', inputType: 'number', validator },
   {
@@ -178,11 +172,39 @@ export const fields: Field[] = [
     ],
   },
   { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator, comparator: 'group', group: 'strings' },
+  { name: 'job', label: 'Job', validator },
   { name: 'description', label: 'Description', valueEditorType: 'textarea' },
   { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
   { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
   { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
+  {
+    name: 'groupedField1',
+    label: 'Grouped Field 1',
+    comparator: 'group',
+    group: 'group1',
+    valueSources: ['field', 'value'],
+  },
+  {
+    name: 'groupedField2',
+    label: 'Grouped Field 2',
+    comparator: 'group',
+    group: 'group1',
+    valueSources: ['field', 'value'],
+  },
+  {
+    name: 'groupedField3',
+    label: 'Grouped Field 3',
+    comparator: 'group',
+    group: 'group1',
+    valueSources: ['field', 'value'],
+  },
+  {
+    name: 'groupedField4',
+    label: 'Grouped Field 4',
+    comparator: 'group',
+    group: 'group1',
+    valueSources: ['field', 'value'],
+  },
 ];
 
 export const initialQuery: RuleGroupType = {
@@ -226,6 +248,7 @@ export const initialQuery: RuleGroupType = {
         },
       ],
     },
+    { field: 'groupedField1', operator: '=', value: 'groupedField4', valueSource: 'field' },
   ],
 };
 
