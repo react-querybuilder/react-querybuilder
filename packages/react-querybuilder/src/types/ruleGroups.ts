@@ -1,4 +1,4 @@
-import type { NameLabelPair } from './basic';
+import type { NameLabelPair, ValueSource } from './basic';
 
 interface CommonProperties {
   path?: number[];
@@ -14,6 +14,7 @@ export type RuleType<
   field: F;
   operator: O;
   value: V;
+  valueSource?: ValueSource;
 };
 
 export type RuleGroupType<

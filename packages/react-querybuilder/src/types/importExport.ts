@@ -1,3 +1,4 @@
+import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
 import type { QueryValidator, RuleValidator } from './validation';
 
 export type ExportFormat =
@@ -49,7 +50,12 @@ export interface FormatQueryOptions {
   paramPrefix?: string;
 }
 
-export type ValueProcessor = (field: string, operator: string, value: any) => string;
+export type ValueProcessor = (
+  field: string,
+  operator: string,
+  value: any,
+  valueSource?: ValueSource
+) => string;
 
 export interface ParameterizedSQL {
   sql: string;
@@ -66,6 +72,8 @@ export interface ParseSQLOptions {
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
   listsAsArrays?: boolean;
+  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  getValueSources?: (field: string, operator: string) => ValueSources;
 }
 
 export type AnyCase<T extends string> = string extends T

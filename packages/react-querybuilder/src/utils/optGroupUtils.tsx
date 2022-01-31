@@ -20,11 +20,11 @@ export const toOptions = (arr?: NameLabelPair[] | OptionGroup[]) =>
           {opt.label}
         </option>
       ))
-    : /* istanbul ignore next */ null;
+    : null;
 
 export const getFirstOption = (arr?: NameLabelPair[] | OptionGroup[]) =>
   !Array.isArray(arr) || arr.length === 0
-    ? /* istanbul ignore next */ null
+    ? null
     : isOptionGroupArray(arr)
     ? arr[0].options[0].name
     : arr[0].name;

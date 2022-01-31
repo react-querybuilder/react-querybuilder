@@ -1,14 +1,17 @@
+import { getValueSourcesUtil } from '..';
 import { defaultCombinators } from '../../defaults';
 import {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  ValueSources,
 } from '../../types';
 import { formatQuery } from '../formatQuery';
 import { add, move, remove, update } from '../queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);
+const [value, field] = ['value', 'field'] as ValueSources;
 
 const stripIDs = (query: DefaultRuleGroupTypeAny) =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
@@ -24,14 +27,18 @@ const [rg1, rg2] = [and, or].map(combinator => ({ combinator, rules: [] }));
 const rg3: DefaultRuleGroupType = { combinator: and, rules: [r1, r2, r3] };
 const rgic1: DefaultRuleGroupTypeIC = { rules: [] };
 const rgic2: DefaultRuleGroupTypeIC = { rules: [r1, and, r2] };
+const rgvsu: DefaultRuleGroupType = { combinator: 'and', rules: [r1] };
+const rgvsv: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueSource: 'value' }] };
+const rgvsf: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueSource: 'field' }] };
 
 const testQT = (
   title: string,
   ruleGroup: DefaultRuleGroupTypeAny,
   expectation: DefaultRuleGroupTypeAny,
-  exact?: boolean
+  exact?: boolean,
+  only?: boolean
 ) => {
-  it(title, () => {
+  (only ? it.only : it)(title, () => {
     if (exact) {
       expect(ruleGroup).toBe(expectation);
     } else {
@@ -199,6 +206,58 @@ describe('update', () => {
       update(rgic2, 'combinator', or, [2]),
       rgic2,
       true
+    );
+  });
+
+  describe('value sources', () => {
+    testQT(
+      'updates value source from undefined to field',
+      update(rgvsu, 'valueSource', field, [0]),
+      { combinator: 'and', rules: [{ ...r1, value: '', valueSource: 'field' }] }
+    );
+    testQT('updates value source from field to value', update(rgvsf, 'valueSource', value, [0]), {
+      combinator: 'and',
+      rules: [{ ...r1, value: '', valueSource: 'value' }],
+    });
+    testQT('resets value source to default on field change', update(rgvsf, 'field', 'fu', [0]), {
+      combinator: 'and',
+      rules: [{ ...r1, field: 'fu', value: '', valueSource: 'value' }],
+    });
+    testQT(
+      'resets value source to default of "field" on field change',
+      update(rgvsv, 'field', 'fu', [0], { getValueSources: () => ['field', 'value'] }),
+      {
+        combinator: 'and',
+        rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
+      },
+      false,
+      true
+    );
+    testQT(
+      'resets value source to default of "field" on field change when Field specifies value sources',
+      update(rgvsv, 'field', 'fu', [0], {
+        getValueSources: (fld, op) =>
+          getValueSourcesUtil({ name: fld, label: 'Fld', valueSources: ['field', 'value'] }, op),
+      }),
+      {
+        combinator: 'and',
+        rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
+      },
+      false,
+      true
+    );
+    testQT(
+      'resets value source to default on operator change',
+      update(rgvsf, 'operator', 'between', [0], { resetOnOperatorChange: true }),
+      {
+        combinator: 'and',
+        rules: [{ ...r1, operator: 'between', value: '', valueSource: 'value' }],
+      }
+    );
+    testQT(
+      'updates undefined value source to default when set explicitly',
+      update(rgvsu, 'valueSource', value, [0]),
+      rgvsv
     );
   });
 });

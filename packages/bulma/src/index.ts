@@ -18,6 +18,7 @@ export const bulmaControlElements: Partial<Controls> = {
   lockGroupAction: BulmaActionElement,
   removeGroupAction: BulmaActionElement,
   removeRuleAction: BulmaActionElement,
+  valueSourceSelector: BulmaValueSelector,
 };
 
 export { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector };

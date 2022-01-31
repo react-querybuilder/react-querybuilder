@@ -1,3 +1,4 @@
+import { filterFieldsByComparator, getValueSourcesUtil, isOptionGroupArray, uniqByName } from '..';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -7,96 +8,23 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Field,
   ParseSQLOptions,
 } from '../../types';
 import sqlParser from './sqlParser';
-import type {
-  AndOperator,
-  ComparisonOperator,
-  OrOperator,
-  SQLAndExpression,
-  SQLExpression,
-  SQLIdentifier,
-  SQLLiteralValue,
-  SQLOrExpression,
-} from './types';
-import { isSQLExpressionNotString, isSQLIdentifier, isSQLLiteralValue } from './utils';
-
-const getParamString = (param: any) => {
-  switch (typeof param) {
-    case 'number':
-      return `${param}`;
-    case 'boolean':
-      return param ? 'TRUE' : 'FALSE';
-    default:
-      return `'${param}'`;
-  }
-};
-
-const getFieldName = (f: string) => f.replace(/(^`|`$)/g, '');
-
-const normalizeCombinator = (c: AndOperator | OrOperator) =>
-  c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorName;
-
-const normalizeOperator = (op: ComparisonOperator) => op.replace('<>', '!=') as DefaultOperatorName;
-
-const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
-  valueObj.type === 'String'
-    ? valueObj.value.replace(/(^'|'$)/g, '').replace(/(^"|"$)/g, '')
-    : valueObj.type === 'Boolean'
-    ? valueObj.value.toLowerCase() === 'true'
-    : parseFloat(valueObj.value);
-
-const generateFlatAndOrList = (
-  expr: SQLAndExpression | SQLOrExpression
-): (DefaultCombinatorName | SQLExpression)[] => {
-  const combinator = normalizeCombinator(expr.operator);
-  if (expr.left.type === 'AndExpression' || expr.left.type === 'OrExpression') {
-    return [...generateFlatAndOrList(expr.left), combinator, expr.right];
-  }
-  return [expr.left, combinator, expr.right];
-};
-
-const generateMixedAndOrList = (expr: SQLAndExpression | SQLOrExpression) => {
-  const arr = generateFlatAndOrList(expr);
-  const returnArray: (DefaultCombinatorName | SQLExpression | ('and' | SQLExpression)[])[] = [];
-  let startIndex = 0;
-  for (let i = 0; i < arr.length; i += 2) {
-    if (arr[i + 1] === 'and') {
-      startIndex = i;
-      let j = 1;
-      while (arr[startIndex + j] === 'and') {
-        i += 2;
-        j += 2;
-      }
-      const tempAndArray = arr.slice(startIndex, i + 1) as ('and' | SQLExpression)[];
-      returnArray.push(tempAndArray);
-      i -= 2;
-    } else if (arr[i + 1] === 'or') {
-      if (i === 0 || i === arr.length - 3) {
-        if (i === 0 || arr[i - 1] === 'or') {
-          returnArray.push(arr[i]);
-        }
-        returnArray.push(arr[i + 1]);
-        if (i === arr.length - 3) {
-          returnArray.push(arr[i + 2]);
-        }
-      } else {
-        if (arr[i - 1] === 'and') {
-          returnArray.push(arr[i + 1]);
-        } else {
-          returnArray.push(arr[i]);
-          returnArray.push(arr[i + 1]);
-        }
-      }
-    }
-  }
-  if (returnArray.length === 1 && Array.isArray(returnArray[0])) {
-    // If length is 1, then the only element is an AND array so just return that
-    return returnArray[0];
-  }
-  return returnArray;
-};
+import type { SQLExpression, SQLIdentifier } from './types';
+import {
+  evalSQLLiteralValue,
+  generateFlatAndOrList,
+  generateMixedAndOrList,
+  getFieldName,
+  getParamString,
+  isSQLExpressionNotString,
+  isSQLIdentifier,
+  isSQLLiteralValue,
+  isWildcardsOnly,
+  normalizeOperator,
+} from './utils';
 
 /**
  * Converts a SQL `SELECT` statement into a query suitable for
@@ -112,11 +40,14 @@ function parseSQL(
   options: Omit<ParseSQLOptions, 'independentCombinators'> & { independentCombinators: true }
 ): DefaultRuleGroupTypeIC;
 function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny {
-  let sqlString = /^[ \t\n\r]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
+  let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
+  let fieldsFlat: Field[] = [];
+  const getValueSources = options?.getValueSources;
+
   if (options) {
-    const { params, paramPrefix, independentCombinators } = options;
-    ic = independentCombinators || false;
+    const { params, paramPrefix, independentCombinators, fields } = options;
+    ic = !!independentCombinators;
     /* istanbul ignore else */
     if (params) {
       if (Array.isArray(params)) {
@@ -137,6 +68,63 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         });
       }
     }
+    if (fields) {
+      const fieldsArray = Array.isArray(fields)
+        ? fields
+        : Object.keys(fields)
+            .map(fld => ({ ...fields[fld], name: fld }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+      if (isOptionGroupArray(fieldsArray)) {
+        fieldsFlat = uniqByName(fieldsFlat.concat(...fieldsArray.map(opt => opt.options)));
+      } else {
+        fieldsFlat = uniqByName(fieldsArray);
+      }
+    }
+  }
+
+  function fieldIsValid(
+    fieldName: string,
+    operator: DefaultOperatorName,
+    subordinateFieldName?: string
+  ) {
+    // If fields option was an empty array or undefined, then all identifiers
+    // are considered valid.
+    if (fieldsFlat.length === 0) return true;
+
+    let valid = false;
+
+    const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
+    if (primaryField) {
+      if (
+        !subordinateFieldName &&
+        operator !== 'notNull' &&
+        operator !== 'null' &&
+        !getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'value')
+      ) {
+        valid = false;
+      } else {
+        valid = true;
+      }
+
+      if (valid && !!subordinateFieldName) {
+        if (
+          getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'field') &&
+          fieldName !== subordinateFieldName
+        ) {
+          const validSubordinateFields = filterFieldsByComparator(
+            primaryField,
+            fieldsFlat
+          ) as Field[];
+          if (validSubordinateFields.every(vsf => vsf.name !== subordinateFieldName)) {
+            valid = false;
+          }
+        } else {
+          valid = false;
+        }
+      }
+    }
+
+    return valid;
   }
 
   const processSQLExpression = (
@@ -206,11 +194,15 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
     } else if (expr.type === 'IsNullBooleanPrimary') {
       /* istanbul ignore else */
       if (isSQLIdentifier(expr.value)) {
-        return {
-          field: getFieldName(expr.value.value),
-          operator: expr.hasNot ? 'notNull' : 'null',
-          value: null,
-        };
+        const f = getFieldName(expr.value);
+        const operator = expr.hasNot ? 'notNull' : 'null';
+        if (fieldIsValid(f, operator)) {
+          return {
+            field: f,
+            operator,
+            value: null,
+          };
+        }
       }
     } else if (expr.type === 'ComparisonBooleanPrimary') {
       /* istanbul ignore else */
@@ -223,20 +215,48 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           : (expr.right as SQLIdentifier).value;
         const valueObj = [expr.left, expr.right].find(t => !isSQLIdentifier(t));
         if (isSQLLiteralValue(valueObj)) {
+          const f = getFieldName(identifier);
+          // flip the operator if the identifier was on the right,
+          // since it's now on the left as `field`
+          const operator = normalizeOperator(expr.operator, isSQLIdentifier(expr.right));
+          if (fieldIsValid(f, operator)) {
+            return {
+              field: f,
+              operator,
+              value: evalSQLLiteralValue(valueObj),
+            };
+          }
+        }
+      } else if (isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right)) {
+        const f = getFieldName(expr.left);
+        const sf = getFieldName(expr.right);
+        const operator = normalizeOperator(expr.operator);
+        if (fieldIsValid(f, operator, sf)) {
           return {
-            field: getFieldName(identifier),
-            operator: normalizeOperator(expr.operator),
-            value: evalSQLLiteralValue(valueObj),
+            field: f,
+            operator,
+            value: sf,
+            valueSource: 'field',
           };
         }
       }
     } else if (expr.type === 'InExpressionListPredicate') {
       /* istanbul ignore else */
       if (isSQLIdentifier(expr.left)) {
+        const f = getFieldName(expr.left);
         const valueArray = expr.right.value.filter(isSQLLiteralValue).map(evalSQLLiteralValue);
-        const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
         const operator = expr.hasNot ? 'notIn' : 'in';
-        return { field: getFieldName(expr.left.value), operator, value };
+        const fieldArray = expr.right.value
+          .filter(isSQLIdentifier)
+          .filter(sf => fieldIsValid(f, operator, sf.value))
+          .map(getFieldName);
+        if (valueArray.length > 0) {
+          const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+          return { field: getFieldName(expr.left), operator, value };
+        } else if (fieldArray.length > 0) {
+          const value = options?.listsAsArrays ? fieldArray : fieldArray.join(', ');
+          return { field: getFieldName(expr.left), operator, value, valueSource: 'field' };
+        }
       }
     } else if (expr.type === 'BetweenPredicate') {
       /* istanbul ignore else */
@@ -248,7 +268,19 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         const valueArray = [expr.right.left, expr.right.right].map(evalSQLLiteralValue);
         const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
         const operator = expr.hasNot ? 'notBetween' : 'between';
-        return { field: getFieldName(expr.left.value), operator, value };
+        return { field: getFieldName(expr.left), operator, value };
+      } else if (
+        isSQLIdentifier(expr.left) &&
+        isSQLIdentifier(expr.right.left) &&
+        isSQLIdentifier(expr.right.right)
+      ) {
+        const f = getFieldName(expr.left);
+        const valueArray = [expr.right.left, expr.right.right].map(getFieldName);
+        const operator = expr.hasNot ? 'notBetween' : 'between';
+        if (valueArray.every(sf => fieldIsValid(f, operator, sf))) {
+          const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+          return { field: f, operator, value, valueSource: 'field' };
+        }
       }
     } else if (expr.type === 'LikePredicate') {
       /* istanbul ignore else */
@@ -257,14 +289,65 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         const valueWithoutWildcards = valueWithWildcards.replace(/(^%)|(%$)/g, '');
         let operator: DefaultOperatorName = '=';
         /* istanbul ignore else */
-        if (/^%.*%$/.test(valueWithWildcards)) {
+        if (/^%.*%$/.test(valueWithWildcards) || valueWithWildcards === '%') {
           operator = expr.hasNot ? 'doesNotContain' : 'contains';
         } else if (/%$/.test(valueWithWildcards)) {
           operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
         } else if (/^%/.test(valueWithWildcards)) {
           operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
         }
-        return { field: getFieldName(expr.left.value), operator, value: valueWithoutWildcards };
+        const f = getFieldName(expr.left);
+        /* istanbul ignore else */
+        if (fieldIsValid(f, operator)) {
+          return { field: f, operator, value: valueWithoutWildcards };
+        }
+      } else if (
+        isSQLIdentifier(expr.left) &&
+        expr.right.type === 'OrExpression' &&
+        expr.right.operator === '||'
+      ) {
+        let subordinateFieldName = '';
+        let operator: DefaultOperatorName = '=';
+
+        if (isSQLIdentifier(expr.right.right) && isWildcardsOnly(expr.right.left)) {
+          subordinateFieldName = getFieldName(expr.right.right);
+          operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
+        } else if (isSQLIdentifier(expr.right.left) && isWildcardsOnly(expr.right.right)) {
+          subordinateFieldName = getFieldName(expr.right.left);
+          operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
+        } else if (
+          isWildcardsOnly(expr.right.right) &&
+          expr.right.left.type === 'OrExpression' &&
+          expr.right.left.operator === '||' &&
+          isWildcardsOnly(expr.right.left.left) &&
+          isSQLIdentifier(expr.right.left.right)
+        ) {
+          subordinateFieldName = getFieldName(expr.right.left.right);
+          operator = expr.hasNot ? 'doesNotContain' : 'contains';
+        }
+
+        const baseFieldName = getFieldName(expr.left);
+
+        if (operator !== '=' && fieldIsValid(baseFieldName, operator, subordinateFieldName)) {
+          return {
+            field: baseFieldName,
+            operator,
+            value: subordinateFieldName,
+            valueSource: 'field',
+          };
+        }
+      } else if (isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right)) {
+        const baseFieldName = getFieldName(expr.left);
+        const subordinateFieldName = getFieldName(expr.right);
+        const operator: DefaultOperatorName = '=';
+        if (fieldIsValid(baseFieldName, operator, subordinateFieldName)) {
+          return {
+            field: baseFieldName,
+            operator,
+            value: subordinateFieldName,
+            valueSource: 'field',
+          };
+        }
       }
     }
     return null;

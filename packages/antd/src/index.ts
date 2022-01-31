@@ -20,6 +20,7 @@ export const antdControlElements: Partial<Controls> = {
   removeRuleAction: AntDActionElement,
   valueEditor: AntDValueEditor,
   dragHandle: AntDDragHandle,
+  valueSourceSelector: AntDValueSelector,
 };
 
 export { AntDActionElement, AntDDragHandle, AntDNotToggle, AntDValueEditor, AntDValueSelector };

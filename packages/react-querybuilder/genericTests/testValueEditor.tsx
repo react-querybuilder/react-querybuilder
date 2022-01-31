@@ -25,6 +25,7 @@ export const defaultValueEditorProps: ValueEditorProps = {
   handleOnChange: () => {},
   level: 0,
   path: [],
+  valueSource: 'value',
 };
 
 export const testValueEditor = (

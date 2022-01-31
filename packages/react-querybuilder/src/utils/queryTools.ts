@@ -6,6 +6,7 @@ import {
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
+  ValueSources,
 } from '../types';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
@@ -32,6 +33,7 @@ interface UpdateOptions {
   resetOnFieldChange: boolean;
   resetOnOperatorChange: boolean;
   getRuleDefaultOperator: (field: string) => string;
+  getValueSources: (field: string, operator: string) => ValueSources;
   getRuleDefaultValue: (rule: RuleType) => any;
 }
 export const update = <RG extends RuleGroupTypeAny>(
@@ -43,6 +45,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     resetOnFieldChange = true,
     resetOnOperatorChange = false,
     getRuleDefaultOperator = () => '=',
+    getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
   }: Partial<UpdateOptions> = {}
 ) =>
@@ -60,16 +63,46 @@ export const update = <RG extends RuleGroupTypeAny>(
       const isGroup = 'rules' in ruleOrGroup;
       // Only update if there is actually a change
       if ((ruleOrGroup as any)[prop] !== value) {
-        (ruleOrGroup as any)[prop] = value;
+        // Handle valueSource updates later
+        if (prop !== 'valueSource') {
+          (ruleOrGroup as any)[prop] = value;
+        }
         if (!isGroup) {
-          // Reset operator and set default value for field change
+          let resetValueSource = false;
+          let resetValue = false;
+
+          // Set default operator, valueSource, and value for field change
           if (resetOnFieldChange && prop === 'field') {
             ruleOrGroup.operator = getRuleDefaultOperator(value);
-            ruleOrGroup.value = getRuleDefaultValue({ ...ruleOrGroup, field: value });
+            resetValueSource = true;
+            resetValue = true;
           }
-          // Set default value for operator change
+
+          // Set default valueSource and value for operator change
           if (resetOnOperatorChange && prop === 'operator') {
-            ruleOrGroup.value = getRuleDefaultValue({ ...ruleOrGroup, operator: value });
+            resetValueSource = true;
+            resetValue = true;
+          }
+
+          const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
+          if (
+            (resetValueSource &&
+              ruleOrGroup.valueSource &&
+              defaultValueSource !== ruleOrGroup.valueSource) ||
+            (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
+          ) {
+            // Only reset the value if we're changing the valueSource either
+            // 1) from `undefined` to something that is _not_ the default, or
+            // 2) from the current (defined) value to something else
+            resetValue =
+              !!ruleOrGroup.valueSource ||
+              (!ruleOrGroup.valueSource && value !== defaultValueSource);
+            ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
+          }
+
+          if (resetValue) {
+            // The default value should be a valid field name if defaultValueSource is 'field'
+            ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
           }
         }
       }
