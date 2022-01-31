@@ -1,4 +1,4 @@
-import { QueryBuilder } from './QueryBuilder';
+import { QueryBuilder, QueryBuilderWithoutDndProvider } from './QueryBuilder';
 export * from './controls/';
 export * from './defaults';
 export * from './InlineCombinator';
@@ -6,5 +6,5 @@ export * from './Rule';
 export * from './RuleGroup';
 export * from './types';
 export * from './utils';
-export { QueryBuilder };
+export { QueryBuilder, QueryBuilderWithoutDndProvider };
 export default QueryBuilder;
