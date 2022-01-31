@@ -722,6 +722,12 @@ Pass `true` to insert an independent combinator selector between each rule/group
 
 Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
 
+:::caution
+
+`react-querybuilder` uses [`react-dnd`](https://react-dnd.github.io/react-dnd/) to enable drag-and-drop features. If your application already uses `react-dnd`, you should import and render `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />`. They are functionally the same, but the former will rely on your pre-existing `DndProvider` wrapper while the latter implements its own and will clash with a separate `DndProvider` higher up in the component tree (the error will typically look like this: "Cannot have two HTML5 backends at the same time.").
+
+:::
+
 ### `disabled`
 
 `boolean | number[][]` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#disabled=true)
