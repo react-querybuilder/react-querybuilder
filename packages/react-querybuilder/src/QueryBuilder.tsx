@@ -19,12 +19,15 @@ import {
   RuleType,
   Schema,
   UpdateableProperties,
+  ValueSources,
 } from './types';
 import {
   add,
   c,
+  filterFieldsByComparator,
   generateID,
   getFirstOption,
+  getValueSourcesUtil,
   isOptionGroupArray,
   isRuleGroup,
   move,
@@ -52,6 +55,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   getDefaultValue,
   getOperators,
   getValueEditorType,
+  getValueSources,
   getInputType,
   getValues,
   onAddRule = r => r,
@@ -89,14 +93,15 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   }, [autoSelectField, fieldsProp]);
 
   const fieldMap = useMemo(() => {
-    const fm: { [k: string]: Field } = {};
+    if (!Array.isArray(fieldsProp)) return fieldsProp;
+    const fm: Record<string, Field> = {};
     if (isOptionGroupArray(fields)) {
       fields.forEach(f => f.options.forEach(opt => (fm[opt.name] = opt)));
     } else {
       fields.forEach(f => (fm[f.name] = f));
     }
     return fm;
-  }, [fields]);
+  }, [fields, fieldsProp]);
 
   const queryDisabled = useMemo(
     () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
@@ -155,9 +160,17 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     [getValueEditorType]
   );
 
+  const getValueSourcesMain = useCallback(
+    (field: string, operator: string): ValueSources =>
+      getValueSourcesUtil(fieldMap[field], operator, getValueSources),
+    [fieldMap, getValueSources]
+  );
+
   const getValuesMain = useCallback(
     (field: string, operator: string) => {
       const fieldData = fieldMap[field];
+      // Ignore this in tests because Rule already checks for
+      // the presence of the values property in fieldData.
       /* istanbul ignore if */
       if (fieldData?.values) {
         return fieldData.values;
@@ -175,7 +188,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   const getRuleDefaultValue = useCallback(
     (rule: RuleType) => {
       const fieldData = fieldMap[rule.field];
-      /* istanbul ignore if */
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
         return fieldData.defaultValue;
       } else if (getDefaultValue) {
@@ -186,7 +198,14 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
 
       const values = getValuesMain(rule.field, rule.operator);
 
-      if (values.length) {
+      if (rule.valueSource === 'field') {
+        const filteredFields = filterFieldsByComparator(fieldData, fields);
+        if (filteredFields.length > 0) {
+          value = getFirstOption(filteredFields);
+        } else {
+          value = '';
+        }
+      } else if (values.length) {
         value = getFirstOption(values);
       } else {
         const editorType = getValueEditorTypeMain(rule.field, rule.operator);
@@ -198,7 +217,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
 
       return value;
     },
-    [fieldMap, getDefaultValue, getValueEditorTypeMain, getValuesMain]
+    [fieldMap, fields, getDefaultValue, getValueEditorTypeMain, getValuesMain]
   );
 
   const getInputTypeMain = useCallback(
@@ -229,17 +248,20 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
 
     const operator = getRuleDefaultOperator(field);
 
+    const valueSource = getValueSourcesMain(field, operator)[0] ?? 'value';
+
     const newRule: RuleType = {
       id: `r-${generateID()}`,
       field,
-      value: '',
       operator,
+      valueSource,
+      value: '',
     };
 
     const value = getRuleDefaultValue(newRule);
 
     return { ...newRule, value };
-  }, [fields, getDefaultField, getRuleDefaultOperator, getRuleDefaultValue]);
+  }, [fields, getDefaultField, getRuleDefaultOperator, getRuleDefaultValue, getValueSourcesMain]);
 
   const createRuleGroup = useCallback((): RG => {
     if (independentCombinators) {
@@ -311,6 +333,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       resetOnFieldChange,
       resetOnOperatorChange,
       getRuleDefaultOperator,
+      getValueSources: getValueSourcesMain,
       getRuleDefaultValue,
     });
     dispatch(newQuery);
@@ -363,6 +386,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     controls,
     getOperators: getOperatorsMain,
     getValueEditorType: getValueEditorTypeMain,
+    getValueSources: getValueSourcesMain,
     getInputType: getInputTypeMain,
     getValues: getValuesMain,
     moveRule,

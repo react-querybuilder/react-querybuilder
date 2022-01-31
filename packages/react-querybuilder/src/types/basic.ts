@@ -1,5 +1,7 @@
 import type { RuleValidator } from './validation';
 
+export type ValueSource = 'value' | 'field';
+
 export type ValueEditorType =
   | 'text'
   | 'select'
@@ -9,6 +11,8 @@ export type ValueEditorType =
   | 'switch'
   | 'multiselect'
   | null;
+
+export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
 export interface NameLabelPair {
   name: string;
@@ -24,13 +28,15 @@ export type OptionGroup<O extends NameLabelPair = NameLabelPair> = {
 export interface Field extends NameLabelPair {
   id?: string;
   operators?: NameLabelPair[];
-  valueEditorType?: ValueEditorType;
+  valueEditorType?: ValueEditorType | ((operator: string) => ValueEditorType);
+  valueSources?: ValueSources | ((operator: string) => ValueSources);
   inputType?: string | null;
   values?: NameLabelPair[] | OptionGroup[];
   defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
+  comparator?: string | ((f: Field) => boolean);
 }
 
 export interface DraggedItem {

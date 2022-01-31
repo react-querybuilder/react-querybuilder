@@ -22,6 +22,7 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   fields: 'form-select form-select-sm',
   operators: 'form-select form-select-sm',
   value: 'form-control form-control-sm',
+  valueSource: 'form-select form-select-sm',
 };
 
 export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };

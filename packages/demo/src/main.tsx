@@ -450,7 +450,7 @@ const App = () => {
         <Text italic>
           SQL string can either be the full <Text code>SELECT</Text> statement or the{' '}
           <Text code>WHERE</Text> clause by itself (without the word &quot;WHERE&quot; -- just the
-          clauses). Semicolon is also optional.
+          clauses). A trailing semicolon is also optional.
         </Text>
         {!!sqlParseError && <pre>{sqlParseError}</pre>}
       </Modal>

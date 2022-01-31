@@ -238,7 +238,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
 
   it('should render a date range picker', async () => {
     const onChange = jest.fn();
-    const { container, getByTitle } = render(
+    const { container, getAllByTitle } = render(
       <AntDValueEditor {...props} inputType="date" operator="between" handleOnChange={onChange} />
     );
     await act(async () => {
@@ -246,8 +246,8 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       await new Promise(r => setTimeout(r, 500));
     });
     turnOffPointerEventsNone();
-    userEvent.click(getByTitle(today));
-    userEvent.click(getByTitle(tomorrow));
+    userEvent.click(getAllByTitle(today)[0]);
+    userEvent.click(getAllByTitle(tomorrow)[0]);
     expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });
 

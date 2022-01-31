@@ -9,7 +9,7 @@ export default (file, api) => {
         e.node?.test?.left?.left?.argument?.name === 'require' &&
         e.node?.test?.right?.left?.argument?.name === 'exports'
     )
-    .remove();
+    .replaceWith(() => j.exportDeclaration(true, { type: 'Identifier', name: 'sqlParser' }));
 
   return root.toSource();
 };

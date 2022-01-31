@@ -20,6 +20,7 @@ export const chakraControlElements: Partial<Controls> = {
   removeGroupAction: ChakraActionElement,
   removeRuleAction: ChakraActionElement,
   valueEditor: ChakraValueEditor,
+  valueSourceSelector: ChakraValueSelector,
 };
 
 export {

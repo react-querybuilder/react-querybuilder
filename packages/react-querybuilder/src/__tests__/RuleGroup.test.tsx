@@ -172,13 +172,14 @@ const schema: Partial<Schema> = {
   getInputType: () => 'text',
   getOperators: () => [{ name: 'operator1', label: 'Operator 1' }],
   getValueEditorType: () => 'text',
+  getValueSources: () => ['value'],
   getValues: () => [],
   isRuleGroup: (_rule): _rule is RuleGroupType => {
     return false;
   },
-  onPropChange: (_prop, _value, _path) => {},
-  onRuleAdd: (_rule, _parentPath) => {},
-  onGroupAdd: (_ruleGroup, _parentPath) => {},
+  onPropChange: () => {},
+  onRuleAdd: () => {},
+  onGroupAdd: () => {},
   createRule: () => _createRule(0),
   createRuleGroup: () => _createRuleGroup(0, [], []),
   showCombinatorsBetweenRules: false,
