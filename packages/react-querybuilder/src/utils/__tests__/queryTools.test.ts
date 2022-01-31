@@ -1,3 +1,4 @@
+import { getValueSourcesUtil } from '..';
 import { defaultCombinators } from '../../defaults';
 import {
   DefaultRuleGroupType,
@@ -34,9 +35,10 @@ const testQT = (
   title: string,
   ruleGroup: DefaultRuleGroupTypeAny,
   expectation: DefaultRuleGroupTypeAny,
-  exact?: boolean
+  exact?: boolean,
+  only?: boolean
 ) => {
-  it(title, () => {
+  (only ? it.only : it)(title, () => {
     if (exact) {
       expect(ruleGroup).toBe(expectation);
     } else {
@@ -221,6 +223,29 @@ describe('update', () => {
       combinator: 'and',
       rules: [{ ...r1, field: 'fu', value: '', valueSource: 'value' }],
     });
+    testQT(
+      'resets value source to default of "field" on field change',
+      update(rgvsv, 'field', 'fu', [0], { getValueSources: () => ['field', 'value'] }),
+      {
+        combinator: 'and',
+        rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
+      },
+      false,
+      true
+    );
+    testQT(
+      'resets value source to default of "field" on field change when Field specifies value sources',
+      update(rgvsv, 'field', 'fu', [0], {
+        getValueSources: (fld, op) =>
+          getValueSourcesUtil({ name: fld, label: 'Fld', valueSources: ['field', 'value'] }, op),
+      }),
+      {
+        combinator: 'and',
+        rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
+      },
+      false,
+      true
+    );
     testQT(
       'resets value source to default on operator change',
       update(rgvsf, 'operator', 'between', [0], { resetOnOperatorChange: true }),

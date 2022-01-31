@@ -1797,6 +1797,7 @@ describe('value source field', () => {
     { name: 'f2', label: 'Field 2', valueSources: ['field'] },
     { name: 'f3', label: 'Field 3', valueSources: ['field'], comparator: () => false },
     { name: 'f4', label: 'Field 4', valueSources: [] as any },
+    { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
 
   it('sets the right default value', () => {
@@ -1819,5 +1820,12 @@ describe('value source field', () => {
     );
     userEvent.click(getByTestId(TestID.addRule));
     expect(queryByDisplayValue('Field 1')).toBeNull();
+  });
+
+  it('sets the default valueSource correctly', () => {
+    const { getByTestId } = render(<QueryBuilder fields={fields} getDefaultField="f1" />);
+    userEvent.click(getByTestId(TestID.addRule));
+    userEvent.selectOptions(getByTestId(TestID.fields), 'f5');
+    expect(getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
   });
 });

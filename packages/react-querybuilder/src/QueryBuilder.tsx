@@ -333,7 +333,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       resetOnFieldChange,
       resetOnOperatorChange,
       getRuleDefaultOperator,
-      getValueSources,
+      getValueSources: getValueSourcesMain,
       getRuleDefaultValue,
     });
     dispatch(newQuery);
