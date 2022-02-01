@@ -1,6 +1,6 @@
 import { enableES5 } from 'immer';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DndProvider } from 'react-dnd';
+import { DndContext, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   defaultCombinators,
@@ -41,7 +41,7 @@ import {
 
 enableES5();
 
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
+export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>({
   defaultQuery,
   query,
   fields: fieldsProp = defaultFields,
@@ -418,28 +418,41 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div
-        className={wrapperClassName}
-        data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
-        data-inlinecombinators={
-          independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
-        }>
-        <controls.ruleGroup
-          translations={{ ...defaultTranslations, ...translations }}
-          rules={root.rules}
-          combinator={'combinator' in root ? root.combinator : undefined}
-          schema={schema}
-          id={root.id}
-          path={[]}
-          not={!!root.not}
-          disabled={!!root.disabled || queryDisabled}
-          parentDisabled={queryDisabled}
-          context={context}
-        />
-      </div>
-    </DndProvider>
+    <DndContext.Consumer>
+      {() => (
+        <div
+          className={wrapperClassName}
+          data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
+          data-inlinecombinators={
+            independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
+          }>
+          <controls.ruleGroup
+            translations={{ ...defaultTranslations, ...translations }}
+            rules={root.rules}
+            combinator={'combinator' in root ? root.combinator : undefined}
+            schema={schema}
+            id={root.id}
+            path={[]}
+            not={!!root.not}
+            disabled={!!root.disabled || queryDisabled}
+            parentDisabled={queryDisabled}
+            context={context}
+          />
+        </div>
+      )}
+    </DndContext.Consumer>
   );
 };
+
+QueryBuilderWithoutDndProvider.displayName = 'QueryBuilder';
+
+export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
+  props: QueryBuilderProps<RG>
+) => (
+  <DndProvider backend={HTML5Backend}>
+    {/* TODO: Should/can the `RG` generic be used here? Would it make a difference? */}
+    <QueryBuilderWithoutDndProvider {...(props as QueryBuilderProps)} />
+  </DndProvider>
+);
 
 QueryBuilder.displayName = 'QueryBuilder';
