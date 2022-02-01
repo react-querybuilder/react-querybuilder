@@ -245,6 +245,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kyrylostepanchuk",
+      "name": "Kyrylo Stepanchuk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/98354866?v=4",
+      "profile": "https://github.com/kyrylostepanchuk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
