@@ -499,7 +499,7 @@ This is a callback function invoked to get the type of `ValueEditor` for the giv
 
 `(field: string, operator: string) => ValueSources`;
 
-This is a callback function invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in any order). If this function is not provided, `() => ["value"]` is used.
+This is a callback function invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in any order). If the prop is undefined, `() => ["value"]` is used. The first element in the array will be the default.
 
 ### `getInputType`
 
