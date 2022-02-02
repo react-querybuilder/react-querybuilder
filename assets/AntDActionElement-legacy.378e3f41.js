@@ -1,2 +1,1 @@
 System.register(["./index.es-legacy.f5cb2f88.js","./vendor-legacy.419ea99b.js"],(function(e){"use strict";return{setters:[function(t){e("default",t.A)},function(){}],execute:function(){}}}));
-//# sourceMappingURL=AntDActionElement-legacy.378e3f41.js.map

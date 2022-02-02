@@ -4,39 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React Query Builder - UMD Demo</title>
+    <title>React Query Builder UMD Build</title>
     <!-- <link rel="stylesheet" href="../react-querybuilder/dist/query-builder.css" /> -->
     <link rel="stylesheet" href="https://unpkg.com/react-querybuilder@4/dist/query-builder.css" />
-    
-    
-    <style>
-      .github-fork-ribbon:before {
-        background-color: #090 !important;
-      }
-      h3 {
-        font-family: Arial, Helvetica, sans-serif;
-        margin-top: 0;
-      }
-    </style>
-    <script async type="module" crossorigin src="/react-querybuilder/assets/umd.dd2f9bfd.js"></script>
-    <link rel="stylesheet" href="/react-querybuilder/assets/umd.57d064cb.css">
-    <link rel="stylesheet" href="/react-querybuilder/assets/github-fork-ribbon.4ace97a5.css">
+    <script async type="module" crossorigin src="/react-querybuilder/assets/umd.0f4ff0ce.js"></script>
     <script type="module">!function(){try{new Function("m","return import(m)")}catch(o){console.warn("vite: loading legacy build because dynamic import is unsupported, syntax error above should be ignored");var e=document.getElementById("vite-legacy-polyfill"),n=document.createElement("script");n.src=e.src,n.onload=function(){System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))},document.body.appendChild(n)}}();</script>
   </head>
   <body>
-    <a
-      class="github-fork-ribbon"
-      data-ribbon="Fork me on GitHub"
-      href="https://github.com/react-querybuilder/react-querybuilder"
-      title="Fork me on GitHub"
-      >Fork me on GitHub</a
-    >
-    <h3><a href="https://react-querybuilder.js.org/">React Query Builder</a> UMD demo</h3>
-    <p>
-      The demo below uses the <a href="/docs/umd">UMD build</a> of
-      <a href="/">React Query Builder</a>.
-    </p>
-    <p>For the full demo, <a href="./">click here</a>.</p>
     <div id="root"></div>
     <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
     <script
@@ -70,7 +44,7 @@
           name: 'instrument',
           label: 'Instrument',
           valueEditorType: 'select',
-          values: ['Guitar', 'Piano', 'Vocals', 'Drums'].map(v => ({ name: v, label: v })),
+          values: ['Guitar', 'Piano', 'Vocals', 'Drums'],
           defaultValue: 'Piano',
           operators: [{ name: '=', label: 'is' }],
         },
@@ -118,6 +92,6 @@
     </script>
     <script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()}),!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
     <script nomodule id="vite-legacy-polyfill" src="/react-querybuilder/assets/polyfills-legacy.d5b735bc.js"></script>
-    <script nomodule id="vite-legacy-entry" data-src="/react-querybuilder/assets/umd-legacy.5b583df5.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
+    <script nomodule id="vite-legacy-entry" data-src="/react-querybuilder/assets/umd-legacy.47e88a8e.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
   </body>
 </html>
