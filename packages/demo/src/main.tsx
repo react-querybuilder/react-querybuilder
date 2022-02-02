@@ -385,7 +385,7 @@ const App = () => {
               <a href="ie11.html">IE-compatible demo</a>
             </p>
             <p>
-              <a href="umd.html">UMD build demo</a>
+              UMD build: <a href="umd.html">demo</a> / <a href={`${docsLink}/docs/umd`}>docs</a>
             </p>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
