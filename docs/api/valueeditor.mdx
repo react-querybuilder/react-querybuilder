@@ -7,7 +7,7 @@ import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
-`<ValueEditor />` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it's quite capable of handling many common scenarios without customization. The query builder below demonstrates each of the available options for the [`Field#valueEditorType` property](../typescript#fields). The last rule demonstrates the `ValueEditor`'s default behavior when a field's `valueSources` property is set to `["field", "value"]`.
+`<ValueEditor />` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it's quite capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields). The last rule demonstrates the `ValueEditor`'s default behavior when a field's `valueSources` property is set to `["field", "value"]`.
 
 This query builder has been specially configured in two ways:
 
@@ -34,6 +34,8 @@ import { ValueEditor } from 'react-querybuilder';
           <option key={o.name} value={o.name}>
             {o.valueSources?.includes('field')
               ? `valueSource: "field"`
+              : 'inputType' in o
+              ? `inputType: "${o.label}"`
               : `valueEditorType: "${o.label}"`}
           </option>
         ))}
@@ -62,13 +64,13 @@ import { ValueEditor } from 'react-querybuilder';
             fontSize: 'x-small',
             opacity: 0.5,
           }}>{`(stored value: ${
-          typeof props.value === 'boolean' ? props.value : `"${props.value}"`
+          typeof props.value === 'boolean' ? props.value : JSON.stringify(props.value)
         })`}</span>
       </div>
     ),
   }}
   fields={[
-    { name: 'f1', label: 'text', valueEditorType: 'text' },
+    { name: 'f1', label: 'text', inputType: 'text' },
     {
       name: 'f2',
       label: 'select',
@@ -98,9 +100,9 @@ import { ValueEditor } from 'react-querybuilder';
         { name: 'opt2', label: 'Option 2' },
       ],
     },
-    { name: 'f7', label: 'date', valueEditorType: 'date' },
-    { name: 'f8', label: 'datetime-local', valueEditorType: 'datetime-local' },
-    { name: 'f9', label: 'time', valueEditorType: 'time' },
+    { name: 'f7', label: 'date', inputType: 'date' },
+    { name: 'f8', label: 'datetime-local', inputType: 'datetime-local' },
+    { name: 'f9', label: 'time', inputType: 'time' },
     { name: 'ff', label: 'text', valueSources: ['field', 'value'] },
   ]}
   defaultQuery={{
@@ -182,11 +184,19 @@ The `Field#valueSources` property can also be a function that takes an operator 
 
 Not all fields will be compatible with each other, so each field may provide a `comparator` property specifying which fields show up in the value editor list. If `comparator` is a string, then only fields which have the same value as the current field in the property matching the `comparator` string will be listed.
 
-That's a mouthful, so let's look at an example. In the following field list, fields `f1`, `f2`, and `f3` share a common property `datatype: "number"`. `f1` identifies the `datatype` property as its `comparator`. Therefore, when a rule specifies the field `f1`, only `f2` and `f3` will be in the drop-down list because their `datatype` property matches `f1`'s'. `f4` and `f5` will be excluded because their `datatype` property does not match `f1`'s, and `f1` will be excluded because a rule's selected field cannot be compared with itself.
+That's a mouthful, so let's look at an example. In the following field list, fields `f1`, `f2`, and `f3` share a common property `datatype: "number"`. `f1` identifies the `datatype` property as its `comparator`. Therefore, when a rule specifies the field `f1`, only `f2` and `f3` will be in the drop-down list because their `datatype` property matches `f1`'s. `f4` and `f5` will be excluded because their `datatype` property does not match `f1`'s, and `f1` will be excluded because a rule's selected field cannot be compared with itself.
 
 ```tsx
 const fields: Field[] = {
-  { name: 'f1', label: 'f1', valueSources: ["field"], comparator: 'datatype', datatype: 'number' },
+  {
+    name: 'f1',
+    label: 'f1',
+    // highlight-start
+    valueSources: ["field"],
+    comparator: 'datatype',
+    datatype: 'number'
+    // highlight-end
+  },
   { name: 'f2', label: 'f2', datatype: 'number' },
   { name: 'f3', label: 'f3', datatype: 'number' },
   { name: 'f4', label: 'f4', datatype: 'string' },
@@ -198,7 +208,13 @@ The `comparator` property can also be a function that takes a `Field` object as 
 
 ```tsx
 const fields: Field[] = {
-  { name: 'f1', label: 'f1', valueSources: ["field"], comparator: f => f.datatype === 'number' },
+  { name: 'f1',
+    label: 'f1',
+    // highlight-start
+    valueSources: ["field"],
+    comparator: f => f.datatype === 'number'
+    // highlight-end
+  },
   { name: 'f2', label: 'f2', datatype: 'number' },
   { name: 'f3', label: 'f3', datatype: 'number' },
   { name: 'f4', label: 'f4', datatype: 'string' },
