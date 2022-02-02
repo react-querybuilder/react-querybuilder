@@ -31,7 +31,6 @@ export const musicalInstruments: OptionGroup[] = [
       'Conga',
       'Drum',
       'Drum kit',
-      'Bass drum',
       "Jew's harp",
       'Octaban',
       'Samphor',
