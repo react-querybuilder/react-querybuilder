@@ -6,10 +6,32 @@ The default React Query Builder components, being basic HTML5 form controls, are
 
 Official components compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder). Current supported libraries include:
 
-- [Bootstrap](https://getbootstrap.com/) ([@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap))
 - [Ant Design](https://ant.design/) ([@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd))
+- [Bootstrap](https://getbootstrap.com/) ([@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap))
 - [Bulma](https://bulma.io/) ([@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma))
 - [Chakra UI](https://chakra-ui.com/) ([@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra))
 - [MUI](https://mui.com/) ([@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material))
 
 You can see each alternate component package in action by selecting different options in the "Style" dropdown list on the [demo page](https://react-querybuilder.js.org/react-querybuilder/).
+
+Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./api/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use as the [`controlClassnames` prop](./api/querybuilder#controlclassnames). For example:
+
+```tsx
+import QueryBuilder from 'react-querybuilder';
+import {
+  bootstrapControlClassnames,
+  bootstrapControlElements,
+} from '@react-querybuilder/bootstrap';
+import { defaultQuery, fields } from './constants';
+
+export function App() {
+  return (
+    <QueryBuilder
+      fields={fields}
+      defaultQuery={defaultQuery}
+      controlElements={bootstrapControlElements}
+      controlClassnames={bootstrapControlClassnames}
+    />
+  );
+}
+```

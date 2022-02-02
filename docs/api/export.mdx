@@ -233,6 +233,32 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 
 By default, `fallbackExpression` is `"(1 = 1)"` for the "sql", "parameterized", and "parameterized_named" formats, and `"{$and:[{$expr:true}]}"` for the "mongodb" format.
 
+### Value sources
+
+When the `valueSource` property for a rule is set to "field", `formatQuery` will place the bare, unquoted value (which should be a valid field name) in the result for the "sql", "parameterized", "parameterized_named", and "mongodb" formats. No parameters will be generated for such rules.
+
+```ts
+const pf = formatQuery(
+  {
+    combinator: 'and',
+    rules: [
+      { field: 'firstName', operator: '=', value: 'lastName', valueSource: 'field' },
+      { field: 'firstName', operator: 'beginsWith', value: 'middleName', valueSource: 'field' },
+    ],
+  },
+  'parameterized_named'
+);
+```
+
+Output:
+
+```ts
+{
+  sql: "(firstName = lastName and firstName like middleName || '%')",
+  params: {},
+}
+```
+
 ## Validation
 
 The validation options (`validator` and `fields` – see [Validation](./validation) for more information) only affect the output when `format` is "sql", "parameterized", "parameterized_named", or "mongodb". If the `validator` function returns `false`, the `fallbackExpression` will be returned. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.

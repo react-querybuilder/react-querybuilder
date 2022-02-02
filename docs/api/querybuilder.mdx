@@ -21,13 +21,13 @@ When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](
 
 ### `fields`
 
-`Field[] | OptionGroup<Field>[]`
+`Field[] | OptionGroup<Field>[] | Record<string, Field>`
 
-The array of [fields](../typescript#fields) that should be used, or an array of [option groups](../typescript#miscellaneous) containing arrays of fields.
+The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](#fieldselector) will be sorted alphabetically by the `label` property.)
 
 :::tip
 
-Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements)).
+Field objects can also contain custom properties. Each field object will be passed in its entirety to the appropriate `OperatorSelector` and `ValueEditor` components as the `fieldData` prop (see the section on [`controlElements`](#controlelements)).
 
 :::
 
@@ -179,6 +179,7 @@ interface Controls {
   rule?: React.ComponentType<RuleProps>;
   ruleGroup?: React.ComponentType<RuleGroupProps>;
   valueEditor?: React.ComponentType<ValueEditorProps>;
+  valueSourceSelector?: React.ComponentType<ValueSourceSelectorProps>;
 }
 ```
 
@@ -235,6 +236,23 @@ interface ActionWithRulesProps {
 }
 ```
 
+#### `lockGroupAction`
+
+By default a `<button />` is used. The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.lockGroup.label, e.g. "🔓" when unlocked and "🔒" when locked
+  title: string; // translations.lockGroup.title, e.g. "Lock group" or "Unlock group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke locking the rule group
+  rules: (RuleGroupType | RuleType)[]; // The rules present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+}
+```
+
 #### `addRuleAction`
 
 By default a `<button />` is used. The following props are passed:
@@ -279,6 +297,22 @@ interface ActionProps {
   className: string; // CSS classNames to be applied
   handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+}
+```
+
+#### `lockRuleAction`
+
+By default a `<button />` is used. The following props are passed:
+
+```ts
+interface ActionProps {
+  label: string; // translations.lockRule.label, e.g. "🔓" when unlocked and "🔒" when locked
+  title: string; // translations.lockRule.title, e.g. "Lock rule" or "Unlock rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke locking the rule
+  level: number; // The level of the current rule
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
 }
@@ -365,11 +399,30 @@ interface ValueEditorProps {
   value: string; // Value from the existing query representation, if any
   title: string; // translations.value.title, e.g. "Value"
   handleOnChange: (value: any) => void; // Callback function to update the query representation
-  type: 'text' | 'select' | 'checkbox' | 'radio'; // Type of editor to be displayed
+  type: ValueEditorType; // Type of editor to be displayed
   inputType: string; // @type of <input> if `type` is "text"
   values: any[]; // List of available values for this rule
   level: number; // The level the group this rule belongs to
   className: string; // CSS classNames to be applied
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+}
+```
+
+#### `valueSourceSelector`
+
+By default a `<select />` is used. The following props are passed:
+
+```ts
+interface ValueSourceSelectorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  options: ValueSourceOption[] | OptionGroup<ValueSourceOption>[]; // Return value of getValueSources(field, operator)
+  value: ValueSource; // Selected value source from the existing query representation, if any
+  title: string; // translations.valueSourceSelector.title, e.g. "Value source"
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Callback function to update query representation
+  level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
 }
@@ -405,6 +458,8 @@ interface RuleGroupProps {
   schema: Schema; // See `Schema` on the TypeScript page
   not: boolean; // Whether or not to invert this group
   context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
 }
 ```
 
@@ -419,9 +474,12 @@ interface RuleProps {
   field: string; // Field name for this rule
   operator: string; // Operator name for this rule
   value: any; // Value for this rule
+  valueSource?: ValueSource; // Value source for this rule's value
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` on the TypeScript page
   context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
 }
 ```
 
@@ -436,6 +494,12 @@ This is a callback function invoked to get the list of allowed operators for the
 `(field: string, operator: string) => ValueEditorType`
 
 This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
+
+### `getValueSources`
+
+`(field: string, operator: string) => ValueSources`;
+
+This is a callback function invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in any order). If the prop is undefined, `() => ["value"]` is used. The first element in the array will be the default.
 
 ### `getInputType`
 
@@ -498,7 +562,7 @@ This prop can be used to assign specific CSS classes to various controls that ar
 ```ts
 interface Classnames {
   queryBuilder?: string; // Root <div> element
-  ruleGroup?: string; // <div> containing the RuleGroup
+  ruleGroup?: string; // <div> containing a RuleGroup
   header?: string; // <div> containing the RuleGroup header controls
   body?: string; // <div> containing the RuleGroup child rules/groups
   combinators?: string; // <select> control for combinators
@@ -507,6 +571,8 @@ interface Classnames {
   cloneRule?: string; // <button> to clone a Rule
   cloneGroup?: string; // <button> to clone a RuleGroup
   removeGroup?: string; // <button> to remove a RuleGroup
+  lockRule?: string; // <button> to lock/disable a Rule
+  lockGroup?: string; // <button> to lock/disable a RuleGroup
   notToggle?: string; // <label> on the "not" toggle
   rule?: string; // <div> containing the Rule
   fields?: string; // <select> control for fields
@@ -566,13 +632,29 @@ This prop can be used to override translatable texts applied to various controls
   dragHandle: {
     label: '⁞⁞',
     title: 'Drag handle'
+  },
+  lockRule: {
+    label: '🔓',
+    title: 'Lock rule',
+  },
+  lockGroup: {
+    label: '🔓',
+    title: 'Lock group',
+  },
+  lockRuleDisabled: {
+    label: '🔒',
+    title: 'Unlock rule',
+  },
+  lockGroupDisabled: {
+    label: '🔒',
+    title: 'Unlock group',
   }
 }
 ```
 
 :::note
 
-The `translations` prop is optional, and each top-level property in the `translations` object is optional, but all sub-properties are required for each defined top-level-property. For example, you cannot pass `translations={{ addRule: { label: 'New Rule' } }}`, because the `title` sub-property is required within the `addRule` object.
+The `translations` prop is optional, and each top-level property in the `translations` object is optional, but all sub-properties are required for each defined top-level property. For example, you cannot pass `translations={{ addRule: { label: 'New Rule' } }}`, because the `title` sub-property is required within the `addRule` object.
 
 :::
 
@@ -592,7 +674,11 @@ Pass `true` to show the "Not" (aka inversion) toggle switch for each rule group.
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#showCloneButtons=true)
 
-Pass `true` to show the "Clone rule" and "Clone group" buttons.
+### `showLockButtons`
+
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#showLockButtons=true)
+
+Pass `true` to show the "Lock rule" and "Lock group" buttons. When a rule is locked, all elements within the rule will be disabled (except for the lock button, so the user can unlock it). When a group is locked, all elements within the group header (except the lock button), as well as all child rule/group elements, will be disabled.
 
 ### `resetOnFieldChange`
 
@@ -635,6 +721,12 @@ Pass `true` to insert an independent combinator selector between each rule/group
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#enableDragAndDrop=true)
 
 Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
+
+:::caution
+
+`react-querybuilder` uses [`react-dnd`](https://react-dnd.github.io/react-dnd/) to enable drag-and-drop features. If your application already uses `react-dnd`, you should import and render `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />`. They are functionally the same, but the former will rely on your pre-existing `DndProvider` wrapper while the latter implements its own and will clash with a separate `DndProvider` higher up in the component tree (the error will typically look like this: "Cannot have two HTML5 backends at the same time.").
+
+:::
 
 ### `disabled`
 

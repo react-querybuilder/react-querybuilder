@@ -66,7 +66,11 @@ To generate actual arrays instead of comma-separated strings for lists of values
 parseSQL(`SELECT * FROM t WHERE lastName IN ('Vai', 'Vaughan') AND age BETWEEN 20 AND 100`, {
   listsAsArrays: true;
 });
-// Output:
+```
+
+Output:
+
+```ts
 {
   combinator: "and",
   rules: [
@@ -113,3 +117,41 @@ Output (`RuleGroupTypeIC`):
   ];
 }
 ```
+
+## Fields as value source
+
+When the `fields` option (which accepts the same types as the [`fields` prop](./querybuilder#fields)) is provided, and _only_ if it is provided, then `parseSQL` will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function can also be provided to help validate rules.
+
+In order for such a rule to be considered valid, either the `getValueSources` return value, the field's `valueSources` property return value, or the field's `valueSources` property itself must be an array that includes the string "field".
+
+```ts
+parseSQL(`SELECT * FROM t WHERE firstName = lastName`, {
+  fields: [
+    { name: 'firstName', label: 'First Name' },
+    { name: 'lastName', label: 'Last Name' },
+  ],
+  getValueSources: () => ['value', 'field'],
+});
+```
+
+Output:
+
+```ts
+{
+  combinator: "and",
+  rules: [
+    {
+      field: "firstName",
+      operator: "=",
+      value: "lastName",
+      valueSource: "field",
+    },
+  ],
+}
+```
+
+:::note
+
+`parseSQL` will only validate clauses where "field" is the _only_ value source. Operators that take multiple values, like "between" and "in", must only have field names to the right of the operator, not a mix of field names and primitive values.
+
+:::
