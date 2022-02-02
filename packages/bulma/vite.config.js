@@ -11,6 +11,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'react-querybuilder', 'react-bulma-components'],
     },
+    sourcemap: true,
   },
   esbuild: {
     jsxInject: `import React from 'react'`,

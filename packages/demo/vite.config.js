@@ -12,6 +12,7 @@ export default defineConfig({
         umd: resolve(__dirname, 'umd.html'),
       },
     },
+    sourcemap: true,
   },
   css: { preprocessorOptions: { css: { charset: false }, scss: { charset: false } } },
   esbuild: {

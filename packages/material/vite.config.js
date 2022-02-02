@@ -5,14 +5,15 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      fileName: (format) => `index.${format}.js`,
-      formats: ['es', 'cjs']
+      fileName: format => `index.${format}.js`,
+      formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['react', 'react-querybuilder', '@mui/icons-material', '@mui/material']
-    }
+      external: ['react', 'react-querybuilder', '@mui/icons-material', '@mui/material'],
+    },
+    sourcemap: true,
   },
   esbuild: {
-    jsxInject: `import React from 'react'`
-  }
+    jsxInject: `import React from 'react'`,
+  },
 });
