@@ -229,9 +229,7 @@ describe('update', () => {
       {
         combinator: 'and',
         rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
-      },
-      false,
-      true
+      }
     );
     testQT(
       'resets value source to default of "field" on field change when Field specifies value sources',
@@ -242,9 +240,7 @@ describe('update', () => {
       {
         combinator: 'and',
         rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
-      },
-      false,
-      true
+      }
     );
     testQT(
       'resets value source to default on operator change',

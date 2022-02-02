@@ -346,7 +346,8 @@ describe('options', () => {
       );
     });
 
-    // TODO: enable when sqlParser properly handles the `||` (string concatenation) operator
+    // TODO: re-enable when sqlParser properly handles `||` (string concatenation operator).
+    // See https://github.com/react-querybuilder/react-querybuilder/issues/280
     it.skip('handles LIKE clauses with wildcards', () => {
       expect(parseSQL(`f3 like '%' || f1 || '%'`, { fields })).toEqual(
         wrapRule({ field: 'f3', operator: 'contains', value: 'f1', valueSource: 'field' })
