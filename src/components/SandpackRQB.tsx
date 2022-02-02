@@ -1,10 +1,10 @@
 import { Sandpack, SandpackFile, SandpackProps } from '@codesandbox/sandpack-react';
-import useThemeContext from '@theme/hooks/useThemeContext';
+import { useColorMode } from '@docusaurus/theme-common';
 import * as React from 'react';
 import './SandpackRQB.scss';
 
 export const SandpackRQB: React.FC<SandpackProps> = ({ children, customSetup, options }) => {
-  const { isDarkTheme } = useThemeContext();
+  const { isDarkTheme } = useColorMode();
   const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
   const bkgdColor = isDarkTheme ? '#343a46' : '#ffffff';
   let hideStylesCSS = true;

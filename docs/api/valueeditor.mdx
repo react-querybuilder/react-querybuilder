@@ -70,54 +70,54 @@ import { ValueEditor } from 'react-querybuilder';
     ),
   }}
   fields={[
-    { name: 'f1', label: 'text', inputType: 'text' },
+    { name: 'text', label: 'text', inputType: 'text' },
     {
-      name: 'f2',
+      name: 'select',
       label: 'select',
       valueEditorType: 'select',
       values: [
-        { name: 'opt1', label: 'Option 1' },
-        { name: 'opt2', label: 'Option 2' },
+        { name: 'option1', label: 'Option 1' },
+        { name: 'option2', label: 'Option 2' },
       ],
     },
-    { name: 'f3', label: 'checkbox', valueEditorType: 'checkbox' },
+    { name: 'checkbox', label: 'checkbox', valueEditorType: 'checkbox' },
     {
-      name: 'f4',
+      name: 'radio',
       label: 'radio',
       valueEditorType: 'radio',
       values: [
-        { name: 'opt1', label: 'Option 1' },
-        { name: 'opt2', label: 'Option 2' },
+        { name: 'option1', label: 'Option 1' },
+        { name: 'option2', label: 'Option 2' },
       ],
     },
-    { name: 'f5', label: 'textarea', valueEditorType: 'textarea' },
+    { name: 'textarea', label: 'textarea', valueEditorType: 'textarea' },
     {
-      name: 'f6',
+      name: 'multiselect',
       label: 'multiselect',
       valueEditorType: 'multiselect',
       values: [
-        { name: 'opt1', label: 'Option 1' },
-        { name: 'opt2', label: 'Option 2' },
+        { name: 'option1', label: 'Option 1' },
+        { name: 'option2', label: 'Option 2' },
       ],
     },
-    { name: 'f7', label: 'date', inputType: 'date' },
-    { name: 'f8', label: 'datetime-local', inputType: 'datetime-local' },
-    { name: 'f9', label: 'time', inputType: 'time' },
-    { name: 'ff', label: 'text', valueSources: ['field', 'value'] },
+    { name: 'date', label: 'date', inputType: 'date' },
+    { name: 'datetime-local', label: 'datetime-local', inputType: 'datetime-local' },
+    { name: 'time', label: 'time', inputType: 'time' },
+    { name: 'field', label: 'field', valueSources: ['field', 'value'] },
   ]}
   defaultQuery={{
     combinator: 'and',
     rules: [
-      { field: 'f1', operator: '=', value: '' },
-      { field: 'f2', operator: '=', value: 'opt2' },
-      { field: 'f3', operator: '=', value: true },
-      { field: 'f4', operator: '=', value: 'opt2' },
-      { field: 'f5', operator: '=', value: '' },
-      { field: 'f6', operator: '=', value: 'opt1,opt2' },
-      { field: 'f7', operator: '=', value: '' },
-      { field: 'f8', operator: '=', value: '' },
-      { field: 'f9', operator: '=', value: '' },
-      { field: 'ff', operator: '=', value: 'f1', valueSource: 'field' },
+      { field: 'text', operator: '=', value: '' },
+      { field: 'select', operator: '=', value: 'option2' },
+      { field: 'checkbox', operator: '=', value: true },
+      { field: 'radio', operator: '=', value: 'option2' },
+      { field: 'textarea', operator: '=', value: '' },
+      { field: 'multiselect', operator: '=', value: 'option1,option2' },
+      { field: 'date', operator: '=', value: '' },
+      { field: 'datetime-local', operator: '=', value: '' },
+      { field: 'time', operator: '=', value: '' },
+      { field: 'field', operator: '=', value: 'text', valueSource: 'field' },
     ],
   }}
 />
@@ -148,8 +148,8 @@ In the query builder above, the definition for the field used in the last rule i
 
 ```json
 {
-  "name": "ff",
-  "label": "text",
+  "name": "field",
+  "label": "field",
   "valueSources": ["field", "value"]
 }
 ```
@@ -161,7 +161,7 @@ And the `defaultQuery` prop looks like this:
   "combinator": "and",
   "rules": [
     // ...other rules...
-    { "field": "ff", "operator": "=", "value": "f1", "valueSource": "field" }
+    { "field": "field", "operator": "=", "value": "text", "valueSource": "field" }
   ]
 }
 ```
