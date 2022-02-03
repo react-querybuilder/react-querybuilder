@@ -1,1 +1,0 @@
-System.register(["./index.es-legacy.7c52b6de.js","./vendor-legacy.419ea99b.js","./constants-legacy.ab8ff89e.js"],(function(e){"use strict";return{setters:[function(t){e("default",t.C)},function(){},function(){}],execute:function(){}}}));
