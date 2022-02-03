@@ -64,6 +64,7 @@ const chakraTheme = extendTheme({
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('json_without_ids', json);
+SyntaxHighlighter.registerLanguage('mongodb', json);
 SyntaxHighlighter.registerLanguage('parameterized', json);
 SyntaxHighlighter.registerLanguage('parameterized_named', json);
 SyntaxHighlighter.registerLanguage('sql', sql);
@@ -191,7 +192,7 @@ const App = () => {
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(
     () =>
-      formatOptions.format === 'json_without_ids'
+      formatOptions.format === 'json_without_ids' || formatOptions.format === 'mongodb'
         ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions)), null, 2)
         : formatOptions.format === 'parameterized' || formatOptions.format === 'parameterized_named'
         ? JSON.stringify(formatQuery(q, formatOptions), null, 2)
@@ -429,13 +430,9 @@ const App = () => {
               </>
             )}
             <Divider />
-            {format === 'mongodb' ? (
-              <pre id="formatQuery-output">{formatString}</pre>
-            ) : (
-              <SyntaxHighlighter language={format} style={shStyle}>
-                {formatString}
-              </SyntaxHighlighter>
-            )}
+            <SyntaxHighlighter language={format} style={shStyle}>
+              {formatString}
+            </SyntaxHighlighter>
           </Content>
         </Layout>
       </Layout>
