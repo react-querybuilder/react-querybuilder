@@ -75,7 +75,7 @@ const query = {
     {
       field: 'first_name',
       operator: 'beginsWith',
-      value: 'Steve',
+      value: 'Stev',
     },
     {
       field: 'last_name',
@@ -105,7 +105,7 @@ console.log(query);
     {
       "field": "first_name",
       "operator": "beginsWith",
-      "value": "Steve",
+      "value": "Stev",
     },
     {
       "field": "last_name",
