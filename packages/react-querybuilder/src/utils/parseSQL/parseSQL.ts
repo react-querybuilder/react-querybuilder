@@ -11,7 +11,7 @@ import type {
   Field,
   ParseSQLOptions,
 } from '../../types';
-import sqlParser from './sqlParser';
+import { sqlParser } from './sqlParser';
 import type { SQLExpression, SQLIdentifier } from './types';
 import {
   evalSQLLiteralValue,

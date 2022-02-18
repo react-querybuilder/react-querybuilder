@@ -1159,4 +1159,4 @@ return new Parser;
 })();
 
 
-export default sqlParser;
+export { sqlParser };

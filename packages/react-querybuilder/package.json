@@ -43,6 +43,7 @@
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
     "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/jscodeshift": "^0.11.3",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "babel-plugin-istanbul": "^6.0.0",
@@ -75,6 +76,8 @@
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch",
-    "generate-sqlparser": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs && npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js"
+    "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
+    "generate-sqlparser-base": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
+    "generate-sqlparser-codemod": "npx jscodeshift -t src/utils/parseSQL/sqlParser.codemod.js src/utils/parseSQL/sqlParser.js"
   }
 }

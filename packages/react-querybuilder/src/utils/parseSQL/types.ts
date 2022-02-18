@@ -1,3 +1,4 @@
+import { API, FileInfo } from 'jscodeshift';
 import { AnyCase } from '../../types';
 
 type TokenType =
@@ -244,3 +245,5 @@ export interface ParsedSQL {
   };
   hasSemicolon: boolean;
 }
+
+export type ParseSQLCodeMod = (file: FileInfo, api: API) => string;
