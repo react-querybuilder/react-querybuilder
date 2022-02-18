@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types';
 import {
   findPath,
   getCommonAncestorPath,
@@ -6,7 +6,7 @@ import {
   isAncestor,
   pathIsDisabled,
   pathsAreEqual,
-} from '../pathUtils';
+} from './pathUtils';
 
 const query: RuleGroupType = {
   combinator: 'and',

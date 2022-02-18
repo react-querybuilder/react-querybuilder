@@ -1,14 +1,14 @@
-import { getValueSourcesUtil } from '..';
-import { defaultCombinators } from '../../defaults';
+import { defaultCombinators } from '../defaults';
 import {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ValueSources,
-} from '../../types';
-import { formatQuery } from '../formatQuery';
-import { add, move, remove, update } from '../queryTools';
+} from '../types';
+import { formatQuery } from './formatQuery';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { add, move, remove, update } from './queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);
 const [value, field] = ['value', 'field'] as ValueSources;

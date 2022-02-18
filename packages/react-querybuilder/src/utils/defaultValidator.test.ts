@@ -1,6 +1,6 @@
-import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../../types';
-import { groupInvalidReasons } from '../../defaults';
-import { defaultValidator } from '../defaultValidator';
+import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../types';
+import { groupInvalidReasons } from '../defaults';
+import { defaultValidator } from './defaultValidator';
 
 // standard rule groups
 const emptyQuery: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };

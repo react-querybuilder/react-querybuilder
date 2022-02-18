@@ -1,4 +1,4 @@
-import { c } from '../c';
+import { c } from './c';
 
 it('should concatenate strings', () => {
   expect(c()).toBe('');

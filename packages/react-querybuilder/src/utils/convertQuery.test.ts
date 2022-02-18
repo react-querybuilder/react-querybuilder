@@ -1,5 +1,5 @@
-import { RuleType } from '../../types';
-import { convertQuery } from '../convertQuery';
+import { RuleType } from '../types';
+import { convertQuery } from './convertQuery';
 
 const [rule1, rule2, rule3, rule4]: RuleType[] = [
   {

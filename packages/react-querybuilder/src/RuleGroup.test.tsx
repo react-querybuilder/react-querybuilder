@@ -10,8 +10,8 @@ import {
   defaultTranslations as t,
   standardClassnames as sc,
   TestID,
-} from '../defaults';
-import { RuleGroup as RuleGroupOriginal } from '../RuleGroup';
+} from './defaults';
+import { RuleGroup as RuleGroupOriginal } from './RuleGroup';
 import type {
   ActionProps,
   Classnames,
@@ -26,7 +26,7 @@ import type {
   Schema,
   ValidationResult,
   ValueSelectorProps,
-} from '../types';
+} from './types';
 
 const [RuleGroup, getDndBackendOriginal] = wrapWithTestBackend(RuleGroupOriginal);
 // This is just a type guard against `undefined`

@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
-import { QueryBuilder as QueryBuilderOriginal } from '../QueryBuilder';
+import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
+import { QueryBuilder as QueryBuilderOriginal } from './QueryBuilder';
 import type {
   Field,
   NameLabelPair,
@@ -12,8 +12,8 @@ import type {
   RuleGroupTypeIC,
   RuleType,
   ValidationMap,
-} from '../types';
-import { defaultValidator, formatQuery } from '../utils';
+} from './types';
+import { defaultValidator, formatQuery } from './utils';
 
 const [QueryBuilder, getDndBackendOriginal] = wrapWithTestBackend(QueryBuilderOriginal);
 // This is just a type guard against `undefined`

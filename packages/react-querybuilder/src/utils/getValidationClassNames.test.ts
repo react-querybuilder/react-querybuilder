@@ -1,5 +1,5 @@
-import { standardClassnames } from '../../defaults';
-import { getValidationClassNames } from '../getValidationClassNames';
+import { standardClassnames } from '../defaults';
+import { getValidationClassNames } from './getValidationClassNames';
 
 it('should get the correct classnames', () => {
   expect(getValidationClassNames(true)).toBe(standardClassnames.valid);

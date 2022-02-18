@@ -1,5 +1,5 @@
-import type { Field, OptionGroup } from '../../types';
-import { filterFieldsByComparator } from '../filterFieldsByComparator';
+import type { Field, OptionGroup } from '../types';
+import { filterFieldsByComparator } from './filterFieldsByComparator';
 
 const fields: Field[] = [
   { name: 'f0', label: 'f0' },

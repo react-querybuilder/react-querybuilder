@@ -1,5 +1,4 @@
-import { uniqOptGroups } from '..';
-import { uniqByName } from '../uniq';
+import { uniqByName, uniqOptGroups } from './uniq';
 
 describe('uniqByName', () => {
   it('returns the same array if no duplicates are found', () => {

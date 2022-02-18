@@ -14,8 +14,8 @@ import {
   defaultTranslations as t,
   standardClassnames as sc,
   TestID,
-} from '../defaults';
-import { Rule as RuleOriginal } from '../Rule';
+} from './defaults';
+import { Rule as RuleOriginal } from './Rule';
 import type {
   ActionProps,
   Classnames,
@@ -29,7 +29,7 @@ import type {
   ValueEditorProps,
   ValueSelectorProps,
   ValueSources,
-} from '../types';
+} from './types';
 
 const [Rule, getDndBackendOriginal] = wrapWithTestBackend(RuleOriginal);
 // This is just a type guard against `undefined`

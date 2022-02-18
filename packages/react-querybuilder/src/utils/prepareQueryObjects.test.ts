@@ -1,5 +1,5 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../../types';
-import { prepareRule, prepareRuleGroup } from '../prepareQueryObjects';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types';
+import { prepareRule, prepareRuleGroup } from './prepareQueryObjects';
 
 describe('prepareRule', () => {
   it('should not generate new ID if rule provides it', () => {

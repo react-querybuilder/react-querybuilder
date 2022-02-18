@@ -1,4 +1,4 @@
-import { generateID } from '../generateID';
+import { generateID } from './generateID';
 
 it('should generate unique IDs', () => {
   const id1 = generateID();

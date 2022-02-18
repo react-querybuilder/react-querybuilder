@@ -6,8 +6,8 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types';
-import { parseSQL } from '../parseSQL';
-import { isWildcardsOnly } from '../parseSQL/utils';
+import { parseSQL } from '.';
+import { isWildcardsOnly } from './utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
   combinator: 'and',
