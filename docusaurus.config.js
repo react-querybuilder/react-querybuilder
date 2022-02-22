@@ -65,7 +65,7 @@ const config = {
       algolia: {
         appId: "1ECMJ15RQA",
         apiKey: "359cf32327b9778459b13f4631f71027",
-        // indexName: "react-querybuilder",
+        indexName: "react-querybuilder",
         // contextualSearch: true,
         // searchParameters: {},
       },
