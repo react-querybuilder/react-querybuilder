@@ -79,6 +79,34 @@ export default () => {
 
 </SandpackRQB>
 
+<details>
+<summary>Plain JavaScript version</summary>
+
+```jsx
+import { useState } from 'react';
+import QueryBuilder from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.scss';
+
+const fields = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+];
+
+export default () => {
+  const [query, setQuery] = useState({
+    combinator: 'and',
+    rules: [
+      { field: 'firstName', operator: '=', value: 'Steve' },
+      { field: 'lastName', operator: '=', value: 'Vai' },
+    ],
+  });
+
+  return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
+};
+```
+
+</details>
+
 :::tip
 
 This documentation primarily demonstrates use of the ESM and CommonJS builds of `react-querybuilder`, but a [UMD build is also available](./umd).
