@@ -36,7 +36,7 @@ export interface Field extends NameLabelPair {
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
-  comparator?: string | ((f: Field) => boolean);
+  comparator?: string | ((f: Field, operator: string) => boolean);
 }
 
 export interface DraggedItem {
