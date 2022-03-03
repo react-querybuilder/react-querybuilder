@@ -2,9 +2,9 @@ name: demo
 
 on:
   workflow_dispatch:
-    branches: [master]
+    branches: [main]
   release:
-    branches: [master]
+    branches: [main]
 
 jobs:
   gh-release:

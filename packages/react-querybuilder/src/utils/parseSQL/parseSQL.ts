@@ -113,7 +113,8 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         ) {
           const validSubordinateFields = filterFieldsByComparator(
             primaryField,
-            fieldsFlat
+            fieldsFlat,
+            operator
           ) as Field[];
           if (validSubordinateFields.every(vsf => vsf.name !== subordinateFieldName)) {
             valid = false;

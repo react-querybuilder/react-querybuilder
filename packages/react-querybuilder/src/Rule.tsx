@@ -143,7 +143,7 @@ export const Rule = ({
           : fieldData.valueEditorType) ?? getValueEditorType(field, operator);
   const values =
     valueSource === 'field'
-      ? filterFieldsByComparator(fieldData, fields)
+      ? filterFieldsByComparator(fieldData, fields, operator)
       : fieldData.values ?? getValues(field, operator);
   const level = path.length;
   const vsOptions = valueSources.map(vs => ({ name: vs, label: vs }));

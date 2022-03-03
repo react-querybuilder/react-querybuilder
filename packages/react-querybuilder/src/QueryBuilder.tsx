@@ -199,7 +199,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       const values = getValuesMain(rule.field, rule.operator);
 
       if (rule.valueSource === 'field') {
-        const filteredFields = filterFieldsByComparator(fieldData, fields);
+        const filteredFields = filterFieldsByComparator(fieldData, fields, rule.operator);
         if (filteredFields.length > 0) {
           value = getFirstOption(filteredFields);
         } else {
