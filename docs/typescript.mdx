@@ -26,7 +26,7 @@ interface Field {
   placeholder?: string; // Value to be displayed in the placeholder of the text field
   validator?: RuleValidator; // Called when a rule specifies this field
   valueSources?: ValueSources | ((operator: string) => ValueSources); // List of allowed value sources (must contain "value", "field", or both)
-  comparator?: string | ((f: Field) => boolean); // Determines which (other) fields to include in the list when valueSource is "field"
+  comparator?: string | ((f: Field, operator: string) => boolean); // Determines which (other) fields to include in the list when valueSource is "field"
 }
 ```
 
