@@ -70,7 +70,7 @@
     "build": "yarn build:main && yarn build:css && yarn build:formatQuery && yarn build:parseSQL && yarn build:types",
     "build:main": "vite build",
     "build:css": "sass --no-source-map src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && yarn build:typesPre45",
+    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC'\" ./dist/types/types -r --silent && yarn build:typesPre45",
     "build:typesPre45": "tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace \"import type\" \"import\" ./dist/typesPre45 -r --silent && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC.pre45'\" ./dist/typesPre45/types -r --silent",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",

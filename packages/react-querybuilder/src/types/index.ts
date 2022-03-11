@@ -1,4 +1,4 @@
-export * from './ruleGroupsIC';
+export * from 'ruleGroupsIC';
 export * from './basic';
 export * from './importExport';
 export * from './props';
