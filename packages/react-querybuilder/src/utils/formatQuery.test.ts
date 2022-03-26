@@ -579,6 +579,10 @@ const mongoQueryString =
   '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"$and":[{"age":{"$gte":12}},{"age":{"$lte":14}}]},{"age":{"$eq":"26"}},{"isMusician":{"$eq":true}},{"email":{"$regex":"@"}},{"email":{"$regex":"^ab"}},{"email":{"$regex":"com$"}},{"hello":{"$not":{"$regex":"com"}}},{"job":{"$not":{"$regex":"^Man"}}},{"job":{"$not":{"$regex":"ger$"}}},{"$or":[{"job":{"$eq":"Sales Executive"}}]}]}';
 const mongoQueryStringForValueSourceField =
   '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"$where":"[this.middleName,this.lastName].includes(this.firstName)"},{"$where":"![this.middleName,this.lastName].includes(this.lastName)"},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$or":[{"$expr":{"$lt":["$lastName","$middleName"]}},{"$expr":{"$gt":["$lastName","$lastName"]}}]},{"$expr":{"$eq":["$age","$iq"]}},{"$expr":{"$eq":["$isMusician","$isCreative"]}},{"$where":"this.email.includes(this.atSign)"},{"$where":"this.email.startsWith(this.name)"},{"$where":"this.email.endsWith(this.dotCom)"},{"$where":"!this.hello.includes(this.dotCom)"},{"$where":"!this.job.startsWith(this.noJob)"},{"$where":"!this.job.endsWith(this.noJob)"},{"$or":[{"$expr":{"$eq":["$job","$executiveJobName"]}}]}]}';
+const celString =
+  '(firstName == null && lastName != null && firstName in ["Test", "This"] && lastName -in ["Test", "This"] && firstName between "Test" and "This" && firstName between "Test" and "This" && lastName -between "Test" and "This" && age between "12" and "14" && age == "26" && isMusician == true && -(gender == "M" || job != "Programmer" || email.contains("@")) && (-lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || -job.startsWith("Man") || -email.endsWith("fr")))';
+const celStringForValueSourceField =
+  '(firstName == null && lastName != null && firstName in [middleName, lastName] && lastName -in [middleName, lastName] && firstName between middleName and lastName && firstName between middleName and lastName && lastName -between middleName and lastName && age == iq && isMusician == isCreative && -(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (-lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || -job.startsWith(hasNoJob) || -email.endsWith(isInvalid)))';
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -627,6 +631,11 @@ it('formats to mongo query correctly', () => {
   expect(formatQuery(mongoQueryWithValueSourceField, 'mongodb')).toBe(
     mongoQueryStringForValueSourceField
   );
+});
+
+it('formats CEL correctly', () => {
+  expect(formatQuery(query, 'cel')).toBe(celString);
+  expect(formatQuery(queryWithValueSourceField, 'cel')).toBe(celStringForValueSourceField);
 });
 
 it('handles invalid type correctly', () => {
@@ -732,7 +741,7 @@ it('uses paramPrefix correctly', () => {
 });
 
 describe('independent combinators', () => {
-  it('handles independent combinators', () => {
+  it('handles independent combinators for sql', () => {
     expect(
       formatQuery(
         {
@@ -745,6 +754,21 @@ describe('independent combinators', () => {
         'sql'
       )
     ).toBe(`(firstName = 'Test' and lastName = 'Test')`);
+  });
+
+  it('handles independent combinators for cel', () => {
+    expect(
+      formatQuery(
+        {
+          rules: [
+            { field: 'firstName', value: 'Test', operator: '=' },
+            'and',
+            { field: 'lastName', value: 'Test', operator: '=' },
+          ],
+        },
+        'cel'
+      )
+    ).toBe(`(firstName == "Test" && lastName == "Test")`);
   });
 
   it('does not support independent combinators for mongodb', () => {

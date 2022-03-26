@@ -7,7 +7,8 @@ export type ExportFormat =
   | 'json_without_ids'
   | 'parameterized'
   | 'parameterized_named'
-  | 'mongodb';
+  | 'mongodb'
+  | 'cel';
 
 export interface FormatQueryOptions {
   /**

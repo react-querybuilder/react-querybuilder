@@ -1,4 +1,5 @@
 import type {
+  DefaultCombinatorName,
   ExportFormat,
   FormatQueryOptions,
   ParameterizedNamedSQL,
@@ -11,7 +12,6 @@ import type {
   ValidationMap,
   ValidationResult,
   ValueProcessor,
-  ValueSource,
 } from '../types';
 import { isRuleOrGroupValid } from './isRuleOrGroupValid';
 import { uniqByName } from './uniq';
@@ -52,12 +52,12 @@ const mongoOperators: { [op: string]: string } = {
   notIn: '$nin',
 };
 
-export const defaultValueProcessor: ValueProcessor = (
-  _field: string,
-  operator: string,
-  value: any,
-  valueSource?: ValueSource
-) => {
+const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
+  and: '&&',
+  or: '||',
+};
+
+export const defaultValueProcessor: ValueProcessor = (_field, operator, value, valueSource) => {
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
   if (operatorLowerCase === 'null' || operatorLowerCase === 'notnull') {
@@ -94,10 +94,10 @@ export const defaultValueProcessor: ValueProcessor = (
 };
 
 export const defaultMongoDBValueProcessor: ValueProcessor = (
-  field: string,
-  operator: string,
-  value: any,
-  valueSource?: ValueSource
+  field,
+  operator,
+  value,
+  valueSource
 ) => {
   const valueIsField = valueSource === 'field';
   const useBareValue = ['number', 'boolean', 'bigint'].includes(typeof value);
@@ -177,6 +177,30 @@ export const defaultMongoDBValueProcessor: ValueProcessor = (
   return '';
 };
 
+export const defaultCELValueProcessor: ValueProcessor = (field, operator, value, valueSource) => {
+  const valueIsField = valueSource === 'field';
+  const operatorLowerCase = operator.toLowerCase().replace(/^=$/, '==');
+  const useBareValue = ['number', 'boolean', 'bigint'].includes(typeof value);
+  if (['<', '<=', '==', '!=', '>', '>='].includes(operatorLowerCase)) {
+    return valueIsField
+      ? `${field} ${operatorLowerCase} ${value}`
+      : `${field} ${operatorLowerCase} ${useBareValue ? value : `"${value}"`}`;
+  } else if (operatorLowerCase === 'contains') {
+    return valueIsField
+      ? `${field}.contains(${value})`
+      : `${field}.contains(${useBareValue ? value : `"${value}"`})`;
+  } else if (operatorLowerCase === 'beginswith') {
+    return valueIsField
+      ? `${field}.startsWith(${value})`
+      : `${field}.startsWith(${useBareValue ? value : `"${value}"`})`;
+  } else if (operatorLowerCase === 'endswith') {
+    return valueIsField
+      ? `${field}.endsWith(${value})`
+      : `${field}.endsWith(${useBareValue ? value : `"${value}"`})`;
+  }
+  return '';
+};
+
 /**
  * Formats a query in the requested output format.
  */
@@ -219,7 +243,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
     valueProcessor =
       options.valueProcessor ??
-      (format === 'mongodb' ? defaultMongoDBValueProcessor : defaultValueProcessor);
+      (format === 'mongodb'
+        ? defaultMongoDBValueProcessor
+        : format === 'cel'
+        ? defaultCELValueProcessor
+        : defaultValueProcessor);
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
@@ -229,6 +257,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
     format = options.toLowerCase() as ExportFormat;
     if (format === 'mongodb') {
       valueProcessor = defaultMongoDBValueProcessor;
+    } else if (format === 'cel') {
+      valueProcessor = defaultCELValueProcessor;
     }
   }
   if (!fallbackExpression) {
@@ -445,6 +475,43 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
       return `{${processRuleGroup(ruleGroup, true)}}`;
     }
     return `{${fallbackExpression}}`;
+  } else if (format === 'cel') {
+    // istanbul ignore else
+    if (typeof validator === 'function') {
+      const validationResult = validator(ruleGroup);
+      if (typeof validationResult === 'boolean') {
+        if (validationResult === false) {
+          return `{${fallbackExpression}}`;
+        }
+      } else {
+        validationMap = validationResult;
+      }
+    }
+
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        return outermost ? fallbackExpression : '';
+      }
+
+      const expression: string = rg.rules
+        .map(rule => {
+          if (typeof rule === 'string') {
+            return celCombinatorMap[rule as DefaultCombinatorName];
+          }
+          if ('rules' in rule) {
+            return processRuleGroup(rule);
+          }
+          return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+        })
+        .filter(e => !!e)
+        .join(
+          'combinator' in rg ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} ` : ' '
+        );
+
+      return expression ? `(${expression})` : fallbackExpression;
+    };
+
+    return processRuleGroup(ruleGroup, true);
   } else {
     return '';
   }
