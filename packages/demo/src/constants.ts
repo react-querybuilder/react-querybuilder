@@ -261,4 +261,5 @@ export const formatMap: { fmt: ExportFormat; lbl: string }[] = [
   { fmt: 'parameterized', lbl: 'Parameterized SQL' },
   { fmt: 'parameterized_named', lbl: 'Parameterized (named) SQL' },
   { fmt: 'mongodb', lbl: 'MongoDB' },
+  { fmt: 'cel', lbl: 'Common Expression Language (CEL)' },
 ];
