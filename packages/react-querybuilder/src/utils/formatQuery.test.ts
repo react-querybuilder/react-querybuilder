@@ -1,5 +1,6 @@
 import type { RuleGroupType, ValueProcessor } from '../types';
 import { formatQuery } from './formatQuery';
+import { add } from './queryTools';
 
 const query: RuleGroupType = {
   id: 'g-root',
@@ -580,9 +581,9 @@ const mongoQueryString =
 const mongoQueryStringForValueSourceField =
   '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"$where":"[this.middleName,this.lastName].includes(this.firstName)"},{"$where":"![this.middleName,this.lastName].includes(this.lastName)"},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$or":[{"$expr":{"$lt":["$lastName","$middleName"]}},{"$expr":{"$gt":["$lastName","$lastName"]}}]},{"$expr":{"$eq":["$age","$iq"]}},{"$expr":{"$eq":["$isMusician","$isCreative"]}},{"$where":"this.email.includes(this.atSign)"},{"$where":"this.email.startsWith(this.name)"},{"$where":"this.email.endsWith(this.dotCom)"},{"$where":"!this.hello.includes(this.dotCom)"},{"$where":"!this.job.startsWith(this.noJob)"},{"$where":"!this.job.endsWith(this.noJob)"},{"$or":[{"$expr":{"$eq":["$job","$executiveJobName"]}}]}]}';
 const celString =
-  '(firstName == null && lastName != null && firstName in ["Test", "This"] && lastName -in ["Test", "This"] && firstName between "Test" and "This" && firstName between "Test" and "This" && lastName -between "Test" and "This" && age between "12" and "14" && age == "26" && isMusician == true && -(gender == "M" || job != "Programmer" || email.contains("@")) && (-lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || -job.startsWith("Man") || -email.endsWith("fr")))';
+  '(firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr")))';
 const celStringForValueSourceField =
-  '(firstName == null && lastName != null && firstName in [middleName, lastName] && lastName -in [middleName, lastName] && firstName between middleName and lastName && firstName between middleName and lastName && lastName -between middleName and lastName && age == iq && isMusician == isCreative && -(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (-lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || -job.startsWith(hasNoJob) || -email.endsWith(isInvalid)))';
+  '(firstName == null && lastName != null && firstName in [middleName, lastName] && !(lastName in [middleName, lastName]) && (firstName >= middleName && firstName <= lastName) && (firstName >= middleName && firstName <= lastName) && (lastName < middleName || lastName > lastName) && age == iq && isMusician == isCreative && !(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (!lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || !job.startsWith(hasNoJob) || !email.endsWith(isInvalid)))';
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -634,7 +635,8 @@ it('formats to mongo query correctly', () => {
 });
 
 it('formats CEL correctly', () => {
-  expect(formatQuery(query, 'cel')).toBe(celString);
+  const celQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
+  expect(formatQuery(celQuery, 'cel')).toBe(celString);
   expect(formatQuery(queryWithValueSourceField, 'cel')).toBe(celStringForValueSourceField);
 });
 
@@ -663,14 +665,14 @@ it('handles custom valueProcessor correctly', () => {
 
   const valueProcessor: ValueProcessor = (_field, operator, value) => {
     if (operator === 'in') {
-      return `(${value.map((v: string) => `'${v.trim()}'`).join(',')})`;
+      return `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`;
     } else {
       return `'${value}'`;
     }
   };
 
   expect(formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor })).toBe(
-    `(instrument in ('Guitar','Vocals') and lastName = 'Vai')`
+    `(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`
   );
 });
 
@@ -748,12 +750,14 @@ describe('independent combinators', () => {
           rules: [
             { field: 'firstName', value: 'Test', operator: '=' },
             'and',
+            { field: 'middleName', value: 'Test', operator: '=' },
+            'or',
             { field: 'lastName', value: 'Test', operator: '=' },
           ],
         },
         'sql'
       )
-    ).toBe(`(firstName = 'Test' and lastName = 'Test')`);
+    ).toBe(`(firstName = 'Test' and middleName = 'Test' or lastName = 'Test')`);
   });
 
   it('handles independent combinators for cel', () => {
@@ -763,12 +767,14 @@ describe('independent combinators', () => {
           rules: [
             { field: 'firstName', value: 'Test', operator: '=' },
             'and',
+            { field: 'middleName', value: 'Test', operator: '=' },
+            'or',
             { field: 'lastName', value: 'Test', operator: '=' },
           ],
         },
         'cel'
       )
-    ).toBe(`(firstName == "Test" && lastName == "Test")`);
+    ).toBe(`(firstName == "Test" && middleName == "Test" || lastName == "Test")`);
   });
 
   it('does not support independent combinators for mongodb', () => {
@@ -928,7 +934,7 @@ describe('validation', () => {
     ).toEqual({ sql: '(1 = 1)', params: {} });
   });
 
-  it('should invalidate a mongob query', () => {
+  it('should invalidate a mongodb query', () => {
     expect(
       formatQuery(
         { id: 'root', combinator: 'and', rules: [] },
@@ -937,16 +943,23 @@ describe('validation', () => {
     ).toBe('{"$and":[{"$expr":true}]}');
   });
 
-  it('should invalidate a mongob rule', () => {
+  it('should invalidate a mongodb rule', () => {
     expect(
       formatQuery(
-        { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+        {
+          id: 'root',
+          combinator: 'and',
+          rules: [
+            { field: 'field', operator: '=', value: '' },
+            { field: 'otherfield', operator: '=', value: '' },
+          ],
+        },
         { format: 'mongodb', fields: [{ name: 'field', validator: () => false }] }
       )
-    ).toBe('{"$and":[{"field":{"$eq":""}}]}');
+    ).toBe('{"$and":[{"otherfield":{"$eq":""}}]}');
   });
 
-  it('should invalidate mongoedb even if fields are valid', () => {
+  it('should invalidate mongodb even if fields are valid', () => {
     expect(
       formatQuery(
         { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
@@ -989,5 +1002,75 @@ describe('validation', () => {
         }
       )
     ).toBe('{"$and":[{"$expr":true}]}');
+  });
+
+  it('should invalidate a cel query', () => {
+    expect(
+      formatQuery(
+        { id: 'root', combinator: 'and', rules: [] },
+        { format: 'cel', validator: () => false }
+      )
+    ).toBe('(1 = 1)');
+  });
+
+  it('should invalidate a cel rule', () => {
+    expect(
+      formatQuery(
+        {
+          id: 'root',
+          combinator: 'and',
+          rules: [
+            { field: 'field', operator: '=', value: '' },
+            { field: 'otherfield', operator: '=', value: '' },
+          ],
+        },
+        { format: 'cel', fields: [{ name: 'field', validator: () => false }] }
+      )
+    ).toBe('(otherfield == "")');
+  });
+
+  it('should invalidate cel even if fields are valid', () => {
+    expect(
+      formatQuery(
+        { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+        {
+          format: 'cel',
+          validator: () => false,
+          fields: [{ name: 'field', validator: () => true }],
+        }
+      )
+    ).toBe('(1 = 1)');
+  });
+
+  it('should invalidate cel outermost group', () => {
+    expect(
+      formatQuery(
+        {
+          id: 'root',
+          combinator: 'and',
+          rules: [],
+        },
+        {
+          format: 'cel',
+          validator: () => ({ root: false }),
+        }
+      )
+    ).toBe('(1 = 1)');
+  });
+
+  it('should invalidate cel inner group', () => {
+    expect(
+      formatQuery(
+        {
+          id: 'root',
+          combinator: 'and',
+          rules: [{ id: 'inner', combinator: 'and', rules: [] }],
+        },
+        {
+          format: 'cel',
+          validator: () => ({ inner: false }),
+        }
+      )
+    ).toBe('(1 = 1)');
   });
 });

@@ -185,18 +185,65 @@ export const defaultCELValueProcessor: ValueProcessor = (field, operator, value,
     return valueIsField
       ? `${field} ${operatorLowerCase} ${value}`
       : `${field} ${operatorLowerCase} ${useBareValue ? value : `"${value}"`}`;
-  } else if (operatorLowerCase === 'contains') {
+  } else if (operatorLowerCase === 'contains' || operatorLowerCase === 'doesnotcontain') {
+    const negate = operatorLowerCase === 'doesnotcontain' ? '!' : '';
     return valueIsField
-      ? `${field}.contains(${value})`
-      : `${field}.contains(${useBareValue ? value : `"${value}"`})`;
-  } else if (operatorLowerCase === 'beginswith') {
+      ? `${negate}${field}.contains(${value})`
+      : `${negate}${field}.contains(${
+          useBareValue ? /* istanbul ignore next */ value : `"${value}"`
+        })`;
+  } else if (operatorLowerCase === 'beginswith' || operatorLowerCase === 'doesnotbeginwith') {
+    const negate = operatorLowerCase === 'doesnotbeginwith' ? '!' : '';
     return valueIsField
-      ? `${field}.startsWith(${value})`
-      : `${field}.startsWith(${useBareValue ? value : `"${value}"`})`;
-  } else if (operatorLowerCase === 'endswith') {
+      ? `${negate}${field}.startsWith(${value})`
+      : `${negate}${field}.startsWith(${
+          useBareValue ? /* istanbul ignore next */ value : `"${value}"`
+        })`;
+  } else if (operatorLowerCase === 'endswith' || operatorLowerCase === 'doesnotendwith') {
+    const negate = operatorLowerCase === 'doesnotendwith' ? '!' : '';
     return valueIsField
-      ? `${field}.endsWith(${value})`
-      : `${field}.endsWith(${useBareValue ? value : `"${value}"`})`;
+      ? `${negate}${field}.endsWith(${value})`
+      : `${negate}${field}.endsWith(${
+          useBareValue ? /* istanbul ignore next */ value : `"${value}"`
+        })`;
+  } else if (operatorLowerCase === 'null') {
+    return `${field} == null`;
+  } else if (operatorLowerCase === 'notnull') {
+    return `${field} != null`;
+  } else if (operatorLowerCase === 'in' || operatorLowerCase === 'notin') {
+    const negate = operatorLowerCase === 'notin';
+    const valArray = toArray(value);
+    if (valArray.length > 0) {
+      return `${negate ? '!(' : ''}${field} in [${valArray
+        .map(val => (valueIsField ? `${val.trim()}` : `"${val.trim()}"`))
+        .join(', ')}]${negate ? ')' : ''}`;
+    } else {
+      return '';
+    }
+  } else if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
+    const valArray = toArray(value);
+    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
+      const [first, second] = valArray;
+      const firstNum = parseFloat(first);
+      const secondNum = parseFloat(second);
+      const firstValue = isNaN(firstNum)
+        ? valueIsField
+          ? `${first.trim()}`
+          : `"${first.trim()}"`
+        : firstNum;
+      const secondValue = isNaN(secondNum)
+        ? valueIsField
+          ? `${second.trim()}`
+          : `"${second.trim()}"`
+        : secondNum;
+      if (operator === 'between') {
+        return `(${field} >= ${firstValue} && ${field} <= ${secondValue})`;
+      } else {
+        return `(${field} < ${firstValue} || ${field} > ${secondValue})`;
+      }
+    } else {
+      return '';
+    }
   }
   return '';
 };
@@ -277,27 +324,18 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
       'not',
       'valueSource',
     ]);
-  } else if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
-    const parameterized = format === 'parameterized';
-    const parameterized_named = format === 'parameterized_named';
-    const params: any[] = [];
-    const params_named: { [p: string]: any } = {};
-    const fieldParamIndexes: { [f: string]: number } = {};
-
-    const getNextNamedParam = (field: string) => {
-      fieldParamIndexes[field] = (fieldParamIndexes[field] ?? 0) + 1;
-      return `${field}_${fieldParamIndexes[field]}`;
-    };
-
+  } else {
     // istanbul ignore else
     if (typeof validator === 'function') {
       const validationResult = validator(ruleGroup);
       if (typeof validationResult === 'boolean') {
         if (validationResult === false) {
-          return parameterized
+          return format === 'parameterized'
             ? { sql: fallbackExpression, params: [] }
-            : parameterized_named
+            : format === 'parameterized_named'
             ? { sql: fallbackExpression, params: {} }
+            : format === 'mongodb'
+            ? `{${fallbackExpression}}`
             : fallbackExpression;
         }
       } else {
@@ -314,7 +352,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
       }
     });
 
-    const processRule = (rule: RuleType) => {
+    const validateRule = (rule: RuleType) => {
       let validationResult: boolean | ValidationResult | undefined = undefined;
       let fieldValidator: RuleValidator | undefined = undefined;
       if (rule.id) {
@@ -330,190 +368,197 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
           }
         }
       }
-      if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
-        return '';
-      }
+      return [validationResult, fieldValidator] as const;
+    };
 
-      const value = valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
-      const operator = mapOperator(rule.operator);
+    if (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') {
+      const parameterized = format === 'parameterized';
+      const parameterized_named = format === 'parameterized_named';
+      const params: any[] = [];
+      const params_named: { [p: string]: any } = {};
+      const fieldParamIndexes: { [f: string]: number } = {};
 
-      if (
-        (parameterized || parameterized_named) &&
-        (!rule.valueSource || rule.valueSource === 'value')
-      ) {
-        if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
-          return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
-        } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
-          if (value) {
-            const splitValue = (rule.value as string).split(',').map(v => v.trim());
-            if (parameterized) {
-              splitValue.forEach(v => params.push(v));
-              return `${quoteFieldNamesWith}${
-                rule.field
-              }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
-            }
-            const inParams: string[] = [];
-            splitValue.forEach(v => {
-              const thisParamName = getNextNamedParam(rule.field);
-              inParams.push(`${paramPrefix}${thisParamName}`);
-              params_named[thisParamName] = v;
-            });
-            return `${quoteFieldNamesWith}${
-              rule.field
-            }${quoteFieldNamesWith} ${operator} (${inParams.join(', ')})`;
-          } else {
-            return '';
-          }
-        } else if (
-          operator.toLowerCase() === 'between' ||
-          operator.toLowerCase() === 'not between'
-        ) {
-          if (value) {
-            const [first, second] = toArray(rule.value).map(v => v.trim());
-            if (parameterized) {
-              params.push(first);
-              params.push(second);
-              return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ? and ?`;
-            }
-            const firstParamName = getNextNamedParam(rule.field);
-            const secondParamName = getNextNamedParam(rule.field);
-            params_named[firstParamName] = first;
-            params_named[secondParamName] = second;
-            return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
-          } else {
-            return '';
-          }
-        }
-        const thisValue = ['boolean', 'number'].includes(typeof rule.value)
-          ? rule.value
-          : (value as string).match(/^'?(.*?)'?$/)![1];
-        let thisParamName = '';
-        if (parameterized) {
-          params.push(thisValue);
-        } else {
-          thisParamName = getNextNamedParam(rule.field);
-          params_named[thisParamName] = thisValue;
-        }
-        return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
-          parameterized ? '?' : `${paramPrefix}${thisParamName}`
-        }`.trim();
-      } else {
-        if (['in', 'not in', 'between', 'not between'].includes(operator.toLowerCase()) && !value) {
+      const getNextNamedParam = (field: string) => {
+        fieldParamIndexes[field] = (fieldParamIndexes[field] ?? 0) + 1;
+        return `${field}_${fieldParamIndexes[field]}`;
+      };
+
+      const processRule = (rule: RuleType) => {
+        const [validationResult, fieldValidator] = validateRule(rule);
+        if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
           return '';
         }
-      }
-      return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${value}`.trim();
-    };
 
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
+        const value = valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+        const operator = mapOperator(rule.operator);
 
-      const processedRules = rg.rules.map(rule => {
-        if (typeof rule === 'string') {
-          return rule;
-        }
-        if ('rules' in rule) {
-          return processRuleGroup(rule);
-        }
-        return processRule(rule);
-      });
-
-      if (processedRules.length === 0) {
-        return fallbackExpression;
-      }
-
-      return `${rg.not ? 'NOT ' : ''}(${processedRules
-        .filter(r => !!r)
-        .join('combinator' in rg ? ` ${rg.combinator} ` : ' ')})`;
-    };
-
-    if (parameterized) {
-      return { sql: processRuleGroup(ruleGroup, true), params };
-    } else if (parameterized_named) {
-      return { sql: processRuleGroup(ruleGroup, true), params: params_named };
-    } else {
-      return processRuleGroup(ruleGroup, true);
-    }
-  } else if (format === 'mongodb') {
-    // istanbul ignore else
-    if (typeof validator === 'function') {
-      const validationResult = validator(ruleGroup);
-      if (typeof validationResult === 'boolean') {
-        if (validationResult === false) {
-          return `{${fallbackExpression}}`;
-        }
-      } else {
-        validationMap = validationResult;
-      }
-    }
-
-    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
-
-      const combinator = `"$${rg.combinator}"`;
-
-      const expression: string = rg.rules
-        .map(rule => {
-          if ('rules' in rule) {
-            const processedRuleGroup = processRuleGroup(rule);
-            return processedRuleGroup ? `{${processedRuleGroup}}` : '';
+        if (
+          (parameterized || parameterized_named) &&
+          (!rule.valueSource || rule.valueSource === 'value')
+        ) {
+          if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
+            return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
+          } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
+            if (value) {
+              const splitValue = (rule.value as string).split(',').map(v => v.trim());
+              if (parameterized) {
+                splitValue.forEach(v => params.push(v));
+                return `${quoteFieldNamesWith}${
+                  rule.field
+                }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+              }
+              const inParams: string[] = [];
+              splitValue.forEach(v => {
+                const thisParamName = getNextNamedParam(rule.field);
+                inParams.push(`${paramPrefix}${thisParamName}`);
+                params_named[thisParamName] = v;
+              });
+              return `${quoteFieldNamesWith}${
+                rule.field
+              }${quoteFieldNamesWith} ${operator} (${inParams.join(', ')})`;
+            } else {
+              return '';
+            }
+          } else if (
+            operator.toLowerCase() === 'between' ||
+            operator.toLowerCase() === 'not between'
+          ) {
+            if (value) {
+              const [first, second] = toArray(rule.value).map(v => v.trim());
+              if (parameterized) {
+                params.push(first);
+                params.push(second);
+                return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ? and ?`;
+              }
+              const firstParamName = getNextNamedParam(rule.field);
+              const secondParamName = getNextNamedParam(rule.field);
+              params_named[firstParamName] = first;
+              params_named[secondParamName] = second;
+              return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
+            } else {
+              return '';
+            }
           }
-          return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
-        })
-        .filter(e => !!e)
-        .join(',');
-
-      return expression ? `${combinator}:[${expression}]` : fallbackExpression;
-    };
-
-    // "mongodb" export type doesn't currently support independent combinators
-    if ('combinator' in ruleGroup) {
-      return `{${processRuleGroup(ruleGroup, true)}}`;
-    }
-    return `{${fallbackExpression}}`;
-  } else if (format === 'cel') {
-    // istanbul ignore else
-    if (typeof validator === 'function') {
-      const validationResult = validator(ruleGroup);
-      if (typeof validationResult === 'boolean') {
-        if (validationResult === false) {
-          return `{${fallbackExpression}}`;
+          const thisValue = ['boolean', 'number'].includes(typeof rule.value)
+            ? rule.value
+            : (value as string).match(/^'?(.*?)'?$/)![1];
+          let thisParamName = '';
+          if (parameterized) {
+            params.push(thisValue);
+          } else {
+            thisParamName = getNextNamedParam(rule.field);
+            params_named[thisParamName] = thisValue;
+          }
+          return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
+            parameterized ? '?' : `${paramPrefix}${thisParamName}`
+          }`.trim();
+        } else {
+          if (
+            ['in', 'not in', 'between', 'not between'].includes(operator.toLowerCase()) &&
+            !value
+          ) {
+            return '';
+          }
         }
-      } else {
-        validationMap = validationResult;
-      }
-    }
+        return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${value}`.trim();
+      };
 
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
+      const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+          return outermost ? fallbackExpression : '';
+        }
 
-      const expression: string = rg.rules
-        .map(rule => {
+        const processedRules = rg.rules.map(rule => {
           if (typeof rule === 'string') {
-            return celCombinatorMap[rule as DefaultCombinatorName];
+            return rule;
           }
           if ('rules' in rule) {
             return processRuleGroup(rule);
           }
-          return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
-        })
-        .filter(e => !!e)
-        .join(
-          'combinator' in rg ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} ` : ' '
-        );
+          return processRule(rule);
+        });
 
-      return expression ? `(${expression})` : fallbackExpression;
-    };
+        if (processedRules.length === 0) {
+          return fallbackExpression;
+        }
 
-    return processRuleGroup(ruleGroup, true);
-  } else {
-    return '';
+        return `${rg.not ? 'NOT ' : ''}(${processedRules
+          .filter(Boolean)
+          .join('combinator' in rg ? ` ${rg.combinator} ` : ' ')})`;
+      };
+
+      if (parameterized) {
+        return { sql: processRuleGroup(ruleGroup, true), params };
+      } else if (parameterized_named) {
+        return { sql: processRuleGroup(ruleGroup, true), params: params_named };
+      } else {
+        return processRuleGroup(ruleGroup, true);
+      }
+    } else if (format === 'mongodb') {
+      const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+          return outermost ? fallbackExpression : '';
+        }
+
+        const combinator = `"$${rg.combinator}"`;
+
+        const expression: string = rg.rules
+          .map(rule => {
+            if ('rules' in rule) {
+              const processedRuleGroup = processRuleGroup(rule);
+              return processedRuleGroup ? `{${processedRuleGroup}}` : '';
+            }
+            const [validationResult, fieldValidator] = validateRule(rule);
+            if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
+              return '';
+            }
+            return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+          })
+          .filter(Boolean)
+          .join(',');
+
+        return expression ? `${combinator}:[${expression}]` : fallbackExpression;
+      };
+
+      // "mongodb" export type does not currently support independent combinators
+      if ('combinator' in ruleGroup) {
+        return `{${processRuleGroup(ruleGroup, true)}}`;
+      }
+      return `{${fallbackExpression}}`;
+    } else if (format === 'cel') {
+      const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+          return outermost ? fallbackExpression : '';
+        }
+
+        const expression: string = rg.rules
+          .map(rule => {
+            if (typeof rule === 'string') {
+              return celCombinatorMap[rule as DefaultCombinatorName];
+            }
+            if ('rules' in rule) {
+              return processRuleGroup(rule);
+            }
+            const [validationResult, fieldValidator] = validateRule(rule);
+            if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
+              return '';
+            }
+            return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+          })
+          .filter(Boolean)
+          .join(
+            'combinator' in rg
+              ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} `
+              : ' '
+          );
+
+        return expression ? `${rg.not ? '!' : ''}(${expression})` : fallbackExpression;
+      };
+
+      return processRuleGroup(ruleGroup, true);
+    } else {
+      return '';
+    }
   }
 }
 
