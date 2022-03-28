@@ -309,7 +309,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
     }
   }
   if (!fallbackExpression) {
-    fallbackExpression = format === 'mongodb' ? '"$and":[{"$expr":true}]' : '(1 = 1)';
+    fallbackExpression =
+      format === 'mongodb' ? '"$and":[{"$expr":true}]' : format === 'cel' ? '1 == 1' : '(1 = 1)';
   }
 
   if (format === 'json') {
@@ -552,7 +553,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
               : ' '
           );
 
-        return expression ? `${rg.not ? '!' : ''}(${expression})` : fallbackExpression;
+        const wrap =
+          rg.not || !outermost ? { pre: `${rg.not ? '!' : ''}(`, suf: ')' } : { pre: '', suf: '' };
+
+        return expression ? `${wrap.pre}${expression}${wrap.suf}` : fallbackExpression;
       };
 
       return processRuleGroup(ruleGroup, true);
