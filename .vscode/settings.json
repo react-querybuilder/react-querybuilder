@@ -7,6 +7,8 @@
     "*.jsx": "$(capture).js",
     "*.tsx": "$(capture).ts, $(capture).test.tsx",
     "tsconfig.json": "tsconfig.*.json",
-    "package.json": "package-lock.json, .npmrc, yarn.lock, .yarnrc"
+    "package.json": "package-lock.json, .npmrc, yarn.lock, .yarnrc",
+    "vite.config.js": "vite.config.*.js",
+    "vite.config.ts": "vite.config.*.ts"
   }
 }
