@@ -5,6 +5,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "patch-package",
     "start": "yarn workspace @react-querybuilder/demo start",
     "build": "lerna run build",
     "build:rqb": "yarn workspace react-querybuilder build",
@@ -37,7 +38,9 @@
     "jest": "^27.0.6",
     "jest-watch-typeahead": "^1.0.0",
     "lerna": "^4.0.0",
-    "prettier": "2.5.1",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
+    "prettier": "2.6.0",
     "react-dnd-test-backend": "^14.0.1",
     "react-dnd-test-utils": "^14.0.2",
     "typescript": "^4.5.0",
