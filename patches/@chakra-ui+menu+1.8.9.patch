@@ -1,0 +1,22 @@
+diff --git a/node_modules/@chakra-ui/menu/dist/declarations/src/use-menu.d.ts b/node_modules/@chakra-ui/menu/dist/declarations/src/use-menu.d.ts
+index 155d4d2..d3f40bb 100644
+--- a/node_modules/@chakra-ui/menu/dist/declarations/src/use-menu.d.ts
++++ b/node_modules/@chakra-ui/menu/dist/declarations/src/use-menu.d.ts
+@@ -477,7 +477,7 @@ export declare function useMenuList(props?: UseMenuListProps, ref?: React.Ref<an
+         clear?: import("csstype").Property.Clear | undefined;
+         clipPath?: import("csstype").Property.ClipPath | undefined;
+         color?: import("csstype").Property.Color | undefined;
+-        colorAdjust?: import("csstype").Property.ColorAdjust | undefined;
++        colorAdjust?: import("csstype").Property.PrintColorAdjust | undefined;
+         colorScheme?: import("csstype").Property.ColorScheme | undefined;
+         columnCount?: import("csstype").Property.ColumnCount | undefined;
+         columnFill?: import("csstype").Property.ColumnFill | undefined;
+@@ -983,7 +983,7 @@ export declare function useMenuList(props?: UseMenuListProps, ref?: React.Ref<an
+         WebkitPaddingStart?: import("csstype").Property.PaddingInlineStart<string | number> | undefined;
+         WebkitPerspective?: import("csstype").Property.Perspective<string | number> | undefined;
+         WebkitPerspectiveOrigin?: import("csstype").Property.PerspectiveOrigin<string | number> | undefined;
+-        WebkitPrintColorAdjust?: import("csstype").Property.ColorAdjust | undefined;
++        WebkitPrintColorAdjust?: import("csstype").Property.PrintColorAdjust | undefined;
+         WebkitRubyPosition?: import("csstype").Property.RubyPosition | undefined;
+         WebkitScrollSnapType?: import("csstype").Property.ScrollSnapType | undefined;
+         WebkitShapeMargin?: import("csstype").Property.ShapeMargin<string | number> | undefined;
