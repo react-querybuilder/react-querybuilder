@@ -22,6 +22,7 @@ function formatQuery(
 - SQL `WHERE` clause
 - Parameterized SQL (with anonymous or named parameters)
 - MongoDB
+- Common Expression Language (CEL)
 
 :::info
 
@@ -166,6 +167,20 @@ Output:
 
 ```ts
 `{"$and":[{"firstName":{"$eq":"Steve"}},{"lastName":{"$eq":"Vai"}}]}`;
+```
+
+### Common Expression Language
+
+For Common Expression Language (CEL) output, use the "cel" format.
+
+```ts
+formatQuery(query, 'cel');
+```
+
+Output:
+
+```ts
+`firstName = "Steve" && lastName = "Vai"`;
 ```
 
 ## Configuration
