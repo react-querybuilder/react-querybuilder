@@ -638,6 +638,12 @@ it('formats CEL correctly', () => {
   const celQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
   expect(formatQuery(celQuery, 'cel')).toBe(celString);
   expect(formatQuery(queryWithValueSourceField, 'cel')).toBe(celStringForValueSourceField);
+  expect(
+    formatQuery(
+      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
+      'cel'
+    )
+  ).toBe('(f >= 12 && f <= 14)');
 });
 
 it('handles invalid type correctly', () => {

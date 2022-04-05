@@ -226,16 +226,21 @@ export const defaultCELValueProcessor: ValueProcessor = (field, operator, value,
       const [first, second] = valArray;
       const firstNum = parseFloat(first);
       const secondNum = parseFloat(second);
-      const firstValue = isNaN(firstNum)
+      let firstValue = isNaN(firstNum)
         ? valueIsField
           ? `${first.trim()}`
           : `"${first.trim()}"`
         : firstNum;
-      const secondValue = isNaN(secondNum)
+      let secondValue = isNaN(secondNum)
         ? valueIsField
           ? `${second.trim()}`
           : `"${second.trim()}"`
         : secondNum;
+      if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
+        const tempNum = secondNum;
+        secondValue = firstNum;
+        firstValue = tempNum;
+      }
       if (operator === 'between') {
         return `(${field} >= ${firstValue} && ${field} <= ${secondValue})`;
       } else {
