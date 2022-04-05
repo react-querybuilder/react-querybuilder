@@ -1,5 +1,6 @@
-import { resolve } from 'path';
 import legacy from '@vitejs/plugin-legacy';
+import vitePluginReact from '@vitejs/plugin-react';
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -15,10 +16,8 @@ export default defineConfig({
     sourcemap: true,
   },
   css: { preprocessorOptions: { css: { charset: false }, scss: { charset: false } } },
-  esbuild: {
-    jsxInject: `import React from 'react'`,
-  },
   plugins: [
+    vitePluginReact(),
     legacy({
       targets: ['ie >= 11'],
       additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
