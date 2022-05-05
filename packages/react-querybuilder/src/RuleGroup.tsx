@@ -292,13 +292,14 @@ export const RuleGroup = ({
       </div>
       <div className={c(standardClassnames.body, classNames.body)}>
         {rules.map((r, idx) => {
-          const thisPath = path.concat([idx]);
+          const thisPath = [...path, idx];
           const thisPathDisabled =
             disabled ||
             (typeof r !== 'string' && r.disabled) ||
             disabledPaths.some(p => pathsAreEqual(thisPath, p));
+          const key = thisPath.join('-');
           return (
-            <Fragment key={thisPath.join('-')}>
+            <Fragment key={key}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
                 <InlineCombinator
                   options={combinators}

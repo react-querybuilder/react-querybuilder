@@ -1,5 +1,6 @@
 import path from 'path';
 import { defineConfig } from 'vite';
+import vitePluginReact from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
@@ -24,8 +25,5 @@ export default defineConfig({
     },
     sourcemap: true,
   },
-  esbuild: {
-    jsxInject: `import React from 'react'`,
-  },
-  plugins: [tsconfigPaths()],
+  plugins: [tsconfigPaths(), vitePluginReact()],
 });

@@ -12,11 +12,22 @@ import type {
   ValidationMap,
   ValidationResult,
   ValueProcessor,
+  ValueProcessorInternal,
 } from '../types';
 import { isRuleOrGroupValid } from './isRuleOrGroupValid';
 import { uniqByName } from './uniq';
 
-const toArray = (v: any) => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []);
+const numericRegex = /^\s*[+-]?(\d+|\d*\.\d+|\d+\.\d*)([Ee][+-]?\d+)?\s*$/;
+
+const trimIfString = (val: any) => (typeof val === 'string' ? val.trim() : val);
+
+const toArray = (v: any) =>
+  (Array.isArray(v)
+    ? v
+    : typeof v === 'string'
+    ? v.split(',').filter(s => !/^\s*$/.test(s))
+    : []
+  ).map(trimIfString);
 
 const mapOperator = (op: string) => {
   switch (op.toLowerCase()) {
@@ -57,7 +68,46 @@ const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
   or: '||',
 };
 
-export const defaultValueProcessor: ValueProcessor = (_field, operator, value, valueSource) => {
+const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
+  ...rg,
+  rules: rg.rules.map(r => {
+    if (typeof r === 'string') {
+      return r;
+    } else if ('rules' in r) {
+      return numerifyValues(r);
+    }
+    let { value } = r;
+    if (typeof value === 'string' && numericRegex.test(value)) {
+      value = parseFloat(value);
+    }
+    // if (toArray(value).length > 1) {
+    //   return { ...r, value };
+    // }
+    // if (typeof value === 'number' && !isNaN(value)) {
+    //   return { ...r, value };
+    // }
+    return { ...r, value };
+  }) as any, // TODO: use a better type?
+});
+
+const isValidValue = (v: any) =>
+  (typeof v === 'string' && v.length > 0) ||
+  (typeof v === 'number' && !isNaN(v)) ||
+  (typeof v !== 'string' && typeof v !== 'number');
+
+const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
+  !!parseNumbers &&
+  (typeof v === 'number' ||
+    typeof v === 'bigint' ||
+    (typeof v === 'string' && numericRegex.test(v)));
+
+export const defaultValueProcessor: ValueProcessor = (field, operator, value, valueSource) =>
+  defaultValueProcessorInternal({ field, operator, value, valueSource }, { parseNumbers: false });
+
+const defaultValueProcessorInternal: ValueProcessorInternal = (
+  { operator, value, valueSource },
+  { parseNumbers }
+) => {
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
   if (operatorLowerCase === 'null' || operatorLowerCase === 'notnull') {
@@ -66,18 +116,19 @@ export const defaultValueProcessor: ValueProcessor = (_field, operator, value, v
     const valArray = toArray(value);
     if (valArray.length > 0) {
       return `(${valArray
-        .map((v: string) => (valueIsField ? `${v.trim()}` : `'${v.trim()}'`))
+        .map(v => (valueIsField || shouldRenderAsNumber(v, parseNumbers) ? `${v}` : `'${v}'`))
         .join(', ')})`;
     } else {
       return '';
     }
   } else if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
     const valArray = toArray(value);
-    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
+    if (valArray.length >= 2 && isValidValue(valArray[0]) && isValidValue(valArray[1])) {
       const [first, second] = valArray;
-      return valueIsField
-        ? `${first.trim()} and ${second.trim()}`
-        : `'${first.trim()}' and '${second.trim()}'`;
+      return valueIsField ||
+        (shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers))
+        ? `${first} and ${second}`
+        : `'${first}' and '${second}'`;
     } else {
       return '';
     }
@@ -90,17 +141,23 @@ export const defaultValueProcessor: ValueProcessor = (_field, operator, value, v
   } else if (typeof value === 'boolean') {
     return `${value}`.toUpperCase();
   }
-  return valueIsField ? `${value}` : `'${value}'`;
+  return valueIsField || shouldRenderAsNumber(value, parseNumbers) ? `${value}` : `'${value}'`;
 };
 
-export const defaultMongoDBValueProcessor: ValueProcessor = (
-  field,
-  operator,
-  value,
-  valueSource
+export const defaultMongoDBValueProcessor: ValueProcessor = (field, operator, value, valueSource) =>
+  defaultMongoDBValueProcessorInternal(
+    { field, operator, value, valueSource },
+    { parseNumbers: false }
+  );
+
+const defaultMongoDBValueProcessorInternal: ValueProcessorInternal = (
+  { field, operator, value, valueSource },
+  { parseNumbers }
 ) => {
   const valueIsField = valueSource === 'field';
-  const useBareValue = ['number', 'boolean', 'bigint'].includes(typeof value);
+  const useBareValue =
+    ['number', 'boolean', 'bigint'].includes(typeof value) ||
+    shouldRenderAsNumber(value, parseNumbers);
   const mongoOperator = mongoOperators[operator];
   if (['<', '<=', '=', '!=', '>', '>='].includes(operator)) {
     return valueIsField
@@ -139,28 +196,22 @@ export const defaultMongoDBValueProcessor: ValueProcessor = (
     if (valArray.length > 0) {
       return valueIsField
         ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valArray
-            .map(val => `this.${val.trim()}`)
+            .map(val => `this.${val}`)
             .join(',')}].includes(this.${field})"}`
-        : `{"${field}":{"${mongoOperator}":[${valArray.map(val => `"${val.trim()}"`).join(',')}]}}`;
+        : `{"${field}":{"${mongoOperator}":[${valArray
+            .map(val => (shouldRenderAsNumber(val, parseNumbers) ? `${val}` : `"${val}"`))
+            .join(',')}]}}`;
     } else {
       return '';
     }
   } else if (operator === 'between' || operator === 'notBetween') {
     const valArray = toArray(value);
-    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
+    if (valArray.length >= 2 && isValidValue(valArray[0]) && isValidValue(valArray[1])) {
       const [first, second] = valArray;
       const firstNum = parseFloat(first);
       const secondNum = parseFloat(second);
-      const firstValue = isNaN(firstNum)
-        ? valueIsField
-          ? `${first.trim()}`
-          : `"${first.trim()}"`
-        : firstNum;
-      const secondValue = isNaN(secondNum)
-        ? valueIsField
-          ? `${second.trim()}`
-          : `"${second.trim()}"`
-        : secondNum;
+      const firstValue = valueIsField || !isNaN(firstNum) ? `${first}` : `"${first}"`;
+      const secondValue = valueIsField || !isNaN(secondNum) ? `${second}` : `"${second}"`;
       if (operator === 'between') {
         return valueIsField
           ? `{"$and":[{"$expr":{"$gte":["$${field}","$${firstValue}"]}},{"$expr":{"$lte":["$${field}","$${secondValue}"]}}]}`
@@ -177,35 +228,32 @@ export const defaultMongoDBValueProcessor: ValueProcessor = (
   return '';
 };
 
-export const defaultCELValueProcessor: ValueProcessor = (field, operator, value, valueSource) => {
+export const defaultCELValueProcessor: ValueProcessor = (field, operator, value, valueSource) =>
+  defaultCELValueProcessorInternal(
+    { field, operator, value, valueSource },
+    { parseNumbers: false }
+  );
+
+const defaultCELValueProcessorInternal: ValueProcessorInternal = (
+  { field, operator, value, valueSource },
+  { parseNumbers }
+) => {
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase().replace(/^=$/, '==');
-  const useBareValue = ['number', 'boolean', 'bigint'].includes(typeof value);
+  const useBareValue =
+    ['number', 'boolean', 'bigint'].includes(typeof value) ||
+    shouldRenderAsNumber(value, parseNumbers);
   if (['<', '<=', '==', '!=', '>', '>='].includes(operatorLowerCase)) {
-    return valueIsField
-      ? `${field} ${operatorLowerCase} ${value}`
-      : `${field} ${operatorLowerCase} ${useBareValue ? value : `"${value}"`}`;
+    return `${field} ${operatorLowerCase} ${valueIsField || useBareValue ? value : `"${value}"`}`;
   } else if (operatorLowerCase === 'contains' || operatorLowerCase === 'doesnotcontain') {
     const negate = operatorLowerCase === 'doesnotcontain' ? '!' : '';
-    return valueIsField
-      ? `${negate}${field}.contains(${value})`
-      : `${negate}${field}.contains(${
-          useBareValue ? /* istanbul ignore next */ value : `"${value}"`
-        })`;
+    return `${negate}${field}.contains(${valueIsField || useBareValue ? value : `"${value}"`})`;
   } else if (operatorLowerCase === 'beginswith' || operatorLowerCase === 'doesnotbeginwith') {
     const negate = operatorLowerCase === 'doesnotbeginwith' ? '!' : '';
-    return valueIsField
-      ? `${negate}${field}.startsWith(${value})`
-      : `${negate}${field}.startsWith(${
-          useBareValue ? /* istanbul ignore next */ value : `"${value}"`
-        })`;
+    return `${negate}${field}.startsWith(${valueIsField || useBareValue ? value : `"${value}"`})`;
   } else if (operatorLowerCase === 'endswith' || operatorLowerCase === 'doesnotendwith') {
     const negate = operatorLowerCase === 'doesnotendwith' ? '!' : '';
-    return valueIsField
-      ? `${negate}${field}.endsWith(${value})`
-      : `${negate}${field}.endsWith(${
-          useBareValue ? /* istanbul ignore next */ value : `"${value}"`
-        })`;
+    return `${negate}${field}.endsWith(${valueIsField || useBareValue ? value : `"${value}"`})`;
   } else if (operatorLowerCase === 'null') {
     return `${field} == null`;
   } else if (operatorLowerCase === 'notnull') {
@@ -215,7 +263,9 @@ export const defaultCELValueProcessor: ValueProcessor = (field, operator, value,
     const valArray = toArray(value);
     if (valArray.length > 0) {
       return `${negate ? '!(' : ''}${field} in [${valArray
-        .map(val => (valueIsField ? `${val.trim()}` : `"${val.trim()}"`))
+        .map(val =>
+          valueIsField || shouldRenderAsNumber(val, parseNumbers) ? `${val}` : `"${val}"`
+        )
         .join(', ')}]${negate ? ')' : ''}`;
     } else {
       return '';
@@ -226,16 +276,8 @@ export const defaultCELValueProcessor: ValueProcessor = (field, operator, value,
       const [first, second] = valArray;
       const firstNum = parseFloat(first);
       const secondNum = parseFloat(second);
-      let firstValue = isNaN(firstNum)
-        ? valueIsField
-          ? `${first.trim()}`
-          : `"${first.trim()}"`
-        : firstNum;
-      let secondValue = isNaN(secondNum)
-        ? valueIsField
-          ? `${second.trim()}`
-          : `"${second.trim()}"`
-        : secondNum;
+      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : `"${first}"`) : firstNum;
+      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : `"${second}"`) : secondNum;
       if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
         const tempNum = secondNum;
         secondValue = firstNum;
@@ -281,55 +323,62 @@ function formatQuery(
     format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>;
   }
 ): string;
-function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions | ExportFormat) {
+function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
   let format: ExportFormat = 'json';
-  let valueProcessor = defaultValueProcessor;
+  let valueProcessorInternal = defaultValueProcessorInternal;
   let quoteFieldNamesWith = '';
   let validator: QueryValidator = () => true;
   let fields: { name: string; validator?: RuleValidator; [k: string]: any }[] = [];
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
   let paramPrefix = ':';
+  let parseNumbers = false;
 
-  if (typeof options === 'object' && options !== null) {
+  if (typeof options === 'string') {
+    format = options.toLowerCase() as ExportFormat;
+    if (format === 'mongodb') {
+      valueProcessorInternal = defaultMongoDBValueProcessorInternal;
+    } else if (format === 'cel') {
+      valueProcessorInternal = defaultCELValueProcessorInternal;
+    }
+  } else {
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
-    valueProcessor =
-      options.valueProcessor ??
-      (format === 'mongodb'
-        ? defaultMongoDBValueProcessor
+    const { valueProcessor = null } = options;
+    valueProcessorInternal =
+      typeof valueProcessor === 'function'
+        ? r => valueProcessor(r.field, r.operator, r.value, r.valueSource)
+        : format === 'mongodb'
+        ? defaultMongoDBValueProcessorInternal
         : format === 'cel'
-        ? defaultCELValueProcessor
-        : defaultValueProcessor);
+        ? defaultCELValueProcessorInternal
+        : defaultValueProcessorInternal;
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
     fallbackExpression = options.fallbackExpression ?? '';
     paramPrefix = options.paramPrefix ?? ':';
-  } else if (typeof options === 'string') {
-    format = options.toLowerCase() as ExportFormat;
-    if (format === 'mongodb') {
-      valueProcessor = defaultMongoDBValueProcessor;
-    } else if (format === 'cel') {
-      valueProcessor = defaultCELValueProcessor;
-    }
+    parseNumbers = !!options.parseNumbers;
   }
   if (!fallbackExpression) {
     fallbackExpression =
       format === 'mongodb' ? '"$and":[{"$expr":true}]' : format === 'cel' ? '1 == 1' : '(1 = 1)';
   }
 
-  if (format === 'json') {
-    return JSON.stringify(ruleGroup, null, 2);
-  } else if (format === 'json_without_ids') {
-    return JSON.stringify(ruleGroup, [
-      'rules',
-      'field',
-      'value',
-      'operator',
-      'combinator',
-      'not',
-      'valueSource',
-    ]);
+  if (format === 'json' || format === 'json_without_ids') {
+    const rg = parseNumbers ? numerifyValues(ruleGroup) : ruleGroup;
+    if (format === 'json') {
+      return JSON.stringify(rg, null, 2);
+    } else {
+      return JSON.stringify(rg, [
+        'rules',
+        'field',
+        'value',
+        'operator',
+        'combinator',
+        'not',
+        'valueSource',
+      ]);
+    }
   } else {
     // istanbul ignore else
     if (typeof validator === 'function') {
@@ -395,20 +444,19 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
           return '';
         }
 
-        const value = valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+        const value = valueProcessorInternal(rule, { parseNumbers });
         const operator = mapOperator(rule.operator);
 
-        if (
-          (parameterized || parameterized_named) &&
-          (!rule.valueSource || rule.valueSource === 'value')
-        ) {
+        if ((parameterized || parameterized_named) && (rule.valueSource ?? 'value') === 'value') {
           if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
             return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
           } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
             if (value) {
-              const splitValue = (rule.value as string).split(',').map(v => v.trim());
+              const splitValue = toArray(rule.value);
               if (parameterized) {
-                splitValue.forEach(v => params.push(v));
+                splitValue.forEach(v =>
+                  params.push(shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v)
+                );
                 return `${quoteFieldNamesWith}${
                   rule.field
                 }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
@@ -417,7 +465,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
               splitValue.forEach(v => {
                 const thisParamName = getNextNamedParam(rule.field);
                 inParams.push(`${paramPrefix}${thisParamName}`);
-                params_named[thisParamName] = v;
+                params_named[thisParamName] = shouldRenderAsNumber(v, parseNumbers)
+                  ? parseFloat(v)
+                  : v;
               });
               return `${quoteFieldNamesWith}${
                 rule.field
@@ -430,7 +480,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
             operator.toLowerCase() === 'not between'
           ) {
             if (value) {
-              const [first, second] = toArray(rule.value).map(v => v.trim());
+              const valArray = toArray(rule.value);
+              const [first, second] = valArray
+                .slice(0, 2)
+                .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v));
               if (parameterized) {
                 params.push(first);
                 params.push(second);
@@ -445,18 +498,25 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
               return '';
             }
           }
-          const thisValue = ['boolean', 'number'].includes(typeof rule.value)
-            ? rule.value
-            : (value as string).match(/^'?(.*?)'?$/)![1];
-          let thisParamName = '';
+          let paramValue = rule.value;
+          if (typeof rule.value === 'string') {
+            if (shouldRenderAsNumber(rule.value, parseNumbers)) {
+              paramValue = parseFloat(rule.value);
+            } else {
+              // Note that we're using `value` here, which has been processed through
+              // a `valueProcessor`, as opposed to `rule.value` which has not
+              paramValue = value.match(/^('?)([^']*?)(\1)$/)?.[2] ?? /* istanbul ignore next */ '';
+            }
+          }
+          let paramName = '';
           if (parameterized) {
-            params.push(thisValue);
+            params.push(paramValue);
           } else {
-            thisParamName = getNextNamedParam(rule.field);
-            params_named[thisParamName] = thisValue;
+            paramName = getNextNamedParam(rule.field);
+            params_named[paramName] = paramValue;
           }
           return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
-            parameterized ? '?' : `${paramPrefix}${thisParamName}`
+            parameterized ? '?' : `${paramPrefix}${paramName}`
           }`.trim();
         } else {
           if (
@@ -518,7 +578,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
             if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
               return '';
             }
-            return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+            return valueProcessorInternal(rule, { parseNumbers });
           })
           .filter(Boolean)
           .join(',');
@@ -549,7 +609,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options?: FormatQueryOptions |
             if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
               return '';
             }
-            return valueProcessor(rule.field, rule.operator, rule.value, rule.valueSource);
+            return valueProcessorInternal(rule, { parseNumbers });
           })
           .filter(Boolean)
           .join(

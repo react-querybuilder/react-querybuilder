@@ -324,6 +324,10 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
         independentCombinators: true;
       }) & {
     /**
+     * Enables debug logging for QueryBuilder and React DnD
+     */
+    debugMode?: boolean;
+    /**
      * Initial query object for uncontrolled components
      */
     defaultQuery?: RG;

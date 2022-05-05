@@ -1,5 +1,5 @@
 // Adapted from https://en.wikipedia.org/wiki/List_of_musical_instruments
-import { OptionGroup } from 'react-querybuilder';
+import type { OptionGroup } from '../src/types';
 
 export const musicalInstruments: OptionGroup[] = [
   {

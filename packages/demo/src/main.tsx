@@ -16,38 +16,43 @@ import {
 } from 'antd';
 import 'antd/dist/antd.compact.css';
 import queryString from 'query-string';
-import { Suspense, useCallback, useEffect, useMemo, useState, FC } from 'react';
+import {
+  StrictMode,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+  type FC,
+} from 'react';
 import ReactDOM from 'react-dom';
 import {
   defaultValidator,
   formatQuery,
   parseSQL,
-  DefaultRuleGroupType,
-  DefaultRuleGroupTypeIC,
-  ExportFormat,
-  FormatQueryOptions,
   QueryBuilder,
+  type ExportFormat,
+  type FormatQueryOptions,
 } from 'react-querybuilder';
+import {
+  defaultOptions,
+  fields,
+  formatMap,
+  initialQuery,
+  initialQueryIC,
+  optionOrder,
+  optionsMetadata,
+} from 'react-querybuilder/dev/constants';
+import type { CommonRQBProps, DemoOption, DemoOptions } from 'react-querybuilder/dev/types';
+import { getFormatQueryString, optionsReducer } from 'react-querybuilder/dev/utils';
 import 'react-querybuilder/dist/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { styleConfigs } from './components';
-import {
-  CommonRQBProps,
-  defaultOptions,
-  docsLink,
-  fields,
-  formatMap,
-  initialQuery,
-  initialQueryIC,
-  npmLink,
-  optionsMetadata,
-  styleNameMap,
-  DemoOptions,
-  StyleName,
-} from './constants';
+import { docsLink, npmLink, styleNameMap, type StyleName } from './constants';
 
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
@@ -108,6 +113,8 @@ const getOptionsFromHash = (hash: Partial<DemoOptions>): DemoOptions => ({
     (hash.independentCombinators ?? `${defaultOptions.independentCombinators}`) === 'true',
   enableDragAndDrop: (hash.enableDragAndDrop ?? `${defaultOptions.enableDragAndDrop}`) === 'true',
   disabled: (hash.disabled ?? `${defaultOptions.disabled}`) === 'true',
+  debugMode: (hash.debugMode ?? `${defaultOptions.debugMode}`) === 'true',
+  parseNumbers: (hash.parseNumbers ?? `${defaultOptions.parseNumbers}`) === 'true',
 });
 
 // Initialize options from URL hash
@@ -117,7 +124,7 @@ const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
-  const [options, setOptions] = useState<DemoOptions>(initialOptions);
+  const [options, setOptions] = useReducer(optionsReducer, initialOptions);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(
     `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`
@@ -136,7 +143,7 @@ const App = () => {
           queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
         )
       );
-      setOptions(opts);
+      setOptions({ type: 'replace', payload: opts });
     };
     window.addEventListener('hashchange', updateOptionsFromHash);
 
@@ -144,28 +151,14 @@ const App = () => {
   }, [permalinkHash]);
 
   const optionSetter = useCallback(
-    (opt: keyof DemoOptions) => (v: boolean) => setOptions(opts => ({ ...opts, [opt]: v })),
+    (opt: DemoOption) => (v: boolean) =>
+      setOptions({ type: 'update', payload: { optionName: opt, value: v } }),
     []
   );
 
   const optionsInfo = useMemo(
     () =>
-      (
-        [
-          'showCombinatorsBetweenRules',
-          'showNotToggle',
-          'showCloneButtons',
-          'showLockButtons',
-          'resetOnFieldChange',
-          'resetOnOperatorChange',
-          'autoSelectField',
-          'addRuleToNewGroups',
-          'validateQuery',
-          'independentCombinators',
-          'enableDragAndDrop',
-          'disabled',
-        ] as (keyof DemoOptions)[]
-      ).map(opt => ({
+      optionOrder.map(opt => ({
         ...optionsMetadata[opt],
         default: defaultOptions[opt],
         checked: options[opt],
@@ -174,38 +167,23 @@ const App = () => {
     [options, optionSetter]
   );
 
-  const resetOptions = useCallback(
-    () =>
-      optionsInfo.forEach(opt => (opt.checked !== opt.default ? opt.setter(opt.default) : null)),
-    [optionsInfo]
-  );
-
-  const allTheFeatures = useCallback(
-    () => optionsInfo.forEach(opt => opt.setter(opt.label !== optionsMetadata.disabled.label)),
-    [optionsInfo]
-  );
-
   const formatOptions = useMemo(
-    (): FormatQueryOptions => (options.validateQuery ? { format, fields } : { format }),
-    [format, options.validateQuery]
+    (): FormatQueryOptions => ({
+      format,
+      fields: options.validateQuery ? fields : undefined,
+      parseNumbers: options.parseNumbers,
+    }),
+    [format, options.parseNumbers, options.validateQuery]
   );
   const q = options.independentCombinators ? queryIC : query;
-  const formatString = useMemo(
-    () =>
-      formatOptions.format === 'json_without_ids' || formatOptions.format === 'mongodb'
-        ? JSON.stringify(JSON.parse(formatQuery(q, formatOptions)), null, 2)
-        : formatOptions.format === 'parameterized' || formatOptions.format === 'parameterized_named'
-        ? JSON.stringify(formatQuery(q, formatOptions), null, 2)
-        : formatQuery(q, formatOptions),
-    [formatOptions, q]
-  );
+  const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
 
   const qbWrapperClassName = `with-${style}${options.validateQuery ? ' validateQuery' : ''}`;
 
   const loadFromSQL = useCallback(() => {
     try {
-      const q = parseSQL(sql) as DefaultRuleGroupType;
-      const qIC = parseSQL(sql, { independentCombinators: true }) as DefaultRuleGroupTypeIC;
+      const q = parseSQL(sql);
+      const qIC = parseSQL(sql, { independentCombinators: true });
       setQuery(q);
       setQueryIC(qIC);
       setIsSQLModalVisible(false);
@@ -225,8 +203,14 @@ const App = () => {
     setTimeout(() => setCopyPermalinkText(permalinkText), 1214);
   };
 
-  const MUIThemeProvider = style === 'material' ? ThemeProvider : CustomFragment;
-  const ChakraStyleProvider = style === 'chakra' ? ChakraProvider : CustomFragment;
+  const MUIThemeProvider = useMemo(
+    () => (style === 'material' ? ThemeProvider : CustomFragment),
+    [style]
+  );
+  const ChakraStyleProvider = useMemo(
+    () => (style === 'chakra' ? ChakraProvider : CustomFragment),
+    [style]
+  );
 
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({
@@ -238,7 +222,7 @@ const App = () => {
     [style, options]
   );
 
-  const loadingPlaceholder = useMemo(
+  const loadingPlaceholder = useCallback(
     () => (
       <div className="loading-placeholder">
         <Spin />
@@ -315,14 +299,14 @@ const App = () => {
                   marginTop: '0.5rem',
                 }}>
                 <Tooltip title="Reset the options above to their default values" placement="right">
-                  <Button type="default" onClick={resetOptions}>
+                  <Button type="default" onClick={() => setOptions({ type: 'reset' })}>
                     Reset
                   </Button>
                 </Tooltip>
                 <Tooltip
                   title={`Enable all features except "${optionsMetadata.disabled.label}"`}
                   placement="right">
-                  <Button type="default" onClick={allTheFeatures}>
+                  <Button type="default" onClick={() => setOptions({ type: 'all' })}>
                     Select all
                   </Button>
                 </Tooltip>
@@ -348,7 +332,7 @@ const App = () => {
             </Title>
             <div
               style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-              {formatMap.map(({ fmt, lbl }) => (
+              {formatMap.map(([fmt, lbl]) => (
                 <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
                   {lbl}
                   {'\u00a0'}
@@ -399,7 +383,7 @@ const App = () => {
                         <QueryBuilder
                           {...commonRQBProps}
                           independentCombinators
-                          key={style}
+                          key={`queryIC-${style}`}
                           query={queryIC}
                           onQueryChange={q => setQueryIC(q)}
                         />
@@ -407,7 +391,7 @@ const App = () => {
                         <QueryBuilder
                           {...commonRQBProps}
                           independentCombinators={false}
-                          key={style}
+                          key={`query-${style}`}
                           query={query}
                           onQueryChange={q => setQuery(q)}
                         />
@@ -458,4 +442,9 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+  document.getElementById('app')
+);

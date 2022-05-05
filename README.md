@@ -45,6 +45,12 @@ _For documentation on `react-querybuilder` v3.12.1, [click here](README.old.md).
 
 In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), and [MUI](https://www.npmjs.com/package/@react-querybuilder/material).
 
+## Development
+
+To load a test page with a basic query builder using the default components, run `yarn start`.
+
+To load the full demo featuring all the compatibility components, run `yarn demo`.
+
 ## Credits
 
 This component was inspired by prior work from:

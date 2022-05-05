@@ -1,0 +1,40 @@
+@import 'react-querybuilder/dist/query-builder.scss';
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  background-color: #f8f8f8;
+  border: 1px solid #dddddd;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+}
+
+#app {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 1.5rem;
+
+  & > *:nth-child(1) {
+    flex-basis: content;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+  }
+
+  & > *:nth-child(2) {
+    flex-grow: 1;
+    min-width: 0;
+  }
+}
+
+#exports {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  row-gap: 1rem;
+  margin-top: 1rem;
+
+  *:nth-child(odd) {
+    font-weight: bold;
+  }
+}

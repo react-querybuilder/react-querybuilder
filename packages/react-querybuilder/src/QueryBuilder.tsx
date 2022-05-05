@@ -42,6 +42,7 @@ import {
 enableES5();
 
 export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>({
+  debugMode = false,
   defaultQuery,
   query,
   fields: fieldsProp = defaultFields,
@@ -417,6 +418,10 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     [classNames.queryBuilder, queryDisabled, root.disabled, validationResult]
   );
 
+  if (debugMode) {
+    // TODO: log relevant information
+  }
+
   return (
     <DndContext.Consumer>
       {() => (
@@ -444,14 +449,15 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   );
 };
 
-QueryBuilderWithoutDndProvider.displayName = 'QueryBuilder';
+QueryBuilderWithoutDndProvider.displayName = 'QueryBuilderWithoutDndProvider';
 
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderProps<RG>
-) => (
-  <DndProvider backend={HTML5Backend}>
+export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
+  debugMode = false,
+  ...props
+}: QueryBuilderProps<RG>) => (
+  <DndProvider backend={HTML5Backend} debugMode={debugMode}>
     {/* TODO: Should/can the `RG` generic be used here? Would it make a difference? */}
-    <QueryBuilderWithoutDndProvider {...(props as QueryBuilderProps)} />
+    <QueryBuilderWithoutDndProvider {...(props as QueryBuilderProps)} debugMode={debugMode} />
   </DndProvider>
 );
 
