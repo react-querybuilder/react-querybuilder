@@ -1129,6 +1129,11 @@ describe('parseNumbers', () => {
       {
         field: 'f',
         operator: '=',
+        value: '    0    ',
+      },
+      {
+        field: 'f',
+        operator: '=',
         value: 0,
       },
       {
@@ -1207,6 +1212,11 @@ describe('parseNumbers', () => {
       "field": "f",
       "operator": "=",
       "value": "NaN"
+    },
+    {
+      "field": "f",
+      "operator": "=",
+      "value": 0
     },
     {
       "field": "f",
@@ -1303,7 +1313,7 @@ describe('parseNumbers', () => {
     expect(
       formatQuery(queryForNumberParsing, { format: 'json_without_ids', parseNumbers: true })
     ).toBe(
-      '{"rules":[{"field":"f","value":"NaN","operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"="},{"field":"f","value":1.5,"operator":"="}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
+      '{"rules":[{"field":"f","value":"NaN","operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"="},{"field":"f","value":1.5,"operator":"="}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
     );
   });
   it('parses numbers for json_without_ids with independentCombinators', () => {
@@ -1313,12 +1323,12 @@ describe('parseNumbers', () => {
         parseNumbers: true,
       })
     ).toBe(
-      '{"rules":[{"field":"f","value":"NaN","operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"="},"or",{"field":"f","value":1.5,"operator":"="}]},"and",{"field":"f","value":"0, 1, 2","operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":"0, 1","operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
+      '{"rules":[{"field":"f","value":"NaN","operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"="},"or",{"field":"f","value":1.5,"operator":"="}]},"and",{"field":"f","value":"0, 1, 2","operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":"0, 1","operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
     );
   });
   it('parses numbers for sql', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'sql', parseNumbers: true })).toBe(
-      "(f = 'NaN' and f = 0 and f = 0 and (f = 1.5 or f = 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')"
+      "(f = 'NaN' and f = 0 and f = 0 and f = 0 and (f = 1.5 or f = 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')"
     );
   });
   it('parses numbers for parameterized', () => {
@@ -1326,6 +1336,7 @@ describe('parseNumbers', () => {
       formatQuery(queryForNumberParsing, { format: 'parameterized', parseNumbers: true })
     ).toHaveProperty('params', [
       'NaN',
+      0,
       0,
       0,
       1.5,
@@ -1356,35 +1367,36 @@ describe('parseNumbers', () => {
       f_1: 'NaN',
       f_2: 0,
       f_3: 0,
-      f_4: 1.5,
+      f_4: 0,
       f_5: 1.5,
-      f_6: 0,
-      f_7: 1,
-      f_8: 2,
-      f_9: 0,
-      f_10: 1,
-      f_11: 2,
-      f_12: 0,
-      f_13: 'abc',
-      f_14: 2,
-      f_15: 0,
-      f_16: 1,
-      f_17: 0,
-      f_18: 1,
-      f_19: 0,
-      f_20: 'abc',
-      f_21: {},
+      f_6: 1.5,
+      f_7: 0,
+      f_8: 1,
+      f_9: 2,
+      f_10: 0,
+      f_11: 1,
+      f_12: 2,
+      f_13: 0,
+      f_14: 'abc',
+      f_15: 2,
+      f_16: 0,
+      f_17: 1,
+      f_18: 0,
+      f_19: 1,
+      f_20: 0,
+      f_21: 'abc',
       f_22: {},
+      f_23: {},
     });
   });
   it('parses numbers for mongodb', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'mongodb', parseNumbers: true })).toBe(
-      '{"$and":[{"f":{"$eq":"NaN"}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"$or":[{"f":{"$eq":1.5}},{"f":{"$eq":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":"abc"}}]},{"$and":[{"f":{"$gte":"[object Object]"}},{"f":{"$lte":"[object Object]"}}]}]}'
+      '{"$and":[{"f":{"$eq":"NaN"}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"$or":[{"f":{"$eq":1.5}},{"f":{"$eq":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":"abc"}}]},{"$and":[{"f":{"$gte":"[object Object]"}},{"f":{"$lte":"[object Object]"}}]}]}'
     );
   });
   it('parses numbers for cel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'cel', parseNumbers: true })).toBe(
-      'f == "NaN" && f == 0 && f == 0 && (f == 1.5 || f == 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
+      'f == "NaN" && f == 0 && f == 0 && f == 0 && (f == 1.5 || f == 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
     );
   });
 });

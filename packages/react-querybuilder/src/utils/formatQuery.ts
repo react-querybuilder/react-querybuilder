@@ -116,7 +116,9 @@ const defaultValueProcessorInternal: ValueProcessorInternal = (
     const valArray = toArray(value);
     if (valArray.length > 0) {
       return `(${valArray
-        .map(v => (valueIsField || shouldRenderAsNumber(v, parseNumbers) ? `${v}` : `'${v}'`))
+        .map(v =>
+          valueIsField || shouldRenderAsNumber(v, parseNumbers) ? `${trimIfString(v)}` : `'${v}'`
+        )
         .join(', ')})`;
     } else {
       return '';
@@ -127,7 +129,7 @@ const defaultValueProcessorInternal: ValueProcessorInternal = (
       const [first, second] = valArray;
       return valueIsField ||
         (shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers))
-        ? `${first} and ${second}`
+        ? `${trimIfString(first)} and ${trimIfString(second)}`
         : `'${first}' and '${second}'`;
     } else {
       return '';
@@ -141,7 +143,9 @@ const defaultValueProcessorInternal: ValueProcessorInternal = (
   } else if (typeof value === 'boolean') {
     return `${value}`.toUpperCase();
   }
-  return valueIsField || shouldRenderAsNumber(value, parseNumbers) ? `${value}` : `'${value}'`;
+  return valueIsField || shouldRenderAsNumber(value, parseNumbers)
+    ? `${trimIfString(value)}`
+    : `'${value}'`;
 };
 
 export const defaultMongoDBValueProcessor: ValueProcessor = (field, operator, value, valueSource) =>
@@ -162,7 +166,7 @@ const defaultMongoDBValueProcessorInternal: ValueProcessorInternal = (
   if (['<', '<=', '=', '!=', '>', '>='].includes(operator)) {
     return valueIsField
       ? `{"$expr":{"${mongoOperator}":["$${field}","$${value}"]}}`
-      : `{"${field}":{"${mongoOperator}":${useBareValue ? value : `"${value}"`}}}`;
+      : `{"${field}":{"${mongoOperator}":${useBareValue ? trimIfString(value) : `"${value}"`}}}`;
   } else if (operator === 'contains') {
     return valueIsField
       ? `{"$where":"this.${field}.includes(this.${value})"}`
@@ -199,7 +203,9 @@ const defaultMongoDBValueProcessorInternal: ValueProcessorInternal = (
             .map(val => `this.${val}`)
             .join(',')}].includes(this.${field})"}`
         : `{"${field}":{"${mongoOperator}":[${valArray
-            .map(val => (shouldRenderAsNumber(val, parseNumbers) ? `${val}` : `"${val}"`))
+            .map(val =>
+              shouldRenderAsNumber(val, parseNumbers) ? `${trimIfString(val)}` : `"${val}"`
+            )
             .join(',')}]}}`;
     } else {
       return '';
@@ -244,16 +250,24 @@ const defaultCELValueProcessorInternal: ValueProcessorInternal = (
     ['number', 'boolean', 'bigint'].includes(typeof value) ||
     shouldRenderAsNumber(value, parseNumbers);
   if (['<', '<=', '==', '!=', '>', '>='].includes(operatorLowerCase)) {
-    return `${field} ${operatorLowerCase} ${valueIsField || useBareValue ? value : `"${value}"`}`;
+    return `${field} ${operatorLowerCase} ${
+      valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
+    }`;
   } else if (operatorLowerCase === 'contains' || operatorLowerCase === 'doesnotcontain') {
     const negate = operatorLowerCase === 'doesnotcontain' ? '!' : '';
-    return `${negate}${field}.contains(${valueIsField || useBareValue ? value : `"${value}"`})`;
+    return `${negate}${field}.contains(${
+      valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
+    })`;
   } else if (operatorLowerCase === 'beginswith' || operatorLowerCase === 'doesnotbeginwith') {
     const negate = operatorLowerCase === 'doesnotbeginwith' ? '!' : '';
-    return `${negate}${field}.startsWith(${valueIsField || useBareValue ? value : `"${value}"`})`;
+    return `${negate}${field}.startsWith(${
+      valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
+    })`;
   } else if (operatorLowerCase === 'endswith' || operatorLowerCase === 'doesnotendwith') {
     const negate = operatorLowerCase === 'doesnotendwith' ? '!' : '';
-    return `${negate}${field}.endsWith(${valueIsField || useBareValue ? value : `"${value}"`})`;
+    return `${negate}${field}.endsWith(${
+      valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
+    })`;
   } else if (operatorLowerCase === 'null') {
     return `${field} == null`;
   } else if (operatorLowerCase === 'notnull') {
@@ -264,7 +278,9 @@ const defaultCELValueProcessorInternal: ValueProcessorInternal = (
     if (valArray.length > 0) {
       return `${negate ? '!(' : ''}${field} in [${valArray
         .map(val =>
-          valueIsField || shouldRenderAsNumber(val, parseNumbers) ? `${val}` : `"${val}"`
+          valueIsField || shouldRenderAsNumber(val, parseNumbers)
+            ? `${trimIfString(val)}`
+            : `"${val}"`
         )
         .join(', ')}]${negate ? ')' : ''}`;
     } else {
