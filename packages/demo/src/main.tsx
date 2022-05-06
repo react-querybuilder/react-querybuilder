@@ -39,13 +39,15 @@ import {
   defaultOptions,
   fields,
   formatMap,
+  getFormatQueryString,
   initialQuery,
   initialQueryIC,
   optionOrder,
   optionsMetadata,
-} from 'react-querybuilder/dev/constants';
-import type { CommonRQBProps, DemoOptions } from 'react-querybuilder/dev/types';
-import { getFormatQueryString, optionsReducer } from 'react-querybuilder/dev/utils';
+  optionsReducer,
+  type CommonRQBProps,
+  type DemoOptions,
+} from 'react-querybuilder/dev';
 import 'react-querybuilder/dist/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';

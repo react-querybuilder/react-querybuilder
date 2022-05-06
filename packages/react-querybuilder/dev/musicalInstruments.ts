@@ -1,5 +1,5 @@
 // Adapted from https://en.wikipedia.org/wiki/List_of_musical_instruments
-import type { OptionGroup } from '../src/types';
+import type { OptionGroup } from '../src';
 
 export const musicalInstruments: OptionGroup[] = [
   {

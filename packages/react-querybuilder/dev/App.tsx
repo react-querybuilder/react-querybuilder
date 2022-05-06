@@ -1,7 +1,5 @@
-import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
-import { QueryBuilder } from '../src/index';
-import type { ExportFormat, FormatQueryOptions } from '../src/types';
-import { defaultValidator } from '../src/utils';
+import { Fragment, useMemo, useReducer, useState } from 'react';
+import { defaultValidator, QueryBuilder, type ExportFormat, type FormatQueryOptions } from '../src';
 import {
   defaultOptions,
   fields,
@@ -42,16 +40,16 @@ export const App = () => {
     [optVals.independentCombinators, optVals.parseNumbers, optVals.validateQuery, query, queryIC]
   );
 
-  const resetOptions = useCallback(() => updateOptions({ type: 'reset' }), []);
-  const allOptions = useCallback(() => updateOptions({ type: 'all' }), []);
-  const clearQuery = useCallback(() => {
+  const resetOptions = () => updateOptions({ type: 'reset' });
+  const allOptions = () => updateOptions({ type: 'all' });
+  const clearQuery = () => {
     setQuery({ combinator: 'and', rules: [] });
     setQueryIC({ rules: [] });
-  }, []);
-  const defaultQuery = useCallback(() => {
+  };
+  const defaultQuery = () => {
     setQuery(initialQuery);
     setQueryIC(initialQueryIC);
-  }, []);
+  };
 
   const actions: [string, () => void][] = [
     ['Default options', resetOptions],

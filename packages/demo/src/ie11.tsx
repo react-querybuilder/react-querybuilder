@@ -9,9 +9,10 @@ import {
   initialQueryIC,
   optionOrder,
   optionsMetadata,
-} from 'react-querybuilder/dev/constants';
-import type { CommonRQBProps, DemoOption } from 'react-querybuilder/dev/types';
-import { optionsReducer } from 'react-querybuilder/dev/utils';
+  optionsReducer,
+  type CommonRQBProps,
+  type DemoOption,
+} from 'react-querybuilder/dev';
 import { docsLink } from './constants';
 
 const IE11 = () => {

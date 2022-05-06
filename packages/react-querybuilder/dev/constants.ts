@@ -1,5 +1,11 @@
-import type { ExportFormat, Field, RuleGroupType, RuleType } from '../src/types';
-import { convertToIC, generateID } from '../src/utils';
+import {
+  convertToIC,
+  generateID,
+  type ExportFormat,
+  type Field,
+  type RuleGroupType,
+  type RuleType,
+} from '../src';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions } from './types';
 

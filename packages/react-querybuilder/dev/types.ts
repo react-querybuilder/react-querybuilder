@@ -1,4 +1,4 @@
-import type { QueryBuilderProps } from '../src/types';
+import type { QueryBuilderProps } from '../src';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
