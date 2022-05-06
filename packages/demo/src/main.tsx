@@ -24,7 +24,7 @@ import {
   useMemo,
   useReducer,
   useState,
-  type FC,
+  type ReactNode,
 } from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -44,7 +44,7 @@ import {
   optionOrder,
   optionsMetadata,
 } from 'react-querybuilder/dev/constants';
-import type { CommonRQBProps, DemoOption, DemoOptions } from 'react-querybuilder/dev/types';
+import type { CommonRQBProps, DemoOptions } from 'react-querybuilder/dev/types';
 import { getFormatQueryString, optionsReducer } from 'react-querybuilder/dev/utils';
 import 'react-querybuilder/dist/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -89,33 +89,20 @@ const shStyle = {
   },
 };
 
-const CustomFragment: FC = ({ children }) => <>{children}</>;
+const CustomFragment = (props: { children?: ReactNode }) => <>{props.children}</>;
 
 const permalinkText = 'Copy link';
 const permalinkCopiedText = 'Copied!';
 
-const getOptionsFromHash = (hash: Partial<DemoOptions>): DemoOptions => ({
-  showCombinatorsBetweenRules:
-    (hash.showCombinatorsBetweenRules ?? `${defaultOptions.showCombinatorsBetweenRules}`) ===
-    'true',
-  showNotToggle: (hash.showNotToggle ?? `${defaultOptions.showNotToggle}`) === 'true',
-  showCloneButtons: (hash.showCloneButtons ?? `${defaultOptions.showCloneButtons}`) === 'true',
-  showLockButtons: (hash.showLockButtons ?? `${defaultOptions.showLockButtons}`) === 'true',
-  resetOnFieldChange:
-    (hash.resetOnFieldChange ?? `${defaultOptions.resetOnFieldChange}`) === 'true' ?? true,
-  resetOnOperatorChange:
-    (hash.resetOnOperatorChange ?? `${defaultOptions.resetOnOperatorChange}`) === 'true',
-  autoSelectField: (hash.autoSelectField ?? `${defaultOptions.autoSelectField}`) === 'true' ?? true,
-  addRuleToNewGroups:
-    (hash.addRuleToNewGroups ?? `${defaultOptions.addRuleToNewGroups}`) === 'true',
-  validateQuery: (hash.validateQuery ?? `${defaultOptions.validateQuery}`) === 'true',
-  independentCombinators:
-    (hash.independentCombinators ?? `${defaultOptions.independentCombinators}`) === 'true',
-  enableDragAndDrop: (hash.enableDragAndDrop ?? `${defaultOptions.enableDragAndDrop}`) === 'true',
-  disabled: (hash.disabled ?? `${defaultOptions.disabled}`) === 'true',
-  debugMode: (hash.debugMode ?? `${defaultOptions.debugMode}`) === 'true',
-  parseNumbers: (hash.parseNumbers ?? `${defaultOptions.parseNumbers}`) === 'true',
-});
+const getOptionsFromHash = (hash: Partial<DemoOptions>) => {
+  const optionsFromHash = defaultOptions;
+  for (const opt of optionOrder) {
+    optionsFromHash[opt] = (hash[opt] ?? `${defaultOptions[opt]}`) === 'true';
+  }
+  return optionsFromHash;
+};
+
+const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 
 // Initialize options from URL hash
 const initialOptions = getOptionsFromHash(queryString.parse(location.hash));
@@ -126,9 +113,7 @@ const App = () => {
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
   const [options, setOptions] = useReducer(optionsReducer, initialOptions);
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
-  const [sql, setSQL] = useState(
-    `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`
-  );
+  const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
   const [style, setStyle] = useState<StyleName>('default');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
@@ -150,21 +135,16 @@ const App = () => {
     return () => window.removeEventListener('hashchange', updateOptionsFromHash);
   }, [permalinkHash]);
 
-  const optionSetter = useCallback(
-    (opt: DemoOption) => (v: boolean) =>
-      setOptions({ type: 'update', payload: { optionName: opt, value: v } }),
-    []
-  );
-
   const optionsInfo = useMemo(
     () =>
       optionOrder.map(opt => ({
         ...optionsMetadata[opt],
         default: defaultOptions[opt],
         checked: options[opt],
-        setter: optionSetter(opt),
+        setter: (v: boolean) =>
+          setOptions({ type: 'update', payload: { optionName: opt, value: v } }),
       })),
-    [options, optionSetter]
+    [options]
   );
 
   const formatOptions = useMemo(
