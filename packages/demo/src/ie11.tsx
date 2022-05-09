@@ -1,7 +1,6 @@
 import 'core-js';
 import { useCallback, useMemo, useReducer } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder, { defaultValidator, QueryBuilderProps } from 'react-querybuilder';
 import {
   defaultOptions,
   fields,
@@ -13,6 +12,7 @@ import {
   type CommonRQBProps,
   type DemoOption,
 } from 'react-querybuilder/dev';
+import { QueryBuilder, defaultValidator, type QueryBuilderProps } from 'react-querybuilder/src';
 import { docsLink } from './constants';
 
 const IE11 = () => {

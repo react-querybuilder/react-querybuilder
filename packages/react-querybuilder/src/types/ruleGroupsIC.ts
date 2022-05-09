@@ -1,3 +1,5 @@
+// WARNING: if the exports in this file change, ./index.ts must be updated
+
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupArray,

@@ -1,1 +1,1 @@
-export { ChakraActionElement as default } from '@react-querybuilder/chakra';
+export { ChakraActionElement as default } from '@react-querybuilder/chakra/src';

@@ -28,14 +28,6 @@ import {
 } from 'react';
 import ReactDOM from 'react-dom';
 import {
-  defaultValidator,
-  formatQuery,
-  parseSQL,
-  QueryBuilder,
-  type ExportFormat,
-  type FormatQueryOptions,
-} from 'react-querybuilder';
-import {
   defaultOptions,
   fields,
   formatMap,
@@ -48,7 +40,15 @@ import {
   type CommonRQBProps,
   type DemoOptions,
 } from 'react-querybuilder/dev';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/src/query-builder.scss';
+import {
+  defaultValidator,
+  formatQuery,
+  parseSQL,
+  QueryBuilder,
+  type ExportFormat,
+  type FormatQueryOptions,
+} from 'react-querybuilder/src';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';

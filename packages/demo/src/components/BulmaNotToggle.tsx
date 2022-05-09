@@ -1,1 +1,1 @@
-export { BulmaNotToggle as default } from '@react-querybuilder/bulma';
+export { BulmaNotToggle as default } from '@react-querybuilder/bulma/src';

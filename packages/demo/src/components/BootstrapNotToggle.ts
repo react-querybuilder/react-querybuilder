@@ -1,1 +1,1 @@
-export { BootstrapNotToggle as default } from '@react-querybuilder/bootstrap';
+export { BootstrapNotToggle as default } from '@react-querybuilder/bootstrap/src';

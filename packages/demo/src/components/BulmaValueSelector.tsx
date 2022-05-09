@@ -1,1 +1,1 @@
-export { BulmaValueSelector as default } from '@react-querybuilder/bulma';
+export { BulmaValueSelector as default } from '@react-querybuilder/bulma/src';

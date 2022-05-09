@@ -1,1 +1,1 @@
-export { BulmaActionElement as default } from '@react-querybuilder/bulma';
+export { BulmaActionElement as default } from '@react-querybuilder/bulma/src';

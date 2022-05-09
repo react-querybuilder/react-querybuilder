@@ -1,1 +1,1 @@
-export { MaterialNotToggle as default } from '@react-querybuilder/material';
+export { MaterialNotToggle as default } from '@react-querybuilder/material/src';
