@@ -1,1 +1,1 @@
-export { AntDDragHandle as default } from '@react-querybuilder/antd';
+export { AntDDragHandle as default } from '@react-querybuilder/antd/src';

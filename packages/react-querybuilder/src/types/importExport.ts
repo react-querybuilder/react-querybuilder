@@ -1,4 +1,5 @@
 import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
+import type { RuleType } from './ruleGroups';
 import type { QueryValidator, RuleValidator } from './validation';
 
 export type ExportFormat =
@@ -49,7 +50,18 @@ export interface FormatQueryOptions {
    * when using the "parameterized_named" export format. Default is ":".
    */
   paramPrefix?: string;
+  /**
+   * Renders values as either `number`-types or unquoted strings, as
+   * appropriate and when possible. Each `string`-type value is passed
+   * to `parseFloat` to determine if it can be represented as a plain
+   * numeric value.
+   */
+  parseNumbers?: boolean;
 }
+
+export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'>;
+
+export type ValueProcessorInternal = (rule: RuleType, options: ValueProcessorOptions) => string;
 
 export type ValueProcessor = (
   field: string,

@@ -1,7 +1,7 @@
 {
   "editor.formatOnSave": true,
-  "explorer.experimental.fileNesting.enabled": true,
-  "explorer.experimental.fileNesting.patterns": {
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
     "*.ts": "$(capture).js, $(capture).d.ts, $(capture).test.ts",
     "*.js": "$(capture).js.map, $(capture).min.js, $(capture).d.ts",
     "*.jsx": "$(capture).js",

@@ -6,7 +6,8 @@
   ],
   "scripts": {
     "postinstall": "patch-package",
-    "start": "yarn workspace @react-querybuilder/demo start",
+    "start": "yarn workspace react-querybuilder start",
+    "demo": "yarn workspace @react-querybuilder/demo start",
     "build": "lerna run build",
     "build:rqb": "yarn workspace react-querybuilder build",
     "test": "jest",

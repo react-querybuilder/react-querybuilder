@@ -1,1 +1,1 @@
-export { MaterialValueSelector as default } from '@react-querybuilder/material';
+export { MaterialValueSelector as default } from '@react-querybuilder/material/src';

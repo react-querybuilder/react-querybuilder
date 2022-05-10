@@ -1,1 +1,1 @@
-export { MaterialActionElement as default } from '@react-querybuilder/material';
+export { MaterialActionElement as default } from '@react-querybuilder/material/src';

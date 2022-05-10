@@ -12,6 +12,7 @@ export default defineConfig({
         ie11: resolve(__dirname, 'ie11.html'),
         umd: resolve(__dirname, 'umd.html'),
       },
+      external: ['ruleGroupsIC'],
     },
     sourcemap: true,
   },

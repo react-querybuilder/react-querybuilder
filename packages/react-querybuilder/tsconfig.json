@@ -6,5 +6,5 @@
       "ruleGroupsIC": ["src/types/ruleGroupsIC.ts"]
     }
   },
-  "include": ["./src/"]
+  "include": ["./src/", "./dev/"]
 }

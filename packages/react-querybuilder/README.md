@@ -13,11 +13,11 @@ Complete documentation is available at [react-querybuilder.js.org](https://react
 [Click here to see a live, interactive demo](https://react-querybuilder.js.org/react-querybuilder/).
 
 <detail>
-<summary>To run the demo yourself...</summary>
+<summary>To run the demo locally:</summary>
 
 1. _Clone this repo_
 2. `yarn` _Install dependencies_
-3. `yarn start` _Run a local server_
+3. `yarn demo` _Run a local server_
 4. _Visit http://localhost:8080 in your browser_
 
 </detail>

@@ -1,1 +1,1 @@
-export { BootstrapValueEditor as default } from '@react-querybuilder/bootstrap';
+export { BootstrapValueEditor as default } from '@react-querybuilder/bootstrap/src';

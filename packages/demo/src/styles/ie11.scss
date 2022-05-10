@@ -47,8 +47,11 @@ body {
       margin-left: 0.5rem;
     }
 
-    .ruleGroup-combinators.betweenRules {
-      margin-top: 0.5rem;
+    .betweenRules {
+      .ruleGroup-combinators {
+        margin-top: 0.5rem;
+        margin-left: 0.5rem;
+      }
     }
 
     .ruleGroup-notToggle {

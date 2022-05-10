@@ -1,44 +1,32 @@
 import 'core-js';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 import ReactDOM from 'react-dom';
-import QueryBuilder, { defaultValidator } from 'react-querybuilder';
 import {
-  CommonRQBProps,
   defaultOptions,
-  DemoOptions,
-  docsLink,
   fields,
   initialQuery,
   initialQueryIC,
+  optionOrder,
   optionsMetadata,
-} from './constants';
+  optionsReducer,
+  type CommonRQBProps,
+  type DemoOption,
+} from 'react-querybuilder/dev';
+import { QueryBuilder, defaultValidator, type QueryBuilderProps } from 'react-querybuilder/src';
+import { docsLink } from './constants';
 
 const IE11 = () => {
-  const [options, setOptions] = useState(defaultOptions);
+  const [options, setOptions] = useReducer(optionsReducer, defaultOptions);
 
   const optionSetter = useCallback(
-    (opt: keyof DemoOptions) => (v: boolean) => setOptions(opts => ({ ...opts, [opt]: v })),
+    (opt: DemoOption) => (v: boolean) =>
+      setOptions({ type: 'update', payload: { optionName: opt, value: v } }),
     []
   );
 
   const optionsInfo = useMemo(
     () =>
-      (
-        [
-          'showCombinatorsBetweenRules',
-          'showNotToggle',
-          'showCloneButtons',
-          'showLockButtons',
-          'resetOnFieldChange',
-          'resetOnOperatorChange',
-          'autoSelectField',
-          'addRuleToNewGroups',
-          'validateQuery',
-          'independentCombinators',
-          'enableDragAndDrop',
-          'disabled',
-        ] as (keyof DemoOptions)[]
-      ).map(opt => ({
+      optionOrder.map(opt => ({
         ...optionsMetadata[opt],
         default: defaultOptions[opt],
         checked: options[opt],
@@ -47,11 +35,7 @@ const IE11 = () => {
     [options, optionSetter]
   );
 
-  const resetOptions = useCallback(
-    () =>
-      optionsInfo.forEach(opt => (opt.checked !== opt.default ? opt.setter(opt.default) : null)),
-    [optionsInfo]
-  );
+  const resetOptions = useCallback(() => setOptions({ type: 'reset' }), []);
 
   const qbWrapperClassName = options.validateQuery ? 'validateQuery' : '';
 
@@ -71,7 +55,9 @@ const IE11 = () => {
     [options.independentCombinators]
   );
 
-  const qbClassname = commonRQBProps.enableDragAndDrop ? '' : 'dnd-disabled';
+  const controlClassnames: QueryBuilderProps['controlClassnames'] = {
+    queryBuilder: commonRQBProps.enableDragAndDrop ? '' : 'dnd-disabled',
+  };
 
   return (
     <div>
@@ -81,13 +67,16 @@ const IE11 = () => {
             {...commonRQBProps}
             independentCombinators={false}
             defaultQuery={initialQuery}
-            controlClassnames={{
-              queryBuilder: qbClassname,
-            }}
+            controlClassnames={controlClassnames}
           />
         </div>
         <div style={getQBWrapperStyle(true)}>
-          <QueryBuilder {...commonRQBProps} independentCombinators defaultQuery={initialQueryIC} />
+          <QueryBuilder
+            {...commonRQBProps}
+            independentCombinators
+            defaultQuery={initialQueryIC}
+            controlClassnames={controlClassnames}
+          />
         </div>
       </div>
       <div style={{ marginTop: '1rem' }}>

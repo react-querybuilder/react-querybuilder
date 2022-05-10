@@ -1,1 +1,1 @@
-export { ChakraNotToggle as default } from '@react-querybuilder/chakra';
+export { ChakraNotToggle as default } from '@react-querybuilder/chakra/src';

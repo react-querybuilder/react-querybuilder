@@ -1,1 +1,1 @@
-export { AntDActionElement as default } from '@react-querybuilder/antd';
+export { AntDActionElement as default } from '@react-querybuilder/antd/src';

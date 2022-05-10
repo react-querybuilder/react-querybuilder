@@ -1,1 +1,1 @@
-export { ChakraValueSelector as default } from '@react-querybuilder/chakra';
+export { ChakraValueSelector as default } from '@react-querybuilder/chakra/src';
