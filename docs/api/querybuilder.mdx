@@ -661,35 +661,35 @@ The `translations` prop is optional, and each top-level property in the `transla
 
 ### `showCombinatorsBetweenRules`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#showCombinatorsBetweenRules=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#showCombinatorsBetweenRules=true)
 
 Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
 
 ### `showNotToggle`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#showNotToggle=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#showNotToggle=true)
 
 Pass `true` to show the "Not" (aka inversion) toggle switch for each rule group.
 
 ### `showCloneButtons`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#showCloneButtons=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#showCloneButtons=true)
 
 ### `showLockButtons`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#showLockButtons=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#showLockButtons=true)
 
 Pass `true` to show the "Lock rule" and "Lock group" buttons. When a rule is locked, all elements within the rule will be disabled (except for the lock button, so the user can unlock it). When a group is locked, all elements within the group header (except the lock button), as well as all child rule/group elements, will be disabled.
 
 ### `resetOnFieldChange`
 
-`boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.github.io/react-querybuilder/#resetOnFieldChange=false)
+`boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#resetOnFieldChange=false)
 
 Pass `false` to avoid resetting the operator and value when the field changes.
 
 ### `resetOnOperatorChange`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#resetOnOperatorChange=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#resetOnOperatorChange=true)
 
 Pass `true` to reset the value when the operator changes.
 
@@ -701,25 +701,25 @@ Pass `false` to disable the `onQueryChange` call on mount of the component which
 
 ### `autoSelectField`
 
-`boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.github.io/react-querybuilder/#autoSelectField=false)
+`boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#autoSelectField=false)
 
 Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which will be selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
 
 ### `addRuleToNewGroups`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#addRuleToNewGroups=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#addRuleToNewGroups=true)
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
 ### `independentCombinators`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#independentCombinators=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#independentCombinators=true)
 
 Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. Visually, this is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
 
 ### `enableDragAndDrop`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#enableDragAndDrop=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#enableDragAndDrop=true)
 
 Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
 
@@ -731,18 +731,18 @@ Pass `true` to display a drag handle to the left of each group header and rule. 
 
 ### `disabled`
 
-`boolean | number[][]` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#disabled=true)
+`boolean | number[][]` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#disabled=true)
 
 Pass `true` to disable all subcomponents and prevent changes to the query. Pass an array of paths to disable specific rules and/or groups, e.g. `disabled={[[0]]}` will disable the first rule and its subcomponents but nothing else.
 
 ### `debugMode`
 
-`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#debugMode=true)
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#debugMode=true)
 
 Pass `true` to log debugging information to the console.
 
 ### `validator`
 
-`QueryValidator` [_Click for demo_](https://react-querybuilder.github.io/react-querybuilder/#validateQuery=true)
+`QueryValidator` [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#validateQuery=true)
 
 This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](./validation) documentation for more information.

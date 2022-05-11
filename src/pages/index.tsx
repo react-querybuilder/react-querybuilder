@@ -19,7 +19,7 @@ function HomepageHeader() {
           </Link>
           <Link
             className="button button--secondary button--lg"
-            href="https://react-querybuilder.github.io/react-querybuilder">
+            href="https://react-querybuilder.js.org/react-querybuilder">
             Try it out
           </Link>
         </div>
