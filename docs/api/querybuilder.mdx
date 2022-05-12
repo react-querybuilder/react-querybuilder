@@ -586,12 +586,14 @@ interface Classnames {
 
 ### `translations`
 
-This prop can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />` component. The default object is:
+This prop can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />` component. All keys in the object and all properties within each key are optional. Missing translations will default to the values below.
 
 ```ts
 {
   fields: {
     title: "Fields",
+    placeholderLabel: "------",
+    placeholderGroupLabel: "------",
   },
   operators: {
     title: "Operators",
@@ -653,12 +655,6 @@ This prop can be used to override translatable texts applied to various controls
 }
 ```
 
-:::note
-
-The `translations` prop is optional, and each top-level property in the `translations` object is optional, but all sub-properties are required for each defined top-level property. For example, you cannot pass `translations={{ addRule: { label: 'New Rule' } }}`, because the `title` sub-property is required within the `addRule` object.
-
-:::
-
 ### `showCombinatorsBetweenRules`
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#showCombinatorsBetweenRules=true)
@@ -703,7 +699,7 @@ Pass `false` to disable the `onQueryChange` call on mount of the component which
 
 `boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#autoSelectField=false)
 
-Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which will be selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
+Pass `false` to automatically add an "empty" option with label `"------"` (or `translations.fields.placeholderLabel` if provided--see [translations](#translations)) to the `fields` array as the first element. The empty option will be the initial selection for all new rules. When the empty field option is selected, the operator and value components will not display for that rule.
 
 ### `addRuleToNewGroups`
 
