@@ -1,2 +1,0 @@
-System.register(["./ChakraValueEditor-legacy.9fb9bf68.js","./vendor-legacy.891d859c.js","./main-legacy.6a75792c.js","./constants-legacy.e3116b41.js","./github-fork-ribbon-legacy.1e87c57b.js"],(function(e){"use strict";return{setters:[function(n){e("default",n.a)},function(){},function(){},function(){},function(){}],execute:function(){}}}));
-//# sourceMappingURL=ChakraDragHandle-legacy.59c8cead.js.map
