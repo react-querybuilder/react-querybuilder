@@ -24,12 +24,6 @@ function formatQuery(
 - MongoDB
 - Common Expression Language (CEL)
 
-:::info
-
-The inversion operator (setting `not: true` for a rule group) is currently unsupported for the MongoDB format, but rules can be created using the `"!="` operator.
-
-:::
-
 For the next few sections, assume the `query` variable has been defined as:
 
 ```ts
@@ -169,6 +163,12 @@ Output:
 `{"$and":[{"firstName":{"$eq":"Steve"}},{"lastName":{"$eq":"Vai"}}]}`;
 ```
 
+:::info
+
+For now, the MongoDB export format has two major shortcomings. For one, it does not support the inversion operator (setting `not: true` for a rule group), however rules _can_ be created using the `"!="` operator. Also, if the query uses [independent combinators](./querybuilder#independentcombinators), it will not be processed and `formatQuery(query, 'mongodb')` will always return the [fallback expression](#fallback-expression).
+
+:::
+
 ### Common Expression Language
 
 For Common Expression Language (CEL) output, use the "cel" format.
@@ -185,7 +185,65 @@ Output:
 
 ## Configuration
 
-An object can be passed as the second argument instead of a string in order to have more detailed control over the output.
+An object can be passed as the second argument instead of a string to have more fine-grained control over the output.
+
+### Parse numbers
+
+Since HTML `<input>` controls store values as strings (even when `type="number"`), exporting a query to various formats may produce a string representation of a value when a true numeric value is required or more appropriate. Set the `parseNumbers` option to `true` and `formatQuery` will attempt to convert all values to numbers, falling back to the original value if `parseFloat(value)` returns `NaN` (not a number).
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  not: false,
+  rules: [
+    {
+      field: 'digits',
+      operator: '=',
+      value: '20',
+    },
+    {
+      field: 'age',
+      operator: 'between',
+      value: '26, 52',
+    },
+    {
+      field: 'lastName',
+      operator: '=',
+      value: 'Vai',
+    },
+  ],
+};
+
+// Default configuration - all values are strings:
+formatQuery(query, { format: 'sql' });
+// Returns: "(digits = '20' and age between '26' and '52' and lastName = 'Vai')"
+
+// `parseNumbers: true` - numeric strings converted to actual numbers:
+formatQuery(query, { format: 'sql', parseNumbers: true });
+// Returns: "(digits = 20 and age between 26 and 52 and lastName = 'Vai')"
+```
+
+:::info
+
+To avoid information loss, this option is more strict about what qualifies as "numeric" than [the standard `parseFloat` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat). Put simply, `parseFloat` works with any string that _starts_ with a numeric sequence, ignoring the rest of the string beginning with the first non-numeric character. When `parseNumbers` is `true`, `formatQuery` will only convert a `value` to a `number` if it appears to be numeric _in its entirety_ (after trimming whitespace).
+
+The following expressions all evaluate to `true`:
+
+```ts
+parseFloat('000111abcdef') === 111;
+
+formatQuery(
+  { rules: [{ field: 'f', operator: '=', value: '000111abcdef' }] },
+  { format: 'sql', parseNumbers: true }
+) === "(f = '000111abcdef')";
+
+formatQuery(
+  { rules: [{ field: 'f', operator: '=', value: '  000111  ' }] },
+  { format: 'sql', parseNumbers: true }
+) === '(f = 111)';
+```
+
+:::
 
 ### Value processor
 
@@ -198,13 +256,13 @@ const query: RuleGroupType = {
   rules: [
     {
       field: 'instrument',
-      value: ['Guitar', 'Vocals'],
       operator: 'in',
+      value: ['Guitar', 'Vocals'],
     },
     {
       field: 'lastName',
-      value: 'Vai',
       operator: '=',
+      value: 'Vai',
     },
   ],
 };
@@ -218,7 +276,7 @@ const valueProcessor = (field, operator, value) => {
 };
 
 formatQuery(query, { format: 'sql', valueProcessor });
-// Output: "(instrument in ('Guitar','Vocals') and lastName = 'Vai')"
+// Returns: "(instrument in ('Guitar','Vocals') and lastName = 'Vai')"
 ```
 
 ### Quote field names
@@ -227,7 +285,7 @@ Some database engines wrap field names in backticks. This can be configured with
 
 ```ts
 formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' });
-// Output: "(`firstName` = 'Steve' and `lastName` = 'Vai')"
+// Returns: "(`firstName` = 'Steve' and `lastName` = 'Vai')"
 ```
 
 ### Parameter prefix
@@ -306,21 +364,21 @@ formatQuery(query, {
   format: 'sql',
   validator: () => false,
 });
-// Output: "(1 = 1)" <-- see `fallbackExpression` option
+// Returns: "(1 = 1)" <-- see `fallbackExpression` option
 
 // Rule "r1" is invalid based on the validation map
 formatQuery(query, {
   format: 'sql',
   validator: () => ({ r1: false }),
 });
-// Output: "(lastName = 'Vai')" <-- skipped `firstName` rule with `id === 'r1'`
+// Returns: "(lastName = 'Vai')" <-- skipped `firstName` rule with `id === 'r1'`
 
 // Rule "r1" is invalid based on the field validator for `firstName`
 formatQuery(query, {
   format: 'sql',
   fields: [{ name: 'firstName', validator: () => false }],
 });
-// Output: "(lastName = 'Vai')" <-- skipped `firstName` rule because field validator returned `false`
+// Returns: "(lastName = 'Vai')" <-- skipped `firstName` rule because field validator returned `false`
 ```
 
 ### Automatic validation

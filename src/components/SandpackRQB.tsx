@@ -3,7 +3,11 @@ import { useColorMode } from '@docusaurus/theme-common';
 import * as React from 'react';
 import './SandpackRQB.scss';
 
-export const SandpackRQB: React.FC<SandpackProps> = ({ children, customSetup, options }) => {
+interface SandpackRQBProps extends SandpackProps {
+  children: React.ReactNode;
+}
+
+export const SandpackRQB = ({ children, customSetup, options }: SandpackRQBProps) => {
   const { isDarkTheme } = useColorMode();
   const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
   const bkgdColor = isDarkTheme ? '#343a46' : '#ffffff';
@@ -64,7 +68,7 @@ export const SandpackRQB: React.FC<SandpackProps> = ({ children, customSetup, op
   )
     ? ''
     : `@import 'react-querybuilder/dist/query-builder.css';`;
-  const sandboxStyle = `body { background-color: ${bkgdColor}; }`;
+  const sandboxStyle = `body { background-color: ${bkgdColor}; } pre { padding: 1rem; background-color: white; border: 1px solid lightgray; border-radius: 4px; white-space: pre-wrap; }`;
 
   files['/styles.css'] = {
     code: [rqbCSSimport, sandboxStyle, files['/styles.css']?.code ?? ''].join('\n\n'),

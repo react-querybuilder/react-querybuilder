@@ -35,7 +35,7 @@ In the query builder below, click the "+Rule" button and then the fields selecto
 <SandpackRQB options={{ editorHeight: 240 }}>
 
 ```tsx
-import QueryBuilder from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 
 const fields: Field[] = [
@@ -56,7 +56,7 @@ The state variable `query` will be passed to the `query` prop, and the setter me
 
 ```tsx
 import { useState } from 'react';
-import QueryBuilder, { Field, RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, Field, RuleGroupType } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 
 const fields: Field[] = [
@@ -84,7 +84,7 @@ export default () => {
 
 ```jsx
 import { useState } from 'react';
-import QueryBuilder from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 
 const fields = [
@@ -113,9 +113,48 @@ This documentation primarily demonstrates use of the ESM and CommonJS builds of 
 
 :::
 
+## Exporting queries
+
+To convert a query object into other formats like [SQL](https://en.wikipedia.org/wiki/SQL), [MongoDB](https://www.mongodb.com/), and [CEL](https://github.com/google/cel-spec), you can use the `formatQuery` function ([full documentation here](./api/export)). The example below demonstrates the conversion of a query to its equivalent SQL form. Modify the query by manipulating the form elements and the SQL will update accordingly.
+
+<SandpackRQB options={{ editorHeight: 480 }}>
+
+```tsx
+import { useState } from 'react';
+import { QueryBuilder, Field, formatQuery, RuleGroupType } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.scss';
+
+const fields: Field[] = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+];
+
+export default () => {
+  const [query, setQuery] = useState<RuleGroupType>({
+    combinator: 'and',
+    rules: [
+      { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+      { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
+    ],
+  });
+
+  return (
+    <>
+      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      <h4>
+        SQL as result of <code>formatQuery(query, 'sql')</code>:
+      </h4>
+      <pre>{formatQuery(query, 'sql')}</pre>
+    </>
+  );
+};
+```
+
+</SandpackRQB>
+
 ## Onward and upward!
 
-To discover all the options of React Query Builder, check out the [API documentation](./api/querybuilder). To play around with various configurations, check out the ["kitchen sink" demo](https://react-querybuilder.github.io/react-querybuilder/).
+To discover all the options of React Query Builder, check out the [API documentation](./api/querybuilder). To play around with various configurations, including other export formats and [importing from SQL](./api/import), check out the ["kitchen sink" demo](https://react-querybuilder.js.org/react-querybuilder/).
 
 ## Training
 
