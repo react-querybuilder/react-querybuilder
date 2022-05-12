@@ -6,7 +6,6 @@ import {
   defaultCombinators,
   defaultControlClassnames,
   defaultControlElements,
-  defaultFields,
   defaultOperators,
   defaultTranslations,
   standardClassnames,
@@ -18,6 +17,7 @@ import {
   RuleGroupTypeIC,
   RuleType,
   Schema,
+  Translations,
   UpdateableProperties,
   ValueSources,
 } from './types';
@@ -45,10 +45,10 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   debugMode = false,
   defaultQuery,
   query,
-  fields: fieldsProp = defaultFields,
+  fields: fProp,
   operators = defaultOperators,
   combinators = defaultCombinators,
-  translations = defaultTranslations,
+  translations: translationsProp = defaultTranslations,
   enableMountQueryChange = true,
   controlElements,
   getDefaultField,
@@ -77,6 +77,21 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   validator,
   context,
 }: QueryBuilderProps<RG>) => {
+  const translations = useMemo(() => {
+    const translationsTemp = defaultTranslations;
+    const translationsPropKeys = Object.keys(translationsProp) as (keyof Translations)[];
+    for (const t of translationsPropKeys) {
+      translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] } as any;
+    }
+    return translationsTemp;
+  }, [translationsProp]);
+
+  const defaultFields = useMemo(
+    (): Field[] => [{ id: '~', name: '~', label: translations.fields.placeholderLabel }],
+    [translations.fields.placeholderLabel]
+  );
+  const fieldsProp = fProp ?? defaultFields;
+
   const fields = useMemo(() => {
     let f = Array.isArray(fieldsProp)
       ? fieldsProp
@@ -85,13 +100,13 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
           .sort((a, b) => a.label.localeCompare(b.label));
     if (!autoSelectField) {
       if (isOptionGroupArray(f)) {
-        f = [{ label: '------', options: defaultFields }].concat(f);
+        f = [{ label: translations.fields.placeholderGroupLabel, options: defaultFields }, ...f];
       } else {
-        f = defaultFields.concat(f);
+        f = [...defaultFields, ...f];
       }
     }
     return isOptionGroupArray(f) ? uniqOptGroups(f) : uniqByName(f);
-  }, [autoSelectField, fieldsProp]);
+  }, [autoSelectField, defaultFields, fieldsProp, translations.fields.placeholderGroupLabel]);
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) return fieldsProp;
@@ -432,7 +447,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
             independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
           }>
           <controls.ruleGroup
-            translations={{ ...defaultTranslations, ...translations }}
+            translations={translations}
             rules={root.rules}
             combinator={'combinator' in root ? root.combinator : undefined}
             schema={schema}

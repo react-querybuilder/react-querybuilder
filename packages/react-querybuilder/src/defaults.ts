@@ -6,15 +6,17 @@ import type {
   Controls,
   DefaultCombinator,
   DefaultOperator,
-  Field,
-  Translations,
+  TranslationsFull,
 } from './types';
 
-export const defaultFields: Field[] = [{ id: '~', name: '~', label: '------' }];
+export const defaultPlaceholderFieldLabel = '------';
+export const defaultPlaceholderFieldGroupLabel = defaultPlaceholderFieldLabel;
 
-export const defaultTranslations: Translations = {
+export const defaultTranslations: TranslationsFull = {
   fields: {
     title: 'Fields',
+    placeholderLabel: defaultPlaceholderFieldLabel,
+    placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
   },
   operators: {
     title: 'Operators',

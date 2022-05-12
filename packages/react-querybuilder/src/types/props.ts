@@ -262,13 +262,17 @@ export interface Schema {
 }
 
 interface Translation {
-  title: string;
+  title?: string;
 }
 interface TranslationWithLabel extends Translation {
-  label: string;
+  label?: string;
+}
+interface TranslationWithPlaceholders extends Translation {
+  placeholderLabel?: string;
+  placeholderGroupLabel?: string;
 }
 export interface Translations {
-  fields: Translation;
+  fields: TranslationWithPlaceholders;
   operators: Translation;
   value: Translation;
   removeRule: TranslationWithLabel;
@@ -286,6 +290,9 @@ export interface Translations {
   lockGroupDisabled: TranslationWithLabel;
   valueSourceSelector: Translation;
 }
+export type TranslationsFull = {
+  [K in keyof Translations]: { [T in keyof Translations[K]]-?: string };
+};
 
 interface CommonRuleAndGroupProps {
   id?: string;
