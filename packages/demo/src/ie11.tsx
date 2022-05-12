@@ -1,6 +1,6 @@
 import 'core-js';
 import { useCallback, useMemo, useReducer } from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import {
   defaultOptions,
   fields,
@@ -100,4 +100,4 @@ const IE11 = () => {
   );
 };
 
-ReactDOM.render(<IE11 />, document.getElementById('ie11'));
+render(<IE11 />, document.getElementById('ie11'));

@@ -26,7 +26,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import {
   defaultOptions,
   fields,
@@ -424,7 +424,7 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
+render(
   <StrictMode>
     <App />
   </StrictMode>,

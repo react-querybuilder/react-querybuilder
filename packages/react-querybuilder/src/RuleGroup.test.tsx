@@ -1,8 +1,7 @@
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { act } from 'react-dom/test-utils';
 import {
   defaultCombinators,
   defaultControlClassnames,

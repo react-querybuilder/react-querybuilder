@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
 import {
@@ -7,7 +7,6 @@ import {
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import { act } from 'react-dom/test-utils';
 import {
   defaultControlClassnames,
   defaultControlElements,
