@@ -25,9 +25,9 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@types/react": "^17.0.0",
+    "@types/react": "^18.0.0",
     "antd": "^4.17.3",
-    "react": "^17.0.1",
+    "react": "^18.1.0",
     "react-querybuilder": "^4.2.5",
     "typescript": "^4.5.0"
   },

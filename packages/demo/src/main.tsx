@@ -24,6 +24,7 @@ import {
   useMemo,
   useReducer,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
 import { render } from 'react-dom';
@@ -40,7 +41,6 @@ import {
   type CommonRQBProps,
   type DemoOptions,
 } from 'react-querybuilder/dev';
-import 'react-querybuilder/src/query-builder.scss';
 import {
   defaultValidator,
   formatQuery,
@@ -49,6 +49,7 @@ import {
   type ExportFormat,
   type FormatQueryOptions,
 } from 'react-querybuilder/src';
+import 'react-querybuilder/src/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
@@ -76,7 +77,7 @@ SyntaxHighlighter.registerLanguage('parameterized', json);
 SyntaxHighlighter.registerLanguage('parameterized_named', json);
 SyntaxHighlighter.registerLanguage('sql', sql);
 
-const shStyle = {
+const shStyle: Record<string, CSSProperties> = {
   ...vs,
   hljs: {
     ...vs.hljs,
@@ -204,7 +205,7 @@ const App = () => {
     [style, options]
   );
 
-  const loadingPlaceholder = useCallback(
+  const loadingPlaceholder = useMemo(
     () => (
       <div className="loading-placeholder">
         <Spin />
