@@ -1668,7 +1668,7 @@ describe('disabled', () => {
     expect(getAllByTestId(TestID.valueEditor)[2]).toBeDisabled();
   });
 
-  it('prevents changes from custom components when disabled', () => {
+  it('prevents changes from rogue components when disabled', async () => {
     const onQueryChange = jest.fn();
     const ruleToAdd: RuleType = { field: 'f1', operator: '=', value: 'v1' };
     const groupToAdd: RuleGroupTypeIC = { rules: [] };
@@ -1723,7 +1723,9 @@ describe('disabled', () => {
       />
     );
     const rg = getByTestId(TestID.ruleGroup);
-    rg.querySelectorAll('button').forEach(async b => await user.click(b));
+    for (const b of rg.querySelectorAll('button')) {
+      await user.click(b);
+    }
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 });
@@ -1734,7 +1736,7 @@ describe('locked rules', () => {
     expect(getByTestId(TestID.lockGroup)).toBeDisabled();
   });
 
-  it('does not update the query when the root group is disabled', () => {
+  it('does not update the query when the root group is disabled', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder
@@ -1763,7 +1765,9 @@ describe('locked rules', () => {
       />
     );
     const rg = getByTestId(TestID.ruleGroup);
-    rg.querySelectorAll('button').forEach(async b => await user.click(b));
+    for (const b of rg.querySelectorAll('button')) {
+      await user.click(b);
+    }
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 
