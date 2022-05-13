@@ -211,7 +211,7 @@ export const testValueEditor = (
           expect(handleOnChange).toHaveBeenCalledWith('test2');
         });
 
-        it('should be disabled by the disabled prop', () => {
+        it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
           const { getByTitle } = render(
             <ValueEditor
@@ -225,18 +225,16 @@ export const testValueEditor = (
               disabled
             />
           );
-          getByTitle(title)
-            .querySelectorAll('input[type="radio"]')
-            .forEach(async r => {
-              expect(r).toBeDisabled();
-              try {
-                await user.click(r);
-              } catch (e: any) {
-                if (!errorMessageIsAboutPointerEventsNone(e)) {
-                  throw e;
-                }
+          for (const r of getByTitle(title).querySelectorAll('input[type="radio"]')) {
+            expect(r).toBeDisabled();
+            try {
+              await user.click(r);
+            } catch (e: any) {
+              if (!errorMessageIsAboutPointerEventsNone(e)) {
+                throw e;
               }
-            });
+            }
+          }
           expect(handleOnChange).not.toHaveBeenCalled();
         });
       });

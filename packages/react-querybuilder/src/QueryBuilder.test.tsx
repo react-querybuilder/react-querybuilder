@@ -1771,7 +1771,7 @@ describe('locked rules', () => {
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 
-  it('does not update the query when an ancestor group is disabled', () => {
+  it('does not update the query when an ancestor group is disabled', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder
@@ -1803,7 +1803,9 @@ describe('locked rules', () => {
       />
     );
     const rg = getByTestId(TestID.ruleGroup);
-    rg.querySelectorAll('button').forEach(async b => await user.click(b));
+    for (const b of rg.querySelectorAll('button')) {
+      await user.click(b);
+    }
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 });
