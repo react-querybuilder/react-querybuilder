@@ -7,16 +7,16 @@ export const isOptionGroupArray = (arr: Field['values']): arr is OptionGroup[] =
 export const toOptions = (arr?: NameLabelPair[] | OptionGroup[]) => {
   if (isOptionGroupArray(arr)) {
     const optArray: JSX.Element[] = [];
-    arr.forEach(og => {
-      optArray.push(<ListSubheader key={og.label}>{og.label}</ListSubheader>);
+    for (const og of arr) {
       optArray.push(
+        <ListSubheader key={og.label}>{og.label}</ListSubheader>,
         ...og.options.map(opt => (
           <MenuItem key={opt.name} value={opt.name}>
             {opt.label}
           </MenuItem>
         ))
       );
-    });
+    }
     return optArray;
   }
   /* istanbul ignore else */

@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import type { NameLabelPair, OptionGroup, ValueEditorProps } from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
-import { errorMessageIsAboutPointerEventsNone, findInput, findTextarea } from './utils';
+import { findInput, findTextarea, userEventSetup } from './utils';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
@@ -32,7 +31,7 @@ export const testValueEditor = (
   ValueEditor: React.ComponentType<ValueEditorProps>,
   skip: ValueEditorTestsToSkip = {}
 ) => {
-  const user = userEvent.setup();
+  const user = userEventSetup();
   const title = ValueEditor.displayName ?? 'ValueEditor';
   const props = { ...defaultValueEditorProps, title };
 
@@ -53,14 +52,9 @@ export const testValueEditor = (
       const { getByTitle } = render(
         <ValueEditor {...props} type={type} handleOnChange={handleOnChange} disabled />
       );
-      expect(findInput(getByTitle(title))).toBeDisabled();
-      try {
-        await user.click(findInput(getByTitle(title)));
-      } catch (e: any) {
-        if (!errorMessageIsAboutPointerEventsNone(e)) {
-          throw e;
-        }
-      }
+      const input = findInput(getByTitle(title));
+      expect(input).toBeDisabled();
+      await user.click(input);
       expect(handleOnChange).not.toHaveBeenCalled();
     });
   };
@@ -183,9 +177,9 @@ export const testValueEditor = (
           );
           const radioButtons = getByTitle(title).querySelectorAll('input[type="radio"]');
           expect(radioButtons).toHaveLength(2);
-          radioButtons.forEach(r => {
+          for (const r of radioButtons) {
             expect(r).toHaveAttribute('type', 'radio');
-          });
+          }
         });
 
         it('should call the onChange handler', async () => {
@@ -227,13 +221,7 @@ export const testValueEditor = (
           );
           for (const r of getByTitle(title).querySelectorAll('input[type="radio"]')) {
             expect(r).toBeDisabled();
-            try {
-              await user.click(r);
-            } catch (e: any) {
-              if (!errorMessageIsAboutPointerEventsNone(e)) {
-                throw e;
-              }
-            }
+            await user.click(r);
           }
           expect(handleOnChange).not.toHaveBeenCalled();
         });

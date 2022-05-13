@@ -1,3 +1,5 @@
+import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
+
 export const findInput = (el: HTMLElement) =>
   (el.tagName === 'INPUT' ? el : el.querySelector('input')) as HTMLInputElement;
 
@@ -7,21 +9,11 @@ export const findTextarea = (el: HTMLElement) =>
 export const findSelect = (el: HTMLElement) =>
   (el.tagName === 'SELECT' ? el : el.querySelector('select')) as HTMLSelectElement;
 
-export const hasOrInheritsClass = (
-  el: HTMLElement | null,
-  className: string,
-  attempt = 1
-): boolean => {
-  if (!el || el.tagName === 'BODY') {
-    return false;
-  }
-  if (el.classList.contains(className)) {
+export const hasOrInheritsClass = (el: HTMLElement | null, className: string) => {
+  if (el && (el.classList.contains(className) || el.closest(`.${className}`))) {
     return true;
   }
-  if (attempt >= 10) {
-    return false;
-  }
-  return hasOrInheritsClass(el.parentElement, className, attempt + 1);
+  return false;
 };
 
 export const hasOrInheritsData = (
@@ -56,5 +48,5 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   return false;
 };
 
-export const errorMessageIsAboutPointerEventsNone = (e: Error) =>
-  e.message.includes('pointer-events set to "none"');
+export const userEventSetup = () =>
+  userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });

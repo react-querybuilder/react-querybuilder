@@ -27,7 +27,7 @@
     "bootstrap-icons": "^1.7.0",
     "bulma": "^0.9.3",
     "core-js": "^3.20.2",
-    "framer-motion": "^4",
+    "framer-motion": "^6.3.3",
     "query-string": "^7.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -37,6 +37,7 @@
   "scripts": {
     "start": "vite --port 8080",
     "build": "vite build",
+    "serve": "vite preview",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch"
   }

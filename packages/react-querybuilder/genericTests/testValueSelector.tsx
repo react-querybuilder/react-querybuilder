@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '../src/types';
-import { findSelect } from './utils';
+import { findSelect, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
   multi: boolean;
@@ -23,7 +22,7 @@ export const testSelect = (
   props: any,
   skip: ValueSelectorTestsToSkip = {}
 ) => {
-  const user = userEvent.setup();
+  const user = userEventSetup();
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 

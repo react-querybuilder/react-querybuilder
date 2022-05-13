@@ -141,11 +141,11 @@ export const AntDValueEditor = ({
     case 'time':
       return (
         <TimePicker
-          value={value ? moment(value, 'HH:mm') : null}
+          value={value ? moment(value, 'HH:mm:ss') : null}
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}
-          onChange={d => handleOnChange(d?.format('HH:mm') ?? '')}
+          onChange={d => handleOnChange(d?.format('HH:mm:ss') ?? '')}
         />
       );
   }

@@ -1,4 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { render, within } from '@testing-library/react';
+import { forwardRef } from 'react';
 import {
   defaultValueEditorProps,
   defaultValueSelectorProps,
@@ -6,17 +8,15 @@ import {
   testDragHandle,
   testNotToggle,
   testValueEditor,
+  userEventSetup,
 } from 'react-querybuilder/genericTests';
-import { render, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { forwardRef } from 'react';
 import type {
   DragHandleProps,
   NameLabelPair,
   OptionGroup,
   ValueEditorProps,
   ValueSelectorProps,
-} from 'react-querybuilder';
+} from 'react-querybuilder/src';
 import 'regenerator-runtime/runtime';
 import {
   MaterialActionElement,
@@ -59,7 +59,7 @@ const testMaterialValueSelector = (
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
-  const user = userEvent.setup();
+  const user = userEventSetup();
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const [firstNameLabel, secondNameLabel] = testValues;
   const isMulti = ('values' in props && props.type === 'multiselect') || props.multiple;

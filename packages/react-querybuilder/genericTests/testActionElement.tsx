@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import type { ActionWithRulesProps } from '../src/types';
-import { errorMessageIsAboutPointerEventsNone } from './utils';
+import { userEventSetup } from './utils';
 
 export const defaultActionElementProps: ActionWithRulesProps = {
   handleOnClick: () => {},
@@ -11,7 +10,7 @@ export const defaultActionElementProps: ActionWithRulesProps = {
 };
 
 export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {
-  const user = userEvent.setup();
+  const user = userEventSetup();
   const title = ActionElement.displayName ?? 'ActionElement';
   const props = { ...defaultActionElementProps, title };
   const dt: ActionWithRulesProps['disabledTranslation'] = { label: '🔒', title: 'Unlock' };
@@ -27,8 +26,9 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
       const { getByTitle } = render(
         <ActionElement {...props} handleOnClick={handleOnClick} {...additionalProps} />
       );
-      expect(getByTitle(testTitle)).toBeEnabled();
-      await user.click(getByTitle(testTitle));
+      const btn = getByTitle(testTitle);
+      expect(btn).toBeEnabled();
+      await user.click(btn);
       expect(handleOnClick).toHaveBeenCalled();
     });
   };
@@ -64,14 +64,9 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
       const { getByTitle } = render(
         <ActionElement {...props} handleOnClick={handleOnClick} disabled />
       );
-      expect(getByTitle(title)).toBeDisabled();
-      try {
-        await user.click(getByTitle(title));
-      } catch (e: any) {
-        if (!errorMessageIsAboutPointerEventsNone(e)) {
-          throw e;
-        }
-      }
+      const btn = getByTitle(title);
+      expect(btn).toBeDisabled();
+      await user.click(btn);
       expect(handleOnClick).not.toHaveBeenCalled();
     });
   });
