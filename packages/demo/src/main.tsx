@@ -27,7 +27,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
   defaultOptions,
   fields,
@@ -425,9 +425,8 @@ const App = () => {
   );
 };
 
-render(
+createRoot(document.getElementById('app')!).render(
   <StrictMode>
     <App />
-  </StrictMode>,
-  document.getElementById('app')
+  </StrictMode>
 );
