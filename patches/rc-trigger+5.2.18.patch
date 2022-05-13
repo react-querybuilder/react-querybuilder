@@ -1,0 +1,26 @@
+diff --git a/node_modules/rc-trigger/es/Popup/PopupInner.js b/node_modules/rc-trigger/es/Popup/PopupInner.js
+index 3418e4c..e839953 100644
+--- a/node_modules/rc-trigger/es/Popup/PopupInner.js
++++ b/node_modules/rc-trigger/es/Popup/PopupInner.js
+@@ -163,7 +163,7 @@ var PopupInner = /*#__PURE__*/React.forwardRef(function (props, ref) {
+     opacity: status === 'motion' || status === 'stable' || !visible ? undefined : 0,
+     // Cannot interact with disappearing elements
+     // https://github.com/ant-design/ant-design/issues/35051#issuecomment-1101340714
+-    pointerEvents: !visible && status !== 'stable' ? 'none' : undefined
++    // pointerEvents: !visible && status !== 'stable' ? 'none' : undefined
+   }, style); // Align status
+ 
+ 
+diff --git a/node_modules/rc-trigger/lib/Popup/PopupInner.js b/node_modules/rc-trigger/lib/Popup/PopupInner.js
+index f441408..7ffaa50 100644
+--- a/node_modules/rc-trigger/lib/Popup/PopupInner.js
++++ b/node_modules/rc-trigger/lib/Popup/PopupInner.js
+@@ -183,7 +183,7 @@ var PopupInner = /*#__PURE__*/React.forwardRef(function (props, ref) {
+     opacity: status === 'motion' || status === 'stable' || !visible ? undefined : 0,
+     // Cannot interact with disappearing elements
+     // https://github.com/ant-design/ant-design/issues/35051#issuecomment-1101340714
+-    pointerEvents: !visible && status !== 'stable' ? 'none' : undefined
++    // pointerEvents: !visible && status !== 'stable' ? 'none' : undefined
+   }, style); // Align status
+ 
+   var alignDisabled = true;

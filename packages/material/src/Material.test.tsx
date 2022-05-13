@@ -59,21 +59,22 @@ const testMaterialValueSelector = (
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
+  const user = userEvent.setup();
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const [firstNameLabel, secondNameLabel] = testValues;
   const isMulti = ('values' in props && props.type === 'multiselect') || props.multiple;
 
   describe(title, () => {
-    it('should render the correct number of options', () => {
+    it('should render the correct number of options', async () => {
       const { getByRole } = render(<Component {...props} value={firstNameLabel.name} />);
-      userEvent.click(getByRole('button'));
+      await user.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option')).toHaveLength(2);
     });
 
-    it('should have the options passed into the <select />', () => {
+    it('should have the options passed into the <select />', async () => {
       const { getByRole } = render(<Component {...props} value={firstNameLabel.name} />);
-      userEvent.click(getByRole('button'));
+      await user.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
       expect(() => listbox.getByText(secondNameLabel.label)).not.toThrow();
     });
@@ -93,14 +94,14 @@ const testMaterialValueSelector = (
       });
     }
 
-    it('should call the onChange method passed in', () => {
+    it('should call the onChange method passed in', async () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(
         <Component {...props} value={firstNameLabel.name} handleOnChange={handleOnChange} />
       );
-      userEvent.click(getByRole('button'));
+      await user.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
-      userEvent.click(listbox.getByText(secondNameLabel.label));
+      await user.click(listbox.getByText(secondNameLabel.label));
       expect(handleOnChange).toHaveBeenCalledWith(
         isMulti ? `${firstNameLabel.name},${secondNameLabel.name}` : secondNameLabel.name
       );
@@ -119,7 +120,7 @@ const testMaterialValueSelector = (
       ];
       const newProps = { ...props, values: optGroups, options: optGroups };
       const { getByRole } = render(<Component {...newProps} value={isMulti ? [] : undefined} />);
-      userEvent.click(getByRole('button'));
+      await user.click(getByRole('button'));
       const listbox = within(getByRole('listbox'));
       expect(() => listbox.getByText(secondNameLabel.label)).not.toThrow();
       expect(getByRole('listbox').querySelectorAll('li')).toHaveLength(3);
@@ -127,7 +128,7 @@ const testMaterialValueSelector = (
       expect(listbox.getAllByRole('option')[2]).toHaveTextContent(secondNameLabel.label);
     });
 
-    it('should be disabled by the disabled prop', () => {
+    it('should be disabled by the disabled prop', async () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(
         <Component
@@ -138,7 +139,7 @@ const testMaterialValueSelector = (
         />
       );
       expect(getByRole('button')).toHaveAttribute('aria-disabled', 'true');
-      userEvent.click(getByRole('button'));
+      await user.click(getByRole('button'));
       expect(() => getByRole('listbox')).toThrow();
       expect(handleOnChange).not.toHaveBeenCalled();
     });

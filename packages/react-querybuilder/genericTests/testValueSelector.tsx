@@ -23,6 +23,7 @@ export const testSelect = (
   props: any,
   skip: ValueSelectorTestsToSkip = {}
 ) => {
+  const user = userEvent.setup();
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 
@@ -79,18 +80,18 @@ export const testSelect = (
       expect(getByTitle(title)).toHaveClass('foo');
     });
 
-    it('should call the onChange method passed in', () => {
+    it('should call the onChange method passed in', async () => {
       const onChange = jest.fn();
       const { getByTitle } = render(<Component {...props} handleOnChange={onChange} />);
-      userEvent.selectOptions(findSelect(getByTitle(title)), testVal.name);
+      await user.selectOptions(findSelect(getByTitle(title)), testVal.name);
       expect(onChange).toHaveBeenCalledWith(testVal.name);
     });
 
-    it('should be disabled by the disabled prop', () => {
+    it('should be disabled by the disabled prop', async () => {
       const onChange = jest.fn();
       const { getByTitle } = render(<Component {...props} handleOnChange={onChange} disabled />);
       expect(findSelect(getByTitle(title))).toBeDisabled();
-      userEvent.selectOptions(findSelect(getByTitle(title)), testVal.name);
+      await user.selectOptions(findSelect(getByTitle(title)), testVal.name);
       expect(onChange).not.toHaveBeenCalled();
     });
   });

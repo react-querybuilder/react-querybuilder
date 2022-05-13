@@ -18,6 +18,8 @@ import type {
 } from './types';
 import { defaultValidator, formatQuery } from './utils';
 
+const user = userEvent.setup();
+
 const [QueryBuilder, getDndBackendOriginal] = wrapWithTestBackend(QueryBuilderOriginal);
 // This is just a type guard against `undefined`
 const getDndBackend = () => getDndBackendOriginal()!;
@@ -40,7 +42,7 @@ describe('when rendered', () => {
 });
 
 describe('when rendered with defaultQuery only', () => {
-  it('changes the query in uncontrolled state', () => {
+  it('changes the query in uncontrolled state', async () => {
     const { getAllByTestId, getByTestId } = render(
       <QueryBuilder
         defaultQuery={{
@@ -50,7 +52,7 @@ describe('when rendered with defaultQuery only', () => {
       />
     );
     expect(getAllByTestId(TestID.rule)).toHaveLength(1);
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getAllByTestId(TestID.rule)).toHaveLength(2);
   });
 });
@@ -70,15 +72,15 @@ describe('when rendered with onQueryChange callback', () => {
 });
 
 describe('when initial query without fields is provided, create rule should work', () => {
-  it('should be able to create rule on add rule click', () => {
+  it('should be able to create rule on add rule click', async () => {
     const { getByTestId } = render(<QueryBuilder />);
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getByTestId(TestID.rule)).toBeInTheDocument();
   });
 });
 
 describe('when initial query with duplicate fields is provided', () => {
-  it('passes down a unique set of fields (by name)', () => {
+  it('passes down a unique set of fields (by name)', async () => {
     const { getAllByTestId, getByTestId } = render(
       <QueryBuilder
         fields={[
@@ -87,20 +89,20 @@ describe('when initial query with duplicate fields is provided', () => {
         ]}
       />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getByTestId(TestID.rule)).toBeInTheDocument();
     expect(getAllByTestId(TestID.fields)).toHaveLength(1);
   });
 });
 
 describe('when initial query with fields object is provided', () => {
-  it('passes down fields sorted by label using the key as name', () => {
+  it('passes down fields sorted by label using the key as name', async () => {
     const { getByTestId } = render(
       <QueryBuilder
         fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
       />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getByTestId(TestID.rule)).toBeInTheDocument();
     expect(getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(2);
     // TODO: test sort
@@ -192,18 +194,18 @@ describe('when fields are provided with optgroups', () => {
     expect(selectors.getByTestId(TestID.fields).querySelectorAll('optgroup')).toHaveLength(2);
   });
 
-  it('selects the correct field', () => {
+  it('selects the correct field', async () => {
     const { selectors } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
     expect(selectors.getAllByTestId(TestID.fields)[1]).toHaveValue('firstName');
   });
 
-  it('selects the default option', () => {
+  it('selects the default option', async () => {
     const { selectors } = setup();
     selectors.rerender(
       <QueryBuilder defaultQuery={query} fields={fields} autoSelectField={false} />
     );
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
     expect(selectors.getAllByTestId(TestID.fields)[1]).toHaveValue('~');
   });
 });
@@ -413,68 +415,68 @@ describe('actions', () => {
     };
   };
 
-  it('should create a new rule and remove that rule', () => {
+  it('should create a new rule and remove that rule', async () => {
     const { selectors, onQueryChange } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
 
     expect(selectors.getByTestId(TestID.rule)).toBeDefined();
     expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
     expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
-    userEvent.click(selectors.getByTestId(TestID.removeRule));
+    await user.click(selectors.getByTestId(TestID.removeRule));
 
     expect(selectors.queryByTestId(TestID.rule)).toBeNull();
     expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
   });
 
-  it('should create a new group and remove that group', () => {
+  it('should create a new group and remove that group', async () => {
     const { selectors, onQueryChange } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addGroup));
+    await user.click(selectors.getByTestId(TestID.addGroup));
 
     expect(selectors.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
     expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
     expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
     expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('and');
 
-    userEvent.click(selectors.getByTestId(TestID.removeGroup));
+    await user.click(selectors.getByTestId(TestID.removeGroup));
 
     expect(selectors.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
     expect(onQueryChange.mock.calls[2][0].rules).toHaveLength(0);
   });
 
-  it('should create a new rule and change the fields', () => {
+  it('should create a new rule and change the fields', async () => {
     const { selectors, onQueryChange } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
 
     expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
     expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
-    userEvent.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
+    await user.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
     expect(onQueryChange.mock.calls[2][0].rules[0].field).toBe('field2');
   });
 
-  it('should create a new rule and change the operator', () => {
+  it('should create a new rule and change the operator', async () => {
     const { selectors, onQueryChange } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
 
     expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
     expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
 
-    userEvent.selectOptions(selectors.getByTestId(TestID.operators), '!=');
+    await user.selectOptions(selectors.getByTestId(TestID.operators), '!=');
     expect(onQueryChange.mock.calls[2][0].rules[0].operator).toBe('!=');
   });
 
-  it('should change the combinator of the root group', () => {
+  it('should change the combinator of the root group', async () => {
     const { selectors, onQueryChange } = setup();
     expect(onQueryChange.mock.calls[0][0].rules).toHaveLength(0);
 
-    userEvent.selectOptions(selectors.getByTestId(TestID.combinators), 'or');
+    await user.selectOptions(selectors.getByTestId(TestID.combinators), 'or');
 
     expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(0);
     expect(onQueryChange.mock.calls[1][0].combinator).toBe('or');
   });
 
-  it('should set default value for a rule', () => {
+  it('should set default value for a rule', async () => {
     const { selectors, onQueryChange } = setup();
     selectors.rerender(
       <QueryBuilder
@@ -498,12 +500,12 @@ describe('actions', () => {
       />
     );
 
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
 
     expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
     expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('value1');
 
-    userEvent.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
+    await user.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
 
     expect(onQueryChange.mock.calls[2][0].rules[0].field).toBe('field2');
     expect(onQueryChange.mock.calls[2][0].rules[0].value).toBe(false);
@@ -520,7 +522,7 @@ describe('actions', () => {
       />
     );
 
-    userEvent.click(selectors.getByTestId(TestID.addRule));
+    await user.click(selectors.getByTestId(TestID.addRule));
 
     expect(onQueryChange.mock.calls[3][0].rules).toHaveLength(2);
     expect(onQueryChange.mock.calls[3][0].rules[0].value).toBe(false);
@@ -541,12 +543,12 @@ describe('resetOnFieldChange prop', () => {
     };
   };
 
-  it('resets the operator and value when true', () => {
+  it('resets the operator and value when true', async () => {
     const { selectors, onQueryChange } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addRule));
-    userEvent.selectOptions(selectors.getByTestId(TestID.operators), '>');
-    userEvent.type(selectors.getByTestId(TestID.valueEditor), 'Test');
-    userEvent.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
+    await user.click(selectors.getByTestId(TestID.addRule));
+    await user.selectOptions(selectors.getByTestId(TestID.operators), '>');
+    await user.type(selectors.getByTestId(TestID.valueEditor), 'Test');
+    await user.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
 
     expect(onQueryChange.mock.calls[3][0].rules[0].operator).toBe('>');
     expect(onQueryChange.mock.calls[6][0].rules[0].value).toBe('Test');
@@ -554,15 +556,15 @@ describe('resetOnFieldChange prop', () => {
     expect(onQueryChange.mock.calls[7][0].rules[0].value).toBe('');
   });
 
-  it('does not reset the operator and value when false', () => {
+  it('does not reset the operator and value when false', async () => {
     const { selectors, onQueryChange } = setup();
     selectors.rerender(
       <QueryBuilder resetOnFieldChange={false} fields={fields} onQueryChange={onQueryChange} />
     );
-    userEvent.click(selectors.getByTestId(TestID.addRule));
-    userEvent.selectOptions(selectors.getByTestId(TestID.operators), '>');
-    userEvent.type(selectors.getByTestId(TestID.valueEditor), 'Test');
-    userEvent.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
+    await user.click(selectors.getByTestId(TestID.addRule));
+    await user.selectOptions(selectors.getByTestId(TestID.operators), '>');
+    await user.type(selectors.getByTestId(TestID.valueEditor), 'Test');
+    await user.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
 
     expect(onQueryChange.mock.calls[3][0].rules[0].operator).toBe('>');
     expect(onQueryChange.mock.calls[6][0].rules[0].value).toBe('Test');
@@ -577,15 +579,15 @@ describe('resetOnOperatorChange prop', () => {
     { name: 'field2', label: 'Field 2' },
   ];
 
-  it('resets the value when true', () => {
+  it('resets the value when true', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder resetOnOperatorChange fields={fields} onQueryChange={onQueryChange} />
     );
-    userEvent.click(getByTestId(TestID.addRule));
-    userEvent.selectOptions(getByTestId(TestID.operators), '>');
-    userEvent.type(getByTestId(TestID.valueEditor), 'Test');
-    userEvent.selectOptions(getByTestId(TestID.operators), '=');
+    await user.click(getByTestId(TestID.addRule));
+    await user.selectOptions(getByTestId(TestID.operators), '>');
+    await user.type(getByTestId(TestID.valueEditor), 'Test');
+    await user.selectOptions(getByTestId(TestID.operators), '=');
 
     expect(onQueryChange.mock.calls[3][0].rules[0].operator).toBe('>');
     expect(onQueryChange.mock.calls[6][0].rules[0].value).toBe('Test');
@@ -593,15 +595,15 @@ describe('resetOnOperatorChange prop', () => {
     expect(onQueryChange.mock.calls[7][0].rules[0].value).toBe('');
   });
 
-  it('does not reset the value when false', () => {
+  it('does not reset the value when false', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder resetOnOperatorChange={false} fields={fields} onQueryChange={onQueryChange} />
     );
-    userEvent.click(getByTestId(TestID.addRule));
-    userEvent.selectOptions(getByTestId(TestID.operators), '>');
-    userEvent.type(getByTestId(TestID.valueEditor), 'Test');
-    userEvent.selectOptions(getByTestId(TestID.operators), '=');
+    await user.click(getByTestId(TestID.addRule));
+    await user.selectOptions(getByTestId(TestID.operators), '>');
+    await user.type(getByTestId(TestID.valueEditor), 'Test');
+    await user.selectOptions(getByTestId(TestID.operators), '=');
 
     expect(onQueryChange.mock.calls[3][0].rules[0].operator).toBe('>');
     expect(onQueryChange.mock.calls[6][0].rules[0].value).toBe('Test');
@@ -616,16 +618,16 @@ describe('getDefaultField prop', () => {
     { name: 'field2', label: 'Field 2' },
   ];
 
-  it('sets the default field as a string', () => {
+  it('sets the default field as a string', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder getDefaultField="field2" fields={fields} onQueryChange={onQueryChange} />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(onQueryChange.mock.calls[1][0].rules[0].field).toBe('field2');
   });
 
-  it('sets the default field as a function', () => {
+  it('sets the default field as a function', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder
@@ -634,7 +636,7 @@ describe('getDefaultField prop', () => {
         onQueryChange={onQueryChange}
       />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(onQueryChange.mock.calls[1][0].rules[0].field).toBe('field2');
   });
 });
@@ -642,16 +644,16 @@ describe('getDefaultField prop', () => {
 describe('getDefaultOperator prop', () => {
   const fields: Field[] = [{ name: 'field1', label: 'Field 1' }];
 
-  it('sets the default operator as a string', () => {
+  it('sets the default operator as a string', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder getDefaultOperator="beginsWith" fields={fields} onQueryChange={onQueryChange} />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
   });
 
-  it('sets the default operator as a function', () => {
+  it('sets the default operator as a function', async () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(
       <QueryBuilder
@@ -660,23 +662,23 @@ describe('getDefaultOperator prop', () => {
         onQueryChange={onQueryChange}
       />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
   });
 });
 
 describe('defaultOperator property in field', () => {
-  it('sets the default operator', () => {
+  it('sets the default operator', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', defaultOperator: 'beginsWith' }];
     const onQueryChange = jest.fn();
     const { getByTestId } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(onQueryChange.mock.calls[1][0].rules[0].operator).toBe('beginsWith');
   });
 });
 
 describe('getDefaultValue prop', () => {
-  it('sets the default value', () => {
+  it('sets the default value', async () => {
     const onQueryChange = jest.fn();
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
@@ -689,13 +691,13 @@ describe('getDefaultValue prop', () => {
         onQueryChange={onQueryChange}
       />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('Test Value');
   });
 });
 
 describe('onAddRule prop', () => {
-  it('cancels the rule addition', () => {
+  it('cancels the rule addition', async () => {
     const onQueryChange = jest.fn();
     const onAddRule = jest.fn(() => false as const);
     const { getByTestId } = render(
@@ -703,27 +705,27 @@ describe('onAddRule prop', () => {
     );
     expect(onQueryChange).toHaveBeenCalledTimes(1);
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(onAddRule).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
   });
 
-  it('modifies the rule addition', () => {
+  it('modifies the rule addition', async () => {
     const onQueryChange = jest.fn();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
     const { getByTestId } = render(
       <QueryBuilder onAddRule={() => rule} onQueryChange={onQueryChange} />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('modified');
   });
 });
 
 describe('onAddGroup prop', () => {
-  it('cancels the group addition', () => {
+  it('cancels the group addition', async () => {
     const onQueryChange = jest.fn();
     const onAddGroup = jest.fn(() => false as const);
     const { getByTestId } = render(
@@ -732,27 +734,27 @@ describe('onAddGroup prop', () => {
 
     expect(onQueryChange).toHaveBeenCalledTimes(1);
 
-    userEvent.click(getByTestId(TestID.addGroup));
+    await user.click(getByTestId(TestID.addGroup));
 
     expect(onAddGroup).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
   });
 
-  it('modifies the group addition', () => {
+  it('modifies the group addition', async () => {
     const onQueryChange = jest.fn();
     const group: RuleGroupType = { combinator: 'fake', rules: [] };
     const { getByTestId } = render(
       <QueryBuilder onAddGroup={() => group} onQueryChange={onQueryChange} />
     );
 
-    userEvent.click(getByTestId(TestID.addGroup));
+    await user.click(getByTestId(TestID.addGroup));
 
     expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('fake');
   });
 });
 
 describe('defaultValue property in field', () => {
-  it('sets the default value', () => {
+  it('sets the default value', async () => {
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1', defaultValue: 'Test Value 1' },
       { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' },
@@ -760,14 +762,14 @@ describe('defaultValue property in field', () => {
     const onQueryChange = jest.fn();
     const { getByTestId } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('Test Value 1');
   });
 });
 
 describe('values property in field', () => {
-  it('sets the values list', () => {
+  it('sets the values list', async () => {
     const fields: Field[] = [
       {
         name: 'field1',
@@ -794,7 +796,7 @@ describe('values property in field', () => {
       />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getAllByTestId(TestID.valueEditor)).toHaveLength(1);
     expect(getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(2);
     expect(getByDisplayValue('Test value 1')).toBeInTheDocument();
@@ -802,35 +804,35 @@ describe('values property in field', () => {
 });
 
 describe('inputType property in field', () => {
-  it('sets the input type', () => {
+  it('sets the input type', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', inputType: 'number' }];
     const onQueryChange = jest.fn();
     const { container, getByTestId } = render(
       <QueryBuilder fields={fields} onQueryChange={onQueryChange} />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(container.querySelector('input[type="number"]')).toBeDefined();
   });
 });
 
 describe('valueEditorType property in field', () => {
-  it('sets the value editor type', () => {
+  it('sets the value editor type', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', valueEditorType: 'select' }];
     const onQueryChange = jest.fn();
     const { container, getByTestId } = render(
       <QueryBuilder fields={fields} onQueryChange={onQueryChange} />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(container.querySelector(`select.${sc.value}`)).toBeDefined();
   });
 });
 
 describe('operators property in field', () => {
-  it('sets the operators options', () => {
+  it('sets the operators options', async () => {
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
       { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] },
@@ -840,7 +842,7 @@ describe('operators property in field', () => {
       <QueryBuilder fields={fields} onQueryChange={onQueryChange} />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(container.querySelector(`select.${sc.operators}`)).toBeDefined();
     expect(container.querySelectorAll(`select.${sc.operators} option`)).toHaveLength(1);
@@ -853,19 +855,19 @@ describe('autoSelectField', () => {
     { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] },
   ];
 
-  it('initially hides the operator selector and value editor', () => {
+  it('initially hides the operator selector and value editor', async () => {
     const { container, getByTestId } = render(
       <QueryBuilder fields={fields} autoSelectField={false} />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
     expect(container.querySelectorAll(`select.${sc.operators}`)).toHaveLength(0);
     expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
   });
 
-  it('uses the placeholderFieldLabel', () => {
+  it('uses the placeholderFieldLabel', async () => {
     const placeholderFieldLabel = 'Test placeholder';
     const { getByDisplayValue, getByTestId } = render(
       <QueryBuilder
@@ -875,12 +877,12 @@ describe('autoSelectField', () => {
       />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(getByDisplayValue(placeholderFieldLabel)).toBeInTheDocument();
   });
 
-  it('uses the placeholderFieldGroupLabel', () => {
+  it('uses the placeholderFieldGroupLabel', async () => {
     const placeholderFieldGroupLabel = 'Test group placeholder';
     const { container, getByTestId } = render(
       <QueryBuilder
@@ -892,7 +894,7 @@ describe('autoSelectField', () => {
       />
     );
 
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
 
     expect(
       container.querySelector(`optgroup[label="${placeholderFieldGroupLabel}"]`)
@@ -918,9 +920,9 @@ describe('addRuleToNewGroups', () => {
     expect(selectors.queryByTestId(TestID.rule)).toBeNull();
   });
 
-  it('adds a rule when a new group is created', () => {
+  it('adds a rule when a new group is created', async () => {
     const { selectors, onQueryChange } = setup();
-    userEvent.click(selectors.getByTestId(TestID.addGroup));
+    await user.click(selectors.getByTestId(TestID.addGroup));
     expect(
       ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType).rules[0]
     ).toHaveProperty('field', '~');
@@ -934,7 +936,7 @@ describe('addRuleToNewGroups', () => {
 
 describe('showCloneButtons', () => {
   describe('standard rule groups', () => {
-    it('should clone rules', () => {
+    it('should clone rules', async () => {
       const onQueryChange = jest.fn();
       const { getAllByText } = render(
         <QueryBuilder
@@ -949,7 +951,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(t.cloneRule.label)[0]);
+      await user.click(getAllByText(t.cloneRule.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         combinator: 'and',
         rules: [
@@ -960,7 +962,7 @@ describe('showCloneButtons', () => {
       });
     });
 
-    it('should clone rule groups', () => {
+    it('should clone rule groups', async () => {
       const onQueryChange = jest.fn();
       const { getAllByText } = render(
         <QueryBuilder
@@ -978,7 +980,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(t.cloneRule.label)[0]);
+      await user.click(getAllByText(t.cloneRule.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         combinator: 'and',
         rules: [
@@ -991,7 +993,7 @@ describe('showCloneButtons', () => {
   });
 
   describe('independent combinators', () => {
-    it('should clone a single rule with independent combinators', () => {
+    it('should clone a single rule with independent combinators', async () => {
       const onQueryChange = jest.fn();
       const { getByText } = render(
         <QueryBuilder
@@ -1003,7 +1005,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getByText(t.cloneRule.label));
+      await user.click(getByText(t.cloneRule.label));
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -1013,7 +1015,7 @@ describe('showCloneButtons', () => {
       });
     });
 
-    it('should clone first rule with independent combinators', () => {
+    it('should clone first rule with independent combinators', async () => {
       const onQueryChange = jest.fn();
       const { getAllByText } = render(
         <QueryBuilder
@@ -1029,7 +1031,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(t.cloneRule.label)[0]);
+      await user.click(getAllByText(t.cloneRule.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -1041,7 +1043,7 @@ describe('showCloneButtons', () => {
       });
     });
 
-    it('should clone last rule with independent combinators', () => {
+    it('should clone last rule with independent combinators', async () => {
       const onQueryChange = jest.fn();
       const { getAllByText } = render(
         <QueryBuilder
@@ -1057,7 +1059,7 @@ describe('showCloneButtons', () => {
           }}
         />
       );
-      userEvent.click(getAllByText(t.cloneRule.label)[1]);
+      await user.click(getAllByText(t.cloneRule.label)[1]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
@@ -1097,43 +1099,43 @@ describe('independent combinators', () => {
     expect(onQueryChange.mock.calls[0][0]).toMatchObject(query);
   });
 
-  it('should add rules with independent combinators', () => {
+  it('should add rules with independent combinators', async () => {
     const { getAllByTestId, getByTestId, queryAllByTestId } = render(
       <QueryBuilder independentCombinators />
     );
     expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getByTestId(TestID.rule)).toBeDefined();
     expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getAllByTestId(TestID.rule)).toHaveLength(2);
     expect(getAllByTestId(TestID.combinators)).toHaveLength(1);
     expect(getByTestId(TestID.combinators)).toHaveValue('and');
-    userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.selectOptions(getByTestId(TestID.combinators), 'or');
+    await user.click(getByTestId(TestID.addRule));
     const combinatorSelectors = getAllByTestId(TestID.combinators);
     expect(combinatorSelectors[0]).toHaveValue('or');
   });
 
-  it('should add groups with independent combinators', () => {
+  it('should add groups with independent combinators', async () => {
     const { getAllByTestId, getByTestId, queryAllByTestId } = render(
       <QueryBuilder independentCombinators />
     );
     expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
-    userEvent.click(getByTestId(TestID.addGroup));
+    await user.click(getByTestId(TestID.addGroup));
     expect(getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
     expect(queryAllByTestId(TestID.combinators)).toHaveLength(0);
-    userEvent.click(getAllByTestId(TestID.addGroup)[0]);
+    await user.click(getAllByTestId(TestID.addGroup)[0]);
     expect(getAllByTestId(TestID.ruleGroup)).toHaveLength(3);
     expect(getAllByTestId(TestID.combinators)).toHaveLength(1);
     expect(getByTestId(TestID.combinators)).toHaveValue('and');
-    userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
-    userEvent.click(getAllByTestId(TestID.addGroup)[0]);
+    await user.selectOptions(getByTestId(TestID.combinators), 'or');
+    await user.click(getAllByTestId(TestID.addGroup)[0]);
     const combinatorSelectors = getAllByTestId(TestID.combinators);
     expect(combinatorSelectors[0]).toHaveValue('or');
   });
 
-  it('should remove rules along with independent combinators', () => {
+  it('should remove rules along with independent combinators', async () => {
     const onQueryChange = jest.fn();
     const query: RuleGroupTypeIC = {
       rules: [
@@ -1149,7 +1151,7 @@ describe('independent combinators', () => {
     );
     expect(getAllByTestId(TestID.rule)).toHaveLength(3);
     expect(getAllByTestId(TestID.combinators)).toHaveLength(2);
-    userEvent.click(getAllByTestId(TestID.removeRule)[1]);
+    await user.click(getAllByTestId(TestID.removeRule)[1]);
     expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0]).toHaveProperty('value', '1');
     expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[1]).toBe('or');
     expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[2]).toHaveProperty('value', '3');
@@ -1161,12 +1163,12 @@ describe('independent combinators', () => {
         independentCombinators
       />
     );
-    userEvent.click(getAllByTestId(TestID.removeRule)[0]);
+    await user.click(getAllByTestId(TestID.removeRule)[0]);
     expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules).toHaveLength(1);
     expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules[0]).toHaveProperty('value', '3');
   });
 
-  it('should remove groups along with independent combinators', () => {
+  it('should remove groups along with independent combinators', async () => {
     const onQueryChange = jest.fn();
     const query: RuleGroupTypeIC = {
       rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }],
@@ -1177,7 +1179,7 @@ describe('independent combinators', () => {
 
     expect(getAllByTestId(TestID.ruleGroup)).toHaveLength(4);
     expect(getAllByTestId(TestID.combinators)).toHaveLength(2);
-    userEvent.click(getAllByTestId(TestID.removeGroup)[1]);
+    await user.click(getAllByTestId(TestID.removeGroup)[1]);
     expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0]).toHaveProperty('rules', []);
     expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[1]).toBe('or');
     expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[2]).toHaveProperty('rules', []);
@@ -1189,7 +1191,7 @@ describe('independent combinators', () => {
         independentCombinators
       />
     );
-    userEvent.click(getAllByTestId(TestID.removeGroup)[0]);
+    await user.click(getAllByTestId(TestID.removeGroup)[0]);
     expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules).toHaveLength(1);
     expect((onQueryChange.mock.calls[2][0] as RuleGroupType).rules[0]).toHaveProperty('rules', []);
   });
@@ -1202,9 +1204,9 @@ describe('validation', () => {
     expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.invalid);
   });
 
-  it('should validate groups if default validator function is provided', () => {
+  it('should validate groups if default validator function is provided', async () => {
     const { container, getByTestId } = render(<QueryBuilder validator={defaultValidator} />);
-    userEvent.click(getByTestId(TestID.addGroup));
+    await user.click(getByTestId(TestID.addGroup));
     // Expect the root group to be valid (contains the inner group)
     expect(container.querySelectorAll(`.${sc.ruleGroup}.${sc.valid}`)).toHaveLength(1);
     // Expect the inner group to be invalid (empty)
@@ -1577,7 +1579,7 @@ describe('disabled', () => {
     const { container } = render(<QueryBuilder disabled />);
     expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
   });
-  it('prevents changes when disabled', () => {
+  it('prevents changes when disabled', async () => {
     const onQueryChange = jest.fn();
     const { getAllByLabelText, getAllByTestId, getAllByTitle, getAllByDisplayValue } = render(
       <QueryBuilder
@@ -1614,16 +1616,16 @@ describe('disabled', () => {
         }}
       />
     );
-    userEvent.click(getAllByTitle(t.addRule.title)[0]);
-    userEvent.click(getAllByTitle(t.addGroup.title)[0]);
-    userEvent.click(getAllByTitle(t.removeRule.title)[0]);
-    userEvent.click(getAllByTitle(t.removeGroup.title)[0]);
-    userEvent.click(getAllByTitle(t.cloneRule.title)[0]);
-    userEvent.click(getAllByTitle(t.cloneRuleGroup.title)[0]);
-    userEvent.click(getAllByLabelText(t.notToggle.label)[0]);
-    userEvent.selectOptions(getAllByDisplayValue('Field 0')[0], 'field1');
-    userEvent.selectOptions(getAllByDisplayValue('=')[0], '>');
-    userEvent.type(getAllByDisplayValue('4')[0], 'Not 4');
+    await user.click(getAllByTitle(t.addRule.title)[0]);
+    await user.click(getAllByTitle(t.addGroup.title)[0]);
+    await user.click(getAllByTitle(t.removeRule.title)[0]);
+    await user.click(getAllByTitle(t.removeGroup.title)[0]);
+    await user.click(getAllByTitle(t.cloneRule.title)[0]);
+    await user.click(getAllByTitle(t.cloneRuleGroup.title)[0]);
+    await user.click(getAllByLabelText(t.notToggle.label)[0]);
+    await user.selectOptions(getAllByDisplayValue('Field 0')[0], 'field1');
+    await user.selectOptions(getAllByDisplayValue('=')[0], '>');
+    await user.type(getAllByDisplayValue('4')[0], 'Not 4');
     const dragRule = getAllByTestId(TestID.rule)[1];
     const dropRule = getAllByTestId(TestID.rule)[3];
     expect(() =>
@@ -1721,7 +1723,7 @@ describe('disabled', () => {
       />
     );
     const rg = getByTestId(TestID.ruleGroup);
-    rg.querySelectorAll('button').forEach(b => userEvent.click(b));
+    rg.querySelectorAll('button').forEach(async b => await user.click(b));
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 });
@@ -1761,7 +1763,7 @@ describe('locked rules', () => {
       />
     );
     const rg = getByTestId(TestID.ruleGroup);
-    rg.querySelectorAll('button').forEach(b => userEvent.click(b));
+    rg.querySelectorAll('button').forEach(async b => await user.click(b));
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 
@@ -1797,7 +1799,7 @@ describe('locked rules', () => {
       />
     );
     const rg = getByTestId(TestID.ruleGroup);
-    rg.querySelectorAll('button').forEach(b => userEvent.click(b));
+    rg.querySelectorAll('button').forEach(async b => await user.click(b));
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 });
@@ -1811,32 +1813,32 @@ describe('value source field', () => {
     { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
 
-  it('sets the right default value', () => {
+  it('sets the right default value', async () => {
     const { getByDisplayValue, getByTestId } = render(
       <QueryBuilder fields={fields} getDefaultField="f1" />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getByDisplayValue(fields.filter(f => f.name !== 'f1')[0].label)).toHaveClass(sc.value);
   });
 
-  it('handles empty comparator results', () => {
+  it('handles empty comparator results', async () => {
     const { getByTestId } = render(<QueryBuilder fields={fields} getDefaultField="f3" />);
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(0);
   });
 
-  it('handles invalid valueSources property', () => {
+  it('handles invalid valueSources property', async () => {
     const { getByTestId, queryByDisplayValue } = render(
       <QueryBuilder fields={fields} getDefaultField="f4" />
     );
-    userEvent.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addRule));
     expect(queryByDisplayValue('Field 1')).toBeNull();
   });
 
-  it('sets the default valueSource correctly', () => {
+  it('sets the default valueSource correctly', async () => {
     const { getByTestId } = render(<QueryBuilder fields={fields} getDefaultField="f1" />);
-    userEvent.click(getByTestId(TestID.addRule));
-    userEvent.selectOptions(getByTestId(TestID.fields), 'f5');
+    await user.click(getByTestId(TestID.addRule));
+    await user.selectOptions(getByTestId(TestID.fields), 'f5');
     expect(getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
   });
 });

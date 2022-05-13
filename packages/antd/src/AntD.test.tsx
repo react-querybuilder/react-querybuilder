@@ -41,6 +41,7 @@ const testAntDValueSelector = (
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
   props: any
 ) => {
+  const user = userEvent.setup();
   const testValues: NameLabelPair[] = props.values ?? props.options;
   const testVal = testValues[1];
 
@@ -48,7 +49,7 @@ const testAntDValueSelector = (
     it('should render the correct number of options', async () => {
       const { getByRole } = render(<Component {...props} />);
       await act(async () => {
-        userEvent.click(getByRole('combobox'));
+        await user.click(getByRole('combobox'));
         await new Promise(r => setTimeout(r, 500));
       });
       const listbox = within(getByRole('listbox'));
@@ -58,7 +59,7 @@ const testAntDValueSelector = (
     it('should have the options passed into the <select />', async () => {
       const { getByRole } = render(<Component {...props} />);
       await act(async () => {
-        userEvent.click(getByRole('combobox'));
+        await user.click(getByRole('combobox'));
         await new Promise(r => setTimeout(r, 500));
       });
       const listbox = within(getByRole('listbox'));
@@ -89,7 +90,7 @@ const testAntDValueSelector = (
         <Component {...props} handleOnChange={handleOnChange} />
       );
       await act(async () => {
-        userEvent.click(getByRole('combobox'));
+        await user.click(getByRole('combobox'));
         await new Promise(r => setTimeout(r, 500));
       });
       // Using fireEvent.click here instead of userEvent.click
@@ -111,20 +112,20 @@ const testAntDValueSelector = (
         'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
       const { getByRole } = render(<Component {...newProps} />);
       await act(async () => {
-        userEvent.click(getByRole('combobox'));
+        await user.click(getByRole('combobox'));
         await new Promise(r => setTimeout(r, 500));
       });
       const listbox = within(getByRole('listbox'));
       expect(listbox.getAllByRole('option').pop()).toHaveTextContent(testVal.name);
     });
 
-    it('should be disabled by the disabled prop', () => {
+    it('should be disabled by the disabled prop', async () => {
       const handleOnChange = jest.fn();
       const { getByRole } = render(
         <Component {...props} handleOnChange={handleOnChange} disabled />
       );
       expect(getByRole('combobox')).toBeDisabled();
-      userEvent.click(getByRole('combobox'));
+      await user.click(getByRole('combobox'));
       expect(() => getByRole('listbox')).toThrow();
       expect(handleOnChange).not.toHaveBeenCalled();
     });
@@ -133,6 +134,7 @@ const testAntDValueSelector = (
 
 const notToggleTitle = AntDNotToggle.displayName;
 describe(notToggleTitle, () => {
+  const user = userEvent.setup();
   const label = 'Not';
   const props: NotToggleProps = { ...defaultNotToggleProps, label, title: notToggleTitle };
 
@@ -146,24 +148,25 @@ describe(notToggleTitle, () => {
     expect(getByTitle(notToggleTitle)).toHaveClass('foo');
   });
 
-  it('should call the onChange method passed in', () => {
+  it('should call the onChange method passed in', async () => {
     const onChange = jest.fn();
     const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
-    userEvent.click(getByTitle(notToggleTitle));
+    await user.click(getByTitle(notToggleTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should be disabled by disabled prop', () => {
+  it('should be disabled by disabled prop', async () => {
     const onChange = jest.fn();
     const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
     expect(getByTitle(notToggleTitle)).toBeDisabled();
-    userEvent.click(getByTitle(notToggleTitle));
+    await user.click(getByTitle(notToggleTitle));
     expect(onChange).not.toHaveBeenCalled();
   });
 });
 
 const valueEditorTitle = AntDValueEditor.displayName;
 describe(`${valueEditorTitle} as switch`, () => {
+  const user = userEvent.setup();
   const props: ValueEditorProps = {
     ...defaultValueEditorProps,
     title: valueEditorTitle,
@@ -180,33 +183,30 @@ describe(`${valueEditorTitle} as switch`, () => {
     expect(getByTitle(valueEditorTitle)).toHaveClass('foo');
   });
 
-  it('should call the onChange method passed in', () => {
+  it('should call the onChange method passed in', async () => {
     const onChange = jest.fn();
     const { getByTitle } = render(<AntDValueEditor {...props} handleOnChange={onChange} />);
-    userEvent.click(getByTitle(valueEditorTitle));
+    await user.click(getByTitle(valueEditorTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should be disabled by disabled prop', () => {
+  it('should be disabled by disabled prop', async () => {
     const onChange = jest.fn();
     const { getByTitle } = render(
       <AntDValueEditor {...props} handleOnChange={onChange} disabled />
     );
     expect(getByTitle(valueEditorTitle)).toBeDisabled();
-    userEvent.click(getByTitle(valueEditorTitle));
+    await user.click(getByTitle(valueEditorTitle));
     expect(onChange).not.toHaveBeenCalled();
   });
 });
 
 describe(`${valueEditorTitle} date/time pickers`, () => {
+  const user = userEvent.setup();
   const props: ValueEditorProps = { ...defaultValueEditorProps, title: valueEditorTitle };
   const today = moment().format(moment.HTML5_FMT.DATE);
   const tomorrow = moment().add(1, 'day').format(moment.HTML5_FMT.DATE);
   // const rightNow = moment().format('HH:mm');
-
-  const turnOffPointerEventsNone = () =>
-    ((document.body.querySelector('.ant-picker-dropdown') as HTMLDivElement).style.pointerEvents =
-      'auto');
 
   it('should render a date picker', async () => {
     const onChange = jest.fn();
@@ -214,11 +214,10 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
-    turnOffPointerEventsNone();
-    userEvent.click(getByTitle(today));
+    await user.click(getByTitle(today));
     expect(onChange).toHaveBeenCalledWith(today);
   });
 
@@ -227,7 +226,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="date" value={today} />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
     expect(getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
@@ -241,12 +240,11 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="date" operator="between" handleOnChange={onChange} />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
-    turnOffPointerEventsNone();
-    userEvent.click(getAllByTitle(today)[0]);
-    userEvent.click(getAllByTitle(tomorrow)[0]);
+    await user.click(getAllByTitle(today)[0]);
+    await user.click(getAllByTitle(tomorrow)[0]);
     expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });
 
@@ -260,7 +258,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
     expect(getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
@@ -277,13 +275,14 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="datetime-local" handleOnChange={onChange} />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
-    turnOffPointerEventsNone();
-    userEvent.click(getByTitle(today));
-    getAllByText('02').forEach(el => userEvent.click(el));
-    userEvent.click(getByText('Ok'));
+    await user.click(getByTitle(today));
+    for (const el of getAllByText('02')) {
+      await user.click(el);
+    }
+    await user.click(getByText(/ok/i));
     expect(onChange).toHaveBeenCalledWith(`${today} 02:02:02`);
   });
 
@@ -293,12 +292,13 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
-    turnOffPointerEventsNone();
-    getAllByText('02').forEach(el => userEvent.click(el));
-    userEvent.click(getByText('Ok'));
+    for (const el of getAllByText('02')) {
+      await user.click(el);
+    }
+    await user.click(getByText(/ok/i));
     expect(onChange).toHaveBeenCalledWith('02:02');
   });
 
@@ -307,7 +307,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="time" value={'02:02'} />
     );
     await act(async () => {
-      userEvent.click(findInput(container));
+      await user.click(findInput(container));
       await new Promise(r => setTimeout(r, 500));
     });
     getAllByText('02').forEach(n => hasOrInheritsClass(n, 'ant-picker-time-panel-cell-selected'));
@@ -318,7 +318,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} value={'02:02'} />
     );
-    userEvent.click(container.querySelector('.ant-picker-clear')!);
+    await user.click(container.querySelector('.ant-picker-clear')!);
     expect(onChange).toHaveBeenCalledWith('');
   });
 });

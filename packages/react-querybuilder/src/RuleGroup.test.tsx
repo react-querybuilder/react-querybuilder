@@ -27,6 +27,8 @@ import type {
   ValueSelectorProps,
 } from './types';
 
+const user = userEvent.setup();
+
 const [RuleGroup, getDndBackendOriginal] = wrapWithTestBackend(RuleGroupOriginal);
 // This is just a type guard against `undefined`
 const getDndBackend = () => getDndBackendOriginal()!;
@@ -230,30 +232,33 @@ describe('when 2 rules exist', () => {
 });
 
 describe('onCombinatorChange', () => {
-  it('calls onPropChange from the schema with expected values', () => {
+  it('calls onPropChange from the schema with expected values', async () => {
     const onPropChange = jest.fn();
     const { container } = render(<RuleGroup {...getProps({ onPropChange })} />);
-    userEvent.selectOptions(container.querySelector(`.${sc.combinators}`)!, 'any_combinator_value');
+    await user.selectOptions(
+      container.querySelector(`.${sc.combinators}`)!,
+      'any_combinator_value'
+    );
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'any_combinator_value', [0]);
   });
 });
 
 describe('onNotToggleChange', () => {
-  it('calls onPropChange from the schema with expected values', () => {
+  it('calls onPropChange from the schema with expected values', async () => {
     const onPropChange = jest.fn();
     const { getByLabelText } = render(
       <RuleGroup {...getProps({ onPropChange, showNotToggle: true })} />
     );
-    userEvent.click(getByLabelText('Not'));
+    await user.click(getByLabelText('Not'));
     expect(onPropChange).toHaveBeenCalledWith('not', true, [0]);
   });
 });
 
 describe('addRule', () => {
-  it('calls onRuleAdd from the schema with expected values', () => {
+  it('calls onRuleAdd from the schema with expected values', async () => {
     const onRuleAdd = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ onRuleAdd })} />);
-    userEvent.click(getByText(t.addRule.label));
+    await user.click(getByText(t.addRule.label));
     const call0 = onRuleAdd.mock.calls[0];
     expect(call0[0]).toHaveProperty('id');
     expect(call0[0]).toHaveProperty('field', 'field_0');
@@ -264,10 +269,10 @@ describe('addRule', () => {
 });
 
 describe('addGroup', () => {
-  it('calls onGroupAdd from the schema with expected values', () => {
+  it('calls onGroupAdd from the schema with expected values', async () => {
     const onGroupAdd = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ onGroupAdd })} />);
-    userEvent.click(getByText(t.addGroup.label));
+    await user.click(getByText(t.addGroup.label));
     const call0 = onGroupAdd.mock.calls[0];
     expect(call0[0]).toHaveProperty('id');
     expect(call0[0]).toHaveProperty('rules', []);
@@ -276,25 +281,25 @@ describe('addGroup', () => {
 });
 
 describe('cloneGroup', () => {
-  it('calls moveRule from the schema with expected values', () => {
+  it('calls moveRule from the schema with expected values', async () => {
     const moveRule = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ moveRule, showCloneButtons: true })} />);
-    userEvent.click(getByText(t.cloneRuleGroup.label));
+    await user.click(getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
 
 describe('removeGroup', () => {
-  it('calls onGroupRemove from the schema with expected values', () => {
+  it('calls onGroupRemove from the schema with expected values', async () => {
     const onGroupRemove = jest.fn();
     const { getByText } = render(<RuleGroup {...getProps({ onGroupRemove })} />);
-    userEvent.click(getByText(t.removeGroup.label));
+    await user.click(getByText(t.removeGroup.label));
     expect(onGroupRemove).toHaveBeenCalledWith([0]);
   });
 });
 
 describe('showCombinatorsBetweenRules', () => {
-  it('does not display combinators when there is only one rule', () => {
+  it('does not display combinators when there is only one rule', async () => {
     const { container } = render(
       <RuleGroup
         {...getProps({ showCombinatorsBetweenRules: true })}
@@ -359,7 +364,7 @@ describe('independent combinators', () => {
     expect(combinatorSelector).toHaveValue('and');
   });
 
-  it('should call handleOnChange for string elements', () => {
+  it('should call handleOnChange for string elements', async () => {
     const onPropChange = jest.fn();
     const rules: RuleGroupICArray = [
       { field: 'firstName', operator: '=', value: 'Test' },
@@ -369,18 +374,18 @@ describe('independent combinators', () => {
     const { getByText, getByTitle } = render(
       <RuleGroup {...getProps({ independentCombinators: true, onPropChange })} rules={rules} />
     );
-    userEvent.selectOptions(getByTitle(t.combinators.title), [getByText('OR')]);
+    await user.selectOptions(getByTitle(t.combinators.title), [getByText('OR')]);
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
   });
 
-  it('should clone independent combinator groups', () => {
+  it('should clone independent combinator groups', async () => {
     const moveRule = jest.fn();
     const { getByText } = render(
       <RuleGroup
         {...getProps({ independentCombinators: true, moveRule, showCloneButtons: true })}
       />
     );
-    userEvent.click(getByText(t.cloneRuleGroup.label));
+    await user.click(getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
@@ -589,7 +594,7 @@ describe('disabled', () => {
     expect(getByTestId(TestID.rule)).toHaveClass(sc.disabled);
   });
 
-  it('does not try to update the query', () => {
+  it('does not try to update the query', async () => {
     const onRuleAdd = jest.fn();
     const onRuleRemove = jest.fn();
     const onGroupAdd = jest.fn();
@@ -616,14 +621,14 @@ describe('disabled', () => {
         ]}
       />
     );
-    userEvent.click(getByTestId(TestID.addRule));
-    userEvent.click(getByTestId(TestID.addGroup));
-    userEvent.click(getByTestId(TestID.cloneGroup));
-    userEvent.click(getByTestId(TestID.removeGroup));
-    userEvent.click(getByTestId(TestID.notToggle));
-    userEvent.click(getAllByTestId(TestID.cloneRule)[0]);
-    userEvent.click(getAllByTestId(TestID.removeRule)[0]);
-    userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
+    await user.click(getByTestId(TestID.addRule));
+    await user.click(getByTestId(TestID.addGroup));
+    await user.click(getByTestId(TestID.cloneGroup));
+    await user.click(getByTestId(TestID.removeGroup));
+    await user.click(getByTestId(TestID.notToggle));
+    await user.click(getAllByTestId(TestID.cloneRule)[0]);
+    await user.click(getAllByTestId(TestID.removeRule)[0]);
+    await user.selectOptions(getByTestId(TestID.combinators), 'or');
     expect(onRuleAdd).not.toHaveBeenCalled();
     expect(onGroupAdd).not.toHaveBeenCalled();
     expect(onGroupRemove).not.toHaveBeenCalled();
@@ -631,7 +636,7 @@ describe('disabled', () => {
     expect(moveRule).not.toHaveBeenCalled();
   });
 
-  it('does not try to update independent combinators', () => {
+  it('does not try to update independent combinators', async () => {
     const onRuleAdd = jest.fn();
     const onRuleRemove = jest.fn();
     const onGroupAdd = jest.fn();
@@ -659,7 +664,7 @@ describe('disabled', () => {
         ]}
       />
     );
-    userEvent.selectOptions(getByTestId(TestID.combinators), 'or');
+    await user.selectOptions(getByTestId(TestID.combinators), 'or');
     expect(onPropChange).not.toHaveBeenCalled();
   });
 });
@@ -670,31 +675,31 @@ describe('lock buttons', () => {
     expect(getByTestId(TestID.lockGroup)).toBeEnabled();
   });
 
-  it('disables the lock button if the parent group is disabled even if the current group is not', () => {
+  it('disables the lock button if the parent group is disabled even if the current group is not', async () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(
       <RuleGroup {...getProps({ showLockButtons: true, onPropChange })} parentDisabled />
     );
     expect(getByTestId(TestID.lockGroup)).toBeDisabled();
-    userEvent.click(getByTestId(TestID.lockGroup));
+    await user.click(getByTestId(TestID.lockGroup));
     expect(onPropChange).not.toHaveBeenCalled();
   });
 
-  it('sets the disabled property', () => {
+  it('sets the disabled property', async () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(
       <RuleGroup {...getProps({ showLockButtons: true, onPropChange })} />
     );
-    userEvent.click(getByTestId(TestID.lockGroup));
+    await user.click(getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
 
-  it('unsets the disabled property', () => {
+  it('unsets the disabled property', async () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(
       <RuleGroup {...getProps({ showLockButtons: true, onPropChange })} disabled />
     );
-    userEvent.click(getByTestId(TestID.lockGroup));
+    await user.click(getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
   });
 

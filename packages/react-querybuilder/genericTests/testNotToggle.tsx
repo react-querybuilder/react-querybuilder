@@ -15,6 +15,7 @@ export const defaultNotToggleProps: NotToggleProps = {
 };
 
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {
+  const user = userEvent.setup();
   const title = NotToggle.displayName ?? 'NotToggle';
   const label = 'Not';
   const props = { ...defaultNotToggleProps, label, title };
@@ -30,21 +31,21 @@ export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) =>
       expect(hasOrInheritsClass(getByLabelText(label), 'foo')).toBe(true);
     });
 
-    it('should call the onChange method passed in', () => {
+    it('should call the onChange method passed in', async () => {
       const onChange = jest.fn();
       const { getByLabelText } = render(<NotToggle {...props} handleOnChange={onChange} />);
-      userEvent.click(getByLabelText(label));
+      await user.click(getByLabelText(label));
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
-    it('should be disabled by disabled prop', () => {
+    it('should be disabled by disabled prop', async () => {
       const onChange = jest.fn();
       const { getByLabelText } = render(
         <NotToggle {...props} handleOnChange={onChange} disabled />
       );
       expect(getByLabelText(label)).toBeDisabled();
       try {
-        userEvent.click(getByLabelText(label));
+        await user.click(getByLabelText(label));
       } catch (e: any) {
         if (!errorMessageIsAboutPointerEventsNone(e)) {
           throw e;

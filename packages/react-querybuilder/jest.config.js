@@ -6,4 +6,5 @@ module.exports = {
   },
   setupFilesAfterEnv: ['../../jestSetup.ts'],
   testEnvironment: 'jsdom',
+  transformIgnorePatterns: ['/node_modules/(?!react-dnd|dnd-core|@react-dnd)'],
 };
