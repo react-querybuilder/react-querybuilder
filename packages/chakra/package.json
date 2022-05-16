@@ -19,6 +19,7 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
+    "start": "vite",
     "build": "vite build && tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch"
@@ -30,6 +31,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@types/react": "^18.0.0",
+    "@vitejs/plugin-react": "^1.3.0",
     "framer-motion": "^6.3.3",
     "react": "^18.1.0",
     "react-querybuilder": "^4.2.5",

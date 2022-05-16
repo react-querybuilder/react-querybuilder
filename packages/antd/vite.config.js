@@ -1,3 +1,4 @@
+import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
 
@@ -13,7 +14,8 @@ export default defineConfig({
     },
     sourcemap: true,
   },
-  esbuild: {
-    jsxInject: `import React from 'react'`,
+  plugins: [vitePluginReact()],
+  server: {
+    port: 3101,
   },
 });

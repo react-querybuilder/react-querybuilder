@@ -1,5 +1,11 @@
 import { Fragment, useMemo, useReducer, useState } from 'react';
-import { defaultValidator, QueryBuilder, type ExportFormat, type FormatQueryOptions } from '../src';
+import {
+  defaultValidator,
+  QueryBuilder,
+  type QueryBuilderProps,
+  type ExportFormat,
+  type FormatQueryOptions,
+} from '../src';
 import {
   defaultOptions,
   fields,
@@ -12,7 +18,9 @@ import './styles.scss';
 import type { CommonRQBProps } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
 
-export const App = () => {
+export const App = (
+  controls?: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'>
+) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, defaultOptions);
@@ -22,8 +30,9 @@ export const App = () => {
       fields,
       ...optVals,
       validator: optVals.validateQuery ? defaultValidator : undefined,
+      ...controls,
     }),
-    [optVals]
+    [controls, optVals]
   );
 
   const formatQueryResults = useMemo(
