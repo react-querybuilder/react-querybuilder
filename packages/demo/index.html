@@ -40,43 +40,17 @@
       >Fork me on GitHub</a
     >
     <div id="app">
-      <p style="display: none">
+      <p id="legacy" style="display: none">
         You may be using a legacy browser. <a href="ie11.html">Click here</a> for a demo that should
         be compatible.
       </p>
-      <p>Loading...</p>
+      <p id="loading">Loading...</p>
     </div>
     <script>
       if (window.document.documentMode) {
-        document.getElementById('app').getElementsByTagName('p')[0].style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('legacy').style.display = 'block';
       }
-      (function setScript(initialValue) {
-        var mql = window.matchMedia('(prefers-color-scheme: dark)');
-        var systemPreference = mql.matches ? 'dark' : 'light';
-        var persistedPreference;
-
-        try {
-          persistedPreference = localStorage.getItem('chakra-ui-color-mode');
-        } catch (error) {
-          console.log(
-            'Chakra UI: localStorage is not available. Color mode persistence might not work as expected.'
-          );
-        }
-
-        var isInStorage = typeof persistedPreference === 'string';
-        var colorMode;
-
-        if (isInStorage) {
-          colorMode = persistedPreference;
-        } else {
-          colorMode = initialValue === 'system' ? systemPreference : initialValue;
-        }
-
-        if (colorMode) {
-          var root = document.documentElement;
-          root.style.setProperty('--chakra-ui-color-mode', colorMode);
-        }
-      })('light');
     </script>
     <script src="./src/main.tsx" type="module"></script>
   </body>

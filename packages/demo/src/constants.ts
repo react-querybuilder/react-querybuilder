@@ -1,4 +1,4 @@
-export type StyleName = 'default' | 'bootstrap' | 'antd' | 'material' | 'chakra' | 'bulma';
+export type StyleName = 'default' | 'antd' | 'bootstrap' | 'bulma' | 'chakra' | 'material';
 
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
 export const docsLink = 'https://react-querybuilder.js.org';
@@ -11,3 +11,10 @@ export const styleNameMap: Record<StyleName, string> = {
   chakra: 'Chakra UI',
   bulma: 'Bulma',
 };
+
+export const styleNameArray: StyleName[] = [
+  'default',
+  ...Object.keys(styleNameMap)
+    .filter(s => s !== 'default')
+    .sort(),
+];
