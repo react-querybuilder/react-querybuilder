@@ -5,6 +5,19 @@ body {
   padding: 0.5rem;
 }
 
+.options-list {
+  margin-bottom: 0.5rem;
+
+  & > div {
+    display: inline-block;
+    margin-right: 1rem;
+    vertical-align: top;
+  }
+  label {
+    display: block;
+  }
+}
+
 .queryBuilder {
   min-width: 405px;
 

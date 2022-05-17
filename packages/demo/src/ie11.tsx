@@ -1,9 +1,11 @@
 import 'core-js';
-import { useCallback, useMemo, useReducer } from 'react';
-import { render } from 'react-dom';
+import { useCallback, useMemo, useReducer, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import {
   defaultOptions,
   fields,
+  formatMap,
+  getFormatQueryString,
   initialQuery,
   initialQueryIC,
   optionOrder,
@@ -12,11 +14,19 @@ import {
   type CommonRQBProps,
   type DemoOption,
 } from 'react-querybuilder/dev';
-import { QueryBuilder, defaultValidator, type QueryBuilderProps } from 'react-querybuilder/src';
+import {
+  QueryBuilder,
+  defaultValidator,
+  type QueryBuilderProps,
+  type ExportFormat,
+} from 'react-querybuilder/src';
 import { docsLink } from './constants';
 
 const IE11 = () => {
   const [options, setOptions] = useReducer(optionsReducer, defaultOptions);
+  const [query, setQuery] = useState(initialQuery);
+  const [queryIC, setQueryIC] = useState(initialQueryIC);
+  const [format, setFormat] = useState<ExportFormat>('sql');
 
   const optionSetter = useCallback(
     (opt: DemoOption) => (v: boolean) =>
@@ -34,8 +44,6 @@ const IE11 = () => {
       })),
     [options, optionSetter]
   );
-
-  const resetOptions = useCallback(() => setOptions({ type: 'reset' }), []);
 
   const qbWrapperClassName = options.validateQuery ? 'validateQuery' : '';
 
@@ -59,6 +67,17 @@ const IE11 = () => {
     queryBuilder: commonRQBProps.enableDragAndDrop ? '' : 'dnd-disabled',
   };
 
+  const generateOptionsJSX = ({ checked, label, link, setter, title }: typeof optionsInfo[0]) => (
+    <label key={label}>
+      <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
+      {label}
+      {'\u00a0'}
+      <a href={`${docsLink}${link}`} title={title} target="_blank" rel="noreferrer">
+        (?)
+      </a>
+    </label>
+  );
+
   return (
     <div>
       <div className={qbWrapperClassName}>
@@ -66,7 +85,8 @@ const IE11 = () => {
           <QueryBuilder
             {...commonRQBProps}
             independentCombinators={false}
-            defaultQuery={initialQuery}
+            query={initialQuery}
+            onQueryChange={q => setQuery(q)}
             controlClassnames={controlClassnames}
           />
         </div>
@@ -74,30 +94,43 @@ const IE11 = () => {
           <QueryBuilder
             {...commonRQBProps}
             independentCombinators
-            defaultQuery={initialQueryIC}
+            query={initialQueryIC}
+            onQueryChange={q => setQueryIC(q)}
             controlClassnames={controlClassnames}
           />
         </div>
       </div>
       <div style={{ marginTop: '1rem' }}>
-        {optionsInfo.map(({ checked, label, link, setter, title }) => (
-          <div key={label}>
-            <label>
-              <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
-              {label}
-              {'\u00a0'}
-              <a href={`${docsLink}${link}`} title={title} target="_blank" rel="noreferrer">
-                (?)
-              </a>
-            </label>
-          </div>
-        ))}
-        <button type="button" style={{ marginTop: '0.5rem' }} onClick={resetOptions}>
+        <div className="options-list">
+          <div>{optionsInfo.slice(0, 5).map(generateOptionsJSX)}</div>
+          <div>{optionsInfo.slice(5, 10).map(generateOptionsJSX)}</div>
+          <div>{optionsInfo.slice(10).map(generateOptionsJSX)}</div>
+        </div>
+        <button type="button" onClick={() => setOptions({ type: 'reset' })}>
           Default options
         </button>
+        <button type="button" onClick={() => setOptions({ type: 'all' })}>
+          All options
+        </button>
+      </div>
+      <div style={{ marginTop: '1rem' }}>
+        <span style={{ marginRight: '0.5rem' }}>Export format:</span>
+        <select value={format} onChange={e => setFormat(e.target.value as ExportFormat)}>
+          {formatMap.map(([fmt, lbl]) => (
+            <option key={fmt} value={fmt}>
+              {lbl}
+            </option>
+          ))}
+        </select>
+        <pre>
+          {getFormatQueryString(options.independentCombinators ? queryIC : query, {
+            format,
+            parseNumbers: options.parseNumbers,
+          })}
+        </pre>
       </div>
     </div>
   );
 };
 
-render(<IE11 />, document.getElementById('ie11'));
+createRoot(document.getElementById('ie11')!).render(<IE11 />);

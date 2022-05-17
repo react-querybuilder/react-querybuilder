@@ -1,0 +1,17 @@
+$code-color: #333333;
+
+@import 'bootstrap/scss/bootstrap.scss';
+
+body {
+  margin: 1rem;
+}
+
+#app > div:first-child > label > input {
+  margin: 3px;
+}
+
+.form-control,
+.form-select {
+  display: inline-block;
+  width: auto;
+}

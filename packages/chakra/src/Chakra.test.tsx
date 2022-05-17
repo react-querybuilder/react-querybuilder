@@ -1,4 +1,5 @@
 import { theme, ThemeProvider } from '@chakra-ui/react';
+import { forwardRef } from 'react';
 import {
   testActionElement,
   testDragHandle,
@@ -6,8 +7,7 @@ import {
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
-import { forwardRef } from 'react';
-import type { DragHandleProps } from 'react-querybuilder';
+import type { DragHandleProps } from 'react-querybuilder/src';
 import {
   ChakraActionElement,
   ChakraDragHandle,

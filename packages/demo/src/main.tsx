@@ -24,9 +24,10 @@ import {
   useMemo,
   useReducer,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
   defaultOptions,
   fields,
@@ -40,7 +41,6 @@ import {
   type CommonRQBProps,
   type DemoOptions,
 } from 'react-querybuilder/dev';
-import 'react-querybuilder/src/query-builder.scss';
 import {
   defaultValidator,
   formatQuery,
@@ -49,12 +49,15 @@ import {
   type ExportFormat,
   type FormatQueryOptions,
 } from 'react-querybuilder/src';
+import 'react-querybuilder/src/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { styleConfigs } from './components';
-import { docsLink, npmLink, styleNameMap, type StyleName } from './constants';
+import { docsLink, npmLink, styleNameArray, styleNameMap, type StyleName } from './constants';
+
+type DemoOptionsWithStyle = DemoOptions & { style?: StyleName };
 
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
@@ -76,7 +79,7 @@ SyntaxHighlighter.registerLanguage('parameterized', json);
 SyntaxHighlighter.registerLanguage('parameterized_named', json);
 SyntaxHighlighter.registerLanguage('sql', sql);
 
-const shStyle = {
+const shStyle: Record<string, CSSProperties> = {
   ...vs,
   hljs: {
     ...vs.hljs,
@@ -96,18 +99,21 @@ const CustomFragment = (props: { children?: ReactNode }) => <>{props.children}</
 const permalinkText = 'Copy link';
 const permalinkCopiedText = 'Copied!';
 
-const getOptionsFromHash = (hash: Partial<DemoOptions>) => {
-  const optionsFromHash = defaultOptions;
+const getOptionsFromHash = (hash: Partial<DemoOptionsWithStyle>) => {
+  const optionsFromHash: DemoOptionsWithStyle = defaultOptions;
   for (const opt of optionOrder) {
     optionsFromHash[opt] = (hash[opt] ?? `${defaultOptions[opt]}`) === 'true';
   }
+  optionsFromHash.style = hash.style ?? 'default';
   return optionsFromHash;
 };
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 
 // Initialize options from URL hash
-const initialOptions = getOptionsFromHash(queryString.parse(location.hash));
+const { style: initialStyle, ...initialOptions } = getOptionsFromHash(
+  queryString.parse(location.hash)
+);
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -117,20 +123,24 @@ const App = () => {
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
-  const [style, setStyle] = useState<StyleName>('default');
+  const [style, setStyle] = useState<StyleName>(initialStyle ?? 'default');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
 
-  const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
+  const permalinkHash = useMemo(
+    () => `#${queryString.stringify({ ...options, style })}`,
+    [options, style]
+  );
 
   useEffect(() => {
     history.pushState(null, '', permalinkHash);
     const updateOptionsFromHash = (e: HashChangeEvent) => {
-      const opts = getOptionsFromHash(
+      const { style: s, ...opts } = getOptionsFromHash(
         queryString.parse(
           queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
         )
       );
       setOptions({ type: 'replace', payload: opts });
+      setStyle(s ?? 'default');
     };
     window.addEventListener('hashchange', updateOptionsFromHash);
 
@@ -204,7 +214,7 @@ const App = () => {
     [style, options]
   );
 
-  const loadingPlaceholder = useCallback(
+  const loadingPlaceholder = useMemo(
     () => (
       <div className="loading-placeholder">
         <Spin />
@@ -240,13 +250,11 @@ const App = () => {
               onChange={setStyle}
               dropdownMatchSelectWidth={false}
               style={{ minWidth: 100 }}>
-              {(['default', 'bootstrap', 'material', 'antd', 'chakra', 'bulma'] as StyleName[]).map(
-                s => (
-                  <Option key={s} value={s}>
-                    {styleNameMap[s]}
-                  </Option>
-                )
-              )}
+              {styleNameArray.map(s => (
+                <Option key={s} value={s}>
+                  {styleNameMap[s]}
+                </Option>
+              ))}
             </Select>
             <Title level={4} style={{ marginTop: '1rem' }}>
               Options
@@ -356,6 +364,18 @@ const App = () => {
             </p>
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
+            {style !== 'default' && (
+              <div style={{ marginBottom: '0.5rem' }}>
+                To use the official React Query Builder components for {styleNameMap[style]} in your
+                project, install{' '}
+                <Link
+                  target="_blank"
+                  href={`https://www.npmjs.com/package/@react-querybuilder/${style}`}>
+                  @react-querybuilder/{style}
+                </Link>
+                .
+              </div>
+            )}
             <ChakraStyleProvider theme={chakraTheme}>
               <MUIThemeProvider theme={muiTheme}>
                 <Suspense fallback={loadingPlaceholder}>
@@ -383,18 +403,6 @@ const App = () => {
                 </Suspense>
               </MUIThemeProvider>
             </ChakraStyleProvider>
-            {style !== 'default' && (
-              <>
-                To use the official React Query Builder components for {styleNameMap[style]} in your
-                project, install{' '}
-                <Link
-                  target="_blank"
-                  href={`https://www.npmjs.com/package/@react-querybuilder/${style}`}>
-                  @react-querybuilder/{style}
-                </Link>
-                .
-              </>
-            )}
             <Divider />
             <SyntaxHighlighter language={format} style={shStyle}>
               {formatString}
@@ -424,9 +432,8 @@ const App = () => {
   );
 };
 
-render(
+createRoot(document.getElementById('app')!).render(
   <StrictMode>
     <App />
-  </StrictMode>,
-  document.getElementById('app')
+  </StrictMode>
 );

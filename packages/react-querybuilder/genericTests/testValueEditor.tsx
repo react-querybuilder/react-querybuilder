@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import type { NameLabelPair, OptionGroup, ValueEditorProps } from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
-import { errorMessageIsAboutPointerEventsNone, findInput, findTextarea } from './utils';
+import { findInput, findTextarea, userEventSetup } from './utils';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
@@ -32,34 +31,30 @@ export const testValueEditor = (
   ValueEditor: React.ComponentType<ValueEditorProps>,
   skip: ValueEditorTestsToSkip = {}
 ) => {
+  const user = userEventSetup();
   const title = ValueEditor.displayName ?? 'ValueEditor';
   const props = { ...defaultValueEditorProps, title };
 
   const testCheckbox = (type: 'checkbox' | 'switch') => {
-    it('should render the checkbox and react to changes', () => {
+    it('should render the checkbox and react to changes', async () => {
       const handleOnChange = jest.fn();
       const { getByTitle } = render(
         <ValueEditor {...props} type={type} handleOnChange={handleOnChange} />
       );
       expect(() => findInput(getByTitle(title))).not.toThrow();
       expect(findInput(getByTitle(title))).toHaveAttribute('type', 'checkbox');
-      userEvent.click(findInput(getByTitle(title)));
+      await user.click(findInput(getByTitle(title)));
       expect(handleOnChange).toHaveBeenCalledWith(true);
     });
 
-    it('should be disabled by the disabled prop', () => {
+    it('should be disabled by the disabled prop', async () => {
       const handleOnChange = jest.fn();
       const { getByTitle } = render(
         <ValueEditor {...props} type={type} handleOnChange={handleOnChange} disabled />
       );
-      expect(findInput(getByTitle(title))).toBeDisabled();
-      try {
-        userEvent.click(findInput(getByTitle(title)));
-      } catch (e: any) {
-        if (!errorMessageIsAboutPointerEventsNone(e)) {
-          throw e;
-        }
-      }
+      const input = findInput(getByTitle(title));
+      expect(input).toBeDisabled();
+      await user.click(input);
       expect(handleOnChange).not.toHaveBeenCalled();
     });
   };
@@ -82,10 +77,10 @@ export const testValueEditor = (
           expect(() => getByTitle(title)).toThrow();
         });
 
-        it('should call the onChange method passed in', () => {
+        it('should call the onChange method passed in', async () => {
           const onChange = jest.fn();
           const { getByTitle } = render(<ValueEditor {...props} handleOnChange={onChange} />);
-          userEvent.type(findInput(getByTitle(title)), 'foo');
+          await user.type(findInput(getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
         });
 
@@ -182,12 +177,12 @@ export const testValueEditor = (
           );
           const radioButtons = getByTitle(title).querySelectorAll('input[type="radio"]');
           expect(radioButtons).toHaveLength(2);
-          radioButtons.forEach(r => {
+          for (const r of radioButtons) {
             expect(r).toHaveAttribute('type', 'radio');
-          });
+          }
         });
 
-        it('should call the onChange handler', () => {
+        it('should call the onChange handler', async () => {
           const handleOnChange = jest.fn();
           const { getByTitle } = render(
             <ValueEditor
@@ -200,16 +195,17 @@ export const testValueEditor = (
               ]}
             />
           );
-          getByTitle(title)
-            .querySelectorAll('input[type="radio"]')
-            .forEach(r => {
-              userEvent.click(r);
-            });
+          const radioButtons = Array.from(
+            getByTitle(title).querySelectorAll('input[type="radio"]')
+          );
+          for (const r of radioButtons) {
+            await user.click(r);
+          }
           expect(handleOnChange).toHaveBeenCalledWith('test1');
           expect(handleOnChange).toHaveBeenCalledWith('test2');
         });
 
-        it('should be disabled by the disabled prop', () => {
+        it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
           const { getByTitle } = render(
             <ValueEditor
@@ -223,18 +219,10 @@ export const testValueEditor = (
               disabled
             />
           );
-          getByTitle(title)
-            .querySelectorAll('input[type="radio"]')
-            .forEach(r => {
-              expect(r).toBeDisabled();
-              try {
-                userEvent.click(r);
-              } catch (e: any) {
-                if (!errorMessageIsAboutPointerEventsNone(e)) {
-                  throw e;
-                }
-              }
-            });
+          for (const r of getByTitle(title).querySelectorAll('input[type="radio"]')) {
+            expect(r).toBeDisabled();
+            await user.click(r);
+          }
           expect(handleOnChange).not.toHaveBeenCalled();
         });
       });
@@ -247,12 +235,12 @@ export const testValueEditor = (
           expect(findTextarea(getByTitle(title))).toHaveValue('test');
         });
 
-        it('should call the onChange method passed in', () => {
+        it('should call the onChange method passed in', async () => {
           const onChange = jest.fn();
           const { getByTitle } = render(
             <ValueEditor {...props} type="textarea" handleOnChange={onChange} />
           );
-          userEvent.type(findTextarea(getByTitle(title)), 'foo');
+          await user.type(findTextarea(getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
         });
       });

@@ -1,0 +1,16 @@
+$code: #333333;
+$code-background: unset;
+
+@import 'bulma/bulma.sass';
+
+body {
+  margin: 1rem;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+.input {
+  width: auto;
+}

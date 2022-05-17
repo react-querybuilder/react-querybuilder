@@ -30,6 +30,8 @@ import type {
   ValueSources,
 } from './types';
 
+const user = userEvent.setup();
+
 const [Rule, getDndBackendOriginal] = wrapWithTestBackend(RuleOriginal);
 // This is just a type guard against `undefined`
 const getDndBackend = () => getDndBackendOriginal()!;
@@ -145,11 +147,11 @@ it('should have correct classNames', () => {
 
 describe('onElementChanged methods', () => {
   describe('onFieldChanged', () => {
-    it('should call onPropChange with the rule path', () => {
+    it('should call onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
       const { getByTestId } = render(<Rule {...props} />);
-      userEvent.selectOptions(
+      await user.selectOptions(
         getByTestId(TestID.rule).querySelector(`select.${sc.fields}`)!,
         'any_field'
       );
@@ -158,11 +160,11 @@ describe('onElementChanged methods', () => {
   });
 
   describe('onOperatorChanged', () => {
-    it('should call onPropChange with the rule path', () => {
+    it('should call onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
       const { getByTestId } = render(<Rule {...props} />);
-      userEvent.selectOptions(
+      await user.selectOptions(
         getByTestId(TestID.rule).querySelector(`select.${sc.operators}`)!,
         'any_operator'
       );
@@ -171,11 +173,11 @@ describe('onElementChanged methods', () => {
   });
 
   describe('onValueChanged', () => {
-    it('should call onPropChange with the rule path', () => {
+    it('should call onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
       const { getByTestId } = render(<Rule {...props} />);
-      userEvent.type(getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!, 'any_value');
+      await user.type(getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!, 'any_value');
       expect(onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
     });
   });
@@ -197,19 +199,19 @@ describe('valueEditorType as function', () => {
 });
 
 describe('cloneRule', () => {
-  it('should call moveRule with the right paths', () => {
+  it('should call moveRule with the right paths', async () => {
     const moveRule = jest.fn();
     const { getByText } = render(<Rule {...getProps({ moveRule, showCloneButtons: true })} />);
-    userEvent.click(getByText(t.cloneRule.label));
+    await user.click(getByText(t.cloneRule.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
 
 describe('removeRule', () => {
-  it('should call onRuleRemove with the rule and path', () => {
+  it('should call onRuleRemove with the rule and path', async () => {
     const onRuleRemove = jest.fn();
     const { getByText } = render(<Rule {...getProps({ onRuleRemove })} />);
-    userEvent.click(getByText(t.removeRule.label));
+    await user.click(getByText(t.removeRule.label));
     expect(onRuleRemove).toHaveBeenCalledWith([0]);
   });
 });
@@ -355,7 +357,7 @@ describe('disabled', () => {
     expect(getByTestId(TestID.rule)).toHaveClass(sc.disabled);
   });
 
-  it('does not try to update the query', () => {
+  it('does not try to update the query', async () => {
     const onRuleRemove = jest.fn();
     const onPropChange = jest.fn();
     const moveRule = jest.fn();
@@ -370,11 +372,11 @@ describe('disabled', () => {
         disabled
       />
     );
-    userEvent.selectOptions(getByTestId(TestID.fields), 'any_field');
-    userEvent.selectOptions(getByTestId(TestID.operators), 'any_operator');
-    userEvent.type(getByTestId(TestID.valueEditor), 'Test');
-    userEvent.click(getByTestId(TestID.cloneRule));
-    userEvent.click(getByTestId(TestID.removeRule));
+    await user.selectOptions(getByTestId(TestID.fields), 'any_field');
+    await user.selectOptions(getByTestId(TestID.operators), 'any_operator');
+    await user.type(getByTestId(TestID.valueEditor), 'Test');
+    await user.click(getByTestId(TestID.cloneRule));
+    await user.click(getByTestId(TestID.removeRule));
     expect(onRuleRemove).not.toHaveBeenCalled();
     expect(onPropChange).not.toHaveBeenCalled();
     expect(moveRule).not.toHaveBeenCalled();
@@ -387,29 +389,29 @@ describe('locked rule', () => {
     expect(getByTestId(TestID.lockRule)).toBeEnabled();
   });
 
-  it('disables the lock button if the parent group is disabled even if the current rule is not', () => {
+  it('disables the lock button if the parent group is disabled even if the current rule is not', async () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(
       <Rule {...getProps({ showLockButtons: true, onPropChange })} parentDisabled />
     );
     expect(getByTestId(TestID.lockRule)).toBeDisabled();
-    userEvent.click(getByTestId(TestID.lockRule));
+    await user.click(getByTestId(TestID.lockRule));
     expect(onPropChange).not.toHaveBeenCalled();
   });
 
-  it('sets the disabled property', () => {
+  it('sets the disabled property', async () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(<Rule {...getProps({ showLockButtons: true, onPropChange })} />);
-    userEvent.click(getByTestId(TestID.lockRule));
+    await user.click(getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
 
-  it('unsets the disabled property', () => {
+  it('unsets the disabled property', async () => {
     const onPropChange = jest.fn();
     const { getByTestId } = render(
       <Rule {...getProps({ showLockButtons: true, onPropChange })} disabled />
     );
-    userEvent.click(getByTestId(TestID.lockRule));
+    await user.click(getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
   });
 

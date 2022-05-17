@@ -26,4 +26,7 @@ export default defineConfig({
     sourcemap: true,
   },
   plugins: [tsconfigPaths(), vitePluginReact()],
+  server: {
+    port: 3100,
+  },
 });

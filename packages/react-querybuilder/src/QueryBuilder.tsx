@@ -10,14 +10,13 @@ import {
   defaultTranslations,
   standardClassnames,
 } from './defaults';
-import {
+import type {
   Field,
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
   Schema,
-  Translations,
   UpdateableProperties,
   ValueSources,
 } from './types';
@@ -31,6 +30,7 @@ import {
   isOptionGroupArray,
   isRuleGroup,
   move,
+  objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
@@ -79,10 +79,10 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 }: QueryBuilderProps<RG>) => {
   const translations = useMemo(() => {
     const translationsTemp = defaultTranslations;
-    const translationsPropKeys = Object.keys(translationsProp) as (keyof Translations)[];
-    for (const t of translationsPropKeys) {
+    objectKeys(translationsProp).forEach(t => {
+      // TODO: type this better (remove/replace `as any`)
       translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] } as any;
-    }
+    });
     return translationsTemp;
   }, [translationsProp]);
 

@@ -11,4 +11,5 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
+  transformIgnorePatterns: ['/node_modules/(?!react-dnd|dnd-core|@react-dnd)'],
 };
