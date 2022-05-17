@@ -100,6 +100,7 @@ UNION                                                             return 'UNION'
 "!="                                                              return '!='
 "!"                                                               return '!'
 "||"                                                              return '||'
+"|"                                                               return '|'
 "&"                                                               return '&'
 "+"                                                               return '+'
 "-"                                                               return '-'
@@ -148,7 +149,7 @@ UNION                                                             return 'UNION'
 %right ON
 %left OR XOR
 %left AND
-// %left '|'
+%left '|'
 %left '^'
 %left '&'
 %left '=' '!='        /* = in sql equels == */
@@ -369,8 +370,8 @@ simple_expr
   ;
 bit_expr
   : simple_expr { $$ = $1 }
-  // | bit_expr '|' bit_expr { $$ = { type: 'BitExpression', operator: '|', left: $1, right: $3 } }
-  // | bit_expr '&' bit_expr { $$ = { type: 'BitExpression', operator: '&', left: $1, right: $3 } }
+  | bit_expr '|' bit_expr { $$ = { type: 'BitExpression', operator: '|', left: $1, right: $3 } }
+  | bit_expr '&' bit_expr { $$ = { type: 'BitExpression', operator: '&', left: $1, right: $3 } }
   | bit_expr '<<' bit_expr { $$ = { type: 'BitExpression', operator: '<<', left: $1, right: $3 } }
   | bit_expr '>>' bit_expr { $$ = { type: 'BitExpression', operator: '>>', left: $1, right: $3 } }
   | bit_expr '+' bit_expr { $$ = { type: 'BitExpression', operator: '+', left: $1, right: $3 } }
@@ -426,8 +427,6 @@ expr
   : boolean_primary { $$ = $1 }
   | boolean_primary IS not_opt boolean_extra { $$ = { type: 'IsExpression', hasNot: $3, left: $1, right: $4 } }
   | NOT expr { $$ = { type: 'NotExpression', value: $2 } }
-  // | expr '&&' expr { $$ = { type: 'AndExpression', operator: $2, left: $1, right: $3 } }
-  // | expr '||' expr { $$ = { type: 'OrExpression', operator: $2, left: $1, right: $3 } }
   | expr OR expr { $$ = { type: 'OrExpression', operator: $2, left: $1, right: $3 } }
   | expr AND expr { $$ = { type: 'AndExpression', operator: $2, left: $1, right: $3 } }
   | expr XOR expr { $$ = { type: 'XORExpression', left: $1, right: $3 } }
