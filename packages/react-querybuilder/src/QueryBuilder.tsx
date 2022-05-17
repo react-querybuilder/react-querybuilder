@@ -30,6 +30,7 @@ import {
   isOptionGroupArray,
   isRuleGroup,
   move,
+  objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
@@ -78,7 +79,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 }: QueryBuilderProps<RG>) => {
   const translations = useMemo(() => {
     const translationsTemp = defaultTranslations;
-    Object.keys(translationsProp).forEach(t => {
+    objectKeys(translationsProp).forEach(t => {
       // TODO: type this better (remove/replace `as any`)
       translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] } as any;
     });

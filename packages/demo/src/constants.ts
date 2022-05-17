@@ -1,3 +1,5 @@
+import { objectKeys } from 'react-querybuilder/src';
+
 export type StyleName = 'default' | 'antd' | 'bootstrap' | 'bulma' | 'chakra' | 'material';
 
 export const npmLink = 'https://www.npmjs.com/package/react-querybuilder';
@@ -14,7 +16,7 @@ export const styleNameMap: Record<StyleName, string> = {
 
 export const styleNameArray: StyleName[] = [
   'default',
-  ...Object.keys(styleNameMap)
+  ...objectKeys(styleNameMap)
     .filter(s => s !== 'default')
     .sort(),
 ];
