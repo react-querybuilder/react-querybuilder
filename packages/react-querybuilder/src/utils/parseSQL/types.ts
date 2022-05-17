@@ -10,6 +10,8 @@ type TokenType =
   | 'CaseWhen'
   | 'ComparisonBooleanPrimary'
   | 'ComparisonSubQueryBooleanPrimary'
+  | 'ContainsExpr'
+  | 'EndsWithExpr'
   | 'ExpressionList'
   | 'ForceIndexHint'
   | 'ForOptIndexHint'
@@ -47,6 +49,7 @@ type TokenType =
   | 'SelectParenthesized'
   | 'SimpleExprParentheses'
   | 'SoundsLikePredicate'
+  | 'StartsWithExpr'
   | 'StraightJoinTable'
   | 'String'
   | 'SubQuery'
@@ -114,8 +117,20 @@ export interface SQLLikePredicate extends SQLWhereObject {
   type: 'LikePredicate';
   hasNot: NotOpt;
   left: SQLSimpleExpression;
-  right: SQLSimpleExpression | SQLOrExpression;
+  right: SQLSimpleExpression | SQLStartsWithExpr | SQLEndsWithExpr | SQLContainsExpr;
   escape: SQLStringValue | null;
+}
+export interface SQLStartsWithExpr extends SQLWhereObject {
+  type: 'StartsWithExpr';
+  value: SQLStringValue | SQLIdentifier;
+}
+export interface SQLEndsWithExpr extends SQLWhereObject {
+  type: 'EndsWithExpr';
+  value: SQLStringValue | SQLIdentifier;
+}
+export interface SQLContainsExpr extends SQLWhereObject {
+  type: 'ContainsExpr';
+  value: SQLStringValue | SQLIdentifier;
 }
 export interface SQLIsNullBooleanPrimary extends SQLWhereObject {
   type: 'IsNullBooleanPrimary';
