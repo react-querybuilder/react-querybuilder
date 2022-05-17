@@ -22,7 +22,6 @@ import {
   isSQLExpressionNotString,
   isSQLIdentifier,
   isSQLLiteralValue,
-  isWildcardsOnly,
   normalizeOperator,
 } from './utils';
 
@@ -304,26 +303,22 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         }
       } else if (
         isSQLIdentifier(expr.left) &&
-        expr.right.type === 'OrExpression' &&
-        expr.right.operator === '||'
+        (expr.right.type === 'StartsWithExpr' ||
+          expr.right.type === 'EndsWithExpr' ||
+          expr.right.type === 'ContainsExpr')
       ) {
         let subordinateFieldName = '';
         let operator: DefaultOperatorName = '=';
 
-        if (isSQLIdentifier(expr.right.right) && isWildcardsOnly(expr.right.left)) {
-          subordinateFieldName = getFieldName(expr.right.right);
+        if (isSQLIdentifier(expr.right.value)) {
+          subordinateFieldName = getFieldName(expr.right.value);
+        }
+
+        if (expr.right.type === 'EndsWithExpr') {
           operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
-        } else if (isSQLIdentifier(expr.right.left) && isWildcardsOnly(expr.right.right)) {
-          subordinateFieldName = getFieldName(expr.right.left);
+        } else if (expr.right.type === 'StartsWithExpr') {
           operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
-        } else if (
-          isWildcardsOnly(expr.right.right) &&
-          expr.right.left.type === 'OrExpression' &&
-          expr.right.left.operator === '||' &&
-          isWildcardsOnly(expr.right.left.left) &&
-          isSQLIdentifier(expr.right.left.right)
-        ) {
-          subordinateFieldName = getFieldName(expr.right.left.right);
+        } else if (expr.right.type === 'ContainsExpr') {
           operator = expr.hasNot ? 'doesNotContain' : 'contains';
         }
 

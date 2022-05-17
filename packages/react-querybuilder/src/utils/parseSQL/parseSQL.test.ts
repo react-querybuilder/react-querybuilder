@@ -346,17 +346,21 @@ describe('options', () => {
       );
     });
 
-    // TODO: re-enable when sqlParser properly handles `||` (string concatenation operator).
-    // See https://github.com/react-querybuilder/react-querybuilder/issues/280
-    it.skip('handles LIKE clauses with wildcards', () => {
+    it('handles LIKE clauses with wildcards', () => {
       expect(
-        parseSQL(`f3 like '%' || f1 || '%' and f3 like f1 || '%' and f3 like '%' || f1`, { fields })
+        parseSQL(
+          `f3 like '%%' || f1 || '%' and f3 like f1 || '%' and f3 like '%' || f1 and f3 not like '%' || f1 || '%' and f3 not like f1 || '%' and f3 not like '%' || f1`,
+          { fields }
+        )
       ).toEqual({
         combinator: 'and',
         rules: [
           { field: 'f3', operator: 'contains', value: 'f1', valueSource: 'field' },
           { field: 'f3', operator: 'beginsWith', value: 'f1', valueSource: 'field' },
           { field: 'f3', operator: 'endsWith', value: 'f1', valueSource: 'field' },
+          { field: 'f3', operator: 'doesNotContain', value: 'f1', valueSource: 'field' },
+          { field: 'f3', operator: 'doesNotBeginWith', value: 'f1', valueSource: 'field' },
+          { field: 'f3', operator: 'doesNotEndWith', value: 'f1', valueSource: 'field' },
         ],
       });
     });

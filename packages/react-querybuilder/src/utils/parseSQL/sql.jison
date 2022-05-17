@@ -99,7 +99,7 @@ UNION                                                             return 'UNION'
 "~"                                                               return '~'
 "!="                                                              return '!='
 "!"                                                               return '!'
-"|"                                                               return '|'
+"||"                                                              return '||'
 "&"                                                               return '&'
 "+"                                                               return '+'
 "-"                                                               return '-'
@@ -119,6 +119,7 @@ UNION                                                             return 'UNION'
 "}"                                                               return '}'
 ";"                                                               return ';'
 
+['](\%+)[']                                                        return 'WILDCARD'
 ['](\\.|[^'])*[']                                                 return 'STRING'
 ["](\\.|[^"])*["]                                                 return 'STRING'
 [0][x][0-9a-fA-F]+                                                return 'HEX_NUMERIC'
@@ -145,9 +146,9 @@ UNION                                                             return 'UNION'
 %left INNER_CROSS_JOIN
 %right USING
 %right ON
-%left OR XOR '||'
-%left '&&' AND
-%left '|'
+%left OR XOR
+%left AND
+// %left '|'
 %left '^'
 %left '&'
 %left '=' '!='        /* = in sql equels == */
@@ -362,11 +363,14 @@ simple_expr
   | EXISTS '(' selectClause ')' { $$ = { type: 'SubQuery', value: $3, hasExists: true } }
   | '{' identifier expr '}' { $$ = { type: 'IdentifierExpr', identifier: $2, value: $3 } }
   | case_when { $$ = $1 }
+  | identifier '||' WILDCARD { $$ = { type: 'StartsWithExpr', value: $1 } }
+  | WILDCARD '||' identifier { $$ = { type: 'EndsWithExpr', value: $3 } }
+  | WILDCARD '||' identifier '||' WILDCARD { $$ = { type: 'ContainsExpr', value: $3 } }
   ;
 bit_expr
   : simple_expr { $$ = $1 }
-  | bit_expr '|' bit_expr { $$ = { type: 'BitExpression', operator: '|', left: $1, right: $3 } }
-  | bit_expr '&' bit_expr { $$ = { type: 'BitExpression', operator: '&', left: $1, right: $3 } }
+  // | bit_expr '|' bit_expr { $$ = { type: 'BitExpression', operator: '|', left: $1, right: $3 } }
+  // | bit_expr '&' bit_expr { $$ = { type: 'BitExpression', operator: '&', left: $1, right: $3 } }
   | bit_expr '<<' bit_expr { $$ = { type: 'BitExpression', operator: '<<', left: $1, right: $3 } }
   | bit_expr '>>' bit_expr { $$ = { type: 'BitExpression', operator: '>>', left: $1, right: $3 } }
   | bit_expr '+' bit_expr { $$ = { type: 'BitExpression', operator: '+', left: $1, right: $3 } }
@@ -422,8 +426,8 @@ expr
   : boolean_primary { $$ = $1 }
   | boolean_primary IS not_opt boolean_extra { $$ = { type: 'IsExpression', hasNot: $3, left: $1, right: $4 } }
   | NOT expr { $$ = { type: 'NotExpression', value: $2 } }
-  | expr '&&' expr { $$ = { type: 'AndExpression', operator: $2, left: $1, right: $3 } }
-  | expr '||' expr { $$ = { type: 'OrExpression', operator: $2, left: $1, right: $3 } }
+  // | expr '&&' expr { $$ = { type: 'AndExpression', operator: $2, left: $1, right: $3 } }
+  // | expr '||' expr { $$ = { type: 'OrExpression', operator: $2, left: $1, right: $3 } }
   | expr OR expr { $$ = { type: 'OrExpression', operator: $2, left: $1, right: $3 } }
   | expr AND expr { $$ = { type: 'AndExpression', operator: $2, left: $1, right: $3 } }
   | expr XOR expr { $$ = { type: 'XORExpression', left: $1, right: $3 } }
