@@ -20,6 +20,7 @@ export const MaterialValueEditor = ({
   type,
   inputType,
   values,
+  valueSource: _vs,
   disabled,
   ...props
 }: ValueEditorProps) => {
