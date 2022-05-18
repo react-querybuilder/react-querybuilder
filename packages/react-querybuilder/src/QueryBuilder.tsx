@@ -12,6 +12,7 @@ import {
 } from './defaults';
 import type {
   Field,
+  NameLabelPair,
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
@@ -428,6 +429,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     showCloneButtons,
     showLockButtons,
     autoSelectField,
+    autoSelectOperator,
     addRuleToNewGroups,
     enableDragAndDrop,
     independentCombinators: !!independentCombinators,
