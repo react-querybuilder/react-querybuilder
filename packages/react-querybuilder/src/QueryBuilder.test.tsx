@@ -833,9 +833,10 @@ describe('valueEditorType property in field', () => {
 
 describe('operators property in field', () => {
   it('sets the operators options', async () => {
+    const operators = [{ name: '=', label: '=' }];
     const fields: Field[] = [
-      { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
-      { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] },
+      { name: 'field1', label: 'Field 1', operators },
+      { name: 'field2', label: 'Field 2', operators },
     ];
     const onQueryChange = jest.fn();
     const { container, getByTestId } = render(
@@ -850,9 +851,10 @@ describe('operators property in field', () => {
 });
 
 describe('autoSelectField', () => {
+  const operators = [{ name: '=', label: '=' }];
   const fields: Field[] = [
-    { name: 'field1', label: 'Field 1', operators: [{ name: '=', label: '=' }] },
-    { name: 'field2', label: 'Field 2', operators: [{ name: '=', label: '=' }] },
+    { name: 'field1', label: 'Field 1', operators },
+    { name: 'field2', label: 'Field 2', operators },
   ];
 
   it('initially hides the operator selector and value editor', async () => {
@@ -898,6 +900,60 @@ describe('autoSelectField', () => {
 
     expect(
       container.querySelector(`optgroup[label="${placeholderFieldGroupLabel}"]`)
+    ).toBeInTheDocument();
+  });
+});
+
+describe('autoSelectOperator', () => {
+  const operators = [{ name: '=', label: '=' }];
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1', operators },
+    { name: 'field2', label: 'Field 2', operators },
+  ];
+
+  it('initially hides the value editor', async () => {
+    const { container, getByTestId } = render(
+      <QueryBuilder fields={fields} autoSelectOperator={false} />
+    );
+
+    await user.click(getByTestId(TestID.addRule));
+
+    expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
+    expect(container.querySelectorAll(`select.${sc.operators}`)).toHaveLength(1);
+    expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
+  });
+
+  it('uses the placeholderOperatorLabel', async () => {
+    const placeholderOperatorLabel = 'Test placeholder';
+    const { getByDisplayValue, getByTestId } = render(
+      <QueryBuilder
+        fields={fields}
+        autoSelectOperator={false}
+        translations={{ operators: { placeholderLabel: placeholderOperatorLabel } }}
+      />
+    );
+
+    await user.click(getByTestId(TestID.addRule));
+
+    expect(getByDisplayValue(placeholderOperatorLabel)).toBeInTheDocument();
+  });
+
+  it('uses the placeholderOperatorGroupLabel', async () => {
+    const placeholderOperatorGroupLabel = 'Test group placeholder';
+    const { container, getByTestId } = render(
+      <QueryBuilder
+        fields={[{ label: 'Fields', options: fields }]}
+        autoSelectOperator={false}
+        translations={{
+          operators: { placeholderGroupLabel: placeholderOperatorGroupLabel },
+        }}
+      />
+    );
+
+    await user.click(getByTestId(TestID.addRule));
+
+    expect(
+      container.querySelector(`optgroup[label="${placeholderOperatorGroupLabel}"]`)
     ).toBeInTheDocument();
   });
 });

@@ -38,6 +38,7 @@ export const Rule = ({
     onPropChange,
     onRuleRemove,
     autoSelectField,
+    autoSelectOperator,
     showCloneButtons,
     showLockButtons,
     independentCombinators,
@@ -201,7 +202,7 @@ export const Rule = ({
         context={context}
         validation={validationResult}
       />
-      {(autoSelectField || fieldData.name !== '~') && (
+      {(autoSelectField || field !== '~') && (
         <>
           <controls.operatorSelector
             testID={TestID.operators}
@@ -218,42 +219,46 @@ export const Rule = ({
             context={context}
             validation={validationResult}
           />
-          {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
-            <controls.valueSourceSelector
-              testID={TestID.valueSourceSelector}
-              field={field}
-              fieldData={fieldData}
-              title={translations.valueSourceSelector.title}
-              options={vsOptions}
-              value={valueSource ?? 'value'}
-              className={c(standardClassnames.valueSource, classNames.valueSource)}
-              handleOnChange={generateOnChangeHandler('valueSource')}
-              level={level}
-              path={path}
-              disabled={disabled}
-              context={context}
-              validation={validationResult}
-            />
+          {(autoSelectOperator || operator !== '~') && (
+            <>
+              {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
+                <controls.valueSourceSelector
+                  testID={TestID.valueSourceSelector}
+                  field={field}
+                  fieldData={fieldData}
+                  title={translations.valueSourceSelector.title}
+                  options={vsOptions}
+                  value={valueSource ?? 'value'}
+                  className={c(standardClassnames.valueSource, classNames.valueSource)}
+                  handleOnChange={generateOnChangeHandler('valueSource')}
+                  level={level}
+                  path={path}
+                  disabled={disabled}
+                  context={context}
+                  validation={validationResult}
+                />
+              )}
+              <controls.valueEditor
+                testID={TestID.valueEditor}
+                field={field}
+                fieldData={fieldData}
+                title={translations.value.title}
+                operator={operator}
+                value={value}
+                valueSource={valueSource ?? 'value'}
+                type={valueEditorType}
+                inputType={inputType}
+                values={values}
+                className={c(standardClassnames.value, classNames.value)}
+                handleOnChange={generateOnChangeHandler('value')}
+                level={level}
+                path={path}
+                disabled={disabled}
+                context={context}
+                validation={validationResult}
+              />
+            </>
           )}
-          <controls.valueEditor
-            testID={TestID.valueEditor}
-            field={field}
-            fieldData={fieldData}
-            title={translations.value.title}
-            operator={operator}
-            value={value}
-            valueSource={valueSource ?? 'value'}
-            type={valueEditorType}
-            inputType={inputType}
-            values={values}
-            className={c(standardClassnames.value, classNames.value)}
-            handleOnChange={generateOnChangeHandler('value')}
-            level={level}
-            path={path}
-            disabled={disabled}
-            context={context}
-            validation={validationResult}
-          />
         </>
       )}
       {showCloneButtons && (

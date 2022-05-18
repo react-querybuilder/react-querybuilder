@@ -70,6 +70,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
   autoSelectField = true,
+  autoSelectOperator = true,
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
@@ -125,20 +126,36 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
+  const defaultOperator = useMemo(
+    (): NameLabelPair[] => [{ id: '~', name: '~', label: translations.operators.placeholderLabel }],
+    [translations.operators.placeholderLabel]
+  );
+
   const getOperatorsMain = useCallback(
     (field: string) => {
       const fieldData = fieldMap[field];
+      let opsFinal = operators;
+
       if (fieldData?.operators) {
-        return fieldData.operators;
-      }
-      if (getOperators) {
+        opsFinal = fieldData.operators;
+      } else if (getOperators) {
         const ops = getOperators(field);
-        if (ops) return ops;
+        if (ops) {
+          opsFinal = ops;
+        }
       }
 
-      return operators;
+      if (!autoSelectOperator) {
+        if (isOptionGroupArray(opsFinal)) {
+          opsFinal = [{ label: translations.operators.placeholderGroupLabel, options: defaultOperator }, ...opsFinal]
+        } else {
+          opsFinal = [...defaultOperator, ...opsFinal]
+        }
+      }
+
+      return isOptionGroupArray(opsFinal) ? uniqOptGroups(opsFinal) : uniqByName(opsFinal);
     },
-    [fieldMap, getOperators, operators]
+    [defaultOperator, fieldMap, getOperators, operators, translations.operators.placeholderGroupLabel]
   );
 
   const getRuleDefaultOperator = useCallback(
@@ -156,9 +173,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
         }
       }
 
-      const operators = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-      return operators.length
-        ? getFirstOption(operators) ?? /* istanbul ignore next */ ''
+      const ops = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
+      return ops.length
+        ? getFirstOption(ops) ?? /* istanbul ignore next */ ''
         : /* istanbul ignore next */ '';
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]

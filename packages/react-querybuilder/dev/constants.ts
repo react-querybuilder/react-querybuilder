@@ -19,6 +19,7 @@ export const defaultOptions: DemoOptions = {
   resetOnFieldChange: true,
   resetOnOperatorChange: false,
   autoSelectField: true,
+  autoSelectOperator: true,
   addRuleToNewGroups: false,
   validateQuery: false,
   independentCombinators: false,
@@ -36,6 +37,7 @@ export const optionOrder: DemoOption[] = [
   'resetOnFieldChange',
   'resetOnOperatorChange',
   'autoSelectField',
+  'autoSelectOperator',
   'addRuleToNewGroups',
   'validateQuery',
   'independentCombinators',
@@ -82,6 +84,11 @@ export const optionsMetadata: Record<
     link: '/docs/api/querybuilder#autoselectfield',
     label: 'Auto-select field',
     title: 'The default field will be automatically selected for new rules',
+  },
+  autoSelectOperator: {
+    link: '/docs/api/querybuilder#autoselectoperator',
+    label: 'Auto-select operator',
+    title: 'The default operator will be automatically selected for new rules',
   },
   addRuleToNewGroups: {
     link: '/docs/api/querybuilder#addruletonewgroups',
