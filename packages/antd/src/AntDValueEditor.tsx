@@ -14,6 +14,7 @@ export const AntDValueEditor = ({
   type,
   inputType,
   values,
+  valueSource: _vs,
   disabled,
   ...props
 }: ValueEditorProps) => {

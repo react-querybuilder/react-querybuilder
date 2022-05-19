@@ -1,7 +1,10 @@
 import { Select } from 'antd';
-import { useMemo } from 'react';
-import type { ValueSelectorProps } from 'react-querybuilder';
+import { useMemo, type ComponentPropsWithoutRef } from 'react';
+import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
+
+type AntDValueSelectorProps = VersatileSelectorProps &
+  Omit<ComponentPropsWithoutRef<typeof Select>, 'onChange' | 'defaultValue'>;
 
 export const AntDValueSelector = ({
   className,
@@ -11,7 +14,18 @@ export const AntDValueSelector = ({
   title,
   disabled,
   multiple,
-}: ValueSelectorProps) => {
+  // Props that should not be in extraProps
+  testID: _testID,
+  rules: _rules,
+  level: _level,
+  path: _path,
+  context: _context,
+  validation: _validation,
+  operator: _operator,
+  field: _field,
+  fieldData: _fieldData,
+  ...extraProps
+}: AntDValueSelectorProps) => {
   const onChange = useMemo(() => {
     if (multiple) {
       return (v: string | string[]) =>
@@ -35,7 +49,8 @@ export const AntDValueSelector = ({
         dropdownMatchSelectWidth={false}
         disabled={disabled}
         value={val as any}
-        onChange={onChange}>
+        onChange={onChange}
+        {...extraProps}>
         {toOptions(options)}
       </Select>
     </span>

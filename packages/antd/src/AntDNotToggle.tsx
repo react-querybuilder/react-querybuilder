@@ -1,5 +1,8 @@
 import { Switch } from 'antd';
+import type { ComponentPropsWithoutRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
+
+type AntDNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
 
 export const AntDNotToggle = ({
   className,
@@ -8,7 +11,8 @@ export const AntDNotToggle = ({
   checked,
   title,
   disabled,
-}: NotToggleProps) => (
+  ...extraProps
+}: AntDNotToggleProps) => (
   <Switch
     title={title}
     className={className}
@@ -17,6 +21,7 @@ export const AntDNotToggle = ({
     disabled={disabled}
     checkedChildren={label}
     unCheckedChildren="="
+    {...extraProps}
   />
 );
 

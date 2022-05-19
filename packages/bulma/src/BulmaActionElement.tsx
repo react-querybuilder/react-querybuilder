@@ -10,7 +10,7 @@ export const BulmaActionElement = ({
 }: ActionProps) => (
   <button
     type="button"
-    className={`${className} button is-small`}
+    className={`button is-small ${className}`}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
     onClick={e => handleOnClick(e)}
     disabled={disabled && !disabledTranslation}>
