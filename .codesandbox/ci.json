@@ -1,4 +1,5 @@
 {
+  "buildCommand": "build:packages",
   "packages": [
     "packages/antd",
     "packages/bootstrap",
