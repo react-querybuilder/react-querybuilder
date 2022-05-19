@@ -4,7 +4,11 @@ title: Compatibility packages
 
 The default React Query Builder components, being basic HTML5 form controls, are very flexible with styling (primarily through the [`controlClassnames` prop](./api/querybuilder#controlclassnames)). But some style libraries require different HTML structure to style their form controls correctly.
 
-Official components compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
+Official component packages compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
+
+## Packages
+
+You can see each alternate component package in action by selecting different options in the "Style" dropdown list on the [demo page](https://react-querybuilder.js.org/react-querybuilder/). The "Demo" links in the table below will load the demo with the respective style library preselected.
 
 | Library                                | Compatibility package                                                                        | Demo link                                                                     |
 | -------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -14,9 +18,11 @@ Official components compatible with several popular style libraries are availabl
 | [Chakra UI](https://chakra-ui.com/)    | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=chakra)    |
 | [MUI](https://mui.com/)                | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=material)  |
 
-You can see each alternate component package in action by selecting different options in the "Style" dropdown list on the [demo page](https://react-querybuilder.js.org/react-querybuilder/).
+## Exports
 
-Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./api/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use as the [`controlClassnames` prop](./api/querybuilder#controlclassnames). For example:
+Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./api/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use as the [`controlClassnames` prop](./api/querybuilder#controlclassnames).
+
+This example uses the Bootstrap library:
 
 ```tsx
 import QueryBuilder from 'react-querybuilder';
@@ -37,3 +43,55 @@ export function App() {
   );
 }
 ```
+
+## Customization
+
+Many of the compatibility components accept any props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the library component while leaving the integration with the query builder up to the compatibility component.
+
+For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders the `Button` component from `antd`, so it can accept properties of the `ActionWithRulesProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
+
+In the example below, the `size` prop is not available on `ActionWithRulesProps`, but it's accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface).
+
+```tsx
+import { AntDActionElement, antdControlElements } from '@react-querybuilder/antd';
+import { QueryBuilder, type ActionWithRulesProps } from 'react-querybuilder';
+
+const MyAntDActionElement = (props: ActionWithRulesProps) => (
+  <AntDActionElement {...props} size="large" />
+);
+
+export const App = () => {
+  return (
+    <QueryBuilder
+      controlElements={{
+        ...antdControlElements,
+        addRuleAction: MyAntDActionElement,
+        addGroupAction: MyAntDActionElement,
+        cloneRuleAction: MyAntDActionElement,
+        cloneGroupAction: MyAntDActionElement,
+        lockRuleAction: MyAntDActionElement,
+        lockGroupAction: MyAntDActionElement,
+        removeRuleAction: MyAntDActionElement,
+        removeGroupAction: MyAntDActionElement,
+      }}
+    />
+  );
+};
+```
+
+This list shows which library components' props will be accepted by the compatibility components, in addition to those defined by `react-querybuilder`.
+
+| Compatibility component | Base props               | Rendered library component                                      |
+| ----------------------- | ------------------------ | --------------------------------------------------------------- |
+| `AntDActionElement`     | `ActionWithRulesProps`   | `import { Button } from 'antd'`                                 |
+| `AntDDragHandle`        | `DragHandleProps`        | `import { HolderOutlined } from '@ant-design/icons'`            |
+| `AntDNotToggle`         | `NotToggleProps`         | `import { Switch } from 'antd'`                                 |
+| `AntDValueSelector`     | `VersatileSelectorProps` | `import { Select } from 'antd'`                                 |
+| `ChakraActionElement`   | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                     |
+| `ChakraDragHandle`      | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
+| `ChakraNotToggle`       | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
+| `ChakraValueSelector`   | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
+| `MaterialActionElement` | `ActionWithRulesProps`   | `import Button from '@mui/material/Button'`                     |
+| `MaterialDragHandle`    | `DragHandleProps`        | `import DragIndicator from '@mui/icons-material/DragIndicator'` |
+| `MaterialNotToggle`     | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |
+| `MaterialValueSelector` | `VersatileSelectorProps` | `import Select from '@mui/material/Select'`                     |

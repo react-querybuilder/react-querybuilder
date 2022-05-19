@@ -332,6 +332,10 @@ Output:
 }
 ```
 
+### Placeholder values
+
+By default, any rules where `field === '~'` or `operator === '~'` will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName` and/or `placeholderOperatorName` options.
+
 ## Validation
 
 The validation options (`validator` and `fields` – see [Validation](./validation) for more information) only affect the output when `format` is "sql", "parameterized", "parameterized_named", or "mongodb". If the `validator` function returns `false`, the `fallbackExpression` will be returned. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
@@ -383,7 +387,8 @@ formatQuery(query, {
 
 ### Automatic validation
 
-A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", "parameterized_named", or "mongodb". This validation is used regardless of the presence of any `validator` options either at the query or field level:
+A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", "parameterized_named", "mongodb", or "cel". This validation is used regardless of the presence of any `validator` options either at the query or field level:
 
 - Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (i.e. `value.length > 0`) nor a non-empty string.
 - Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array of length two (`value.length === 2`) nor a string with exactly one comma that isn't the first or last character (i.e. `value.split(',').length === 2` and neither element is an empty string).
+- Rules where the following expression is true will be deemed invalid: `field === placeholderFieldName || operator === placeholderOperatorName`.
