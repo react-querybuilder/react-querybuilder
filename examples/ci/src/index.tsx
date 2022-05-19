@@ -90,7 +90,7 @@ const App = () => {
         ).map(([value, setter, label]) => (
           <label key={label}>
             <input type="checkbox" checked={value} onChange={e => setter(e.target.checked)} />
-            Show Combinators Between Rules
+            {label}
           </label>
         ))}
       </div>
