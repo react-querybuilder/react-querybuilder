@@ -6,9 +6,7 @@ export interface ValidationResult {
   reasons?: any[];
 }
 
-export interface ValidationMap {
-  [id: string]: boolean | ValidationResult;
-}
+export type ValidationMap = Record<string, boolean | ValidationResult>;
 
 export type QueryValidator = (query: RuleGroupTypeAny) => boolean | ValidationMap;
 

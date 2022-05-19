@@ -1,6 +1,6 @@
 import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
 import type { RuleType } from './ruleGroups';
-import type { QueryValidator, RuleValidator } from './validation';
+import type { QueryValidator } from './validation';
 
 export type ExportFormat =
   | 'json'
@@ -37,7 +37,7 @@ export interface FormatQueryOptions {
    * This can be the same Field[] passed to <QueryBuilder />, but really
    * all you need to provide is the name and validator for each field.
    */
-  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
+  fields?: (Pick<Field, 'name' | 'validator'> & Record<string, any>)[];
   /**
    * This string will be inserted in place of invalid groups for "sql",
    * "parameterized", "parameterized_named", and "mongodb" formats.
@@ -77,13 +77,13 @@ export interface ParameterizedSQL {
 
 export interface ParameterizedNamedSQL {
   sql: string;
-  params: { [p: string]: any };
+  params: Record<string, any>;
 }
 
 export interface ParseSQLOptions {
   independentCombinators?: boolean;
   paramPrefix?: string;
-  params?: any[] | { [p: string]: any };
+  params?: any[] | Record<string, any>;
   listsAsArrays?: boolean;
   fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
   getValueSources?: (field: string, operator: string) => ValueSources;

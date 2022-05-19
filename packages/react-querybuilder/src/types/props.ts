@@ -232,7 +232,7 @@ export interface Classnames {
 
 export interface Schema {
   fields: Field[] | OptionGroup<Field>[];
-  fieldMap: { [k: string]: Field };
+  fieldMap: Record<string, Field>;
   classNames: Classnames;
   combinators: NameLabelPair[] | OptionGroup[];
   controls: Controls;

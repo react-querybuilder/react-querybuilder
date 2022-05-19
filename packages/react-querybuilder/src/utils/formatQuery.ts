@@ -52,7 +52,7 @@ const mapOperator = (op: string) => {
   }
 };
 
-const mongoOperators: { [op: string]: string } = {
+const mongoOperators = {
   '=': '$eq',
   '!=': '$ne',
   '<': '$lt',
@@ -160,10 +160,19 @@ const defaultMongoDBValueProcessorInternal: ValueProcessorInternal = (
 ) => {
   const valueIsField = valueSource === 'field';
   const useBareValue =
-    ['number', 'boolean', 'bigint'].includes(typeof value) ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
-  const mongoOperator = mongoOperators[operator];
-  if (['<', '<=', '=', '!=', '>', '>='].includes(operator)) {
+  if (
+    operator === '<' ||
+    operator === '<=' ||
+    operator === '=' ||
+    operator === '!=' ||
+    operator === '>' ||
+    operator === '>='
+  ) {
+    const mongoOperator = mongoOperators[operator];
     return valueIsField
       ? `{"$expr":{"${mongoOperator}":["$${field}","$${value}"]}}`
       : `{"${field}":{"${mongoOperator}":${useBareValue ? trimIfString(value) : `"${value}"`}}}`;
@@ -202,7 +211,7 @@ const defaultMongoDBValueProcessorInternal: ValueProcessorInternal = (
         ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valArray
             .map(val => `this.${val}`)
             .join(',')}].includes(this.${field})"}`
-        : `{"${field}":{"${mongoOperator}":[${valArray
+        : `{"${field}":{"${mongoOperators[operator]}":[${valArray
             .map(val =>
               shouldRenderAsNumber(val, parseNumbers) ? `${trimIfString(val)}` : `"${val}"`
             )
@@ -247,9 +256,18 @@ const defaultCELValueProcessorInternal: ValueProcessorInternal = (
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase().replace(/^=$/, '==');
   const useBareValue =
-    ['number', 'boolean', 'bigint'].includes(typeof value) ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
-  if (['<', '<=', '==', '!=', '>', '>='].includes(operatorLowerCase)) {
+  if (
+    operatorLowerCase === '<' ||
+    operatorLowerCase === '<=' ||
+    operatorLowerCase === '==' ||
+    operatorLowerCase === '!=' ||
+    operatorLowerCase === '>' ||
+    operatorLowerCase === '>='
+  ) {
     return `${field} ${operatorLowerCase} ${
       valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
     }`;
@@ -344,7 +362,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let valueProcessorInternal = defaultValueProcessorInternal;
   let quoteFieldNamesWith = '';
   let validator: QueryValidator = () => true;
-  let fields: { name: string; validator?: RuleValidator; [k: string]: any }[] = [];
+  let fields: Required<FormatQueryOptions>['fields'] = [];
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
   let paramPrefix = ':';
@@ -414,7 +432,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
     }
 
-    const validatorMap: { [f: string]: RuleValidator } = {};
+    const validatorMap: Record<string, RuleValidator> = {};
     const uniqueFields = uniqByName(fields);
     uniqueFields.forEach(f => {
       // istanbul ignore else
@@ -446,8 +464,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       const parameterized = format === 'parameterized';
       const parameterized_named = format === 'parameterized_named';
       const params: any[] = [];
-      const params_named: { [p: string]: any } = {};
-      const fieldParamIndexes: { [f: string]: number } = {};
+      const params_named: Record<string, any> = {};
+      const fieldParamIndexes: Record<string, number> = {};
 
       const getNextNamedParam = (field: string) => {
         fieldParamIndexes[field] = (fieldParamIndexes[field] ?? 0) + 1;
@@ -535,8 +553,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parameterized ? '?' : `${paramPrefix}${paramName}`
           }`.trim();
         } else {
+          const operatorLowerCase = operator.toLowerCase();
           if (
-            ['in', 'not in', 'between', 'not between'].includes(operator.toLowerCase()) &&
+            (operatorLowerCase === 'in' ||
+              operatorLowerCase === 'not in' ||
+              operatorLowerCase === 'between' ||
+              operatorLowerCase === 'not between') &&
             !value
           ) {
             return '';

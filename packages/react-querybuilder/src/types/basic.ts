@@ -20,9 +20,9 @@ export interface NameLabelPair {
   [x: string]: any;
 }
 
-export type OptionGroup<O extends NameLabelPair = NameLabelPair> = {
+export type OptionGroup<Opt extends NameLabelPair = NameLabelPair> = {
   label: string;
-  options: O[];
+  options: Opt[];
 };
 
 export interface Field extends NameLabelPair {
