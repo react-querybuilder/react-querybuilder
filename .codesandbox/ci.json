@@ -7,6 +7,6 @@
     "packages/material",
     "packages/react-querybuilder"
   ],
-  "sandboxes": ["react-querybuilder-ci-oq8ts", "/examples/ci"],
+  "sandboxes": ["/examples/ci"],
   "node": "16"
 }
