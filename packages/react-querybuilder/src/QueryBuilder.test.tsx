@@ -1,7 +1,13 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
+import {
+  defaultPlaceholderFieldName,
+  defaultPlaceholderOperatorName,
+  defaultTranslations as t,
+  standardClassnames as sc,
+  TestID,
+} from './defaults';
 import {
   QueryBuilder as QueryBuilderOriginal,
   QueryBuilderWithoutDndProvider,
@@ -206,7 +212,7 @@ describe('when fields are provided with optgroups', () => {
       <QueryBuilder defaultQuery={query} fields={fields} autoSelectField={false} />
     );
     await user.click(selectors.getByTestId(TestID.addRule));
-    expect(selectors.getAllByTestId(TestID.fields)[1]).toHaveValue('~');
+    expect(selectors.getAllByTestId(TestID.fields)[1]).toHaveValue(defaultPlaceholderFieldName);
   });
 });
 
@@ -869,19 +875,21 @@ describe('autoSelectField', () => {
     expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
   });
 
-  it('uses the placeholderFieldLabel', async () => {
-    const placeholderFieldLabel = 'Test placeholder';
+  it('uses the placeholderFieldLabel and placeholderFieldName', async () => {
+    const placeholderFieldName = 'placeholderFieldName';
+    const placeholderLabel = 'Test placeholder';
     const { getByDisplayValue, getByTestId } = render(
       <QueryBuilder
         fields={fields}
         autoSelectField={false}
-        translations={{ fields: { placeholderLabel: placeholderFieldLabel } }}
+        placeholderFieldName={placeholderFieldName}
+        translations={{ fields: { placeholderLabel } }}
       />
     );
 
     await user.click(getByTestId(TestID.addRule));
 
-    expect(getByDisplayValue(placeholderFieldLabel)).toBeInTheDocument();
+    expect(getByDisplayValue(placeholderLabel)).toHaveValue(placeholderFieldName);
   });
 
   it('uses the placeholderFieldGroupLabel', async () => {
@@ -920,29 +928,35 @@ describe('autoSelectOperator', () => {
 
     expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
     expect(container.querySelectorAll(`select.${sc.operators}`)).toHaveLength(1);
+    expect(getByTestId(TestID.operators)).toHaveValue(defaultPlaceholderOperatorName);
     expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
   });
 
-  it('uses the placeholderOperatorLabel', async () => {
-    const placeholderOperatorLabel = 'Test placeholder';
+  it('uses the placeholderOperatorLabel and placeholderOperatorName', async () => {
+    const placeholderOperatorName = 'placeholderOperatorName';
+    const placeholderLabel = 'Test placeholder';
     const { getByDisplayValue, getByTestId } = render(
       <QueryBuilder
         fields={fields}
         autoSelectOperator={false}
-        translations={{ operators: { placeholderLabel: placeholderOperatorLabel } }}
+        placeholderOperatorName={placeholderOperatorName}
+        translations={{ operators: { placeholderLabel } }}
       />
     );
 
     await user.click(getByTestId(TestID.addRule));
 
-    expect(getByDisplayValue(placeholderOperatorLabel)).toBeInTheDocument();
+    expect(getByDisplayValue(placeholderLabel)).toHaveValue(placeholderOperatorName);
   });
 
   it('uses the placeholderOperatorGroupLabel', async () => {
     const placeholderOperatorGroupLabel = 'Test group placeholder';
     const { container, getByTestId } = render(
       <QueryBuilder
-        fields={[{ label: 'Fields', options: fields }]}
+        fields={fields.map(f => ({
+          ...f,
+          operators: [{ label: 'Operators', options: operators }],
+        }))}
         autoSelectOperator={false}
         translations={{
           operators: { placeholderGroupLabel: placeholderOperatorGroupLabel },
@@ -981,7 +995,7 @@ describe('addRuleToNewGroups', () => {
     await user.click(selectors.getByTestId(TestID.addGroup));
     expect(
       ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType).rules[0]
-    ).toHaveProperty('field', '~');
+    ).toHaveProperty('field', defaultPlaceholderFieldName);
   });
 
   it('adds a rule when mounted if no initial query is provided', () => {

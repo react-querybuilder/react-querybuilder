@@ -1,3 +1,4 @@
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../defaults';
 import type { RuleGroupType, ValueProcessor } from '../types';
 import { convertToIC } from './convertQuery';
 import {
@@ -11,6 +12,21 @@ import { add } from './queryTools';
 const query: RuleGroupType = {
   id: 'g-root',
   rules: [
+    {
+      field: defaultPlaceholderFieldName,
+      operator: defaultPlaceholderOperatorName,
+      value: 'Placeholder',
+    },
+    {
+      field: defaultPlaceholderFieldName,
+      operator: '=',
+      value: 'Placeholder',
+    },
+    {
+      field: 'firstName',
+      operator: defaultPlaceholderOperatorName,
+      value: 'Placeholder',
+    },
     {
       field: 'firstName',
       value: '',
@@ -143,6 +159,21 @@ const mongoQuery: RuleGroupType = {
   id: 'g-root',
   combinator: 'and',
   rules: [
+    {
+      field: '~',
+      operator: '~',
+      value: 'Placeholder',
+    },
+    {
+      field: '~',
+      operator: '=',
+      value: 'Placeholder',
+    },
+    {
+      field: 'firstName',
+      operator: '~',
+      value: 'Placeholder',
+    },
     {
       field: 'invalid',
       value: '',
@@ -1398,5 +1429,30 @@ describe('parseNumbers', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'cel', parseNumbers: true })).toBe(
       'f == "NaN" && f == 0 && f == 0 && f == 0 && (f == 1.5 || f == 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
     );
+  });
+});
+
+describe('placeholder names', () => {
+  const placeholderFieldName = 'placeholderFieldName';
+  const placeholderOperatorName = 'placeholderOperatorName';
+
+  const queryForPlaceholders: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: defaultPlaceholderFieldName, operator: defaultPlaceholderOperatorName, value: 'v1' },
+      { field: placeholderFieldName, operator: '=', value: 'v2' },
+      { field: 'f3', operator: placeholderOperatorName, value: 'v3' },
+      { field: placeholderFieldName, operator: placeholderOperatorName, value: 'v4' },
+    ],
+  };
+
+  it('respects custom placeholder names', () => {
+    expect(
+      formatQuery(queryForPlaceholders, {
+        format: 'sql',
+        placeholderFieldName,
+        placeholderOperatorName,
+      })
+    ).toBe(`(${defaultPlaceholderFieldName} ${defaultPlaceholderOperatorName} 'v1')`);
   });
 });

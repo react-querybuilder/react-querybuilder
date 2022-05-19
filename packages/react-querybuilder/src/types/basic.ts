@@ -27,7 +27,7 @@ export type OptionGroup<O extends NameLabelPair = NameLabelPair> = {
 
 export interface Field extends NameLabelPair {
   id?: string;
-  operators?: NameLabelPair[];
+  operators?: NameLabelPair[] | OptionGroup[];
   valueEditorType?: ValueEditorType | ((operator: string) => ValueEditorType);
   valueSources?: ValueSources | ((operator: string) => ValueSources);
   inputType?: string | null;

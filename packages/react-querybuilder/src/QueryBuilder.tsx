@@ -7,6 +7,8 @@ import {
   defaultControlClassnames,
   defaultControlElements,
   defaultOperators,
+  defaultPlaceholderFieldName,
+  defaultPlaceholderOperatorName,
   defaultTranslations,
   standardClassnames,
 } from './defaults';
@@ -71,7 +73,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
   autoSelectField = true,
+  placeholderFieldName = defaultPlaceholderFieldName,
   autoSelectOperator = true,
+  placeholderOperatorName = defaultPlaceholderOperatorName,
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
@@ -88,11 +92,15 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     return translationsTemp;
   }, [translationsProp]);
 
-  const defaultFields = useMemo(
-    (): Field[] => [{ id: '~', name: '~', label: translations.fields.placeholderLabel }],
-    [translations.fields.placeholderLabel]
+  const defaultField = useMemo(
+    (): Field => ({
+      id: placeholderFieldName,
+      name: placeholderFieldName,
+      label: translations.fields.placeholderLabel,
+    }),
+    [placeholderFieldName, translations.fields.placeholderLabel]
   );
-  const fieldsProp = fProp ?? defaultFields;
+  const fieldsProp = useMemo(() => fProp ?? [defaultField], [defaultField, fProp]);
 
   const fields = useMemo(() => {
     let f = Array.isArray(fieldsProp)
@@ -102,13 +110,13 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
           .sort((a, b) => a.label.localeCompare(b.label));
     if (!autoSelectField) {
       if (isOptionGroupArray(f)) {
-        f = [{ label: translations.fields.placeholderGroupLabel, options: defaultFields }, ...f];
+        f = [{ label: translations.fields.placeholderGroupLabel, options: [defaultField] }, ...f];
       } else {
-        f = [...defaultFields, ...f];
+        f = [defaultField, ...f];
       }
     }
     return isOptionGroupArray(f) ? uniqOptGroups(f) : uniqByName(f);
-  }, [autoSelectField, defaultFields, fieldsProp, translations.fields.placeholderGroupLabel]);
+  }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) return fieldsProp;
@@ -128,8 +136,12 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
   const defaultOperator = useMemo(
-    (): NameLabelPair[] => [{ id: '~', name: '~', label: translations.operators.placeholderLabel }],
-    [translations.operators.placeholderLabel]
+    (): NameLabelPair => ({
+      id: placeholderOperatorName,
+      name: placeholderOperatorName,
+      label: translations.operators.placeholderLabel,
+    }),
+    [placeholderOperatorName, translations.operators.placeholderLabel]
   );
 
   const getOperatorsMain = useCallback(
@@ -148,15 +160,25 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
       if (!autoSelectOperator) {
         if (isOptionGroupArray(opsFinal)) {
-          opsFinal = [{ label: translations.operators.placeholderGroupLabel, options: defaultOperator }, ...opsFinal]
+          opsFinal = [
+            { label: translations.operators.placeholderGroupLabel, options: [defaultOperator] },
+            ...opsFinal,
+          ];
         } else {
-          opsFinal = [...defaultOperator, ...opsFinal]
+          opsFinal = [defaultOperator, ...opsFinal];
         }
       }
 
       return isOptionGroupArray(opsFinal) ? uniqOptGroups(opsFinal) : uniqByName(opsFinal);
     },
-    [defaultOperator, fieldMap, getOperators, operators, translations.operators.placeholderGroupLabel]
+    [
+      autoSelectOperator,
+      defaultOperator,
+      fieldMap,
+      getOperators,
+      operators,
+      translations.operators.placeholderGroupLabel,
+    ]
   );
 
   const getRuleDefaultOperator = useCallback(
@@ -429,7 +451,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     showCloneButtons,
     showLockButtons,
     autoSelectField,
+    placeholderFieldName,
     autoSelectOperator,
+    placeholderOperatorName,
     addRuleToNewGroups,
     enableDragAndDrop,
     independentCombinators: !!independentCombinators,
