@@ -1,0 +1,15 @@
+@import 'react-querybuilder/dist/query-builder.scss';
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+label {
+  display: block;
+}
+
+.queryBuilder {
+  margin-bottom: 1rem;
+}
