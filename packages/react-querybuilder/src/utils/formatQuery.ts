@@ -1,3 +1,4 @@
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../defaults';
 import type {
   DefaultCombinatorName,
   ExportFormat,
@@ -349,6 +350,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let fallbackExpression = '';
   let paramPrefix = ':';
   let parseNumbers = false;
+  let placeholderFieldName = defaultPlaceholderFieldName;
+  let placeholderOperatorName = defaultPlaceholderOperatorName;
 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
@@ -374,6 +377,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     fallbackExpression = options.fallbackExpression ?? '';
     paramPrefix = options.paramPrefix ?? ':';
     parseNumbers = !!options.parseNumbers;
+    placeholderFieldName = options.placeholderFieldName ?? defaultPlaceholderFieldName;
+    placeholderOperatorName = options.placeholderOperatorName ?? defaultPlaceholderOperatorName;
   }
   if (!fallbackExpression) {
     fallbackExpression =
@@ -414,7 +419,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
     }
 
-    const validatorMap: { [f: string]: RuleValidator } = {};
+    const validatorMap: Record<string, RuleValidator> = {};
     const uniqueFields = uniqByName(fields);
     uniqueFields.forEach(f => {
       // istanbul ignore else
@@ -456,7 +461,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       const processRule = (rule: RuleType) => {
         const [validationResult, fieldValidator] = validateRule(rule);
-        if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
+        if (
+          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+          rule.field === placeholderFieldName ||
+          rule.operator === placeholderOperatorName
+        ) {
           return '';
         }
 
@@ -591,7 +600,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               return processedRuleGroup ? `{${processedRuleGroup}}` : '';
             }
             const [validationResult, fieldValidator] = validateRule(rule);
-            if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
+            if (
+              !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+              rule.field === placeholderFieldName ||
+              rule.operator === placeholderOperatorName
+            ) {
               return '';
             }
             return valueProcessorInternal(rule, { parseNumbers });
@@ -622,7 +635,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               return processRuleGroup(rule);
             }
             const [validationResult, fieldValidator] = validateRule(rule);
-            if (!isRuleOrGroupValid(rule, validationResult, fieldValidator)) {
+            if (
+              !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+              rule.field === placeholderFieldName ||
+              rule.operator === placeholderOperatorName
+            ) {
               return '';
             }
             return valueProcessorInternal(rule, { parseNumbers });
@@ -634,10 +651,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               : ' '
           );
 
-        const wrap =
-          rg.not || !outermost ? { pre: `${rg.not ? '!' : ''}(`, suf: ')' } : { pre: '', suf: '' };
+        const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
 
-        return expression ? `${wrap.pre}${expression}${wrap.suf}` : fallbackExpression;
+        return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
       };
 
       return processRuleGroup(ruleGroup, true);

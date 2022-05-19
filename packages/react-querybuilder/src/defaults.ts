@@ -9,8 +9,14 @@ import type {
   TranslationsFull,
 } from './types';
 
-export const defaultPlaceholderFieldLabel = '------';
-export const defaultPlaceholderFieldGroupLabel = defaultPlaceholderFieldLabel;
+const placeholderName = '~';
+const placeholderLabel = '------';
+export const defaultPlaceholderFieldName = placeholderName;
+export const defaultPlaceholderFieldLabel = placeholderLabel;
+export const defaultPlaceholderFieldGroupLabel = placeholderLabel;
+export const defaultPlaceholderOperatorName = placeholderName;
+export const defaultPlaceholderOperatorLabel = placeholderLabel;
+export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
 
 export const defaultTranslations: TranslationsFull = {
   fields: {
@@ -20,6 +26,8 @@ export const defaultTranslations: TranslationsFull = {
   },
   operators: {
     title: 'Operators',
+    placeholderLabel: defaultPlaceholderOperatorLabel,
+    placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
   },
   value: {
     title: 'Value',

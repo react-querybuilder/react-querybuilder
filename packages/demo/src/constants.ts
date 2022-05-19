@@ -14,9 +14,6 @@ export const styleNameMap: Record<StyleName, string> = {
   bulma: 'Bulma',
 };
 
-export const styleNameArray: StyleName[] = [
-  'default',
-  ...objectKeys(styleNameMap)
-    .filter(s => s !== 'default')
-    .sort(),
-];
+const { default: _d, ...compatStyles } = styleNameMap;
+
+export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];

@@ -8,6 +8,7 @@ export type DemoOption =
   | 'resetOnFieldChange'
   | 'resetOnOperatorChange'
   | 'autoSelectField'
+  | 'autoSelectOperator'
   | 'addRuleToNewGroups'
   | 'validateQuery'
   | 'independentCombinators'

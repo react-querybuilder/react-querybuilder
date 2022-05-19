@@ -57,6 +57,18 @@ export interface FormatQueryOptions {
    * numeric value.
    */
   parseNumbers?: boolean;
+  /**
+   * Any rules where the field is equal to this value will be ignored.
+   *
+   * @default '~'
+   */
+  placeholderFieldName?: string;
+  /**
+   * Any rules where the operator is equal to this value will be ignored.
+   *
+   * @default '~'
+   */
+  placeholderOperatorName?: string;
 }
 
 export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'>;

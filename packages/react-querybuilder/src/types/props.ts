@@ -254,6 +254,9 @@ export interface Schema {
   showCloneButtons: boolean;
   showLockButtons: boolean;
   autoSelectField: boolean;
+  placeholderFieldName: string;
+  autoSelectOperator: boolean;
+  placeholderOperatorName: string;
   addRuleToNewGroups: boolean;
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;
@@ -273,7 +276,7 @@ interface TranslationWithPlaceholders extends Translation {
 }
 export interface Translations {
   fields: TranslationWithPlaceholders;
-  operators: Translation;
+  operators: TranslationWithPlaceholders;
   value: Translation;
   removeRule: TranslationWithLabel;
   removeGroup: TranslationWithLabel;
@@ -481,6 +484,18 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
      * Select the first field in the array automatically
      */
     autoSelectField?: boolean;
+    /**
+     * Value for the placeholder option if autoSelectField is false
+     */
+    placeholderFieldName?: string;
+    /**
+     * Select the first operator in the array automatically
+     */
+    autoSelectOperator?: boolean;
+    /**
+     * Value for the placeholder option if autoSelectOperator is false
+     */
+    placeholderOperatorName?: string;
     /**
      * Adds a new default rule automatically to each new group
      */

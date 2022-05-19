@@ -1,7 +1,7 @@
 import { MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
-import type { DraggedItem, Field, RuleProps, RuleType } from './types';
+import type { DraggedItem, RuleProps, RuleType } from './types';
 import {
   c,
   filterFieldsByComparator,
@@ -38,6 +38,9 @@ export const Rule = ({
     onPropChange,
     onRuleRemove,
     autoSelectField,
+    placeholderFieldName,
+    autoSelectOperator,
+    placeholderOperatorName,
     showCloneButtons,
     showLockButtons,
     independentCombinators,
@@ -128,9 +131,9 @@ export const Rule = ({
     }
   };
 
-  const fieldData = fieldMap?.[field] ?? ({} as Field);
+  const fieldData = fieldMap?.[field] ?? { name: field, label: field };
   const inputType = fieldData.inputType ?? getInputType(field, operator);
-  const operators = fieldData.operators ?? getOperators(field);
+  const operators = getOperators(field);
   const valueSources =
     typeof fieldData.valueSources === 'function'
       ? fieldData.valueSources(operator)
@@ -201,7 +204,7 @@ export const Rule = ({
         context={context}
         validation={validationResult}
       />
-      {(autoSelectField || fieldData.name !== '~') && (
+      {(autoSelectField || field !== placeholderFieldName) && (
         <>
           <controls.operatorSelector
             testID={TestID.operators}
@@ -218,42 +221,46 @@ export const Rule = ({
             context={context}
             validation={validationResult}
           />
-          {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
-            <controls.valueSourceSelector
-              testID={TestID.valueSourceSelector}
-              field={field}
-              fieldData={fieldData}
-              title={translations.valueSourceSelector.title}
-              options={vsOptions}
-              value={valueSource ?? 'value'}
-              className={c(standardClassnames.valueSource, classNames.valueSource)}
-              handleOnChange={generateOnChangeHandler('valueSource')}
-              level={level}
-              path={path}
-              disabled={disabled}
-              context={context}
-              validation={validationResult}
-            />
+          {(autoSelectOperator || operator !== placeholderOperatorName) && (
+            <>
+              {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
+                <controls.valueSourceSelector
+                  testID={TestID.valueSourceSelector}
+                  field={field}
+                  fieldData={fieldData}
+                  title={translations.valueSourceSelector.title}
+                  options={vsOptions}
+                  value={valueSource ?? 'value'}
+                  className={c(standardClassnames.valueSource, classNames.valueSource)}
+                  handleOnChange={generateOnChangeHandler('valueSource')}
+                  level={level}
+                  path={path}
+                  disabled={disabled}
+                  context={context}
+                  validation={validationResult}
+                />
+              )}
+              <controls.valueEditor
+                testID={TestID.valueEditor}
+                field={field}
+                fieldData={fieldData}
+                title={translations.value.title}
+                operator={operator}
+                value={value}
+                valueSource={valueSource ?? 'value'}
+                type={valueEditorType}
+                inputType={inputType}
+                values={values}
+                className={c(standardClassnames.value, classNames.value)}
+                handleOnChange={generateOnChangeHandler('value')}
+                level={level}
+                path={path}
+                disabled={disabled}
+                context={context}
+                validation={validationResult}
+              />
+            </>
           )}
-          <controls.valueEditor
-            testID={TestID.valueEditor}
-            field={field}
-            fieldData={fieldData}
-            title={translations.value.title}
-            operator={operator}
-            value={value}
-            valueSource={valueSource ?? 'value'}
-            type={valueEditorType}
-            inputType={inputType}
-            values={values}
-            className={c(standardClassnames.value, classNames.value)}
-            handleOnChange={generateOnChangeHandler('value')}
-            level={level}
-            path={path}
-            disabled={disabled}
-            context={context}
-            validation={validationResult}
-          />
         </>
       )}
       {showCloneButtons && (
