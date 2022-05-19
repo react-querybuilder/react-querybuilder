@@ -1,0 +1,35 @@
+{
+  "name": "react-querybuilder-basic-example",
+  "description": "React Query Builder Basic Example",
+  "private": true,
+  "dependencies": {
+    "react-querybuilder": "^4.2.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.6.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  }
+}
