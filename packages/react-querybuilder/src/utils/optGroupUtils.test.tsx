@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { getFirstOption, isOptionGroupArray, toOptions } from './optGroupUtils';
 
 it('identifies option group arrays', () => {
@@ -13,19 +13,17 @@ it('builds an empty option list', () => {
 });
 
 it('builds an option list', () => {
-  const { container, getByText } = render(
-    <select>{toOptions([{ name: 'test', label: 'Test' }])}</select>
-  );
+  const { container } = render(<select>{toOptions([{ name: 'test', label: 'Test' }])}</select>);
   expect(container.getElementsByTagName('option')).toHaveLength(1);
-  expect(getByText('Test')).toBeInTheDocument();
+  expect(screen.getByText('Test')).toBeInTheDocument();
 });
 
 it('builds an option group list', () => {
-  const { container, getByText } = render(
+  const { container } = render(
     <select>{toOptions([{ label: 'Test', options: [{ name: 'test', label: 'Test' }] }])}</select>
   );
   expect(container.getElementsByTagName('option')).toHaveLength(1);
-  expect(getByText('Test')).toBeInTheDocument();
+  expect(screen.getByText('Test')).toBeInTheDocument();
 });
 
 it('gets the first option', () => {
