@@ -122,10 +122,10 @@ formatQuery(query, 'parameterized');
 
 Output:
 
-```ts
+```json
 {
-  sql: "(firstName = ? and lastName = ?)",
-  params: ["Steve", "Vai"]
+  "sql": "(firstName = ? and lastName = ?)",
+  "params": ["Steve", "Vai"]
 }
 ```
 
@@ -139,12 +139,12 @@ formatQuery(query, 'parameterized_named');
 
 Output:
 
-```ts
+```json
 {
-  sql: "(firstName = :firstName_1 and lastName = :lastName_1)",
-  params: {
-    firstName_1: "Steve",
-    lastName_1: "Vai"
+  "sql": "(firstName = :firstName_1 and lastName = :lastName_1)",
+  "params": {
+    "firstName_1": "Steve",
+    "lastName_1": "Vai"
   }
 }
 ```
@@ -325,10 +325,10 @@ const pf = formatQuery(
 
 Output:
 
-```ts
+```json
 {
-  sql: "(firstName = lastName and firstName like middleName || '%')",
-  params: {},
+  "sql": "(firstName = lastName and firstName like middleName || '%')",
+  "params": {}
 }
 ```
 

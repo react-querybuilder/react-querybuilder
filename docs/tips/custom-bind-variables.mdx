@@ -12,23 +12,30 @@ The following code will produce a SQL string with each bind variable placeholder
 
 ```ts
 let i = 0;
-const sql = (formatQuery(query, 'parameterized') as ParameterizedSQL).sql.replaceAll('?', () => {
-  i++;
-  return `$${i}`;
-});
+const { sql, params } = formatQuery(query, 'parameterized');
+const numberedParams = {
+  params,
+  sql: sql.replaceAll('?', () => {
+    i++;
+    return `$${i}`;
+  }),
+};
 ```
 
 For example, if `formatQuery(query, "parameterized")` produced the following object:
 
-```ts
+```json
 {
-  sql: "(firstName = ? and lastName = ?)",
-  params: ["Steve", "Vai"]
+  "sql": "(firstName = ? and lastName = ?)",
+  "params": ["Steve", "Vai"]
 }
 ```
 
-...then the code above would assign the following string to the `sql` variable:
+...then the code above would assign the following object to the `numberedParams` variable:
 
-```ts
-'(firstName = $1 and lastName = $2)';
+```json
+{
+  "sql": "(firstName = $1 and lastName = $2)",
+  "params": ["Steve", "Vai"]
+}
 ```
