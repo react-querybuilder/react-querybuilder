@@ -7,16 +7,16 @@ To see them in action, check out the [`react-querybuilder` demo](https://react-q
 ## Installation
 
 ```bash
-npm i --save react-querybuilder @react-querybuilder/bulma bulma react-bulma-components
+npm i --save react-querybuilder @react-querybuilder/bulma bulma
 # OR
-yarn add react-querybuilder @react-querybuilder/bulma bulma react-bulma-components
+yarn add react-querybuilder @react-querybuilder/bulma bulma
 ```
 
 ## Usage
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 import { bulmaControlElements } from '@react-querybuilder/bulma';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 import 'bulma/bulma.sass';
 
 const fields = [
@@ -40,8 +40,8 @@ const App = () => {
 
 Some additional styling may be necessary, e.g.:
 
-```scss
-.input {
+```css
+.queryBuilder .input {
   width: auto;
 }
 ```

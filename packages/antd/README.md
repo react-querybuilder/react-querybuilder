@@ -15,8 +15,8 @@ yarn add react-querybuilder @react-querybuilder/antd @ant-design/icons antd
 ## Usage
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 import { antdControlElements } from '@react-querybuilder/antd';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -40,7 +40,7 @@ const App = () => {
 You may also want to reduce the width of the value editor component, which is 100% by default, with the following CSS rule:
 
 ```css
-.ant-input {
+.queryBuilder .ant-input {
   width: auto;
 }
 ```

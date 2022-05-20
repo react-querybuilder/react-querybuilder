@@ -1,0 +1,23 @@
+@import 'react-querybuilder/dist/query-builder.scss';
+
+body {
+  margin: 0.5rem !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.chakra-select__wrapper {
+  width: fit-content;
+  display: inline-block;
+}
+
+.chakra-input {
+  width: auto;
+  display: inline-block;
+}
+
+.chakra-radio-group {
+  display: inline-block;
+}

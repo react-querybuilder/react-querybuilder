@@ -1,8 +1,11 @@
 {
-  "name": "react-querybuilder-basic-ts-example",
-  "description": "React Query Builder Basic Example (TypeScript)",
+  "name": "react-querybuilder-bootstrap-example",
+  "description": "React Query Builder Bootstrap Example",
   "private": true,
   "dependencies": {
+    "@react-querybuilder/bootstrap": "^4.2.5",
+    "bootstrap": "^5.1.3",
+    "bootstrap-icons": "^1.8.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-querybuilder": "^4.2.5"

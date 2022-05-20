@@ -1,8 +1,10 @@
 {
-  "name": "react-querybuilder-basic-ts-example",
-  "description": "React Query Builder Basic Example (TypeScript)",
+  "name": "react-querybuilder-bulma-example",
+  "description": "React Query Builder Bulma Example",
   "private": true,
   "dependencies": {
+    "@react-querybuilder/bulma": "^4.2.5",
+    "bulma": "^0.9.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-querybuilder": "^4.2.5"

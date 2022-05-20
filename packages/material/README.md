@@ -15,8 +15,11 @@ yarn add react-querybuilder @react-querybuilder/material @mui/icons-material @mu
 ## Usage
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { materialControlElements } from '@react-querybuilder/material';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+
+const muiTheme = createTheme();
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -27,12 +30,14 @@ const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      controlElements={materialControlElements}
-    />
+    <ThemeProvider theme={muiTheme}>
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        controlElements={materialControlElements}
+      />
+    </ThemeProvider>
   );
 };
 ```

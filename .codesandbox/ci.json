@@ -8,6 +8,13 @@
     "packages/material",
     "packages/react-querybuilder"
   ],
-  "sandboxes": ["/examples/ci"],
+  "sandboxes": [
+    "/examples/ci",
+    "/examples/antd",
+    "/examples/bootstrap",
+    "/examples/bulma",
+    "/examples/chakra",
+    "/examples/material"
+  ],
   "node": "16"
 }

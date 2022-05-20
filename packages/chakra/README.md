@@ -15,8 +15,9 @@ yarn add react-querybuilder @react-querybuilder/chakra @chakra-ui/icons @chakra-
 ## Usage
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { chakraControlElements } from '@react-querybuilder/chakra';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -25,33 +26,35 @@ const fields = [
 
 const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
+  const chakraTheme = extendTheme();
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      controlElements={chakraControlElements}
-    />
+    <ChakraProvider theme={chakraTheme}>
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        controlElements={chakraControlElements}
+      />
+    </ChakraProvider>
   );
 };
 ```
 
 Some additional styling may be necessary, e.g.:
 
-```scss
-.chakra-select__wrapper {
+```css
+.queryBuilder .chakra-select__wrapper {
   width: fit-content;
-  width: -moz-fit-content; // vendor prefix required for Firefox
   display: inline-block;
 }
 
-.chakra-input {
+.queryBuilder .chakra-input {
   width: auto;
   display: inline-block;
 }
 
-.chakra-radio-group {
+.queryBuilder .chakra-radio-group {
   display: inline-block;
 }
 ```
