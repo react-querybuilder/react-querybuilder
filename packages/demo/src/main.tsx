@@ -365,7 +365,7 @@ const App = () => {
           </Sider>
           <Content style={{ backgroundColor: '#ffffff', padding: '1rem 1rem 0 0' }}>
             {style !== 'default' && (
-              <div style={{ marginBottom: '0.5rem' }}>
+              <div style={{ marginBottom: '0.5rem', whiteSpace: 'normal' }}>
                 To use the official React Query Builder components for {styleNameMap[style]} in your
                 project, install{' '}
                 <Link
@@ -373,7 +373,13 @@ const App = () => {
                   href={`https://www.npmjs.com/package/@react-querybuilder/${style}`}>
                   @react-querybuilder/{style}
                 </Link>
-                .
+                . Click{' '}
+                <Link
+                  target="_blank"
+                  href={`https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/${style}`}>
+                  here
+                </Link>{' '}
+                to see sample usage.
               </div>
             )}
             <ChakraStyleProvider theme={chakraTheme}>
