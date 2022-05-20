@@ -16,7 +16,7 @@ Validating at the query level can result in the entire query being treated as va
 To mark an entire query as valid or invalid, return a `boolean` value from the `validator` callback function (`true` for valid, `false` for invalid).
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 /**
  * This function returns false (indicating "invalid") if there are no rules present.
@@ -31,7 +31,7 @@ const App = () => {
 The alternate return value from a query-level validator is a validation map, which is an object where each key represents the `id` of a rule or group. Associated values are either `boolean` (`true` for valid, `false` for invalid) or a validation result. Validation results are objects with two keys: a required `boolean` `valid` key and an optional `reasons` array specifying why that rule/group is valid or invalid. (Reasons are assumed to be strings, but the type is `any[]` since the QueryBuilder default components ignore them. Feel free to use them any way you please in your custom components.)
 
 ```tsx
-import QueryBuilder, { RuleGroupType, ValidationMap } from 'react-querybuilder';
+import { QueryBuilder, RuleGroupType, ValidationMap } from 'react-querybuilder';
 
 /**
  * This function returns a validation map. A real validator function would
@@ -67,7 +67,8 @@ Assigning a `validator` to individual fields allows you to provide a separate ca
 In the following configuration, any rule that specifies `field1` as the field (e.g. the second rule) will be marked invalid.
 
 ```tsx
-import QueryBuilder, {
+import {
+  QueryBuilder,
   Field,
   RuleGroupType,
   RuleValidator,

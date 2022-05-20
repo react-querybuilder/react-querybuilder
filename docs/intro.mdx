@@ -5,6 +5,12 @@ hide_table_of_contents: true
 
 import { SandpackRQB } from '../src/components/SandpackRQB';
 
+## TL;DR
+
+[Basic example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/basic-ts) ([non-TypeScript version](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/basic)). [More examples](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/).
+
+## Installation
+
 To install `react-querybuilder`, use [npm](https://www.npmjs.com/package/react-querybuilder) or [Yarn](https://yarnpkg.com/package/react-querybuilder).
 
 ```bash
@@ -20,7 +26,7 @@ The simplest way to create a query builder is to render the `QueryBuilder` compo
 <SandpackRQB options={{ editorHeight: 160 }}>
 
 ```tsx
-import QueryBuilder from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 
 export default () => <QueryBuilder />;
@@ -30,7 +36,7 @@ export default () => <QueryBuilder />;
 
 Functional, but not very useful. To really get value out of the query builder, we'll first need to define a set of fields for the user to choose from. We can pass the `fields` array into the query builder through the `fields` prop.
 
-In the query builder below, click the "+Rule" button and then the fields selector to see the field choices.
+In the query builder below, click the "+Rule" button and then the field selector to see the field choices.
 
 <SandpackRQB options={{ editorHeight: 240 }}>
 
@@ -80,7 +86,7 @@ export default () => {
 </SandpackRQB>
 
 <details>
-<summary>Plain JavaScript version</summary>
+<summary>Non-TypeScript version</summary>
 
 ```jsx
 import { useState } from 'react';

@@ -2,21 +2,21 @@
 title: Compatibility packages
 ---
 
-The default React Query Builder components, being basic HTML5 form controls, are very flexible with styling (primarily through the [`controlClassnames` prop](./api/querybuilder#controlclassnames)). But some style libraries require different HTML structure to style their form controls correctly.
-
-Official component packages compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
+The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./api/querybuilder#controlclassnames)). But some style libraries require different HTML structure to style their form controls correctly.
 
 ## Packages
 
-You can see each alternate component package in action by selecting different options in the "Style" dropdown list on the [demo page](https://react-querybuilder.js.org/react-querybuilder/). The "Demo" links in the table below will load the demo with the respective style library preselected.
+Official component packages compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
 
-| Library                                | Compatibility package                                                                        | Demo link                                                                     |
-| -------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| [Ant Design](https://ant.design/)      | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=antd)      |
-| [Bootstrap](https://getbootstrap.com/) | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=bootstrap) |
-| [Bulma](https://bulma.io/)             | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=bulma)     |
-| [Chakra UI](https://chakra-ui.com/)    | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=chakra)    |
-| [MUI](https://mui.com/)                | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=material)  |
+You can see each alternate component package in action by selecting different options in the "Style" dropdown list on the [demo page](https://react-querybuilder.js.org/react-querybuilder/). The "Demo" links in the table below will load the demo with the respective style library preselected, and the CodeSandbox links will open [codesandbox.io](https://codesandbox.io) with an editable example of the library preloaded.
+
+| Official site                          | Compatibility package                                                                        | Demo                                                                          | CodeSandbox                                                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [Ant Design](https://ant.design/)      | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=antd)      | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd)      |
+| [Bootstrap](https://getbootstrap.com/) | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=bootstrap) | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap) |
+| [Bulma](https://bulma.io/)             | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=bulma)     | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma)     |
+| [Chakra UI](https://chakra-ui.com/)    | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=chakra)    | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra)    |
+| [MUI](https://mui.com/)                | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=material)  | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
 
 ## Exports
 
@@ -25,11 +25,12 @@ Each compatibility package exports a `*ControlElements` object that can be used 
 This example uses the Bootstrap library:
 
 ```tsx
-import QueryBuilder from 'react-querybuilder';
 import {
   bootstrapControlClassnames,
   bootstrapControlElements,
 } from '@react-querybuilder/bootstrap';
+import { QueryBuilder } from 'react-querybuilder';
+import 'bootstrap/scss/bootstrap.scss';
 import { defaultQuery, fields } from './constants';
 
 export function App() {
