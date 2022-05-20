@@ -40,7 +40,7 @@ yarn add react-querybuilder
 
 ```tsx
 import { useState } from 'react';
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
 const fields = [

@@ -23,7 +23,7 @@
 To get started, import the main component and the default stylesheet, then render the component in your app:
 
 ```tsx
-import QueryBuilder from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
 export const App = () => {
@@ -33,7 +33,7 @@ export const App = () => {
 
 For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/api/querybuilder), or browse the [example projects](./examples/).
 
-_For documentation on `react-querybuilder` v3.12.1, [click here](README.old.md)._
+_For documentation on `react-querybuilder` v3.12.1, [click here](README.v3.12.1.md)._
 
 ## Compatibility packages
 
