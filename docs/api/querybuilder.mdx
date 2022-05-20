@@ -592,11 +592,15 @@ This prop can be used to override translatable texts applied to various controls
 {
   fields: {
     title: "Fields",
+    placeholderName: "~",
     placeholderLabel: "------",
     placeholderGroupLabel: "------",
   },
   operators: {
     title: "Operators",
+    placeholderName: "~",
+    placeholderLabel: "------",
+    placeholderGroupLabel: "------",
   },
   value: {
     title: "Value",
@@ -699,25 +703,13 @@ Pass `false` to disable the `onQueryChange` call on mount of the component which
 
 `boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#autoSelectField=false)
 
-Pass `false` to automatically add an "empty" option with label `"------"` (or `translations.fields.placeholderLabel` if provided--see [translations](#translations)) to the `fields` array as the first element. The empty option will be the initial selection for all new rules. When the empty field option is selected, the operator and value editor components will not display for that rule.
-
-### `placeholderFieldName`
-
-`string` (default `"~"`)
-
-When `autoSelectField` is `false`, this string will be the default value (not label) of the field selector. See the [export documentation](./export#placeholder-values) for the corresponding `formatQuery` option.
+Pass `false` to automatically add an "empty" option with value `"~"` and label `"------"` (see [`translations.fields.placeholder*` to customize](#translations)) to the `fields` array as the first element. The empty option will be the initial selection for all new rules. When the empty field option is selected, the operator and value editor components will not display for that rule.
 
 ### `autoSelectOperator`
 
 `boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#autoSelectOperator=false)
 
-Pass `false` to automatically add an "empty" option with label `"------"` (or `translations.operators.placeholderLabel` if provided--see [translations](#translations)) to the `operators` array as the first element. The empty option will be the initial selection for all new rules. When the empty operator option is selected, the value editor component will not display for that rule.
-
-### `placeholderOperatorName`
-
-`string` (default `"~"`)
-
-When `autoSelectOperator` is `false`, this string will be the default value (not label) of the operator selector. See the [export documentation](./export#placeholder-values) for the corresponding `formatQuery` option.
+Pass `false` to automatically add an "empty" option with value `"~"` and label `"------"` (see [`translations.operators.placeholder*` to customize](#translations)) to the `operators` array as the first element. The empty option will be the initial selection for all new rules. When the empty operator option is selected, the value editor component will not display for that rule.
 
 ### `addRuleToNewGroups`
 

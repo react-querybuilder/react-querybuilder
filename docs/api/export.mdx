@@ -334,7 +334,7 @@ Output:
 
 ### Placeholder values
 
-By default, any rules where `field === '~'` or `operator === '~'` will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName` and/or `placeholderOperatorName` options.
+Any rules whose `field` or `operator` match the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName` and/or `placeholderOperatorName` options.
 
 ## Validation
 
