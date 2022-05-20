@@ -1,4 +1,4 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   DefaultRuleGroupType,
@@ -11,38 +11,16 @@ import {
 import { fields } from './fields';
 import './index.scss';
 import { initialQuery, initialQueryIC } from './initialQuery';
+import { defaultOptions, optionsOrder, optionsReducer } from './utils';
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
-  const [showCombinatorsBetweenRules, setShowCombinatorsBetweenRules] = useState(false);
-  const [showNotToggle, setShowNotToggle] = useState(false);
-  const [showCloneButtons, setShowCloneButtons] = useState(false);
-  const [resetOnFieldChange, setResetOnFieldChange] = useState(true);
-  const [resetOnOperatorChange, setResetOnOperatorChange] = useState(false);
-  const [autoSelectField, setAutoSelectField] = useState(true);
-  const [autoSelectOperator, setAutoSelectOperator] = useState(true);
-  const [addRuleToNewGroups, setAddRuleToNewGroups] = useState(false);
-  const [useValidation, setUseValidation] = useState(false);
-  const [independentCombinators, setIndependentCombinators] = useState(false);
-  const [enableDragAndDrop, setEnableDragAndDrop] = useState(false);
-  const [parseNumbers, setParseNumbers] = useState(false);
-  const [disabled, setDisabled] = useState(false);
-  const [debugMode, setDebugMode] = useState(false);
-
+  const [options, dispatch] = useReducer(optionsReducer, defaultOptions);
+  const { useValidation, independentCombinators, parseNumbers, ...commonOptions } = options;
   const commonProps: QueryBuilderProps<DefaultRuleGroupType> = {
     fields,
-    showCombinatorsBetweenRules,
-    showNotToggle,
-    showCloneButtons,
-    resetOnFieldChange,
-    resetOnOperatorChange,
-    autoSelectField,
-    autoSelectOperator,
-    addRuleToNewGroups,
-    enableDragAndDrop,
-    disabled,
-    debugMode,
+    ...commonOptions,
     validator: useValidation ? defaultValidator : undefined,
   };
 
@@ -66,31 +44,16 @@ const App = () => {
         />
       )}
       <div>
-        {(
-          [
-            [
-              showCombinatorsBetweenRules,
-              setShowCombinatorsBetweenRules,
-              'Show Combinators Between Rules',
-            ],
-            [showNotToggle, setShowNotToggle, 'Show Not Toggle'],
-            [showCloneButtons, setShowCloneButtons, 'Show Clone Buttons'],
-            [resetOnFieldChange, setResetOnFieldChange, 'Reset On Field Change'],
-            [resetOnOperatorChange, setResetOnOperatorChange, 'Reset On Operator Change'],
-            [autoSelectField, setAutoSelectField, 'Auto-Select Field'],
-            [autoSelectOperator, setAutoSelectOperator, 'Auto-Select Operator'],
-            [addRuleToNewGroups, setAddRuleToNewGroups, 'Add Rule To New Groups'],
-            [useValidation, setUseValidation, 'Use Validation'],
-            [independentCombinators, setIndependentCombinators, 'Independent Combinators'],
-            [enableDragAndDrop, setEnableDragAndDrop, 'Enable Drag-And-Drop'],
-            [disabled, setDisabled, 'Disabled'],
-            [debugMode, setDebugMode, 'Debug Mode'],
-            [parseNumbers, setParseNumbers, 'Parse Numbers'],
-          ] as const
-        ).map(([value, setter, label]) => (
-          <label key={label}>
-            <input type="checkbox" checked={value} onChange={e => setter(e.target.checked)} />
-            {label}
+        {optionsOrder.map(optionName => (
+          <label key={optionName}>
+            <input
+              type="checkbox"
+              checked={options[optionName]}
+              onChange={e =>
+                dispatch({ type: 'update', payload: { optionName, value: e.target.checked } })
+              }
+            />
+            {optionName}
           </label>
         ))}
       </div>
