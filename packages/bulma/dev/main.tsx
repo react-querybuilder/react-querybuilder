@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from 'react-querybuilder/dev/App';
+import { App } from 'react-querybuilder/dev';
 import { bulmaControlElements } from '../src';
 import './styles.scss';
 
