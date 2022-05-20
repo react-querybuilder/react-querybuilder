@@ -38,9 +38,7 @@ export const Rule = ({
     onPropChange,
     onRuleRemove,
     autoSelectField,
-    placeholderFieldName,
     autoSelectOperator,
-    placeholderOperatorName,
     showCloneButtons,
     showLockButtons,
     independentCombinators,
@@ -204,7 +202,7 @@ export const Rule = ({
         context={context}
         validation={validationResult}
       />
-      {(autoSelectField || field !== placeholderFieldName) && (
+      {(autoSelectField || field !== translations.fields.placeholderName) && (
         <>
           <controls.operatorSelector
             testID={TestID.operators}
@@ -221,7 +219,7 @@ export const Rule = ({
             context={context}
             validation={validationResult}
           />
-          {(autoSelectOperator || operator !== placeholderOperatorName) && (
+          {(autoSelectOperator || operator !== translations.operators.placeholderName) && (
             <>
               {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
                 <controls.valueSourceSelector

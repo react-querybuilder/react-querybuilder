@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { ActionWithRulesProps } from '../src/types';
 import { userEventSetup } from './utils';
 
@@ -23,10 +23,8 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
       const testTitle =
         (additionalProps?.disabled && additionalProps?.disabledTranslation?.title) || title;
       const handleOnClick = jest.fn();
-      const { getByTitle } = render(
-        <ActionElement {...props} handleOnClick={handleOnClick} {...additionalProps} />
-      );
-      const btn = getByTitle(testTitle);
+      render(<ActionElement {...props} handleOnClick={handleOnClick} {...additionalProps} />);
+      const btn = screen.getByTitle(testTitle);
       expect(btn).toBeEnabled();
       await user.click(btn);
       expect(handleOnClick).toHaveBeenCalled();
@@ -36,14 +34,14 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
   describe(title, () => {
     it('should have the label passed into the <button />', () => {
       const testLabel = 'Test label';
-      const { container } = render(<ActionElement {...props} label={testLabel} />);
-      expect(container).toHaveTextContent(testLabel);
+      render(<ActionElement {...props} label={testLabel} />);
+      expect(screen.getByRole('button')).toHaveTextContent(testLabel);
     });
 
     it('should have the className passed into the <button />', () => {
       const testClass = 'test-class';
-      const { getByTitle } = render(<ActionElement {...props} className={testClass} />);
-      expect(getByTitle(title)).toHaveClass(testClass);
+      render(<ActionElement {...props} className={testClass} />);
+      expect(screen.getByTitle(title)).toHaveClass(testClass);
     });
 
     testEnabledAndOnClick();
@@ -61,10 +59,8 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
 
     it('should be disabled by disabled prop', async () => {
       const handleOnClick = jest.fn();
-      const { getByTitle } = render(
-        <ActionElement {...props} handleOnClick={handleOnClick} disabled />
-      );
-      const btn = getByTitle(title);
+      render(<ActionElement {...props} handleOnClick={handleOnClick} disabled />);
+      const btn = screen.getByTitle(title);
       expect(btn).toBeDisabled();
       await user.click(btn);
       expect(handleOnClick).not.toHaveBeenCalled();

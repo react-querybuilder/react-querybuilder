@@ -2,7 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Chakra UI](https://chakra-ui.com/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Chakra UI" from the Style drop-down.
+To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/#style=chakra) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra).
 
 ## Installation
 
@@ -15,8 +15,9 @@ yarn add react-querybuilder @react-querybuilder/chakra @chakra-ui/icons @chakra-
 ## Usage
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { chakraControlElements } from '@react-querybuilder/chakra';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -25,33 +26,35 @@ const fields = [
 
 const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
+  const chakraTheme = extendTheme();
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      controlElements={chakraControlElements}
-    />
+    <ChakraProvider theme={chakraTheme}>
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        controlElements={chakraControlElements}
+      />
+    </ChakraProvider>
   );
 };
 ```
 
 Some additional styling may be necessary, e.g.:
 
-```scss
-.chakra-select__wrapper {
+```css
+.queryBuilder .chakra-select__wrapper {
   width: fit-content;
-  width: -moz-fit-content; // vendor prefix required for Firefox
   display: inline-block;
 }
 
-.chakra-input {
+.queryBuilder .chakra-input {
   width: auto;
   display: inline-block;
 }
 
-.chakra-radio-group {
+.queryBuilder .chakra-radio-group {
   display: inline-block;
 }
 ```

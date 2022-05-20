@@ -1,4 +1,4 @@
-import { render, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import moment from 'moment';
 import {
   defaultNotToggleProps,
@@ -47,16 +47,16 @@ const testAntDValueSelector = (
 
   describe(title, () => {
     it('should render the correct number of options', async () => {
-      const { getByRole } = render(<Component {...props} />);
-      await user.click(getByRole('combobox'));
-      const listbox = within(getByRole('listbox'));
+      render(<Component {...props} />);
+      await user.click(screen.getByRole('combobox'));
+      const listbox = within(screen.getByRole('listbox'));
       expect(listbox.getAllByRole('option')).toHaveLength(2);
     });
 
     it('should have the options passed into the <select />', async () => {
-      const { getByRole } = render(<Component {...props} />);
-      await user.click(getByRole('combobox'));
-      const listbox = within(getByRole('listbox'));
+      render(<Component {...props} />);
+      await user.click(screen.getByRole('combobox'));
+      const listbox = within(screen.getByRole('listbox'));
       expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
     });
 
@@ -64,33 +64,31 @@ const testAntDValueSelector = (
       it('should have the values passed into the <select multiple />', () => {
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
-        const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
+        render(<Component {...props} value={value} {...multiselectProps} />);
         expect(
-          getByTitle(props.title).querySelectorAll('.ant-select-selection-item-content')
+          screen.getByTitle(props.title).querySelectorAll('.ant-select-selection-item-content')
         ).toHaveLength(testValues.length);
       });
     }
 
     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
       it('should have the value passed into the <select />', () => {
-        const { getByTitle } = render(<Component {...props} value={testVal.name} />);
-        expect(getByTitle(props.title)).toHaveTextContent(testVal.label);
+        render(<Component {...props} value={testVal.name} />);
+        expect(screen.getByTitle(props.title)).toHaveTextContent(testVal.label);
       });
     }
 
     it('should call the onChange method passed in', async () => {
       const handleOnChange = jest.fn();
-      const { getByRole, getByText } = render(
-        <Component {...props} handleOnChange={handleOnChange} />
-      );
-      await user.click(getByRole('combobox'));
-      await user.click(getByText(testVal.label));
+      render(<Component {...props} handleOnChange={handleOnChange} />);
+      await user.click(screen.getByRole('combobox'));
+      await user.click(screen.getByText(testVal.label));
       expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
     });
 
     it('should have the className passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} className="foo" />);
-      expect(getByTitle(props.title)).toHaveClass('foo');
+      render(<Component {...props} className="foo" />);
+      expect(screen.getByTitle(props.title)).toHaveClass('foo');
     });
 
     it('should render optgroups', async () => {
@@ -99,20 +97,18 @@ const testAntDValueSelector = (
       ];
       const newProps =
         'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
-      const { getByRole } = render(<Component {...newProps} />);
-      await user.click(getByRole('combobox'));
-      const listbox = within(getByRole('listbox'));
+      render(<Component {...newProps} />);
+      await user.click(screen.getByRole('combobox'));
+      const listbox = within(screen.getByRole('listbox'));
       expect(listbox.getAllByRole('option').pop()).toHaveTextContent(testVal.name);
     });
 
     it('should be disabled by the disabled prop', async () => {
       const handleOnChange = jest.fn();
-      const { getByRole } = render(
-        <Component {...props} handleOnChange={handleOnChange} disabled />
-      );
-      expect(getByRole('combobox')).toBeDisabled();
-      await user.click(getByRole('combobox'));
-      expect(() => getByRole('listbox')).toThrow();
+      render(<Component {...props} handleOnChange={handleOnChange} disabled />);
+      expect(screen.getByRole('combobox')).toBeDisabled();
+      await user.click(screen.getByRole('combobox'));
+      expect(() => screen.getByRole('listbox')).toThrow();
       expect(handleOnChange).not.toHaveBeenCalled();
     });
   });
@@ -125,27 +121,27 @@ describe(notToggleTitle, () => {
   const props: NotToggleProps = { ...defaultNotToggleProps, label, title: notToggleTitle };
 
   it('should have the value passed in', () => {
-    const { getByTitle } = render(<AntDNotToggle {...props} checked />);
-    expect(getByTitle(notToggleTitle)).toBeDefined();
+    render(<AntDNotToggle {...props} checked />);
+    expect(screen.getByTitle(notToggleTitle)).toBeDefined();
   });
 
   it('should have the className passed into the <label />', () => {
-    const { getByTitle } = render(<AntDNotToggle {...props} className="foo" />);
-    expect(getByTitle(notToggleTitle)).toHaveClass('foo');
+    render(<AntDNotToggle {...props} className="foo" />);
+    expect(screen.getByTitle(notToggleTitle)).toHaveClass('foo');
   });
 
   it('should call the onChange method passed in', async () => {
     const onChange = jest.fn();
-    const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} />);
-    await user.click(getByTitle(notToggleTitle));
+    render(<AntDNotToggle {...props} handleOnChange={onChange} />);
+    await user.click(screen.getByTitle(notToggleTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('should be disabled by disabled prop', async () => {
     const onChange = jest.fn();
-    const { getByTitle } = render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
-    expect(getByTitle(notToggleTitle)).toBeDisabled();
-    await user.click(getByTitle(notToggleTitle));
+    render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
+    expect(screen.getByTitle(notToggleTitle)).toBeDisabled();
+    await user.click(screen.getByTitle(notToggleTitle));
     expect(onChange).not.toHaveBeenCalled();
   });
 });
@@ -160,29 +156,27 @@ describe(`${valueEditorTitle} as switch`, () => {
   };
 
   it('should have the value passed in', () => {
-    const { getByTitle } = render(<AntDValueEditor {...props} value />);
-    expect(getByTitle(valueEditorTitle)).toBeDefined();
+    render(<AntDValueEditor {...props} value />);
+    expect(screen.getByTitle(valueEditorTitle)).toBeDefined();
   });
 
   it('should have the className passed into the <label />', () => {
-    const { getByTitle } = render(<AntDValueEditor {...props} className="foo" />);
-    expect(getByTitle(valueEditorTitle)).toHaveClass('foo');
+    render(<AntDValueEditor {...props} className="foo" />);
+    expect(screen.getByTitle(valueEditorTitle)).toHaveClass('foo');
   });
 
   it('should call the onChange method passed in', async () => {
     const onChange = jest.fn();
-    const { getByTitle } = render(<AntDValueEditor {...props} handleOnChange={onChange} />);
-    await user.click(getByTitle(valueEditorTitle));
+    render(<AntDValueEditor {...props} handleOnChange={onChange} />);
+    await user.click(screen.getByTitle(valueEditorTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('should be disabled by disabled prop', async () => {
     const onChange = jest.fn();
-    const { getByTitle } = render(
-      <AntDValueEditor {...props} handleOnChange={onChange} disabled />
-    );
-    expect(getByTitle(valueEditorTitle)).toBeDisabled();
-    await user.click(getByTitle(valueEditorTitle));
+    render(<AntDValueEditor {...props} handleOnChange={onChange} disabled />);
+    expect(screen.getByTitle(valueEditorTitle)).toBeDisabled();
+    await user.click(screen.getByTitle(valueEditorTitle));
     expect(onChange).not.toHaveBeenCalled();
   });
 });
@@ -196,37 +190,35 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
 
   it('should render a date picker', async () => {
     const onChange = jest.fn();
-    const { container, getByTitle } = render(
+    const { container } = render(
       <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} />
     );
     await user.click(findInput(container));
-    await user.click(getByTitle(today));
+    await user.click(screen.getByTitle(today));
     expect(onChange).toHaveBeenCalledWith(today);
   });
 
   it('should render a date picker with a preset value', async () => {
-    const { container, getAllByTitle } = render(
-      <AntDValueEditor {...props} inputType="date" value={today} />
-    );
+    const { container } = render(<AntDValueEditor {...props} inputType="date" value={today} />);
     await user.click(findInput(container));
-    expect(getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
+    expect(screen.getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
       'ant-picker-cell-selected'
     );
   });
 
   it('should render a date range picker', async () => {
     const onChange = jest.fn();
-    const { container, getAllByTitle } = render(
+    const { container } = render(
       <AntDValueEditor {...props} inputType="date" operator="between" handleOnChange={onChange} />
     );
     await user.click(findInput(container));
-    await user.click(getAllByTitle(today)[0]);
-    await user.click(getAllByTitle(tomorrow)[0]);
+    await user.click(screen.getAllByTitle(today)[0]);
+    await user.click(screen.getAllByTitle(tomorrow)[0]);
     expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });
 
   it('should render a date range picker with a preset value', async () => {
-    const { container, getAllByTitle } = render(
+    const { container } = render(
       <AntDValueEditor
         {...props}
         inputType="date"
@@ -235,47 +227,47 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       />
     );
     await user.click(findInput(container));
-    expect(getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
+    expect(screen.getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
       'ant-picker-cell-range-start'
     );
-    expect(getAllByTitle(tomorrow).find(el => el.tagName !== 'INPUT')).toHaveClass(
+    expect(screen.getAllByTitle(tomorrow).find(el => el.tagName !== 'INPUT')).toHaveClass(
       'ant-picker-cell-range-end'
     );
   });
 
   it('should render a datetime picker', async () => {
     const onChange = jest.fn();
-    const { container, getByText, getByTitle, getAllByText } = render(
+    const { container } = render(
       <AntDValueEditor {...props} inputType="datetime-local" handleOnChange={onChange} />
     );
     await user.click(findInput(container));
-    await user.click(getByTitle(today));
-    for (const el of getAllByText('02')) {
+    await user.click(screen.getByTitle(today));
+    for (const el of screen.getAllByText('02')) {
       await user.click(el);
     }
-    await user.click(getByText(/ok/i));
+    await user.click(screen.getByText(/ok/i));
     expect(onChange).toHaveBeenCalledWith(`${today} 02:02:02`);
   });
 
   it('should render a time picker', async () => {
     const onChange = jest.fn();
-    const { container, getByText, getAllByText } = render(
+    const { container } = render(
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
     );
     await user.click(findInput(container));
-    for (const el of getAllByText('02')) {
+    for (const el of screen.getAllByText('02')) {
       await user.click(el);
     }
-    await user.click(getByText(/ok/i));
+    await user.click(screen.getByText(/ok/i));
     expect(onChange).toHaveBeenCalledWith('02:02:02');
   });
 
   it('should render a time picker with a preset value', async () => {
-    const { container, getAllByText } = render(
+    const { container } = render(
       <AntDValueEditor {...props} inputType="time" value={'02:02:02'} />
     );
     await user.click(findInput(container));
-    for (const n of getAllByText('02')) {
+    for (const n of screen.getAllByText('02')) {
       expect(hasOrInheritsClass(n, 'ant-picker-time-panel-cell-selected')).toBe(true);
     }
   });

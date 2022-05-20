@@ -2,7 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Bootstrap](https://getbootstrap.com/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/) and choose "Bootstrap" from the Style drop-down.
+To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/#style=bootstrap) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap).
 
 ## Installation
 
@@ -15,11 +15,12 @@ yarn add react-querybuilder @react-querybuilder/bootstrap bootstrap bootstrap-ic
 ## Usage
 
 ```tsx
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
 import {
   bootstrapControlClassnames,
   bootstrapControlElements,
 } from '@react-querybuilder/bootstrap';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import 'bootstrap/scss/bootstrap.scss';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -41,20 +42,11 @@ const App = () => {
 };
 ```
 
-To apply the Bootstrap styles, you can add the following SCSS to your app:
+Some additional styling may be necessary, e.g.:
 
-```scss
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-@import 'bootstrap/scss/mixins';
-@import 'bootstrap/scss/reboot';
-@import 'bootstrap/scss/type';
-@import 'bootstrap/scss/forms';
-@import 'bootstrap/scss/buttons';
-@import 'bootstrap/scss/dropdown';
-
-.form-control,
-.form-select {
+```css
+.queryBuilder .form-control,
+.queryBuilder .form-select {
   display: inline-block;
   width: auto;
 }

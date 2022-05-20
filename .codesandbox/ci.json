@@ -1,5 +1,20 @@
 {
-  "packages": ["packages/react-querybuilder"],
-  "sandboxes": ["react-querybuilder-ci-oq8ts"],
-  "node": "14"
+  "buildCommand": "build:packages",
+  "packages": [
+    "packages/antd",
+    "packages/bootstrap",
+    "packages/bulma",
+    "packages/chakra",
+    "packages/material",
+    "packages/react-querybuilder"
+  ],
+  "sandboxes": [
+    "/examples/ci",
+    "/examples/antd",
+    "/examples/bootstrap",
+    "/examples/bulma",
+    "/examples/chakra",
+    "/examples/material"
+  ],
+  "node": "16"
 }

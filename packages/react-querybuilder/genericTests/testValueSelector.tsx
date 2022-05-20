@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '../src/types';
 import { findSelect, userEventSetup } from './utils';
 
@@ -28,13 +28,13 @@ export const testSelect = (
 
   describe(title, () => {
     it('should have the options passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} />);
-      expect(getByTitle(title).querySelectorAll('option')).toHaveLength(2);
+      render(<Component {...props} />);
+      expect(screen.getByTitle(title).querySelectorAll('option')).toHaveLength(2);
     });
 
     it('should render the correct number of options', () => {
-      const { getByTitle } = render(<Component {...props} />);
-      const getSelect = () => findSelect(getByTitle(title));
+      render(<Component {...props} />);
+      const getSelect = () => findSelect(screen.getByTitle(title));
       expect(getSelect).not.toThrow();
       expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
     });
@@ -45,8 +45,8 @@ export const testSelect = (
       ];
       const newProps =
         'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
-      const { getByTitle } = render(<Component {...newProps} />);
-      const getSelect = () => findSelect(getByTitle(title));
+      render(<Component {...newProps} />);
+      const getSelect = () => findSelect(screen.getByTitle(title));
       expect(getSelect).not.toThrow();
       expect(getSelect().querySelectorAll('optgroup')).toHaveLength(optGroups.length);
       expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
@@ -60,37 +60,37 @@ export const testSelect = (
       it('should have the values passed into the <select multiple />', () => {
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
-        const { getByTitle } = render(<Component {...props} value={value} {...multiselectProps} />);
-        expect(findSelect(getByTitle(title))).toHaveProperty('multiple', true);
-        expect(findSelect(getByTitle(title)).selectedOptions.length).toBe(testValues.length);
+        render(<Component {...props} value={value} {...multiselectProps} />);
+        expect(findSelect(screen.getByTitle(title))).toHaveProperty('multiple', true);
+        expect(findSelect(screen.getByTitle(title)).selectedOptions.length).toBe(testValues.length);
       });
     }
 
     // Test as single-value selector
     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
       it('should have the value passed into the <select />', () => {
-        const { getByTitle } = render(<Component {...props} value={testVal.name} />);
-        expect(findSelect(getByTitle(title))).toHaveValue(testVal.name);
+        render(<Component {...props} value={testVal.name} />);
+        expect(findSelect(screen.getByTitle(title))).toHaveValue(testVal.name);
       });
     }
 
     it('should have the className passed into the <select />', () => {
-      const { getByTitle } = render(<Component {...props} className="foo" />);
-      expect(getByTitle(title)).toHaveClass('foo');
+      render(<Component {...props} className="foo" />);
+      expect(screen.getByTitle(title)).toHaveClass('foo');
     });
 
     it('should call the onChange method passed in', async () => {
       const onChange = jest.fn();
-      const { getByTitle } = render(<Component {...props} handleOnChange={onChange} />);
-      await user.selectOptions(findSelect(getByTitle(title)), testVal.name);
+      render(<Component {...props} handleOnChange={onChange} />);
+      await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
       expect(onChange).toHaveBeenCalledWith(testVal.name);
     });
 
     it('should be disabled by the disabled prop', async () => {
       const onChange = jest.fn();
-      const { getByTitle } = render(<Component {...props} handleOnChange={onChange} disabled />);
-      expect(findSelect(getByTitle(title))).toBeDisabled();
-      await user.selectOptions(findSelect(getByTitle(title)), testVal.name);
+      render(<Component {...props} handleOnChange={onChange} disabled />);
+      expect(findSelect(screen.getByTitle(title))).toBeDisabled();
+      await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
       expect(onChange).not.toHaveBeenCalled();
     });
   });

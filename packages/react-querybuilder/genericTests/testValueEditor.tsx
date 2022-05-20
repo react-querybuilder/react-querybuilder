@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { NameLabelPair, OptionGroup, ValueEditorProps } from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { findInput, findTextarea, userEventSetup } from './utils';
@@ -38,21 +38,17 @@ export const testValueEditor = (
   const testCheckbox = (type: 'checkbox' | 'switch') => {
     it('should render the checkbox and react to changes', async () => {
       const handleOnChange = jest.fn();
-      const { getByTitle } = render(
-        <ValueEditor {...props} type={type} handleOnChange={handleOnChange} />
-      );
-      expect(() => findInput(getByTitle(title))).not.toThrow();
-      expect(findInput(getByTitle(title))).toHaveAttribute('type', 'checkbox');
-      await user.click(findInput(getByTitle(title)));
+      render(<ValueEditor {...props} type={type} handleOnChange={handleOnChange} />);
+      expect(() => findInput(screen.getByTitle(title))).not.toThrow();
+      expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'checkbox');
+      await user.click(findInput(screen.getByTitle(title)));
       expect(handleOnChange).toHaveBeenCalledWith(true);
     });
 
     it('should be disabled by the disabled prop', async () => {
       const handleOnChange = jest.fn();
-      const { getByTitle } = render(
-        <ValueEditor {...props} type={type} handleOnChange={handleOnChange} disabled />
-      );
-      const input = findInput(getByTitle(title));
+      render(<ValueEditor {...props} type={type} handleOnChange={handleOnChange} disabled />);
+      const input = findInput(screen.getByTitle(title));
       expect(input).toBeDisabled();
       await user.click(input);
       expect(handleOnChange).not.toHaveBeenCalled();
@@ -63,32 +59,30 @@ export const testValueEditor = (
     if (!skip.def) {
       describe('when using default rendering', () => {
         it('should have the value passed into the <input />', () => {
-          const { getByTitle } = render(<ValueEditor {...props} value="test" />);
-          expect(findInput(getByTitle(title))).toHaveValue('test');
+          render(<ValueEditor {...props} value="test" />);
+          expect(findInput(screen.getByTitle(title))).toHaveValue('test');
         });
 
         it('should render nothing for operator "null"', () => {
-          const { getByTitle } = render(<ValueEditor {...props} operator="null" />);
-          expect(() => getByTitle(title)).toThrow();
+          render(<ValueEditor {...props} operator="null" />);
+          expect(() => screen.getByTitle(title)).toThrow();
         });
 
         it('should render nothing for operator "notNull"', () => {
-          const { getByTitle } = render(<ValueEditor {...props} operator="notNull" />);
-          expect(() => getByTitle(title)).toThrow();
+          render(<ValueEditor {...props} operator="notNull" />);
+          expect(() => screen.getByTitle(title)).toThrow();
         });
 
         it('should call the onChange method passed in', async () => {
           const onChange = jest.fn();
-          const { getByTitle } = render(<ValueEditor {...props} handleOnChange={onChange} />);
-          await user.type(findInput(getByTitle(title)), 'foo');
+          render(<ValueEditor {...props} handleOnChange={onChange} />);
+          await user.type(findInput(screen.getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
         });
 
         it('should make the inputType "text" if operator is "between" or "notBetween"', () => {
-          const { getByTitle } = render(
-            <ValueEditor {...props} inputType="number" operator="between" />
-          );
-          expect(findInput(getByTitle(title))).toHaveAttribute('type', 'text');
+          render(<ValueEditor {...props} inputType="number" operator="between" />);
+          expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
         });
 
         it('should set the value to "" if operator is not "between" or "notBetween" and inputType is "number" and value contains a comma', () => {
@@ -165,7 +159,7 @@ export const testValueEditor = (
     if (!skip.radio) {
       describe('when rendering a radio button set', () => {
         it('should render the radio buttons with labels', () => {
-          const { getByTitle } = render(
+          render(
             <ValueEditor
               {...props}
               type="radio"
@@ -175,7 +169,7 @@ export const testValueEditor = (
               ]}
             />
           );
-          const radioButtons = getByTitle(title).querySelectorAll('input[type="radio"]');
+          const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           expect(radioButtons).toHaveLength(2);
           for (const r of radioButtons) {
             expect(r).toHaveAttribute('type', 'radio');
@@ -184,7 +178,7 @@ export const testValueEditor = (
 
         it('should call the onChange handler', async () => {
           const handleOnChange = jest.fn();
-          const { getByTitle } = render(
+          render(
             <ValueEditor
               {...props}
               type="radio"
@@ -196,7 +190,7 @@ export const testValueEditor = (
             />
           );
           const radioButtons = Array.from(
-            getByTitle(title).querySelectorAll('input[type="radio"]')
+            screen.getByTitle(title).querySelectorAll('input[type="radio"]')
           );
           for (const r of radioButtons) {
             await user.click(r);
@@ -207,7 +201,7 @@ export const testValueEditor = (
 
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
-          const { getByTitle } = render(
+          render(
             <ValueEditor
               {...props}
               type="radio"
@@ -219,7 +213,7 @@ export const testValueEditor = (
               disabled
             />
           );
-          for (const r of getByTitle(title).querySelectorAll('input[type="radio"]')) {
+          for (const r of screen.getByTitle(title).querySelectorAll('input[type="radio"]')) {
             expect(r).toBeDisabled();
             await user.click(r);
           }
@@ -231,16 +225,14 @@ export const testValueEditor = (
     if (!skip.textarea) {
       describe('when rendering a textarea', () => {
         it('should have the value passed into the <input />', () => {
-          const { getByTitle } = render(<ValueEditor {...props} type="textarea" value="test" />);
-          expect(findTextarea(getByTitle(title))).toHaveValue('test');
+          render(<ValueEditor {...props} type="textarea" value="test" />);
+          expect(findTextarea(screen.getByTitle(title))).toHaveValue('test');
         });
 
         it('should call the onChange method passed in', async () => {
           const onChange = jest.fn();
-          const { getByTitle } = render(
-            <ValueEditor {...props} type="textarea" handleOnChange={onChange} />
-          );
-          await user.type(findTextarea(getByTitle(title)), 'foo');
+          render(<ValueEditor {...props} type="textarea" handleOnChange={onChange} />);
+          await user.type(findTextarea(screen.getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
         });
       });

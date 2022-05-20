@@ -1,4 +1,4 @@
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
 import {
@@ -141,8 +141,8 @@ const getProps = (mergeIntoSchema?: Partial<Schema>): RuleProps => ({
 });
 
 it('should have correct classNames', () => {
-  const { getByTestId } = render(<Rule {...getProps()} />);
-  expect(getByTestId(TestID.rule)).toHaveClass(sc.rule, 'custom-rule-class');
+  render(<Rule {...getProps()} />);
+  expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, 'custom-rule-class');
 });
 
 describe('onElementChanged methods', () => {
@@ -150,9 +150,9 @@ describe('onElementChanged methods', () => {
     it('should call onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
-      const { getByTestId } = render(<Rule {...props} />);
+      render(<Rule {...props} />);
       await user.selectOptions(
-        getByTestId(TestID.rule).querySelector(`select.${sc.fields}`)!,
+        screen.getByTestId(TestID.rule).querySelector(`select.${sc.fields}`)!,
         'any_field'
       );
       expect(onPropChange).toHaveBeenCalledWith('field', 'any_field', [0]);
@@ -163,9 +163,9 @@ describe('onElementChanged methods', () => {
     it('should call onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
-      const { getByTestId } = render(<Rule {...props} />);
+      render(<Rule {...props} />);
       await user.selectOptions(
-        getByTestId(TestID.rule).querySelector(`select.${sc.operators}`)!,
+        screen.getByTestId(TestID.rule).querySelector(`select.${sc.operators}`)!,
         'any_operator'
       );
       expect(onPropChange).toHaveBeenCalledWith('operator', 'any_operator', [0]);
@@ -176,8 +176,11 @@ describe('onElementChanged methods', () => {
     it('should call onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({ onPropChange }) };
-      const { getByTestId } = render(<Rule {...props} />);
-      await user.type(getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!, 'any_value');
+      render(<Rule {...props} />);
+      await user.type(
+        screen.getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!,
+        'any_value'
+      );
       expect(onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
     });
   });
@@ -193,16 +196,16 @@ describe('valueEditorType as function', () => {
       fieldMap,
       controls: { ...controls, valueEditor: ({ type }) => <button>{type}</button> },
     });
-    const { getByText } = render(<Rule {...props} field="f1" />);
-    expect(getByText('radio')).toBeInTheDocument();
+    render(<Rule {...props} field="f1" />);
+    expect(screen.getByText('radio')).toBeInTheDocument();
   });
 });
 
 describe('cloneRule', () => {
   it('should call moveRule with the right paths', async () => {
     const moveRule = jest.fn();
-    const { getByText } = render(<Rule {...getProps({ moveRule, showCloneButtons: true })} />);
-    await user.click(getByText(t.cloneRule.label));
+    render(<Rule {...getProps({ moveRule, showCloneButtons: true })} />);
+    await user.click(screen.getByText(t.cloneRule.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
 });
@@ -210,42 +213,42 @@ describe('cloneRule', () => {
 describe('removeRule', () => {
   it('should call onRuleRemove with the rule and path', async () => {
     const onRuleRemove = jest.fn();
-    const { getByText } = render(<Rule {...getProps({ onRuleRemove })} />);
-    await user.click(getByText(t.removeRule.label));
+    render(<Rule {...getProps({ onRuleRemove })} />);
+    await user.click(screen.getByText(t.removeRule.label));
     expect(onRuleRemove).toHaveBeenCalledWith([0]);
   });
 });
 
 describe('validation', () => {
   it('should not validate if no validationMap[id] value exists and no validator function is provided', () => {
-    const { getByTestId } = render(<Rule {...getProps()} />);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
+    render(<Rule {...getProps()} />);
+    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
+    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
   });
 
   it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
     const validationMap = { id: false };
-    const { getByTestId } = render(<Rule {...getProps({ fieldMap, validationMap })} />);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
-    expect(getByTestId(TestID.rule)).toHaveClass(sc.invalid);
+    render(<Rule {...getProps({ fieldMap, validationMap })} />);
+    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.invalid);
     expect(validator).not.toHaveBeenCalled();
   });
 
   it('should validate to true if validationMap[id] = true', () => {
     const validationMap = { id: true };
-    const { getByTestId } = render(<Rule {...getProps({ validationMap })} />);
-    expect(getByTestId(TestID.rule)).toHaveClass(sc.valid);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
+    render(<Rule {...getProps({ validationMap })} />);
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
+    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
   });
 
   it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
-    const { getByTestId } = render(<Rule {...getProps({ fieldMap })} field="field1" />);
-    expect(getByTestId(TestID.rule)).toHaveClass(sc.valid);
-    expect(getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
+    render(<Rule {...getProps({ fieldMap })} field="field1" />);
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
+    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
     expect(validator).toHaveBeenCalled();
   });
 
@@ -259,8 +262,8 @@ describe('validation', () => {
       ),
     };
     const validationMap = { id: valRes };
-    const { getByTitle } = render(<Rule {...getProps({ validationMap, controls })} />);
-    expect(getByTitle('ValueSelector').innerHTML).toEqual(JSON.stringify(valRes));
+    render(<Rule {...getProps({ validationMap, controls })} />);
+    expect(screen.getByTitle('ValueSelector').innerHTML).toEqual(JSON.stringify(valRes));
   });
 });
 
@@ -270,14 +273,14 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should not have the drag class if not dragging', () => {
-    const { getByTestId } = render(<Rule {...getProps()} />);
-    const rule = getByTestId(TestID.rule);
+    render(<Rule {...getProps()} />);
+    const rule = screen.getByTestId(TestID.rule);
     expect(rule).not.toHaveClass(sc.dndDragging);
   });
 
   it('should have the drag class if dragging', () => {
-    const { getByTestId } = render(<Rule {...getProps()} />);
-    const rule = getByTestId(TestID.rule);
+    render(<Rule {...getProps()} />);
+    const rule = screen.getByTestId(TestID.rule);
     simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
     expect(rule).toHaveClass(sc.dndDragging);
     act(() => {
@@ -286,13 +289,13 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should have the over class if hovered', () => {
-    const { getAllByTestId } = render(
+    render(
       <div>
         <Rule {...getProps()} path={[0]} />
         <Rule {...getProps()} path={[1]} />
       </div>
     );
-    const rules = getAllByTestId(TestID.rule);
+    const rules = screen.getAllByTestId(TestID.rule);
     simulateDragHover(
       getHandlerId(rules[0], 'drag'),
       getHandlerId(rules[1], 'drop'),
@@ -306,13 +309,13 @@ describe('enableDragAndDrop', () => {
 
   it('should handle a dropped rule', () => {
     const moveRule = jest.fn();
-    const { getAllByTestId } = render(
+    render(
       <div>
         <Rule {...getProps({ moveRule })} path={[0]} />
         <Rule {...getProps({ moveRule })} path={[1]} />
       </div>
     );
-    const rules = getAllByTestId(TestID.rule);
+    const rules = screen.getAllByTestId(TestID.rule);
     simulateDragDrop(
       getHandlerId(rules[0], 'drag'),
       getHandlerId(rules[1], 'drop'),
@@ -325,8 +328,8 @@ describe('enableDragAndDrop', () => {
 
   it('should abort move if dropped on itself', () => {
     const moveRule = jest.fn();
-    const { getByTestId } = render(<Rule {...getProps({ moveRule })} />);
-    const rule = getByTestId(TestID.rule);
+    render(<Rule {...getProps({ moveRule })} />);
+    const rule = screen.getByTestId(TestID.rule);
     simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
     expect(rule).not.toHaveClass(sc.dndDragging);
     expect(rule).not.toHaveClass(sc.dndOver);
@@ -335,13 +338,13 @@ describe('enableDragAndDrop', () => {
 
   it('should not try to update query if disabled', () => {
     const moveRule = jest.fn();
-    const { getAllByTestId } = render(
+    render(
       <div>
         <Rule {...getProps({ moveRule })} path={[0]} />
         <Rule {...getProps({ moveRule })} path={[1]} disabled />
       </div>
     );
-    const rules = getAllByTestId(TestID.rule);
+    const rules = screen.getAllByTestId(TestID.rule);
     simulateDragDrop(
       getHandlerId(rules[0], 'drag'),
       getHandlerId(rules[1], 'drop'),
@@ -353,15 +356,15 @@ describe('enableDragAndDrop', () => {
 
 describe('disabled', () => {
   it('should have the correct classname', () => {
-    const { getByTestId } = render(<Rule {...getProps()} disabled />);
-    expect(getByTestId(TestID.rule)).toHaveClass(sc.disabled);
+    render(<Rule {...getProps()} disabled />);
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.disabled);
   });
 
   it('does not try to update the query', async () => {
     const onRuleRemove = jest.fn();
     const onPropChange = jest.fn();
     const moveRule = jest.fn();
-    const { getByTestId } = render(
+    render(
       <Rule
         {...getProps({
           showCloneButtons: true,
@@ -372,11 +375,11 @@ describe('disabled', () => {
         disabled
       />
     );
-    await user.selectOptions(getByTestId(TestID.fields), 'any_field');
-    await user.selectOptions(getByTestId(TestID.operators), 'any_operator');
-    await user.type(getByTestId(TestID.valueEditor), 'Test');
-    await user.click(getByTestId(TestID.cloneRule));
-    await user.click(getByTestId(TestID.removeRule));
+    await user.selectOptions(screen.getByTestId(TestID.fields), 'any_field');
+    await user.selectOptions(screen.getByTestId(TestID.operators), 'any_operator');
+    await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
+    await user.click(screen.getByTestId(TestID.cloneRule));
+    await user.click(screen.getByTestId(TestID.removeRule));
     expect(onRuleRemove).not.toHaveBeenCalled();
     expect(onPropChange).not.toHaveBeenCalled();
     expect(moveRule).not.toHaveBeenCalled();
@@ -385,45 +388,41 @@ describe('disabled', () => {
 
 describe('locked rule', () => {
   it('does not disable the lock button if the parent group is not disabled', () => {
-    const { getByTestId } = render(<Rule {...getProps({ showLockButtons: true })} disabled />);
-    expect(getByTestId(TestID.lockRule)).toBeEnabled();
+    render(<Rule {...getProps({ showLockButtons: true })} disabled />);
+    expect(screen.getByTestId(TestID.lockRule)).toBeEnabled();
   });
 
   it('disables the lock button if the parent group is disabled even if the current rule is not', async () => {
     const onPropChange = jest.fn();
-    const { getByTestId } = render(
-      <Rule {...getProps({ showLockButtons: true, onPropChange })} parentDisabled />
-    );
-    expect(getByTestId(TestID.lockRule)).toBeDisabled();
-    await user.click(getByTestId(TestID.lockRule));
+    render(<Rule {...getProps({ showLockButtons: true, onPropChange })} parentDisabled />);
+    expect(screen.getByTestId(TestID.lockRule)).toBeDisabled();
+    await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).not.toHaveBeenCalled();
   });
 
   it('sets the disabled property', async () => {
     const onPropChange = jest.fn();
-    const { getByTestId } = render(<Rule {...getProps({ showLockButtons: true, onPropChange })} />);
-    await user.click(getByTestId(TestID.lockRule));
+    render(<Rule {...getProps({ showLockButtons: true, onPropChange })} />);
+    await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
 
   it('unsets the disabled property', async () => {
     const onPropChange = jest.fn();
-    const { getByTestId } = render(
-      <Rule {...getProps({ showLockButtons: true, onPropChange })} disabled />
-    );
-    await user.click(getByTestId(TestID.lockRule));
+    render(<Rule {...getProps({ showLockButtons: true, onPropChange })} disabled />);
+    await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
   });
 
   it('prevents drops', () => {
     const moveRule = jest.fn();
-    const { getAllByTestId } = render(
+    render(
       <div>
         <Rule {...getProps({ moveRule })} path={[0]} disabled />
         <Rule {...getProps({ moveRule })} path={[1]} />
       </div>
     );
-    const rules = getAllByTestId(TestID.rule);
+    const rules = screen.getAllByTestId(TestID.rule);
     simulateDragDrop(
       getHandlerId(rules[1], 'drag'),
       getHandlerId(rules[0], 'drop'),
@@ -454,8 +453,8 @@ describe('valueSource', () => {
   const getValueSources = (): ValueSources => valueSources;
 
   it('does not display value source selector by default', () => {
-    const { queryByTestId } = render(<Rule {...getProps()} />);
-    expect(queryByTestId(TestID.valueSourceSelector)).toBeNull();
+    render(<Rule {...getProps()} />);
+    expect(screen.queryByTestId(TestID.valueSourceSelector)).toBeNull();
   });
 
   it('sets the value source to "value" by default', () => {
@@ -467,39 +466,41 @@ describe('valueSource', () => {
         valueEditor: ({ valueSource }) => <button>{`vs=${valueSource}`}</button>,
       },
     });
-    const { getByText } = render(<Rule {...props} />);
-    expect(getByText('vs=value')).toBeInTheDocument();
+    render(<Rule {...props} />);
+    expect(screen.getByText('vs=value')).toBeInTheDocument();
   });
 
   it('valueSource "field"', () => {
-    const { getByDisplayValue } = render(
-      <Rule {...getProps({ getValueSources })} valueSource="field" />
-    );
-    expect(getByDisplayValue('field')).toBeInTheDocument();
+    render(<Rule {...getProps({ getValueSources })} valueSource="field" />);
+    expect(screen.getByDisplayValue('field')).toBeInTheDocument();
   });
 
   it('valueSources as array', () => {
-    const { getByTestId } = render(
+    render(
       <Rule
         {...getProps({ getValueSources: () => ['value'], fields, fieldMap })}
         field="fvsa"
         valueSource="field"
       />
     );
-    expect(getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')).toHaveLength(2);
-    expect(getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
+    expect(
+      screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
+    ).toHaveLength(2);
+    expect(screen.getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
   });
 
   it('valueSources as function', () => {
-    const { getByTestId } = render(
+    render(
       <Rule
         {...getProps({ getValueSources: () => ['value'], fields, fieldMap })}
         field="fvsf"
         valueSource="field"
       />
     );
-    expect(getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')).toHaveLength(2);
-    expect(getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
+    expect(
+      screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
+    ).toHaveLength(2);
+    expect(screen.getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
   });
 
   it('filters fields by comparator', () => {
@@ -521,10 +522,10 @@ describe('valueSource', () => {
         ),
       },
     });
-    const { getByDisplayValue } = render(
-      <Rule {...props} field="fvsa" value="fc2" valueSource="field" />
-    );
-    expect(getByDisplayValue(fieldMap['fc2'].label).getElementsByTagName('option')).toHaveLength(2);
-    expect(getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
+    render(<Rule {...props} field="fvsa" value="fc2" valueSource="field" />);
+    expect(
+      screen.getByDisplayValue(fieldMap['fc2'].label).getElementsByTagName('option')
+    ).toHaveLength(2);
+    expect(screen.getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
   });
 });

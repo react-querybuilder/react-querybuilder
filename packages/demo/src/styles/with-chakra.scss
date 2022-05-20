@@ -1,7 +1,6 @@
 .with-chakra {
   .chakra-select__wrapper {
     width: fit-content;
-    width: -moz-fit-content; // vendor prefix required for Firefox
     display: inline-block;
   }
 

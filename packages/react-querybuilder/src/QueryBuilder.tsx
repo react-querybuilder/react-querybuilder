@@ -7,8 +7,6 @@ import {
   defaultControlClassnames,
   defaultControlElements,
   defaultOperators,
-  defaultPlaceholderFieldName,
-  defaultPlaceholderOperatorName,
   defaultTranslations,
   standardClassnames,
 } from './defaults';
@@ -20,6 +18,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
   Schema,
+  TranslationsFull,
   UpdateableProperties,
   ValueSources,
 } from './types';
@@ -73,9 +72,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   resetOnFieldChange = true,
   resetOnOperatorChange = false,
   autoSelectField = true,
-  placeholderFieldName = defaultPlaceholderFieldName,
   autoSelectOperator = true,
-  placeholderOperatorName = defaultPlaceholderOperatorName,
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
@@ -84,7 +81,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   context,
 }: QueryBuilderProps<RG>) => {
   const translations = useMemo(() => {
-    const translationsTemp = defaultTranslations;
+    const translationsTemp: TranslationsFull = { ...defaultTranslations };
     objectKeys(translationsProp).forEach(t => {
       // TODO: type this better (remove/replace `as any`)
       translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] } as any;
@@ -94,11 +91,11 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   const defaultField = useMemo(
     (): Field => ({
-      id: placeholderFieldName,
-      name: placeholderFieldName,
+      id: translations.fields.placeholderName,
+      name: translations.fields.placeholderName,
       label: translations.fields.placeholderLabel,
     }),
-    [placeholderFieldName, translations.fields.placeholderLabel]
+    [translations.fields.placeholderLabel, translations.fields.placeholderName]
   );
   const fieldsProp = useMemo(() => fProp ?? [defaultField], [defaultField, fProp]);
 
@@ -137,11 +134,11 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   const defaultOperator = useMemo(
     (): NameLabelPair => ({
-      id: placeholderOperatorName,
-      name: placeholderOperatorName,
+      id: translations.operators.placeholderName,
+      name: translations.operators.placeholderName,
       label: translations.operators.placeholderLabel,
     }),
-    [placeholderOperatorName, translations.operators.placeholderLabel]
+    [translations.operators.placeholderLabel, translations.operators.placeholderName]
   );
 
   const getOperatorsMain = useCallback(
@@ -451,9 +448,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     showCloneButtons,
     showLockButtons,
     autoSelectField,
-    placeholderFieldName,
     autoSelectOperator,
-    placeholderOperatorName,
     addRuleToNewGroups,
     enableDragAndDrop,
     independentCombinators: !!independentCombinators,

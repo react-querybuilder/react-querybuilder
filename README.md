@@ -31,7 +31,7 @@ export const App = () => {
 };
 ```
 
-For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md) or dive into the [full documentation](https://react-querybuilder.js.org/docs/api/querybuilder).
+For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/api/querybuilder), or browse the [example projects](./examples/).
 
 _For documentation on `react-querybuilder` v3.12.1, [click here](README.old.md)._
 

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "lib": ["dom", "es2016"],
+    "jsx": "react-jsx"
+  },
+  "include": ["./src/**/*"]
+}

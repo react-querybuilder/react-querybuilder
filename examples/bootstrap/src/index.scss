@@ -1,0 +1,20 @@
+$code-color: #333333;
+
+@import 'bootstrap/scss/bootstrap.scss';
+@import 'react-querybuilder/dist/query-builder.scss';
+
+body {
+  margin: 0.5rem;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.queryBuilder {
+  .form-control,
+  .form-select {
+    display: inline-block;
+    width: auto;
+  }
+}

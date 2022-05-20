@@ -21,11 +21,13 @@ export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
 export const defaultTranslations: TranslationsFull = {
   fields: {
     title: 'Fields',
+    placeholderName: defaultPlaceholderFieldName,
     placeholderLabel: defaultPlaceholderFieldLabel,
     placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
   },
   operators: {
     title: 'Operators',
+    placeholderName: defaultPlaceholderOperatorName,
     placeholderLabel: defaultPlaceholderOperatorLabel,
     placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
   },

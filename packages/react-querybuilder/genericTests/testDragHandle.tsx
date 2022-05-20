@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { DragHandleProps } from '../src/types';
 
 export const defaultDragHandleProps: DragHandleProps = {
@@ -16,8 +16,8 @@ export const testDragHandle = (
 
   describe(title, () => {
     it('should have the className passed into the <span />', () => {
-      const { getByTitle } = render(<DragHandle {...props} className="foo" />);
-      expect(getByTitle(title)).toHaveClass('foo');
+      render(<DragHandle {...props} className="foo" />);
+      expect(screen.getByTitle(title)).toHaveClass('foo');
     });
   });
 };
