@@ -26,8 +26,8 @@ const App = () => {
         fields={fields}
         query={query}
         onQueryChange={q => setQuery(q)}
-        controlClassnames={bootstrapControlClassnames}
         controlElements={bootstrapControlElements}
+        controlClassnames={bootstrapControlClassnames}
       />
       <h4>Query</h4>
       <pre>

@@ -11,8 +11,6 @@ const templatePkgJSON = require('./template/package.json');
 const stableStringify = require('fast-json-stable-stringify');
 
 const __filename = fileURLToPath(import.meta.url);
-
-// 👇️ "/home/john/Desktop/javascript"
 const __dirname = dirname(__filename);
 const templatePath = pathJoin(__dirname, 'template');
 const templatePublic = pathJoin(templatePath, 'public');
@@ -66,7 +64,7 @@ for (const config of configs) {
   );
 
   // package.json
-  const examplePkgJSON = { ...templatePkgJSON };
+  const examplePkgJSON = JSON.parse(JSON.stringify(templatePkgJSON));
   examplePkgJSON.name = `react-querybuilder-${config.id}-example`;
   examplePkgJSON.description = exampleTitle;
   examplePkgJSON.dependencies[`@react-querybuilder/${config.id}`] =
@@ -80,7 +78,7 @@ for (const config of configs) {
   await copyFile(pathJoin(templatePath, 'tsconfig.json'), pathJoin(examplePath, 'tsconfig.json'));
 
   // Prettify everything
-  for (const folderPath of [templatePath, templatePublic, templateSrc]) {
+  for (const folderPath of [examplePath, examplePublic, exampleSrc]) {
     const fileList = (await readdir(folderPath, { withFileTypes: true }))
       .filter(dirent => dirent.isFile())
       .map(dirent => pathJoin(folderPath, dirent.name));

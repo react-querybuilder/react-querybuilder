@@ -1,8 +1,8 @@
 @import 'antd/dist/antd.compact.css';
-@import 'react-querybuilder/dist/query-builder.css';
+@import 'react-querybuilder/dist/query-builder.scss';
 
 body {
-  margin: 0.5rem;
+  margin: 0.5rem !important;
 }
 
 code {
