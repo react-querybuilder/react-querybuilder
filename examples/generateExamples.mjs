@@ -89,7 +89,7 @@ for (const configID in configs) {
           minifyWhitespace: false,
           jsx: 'preserve',
         })
-      ).code
+      ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1')
     : processedTemplateTSX;
   await writeFile(pathJoin(exampleSrc, `index.${config.compileToJS ? 'js' : 'tsx'}`), sourceCode);
   // #endregion
