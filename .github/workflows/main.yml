@@ -18,7 +18,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.1
         with:
-          prettier_options: --write packages/*/src/** ./*.js
+          prettier_options: --write packages/*/src/** ./*.js examples/**/*
           prettier_version: 2.6.2
           commit_message: 'Prettified code'
         env:
