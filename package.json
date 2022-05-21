@@ -60,7 +60,6 @@
     "prettier-plugin-organize-imports": "^2.3.4",
     "react-dnd-test-backend": "^16.0.1",
     "react-dnd-test-utils": "^16.0.1",
-    "ts-node": "^10.7.0",
     "typescript": "^4.5.0",
     "vite": "^2.6.14"
   }
