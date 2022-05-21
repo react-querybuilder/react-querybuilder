@@ -1,7 +1,7 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Field, formatQuery, QueryBuilder, RuleGroupType } from 'react-querybuilder';
-import './index.css';
+import './index.scss';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },

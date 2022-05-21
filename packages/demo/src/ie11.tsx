@@ -15,10 +15,10 @@ import {
   type DemoOption,
 } from 'react-querybuilder/dev';
 import {
-  QueryBuilder,
   defaultValidator,
-  type QueryBuilderProps,
+  QueryBuilder,
   type ExportFormat,
+  type QueryBuilderProps,
 } from 'react-querybuilder/src';
 import { docsLink } from './constants';
 

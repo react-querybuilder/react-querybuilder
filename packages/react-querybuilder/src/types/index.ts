@@ -1,12 +1,12 @@
 export type {
-  RuleGroupTypeIC,
-  RuleGroupTypeAny,
-  RuleGroupICArray,
-  RuleOrGroupArray,
   DefaultRuleGroupICArray,
-  DefaultRuleOrGroupArray,
-  DefaultRuleGroupTypeIC,
   DefaultRuleGroupTypeAny,
+  DefaultRuleGroupTypeIC,
+  DefaultRuleOrGroupArray,
+  RuleGroupICArray,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleOrGroupArray,
 } from 'ruleGroupsIC';
 export * from './basic';
 export * from './importExport';

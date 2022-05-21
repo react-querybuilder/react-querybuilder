@@ -1,19 +1,14 @@
 $code: #333333;
 $code-background: unset;
-
 @import 'bulma/bulma.sass';
 @import 'react-querybuilder/dist/query-builder.scss';
 
 body {
-  margin: 0.5rem;
+  margin: 0.5rem !important;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
-pre {
-  white-space: pre-wrap;
 }
 
 .queryBuilder {

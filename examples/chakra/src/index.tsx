@@ -6,10 +6,7 @@ import { Field, formatQuery, QueryBuilder, RuleGroupType } from 'react-querybuil
 import './index.scss';
 
 const chakraTheme = extendTheme({
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
-  },
+  config: { initialColorMode: 'light', useSystemColorMode: false },
 });
 
 const fields: Field[] = [
