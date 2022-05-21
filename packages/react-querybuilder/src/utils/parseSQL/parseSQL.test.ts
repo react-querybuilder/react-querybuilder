@@ -1,3 +1,4 @@
+import { parseSQL } from '.';
 import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
@@ -6,7 +7,6 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types';
-import { parseSQL } from '.';
 import { isWildcardsOnly } from './utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({

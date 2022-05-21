@@ -1,4 +1,4 @@
-import type { RuleType, RuleGroupTypeAny, RuleGroupTypeIC, RuleGroupType } from '../types';
+import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC, RuleType } from '../types';
 
 /**
  * Determines if this is a RuleGroupType or RuleGroupTypeIC.
