@@ -28,7 +28,7 @@
     "publish:demo": "yarn build && node gh-pages.publish.js",
     "pretty-print": "prettier --write packages/*/src/** ./*.js examples/**/*",
     "generate-changelog": "github-changes --owner react-querybuilder --repository react-querybuilder --auth --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\"",
-    "generate-compat-examples": "node ./examples/generateCompatExamples.mjs"
+    "generate-examples": "node ./examples/generateExamples.mjs"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

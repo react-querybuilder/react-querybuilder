@@ -1,17 +1,38 @@
-export default [
-  {
-    id: 'antd',
+export default {
+  basic: {
+    name: 'Basic',
+    dependencies: [],
+    scssPre: [],
+    scssPost: [],
+    tsxImports: [],
+    additionalDeclarations: [],
+    wrapper: ['', ''],
+    compileToJS: true,
+    isCompatPackage: false,
+  },
+  'basic-ts': {
+    name: 'Basic TypeScript',
+    dependencies: [],
+    scssPre: [],
+    scssPost: [],
+    tsxImports: [],
+    additionalDeclarations: [],
+    wrapper: ['', ''],
+    compileToJS: false,
+    isCompatPackage: false,
+  },
+  antd: {
     name: 'Ant Design',
     dependencies: [['antd', '^4.20.5']],
     scssPre: [`@import 'antd/dist/antd.compact.css';`],
     scssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
     tsxImports: [],
     additionalDeclarations: [],
-    wrapperOpen: '',
-    wrapperClose: '',
+    wrapper: ['', ''],
+    compileToJS: false,
+    isCompatPackage: true,
   },
-  {
-    id: 'bootstrap',
+  bootstrap: {
     name: 'Bootstrap',
     dependencies: [
       ['bootstrap', '^5.1.3'],
@@ -21,22 +42,22 @@ export default [
     scssPost: [`.queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`],
     tsxImports: [],
     additionalDeclarations: [],
-    wrapperOpen: '',
-    wrapperClose: '',
+    wrapper: ['', ''],
+    compileToJS: false,
+    isCompatPackage: true,
   },
-  {
-    id: 'bulma',
+  bulma: {
     name: 'Bulma',
     dependencies: [['bulma', '^0.9.4']],
     scssPre: [`$code: #333333;`, `$code-background: unset;`, `@import 'bulma/bulma.sass';`],
     scssPost: [`.queryBuilder{.input{width: auto;}}`],
     tsxImports: [],
     additionalDeclarations: [],
-    wrapperOpen: '',
-    wrapperClose: '',
+    wrapper: ['', ''],
+    compileToJS: false,
+    isCompatPackage: true,
   },
-  {
-    id: 'chakra',
+  chakra: {
     name: 'Chakra UI',
     dependencies: [
       ['@chakra-ui/icons', '^2.0.0'],
@@ -58,18 +79,19 @@ export default [
     additionalDeclarations: [
       `const chakraTheme = extendTheme({config:{initialColorMode: 'light',useSystemColorMode: false}});`,
     ],
-    wrapperOpen: '<ChakraProvider theme={chakraTheme}>',
-    wrapperClose: '</ChakraProvider>',
+    wrapper: ['<ChakraProvider theme={chakraTheme}>', '</ChakraProvider>'],
+    compileToJS: false,
+    isCompatPackage: true,
   },
-  {
-    id: 'material',
+  material: {
     name: 'MUI/Material',
     dependencies: [['@mui/material', '^5.8.0']],
     scssPre: [],
     scssPost: [],
     tsxImports: [`import { createTheme, ThemeProvider } from '@mui/material/styles';`],
     additionalDeclarations: [`const muiTheme = createTheme();`],
-    wrapperOpen: '<ThemeProvider theme={muiTheme}>',
-    wrapperClose: '</ThemeProvider>',
+    wrapper: ['<ThemeProvider theme={muiTheme}>', '</ThemeProvider>'],
+    compileToJS: false,
+    isCompatPackage: true,
   },
-];
+};
