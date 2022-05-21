@@ -122,10 +122,10 @@ formatQuery(query, 'parameterized');
 
 Output:
 
-```ts
+```json
 {
-  sql: "(firstName = ? and lastName = ?)",
-  params: ["Steve", "Vai"]
+  "sql": "(firstName = ? and lastName = ?)",
+  "params": ["Steve", "Vai"]
 }
 ```
 
@@ -139,12 +139,12 @@ formatQuery(query, 'parameterized_named');
 
 Output:
 
-```ts
+```json
 {
-  sql: "(firstName = :firstName_1 and lastName = :lastName_1)",
-  params: {
-    firstName_1: "Steve",
-    lastName_1: "Vai"
+  "sql": "(firstName = :firstName_1 and lastName = :lastName_1)",
+  "params": {
+    "firstName_1": "Steve",
+    "lastName_1": "Vai"
   }
 }
 ```
@@ -325,12 +325,16 @@ const pf = formatQuery(
 
 Output:
 
-```ts
+```json
 {
-  sql: "(firstName = lastName and firstName like middleName || '%')",
-  params: {},
+  "sql": "(firstName = lastName and firstName like middleName || '%')",
+  "params": {}
 }
 ```
+
+### Placeholder values
+
+Any rule where the `field` or `operator` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `fields.placeholderName` and/or the `operators.placeholderName` property as appropriate on the [`translations` prop](./querybuilder#translations) object.
 
 ## Validation
 
@@ -383,7 +387,8 @@ formatQuery(query, {
 
 ### Automatic validation
 
-A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", "parameterized_named", or "mongodb". This validation is used regardless of the presence of any `validator` options either at the query or field level:
+A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is "sql", "parameterized", "parameterized_named", "mongodb", or "cel". This validation is used regardless of the presence of any `validator` options either at the query or field level:
 
 - Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (i.e. `value.length > 0`) nor a non-empty string.
 - Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array of length two (`value.length === 2`) nor a string with exactly one comma that isn't the first or last character (i.e. `value.split(',').length === 2` and neither element is an empty string).
+- Rules where the following expression is true will be deemed invalid: `field === placeholderFieldName || operator === placeholderOperatorName`.

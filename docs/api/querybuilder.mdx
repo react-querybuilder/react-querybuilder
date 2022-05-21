@@ -588,69 +588,73 @@ interface Classnames {
 
 This prop can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />` component. All keys in the object and all properties within each key are optional. Missing translations will default to the values below.
 
-```ts
+```json
 {
-  fields: {
-    title: "Fields",
-    placeholderLabel: "------",
-    placeholderGroupLabel: "------",
+  "fields": {
+    "title": "Fields",
+    "placeholderName": "~",
+    "placeholderLabel": "------",
+    "placeholderGroupLabel": "------"
   },
-  operators: {
-    title: "Operators",
+  "operators": {
+    "title": "Operators",
+    "placeholderName": "~",
+    "placeholderLabel": "------",
+    "placeholderGroupLabel": "------"
   },
-  value: {
-    title: "Value",
+  "value": {
+    "title": "Value"
   },
-  removeRule: {
-    label: "x",
-    title: "Remove rule",
+  "removeRule": {
+    "label": "x",
+    "title": "Remove rule"
   },
-  removeGroup: {
-    label: "x",
-    title: "Remove group",
+  "removeGroup": {
+    "label": "x",
+    "title": "Remove group"
   },
-  addRule: {
-    label: "+Rule",
-    title: "Add rule",
+  "addRule": {
+    "label": "+Rule",
+    "title": "Add rule"
   },
-  addGroup: {
-    label: "+Group",
-    title: "Add group",
+  "addGroup": {
+    "label": "+Group",
+    "title": "Add group"
   },
-  combinators: {
-    title: "Combinators",
+  "combinators": {
+    "title": "Combinators"
   },
-  notToggle: {
-    label: "Not",
-    title: "Invert this group",
+  "notToggle": {
+    "label": "Not",
+    "title": "Invert this group"
   },
-  cloneRule: {
-    label: '⧉',
-    title: 'Clone rule'
+  "cloneRule": {
+    "label": "⧉",
+    "title": "Clone rule"
   },
-  cloneRuleGroup: {
-    label: '⧉',
-    title: 'Clone group'
+  "cloneRuleGroup": {
+    "label": "⧉",
+    "title": "Clone group"
   },
-  dragHandle: {
-    label: '⁞⁞',
-    title: 'Drag handle'
+  "dragHandle": {
+    "label": "⁞⁞",
+    "title": "Drag handle"
   },
-  lockRule: {
-    label: '🔓',
-    title: 'Lock rule',
+  "lockRule": {
+    "label": "🔓",
+    "title": "Lock rule"
   },
-  lockGroup: {
-    label: '🔓',
-    title: 'Lock group',
+  "lockGroup": {
+    "label": "🔓",
+    "title": "Lock group"
   },
-  lockRuleDisabled: {
-    label: '🔒',
-    title: 'Unlock rule',
+  "lockRuleDisabled": {
+    "label": "🔒",
+    "title": "Unlock rule"
   },
-  lockGroupDisabled: {
-    label: '🔒',
-    title: 'Unlock group',
+  "lockGroupDisabled": {
+    "label": "🔒",
+    "title": "Unlock group"
   }
 }
 ```
@@ -699,7 +703,13 @@ Pass `false` to disable the `onQueryChange` call on mount of the component which
 
 `boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#autoSelectField=false)
 
-Pass `false` to automatically add an "empty" option with label `"------"` (or `translations.fields.placeholderLabel` if provided--see [translations](#translations)) to the `fields` array as the first element. The empty option will be the initial selection for all new rules. When the empty field option is selected, the operator and value components will not display for that rule.
+Pass `false` to automatically add an "empty" option with value `"~"` and label `"------"` (see [`translations.fields.placeholder*` to customize](#translations)) to the `fields` array as the first element. The empty option will be the initial selection for all new rules. When the empty field option is selected, the operator and value editor components will not display for that rule.
+
+### `autoSelectOperator`
+
+`boolean` (default `true`) [_Click for demo with this feature disabled_](https://react-querybuilder.js.org/react-querybuilder/#autoSelectOperator=false)
+
+Pass `false` to automatically add an "empty" option with value `"~"` and label `"------"` (see [`translations.operators.placeholder*` to customize](#translations)) to the `operators` array as the first element. The empty option will be the initial selection for all new rules. When the empty operator option is selected, the value editor component will not display for that rule.
 
 ### `addRuleToNewGroups`
 

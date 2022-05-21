@@ -17,7 +17,7 @@ interface Field {
   id?: string; // The field identifier (if not provided, then `name` will be used)
   name: string; // REQUIRED - the field name
   label: string; // REQUIRED - the field label
-  operators?: NameLabelPair[]; // Array of operators (if not provided, then `getOperators()` will be used)
+  operators?: NameLabelPair[] | OptionGroup[]; // Array of operators (if not provided, then `getOperators()` will be used)
   valueEditorType?: ValueEditorType; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
   inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
   values?: NameLabelPair[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
@@ -226,6 +226,9 @@ interface Schema {
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
+  placeholderFieldName: string;
+  autoSelectOperator: boolean;
+  placeholderOperatorName: string;
   addRuleToNewGroups: boolean;
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;

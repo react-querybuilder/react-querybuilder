@@ -40,19 +40,19 @@ parseSQL(`SELECT * FROM t WHERE firstName = $p1 AND lastName = $p2`, {
 
 Output (`RuleGroupType`):
 
-```ts
+```json
 {
-  combinator: "and",
-  rules: [
+  "combinator": "and",
+  "rules": [
     {
-      field: "firstName",
-      operator: "=",
-      value: "Steve"
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
     },
     {
-      field: "lastName",
-      operator: "=",
-      value: "Vai"
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
     }
   ]
 }
@@ -70,19 +70,19 @@ parseSQL(`SELECT * FROM t WHERE lastName IN ('Vai', 'Vaughan') AND age BETWEEN 2
 
 Output:
 
-```ts
+```json
 {
-  combinator: "and",
-  rules: [
+  "combinator": "and",
+  "rules": [
     {
-      field: "lastName",
-      operator: "in",
-      value: ["Vai", "Vaughan"]
+      "field": "lastName",
+      "operator": "in",
+      "value": ["Vai", "Vaughan"]
     },
     {
-      field: "age",
-      operator: "between",
-      value: [20, 100]
+      "field": "age",
+      "operator": "between",
+      "value": [20, 100]
     }
   ]
 }
@@ -100,21 +100,21 @@ parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`, {
 
 Output (`RuleGroupTypeIC`):
 
-```ts
+```json
 {
-  rules: [
+  "rules": [
     {
-      field: 'firstName',
-      operator: '=',
-      value: 'Steve',
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
     },
-    'and',
+    "and",
     {
-      field: 'lastName',
-      operator: '=',
-      value: 'Vai',
-    },
-  ];
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
 }
 ```
 
@@ -136,17 +136,17 @@ parseSQL(`SELECT * FROM t WHERE firstName = lastName`, {
 
 Output:
 
-```ts
+```json
 {
-  combinator: "and",
-  rules: [
+  "combinator": "and",
+  "rules": [
     {
-      field: "firstName",
-      operator: "=",
-      value: "lastName",
-      valueSource: "field",
-    },
-  ],
+      "field": "firstName",
+      "operator": "=",
+      "value": "lastName",
+      "valueSource": "field"
+    }
+  ]
 }
 ```
 
