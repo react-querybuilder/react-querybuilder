@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import {
+  defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,
   defaultPlaceholderOperatorName,
   defaultTranslations as t,
@@ -111,7 +112,43 @@ describe('when initial query with fields object is provided', () => {
     await user.click(screen.getByTestId(TestID.addRule));
     expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
     expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(2);
-    // TODO: test sort
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option')).map(opt => opt.value)
+    ).toEqual(['xyz', 'abc']);
+    expect(screen.getByText('One')).toBeInTheDocument();
+    expect(screen.getByText('Two')).toBeInTheDocument();
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[0]
+    ).toHaveTextContent('One');
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[1]
+    ).toHaveTextContent('Two');
+  });
+
+  it('respects autoSelectField={false}', async () => {
+    render(
+      <QueryBuilder
+        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
+        autoSelectField={false}
+      />
+    );
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
+    expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(3);
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option')).map(opt => opt.value)
+    ).toEqual([defaultPlaceholderFieldName, 'xyz', 'abc']);
+    expect(screen.getByText('One')).toBeInTheDocument();
+    expect(screen.getByText('Two')).toBeInTheDocument();
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[0]
+    ).toHaveTextContent(defaultPlaceholderFieldLabel);
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[1]
+    ).toHaveTextContent('One');
+    expect(
+      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[2]
+    ).toHaveTextContent('Two');
   });
 });
 

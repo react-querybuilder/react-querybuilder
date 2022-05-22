@@ -1,4 +1,5 @@
 import { enableES5 } from 'immer';
+import type { ClassAttributes } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndContext, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -11,6 +12,8 @@ import {
   standardClassnames,
 } from './defaults';
 import type {
+  Classnames,
+  Controls,
   Field,
   NameLabelPair,
   QueryBuilderProps,
@@ -102,21 +105,38 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   const fields = useMemo(() => {
     let f = Array.isArray(fieldsProp)
       ? fieldsProp
-      : Object.keys(fieldsProp)
-          .map(fld => ({ ...fieldsProp[fld], name: fld }))
+      : objectKeys(fieldsProp)
+          .map((fld): Field => ({ ...fieldsProp[fld], name: fld }))
           .sort((a, b) => a.label.localeCompare(b.label));
-    if (!autoSelectField) {
-      if (isOptionGroupArray(f)) {
-        f = [{ label: translations.fields.placeholderGroupLabel, options: [defaultField] }, ...f];
+    if (isOptionGroupArray(f)) {
+      if (autoSelectField) {
+        f = uniqOptGroups(f);
       } else {
-        f = [defaultField, ...f];
+        f = uniqOptGroups([
+          { label: translations.fields.placeholderGroupLabel, options: [defaultField] },
+          ...f,
+        ]);
+      }
+    } else {
+      if (autoSelectField) {
+        f = uniqByName(f);
+      } else {
+        f = uniqByName([defaultField, ...f]);
       }
     }
-    return isOptionGroupArray(f) ? uniqOptGroups(f) : uniqByName(f);
+    return f;
   }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
 
   const fieldMap = useMemo(() => {
-    if (!Array.isArray(fieldsProp)) return fieldsProp;
+    if (!Array.isArray(fieldsProp)) {
+      const fp: Record<string, Field> = {};
+      objectKeys(fieldsProp).forEach(f => (fp[f] = { ...fieldsProp[f], name: f }));
+      if (autoSelectField) {
+        return fp;
+      } else {
+        return { ...fp, [translations.fields.placeholderName]: defaultField };
+      }
+    }
     const fm: Record<string, Field> = {};
     if (isOptionGroupArray(fields)) {
       fields.forEach(f => f.options.forEach(opt => (fm[opt.name] = opt)));
@@ -124,7 +144,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       fields.forEach(f => (fm[f.name] = f));
     }
     return fm;
-  }, [fields, fieldsProp]);
+  }, [autoSelectField, defaultField, fields, fieldsProp, translations.fields.placeholderName]);
 
   const queryDisabled = useMemo(
     () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
@@ -333,15 +353,16 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   }, [addRuleToNewGroups, combinators, createRule, independentCombinators]);
 
   const isFirstRender = useRef(true);
+  // This state variable is only used when the component is uncontrolled
   const [queryState, setQueryState] = useState(defaultQuery ?? createRuleGroup());
-  // We assume here that if a query is passed in, and it's not the first render,
-  // that the query has already been prepared, i.e. the user is just passing back
-  // the onQueryChange callback parameter as query. This appears to have a huge
+  // We assume here that if `query` is passed in, and it's not the first render,
+  // that `query` has already been prepared, i.e. the user is just passing back
+  // the `onQueryChange` callback parameter as `query`. This appears to have a huge
   // performance impact.
   const root: RG = query ? (isFirstRender.current ? prepareRuleGroup(query) : query) : queryState;
   isFirstRender.current = false;
 
-  // Notify a query change on mount
+  // Run `onQueryChange` on mount, if enabled
   useEffect(() => {
     if (enableMountQueryChange) {
       onQueryChange(root);
@@ -350,12 +371,11 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   }, []);
 
   /**
-   * Executes the `onQueryChange` function if provided,
-   * and sets the state for uncontrolled components
+   * Executes the `onQueryChange` function if provided
+   * and sets the state when component is uncontrolled
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
-      // State variable only used when component is uncontrolled
       if (!query) {
         setQueryState(newQuery);
       }
@@ -404,22 +424,19 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     dispatch(newQuery);
   };
 
-  const validationResult = useMemo(
-    () => (typeof validator === 'function' ? validator(root) : {}),
-    [root, validator]
-  );
-  const validationMap = useMemo(
-    () => (typeof validationResult === 'object' ? validationResult : {}),
-    [validationResult]
-  );
+  const { validationResult, validationMap } = useMemo(() => {
+    const validationResult = typeof validator === 'function' ? validator(root) : {};
+    const validationMap = typeof validationResult === 'object' ? validationResult : {};
+    return { validationResult, validationMap };
+  }, [root, validator]);
 
   const classNames = useMemo(
-    () => ({ ...defaultControlClassnames, ...controlClassnames }),
+    (): Classnames => ({ ...defaultControlClassnames, ...controlClassnames }),
     [controlClassnames]
   );
 
   const controls = useMemo(
-    () => ({ ...defaultControlElements, ...controlElements }),
+    (): Controls => ({ ...defaultControlElements, ...controlElements }),
     [controlElements]
   );
 
@@ -471,14 +488,30 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     [classNames.queryBuilder, queryDisabled, root.disabled, validationResult]
   );
 
+  const rqbRef: ClassAttributes<HTMLDivElement>['ref'] = useRef(null);
+
+  const log = useMemo(
+    () =>
+      process.env.NODE_ENV === 'test'
+        ? (r: any) => {
+            const div = document?.createElement('div');
+            div.innerHTML = JSON.stringify(r, null, 2);
+            rqbRef.current?.appendChild(div);
+          }
+        : /* istanbul ignore next */ console.log,
+    []
+  );
+
   if (debugMode) {
-    // TODO: log relevant information
+    // TODO: log more information
+    log({ root, queryState });
   }
 
   return (
     <DndContext.Consumer>
       {() => (
         <div
+          ref={rqbRef}
           className={wrapperClassName}
           data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
           data-inlinecombinators={
