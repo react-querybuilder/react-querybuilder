@@ -16,3 +16,4 @@ export * from './prepareQueryObjects';
 export * from './queryTools';
 export * from './regenerateIDs';
 export * from './uniq';
+export * from './useLog';

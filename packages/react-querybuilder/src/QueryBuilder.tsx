@@ -42,6 +42,7 @@ import {
   uniqByName,
   uniqOptGroups,
   update,
+  useLog,
 } from './utils';
 
 enableES5();
@@ -490,22 +491,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   const rqbRef: ClassAttributes<HTMLDivElement>['ref'] = useRef(null);
 
-  const log = useMemo(
-    () =>
-      process.env.NODE_ENV === 'test'
-        ? (r: any) => {
-            const div = document?.createElement('div');
-            div.innerHTML = JSON.stringify(r, null, 2);
-            rqbRef.current?.appendChild(div);
-          }
-        : /* istanbul ignore next */ console.log,
-    []
-  );
-
-  if (debugMode) {
-    // TODO: log more information
-    log({ root, queryState });
-  }
+  useLog(debugMode, rqbRef.current, schema, root, queryState);
 
   return (
     <DndContext.Consumer>
