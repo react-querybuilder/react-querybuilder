@@ -114,7 +114,8 @@ type ExportFormat =
   | 'json_without_ids'
   | 'parameterized'
   | 'parameterized_named'
-  | 'mongodb';
+  | 'mongodb'
+  | 'cel';
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
 
@@ -126,6 +127,9 @@ interface FormatQueryOptions {
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
   fallbackExpression?: string;
   paramPrefix?: string;
+  parseNumbers?: boolean;
+  placeholderFieldName?: string;
+  placeholderOperatorName?: string;
 }
 
 interface ParameterizedSQL {

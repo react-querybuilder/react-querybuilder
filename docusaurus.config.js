@@ -89,7 +89,7 @@ const config = {
             label: "Docs",
           },
           {
-            href: "https://react-querybuilder.github.io/react-querybuilder",
+            href: "https://react-querybuilder.js.org/react-querybuilder",
             label: "Demo",
             position: "right",
           },
