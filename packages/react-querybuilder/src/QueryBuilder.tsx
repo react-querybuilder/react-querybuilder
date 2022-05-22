@@ -80,13 +80,13 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   validator,
   context,
 }: QueryBuilderProps<RG>) => {
-  const translations = useMemo(() => {
-    const translationsTemp: TranslationsFull = { ...defaultTranslations };
+  const translations = useMemo((): TranslationsFull => {
+    const translationsTemp: Partial<TranslationsFull> = {};
     objectKeys(translationsProp).forEach(t => {
       // TODO: type this better (remove/replace `as any`)
       translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] } as any;
     });
-    return translationsTemp;
+    return { ...defaultTranslations, ...translationsTemp };
   }, [translationsProp]);
 
   const defaultField = useMemo(
