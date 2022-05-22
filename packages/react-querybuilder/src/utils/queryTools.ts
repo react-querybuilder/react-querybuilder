@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
+import { regenerateID, regenerateIDs } from '../internal';
 import {
   NameLabelPair,
   OptionGroup,
@@ -11,7 +12,6 @@ import {
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
-import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 export const add = <RG extends RuleGroupTypeAny>(
   query: RG,

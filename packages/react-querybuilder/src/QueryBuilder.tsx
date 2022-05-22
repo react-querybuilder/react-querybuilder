@@ -11,6 +11,16 @@ import {
   defaultTranslations,
   standardClassnames,
 } from './defaults';
+import {
+  c,
+  filterFieldsByComparator,
+  generateID,
+  getValueSourcesUtil,
+  objectKeys,
+  uniqByName,
+  uniqOptGroups,
+  useLog,
+} from './internal';
 import type {
   Classnames,
   Controls,
@@ -27,22 +37,14 @@ import type {
 } from './types';
 import {
   add,
-  c,
-  filterFieldsByComparator,
-  generateID,
   getFirstOption,
-  getValueSourcesUtil,
   isOptionGroupArray,
   isRuleGroup,
   move,
-  objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
-  uniqByName,
-  uniqOptGroups,
   update,
-  useLog,
 } from './utils';
 
 enableES5();

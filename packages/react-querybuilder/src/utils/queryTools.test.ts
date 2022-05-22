@@ -1,4 +1,5 @@
 import { defaultCombinators } from '../defaults';
+import { getValueSourcesUtil } from '../internal';
 import {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
@@ -7,7 +8,6 @@ import {
   ValueSources,
 } from '../types';
 import { formatQuery } from './formatQuery';
-import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { add, move, remove, update } from './queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);

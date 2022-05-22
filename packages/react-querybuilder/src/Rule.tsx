@@ -1,15 +1,9 @@
-import { MouseEvent as ReactMouseEvent, useRef } from 'react';
+import { useRef, type MouseEvent as ReactMouseEvent } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
+import { c, filterFieldsByComparator, getValidationClassNames } from './internal';
 import type { DraggedItem, RuleProps, RuleType } from './types';
-import {
-  c,
-  filterFieldsByComparator,
-  getParentPath,
-  getValidationClassNames,
-  isAncestor,
-  pathsAreEqual,
-} from './utils';
+import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 
 export const Rule = ({
   id,

@@ -1,7 +1,8 @@
 import { useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
+import { c } from './internal';
 import { CombinatorSelectorProps, DraggedItem, Schema } from './types';
-import { c, getParentPath, isAncestor, pathsAreEqual } from './utils';
+import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 
 interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];

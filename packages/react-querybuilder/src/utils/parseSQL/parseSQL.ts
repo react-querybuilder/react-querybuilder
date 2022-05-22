@@ -1,4 +1,5 @@
-import { filterFieldsByComparator, getValueSourcesUtil, isOptionGroupArray, uniqByName } from '..';
+import { isOptionGroupArray } from '..';
+import { filterFieldsByComparator, getValueSourcesUtil, uniqByName } from '../../internal';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,

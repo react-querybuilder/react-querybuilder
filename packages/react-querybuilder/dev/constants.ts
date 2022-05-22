@@ -1,11 +1,11 @@
 import {
   convertToIC,
-  generateID,
   type ExportFormat,
   type Field,
   type RuleGroupType,
   type RuleType,
 } from '../src';
+import { generateID } from '../src/internal';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions } from './types';
 

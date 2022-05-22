@@ -1,4 +1,5 @@
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../defaults';
+import { uniqByName } from '../internal';
 import type {
   DefaultCombinatorName,
   ExportFormat,
@@ -16,7 +17,6 @@ import type {
   ValueProcessorInternal,
 } from '../types';
 import { isRuleOrGroupValid } from './isRuleOrGroupValid';
-import { uniqByName } from './uniq';
 
 const numericRegex = /^\s*[+-]?(\d+|\d*\.\d+|\d+\.\d*)([Ee][+-]?\d+)?\s*$/;
 

@@ -1,10 +1,9 @@
 import { Select } from 'antd';
-import type { Field, NameLabelPair, OptionGroup } from 'react-querybuilder';
+import { isOptionGroupArray, type NameLabelPair, type OptionGroup } from 'react-querybuilder';
 
 const { OptGroup, Option } = Select;
 
-export const isOptionGroupArray = (arr: Field['values']): arr is OptionGroup[] =>
-  Array.isArray(arr) && arr.length > 0 && 'options' in arr[0];
+export { isOptionGroupArray };
 
 export const toOptions = (arr?: NameLabelPair[] | OptionGroup[]) =>
   isOptionGroupArray(arr)

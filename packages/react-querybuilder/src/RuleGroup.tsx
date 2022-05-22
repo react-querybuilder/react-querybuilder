@@ -2,8 +2,9 @@ import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
 import { InlineCombinator } from './InlineCombinator';
+import { c, getValidationClassNames } from './internal';
 import type { DraggedItem, RuleGroupProps } from './types';
-import { c, getParentPath, getValidationClassNames, isAncestor, pathsAreEqual } from './utils';
+import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 
 export const RuleGroup = ({
   id,

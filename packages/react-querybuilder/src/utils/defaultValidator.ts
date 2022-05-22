@@ -21,8 +21,7 @@ export const defaultValidator: QueryValidator = query => {
     if (rg.rules.length === 0) {
       reasons.push(groupInvalidReasons.empty);
     } else if (!('combinator' in rg)) {
-      // TODO: check if rules are separated by valid combinators
-      // Odd indexes should be combinators and even indexes should be rules or groups
+      // Odd indexes should be valid combinators and even indexes should be rules or groups
       let invalidICs = false;
       for (let i = 0; i < rg.rules.length && !invalidICs; i++) {
         if (
@@ -39,10 +38,12 @@ export const defaultValidator: QueryValidator = query => {
         reasons.push(groupInvalidReasons.invalidIndependentCombinators);
       }
     }
+    // Non-independent combinators should be valid, but only checked if there are multiple rules
+    // since combinators don't really apply to groups with only one rule/group
     if (
       'combinator' in rg &&
       !defaultCombinators.map(c => c.name as string).includes(rg.combinator) &&
-      rg.rules.length >= 2
+      rg.rules.length > 1
     ) {
       reasons.push(groupInvalidReasons.invalidCombinator);
     }
@@ -56,7 +57,7 @@ export const defaultValidator: QueryValidator = query => {
     }
     rg.rules.forEach(r => {
       if (typeof r === 'string') {
-        // no-op
+        // Validation for this case was done earlier
       } else if ('rules' in r) {
         validateGroup(r);
       } else {
