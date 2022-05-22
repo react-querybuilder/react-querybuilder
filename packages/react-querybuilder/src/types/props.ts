@@ -354,6 +354,11 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
      */
     debugMode?: boolean;
     /**
+     * When `debugMode` is `true`, each log object will be passed to
+     * this function (otherwise `console.log` is used)
+     */
+    onLog?(obj: any): void;
+    /**
      * Initial query object for uncontrolled components
      */
     defaultQuery?: RG;

@@ -1904,8 +1904,21 @@ describe('value source field', () => {
 });
 
 describe('debug mode', () => {
+  const query: RuleGroupType = {
+    not: false,
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+  };
+
   it('logs info', () => {
-    render(<QueryBuilder debugMode />);
-    expect('TODO: test logging').toBeDefined();
+    const onLog = jest.fn();
+    render(<QueryBuilder debugMode query={query} onLog={onLog} />);
+    const { root, queryState, schema } = onLog.mock.calls[0][0];
+    const [processedRoot, processedQueryState] = [root, queryState].map(q =>
+      JSON.parse(formatQuery(q, 'json_without_ids'))
+    );
+    expect(processedRoot).toEqual(query);
+    expect(processedQueryState).toEqual({ ...query, rules: [] });
+    expect(schema).toBeDefined();
   });
 });

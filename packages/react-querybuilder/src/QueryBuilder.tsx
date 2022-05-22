@@ -1,5 +1,4 @@
 import { enableES5 } from 'immer';
-import type { ClassAttributes } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndContext, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -50,7 +49,6 @@ import {
 enableES5();
 
 export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>({
-  debugMode = false,
   defaultQuery,
   query,
   fields: fProp,
@@ -85,6 +83,8 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   disabled = false,
   validator,
   context,
+  debugMode = false,
+  onLog,
 }: QueryBuilderProps<RG>) => {
   const translations = useMemo((): TranslationsFull => {
     const translationsTemp: Partial<TranslationsFull> = {};
@@ -491,15 +491,12 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     [classNames.queryBuilder, queryDisabled, root.disabled, validationResult]
   );
 
-  const rqbRef: ClassAttributes<HTMLDivElement>['ref'] = useRef(null);
-
-  useLog(debugMode, rqbRef.current, schema, root, queryState);
+  useLog(debugMode, schema, root, queryState, onLog);
 
   return (
     <DndContext.Consumer>
       {() => (
         <div
-          ref={rqbRef}
           className={wrapperClassName}
           data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
           data-inlinecombinators={
