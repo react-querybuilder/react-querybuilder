@@ -1,6 +1,6 @@
 {
-  "name": "react-querybuilder-compat-template",
-  "description": "React Query Builder Compatibility Template",
+  "name": "react-querybuilder-template-example",
+  "description": "React Query Builder Template Example",
   "private": true,
   "dependencies": {
     "react": "^18.1.0",

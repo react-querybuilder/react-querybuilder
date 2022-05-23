@@ -7,7 +7,7 @@ import { transformWithEsbuild } from 'vite';
 import configs from './configs.mjs';
 const require = createRequire(import.meta.url);
 const prettierConfig = require('../.prettierrc.json');
-const templatePkgJSON = require('./template/package.json');
+const templatePkgJSON = require('./_template/package.json');
 const stableStringify = require('fast-json-stable-stringify');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,7 +24,7 @@ async function recursivelyGetFiles(dir) {
   return files.flat();
 }
 
-const templatePath = pathJoin(__dirname, 'template');
+const templatePath = pathJoin(__dirname, '_template');
 const templatePublic = pathJoin(templatePath, 'public');
 const templateSrc = pathJoin(templatePath, 'src');
 const templateIndexHTML = (await readFile(pathJoin(templatePublic, 'index.html'))).toString(
@@ -32,6 +32,7 @@ const templateIndexHTML = (await readFile(pathJoin(templatePublic, 'index.html')
 );
 const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
 const templateIndexSCSS = (await readFile(pathJoin(templateSrc, 'index.scss'))).toString('utf-8');
+const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
 
 for (const configID in configs) {
   const config = configs[configID];
@@ -119,6 +120,11 @@ for (const configID in configs) {
   if (!config.compileToJS) {
     await copyFile(pathJoin(templatePath, 'tsconfig.json'), pathJoin(examplePath, 'tsconfig.json'));
   }
+  // #endregion
+
+  // #region README.md
+  const exampleREADMEmd = templateREADMEmd.replace('/examples/_template', `/examples/${configID}`);
+  await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
   // #region Prettify everything
