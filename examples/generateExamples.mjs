@@ -1,11 +1,13 @@
+// @ts-check
 import { createRequire } from 'module';
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join as pathJoin, resolve } from 'node:path';
 import prettier from 'prettier';
 import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
-import configs from './configs.mjs';
+import { configs } from './exampleConfigs.mjs';
 const require = createRequire(import.meta.url);
+/** @type {import('prettier').Config} */
 const prettierConfig = require('../.prettierrc.json');
 const templatePkgJSON = require('./_template/package.json');
 const stableStringify = require('fast-json-stable-stringify');
@@ -34,12 +36,12 @@ const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).to
 const templateIndexSCSS = (await readFile(pathJoin(templateSrc, 'index.scss'))).toString('utf-8');
 const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
 
-for (const configID in configs) {
-  const config = configs[configID];
-  const examplePath = pathJoin(__dirname, configID);
+for (const exampleID in configs) {
+  const exampleConfig = configs[exampleID];
+  const examplePath = pathJoin(__dirname, exampleID);
   const examplePublic = pathJoin(examplePath, 'public');
   const exampleSrc = pathJoin(examplePath, 'src');
-  const exampleTitle = `React Query Builder ${config.name} Example`;
+  const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
   await rm(examplePath, { recursive: true, force: true });
   await mkdir(examplePath);
   await mkdir(examplePublic);
@@ -54,11 +56,11 @@ for (const configID in configs) {
 
   // #region src/index.scss
   const processedTemplateSCSS = templateIndexSCSS
-    .replace('// __SCSS_PRE__', config.scssPre.join('\n'))
-    .replace('// __SCSS_POST__', config.scssPost.join('\n'))
-    .replace(/((query-builder\.)s(css))/g, config.compileToJS ? '$2$3' : '$1');
+    .replace('// __SCSS_PRE__', exampleConfig.scssPre.join('\n'))
+    .replace('// __SCSS_POST__', exampleConfig.scssPost.join('\n'))
+    .replace(/((query-builder\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
   await writeFile(
-    pathJoin(exampleSrc, `index.${config.compileToJS ? '' : 's'}css`),
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? '' : 's'}css`),
     processedTemplateSCSS
   );
   // #endregion
@@ -66,23 +68,23 @@ for (const configID in configs) {
   // #region src/index.tsx
   let baseImport = '';
   const props = [];
-  if (config.isCompatPackage) {
+  if (exampleConfig.isCompatPackage) {
     baseImport = `import { ${
-      configID === 'bootstrap' ? `${configID}ControlClassnames, ` : ''
-    }${configID}ControlElements } from '@react-querybuilder/${configID}';`;
+      exampleID === 'bootstrap' ? `${exampleID}ControlClassnames, ` : ''
+    }${exampleID}ControlElements } from '@react-querybuilder/${exampleID}';`;
     props.push(
-      `controlElements={${configID}ControlElements}`,
-      configID === 'bootstrap' ? `controlClassnames={${configID}ControlClassnames}` : ''
+      `controlElements={${exampleID}ControlElements}`,
+      exampleID === 'bootstrap' ? `controlClassnames={${exampleID}ControlClassnames}` : ''
     );
   }
   const processedTemplateTSX = templateIndexTSX
-    .replace('// __IMPORTS__', [baseImport, ...config.tsxImports].join('\n'))
-    .replace('// __ADDITIONAL_DECLARATIONS__', config.additionalDeclarations.join('\n'))
-    .replace('// __WRAPPER_OPEN__', config.wrapper[0])
-    .replace('// __WRAPPER_CLOSE__', config.wrapper[1])
+    .replace('// __IMPORTS__', [baseImport, ...exampleConfig.tsxImports].join('\n'))
+    .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
+    .replace('// __WRAPPER_OPEN__', exampleConfig.wrapper?.[0] ?? '')
+    .replace('// __WRAPPER_CLOSE__', exampleConfig.wrapper?.[1] ?? '')
     .replace('// __RQB_PROPS__', props.join('\n'))
-    .replace(/((index\.)s(css))/g, config.compileToJS ? '$2$3' : '$1');
-  const sourceCode = config.compileToJS
+    .replace(/((index\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
+  const sourceCode = exampleConfig.compileToJS
     ? (
         await transformWithEsbuild(processedTemplateTSX, 'index.tsx', {
           minify: false,
@@ -91,18 +93,22 @@ for (const configID in configs) {
         })
       ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1')
     : processedTemplateTSX;
-  await writeFile(pathJoin(exampleSrc, `index.${config.compileToJS ? 'js' : 'tsx'}`), sourceCode);
+  await writeFile(
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    sourceCode
+  );
   // #endregion
 
   // #region package.json
+  /** @type {import('./exampleConfigs').PackageJSON} */
   const examplePkgJSON = JSON.parse(JSON.stringify(templatePkgJSON));
-  examplePkgJSON.name = `react-querybuilder-${configID}-example`;
+  examplePkgJSON.name = `react-querybuilder-${exampleID}-example`;
   examplePkgJSON.description = exampleTitle;
-  if (config.isCompatPackage) {
-    examplePkgJSON.dependencies[`@react-querybuilder/${configID}`] =
+  if (exampleConfig.isCompatPackage) {
+    examplePkgJSON.dependencies[`@react-querybuilder/${exampleID}`] =
       templatePkgJSON.dependencies['react-querybuilder'];
   }
-  if (config.compileToJS) {
+  if (exampleConfig.compileToJS) {
     delete examplePkgJSON.devDependencies['typescript'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
       if (devDep.match(/^@types\//)) {
@@ -110,20 +116,18 @@ for (const configID in configs) {
       }
     }
   }
-  for (const [dep, version] of config.dependencies) {
-    examplePkgJSON.dependencies[dep] = version;
-  }
+  examplePkgJSON.dependencies = { ...examplePkgJSON.dependencies, ...exampleConfig.dependencies };
   await writeFile(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON));
   // #endregion
 
   // #region tsconfig.json
-  if (!config.compileToJS) {
+  if (!exampleConfig.compileToJS) {
     await copyFile(pathJoin(templatePath, 'tsconfig.json'), pathJoin(examplePath, 'tsconfig.json'));
   }
   // #endregion
 
   // #region README.md
-  const exampleREADMEmd = templateREADMEmd.replace('/examples/_template', `/examples/${configID}`);
+  const exampleREADMEmd = templateREADMEmd.replace('/examples/_template', `/examples/${exampleID}`);
   await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
