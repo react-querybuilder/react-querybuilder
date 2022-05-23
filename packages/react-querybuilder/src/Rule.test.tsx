@@ -132,9 +132,11 @@ const schema: Partial<Schema> = {
 };
 const getProps = (mergeIntoSchema?: Partial<Schema>): RuleProps => ({
   id: 'id',
-  field: 'field', // note that this is not a valid field name based on the defaultFields
-  value: 'value',
-  operator: 'operator',
+  rule: {
+    field: 'field', // note that this is not a valid field name based on the defaultFields
+    value: 'value',
+    operator: 'operator',
+  },
   schema: { ...schema, ...mergeIntoSchema } as Schema,
   path: [0],
   translations: t,
@@ -190,13 +192,16 @@ describe('valueEditorType as function', () => {
   it('should determine the correct value editor type', () => {
     const fields: Field[] = [{ name: 'f1', label: 'Field 1', valueEditorType: () => 'radio' }];
     const fieldMap = getFieldMapFromArray(fields);
-    const controls = getProps().schema.controls;
+    const {
+      schema: { controls },
+      rule,
+    } = getProps();
     const props = getProps({
       fields,
       fieldMap,
       controls: { ...controls, valueEditor: ({ type }) => <button>{type}</button> },
     });
-    render(<Rule {...props} field="f1" />);
+    render(<Rule {...props} rule={{ ...rule, field: 'f1' }} />);
     expect(screen.getByText('radio')).toBeInTheDocument();
   });
 });
@@ -246,7 +251,8 @@ describe('validation', () => {
   it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
-    render(<Rule {...getProps({ fieldMap })} field="field1" />);
+    const props = getProps({ fieldMap });
+    render(<Rule {...props} rule={{ ...props.rule, field: 'field1' }} />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
     expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
     expect(validator).toHaveBeenCalled();
@@ -471,18 +477,14 @@ describe('valueSource', () => {
   });
 
   it('valueSource "field"', () => {
-    render(<Rule {...getProps({ getValueSources })} valueSource="field" />);
+    const props = getProps({ getValueSources });
+    render(<Rule {...props} rule={{ ...props.rule, valueSource: 'field' }} />);
     expect(screen.getByDisplayValue('field')).toBeInTheDocument();
   });
 
   it('valueSources as array', () => {
-    render(
-      <Rule
-        {...getProps({ getValueSources: () => ['value'], fields, fieldMap })}
-        field="fvsa"
-        valueSource="field"
-      />
-    );
+    const props = getProps({ getValueSources: () => ['value'], fields, fieldMap });
+    render(<Rule {...props} rule={{ ...props.rule, field: 'fvsa', valueSource: 'field' }} />);
     expect(
       screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
     ).toHaveLength(2);
@@ -490,13 +492,8 @@ describe('valueSource', () => {
   });
 
   it('valueSources as function', () => {
-    render(
-      <Rule
-        {...getProps({ getValueSources: () => ['value'], fields, fieldMap })}
-        field="fvsf"
-        valueSource="field"
-      />
-    );
+    const props = getProps({ getValueSources: () => ['value'], fields, fieldMap });
+    render(<Rule {...props} rule={{ ...props.rule, field: 'fvsf', valueSource: 'field' }} />);
     expect(
       screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
     ).toHaveLength(2);
@@ -522,7 +519,12 @@ describe('valueSource', () => {
         ),
       },
     });
-    render(<Rule {...props} field="fvsa" value="fc2" valueSource="field" />);
+    render(
+      <Rule
+        {...props}
+        rule={{ ...props.rule, field: 'fvsa', value: 'fc2', valueSource: 'field' }}
+      />
+    );
     expect(
       screen.getByDisplayValue(fieldMap['fc2'].label).getElementsByTagName('option')
     ).toHaveLength(2);

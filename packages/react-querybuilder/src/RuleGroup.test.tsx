@@ -193,8 +193,7 @@ const schema: Partial<Schema> = {
 const getProps = (mergeIntoSchema?: Partial<Schema>): RuleGroupProps => ({
   id: 'id',
   path: [0],
-  rules: [],
-  combinator: 'and',
+  ruleGroup: { rules: [], combinator: 'and' },
   schema: { ...schema, ...mergeIntoSchema } as Schema,
   translations: t,
   disabled: false,
@@ -213,12 +212,24 @@ it('should have correct classNames', () => {
 
 describe('when 2 rules exist', () => {
   it('has 2 <Rule /> elements', () => {
-    render(<RuleGroup {...getProps()} rules={[_createRule(1), _createRule(2)]} />);
+    const props = getProps();
+    render(
+      <RuleGroup
+        {...props}
+        ruleGroup={{ combinator: 'and', rules: [_createRule(1), _createRule(2)] }}
+      />
+    );
     expect(screen.getAllByTestId(TestID.rule)).toHaveLength(2);
   });
 
   it('has the first rule with the correct values', () => {
-    render(<RuleGroup {...getProps()} rules={[_createRule(1), _createRule(2)]} />);
+    const props = getProps();
+    render(
+      <RuleGroup
+        {...props}
+        ruleGroup={{ combinator: 'and', rules: [_createRule(1), _createRule(2)] }}
+      />
+    );
     const firstRule = screen.getAllByTestId(TestID.rule)[0];
     expect(firstRule.dataset.ruleId).toBe('rule_id_1');
     expect(firstRule.querySelector(`.${sc.fields}`)).toHaveValue('field1');
@@ -297,7 +308,7 @@ describe('showCombinatorsBetweenRules', () => {
     const { container } = render(
       <RuleGroup
         {...getProps({ showCombinatorsBetweenRules: true })}
-        rules={[{ field: 'test', value: 'Test', operator: '=' }]}
+        ruleGroup={{ combinator: 'and', rules: [{ field: 'test', value: 'Test', operator: '=' }] }}
       />
     );
     expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(0);
@@ -307,11 +318,14 @@ describe('showCombinatorsBetweenRules', () => {
     const { container } = render(
       <RuleGroup
         {...getProps({ showCombinatorsBetweenRules: true })}
-        rules={[
-          { rules: [], combinator: 'and' },
-          { field: 'test', value: 'Test', operator: '=' },
-          { rules: [], combinator: 'and' },
-        ]}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [
+            { rules: [], combinator: 'and' },
+            { field: 'test', value: 'Test', operator: '=' },
+            { rules: [], combinator: 'and' },
+          ],
+        }}
       />
     );
     expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(2);
@@ -355,7 +369,7 @@ describe('independent combinators', () => {
       'and',
       { rules: [] },
     ];
-    render(<RuleGroup {...getProps({ independentCombinators: true })} rules={rules} />);
+    render(<RuleGroup {...getProps({ independentCombinators: true })} ruleGroup={{ rules }} />);
     const inlineCombinator = screen.getByTestId(TestID.inlineCombinator);
     const combinatorSelector = screen.getByTestId(TestID.combinators);
     expect(inlineCombinator).toHaveClass(sc.betweenRules);
@@ -370,7 +384,10 @@ describe('independent combinators', () => {
       { field: 'lastName', operator: '=', value: 'Test' },
     ];
     render(
-      <RuleGroup {...getProps({ independentCombinators: true, onPropChange })} rules={rules} />
+      <RuleGroup
+        {...getProps({ independentCombinators: true, onPropChange })}
+        ruleGroup={{ rules }}
+      />
     );
     await user.selectOptions(screen.getByTitle(t.combinators.title), [screen.getByText('OR')]);
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
@@ -477,7 +494,12 @@ describe('enableDragAndDrop', () => {
 
   it('should abort move if source item is first child of this group', () => {
     const moveRule = jest.fn();
-    render(<RuleGroup {...getProps({ moveRule })} rules={[{ rules: [] }]} />);
+    render(
+      <RuleGroup
+        {...getProps({ moveRule })}
+        ruleGroup={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
+      />
+    );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
     simulateDragDrop(
       getHandlerId(ruleGroups[1], 'drag'),
@@ -493,11 +515,14 @@ describe('enableDragAndDrop', () => {
       <div>
         <RuleGroup
           {...getProps({ moveRule, showCombinatorsBetweenRules: true })}
-          rules={[
-            { field: 'firstName', operator: '=', value: '0' },
-            { field: 'firstName', operator: '=', value: '1' },
-            { field: 'firstName', operator: '=', value: '2' },
-          ]}
+          ruleGroup={{
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: '0' },
+              { field: 'firstName', operator: '=', value: '1' },
+              { field: 'firstName', operator: '=', value: '2' },
+            ],
+          }}
           path={[0]}
         />
       </div>
@@ -524,11 +549,13 @@ describe('enableDragAndDrop', () => {
       <div>
         <RuleGroup
           {...getProps({ independentCombinators: true, moveRule })}
-          rules={[
-            { field: 'firstName', operator: '=', value: 'Steve' },
-            'and',
-            { field: 'lastName', operator: '=', value: 'Vai' },
-          ]}
+          ruleGroup={{
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
           path={[0]}
         />
         <RuleGroup {...getProps({ independentCombinators: true, moveRule })} path={[1]} />
@@ -551,13 +578,15 @@ describe('enableDragAndDrop', () => {
     render(
       <RuleGroup
         {...getProps({ independentCombinators: true, moveRule })}
-        rules={[
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          'and',
-          { field: 'lastName', operator: '=', value: 'Vai' },
-          'and',
-          { field: 'age', operator: '>', value: 28 },
-        ]}
+        ruleGroup={{
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            'and',
+            { field: 'age', operator: '>', value: 28 },
+          ],
+        }}
         path={[0]}
       />
     );
@@ -582,7 +611,7 @@ describe('disabled', () => {
     render(
       <RuleGroup
         {...getProps({ disabledPaths: [[0, 0]] })}
-        rules={[{ field: 'f1', operator: '=', value: 'v1' }]}
+        ruleGroup={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
       />
     );
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.disabled);
@@ -608,11 +637,13 @@ describe('disabled', () => {
           moveRule,
         })}
         disabled
-        combinator="and"
-        rules={[
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' },
-        ]}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        }}
       />
     );
     await user.click(screen.getByTestId(TestID.addRule));
@@ -651,11 +682,13 @@ describe('disabled', () => {
           moveRule,
         })}
         disabled
-        rules={[
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          'and',
-          { field: 'lastName', operator: '=', value: 'Vai' },
-        ]}
+        ruleGroup={{
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        }}
       />
     );
     await user.selectOptions(screen.getByTestId(TestID.combinators), 'or');

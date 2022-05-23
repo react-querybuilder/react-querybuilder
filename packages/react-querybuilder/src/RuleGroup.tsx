@@ -9,19 +9,28 @@ import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 export const RuleGroup = ({
   id,
   path,
-  combinator = 'and',
-  rules,
+  ruleGroup,
   translations,
   schema,
   disabled: disabledProp,
   parentDisabled,
-  not,
   context,
 }: RuleGroupProps) => {
   const {
     classNames,
     combinators,
-    controls,
+    controls: {
+      dragHandle: DragHandleControlElement,
+      combinatorSelector: CombinatorSelectorControlElement,
+      notToggle: NotToggleControlElement,
+      addRuleAction: AddRuleActionControlElement,
+      addGroupAction: AddGroupActionControlElement,
+      cloneGroupAction: CloneGroupActionControlElement,
+      lockGroupAction: LockGroupActionControlElement,
+      removeGroupAction: RemoveGroupActionControlElement,
+      ruleGroup: RuleGroupControlElement,
+      rule: RuleControlElement,
+    },
     createRule,
     createRuleGroup,
     independentCombinators,
@@ -38,6 +47,11 @@ export const RuleGroup = ({
     disabledPaths,
   } = schema;
   const disabled = !!parentDisabled || !!disabledProp;
+  const { rules, not } = ruleGroup;
+  let combinator = 'and';
+  if ('combinator' in ruleGroup) {
+    combinator = ruleGroup.combinator;
+  }
 
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -174,7 +188,7 @@ export const RuleGroup = ({
       data-path={JSON.stringify(path)}>
       <div ref={dropRef} className={c(standardClassnames.header, classNames.header, dndOver)}>
         {level > 0 && (
-          <controls.dragHandle
+          <DragHandleControlElement
             testID={TestID.dragHandle}
             ref={dragRef}
             level={level}
@@ -188,7 +202,7 @@ export const RuleGroup = ({
           />
         )}
         {!showCombinatorsBetweenRules && !independentCombinators && (
-          <controls.combinatorSelector
+          <CombinatorSelectorControlElement
             testID={TestID.combinators}
             options={combinators}
             value={combinator}
@@ -204,7 +218,7 @@ export const RuleGroup = ({
           />
         )}
         {showNotToggle && (
-          <controls.notToggle
+          <NotToggleControlElement
             testID={TestID.notToggle}
             className={c(standardClassnames.notToggle, classNames.notToggle)}
             title={translations.notToggle.title}
@@ -218,7 +232,7 @@ export const RuleGroup = ({
             validation={validationResult}
           />
         )}
-        <controls.addRuleAction
+        <AddRuleActionControlElement
           testID={TestID.addRule}
           label={translations.addRule.label}
           title={translations.addRule.title}
@@ -231,7 +245,7 @@ export const RuleGroup = ({
           context={context}
           validation={validationResult}
         />
-        <controls.addGroupAction
+        <AddGroupActionControlElement
           testID={TestID.addGroup}
           label={translations.addGroup.label}
           title={translations.addGroup.title}
@@ -245,7 +259,7 @@ export const RuleGroup = ({
           validation={validationResult}
         />
         {showCloneButtons && path.length >= 1 && (
-          <controls.cloneGroupAction
+          <CloneGroupActionControlElement
             testID={TestID.cloneGroup}
             label={translations.cloneRuleGroup.label}
             title={translations.cloneRuleGroup.title}
@@ -260,7 +274,7 @@ export const RuleGroup = ({
           />
         )}
         {showLockButtons && (
-          <controls.lockGroupAction
+          <LockGroupActionControlElement
             testID={TestID.lockGroup}
             label={translations.lockGroup.label}
             title={translations.lockGroup.title}
@@ -276,7 +290,7 @@ export const RuleGroup = ({
           />
         )}
         {path.length >= 1 && (
-          <controls.removeGroupAction
+          <RemoveGroupActionControlElement
             testID={TestID.removeGroup}
             label={translations.removeGroup.label}
             title={translations.removeGroup.title}
@@ -312,7 +326,7 @@ export const RuleGroup = ({
                   level={level}
                   context={context}
                   validation={validationResult}
-                  component={controls.combinatorSelector}
+                  component={CombinatorSelectorControlElement}
                   moveRule={moveRule}
                   path={thisPath}
                   disabled={thisPathDisabled}
@@ -330,38 +344,33 @@ export const RuleGroup = ({
                   level={level}
                   context={context}
                   validation={validationResult}
-                  component={controls.combinatorSelector}
+                  component={CombinatorSelectorControlElement}
                   moveRule={moveRule}
                   path={thisPath}
                   disabled={thisPathDisabled}
                   independentCombinators={independentCombinators}
                 />
               ) : 'rules' in r ? (
-                <controls.ruleGroup
+                <RuleGroupControlElement
                   id={r.id}
                   schema={schema}
                   path={thisPath}
-                  combinator={'combinator' in r ? r.combinator : undefined}
                   translations={translations}
-                  rules={r.rules}
+                  ruleGroup={r}
                   disabled={thisPathDisabled}
                   parentDisabled={parentDisabled || disabled}
-                  not={!!r.not}
                   context={context}
                 />
               ) : (
-                <controls.rule
+                <RuleControlElement
                   id={r.id!}
-                  field={r.field}
-                  value={r.value}
-                  operator={r.operator}
+                  rule={r}
                   schema={schema}
                   path={thisPath}
                   disabled={thisPathDisabled}
                   parentDisabled={parentDisabled || disabled}
                   translations={translations}
                   context={context}
-                  valueSource={r.valueSource}
                 />
               )}
             </Fragment>

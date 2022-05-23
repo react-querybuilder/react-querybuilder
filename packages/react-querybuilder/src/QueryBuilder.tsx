@@ -558,6 +558,8 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     }
   }, [debugMode, onLog, queryState, query, schema]);
 
+  const { ruleGroup: RuleGroupControlElement } = controls;
+
   return (
     <DndContext.Consumer>
       {() => (
@@ -567,14 +569,12 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
           data-inlinecombinators={
             independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
           }>
-          <controls.ruleGroup
+          <RuleGroupControlElement
             translations={translations}
-            rules={query.rules}
-            combinator={'combinator' in query ? query.combinator : undefined}
+            ruleGroup={query}
             schema={schema}
             id={query.id}
             path={[]}
-            not={!!query.not}
             disabled={!!query.disabled || queryDisabled}
             parentDisabled={queryDisabled}
             context={context}

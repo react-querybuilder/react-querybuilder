@@ -324,16 +324,11 @@ interface CommonRuleAndGroupProps {
 }
 
 export interface RuleGroupProps extends CommonRuleAndGroupProps {
-  combinator?: string;
-  rules: RuleOrGroupArray;
-  not?: boolean;
+  ruleGroup: RuleGroupTypeAny;
 }
 
 export interface RuleProps extends CommonRuleAndGroupProps {
-  field: string;
-  operator: string;
-  value: any;
-  valueSource?: ValueSource;
+  rule: RuleType;
 }
 
 export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
