@@ -1745,17 +1745,17 @@ describe('disabled', () => {
         showNotToggle
         disabled
         controlElements={{
-          ruleGroup: ({ schema }) => (
+          ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => schema.onRuleAdd(ruleToAdd, [])} />
-              <button onClick={() => schema.onGroupAdd(groupToAdd, [])} />
-              <button onClick={() => schema.onPropChange('field', 'f2', [0])} />
-              <button onClick={() => schema.onPropChange('combinator', 'or', [1])} />
-              <button onClick={() => schema.onPropChange('not', true, [])} />
-              <button onClick={() => schema.onRuleRemove([0])} />
-              <button onClick={() => schema.onGroupRemove([6])} />
-              <button onClick={() => schema.moveRule([6], [0])} />
-              <button onClick={() => schema.moveRule([6], [0], true)} />
+              <button onClick={() => actions.onRuleAdd(ruleToAdd, [])} />
+              <button onClick={() => actions.onGroupAdd(groupToAdd, [])} />
+              <button onClick={() => actions.onPropChange('field', 'f2', [0])} />
+              <button onClick={() => actions.onPropChange('combinator', 'or', [1])} />
+              <button onClick={() => actions.onPropChange('not', true, [])} />
+              <button onClick={() => actions.onRuleRemove([0])} />
+              <button onClick={() => actions.onGroupRemove([6])} />
+              <button onClick={() => actions.moveRule([6], [0])} />
+              <button onClick={() => actions.moveRule([6], [0], true)} />
             </div>
           ),
         }}
@@ -1807,10 +1807,10 @@ describe('locked rules', () => {
         showCloneButtons
         showNotToggle
         controlElements={{
-          ruleGroup: ({ schema }) => (
+          ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => schema.onPropChange('not', true, [])} />
-              <button onClick={() => schema.onPropChange('field', 'f1', [0])} />
+              <button onClick={() => actions.onPropChange('not', true, [])} />
+              <button onClick={() => actions.onPropChange('field', 'f1', [0])} />
             </div>
           ),
         }}
@@ -1842,10 +1842,10 @@ describe('locked rules', () => {
         showCloneButtons
         showNotToggle
         controlElements={{
-          ruleGroup: ({ schema }) => (
+          ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => schema.onPropChange('not', true, [2])} />
-              <button onClick={() => schema.onPropChange('field', 'f1', [2, 0])} />
+              <button onClick={() => actions.onPropChange('not', true, [2])} />
+              <button onClick={() => actions.onPropChange('field', 'f1', [2, 0])} />
             </div>
           ),
         }}

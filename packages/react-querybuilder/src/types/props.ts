@@ -243,17 +243,6 @@ export interface Schema {
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): NameLabelPair[] | OptionGroup[];
-  isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
-  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
-  onGroupRemove(path: number[]): void;
-  onPropChange(
-    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
-    value: any,
-    path: number[]
-  ): void;
-  onRuleAdd(rule: RuleType, parentPath: number[]): void;
-  onRuleRemove(path: number[]): void;
-  moveRule(oldPath: number[], newPath: number[], clone?: boolean): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -265,6 +254,18 @@ export interface Schema {
   validationMap: ValidationMap;
   independentCombinators: boolean;
   disabledPaths: number[][];
+}
+export interface QueryActions {
+  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
+  onGroupRemove(path: number[]): void;
+  onPropChange(
+    prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
+    value: any,
+    path: number[]
+  ): void;
+  onRuleAdd(rule: RuleType, parentPath: number[]): void;
+  onRuleRemove(path: number[]): void;
+  moveRule(oldPath: number[], newPath: number[], clone?: boolean): void;
 }
 
 interface Translation {
@@ -319,6 +320,7 @@ interface CommonRuleAndGroupProps {
   parentDisabled?: boolean;
   translations: Translations;
   schema: Schema;
+  actions: QueryActions;
   disabled?: boolean;
   context?: any;
 }

@@ -11,6 +11,7 @@ export const Rule = ({
   rule,
   translations,
   schema,
+  actions,
   disabled: disabledProp,
   parentDisabled,
   context,
@@ -34,9 +35,6 @@ export const Rule = ({
     getValueEditorType,
     getValueSources,
     getValues,
-    moveRule,
-    onPropChange,
-    onRuleRemove,
     autoSelectField,
     autoSelectOperator,
     showCloneButtons,
@@ -44,6 +42,7 @@ export const Rule = ({
     independentCombinators,
     validationMap,
   } = schema;
+  const { moveRule, onPropChange, onRuleRemove } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
   const { field, operator, value, valueSource } = rule;
 

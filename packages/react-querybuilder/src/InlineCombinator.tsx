@@ -1,13 +1,13 @@
 import { useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
 import { c } from './internal';
-import { CombinatorSelectorProps, DraggedItem, Schema } from './types';
+import { CombinatorSelectorProps, DraggedItem, QueryActions, Schema } from './types';
 import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 
 interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
   path: number[];
-  moveRule: Schema['moveRule'];
+  moveRule: QueryActions['moveRule'];
   independentCombinators: boolean;
 }
 

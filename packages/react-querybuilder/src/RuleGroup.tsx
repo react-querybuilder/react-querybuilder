@@ -12,6 +12,7 @@ export const RuleGroup = ({
   ruleGroup,
   translations,
   schema,
+  actions,
   disabled: disabledProp,
   parentDisabled,
   context,
@@ -34,11 +35,6 @@ export const RuleGroup = ({
     createRule,
     createRuleGroup,
     independentCombinators,
-    onGroupAdd,
-    onGroupRemove,
-    onPropChange,
-    onRuleAdd,
-    moveRule,
     showCombinatorsBetweenRules,
     showNotToggle,
     showCloneButtons,
@@ -46,6 +42,7 @@ export const RuleGroup = ({
     validationMap,
     disabledPaths,
   } = schema;
+  const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
   const { rules, not } = ruleGroup;
   let combinator = 'and';
@@ -354,6 +351,7 @@ export const RuleGroup = ({
                 <RuleGroupControlElement
                   id={r.id}
                   schema={schema}
+                  actions={actions}
                   path={thisPath}
                   translations={translations}
                   ruleGroup={r}
@@ -366,6 +364,7 @@ export const RuleGroup = ({
                   id={r.id!}
                   rule={r}
                   schema={schema}
+                  actions={actions}
                   path={thisPath}
                   disabled={thisPathDisabled}
                   parentDisabled={parentDisabled || disabled}

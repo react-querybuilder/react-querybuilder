@@ -24,6 +24,7 @@ import type {
   Controls,
   Field,
   NameLabelPair,
+  QueryActions,
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
@@ -37,7 +38,6 @@ import {
   add,
   getFirstOption,
   isOptionGroupArray,
-  isRuleGroup,
   move,
   pathIsDisabled,
   prepareRuleGroup,
@@ -339,6 +339,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   }, [fields, getDefaultField, getRuleDefaultOperator, getRuleDefaultValue, getValueSourcesMain]);
 
   const createRuleGroup = useCallback((): RG => {
+    // TODO: figure out how to avoid `as any` here
     if (independentCombinators) {
       return {
         id: `g-${generateID()}`,
@@ -472,27 +473,20 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     [controlElements]
   );
 
-  const schema: Schema = useMemo(
-    () => ({
+  const schema = useMemo(
+    (): Schema => ({
       fields,
       fieldMap,
       combinators,
       classNames,
       createRule,
       createRuleGroup,
-      onRuleAdd,
-      onGroupAdd,
-      onRuleRemove: onRuleOrGroupRemove,
-      onGroupRemove: onRuleOrGroupRemove,
-      onPropChange,
-      isRuleGroup,
       controls,
       getOperators: getOperatorsMain,
       getValueEditorType: getValueEditorTypeMain,
       getValueSources: getValueSourcesMain,
       getInputType: getInputTypeMain,
       getValues: getValuesMain,
-      moveRule,
       showCombinatorsBetweenRules,
       showNotToggle,
       showCloneButtons,
@@ -524,17 +518,23 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       getValueSourcesMain,
       getValuesMain,
       independentCombinators,
-      moveRule,
-      onGroupAdd,
-      onPropChange,
-      onRuleAdd,
-      onRuleOrGroupRemove,
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
       showNotToggle,
       validationMap,
     ]
+  );
+  const actions = useMemo(
+    (): QueryActions => ({
+      onRuleAdd,
+      onGroupAdd,
+      onRuleRemove: onRuleOrGroupRemove,
+      onGroupRemove: onRuleOrGroupRemove,
+      onPropChange,
+      moveRule,
+    }),
+    [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
   );
 
   const wrapperClassName = useMemo(
@@ -573,6 +573,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
             translations={translations}
             ruleGroup={query}
             schema={schema}
+            actions={actions}
             id={query.id}
             path={[]}
             disabled={!!query.disabled || queryDisabled}
