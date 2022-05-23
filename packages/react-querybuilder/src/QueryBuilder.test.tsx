@@ -1904,7 +1904,7 @@ describe('value source field', () => {
 });
 
 describe('debug mode', () => {
-  const query: RuleGroupType = {
+  const defaultQuery: RuleGroupType = {
     not: false,
     combinator: 'and',
     rules: [{ field: 'f1', operator: '=', value: 'v1' }],
@@ -1912,13 +1912,13 @@ describe('debug mode', () => {
 
   it('logs info', () => {
     const onLog = jest.fn();
-    render(<QueryBuilder debugMode query={query} onLog={onLog} />);
-    const { root, queryState, schema } = onLog.mock.calls[0][0];
-    const [processedRoot, processedQueryState] = [root, queryState].map(q =>
+    render(<QueryBuilder debugMode query={defaultQuery} onLog={onLog} />);
+    const { query, queryState, schema } = onLog.mock.calls[0][0];
+    const [processedRoot, processedQueryState] = [query, queryState].map(q =>
       JSON.parse(formatQuery(q, 'json_without_ids'))
     );
-    expect(processedRoot).toEqual(query);
-    expect(processedQueryState).toEqual({ ...query, rules: [] });
+    expect(processedRoot).toEqual(defaultQuery);
+    expect(processedQueryState).toEqual({ ...defaultQuery, rules: [] });
     expect(schema).toBeDefined();
   });
 });

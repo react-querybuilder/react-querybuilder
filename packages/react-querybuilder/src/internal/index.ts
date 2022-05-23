@@ -6,4 +6,3 @@ export * from './getValueSourcesUtil';
 export * from './objectKeys';
 export * from './regenerateIDs';
 export * from './uniq';
-export * from './useLog';
