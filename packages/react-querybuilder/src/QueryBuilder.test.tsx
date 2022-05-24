@@ -17,13 +17,14 @@ import type {
   Field,
   NameLabelPair,
   OptionGroup,
+  QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
   ValidationMap,
 } from './types';
-import { defaultValidator, formatQuery } from './utils';
+import { defaultValidator, findPath, formatQuery } from './utils';
 
 const user = userEvent.setup();
 
@@ -1900,6 +1901,26 @@ describe('value source field', () => {
     await user.click(screen.getByTestId(TestID.addRule));
     await user.selectOptions(screen.getByTestId(TestID.fields), 'f5');
     expect(screen.getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
+  });
+});
+
+describe('immutability', () => {
+  it('does not modify rules it does not have to modify', async () => {
+    const onQueryChange = jest.fn();
+    const immutableRule: RuleType = { field: 'this', operator: '=', value: 'should stay the same' };
+    const defaultQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'this', operator: '=', value: 'can change' },
+        { combinator: 'and', rules: [immutableRule] },
+      ],
+    };
+    const props: QueryBuilderProps = { onQueryChange, defaultQuery, enableMountQueryChange: false };
+    render(<QueryBuilder {...props} />);
+    await user.click(screen.getAllByTestId(TestID.addRule)[0]);
+    expect(findPath([1, 0], onQueryChange.mock.calls[0][0])).toBe(immutableRule);
+    await user.selectOptions(screen.getAllByTestId(TestID.operators)[0], '>');
+    expect(findPath([1, 0], onQueryChange.mock.calls[1][0])).toBe(immutableRule);
   });
 });
 
