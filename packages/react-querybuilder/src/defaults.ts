@@ -219,3 +219,11 @@ export const TestID = {
   lockGroup: 'lock-group',
   valueSourceSelector: 'value-source-selector',
 } as const;
+
+export const LogType = {
+  parentPathDisabled: 'action aborted: parent path disabled',
+  pathDisabled: 'action aborted: path is disabled',
+  queryUpdate: 'query updated',
+  onAddRuleFalse: 'onAddRule callback returned false',
+  onAddGroupFalse: 'onAddGroup callback returned false',
+} as const;

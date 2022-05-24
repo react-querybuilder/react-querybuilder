@@ -8,6 +8,7 @@ import {
   defaultControlElements,
   defaultOperators,
   defaultTranslations,
+  LogType,
   standardClassnames,
 } from './defaults';
 import {
@@ -85,6 +86,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   debugMode = false,
   onLog = console.log,
 }: QueryBuilderProps<RG>) => {
+  // #region Set up `fields`
   const translations = useMemo((): TranslationsFull => {
     const translationsTemp: Partial<TranslationsFull> = {};
     objectKeys(translationsProp).forEach(t => {
@@ -147,13 +149,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     }
     return fm;
   }, [autoSelectField, defaultField, fields, fieldsProp, translations.fields.placeholderName]);
+  // #endregion
 
-  const queryDisabled = useMemo(
-    () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
-    [disabled]
-  );
-  const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
-
+  // #region Set up `operators`
   const defaultOperator = useMemo(
     (): NameLabelPair => ({
       id: translations.operators.placeholderName,
@@ -222,7 +220,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
+  // #endregion
 
+  // #region Rule property getters
   const getValueEditorTypeMain = useCallback(
     (field: string, operator: string) => {
       if (getValueEditorType) {
@@ -306,7 +306,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     },
     [getInputType]
   );
+  // #endregion
 
+  // #region Rule/group creators
   const createRule = useCallback((): RuleType => {
     let field = '';
     /* istanbul ignore else */
@@ -354,7 +356,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       not: false,
     } as any;
   }, [addRuleToNewGroups, combinators, createRule, independentCombinators]);
+  // #endregion
 
+  // #region Handle controlled mode vs uncontrolled mode
   const isFirstRender = useRef(true);
   // This state variable is only used when the component is uncontrolled
   const [queryState, setQueryState] = useState(defaultQuery ?? createRuleGroup());
@@ -377,47 +381,88 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Help prevent `dispatch` from being regenerated on every render
-  const queryPropPresent = useMemo(() => !!queryProp, [queryProp]);
+  // Help prevent `dispatch` from being regenerated on every render.
+  // This assignment doesn't need memoization because even if `queryProp`
+  // changes, its presence is still the same value (`true`).
+  const uncontrolled = !queryProp;
+
   /**
-   * Executes the `onQueryChange` function if provided
-   * and sets the state when component is uncontrolled
+   * Sets the state if the component is uncontrolled, then calls `onQueryChange`
+   * with the updated query object
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
-      if (!queryPropPresent) {
+      if (uncontrolled) {
         setQueryState(newQuery);
       }
       onQueryChange(newQuery);
     },
-    [onQueryChange, queryPropPresent]
+    [onQueryChange, uncontrolled]
   );
+  // #endregion
+
+  // #region Query update methods
+  const queryDisabled = useMemo(
+    () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
+    [disabled]
+  );
+  const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
   const onRuleAdd = useCallback(
     (rule: RuleType, parentPath: number[]) => {
-      if (pathIsDisabled(parentPath, query) || queryDisabled) return;
+      if (pathIsDisabled(parentPath, query) || queryDisabled) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.parentPathDisabled, rule, parentPath, query });
+        }
+        return;
+      }
       const newRule = onAddRule(rule, parentPath, query);
-      if (!newRule) return;
+      if (!newRule) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query });
+        }
+        return;
+      }
       const newQuery = add(query, newRule, parentPath);
       dispatch(newQuery);
     },
-    [dispatch, onAddRule, queryDisabled, query]
+    [query, queryDisabled, onAddRule, dispatch, debugMode, onLog]
   );
 
   const onGroupAdd = useCallback(
-    (group: RG, parentPath: number[]) => {
-      if (pathIsDisabled(parentPath, query) || queryDisabled) return;
-      const newGroup = onAddGroup(group, parentPath, query);
-      if (!newGroup) return;
+    (ruleGroup: RG, parentPath: number[]) => {
+      if (pathIsDisabled(parentPath, query) || queryDisabled) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.parentPathDisabled, ruleGroup, parentPath, query });
+        }
+        return;
+      }
+      const newGroup = onAddGroup(ruleGroup, parentPath, query);
+      if (!newGroup) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query });
+        }
+        return;
+      }
       const newQuery = add(query, newGroup, parentPath);
       dispatch(newQuery);
     },
-    [dispatch, onAddGroup, queryDisabled, query]
+    [query, queryDisabled, onAddGroup, dispatch, debugMode, onLog]
   );
 
   const onPropChange = useCallback(
     (prop: UpdateableProperties, value: any, path: number[]) => {
-      if ((pathIsDisabled(path, query) && prop !== 'disabled') || queryDisabled) return;
+      if ((pathIsDisabled(path, query) && prop !== 'disabled') || queryDisabled) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.pathDisabled, path, prop, value, query });
+        }
+        return;
+      }
       const newQuery = update(query, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
@@ -428,34 +473,49 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       dispatch(newQuery);
     },
     [
-      dispatch,
-      getRuleDefaultOperator,
-      getRuleDefaultValue,
-      getValueSourcesMain,
+      query,
       queryDisabled,
       resetOnFieldChange,
       resetOnOperatorChange,
-      query,
+      getRuleDefaultOperator,
+      getValueSourcesMain,
+      getRuleDefaultValue,
+      dispatch,
+      debugMode,
+      onLog,
     ]
   );
 
   const onRuleOrGroupRemove = useCallback(
     (path: number[]) => {
-      if (pathIsDisabled(path, query) || queryDisabled) return;
+      if (pathIsDisabled(path, query) || queryDisabled) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.pathDisabled, path, query });
+        }
+        return;
+      }
       const newQuery = remove(query, path);
       dispatch(newQuery);
     },
-    [dispatch, queryDisabled, query]
+    [query, queryDisabled, dispatch, debugMode, onLog]
   );
 
   const moveRule = useCallback(
     (oldPath: number[], newPath: number[], clone?: boolean) => {
-      if (pathIsDisabled(oldPath, query) || pathIsDisabled(newPath, query) || queryDisabled) return;
+      if (pathIsDisabled(oldPath, query) || pathIsDisabled(newPath, query) || queryDisabled) {
+        // istanbul ignore if
+        if (debugMode) {
+          onLog({ type: LogType.pathDisabled, oldPath, newPath, query });
+        }
+        return;
+      }
       const newQuery = move(query, oldPath, newPath, { clone, combinators });
       dispatch(newQuery);
     },
-    [combinators, dispatch, queryDisabled, query]
+    [query, queryDisabled, combinators, dispatch, debugMode, onLog]
   );
+  // #endregion
 
   const { validationResult, validationMap } = useMemo(() => {
     const validationResult = typeof validator === 'function' ? validator(query) : {};
@@ -525,6 +585,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       validationMap,
     ]
   );
+
   const actions = useMemo(
     (): QueryActions => ({
       onRuleAdd,
@@ -554,7 +615,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   useEffect(() => {
     if (debugMode) {
-      onLog({ query, queryState, schema });
+      onLog({ type: LogType.queryUpdate, query, queryState, schema });
     }
   }, [debugMode, onLog, queryState, query, schema]);
 
@@ -594,7 +655,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
 }: QueryBuilderProps<RG>) => (
   <DndProvider backend={HTML5Backend} debugMode={debugMode}>
     {/* TODO: Should/can the `RG` generic be used here? Would it make a difference? */}
-    <QueryBuilderWithoutDndProvider {...(props as QueryBuilderProps)} debugMode={debugMode} />
+    <QueryBuilderWithoutDndProvider {...({ ...props, debugMode } as QueryBuilderProps)} />
   </DndProvider>
 );
 

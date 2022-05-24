@@ -122,9 +122,9 @@ export const optionsMetadata: Record<
     title: 'Display buttons to lock/disable rules and groups',
   },
   debugMode: {
-    link: '/docs/api/querybuilder#debugMode',
+    link: '/docs/api/querybuilder#debugmode',
     label: 'Debug mode',
-    title: 'Enable debug logging for QueryBuilder and React DnD',
+    title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
   parseNumbers: {
     link: '/docs/api/export#parsing-numbers',
