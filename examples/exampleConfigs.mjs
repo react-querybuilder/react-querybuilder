@@ -87,7 +87,11 @@ export const configs = {
   },
   material: {
     name: 'MUI/Material',
-    dependencies: { '@mui/material': '^5.8.0' },
+    dependencies: {
+      '@emotion/react': '^11.9.0',
+      '@emotion/styled': '^11.8.1',
+      '@mui/material': '^5.8.0'
+    },
     scssPre: [],
     scssPost: [],
     tsxImports: [`import { createTheme, ThemeProvider } from '@mui/material/styles';`],
