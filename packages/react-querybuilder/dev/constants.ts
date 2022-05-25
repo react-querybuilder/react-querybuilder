@@ -210,6 +210,9 @@ export const fields: Field[] = [
   },
 ];
 
+export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
+export const emptyQueryIC = convertToIC(emptyQuery);
+
 export const initialQuery: RuleGroupType = {
   id: generateID(),
   combinator: 'and',

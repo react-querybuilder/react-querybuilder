@@ -1904,7 +1904,7 @@ describe('value source field', () => {
   });
 });
 
-describe('immutability', () => {
+describe('nested object immutability', () => {
   it('does not modify rules it does not have to modify', async () => {
     const onQueryChange = jest.fn();
     const immutableRule: RuleType = { field: 'this', operator: '=', value: 'should stay the same' };
@@ -1917,10 +1917,14 @@ describe('immutability', () => {
     };
     const props: QueryBuilderProps = { onQueryChange, defaultQuery, enableMountQueryChange: false };
     render(<QueryBuilder {...props} />);
+    const { calls } = onQueryChange.mock;
     await user.click(screen.getAllByTestId(TestID.addRule)[0]);
-    expect(findPath([1, 0], onQueryChange.mock.calls[0][0])).toBe(immutableRule);
+    expect(calls[0][0]).not.toBe(defaultQuery);
+    expect(findPath([0], calls[0][0])).toBe(findPath([0], defaultQuery));
+    expect(findPath([1, 0], calls[0][0])).toBe(immutableRule);
     await user.selectOptions(screen.getAllByTestId(TestID.operators)[0], '>');
-    expect(findPath([1, 0], onQueryChange.mock.calls[1][0])).toBe(immutableRule);
+    expect(findPath([0], calls[1][0])).not.toBe(findPath([0], calls[0][0]));
+    expect(findPath([1, 0], calls[1][0])).toBe(immutableRule);
   });
 });
 

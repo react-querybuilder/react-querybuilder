@@ -1,13 +1,16 @@
-import { Fragment, useMemo, useReducer, useState } from 'react';
+import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
 import {
   defaultValidator,
   QueryBuilder,
-  type QueryBuilderProps,
-  type ExportFormat,
   type FormatQueryOptions,
+  type QueryBuilderProps,
+  type RuleGroupType,
+  type RuleGroupTypeIC,
 } from '../src';
 import {
   defaultOptions,
+  emptyQuery,
+  emptyQueryIC,
   fields,
   formatMap,
   initialQuery,
@@ -35,37 +38,41 @@ export const App = (
     [controls, optVals]
   );
 
-  const formatQueryResults = useMemo(
+  const formatQueryResults = formatMap.map(([format]) => {
+    const formatQueryOptions: FormatQueryOptions = {
+      format,
+      fields: optVals.validateQuery ? fields : undefined,
+      parseNumbers: optVals.parseNumbers,
+    };
+    const q = optVals.independentCombinators ? queryIC : query;
+    return [format, getFormatQueryString(q, formatQueryOptions)] as const;
+  });
+
+  const actions = useMemo(
     () =>
-      formatMap.map(([format]): [ExportFormat, string] => {
-        const formatOptions: FormatQueryOptions = {
-          format,
-          fields: optVals.validateQuery ? fields : undefined,
-          parseNumbers: optVals.parseNumbers,
-        };
-        const q = optVals.independentCombinators ? queryIC : query;
-        return [format, getFormatQueryString(q, formatOptions)];
-      }),
-    [optVals.independentCombinators, optVals.parseNumbers, optVals.validateQuery, query, queryIC]
+      [
+        ['Default options', () => updateOptions({ type: 'reset' })],
+        ['All options', () => updateOptions({ type: 'all' })],
+        [
+          'Clear query',
+          () => {
+            setQuery(emptyQuery);
+            setQueryIC(emptyQueryIC);
+          },
+        ],
+        [
+          'Default query',
+          () => {
+            setQuery(initialQuery);
+            setQueryIC(initialQueryIC);
+          },
+        ],
+      ] as const,
+    []
   );
 
-  const resetOptions = () => updateOptions({ type: 'reset' });
-  const allOptions = () => updateOptions({ type: 'all' });
-  const clearQuery = () => {
-    setQuery({ combinator: 'and', rules: [] });
-    setQueryIC({ rules: [] });
-  };
-  const defaultQuery = () => {
-    setQuery(initialQuery);
-    setQueryIC(initialQueryIC);
-  };
-
-  const actions: [string, () => void][] = [
-    ['Default options', resetOptions],
-    ['All options', allOptions],
-    ['Clear query', clearQuery],
-    ['Default query', defaultQuery],
-  ];
+  const onQueryChange = useCallback((q: RuleGroupType) => setQuery(q), []);
+  const onQueryChangeIC = useCallback((q: RuleGroupTypeIC) => setQueryIC(q), []);
 
   return (
     <>
@@ -100,7 +107,7 @@ export const App = (
             {...commonRQBProps}
             independentCombinators={false}
             query={query}
-            onQueryChange={q => setQuery(q)}
+            onQueryChange={onQueryChange}
           />
         ) : (
           <QueryBuilder
@@ -108,7 +115,7 @@ export const App = (
             {...commonRQBProps}
             independentCombinators
             query={queryIC}
-            onQueryChange={q => setQueryIC(q)}
+            onQueryChange={onQueryChangeIC}
           />
         )}
         <div id="exports">
