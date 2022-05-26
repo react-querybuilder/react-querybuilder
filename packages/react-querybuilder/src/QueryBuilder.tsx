@@ -388,7 +388,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   /**
    * Sets the state if the component is uncontrolled, then calls `onQueryChange`
-   * with the updated query object
+   * with the updated query object. (`useCallback` is only effective here when the
+   * user's `onQueryChange` handler is undefined or has a stable reference, i.e. it
+   * is wrapped in `useCallback` itself).
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
@@ -408,113 +410,87 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
-  const onRuleAdd = useCallback(
-    (rule: RuleType, parentPath: number[]) => {
-      if (pathIsDisabled(parentPath, query) || queryDisabled) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.parentPathDisabled, rule, parentPath, query });
-        }
-        return;
+  const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
+    if (pathIsDisabled(parentPath, query) || queryDisabled) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.parentPathDisabled, rule, parentPath, query });
       }
-      const newRule = onAddRule(rule, parentPath, query);
-      if (!newRule) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query });
-        }
-        return;
+      return;
+    }
+    const newRule = onAddRule(rule, parentPath, query);
+    if (!newRule) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query });
       }
-      const newQuery = add(query, newRule, parentPath);
-      dispatch(newQuery);
-    },
-    [query, queryDisabled, onAddRule, dispatch, debugMode, onLog]
-  );
+      return;
+    }
+    const newQuery = add(query, newRule, parentPath);
+    dispatch(newQuery);
+  };
 
-  const onGroupAdd = useCallback(
-    (ruleGroup: RG, parentPath: number[]) => {
-      if (pathIsDisabled(parentPath, query) || queryDisabled) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.parentPathDisabled, ruleGroup, parentPath, query });
-        }
-        return;
+  const onGroupAdd = (ruleGroup: RG, parentPath: number[]) => {
+    if (pathIsDisabled(parentPath, query) || queryDisabled) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.parentPathDisabled, ruleGroup, parentPath, query });
       }
-      const newGroup = onAddGroup(ruleGroup, parentPath, query);
-      if (!newGroup) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query });
-        }
-        return;
+      return;
+    }
+    const newGroup = onAddGroup(ruleGroup, parentPath, query);
+    if (!newGroup) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query });
       }
-      const newQuery = add(query, newGroup, parentPath);
-      dispatch(newQuery);
-    },
-    [query, queryDisabled, onAddGroup, dispatch, debugMode, onLog]
-  );
+      return;
+    }
+    const newQuery = add(query, newGroup, parentPath);
+    dispatch(newQuery);
+  };
 
-  const onPropChange = useCallback(
-    (prop: UpdateableProperties, value: any, path: number[]) => {
-      if ((pathIsDisabled(path, query) && prop !== 'disabled') || queryDisabled) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.pathDisabled, path, prop, value, query });
-        }
-        return;
+  const onPropChange = (prop: UpdateableProperties, value: any, path: number[]) => {
+    if ((pathIsDisabled(path, query) && prop !== 'disabled') || queryDisabled) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.pathDisabled, path, prop, value, query });
       }
-      const newQuery = update(query, prop, value, path, {
-        resetOnFieldChange,
-        resetOnOperatorChange,
-        getRuleDefaultOperator,
-        getValueSources: getValueSourcesMain,
-        getRuleDefaultValue,
-      });
-      dispatch(newQuery);
-    },
-    [
-      query,
-      queryDisabled,
+      return;
+    }
+    const newQuery = update(query, prop, value, path, {
       resetOnFieldChange,
       resetOnOperatorChange,
       getRuleDefaultOperator,
-      getValueSourcesMain,
+      getValueSources: getValueSourcesMain,
       getRuleDefaultValue,
-      dispatch,
-      debugMode,
-      onLog,
-    ]
-  );
+    });
+    dispatch(newQuery);
+  };
 
-  const onRuleOrGroupRemove = useCallback(
-    (path: number[]) => {
-      if (pathIsDisabled(path, query) || queryDisabled) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.pathDisabled, path, query });
-        }
-        return;
+  const onRuleOrGroupRemove = (path: number[]) => {
+    if (pathIsDisabled(path, query) || queryDisabled) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.pathDisabled, path, query });
       }
-      const newQuery = remove(query, path);
-      dispatch(newQuery);
-    },
-    [query, queryDisabled, dispatch, debugMode, onLog]
-  );
+      return;
+    }
+    const newQuery = remove(query, path);
+    dispatch(newQuery);
+  };
 
-  const moveRule = useCallback(
-    (oldPath: number[], newPath: number[], clone?: boolean) => {
-      if (pathIsDisabled(oldPath, query) || pathIsDisabled(newPath, query) || queryDisabled) {
-        // istanbul ignore if
-        if (debugMode) {
-          onLog({ type: LogType.pathDisabled, oldPath, newPath, query });
-        }
-        return;
+  const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
+    if (pathIsDisabled(oldPath, query) || pathIsDisabled(newPath, query) || queryDisabled) {
+      // istanbul ignore if
+      if (debugMode) {
+        onLog({ type: LogType.pathDisabled, oldPath, newPath, query });
       }
-      const newQuery = move(query, oldPath, newPath, { clone, combinators });
-      dispatch(newQuery);
-    },
-    [query, queryDisabled, combinators, dispatch, debugMode, onLog]
-  );
+      return;
+    }
+    const newQuery = move(query, oldPath, newPath, { clone, combinators });
+    dispatch(newQuery);
+  };
   // #endregion
 
   const { validationResult, validationMap } = useMemo(() => {
@@ -586,17 +562,14 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     ]
   );
 
-  const actions = useMemo(
-    (): QueryActions => ({
-      onRuleAdd,
-      onGroupAdd,
-      onRuleRemove: onRuleOrGroupRemove,
-      onGroupRemove: onRuleOrGroupRemove,
-      onPropChange,
-      moveRule,
-    }),
-    [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
-  );
+  const actions: QueryActions = {
+    onRuleAdd,
+    onGroupAdd,
+    onRuleRemove: onRuleOrGroupRemove,
+    onGroupRemove: onRuleOrGroupRemove,
+    onPropChange,
+    moveRule,
+  };
 
   const wrapperClassName = useMemo(
     () =>
