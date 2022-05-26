@@ -190,6 +190,7 @@ const actions: Partial<QueryActions> = {
   onRuleAdd: () => {},
   onGroupAdd: () => {},
 };
+const UNUSED = 'UNUSED';
 const getProps = (
   mergeIntoSchema: Partial<Schema> = {},
   mergeIntoActions: Partial<QueryActions> = {}
@@ -197,6 +198,8 @@ const getProps = (
   id: 'id',
   path: [0],
   ruleGroup: { rules: [], combinator: 'and' },
+  rules: [], // UNUSED
+  combinator: UNUSED,
   schema: { ...schema, ...mergeIntoSchema } as Schema,
   actions: { ...actions, ...mergeIntoActions } as QueryActions,
   translations: t,

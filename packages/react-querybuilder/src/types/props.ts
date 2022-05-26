@@ -327,10 +327,38 @@ interface CommonRuleAndGroupProps {
 
 export interface RuleGroupProps extends CommonRuleAndGroupProps {
   ruleGroup: RuleGroupTypeAny;
+  /**
+   * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
+   */
+  combinator?: string;
+  /**
+   * @deprecated Use the `rules` property of the `ruleGroup` prop instead
+   */
+  rules: RuleOrGroupArray;
+  /**
+   * @deprecated Use the `not` property of the `ruleGroup` prop instead
+   */
+  not?: boolean;
 }
 
 export interface RuleProps extends CommonRuleAndGroupProps {
   rule: RuleType;
+  /**
+   * @deprecated Use the `field` property of the `rule` prop instead
+   */
+  field: string;
+  /**
+   * @deprecated Use the `operator` property of the `rule` prop instead
+   */
+  operator: string;
+  /**
+   * @deprecated Use the `value` property of the `rule` prop instead
+   */
+  value: any;
+  /**
+   * @deprecated Use the `valueSource` property of the `rule` prop instead
+   */
+  valueSource?: ValueSource;
 }
 
 export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =

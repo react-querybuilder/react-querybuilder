@@ -133,6 +133,7 @@ const actions: Partial<QueryActions> = {
   onPropChange: () => {},
   onRuleRemove: () => {},
 };
+const UNUSED = 'UNUSED';
 const getProps = (
   mergeIntoSchema: Partial<Schema> = {},
   mergeIntoActions: Partial<QueryActions> = {}
@@ -143,6 +144,9 @@ const getProps = (
     value: 'value',
     operator: 'operator',
   },
+  field: UNUSED,
+  operator: UNUSED,
+  value: UNUSED,
   schema: { ...schema, ...mergeIntoSchema } as Schema,
   actions: { ...actions, ...mergeIntoActions } as QueryActions,
   path: [0],

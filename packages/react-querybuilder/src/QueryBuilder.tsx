@@ -606,6 +606,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
           <RuleGroupControlElement
             translations={translations}
             ruleGroup={query}
+            rules={query.rules}
+            combinator={'combinator' in query ? query.combinator : undefined}
+            not={!!query.not}
             schema={schema}
             actions={actions}
             id={query.id}
