@@ -10,6 +10,11 @@ import {
   TestID,
 } from './defaults';
 import {
+  errorBothQueryDefaultQuery,
+  errorControlledToUncontrolled,
+  errorUncontrolledToControlled,
+} from './internal';
+import {
   QueryBuilder as QueryBuilderOriginal,
   QueryBuilderWithoutDndProvider,
 } from './QueryBuilder';
@@ -20,6 +25,7 @@ import type {
   QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   ValidationMap,
@@ -35,7 +41,15 @@ const getDndBackend = () => getDndBackendOriginal()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
-const stripQueryIds = (query: any) => JSON.parse(formatQuery(query, 'json_without_ids') as string);
+const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
+  JSON.parse(formatQuery(query, 'json_without_ids'));
+
+const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+afterEach(() => {
+  consoleError.mockReset();
+  consoleWarn.mockReset();
+});
 
 describe('when rendered', () => {
   it('should have the correct className', () => {
@@ -172,7 +186,7 @@ describe('when initial query, without ID, is provided', () => {
   ];
 
   const setup = () => ({
-    selectors: render(<QueryBuilder query={queryWithoutID as RuleGroupType} fields={fields} />),
+    selectors: render(<QueryBuilder query={queryWithoutID} fields={fields} />),
   });
 
   it('should contain a <Rule /> with the correct props', () => {
@@ -1945,5 +1959,19 @@ describe('debug mode', () => {
     expect(processedRoot).toEqual(defaultQuery);
     expect(processedQueryState).toEqual({ ...defaultQuery, rules: [] });
     expect(schema).toBeDefined();
+  });
+});
+
+describe('controlled/uncontrolled warnings', () => {
+  it('tracks changes from controlled to uncontrolled and vice versa', () => {
+    const getQuery = (): RuleGroupType => ({ combinator: `${Math.random()}`, rules: [] });
+    const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
+    expect(consoleError).not.toHaveBeenCalled();
+    rerender(<QueryBuilder query={getQuery()} />);
+    expect(consoleError.mock.calls[0][0]).toBe(errorUncontrolledToControlled);
+    rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
+    expect(consoleError.mock.calls[1][0]).toBe(errorBothQueryDefaultQuery);
+    rerender(<QueryBuilder defaultQuery={getQuery()} />);
+    expect(consoleError.mock.calls[2][0]).toBe(errorControlledToUncontrolled);
   });
 });

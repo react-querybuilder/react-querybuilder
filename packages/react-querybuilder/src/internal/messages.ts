@@ -1,0 +1,20 @@
+export const errorBothQueryDefaultQuery =
+  'QueryBuilder was rendered with both query and defaultQuery props. ' +
+  'QueryBuilder must be either controlled or uncontrolled (specify ' +
+  'either the query prop, or the defaultQuery prop, but not both). ' +
+  'Decide between using a controlled or uncontrolled query builder ' +
+  'and remove one of these props. More info: https://reactjs.org/link/controlled-components';
+
+export const errorUncontrolledToControlled =
+  'QueryBuilder is changing from an uncontrolled component to be controlled. ' +
+  'This is likely caused by the query changing from undefined to ' +
+  'a defined value, which should not happen. ' +
+  'Decide between using a controlled or uncontrolled query builder ' +
+  'for the lifetime of the component. More info: https://reactjs.org/link/controlled-components';
+
+export const errorControlledToUncontrolled =
+  'QueryBuilder is changing from a controlled component to be uncontrolled. ' +
+  'This is likely caused by the query changing from defined to ' +
+  'undefined, which should not happen. ' +
+  'Decide between using a controlled or uncontrolled query builder ' +
+  'for the lifetime of the component. More info: https://reactjs.org/link/controlled-components';

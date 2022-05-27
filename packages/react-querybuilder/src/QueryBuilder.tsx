@@ -19,6 +19,7 @@ import {
   objectKeys,
   uniqByName,
   uniqOptGroups,
+  useControlledOrUncontrolled,
 } from './internal';
 import type {
   Classnames,
@@ -48,10 +49,12 @@ import {
 
 enableES5();
 
+const noop = () => {};
+
 export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>({
   defaultQuery,
   query: queryProp,
-  fields: fProp,
+  fields: fieldsPropOriginal,
   operators = defaultOperators,
   combinators = defaultCombinators,
   translations: translationsProp = defaultTranslations,
@@ -67,7 +70,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   getValues,
   onAddRule = r => r,
   onAddGroup = rg => rg,
-  onQueryChange = () => {},
+  onQueryChange = noop,
   controlClassnames,
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
@@ -104,7 +107,10 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     }),
     [translations.fields.placeholderLabel, translations.fields.placeholderName]
   );
-  const fieldsProp = useMemo(() => fProp ?? [defaultField], [defaultField, fProp]);
+  const fieldsProp = useMemo(
+    () => fieldsPropOriginal ?? [defaultField],
+    [defaultField, fieldsPropOriginal]
+  );
 
   const fields = useMemo(() => {
     let f = Array.isArray(fieldsProp)
@@ -371,6 +377,9 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       ? prepareRuleGroup(queryProp)
       : queryProp
     : queryState;
+
+  useControlledOrUncontrolled({ defaultQuery, queryProp, isFirstRender: isFirstRender.current });
+
   isFirstRender.current = false;
 
   // Run `onQueryChange` on mount, if enabled
@@ -383,14 +392,14 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   // Help prevent `dispatch` from being regenerated on every render.
   // This assignment doesn't need memoization because even if `queryProp`
-  // changes, its presence is still the same value (`true`).
+  // changes references, `!queryProp` is still `true`.
   const uncontrolled = !queryProp;
 
   /**
-   * Sets the state if the component is uncontrolled, then calls `onQueryChange`
-   * with the updated query object. (`useCallback` is only effective here when the
-   * user's `onQueryChange` handler is undefined or has a stable reference, i.e. it
-   * is wrapped in `useCallback` itself).
+   * Updates the state-based query if the component is uncontrolled, then calls
+   * `onQueryChange` with the updated query object. (`useCallback` is only effective
+   * here when the user's `onQueryChange` handler is undefined or has a stable reference,
+   * which usually means that it's wrapped in its own `useCallback`).
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
