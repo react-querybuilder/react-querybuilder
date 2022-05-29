@@ -10,13 +10,12 @@ export default defineConfig(({ mode, command }) => {
     // Use this line instead if we ever want to do a "development"-mode build:
     // return `index.${format}${mode === 'production' ? '' : '.development'}.js`;
   };
-  const plugins = [tsconfigPaths()];
-  if (command === 'serve') {
-    plugins.push(vitePluginReact());
-  }
+  const define = {
+    __DEV__: command === 'build' ? 'process.env.NODE_ENV !== "production"' : 'true',
+  };
 
   return {
-    define: { __DEV__: 'process.env.NODE_ENV !== "production"' },
+    define,
     build: {
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
@@ -38,7 +37,7 @@ export default defineConfig(({ mode, command }) => {
       },
       sourcemap: true,
     },
-    plugins,
+    plugins: [tsconfigPaths(), vitePluginReact()],
     server: {
       port: 3100,
     },
