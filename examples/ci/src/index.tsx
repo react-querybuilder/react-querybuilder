@@ -2,7 +2,6 @@ import { StrictMode, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   DefaultRuleGroupType,
-  DefaultRuleGroupTypeIC,
   defaultValidator,
   formatQuery,
   QueryBuilder,
@@ -11,6 +10,7 @@ import {
 import { fields } from './fields';
 import './index.scss';
 import { initialQuery, initialQueryIC } from './initialQuery';
+import type { DefaultQBPropsNoDefaultQuery, DefaultQBPropsNoDefaultQueryIC } from './types';
 import { defaultOptions, optionsOrder, optionsReducer } from './utils';
 
 const App = () => {
@@ -29,15 +29,15 @@ const App = () => {
       {independentCombinators ? (
         <QueryBuilder
           key="rqb-ic"
-          {...(commonProps as unknown as QueryBuilderProps<DefaultRuleGroupTypeIC>)}
+          {...(commonProps as unknown as DefaultQBPropsNoDefaultQueryIC)}
           independentCombinators
           query={queryIC}
-          onQueryChange={q => setQueryIC(q)}
+          onQueryChange={qIC => setQueryIC(qIC)}
         />
       ) : (
         <QueryBuilder
           key="rqb"
-          {...commonProps}
+          {...(commonProps as DefaultQBPropsNoDefaultQuery)}
           independentCombinators={false}
           query={query}
           onQueryChange={q => setQuery(q)}

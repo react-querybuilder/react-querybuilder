@@ -1,3 +1,9 @@
+import type {
+  DefaultRuleGroupType,
+  DefaultRuleGroupTypeIC,
+  QueryBuilderProps,
+} from 'react-querybuilder';
+
 export type CIOption =
   | 'showCombinatorsBetweenRules'
   | 'showNotToggle'
@@ -23,3 +29,12 @@ export type CIOptionsAction = {
     value: boolean;
   };
 };
+
+export type DefaultQBPropsNoDefaultQueryIC = Omit<
+  QueryBuilderProps<DefaultRuleGroupTypeIC>,
+  'defaultQuery'
+>;
+export type DefaultQBPropsNoDefaultQuery = Omit<
+  QueryBuilderProps<DefaultRuleGroupType>,
+  'defaultQuery'
+>;
