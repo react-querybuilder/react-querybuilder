@@ -1,4 +1,4 @@
-/// <reference types="vite/client" />
+declare const __DEV__: boolean;
 
 import { useEffect } from 'react';
 import { RuleGroupTypeAny } from 'ruleGroupsIC';
@@ -19,8 +19,6 @@ let didWarnBothQueryDefaultQuery = false;
 let didWarnUncontrolledToControlled = false;
 let didWarnControlledToUncontrolled = false;
 
-const getMode = () => `import.meta.env.MODE`;
-
 /**
  * Log errors when the component changes from controlled to uncontrolled,
  * vice versa, or both query and defaultQuery are provided.
@@ -34,7 +32,7 @@ export const useControlledOrUncontrolled = ({
 
   useEffect(() => {
     // istanbul ignore else
-    if ('"production"' !== getMode()) {
+    if (__DEV__) {
       if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
         console.error(errorBothQueryDefaultQuery);
         didWarnBothQueryDefaultQuery = true;
