@@ -1969,6 +1969,7 @@ describe('controlled/uncontrolled warnings', () => {
     expect(consoleError).not.toHaveBeenCalled();
     rerender(<QueryBuilder query={getQuery()} />);
     expect(consoleError.mock.calls[0][0]).toBe(errorUncontrolledToControlled);
+    // @ts-expect-error Providing both query props violates QueryBuilderProps
     rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
     expect(consoleError.mock.calls[1][0]).toBe(errorBothQueryDefaultQuery);
     rerender(<QueryBuilder defaultQuery={getQuery()} />);
