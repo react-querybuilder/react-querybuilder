@@ -1,4 +1,4 @@
-import { Field, RuleType } from 'react-querybuilder';
+import type { Field, RuleType } from 'react-querybuilder';
 
 const validator = (r: RuleType) => !!r.value;
 

@@ -17,6 +17,7 @@ import type {
   Controls,
   Field,
   NameLabelPair,
+  QueryActions,
   RuleGroupArray,
   RuleGroupICArray,
   RuleGroupProps,
@@ -175,12 +176,6 @@ const schema: Partial<Schema> = {
   getValueEditorType: () => 'text',
   getValueSources: () => ['value'],
   getValues: () => [],
-  isRuleGroup: (_rule): _rule is RuleGroupType => {
-    return false;
-  },
-  onPropChange: () => {},
-  onRuleAdd: () => {},
-  onGroupAdd: () => {},
   createRule: () => _createRule(0),
   createRuleGroup: () => _createRuleGroup(0, [], []),
   showCombinatorsBetweenRules: false,
@@ -190,12 +185,23 @@ const schema: Partial<Schema> = {
   validationMap: {},
   disabledPaths: [],
 };
-const getProps = (mergeIntoSchema?: Partial<Schema>): RuleGroupProps => ({
+const actions: Partial<QueryActions> = {
+  onPropChange: () => {},
+  onRuleAdd: () => {},
+  onGroupAdd: () => {},
+};
+const UNUSED = 'UNUSED';
+const getProps = (
+  mergeIntoSchema: Partial<Schema> = {},
+  mergeIntoActions: Partial<QueryActions> = {}
+): RuleGroupProps => ({
   id: 'id',
   path: [0],
-  rules: [],
-  combinator: 'and',
+  ruleGroup: { rules: [], combinator: 'and' },
+  rules: [], // UNUSED
+  combinator: UNUSED,
   schema: { ...schema, ...mergeIntoSchema } as Schema,
+  actions: { ...actions, ...mergeIntoActions } as QueryActions,
   translations: t,
   disabled: false,
 });
@@ -213,12 +219,24 @@ it('should have correct classNames', () => {
 
 describe('when 2 rules exist', () => {
   it('has 2 <Rule /> elements', () => {
-    render(<RuleGroup {...getProps()} rules={[_createRule(1), _createRule(2)]} />);
+    const props = getProps();
+    render(
+      <RuleGroup
+        {...props}
+        ruleGroup={{ combinator: 'and', rules: [_createRule(1), _createRule(2)] }}
+      />
+    );
     expect(screen.getAllByTestId(TestID.rule)).toHaveLength(2);
   });
 
   it('has the first rule with the correct values', () => {
-    render(<RuleGroup {...getProps()} rules={[_createRule(1), _createRule(2)]} />);
+    const props = getProps();
+    render(
+      <RuleGroup
+        {...props}
+        ruleGroup={{ combinator: 'and', rules: [_createRule(1), _createRule(2)] }}
+      />
+    );
     const firstRule = screen.getAllByTestId(TestID.rule)[0];
     expect(firstRule.dataset.ruleId).toBe('rule_id_1');
     expect(firstRule.querySelector(`.${sc.fields}`)).toHaveValue('field1');
@@ -230,7 +248,7 @@ describe('when 2 rules exist', () => {
 describe('onCombinatorChange', () => {
   it('calls onPropChange from the schema with expected values', async () => {
     const onPropChange = jest.fn();
-    const { container } = render(<RuleGroup {...getProps({ onPropChange })} />);
+    const { container } = render(<RuleGroup {...getProps({}, { onPropChange })} />);
     await user.selectOptions(
       container.querySelector(`.${sc.combinators}`)!,
       'any_combinator_value'
@@ -242,7 +260,7 @@ describe('onCombinatorChange', () => {
 describe('onNotToggleChange', () => {
   it('calls onPropChange from the schema with expected values', async () => {
     const onPropChange = jest.fn();
-    render(<RuleGroup {...getProps({ onPropChange, showNotToggle: true })} />);
+    render(<RuleGroup {...getProps({ showNotToggle: true }, { onPropChange })} />);
     await user.click(screen.getByLabelText('Not'));
     expect(onPropChange).toHaveBeenCalledWith('not', true, [0]);
   });
@@ -251,7 +269,7 @@ describe('onNotToggleChange', () => {
 describe('addRule', () => {
   it('calls onRuleAdd from the schema with expected values', async () => {
     const onRuleAdd = jest.fn();
-    render(<RuleGroup {...getProps({ onRuleAdd })} />);
+    render(<RuleGroup {...getProps({}, { onRuleAdd })} />);
     await user.click(screen.getByText(t.addRule.label));
     const call0 = onRuleAdd.mock.calls[0];
     expect(call0[0]).toHaveProperty('id');
@@ -265,7 +283,7 @@ describe('addRule', () => {
 describe('addGroup', () => {
   it('calls onGroupAdd from the schema with expected values', async () => {
     const onGroupAdd = jest.fn();
-    render(<RuleGroup {...getProps({ onGroupAdd })} />);
+    render(<RuleGroup {...getProps({}, { onGroupAdd })} />);
     await user.click(screen.getByText(t.addGroup.label));
     const call0 = onGroupAdd.mock.calls[0];
     expect(call0[0]).toHaveProperty('id');
@@ -277,7 +295,7 @@ describe('addGroup', () => {
 describe('cloneGroup', () => {
   it('calls moveRule from the schema with expected values', async () => {
     const moveRule = jest.fn();
-    render(<RuleGroup {...getProps({ moveRule, showCloneButtons: true })} />);
+    render(<RuleGroup {...getProps({ showCloneButtons: true }, { moveRule })} />);
     await user.click(screen.getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
@@ -286,7 +304,7 @@ describe('cloneGroup', () => {
 describe('removeGroup', () => {
   it('calls onGroupRemove from the schema with expected values', async () => {
     const onGroupRemove = jest.fn();
-    render(<RuleGroup {...getProps({ onGroupRemove })} />);
+    render(<RuleGroup {...getProps({}, { onGroupRemove })} />);
     await user.click(screen.getByText(t.removeGroup.label));
     expect(onGroupRemove).toHaveBeenCalledWith([0]);
   });
@@ -297,7 +315,7 @@ describe('showCombinatorsBetweenRules', () => {
     const { container } = render(
       <RuleGroup
         {...getProps({ showCombinatorsBetweenRules: true })}
-        rules={[{ field: 'test', value: 'Test', operator: '=' }]}
+        ruleGroup={{ combinator: 'and', rules: [{ field: 'test', value: 'Test', operator: '=' }] }}
       />
     );
     expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(0);
@@ -307,11 +325,14 @@ describe('showCombinatorsBetweenRules', () => {
     const { container } = render(
       <RuleGroup
         {...getProps({ showCombinatorsBetweenRules: true })}
-        rules={[
-          { rules: [], combinator: 'and' },
-          { field: 'test', value: 'Test', operator: '=' },
-          { rules: [], combinator: 'and' },
-        ]}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [
+            { rules: [], combinator: 'and' },
+            { field: 'test', value: 'Test', operator: '=' },
+            { rules: [], combinator: 'and' },
+          ],
+        }}
       />
     );
     expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(2);
@@ -355,7 +376,7 @@ describe('independent combinators', () => {
       'and',
       { rules: [] },
     ];
-    render(<RuleGroup {...getProps({ independentCombinators: true })} rules={rules} />);
+    render(<RuleGroup {...getProps({ independentCombinators: true })} ruleGroup={{ rules }} />);
     const inlineCombinator = screen.getByTestId(TestID.inlineCombinator);
     const combinatorSelector = screen.getByTestId(TestID.combinators);
     expect(inlineCombinator).toHaveClass(sc.betweenRules);
@@ -370,7 +391,10 @@ describe('independent combinators', () => {
       { field: 'lastName', operator: '=', value: 'Test' },
     ];
     render(
-      <RuleGroup {...getProps({ independentCombinators: true, onPropChange })} rules={rules} />
+      <RuleGroup
+        {...getProps({ independentCombinators: true }, { onPropChange })}
+        ruleGroup={{ rules }}
+      />
     );
     await user.selectOptions(screen.getByTitle(t.combinators.title), [screen.getByText('OR')]);
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
@@ -380,7 +404,7 @@ describe('independent combinators', () => {
     const moveRule = jest.fn();
     render(
       <RuleGroup
-        {...getProps({ independentCombinators: true, moveRule, showCloneButtons: true })}
+        {...getProps({ independentCombinators: true, showCloneButtons: true }, { moveRule })}
       />
     );
     await user.click(screen.getByText(t.cloneRuleGroup.label));
@@ -446,8 +470,8 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleGroup {...getProps({ moveRule })} path={[0]} />
-        <RuleGroup {...getProps({ moveRule })} path={[1]} />
+        <RuleGroup {...getProps({}, { moveRule })} path={[0]} />
+        <RuleGroup {...getProps({}, { moveRule })} path={[1]} />
       </div>
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
@@ -463,7 +487,7 @@ describe('enableDragAndDrop', () => {
 
   it('should abort move if dropped on itself', () => {
     const moveRule = jest.fn();
-    render(<RuleGroup {...getProps({ moveRule })} />);
+    render(<RuleGroup {...getProps({}, { moveRule })} />);
     const ruleGroup = screen.getByTestId(TestID.ruleGroup);
     simulateDragDrop(
       getHandlerId(ruleGroup, 'drag'),
@@ -477,7 +501,12 @@ describe('enableDragAndDrop', () => {
 
   it('should abort move if source item is first child of this group', () => {
     const moveRule = jest.fn();
-    render(<RuleGroup {...getProps({ moveRule })} rules={[{ rules: [] }]} />);
+    render(
+      <RuleGroup
+        {...getProps({}, { moveRule })}
+        ruleGroup={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
+      />
+    );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
     simulateDragDrop(
       getHandlerId(ruleGroups[1], 'drag'),
@@ -492,12 +521,15 @@ describe('enableDragAndDrop', () => {
     render(
       <div>
         <RuleGroup
-          {...getProps({ moveRule, showCombinatorsBetweenRules: true })}
-          rules={[
-            { field: 'firstName', operator: '=', value: '0' },
-            { field: 'firstName', operator: '=', value: '1' },
-            { field: 'firstName', operator: '=', value: '2' },
-          ]}
+          {...getProps({ showCombinatorsBetweenRules: true }, { moveRule })}
+          ruleGroup={{
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: '0' },
+              { field: 'firstName', operator: '=', value: '1' },
+              { field: 'firstName', operator: '=', value: '2' },
+            ],
+          }}
           path={[0]}
         />
       </div>
@@ -523,15 +555,17 @@ describe('enableDragAndDrop', () => {
     render(
       <div>
         <RuleGroup
-          {...getProps({ independentCombinators: true, moveRule })}
-          rules={[
-            { field: 'firstName', operator: '=', value: 'Steve' },
-            'and',
-            { field: 'lastName', operator: '=', value: 'Vai' },
-          ]}
+          {...getProps({ independentCombinators: true }, { moveRule })}
+          ruleGroup={{
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
           path={[0]}
         />
-        <RuleGroup {...getProps({ independentCombinators: true, moveRule })} path={[1]} />
+        <RuleGroup {...getProps({ independentCombinators: true }, { moveRule })} path={[1]} />
       </div>
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
@@ -550,14 +584,16 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <RuleGroup
-        {...getProps({ independentCombinators: true, moveRule })}
-        rules={[
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          'and',
-          { field: 'lastName', operator: '=', value: 'Vai' },
-          'and',
-          { field: 'age', operator: '>', value: 28 },
-        ]}
+        {...getProps({ independentCombinators: true }, { moveRule })}
+        ruleGroup={{
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            'and',
+            { field: 'age', operator: '>', value: 28 },
+          ],
+        }}
         path={[0]}
       />
     );
@@ -582,7 +618,7 @@ describe('disabled', () => {
     render(
       <RuleGroup
         {...getProps({ disabledPaths: [[0, 0]] })}
-        rules={[{ field: 'f1', operator: '=', value: 'v1' }]}
+        ruleGroup={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
       />
     );
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.disabled);
@@ -597,22 +633,21 @@ describe('disabled', () => {
     const moveRule = jest.fn();
     render(
       <RuleGroup
-        {...getProps({
-          showCloneButtons: true,
-          showNotToggle: true,
-          onRuleAdd,
-          onRuleRemove,
-          onGroupAdd,
-          onGroupRemove,
-          onPropChange,
-          moveRule,
-        })}
+        {...getProps(
+          {
+            showCloneButtons: true,
+            showNotToggle: true,
+          },
+          { onRuleAdd, onRuleRemove, onGroupAdd, onGroupRemove, onPropChange, moveRule }
+        )}
         disabled
-        combinator="and"
-        rules={[
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' },
-        ]}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        }}
       />
     );
     await user.click(screen.getByTestId(TestID.addRule));
@@ -639,23 +674,22 @@ describe('disabled', () => {
     const moveRule = jest.fn();
     render(
       <RuleGroup
-        {...getProps({
-          showCloneButtons: true,
-          showNotToggle: true,
-          independentCombinators: true,
-          onRuleAdd,
-          onRuleRemove,
-          onGroupAdd,
-          onGroupRemove,
-          onPropChange,
-          moveRule,
-        })}
+        {...getProps(
+          {
+            showCloneButtons: true,
+            showNotToggle: true,
+            independentCombinators: true,
+          },
+          { onRuleAdd, onRuleRemove, onGroupAdd, onGroupRemove, onPropChange, moveRule }
+        )}
         disabled
-        rules={[
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          'and',
-          { field: 'lastName', operator: '=', value: 'Vai' },
-        ]}
+        ruleGroup={{
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            'and',
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        }}
       />
     );
     await user.selectOptions(screen.getByTestId(TestID.combinators), 'or');
@@ -671,7 +705,7 @@ describe('lock buttons', () => {
 
   it('disables the lock button if the parent group is disabled even if the current group is not', async () => {
     const onPropChange = jest.fn();
-    render(<RuleGroup {...getProps({ showLockButtons: true, onPropChange })} parentDisabled />);
+    render(<RuleGroup {...getProps({ showLockButtons: true }, { onPropChange })} parentDisabled />);
     expect(screen.getByTestId(TestID.lockGroup)).toBeDisabled();
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).not.toHaveBeenCalled();
@@ -679,14 +713,14 @@ describe('lock buttons', () => {
 
   it('sets the disabled property', async () => {
     const onPropChange = jest.fn();
-    render(<RuleGroup {...getProps({ showLockButtons: true, onPropChange })} />);
+    render(<RuleGroup {...getProps({ showLockButtons: true }, { onPropChange })} />);
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
 
   it('unsets the disabled property', async () => {
     const onPropChange = jest.fn();
-    render(<RuleGroup {...getProps({ showLockButtons: true, onPropChange })} disabled />);
+    render(<RuleGroup {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
   });
@@ -695,8 +729,8 @@ describe('lock buttons', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleGroup {...getProps({ moveRule })} path={[0]} disabled />
-        <RuleGroup {...getProps({ moveRule })} path={[1]} />
+        <RuleGroup {...getProps({}, { moveRule })} path={[0]} disabled />
+        <RuleGroup {...getProps({}, { moveRule })} path={[1]} />
       </div>
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);

@@ -8,19 +8,26 @@ import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 export const Rule = ({
   id,
   path,
-  field,
-  operator,
-  value,
+  rule,
   translations,
   schema,
+  actions,
   disabled: disabledProp,
   parentDisabled,
   context,
-  valueSource,
 }: RuleProps) => {
   const {
     classNames,
-    controls,
+    controls: {
+      dragHandle: DragHandleControlElement,
+      fieldSelector: FieldSelectorControlElement,
+      operatorSelector: OperatorSelectorControlElement,
+      valueSourceSelector: ValueSourceSelectorControlElement,
+      valueEditor: ValueEditorControlElement,
+      cloneRuleAction: CloneRuleActionControlElement,
+      lockRuleAction: LockRuleActionControlElement,
+      removeRuleAction: RemoveRuleActionControlElement,
+    },
     fields,
     fieldMap,
     getInputType,
@@ -28,9 +35,6 @@ export const Rule = ({
     getValueEditorType,
     getValueSources,
     getValues,
-    moveRule,
-    onPropChange,
-    onRuleRemove,
     autoSelectField,
     autoSelectOperator,
     showCloneButtons,
@@ -38,7 +42,9 @@ export const Rule = ({
     independentCombinators,
     validationMap,
   } = schema;
+  const { moveRule, onPropChange, onRuleRemove } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
+  const { field, operator, value, valueSource } = rule;
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -170,7 +176,7 @@ export const Rule = ({
       data-rule-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      <controls.dragHandle
+      <DragHandleControlElement
         testID={TestID.dragHandle}
         ref={dragRef}
         level={level}
@@ -182,7 +188,7 @@ export const Rule = ({
         context={context}
         validation={validationResult}
       />
-      <controls.fieldSelector
+      <FieldSelectorControlElement
         testID={TestID.fields}
         options={fields}
         title={translations.fields.title}
@@ -198,7 +204,7 @@ export const Rule = ({
       />
       {(autoSelectField || field !== translations.fields.placeholderName) && (
         <>
-          <controls.operatorSelector
+          <OperatorSelectorControlElement
             testID={TestID.operators}
             field={field}
             fieldData={fieldData}
@@ -216,7 +222,7 @@ export const Rule = ({
           {(autoSelectOperator || operator !== translations.operators.placeholderName) && (
             <>
               {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
-                <controls.valueSourceSelector
+                <ValueSourceSelectorControlElement
                   testID={TestID.valueSourceSelector}
                   field={field}
                   fieldData={fieldData}
@@ -232,7 +238,7 @@ export const Rule = ({
                   validation={validationResult}
                 />
               )}
-              <controls.valueEditor
+              <ValueEditorControlElement
                 testID={TestID.valueEditor}
                 field={field}
                 fieldData={fieldData}
@@ -256,7 +262,7 @@ export const Rule = ({
         </>
       )}
       {showCloneButtons && (
-        <controls.cloneRuleAction
+        <CloneRuleActionControlElement
           testID={TestID.cloneRule}
           label={translations.cloneRule.label}
           title={translations.cloneRule.title}
@@ -270,7 +276,7 @@ export const Rule = ({
         />
       )}
       {showLockButtons && (
-        <controls.lockRuleAction
+        <LockRuleActionControlElement
           testID={TestID.lockRule}
           label={translations.lockRule.label}
           title={translations.lockRule.title}
@@ -284,7 +290,7 @@ export const Rule = ({
           validation={validationResult}
         />
       )}
-      <controls.removeRuleAction
+      <RemoveRuleActionControlElement
         testID={TestID.removeRule}
         label={translations.removeRule.label}
         title={translations.removeRule.title}

@@ -1,10 +1,10 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "target": "ES2020"
-  }
+    "noEmit": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./**/src"]
 }

@@ -54,13 +54,13 @@
     "replace": "^1.2.1",
     "rimraf": "^3.0.2",
     "sass": "^1.40.0",
-    "typescript": "^4.5.0"
+    "typescript": "^4.5.0",
+    "vite-tsconfig-paths": "^3.3.17"
   },
   "dependencies": {
     "immer": "^9.0.6",
     "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "vite-tsconfig-paths": "^3.3.17"
+    "react-dnd-html5-backend": "^16.0.1"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

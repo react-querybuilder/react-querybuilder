@@ -10,6 +10,11 @@ import {
   TestID,
 } from './defaults';
 import {
+  errorBothQueryDefaultQuery,
+  errorControlledToUncontrolled,
+  errorUncontrolledToControlled,
+} from './internal';
+import {
   QueryBuilder as QueryBuilderOriginal,
   QueryBuilderWithoutDndProvider,
 } from './QueryBuilder';
@@ -17,13 +22,15 @@ import type {
   Field,
   NameLabelPair,
   OptionGroup,
+  QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   ValidationMap,
 } from './types';
-import { defaultValidator, formatQuery } from './utils';
+import { defaultValidator, findPath, formatQuery } from './utils';
 
 const user = userEvent.setup();
 
@@ -34,7 +41,15 @@ const getDndBackend = () => getDndBackendOriginal()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
-const stripQueryIds = (query: any) => JSON.parse(formatQuery(query, 'json_without_ids') as string);
+const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
+  JSON.parse(formatQuery(query, 'json_without_ids'));
+
+const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+afterEach(() => {
+  consoleError.mockReset();
+  consoleWarn.mockReset();
+});
 
 describe('when rendered', () => {
   it('should have the correct className', () => {
@@ -171,7 +186,7 @@ describe('when initial query, without ID, is provided', () => {
   ];
 
   const setup = () => ({
-    selectors: render(<QueryBuilder query={queryWithoutID as RuleGroupType} fields={fields} />),
+    selectors: render(<QueryBuilder query={queryWithoutID} fields={fields} />),
   });
 
   it('should contain a <Rule /> with the correct props', () => {
@@ -1745,17 +1760,17 @@ describe('disabled', () => {
         showNotToggle
         disabled
         controlElements={{
-          ruleGroup: ({ schema }) => (
+          ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => schema.onRuleAdd(ruleToAdd, [])} />
-              <button onClick={() => schema.onGroupAdd(groupToAdd, [])} />
-              <button onClick={() => schema.onPropChange('field', 'f2', [0])} />
-              <button onClick={() => schema.onPropChange('combinator', 'or', [1])} />
-              <button onClick={() => schema.onPropChange('not', true, [])} />
-              <button onClick={() => schema.onRuleRemove([0])} />
-              <button onClick={() => schema.onGroupRemove([6])} />
-              <button onClick={() => schema.moveRule([6], [0])} />
-              <button onClick={() => schema.moveRule([6], [0], true)} />
+              <button onClick={() => actions.onRuleAdd(ruleToAdd, [])} />
+              <button onClick={() => actions.onGroupAdd(groupToAdd, [])} />
+              <button onClick={() => actions.onPropChange('field', 'f2', [0])} />
+              <button onClick={() => actions.onPropChange('combinator', 'or', [1])} />
+              <button onClick={() => actions.onPropChange('not', true, [])} />
+              <button onClick={() => actions.onRuleRemove([0])} />
+              <button onClick={() => actions.onGroupRemove([6])} />
+              <button onClick={() => actions.moveRule([6], [0])} />
+              <button onClick={() => actions.moveRule([6], [0], true)} />
             </div>
           ),
         }}
@@ -1807,10 +1822,10 @@ describe('locked rules', () => {
         showCloneButtons
         showNotToggle
         controlElements={{
-          ruleGroup: ({ schema }) => (
+          ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => schema.onPropChange('not', true, [])} />
-              <button onClick={() => schema.onPropChange('field', 'f1', [0])} />
+              <button onClick={() => actions.onPropChange('not', true, [])} />
+              <button onClick={() => actions.onPropChange('field', 'f1', [0])} />
             </div>
           ),
         }}
@@ -1842,10 +1857,10 @@ describe('locked rules', () => {
         showCloneButtons
         showNotToggle
         controlElements={{
-          ruleGroup: ({ schema }) => (
+          ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => schema.onPropChange('not', true, [2])} />
-              <button onClick={() => schema.onPropChange('field', 'f1', [2, 0])} />
+              <button onClick={() => actions.onPropChange('not', true, [2])} />
+              <button onClick={() => actions.onPropChange('field', 'f1', [2, 0])} />
             </div>
           ),
         }}
@@ -1903,8 +1918,32 @@ describe('value source field', () => {
   });
 });
 
+describe('nested object immutability', () => {
+  it('does not modify rules it does not have to modify', async () => {
+    const onQueryChange = jest.fn();
+    const immutableRule: RuleType = { field: 'this', operator: '=', value: 'should stay the same' };
+    const defaultQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'this', operator: '=', value: 'can change' },
+        { combinator: 'and', rules: [immutableRule] },
+      ],
+    };
+    const props: QueryBuilderProps = { onQueryChange, defaultQuery, enableMountQueryChange: false };
+    render(<QueryBuilder {...props} />);
+    const { calls } = onQueryChange.mock;
+    await user.click(screen.getAllByTestId(TestID.addRule)[0]);
+    expect(calls[0][0]).not.toBe(defaultQuery);
+    expect(findPath([0], calls[0][0])).toBe(findPath([0], defaultQuery));
+    expect(findPath([1, 0], calls[0][0])).toBe(immutableRule);
+    await user.selectOptions(screen.getAllByTestId(TestID.operators)[0], '>');
+    expect(findPath([0], calls[1][0])).not.toBe(findPath([0], calls[0][0]));
+    expect(findPath([1, 0], calls[1][0])).toBe(immutableRule);
+  });
+});
+
 describe('debug mode', () => {
-  const query: RuleGroupType = {
+  const defaultQuery: RuleGroupType = {
     not: false,
     combinator: 'and',
     rules: [{ field: 'f1', operator: '=', value: 'v1' }],
@@ -1912,13 +1951,28 @@ describe('debug mode', () => {
 
   it('logs info', () => {
     const onLog = jest.fn();
-    render(<QueryBuilder debugMode query={query} onLog={onLog} />);
-    const { root, queryState, schema } = onLog.mock.calls[0][0];
-    const [processedRoot, processedQueryState] = [root, queryState].map(q =>
+    render(<QueryBuilder debugMode query={defaultQuery} onLog={onLog} />);
+    const { query, queryState, schema } = onLog.mock.calls[0][0];
+    const [processedRoot, processedQueryState] = [query, queryState].map(q =>
       JSON.parse(formatQuery(q, 'json_without_ids'))
     );
-    expect(processedRoot).toEqual(query);
-    expect(processedQueryState).toEqual({ ...query, rules: [] });
+    expect(processedRoot).toEqual(defaultQuery);
+    expect(processedQueryState).toEqual({ ...defaultQuery, rules: [] });
     expect(schema).toBeDefined();
+  });
+});
+
+describe('controlled/uncontrolled warnings', () => {
+  it('tracks changes from controlled to uncontrolled and vice versa', () => {
+    const getQuery = (): RuleGroupType => ({ combinator: `${Math.random()}`, rules: [] });
+    const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
+    expect(consoleError).not.toHaveBeenCalled();
+    rerender(<QueryBuilder query={getQuery()} />);
+    expect(consoleError.mock.calls[0][0]).toBe(errorUncontrolledToControlled);
+    // @ts-expect-error Providing both query props violates QueryBuilderProps
+    rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
+    expect(consoleError.mock.calls[1][0]).toBe(errorBothQueryDefaultQuery);
+    rerender(<QueryBuilder defaultQuery={getQuery()} />);
+    expect(consoleError.mock.calls[2][0]).toBe(errorControlledToUncontrolled);
   });
 });

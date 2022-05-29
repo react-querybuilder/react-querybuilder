@@ -1,5 +1,12 @@
 import { API, FileInfo } from 'jscodeshift';
-import { AnyCase } from '../../types';
+
+type AnyCase<T extends string> = string extends T
+  ? string
+  : T extends `${infer F1}${infer F2}${infer R}`
+  ? `${Uppercase<F1> | Lowercase<F1>}${Uppercase<F2> | Lowercase<F2>}${AnyCase<R>}`
+  : T extends `${infer F}${infer R}`
+  ? `${Uppercase<F> | Lowercase<F>}${AnyCase<R>}`
+  : '';
 
 type TokenType =
   | 'AndExpression'
@@ -64,8 +71,8 @@ type TokenType =
 
 export type ComparisonOperator = '=' | '>=' | '>' | '<=' | '<' | '<>' | '!=';
 export type NotOpt = AnyCase<'NOT'> | null;
-export type AndOperator = AnyCase<'AND'> | '&&';
-export type OrOperator = AnyCase<'OR'> | '||';
+export type AndOperator = AnyCase<'AND'>;
+export type OrOperator = AnyCase<'OR'>;
 
 export interface SQLWhereObject {
   type: TokenType;
