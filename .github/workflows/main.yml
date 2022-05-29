@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test
@@ -45,8 +45,8 @@ jobs:
   #   strategy:
   #     fail-fast: false
   #     matrix:
-  #       node: ['14.x']
-  #       ts: ['4.1']
+  #       node: ['16.x']
+  #       ts: ['4.6']
   #   steps:
   #     - name: Checkout repo
   #       uses: actions/checkout@v2
