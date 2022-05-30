@@ -1,6 +1,6 @@
 export const errorDeprecatedRuleGroupProps =
   'A custom RuleGroup component has rendered a standard RuleGroup ' +
-  'component with deprecated props. The rules, not, and combinator ' +
+  'component with deprecated props. The combinator, not, and rules ' +
   'props should not be used. Instead, the full group object should ' +
   'be passed as the ruleGroup prop.';
 
