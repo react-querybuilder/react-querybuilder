@@ -23,8 +23,10 @@ export const add = <RG extends RuleGroupTypeAny>(
     if (!('combinator' in parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
-        // @ts-expect-error this is technically a violation until the next push
-        // (which happens immediately)
+        // TODO: @ts-expect-error once we don't support TS@<4.5
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore this is technically a violation until the next push
+        // (which happens immediately and unconditionally)
         typeof prevCombinator === 'string' ? prevCombinator : defaultCombinators[0].name
       );
     }

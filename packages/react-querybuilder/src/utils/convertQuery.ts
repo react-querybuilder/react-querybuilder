@@ -26,7 +26,9 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
         j += 2;
       }
       returnArray.push({
-        // @ts-expect-error TS can't keep track of odd/even indexes here
+        // TODO: @ts-expect-error once we don't support TS@<4.5
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TS can't keep track of odd/even indexes here
         rules: rg.rules.slice(startIndex, i + 1).map(processRuleOrStringOrRuleGroupIC),
       });
       i -= 2;
@@ -50,12 +52,16 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
     }
   }
   if (
-    // @ts-expect-error TS still thinks returnArray has length 0
+    // TODO: @ts-expect-error once we don't support TS@<4.5
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore TS still thinks returnArray has length 0
     returnArray.length === 1 &&
     typeof returnArray[0] === 'object' &&
     'rules' in returnArray[0]
   ) {
-    // @ts-expect-error TS still thinks returnArray has length 0
+    // TODO: @ts-expect-error once we don't support TS@<4.5
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore TS still thinks returnArray has length 0
     return { ...rg, ...returnArray[0] };
   }
   return { ...rg, rules: returnArray };
