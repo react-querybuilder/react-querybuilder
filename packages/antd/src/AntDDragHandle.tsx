@@ -11,7 +11,6 @@ export const AntDDragHandle = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
       title,
       // Props that should not be in extraProps
       testID: _testID,
-      ref: _ref,
       level: _level,
       path: _path,
       label: _label,

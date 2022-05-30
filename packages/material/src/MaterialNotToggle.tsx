@@ -12,6 +12,11 @@ export const MaterialNotToggle = ({
   checked,
   title,
   disabled,
+  // Props that should not be in extraProps
+  path: _path,
+  context: _context,
+  validation: _validation,
+  testID: _testID,
   ...extraProps
 }: MaterialNotToggleProps) => (
   <FormControlLabel

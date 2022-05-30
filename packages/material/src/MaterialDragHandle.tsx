@@ -13,7 +13,6 @@ export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandle
       path: _path,
       // Props that should not be in extraProps
       testID: _testID,
-      ref: _ref,
       level: _level,
       label: _label,
       disabled: _disabled,
