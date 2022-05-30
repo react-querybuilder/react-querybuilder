@@ -1,4 +1,4 @@
-declare const __DEV__: boolean;
+declare const __RQB_DEV__: boolean;
 
 import { useEffect } from 'react';
 import { errorDeprecatedRuleGroupProps, errorDeprecatedRuleProps } from './messages';
@@ -8,12 +8,12 @@ let didWarnUsingDeprecatedRuleGroupProps = false;
 
 export const useDeprecatedProps = (type: 'rule' | 'ruleGroup', newPropPresent: boolean) => {
   useEffect(() => {
-    if (__DEV__ && type === 'rule' && !newPropPresent && !didWarnUsingDeprecatedRuleProps) {
+    if (__RQB_DEV__ && type === 'rule' && !newPropPresent && !didWarnUsingDeprecatedRuleProps) {
       console.error(errorDeprecatedRuleProps);
       didWarnUsingDeprecatedRuleProps = true;
     }
     if (
-      __DEV__ &&
+      __RQB_DEV__ &&
       type === 'ruleGroup' &&
       !newPropPresent &&
       !didWarnUsingDeprecatedRuleGroupProps

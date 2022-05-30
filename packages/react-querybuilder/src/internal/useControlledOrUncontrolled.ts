@@ -1,4 +1,4 @@
-declare const __DEV__: boolean;
+declare const __RQB_DEV__: boolean;
 
 import { useEffect } from 'react';
 import { RuleGroupTypeAny } from 'ruleGroupsIC';
@@ -32,7 +32,7 @@ export const useControlledOrUncontrolled = ({
 
   useEffect(() => {
     // istanbul ignore else
-    if (__DEV__) {
+    if (__RQB_DEV__) {
       if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
         console.error(errorBothQueryDefaultQuery);
         didWarnBothQueryDefaultQuery = true;

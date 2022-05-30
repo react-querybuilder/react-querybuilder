@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode, command }) => {
   const define = {
-    __DEV__: command === 'build' ? 'false' : 'true',
+    __RQB_DEV__: command === 'build' ? 'false' : 'true',
   };
 
   return {

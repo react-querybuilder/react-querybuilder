@@ -11,7 +11,7 @@ export default defineConfig(({ mode, command }) => {
     // return `index.${format}${mode === 'production' ? '' : '.development'}.js`;
   };
   const define = {
-    __DEV__: command === 'build' ? 'process.env.NODE_ENV !== "production"' : 'true',
+    __RQB_DEV__: command === 'build' ? 'process.env.NODE_ENV !== "production"' : 'true',
   };
 
   return {
