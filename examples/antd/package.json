@@ -12,11 +12,11 @@
     ]
   },
   "dependencies": {
-    "@react-querybuilder/antd": "^4.2.5",
+    "@react-querybuilder/antd": "^4.4.0",
     "antd": "^4.20.5",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-querybuilder": "^4.2.5"
+    "react-querybuilder": "^4.4.0"
   },
   "description": "React Query Builder Ant Design Example",
   "devDependencies": {
