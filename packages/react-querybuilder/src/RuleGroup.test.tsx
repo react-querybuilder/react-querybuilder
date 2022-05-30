@@ -10,6 +10,7 @@ import {
   standardClassnames as sc,
   TestID,
 } from './defaults';
+import { errorDeprecatedRuleGroupProps } from './internal';
 import { RuleGroup as RuleGroupOriginal } from './RuleGroup';
 import type {
   ActionProps,
@@ -36,6 +37,13 @@ const getDndBackend = () => getDndBackendOriginal()!;
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
+
+const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+afterEach(() => {
+  consoleError.mockReset();
+  consoleWarn.mockReset();
+});
 
 // helper functions
 const _createRule = (index: number): RuleType => {
@@ -740,5 +748,27 @@ describe('lock buttons', () => {
       getDndBackend()
     );
     expect(moveRule).not.toHaveBeenCalled();
+  });
+});
+
+describe('deprecated props', () => {
+  // TODO: re-enable this and test for the presence of the "or" combinator.
+  // May need to use https://www.npmjs.com/package/babel-plugin-dynamic-import-node
+  // to reset the module import (reset the "has already warned about this" switch).
+  it.skip('warns about deprecated props', () => {
+    render(<RuleGroup {...getProps()} ruleGroup={undefined as any} rules={[]} combinator="or" />);
+    expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
+  });
+
+  it('warns about deprecated props (independent combinators)', () => {
+    render(
+      <RuleGroup
+        {...getProps({ independentCombinators: true })}
+        ruleGroup={undefined as any}
+        rules={[]}
+        combinator={undefined}
+      />
+    );
+    expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
   });
 });

@@ -1,3 +1,15 @@
+export const errorDeprecatedRuleGroupProps =
+  'A custom RuleGroup component has rendered a standard RuleGroup ' +
+  'component with deprecated props. The rules, not, and combinator ' +
+  'props should not be used. Instead, the full group object should ' +
+  'be passed as the ruleGroup prop.';
+
+export const errorDeprecatedRuleProps =
+  'A custom RuleGroup component has rendered a standard Rule ' +
+  'component with deprecated props. The field, operator, value, and valueSource ' +
+  'props should not be used. Instead, the full rule object should ' +
+  'be passed as the rule prop.';
+
 export const errorBothQueryDefaultQuery =
   'QueryBuilder was rendered with both query and defaultQuery props. ' +
   'QueryBuilder must be either controlled or uncontrolled (specify ' +

@@ -14,6 +14,7 @@ import {
   standardClassnames as sc,
   TestID,
 } from './defaults';
+import { errorDeprecatedRuleProps } from './internal';
 import { Rule as RuleOriginal } from './Rule';
 import type {
   ActionProps,
@@ -39,6 +40,13 @@ const getDndBackend = () => getDndBackendOriginal()!;
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
+
+const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+afterEach(() => {
+  consoleError.mockReset();
+  consoleWarn.mockReset();
+});
 
 const getFieldMapFromArray = (fa: Field[]) => {
   const map: Record<string, Field> = {};
@@ -544,5 +552,12 @@ describe('valueSource', () => {
       screen.getByDisplayValue(fieldMap['fc2'].label).getElementsByTagName('option')
     ).toHaveLength(2);
     expect(screen.getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
+  });
+});
+
+describe('deprecated props', () => {
+  it('warns about deprecated props', () => {
+    render(<Rule {...getProps()} rule={undefined as any} field="f1" operator="=" value="v1" />);
+    expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleProps);
   });
 });
