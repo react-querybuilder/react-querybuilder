@@ -6,5 +6,6 @@ it('should get the correct classnames', () => {
   expect(getValidationClassNames(false)).toBe(standardClassnames.invalid);
   expect(getValidationClassNames({ valid: true })).toBe(standardClassnames.valid);
   expect(getValidationClassNames({ valid: false })).toBe(standardClassnames.invalid);
-  expect(getValidationClassNames(null as any)).toBe('');
+  // @ts-expect-error getValidationClassNames cannot accept null
+  expect(getValidationClassNames(null)).toBe('');
 });

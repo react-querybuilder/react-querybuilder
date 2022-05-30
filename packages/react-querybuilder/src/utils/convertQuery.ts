@@ -26,7 +26,8 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
         j += 2;
       }
       returnArray.push({
-        rules: rg.rules.slice(startIndex, i + 1).map(processRuleOrStringOrRuleGroupIC) as any,
+        // @ts-expect-error TS can't keep track of odd/even indexes here
+        rules: rg.rules.slice(startIndex, i + 1).map(processRuleOrStringOrRuleGroupIC),
       });
       i -= 2;
     } else if (rg.rules[i + 1] === 'or') {
@@ -49,10 +50,12 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
     }
   }
   if (
-    (returnArray as any[]).length === 1 &&
+    // @ts-expect-error TS still thinks returnArray has length 0
+    returnArray.length === 1 &&
     typeof returnArray[0] === 'object' &&
     'rules' in returnArray[0]
   ) {
+    // @ts-expect-error TS still thinks returnArray has length 0
     return { ...rg, ...returnArray[0] };
   }
   return { ...rg, rules: returnArray };

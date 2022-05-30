@@ -38,7 +38,12 @@ export const MaterialValueSelector = ({
 
   return (
     <FormControl variant="standard" className={className} title={title} disabled={disabled}>
-      <Select value={val as any} onChange={onChange} multiple={!!multiple} {...extraProps}>
+      <Select
+        value={val}
+        // @ts-expect-error onChange cannot accept string[]
+        onChange={onChange}
+        multiple={!!multiple}
+        {...extraProps}>
         {toOptions(options)}
       </Select>
     </FormControl>

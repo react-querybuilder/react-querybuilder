@@ -557,7 +557,8 @@ describe('valueSource', () => {
 
 describe('deprecated props', () => {
   it('warns about deprecated props', () => {
-    render(<Rule {...getProps()} rule={undefined as any} field="f1" operator="=" value="v1" />);
+    // @ts-expect-error rule prop is required
+    render(<Rule {...getProps()} rule={undefined} field="f1" operator="=" value="v1" />);
     expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleProps);
   });
 });

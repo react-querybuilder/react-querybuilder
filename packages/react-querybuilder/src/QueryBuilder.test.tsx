@@ -444,7 +444,8 @@ describe('when getValues fn prop is provided', () => {
   });
 
   it('should handle invalid getValues function', () => {
-    render(<QueryBuilder query={query} fields={fields} getValues={() => null as any} />);
+    // @ts-expect-error getValues should return an array of options or option groups
+    render(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
     const select = screen.getByTestId(TestID.valueEditor);
     const opts = select.querySelectorAll('option');
     expect(opts).toHaveLength(0);
@@ -1886,7 +1887,8 @@ describe('value source field', () => {
     { name: 'f1', label: 'Field 1', valueSources: ['field'] },
     { name: 'f2', label: 'Field 2', valueSources: ['field'] },
     { name: 'f3', label: 'Field 3', valueSources: ['field'], comparator: () => false },
-    { name: 'f4', label: 'Field 4', valueSources: [] as any },
+    // @ts-expect-error valueSources cannot be an empty array
+    { name: 'f4', label: 'Field 4', valueSources: [] },
     { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
 
@@ -1969,7 +1971,7 @@ describe('controlled/uncontrolled warnings', () => {
     expect(consoleError).not.toHaveBeenCalled();
     rerender(<QueryBuilder query={getQuery()} />);
     expect(consoleError.mock.calls[0][0]).toBe(errorUncontrolledToControlled);
-    // @ts-expect-error Providing both query props violates QueryBuilderProps
+    // @ts-expect-error QueryBuilderProps cannot accept both query and defaultQuery
     rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
     expect(consoleError.mock.calls[1][0]).toBe(errorBothQueryDefaultQuery);
     rerender(<QueryBuilder defaultQuery={getQuery()} />);

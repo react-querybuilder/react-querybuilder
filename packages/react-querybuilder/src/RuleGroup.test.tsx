@@ -28,6 +28,7 @@ import type {
   ValidationResult,
   ValueSelectorProps,
 } from './types';
+import { add } from './utils';
 
 const user = userEvent.setup();
 
@@ -752,23 +753,39 @@ describe('lock buttons', () => {
 });
 
 describe('deprecated props', () => {
-  // TODO: re-enable this and test for the presence of the "or" combinator.
-  // May need to use https://www.npmjs.com/package/babel-plugin-dynamic-import-node
-  // to reset the module import (reset the "has already warned about this" switch).
+  // TODO: May need to use https://www.npmjs.com/package/babel-plugin-dynamic-import-node
+  // to reset the module import (to reset the "has already warned about this" switch
+  // in the useDeprecatedProps module).
   it.skip('warns about deprecated props', () => {
-    render(<RuleGroup {...getProps()} ruleGroup={undefined as any} rules={[]} combinator="or" />);
+    // @ts-expect-error ruleGroup is required
+    render(<RuleGroup {...getProps()} ruleGroup={undefined} rules={[]} combinator="or" />);
     expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
+    expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
   });
 
-  it('warns about deprecated props (independent combinators)', () => {
+  it('warns about deprecated props (independent combinators)', async () => {
+    const addListener = jest.fn();
     render(
       <RuleGroup
-        {...getProps({ independentCombinators: true })}
-        ruleGroup={undefined as any}
-        rules={[]}
+        {...getProps(
+          { independentCombinators: true },
+          {
+            onRuleAdd: (rOrG, parentPath) => {
+              addListener(
+                add({ rules: [{ field: 'f', operator: '=', value: 'v' }] }, rOrG, parentPath)
+              );
+            },
+          }
+        )}
+        path={[]}
+        // @ts-expect-error ruleGroup prop is required
+        ruleGroup={undefined}
+        rules={[{ field: 'f', operator: '=', value: 'v' }]}
         combinator={undefined}
       />
     );
     expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(addListener.mock.calls[0][0].rules[1]).toBe(defaultCombinators[0].name);
   });
 });

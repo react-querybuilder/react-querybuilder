@@ -71,6 +71,7 @@ const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
 
 const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
+  // @ts-expect-error TS can't keep track of odd/even indexes here
   rules: rg.rules.map(r => {
     if (typeof r === 'string') {
       return r;
@@ -88,7 +89,7 @@ const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
     //   return { ...r, value };
     // }
     return { ...r, value };
-  }) as any, // TODO: use a better type?
+  }),
 });
 
 const isValidValue = (v: any) =>

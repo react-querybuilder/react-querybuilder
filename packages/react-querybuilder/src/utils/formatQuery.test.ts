@@ -709,7 +709,8 @@ it('formats CEL correctly', () => {
 });
 
 it('handles invalid type correctly', () => {
-  expect(formatQuery(query, 'null' as any)).toBe('');
+  // @ts-expect-error 'null' is not a valid format
+  expect(formatQuery(query, 'null')).toBe('');
 });
 
 it('handles custom valueProcessor correctly', () => {
