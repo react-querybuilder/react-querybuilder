@@ -48,7 +48,8 @@ export const AntDValueSelector = ({
         {...modeObj}
         dropdownMatchSelectWidth={false}
         disabled={disabled}
-        value={val as any}
+        // @ts-expect-error value prop cannot be string[]
+        value={val}
         onChange={onChange}
         {...extraProps}>
         {toOptions(options)}

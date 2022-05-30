@@ -1,8 +1,8 @@
 import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { DNDType, standardClassnames, TestID } from './defaults';
+import { defaultCombinators, DNDType, standardClassnames, TestID } from './defaults';
 import { InlineCombinator } from './InlineCombinator';
-import { c, getValidationClassNames } from './internal';
+import { c, getValidationClassNames, useDeprecatedProps } from './internal';
 import type { DraggedItem, RuleGroupProps } from './types';
 import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 
@@ -16,6 +16,9 @@ export const RuleGroup = ({
   disabled: disabledProp,
   parentDisabled,
   context,
+  combinator: combinatorProp,
+  rules: rulesProp,
+  not: notProp,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -44,11 +47,16 @@ export const RuleGroup = ({
   } = schema;
   const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
-  const { rules, not } = ruleGroup;
-  let combinator = 'and';
-  if ('combinator' in ruleGroup) {
+
+  const { rules, not } = ruleGroup ? ruleGroup : { rules: rulesProp, not: notProp };
+  let combinator: string = defaultCombinators[0].name;
+  if (ruleGroup && 'combinator' in ruleGroup) {
     combinator = ruleGroup.combinator;
+  } else if (!ruleGroup) {
+    combinator = combinatorProp ?? combinator;
   }
+
+  useDeprecatedProps('ruleGroup', !!ruleGroup);
 
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);

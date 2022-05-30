@@ -23,7 +23,11 @@ export const add = <RG extends RuleGroupTypeAny>(
     if (!('combinator' in parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
-        (typeof prevCombinator === 'string' ? prevCombinator : defaultCombinators[0].name) as any
+        // TODO: @ts-expect-error once we don't support TS@<4.5
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore this is technically a violation until the next push
+        // (which happens immediately and unconditionally)
+        typeof prevCombinator === 'string' ? prevCombinator : defaultCombinators[0].name
       );
     }
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup) as RuleType);
@@ -62,10 +66,12 @@ export const update = <RG extends RuleGroupTypeAny>(
       const ruleOrGroup = findPath(path, draft)!;
       const isGroup = 'rules' in ruleOrGroup;
       // Only update if there is actually a change
-      if ((ruleOrGroup as any)[prop] !== value) {
+      // @ts-expect-error prop can refer to rule or group properties
+      if (ruleOrGroup[prop] !== value) {
         // Handle valueSource updates later
         if (prop !== 'valueSource') {
-          (ruleOrGroup as any)[prop] = value;
+          // @ts-expect-error prop can refer to rule or group properties
+          ruleOrGroup[prop] = value;
         }
         if (!isGroup) {
           let resetValueSource = false;

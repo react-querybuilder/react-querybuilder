@@ -1,7 +1,12 @@
 import { useRef, type MouseEvent as ReactMouseEvent } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
-import { c, filterFieldsByComparator, getValidationClassNames } from './internal';
+import {
+  c,
+  filterFieldsByComparator,
+  getValidationClassNames,
+  useDeprecatedProps,
+} from './internal';
 import type { DraggedItem, RuleProps, RuleType } from './types';
 import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 
@@ -15,6 +20,10 @@ export const Rule = ({
   disabled: disabledProp,
   parentDisabled,
   context,
+  field: fieldProp,
+  operator: operatorProp,
+  value: valueProp,
+  valueSource: valueSourceProp,
 }: RuleProps) => {
   const {
     classNames,
@@ -44,7 +53,12 @@ export const Rule = ({
   } = schema;
   const { moveRule, onPropChange, onRuleRemove } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
-  const { field, operator, value, valueSource } = rule;
+
+  const { field, operator, value, valueSource } = rule
+    ? rule
+    : { field: fieldProp, operator: operatorProp, value: valueProp, valueSource: valueSourceProp };
+
+  useDeprecatedProps('rule', !!rule);
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);

@@ -93,8 +93,8 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   const translations = useMemo((): TranslationsFull => {
     const translationsTemp: Partial<TranslationsFull> = {};
     objectKeys(translationsProp).forEach(t => {
-      // TODO: type this better (remove/replace `as any`)
-      translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] } as any;
+      // @ts-expect-error Different keys have different requirements
+      translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] };
     });
     return { ...defaultTranslations, ...translationsTemp };
   }, [translationsProp]);
@@ -349,18 +349,20 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   const createRuleGroup = useCallback((): RG => {
     // TODO: figure out how to avoid `as any` here
     if (independentCombinators) {
+      // @ts-expect-error TS can't tell that RG is RuleGroupTypeIC
       return {
         id: `g-${generateID()}`,
         rules: addRuleToNewGroups ? [createRule()] : [],
         not: false,
-      } as any;
+      };
     }
+    // @ts-expect-error TS can't tell that RG is RuleGroupType
     return {
       id: `g-${generateID()}`,
       rules: addRuleToNewGroups ? [createRule()] : [],
       combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
       not: false,
-    } as any;
+    };
   }, [addRuleToNewGroups, combinators, createRule, independentCombinators]);
   // #endregion
 
