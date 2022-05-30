@@ -101,15 +101,23 @@ If the `independentCombinators` prop is provided, then the `query` argument will
 
 `RuleGroupTypeAny`
 
-The query as an object of type `RuleGroupType` (or `RuleGroupTypeIC` if [`independentCombinators`](#independentCombinators) is also provided). If this prop is provided, `<QueryBuilder />` will be a controlled component.
+The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentCombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a controlled component.
 
-The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [the demo source](https://github.com/react-querybuilder/react-querybuilder/blob/master/packages/demo/src/main.tsx) for examples.
+The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [examples](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
 
 ### `defaultQuery`
 
 `RuleGroupTypeAny`
 
-The initial query for uncontrolled components. Ignored if `query` prop is also present.
+The initial query when `<QueryBuilder />` is uncontrolled.
+
+:::caution
+
+Do not provide both `query` and `defaultQuery` props. To use `<QueryBuilder />` as a controlled component, provide and manage the `query` prop in combination with the `onQueryChange` callback. Use `defaultQuery` (or neither query prop) to render an uncontrolled component.
+
+If both props are provided, TypeScript will throw an error during compilation and an error will be logged to the console during runtime (in "development" mode only). Errors will also be logged to the console if the `query` prop is defined during one render and undefined in the next, or vice versa.
+
+:::
 
 ### `context`
 
@@ -452,11 +460,9 @@ By default, `<RuleGroup />` is used. The following props are passed:
 interface RuleGroupProps {
   id?: string; // Unique identifier for this rule group
   path: number[]; // path of indexes through a rule group hierarchy
-  combinator: string; // Combinator for this group, e.g. "and" / "or"
-  rules: RuleOrGroupArray; // List of rules and/or sub-groups for this group
+  ruleGroup: RuleGroupTypeAny; // The rule group object
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` on the TypeScript page
-  not: boolean; // Whether or not to invert this group
   context: any; // Container for custom props that are passed to all components
   disabled?: boolean; // Whether the rule itself is disabled
   parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
@@ -471,10 +477,7 @@ By default, `<Rule />` is used. The following props are passed:
 interface RuleProps {
   id?: string; // Unique identifier for this rule
   path: number[]; // path of indexes through a rule group hierarchy
-  field: string; // Field name for this rule
-  operator: string; // Operator name for this rule
-  value: any; // Value for this rule
-  valueSource?: ValueSource; // Value source for this rule's value
+  rule: RuleType; // The rule object
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` on the TypeScript page
   context: any; // Container for custom props that are passed to all components
@@ -745,7 +748,13 @@ Pass `true` to disable all subcomponents and prevent changes to the query. Pass 
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#debugMode=true)
 
-Pass `true` to log debugging information to the console.
+Pass `true` to log debugging information to the console (or the [`onLog` function](#onlog) if provided).
+
+### `onLog`
+
+`(message: any) => void` (default `console.log`)
+
+Captures log messages when `debugMode` is `true`.
 
 ### `validator`
 
