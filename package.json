@@ -16,10 +16,10 @@
     "pretty-print": "prettier --write docs/* docs/**/* src/**/*"
   },
   "dependencies": {
-    "@codesandbox/sandpack-react": "^0.19.6",
-    "@docusaurus/core": "2.0.0-beta.20",
-    "@docusaurus/preset-classic": "2.0.0-beta.20",
-    "@docusaurus/theme-search-algolia": "2.0.0-beta.20",
+    "@codesandbox/sandpack-react": "^1.1.0",
+    "@docusaurus/core": "2.0.0-beta.21",
+    "@docusaurus/preset-classic": "2.0.0-beta.21",
+    "@docusaurus/theme-search-algolia": "2.0.0-beta.21",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^6.1.2",
     "clsx": "^1.1.1",
@@ -34,7 +34,7 @@
     "url-loader": "^4.1.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.0.0-beta.20",
+    "@docusaurus/module-type-aliases": "2.0.0-beta.21",
     "@tsconfig/docusaurus": "^1.0.4",
     "typescript": "^4.4.4"
   },

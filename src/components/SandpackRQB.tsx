@@ -84,7 +84,7 @@ export const SandpackRQB = ({ children, customSetup, options }: SandpackRQBProps
     <div className="sandpackrqb">
       <Sandpack
         files={files}
-        theme={isDarkTheme ? 'monokai-pro' : undefined}
+        theme={isDarkTheme ? 'dark' : undefined}
         template="react-ts"
         customSetup={setup}
         options={options}
