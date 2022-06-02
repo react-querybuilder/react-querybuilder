@@ -7,7 +7,7 @@ import {
 } from '../src';
 import { generateID } from '../src/internal';
 import { musicalInstruments } from './musicalInstruments';
-import type { DemoOption, DemoOptions } from './types';
+import type { DemoOption, DemoOptions, HttpsURL } from './types';
 
 export const validator = (r: RuleType) => !!r.value;
 
@@ -260,12 +260,13 @@ export const initialQuery: RuleGroupType = {
 
 export const initialQueryIC = convertToIC(initialQuery);
 
-export const formatMap: [ExportFormat, string][] = [
-  ['sql', 'SQL'],
-  ['parameterized', 'SQL (parameterized)'],
-  ['parameterized_named', 'SQL (named parameters)'],
-  ['json_without_ids', 'JSON (no identifiers)'],
-  ['json', 'JSON'],
-  ['mongodb', 'MongoDB'],
-  ['cel', 'Common Expression Language (CEL)'],
+export const formatMap: [ExportFormat, string, HttpsURL][] = [
+  ['sql', 'SQL', 'https://en.wikipedia.org/wiki/SQL'],
+  ['parameterized', 'SQL (parameterized)', 'https://en.wikipedia.org/wiki/SQL'],
+  ['parameterized_named', 'SQL (named parameters)', 'https://en.wikipedia.org/wiki/SQL'],
+  ['json_without_ids', 'JSON (no identifiers)', 'https://en.wikipedia.org/wiki/JSON'],
+  ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON'],
+  ['mongodb', 'MongoDB', 'https://www.mongodb.com/'],
+  ['cel', 'Common Expression Language (CEL)', 'https://github.com/google/cel-spec'],
+  ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
 ];

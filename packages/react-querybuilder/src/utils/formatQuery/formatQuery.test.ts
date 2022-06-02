@@ -1,13 +1,10 @@
-import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../defaults';
-import type { RuleGroupType, ValueProcessor } from '../types';
-import { convertToIC } from './convertQuery';
-import {
-  defaultCELValueProcessor,
-  defaultMongoDBValueProcessor,
-  defaultValueProcessor,
-  formatQuery,
-} from './formatQuery';
-import { add } from './queryTools';
+import { defaultCELValueProcessor, defaultMongoDBValueProcessor, defaultValueProcessor } from '.';
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+import type { RuleGroupType, RuleGroupTypeIC, ValueProcessor } from '../../types';
+import { convertToIC } from '../convertQuery';
+import { add } from '../queryTools';
+import { formatQuery } from './formatQuery';
+import { jsonLogicAdditionalOperators } from './utils';
 
 const query: RuleGroupType = {
   id: 'g-root',
@@ -29,73 +26,73 @@ const query: RuleGroupType = {
     },
     {
       field: 'firstName',
-      value: '',
       operator: 'null',
-    },
-    {
-      field: 'lastName',
       value: '',
+    },
+    {
+      field: 'lastName',
       operator: 'notNull',
+      value: '',
     },
     {
       field: 'firstName',
-      value: 'Test,This',
       operator: 'in',
+      value: 'Test,This',
     },
     {
       field: 'lastName',
-      value: 'Test,This',
       operator: 'notIn',
-    },
-    {
-      field: 'firstName',
-      value: false,
-      operator: 'in',
-    },
-    {
-      field: 'firstName',
       value: 'Test,This',
-      operator: 'between',
     },
     {
       field: 'firstName',
-      value: ['Test', 'This'],
+      operator: 'in',
+      value: false,
+    },
+    {
+      field: 'firstName',
       operator: 'between',
+      value: 'Test,This',
+    },
+    {
+      field: 'firstName',
+      operator: 'between',
+      value: ['Test', 'This'],
     },
     {
       field: 'lastName',
-      value: 'Test,This',
       operator: 'notBetween',
+      value: 'Test,This',
     },
     {
       field: 'firstName',
+      operator: 'between',
       value: 'MissingComma',
-      operator: 'between',
     },
     {
       field: 'age',
+      operator: 'between',
       value: '12,14',
-      operator: 'between',
     },
     {
       field: 'firstName',
+      operator: 'between',
       value: 'OnlyFirstElement,',
-      operator: 'between',
     },
     {
       field: 'firstName',
-      value: ',OnlySecondElement',
       operator: 'between',
+      value: ',OnlySecondElement',
     },
     {
       field: 'age',
-      value: '26',
       operator: '=',
+      value: '26',
     },
     {
       field: 'isMusician',
-      value: true,
       operator: '=',
+      value: true,
     },
     {
       id: 'g-sub1',
@@ -103,18 +100,18 @@ const query: RuleGroupType = {
       rules: [
         {
           field: 'gender',
-          value: 'M',
           operator: '=',
+          value: 'M',
         },
         {
           field: 'job',
-          value: 'Programmer',
           operator: '!=',
+          value: 'Programmer',
         },
         {
           field: 'email',
-          value: '@',
           operator: 'contains',
+          value: '@',
         },
       ],
       not: true,
@@ -125,28 +122,28 @@ const query: RuleGroupType = {
       rules: [
         {
           field: 'lastName',
-          value: 'ab',
           operator: 'doesNotContain',
+          value: 'ab',
         },
         {
           field: 'job',
-          value: 'Prog',
           operator: 'beginsWith',
+          value: 'Prog',
         },
         {
           field: 'email',
-          value: 'com',
           operator: 'endsWith',
+          value: 'com',
         },
         {
           field: 'job',
-          value: 'Man',
           operator: 'doesNotBeginWith',
+          value: 'Man',
         },
         {
           field: 'email',
-          value: 'fr',
           operator: 'doesNotEndWith',
+          value: 'fr',
         },
       ],
       not: false,
@@ -304,68 +301,68 @@ const queryWithValueSourceField: RuleGroupType = {
   rules: [
     {
       field: 'firstName',
-      value: '',
       operator: 'null',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
       value: '',
+      valueSource: 'field',
+    },
+    {
+      field: 'lastName',
       operator: 'notNull',
+      value: '',
       valueSource: 'field',
     },
     {
       field: 'firstName',
-      value: 'middleName,lastName',
       operator: 'in',
+      value: 'middleName,lastName',
       valueSource: 'field',
     },
     {
       field: 'lastName',
-      value: 'middleName,lastName',
       operator: 'notIn',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      value: false,
-      operator: 'in',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
       value: 'middleName,lastName',
-      operator: 'between',
       valueSource: 'field',
     },
     {
       field: 'firstName',
-      value: ['middleName', 'lastName'],
+      operator: 'in',
+      value: false,
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
       operator: 'between',
+      value: 'middleName,lastName',
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
+      operator: 'between',
+      value: ['middleName', 'lastName'],
       valueSource: 'field',
     },
     {
       field: 'lastName',
-      value: 'middleName,lastName',
       operator: 'notBetween',
+      value: 'middleName,lastName',
       valueSource: 'field',
     },
     {
       field: 'firstName',
-      value: 'MissingComma',
       operator: 'between',
+      value: 'MissingComma',
       valueSource: 'field',
     },
     {
       field: 'age',
-      value: 'iq',
       operator: '=',
+      value: 'iq',
       valueSource: 'field',
     },
     {
       field: 'isMusician',
-      value: 'isCreative',
       operator: '=',
+      value: 'isCreative',
       valueSource: 'field',
     },
     {
@@ -374,20 +371,20 @@ const queryWithValueSourceField: RuleGroupType = {
       rules: [
         {
           field: 'gender',
-          value: 'someLetter',
           operator: '=',
+          value: 'someLetter',
           valueSource: 'field',
         },
         {
           field: 'job',
-          value: 'isBetweenJobs',
           operator: '!=',
+          value: 'isBetweenJobs',
           valueSource: 'field',
         },
         {
           field: 'email',
-          value: 'atSign',
           operator: 'contains',
+          value: 'atSign',
           valueSource: 'field',
         },
       ],
@@ -399,32 +396,32 @@ const queryWithValueSourceField: RuleGroupType = {
       rules: [
         {
           field: 'lastName',
-          value: 'firstName',
           operator: 'doesNotContain',
+          value: 'firstName',
           valueSource: 'field',
         },
         {
           field: 'job',
-          value: 'jobPrefix',
           operator: 'beginsWith',
+          value: 'jobPrefix',
           valueSource: 'field',
         },
         {
           field: 'email',
-          value: 'dotCom',
           operator: 'endsWith',
+          value: 'dotCom',
           valueSource: 'field',
         },
         {
           field: 'job',
-          value: 'hasNoJob',
           operator: 'doesNotBeginWith',
+          value: 'hasNoJob',
           valueSource: 'field',
         },
         {
           field: 'email',
-          value: 'isInvalid',
           operator: 'doesNotEndWith',
+          value: 'isInvalid',
           valueSource: 'field',
         },
       ],
@@ -438,116 +435,116 @@ const mongoQueryWithValueSourceField: RuleGroupType = {
   rules: [
     {
       field: 'invalid',
-      value: '',
       operator: 'invalid',
+      value: '',
       valueSource: 'field',
     },
     {
       field: 'firstName',
-      value: '',
       operator: 'null',
+      value: '',
       valueSource: 'field',
     },
     {
       field: 'lastName',
-      value: '',
       operator: 'notNull',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      value: 'middleName,lastName',
-      operator: 'in',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
-      value: 'middleName,lastName',
-      operator: 'notIn',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      value: false,
-      operator: 'in',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      value: 'middleName,lastName',
-      operator: 'between',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      value: ['middleName', 'lastName'],
-      operator: 'between',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
-      value: 'middleName,lastName',
-      operator: 'notBetween',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
       value: '',
-      operator: 'between',
       valueSource: 'field',
     },
     {
       field: 'firstName',
+      operator: 'in',
+      value: 'middleName,lastName',
+      valueSource: 'field',
+    },
+    {
+      field: 'lastName',
+      operator: 'notIn',
+      value: 'middleName,lastName',
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
+      operator: 'in',
       value: false,
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
       operator: 'between',
+      value: 'middleName,lastName',
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
+      operator: 'between',
+      value: ['middleName', 'lastName'],
+      valueSource: 'field',
+    },
+    {
+      field: 'lastName',
+      operator: 'notBetween',
+      value: 'middleName,lastName',
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
+      operator: 'between',
+      value: '',
+      valueSource: 'field',
+    },
+    {
+      field: 'firstName',
+      operator: 'between',
+      value: false,
       valueSource: 'field',
     },
     {
       field: 'age',
-      value: 'iq',
       operator: '=',
+      value: 'iq',
       valueSource: 'field',
     },
     {
       field: 'isMusician',
-      value: 'isCreative',
       operator: '=',
+      value: 'isCreative',
       valueSource: 'field',
     },
     {
       field: 'email',
-      value: 'atSign',
       operator: 'contains',
+      value: 'atSign',
       valueSource: 'field',
     },
     {
       field: 'email',
-      value: 'name',
       operator: 'beginsWith',
+      value: 'name',
       valueSource: 'field',
     },
     {
       field: 'email',
-      value: 'dotCom',
       operator: 'endsWith',
+      value: 'dotCom',
       valueSource: 'field',
     },
     {
       field: 'hello',
-      value: 'dotCom',
       operator: 'doesNotContain',
+      value: 'dotCom',
       valueSource: 'field',
     },
     {
       field: 'job',
-      value: 'noJob',
       operator: 'doesNotBeginWith',
+      value: 'noJob',
       valueSource: 'field',
     },
     {
       field: 'job',
-      value: 'noJob',
       operator: 'doesNotEndWith',
+      value: 'noJob',
       valueSource: 'field',
     },
     {
@@ -556,8 +553,8 @@ const mongoQueryWithValueSourceField: RuleGroupType = {
       rules: [
         {
           field: 'job',
-          value: 'executiveJobName',
           operator: '=',
+          value: 'executiveJobName',
           valueSource: 'field',
         },
       ],
@@ -631,6 +628,69 @@ const celString =
   'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
 const celStringForValueSourceField =
   'firstName == null && lastName != null && firstName in [middleName, lastName] && !(lastName in [middleName, lastName]) && (firstName >= middleName && firstName <= lastName) && (firstName >= middleName && firstName <= lastName) && (lastName < middleName || lastName > lastName) && age == iq && isMusician == isCreative && !(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (!lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || !job.startsWith(hasNoJob) || !email.endsWith(isInvalid))';
+const jsonLogicQueryObject = {
+  and: [
+    { '==': [{ var: 'firstName' }, null] },
+    { '!=': [{ var: 'lastName' }, null] },
+    { in: [{ var: 'firstName' }, ['Test', 'This']] },
+    { '!': { in: [{ var: 'lastName' }, ['Test', 'This']] } },
+    { '<=': ['Test', { var: 'firstName' }, 'This'] },
+    { '<=': ['Test', { var: 'firstName' }, 'This'] },
+    { '!': { '<=': ['Test', { var: 'lastName' }, 'This'] } },
+    { '<=': [12, { var: 'age' }, 14] },
+    { '==': [{ var: 'age' }, '26'] },
+    { '==': [{ var: 'isMusician' }, true] },
+    {
+      '!': {
+        or: [
+          { '==': [{ var: 'gender' }, 'M'] },
+          { '!=': [{ var: 'job' }, 'Programmer'] },
+          { in: ['@', { var: 'email' }] },
+        ],
+      },
+    },
+    {
+      or: [
+        { '!': { in: ['ab', { var: 'lastName' }] } },
+        { startsWith: [{ var: 'job' }, 'Prog'] },
+        { endsWith: [{ var: 'email' }, 'com'] },
+        { '!': { startsWith: [{ var: 'job' }, 'Man'] } },
+        { '!': { endsWith: [{ var: 'email' }, 'fr'] } },
+      ],
+    },
+  ],
+};
+const jsonLogicQueryObjectForValueSourceField = {
+  and: [
+    { '==': [{ var: 'firstName' }, null] },
+    { '!=': [{ var: 'lastName' }, null] },
+    { in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]] },
+    { '!': { in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]] } },
+    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
+    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
+    { '!': { '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }] } },
+    { '==': [{ var: 'age' }, { var: 'iq' }] },
+    { '==': [{ var: 'isMusician' }, { var: 'isCreative' }] },
+    {
+      '!': {
+        or: [
+          { '==': [{ var: 'gender' }, { var: 'someLetter' }] },
+          { '!=': [{ var: 'job' }, { var: 'isBetweenJobs' }] },
+          { in: [{ var: 'atSign' }, { var: 'email' }] },
+        ],
+      },
+    },
+    {
+      or: [
+        { '!': { in: [{ var: 'firstName' }, { var: 'lastName' }] } },
+        { startsWith: [{ var: 'job' }, { var: 'jobPrefix' }] },
+        { endsWith: [{ var: 'email' }, { var: 'dotCom' }] },
+        { '!': { startsWith: [{ var: 'job' }, { var: 'hasNoJob' }] } },
+        { '!': { endsWith: [{ var: 'email' }, { var: 'isInvalid' }] } },
+      ],
+    },
+  ],
+};
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -708,6 +768,25 @@ it('formats CEL correctly', () => {
   ).toBe('(f >= 12 && f <= 14)');
 });
 
+it('formats JSONLogic correctly', () => {
+  // Add an empty group and a rule with a non-standard operator
+  const jsonLogicQuery = add(
+    add(query, { combinator: 'and', rules: [] }, []),
+    { field: 'invalid', operator: 'invalid', value: '' },
+    []
+  );
+  expect(formatQuery(jsonLogicQuery, 'jsonlogic')).toEqual(jsonLogicQueryObject);
+  expect(formatQuery(queryWithValueSourceField, 'jsonlogic')).toEqual(
+    jsonLogicQueryObjectForValueSourceField
+  );
+  expect(
+    formatQuery(
+      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
+      'jsonlogic'
+    )
+  ).toEqual({ '<=': [12, { var: 'f' }, 14] });
+});
+
 it('handles invalid type correctly', () => {
   // @ts-expect-error 'null' is not a valid format
   expect(formatQuery(query, 'null')).toBe('');
@@ -770,15 +849,14 @@ it('handles quoteFieldNamesWith correctly', () => {
 });
 
 it('handles custom fallbackExpression correctly', () => {
+  const fallbackExpression = 'fallbackExpression';
   const queryToTest: RuleGroupType = {
     id: 'g-root',
     combinator: 'and',
     rules: [],
   };
 
-  expect(
-    formatQuery(queryToTest, { format: 'sql', fallbackExpression: 'fallbackExpression' })
-  ).toBe('fallbackExpression');
+  expect(formatQuery(queryToTest, { format: 'sql', fallbackExpression })).toBe(fallbackExpression);
 });
 
 it('handles json_without_ids correctly', () => {
@@ -812,335 +890,415 @@ it('uses paramPrefix correctly', () => {
 });
 
 describe('independent combinators', () => {
+  const queryIC: RuleGroupTypeIC = {
+    rules: [
+      { field: 'firstName', operator: '=', value: 'Test' },
+      'and',
+      { field: 'middleName', operator: '=', value: 'Test' },
+      'or',
+      { field: 'lastName', operator: '=', value: 'Test' },
+    ],
+  };
   it('handles independent combinators for sql', () => {
-    expect(
-      formatQuery(
-        {
-          rules: [
-            { field: 'firstName', value: 'Test', operator: '=' },
-            'and',
-            { field: 'middleName', value: 'Test', operator: '=' },
-            'or',
-            { field: 'lastName', value: 'Test', operator: '=' },
-          ],
-        },
-        'sql'
-      )
-    ).toBe(`(firstName = 'Test' and middleName = 'Test' or lastName = 'Test')`);
+    expect(formatQuery(queryIC, 'sql')).toBe(
+      `(firstName = 'Test' and middleName = 'Test' or lastName = 'Test')`
+    );
   });
 
   it('handles independent combinators for cel', () => {
-    expect(
-      formatQuery(
-        {
-          rules: [
-            { field: 'firstName', value: 'Test', operator: '=' },
-            'and',
-            { field: 'middleName', value: 'Test', operator: '=' },
-            'or',
-            { field: 'lastName', value: 'Test', operator: '=' },
-          ],
-        },
-        'cel'
-      )
-    ).toBe(`firstName == "Test" && middleName == "Test" || lastName == "Test"`);
+    expect(formatQuery(queryIC, 'cel')).toBe(
+      `firstName == "Test" && middleName == "Test" || lastName == "Test"`
+    );
   });
 
-  it('does not support independent combinators for mongodb', () => {
-    expect(
-      formatQuery(
-        { id: 'root', rules: [{ field: 'firstName', value: 'Test', operator: '=' }] },
-        'mongodb'
-      )
-    ).toBe('{"$and":[{"$expr":true}]}');
+  it('handles independent combinators for mongodb', () => {
+    expect(formatQuery(queryIC, 'mongodb')).toBe(
+      '{"$or":[{"$and":[{"firstName":{"$eq":"Test"}},{"middleName":{"$eq":"Test"}}]},{"lastName":{"$eq":"Test"}}]}'
+    );
+  });
+
+  it('handles independent combinators for jsonlogic', () => {
+    expect(formatQuery(queryIC, 'jsonlogic')).toEqual({
+      or: [
+        {
+          and: [
+            { '==': [{ var: 'firstName' }, 'Test'] },
+            { '==': [{ var: 'middleName' }, 'Test'] },
+          ],
+        },
+        { '==': [{ var: 'lastName' }, 'Test'] },
+      ],
+    });
   });
 });
 
 describe('validation', () => {
-  it('should invalidate sql', () => {
-    expect(
-      formatQuery(
-        { id: 'root', combinator: 'and', rules: [] },
-        { format: 'sql', validator: () => false }
-      )
-    ).toBe('(1 = 1)');
-  });
-
-  it('should invalidate sql even if fields are valid', () => {
-    expect(
-      formatQuery(
-        { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
-        {
-          format: 'sql',
-          validator: () => false,
-          fields: [{ name: 'field', validator: () => true }],
-        }
-      )
-    ).toBe('(1 = 1)');
-  });
-
-  it('should invalidate sql rule by validator function', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [
-            { field: 'field', operator: '=', value: '' },
-            { field: 'field2', operator: '=', value: '' },
-          ],
-        },
-        {
-          format: 'sql',
-          fields: [
-            { name: 'field', validator: () => false },
-            { name: 'field3', validator: () => false },
-          ],
-        }
-      )
-    ).toBe(`(field2 = '')`);
-  });
-
-  it('should invalidate sql rule specified by validationMap', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [
-            { id: 'f1', field: 'field', operator: '=', value: '' },
-            { id: 'f2', field: 'field2', operator: '=', value: '' },
-          ],
-        },
-        {
-          format: 'sql',
-          validator: () => ({ f1: false }),
-        }
-      )
-    ).toBe(`(field2 = '')`);
-  });
-
-  it('should invalidate sql outermost group', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [],
-        },
-        {
-          format: 'sql',
-          validator: () => ({ root: false }),
-        }
-      )
-    ).toBe('(1 = 1)');
-  });
-
-  it('should invalidate sql inner group', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-        },
-        {
-          format: 'sql',
-          validator: () => ({ inner: false }),
-        }
-      )
-    ).toBe('()');
-  });
-
-  it('should convert sql inner group with no rules to (1 = 1)', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [
-            { field: 'field', operator: '=', value: '' },
-            { id: 'inner', combinator: 'and', rules: [] },
-          ],
-        },
-        'sql'
-      )
-    ).toBe(`(field = '' and (1 = 1))`);
-  });
-
-  it('should invalidate parameterized rule', () => {
-    const queryToTest: RuleGroupType = {
-      id: 'root',
-      combinator: 'and',
-      rules: [
-        { field: 'field', operator: '=', value: '' },
-        { field: 'field2', operator: '=', value: '' },
-      ],
-    };
-    const fields = [{ name: 'field', validator: () => false }];
-    expect(
-      formatQuery(queryToTest, {
-        format: 'parameterized',
-        fields,
-      })
-    ).toEqual({ sql: `(field2 = ?)`, params: [''] });
-    expect(
-      formatQuery(queryToTest, {
-        format: 'parameterized_named',
-        fields,
-      })
-    ).toEqual({ sql: '(field2 = :field2_1)', params: { field2_1: '' } });
-  });
-
-  it('should invalidate parameterized', () => {
-    const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
-    expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual({
-      sql: '(1 = 1)',
-      params: [],
+  describe('sql', () => {
+    it('should invalidate sql', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'sql', validator: () => false }
+        )
+      ).toBe('(1 = 1)');
     });
-    expect(
-      formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
-    ).toEqual({ sql: '(1 = 1)', params: {} });
+
+    it('should invalidate sql even if fields are valid', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            format: 'sql',
+            validator: () => false,
+            fields: [{ name: 'field', validator: () => true }],
+          }
+        )
+      ).toBe('(1 = 1)');
+    });
+
+    it('should invalidate sql rule by validator function', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { field: 'field', operator: '=', value: '' },
+              { field: 'field2', operator: '=', value: '' },
+            ],
+          },
+          {
+            format: 'sql',
+            fields: [
+              { name: 'field', validator: () => false },
+              { name: 'field3', validator: () => false },
+            ],
+          }
+        )
+      ).toBe(`(field2 = '')`);
+    });
+
+    it('should invalidate sql rule specified by validationMap', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { id: 'f1', field: 'field', operator: '=', value: '' },
+              { id: 'f2', field: 'field2', operator: '=', value: '' },
+            ],
+          },
+          {
+            format: 'sql',
+            validator: () => ({ f1: false }),
+          }
+        )
+      ).toBe(`(field2 = '')`);
+    });
+
+    it('should invalidate sql outermost group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [],
+          },
+          {
+            format: 'sql',
+            validator: () => ({ root: false }),
+          }
+        )
+      ).toBe('(1 = 1)');
+    });
+
+    it('should invalidate sql inner group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
+          },
+          {
+            format: 'sql',
+            validator: () => ({ inner: false }),
+          }
+        )
+      ).toBe('()');
+    });
+
+    it('should convert sql inner group with no rules to (1 = 1)', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { field: 'field', operator: '=', value: '' },
+              { id: 'inner', combinator: 'and', rules: [] },
+            ],
+          },
+          'sql'
+        )
+      ).toBe(`(field = '' and (1 = 1))`);
+    });
   });
 
-  it('should invalidate a mongodb query', () => {
-    expect(
-      formatQuery(
-        { id: 'root', combinator: 'and', rules: [] },
-        { format: 'mongodb', validator: () => false }
-      )
-    ).toBe('{"$and":[{"$expr":true}]}');
-  });
+  describe('parameterized', () => {
+    it('should invalidate parameterized rule', () => {
+      const queryToTest: RuleGroupType = {
+        id: 'root',
+        combinator: 'and',
+        rules: [
+          { field: 'field', operator: '=', value: '' },
+          { field: 'field2', operator: '=', value: '' },
+        ],
+      };
+      const fields = [{ name: 'field', validator: () => false }];
+      expect(
+        formatQuery(queryToTest, {
+          format: 'parameterized',
+          fields,
+        })
+      ).toEqual({ sql: `(field2 = ?)`, params: [''] });
+      expect(
+        formatQuery(queryToTest, {
+          format: 'parameterized_named',
+          fields,
+        })
+      ).toEqual({ sql: '(field2 = :field2_1)', params: { field2_1: '' } });
+    });
 
-  it('should invalidate a mongodb rule', () => {
-    expect(
-      formatQuery(
+    it('should invalidate parameterized', () => {
+      const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
+      expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual(
         {
-          id: 'root',
-          combinator: 'and',
-          rules: [
-            { field: 'field', operator: '=', value: '' },
-            { field: 'otherfield', operator: '=', value: '' },
-          ],
-        },
-        { format: 'mongodb', fields: [{ name: 'field', validator: () => false }] }
-      )
-    ).toBe('{"$and":[{"otherfield":{"$eq":""}}]}');
-  });
-
-  it('should invalidate mongodb even if fields are valid', () => {
-    expect(
-      formatQuery(
-        { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
-        {
-          format: 'mongodb',
-          validator: () => false,
-          fields: [{ name: 'field', validator: () => true }],
+          sql: '(1 = 1)',
+          params: [],
         }
-      )
-    ).toBe('{"$and":[{"$expr":true}]}');
+      );
+      expect(
+        formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
+      ).toEqual({ sql: '(1 = 1)', params: {} });
+    });
   });
 
-  it('should invalidate mongodb outermost group', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [],
-        },
-        {
-          format: 'mongodb',
-          validator: () => ({ root: false }),
-        }
-      )
-    ).toBe('{"$and":[{"$expr":true}]}');
+  describe('mongodb', () => {
+    it('should invalidate a mongodb query', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'mongodb', validator: () => false }
+        )
+      ).toBe('{"$and":[{"$expr":true}]}');
+    });
+
+    it('should invalidate a mongodb rule', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { field: 'field', operator: '=', value: '' },
+              { field: 'otherfield', operator: '=', value: '' },
+            ],
+          },
+          { format: 'mongodb', fields: [{ name: 'field', validator: () => false }] }
+        )
+      ).toBe('{"$and":[{"otherfield":{"$eq":""}}]}');
+    });
+
+    it('should invalidate mongodb even if fields are valid', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            format: 'mongodb',
+            validator: () => false,
+            fields: [{ name: 'field', validator: () => true }],
+          }
+        )
+      ).toBe('{"$and":[{"$expr":true}]}');
+    });
+
+    it('should invalidate mongodb outermost group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [],
+          },
+          {
+            format: 'mongodb',
+            validator: () => ({ root: false }),
+          }
+        )
+      ).toBe('{"$and":[{"$expr":true}]}');
+    });
+
+    it('should invalidate mongodb inner group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
+          },
+          {
+            format: 'mongodb',
+            validator: () => ({ inner: false }),
+          }
+        )
+      ).toBe('{"$and":[{"$expr":true}]}');
+    });
   });
 
-  it('should invalidate mongodb inner group', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-        },
-        {
-          format: 'mongodb',
-          validator: () => ({ inner: false }),
-        }
-      )
-    ).toBe('{"$and":[{"$expr":true}]}');
+  describe('cel', () => {
+    it('should invalidate a cel query', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'cel', validator: () => false }
+        )
+      ).toBe('1 == 1');
+    });
+
+    it('should invalidate a cel rule', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { field: 'field', operator: '=', value: '' },
+              { field: 'otherfield', operator: '=', value: '' },
+            ],
+          },
+          { format: 'cel', fields: [{ name: 'field', validator: () => false }] }
+        )
+      ).toBe('otherfield == ""');
+    });
+
+    it('should invalidate cel even if fields are valid', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            format: 'cel',
+            validator: () => false,
+            fields: [{ name: 'field', validator: () => true }],
+          }
+        )
+      ).toBe('1 == 1');
+    });
+
+    it('should invalidate cel outermost group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [],
+          },
+          {
+            format: 'cel',
+            validator: () => ({ root: false }),
+          }
+        )
+      ).toBe('1 == 1');
+    });
+
+    it('should invalidate cel inner group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
+          },
+          {
+            format: 'cel',
+            validator: () => ({ inner: false }),
+          }
+        )
+      ).toBe('1 == 1');
+    });
   });
 
-  it('should invalidate a cel query', () => {
-    expect(
-      formatQuery(
-        { id: 'root', combinator: 'and', rules: [] },
-        { format: 'cel', validator: () => false }
-      )
-    ).toBe('1 == 1');
-  });
+  describe('jsonlogic', () => {
+    it('should invalidate a jsonlogic query', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'jsonlogic', validator: () => false }
+        )
+      ).toBe(false);
+    });
 
-  it('should invalidate a cel rule', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [
-            { field: 'field', operator: '=', value: '' },
-            { field: 'otherfield', operator: '=', value: '' },
-          ],
-        },
-        { format: 'cel', fields: [{ name: 'field', validator: () => false }] }
-      )
-    ).toBe('otherfield == ""');
-  });
+    it('should invalidate a jsonlogic rule', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { field: 'field', operator: '=', value: '' },
+              { field: 'otherfield', operator: '=', value: '' },
+            ],
+          },
+          { format: 'jsonlogic', fields: [{ name: 'field', validator: () => false }] }
+        )
+      ).toEqual({ '==': [{ var: 'otherfield' }, ''] });
+    });
 
-  it('should invalidate cel even if fields are valid', () => {
-    expect(
-      formatQuery(
-        { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
-        {
-          format: 'cel',
-          validator: () => false,
-          fields: [{ name: 'field', validator: () => true }],
-        }
-      )
-    ).toBe('1 == 1');
-  });
+    it('should invalidate jsonlogic even if fields are valid', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            format: 'jsonlogic',
+            validator: () => false,
+            fields: [{ name: 'field', validator: () => true }],
+          }
+        )
+      ).toBe(false);
+    });
 
-  it('should invalidate cel outermost group', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [],
-        },
-        {
-          format: 'cel',
-          validator: () => ({ root: false }),
-        }
-      )
-    ).toBe('1 == 1');
-  });
+    it('should invalidate jsonlogic outermost group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [],
+          },
+          {
+            format: 'jsonlogic',
+            validator: () => ({ root: false }),
+          }
+        )
+      ).toBe(false);
+    });
 
-  it('should invalidate cel inner group', () => {
-    expect(
-      formatQuery(
-        {
-          id: 'root',
-          combinator: 'and',
-          rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-        },
-        {
-          format: 'cel',
-          validator: () => ({ inner: false }),
-        }
-      )
-    ).toBe('1 == 1');
+    it('should invalidate jsonlogic inner group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
+          },
+          {
+            format: 'jsonlogic',
+            validator: () => ({ inner: false }),
+          }
+        )
+      ).toBe(false);
+    });
   });
 });
 
@@ -1431,6 +1589,26 @@ describe('parseNumbers', () => {
       'f == "NaN" && f == 0 && f == 0 && f == 0 && (f == 1.5 || f == 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
     );
   });
+  it('parses numbers for jsonlogic', () => {
+    expect(formatQuery(queryForNumberParsing, { format: 'jsonlogic', parseNumbers: true })).toEqual(
+      {
+        and: [
+          { '==': [{ var: 'f' }, 'NaN'] },
+          { '==': [{ var: 'f' }, 0] },
+          { '==': [{ var: 'f' }, 0] },
+          { '==': [{ var: 'f' }, 0] },
+          { or: [{ '==': [{ var: 'f' }, 1.5] }, { '==': [{ var: 'f' }, 1.5] }] },
+          { in: [{ var: 'f' }, [0, 1, 2]] },
+          { in: [{ var: 'f' }, [0, 1, 2]] },
+          { in: [{ var: 'f' }, [0, 'abc', 2]] },
+          { '<=': [0, { var: 'f' }, 1] },
+          { '<=': [0, { var: 'f' }, 1] },
+          { '<=': ['0', { var: 'f' }, 'abc'] },
+          { '<=': [{}, { var: 'f' }, {}] },
+        ],
+      }
+    );
+  });
 });
 
 describe('placeholder names', () => {
@@ -1455,5 +1633,13 @@ describe('placeholder names', () => {
         placeholderOperatorName,
       })
     ).toBe(`(${defaultPlaceholderFieldName} ${defaultPlaceholderOperatorName} 'v1')`);
+  });
+});
+
+describe('misc', () => {
+  it('runs the jsonLogic additional operators', () => {
+    const { startsWith, endsWith } = jsonLogicAdditionalOperators;
+    expect(startsWith('TestString', 'Test')).toBe(true);
+    expect(endsWith('TestString', 'String')).toBe(true);
   });
 });
