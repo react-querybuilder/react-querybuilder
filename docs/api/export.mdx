@@ -23,6 +23,7 @@ function formatQuery(
 - Parameterized SQL (with anonymous or named parameters)
 - MongoDB
 - Common Expression Language (CEL)
+- JsonLogic
 
 For the next few sections, assume the `query` variable has been defined as:
 
@@ -165,7 +166,7 @@ Output:
 
 :::info
 
-For now, the MongoDB export format has two major shortcomings. For one, it does not support the inversion operator (setting `not: true` for a rule group), however rules _can_ be created using the `"!="` operator. Also, if the query uses [independent combinators](./querybuilder#independentcombinators), it will not be processed and `formatQuery(query, 'mongodb')` will always return the [fallback expression](#fallback-expression).
+The MongoDB export format does not support the inversion operator (setting `not: true` for a rule group), however rules _can_ be created using the `"!="` operator.
 
 :::
 
@@ -181,6 +182,20 @@ Output:
 
 ```ts
 `firstName = "Steve" && lastName = "Vai"`;
+```
+
+### JsonLogic
+
+The "jsonlogic" format produces an object that can be processed by the `jsonLogic.apply` function (see https://jsonlogic.com/).
+
+```ts
+formatQuery(query, 'jsonlogic');
+```
+
+Output:
+
+```json
+{ "and": [{ "==": [{ "var": "firstName" }, "Steve"] }, { "==": [{ "var": "lastName" }, "Vai"] }] }
 ```
 
 ## Configuration
