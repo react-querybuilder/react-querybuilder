@@ -1,4 +1,9 @@
-import { defaultCELValueProcessor, defaultMongoDBValueProcessor, defaultValueProcessor } from '.';
+import {
+  defaultCELValueProcessor,
+  defaultMongoDBValueProcessor,
+  defaultSpELValueProcessor,
+  defaultValueProcessor,
+} from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type { RuleGroupType, RuleGroupTypeIC, ValueProcessor } from '../../types';
 import { convertToIC } from '../convertQuery';
@@ -628,6 +633,10 @@ const celString =
   'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
 const celStringForValueSourceField =
   'firstName == null && lastName != null && firstName in [middleName, lastName] && !(lastName in [middleName, lastName]) && (firstName >= middleName && firstName <= lastName) && (firstName >= middleName && firstName <= lastName) && (lastName < middleName || lastName > lastName) && age == iq && isMusician == isCreative && !(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (!lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || !job.startsWith(hasNoJob) || !email.endsWith(isInvalid))';
+const spelString =
+  "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and !(gender == 'M' or job != 'Programmer' or email matches '@') and (!(lastName matches 'ab') or job matches '^Prog' or email matches 'com$' or !(job matches '^Man') or !(email matches 'fr$'))";
+const spelStringForValueSourceField =
+  "firstName == null and lastName != null and (firstName == middleName or firstName == lastName) and !(lastName == middleName or lastName == lastName) and (firstName >= middleName and firstName <= lastName) and (firstName >= middleName and firstName <= lastName) and (lastName < middleName or lastName > lastName) and age == iq and isMusician == isCreative and !(gender == someLetter or job != isBetweenJobs or email matches atSign) and (!(lastName matches firstName) or job matches '^'.concat(jobPrefix) or email matches dotCom.concat('$') or !(job matches '^'.concat(hasNoJob)) or !(email matches isInvalid.concat('$')))";
 const jsonLogicQueryObject = {
   and: [
     { '==': [{ var: 'firstName' }, null] },
@@ -766,6 +775,24 @@ it('formats CEL correctly', () => {
       'cel'
     )
   ).toBe('(f >= 12 && f <= 14)');
+});
+
+it('formats SpEL correctly', () => {
+  const spelQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
+  expect(formatQuery(spelQuery, 'spel')).toBe(spelString);
+  expect(formatQuery(queryWithValueSourceField, 'spel')).toBe(spelStringForValueSourceField);
+  expect(
+    formatQuery(queryWithValueSourceField, {
+      format: 'spel',
+      valueProcessor: defaultSpELValueProcessor,
+    })
+  ).toBe(spelStringForValueSourceField);
+  expect(
+    formatQuery(
+      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
+      'spel'
+    )
+  ).toBe('(f >= 12 and f <= 14)');
 });
 
 it('formats JSONLogic correctly', () => {
@@ -908,6 +935,12 @@ describe('independent combinators', () => {
   it('handles independent combinators for cel', () => {
     expect(formatQuery(queryIC, 'cel')).toBe(
       `firstName == "Test" && middleName == "Test" || lastName == "Test"`
+    );
+  });
+
+  it('handles independent combinators for spel', () => {
+    expect(formatQuery(queryIC, 'spel')).toBe(
+      `firstName == 'Test' and middleName == 'Test' or lastName == 'Test'`
     );
   });
 
@@ -1222,6 +1255,78 @@ describe('validation', () => {
           },
           {
             format: 'cel',
+            validator: () => ({ inner: false }),
+          }
+        )
+      ).toBe('1 == 1');
+    });
+  });
+
+  describe('spel', () => {
+    it('should invalidate a spel query', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'spel', validator: () => false }
+        )
+      ).toBe('1 == 1');
+    });
+
+    it('should invalidate a spel rule', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [
+              { field: 'field', operator: '=', value: '' },
+              { field: 'otherfield', operator: '=', value: '' },
+            ],
+          },
+          { format: 'spel', fields: [{ name: 'field', validator: () => false }] }
+        )
+      ).toBe("otherfield == ''");
+    });
+
+    it('should invalidate spel even if fields are valid', () => {
+      expect(
+        formatQuery(
+          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            format: 'spel',
+            validator: () => false,
+            fields: [{ name: 'field', validator: () => true }],
+          }
+        )
+      ).toBe('1 == 1');
+    });
+
+    it('should invalidate spel outermost group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [],
+          },
+          {
+            format: 'spel',
+            validator: () => ({ root: false }),
+          }
+        )
+      ).toBe('1 == 1');
+    });
+
+    it('should invalidate spel inner group', () => {
+      expect(
+        formatQuery(
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
+          },
+          {
+            format: 'spel',
             validator: () => ({ inner: false }),
           }
         )
@@ -1587,6 +1692,33 @@ describe('parseNumbers', () => {
   it('parses numbers for cel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'cel', parseNumbers: true })).toBe(
       'f == "NaN" && f == 0 && f == 0 && f == 0 && (f == 1.5 || f == 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
+    );
+    const queryForNumberParsingCEL: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'beginsWith', value: 1 },
+        { field: 'f', operator: 'endsWith', value: 1 },
+      ],
+    };
+    expect(formatQuery(queryForNumberParsingCEL, { format: 'cel', parseNumbers: true })).toBe(
+      `f.startsWith("1") && f.endsWith("1")`
+    );
+  });
+  it('parses numbers for spel', () => {
+    expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
+      "f == 'NaN' and f == 0 and f == 0 and f == 0 and (f == 1.5 or f == 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
+    );
+    const queryForNumberParsingSpEL: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'beginsWith', value: 1 },
+        { field: 'f', operator: 'beginsWith', value: '^hasCaret' },
+        { field: 'f', operator: 'endsWith', value: 1 },
+        { field: 'f', operator: 'endsWith', value: 'hasDollarSign$' },
+      ],
+    };
+    expect(formatQuery(queryForNumberParsingSpEL, { format: 'spel', parseNumbers: true })).toBe(
+      `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
     );
   });
   it('parses numbers for jsonlogic', () => {

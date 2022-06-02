@@ -11,7 +11,8 @@ export type ExportFormat =
   | 'parameterized_named'
   | 'mongodb'
   | 'cel'
-  | 'jsonlogic';
+  | 'jsonlogic'
+  | 'spel';
 
 export interface FormatQueryOptions {
   /**

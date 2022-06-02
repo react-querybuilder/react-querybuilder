@@ -21,6 +21,7 @@ import { internalRuleProcessorJSONLogic } from './internalRuleProcessorJSONLogic
 import { internalValueProcessor } from './internalValueProcessor';
 import { internalValueProcessorCEL } from './internalValueProcessorCEL';
 import { internalValueProcessorMongoDB } from './internalValueProcessorMongoDB';
+import { internalValueProcessorSpEL } from './internalValueProcessorSpEL';
 import {
   celCombinatorMap,
   mapSQLOperator,
@@ -53,12 +54,12 @@ function formatQuery(
 ): string;
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>
+  options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named' | 'jsonlogic'>
 ): string;
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'> & {
-    format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named'>;
+    format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named' | 'jsonlogic'>;
   }
 ): string;
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
@@ -80,6 +81,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       valueProcessorInternal = internalValueProcessorMongoDB;
     } else if (format === 'cel') {
       valueProcessorInternal = internalValueProcessorCEL;
+    } else if (format === 'spel') {
+      valueProcessorInternal = internalValueProcessorSpEL;
     }
   } else {
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
@@ -91,6 +94,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         ? internalValueProcessorMongoDB
         : format === 'cel'
         ? internalValueProcessorCEL
+        : format === 'spel'
+        ? internalValueProcessorSpEL
         : internalValueProcessor;
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
@@ -103,7 +108,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   }
   if (!fallbackExpression) {
     fallbackExpression =
-      format === 'mongodb' ? '"$and":[{"$expr":true}]' : format === 'cel' ? '1 == 1' : '(1 = 1)';
+      format === 'mongodb'
+        ? '"$and":[{"$expr":true}]'
+        : format === 'cel' || format === 'spel'
+        ? '1 == 1'
+        : '(1 = 1)';
   }
 
   if (format === 'json' || format === 'json_without_ids') {
@@ -374,6 +383,39 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} `
               : ' '
           );
+
+        const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
+
+        return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
+      };
+
+      return processRuleGroup(ruleGroup, true);
+    } else if (format === 'spel') {
+      const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+          return outermost ? fallbackExpression : '';
+        }
+
+        const expression: string = rg.rules
+          .map(rule => {
+            if (typeof rule === 'string') {
+              return rule;
+            }
+            if ('rules' in rule) {
+              return processRuleGroup(rule);
+            }
+            const [validationResult, fieldValidator] = validateRule(rule);
+            if (
+              !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+              rule.field === placeholderFieldName ||
+              rule.operator === placeholderOperatorName
+            ) {
+              return '';
+            }
+            return valueProcessorInternal(rule, { parseNumbers });
+          })
+          .filter(Boolean)
+          .join('combinator' in rg ? ` ${rg.combinator} ` : ' ');
 
         const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
 

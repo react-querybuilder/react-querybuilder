@@ -3,7 +3,10 @@ import { shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
-export const internalValueProcessorCEL: ValueProcessorInternal = (
+const wrapInNegation = (clause: string, negate: boolean) =>
+  `${negate ? '!(' : ''}${clause}${negate ? ')' : ''}`;
+
+export const internalValueProcessorSpEL: ValueProcessorInternal = (
   { field, operator, value, valueSource },
   { parseNumbers }
 ) => {
@@ -23,32 +26,45 @@ export const internalValueProcessorCEL: ValueProcessorInternal = (
     operatorTL === '>='
   ) {
     return `${field} ${operatorTL} ${
-      valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
+      valueIsField || useBareValue ? trimIfString(value) : `'${value}'`
     }`;
   } else if (operatorTL === 'contains' || operatorTL === 'doesNotContain') {
-    const negate = shouldNegate(operatorTL) ? '!' : '';
-    return `${negate}${field}.contains(${valueIsField ? trimIfString(value) : `"${value}"`})`;
+    return wrapInNegation(
+      `${field} matches ${valueIsField || useBareValue ? trimIfString(value) : `'${value}'`}`,
+      shouldNegate(operatorTL)
+    );
   } else if (operatorTL === 'beginsWith' || operatorTL === 'doesNotBeginWith') {
-    const negate = shouldNegate(operatorTL) ? '!' : '';
-    return `${negate}${field}.startsWith(${valueIsField ? trimIfString(value) : `"${value}"`})`;
+    const valueTL = valueIsField
+      ? `'^'.concat(${trimIfString(value)})`
+      : `'${
+          (typeof value === 'string' && !value.startsWith('^')) || useBareValue ? '^' : ''
+        }${value}'`;
+    return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
   } else if (operatorTL === 'endsWith' || operatorTL === 'doesNotEndWith') {
-    const negate = shouldNegate(operatorTL) ? '!' : '';
-    return `${negate}${field}.endsWith(${valueIsField ? trimIfString(value) : `"${value}"`})`;
+    const valueTL = valueIsField
+      ? `${trimIfString(value)}.concat('$')`
+      : `'${value}${
+          (typeof value === 'string' && !value.endsWith('$')) || useBareValue ? '$' : ''
+        }'`;
+    return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
   } else if (operatorTL === 'null') {
     return `${field} == null`;
   } else if (operatorTL === 'notNull') {
     return `${field} != null`;
   } else if (operatorTL === 'in' || operatorTL === 'notIn') {
-    const negate = shouldNegate(operatorTL);
+    const negate = shouldNegate(operatorTL) ? '!' : '';
     const valArray = toArray(value);
     if (valArray.length > 0) {
-      return `${negate ? '!(' : ''}${field} in [${valArray
-        .map(val =>
-          valueIsField || shouldRenderAsNumber(val, parseNumbers)
-            ? `${trimIfString(val)}`
-            : `"${val}"`
+      return `${negate}(${valArray
+        .map(
+          val =>
+            `${field} == ${
+              valueIsField || shouldRenderAsNumber(val, parseNumbers)
+                ? `${trimIfString(val)}`
+                : `'${val}'`
+            }`
         )
-        .join(', ')}]${negate ? ')' : ''}`;
+        .join(' or ')})`;
     } else {
       return '';
     }
@@ -58,17 +74,17 @@ export const internalValueProcessorCEL: ValueProcessorInternal = (
       const [first, second] = valArray;
       const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
       const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
-      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : `"${first}"`) : firstNum;
-      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : `"${second}"`) : secondNum;
+      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : `'${first}'`) : firstNum;
+      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : `'${second}'`) : secondNum;
       if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
         const tempNum = secondNum;
         secondValue = firstNum;
         firstValue = tempNum;
       }
       if (operator === 'between') {
-        return `(${field} >= ${firstValue} && ${field} <= ${secondValue})`;
+        return `(${field} >= ${firstValue} and ${field} <= ${secondValue})`;
       } else {
-        return `(${field} < ${firstValue} || ${field} > ${secondValue})`;
+        return `(${field} < ${firstValue} or ${field} > ${secondValue})`;
       }
     } else {
       return '';

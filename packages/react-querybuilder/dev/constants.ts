@@ -260,6 +260,7 @@ export const initialQuery: RuleGroupType = {
 
 export const initialQueryIC = convertToIC(initialQuery);
 
+// prettier-ignore
 export const formatMap: [ExportFormat, string, HttpsURL][] = [
   ['sql', 'SQL', 'https://en.wikipedia.org/wiki/SQL'],
   ['parameterized', 'SQL (parameterized)', 'https://en.wikipedia.org/wiki/SQL'],
@@ -268,5 +269,6 @@ export const formatMap: [ExportFormat, string, HttpsURL][] = [
   ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON'],
   ['mongodb', 'MongoDB', 'https://www.mongodb.com/'],
   ['cel', 'Common Expression Language (CEL)', 'https://github.com/google/cel-spec'],
+  ['spel', 'Spring Expression Language (SpEL)', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
 ];
