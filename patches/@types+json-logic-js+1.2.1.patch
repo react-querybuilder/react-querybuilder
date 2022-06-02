@@ -1,8 +1,8 @@
 diff --git a/node_modules/@types/json-logic-js/index.d.ts b/node_modules/@types/json-logic-js/index.d.ts
-index 78b890b..4e40302 100644
+index 78b890b..a4a0d01 100644
 --- a/node_modules/@types/json-logic-js/index.d.ts
 +++ b/node_modules/@types/json-logic-js/index.d.ts
-@@ -1,62 +1,147 @@
+@@ -1,62 +1,149 @@
 -// Type definitions for json-logic-js 1.2
 +// Type definitions for json-logic-js 2.0
  // Project: https://github.com/jwadhams/json-logic-js#readme
@@ -14,10 +14,12 @@ index 78b890b..4e40302 100644
  export as namespace jsonFactory;
  
 -export type RulesLogic =
++// Disable auto-export
 +export {};
 +
 +/**
-+ * This is a utility type used below for the "if" operation
++ * This is a utility type used below for the "if" operation.
++ * Original: https://stackoverflow.com/a/68373774/765987
 + */
 +type MAXIMUM_ALLOWED_BOUNDARY = 80;
 +type Mapped<
@@ -37,49 +39,49 @@ index 78b890b..4e40302 100644
 + */
 +type AnyArrayOfOddLengthMin3 = [any, ...Mapped<[any, any]>];
 +
++export type ReservedOperations =
++    | 'var'
++    | 'missing'
++    | 'missing_some'
++    | 'if'
++    | '=='
++    | '==='
++    | '!='
++    | '!=='
++    | '!'
++    | '!!'
++    | 'or'
++    | 'and'
++    | '>'
++    | '>='
++    | '<'
++    | '<='
++    | 'max'
++    | 'min'
++    | '+'
++    | '-'
++    | '*'
++    | '/'
++    | '%'
++    | 'map'
++    | 'filter'
++    | 'reduce'
++    | 'all'
++    | 'none'
++    | 'some'
++    | 'merge'
++    | 'in'
++    | 'cat'
++    | 'substr'
++    | 'log';
++
 +/**
 + * This can be an object with any key except the reserved keys.
 + * TODO: Find a way to limit this type to exactly one (1) key, since
 + * json-logic-js enforces it. See:
 + * https://github.com/jwadhams/json-logic-js/blob/2.0.2/logic.js#L180
 + */
-+export interface AdditionalOperation {
-+    var?: never;
-+    missing?: never;
-+    missing_some?: never;
-+    if?: never;
-+    '=='?: never;
-+    '==='?: never;
-+    '!='?: never;
-+    '!=='?: never;
-+    '!'?: never;
-+    '!!'?: never;
-+    or?: never;
-+    and?: never;
-+    '>'?: never;
-+    '>='?: never;
-+    '<'?: never;
-+    '<='?: never;
-+    max?: never;
-+    min?: never;
-+    '+'?: never;
-+    '-'?: never;
-+    '*'?: never;
-+    '/'?: never;
-+    '%'?: never;
-+    map?: never;
-+    filter?: never;
-+    reduce?: never;
-+    all?: never;
-+    none?: never;
-+    some?: never;
-+    merge?: never;
-+    in?: never;
-+    cat?: never;
-+    substr?: never;
-+    log?: never;
-+    [k: string]: any;
-+}
++export type AdditionalOperation = Partial<Record<ReservedOperations, never>> & { [k: string]: any };
 +
 +export type RulesLogic<AddOps extends AdditionalOperation = never> =
      | boolean
