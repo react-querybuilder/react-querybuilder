@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     emptyOutDir: false,
     lib: {
-      entry: path.resolve(__dirname, 'src/utils/formatQuery.ts'),
+      entry: path.resolve(__dirname, 'src/utils/formatQuery/index.ts'),
       fileName: () => 'formatQuery.js',
       formats: ['cjs'],
     },
