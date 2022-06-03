@@ -23,6 +23,8 @@ function formatQuery(
 - Parameterized SQL (with anonymous or named parameters)
 - MongoDB
 - Common Expression Language (CEL)
+- Spring Expression Language (SpEL)
+- JsonLogic
 
 For the next few sections, assume the `query` variable has been defined as:
 
@@ -165,7 +167,7 @@ Output:
 
 :::info
 
-For now, the MongoDB export format has two major shortcomings. For one, it does not support the inversion operator (setting `not: true` for a rule group), however rules _can_ be created using the `"!="` operator. Also, if the query uses [independent combinators](./querybuilder#independentcombinators), it will not be processed and `formatQuery(query, 'mongodb')` will always return the [fallback expression](#fallback-expression).
+The MongoDB export format does not support the inversion operator (setting `not: true` for a rule group), however rules _can_ be created using the `"!="` operator.
 
 :::
 
@@ -181,6 +183,34 @@ Output:
 
 ```ts
 `firstName = "Steve" && lastName = "Vai"`;
+```
+
+### Spring Expression Language
+
+For Spring Expression Language (SpEL) output, use the "spel" format.
+
+```ts
+formatQuery(query, 'spel');
+```
+
+Output:
+
+```ts
+`firstName == 'Steve' and lastName == 'Vai'`;
+```
+
+### JsonLogic
+
+The "jsonlogic" format produces an object that can be processed by the `jsonLogic.apply` function (see https://jsonlogic.com/).
+
+```ts
+formatQuery(query, 'jsonlogic');
+```
+
+Output:
+
+```json
+{ "and": [{ "==": [{ "var": "firstName" }, "Steve"] }, { "==": [{ "var": "lastName" }, "Vai"] }] }
 ```
 
 ## Configuration
@@ -308,9 +338,17 @@ const p = formatQuery(query, {
 
 ### Fallback expression
 
-The `fallbackExpression` is a string that will be part of the output when `formatQuery` can't quite figure out what to do for a particular rule or group. The intent is to maintain valid syntax while (hopefully) not detrimentally affecting the query criteria.
+The `fallbackExpression` is a string that will be part of the output when `formatQuery` can't quite figure out what to do for a particular rule or group. The intent is to maintain valid syntax while (hopefully) not detrimentally affecting the query criteria. If not provided, the default fallback expression for the given format will be used (see table below).
 
-By default, `fallbackExpression` is `"(1 = 1)"` for the "sql", "parameterized", and "parameterized_named" formats, `"1 == 1"` for the "cel" format, and `"{$and:[{$expr:true}]}"` for the "mongodb" format.
+| Format                | Default `fallbackExpression` |
+| --------------------- | ---------------------------- |
+| "sql"                 | `"(1 = 1)"`                  |
+| "parameterized"       | `"(1 = 1)"`                  |
+| "parameterized_named" | `"(1 = 1)"`                  |
+| "mongodb"             | `"{$and:[{$expr:true}]}"`    |
+| "cel"                 | `"1 == 1"`                   |
+| "spel"                | `"1 == 1"`                   |
+| "jsonlogic"           | `false`                      |
 
 ### Value sources
 
