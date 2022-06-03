@@ -85,6 +85,12 @@ const App = () => {
       <pre>{formatQuery(query, { format: 'mongodb', parseNumbers })}</pre>
       <h5>CEL</h5>
       <pre>{formatQuery(query, { format: 'cel', parseNumbers })}</pre>
+      <h5>SpEL</h5>
+      <pre>{formatQuery(query, { format: 'spel', parseNumbers })}</pre>
+      <h5>JsonLogic</h5>
+      <pre>
+        {JSON.stringify(formatQuery(query, { format: 'jsonlogic', parseNumbers }), null, 2)}
+      </pre>
     </div>
   );
 };

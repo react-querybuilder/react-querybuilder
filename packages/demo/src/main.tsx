@@ -322,14 +322,20 @@ const App = () => {
             </Title>
             <div
               style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
-              {formatMap.map(([fmt, lbl]) => (
-                <Radio key={fmt} checked={format === fmt} onChange={() => setFormat(fmt)}>
-                  {lbl}
-                  {'\u00a0'}
-                  <Tooltip title={`formatQuery(query, "${fmt}")`} placement="right">
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </Radio>
+              {formatMap.map(([fmt, lbl, lnk]) => (
+                <div key={fmt}>
+                  <Radio checked={format === fmt} onChange={() => setFormat(fmt)}>
+                    {lbl}
+                    {'\u00a0'}
+                    <a href={lnk} target="_blank" rel="noreferrer">
+                      <Tooltip
+                        title={`formatQuery(query, "${fmt}") (click for information)`}
+                        placement="right">
+                        <QuestionCircleOutlined />
+                      </Tooltip>
+                    </a>
+                  </Radio>
+                </div>
               ))}
             </div>
             <Title level={4} style={{ marginTop: '1rem' }}>

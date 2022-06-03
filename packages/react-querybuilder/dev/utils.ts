@@ -37,7 +37,11 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
   const formatQueryResult = formatQuery(query, options);
   if (options.format === 'json_without_ids' || options.format === 'mongodb') {
     return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
-  } else if (options.format === 'parameterized' || options.format === 'parameterized_named') {
+  } else if (
+    options.format === 'parameterized' ||
+    options.format === 'parameterized_named' ||
+    options.format === 'jsonlogic'
+  ) {
     return JSON.stringify(formatQueryResult, null, 2);
   }
   return formatQueryResult;

@@ -1,3 +1,4 @@
+import type { RulesLogic } from 'json-logic-js';
 import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
 import type { RuleType } from './ruleGroups';
 import type { QueryValidator } from './validation';
@@ -9,7 +10,9 @@ export type ExportFormat =
   | 'parameterized'
   | 'parameterized_named'
   | 'mongodb'
-  | 'cel';
+  | 'cel'
+  | 'jsonlogic'
+  | 'spel';
 
 export interface FormatQueryOptions {
   /**
@@ -91,6 +94,11 @@ export interface ParameterizedNamedSQL {
   sql: string;
   params: Record<string, any>;
 }
+
+export type RQBJsonLogic = RulesLogic<
+  | { startsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]] }
+  | { endsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]] }
+>;
 
 export interface ParseSQLOptions {
   independentCombinators?: boolean;
