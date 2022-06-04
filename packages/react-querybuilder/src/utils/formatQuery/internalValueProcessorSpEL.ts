@@ -8,7 +8,7 @@ const wrapInNegation = (clause: string, negate: boolean) =>
 
 export const internalValueProcessorSpEL: ValueProcessorByRule = (
   { field, operator, value, valueSource },
-  { parseNumbers }
+  { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.replace(/^=$/, '==');

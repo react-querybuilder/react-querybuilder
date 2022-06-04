@@ -5,7 +5,7 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 export const internalValueProcessorCEL: ValueProcessorByRule = (
   { field, operator, value, valueSource },
-  { parseNumbers }
+  { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.replace(/^=$/, '==');

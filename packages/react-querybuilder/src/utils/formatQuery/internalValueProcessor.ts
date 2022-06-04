@@ -3,7 +3,7 @@ import { isValidValue, shouldRenderAsNumber, toArray, trimIfString } from './uti
 
 export const internalValueProcessor: ValueProcessorByRule = (
   { operator, value, valueSource },
-  { parseNumbers }
+  { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
