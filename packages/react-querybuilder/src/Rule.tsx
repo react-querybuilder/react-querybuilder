@@ -1,12 +1,8 @@
 import { useRef, type MouseEvent as ReactMouseEvent } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDType, standardClassnames, TestID } from './defaults';
-import {
-  c,
-  filterFieldsByComparator,
-  getValidationClassNames,
-  useDeprecatedProps,
-} from './internal';
+import { c, filterFieldsByComparator, getValidationClassNames } from './internal';
+import { useDeprecatedProps } from './internal/hooks';
 import type { DraggedItem, RuleProps, RuleType } from './types';
 import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 

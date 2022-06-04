@@ -2,7 +2,8 @@ import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { defaultCombinators, DNDType, standardClassnames, TestID } from './defaults';
 import { InlineCombinator } from './InlineCombinator';
-import { c, getValidationClassNames, useDeprecatedProps } from './internal';
+import { c, getValidationClassNames } from './internal';
+import { useDeprecatedProps } from './internal/hooks';
 import type { DraggedItem, RuleGroupProps } from './types';
 import { getParentPath, isAncestor, pathsAreEqual } from './utils';
 

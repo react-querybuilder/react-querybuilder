@@ -2,10 +2,10 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
+import { defaultControlElements } from './controls';
 import {
   defaultCombinators,
   defaultControlClassnames,
-  defaultControlElements,
   defaultTranslations as t,
   standardClassnames as sc,
   TestID,

@@ -6,7 +6,7 @@ import {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ValueSources,
-} from '../types';
+} from '../types/index.noReact';
 import { formatQuery } from './formatQuery';
 import { add, move, remove, update } from './queryTools';
 

@@ -1,4 +1,4 @@
-import { NameLabelPair, OptionGroup } from '../types';
+import type { NameLabelPair, OptionGroup } from '../types/index.noReact';
 
 export const uniqByName = <T extends { name: string }>(originalArray: T[]): T[] => {
   const names = new Set<string>();

@@ -6,7 +6,7 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '../../types';
+} from '../../types/index.noReact';
 import { isWildcardsOnly } from './utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({

@@ -14,7 +14,7 @@ import type {
   RuleValidator,
   ValidationMap,
   ValidationResult,
-} from '../../types';
+} from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { internalRuleProcessorJSONLogic } from './internalRuleProcessorJSONLogic';

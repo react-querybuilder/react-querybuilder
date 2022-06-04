@@ -1,4 +1,4 @@
-import { Field } from '../types';
+import type { Field } from '../types/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 
 const f: Field = { name: 'f', label: 'F' };

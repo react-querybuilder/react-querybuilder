@@ -7,9 +7,9 @@ import {
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
+import { defaultControlElements } from './controls';
 import {
   defaultControlClassnames,
-  defaultControlElements,
   defaultTranslations as t,
   standardClassnames as sc,
   TestID,

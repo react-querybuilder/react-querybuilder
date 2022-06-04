@@ -2,10 +2,10 @@ import { enableES5 } from 'immer';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndContext, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { defaultControlElements } from './controls';
 import {
   defaultCombinators,
   defaultControlClassnames,
-  defaultControlElements,
   defaultOperators,
   defaultTranslations,
   LogType,
@@ -19,8 +19,8 @@ import {
   objectKeys,
   uniqByName,
   uniqOptGroups,
-  useControlledOrUncontrolled,
 } from './internal';
+import { useControlledOrUncontrolled } from './internal/hooks';
 import type {
   Classnames,
   Controls,

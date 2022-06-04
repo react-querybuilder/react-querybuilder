@@ -1,4 +1,4 @@
-import { Field, OptionGroup } from '../types';
+import { Field, OptionGroup } from '../types/index.noReact';
 import { isOptionGroupArray } from '../utils';
 
 export const filterFieldsByComparator = (

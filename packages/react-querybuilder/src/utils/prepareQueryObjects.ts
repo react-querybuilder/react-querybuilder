@@ -1,6 +1,11 @@
 import { produce } from 'immer';
 import { generateID } from '../internal';
-import type { RuleGroupArray, RuleGroupICArray, RuleGroupTypeAny, RuleType } from '../types';
+import type {
+  RuleGroupArray,
+  RuleGroupICArray,
+  RuleGroupTypeAny,
+  RuleType,
+} from '../types/index.noReact';
 
 /**
  * Generates a valid rule

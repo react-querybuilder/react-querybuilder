@@ -1,4 +1,4 @@
-import type { Field, OptionGroup } from '../types';
+import type { Field, OptionGroup } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 
 const fields: Field[] = [

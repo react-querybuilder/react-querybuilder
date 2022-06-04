@@ -1,4 +1,4 @@
-import type { Field, NameLabelPair, OptionGroup } from '../types';
+import type { Field, NameLabelPair, OptionGroup } from '../types/index.noReact';
 
 export const isOptionGroupArray = (arr: Field['values']): arr is OptionGroup[] =>
   Array.isArray(arr) && arr.length > 0 && 'options' in arr[0];

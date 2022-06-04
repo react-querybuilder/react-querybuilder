@@ -1,4 +1,4 @@
-import type { RuleGroupTypeAny, RuleType } from '../types';
+import type { RuleGroupTypeAny, RuleType } from '../types/index.noReact';
 
 type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 

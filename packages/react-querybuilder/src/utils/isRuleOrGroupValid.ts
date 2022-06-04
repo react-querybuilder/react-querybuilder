@@ -1,4 +1,9 @@
-import type { RuleGroupTypeAny, RuleType, RuleValidator, ValidationResult } from '../types';
+import type {
+  RuleGroupTypeAny,
+  RuleType,
+  RuleValidator,
+  ValidationResult,
+} from '../types/index.noReact';
 
 export const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
   typeof vr === 'object' && vr !== null && typeof vr.valid === 'boolean';

@@ -8,7 +8,7 @@ import {
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '../types';
+} from '../types/index.noReact';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
