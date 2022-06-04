@@ -1,4 +1,4 @@
-import type { ValueProcessorInternal } from '../../types';
+import type { ValueProcessorInternal } from '../../types/index.noReact';
 import { isValidValue, shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
 export const internalValueProcessor: ValueProcessorInternal = (

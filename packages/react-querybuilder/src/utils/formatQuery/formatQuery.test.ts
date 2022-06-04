@@ -5,7 +5,7 @@ import {
   defaultValueProcessor,
 } from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import type { RuleGroupType, RuleGroupTypeIC, ValueProcessor } from '../../types';
+import type { RuleGroupType, RuleGroupTypeIC, ValueProcessor } from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
 import { formatQuery } from './formatQuery';

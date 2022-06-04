@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../types';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
 import {
   findPath,
   getCommonAncestorPath,

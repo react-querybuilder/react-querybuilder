@@ -1,4 +1,4 @@
-import type { ValueProcessor } from '../../types';
+import type { ValueProcessor } from '../../types/index.noReact';
 import { internalValueProcessor } from './internalValueProcessor';
 import { internalValueProcessorCEL } from './internalValueProcessorCEL';
 import { internalValueProcessorMongoDB } from './internalValueProcessorMongoDB';

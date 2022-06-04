@@ -1,9 +1,9 @@
-import { Field, QueryBuilderProps, ValueSources } from '../types';
+import type { Field, ValueSources } from '../types/index.noReact';
 
 export const getValueSourcesUtil = (
   fieldData: Field,
   operator: string,
-  getValueSources?: QueryBuilderProps['getValueSources']
+  getValueSources?: (field: string, operator: string) => ValueSources
 ): ValueSources => {
   if (fieldData?.valueSources) {
     if (typeof fieldData.valueSources === 'function') {

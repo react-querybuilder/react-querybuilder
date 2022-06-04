@@ -1,13 +1,9 @@
-import { ActionElement, DragHandle, NotToggle, ValueEditor, ValueSelector } from './controls';
-import { Rule } from './Rule';
-import { RuleGroup } from './RuleGroup';
 import type {
   Classnames,
-  Controls,
   DefaultCombinator,
   DefaultOperator,
   TranslationsFull,
-} from './types';
+} from './types/index.noReact';
 
 const placeholderName = '~';
 const placeholderLabel = '------';
@@ -166,26 +162,6 @@ export const defaultControlClassnames: Classnames = {
   lockRule: '',
   lockGroup: '',
   valueSource: '',
-};
-
-export const defaultControlElements: Controls = {
-  addGroupAction: ActionElement,
-  removeGroupAction: ActionElement,
-  cloneGroupAction: ActionElement,
-  cloneRuleAction: ActionElement,
-  addRuleAction: ActionElement,
-  removeRuleAction: ActionElement,
-  combinatorSelector: ValueSelector,
-  fieldSelector: ValueSelector,
-  operatorSelector: ValueSelector,
-  valueEditor: ValueEditor,
-  notToggle: NotToggle,
-  ruleGroup: RuleGroup,
-  rule: Rule,
-  dragHandle: DragHandle,
-  lockRuleAction: ActionElement,
-  lockGroupAction: ActionElement,
-  valueSourceSelector: ValueSelector,
 };
 
 export const groupInvalidReasons = {

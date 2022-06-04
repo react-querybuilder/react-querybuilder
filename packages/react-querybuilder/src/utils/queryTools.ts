@@ -1,14 +1,14 @@
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import { regenerateID, regenerateIDs } from '../internal';
-import {
+import type {
   NameLabelPair,
   OptionGroup,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '../types';
+} from '../types/index.noReact';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';

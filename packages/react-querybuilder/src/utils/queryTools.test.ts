@@ -1,12 +1,12 @@
 import { defaultCombinators } from '../defaults';
 import { getValueSourcesUtil } from '../internal';
-import {
+import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ValueSources,
-} from '../types';
+} from '../types/index.noReact';
 import { formatQuery } from './formatQuery';
 import { add, move, remove, update } from './queryTools';
 

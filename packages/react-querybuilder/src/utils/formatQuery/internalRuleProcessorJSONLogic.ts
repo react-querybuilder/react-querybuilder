@@ -1,4 +1,4 @@
-import type { FormatQueryOptions, RQBJsonLogic, RuleType } from '../../types';
+import type { FormatQueryOptions, RQBJsonLogic, RuleType } from '../../types/index.noReact';
 import { isValidValue, shouldRenderAsNumber, toArray } from './utils';
 
 const convertOperator = (op: string) =>

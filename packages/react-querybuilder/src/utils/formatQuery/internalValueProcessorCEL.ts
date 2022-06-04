@@ -1,4 +1,4 @@
-import type { ValueProcessorInternal } from '../../types';
+import type { ValueProcessorInternal } from '../../types/index.noReact';
 import { shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);

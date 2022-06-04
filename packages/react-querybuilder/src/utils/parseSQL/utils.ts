@@ -1,4 +1,4 @@
-import type { DefaultCombinatorName, DefaultOperatorName } from '../../types';
+import type { DefaultCombinatorName, DefaultOperatorName } from '../../types/index.noReact';
 import type {
   AndOperator,
   ComparisonOperator,

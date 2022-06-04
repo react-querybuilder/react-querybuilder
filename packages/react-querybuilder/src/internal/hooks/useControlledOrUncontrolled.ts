@@ -1,12 +1,12 @@
 declare const __RQB_DEV__: boolean;
 
 import { useEffect } from 'react';
-import { RuleGroupTypeAny } from 'ruleGroupsIC';
+import type { RuleGroupTypeAny } from 'ruleGroupsIC';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
-} from './messages';
+} from '../messages';
 import { usePrevious } from './usePrevious';
 
 interface UseControlledOrUncontrolledParams {

@@ -11,7 +11,7 @@ import type {
   DefaultRuleType,
   Field,
   ParseSQLOptions,
-} from '../../types';
+} from '../../types/index.noReact';
 import { sqlParser } from './sqlParser';
 import type { SQLExpression, SQLIdentifier } from './types';
 import {

@@ -1,4 +1,9 @@
-import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC, RuleType } from '../types';
+import type {
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleType,
+} from '../types/index.noReact';
 
 /**
  * Determines if this is either a RuleGroupType or RuleGroupTypeIC.

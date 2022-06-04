@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types/index.noReact';
 import { isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 
 const rule: RuleType = {

@@ -1,4 +1,4 @@
-import type { DefaultCombinatorName, RuleGroupTypeAny } from '../../types';
+import type { DefaultCombinatorName, RuleGroupTypeAny } from '../../types/index.noReact';
 
 export const numericRegex = /^\s*[+-]?(\d+|\d*\.\d+|\d+\.\d*)([Ee][+-]?\d+)?\s*$/;
 

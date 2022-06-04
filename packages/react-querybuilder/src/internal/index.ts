@@ -7,6 +7,3 @@ export * from './messages';
 export * from './objectKeys';
 export * from './regenerateIDs';
 export * from './uniq';
-export * from './useControlledOrUncontrolled';
-export * from './useDeprecatedProps';
-export * from './usePrevious';

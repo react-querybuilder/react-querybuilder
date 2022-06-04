@@ -1,5 +1,5 @@
 import { groupInvalidReasons } from '../defaults';
-import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../types';
+import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../types/index.noReact';
 import { defaultValidator } from './defaultValidator';
 
 // standard rule groups
