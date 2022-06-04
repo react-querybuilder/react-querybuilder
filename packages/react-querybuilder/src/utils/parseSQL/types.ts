@@ -1,4 +1,4 @@
-import { API, FileInfo } from 'jscodeshift';
+import type { API, FileInfo } from 'jscodeshift';
 
 type AnyCase<T extends string> = string extends T
   ? string
