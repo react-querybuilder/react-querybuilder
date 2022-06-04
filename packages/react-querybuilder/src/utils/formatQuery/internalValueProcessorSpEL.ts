@@ -8,6 +8,7 @@ const wrapInNegation = (clause: string, negate: boolean) =>
 
 export const internalValueProcessorSpEL: ValueProcessorByRule = (
   { field, operator, value, valueSource },
+  // istanbul ignore next
   { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';

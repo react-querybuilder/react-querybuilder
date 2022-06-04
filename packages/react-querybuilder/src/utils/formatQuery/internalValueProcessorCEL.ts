@@ -5,6 +5,7 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 export const internalValueProcessorCEL: ValueProcessorByRule = (
   { field, operator, value, valueSource },
+  // istanbul ignore next
   { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';

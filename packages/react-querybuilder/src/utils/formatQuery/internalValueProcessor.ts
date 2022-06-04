@@ -3,6 +3,7 @@ import { isValidValue, shouldRenderAsNumber, toArray, trimIfString } from './uti
 
 export const internalValueProcessor: ValueProcessorByRule = (
   { operator, value, valueSource },
+  // istanbul ignore next
   { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';

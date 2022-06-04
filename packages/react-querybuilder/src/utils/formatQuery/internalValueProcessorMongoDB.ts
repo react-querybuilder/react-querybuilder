@@ -3,6 +3,7 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber, toArray, trimIfStri
 
 export const internalValueProcessorMongoDB: ValueProcessorByRule = (
   { field, operator, value, valueSource },
+  // istanbul ignore next
   { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
