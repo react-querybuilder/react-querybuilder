@@ -17,11 +17,11 @@ import type {
 } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
-import { internalRuleProcessorJSONLogic } from './internalRuleProcessorJSONLogic';
-import { internalValueProcessor } from './internalValueProcessor';
-import { internalValueProcessorCEL } from './internalValueProcessorCEL';
-import { internalValueProcessorMongoDB } from './internalValueProcessorMongoDB';
-import { internalValueProcessorSpEL } from './internalValueProcessorSpEL';
+import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { defaultValueProcessorCELByRule } from './defaultValueProcessorCELByRule';
+import { defaultValueProcessorMongoDBByRule } from './defaultValueProcessorMongoDBByRule';
+import { defaultValueProcessorSpELByRule } from './defaultValueProcessorSpELByRule';
 import {
   celCombinatorMap,
   isValueProcessorLegacy,
@@ -65,7 +65,7 @@ function formatQuery(
 ): string;
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
   let format: ExportFormat = 'json';
-  let valueProcessorInternal = internalValueProcessor;
+  let valueProcessorInternal = defaultValueProcessorByRule;
   let quoteFieldNamesWith = '';
   let validator: QueryValidator = () => true;
   let fields: Required<FormatQueryOptions>['fields'] = [];
@@ -79,11 +79,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
     if (format === 'mongodb') {
-      valueProcessorInternal = internalValueProcessorMongoDB;
+      valueProcessorInternal = defaultValueProcessorMongoDBByRule;
     } else if (format === 'cel') {
-      valueProcessorInternal = internalValueProcessorCEL;
+      valueProcessorInternal = defaultValueProcessorCELByRule;
     } else if (format === 'spel') {
-      valueProcessorInternal = internalValueProcessorSpEL;
+      valueProcessorInternal = defaultValueProcessorSpELByRule;
     }
   } else {
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
@@ -95,12 +95,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
               : valueProcessor(r, { parseNumbers })
         : format === 'mongodb'
-        ? internalValueProcessorMongoDB
+        ? defaultValueProcessorMongoDBByRule
         : format === 'cel'
-        ? internalValueProcessorCEL
+        ? defaultValueProcessorCELByRule
         : format === 'spel'
-        ? internalValueProcessorSpEL
-        : internalValueProcessor;
+        ? defaultValueProcessorSpELByRule
+        : defaultValueProcessorByRule;
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
@@ -448,7 +448,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return false;
             }
-            return internalRuleProcessorJSONLogic(rule, { parseNumbers });
+            return defaultRuleProcessorJsonLogic(rule, { parseNumbers });
           })
           .filter(Boolean);
 

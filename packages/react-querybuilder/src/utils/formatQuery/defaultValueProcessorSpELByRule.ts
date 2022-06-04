@@ -6,7 +6,7 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 const wrapInNegation = (clause: string, negate: boolean) =>
   `${negate ? '!(' : ''}${clause}${negate ? ')' : ''}`;
 
-export const internalValueProcessorSpEL: ValueProcessorByRule = (
+export const defaultValueProcessorSpELByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
   { parseNumbers } = {}

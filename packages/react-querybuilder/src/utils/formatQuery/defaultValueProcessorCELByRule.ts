@@ -3,7 +3,7 @@ import { shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
-export const internalValueProcessorCEL: ValueProcessorByRule = (
+export const defaultValueProcessorCELByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
   { parseNumbers } = {}

@@ -1,14 +1,14 @@
 import type { ValueProcessor } from '../../types/index.noReact';
-import { internalValueProcessor } from './internalValueProcessor';
-import { internalValueProcessorCEL } from './internalValueProcessorCEL';
-import { internalValueProcessorMongoDB } from './internalValueProcessorMongoDB';
-import { internalValueProcessorSpEL } from './internalValueProcessorSpEL';
+import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { defaultValueProcessorCELByRule } from './defaultValueProcessorCELByRule';
+import { defaultValueProcessorMongoDBByRule } from './defaultValueProcessorMongoDBByRule';
+import { defaultValueProcessorSpELByRule } from './defaultValueProcessorSpELByRule';
 
 const internalValueProcessors = {
-  default: internalValueProcessor,
-  mongodb: internalValueProcessorMongoDB,
-  cel: internalValueProcessorCEL,
-  spel: internalValueProcessorSpEL,
+  default: defaultValueProcessorByRule,
+  mongodb: defaultValueProcessorMongoDBByRule,
+  cel: defaultValueProcessorCELByRule,
+  spel: defaultValueProcessorSpELByRule,
 } as const;
 
 const generateValueProcessor =
@@ -24,3 +24,7 @@ export const defaultMongoDBValueProcessor = generateValueProcessor('mongodb');
 export const defaultCELValueProcessor = generateValueProcessor('cel');
 export const defaultSpELValueProcessor = generateValueProcessor('spel');
 export * from './formatQuery';
+export { defaultValueProcessorByRule };
+export { defaultValueProcessorCELByRule };
+export { defaultValueProcessorMongoDBByRule };
+export { defaultValueProcessorSpELByRule };

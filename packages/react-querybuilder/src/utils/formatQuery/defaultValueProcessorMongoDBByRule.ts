@@ -1,7 +1,7 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { isValidValue, mongoOperators, shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
-export const internalValueProcessorMongoDB: ValueProcessorByRule = (
+export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
   { parseNumbers } = {}
