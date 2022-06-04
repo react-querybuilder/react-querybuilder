@@ -1,6 +1,6 @@
 import { defaultCombinators } from '../defaults';
 import { getValueSourcesUtil } from '../internal';
-import {
+import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,

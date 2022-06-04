@@ -24,6 +24,7 @@
     "build:rqb": "yarn workspace react-querybuilder build",
     "build:formatQuery": "yarn workspace react-querybuilder build:formatQuery",
     "build:parseSQL": "yarn workspace react-querybuilder build:parseSQL",
+    "lint": "eslint packages/*/src/**/*.{ts,tsx} packages/*/src/*.{ts,tsx}",
     "test": "jest",
     "test:watch": "jest --watch",
     "type-check": "yarn workspaces run type-check && tsc -p examples",

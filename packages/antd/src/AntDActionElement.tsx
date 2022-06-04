@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 
 type AntDActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;

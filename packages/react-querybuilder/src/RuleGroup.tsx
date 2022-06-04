@@ -1,4 +1,4 @@
-import { Fragment, MouseEvent as ReactMouseEvent, useRef } from 'react';
+import { Fragment, useRef, type MouseEvent as ReactMouseEvent } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { defaultCombinators, DNDType, standardClassnames, TestID } from './defaults';
 import { InlineCombinator } from './InlineCombinator';
