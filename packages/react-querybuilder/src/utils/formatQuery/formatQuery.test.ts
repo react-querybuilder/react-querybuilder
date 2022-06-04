@@ -5,7 +5,14 @@ import {
   defaultValueProcessor,
 } from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import type { RuleGroupType, RuleGroupTypeIC, ValueProcessor } from '../../types/index.noReact';
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+  ValueProcessorByRule,
+  ValueProcessorLegacy,
+  ValueProcessorOptions,
+} from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
 import { formatQuery } from './formatQuery';
@@ -838,7 +845,7 @@ it('handles custom valueProcessor correctly', () => {
     not: false,
   };
 
-  const valueProcessor: ValueProcessor = (_field, operator, value) => {
+  const valueProcessorLegacy: ValueProcessorLegacy = (_field, operator, value) => {
     if (operator === 'in') {
       return `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`;
     } else {
@@ -846,9 +853,21 @@ it('handles custom valueProcessor correctly', () => {
     }
   };
 
-  expect(formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor })).toBe(
-    `(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`
-  );
+  expect(
+    formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor: valueProcessorLegacy })
+  ).toBe(`(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`);
+
+  const queryForNewValueProcessor: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: '=', value: 'v1', valueSource: 'value' }],
+  };
+
+  const valueProcessor: ValueProcessorByRule = (rule: RuleType, options: ValueProcessorOptions) =>
+    `${rule.field}-${rule.operator}-${rule.value}-${rule.valueSource}-${options.parseNumbers}`;
+
+  expect(
+    formatQuery(queryForNewValueProcessor, { format: 'sql', parseNumbers: true, valueProcessor })
+  ).toBe('(f1 = f1-=-v1-value-true)');
 });
 
 it('handles quoteFieldNamesWith correctly', () => {

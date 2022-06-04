@@ -1,7 +1,7 @@
-import type { ValueProcessorInternal } from '../../types/index.noReact';
+import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { isValidValue, mongoOperators, shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
-export const internalValueProcessorMongoDB: ValueProcessorInternal = (
+export const internalValueProcessorMongoDB: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   { parseNumbers }
 ) => {

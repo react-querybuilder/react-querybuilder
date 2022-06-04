@@ -1,4 +1,4 @@
-import type { ValueProcessorInternal } from '../../types/index.noReact';
+import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
@@ -6,7 +6,7 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 const wrapInNegation = (clause: string, negate: boolean) =>
   `${negate ? '!(' : ''}${clause}${negate ? ')' : ''}`;
 
-export const internalValueProcessorSpEL: ValueProcessorInternal = (
+export const internalValueProcessorSpEL: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   { parseNumbers }
 ) => {

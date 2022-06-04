@@ -76,14 +76,16 @@ export interface FormatQueryOptions {
 
 export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'>;
 
-export type ValueProcessorInternal = (rule: RuleType, options: ValueProcessorOptions) => string;
+export type ValueProcessorByRule = (rule: RuleType, options: ValueProcessorOptions) => string;
 
-export type ValueProcessor = (
+export type ValueProcessorLegacy = (
   field: string,
   operator: string,
   value: any,
   valueSource?: ValueSource
 ) => string;
+
+export type ValueProcessor = ValueProcessorLegacy | ValueProcessorByRule;
 
 export interface ParameterizedSQL {
   sql: string;

@@ -1,4 +1,9 @@
-import type { DefaultCombinatorName, RuleGroupTypeAny } from '../../types/index.noReact';
+import type {
+  DefaultCombinatorName,
+  RuleGroupTypeAny,
+  ValueProcessor,
+  ValueProcessorLegacy,
+} from '../../types/index.noReact';
 
 export const numericRegex = /^\s*[+-]?(\d+|\d*\.\d+|\d+\.\d*)([Ee][+-]?\d+)?\s*$/;
 
@@ -104,3 +109,6 @@ export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
   (typeof v === 'number' ||
     typeof v === 'bigint' ||
     (typeof v === 'string' && numericRegex.test(v)));
+
+export const isValueProcessorLegacy = (vp: ValueProcessor): vp is ValueProcessorLegacy =>
+  vp.length >= 3;

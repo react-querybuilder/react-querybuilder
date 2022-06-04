@@ -24,6 +24,7 @@ import { internalValueProcessorMongoDB } from './internalValueProcessorMongoDB';
 import { internalValueProcessorSpEL } from './internalValueProcessorSpEL';
 import {
   celCombinatorMap,
+  isValueProcessorLegacy,
   mapSQLOperator,
   numerifyValues,
   shouldRenderAsNumber,
@@ -89,7 +90,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     const { valueProcessor = null } = options;
     valueProcessorInternal =
       typeof valueProcessor === 'function'
-        ? r => valueProcessor(r.field, r.operator, r.value, r.valueSource)
+        ? r =>
+            isValueProcessorLegacy(valueProcessor)
+              ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
+              : valueProcessor(r, { parseNumbers })
         : format === 'mongodb'
         ? internalValueProcessorMongoDB
         : format === 'cel'

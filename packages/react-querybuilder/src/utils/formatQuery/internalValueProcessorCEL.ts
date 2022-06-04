@@ -1,9 +1,9 @@
-import type { ValueProcessorInternal } from '../../types/index.noReact';
+import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
-export const internalValueProcessorCEL: ValueProcessorInternal = (
+export const internalValueProcessorCEL: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   { parseNumbers }
 ) => {

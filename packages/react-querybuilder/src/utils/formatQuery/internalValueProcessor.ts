@@ -1,7 +1,7 @@
-import type { ValueProcessorInternal } from '../../types/index.noReact';
+import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { isValidValue, shouldRenderAsNumber, toArray, trimIfString } from './utils';
 
-export const internalValueProcessor: ValueProcessorInternal = (
+export const internalValueProcessor: ValueProcessorByRule = (
   { operator, value, valueSource },
   { parseNumbers }
 ) => {
