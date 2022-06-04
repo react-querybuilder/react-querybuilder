@@ -4,6 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   build: {
+    minify: false,
     emptyOutDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src/utils/formatQuery/index.ts'),
