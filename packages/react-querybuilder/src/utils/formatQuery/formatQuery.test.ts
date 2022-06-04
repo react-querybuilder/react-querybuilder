@@ -8,10 +8,8 @@ import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../
 import type {
   RuleGroupType,
   RuleGroupTypeIC,
-  RuleType,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-  ValueProcessorOptions,
 } from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
@@ -826,7 +824,7 @@ it('handles invalid type correctly', () => {
   expect(formatQuery(query, 'null')).toBe('');
 });
 
-it('handles custom valueProcessor correctly', () => {
+it('handles custom valueProcessors correctly', () => {
   const queryWithArrayValue: RuleGroupType = {
     id: 'g-root',
     combinator: 'and',
@@ -862,8 +860,10 @@ it('handles custom valueProcessor correctly', () => {
     rules: [{ field: 'f1', operator: '=', value: 'v1', valueSource: 'value' }],
   };
 
-  const valueProcessor: ValueProcessorByRule = (rule: RuleType, options: ValueProcessorOptions) =>
-    `${rule.field}-${rule.operator}-${rule.value}-${rule.valueSource}-${options.parseNumbers}`;
+  const valueProcessor: ValueProcessorByRule = (
+    { field, operator, value, valueSource },
+    { parseNumbers } = {}
+  ) => `${field}-${operator}-${value}-${valueSource}-${!!parseNumbers}`;
 
   expect(
     formatQuery(queryForNewValueProcessor, { format: 'sql', parseNumbers: true, valueProcessor })

@@ -76,7 +76,7 @@ export interface FormatQueryOptions {
 
 export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'>;
 
-export type ValueProcessorByRule = (rule: RuleType, options: ValueProcessorOptions) => string;
+export type ValueProcessorByRule = (rule: RuleType, options?: ValueProcessorOptions) => string;
 
 export type ValueProcessorLegacy = (
   field: string,
