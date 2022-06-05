@@ -95,15 +95,25 @@ export interface ParameterizedNamedSQL {
   params: Record<string, any>;
 }
 
-export type RQBJsonLogic = RulesLogic<
-  | { startsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]] }
-  | { endsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]] }
->;
+export interface RQBJsonLogicStartsWith {
+  startsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
+}
+export interface RQBJsonLogicEndsWith {
+  endsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
+}
+export type RQBJsonLogicVar = { var: string };
+export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
 
 export interface ParseSQLOptions {
   independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | Record<string, any>;
+  listsAsArrays?: boolean;
+  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  getValueSources?: (field: string, operator: string) => ValueSources;
+}
+
+export interface ParseJsonLogicOptions {
   listsAsArrays?: boolean;
   fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
   getValueSources?: (field: string, operator: string) => ValueSources;

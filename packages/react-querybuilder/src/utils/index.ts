@@ -4,6 +4,7 @@ export * from './formatQuery';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
 export * from './optGroupUtils';
+export * from './parseJsonLogic';
 export * from './parseSQL';
 export * from './pathUtils';
 export * from './prepareQueryObjects';
