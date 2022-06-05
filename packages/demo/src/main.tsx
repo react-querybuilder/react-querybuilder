@@ -42,8 +42,10 @@ import {
   type DemoOptions,
 } from 'react-querybuilder/dev';
 import {
+  convertToIC,
   defaultValidator,
   formatQuery,
+  parseJsonLogic,
   parseSQL,
   QueryBuilder,
   type ExportFormat,
@@ -109,6 +111,7 @@ const getOptionsFromHash = (hash: Partial<DemoOptionsWithStyle>) => {
 };
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
+const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'));
 
 // Initialize options from URL hash
 const { style: initialStyle, ...initialOptions } = getOptionsFromHash(
@@ -123,6 +126,9 @@ const App = () => {
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
+  const [isJsonLogicModalVisible, setIsJsonLogicModalVisible] = useState(false);
+  const [jsonLogic, setJsonLogic] = useState(initialJsonLogic);
+  const [jsonLogicParseError, setJsonLogicParseError] = useState('');
   const [style, setStyle] = useState<StyleName>(initialStyle ?? 'default');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
 
@@ -184,6 +190,18 @@ const App = () => {
       setSQLParseError((err as Error).message);
     }
   }, [sql]);
+  const loadFromJsonLogic = useCallback(() => {
+    try {
+      const q = parseJsonLogic(jsonLogic);
+      const qIC = convertToIC(q);
+      setQuery(q);
+      setQueryIC(qIC);
+      setIsJsonLogicModalVisible(false);
+      setJsonLogicParseError('');
+    } catch (err) {
+      setJsonLogicParseError((err as Error).message);
+    }
+  }, [jsonLogic]);
 
   const onClickCopyPermalink = async () => {
     try {
@@ -343,13 +361,22 @@ const App = () => {
               {'\u00a0'}
               <a href={`${docsLink}/docs/api/import`} target="_blank" rel="noreferrer">
                 <Tooltip
-                  title={`Use the parseSQL method to set the query from SQL (click for documentation)`}
+                  title={`Use the parse* methods to set the query from SQL/JsonLogic/etc. (click for documentation)`}
                   placement="right">
                   <QuestionCircleOutlined />
                 </Tooltip>
               </a>
             </Title>
-            <Button onClick={() => setIsSQLModalVisible(true)}>Load from SQL</Button>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'column',
+                rowGap: '0.5rem',
+              }}>
+              <Button onClick={() => setIsSQLModalVisible(true)}>Load from SQL</Button>
+              <Button onClick={() => setIsJsonLogicModalVisible(true)}>Load from JsonLogic</Button>
+            </div>
             <Title level={4} style={{ marginTop: '1rem' }}>
               Installation{'\u00a0'}
               <Link href={npmLink} target="_blank">
@@ -439,6 +466,22 @@ const App = () => {
           clauses). A trailing semicolon is also optional.
         </Text>
         {!!sqlParseError && <pre>{sqlParseError}</pre>}
+      </Modal>
+      <Modal
+        title="Load Query From JsonLogic"
+        visible={isJsonLogicModalVisible}
+        onOk={loadFromJsonLogic}
+        onCancel={() => setIsJsonLogicModalVisible(false)}>
+        <TextArea
+          value={jsonLogic}
+          onChange={e => setJsonLogic(e.target.value)}
+          spellCheck={false}
+          style={{ height: 200, fontFamily: 'monospace' }}
+        />
+        <Text italic>
+          JsonLogic must be a <Text code>JSON.parse</Text>-able string.
+        </Text>
+        {!!jsonLogicParseError && <pre>{jsonLogicParseError}</pre>}
       </Modal>
     </>
   );
