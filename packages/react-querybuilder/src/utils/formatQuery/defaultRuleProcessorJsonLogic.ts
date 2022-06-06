@@ -1,5 +1,5 @@
 import type { JsonLogicVar } from 'json-logic-js';
-import type { FormatQueryOptions, RQBJsonLogic, RuleType } from '../../types/index.noReact';
+import type { RQBJsonLogic, RuleType, ValueProcessorOptions } from '../../types/index.noReact';
 import { isValidValue, shouldRenderAsNumber, toArray } from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
@@ -11,9 +11,9 @@ const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
 const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
   /^(does)?not/i.test(op) ? { '!': jsonRule } : jsonRule;
 
-export const internalRuleProcessorJSONLogic = (
+export const defaultRuleProcessorJsonLogic = (
   { field, operator, value, valueSource }: RuleType,
-  { parseNumbers }: Pick<FormatQueryOptions, 'parseNumbers'>
+  { parseNumbers }: ValueProcessorOptions
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };

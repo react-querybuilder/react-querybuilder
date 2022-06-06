@@ -5,7 +5,12 @@ import {
   defaultValueProcessor,
 } from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import type { RuleGroupType, RuleGroupTypeIC, ValueProcessor } from '../../types/index.noReact';
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+  ValueProcessorByRule,
+  ValueProcessorLegacy,
+} from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
 import { formatQuery } from './formatQuery';
@@ -819,7 +824,7 @@ it('handles invalid type correctly', () => {
   expect(formatQuery(query, 'null')).toBe('');
 });
 
-it('handles custom valueProcessor correctly', () => {
+it('handles custom valueProcessors correctly', () => {
   const queryWithArrayValue: RuleGroupType = {
     id: 'g-root',
     combinator: 'and',
@@ -838,7 +843,7 @@ it('handles custom valueProcessor correctly', () => {
     not: false,
   };
 
-  const valueProcessor: ValueProcessor = (_field, operator, value) => {
+  const valueProcessorLegacy: ValueProcessorLegacy = (_field, operator, value) => {
     if (operator === 'in') {
       return `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`;
     } else {
@@ -846,9 +851,23 @@ it('handles custom valueProcessor correctly', () => {
     }
   };
 
-  expect(formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor })).toBe(
-    `(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`
-  );
+  expect(
+    formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor: valueProcessorLegacy })
+  ).toBe(`(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`);
+
+  const queryForNewValueProcessor: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: '=', value: 'v1', valueSource: 'value' }],
+  };
+
+  const valueProcessor: ValueProcessorByRule = (
+    { field, operator, value, valueSource },
+    { parseNumbers } = {}
+  ) => `${field}-${operator}-${value}-${valueSource}-${!!parseNumbers}`;
+
+  expect(
+    formatQuery(queryForNewValueProcessor, { format: 'sql', parseNumbers: true, valueProcessor })
+  ).toBe('(f1 = f1-=-v1-value-true)');
 });
 
 it('handles quoteFieldNamesWith correctly', () => {
