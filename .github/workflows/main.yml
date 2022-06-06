@@ -34,10 +34,10 @@ jobs:
           node-version: '16'
       - run: yarn install --frozen-lockfile
       - run: yarn lint
-      - run: yarn build
       - run: yarn test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
+      - run: yarn build
 
   # test-types:
   #   name: Test Types with TypeScript ${{ matrix.ts }}
