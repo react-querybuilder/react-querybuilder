@@ -1,7 +1,8 @@
+import type { JsonLogicVar } from 'json-logic-js';
 import type { RQBJsonLogic, RuleType, ValueProcessorOptions } from '../../types/index.noReact';
 import { isValidValue, shouldRenderAsNumber, toArray } from './utils';
 
-const convertOperator = (op: string) =>
+const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
   op
     .replace(/^(=)$/, '$1=')
     .replace(/^notNull$/i, '!=')
@@ -15,7 +16,7 @@ export const defaultRuleProcessorJsonLogic = (
   { parseNumbers }: ValueProcessorOptions
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
-  const fieldObject = { var: field };
+  const fieldObject: JsonLogicVar = { var: field };
   const fieldOrNumberRenderer = (v: any) =>
     valueIsField ? { var: `${v}` } : shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
 
