@@ -120,7 +120,7 @@ UNION                                                             return 'UNION'
 "}"                                                               return '}'
 ";"                                                               return ';'
 
-['](\%+)[']                                                        return 'WILDCARD'
+['](\%+)[']                                                       return 'WILDCARD'
 ['](\\.|[^'])*[']                                                 return 'STRING'
 ["](\\.|[^"])*["]                                                 return 'STRING'
 [0][x][0-9a-fA-F]+                                                return 'HEX_NUMERIC'
@@ -152,7 +152,7 @@ UNION                                                             return 'UNION'
 %left '|'
 %left '^'
 %left '&'
-%left '=' '!='        /* = in sql equels == */
+%left '=' '!='        /* '=' in sql equals '==' */
 %left '>' '>=' '<' '<='
 %left '<<' '>>'
 %left '+' '-'

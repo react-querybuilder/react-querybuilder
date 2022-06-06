@@ -62,24 +62,24 @@ const ruleGroup: DefaultRuleGroupType = {
       rules: [
         {
           combinator: 'and',
-          rules: [{ field: 'f1', operator: '=', value: 'Test', valueSource: 'value' }],
+          rules: [{ field: 'f1', operator: '=', value: 'Test' }],
           not: true,
         },
-        { field: 'f1', operator: '=', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: '=', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: '!=', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: '=', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: '!=', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: '>', value: 1214, valueSource: 'value' },
-        { field: 'f1', operator: '>=', value: 1214, valueSource: 'value' },
-        { field: 'f1', operator: '<', value: 1214, valueSource: 'value' },
-        { field: 'f1', operator: '<=', value: 1214, valueSource: 'value' },
-        { field: 'f1', operator: 'in', value: 'Test,Test2', valueSource: 'value' },
-        { field: 'f1', operator: 'in', value: '12,14', valueSource: 'value' },
-        { field: 'f1', operator: 'in', value: 'true,false', valueSource: 'value' },
-        { field: 'f1', operator: 'contains', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: 'beginsWith', value: 'Test', valueSource: 'value' },
-        { field: 'f1', operator: 'endsWith', value: 'Test', valueSource: 'value' },
+        { field: 'f1', operator: '=', value: 'Test' },
+        { field: 'f1', operator: '=', value: 'Test' },
+        { field: 'f1', operator: '!=', value: 'Test' },
+        { field: 'f1', operator: '=', value: 'Test' },
+        { field: 'f1', operator: '!=', value: 'Test' },
+        { field: 'f1', operator: '>', value: 1214 },
+        { field: 'f1', operator: '>=', value: 1214 },
+        { field: 'f1', operator: '<', value: 1214 },
+        { field: 'f1', operator: '<=', value: 1214 },
+        { field: 'f1', operator: 'in', value: 'Test,Test2' },
+        { field: 'f1', operator: 'in', value: '12,14' },
+        { field: 'f1', operator: 'in', value: 'true,false' },
+        { field: 'f1', operator: 'contains', value: 'Test' },
+        { field: 'f1', operator: 'beginsWith', value: 'Test' },
+        { field: 'f1', operator: 'endsWith', value: 'Test' },
       ],
     },
     {
@@ -110,8 +110,8 @@ it('parses JsonLogic from string', () => {
   expect(parseJsonLogic('{"and":[{"==":[{"var": "f1"},1]},{"==":[{"var": "f2"},2]}]}')).toEqual({
     combinator: 'and',
     rules: [
-      { field: 'f1', operator: '=', value: 1, valueSource: 'value' },
-      { field: 'f2', operator: '=', value: 2, valueSource: 'value' },
+      { field: 'f1', operator: '=', value: 1 },
+      { field: 'f2', operator: '=', value: 2 },
     ],
   });
 });
@@ -180,7 +180,7 @@ it('translates lists as arrays', () => {
   ).toEqual({
     combinator: 'and',
     rules: [
-      { field: 'f1', operator: 'in', value: [12, 14], valueSource: 'value' },
+      { field: 'f1', operator: 'in', value: [12, 14] },
       { field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' },
     ],
   });
@@ -189,7 +189,7 @@ it('translates lists as arrays', () => {
 it('handles empty options object', () => {
   expect(parseJsonLogic({ '===': [{ var: 'f1' }, 1] }, {})).toEqual({
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: 1, valueSource: 'value' }],
+    rules: [{ field: 'f1', operator: '=', value: 1 }],
     not: false,
   });
 });
