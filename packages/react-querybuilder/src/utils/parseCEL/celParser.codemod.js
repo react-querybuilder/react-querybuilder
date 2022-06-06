@@ -1,8 +1,12 @@
 /** @type {import('./types').ParseCELCodeMod} */
-export default (file, api) =>
-  api
-    .jscodeshift(file.source)
-    .find(api.jscodeshift.IfStatement)
+export default ({ source }, { jscodeshift: j }) =>
+  j(
+    j(source)
+      .find(j.LabeledStatement)
+      .replaceWith(n => n.node.body)
+      .toSource()
+  )
+    .find(j.IfStatement)
     .filter(
       e =>
         e.node?.test?.left?.left?.argument?.name === 'require' &&
