@@ -155,7 +155,7 @@ export const parseJsonLogic = (
     let field = '';
     let operator: DefaultOperatorName = '=';
     let value: any = '';
-    let valueSource: ValueSource = 'value';
+    let valueSource: ValueSource | undefined = undefined;
 
     // Basic boolean operations
     if (
