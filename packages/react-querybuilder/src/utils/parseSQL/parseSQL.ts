@@ -116,7 +116,7 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
             fieldsFlat,
             operator
           ) as Field[];
-          if (validSubordinateFields.every(vsf => vsf.name !== subordinateFieldName)) {
+          if (!validSubordinateFields.find(vsf => vsf.name === subordinateFieldName)) {
             valid = false;
           }
         } else {
