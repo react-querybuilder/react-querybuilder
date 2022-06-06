@@ -6,11 +6,18 @@ import type {
   DefaultRuleType,
   Field,
   OptionGroup,
+  ValueSource,
   ValueSources,
 } from '../../types/index.noReact';
 import { celParser } from './celParser';
 import type { CELExpression } from './types';
-import { convertRelop, isCELRelation } from './utils';
+import {
+  convertRelop,
+  evalCELLiteralValue,
+  isCELIdentifier,
+  isCELLiteral,
+  isCELRelation,
+} from './utils';
 
 export const parseCEL = (
   cel: string,
@@ -93,13 +100,24 @@ export const parseCEL = (
     expr: CELExpression
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
     if (isCELRelation(expr)) {
+      let field: string | null = null;
+      let value: any = '';
+      let valueSource: ValueSource | undefined = undefined;
+      const { left, right } = expr;
+      if (isCELIdentifier(left)) {
+        field = left.value;
+      }
+      if (isCELIdentifier(right)) {
+        value = right.value;
+        valueSource = 'field';
+      } else if (isCELLiteral(right)) {
+        value = evalCELLiteralValue(right);
+      }
       const operator = convertRelop(expr.operator);
-      const rule: DefaultRuleType = {
-        field: JSON.stringify(expr.left),
-        operator,
-        value: JSON.stringify(expr.right),
-      };
-      return ic ? { rules: [rule] } : { combinator: 'and', rules: [rule] };
+      if (field) {
+        const rule: DefaultRuleType = { field, operator, value, valueSource };
+        return ic ? { rules: [rule] } : { combinator: 'and', rules: [rule] };
+      }
     }
     return null;
   };
