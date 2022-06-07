@@ -65,7 +65,7 @@ COMMENT        ::= '//' ~NEWLINE* NEWLINE
 */
 %lex
 
-%options case-sensitive
+%options flex
 
 %%
 
@@ -73,24 +73,28 @@ COMMENT        ::= '//' ~NEWLINE* NEWLINE
 \s+                                                               /* skip whitespace */
 // Reserved words
 in                                                                return 'in'
-as                                                                return 'as' 
-break                                                             return 'break' 
-const                                                             return 'const' 
-continue                                                          return 'continue' 
+as                                                                return 'as'
+break                                                             return 'break'
+const                                                             return 'const'
+continue                                                          return 'continue'
 else                                                              return 'else'
-for                                                               return 'for' 
-function                                                          return 'function' 
-if                                                                return 'if' 
-import                                                            return 'import' 
+for                                                               return 'for'
+function                                                          return 'function'
+if                                                                return 'if'
+import                                                            return 'import'
 let                                                               return 'let'
-loop                                                              return 'loop' 
-package                                                           return 'package' 
-namespace                                                         return 'namespace' 
+loop                                                              return 'loop'
+package                                                           return 'package'
+namespace                                                         return 'namespace'
 return                                                            return 'return'
-var                                                               return 'var' 
-void                                                              return 'void' 
+var                                                               return 'var'
+void                                                              return 'void'
 while                                                             return 'while'
+null                                                              return 'NULL_LIT'
+true                                                              return 'BOOL_LIT'
+false                                                             return 'BOOL_LIT'
 // Operators and other characters
+\.                                                                return 'DOT'
 ","                                                               return ','
 "("                                                               return '('
 ")"                                                               return ')'
@@ -113,7 +117,6 @@ while                                                             return 'while'
 // Identfiers
 [_a-zA-Z][_a-zA-Z0-9]*                                            return 'IDENT'
 // Literals
-"null"                                                            return 'NULL_LIT'
 [rR]?['](\\.|[^'\\n\\r])*[']                                      return 'STRING_LIT'
 [rR]?["](\\.|[^"\\n\\r])*["]                                      return 'STRING_LIT'
 [rR]?['''](\\.)*[''']                                             return 'STRING_LIT'
@@ -127,10 +130,13 @@ while                                                             return 'while'
 
 /lex
 
+%left '||'
+%left '&&'
 %left '==' '!='
 %left '>' '>=' '<' '<='
 %left '+' '-'
 %left '/' '%' '*'
+%left '?' ':'
 
 %start main
 
@@ -140,112 +146,115 @@ main
   : expr EOF { return { nodeType: 'Main', value: $1 }; }
   ;
 string_literal
-  : STRING_LIT { $$ = { type: 'StringLiteral', value: $1 } }
+  : STRING_LIT -> { type: 'StringLiteral', value: $1 }
   ;
 bytes_literal
-  : "b" string_literal { $$ = { type: 'BytesLiteral', value: $2 } }
-  | "B" string_literal { $$ = { type: 'BytesLiteral', value: $2 } }
+  : "b" string_literal -> { type: 'BytesLiteral', value: $2 }
+  | "B" string_literal -> { type: 'BytesLiteral', value: $2 }
   ;
 number_literal
-  : INT_LIT { $$ = { type: 'IntegerLiteral', value: $1 } }
-  | UINT_LIT = { $$ = { type: 'UnsignedIntegerLiteral', value: $1 } }
-  | FLOAT_LIT = { $$ = { type: 'FloatLiteral', value: $1 } }
+  : INT_LIT -> { type: 'IntegerLiteral', value: $1 }
+  | UINT_LIT = -> { type: 'UnsignedIntegerLiteral', value: $1 }
+  | FLOAT_LIT = -> { type: 'FloatLiteral', value: $1 }
   ;
 boolean_literal
-  : 'true' { $$ = { type: 'BooleanLiteral', value: true } }
-  | 'false' { $$ = { type: 'BooleanLiteral', value: false } }
+  : BOOL_LIT -> { type: 'BooleanLiteral', value: $1 === 'true' }
   ;
 null_literal
-  : NULL_LIT { $$ = { type: 'NullLiteral', value: null } }
+  : NULL_LIT -> { type: 'NullLiteral', value: null }
   ;
 literal
-  : string_literal { $$ = $1 }
-  | number_literal { $$ = $1 }
-  | bytes_literal { $$ = $1 }
-  | boolean_literal { $$ = $1 }
-  | null_literal { $$ = $1 }
+  : string_literal -> $1
+  | number_literal -> $1
+  | bytes_literal -> $1
+  | boolean_literal -> $1
+  | null_literal -> $1
   ;
 ident
-  : IDENT { $$ = { type: 'Identifier', value: $1 } }
+  : IDENT -> { type: 'Identifier', value: $1 }
   ;
 relop
-  : '==' { $$ = $1 }
-  | '>=' { $$ = $1 }
-  | '>' { $$ = $1 }
-  | '<=' { $$ = $1 }
-  | '<' { $$ = $1 }
-  | '!=' { $$ = $1 }
-  | 'in' { $$ = $1 }
+  : '==' -> $1
+  | '>=' -> $1
+  | '>' -> $1
+  | '<=' -> $1
+  | '<' -> $1
+  | '!=' -> $1
+  | 'in' -> $1
   ;
 relation
-  : member relop member { $$ = { type: 'Relation', left: $1, operator: $2, right: $3 } }
+  : member relop member -> { type: 'Relation', left: $1, operator: $2, right: $3 }
   ;
 exclamation_list
-  : '!' { $$ = { type: 'ExclamationList', value: [ $1 ] } }
-  | exclamation_list '!' { $$ = $1; $$.value.push($2); }
+  : '!' -> { type: 'ExclamationList', value: [ $1 ] }
+  | exclamation_list '!' -> $1; $$.value.push($2);
   ;
 hyphen_list
-  : '-' { $$ = { type: 'HyphenList', value: [ $1 ] } }
-  | hyphen_list '-' { $$ = $1; $$.value.push($2); }
+  : '-' -> { type: 'HyphenList', value: [ $1 ] }
+  | hyphen_list '-' -> $1; $$.value.push($2);
   ;
 unary
-  : member { $$ = $1 }
-  | exclamation_list member { $$ = { type: 'Negation', negations: $1, value: $2 } }
-  | hyphen_list member { $$ = { type: 'Negative', negatives: $1, value: $2 } }
+  : member -> $1
+  | exclamation_list member -> { type: 'Negation', negations: $1, value: $2 }
+  | hyphen_list member -> { type: 'Negative', negatives: $1, value: $2 }
   ;
 member
-  : primary { $$ =  $1 }
-  | member '.' ident { $$ = { type: 'Member', left: $1, right: $3 } }
-  | member '.' ident '(' expr_list ')' { $$ = { type: 'Member', left: $1, right: $3, list: $5 } }
-  | member '[' expr ']' { $$ = { type: 'Member', left: $1, list: $3 } }
-  | member '{' field_inits trailing_comma '}' { $$ = { type: 'Member', left: $1, list: $3, trailingComma: $4 } }
+  : primary ->  $1
+  | member DOT ident -> { type: 'Member', left: $1, right: $3 }
+  | member DOT ident '(' expr_list ')' -> { type: 'Member', left: $1, right: $3, list: $5 }
+  | member '[' expr ']' -> { type: 'DynamicPropertyAccessor', left: $1, right: $3 }
+  // TODO: This needs a better type name
+  | member '{' field_inits trailing_comma '}' -> { type: 'FieldsObject', left: $1, list: $3, trailingComma: $4 }
   ;
 trailing_comma
-  : { $$ = false }
-  | ',' { $$ = true }
+  : -> false
+  | ',' -> true
   ;
 primary
-  : ident { $$ = $1 }
-  | '.' ident { $$ = { type: 'Property', value: $2 } }
-  | ident '(' expr_list trailing_comma ')' { $$ = { type: 'FunctionCall', name: $1, args: $3, trailingComma: $4 } }
-  | '.' ident '(' expr_list trailing_comma ')' { $$ = { type: 'Property', value: $2, args: $4, trailingComma: $5 } }
-  | '(' expr ')' { $$ = { type: 'ExpressionGroup', value: $2 } }
-  | '[' expr_list trailing_comma ']' { $$ = { type: 'List', value: $2, trailingComma: $3 } }
-  | '{' map_inits trailing_comma '}' { $$ = { type: 'Map', value: $2, trailingComma: $3 } }
-  | literal { $$ = $1 }
+  : ident -> $1
+  | DOT ident -> { type: 'Property', value: $2 }
+  | ident '(' expr_list trailing_comma ')' -> { type: 'FunctionCall', name: $1, args: $3, trailingComma: $4 }
+  | DOT ident '(' expr_list trailing_comma ')' -> { type: 'Property', value: $2, args: $4, trailingComma: $5 }
+  | '(' expr ')' -> { type: 'ExpressionGroup', value: $2 }
+  | '[' expr_list trailing_comma ']' -> { type: 'List', value: $2, trailingComma: $3 }
+  | '{' map_inits trailing_comma '}' -> { type: 'Map', value: $2, trailingComma: $3 }
+  | literal -> $1
   ;
 math_operation
-  : expr '+' expr { $$ = { type: 'Addition', left: $1, right: $3 } }
-  | expr '-' expr { $$ = { type: 'Subtraction', left: $1, right: $3 } }
-  | expr '*' expr { $$ = { type: 'Multiplication', left: $1, right: $3 } }
-  | expr '/' expr { $$ = { type: 'Division', left: $1, right: $3 } }
-  | expr '%' expr { $$ = { type: 'Modulo', left: $1, right: $3 } }
+  : expr '+' expr -> { type: 'Addition', left: $1, right: $3 }
+  | expr '-' expr -> { type: 'Subtraction', left: $1, right: $3 }
+  | expr '*' expr -> { type: 'Multiplication', left: $1, right: $3 }
+  | expr '/' expr -> { type: 'Division', left: $1, right: $3 }
+  | expr '%' expr -> { type: 'Modulo', left: $1, right: $3 }
   ;
 expr
-  : member { $$ = $1 }
+  : member -> $1
   // TODO: support conditional expression (x ? y : z)
-  // | conditional_expr { $$ = $1 }
-  | relation { $$ = $1 }
-  | math_operation { $$ = $1 }
+  // | conditional_expr -> $1
+  | conditional_and -> $1
+  | conditional_or -> $1
+  | relation -> $1
+  | math_operation -> $1
+  | like_expr -> $1
   ;
 conditional_expr
-  : expr '?' expr ':' expr { $$ = { type: 'ConditionalExpr', condition: $1, valueIfTrue: $3, valueIfFalse: $5 } }
+  : expr '?' expr ':' expr -> { type: 'ConditionalExpr', condition: $1, valueIfTrue: $3, valueIfFalse: $5 }
   ;
 conditional_and
-  : expr '&&' expr { $$ = { type: 'ConditionalAnd', left: $1, right: $3 } }
+  : expr '&&' expr -> { type: 'ConditionalAnd', left: $1, right: $3 }
   ;
 conditional_or
-  : expr '||' expr { $$ = { type: 'ConditionalOr', left: $1, right: $3 } }
+  : expr '||' expr -> { type: 'ConditionalOr', left: $1, right: $3 }
   ;
 expr_list
-  : expr { $$ = { type: 'ExpressionList', value: [ $1 ] } }
-  | expr_list ',' expr { $$ = $1; $$.value.push($3); }
+  : expr -> { type: 'ExpressionList', value: [ $1 ] }
+  | expr_list ',' expr -> $1; $$.value.push($3);
   ;
 field_inits
-  : ident ':' expr { $$ = { type: 'FieldInits', value: [ { type: 'FieldInit', left: $1, right: $3 } ] } }
-  | field_inits ',' ident ':' expr { $$ = $1; $$.value.push({ type: 'FieldInit', left: $3, right: $5 }); }
+  : ident ':' expr -> { type: 'FieldInits', value: [ { type: 'FieldInit', left: $1, right: $3 } ] }
+  | field_inits ',' ident ':' expr -> $1; $$.value.push({ type: 'FieldInit', left: $3, right: $5 });
   ;
 map_inits
-  : expr ':' expr { $$ = { type: 'MapInits', value: [ { type: 'MapInit', left: $1, right: $3 } ] } }
-  | map_inits ',' expr ':' expr { $$ = $1; $$.value.push({ type: 'MapInit', left: $3, right: $5 }); }
+  : expr ':' expr -> { type: 'MapInits', value: [ { type: 'MapInit', left: $1, right: $3 } ] }
+  | map_inits ',' expr ':' expr -> $1; $$.value.push({ type: 'MapInit', left: $3, right: $5 });
   ;

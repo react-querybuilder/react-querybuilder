@@ -106,6 +106,13 @@ export interface RQBJsonLogicEndsWith {
 export type RQBJsonLogicVar = { var: string };
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
 
+export interface ParseCELOptions {
+  independentCombinators?: boolean;
+  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  listsAsArrays?: boolean;
+  getValueSources?: (field: string, operator: string) => ValueSources;
+}
+
 export interface ParseSQLOptions {
   independentCombinators?: boolean;
   paramPrefix?: string;

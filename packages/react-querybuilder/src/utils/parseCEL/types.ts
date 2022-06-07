@@ -17,6 +17,7 @@ type TokenType =
   | 'Unary'
   | 'Member'
   | 'Property'
+  | 'DynamicPropertyAccessor'
   | 'FunctionCall'
   | 'ExpressionGroup'
   | 'List'
@@ -30,19 +31,22 @@ type TokenType =
   | 'ConditionalOr'
   | 'ConditionalAnd'
   | 'ExpressionList'
+  | 'FieldsObject'
   | 'FieldInits'
   | 'FieldInit'
   | 'MapInits'
-  | 'MapInit';
+  | 'MapInit'
+  // RQB-specific:
+  | 'LikeExpression';
 
 export type CELRelop = '==' | '>=' | '>' | '<=' | '<' | '!=' | 'in';
 
 export interface CELExpression {
   type: TokenType;
 }
-export interface CELIdentifier extends CELExpression {
+export interface CELIdentifier<LimitTo extends string = string> extends CELExpression {
   type: 'Identifier';
-  value: string;
+  value: LimitTo;
 }
 export interface CELStringLiteral extends CELExpression {
   type: 'StringLiteral';
@@ -71,10 +75,6 @@ export interface CELBooleanLiteral extends CELExpression {
 export interface CELNullLiteral extends CELExpression {
   type: 'NullLiteral';
   value: null;
-}
-export interface CELIdentifier extends CELExpression {
-  type: 'Identifier';
-  value: string;
 }
 export interface CELRelation extends CELExpression {
   type: 'Relation';
@@ -111,7 +111,12 @@ export interface CELMember extends CELExpression {
   value?: CELPrimary;
   left?: CELMember;
   right?: CELIdentifier;
-  list?: CELExpression | CELExpressionList | CELFieldInits;
+  list?: CELExpressionList;
+}
+export interface CELDynamicPropertyAccessor extends CELExpression {
+  type: 'DynamicPropertyAccessor';
+  left: CELMember;
+  right: CELExpression;
 }
 export interface CELProperty extends CELExpression {
   type: 'Property';
@@ -178,6 +183,12 @@ export interface CELExpressionList extends CELExpression {
   type: 'ExpressionList';
   value: CELExpression[];
 }
+export interface CELFieldsObject extends CELExpression {
+  type: 'FieldsObject';
+  left: CELMember;
+  list: CELFieldInits;
+  trailingComma?: boolean;
+}
 export interface CELFieldInits extends CELExpression {
   type: 'FieldInits';
   value: CELFieldInit[];
@@ -195,6 +206,14 @@ export interface CELMapInit extends CELExpression {
   type: 'MapInit';
   left: CELExpression;
   right: CELExpression;
+}
+
+// RQB-specific:
+export interface CELLikeExpression extends CELExpression {
+  type: 'LikeExpression';
+  left: CELIdentifier;
+  right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
+  list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
 }
 
 export type CELNumericLiteral = CELIntegerLiteral | CELUnsignedIntegerLiteral | CELFloatLiteral;
