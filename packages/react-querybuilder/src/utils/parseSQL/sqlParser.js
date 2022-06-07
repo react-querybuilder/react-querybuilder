@@ -87,25 +87,25 @@ case 1: case 2:
  return {nodeType: 'Main', value: $$[$0-2], hasSemicolon: $$[$0-1]}; 
 break;
 case 3: case 145:
- this.$ = true 
+this.$ = true;
 break;
 case 4:
- this.$ = false 
+this.$ = false;
 break;
 case 5: case 13: case 14: case 15: case 17: case 19: case 21: case 23: case 25: case 27: case 30: case 31: case 32: case 51: case 52: case 53: case 54: case 55: case 60: case 61: case 63: case 69: case 73: case 80: case 81: case 82: case 83: case 89: case 93: case 107: case 109: case 110: case 117: case 118: case 119: case 120: case 121: case 122: case 123: case 124: case 125: case 126: case 130: case 132: case 141: case 143: case 148: case 154: case 155: case 157: case 162: case 164: case 165: case 176: case 177: case 178: case 179: case 181: case 190: case 192: case 194: case 195: case 203: case 204: case 210: case 212:
- this.$ = $$[$0] 
+this.$ = $$[$0];
 break;
 case 6:
- this.$ = $$[$0-2], this.$.orderBy = $$[$0-1], this.$.limit = $$[$0]; 
+this.$ = $$[$0-2], this.$.orderBy = $$[$0-1], this.$.limit = $$[$0];;
 break;
 case 7: case 8:
- this.$ = { type: 'Union', left: $$[$0-3], distinctOpt: $$[$0-1], right: $$[$0] }; 
+this.$ = { type: 'Union', left: $$[$0-3], distinctOpt: $$[$0-1], right: $$[$0] };;
 break;
 case 9:
- this.$ = { type: 'SelectParenthesized', value: $$[$0-1] }; 
+this.$ = { type: 'SelectParenthesized', value: $$[$0-1] };;
 break;
 case 10: case 11:
- this.$ = { type: 'Union', left: $$[$0-3], distinctOpt: $$[$0-1], right: $$[$0] } 
+this.$ = { type: 'Union', left: $$[$0-3], distinctOpt: $$[$0-1], right: $$[$0] };
 break;
 case 12:
 
@@ -134,301 +134,301 @@ case 12:
       
 break;
 case 16: case 18: case 20: case 22: case 24: case 26: case 28: case 29: case 33: case 59: case 68: case 72: case 106: case 108: case 140: case 142: case 144: case 147: case 153: case 156: case 161: case 163: case 166: case 175: case 180: case 189: case 198: case 205: case 209: case 211:
- this.$ = null 
+this.$ = null;
 break;
 case 34:
  $$[$0-2].value.push($$[$0]); 
 break;
 case 35:
- this.$ = { type: 'SelectExpr', value: [ $$[$0] ] } 
+this.$ = { type: 'SelectExpr', value: [ $$[$0] ] };
 break;
 case 36: case 37: case 64:
- this.$ = { type: 'Identifier', value: $$[$0] } 
+this.$ = { type: 'Identifier', value: $$[$0] };
 break;
 case 38:
- this.$ = $$[$0-1]; this.$.alias = $$[$0].alias; this.$.hasAs = $$[$0].hasAs; 
+this.$ = $$[$0-1]; this.$.alias = $$[$0].alias; this.$.hasAs = $$[$0].hasAs;;
 break;
 case 39: case 200:
- this.$ = {alias: null, hasAs: null} 
+this.$ = {alias: null, hasAs: null};
 break;
 case 40: case 42:
- this.$ = {alias: $$[$0], hasAs: true} 
+this.$ = {alias: $$[$0], hasAs: true};
 break;
 case 41:
- this.$ = {alias: $$[$0], hasAs: false} 
+this.$ = {alias: $$[$0], hasAs: false};
 break;
 case 43:
- this.$ = {alias: $$[$01], hasAs: false} 
+this.$ = {alias: $$[$01], hasAs: false};
 break;
 case 44:
- this.$ = { type: 'String', value: $$[$0] } 
+this.$ = { type: 'String', value: $$[$0] };
 break;
 case 45: case 46: case 47:
- this.$ = { type: 'Number', value: $$[$0] } 
+this.$ = { type: 'Number', value: $$[$0] };
 break;
 case 48:
- this.$ = { type: 'Boolean', value: 'TRUE' } 
+this.$ = { type: 'Boolean', value: 'TRUE' };
 break;
 case 49:
- this.$ = { type: 'Boolean', value: 'FALSE' } 
+this.$ = { type: 'Boolean', value: 'FALSE' };
 break;
 case 50:
- this.$ = { type: 'Null', value: 'null' } 
+this.$ = { type: 'Null', value: 'null' };
 break;
 case 56:
- this.$ = {type: 'FunctionCall', name: $$[$0-3], params: $$[$0-1]} 
+this.$ = {type: 'FunctionCall', name: $$[$0-3], params: $$[$0-1]};
 break;
 case 57:
  $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
 case 58:
- this.$ = [$$[$0]]; 
+this.$ = [$$[$0]];;
 break;
 case 62:
- this.$ = { type: 'FunctionCallParam', distinctOpt: $$[$0-1], value: $$[$0] } 
+this.$ = { type: 'FunctionCallParam', distinctOpt: $$[$0-1], value: $$[$0] };
 break;
 case 65:
- this.$ = $$[$0-2]; $$[$0-2].value += '.' + $$[$0] 
+this.$ = $$[$0-2]; $$[$0-2].value += '.' + $$[$0];
 break;
 case 66:
- this.$ = { type: 'IdentifierList', value: [ $$[$0] ] } 
+this.$ = { type: 'IdentifierList', value: [ $$[$0] ] };
 break;
 case 67: case 172:
- this.$ = $$[$0-2]; $$[$0-2].value.push($$[$0]); 
+this.$ = $$[$0-2]; $$[$0-2].value.push($$[$0]);;
 break;
 case 70:
- this.$ = { type: 'WhenThenList', value: [ { when: $$[$0-2], then: $$[$0] } ] }; 
+this.$ = { type: 'WhenThenList', value: [ { when: $$[$0-2], then: $$[$0] } ] };;
 break;
 case 71:
- this.$ = $$[$0-4]; this.$.value.push({ when: $$[$0-2], then: $$[$0] }); 
+this.$ = $$[$0-4]; this.$.value.push({ when: $$[$0-2], then: $$[$0] });;
 break;
 case 74:
- this.$ = { type: 'CaseWhen', caseExprOpt: $$[$0-3], whenThenList: $$[$0-2], else: $$[$0-1] } 
+this.$ = { type: 'CaseWhen', caseExprOpt: $$[$0-3], whenThenList: $$[$0-2], else: $$[$0-1] };
 break;
 case 75: case 76: case 77: case 78: case 79:
- this.$ = { type: 'Prefix', prefix: $$[$0-1], value: $$[$0] } 
+this.$ = { type: 'Prefix', prefix: $$[$0-1], value: $$[$0] };
 break;
 case 84:
- this.$ = { type: 'SimpleExprParentheses', value: $$[$0-1] } 
+this.$ = { type: 'SimpleExprParentheses', value: $$[$0-1] };
 break;
 case 85:
- this.$ = { type: 'SimpleExprParentheses', value: $$[$0-2], hasRow: true } 
+this.$ = { type: 'SimpleExprParentheses', value: $$[$0-2], hasRow: true };
 break;
 case 86:
- this.$ = { type: 'SubQuery', value: $$[$0-1] } 
+this.$ = { type: 'SubQuery', value: $$[$0-1] };
 break;
 case 87:
- this.$ = { type: 'SubQuery', value: $$[$0-1], hasExists: true } 
+this.$ = { type: 'SubQuery', value: $$[$0-1], hasExists: true };
 break;
 case 88:
- this.$ = { type: 'IdentifierExpr', identifier: $$[$0-2], value: $$[$0-1] } 
+this.$ = { type: 'IdentifierExpr', identifier: $$[$0-2], value: $$[$0-1] };
 break;
 case 90:
- this.$ = { type: 'StartsWithExpr', value: $$[$0-2] } 
+this.$ = { type: 'StartsWithExpr', value: $$[$0-2] };
 break;
 case 91:
- this.$ = { type: 'EndsWithExpr', value: $$[$0] } 
+this.$ = { type: 'EndsWithExpr', value: $$[$0] };
 break;
 case 92:
- this.$ = { type: 'ContainsExpr', value: $$[$0-2] } 
+this.$ = { type: 'ContainsExpr', value: $$[$0-2] };
 break;
 case 94:
- this.$ = { type: 'BitExpression', operator: '|', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '|', left: $$[$0-2], right: $$[$0] };
 break;
 case 95:
- this.$ = { type: 'BitExpression', operator: '&', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '&', left: $$[$0-2], right: $$[$0] };
 break;
 case 96:
- this.$ = { type: 'BitExpression', operator: '<<', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '<<', left: $$[$0-2], right: $$[$0] };
 break;
 case 97:
- this.$ = { type: 'BitExpression', operator: '>>', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '>>', left: $$[$0-2], right: $$[$0] };
 break;
 case 98:
- this.$ = { type: 'BitExpression', operator: '+', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '+', left: $$[$0-2], right: $$[$0] };
 break;
 case 99:
- this.$ = { type: 'BitExpression', operator: '-', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '-', left: $$[$0-2], right: $$[$0] };
 break;
 case 100:
- this.$ = { type: 'BitExpression', operator: '*', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '*', left: $$[$0-2], right: $$[$0] };
 break;
 case 101:
- this.$ = { type: 'BitExpression', operator: '/', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '/', left: $$[$0-2], right: $$[$0] };
 break;
 case 102:
- this.$ = { type: 'BitExpression', operator: 'DIV', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: 'DIV', left: $$[$0-2], right: $$[$0] };
 break;
 case 103:
- this.$ = { type: 'BitExpression', operator: 'MOD', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: 'MOD', left: $$[$0-2], right: $$[$0] };
 break;
 case 104:
- this.$ = { type: 'BitExpression', operator: '%', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '%', left: $$[$0-2], right: $$[$0] };
 break;
 case 105:
- this.$ = { type: 'BitExpression', operator: '^', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'BitExpression', operator: '^', left: $$[$0-2], right: $$[$0] };
 break;
 case 111:
- this.$ = { type: 'InSubQueryPredicate', hasNot: $$[$0-4], left: $$[$0-5] ,right: $$[$0-1] } 
+this.$ = { type: 'InSubQueryPredicate', hasNot: $$[$0-4], left: $$[$0-5] ,right: $$[$0-1] };
 break;
 case 112:
- this.$ = { type: 'InExpressionListPredicate', hasNot: $$[$0-4], left: $$[$0-5], right: $$[$0-1] } 
+this.$ = { type: 'InExpressionListPredicate', hasNot: $$[$0-4], left: $$[$0-5], right: $$[$0-1] };
 break;
 case 113:
- this.$ = { type: 'BetweenPredicate', hasNot: $$[$0-4], left: $$[$0-5], right: { left: $$[$0-2], right: $$[$0] } } 
+this.$ = { type: 'BetweenPredicate', hasNot: $$[$0-4], left: $$[$0-5], right: { left: $$[$0-2], right: $$[$0] } };
 break;
 case 114:
- this.$ = { type: 'SoundsLikePredicate', hasNot: false, left: $$[$0-3], right: $$[$0] } 
+this.$ = { type: 'SoundsLikePredicate', hasNot: false, left: $$[$0-3], right: $$[$0] };
 break;
 case 115:
- this.$ = { type: 'LikePredicate', hasNot: $$[$0-3], left: $$[$0-4], right: $$[$0-1], escape: $$[$0] } 
+this.$ = { type: 'LikePredicate', hasNot: $$[$0-3], left: $$[$0-4], right: $$[$0-1], escape: $$[$0] };
 break;
 case 116:
- this.$ = { type: 'RegexpPredicate', hasNot: $$[$0-2], left: $$[$0-3], right: $$[$0] } 
+this.$ = { type: 'RegexpPredicate', hasNot: $$[$0-2], left: $$[$0-3], right: $$[$0] };
 break;
 case 127:
- this.$ = { type: 'IsNullBooleanPrimary', hasNot: $$[$0-1] , value: $$[$0-3] } 
+this.$ = { type: 'IsNullBooleanPrimary', hasNot: $$[$0-1] , value: $$[$0-3] };
 break;
 case 128:
- this.$ = { type: 'ComparisonBooleanPrimary', left: $$[$0-2], operator: $$[$0-1], right: $$[$0] } 
+this.$ = { type: 'ComparisonBooleanPrimary', left: $$[$0-2], operator: $$[$0-1], right: $$[$0] };
 break;
 case 129:
- this.$ = { type: 'ComparisonSubQueryBooleanPrimary', operator: $$[$0-4], subQueryOpt: $$[$0-3], left: $$[$0-5], right: $$[$0-1] } 
+this.$ = { type: 'ComparisonSubQueryBooleanPrimary', operator: $$[$0-4], subQueryOpt: $$[$0-3], left: $$[$0-5], right: $$[$0-1] };
 break;
 case 131:
- this.$ = { type: 'BooleanExtra', value: $$[$0] } 
+this.$ = { type: 'BooleanExtra', value: $$[$0] };
 break;
 case 133:
- this.$ = { type: 'IsExpression', hasNot: $$[$0-1], left: $$[$0-3], right: $$[$0] } 
+this.$ = { type: 'IsExpression', hasNot: $$[$0-1], left: $$[$0-3], right: $$[$0] };
 break;
 case 134:
- this.$ = { type: 'NotExpression', value: $$[$0] } 
+this.$ = { type: 'NotExpression', value: $$[$0] };
 break;
 case 135:
- this.$ = { type: 'OrExpression', operator: $$[$0-1], left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'OrExpression', operator: $$[$0-1], left: $$[$0-2], right: $$[$0] };
 break;
 case 136:
- this.$ = { type: 'AndExpression', operator: $$[$0-1], left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'AndExpression', operator: $$[$0-1], left: $$[$0-2], right: $$[$0] };
 break;
 case 137:
- this.$ = { type: 'XORExpression', left: $$[$0-2], right: $$[$0] } 
+this.$ = { type: 'XORExpression', left: $$[$0-2], right: $$[$0] };
 break;
 case 138:
- this.$ = { type: 'ExpressionList', value: [ $$[$0] ] } 
+this.$ = { type: 'ExpressionList', value: [ $$[$0] ] };
 break;
 case 139: case 214:
- this.$ = $$[$0-2]; this.$.value.push($$[$0]); 
+this.$ = $$[$0-2]; this.$.value.push($$[$0]);;
 break;
 case 146:
- this.$ = { type: 'GroupBy', value: $$[$0-1], rollUp: $$[$0] } 
+this.$ = { type: 'GroupBy', value: $$[$0-1], rollUp: $$[$0] };
 break;
 case 149:
- this.$ = { type: 'OrderBy', value: $$[$0-1], rollUp: $$[$0] } 
+this.$ = { type: 'OrderBy', value: $$[$0-1], rollUp: $$[$0] };
 break;
 case 150: case 196:
- this.$ = [ $$[$0] ] 
+this.$ = [ $$[$0] ];
 break;
 case 151:
- this.$ = $$[$0-2]; $$[$0-2].push($$[$0]); 
+this.$ = $$[$0-2]; $$[$0-2].push($$[$0]);;
 break;
 case 152:
- this.$ = { type: 'GroupByOrderByItem', value: $$[$0-1], sortOpt: $$[$0] } 
+this.$ = { type: 'GroupByOrderByItem', value: $$[$0-1], sortOpt: $$[$0] };
 break;
 case 158:
- this.$ = { type: 'Limit', value: [ $$[$0] ] } 
+this.$ = { type: 'Limit', value: [ $$[$0] ] };
 break;
 case 159:
- this.$ = { type: 'Limit', value: [ $$[$0-2], $$[$0] ] } 
+this.$ = { type: 'Limit', value: [ $$[$0-2], $$[$0] ] };
 break;
 case 160:
- this.$ = { type: 'Limit', value: [ $$[$0], $$[$0-2] ], offsetMode: true } 
+this.$ = { type: 'Limit', value: [ $$[$0], $$[$0-2] ], offsetMode: true };
 break;
 case 167:
- this.$ = $$[$0-1] + ' ' + $$[$0] 
+this.$ = $$[$0-1] + ' ' + $$[$0];
 break;
 case 168:
- this.$ = $$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0] 
+this.$ = $$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
 case 169:
- this.$ = {} 
+this.$ = {};
 break;
 case 170:
- this.$ = { from: $$[$0-8], partition: $$[$0-7], where: $$[$0-6], groupBy: $$[$0-5], having: $$[$0-4], orderBy: $$[$0-3], limit: $$[$0-2], procedure: $$[$0-1], updateLockMode: $$[$0] } 
+this.$ = { from: $$[$0-8], partition: $$[$0-7], where: $$[$0-6], groupBy: $$[$0-5], having: $$[$0-4], orderBy: $$[$0-3], limit: $$[$0-2], procedure: $$[$0-1], updateLockMode: $$[$0] };
 break;
 case 171:
- this.$ = { type: 'TableReferences', value: [ $$[$0] ] } 
+this.$ = { type: 'TableReferences', value: [ $$[$0] ] };
 break;
 case 173:
- this.$ = { type: 'TableReference', value: $$[$0] } 
+this.$ = { type: 'TableReference', value: $$[$0] };
 break;
 case 174:
- this.$ = { type: 'TableReference', hasOj: true, value: $$[$0-1] } 
+this.$ = { type: 'TableReference', hasOj: true, value: $$[$0-1] };
 break;
 case 182:
- this.$ = { leftRight: null, outOpt: null } 
+this.$ = { leftRight: null, outOpt: null };
 break;
 case 183:
- this.$ = { leftRight: $$[$0-1], outOpt: $$[$0] } 
+this.$ = { leftRight: $$[$0-1], outOpt: $$[$0] };
 break;
 case 184:
- this.$ = { type: 'InnerCrossJoinTable', innerCrossOpt: $$[$0-2], left: $$[$0-3], right: $$[$0], condition: null } 
+this.$ = { type: 'InnerCrossJoinTable', innerCrossOpt: $$[$0-2], left: $$[$0-3], right: $$[$0], condition: null };
 break;
 case 185:
- this.$ = { type: 'InnerCrossJoinTable', innerCrossOpt: $$[$0-3], left: $$[$0-4], right: $$[$0-1], condition: $$[$0] } 
+this.$ = { type: 'InnerCrossJoinTable', innerCrossOpt: $$[$0-3], left: $$[$0-4], right: $$[$0-1], condition: $$[$0] };
 break;
 case 186:
- this.$ = { type: 'StraightJoinTable', left: $$[$0-3], right: $$[$0-1], condition: $$[$0] } 
+this.$ = { type: 'StraightJoinTable', left: $$[$0-3], right: $$[$0-1], condition: $$[$0] };
 break;
 case 187:
- this.$ = { type: 'LeftRightJoinTable', leftRight: $$[$0-4], outOpt: $$[$0-3], left: $$[$0-5], right: $$[$0-1], condition: $$[$0] } 
+this.$ = { type: 'LeftRightJoinTable', leftRight: $$[$0-4], outOpt: $$[$0-3], left: $$[$0-5], right: $$[$0-1], condition: $$[$0] };
 break;
 case 188:
- this.$ = { type: 'NaturalJoinTable', leftRight: $$[$0-2].leftRight, outOpt: $$[$0-2].outOpt, left: $$[$0-4], right: $$[$0] } 
+this.$ = { type: 'NaturalJoinTable', leftRight: $$[$0-2].leftRight, outOpt: $$[$0-2].outOpt, left: $$[$0-4], right: $$[$0] };
 break;
 case 191:
- this.$ = { type: 'OnJoinCondition', value: $$[$0] } 
+this.$ = { type: 'OnJoinCondition', value: $$[$0] };
 break;
 case 193:
- this.$ = { type: 'UsingJoinCondition', value: $$[$0-1] } 
+this.$ = { type: 'UsingJoinCondition', value: $$[$0-1] };
 break;
 case 197:
- this.$ = $$[$0-2]; $$[$0-2].push($$[$0]) 
+this.$ = $$[$0-2]; $$[$0-2].push($$[$0]);
 break;
 case 199:
- this.$ = { type: 'Partitions', value: $$[$0-1] } 
+this.$ = { type: 'Partitions', value: $$[$0-1] };
 break;
 case 201:
- this.$ = { hasAs: true, alias: $$[$0] } 
+this.$ = { hasAs: true, alias: $$[$0] };
 break;
 case 202:
- this.$ = { hasAs: false, alias: $$[$0] } 
+this.$ = { hasAs: false, alias: $$[$0] };
 break;
 case 206: case 207: case 208:
- this.$ = { type: 'ForOptIndexHint', value: $$[$0] } 
+this.$ = { type: 'ForOptIndexHint', value: $$[$0] };
 break;
 case 213:
- this.$ = { type: 'IndexHintList', value: [ $$[$0] ] } 
+this.$ = { type: 'IndexHintList', value: [ $$[$0] ] };
 break;
 case 215:
- this.$ = { type: 'UseIndexHint', value: $$[$0-1], forOpt: $$[$0-3], indexOrKey: $$[$0-4] } 
+this.$ = { type: 'UseIndexHint', value: $$[$0-1], forOpt: $$[$0-3], indexOrKey: $$[$0-4] };
 break;
 case 216:
- this.$ = { type: 'IgnoreIndexHint', value: $$[$0-1], forOpt: $$[$0-3], indexOrKey: $$[$0-4] } 
+this.$ = { type: 'IgnoreIndexHint', value: $$[$0-1], forOpt: $$[$0-3], indexOrKey: $$[$0-4] };
 break;
 case 217:
- this.$ = { type: 'ForceIndexHint', value: $$[$0-1], forOpt: $$[$0-3], indexOrKey: $$[$0-4] } 
+this.$ = { type: 'ForceIndexHint', value: $$[$0-1], forOpt: $$[$0-3], indexOrKey: $$[$0-4] };
 break;
 case 218:
- this.$ = { type: 'TableFactor', value: $$[$0-3], partition: $$[$0-2], alias: $$[$0-1].alias, hasAs: $$[$0-1].hasAs, indexHintOpt: $$[$0] } 
+this.$ = { type: 'TableFactor', value: $$[$0-3], partition: $$[$0-2], alias: $$[$0-1].alias, hasAs: $$[$0-1].hasAs, indexHintOpt: $$[$0] };
 break;
 case 219:
- this.$ = { type: 'TableFactor', value: { type: 'SubQuery', value: $$[$0-2] }, alias: $$[$0].alias, hasAs: $$[$0].hasAs} 
+this.$ = { type: 'TableFactor', value: { type: 'SubQuery', value: $$[$0-2] }, alias: $$[$0].alias, hasAs: $$[$0].hasAs};
 break;
 case 220:
- this.$ = $$[$0-1]; this.$.hasParentheses = true 
+this.$ = $$[$0-1]; this.$.hasParentheses = true;
 break;
 case 221:
- this.$ = { type: 'PlaceHolder', value: $$[$0], param: $$[$0].slice(2, -1)} 
+this.$ = { type: 'PlaceHolder', value: $$[$0], param: $$[$0].slice(2, -1)};
 break;
 }
 },
