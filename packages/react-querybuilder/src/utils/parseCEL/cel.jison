@@ -72,12 +72,6 @@ COMMENT        ::= '//' ~NEWLINE* NEWLINE
 [/][/]\s.*\n                                                      /* skip end-of-line comments */
 \s+                                                               /* skip whitespace */
 // Reserved words
-// Boolean literals
-// true                                                              return 'TRUE'
-// false                                                             return 'FALSE'
-// Null literal
-// null                                                              return 'NULL'
-// Other reserved words
 in                                                                return 'in'
 as                                                                return 'as' 
 break                                                             return 'break' 
@@ -102,7 +96,6 @@ while                                                             return 'while'
 ")"                                                               return ')'
 "!="                                                              return '!='
 "!"                                                               return '!'
-"||"                                                              return '||'
 "+"                                                               return '+'
 "-"                                                               return '-'
 "*"                                                               return '*'
@@ -115,6 +108,8 @@ while                                                             return 'while'
 "<"                                                               return '<'
 "{"                                                               return '{'
 "}"                                                               return '}'
+"&&"                                                              return '&&'
+"||"                                                              return '||'
 // Identfiers
 [_a-zA-Z][_a-zA-Z0-9]*                                            return 'IDENT'
 // Literals
@@ -132,7 +127,7 @@ while                                                             return 'while'
 
 /lex
 
-%left '=' '!='        /* '=' in sql equals '==' */
+%left '==' '!='
 %left '>' '>=' '<' '<='
 %left '+' '-'
 %left '/' '%' '*'

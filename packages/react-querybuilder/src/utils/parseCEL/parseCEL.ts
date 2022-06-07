@@ -1,7 +1,11 @@
 import { isOptionGroupArray } from '..';
 import { filterFieldsByComparator, getValueSourcesUtil, uniqByName } from '../../internal';
 import type {
+  DefaultCombinatorName,
   DefaultOperatorName,
+  DefaultRuleGroupArray,
+  DefaultRuleGroupICArray,
+  DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleType,
   Field,
@@ -14,6 +18,11 @@ import type { CELExpression } from './types';
 import {
   convertRelop,
   evalCELLiteralValue,
+  generateFlatAndOrList,
+  generateMixedAndOrList,
+  isCELConditionalAnd,
+  isCELConditionalOr,
+  isCELExpressionGroup,
   isCELIdentifier,
   isCELLiteral,
   isCELRelation,
@@ -99,7 +108,57 @@ export const parseCEL = (
   const processCELExpression = (
     expr: CELExpression
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
-    if (isCELRelation(expr)) {
+    if (isCELExpressionGroup(expr)) {
+      const rule = processCELExpression(expr);
+      if (rule) {
+        if ('rules' in rule) {
+          return rule;
+        }
+        return ic ? { rules: [rule] } : { combinator: 'and', rules: [rule] };
+      }
+    } else if (isCELConditionalAnd(expr) || isCELConditionalOr(expr)) {
+      if (ic) {
+        const andOrList = generateFlatAndOrList(expr);
+        const rules = andOrList.map(v => {
+          if (typeof v === 'string') {
+            return v;
+          }
+          return processCELExpression(v);
+        });
+        // Bail out completely if any rules in the list were invalid
+        // so as not to return an incorrect and/or sequence
+        if (rules.includes(null)) {
+          return null;
+        }
+        return {
+          rules: rules as DefaultRuleGroupICArray,
+        };
+      }
+      const andOrList = generateMixedAndOrList(expr);
+      const combinator = andOrList[1] as DefaultCombinatorName;
+      const filteredList = andOrList
+        .filter(v => Array.isArray(v) || (!!v && typeof v !== 'string' && 'type' in v))
+        .map(v =>
+          Array.isArray(v) ? v.filter(vf => !!v && typeof vf !== 'string' && 'type' in vf) : v
+        ) as (CELExpression | CELExpression[])[];
+      const rules = filteredList
+        .map((exp): DefaultRuleGroupType | DefaultRuleType | null => {
+          if (Array.isArray(exp)) {
+            return {
+              combinator: 'and',
+              rules: exp
+                .map(e => processCELExpression(e))
+                .filter(r => !!r) as DefaultRuleGroupArray,
+            };
+          }
+          return processCELExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
+        })
+        .filter(r => !!r) as DefaultRuleGroupArray;
+      /* istanbul ignore else */
+      if (rules.length > 0) {
+        return { combinator, rules };
+      }
+    } else if (isCELRelation(expr)) {
       let field: string | null = null;
       let value: any = '';
       let valueSource: ValueSource | undefined = undefined;
