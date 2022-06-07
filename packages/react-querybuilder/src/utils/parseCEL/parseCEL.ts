@@ -7,11 +7,11 @@ import type {
   DefaultRuleGroupICArray,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
+  DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Field,
-  OptionGroup,
+  ParseCELOptions,
   ValueSource,
-  ValueSources,
 } from '../../types/index.noReact';
 import { celParser } from './celParser';
 import type { CELExpression } from './types';
@@ -24,18 +24,27 @@ import {
   isCELConditionalOr,
   isCELExpressionGroup,
   isCELIdentifier,
+  isCELLikeExpression,
   isCELLiteral,
+  isCELNegation,
   isCELRelation,
+  isCELStringLiteral,
 } from './utils';
 
-export const parseCEL = (
-  cel: string,
-  options: {
-    fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
-    getValueSources?: (f: string, o: string) => ValueSources;
-    independentCombinators?: boolean;
-  } = {}
-): DefaultRuleGroupTypeAny => {
+/**
+ * Converts a SQL `SELECT` statement into a query suitable for
+ * the QueryBuilder component's `query` or `defaultQuery` props.
+ */
+function parseCEL(sql: string): DefaultRuleGroupType;
+function parseCEL(
+  sql: string,
+  options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators?: false }
+): DefaultRuleGroupType;
+function parseCEL(
+  sql: string,
+  options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators: true }
+): DefaultRuleGroupTypeIC;
+function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
   let ic = false;
   let fieldsFlat: Field[] = [];
   const getValueSources = options?.getValueSources;
@@ -106,12 +115,33 @@ export const parseCEL = (
   }
 
   const processCELExpression = (
-    expr: CELExpression
+    expr: CELExpression,
+    processOpts: { groupOnlyIfNecessary?: boolean; forwardNegation?: boolean } = {}
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
-    if (isCELExpressionGroup(expr)) {
-      const rule = processCELExpression(expr);
+    const { forwardNegation, groupOnlyIfNecessary } = processOpts;
+    if (isCELNegation(expr)) {
+      const negate = expr.negations.value.length % 2 === 1;
+      const negatedExpr = processCELExpression(expr.value, {
+        groupOnlyIfNecessary: true,
+        forwardNegation: negate,
+      });
+      if (negatedExpr) {
+        if (
+          !negate ||
+          (negate && !('rules' in negatedExpr) && negatedExpr.operator.startsWith('doesNot'))
+        ) {
+          return ic
+            ? ({ rules: [negatedExpr] } as DefaultRuleGroupTypeIC)
+            : ({ combinator: 'and', rules: [negatedExpr] } as DefaultRuleGroupType);
+        }
+        return ic
+          ? ({ rules: [negatedExpr], not: true } as DefaultRuleGroupTypeIC)
+          : ({ combinator: 'and', rules: [negatedExpr], not: true } as DefaultRuleGroupType);
+      }
+    } else if (isCELExpressionGroup(expr)) {
+      const rule = processCELExpression(expr.value);
       if (rule) {
-        if ('rules' in rule) {
+        if ('rules' in rule || (groupOnlyIfNecessary && isCELExpressionGroup(expr.value))) {
           return rule;
         }
         return ic ? { rules: [rule] } : { combinator: 'and', rules: [rule] };
@@ -127,7 +157,7 @@ export const parseCEL = (
         });
         // Bail out completely if any rules in the list were invalid
         // so as not to return an incorrect and/or sequence
-        if (rules.includes(null)) {
+        if (!rules.every(Boolean)) {
           return null;
         }
         return {
@@ -158,9 +188,27 @@ export const parseCEL = (
       if (rules.length > 0) {
         return { combinator, rules };
       }
+    } else if (isCELLikeExpression(expr)) {
+      const {
+        left: { value: field },
+        right: { value: func },
+      } = expr;
+      const operatorPre: DefaultOperatorName = func === 'startsWith' ? 'beginsWith' : func;
+      const operator = forwardNegation
+        ? (`doesNot${operatorPre[0].toUpperCase()}${operatorPre
+            .slice(1)
+            .replace(/s/, '')}` as DefaultOperatorName)
+        : operatorPre;
+      if (typeof operator !== 'undefined') {
+        const valueObj = expr.list.value[0];
+        const value = isCELStringLiteral(valueObj) ? evalCELLiteralValue(valueObj) : valueObj.value;
+        const valueSource: ValueSource | undefined =
+          expr.list.value[0].type === 'Identifier' ? 'field' : undefined;
+        return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
+      }
     } else if (isCELRelation(expr)) {
       let field: string | null = null;
-      let value: any = '';
+      let value: any = undefined;
       let valueSource: ValueSource | undefined = undefined;
       const { left, right } = expr;
       if (isCELIdentifier(left)) {
@@ -172,10 +220,12 @@ export const parseCEL = (
       } else if (isCELLiteral(right)) {
         value = evalCELLiteralValue(right);
       }
-      const operator = convertRelop(expr.operator);
-      if (field) {
-        const rule: DefaultRuleType = { field, operator, value, valueSource };
-        return ic ? { rules: [rule] } : { combinator: 'and', rules: [rule] };
+      let operator = convertRelop(expr.operator);
+      if (value === null && (operator === '=' || operator === '!=')) {
+        operator = operator === '=' ? 'null' : 'notNull';
+      }
+      if (field && typeof value !== 'undefined') {
+        return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
     }
     return null;
@@ -192,4 +242,6 @@ export const parseCEL = (
     }
   }
   return { rules: [], ...(ic ? {} : { combinator: 'and' }) };
-};
+}
+
+export { parseCEL };

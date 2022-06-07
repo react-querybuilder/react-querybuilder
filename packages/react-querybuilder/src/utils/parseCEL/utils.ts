@@ -5,10 +5,15 @@ import type {
   CELExpression,
   CELExpressionGroup,
   CELIdentifier,
+  CELLikeExpression,
   CELLiteral,
+  CELMember,
+  CELNegation,
+  CELNegative,
   CELNumericLiteral,
   CELRelation,
   CELRelop,
+  CELStringLiteral,
 } from './types';
 
 export const convertRelop = (op: CELRelop) => op.replace(/^==$/, '=') as DefaultOperatorName;
@@ -21,12 +26,14 @@ export const isCELConditionalAnd = (expr: CELExpression): expr is CELConditional
   expr.type === 'ConditionalAnd';
 export const isCELConditionalOr = (expr: CELExpression): expr is CELConditionalOr =>
   expr.type === 'ConditionalOr';
+export const isCELStringLiteral = (expr: CELExpression): expr is CELStringLiteral =>
+  expr.type === 'StringLiteral';
 export const isCELLiteral = (expr: CELExpression): expr is CELLiteral =>
   isCELNumericLiteral(expr) ||
   expr.type === 'BooleanLiteral' ||
   expr.type === 'NullLiteral' ||
   expr.type === 'BytesLiteral' ||
-  expr.type === 'StringLiteral';
+  isCELStringLiteral(expr);
 export const isCELNumericLiteral = (expr: CELExpression): expr is CELNumericLiteral =>
   expr.type === 'FloatLiteral' ||
   expr.type === 'IntegerLiteral' ||
@@ -34,11 +41,27 @@ export const isCELNumericLiteral = (expr: CELExpression): expr is CELNumericLite
 export const isCELRelation = (expr: CELExpression): expr is CELRelation => expr.type === 'Relation';
 export const isCELIdentifier = (expr: CELExpression): expr is CELIdentifier =>
   expr.type === 'Identifier';
+export const isCELNegation = (expr: CELExpression): expr is CELNegation => expr.type === 'Negation';
+export const isCELNegative = (expr: CELExpression): expr is CELNegative => expr.type === 'Negative';
+export const isCELMember = (expr: CELExpression): expr is CELMember => expr.type === 'Member';
+
+export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpression =>
+  isCELMember(expr) &&
+  !!expr.left &&
+  !!expr.right &&
+  !!expr.list &&
+  isCELIdentifier(expr.left) &&
+  isCELIdentifier(expr.right) &&
+  (expr.right.value === 'contains' ||
+    expr.right.value === 'startsWith' ||
+    expr.right.value === 'endsWith') &&
+  expr.list.value.length === 1 &&
+  (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 
 export const evalCELLiteralValue = (literal: CELLiteral) =>
   literal.type === 'StringLiteral'
     ? literal.value.replace(/^(['"]?)(.+?)\1$/, '$2')
-    : literal.type === 'BooleanLiteral'
+    : literal.type === 'BooleanLiteral' || literal.type === 'NullLiteral'
     ? literal.value
     : literal.type === 'IntegerLiteral' || literal.type === 'UnsignedIntegerLiteral'
     ? parseInt(literal.value.replace(/u$/i, ''), isHexadecimal(literal.value) ? 16 : 10)
