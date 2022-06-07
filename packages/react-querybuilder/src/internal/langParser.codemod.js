@@ -1,5 +1,7 @@
-/** @type {import('./types').ParseCELCodeMod} */
-export default ({ source }, { jscodeshift: j }) =>
+import path from 'node:path';
+
+/** @type {import('./types').LanguageParserCodeMod} */
+export default ({ path: filePath, source }, { jscodeshift: j }) =>
   j(
     j(source)
       .find(j.LabeledStatement)
@@ -19,11 +21,11 @@ export default ({ source }, { jscodeshift: j }) =>
           type: 'ExportSpecifier',
           local: {
             type: 'Identifier',
-            name: 'celParser',
+            name: path.parse(filePath).name,
           },
           exported: {
             type: 'Identifier',
-            name: 'celParser',
+            name: path.parse(filePath).name,
           },
         },
       ],
