@@ -108,7 +108,7 @@ case 9:
  this.$ = { type: 'BooleanLiteral', value: false } 
 break;
 case 10:
- this.$ = { type: 'NullLiteral' } 
+ this.$ = { type: 'NullLiteral', value: null } 
 break;
 case 11: case 12: case 13: case 14: case 15: case 17: case 18: case 19: case 20: case 21: case 22: case 23: case 29: case 39: case 46: case 52: case 53: case 54:
  this.$ = $$[$0] 
@@ -742,37 +742,37 @@ case 23:return 29
 break;
 case 24:return 34
 break;
-case 25:return 62
+case 25:return 52
 break;
-case 26:return 52
+case 26:return 36
 break;
-case 27:return 36
+case 27:return 53
 break;
-case 28:return 53
+case 28:return 54
 break;
-case 29:return 54
+case 29:return 55
 break;
-case 30:return 55
+case 30:return 24
 break;
-case 31:return 24
+case 31:return 25
 break;
-case 32:return 25
+case 32:return 26
 break;
-case 33:return 26
+case 33:return 27
 break;
-case 34:return 27
+case 34:return 28
 break;
-case 35:return 28
+case 35:return 45
 break;
-case 36:return 45
+case 36:return 48
 break;
-case 37:return 48
+case 37:return 60
 break;
-case 38:return 22
+case 38:return 62
 break;
-case 39:return 19
+case 39:return 22
 break;
-case 40:return 7
+case 40:return 19
 break;
 case 41:return 7
 break;
@@ -780,20 +780,22 @@ case 42:return 7
 break;
 case 43:return 7
 break;
-case 44:return 12
+case 44:return 7
 break;
-case 45:return 13
+case 45:return 12
 break;
-case 46:return 14
+case 46:return 13
 break;
-case 47:return 5
+case 47:return 14
 break;
-case 48:return 'INVALID'
+case 48:return 5
+break;
+case 49:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:[/][/]\s.*\n)/,/^(?:\s+)/,/^(?:in\b)/,/^(?:as\b)/,/^(?:break\b)/,/^(?:const\b)/,/^(?:continue\b)/,/^(?:else\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:if\b)/,/^(?:import\b)/,/^(?:let\b)/,/^(?:loop\b)/,/^(?:package\b)/,/^(?:namespace\b)/,/^(?:return\b)/,/^(?:var\b)/,/^(?:void\b)/,/^(?:while\b)/,/^(?:,)/,/^(?:\()/,/^(?:\))/,/^(?:!=)/,/^(?:!)/,/^(?:\|\|)/,/^(?:\+)/,/^(?:-)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:==)/,/^(?:>=)/,/^(?:>)/,/^(?:<=)/,/^(?:<)/,/^(?:\{)/,/^(?:\})/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:null\b)/,/^(?:[rR]?['](\\.|[^'\\n\\r])*['])/,/^(?:[rR]?["](\\.|[^"\\n\\r])*["])/,/^(?:[rR]?['''](\\.)*['''])/,/^(?:[rR]?["""](\\.)*["""])/,/^(?:[-]?([0-9]+|0x[0-9a-fA-F]+))/,/^(?:([0-9]+|0x[0-9a-fA-F]+)[uU])/,/^(?:[-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"inclusive":true}}
+rules: [/^(?:[/][/]\s.*\n)/,/^(?:\s+)/,/^(?:in\b)/,/^(?:as\b)/,/^(?:break\b)/,/^(?:const\b)/,/^(?:continue\b)/,/^(?:else\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:if\b)/,/^(?:import\b)/,/^(?:let\b)/,/^(?:loop\b)/,/^(?:package\b)/,/^(?:namespace\b)/,/^(?:return\b)/,/^(?:var\b)/,/^(?:void\b)/,/^(?:while\b)/,/^(?:,)/,/^(?:\()/,/^(?:\))/,/^(?:!=)/,/^(?:!)/,/^(?:\+)/,/^(?:-)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:==)/,/^(?:>=)/,/^(?:>)/,/^(?:<=)/,/^(?:<)/,/^(?:\{)/,/^(?:\})/,/^(?:&&)/,/^(?:\|\|)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:null\b)/,/^(?:[rR]?['](\\.|[^'\\n\\r])*['])/,/^(?:[rR]?["](\\.|[^"\\n\\r])*["])/,/^(?:[rR]?['''](\\.)*['''])/,/^(?:[rR]?["""](\\.)*["""])/,/^(?:[-]?([0-9]+|0x[0-9a-fA-F]+))/,/^(?:([0-9]+|0x[0-9a-fA-F]+)[uU])/,/^(?:[-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49],"inclusive":true}}
 });
 return lexer;
 })();
