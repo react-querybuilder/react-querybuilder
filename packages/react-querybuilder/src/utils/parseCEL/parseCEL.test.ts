@@ -339,6 +339,25 @@ it('handles "in" operator', () => {
     parseCEL('f1 in [f2,f3]'),
     wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' })
   );
+  testParseCEL(
+    parseCEL('f1 in {f2: "v2", "f3": "v3"}'),
+    wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3' })
+  );
+});
+
+it('outputs lists as arrays', () => {
+  testParseCEL(
+    parseCEL('f1 in ["Test","Test2"]', { listsAsArrays: true }),
+    wrapRule({ field: 'f1', operator: 'in', value: ['Test', 'Test2'] })
+  );
+  testParseCEL(
+    parseCEL('f1 in [f2,f3]', { listsAsArrays: true }),
+    wrapRule({ field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' })
+  );
+  testParseCEL(
+    parseCEL('f1 in {f2: "v2", "f3": "v3"}', { listsAsArrays: true }),
+    wrapRule({ field: 'f1', operator: 'in', value: ['f2', 'f3'] })
+  );
 });
 
 // it('validates fields', () => {
@@ -380,10 +399,17 @@ it('handles independent combinators', () => {
 });
 
 it('ignores things', () => {
-  // testParseCEL(parseCEL('f1 == f2 ? f3 : f4'), wrapRule());
-  testParseCEL(parseCEL(''), wrapRule());
-  testParseCEL(parseCEL('f1 == f2("")'), wrapRule());
-  testParseCEL(parseCEL('(f1 == f2(""))'), wrapRule());
-  testParseCEL(parseCEL('true'), wrapRule());
-  testParseCEL(parseCEL('f1 in ["Test",f2]'), wrapRule());
+  const expressionsToIgnore = [
+    // 'f1 == f2 ? f3 : f4',
+    '',
+    'f1 == f2("")',
+    '(f1 == f2(""))',
+    'true',
+    'f1 in ["Test",f2]',
+    'f1 in {["f2"]: "v2", "f3": "v3"}',
+  ];
+
+  for (const pr of expressionsToIgnore) {
+    testParseCEL(parseCEL(pr), wrapRule());
+  }
 });

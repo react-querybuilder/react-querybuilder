@@ -737,51 +737,51 @@ case 22:return 16
 break;
 case 23:return 40
 break;
-case 24:return 50
+case 24:return 62
 break;
-case 25:return 44
+case 25:return 50
 break;
-case 26:return 45
+case 26:return 44
 break;
-case 27:return 41
+case 27:return 45
 break;
-case 28:return 43
+case 28:return 41
 break;
-case 29:return 28
+case 29:return 43
 break;
-case 30:return 35
+case 30:return 28
 break;
-case 31:return 53
+case 31:return 35
 break;
-case 32:return 37
+case 32:return 53
 break;
-case 33:return 54
+case 33:return 37
 break;
-case 34:return 55
+case 34:return 54
 break;
-case 35:return 56
+case 35:return 55
 break;
-case 36:return 23
+case 36:return 56
 break;
-case 37:return 24
+case 37:return 23
 break;
-case 38:return 25
+case 38:return 24
 break;
-case 39:return 26
+case 39:return 25
 break;
-case 40:return 27
+case 40:return 26
 break;
-case 41:return 46
+case 41:return 27
 break;
-case 42:return 49
+case 42:return 46
 break;
-case 43:return 63
+case 43:return 49
 break;
-case 44:return 64
+case 44:return 63
 break;
-case 45:return 21
+case 45:return 64
 break;
-case 46:return 7
+case 46:return 21
 break;
 case 47:return 7
 break;
@@ -789,22 +789,24 @@ case 48:return 7
 break;
 case 49:return 7
 break;
-case 50:return 12
+case 50:return 7
 break;
-case 51:return 13
+case 51:return 12
 break;
-case 52:return 14
+case 52:return 13
 break;
-case 53:return 5
+case 53:return 14
 break;
-case 54:return 'INVALID'
+case 54:return 5
 break;
-case 55:console.log(yy_.yytext);
+case 55:return 'INVALID'
+break;
+case 56:console.log(yy_.yytext);
 break;
 }
 },
-rules: [/^(?:[/][/]\s.*\n)/,/^(?:\s+)/,/^(?:in)/,/^(?:as)/,/^(?:break)/,/^(?:const)/,/^(?:continue)/,/^(?:else)/,/^(?:for)/,/^(?:function)/,/^(?:if)/,/^(?:import)/,/^(?:let)/,/^(?:loop)/,/^(?:package)/,/^(?:namespace)/,/^(?:return)/,/^(?:var)/,/^(?:void)/,/^(?:while)/,/^(?:null)/,/^(?:true)/,/^(?:false)/,/^(?:\.)/,/^(?:,)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!=)/,/^(?:!)/,/^(?:\+)/,/^(?:-)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:==)/,/^(?:>=)/,/^(?:>)/,/^(?:<=)/,/^(?:<)/,/^(?:\{)/,/^(?:\})/,/^(?:&&)/,/^(?:\|\|)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:[rR]?['](\\.|[^'\\n\\r])*['])/,/^(?:[rR]?["](\\.|[^"\\n\\r])*["])/,/^(?:[rR]?['''](\\.)*['''])/,/^(?:[rR]?["""](\\.)*["""])/,/^(?:[-]?([0-9]+|0x[0-9a-fA-F]+))/,/^(?:([0-9]+|0x[0-9a-fA-F]+)[uU])/,/^(?:[-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?)/,/^(?:$)/,/^(?:.)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55],"inclusive":true}}
+rules: [/^(?:[/][/]\s.*\n)/,/^(?:\s+)/,/^(?:in)/,/^(?:as)/,/^(?:break)/,/^(?:const)/,/^(?:continue)/,/^(?:else)/,/^(?:for)/,/^(?:function)/,/^(?:if)/,/^(?:import)/,/^(?:let)/,/^(?:loop)/,/^(?:package)/,/^(?:namespace)/,/^(?:return)/,/^(?:var)/,/^(?:void)/,/^(?:while)/,/^(?:null)/,/^(?:true)/,/^(?:false)/,/^(?:\.)/,/^(?::)/,/^(?:,)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!=)/,/^(?:!)/,/^(?:\+)/,/^(?:-)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:==)/,/^(?:>=)/,/^(?:>)/,/^(?:<=)/,/^(?:<)/,/^(?:\{)/,/^(?:\})/,/^(?:&&)/,/^(?:\|\|)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:[rR]?['](\\.|[^'\\n\\r])*['])/,/^(?:[rR]?["](\\.|[^"\\n\\r])*["])/,/^(?:[rR]?['''](\\.)*['''])/,/^(?:[rR]?["""](\\.)*["""])/,/^(?:[-]?([0-9]+|0x[0-9a-fA-F]+))/,/^(?:([0-9]+|0x[0-9a-fA-F]+)[uU])/,/^(?:[-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?)/,/^(?:$)/,/^(?:.)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56],"inclusive":true}}
 });
 return lexer;
 })();
