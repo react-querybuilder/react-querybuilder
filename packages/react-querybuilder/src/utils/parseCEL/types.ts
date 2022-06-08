@@ -1,5 +1,3 @@
-import type { API, FileInfo } from 'jscodeshift';
-
 type TokenType =
   | 'StringLiteral'
   | 'BytesLiteral'
@@ -236,8 +234,6 @@ export type CELMathOperation =
   | CELDivision
   | CELModulo;
 export type CELUnary = CELMember | CELNegation | CELNegative;
-
-export type ParseCELCodeMod = (file: FileInfo, api: API) => string;
 
 export interface ParsedCEL {
   nodeType: 'Main';

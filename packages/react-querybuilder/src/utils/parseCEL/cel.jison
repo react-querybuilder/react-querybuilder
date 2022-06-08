@@ -180,10 +180,11 @@ relop
   | '<=' -> $1
   | '<' -> $1
   | '!=' -> $1
-  | 'in' -> $1
   ;
 relation
   : member relop member -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | member 'in' list -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | member 'in' map -> { type: 'Relation', left: $1, operator: $2, right: $3 }
   ;
 exclamation_list
   : '!' -> { type: 'ExclamationList', value: [ $1 ] }
@@ -216,9 +217,15 @@ primary
   | ident '(' expr_list trailing_comma ')' -> { type: 'FunctionCall', name: $1, args: $3, trailingComma: $4 }
   | DOT ident '(' expr_list trailing_comma ')' -> { type: 'Property', value: $2, args: $4, trailingComma: $5 }
   | '(' expr ')' -> { type: 'ExpressionGroup', value: $2 }
-  | '[' expr_list trailing_comma ']' -> { type: 'List', value: $2, trailingComma: $3 }
-  | '{' map_inits trailing_comma '}' -> { type: 'Map', value: $2, trailingComma: $3 }
+  | list -> $1
+  | map -> $1
   | literal -> $1
+  ;
+list
+  : '[' expr_list trailing_comma ']' -> { type: 'List', value: $2, trailingComma: $3 }
+  ;
+map
+  : '{' map_inits trailing_comma '}' -> { type: 'Map', value: $2, trailingComma: $3 }
   ;
 math_operation
   : expr '+' expr -> { type: 'Addition', left: $1, right: $3 }

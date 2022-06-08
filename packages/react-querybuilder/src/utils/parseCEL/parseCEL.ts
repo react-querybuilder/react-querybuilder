@@ -1,5 +1,4 @@
-import { isOptionGroupArray } from '..';
-import { filterFieldsByComparator, getValueSourcesUtil, uniqByName } from '../../internal';
+import { fieldIsValidUtil, getFieldsArray } from '../../internal';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,7 +8,6 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Field,
   ParseCELOptions,
   ValueSource,
 } from '../../types/index.noReact';
@@ -32,93 +30,44 @@ import {
 } from './utils';
 
 /**
- * Converts a SQL `SELECT` statement into a query suitable for
+ * Converts a CEL string expression into a query suitable for
  * the QueryBuilder component's `query` or `defaultQuery` props.
  */
-function parseCEL(sql: string): DefaultRuleGroupType;
+function parseCEL(cel: string): DefaultRuleGroupType;
 function parseCEL(
-  sql: string,
+  cel: string,
   options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators?: false }
 ): DefaultRuleGroupType;
 function parseCEL(
-  sql: string,
+  cel: string,
   options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators: true }
 ): DefaultRuleGroupTypeIC;
 function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
-  let ic = false;
-  let fieldsFlat: Field[] = [];
-  const getValueSources = options?.getValueSources;
+  const { independentCombinators, fields } = options;
+  const ic = !!independentCombinators;
+  const fieldsFlat = getFieldsArray(fields);
 
-  if (options) {
-    const { independentCombinators, fields } = options;
-    ic = !!independentCombinators;
-    /* istanbul ignore else */
-    if (fields) {
-      const fieldsArray = Array.isArray(fields)
-        ? fields
-        : Object.keys(fields)
-            .map(fld => ({ ...fields[fld], name: fld }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-      if (isOptionGroupArray(fieldsArray)) {
-        fieldsFlat = uniqByName(fieldsFlat.concat(...fieldsArray.map(opt => opt.options)));
-      } else {
-        fieldsFlat = uniqByName(fieldsArray);
-      }
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function fieldIsValid(
+  const fieldIsValid = (
     fieldName: string,
     operator: DefaultOperatorName,
     subordinateFieldName?: string
-  ) {
-    // If fields option was an empty array or undefined, then all identifiers
-    // are considered valid.
-    if (fieldsFlat.length === 0) return true;
+  ) =>
+    fieldIsValidUtil({
+      fieldName,
+      fieldsFlat,
+      operator,
+      subordinateFieldName,
+      getValueSources: options?.getValueSources,
+    });
 
-    let valid = false;
-
-    const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
-    if (primaryField) {
-      if (
-        !subordinateFieldName &&
-        operator !== 'notNull' &&
-        operator !== 'null' &&
-        !getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'value')
-      ) {
-        valid = false;
-      } else {
-        valid = true;
-      }
-
-      if (valid && !!subordinateFieldName) {
-        if (
-          getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'field') &&
-          fieldName !== subordinateFieldName
-        ) {
-          const validSubordinateFields = filterFieldsByComparator(
-            primaryField,
-            fieldsFlat,
-            operator
-          ) as Field[];
-          if (!validSubordinateFields.find(vsf => vsf.name === subordinateFieldName)) {
-            valid = false;
-          }
-        } else {
-          valid = false;
-        }
-      }
-    }
-
-    return valid;
-  }
+  const emptyQuery: DefaultRuleGroupTypeAny = { rules: [], ...(ic ? {} : { combinator: 'and' }) };
 
   const processCELExpression = (
     expr: CELExpression,
     processOpts: { groupOnlyIfNecessary?: boolean; forwardNegation?: boolean } = {}
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
     const { forwardNegation, groupOnlyIfNecessary } = processOpts;
+    /* istanbul ignore if */
     if (isCELNegation(expr)) {
       const negate = expr.negations.value.length % 2 === 1;
       const negatedExpr = processCELExpression(expr.value, {
@@ -197,13 +146,13 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       const operator = forwardNegation
         ? (`doesNot${operatorPre[0].toUpperCase()}${operatorPre
             .slice(1)
-            .replace(/s/, '')}` as DefaultOperatorName)
+            .replace('s', '')}` as DefaultOperatorName)
         : operatorPre;
-      if (typeof operator !== 'undefined') {
-        const valueObj = expr.list.value[0];
-        const value = isCELStringLiteral(valueObj) ? evalCELLiteralValue(valueObj) : valueObj.value;
-        const valueSource: ValueSource | undefined =
-          expr.list.value[0].type === 'Identifier' ? 'field' : undefined;
+      const valueObj = expr.list.value[0];
+      const value = isCELStringLiteral(valueObj) ? evalCELLiteralValue(valueObj) : valueObj.value;
+      const valueSource: ValueSource | undefined =
+        expr.list.value[0].type === 'Identifier' ? 'field' : undefined;
+      if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
     } else if (isCELRelation(expr)) {
@@ -213,35 +162,49 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       const { left, right } = expr;
       if (isCELIdentifier(left)) {
         field = left.value;
-      }
-      if (isCELIdentifier(right)) {
-        value = right.value;
-        valueSource = 'field';
-      } else if (isCELLiteral(right)) {
-        value = evalCELLiteralValue(right);
+        if (isCELIdentifier(right)) {
+          value = right.value;
+          valueSource = 'field';
+        } else if (isCELLiteral(right)) {
+          value = evalCELLiteralValue(right);
+        }
+      } else {
+        /* istanbul ignore else */
+        if (isCELIdentifier(right) && isCELLiteral(left)) {
+          field = right.value;
+          value = evalCELLiteralValue(left);
+        }
       }
       let operator = convertRelop(expr.operator);
       if (value === null && (operator === '=' || operator === '!=')) {
         operator = operator === '=' ? 'null' : 'notNull';
       }
-      if (field && typeof value !== 'undefined') {
+      if (
+        field &&
+        fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
+        typeof value !== 'undefined'
+      ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
     }
     return null;
   };
 
-  const { value } = celParser.parse(cel);
-  if (value) {
-    const result = processCELExpression(value);
-    if (result) {
-      if ('rules' in result) {
-        return result;
-      }
-      return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
-    }
+  let processedCEL: CELExpression;
+  try {
+    processedCEL = celParser.parse(cel).value;
+  } catch (err) {
+    return emptyQuery;
   }
-  return { rules: [], ...(ic ? {} : { combinator: 'and' }) };
+  const result = processCELExpression(processedCEL);
+  if (result) {
+    if ('rules' in result) {
+      return result;
+    }
+    return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
+  }
+
+  return emptyQuery;
 }
 
 export { parseCEL };
