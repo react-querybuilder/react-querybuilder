@@ -1,5 +1,3 @@
-import type { API, FileInfo } from 'jscodeshift';
-
 type AnyCase<T extends string> = string extends T
   ? string
   : T extends `${infer F1}${infer F2}${infer R}`
@@ -267,5 +265,3 @@ export interface ParsedSQL {
   };
   hasSemicolon: boolean;
 }
-
-export type ParseSQLCodeMod = (file: FileInfo, api: API) => string;

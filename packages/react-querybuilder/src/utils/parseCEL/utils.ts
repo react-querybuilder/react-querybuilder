@@ -1,5 +1,7 @@
 import type { DefaultCombinatorName, DefaultOperatorName } from '../../types/index.noReact';
 import type {
+  CELBooleanLiteral,
+  CELBytesLiteral,
   CELConditionalAnd,
   CELConditionalOr,
   CELExpression,
@@ -10,6 +12,7 @@ import type {
   CELMember,
   CELNegation,
   CELNegative,
+  CELNullLiteral,
   CELNumericLiteral,
   CELRelation,
   CELRelop,
@@ -30,10 +33,10 @@ export const isCELStringLiteral = (expr: CELExpression): expr is CELStringLitera
   expr.type === 'StringLiteral';
 export const isCELLiteral = (expr: CELExpression): expr is CELLiteral =>
   isCELNumericLiteral(expr) ||
+  isCELStringLiteral(expr) ||
   expr.type === 'BooleanLiteral' ||
   expr.type === 'NullLiteral' ||
-  expr.type === 'BytesLiteral' ||
-  isCELStringLiteral(expr);
+  expr.type === 'BytesLiteral';
 export const isCELNumericLiteral = (expr: CELExpression): expr is CELNumericLiteral =>
   expr.type === 'FloatLiteral' ||
   expr.type === 'IntegerLiteral' ||
@@ -58,16 +61,26 @@ export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpress
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 
-export const evalCELLiteralValue = (literal: CELLiteral) =>
-  literal.type === 'StringLiteral'
-    ? literal.value.replace(/^(['"]?)(.+?)\1$/, '$2')
-    : literal.type === 'BooleanLiteral' || literal.type === 'NullLiteral'
-    ? literal.value
-    : literal.type === 'IntegerLiteral' || literal.type === 'UnsignedIntegerLiteral'
-    ? parseInt(literal.value.replace(/u$/i, ''), isHexadecimal(literal.value) ? 16 : 10)
-    : isNaN(parseFloat(literal.value ?? ''))
-    ? null
-    : parseFloat(literal.value ?? '');
+function evalCELLiteralValue(literal: CELStringLiteral): string;
+function evalCELLiteralValue(literal: CELBooleanLiteral): boolean;
+function evalCELLiteralValue(literal: CELNumericLiteral): number | null;
+function evalCELLiteralValue(literal: CELBytesLiteral): null;
+function evalCELLiteralValue(literal: CELNullLiteral): null;
+function evalCELLiteralValue(literal: CELLiteral): string | boolean | number | null;
+function evalCELLiteralValue(literal: CELLiteral) {
+  if (literal.type === 'StringLiteral') {
+    return literal.value.replace(/^(['"]?)(.+?)\1$/, '$2');
+  } else if (literal.type === 'BooleanLiteral') {
+    return literal.value;
+  } else if (literal.type === 'NullLiteral' || literal.type === 'BytesLiteral') {
+    return null;
+  } else if (literal.type === 'IntegerLiteral' || literal.type === 'UnsignedIntegerLiteral') {
+    return parseInt(literal.value.replace(/u$/i, ''), isHexadecimal(literal.value) ? 16 : 10);
+  } else {
+    const num = parseFloat(literal.value);
+    return isNaN(num) ? null : parseFloat(literal.value);
+  }
+}
 
 export const normalizeCombinator = (c: '&&' | '||'): DefaultCombinatorName =>
   c === '||' ? 'or' : 'and';
@@ -137,3 +150,5 @@ export const generateMixedAndOrList = (expr: CELConditionalAnd | CELConditionalO
   }
   return returnArray;
 };
+
+export { evalCELLiteralValue };
