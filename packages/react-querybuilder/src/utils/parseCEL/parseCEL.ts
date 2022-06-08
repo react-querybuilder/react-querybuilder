@@ -12,7 +12,7 @@ import type {
   ValueSource,
 } from '../../types/index.noReact';
 import { celParser } from './celParser';
-import type { CELExpression } from './types';
+import type { CELExpression, CELIdentifier, CELLiteral } from './types';
 import {
   evalCELLiteralValue,
   generateFlatAndOrList,
@@ -24,6 +24,7 @@ import {
   isCELLikeExpression,
   isCELList,
   isCELLiteral,
+  isCELMap,
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
@@ -189,6 +190,16 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
             valueSource = 'field';
             value = right.value.value.map(id => id.value);
           }
+        }
+        if (value && !listsAsArrays) {
+          value = value.map((v: string | boolean | number) => `${v}`).join(',');
+        }
+      } else if (operator === 'in' && isCELMap(right)) {
+        const keys = right.value.value.map(v => v.left);
+        if (keys.every(k => isCELLiteral(k) || isCELIdentifier(k))) {
+          value = (keys as (CELLiteral | CELIdentifier)[]).map(k =>
+            isCELLiteral(k) ? evalCELLiteralValue(k) : k.value
+          );
         }
         if (value && !listsAsArrays) {
           value = value.map((v: string | boolean | number) => `${v}`).join(',');

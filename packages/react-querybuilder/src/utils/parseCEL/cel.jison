@@ -95,6 +95,7 @@ true                                                              return 'BOOL_L
 false                                                             return 'BOOL_LIT'
 // Operators and other characters
 \.                                                                return 'DOT'
+":"                                                               return ':'
 ","                                                               return ','
 "["                                                               return '['
 "]"                                                               return ']'

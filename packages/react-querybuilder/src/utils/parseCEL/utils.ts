@@ -10,6 +10,7 @@ import type {
   CELLikeExpression,
   CELList,
   CELLiteral,
+  CELMap,
   CELMember,
   CELNegation,
   CELNegative,
@@ -40,6 +41,7 @@ export const isCELNumericLiteral = (expr: CELExpression): expr is CELNumericLite
   expr.type === 'UnsignedIntegerLiteral';
 export const isCELRelation = (expr: CELExpression): expr is CELRelation => expr.type === 'Relation';
 export const isCELList = (expr: CELExpression): expr is CELList => expr.type === 'List';
+export const isCELMap = (expr: CELExpression): expr is CELMap => expr.type === 'Map';
 export const isCELIdentifier = (expr: CELExpression): expr is CELIdentifier =>
   expr.type === 'Identifier';
 export const isCELNegation = (expr: CELExpression): expr is CELNegation => expr.type === 'Negation';
