@@ -22,6 +22,7 @@ import {
   isCELExpressionGroup,
   isCELIdentifier,
   isCELLikeExpression,
+  isCELList,
   isCELLiteral,
   isCELNegation,
   isCELRelation,
@@ -43,7 +44,7 @@ function parseCEL(
   options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators: true }
 ): DefaultRuleGroupTypeIC;
 function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
-  const { independentCombinators, fields } = options;
+  const { fields, independentCombinators, listsAsArrays } = options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
 
@@ -171,7 +172,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         }
       } else {
         /* istanbul ignore else */
-        if (isCELIdentifier(right) && isCELLiteral(left)) {
+        if (isCELIdentifier(right) && isCELLiteral(left) && expr.operator !== 'in') {
           flip = true;
           field = right.value;
           value = evalCELLiteralValue(left);
@@ -180,6 +181,18 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       let operator = normalizeOperator(expr.operator, flip);
       if (value === null && (operator === '=' || operator === '!=')) {
         operator = operator === '=' ? 'null' : 'notNull';
+      } else if (operator === 'in' && isCELList(right)) {
+        if (right.value.value.every(isCELLiteral)) {
+          value = right.value.value.map(evalCELLiteralValue);
+        } else {
+          if (right.value.value.every(isCELIdentifier)) {
+            valueSource = 'field';
+            value = right.value.value.map(id => id.value);
+          }
+        }
+        if (value && !listsAsArrays) {
+          value = value.map((v: string | boolean | number) => `${v}`).join(',');
+        }
       }
       if (
         field &&
