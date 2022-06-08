@@ -400,7 +400,7 @@ it('handles independent combinators', () => {
 
 it('ignores things', () => {
   const expressionsToIgnore = [
-    // 'f1 == f2 ? f3 : f4',
+    'f1 == f2 ? f3 : f4',
     '',
     'f1 == f2("")',
     '(f1 == f2(""))',
