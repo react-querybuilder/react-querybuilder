@@ -33,17 +33,27 @@ const testParseCELic = (
 
 it('works for basic relations', () => {
   testParseCEL(parseCEL('f1 == "Test"'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL(parseCEL('"Test" == f1'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   testParseCEL(parseCEL('(f1 == "Test")'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   testParseCEL(parseCEL('f1 != "Test"'), wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
   testParseCEL(parseCEL('f1 > 1'), wrapRule({ field: 'f1', operator: '>', value: 1 }));
   testParseCEL(parseCEL('f1 >= 1'), wrapRule({ field: 'f1', operator: '>=', value: 1 }));
   testParseCEL(parseCEL('f1 < 1'), wrapRule({ field: 'f1', operator: '<', value: 1 }));
   testParseCEL(parseCEL('f1 <= 1'), wrapRule({ field: 'f1', operator: '<=', value: 1 }));
+  testParseCEL(parseCEL('f1 == 12.14'), wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
+  // TODO: fix hexadecimal processing
+  // testParseCEL(parseCEL('f1 == 0x1214'), wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
+  // testParseCEL(parseCEL('f1 == 0x1214u'), wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
+  testParseCEL(parseCEL('f1 == 1214u'), wrapRule({ field: 'f1', operator: '=', value: 1214 }));
   testParseCEL(parseCEL('f1 == null'), wrapRule({ field: 'f1', operator: 'null', value: null }));
   testParseCEL(parseCEL('f1 != null'), wrapRule({ field: 'f1', operator: 'notNull', value: null }));
   testParseCEL(parseCEL('f1 == true'), wrapRule({ field: 'f1', operator: '=', value: true }));
   testParseCEL(parseCEL('f1 == false'), wrapRule({ field: 'f1', operator: '=', value: false }));
+  // flips operators
+  testParseCEL(parseCEL('"Test" == f1'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL(parseCEL('1214 > f1'), wrapRule({ field: 'f1', operator: '<', value: 1214 }));
+  testParseCEL(parseCEL('1214 >= f1'), wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
+  testParseCEL(parseCEL('1214 < f1'), wrapRule({ field: 'f1', operator: '>', value: 1214 }));
+  testParseCEL(parseCEL('1214 <= f1'), wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
 it('handles "like" comparisons', () => {

@@ -19,8 +19,6 @@ import type {
   CELStringLiteral,
 } from './types';
 
-export const convertRelop = (op: CELRelop) => op.replace(/^==$/, '=') as DefaultOperatorName;
-
 export const isHexadecimal = (val: string) => /^0x[0-9a-f]+$/i.test(val);
 
 export const isCELExpressionGroup = (expr: CELExpression): expr is CELExpressionGroup =>
@@ -74,21 +72,14 @@ function evalCELLiteralValue(literal: CELLiteral) {
     return literal.value;
   } else if (literal.type === 'NullLiteral' || literal.type === 'BytesLiteral') {
     return null;
-  } else if (literal.type === 'IntegerLiteral' || literal.type === 'UnsignedIntegerLiteral') {
-    return parseInt(literal.value.replace(/u$/i, ''), isHexadecimal(literal.value) ? 16 : 10);
-  } else {
-    const num = parseFloat(literal.value);
-    return isNaN(num) ? null : parseFloat(literal.value);
   }
+  return literal.value;
 }
 
 export const normalizeCombinator = (c: '&&' | '||'): DefaultCombinatorName =>
   c === '||' ? 'or' : 'and';
 
-export const normalizeOperator = (
-  op: Exclude<CELRelop, 'in'>,
-  flip?: boolean
-): DefaultOperatorName => {
+export const normalizeOperator = (op: CELRelop, flip?: boolean): DefaultOperatorName => {
   if (flip) {
     if (op === '<') return '>';
     if (op === '<=') return '>=';
