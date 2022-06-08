@@ -93,13 +93,13 @@ case 3: case 4:
 this.$ = { type: 'BytesLiteral', value: $$[$0] };
 break;
 case 5:
-this.$ = { type: 'IntegerLiteral', value: $$[$0] };
+this.$ = { type: 'IntegerLiteral', value: parseInt($$[$0], /x/.test($$[$0]) ? 16 : 10) };
 break;
 case 6:
-this.$ = { type: 'UnsignedIntegerLiteral', value: $$[$0] };
+this.$ = { type: 'UnsignedIntegerLiteral', value: parseInt($$[$0].replace(/u$/i, ''), /^0x/.test($$[$0]) ? 16 : 10) };
 break;
 case 7:
-this.$ = { type: 'FloatLiteral', value: $$[$0] };
+this.$ = { type: 'FloatLiteral', value: parseFloat($$[$0]) };
 break;
 case 8:
 this.$ = { type: 'BooleanLiteral', value: $$[$0] === 'true' };

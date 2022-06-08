@@ -14,7 +14,6 @@ import type {
 import { celParser } from './celParser';
 import type { CELExpression } from './types';
 import {
-  convertRelop,
   evalCELLiteralValue,
   generateFlatAndOrList,
   generateMixedAndOrList,
@@ -27,6 +26,7 @@ import {
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
+  normalizeOperator,
 } from './utils';
 
 /**
@@ -159,6 +159,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       let field: string | null = null;
       let value: any = undefined;
       let valueSource: ValueSource | undefined = undefined;
+      let flip = false;
       const { left, right } = expr;
       if (isCELIdentifier(left)) {
         field = left.value;
@@ -171,11 +172,12 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       } else {
         /* istanbul ignore else */
         if (isCELIdentifier(right) && isCELLiteral(left)) {
+          flip = true;
           field = right.value;
           value = evalCELLiteralValue(left);
         }
       }
-      let operator = convertRelop(expr.operator);
+      let operator = normalizeOperator(expr.operator, flip);
       if (value === null && (operator === '=' || operator === '!=')) {
         operator = operator === '=' ? 'null' : 'notNull';
       }

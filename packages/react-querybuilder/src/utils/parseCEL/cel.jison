@@ -137,6 +137,8 @@ false                                                             return 'BOOL_L
 %left '+' '-'
 %left '/' '%' '*'
 %left '?' ':'
+%left IDENT
+%left INT_LIT UINT_LIT
 
 %start main
 
@@ -153,9 +155,9 @@ bytes_literal
   | "B" string_literal -> { type: 'BytesLiteral', value: $2 }
   ;
 number_literal
-  : INT_LIT -> { type: 'IntegerLiteral', value: $1 }
-  | UINT_LIT = -> { type: 'UnsignedIntegerLiteral', value: $1 }
-  | FLOAT_LIT = -> { type: 'FloatLiteral', value: $1 }
+  : INT_LIT -> { type: 'IntegerLiteral', value: parseInt($1, /x/.test($1) ? 16 : 10) }
+  | UINT_LIT = -> { type: 'UnsignedIntegerLiteral', value: parseInt($1.replace(/u$/i, ''), /^0x/.test($1) ? 16 : 10) }
+  | FLOAT_LIT = -> { type: 'FloatLiteral', value: parseFloat($1) }
   ;
 boolean_literal
   : BOOL_LIT -> { type: 'BooleanLiteral', value: $1 === 'true' }

@@ -56,15 +56,15 @@ export interface CELBytesLiteral extends CELExpression {
 }
 export interface CELIntegerLiteral extends CELExpression {
   type: 'IntegerLiteral';
-  value: string;
+  value: number;
 }
 export interface CELUnsignedIntegerLiteral extends CELExpression {
   type: 'UnsignedIntegerLiteral';
-  value: string;
+  value: number;
 }
 export interface CELFloatLiteral extends CELExpression {
   type: 'FloatLiteral';
-  value: string;
+  value: number;
 }
 export interface CELBooleanLiteral extends CELExpression {
   type: 'BooleanLiteral';
