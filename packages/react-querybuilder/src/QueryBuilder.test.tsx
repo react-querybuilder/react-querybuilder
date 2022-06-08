@@ -1318,10 +1318,11 @@ describe('validation', () => {
 
 // The drag-and-drop tests run once for QueryBuilderOriginal and once again
 // for QueryBuilderWithoutDndProvider.
-for (const QB of [QueryBuilderOriginal, QueryBuilderWithoutDndProvider]) {
-  const [QBforDnD, getBackend] = wrapWithTestBackend(QB);
-  const gDnDBe = () => getBackend()!;
-  describe(`enableDragAndDrop (${QB.displayName})`, () => {
+describe.each([{ QB: QueryBuilderOriginal }, { QB: QueryBuilderWithoutDndProvider }])(
+  'enableDragAndDrop ($QB.displayName)',
+  ({ QB }) => {
+    const [QBforDnD, getBackend] = wrapWithTestBackend(QB);
+    const gDnDBe = () => getBackend()!;
     describe('standard rule groups', () => {
       it('should set data-dnd attribute appropriately', () => {
         const { container, rerender } = render(<QBforDnD />);
@@ -1643,8 +1644,8 @@ for (const QB of [QueryBuilderOriginal, QueryBuilderWithoutDndProvider]) {
         });
       });
     });
-  });
-}
+  }
+);
 
 describe('disabled', () => {
   it('should have the correct classname', () => {
