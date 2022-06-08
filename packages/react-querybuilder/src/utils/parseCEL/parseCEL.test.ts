@@ -330,6 +330,17 @@ describe('fields and getValueSources', () => {
   });
 });
 
+it('handles "in" operator', () => {
+  testParseCEL(
+    parseCEL('f1 in ["Test","Test2"]'),
+    wrapRule({ field: 'f1', operator: 'in', value: 'Test,Test2' })
+  );
+  testParseCEL(
+    parseCEL('f1 in [f2,f3]'),
+    wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' })
+  );
+});
+
 // it('validates fields', () => {
 //   let fields: Field[] | OptionGroup<Field>[] | Record<string, Field> = [
 //     { name: 'f1', label: 'Field 1' },
@@ -374,4 +385,5 @@ it('ignores things', () => {
   testParseCEL(parseCEL('f1 == f2("")'), wrapRule());
   testParseCEL(parseCEL('(f1 == f2(""))'), wrapRule());
   testParseCEL(parseCEL('true'), wrapRule());
+  testParseCEL(parseCEL('f1 in ["Test",f2]'), wrapRule());
 });
