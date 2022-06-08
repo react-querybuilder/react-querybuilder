@@ -95,6 +95,7 @@ true                                                              return 'BOOL_L
 false                                                             return 'BOOL_LIT'
 // Operators and other characters
 \.                                                                return 'DOT'
+"?"                                                               return '?'
 ":"                                                               return ':'
 ","                                                               return ','
 "["                                                               return '['
@@ -241,8 +242,7 @@ math_operation
   ;
 expr
   : member -> $1
-  // TODO: support conditional expression (x ? y : z)
-  // | conditional_expr -> $1
+  | conditional_expr -> $1
   | conditional_and -> $1
   | conditional_or -> $1
   | relation -> $1
