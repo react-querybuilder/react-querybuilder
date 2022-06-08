@@ -162,6 +162,74 @@ it('works for conditional and/or', () => {
   });
 });
 
+it('mixed and/or', () => {
+  testParseCEL(parseCEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`), {
+    combinator: 'or',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      },
+      { field: 'middleName', operator: 'null', value: null },
+    ],
+  });
+  testParseCEL(
+    parseCEL(
+      `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true`
+    ),
+    {
+      combinator: 'or',
+      rules: [
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        },
+        { field: 'middleName', operator: 'null', value: null },
+        { field: 'isMusician', operator: '=', value: true },
+      ],
+    }
+  );
+  testParseCEL(
+    parseCEL(
+      `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true || fieldName == 'Test'`
+    ),
+    {
+      combinator: 'or',
+      rules: [
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        },
+        { field: 'middleName', operator: 'null', value: null },
+        { field: 'isMusician', operator: '=', value: true },
+        { field: 'fieldName', operator: '=', value: 'Test' },
+      ],
+    }
+  );
+  testParseCEL(parseCEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`), {
+    combinator: 'or',
+    rules: [
+      { field: 'firstName', operator: '=', value: 'Steve' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'middleName', operator: 'null', value: null },
+        ],
+      },
+    ],
+  });
+});
+
 describe('fields and getValueSources', () => {
   const fields: Field[] = [
     { name: 'f1', label: 'f1' },

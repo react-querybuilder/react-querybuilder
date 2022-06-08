@@ -19,8 +19,6 @@ import type {
   CELStringLiteral,
 } from './types';
 
-export const isHexadecimal = (val: string) => /^0x[0-9a-f]+$/i.test(val);
-
 export const isCELExpressionGroup = (expr: CELExpression): expr is CELExpressionGroup =>
   expr.type === 'ExpressionGroup';
 export const isCELConditionalAnd = (expr: CELExpression): expr is CELConditionalAnd =>
