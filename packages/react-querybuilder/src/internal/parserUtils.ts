@@ -20,7 +20,7 @@ export const getFieldsArray = (fields?: Field[] | OptionGroup<Field>[] | Record<
 };
 
 export function fieldIsValidUtil({
-  fieldsFlat = [],
+  fieldsFlat,
   fieldName,
   operator,
   subordinateFieldName,
