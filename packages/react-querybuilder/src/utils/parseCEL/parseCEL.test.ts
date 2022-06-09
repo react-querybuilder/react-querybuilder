@@ -19,92 +19,103 @@ const wrapRule = (
 const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
   rules: rule ? [rule] : [],
 });
-const icOpts = { independentCombinators: true } as const;
 
-const testParseCEL = (parseResult: DefaultRuleGroupType, expectedResult: DefaultRuleGroupType) => {
-  expect(parseResult).toEqual(expectedResult);
+const testParseCEL = (
+  parseResult: DefaultRuleGroupType | string,
+  expectedResult: DefaultRuleGroupType
+) => {
+  expect(typeof parseResult === 'string' ? parseCEL(parseResult) : parseResult).toEqual(
+    expectedResult
+  );
 };
 const testParseCELic = (
-  parseResult: DefaultRuleGroupTypeIC,
+  parseResult: DefaultRuleGroupTypeIC | string,
   expectedResult: DefaultRuleGroupTypeIC
 ) => {
-  expect(parseResult).toEqual(expectedResult);
+  expect(
+    typeof parseResult === 'string'
+      ? parseCEL(parseResult, { independentCombinators: true })
+      : parseResult
+  ).toEqual(expectedResult);
 };
 
 it('works for basic relations', () => {
-  testParseCEL(parseCEL('f1 == "Test"'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL(parseCEL('(f1 == "Test")'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL(parseCEL('f1 != "Test"'), wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
-  testParseCEL(parseCEL('f1 > 1'), wrapRule({ field: 'f1', operator: '>', value: 1 }));
-  testParseCEL(parseCEL('f1 >= 1'), wrapRule({ field: 'f1', operator: '>=', value: 1 }));
-  testParseCEL(parseCEL('f1 < 1'), wrapRule({ field: 'f1', operator: '<', value: 1 }));
-  testParseCEL(parseCEL('f1 <= 1'), wrapRule({ field: 'f1', operator: '<=', value: 1 }));
-  testParseCEL(parseCEL('f1 == 12.14'), wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
+  testParseCEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL('(f1 == "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL('f1 != "Test"', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  testParseCEL('f1 > 1', wrapRule({ field: 'f1', operator: '>', value: 1 }));
+  testParseCEL('f1 >= 1', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
+  testParseCEL('f1 < 1', wrapRule({ field: 'f1', operator: '<', value: 1 }));
+  testParseCEL('f1 <= 1', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
+  testParseCEL('f1 == 12.14', wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
   // TODO: fix hexadecimal processing
-  // testParseCEL(parseCEL('f1 == 0x1214'), wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
-  // testParseCEL(parseCEL('f1 == 0x1214u'), wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
-  testParseCEL(parseCEL('f1 == 1214u'), wrapRule({ field: 'f1', operator: '=', value: 1214 }));
-  testParseCEL(parseCEL('f1 == null'), wrapRule({ field: 'f1', operator: 'null', value: null }));
-  testParseCEL(parseCEL('f1 != null'), wrapRule({ field: 'f1', operator: 'notNull', value: null }));
-  testParseCEL(parseCEL('f1 == true'), wrapRule({ field: 'f1', operator: '=', value: true }));
-  testParseCEL(parseCEL('f1 == false'), wrapRule({ field: 'f1', operator: '=', value: false }));
+  // testParseCEL('f1 == 0x1214', wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
+  // testParseCEL('f1 == 0x1214u', wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
+  testParseCEL('f1 == 1214u', wrapRule({ field: 'f1', operator: '=', value: 1214 }));
+  testParseCEL('f1 == null', wrapRule({ field: 'f1', operator: 'null', value: null }));
+  testParseCEL('f1 != null', wrapRule({ field: 'f1', operator: 'notNull', value: null }));
+  testParseCEL('f1 == true', wrapRule({ field: 'f1', operator: '=', value: true }));
+  testParseCEL('f1 == false', wrapRule({ field: 'f1', operator: '=', value: false }));
   // flips operators
-  testParseCEL(parseCEL('"Test" == f1'), wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL(parseCEL('1214 > f1'), wrapRule({ field: 'f1', operator: '<', value: 1214 }));
-  testParseCEL(parseCEL('1214 >= f1'), wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
-  testParseCEL(parseCEL('1214 < f1'), wrapRule({ field: 'f1', operator: '>', value: 1214 }));
-  testParseCEL(parseCEL('1214 <= f1'), wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
+  testParseCEL('"Test" == f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL('1214 > f1', wrapRule({ field: 'f1', operator: '<', value: 1214 }));
+  testParseCEL('1214 >= f1', wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
+  testParseCEL('1214 < f1', wrapRule({ field: 'f1', operator: '>', value: 1214 }));
+  testParseCEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
 it('handles "like" comparisons', () => {
   testParseCEL(
-    parseCEL('f1.contains("Test")'),
+    'f1.contains("Test")',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
   testParseCEL(
-    parseCEL('f1.startsWith("Test")'),
+    'f1.startsWith("Test")',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
   );
   testParseCEL(
-    parseCEL('f1.endsWith("Test")'),
+    'f1.endsWith("Test")',
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
   );
   testParseCEL(
-    parseCEL('f1.contains(f2)'),
+    'f1.contains(f2)',
     wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
   );
   testParseCEL(
-    parseCEL('f1.startsWith(f2)'),
+    'f1.startsWith(f2)',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'f2', valueSource: 'field' })
   );
   testParseCEL(
-    parseCEL('f1.endsWith(f2)'),
+    'f1.endsWith(f2)',
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'f2', valueSource: 'field' })
   );
-  // TODO: fix handling of negations
-  // testParseCEL(
-  //   parseCEL('!f1.contains("Test")'),
-  //   wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
-  // );
-  // testParseCEL(
-  //   parseCEL('!f1.startsWith("Test")'),
-  //   wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
-  // );
-  // testParseCEL(
-  //   parseCEL('!f1.endsWith("Test")'),
-  //   wrapRule({ field: 'f1', operator: 'doesNotEndWith', value: 'Test' })
-  // );
+});
+
+it('negates "like" comparisons', () => {
+  // TODO: support negation without parentheses ('!f1.contains("Test")')
+  testParseCEL(
+    '!(f1.contains("Test"))',
+    wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
+  );
+  testParseCEL(
+    '!(f1.startsWith("Test"))',
+    wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
+  );
+  testParseCEL(
+    '!(f1.endsWith("Test"))',
+    wrapRule({ field: 'f1', operator: 'doesNotEndWith', value: 'Test' })
+  );
 });
 
 it('groups only when necessary', () => {
-  testParseCEL(parseCEL('(f1 == "Test" || f2 == "Test2")'), {
+  testParseCEL('(f1 == "Test" || f2 == "Test2")', {
     combinator: 'or',
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
       { field: 'f2', operator: '=', value: 'Test2' },
     ],
   });
-  testParseCEL(parseCEL('((f1 == "Test" || f2 == "Test2"))'), {
+  testParseCEL('((f1 == "Test" || f2 == "Test2"))', {
     combinator: 'or',
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
@@ -114,7 +125,7 @@ it('groups only when necessary', () => {
 });
 
 it('handles parentheses', () => {
-  testParseCEL(parseCEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"'), {
+  testParseCEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
     combinator: 'and',
     rules: [
       {
@@ -127,18 +138,22 @@ it('handles parentheses', () => {
       { field: 'f3', operator: '=', value: 'Test3' },
     ],
   });
+  testParseCEL(
+    '(((f1.contains("Test"))))',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
 });
 
 it('works for conditional and/or', () => {
   testParseCEL(
-    parseCEL('f1 == "Test" && f2 == "Test2"'),
+    'f1 == "Test" && f2 == "Test2"',
     wrapRule([
       { field: 'f1', operator: '=', value: 'Test' },
       { field: 'f2', operator: '=', value: 'Test2' },
     ])
   );
   testParseCEL(
-    parseCEL('f1 == "Test" || f2 == "Test2"'),
+    'f1 == "Test" || f2 == "Test2"',
     wrapRule(
       [
         { field: 'f1', operator: '=', value: 'Test' },
@@ -147,7 +162,7 @@ it('works for conditional and/or', () => {
       'or'
     )
   );
-  testParseCEL(parseCEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"'), {
+  testParseCEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     combinator: 'or',
     rules: [
       {
@@ -163,7 +178,7 @@ it('works for conditional and/or', () => {
 });
 
 it('mixed and/or', () => {
-  testParseCEL(parseCEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`), {
+  testParseCEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
     combinator: 'or',
     rules: [
       {
@@ -215,7 +230,7 @@ it('mixed and/or', () => {
       ],
     }
   );
-  testParseCEL(parseCEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`), {
+  testParseCEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`, {
     combinator: 'or',
     rules: [
       { field: 'firstName', operator: '=', value: 'Steve' },
@@ -327,20 +342,32 @@ describe('fields and getValueSources', () => {
     // `f10` implicitly allows the valueSource "field" through getValueSources,
     // but `f5` is not a valid subordinate field
     testParseCEL(parseCEL(`f10 == f5`, { fields, getValueSources }), wrapRule());
+    // independent combinators
+    const fieldsForIC: Field[] = [
+      { name: 'f1', label: 'Field 1' },
+      { name: 'f3', label: 'Field 3', valueSources: ['field'] },
+    ];
+    testParseCELic(
+      parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', {
+        fields: fieldsForIC,
+        independentCombinators: true,
+      }),
+      wrapRuleIC()
+    );
   });
 });
 
 it('handles "in" operator', () => {
   testParseCEL(
-    parseCEL('f1 in ["Test","Test2"]'),
+    'f1 in ["Test","Test2"]',
     wrapRule({ field: 'f1', operator: 'in', value: 'Test,Test2' })
   );
   testParseCEL(
-    parseCEL('f1 in [f2,f3]'),
+    'f1 in [f2,f3]',
     wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' })
   );
   testParseCEL(
-    parseCEL('f1 in {f2: "v2", "f3": "v3"}'),
+    'f1 in {f2: "v2", "f3": "v3"}',
     wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3' })
   );
 });
@@ -360,34 +387,25 @@ it('outputs lists as arrays', () => {
   );
 });
 
-// it('validates fields', () => {
-//   let fields: Field[] | OptionGroup<Field>[] | Record<string, Field> = [
-//     { name: 'f1', label: 'Field 1' },
-//     { name: 'f3', label: 'Field 3', valueSources: ['field'] },
-//   ];
-//   testParseCEL(parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', { fields }), wrapRule());
-//   fields = [{ label: 'Options', options: fields }];
-//   testParseCEL(parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', { fields }), wrapRule());
-//   fields = { f1: fields[0].options[0], f3: fields[0].options[1] };
-//   testParseCEL(parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', { fields }), wrapRule());
-// });
+it('handles multiple negations', () => {
+  testParseCEL(
+    '!!!(f1.contains("Test"))',
+    wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
+  );
+  testParseCEL(
+    '!!!!(f1.contains("Test"))',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
+});
 
 it('handles independent combinators', () => {
-  const fields: Field[] = [
-    { name: 'f1', label: 'Field 1' },
-    { name: 'f3', label: 'Field 3', valueSources: ['field'] },
-  ];
-  testParseCELic(
-    parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', { fields, ...icOpts }),
-    wrapRuleIC()
-  );
-  testParseCELic(parseCEL('(f1 == "Test")', icOpts), {
+  testParseCELic('(f1 == "Test")', {
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],
   });
-  testParseCELic(parseCEL('f1 == "Test"', icOpts), {
+  testParseCELic('f1 == "Test"', {
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],
   });
-  testParseCELic(parseCEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', icOpts), {
+  testParseCELic('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
       'and',
@@ -400,8 +418,8 @@ it('handles independent combinators', () => {
 
 it('ignores things', () => {
   const expressionsToIgnore = [
-    'f1 == f2 ? f3 : f4',
     '',
+    'f1 == f2 ? f3 : f4',
     'f1 == f2("")',
     '(f1 == f2(""))',
     'true',
@@ -410,6 +428,6 @@ it('ignores things', () => {
   ];
 
   for (const pr of expressionsToIgnore) {
-    testParseCEL(parseCEL(pr), wrapRule());
+    testParseCEL(pr, wrapRule());
   }
 });

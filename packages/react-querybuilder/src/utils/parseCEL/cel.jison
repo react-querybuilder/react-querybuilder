@@ -192,21 +192,22 @@ relation
   | member 'in' list -> { type: 'Relation', left: $1, operator: $2, right: $3 }
   | member 'in' map -> { type: 'Relation', left: $1, operator: $2, right: $3 }
   ;
-exclamation_list
-  : '!' -> { type: 'ExclamationList', value: [ $1 ] }
-  | exclamation_list '!' -> $1; $$.value.push($2);
+negation
+  : '!' -> 1
+  | negation '!' -> $$ += 1;
   ;
-hyphen_list
-  : '-' -> { type: 'HyphenList', value: [ $1 ] }
-  | hyphen_list '-' -> $1; $$.value.push($2);
+negative
+  : '-' -> 1
+  | negative '-' -> $$ += 1;
   ;
 unary
-  : member -> $1
-  | exclamation_list member -> { type: 'Negation', negations: $1, value: $2 }
-  | hyphen_list member -> { type: 'Negative', negatives: $1, value: $2 }
+  : negation primary -> { type: 'Negation', negations: $1, value: $2 }
+  // TODO?: Handle this, maybe
+  // | negative member -> { type: 'Negative', negatives: $1, value: $2 }
   ;
 member
   : primary ->  $1
+  | unary ->  $1
   | member DOT ident -> { type: 'Member', left: $1, right: $3 }
   | member DOT ident '(' expr_list ')' -> { type: 'Member', left: $1, right: $3, list: $5 }
   | member '[' expr ']' -> { type: 'DynamicPropertyAccessor', left: $1, right: $3 }
@@ -247,7 +248,6 @@ expr
   | conditional_or -> $1
   | relation -> $1
   | math_operation -> $1
-  | like_expr -> $1
   ;
 conditional_expr
   : expr '?' expr ':' expr -> { type: 'ConditionalExpr', condition: $1, valueIfTrue: $3, valueIfFalse: $5 }

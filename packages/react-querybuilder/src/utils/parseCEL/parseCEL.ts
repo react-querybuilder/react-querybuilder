@@ -68,14 +68,19 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
     expr: CELExpression,
     processOpts: { groupOnlyIfNecessary?: boolean; forwardNegation?: boolean } = {}
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
-    const { forwardNegation, groupOnlyIfNecessary } = processOpts;
+    const { forwardNegation: forwardedNegation, groupOnlyIfNecessary } = processOpts;
     /* istanbul ignore if */
     if (isCELNegation(expr)) {
-      const negate = expr.negations.value.length % 2 === 1;
-      const negatedExpr = processCELExpression(expr.value, {
-        groupOnlyIfNecessary: true,
-        forwardNegation: negate,
-      });
+      const negate = expr.negations % 2 === 1;
+      // TODO?: forwardNegation when isCELRelation(expr.value.value), in addition
+      // to CELLikeExpression? ('<=' becomes '>', 'in' becomes 'notIn', etc.)
+      const negatedExpr =
+        isCELExpressionGroup(expr.value) && isCELLikeExpression(expr.value.value)
+          ? processCELExpression(expr.value.value, { forwardNegation: negate })
+          : processCELExpression(expr.value, {
+              groupOnlyIfNecessary: true,
+              forwardNegation: negate,
+            });
       if (negatedExpr) {
         if (
           !negate ||
@@ -90,7 +95,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           : ({ combinator: 'and', rules: [negatedExpr], not: true } as DefaultRuleGroupType);
       }
     } else if (isCELExpressionGroup(expr)) {
-      const rule = processCELExpression(expr.value);
+      const rule = processCELExpression(expr.value, { groupOnlyIfNecessary: true });
       if (rule) {
         if ('rules' in rule || (groupOnlyIfNecessary && isCELExpressionGroup(expr.value))) {
           return rule;
@@ -145,7 +150,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         right: { value: func },
       } = expr;
       const operatorPre: DefaultOperatorName = func === 'startsWith' ? 'beginsWith' : func;
-      const operator = forwardNegation
+      const operator = forwardedNegation
         ? (`doesNot${operatorPre[0].toUpperCase()}${operatorPre
             .slice(1)
             .replace('s', '')}` as DefaultOperatorName)

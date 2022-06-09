@@ -8,8 +8,6 @@ type TokenType =
   | 'NullLiteral'
   | 'Identifier'
   | 'Relation'
-  | 'ExclamationList'
-  | 'HyphenList'
   | 'Negation'
   | 'Negative'
   | 'Unary'
@@ -86,22 +84,14 @@ export interface CELConditionalExpr extends CELExpression {
   valueIfTrue: CELExpression;
   valueIfFalse: CELExpression;
 }
-export interface CELExclamationList extends CELExpression {
-  type: 'ExclamationList';
-  value: ['!', ...'!'[]];
-}
-export interface CELHyphenList extends CELExpression {
-  type: 'HyphenList';
-  value: ['-', ...'-'[]];
-}
 export interface CELNegation extends CELExpression {
   type: 'Negation';
-  negations: CELExclamationList;
-  value: CELMember;
+  negations: number;
+  value: CELPrimary;
 }
 export interface CELNegative extends CELExpression {
   type: 'Negative';
-  negations: CELHyphenList;
+  negatives: number;
   value: CELMember;
 }
 export interface CELMember extends CELExpression {
@@ -226,14 +216,15 @@ export type CELPrimary =
   | CELIdentifier
   | CELExpressionGroup
   | CELFunctionCall
-  | CELIdentifier;
+  | CELLiteral
+  | CELList
+  | CELMap;
 export type CELMathOperation =
   | CELAddition
   | CELSubtraction
   | CELMultiplication
   | CELDivision
   | CELModulo;
-export type CELUnary = CELMember | CELNegation | CELNegative;
 
 export interface ParsedCEL {
   nodeType: 'Main';
