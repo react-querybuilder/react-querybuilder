@@ -243,6 +243,20 @@ it('mixed and/or', () => {
       },
     ],
   });
+  testParseCEL(`firstName == 'Steve' || lastName == 'Vai' || f1 == 'v1' && f2 == 'v2'`, {
+    combinator: 'or',
+    rules: [
+      { field: 'firstName', operator: '=', value: 'Steve' },
+      { field: 'lastName', operator: '=', value: 'Vai' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      },
+    ],
+  });
 });
 
 describe('fields and getValueSources', () => {
