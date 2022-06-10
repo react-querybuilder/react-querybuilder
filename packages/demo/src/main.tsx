@@ -45,6 +45,7 @@ import {
   convertToIC,
   defaultValidator,
   formatQuery,
+  parseCEL,
   parseJsonLogic,
   parseSQL,
   QueryBuilder,
@@ -111,6 +112,7 @@ const getOptionsFromHash = (hash: Partial<DemoOptionsWithStyle>) => {
 };
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
+const initialCEL = formatQuery(initialQuery, 'cel');
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'));
 
 // Initialize options from URL hash
@@ -126,6 +128,9 @@ const App = () => {
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
+  const [isCELModalVisible, setIsCELModalVisible] = useState(false);
+  const [cel, setCEL] = useState(initialCEL);
+  const [celParseError, setCELParseError] = useState('');
   const [isJsonLogicModalVisible, setIsJsonLogicModalVisible] = useState(false);
   const [jsonLogic, setJsonLogic] = useState(initialJsonLogic);
   const [jsonLogicParseError, setJsonLogicParseError] = useState('');
@@ -190,6 +195,18 @@ const App = () => {
       setSQLParseError((err as Error).message);
     }
   }, [sql]);
+  const loadFromCEL = useCallback(() => {
+    try {
+      const q = parseCEL(cel);
+      const qIC = parseCEL(cel, { independentCombinators: true });
+      setQuery(q);
+      setQueryIC(qIC);
+      setIsCELModalVisible(false);
+      setCELParseError('');
+    } catch (err) {
+      setCELParseError((err as Error).message);
+    }
+  }, [cel]);
   const loadFromJsonLogic = useCallback(() => {
     try {
       const q = parseJsonLogic(jsonLogic);
@@ -375,6 +392,7 @@ const App = () => {
                 rowGap: '0.5rem',
               }}>
               <Button onClick={() => setIsSQLModalVisible(true)}>Load from SQL</Button>
+              <Button onClick={() => setIsCELModalVisible(true)}>Load from CEL</Button>
               <Button onClick={() => setIsJsonLogicModalVisible(true)}>Load from JsonLogic</Button>
             </div>
             <Title level={4} style={{ marginTop: '1rem' }}>
@@ -466,6 +484,19 @@ const App = () => {
           clauses). A trailing semicolon is also optional.
         </Text>
         {!!sqlParseError && <pre>{sqlParseError}</pre>}
+      </Modal>
+      <Modal
+        title="Load Query From CEL"
+        visible={isCELModalVisible}
+        onOk={loadFromCEL}
+        onCancel={() => setIsCELModalVisible(false)}>
+        <TextArea
+          value={cel}
+          onChange={e => setCEL(e.target.value)}
+          spellCheck={false}
+          style={{ height: 200, fontFamily: 'monospace' }}
+        />
+        {!!celParseError && <pre>{celParseError}</pre>}
       </Modal>
       <Modal
         title="Load Query From JsonLogic"
