@@ -5,7 +5,6 @@ export * from './getValidationClassNames';
 export * from './getValueSourcesUtil';
 export * from './messages';
 export * from './objectKeys';
-export * from './parserUtils';
 export * from './regenerateIDs';
 export * from './types';
 export * from './uniq';

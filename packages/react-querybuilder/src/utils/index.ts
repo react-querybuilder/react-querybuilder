@@ -10,3 +10,4 @@ export * from './parseSQL';
 export * from './pathUtils';
 export * from './prepareQueryObjects';
 export * from './queryTools';
+export * from './toOptions';

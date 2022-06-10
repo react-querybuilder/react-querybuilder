@@ -1,5 +1,5 @@
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import { uniqByName } from '../../internal';
+import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
   ExportFormat,

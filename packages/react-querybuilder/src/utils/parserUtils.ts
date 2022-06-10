@@ -1,6 +1,8 @@
-import { filterFieldsByComparator, getValueSourcesUtil, uniqByName } from '.';
+import { filterFieldsByComparator } from '../internal/filterFieldsByComparator';
+import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
+import { uniqByName } from '../internal/uniq';
 import type { DefaultOperatorName, Field, OptionGroup, ValueSources } from '../types/index.noReact';
-import { isOptionGroupArray } from '../utils';
+import { isOptionGroupArray } from './optGroupUtils';
 
 export const getFieldsArray = (fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>) => {
   let fieldsFlat: Field[] = [];

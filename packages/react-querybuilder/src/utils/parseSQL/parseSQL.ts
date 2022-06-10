@@ -1,5 +1,4 @@
-import { isOptionGroupArray } from '..';
-import { fieldIsValidUtil, uniqByName } from '../../internal';
+import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -12,6 +11,8 @@ import type {
   Field,
   ParseSQLOptions,
 } from '../../types/index.noReact';
+import { isOptionGroupArray } from '../optGroupUtils';
+import { fieldIsValidUtil } from '../parserUtils';
 import { sqlParser } from './sqlParser';
 import type { SQLExpression, SQLIdentifier } from './types';
 import {

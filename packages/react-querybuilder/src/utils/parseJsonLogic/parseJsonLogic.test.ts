@@ -4,7 +4,7 @@ import type {
   OptionGroup,
   RQBJsonLogic,
   ValueSources,
-} from '../../types';
+} from '../../types/index.noReact';
 import { parseJsonLogic } from './parseJsonLogic';
 
 const rqbJsonLogic: RQBJsonLogic = {

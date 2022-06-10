@@ -1,4 +1,3 @@
-import { fieldIsValidUtil, getFieldsArray } from '../../internal';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -11,6 +10,7 @@ import type {
   ParseCELOptions,
   ValueSource,
 } from '../../types/index.noReact';
+import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLiteral } from './types';
 import {
