@@ -1,5 +1,5 @@
 import DragIndicator from '@mui/icons-material/DragIndicator';
-import { ThemeProvider, useTheme } from '@mui/system';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { forwardRef, type ComponentPropsWithRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 

@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import { ThemeProvider, useTheme } from '@mui/system';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import type { ComponentPropsWithoutRef } from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 

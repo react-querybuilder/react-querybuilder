@@ -1,6 +1,6 @@
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-import { ThemeProvider, useTheme } from '@mui/system';
 import type { ComponentPropsWithoutRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 

@@ -1,6 +1,6 @@
 import FormControl from '@mui/material/FormControl';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
-import { ThemeProvider, useTheme } from '@mui/system';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { useMemo, type ComponentPropsWithoutRef } from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
@@ -27,7 +27,7 @@ export const MaterialValueSelector = ({
   fieldData: _fieldData,
   ...extraProps
 }: MaterialValueSelectorProps) => {
-  const theme = useTheme;
+  const theme = useTheme();
 
   const onChange = useMemo(() => {
     if (multiple) {
