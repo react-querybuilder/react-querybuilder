@@ -1,5 +1,6 @@
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import { ThemeProvider, useTheme } from '@mui/system';
 import type { ComponentPropsWithoutRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
@@ -18,20 +19,26 @@ export const MaterialNotToggle = ({
   validation: _validation,
   testID: _testID,
   ...extraProps
-}: MaterialNotToggleProps) => (
-  <FormControlLabel
-    className={className}
-    title={title}
-    disabled={disabled}
-    control={
-      <Switch
-        checked={!!checked}
-        onChange={e => handleOnChange(e.target.checked)}
-        {...extraProps}
+}: MaterialNotToggleProps) => {
+  const theme = useTheme();
+
+  return (
+    <ThemeProvider theme={theme}>
+      <FormControlLabel
+        className={className}
+        title={title}
+        disabled={disabled}
+        control={
+          <Switch
+            checked={!!checked}
+            onChange={e => handleOnChange(e.target.checked)}
+            {...extraProps}
+          />
+        }
+        label={label ?? /* istanbul ignore next */ ''}
       />
-    }
-    label={label ?? /* istanbul ignore next */ ''}
-  />
-);
+    </ThemeProvider>
+  );
+};
 
 MaterialNotToggle.displayName = 'MaterialNotToggle';

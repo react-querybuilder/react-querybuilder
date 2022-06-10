@@ -6,11 +6,22 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
+import { ThemeProvider, useTheme } from '@mui/system';
 import { useEffect } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { MaterialValueSelector } from './MaterialValueSelector';
 
-export const MaterialValueEditor = ({
+export const MaterialValueEditor = (props: ValueEditorProps) => {
+  const theme = useTheme();
+
+  return (
+    <ThemeProvider theme={theme}>
+      <MaterialValueEditorInner {...props} />
+    </ThemeProvider>
+  );
+};
+
+const MaterialValueEditorInner = ({
   fieldData,
   operator,
   value,

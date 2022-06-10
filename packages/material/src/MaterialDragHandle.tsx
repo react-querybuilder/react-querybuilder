@@ -1,4 +1,5 @@
 import DragIndicator from '@mui/icons-material/DragIndicator';
+import { ThemeProvider, useTheme } from '@mui/system';
 import { forwardRef, type ComponentPropsWithRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
@@ -21,11 +22,17 @@ export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandle
       ...extraProps
     },
     dragRef
-  ) => (
-    <span ref={dragRef} className={className} title={title}>
-      <DragIndicator {...extraProps} />
-    </span>
-  )
+  ) => {
+    const theme = useTheme();
+
+    return (
+      <span ref={dragRef} className={className} title={title}>
+        <ThemeProvider theme={theme}>
+          <DragIndicator {...extraProps} />
+        </ThemeProvider>
+      </span>
+    );
+  }
 );
 
 MaterialDragHandle.displayName = 'MaterialDragHandle';

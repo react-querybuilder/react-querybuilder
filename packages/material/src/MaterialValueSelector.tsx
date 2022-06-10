@@ -1,5 +1,6 @@
 import FormControl from '@mui/material/FormControl';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
+import { ThemeProvider, useTheme } from '@mui/system';
 import { useMemo, type ComponentPropsWithoutRef } from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
@@ -26,6 +27,8 @@ export const MaterialValueSelector = ({
   fieldData: _fieldData,
   ...extraProps
 }: MaterialValueSelectorProps) => {
+  const theme = useTheme;
+
   const onChange = useMemo(() => {
     if (multiple) {
       return ({ target: { value: v } }: SelectChangeEvent<string | string[]>) =>
@@ -37,16 +40,18 @@ export const MaterialValueSelector = ({
   const val = multiple ? (Array.isArray(value) ? value : value?.split(',')) : value;
 
   return (
-    <FormControl variant="standard" className={className} title={title} disabled={disabled}>
-      <Select
-        value={val}
-        // @ts-expect-error onChange cannot accept string[]
-        onChange={onChange}
-        multiple={!!multiple}
-        {...extraProps}>
-        {toOptions(options)}
-      </Select>
-    </FormControl>
+    <ThemeProvider theme={theme}>
+      <FormControl variant="standard" className={className} title={title} disabled={disabled}>
+        <Select
+          value={val}
+          // @ts-expect-error onChange cannot accept string[]
+          onChange={onChange}
+          multiple={!!multiple}
+          {...extraProps}>
+          {toOptions(options)}
+        </Select>
+      </FormControl>
+    </ThemeProvider>
   );
 };
 
