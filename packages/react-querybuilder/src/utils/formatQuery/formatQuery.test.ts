@@ -935,6 +935,35 @@ it('uses paramPrefix correctly', () => {
   });
 });
 
+describe('escapes quotes when appropriate', () => {
+  const testQuerySQ: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: '=', value: `Te'st` }],
+  };
+
+  it.each([
+    { fmt: 'sql', result: `(f1 = 'Te''st')` },
+    { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
+    { fmt: 'parameterized_named', result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } } },
+    { fmt: 'spel', result: `f1 == 'Te\\'st'` },
+  ])('escapes single quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
+    // @ts-expect-error Conflicting formatQuery overloads
+    expect(formatQuery(testQuerySQ, fmt)).toEqual(result);
+  });
+
+  const testQueryDQ: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
+  };
+
+  it.each([
+    { fmt: 'mongodb', result: `{"$and":[{"f1":{"$eq":"Te\\"st"}}]}` },
+    { fmt: 'cel', result: `f1 == "Te\\"st"` },
+  ])('escapes double quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
+    expect(formatQuery(testQueryDQ, fmt as 'cel' | 'mongodb')).toEqual(result);
+  });
+});
+
 describe('independent combinators', () => {
   const queryIC: RuleGroupTypeIC = {
     rules: [

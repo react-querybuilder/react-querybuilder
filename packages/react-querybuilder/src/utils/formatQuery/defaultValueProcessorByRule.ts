@@ -4,8 +4,10 @@ import { isValidValue, shouldRenderAsNumber, toArray, trimIfString } from './uti
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers } = {}
+  { escapeQuotes, parseNumbers } = {}
 ) => {
+  const escapeSingleQuotes = (v: any) =>
+    typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `''`);
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
   if (operatorLowerCase === 'null' || operatorLowerCase === 'notnull') {
@@ -15,7 +17,9 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     if (valArray.length > 0) {
       return `(${valArray
         .map(v =>
-          valueIsField || shouldRenderAsNumber(v, parseNumbers) ? `${trimIfString(v)}` : `'${v}'`
+          valueIsField || shouldRenderAsNumber(v, parseNumbers)
+            ? `${trimIfString(v)}`
+            : `'${escapeSingleQuotes(v)}'`
         )
         .join(', ')})`;
     }
@@ -27,19 +31,19 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
       return valueIsField ||
         (shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers))
         ? `${trimIfString(first)} and ${trimIfString(second)}`
-        : `'${first}' and '${second}'`;
+        : `'${escapeSingleQuotes(first)}' and '${escapeSingleQuotes(second)}'`;
     }
     return '';
   } else if (operatorLowerCase === 'contains' || operatorLowerCase === 'doesnotcontain') {
-    return valueIsField ? `'%' || ${value} || '%'` : `'%${value}%'`;
+    return valueIsField ? `'%' || ${value} || '%'` : `'%${escapeSingleQuotes(value)}%'`;
   } else if (operatorLowerCase === 'beginswith' || operatorLowerCase === 'doesnotbeginwith') {
-    return valueIsField ? `${value} || '%'` : `'${value}%'`;
+    return valueIsField ? `${value} || '%'` : `'${escapeSingleQuotes(value)}%'`;
   } else if (operatorLowerCase === 'endswith' || operatorLowerCase === 'doesnotendwith') {
-    return valueIsField ? `'%' || ${value}` : `'%${value}'`;
+    return valueIsField ? `'%' || ${value}` : `'%${escapeSingleQuotes(value)}'`;
   } else if (typeof value === 'boolean') {
     return `${value}`.toUpperCase();
   }
   return valueIsField || shouldRenderAsNumber(value, parseNumbers)
     ? `${trimIfString(value)}`
-    : `'${value}'`;
+    : `'${escapeSingleQuotes(value)}'`;
 };

@@ -1,5 +1,4 @@
-import { isOptionGroupArray } from '..';
-import { filterFieldsByComparator, getValueSourcesUtil, uniqByName } from '../../internal';
+import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -12,6 +11,8 @@ import type {
   Field,
   ParseSQLOptions,
 } from '../../types/index.noReact';
+import { isOptionGroupArray } from '../optGroupUtils';
+import { fieldIsValidUtil } from '../parserUtils';
 import { sqlParser } from './sqlParser';
 import type { SQLExpression, SQLIdentifier } from './types';
 import {
@@ -82,51 +83,18 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
     }
   }
 
-  function fieldIsValid(
+  const fieldIsValid = (
     fieldName: string,
     operator: DefaultOperatorName,
     subordinateFieldName?: string
-  ) {
-    // If fields option was an empty array or undefined, then all identifiers
-    // are considered valid.
-    if (fieldsFlat.length === 0) return true;
-
-    let valid = false;
-
-    const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
-    if (primaryField) {
-      if (
-        !subordinateFieldName &&
-        operator !== 'notNull' &&
-        operator !== 'null' &&
-        !getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'value')
-      ) {
-        valid = false;
-      } else {
-        valid = true;
-      }
-
-      if (valid && !!subordinateFieldName) {
-        if (
-          getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'field') &&
-          fieldName !== subordinateFieldName
-        ) {
-          const validSubordinateFields = filterFieldsByComparator(
-            primaryField,
-            fieldsFlat,
-            operator
-          ) as Field[];
-          if (!validSubordinateFields.find(vsf => vsf.name === subordinateFieldName)) {
-            valid = false;
-          }
-        } else {
-          valid = false;
-        }
-      }
-    }
-
-    return valid;
-  }
+  ) =>
+    fieldIsValidUtil({
+      fieldName,
+      fieldsFlat,
+      operator,
+      subordinateFieldName,
+      getValueSources,
+    });
 
   const processSQLExpression = (
     expr: SQLExpression

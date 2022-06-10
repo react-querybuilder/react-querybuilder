@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
-import { regenerateID, regenerateIDs } from '../internal';
+import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';
 import type {
   NameLabelPair,
   OptionGroup,

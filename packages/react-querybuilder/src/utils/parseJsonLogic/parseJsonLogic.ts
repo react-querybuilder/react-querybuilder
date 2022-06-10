@@ -1,5 +1,7 @@
 import type { ReservedOperations } from 'json-logic-js';
-import { filterFieldsByComparator, getValueSourcesUtil, uniqByName } from '../../internal';
+import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';
+import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
+import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
@@ -155,7 +157,7 @@ export const parseJsonLogic = (
     let field = '';
     let operator: DefaultOperatorName = '=';
     let value: any = '';
-    let valueSource: ValueSource = 'value';
+    let valueSource: ValueSource | undefined = undefined;
 
     // Basic boolean operations
     if (

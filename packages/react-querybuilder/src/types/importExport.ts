@@ -74,7 +74,9 @@ export interface FormatQueryOptions {
   placeholderOperatorName?: string;
 }
 
-export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'>;
+export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'> & {
+  escapeQuotes?: boolean;
+};
 
 export type ValueProcessorByRule = (rule: RuleType, options?: ValueProcessorOptions) => string;
 
@@ -105,6 +107,13 @@ export interface RQBJsonLogicEndsWith {
 }
 export type RQBJsonLogicVar = { var: string };
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
+
+export interface ParseCELOptions {
+  independentCombinators?: boolean;
+  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  listsAsArrays?: boolean;
+  getValueSources?: (field: string, operator: string) => ValueSources;
+}
 
 export interface ParseSQLOptions {
   independentCombinators?: boolean;

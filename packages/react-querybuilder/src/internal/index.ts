@@ -6,4 +6,5 @@ export * from './getValueSourcesUtil';
 export * from './messages';
 export * from './objectKeys';
 export * from './regenerateIDs';
+export * from './types';
 export * from './uniq';
