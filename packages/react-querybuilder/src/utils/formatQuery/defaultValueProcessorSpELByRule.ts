@@ -9,8 +9,10 @@ const wrapInNegation = (clause: string, negate: boolean) =>
 export const defaultValueProcessorSpELByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers } = {}
+  { escapeQuotes, parseNumbers } = {}
 ) => {
+  const escapeSingleQuotes = (v: any) =>
+    typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`);
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.replace(/^=$/, '==');
   const useBareValue =
@@ -27,11 +29,13 @@ export const defaultValueProcessorSpELByRule: ValueProcessorByRule = (
     operatorTL === '>='
   ) {
     return `${field} ${operatorTL} ${
-      valueIsField || useBareValue ? trimIfString(value) : `'${value}'`
+      valueIsField || useBareValue ? trimIfString(value) : `'${escapeSingleQuotes(value)}'`
     }`;
   } else if (operatorTL === 'contains' || operatorTL === 'doesNotContain') {
     return wrapInNegation(
-      `${field} matches ${valueIsField || useBareValue ? trimIfString(value) : `'${value}'`}`,
+      `${field} matches ${
+        valueIsField || useBareValue ? trimIfString(value) : `'${escapeSingleQuotes(value)}'`
+      }`,
       shouldNegate(operatorTL)
     );
   } else if (operatorTL === 'beginsWith' || operatorTL === 'doesNotBeginWith') {
@@ -39,12 +43,12 @@ export const defaultValueProcessorSpELByRule: ValueProcessorByRule = (
       ? `'^'.concat(${trimIfString(value)})`
       : `'${
           (typeof value === 'string' && !value.startsWith('^')) || useBareValue ? '^' : ''
-        }${value}'`;
+        }${escapeSingleQuotes(value)}'`;
     return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
   } else if (operatorTL === 'endsWith' || operatorTL === 'doesNotEndWith') {
     const valueTL = valueIsField
       ? `${trimIfString(value)}.concat('$')`
-      : `'${value}${
+      : `'${escapeSingleQuotes(value)}${
           (typeof value === 'string' && !value.endsWith('$')) || useBareValue ? '$' : ''
         }'`;
     return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
@@ -62,7 +66,7 @@ export const defaultValueProcessorSpELByRule: ValueProcessorByRule = (
             `${field} == ${
               valueIsField || shouldRenderAsNumber(val, parseNumbers)
                 ? `${trimIfString(val)}`
-                : `'${val}'`
+                : `'${escapeSingleQuotes(val)}'`
             }`
         )
         .join(' or ')})`;
@@ -75,8 +79,16 @@ export const defaultValueProcessorSpELByRule: ValueProcessorByRule = (
       const [first, second] = valArray;
       const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
       const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
-      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : `'${first}'`) : firstNum;
-      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : `'${second}'`) : secondNum;
+      let firstValue = isNaN(firstNum)
+        ? valueIsField
+          ? `${first}`
+          : `'${escapeSingleQuotes(first)}'`
+        : firstNum;
+      let secondValue = isNaN(secondNum)
+        ? valueIsField
+          ? `${second}`
+          : `'${escapeSingleQuotes(second)}'`
+        : secondNum;
       if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
         const tempNum = secondNum;
         secondValue = firstNum;

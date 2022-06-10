@@ -74,7 +74,9 @@ export interface FormatQueryOptions {
   placeholderOperatorName?: string;
 }
 
-export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'>;
+export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'> & {
+  escapeQuotes?: boolean;
+};
 
 export type ValueProcessorByRule = (rule: RuleType, options?: ValueProcessorOptions) => string;
 

@@ -13,7 +13,6 @@ import type {
   CELMap,
   CELMember,
   CELNegation,
-  CELNegative,
   CELNullLiteral,
   CELNumericLiteral,
   CELRelation,
@@ -45,7 +44,6 @@ export const isCELMap = (expr: CELExpression): expr is CELMap => expr.type === '
 export const isCELIdentifier = (expr: CELExpression): expr is CELIdentifier =>
   expr.type === 'Identifier';
 export const isCELNegation = (expr: CELExpression): expr is CELNegation => expr.type === 'Negation';
-export const isCELNegative = (expr: CELExpression): expr is CELNegative => expr.type === 'Negative';
 export const isCELMember = (expr: CELExpression): expr is CELMember => expr.type === 'Member';
 
 export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpression =>

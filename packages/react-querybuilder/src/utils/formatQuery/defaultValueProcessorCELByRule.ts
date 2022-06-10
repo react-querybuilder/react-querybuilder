@@ -6,8 +6,10 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 export const defaultValueProcessorCELByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers } = {}
+  { escapeQuotes, parseNumbers } = {}
 ) => {
+  const escapeDoubleQuotes = (v: any) =>
+    typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`"`, `\\"`);
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.replace(/^=$/, '==');
   const useBareValue =
@@ -24,17 +26,23 @@ export const defaultValueProcessorCELByRule: ValueProcessorByRule = (
     operatorTL === '>='
   ) {
     return `${field} ${operatorTL} ${
-      valueIsField || useBareValue ? trimIfString(value) : `"${value}"`
+      valueIsField || useBareValue ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`
     }`;
   } else if (operatorTL === 'contains' || operatorTL === 'doesNotContain') {
     const negate = shouldNegate(operatorTL) ? '!' : '';
-    return `${negate}${field}.contains(${valueIsField ? trimIfString(value) : `"${value}"`})`;
+    return `${negate}${field}.contains(${
+      valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`
+    })`;
   } else if (operatorTL === 'beginsWith' || operatorTL === 'doesNotBeginWith') {
     const negate = shouldNegate(operatorTL) ? '!' : '';
-    return `${negate}${field}.startsWith(${valueIsField ? trimIfString(value) : `"${value}"`})`;
+    return `${negate}${field}.startsWith(${
+      valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`
+    })`;
   } else if (operatorTL === 'endsWith' || operatorTL === 'doesNotEndWith') {
     const negate = shouldNegate(operatorTL) ? '!' : '';
-    return `${negate}${field}.endsWith(${valueIsField ? trimIfString(value) : `"${value}"`})`;
+    return `${negate}${field}.endsWith(${
+      valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`
+    })`;
   } else if (operatorTL === 'null') {
     return `${field} == null`;
   } else if (operatorTL === 'notNull') {
@@ -47,7 +55,7 @@ export const defaultValueProcessorCELByRule: ValueProcessorByRule = (
         .map(val =>
           valueIsField || shouldRenderAsNumber(val, parseNumbers)
             ? `${trimIfString(val)}`
-            : `"${val}"`
+            : `"${escapeDoubleQuotes(val)}"`
         )
         .join(', ')}]${negate ? ')' : ''}`;
     } else {
@@ -59,8 +67,16 @@ export const defaultValueProcessorCELByRule: ValueProcessorByRule = (
       const [first, second] = valArray;
       const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
       const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
-      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : `"${first}"`) : firstNum;
-      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : `"${second}"`) : secondNum;
+      let firstValue = isNaN(firstNum)
+        ? valueIsField
+          ? `${first}`
+          : `"${escapeDoubleQuotes(first)}"`
+        : firstNum;
+      let secondValue = isNaN(secondNum)
+        ? valueIsField
+          ? `${second}`
+          : `"${escapeDoubleQuotes(second)}"`
+        : secondNum;
       if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
         const tempNum = secondNum;
         secondValue = firstNum;

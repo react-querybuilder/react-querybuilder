@@ -205,7 +205,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return '';
         }
 
-        const value = valueProcessorInternal(rule, { parseNumbers });
+        const value = valueProcessorInternal(rule, {
+          parseNumbers,
+          escapeQuotes: format === 'sql' && (rule.valueSource ?? 'value') === 'value',
+        });
         const operator = mapSQLOperator(rule.operator);
 
         if ((parameterized || parameterized_named) && (rule.valueSource ?? 'value') === 'value') {
@@ -266,7 +269,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             } else {
               // Note that we're using `value` here, which has been processed through
               // a `valueProcessor`, as opposed to `rule.value` which has not
-              paramValue = value.match(/^('?)([^']*?)(\1)$/)?.[2] ?? /* istanbul ignore next */ '';
+              paramValue = /^'.*'$/g.test(value)
+                ? value.replace(/(^'|'$)/g, '')
+                : /* istanbul ignore next */ value;
             }
           }
           let paramName = '';
@@ -347,7 +352,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, { parseNumbers });
+            return valueProcessorInternal(rule, {
+              parseNumbers,
+              escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+            });
           })
           .filter(Boolean)
           .join(',');
@@ -379,7 +387,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, { parseNumbers });
+            return valueProcessorInternal(rule, {
+              parseNumbers,
+              escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+            });
           })
           .filter(Boolean)
           .join(
@@ -416,7 +427,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, { parseNumbers });
+            return valueProcessorInternal(rule, {
+              parseNumbers,
+              escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+            });
           })
           .filter(Boolean)
           .join('combinator' in rg ? ` ${rg.combinator} ` : ' ');

@@ -4,8 +4,10 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber, toArray, trimIfStri
 export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers } = {}
+  { escapeQuotes, parseNumbers } = {}
 ) => {
+  const escapeDoubleQuotes = (v: any) =>
+    typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`"`, `\\"`);
   const valueIsField = valueSource === 'field';
   const useBareValue =
     typeof value === 'number' ||
@@ -23,31 +25,33 @@ export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
     const mongoOperator = mongoOperators[operator];
     return valueIsField
       ? `{"$expr":{"${mongoOperator}":["$${field}","$${value}"]}}`
-      : `{"${field}":{"${mongoOperator}":${useBareValue ? trimIfString(value) : `"${value}"`}}}`;
+      : `{"${field}":{"${mongoOperator}":${
+          useBareValue ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`
+        }}}`;
   } else if (operator === 'contains') {
     return valueIsField
       ? `{"$where":"this.${field}.includes(this.${value})"}`
-      : `{"${field}":{"$regex":"${value}"}}`;
+      : `{"${field}":{"$regex":"${escapeDoubleQuotes(value)}"}}`;
   } else if (operator === 'beginsWith') {
     return valueIsField
       ? `{"$where":"this.${field}.startsWith(this.${value})"}`
-      : `{"${field}":{"$regex":"^${value}"}}`;
+      : `{"${field}":{"$regex":"^${escapeDoubleQuotes(value)}"}}`;
   } else if (operator === 'endsWith') {
     return valueIsField
       ? `{"$where":"this.${field}.endsWith(this.${value})"}`
-      : `{"${field}":{"$regex":"${value}$"}}`;
+      : `{"${field}":{"$regex":"${escapeDoubleQuotes(value)}$"}}`;
   } else if (operator === 'doesNotContain') {
     return valueIsField
       ? `{"$where":"!this.${field}.includes(this.${value})"}`
-      : `{"${field}":{"$not":{"$regex":"${value}"}}}`;
+      : `{"${field}":{"$not":{"$regex":"${escapeDoubleQuotes(value)}"}}}`;
   } else if (operator === 'doesNotBeginWith') {
     return valueIsField
       ? `{"$where":"!this.${field}.startsWith(this.${value})"}`
-      : `{"${field}":{"$not":{"$regex":"^${value}"}}}`;
+      : `{"${field}":{"$not":{"$regex":"^${escapeDoubleQuotes(value)}"}}}`;
   } else if (operator === 'doesNotEndWith') {
     return valueIsField
       ? `{"$where":"!this.${field}.endsWith(this.${value})"}`
-      : `{"${field}":{"$not":{"$regex":"${value}$"}}}`;
+      : `{"${field}":{"$not":{"$regex":"${escapeDoubleQuotes(value)}$"}}}`;
   } else if (operator === 'null') {
     return `{"${field}":null}`;
   } else if (operator === 'notNull') {
@@ -61,7 +65,9 @@ export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
             .join(',')}].includes(this.${field})"}`
         : `{"${field}":{"${mongoOperators[operator]}":[${valArray
             .map(val =>
-              shouldRenderAsNumber(val, parseNumbers) ? `${trimIfString(val)}` : `"${val}"`
+              shouldRenderAsNumber(val, parseNumbers)
+                ? `${trimIfString(val)}`
+                : `"${escapeDoubleQuotes(val)}"`
             )
             .join(',')}]}}`;
     } else {
@@ -73,8 +79,10 @@ export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
       const [first, second] = valArray;
       const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
       const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
-      const firstValue = valueIsField || !isNaN(firstNum) ? `${first}` : `"${first}"`;
-      const secondValue = valueIsField || !isNaN(secondNum) ? `${second}` : `"${second}"`;
+      const firstValue =
+        valueIsField || !isNaN(firstNum) ? `${first}` : `"${escapeDoubleQuotes(first)}"`;
+      const secondValue =
+        valueIsField || !isNaN(secondNum) ? `${second}` : `"${escapeDoubleQuotes(second)}"`;
       if (operator === 'between') {
         return valueIsField
           ? `{"$and":[{"$expr":{"$gte":["$${field}","$${firstValue}"]}},{"$expr":{"$lte":["$${field}","$${secondValue}"]}}]}`
