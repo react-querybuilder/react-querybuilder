@@ -9,8 +9,7 @@
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -21,7 +20,9 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "vite build && tsc --emitDeclarationOnly && yarn copy-src-to-dist && yarn downgrade-dist-src",
+    "copy-src-to-dist": "copyfiles src/index.ts src/MaterialActionElement.tsx src/MaterialDragHandle.tsx src/MaterialNotToggle.tsx src/MaterialValueEditor.tsx src/MaterialValueSelector.tsx src/utils.tsx dist",
+    "downgrade-dist-src": "replace \"import type\" \"import\" ./dist/src -r --silent && replace \", type \" \", \" ./dist/src -r --silent && replace \"{ type \" \"{ \" ./dist/src -r --silent",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch"
   },
