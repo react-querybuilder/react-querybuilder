@@ -9,7 +9,8 @@
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "repository": {
     "type": "git",
