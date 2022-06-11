@@ -27,6 +27,8 @@
     "type-check:watch": "yarn type-check --watch"
   },
   "devDependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.0.5",
     "@mui/material": "^5.0.6",
     "@types/react": "^18.0.0",

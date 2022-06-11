@@ -17,7 +17,14 @@ export default defineConfig(({ mode, command }) => {
         formats: ['es', 'cjs'],
       },
       rollupOptions: {
-        external: ['react', 'react-querybuilder', '@mui/icons-material', '@mui/material'],
+        external: [
+          'react',
+          'react-querybuilder',
+          '@emotion/react',
+          '@emotion/styled',
+          '@mui/icons-material',
+          '@mui/material',
+        ],
       },
       sourcemap: true,
     },
