@@ -33,27 +33,32 @@ export const transformQuery = (
       }
     });
 
-  const processGroup = (rg: RuleGroupTypeAny): any => ({
+  const processGroup = (rg: RuleGroupTypeAny & { path: number[] }): any => ({
     ...ruleGroupProcessor(
       remapProperties({
         ...rg,
-        combinator: 'combinator' in rg ? combinatorMap[rg.combinator] ?? rg.combinator : undefined,
+        ...('combinator' in rg
+          ? { combinator: combinatorMap[rg.combinator] ?? rg.combinator }
+          : {}),
       }) as RuleGroupTypeAny
     ),
-    rules: rg.rules.map((r: any) => {
+    rules: rg.rules.map((r: any, idx) => {
       if (typeof r === 'string') {
         // independent combinators
         return combinatorMap[r] ?? r;
       } else if ('rules' in r) {
         // sub-groups
-        return processGroup(r);
+        return processGroup({ ...r, path: [...rg.path, idx] });
       }
       // rules
       return ruleProcessor(
-        remapProperties({ ...r, operator: operatorMap[r.operator] ?? r.operator }) as RuleType
+        remapProperties({
+          ...{ ...r, path: [...rg.path, idx] },
+          operator: operatorMap[r.operator] ?? r.operator,
+        }) as RuleType
       );
     }),
   });
 
-  return processGroup(query);
+  return processGroup({ ...query, path: [] });
 };

@@ -9,15 +9,26 @@ const queryIC: RuleGroupTypeIC = { rules: [{ rules: [] }, 'and', { rules: [] }] 
 
 const combinatorMap = { and: '&&', or: '||' } as const;
 
-it('does nothing by default', () => {
-  expect(transformQuery(query)).toEqual(query);
-  expect(transformQuery(queryIC)).toEqual(queryIC);
+it('only adds path by default', () => {
+  expect(transformQuery(query)).toEqual({
+    ...query,
+    path: [],
+    rules: [{ ...query.rules[0], path: [0] }],
+  });
+  expect(transformQuery(queryIC)).toEqual({
+    path: [],
+    rules: [
+      { ...queryIC.rules[0], path: [0] },
+      queryIC.rules[1],
+      { ...queryIC.rules[2], path: [2] },
+    ],
+  });
 });
 
 it('respects the ruleProcessor option', () => {
   expect(
     transformQuery(query, { ruleProcessor: r => `${r.field} ${r.operator} ${r.value}` })
-  ).toEqual({ combinator: 'and', rules: ['f1 = v1'] });
+  ).toEqual({ combinator: 'and', rules: ['f1 = v1'], path: [] });
 });
 
 it('respects the ruleGroupProcessor option', () => {
@@ -25,27 +36,34 @@ it('respects the ruleGroupProcessor option', () => {
     transformQuery(query, {
       ruleGroupProcessor: rg => ({ text: `rules.length == ${rg.rules.length}` }),
     })
-  ).toEqual({ text: 'rules.length == 1', rules: query.rules });
+  ).toEqual({
+    text: 'rules.length == 1',
+    rules: query.rules.map((r, idx) => ({ ...r, path: [idx] })),
+  });
 });
 
 it('respects the propertyMap option', () => {
   expect(transformQuery(query, { propertyMap: { combinator: 'AndOr', value: 'val' } })).toEqual({
     AndOr: 'and',
-    rules: [{ field: 'f1', operator: '=', val: 'v1' }],
+    path: [],
+    rules: [{ field: 'f1', operator: '=', val: 'v1', path: [0] }],
   });
 });
 
 it('respects the combinatorMap option', () => {
   expect(transformQuery(query, { combinatorMap })).toEqual({
     ...query,
+    path: [],
     combinator: '&&',
+    rules: query.rules.map((r, idx) => ({ ...r, path: [idx] })),
   });
 });
 
 it('respects the operatorMap option', () => {
   expect(transformQuery(query, { operatorMap: { '=': '==' } })).toEqual({
     ...query,
-    rules: [{ ...query.rules[0], operator: '==' }],
+    path: [],
+    rules: [{ ...query.rules[0], operator: '==', path: [0] }],
   });
 });
 
@@ -57,8 +75,9 @@ it('respects the deleteRemappedProperties option', () => {
     })
   ).toEqual({
     combinator: 'and',
+    path: [],
     AndOr: 'and',
-    rules: [{ field: 'f1', operator: '=', val: 'v1', value: 'v1' }],
+    rules: [{ field: 'f1', operator: '=', val: 'v1', value: 'v1', path: [0] }],
   });
 });
 
@@ -79,6 +98,7 @@ it('handles independent combinators and nested groups', () => {
       { ruleProcessor: () => 'Rule!', combinatorMap }
     )
   ).toEqual({
-    rules: [{ rules: ['Rule!', '||', 'Rule!'] }],
+    path: [],
+    rules: [{ rules: ['Rule!', '||', 'Rule!'], path: [0] }],
   });
 });
