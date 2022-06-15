@@ -70,7 +70,7 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "yarn build:main && yarn build:css && yarn build:formatQuery && yarn build:parseCEL && yarn build:parseJsonLogic && yarn build:parseSQL && yarn build:types",
+    "build": "yarn build:main && yarn build:css && yarn build:formatQuery && yarn build:parseCEL && yarn build:parseJsonLogic && yarn build:parseSQL && yarn build:transformQuery && yarn build:types",
     "build:main": "vite build",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
     "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC'\" ./dist/types/types -r --silent && yarn build:typesPre45",
@@ -79,6 +79,7 @@
     "build:parseCEL": "vite build --config vite.config.parseCEL.js",
     "build:parseJsonLogic": "vite build --config vite.config.parseJsonLogic.js",
     "build:parseSQL": "vite build --config vite.config.parseSQL.js",
+    "build:transformQuery": "vite build --config vite.config.transformQuery.js",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch",
     "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
