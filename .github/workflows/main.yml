@@ -24,8 +24,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
-    name: Build and test
+  build_packages:
+    name: Build and test packages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -34,10 +34,21 @@ jobs:
           node-version: '16'
       - run: yarn install --frozen-lockfile
       - run: yarn lint
-      - run: yarn build
+      - run: yarn build:packages
       - run: yarn test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
+
+  build_demo:
+    name: Build demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: yarn install --frozen-lockfile
+      - run: yarn build:demo
 
   # test-types:
   #   name: Test Types with TypeScript ${{ matrix.ts }}
@@ -47,7 +58,7 @@ jobs:
   #     fail-fast: false
   #     matrix:
   #       node: ['16.x']
-  #       ts: ['4.6']
+  #       ts: ['4.1', '4.5', 'latest']
   #   steps:
   #     - name: Checkout repo
   #       uses: actions/checkout@v2
