@@ -55,6 +55,7 @@ import 'react-querybuilder/src/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
+import plaintext from 'react-syntax-highlighter/dist/esm/languages/hljs/plaintext';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { styleConfigs } from './components';
 import { docsLink, npmLink, styleNameArray, styleNameMap, type StyleName } from './constants';
@@ -80,6 +81,9 @@ SyntaxHighlighter.registerLanguage('mongodb', json);
 SyntaxHighlighter.registerLanguage('parameterized', json);
 SyntaxHighlighter.registerLanguage('parameterized_named', json);
 SyntaxHighlighter.registerLanguage('sql', sql);
+SyntaxHighlighter.registerLanguage('jsonlogic', json);
+SyntaxHighlighter.registerLanguage('cel', plaintext);
+SyntaxHighlighter.registerLanguage('spel', plaintext);
 
 const shStyle: Record<string, CSSProperties> = {
   ...vs,
