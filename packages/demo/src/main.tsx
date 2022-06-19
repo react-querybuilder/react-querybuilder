@@ -117,7 +117,7 @@ const getOptionsFromHash = (hash: Partial<DemoOptionsWithStyle>) => {
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
-const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'));
+const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
 // Initialize options from URL hash
 const { style: initialStyle, ...initialOptions } = getOptionsFromHash(
@@ -272,7 +272,7 @@ const App = () => {
           </Title>
         </Header>
         <Layout>
-          <Sider theme="light" width={260} style={{ padding: '1rem' }}>
+          <Sider theme="light" width={280} style={{ padding: '1rem' }}>
             <Title level={4}>
               Style
               {'\u00a0'}
