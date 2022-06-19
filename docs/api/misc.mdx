@@ -13,7 +13,7 @@ import TypeScriptAdmonition from './_ts_admonition.md';
 ### `defaultValidator`
 
 ```ts
-function defaultValidator(query: RuleGroupType): {
+function defaultValidator(query: RuleGroupTypeAny): {
   [id: string]: { valid: boolean; reasons?: string[] };
 };
 ```
@@ -25,7 +25,7 @@ You can see an example of the default validator in action in the [demo](https://
 ### `findPath`
 
 ```ts
-function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
+function findPath(path: number[], query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny;
 ```
 
 `findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](./querybuilder#onaddrule) and [`onAddGroup`](./querybuilder#onaddgroup) functions.
@@ -41,6 +41,22 @@ function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 `convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](./querybuilder#independentcombinators)).
 
 `convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in one direction.
+
+### `transformQuery`
+
+```ts
+function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOptions): any;
+```
+
+This function recursively steps through nested `rules` arrays in a `RuleGroupType` or `RuleGroupTypeIC`, passing each `RuleType` object to a provided `ruleProcessor` function. Several other options are also available:
+
+- `ruleGroupProcessor`: Custom processing for each rule group. (The `rules` property will be overwritten.)
+- `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
+- `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
+- `operatorMap`: Convert operators that match the keys in this object to the corresponding values, e.g. `{"=": "=="}`.
+- `deleteRemappedProperties`: Defaults to `true`; pass `false` to leave the remapped properties _and_ the original properties in the resulting object.
+
+See the [test suite](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/transformQuery.test.ts) for example usage.
 
 ## Query tools
 
@@ -60,8 +76,7 @@ The following default configuration objects are exported for convenience.
 - `defaultCombinators` (see [`combinators` prop](./querybuilder#combinators))
 - `defaultOperators` (see [`operators` prop](./querybuilder#operators))
 - `defaultTranslations` (see [`translations` prop](./querybuilder#translations))
-- `defaultValueProcessor` (see [Export](./export) > [Value processor](./export#value-processor))
-- `defaultMongoDBValueProcessor` (see [Export](./export) > [Value processor](./export#value-processor))
+- `defaultValueProcessor` and variants for non-SQL formats (see [Export](./export) > [Value processor](./export#value-processor))
 - `defaultFields` (see [`fields` prop](./querybuilder#fields))
 - `standardClassnames` (see [CSS classes](./classnames))
 

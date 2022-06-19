@@ -1,11 +1,13 @@
 ---
 title: Import
-description: Convert SQL to query builder objects
+description: Convert SQL and other formats to query builder objects
 ---
 
 import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
+
+## SQL
 
 Use the `parseSQL` function to convert SQL `SELECT` statements into a format suitable for the `<QueryBuilder />` component's `query` prop. The function signature is:
 
@@ -17,7 +19,7 @@ function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables within the SQL string.
 
-## Basic usage
+### Basic usage
 
 Running any of the following statements will produce the same result (see below):
 
@@ -58,6 +60,20 @@ Output (`RuleGroupType`):
 }
 ```
 
+## Common Expression Language (CEL)
+
+`parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`.
+
+Click the "Import from CEL" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try it out.
+
+## JsonLogic
+
+`parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
+
+Click the "Import from JsonLogic" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try it out.
+
+## Configuration
+
 ### Lists as arrays
 
 To generate actual arrays instead of comma-separated strings for lists of values following `IN` and `BETWEEN` operators, use the `listsAsArrays` option.
@@ -88,9 +104,9 @@ Output:
 }
 ```
 
-## Independent combinators
+### Independent combinators
 
-When the `independentCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between sibling rules/groups.
+When the `independentCombinators` option is `true`, `parse*` functions will output a query with combinator identifiers between sibling rules/groups.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`, {
@@ -118,11 +134,11 @@ Output (`RuleGroupTypeIC`):
 }
 ```
 
-## Fields as value source
+### Fields as value source
 
-When the `fields` option (which accepts the same types as the [`fields` prop](./querybuilder#fields)) is provided, and _only_ if it is provided, then `parseSQL` will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function can also be provided to help validate rules.
+When the `fields` option (which accepts the same types as the [`fields` prop](./querybuilder#fields)) is provided, and _only_ if it is provided, then `parse*` functions will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function (with the same signature as the [prop of the same name](./querybuilder#getvaluesources)) can also be provided to help validate rules.
 
-In order for such a rule to be considered valid, either the `getValueSources` return value, the field's `valueSources` property return value, or the field's `valueSources` property itself must be an array that includes the string "field".
+In order for such a rule to be considered valid, one of the following must be an array that includes the string "field": 1) the `getValueSources` return value, 2) the field's `valueSources` property return value, or 3) the field's `valueSources` property itself.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = lastName`, {
@@ -152,6 +168,6 @@ Output:
 
 :::note
 
-`parseSQL` will only validate clauses where "field" is the _only_ value source. Operators that take multiple values, like "between" and "in", must only have field names to the right of the operator, not a mix of field names and primitive values.
+`parse*` functions will only validate clauses where "field" is the _only_ value source. Operators that take multiple values, like "between" and "in", must only have field names to the right of the operator, not a mix of field names and primitive values.
 
 :::
