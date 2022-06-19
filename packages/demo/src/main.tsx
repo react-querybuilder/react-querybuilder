@@ -55,6 +55,7 @@ import {
 import 'react-querybuilder/src/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
+import plaintext from 'react-syntax-highlighter/dist/esm/languages/hljs/plaintext';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { styleConfigs } from './components';
@@ -81,6 +82,9 @@ SyntaxHighlighter.registerLanguage('mongodb', json);
 SyntaxHighlighter.registerLanguage('parameterized', json);
 SyntaxHighlighter.registerLanguage('parameterized_named', json);
 SyntaxHighlighter.registerLanguage('sql', sql);
+SyntaxHighlighter.registerLanguage('jsonlogic', json);
+SyntaxHighlighter.registerLanguage('cel', plaintext);
+SyntaxHighlighter.registerLanguage('spel', plaintext);
 
 const shStyle: Record<string, CSSProperties> = {
   ...vs,
@@ -112,8 +116,8 @@ const getOptionsFromHash = (hash: Partial<DemoOptionsWithStyle>) => {
 };
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
-const initialCEL = formatQuery(initialQuery, 'cel');
-const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'));
+const initialCEL = `firstName.startsWith("Stev") && age > 28`;
+const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
 // Initialize options from URL hash
 const { style: initialStyle, ...initialOptions } = getOptionsFromHash(
@@ -268,7 +272,7 @@ const App = () => {
           </Title>
         </Header>
         <Layout>
-          <Sider theme="light" width={260} style={{ padding: '1rem' }}>
+          <Sider theme="light" width={280} style={{ padding: '1rem' }}>
             <Title level={4}>
               Style
               {'\u00a0'}
