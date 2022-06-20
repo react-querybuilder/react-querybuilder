@@ -105,6 +105,7 @@ for (const exampleID in configs) {
   }
   if (exampleConfig.compileToJS) {
     delete examplePkgJSON.devDependencies['typescript'];
+    delete examplePkgJSON.devDependencies['sass'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
       if (devDep.match(/^@types\//)) {
         delete examplePkgJSON.devDependencies[devDep];
