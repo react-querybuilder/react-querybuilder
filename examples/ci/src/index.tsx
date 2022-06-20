@@ -1,12 +1,7 @@
 import { StrictMode, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  DefaultRuleGroupType,
-  defaultValidator,
-  formatQuery,
-  QueryBuilder,
-  QueryBuilderProps,
-} from 'react-querybuilder';
+import type { DefaultRuleGroupType, QueryBuilderProps } from 'react-querybuilder';
+import { defaultValidator, formatQuery, QueryBuilder } from 'react-querybuilder';
 import { fields } from './fields';
 import './index.scss';
 import { initialQuery, initialQueryIC } from './initialQuery';

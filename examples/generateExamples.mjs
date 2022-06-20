@@ -27,11 +27,8 @@ async function recursivelyGetFiles(dir) {
 }
 
 const templatePath = pathJoin(__dirname, '_template');
-const templatePublic = pathJoin(templatePath, 'public');
 const templateSrc = pathJoin(templatePath, 'src');
-const templateIndexHTML = (await readFile(pathJoin(templatePublic, 'index.html'))).toString(
-  'utf-8'
-);
+const templateIndexHTML = (await readFile(pathJoin(templatePath, 'index.html'))).toString('utf-8');
 const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
 const templateIndexSCSS = (await readFile(pathJoin(templateSrc, 'index.scss'))).toString('utf-8');
 const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
@@ -39,17 +36,15 @@ const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).t
 for (const exampleID in configs) {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
-  const examplePublic = pathJoin(examplePath, 'public');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
   await rm(examplePath, { recursive: true, force: true });
   await mkdir(examplePath);
-  await mkdir(examplePublic);
   await mkdir(exampleSrc);
 
   // #region public/index.html
   await writeFile(
-    pathJoin(examplePublic, 'index.html'),
+    pathJoin(examplePath, 'index.html'),
     templateIndexHTML.replace('__TITLE__', exampleTitle)
   );
   // #endregion
@@ -124,6 +119,10 @@ for (const exampleID in configs) {
   if (!exampleConfig.compileToJS) {
     await copyFile(pathJoin(templatePath, 'tsconfig.json'), pathJoin(examplePath, 'tsconfig.json'));
   }
+  // #endregion
+
+  // #region vite.config.js
+  await copyFile(pathJoin(templatePath, 'vite.config.js'), pathJoin(examplePath, 'vite.config.js'));
   // #endregion
 
   // #region README.md
