@@ -19,6 +19,8 @@ const App = () => {
     validator: useValidation ? defaultValidator : undefined,
   };
 
+  const queryForFormatting = independentCombinators ? queryIC : query;
+
   return (
     <div>
       {independentCombinators ? (
@@ -57,34 +59,42 @@ const App = () => {
       </h5>
       <pre>
         {JSON.stringify(
-          JSON.parse(formatQuery(query, { format: 'json_without_ids', parseNumbers })),
+          JSON.parse(formatQuery(queryForFormatting, { format: 'json_without_ids', parseNumbers })),
           null,
           2
         )}
       </pre>
       <h5>Parameterized SQL</h5>
       <pre>
-        {JSON.stringify(formatQuery(query, { format: 'parameterized', parseNumbers }), null, 2)}
+        {JSON.stringify(
+          formatQuery(queryForFormatting, { format: 'parameterized', parseNumbers }),
+          null,
+          2
+        )}
       </pre>
       <h5>Parameterized (Named) SQL</h5>
       <pre>
         {JSON.stringify(
-          formatQuery(query, { format: 'parameterized_named', parseNumbers }),
+          formatQuery(queryForFormatting, { format: 'parameterized_named', parseNumbers }),
           null,
           2
         )}
       </pre>
       <h5>SQL</h5>
-      <pre>{formatQuery(query, { format: 'sql', parseNumbers })}</pre>
+      <pre>{formatQuery(queryForFormatting, { format: 'sql', parseNumbers })}</pre>
       <h5>MongoDB</h5>
-      <pre>{formatQuery(query, { format: 'mongodb', parseNumbers })}</pre>
+      <pre>{formatQuery(queryForFormatting, { format: 'mongodb', parseNumbers })}</pre>
       <h5>CEL</h5>
-      <pre>{formatQuery(query, { format: 'cel', parseNumbers })}</pre>
+      <pre>{formatQuery(queryForFormatting, { format: 'cel', parseNumbers })}</pre>
       <h5>SpEL</h5>
-      <pre>{formatQuery(query, { format: 'spel', parseNumbers })}</pre>
+      <pre>{formatQuery(queryForFormatting, { format: 'spel', parseNumbers })}</pre>
       <h5>JsonLogic</h5>
       <pre>
-        {JSON.stringify(formatQuery(query, { format: 'jsonlogic', parseNumbers }), null, 2)}
+        {JSON.stringify(
+          formatQuery(queryForFormatting, { format: 'jsonlogic', parseNumbers }),
+          null,
+          2
+        )}
       </pre>
     </div>
   );
