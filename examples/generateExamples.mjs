@@ -43,10 +43,10 @@ for (const exampleID in configs) {
   await mkdir(exampleSrc);
 
   // #region public/index.html
-  await writeFile(
-    pathJoin(examplePath, 'index.html'),
-    templateIndexHTML.replace('__TITLE__', exampleTitle)
-  );
+  const exampleIndexHTML = templateIndexHTML
+    .replace('__TITLE__', exampleTitle)
+    .replace(/((\/src\/index)\.tsx)/g, exampleConfig.compileToJS ? '$2.js' : '$1');
+  await writeFile(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
   // #endregion
 
   // #region src/index.scss
@@ -122,8 +122,12 @@ for (const exampleID in configs) {
   }
   // #endregion
 
-  // #region vite.config.js
+  // #region vite.config.js and sandbox.config.json
   await copyFile(pathJoin(templatePath, 'vite.config.js'), pathJoin(examplePath, 'vite.config.js'));
+  await copyFile(
+    pathJoin(templatePath, 'sandbox.config.json'),
+    pathJoin(examplePath, 'sandbox.config.json')
+  );
   // #endregion
 
   // #region README.md
