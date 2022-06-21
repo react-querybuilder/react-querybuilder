@@ -30,6 +30,7 @@ const templatePath = pathJoin(__dirname, '_template');
 const templateSrc = pathJoin(templatePath, 'src');
 const templateIndexHTML = (await readFile(pathJoin(templatePath, 'index.html'))).toString('utf-8');
 const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
+const templateAppTSX = (await readFile(pathJoin(templateSrc, 'App.tsx'))).toString('utf-8');
 const templateIndexSCSS = (await readFile(pathJoin(templateSrc, 'index.scss'))).toString('utf-8');
 const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
 
@@ -61,35 +62,44 @@ for (const exampleID in configs) {
   // #endregion
 
   // #region src/index.tsx
+  const processedTemplateIndexTSX = templateIndexTSX
+    .replace(/(!)/g, exampleConfig.compileToJS ? '' : '$1')
+    .replace(/((index\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
+  await writeFile(
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
+    processedTemplateIndexTSX
+  );
+  // #endregion
+
+  // #region src/App.tsx
   let baseImport = '';
   const props = [];
   if (exampleConfig.isCompatPackage) {
     baseImport = `import { ${
       exampleID === 'bootstrap' ? `${exampleID}ControlClassnames, ` : ''
     }${exampleID}ControlElements } from '@react-querybuilder/${exampleID}';`;
-    props.push(
-      `controlElements={${exampleID}ControlElements}`,
-      exampleID === 'bootstrap' ? `controlClassnames={${exampleID}ControlClassnames}` : ''
-    );
+    props.push(`controlElements={${exampleID}ControlElements}`);
+    if (exampleID === 'bootstrap') {
+      props.push(`controlClassnames={${exampleID}ControlClassnames}`);
+    }
   }
-  const processedTemplateTSX = templateIndexTSX
+  const processedTemplateAppTSX = templateAppTSX
     .replace('// __IMPORTS__', [baseImport, ...exampleConfig.tsxImports].join('\n'))
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
     .replace('// __WRAPPER_OPEN__', exampleConfig.wrapper?.[0] ?? '')
     .replace('// __WRAPPER_CLOSE__', exampleConfig.wrapper?.[1] ?? '')
-    .replace('// __RQB_PROPS__', props.join('\n'))
-    .replace(/((index\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
+    .replace('// __RQB_PROPS__', props.join('\n'));
   const sourceCode = exampleConfig.compileToJS
     ? (
-        await transformWithEsbuild(processedTemplateTSX, 'index.tsx', {
+        await transformWithEsbuild(processedTemplateAppTSX, 'App.tsx', {
           minify: false,
           minifyWhitespace: false,
           jsx: 'preserve',
         })
       ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1')
-    : processedTemplateTSX;
+    : processedTemplateAppTSX;
   await writeFile(
-    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
+    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     sourceCode
   );
   // #endregion
