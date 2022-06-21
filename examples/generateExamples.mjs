@@ -45,7 +45,7 @@ for (const exampleID in configs) {
   // #region public/index.html
   const exampleIndexHTML = templateIndexHTML
     .replace('__TITLE__', exampleTitle)
-    .replace(/((\/src\/index)\.tsx)/g, exampleConfig.compileToJS ? '$2.js' : '$1');
+    .replace(/((\/src\/index)\.tsx)/g, exampleConfig.compileToJS ? '$2.jsx' : '$1');
   await writeFile(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
   // #endregion
 
@@ -89,7 +89,7 @@ for (const exampleID in configs) {
       ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1')
     : processedTemplateTSX;
   await writeFile(
-    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     sourceCode
   );
   // #endregion
