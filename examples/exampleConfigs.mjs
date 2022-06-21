@@ -90,7 +90,8 @@ export const configs = {
     dependencies: {
       '@emotion/react': '^11.9.0',
       '@emotion/styled': '^11.8.1',
-      '@mui/material': '^5.8.0'
+      '@mui/icons-material': '^5.0.5',
+      '@mui/material': '^5.8.0',
     },
     scssPre: [],
     scssPost: [],

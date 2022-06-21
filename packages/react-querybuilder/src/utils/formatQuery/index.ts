@@ -1,4 +1,4 @@
-import type { ValueProcessor } from '../../types/index.noReact';
+import type { ValueProcessorLegacy } from '../../types/index.noReact';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorCELByRule } from './defaultValueProcessorCELByRule';
 import { defaultValueProcessorMongoDBByRule } from './defaultValueProcessorMongoDBByRule';
@@ -12,7 +12,7 @@ const internalValueProcessors = {
 } as const;
 
 const generateValueProcessor =
-  (format: 'default' | 'mongodb' | 'cel' | 'spel'): ValueProcessor =>
+  (format: 'default' | 'mongodb' | 'cel' | 'spel'): ValueProcessorLegacy =>
   (field, operator, value, valueSource) =>
     internalValueProcessors[format](
       { field, operator, value, valueSource },

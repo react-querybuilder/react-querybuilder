@@ -1,7 +1,7 @@
 import type {
   DefaultCombinatorName,
   RuleGroupTypeAny,
-  ValueProcessor,
+  ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
 
@@ -110,5 +110,6 @@ export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
     typeof v === 'bigint' ||
     (typeof v === 'string' && numericRegex.test(v)));
 
-export const isValueProcessorLegacy = (vp: ValueProcessor): vp is ValueProcessorLegacy =>
-  vp.length >= 3;
+export const isValueProcessorLegacy = (
+  vp: ValueProcessorLegacy | ValueProcessorByRule
+): vp is ValueProcessorLegacy => vp.length >= 3;
