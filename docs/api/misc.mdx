@@ -48,8 +48,9 @@ function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOptions): any;
 ```
 
-This function recursively steps through nested `rules` arrays in a `RuleGroupType` or `RuleGroupTypeIC`, passing each `RuleType` object to a provided `ruleProcessor` function. Several other options are also available:
+This function recursively steps through nested `rules` arrays in a `RuleGroupType` or `RuleGroupTypeIC`, passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
 
+- `ruleProcessor`: Custom processing for each rule.
 - `ruleGroupProcessor`: Custom processing for each rule group. (The `rules` property will be overwritten.)
 - `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
 - `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
