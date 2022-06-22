@@ -151,6 +151,7 @@ for (const exampleID in configs) {
     const fileContents = (await readFile(filePath)).toString('utf-8');
     const prettified = prettier.format(fileContents, {
       ...prettierConfig,
+      printWidth: 80, // narrower since codesandbox code panel is narrow
       filepath: filePath,
       plugins: ['prettier-plugin-organize-imports'],
     });
