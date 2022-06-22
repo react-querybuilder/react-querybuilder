@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { standardClassnames } from '../defaults';
+import { toArray } from '../internal';
 import type { ValueEditorProps } from '../types';
 import { ValueSelector } from './ValueSelector';
 
@@ -39,6 +41,32 @@ export const ValueEditor = ({
     ? 'text'
     : inputType || 'text';
 
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => handleOnChange(`${v},${valArray[1]}`);
+    const selector2handler = (v: string) => handleOnChange(`${valArray[0]},${v}`);
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <ValueSelector
+          {...props}
+          className={standardClassnames.valueBetweenSelector1}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values ?? []}
+        />
+        <ValueSelector
+          {...props}
+          className={standardClassnames.valueBetweenSelector2}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values ?? []}
+        />
+      </span>
+    );
+  }
+
   switch (type) {
     case 'select':
     case 'multiselect':
@@ -51,7 +79,7 @@ export const ValueEditor = ({
           handleOnChange={handleOnChange}
           disabled={disabled}
           value={value}
-          options={values!}
+          options={values ?? []}
           multiple={type === 'multiselect'}
         />
       );

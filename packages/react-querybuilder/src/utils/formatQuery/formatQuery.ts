@@ -1,4 +1,5 @@
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+import { toArray } from '../../internal/toArray';
 import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
@@ -28,7 +29,6 @@ import {
   mapSQLOperator,
   numerifyValues,
   shouldRenderAsNumber,
-  toArray,
 } from './utils';
 
 /**

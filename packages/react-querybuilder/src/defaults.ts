@@ -139,6 +139,8 @@ export const standardClassnames = {
   lockRule: 'rule-lock',
   lockGroup: 'ruleGroup-lock',
   valueSource: 'rule-valueSource',
+  valueBetweenSelector1: 'rule-value-between-selector-1',
+  valueBetweenSelector2: 'rule-value-between-selector-2',
 } as const;
 
 export const defaultControlClassnames: Classnames = {
