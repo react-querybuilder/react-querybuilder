@@ -14,6 +14,7 @@ export const MaterialValueSelector = ({
   disabled,
   title,
   multiple,
+  listsAsArrays,
   // Props that should not be in extraProps
   testID: _testID,
   rules: _rules,
@@ -26,13 +27,16 @@ export const MaterialValueSelector = ({
   fieldData: _fieldData,
   ...extraProps
 }: MaterialValueSelectorProps) => {
-  const onChange = useMemo(() => {
-    if (multiple) {
-      return ({ target: { value: v } }: SelectChangeEvent<string | string[]>) =>
-        handleOnChange(Array.isArray(v) ? v.join(',') : /* istanbul ignore next */ v);
-    }
-    return ({ target: { value: v } }: SelectChangeEvent<string>) => handleOnChange(v);
-  }, [handleOnChange, multiple]);
+  const onChange = useMemo(
+    () =>
+      multiple
+        ? ({ target: { value: v } }: SelectChangeEvent<string | string[]>) =>
+            handleOnChange(
+              Array.isArray(v) ? (listsAsArrays ? v : v.join(',')) : /* istanbul ignore next */ v
+            )
+        : ({ target: { value: v } }: SelectChangeEvent<string>) => handleOnChange(v),
+    [handleOnChange, listsAsArrays, multiple]
+  );
 
   const val = multiple ? (Array.isArray(value) ? value : value?.split(',')) : value;
 

@@ -14,6 +14,7 @@ export const AntDValueSelector = ({
   title,
   disabled,
   multiple,
+  listsAsArrays,
   // Props that should not be in extraProps
   testID: _testID,
   rules: _rules,
@@ -26,13 +27,16 @@ export const AntDValueSelector = ({
   fieldData: _fieldData,
   ...extraProps
 }: AntDValueSelectorProps) => {
-  const onChange = useMemo(() => {
-    if (multiple) {
-      return (v: string | string[]) =>
-        handleOnChange(Array.isArray(v) ? v.join(',') : /* istanbul ignore next */ v);
-    }
-    return (v: string) => handleOnChange(v);
-  }, [handleOnChange, multiple]);
+  const onChange = useMemo(
+    () =>
+      multiple
+        ? (v: string | string[]) =>
+            handleOnChange(
+              Array.isArray(v) ? (listsAsArrays ? v : v.join(',')) : /* istanbul ignore next */ v
+            )
+        : (v: string) => handleOnChange(v),
+    [handleOnChange, listsAsArrays, multiple]
+  );
 
   const val = multiple
     ? Array.isArray(value)

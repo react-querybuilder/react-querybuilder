@@ -1,6 +1,11 @@
 import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import moment from 'moment';
-import { useValueEditor, type ValueEditorProps } from 'react-querybuilder';
+import {
+  standardClassnames,
+  toArray,
+  useValueEditor,
+  type ValueEditorProps,
+} from 'react-querybuilder';
 import { AntDValueSelector } from './AntDValueSelector';
 
 export const AntDValueEditor = ({
@@ -12,9 +17,11 @@ export const AntDValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   valueSource: _vs,
   disabled,
+  testID,
   ...props
 }: ValueEditorProps) => {
   useValueEditor({ handleOnChange, inputType, operator, value });
@@ -32,6 +39,40 @@ export const AntDValueEditor = ({
       ? 'text'
       : inputType || 'text';
 
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <AntDValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <AntDValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
+
   switch (type) {
     case 'select':
     case 'multiselect':
@@ -40,7 +81,7 @@ export const AntDValueEditor = ({
           {...props}
           className={className}
           handleOnChange={handleOnChange}
-          options={values!}
+          options={values}
           value={value}
           title={title}
           disabled={disabled}
@@ -86,7 +127,7 @@ export const AntDValueEditor = ({
     case 'radio':
       return (
         <span className={className} title={title}>
-          {values!.map(v => (
+          {values.map(v => (
             <Radio
               key={v.name}
               value={v.name}

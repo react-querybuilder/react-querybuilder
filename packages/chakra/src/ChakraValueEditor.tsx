@@ -1,5 +1,11 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
-import { useValueEditor, ValueSelector, type ValueEditorProps } from 'react-querybuilder';
+import {
+  standardClassnames,
+  toArray,
+  useValueEditor,
+  ValueSelector,
+  type ValueEditorProps,
+} from 'react-querybuilder';
 import { ChakraValueSelector } from './ChakraValueSelector';
 
 export const ChakraValueEditor = ({
@@ -11,9 +17,10 @@ export const ChakraValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   valueSource: _vs,
-  testID: _t,
+  testID,
   disabled,
   ...props
 }: ValueEditorProps) => {
@@ -28,6 +35,40 @@ export const ChakraValueEditor = ({
     ? 'text'
     : inputType || 'text';
 
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <ChakraValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <ChakraValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
+
   switch (type) {
     case 'select':
       return (
@@ -38,7 +79,7 @@ export const ChakraValueEditor = ({
           value={value}
           disabled={disabled}
           handleOnChange={handleOnChange}
-          options={values!}
+          options={values}
         />
       );
 
@@ -51,7 +92,7 @@ export const ChakraValueEditor = ({
           value={value}
           disabled={disabled}
           handleOnChange={handleOnChange}
-          options={values!}
+          options={values}
           multiple
         />
       );
@@ -103,7 +144,7 @@ export const ChakraValueEditor = ({
           onChange={handleOnChange}
           isDisabled={disabled}>
           <Stack direction="row">
-            {values!.map(v => (
+            {values.map(v => (
               <Radio key={v.name} value={v.name} size="sm">
                 {v.label}
               </Radio>

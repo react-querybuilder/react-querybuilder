@@ -10,19 +10,18 @@ export const BulmaValueSelector = ({
   title,
   disabled,
   multiple,
+  listsAsArrays,
 }: ValueSelectorProps) => {
-  const onChange = useMemo(() => {
-    if (multiple) {
-      return (e: ChangeEvent<HTMLSelectElement>) =>
-        handleOnChange(
-          [...e.target.options]
-            .filter(o => o.selected)
-            .map(o => o.value)
-            .join(',')
-        );
-    }
-    return (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value);
-  }, [handleOnChange, multiple]);
+  const onChange = useMemo(
+    () =>
+      multiple
+        ? (e: ChangeEvent<HTMLSelectElement>) => {
+            const valArray = Array.from(e.target.selectedOptions).map(o => o.value);
+            handleOnChange(listsAsArrays ? valArray : valArray.join(','));
+          }
+        : (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value),
+    [handleOnChange, listsAsArrays, multiple]
+  );
 
   return (
     <div title={title} className={`${className} select is-small`}>

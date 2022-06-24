@@ -1,4 +1,10 @@
-import { useValueEditor, ValueSelector, type ValueEditorProps } from 'react-querybuilder';
+import {
+  standardClassnames,
+  toArray,
+  useValueEditor,
+  ValueSelector,
+  type ValueEditorProps,
+} from 'react-querybuilder';
 
 export const BootstrapValueEditor = ({
   fieldData,
@@ -9,8 +15,10 @@ export const BootstrapValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   disabled,
+  testID,
   ...props
 }: ValueEditorProps) => {
   useValueEditor({ handleOnChange, inputType, operator, value });
@@ -24,6 +32,40 @@ export const BootstrapValueEditor = ({
     ? 'text'
     : inputType || 'text';
 
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <ValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <ValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
+
   switch (type) {
     case 'select':
     case 'multiselect':
@@ -36,7 +78,7 @@ export const BootstrapValueEditor = ({
           value={value}
           disabled={disabled}
           multiple={type === 'multiselect'}
-          options={values!}
+          options={values}
         />
       );
 
@@ -81,7 +123,7 @@ export const BootstrapValueEditor = ({
     case 'radio':
       return (
         <span title={title}>
-          {values!.map(v => (
+          {values.map(v => (
             <div key={v.name} className="form-check form-check-inline">
               <input
                 className="form-check-input"
