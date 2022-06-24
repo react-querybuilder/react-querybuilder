@@ -1,5 +1,6 @@
 import {
   convertToIC,
+  defaultOperators,
   type ExportFormat,
   type Field,
   type RuleGroupType,
@@ -23,6 +24,7 @@ export const defaultOptions: DemoOptions = {
   addRuleToNewGroups: false,
   validateQuery: false,
   independentCombinators: false,
+  listsAsArrays: false,
   enableDragAndDrop: false,
   disabled: false,
   debugMode: false,
@@ -41,6 +43,7 @@ export const optionOrder: DemoOption[] = [
   'addRuleToNewGroups',
   'validateQuery',
   'independentCombinators',
+  'listsAsArrays',
   'enableDragAndDrop',
   'disabled',
   'debugMode',
@@ -106,6 +109,11 @@ export const optionsMetadata: Record<
     label: 'Independent combinators',
     title: 'Combinators between rules can be independently updated',
   },
+  listsAsArrays: {
+    link: '/docs/api/querybuilder#listsasarrays',
+    label: 'Lists as arrays',
+    title: 'Lists will be stored as arrays instead of comma-separated strings',
+  },
   enableDragAndDrop: {
     link: '/docs/api/querybuilder#enabledraganddrop',
     label: 'Enable drag-and-drop',
@@ -152,7 +160,7 @@ export const fields: Field[] = [
     name: 'isMusician',
     label: 'Is a musician',
     valueEditorType: 'checkbox',
-    operators: [{ name: '=', label: 'is' }],
+    operators: defaultOperators.filter(op => op.name === '='),
     defaultValue: false,
   },
   {
@@ -161,12 +169,12 @@ export const fields: Field[] = [
     valueEditorType: 'select',
     values: musicalInstruments,
     defaultValue: 'Piano',
-    operators: [{ name: '=', label: 'is' }],
+    operators: defaultOperators.filter(op => op.name === '=' || op.name === 'in'),
   },
   {
     name: 'gender',
     label: 'Gender',
-    operators: [{ name: '=', label: 'is' }],
+    operators: defaultOperators.filter(op => op.name === '='),
     valueEditorType: 'radio',
     values: [
       { name: 'M', label: 'Male' },

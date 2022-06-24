@@ -1,6 +1,6 @@
 import { useMemo, type ChangeEvent } from 'react';
 import type { ValueSelectorProps } from '../types';
-import { toOptions } from '../utils';
+import { toArray, toOptions } from '../utils';
 
 export const ValueSelector = ({
   className,
@@ -9,27 +9,26 @@ export const ValueSelector = ({
   title,
   value,
   multiple,
+  listsAsArrays,
   disabled,
   testID,
 }: ValueSelectorProps) => {
-  const onChange = useMemo(() => {
-    if (multiple) {
-      return (e: ChangeEvent<HTMLSelectElement>) =>
-        handleOnChange(
-          [...e.target.options]
-            .filter(o => o.selected)
-            .map(o => o.value)
-            .join(',')
-        );
-    }
-    return (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value);
-  }, [handleOnChange, multiple]);
+  const onChange = useMemo(
+    () =>
+      multiple
+        ? (e: ChangeEvent<HTMLSelectElement>) => {
+            const valArray = Array.from(e.target.selectedOptions).map(o => o.value);
+            handleOnChange(listsAsArrays ? valArray : valArray.join(','));
+          }
+        : (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value),
+    [handleOnChange, listsAsArrays, multiple]
+  );
 
   return (
     <select
       data-testid={testID}
       className={className}
-      value={multiple && value ? value.split(',') : value}
+      value={multiple ? toArray(value) : value}
       title={title}
       disabled={disabled}
       multiple={!!multiple}

@@ -49,6 +49,7 @@ export interface BaseSelectorProps extends SelectorEditorProps {
 
 export interface ValueSelectorProps extends BaseSelectorProps {
   multiple?: boolean;
+  listsAsArrays?: boolean;
 }
 
 export interface NotToggleProps extends CommonSubComponentProps {
@@ -95,6 +96,7 @@ export interface ValueEditorProps extends SelectorEditorProps {
   type?: ValueEditorType;
   inputType?: string | null;
   values?: any[];
+  listsAsArrays?: boolean;
 }
 
 export interface DragHandleProps extends CommonSubComponentProps {

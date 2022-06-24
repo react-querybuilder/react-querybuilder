@@ -83,6 +83,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   addRuleToNewGroups = false,
   enableDragAndDrop = false,
   independentCombinators,
+  listsAsArrays = false,
   disabled = false,
   validator,
   context,
@@ -279,18 +280,27 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
       const values = getValuesMain(rule.field, rule.operator);
 
+      const getFirstOptionsFrom = (opts: any[]) => {
+        const firstOption = getFirstOption(opts);
+        if (rule.operator === 'between' || rule.operator === 'notBetween') {
+          const valArray = [firstOption, firstOption];
+          return listsAsArrays ? valArray : valArray.join(',');
+        } else {
+          return firstOption;
+        }
+      };
+
       if (rule.valueSource === 'field') {
         const filteredFields = filterFieldsByComparator(fieldData, fields, rule.operator);
         if (filteredFields.length > 0) {
-          value = getFirstOption(filteredFields);
+          value = getFirstOptionsFrom(filteredFields);
         } else {
           value = '';
         }
       } else if (values.length) {
-        value = getFirstOption(values);
+        value = getFirstOptionsFrom(values);
       } else {
         const editorType = getValueEditorTypeMain(rule.field, rule.operator);
-
         if (editorType === 'checkbox') {
           value = false;
         }
@@ -298,7 +308,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
       return value;
     },
-    [fieldMap, fields, getDefaultValue, getValueEditorTypeMain, getValuesMain]
+    [fieldMap, fields, getDefaultValue, getValueEditorTypeMain, getValuesMain, listsAsArrays]
   );
 
   const getInputTypeMain = useCallback(
@@ -543,6 +553,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       addRuleToNewGroups,
       enableDragAndDrop,
       independentCombinators: !!independentCombinators,
+      listsAsArrays,
       validationMap,
       disabledPaths,
     }),
@@ -565,6 +576,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
       getValueSourcesMain,
       getValuesMain,
       independentCombinators,
+      listsAsArrays,
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,

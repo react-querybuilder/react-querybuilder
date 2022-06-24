@@ -1,5 +1,4 @@
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import { toArray } from '../../internal/toArray';
 import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
@@ -18,6 +17,7 @@ import type {
 } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { toArray } from '../toArray';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorCELByRule } from './defaultValueProcessorCELByRule';

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { standardClassnames } from '../defaults';
-import { toArray } from '../internal';
 import type { ValueEditorProps } from '../types';
+import { toArray } from '../utils';
 import { ValueSelector } from './ValueSelector';
 
 export const ValueEditor = ({
@@ -12,23 +12,27 @@ export const ValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   fieldData,
   disabled,
   testID,
   ...props
 }: ValueEditorProps) => {
-  // This side effect blanks out the value if 1) the inputType is "number",
-  // 2) the operator is not "between", "notBetween", "in", or "notIn", and
-  // 3) the value contains a comma.
+  // The Effect below trims the value if all of the following are true:
+  //   - `inputType` is "number"
+  //   - `operator` is not one of ("between", "notBetween", "in", "notIn")
+  //   - `value` is an array OR the value is a string containing a comma
+  // For example, if a rule is "f1 between '1' and '2'" and its operator changes to
+  // "=", the value will be reset to "1" since the "number" input type can't handle
+  // arrays or strings with commas.
   useEffect(() => {
     if (
       inputType === 'number' &&
       !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
+      ((typeof value === 'string' && value.includes(',')) || Array.isArray(value))
     ) {
-      handleOnChange('');
+      handleOnChange(toArray(value)[0] ?? '');
     }
   }, [handleOnChange, inputType, operator, value]);
 
@@ -43,25 +47,33 @@ export const ValueEditor = ({
 
   if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
     const valArray = toArray(value);
-    const selector1handler = (v: string) => handleOnChange(`${v},${valArray[1]}`);
-    const selector2handler = (v: string) => handleOnChange(`${valArray[0]},${v}`);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : val.join(','));
+    };
     return (
       <span data-testid={testID} className={className} title={title}>
         <ValueSelector
           {...props}
-          className={standardClassnames.valueBetweenSelector1}
+          className={standardClassnames.valueListItem}
           handleOnChange={selector1handler}
           disabled={disabled}
           value={valArray[0]}
-          options={values ?? []}
+          options={values}
+          listsAsArrays={listsAsArrays}
         />
         <ValueSelector
           {...props}
-          className={standardClassnames.valueBetweenSelector2}
+          className={standardClassnames.valueListItem}
           handleOnChange={selector2handler}
           disabled={disabled}
           value={valArray[1]}
-          options={values ?? []}
+          options={values}
+          listsAsArrays={listsAsArrays}
         />
       </span>
     );
@@ -79,8 +91,9 @@ export const ValueEditor = ({
           handleOnChange={handleOnChange}
           disabled={disabled}
           value={value}
-          options={values ?? []}
+          options={values}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 
@@ -114,19 +127,18 @@ export const ValueEditor = ({
     case 'radio':
       return (
         <span data-testid={testID} className={className} title={title}>
-          {values &&
-            values.map(v => (
-              <label key={v.name}>
-                <input
-                  type="radio"
-                  value={v.name}
-                  disabled={disabled}
-                  checked={value === v.name}
-                  onChange={e => handleOnChange(e.target.value)}
-                />
-                {v.label}
-              </label>
-            ))}
+          {values.map(v => (
+            <label key={v.name}>
+              <input
+                type="radio"
+                value={v.name}
+                disabled={disabled}
+                checked={value === v.name}
+                onChange={e => handleOnChange(e.target.value)}
+              />
+              {v.label}
+            </label>
+          ))}
         </span>
       );
   }

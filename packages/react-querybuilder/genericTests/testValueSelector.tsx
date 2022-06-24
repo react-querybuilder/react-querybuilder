@@ -11,6 +11,7 @@ export const defaultValueSelectorProps: ValueSelectorProps = {
   options: [
     { name: 'foo', label: 'Foo' },
     { name: 'bar', label: 'Bar' },
+    { name: 'baz', label: 'Baz' },
   ],
   level: 0,
   path: [],
@@ -29,7 +30,7 @@ export const testSelect = (
   describe(title, () => {
     it('should have the options passed into the <select />', () => {
       render(<Component {...props} />);
-      expect(screen.getByTitle(title).querySelectorAll('option')).toHaveLength(2);
+      expect(screen.getByTitle(title).querySelectorAll('option')).toHaveLength(testValues.length);
     });
 
     it('should render the correct number of options', () => {
@@ -57,12 +58,43 @@ export const testSelect = (
       !skip.multi &&
       (('values' in props && props.type === 'multiselect') || 'options' in props)
     ) {
-      it('should have the values passed into the <select multiple />', () => {
+      it('should have the values passed into the <select multiple />', async () => {
+        const onChange = jest.fn();
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
-        render(<Component {...props} value={value} {...multiselectProps} />);
-        expect(findSelect(screen.getByTitle(title))).toHaveProperty('multiple', true);
-        expect(findSelect(screen.getByTitle(title)).selectedOptions.length).toBe(testValues.length);
+        render(
+          <Component {...props} value={value} {...multiselectProps} handleOnChange={onChange} />
+        );
+        const select = findSelect(screen.getByTitle(title));
+        expect(select).toHaveProperty('multiple', true);
+        expect(select.selectedOptions).toHaveLength(testValues.length);
+      });
+
+      it('should call the handleOnChange callback properly for <select multiple />', async () => {
+        const onChange = jest.fn();
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        const allValuesExceptFirst = testValues.slice(1, 3).map(v => v.name);
+        render(
+          <Component
+            {...props}
+            {...multiselectProps}
+            value={allValuesExceptFirst[0]}
+            handleOnChange={onChange}
+          />
+        );
+        const select = findSelect(screen.getByTitle(title));
+        await user.selectOptions(select, allValuesExceptFirst);
+        expect(onChange).toHaveBeenCalledWith(allValuesExceptFirst.join(','));
+      });
+
+      it('should respect the listsAsArrays option', async () => {
+        const onChange = jest.fn();
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        render(
+          <Component {...props} {...multiselectProps} handleOnChange={onChange} listsAsArrays />
+        );
+        await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
+        expect(onChange).toHaveBeenCalledWith([testVal.name]);
       });
     }
 

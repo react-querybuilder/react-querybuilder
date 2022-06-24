@@ -1,5 +1,5 @@
-import { toArray, trimIfString } from '../../internal/toArray';
 import type { ValueProcessorByRule } from '../../types/index.noReact';
+import { toArray, trimIfString } from '../toArray';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
 export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (

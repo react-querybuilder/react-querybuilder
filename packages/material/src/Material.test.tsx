@@ -145,7 +145,11 @@ const testMaterialValueSelector = (
 testActionElement(generateWrapper(MaterialActionElement));
 testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(MaterialNotToggle));
-testValueEditor(generateWrapper(MaterialValueEditor), { select: true, multiselect: true });
+testValueEditor(generateWrapper(MaterialValueEditor), {
+  select: true,
+  multiselect: true,
+  betweenSelect: true,
+});
 const valueEditorAsSelectTitle = `${materialValueEditorProps.title} (as ValueSelector)`;
 testMaterialValueSelector(valueEditorAsSelectTitle, MaterialValueEditor, {
   ...materialValueEditorProps,

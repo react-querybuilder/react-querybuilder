@@ -543,11 +543,7 @@ describe('actions', () => {
 
           return [];
         }}
-        getValueEditorType={(field: string) => {
-          if (field === 'field2') return 'checkbox';
-
-          return 'text';
-        }}
+        getValueEditorType={f => (f === 'field2' ? 'checkbox' : 'text')}
       />
     );
 
@@ -565,11 +561,7 @@ describe('actions', () => {
       <QueryBuilder
         fields={fields.slice(1)}
         onQueryChange={onQueryChange}
-        getValueEditorType={(field: string) => {
-          if (field === 'field2') return 'checkbox';
-
-          return 'text';
-        }}
+        getValueEditorType={f => (f === 'field2' ? 'checkbox' : 'text')}
       />
     );
 
@@ -808,24 +800,25 @@ describe('defaultValue property in field', () => {
 });
 
 describe('values property in field', () => {
+  const fields: Field[] = [
+    {
+      name: 'field1',
+      label: 'Field 1',
+      defaultValue: 'test',
+      values: [
+        { name: 'test', label: 'Test value 1' },
+        { name: 'test2', label: 'Test2' },
+      ],
+    },
+    {
+      name: 'field2',
+      label: 'Field 2',
+      defaultValue: 'test',
+      values: [{ name: 'test', label: 'Test' }],
+    },
+  ];
+
   it('sets the values list', async () => {
-    const fields: Field[] = [
-      {
-        name: 'field1',
-        label: 'Field 1',
-        defaultValue: 'test',
-        values: [
-          { name: 'test', label: 'Test value 1' },
-          { name: 'test2', label: 'Test2' },
-        ],
-      },
-      {
-        name: 'field2',
-        label: 'Field 2',
-        defaultValue: 'test',
-        values: [{ name: 'test', label: 'Test' }],
-      },
-    ];
     const onQueryChange = jest.fn();
     render(
       <QueryBuilder
@@ -839,6 +832,30 @@ describe('values property in field', () => {
     expect(screen.getAllByTestId(TestID.valueEditor)).toHaveLength(1);
     expect(screen.getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(2);
     expect(screen.getByDisplayValue('Test value 1')).toBeInTheDocument();
+  });
+
+  it('sets the values list for "between" operator', async () => {
+    const onQueryChange = jest.fn();
+    render(
+      <QueryBuilder
+        getValueEditorType={() => 'select'}
+        getDefaultOperator="between"
+        fields={fields}
+        onQueryChange={onQueryChange}
+      />
+    );
+
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(screen.getAllByTestId(TestID.valueEditor)).toHaveLength(1);
+    const betweenSelects = screen
+      .getAllByRole('combobox')
+      .filter(bs => bs.classList.contains(sc.valueListItem));
+    expect(betweenSelects).toHaveLength(2);
+    for (const bs of betweenSelects) {
+      expect(bs.getElementsByTagName('option')).toHaveLength(2);
+      expect(bs).toHaveValue('test');
+    }
+    expect(screen.getAllByDisplayValue('Test value 1')).toHaveLength(2);
   });
 });
 
@@ -1892,6 +1909,10 @@ describe('value source field', () => {
     { name: 'f4', label: 'Field 4', valueSources: [] },
     { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
+  const fieldsWithBetween: Field[] = [
+    { name: 'fb', label: 'Field B', valueSources: ['field'], defaultOperator: 'between' },
+    ...fields,
+  ];
 
   it('sets the right default value', async () => {
     render(<QueryBuilder fields={fields} getDefaultField="f1" />);
@@ -1899,6 +1920,37 @@ describe('value source field', () => {
     expect(screen.getByDisplayValue(fields.filter(f => f.name !== 'f1')[0].label)).toHaveClass(
       sc.value
     );
+  });
+
+  it('sets the right default value for "between" operator', async () => {
+    const onQueryChange = jest.fn();
+    render(
+      <QueryBuilder fields={fieldsWithBetween} getDefaultField="fb" onQueryChange={onQueryChange} />
+    );
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(screen.getAllByDisplayValue(fields.filter(f => f.name !== 'fb')[0].label)).toHaveLength(
+      2
+    );
+    expect(((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleType).value).toBe(
+      'f1,f1'
+    );
+  });
+
+  it('sets the right default value for "between" operator and listsAsArrays', async () => {
+    const onQueryChange = jest.fn();
+    render(
+      <QueryBuilder
+        fields={fieldsWithBetween}
+        getDefaultField="fb"
+        onQueryChange={onQueryChange}
+        listsAsArrays
+      />
+    );
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleType).value).toEqual([
+      'f1',
+      'f1',
+    ]);
   });
 
   it('handles empty comparator results', async () => {

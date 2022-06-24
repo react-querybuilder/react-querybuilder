@@ -84,8 +84,8 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
 // Miscellaneous
 .rule {
   .rule-value {
-    .rule-value-between-selector-1 {
-      margin-right: $rqb-spacing;
+    .rule-value-list-item:not(:first-of-type) {
+      margin-left: $rqb-spacing;
     }
   }
 }

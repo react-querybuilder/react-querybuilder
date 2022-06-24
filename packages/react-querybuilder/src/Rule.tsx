@@ -45,6 +45,7 @@ export const Rule = ({
     showCloneButtons,
     showLockButtons,
     independentCombinators,
+    listsAsArrays,
     validationMap,
   } = schema;
   const { moveRule, onPropChange, onRuleRemove } = actions;
@@ -259,6 +260,7 @@ export const Rule = ({
                 type={valueEditorType}
                 inputType={inputType}
                 values={values}
+                listsAsArrays={listsAsArrays}
                 className={c(standardClassnames.value, classNames.value)}
                 handleOnChange={generateOnChangeHandler('value')}
                 level={level}

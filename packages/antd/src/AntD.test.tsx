@@ -284,7 +284,12 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
 
 testActionElement(AntDActionElement);
 testDragHandle(AntDDragHandle);
-testValueEditor(AntDValueEditor, { multiselect: true, select: true, switch: true });
+testValueEditor(AntDValueEditor, {
+  multiselect: true,
+  select: true,
+  switch: true,
+  betweenSelect: true,
+});
 const valueEditorAsSelectTitle = `${antdValueEditorProps.title} (as ValueSelector)`;
 testAntDValueSelector(valueEditorAsSelectTitle, AntDValueEditor, {
   ...antdValueEditorProps,
