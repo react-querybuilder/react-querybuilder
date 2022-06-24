@@ -360,7 +360,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           .filter(Boolean)
           .join(',');
 
-        return expression ? `${combinator}:[${expression}]` : fallbackExpression;
+        return expression
+          ? `${combinator}:[${expression}]`.replaceAll('\\', '\\\\')
+          : fallbackExpression;
       };
 
       const rgStandard = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
