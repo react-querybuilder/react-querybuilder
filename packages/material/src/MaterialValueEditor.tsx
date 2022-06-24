@@ -6,8 +6,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
-import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
+import { useValueEditor, type ValueEditorProps } from 'react-querybuilder';
 import { MaterialValueSelector } from './MaterialValueSelector';
 
 export const MaterialValueEditor = ({
@@ -24,16 +23,7 @@ export const MaterialValueEditor = ({
   disabled,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

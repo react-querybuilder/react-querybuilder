@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
 import { standardClassnames } from '../defaults';
 import type { ValueEditorProps } from '../types';
-import { toArray } from '../utils';
+import { toArray, useValueEditor } from '../utils';
 import { ValueSelector } from './ValueSelector';
 
 export const ValueEditor = ({
@@ -19,22 +18,7 @@ export const ValueEditor = ({
   testID,
   ...props
 }: ValueEditorProps) => {
-  // The Effect below trims the value if all of the following are true:
-  //   - `inputType` is "number"
-  //   - `operator` is not one of ("between", "notBetween", "in", "notIn")
-  //   - `value` is an array OR the value is a string containing a comma
-  // For example, if a rule is "f1 between '1' and '2'" and its operator changes to
-  // "=", the value will be reset to "1" since the "number" input type can't handle
-  // arrays or strings with commas.
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      ((typeof value === 'string' && value.includes(',')) || Array.isArray(value))
-    ) {
-      handleOnChange(toArray(value)[0] ?? '');
-    }
-  }, [handleOnChange, inputType, operator, value]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

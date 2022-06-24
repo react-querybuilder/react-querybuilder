@@ -1,7 +1,6 @@
 import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import moment from 'moment';
-import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
+import { useValueEditor, type ValueEditorProps } from 'react-querybuilder';
 import { AntDValueSelector } from './AntDValueSelector';
 
 export const AntDValueEditor = ({
@@ -18,16 +17,7 @@ export const AntDValueEditor = ({
   disabled,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

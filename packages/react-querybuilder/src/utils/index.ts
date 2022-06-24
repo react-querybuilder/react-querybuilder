@@ -1,6 +1,7 @@
 export * from './convertQuery';
 export * from './defaultValidator';
 export * from './formatQuery';
+export * from './hooks';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
 export * from './optGroupUtils';

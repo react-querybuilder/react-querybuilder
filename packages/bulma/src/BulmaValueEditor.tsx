@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
+import { useValueEditor, type ValueEditorProps } from 'react-querybuilder';
 import { BulmaValueSelector } from './BulmaValueSelector';
 
 export const BulmaValueEditor = ({
@@ -15,16 +14,7 @@ export const BulmaValueEditor = ({
   disabled,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

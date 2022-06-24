@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { ValueSelector, type ValueEditorProps } from 'react-querybuilder';
+import { useValueEditor, ValueSelector, type ValueEditorProps } from 'react-querybuilder';
 
 export const BootstrapValueEditor = ({
   fieldData,
@@ -14,16 +13,7 @@ export const BootstrapValueEditor = ({
   disabled,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
