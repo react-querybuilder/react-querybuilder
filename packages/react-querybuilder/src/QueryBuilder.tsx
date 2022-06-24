@@ -40,6 +40,7 @@ import {
   add,
   getFirstOption,
   isOptionGroupArray,
+  joinWith,
   move,
   pathIsDisabled,
   prepareRuleGroup,
@@ -284,7 +285,12 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
         const firstOption = getFirstOption(opts);
         if (rule.operator === 'between' || rule.operator === 'notBetween') {
           const valArray = [firstOption, firstOption];
-          return listsAsArrays ? valArray : valArray.join(',');
+          return listsAsArrays
+            ? valArray
+            : joinWith(
+                valArray.map(v => v ?? /* istanbul ignore next */ ''),
+                ','
+              );
         } else {
           return firstOption;
         }

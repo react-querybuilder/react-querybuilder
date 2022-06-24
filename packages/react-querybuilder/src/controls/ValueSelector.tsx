@@ -1,6 +1,6 @@
 import { useMemo, type ChangeEvent } from 'react';
 import type { ValueSelectorProps } from '../types';
-import { toArray, toOptions } from '../utils';
+import { joinWith, toArray, toOptions } from '../utils';
 
 export const ValueSelector = ({
   className,
@@ -18,7 +18,7 @@ export const ValueSelector = ({
       multiple
         ? (e: ChangeEvent<HTMLSelectElement>) => {
             const valArray = Array.from(e.target.selectedOptions).map(o => o.value);
-            handleOnChange(listsAsArrays ? valArray : valArray.join(','));
+            handleOnChange(listsAsArrays ? valArray : joinWith(valArray, ','));
           }
         : (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value),
     [handleOnChange, listsAsArrays, multiple]

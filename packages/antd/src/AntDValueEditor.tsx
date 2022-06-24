@@ -1,6 +1,8 @@
 import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import {
+  joinWith,
+  splitBy,
   standardClassnames,
   toArray,
   useValueEditor,
@@ -43,11 +45,11 @@ export const AntDValueEditor = ({
     const valArray = toArray(value);
     const selector1handler = (v: string) => {
       const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     const selector2handler = (v: string) => {
       const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     return (
       <span data-testid={testID} className={className} title={title}>
@@ -86,6 +88,7 @@ export const AntDValueEditor = ({
           title={title}
           disabled={disabled}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 
@@ -148,7 +151,7 @@ export const AntDValueEditor = ({
         <DatePicker.RangePicker
           value={
             typeof value === 'string' && /^[^,]+,[^,]+$/.test(value)
-              ? (value.split(',').map(v => moment(v)) as [moment.Moment, moment.Moment])
+              ? (splitBy(value, ',').map(v => moment(v)) as [moment.Moment, moment.Moment])
               : undefined
           }
           showTime={inputTypeCoerced === 'datetime-local'}

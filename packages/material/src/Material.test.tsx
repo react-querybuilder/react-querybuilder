@@ -69,7 +69,7 @@ const testMaterialValueSelector = (
       render(<Component {...props} value={firstNameLabel.name} />);
       await user.click(screen.getByRole('button'));
       const listbox = within(screen.getByRole('listbox'));
-      expect(listbox.getAllByRole('option')).toHaveLength(2);
+      expect(listbox.getAllByRole('option')).toHaveLength(testValues.length);
     });
 
     it('should have the options passed into the <select />', async () => {
@@ -111,16 +111,16 @@ const testMaterialValueSelector = (
     });
 
     it('should render optgroups', async () => {
-      const optGroups: OptionGroup[] = [
-        { label: 'Test Option Group', options: props.values ?? props.options },
-      ];
+      const optGroups: OptionGroup[] = [{ label: 'Test Option Group', options: testValues }];
       const newProps = { ...props, values: optGroups, options: optGroups };
       render(<Component {...newProps} value={isMulti ? [] : undefined} />);
       await user.click(screen.getByRole('button'));
       const listbox = within(screen.getByRole('listbox'));
       expect(() => listbox.getByText(secondNameLabel.label)).not.toThrow();
-      expect(screen.getByRole('listbox').querySelectorAll('li')).toHaveLength(3);
-      expect(listbox.getAllByRole('option')).toHaveLength(3);
+      expect(screen.getByRole('listbox').querySelectorAll('li')).toHaveLength(
+        testValues.length + 1
+      );
+      expect(listbox.getAllByRole('option')).toHaveLength(testValues.length + 1);
       expect(listbox.getAllByRole('option')[2]).toHaveTextContent(secondNameLabel.label);
     });
 

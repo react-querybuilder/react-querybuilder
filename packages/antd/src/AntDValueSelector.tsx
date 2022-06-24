@@ -1,6 +1,6 @@
 import { Select } from 'antd';
 import { useMemo, type ComponentPropsWithoutRef } from 'react';
-import type { VersatileSelectorProps } from 'react-querybuilder';
+import { joinWith, splitBy, type VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 type AntDValueSelectorProps = VersatileSelectorProps &
@@ -32,7 +32,11 @@ export const AntDValueSelector = ({
       multiple
         ? (v: string | string[]) =>
             handleOnChange(
-              Array.isArray(v) ? (listsAsArrays ? v : v.join(',')) : /* istanbul ignore next */ v
+              Array.isArray(v)
+                ? listsAsArrays
+                  ? v
+                  : joinWith(v, ',')
+                : /* istanbul ignore next */ v
             )
         : (v: string) => handleOnChange(v),
     [handleOnChange, listsAsArrays, multiple]
@@ -41,7 +45,7 @@ export const AntDValueSelector = ({
   const val = multiple
     ? Array.isArray(value)
       ? /* istanbul ignore next */ value
-      : value?.split(',')
+      : splitBy(value, ',')
     : value;
 
   const modeObj = multiple ? { mode: 'multiple' as const } : {};

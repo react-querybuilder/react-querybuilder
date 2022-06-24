@@ -23,6 +23,7 @@ export const ChakraValueSelector = ({
   field: _field,
   fieldData: _fieldData,
   multiple: _multiple,
+  listsAsArrays: _listsAsArrays,
   ...extraProps
 }: ChakraValueSelectorProps) => (
   <Select

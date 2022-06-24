@@ -15,9 +15,9 @@ import type {
   ValidationMap,
   ValidationResult,
 } from '../../types/index.noReact';
+import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
-import { toArray } from '../toArray';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorCELByRule } from './defaultValueProcessorCELByRule';

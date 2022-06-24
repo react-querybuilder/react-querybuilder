@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { ValueEditorProps } from '../../types';
-import { toArray } from '../toArray';
+import { toArray } from '../arrayUtils';
 
 type useValueEditorParams = Pick<
   ValueEditorProps,

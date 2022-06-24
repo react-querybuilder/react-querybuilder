@@ -165,11 +165,19 @@ export const fields: Field[] = [
   },
   {
     name: 'instrument',
-    label: 'Instrument',
+    label: 'Primary instrument',
     valueEditorType: 'select',
     values: musicalInstruments,
     defaultValue: 'Piano',
     operators: defaultOperators.filter(op => op.name === '=' || op.name === 'in'),
+  },
+  {
+    name: 'alsoPlaysInstruments',
+    label: 'Also plays instruments',
+    valueEditorType: 'multiselect',
+    values: musicalInstruments,
+    defaultValue: 'Guitar',
+    operators: defaultOperators.filter(op => op.name === 'in'),
   },
   {
     name: 'gender',

@@ -14,6 +14,8 @@ export const defaultPlaceholderOperatorName = placeholderName;
 export const defaultPlaceholderOperatorLabel = placeholderLabel;
 export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
 
+export const defaultJoinChar = ',';
+
 export const defaultTranslations: TranslationsFull = {
   fields: {
     title: 'Fields',

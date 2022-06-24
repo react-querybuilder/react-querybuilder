@@ -7,6 +7,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import {
+  joinWith,
   standardClassnames,
   toArray,
   useValueEditor,
@@ -45,11 +46,11 @@ export const MaterialValueEditor = ({
     const valArray = toArray(value);
     const selector1handler = (v: string) => {
       const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     const selector2handler = (v: string) => {
       const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     return (
       <span data-testid={testID} className={className} title={title}>

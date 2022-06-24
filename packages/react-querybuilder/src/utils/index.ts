@@ -1,3 +1,4 @@
+export * from './arrayUtils';
 export * from './convertQuery';
 export * from './defaultValidator';
 export * from './formatQuery';
@@ -11,6 +12,5 @@ export * from './parseSQL';
 export * from './pathUtils';
 export * from './prepareQueryObjects';
 export * from './queryTools';
-export * from './toArray';
 export * from './toOptions';
 export * from './transformQuery';

@@ -1,5 +1,6 @@
 import {
-  standardClassnames,
+  joinWith,
+  standardClassnames as sc,
   toArray,
   useValueEditor,
   ValueSelector,
@@ -36,17 +37,17 @@ export const BootstrapValueEditor = ({
     const valArray = toArray(value);
     const selector1handler = (v: string) => {
       const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     const selector2handler = (v: string) => {
       const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     return (
       <span data-testid={testID} className={className} title={title}>
         <ValueSelector
           {...props}
-          className={standardClassnames.valueListItem}
+          className={`${sc.valueListItem} ${className?.replaceAll(sc.value, '')}`}
           handleOnChange={selector1handler}
           disabled={disabled}
           value={valArray[0]}
@@ -55,7 +56,7 @@ export const BootstrapValueEditor = ({
         />
         <ValueSelector
           {...props}
-          className={standardClassnames.valueListItem}
+          className={`${sc.valueListItem} ${className?.replaceAll(sc.value, '')}`}
           handleOnChange={selector2handler}
           disabled={disabled}
           value={valArray[1]}
@@ -78,6 +79,7 @@ export const BootstrapValueEditor = ({
           value={value}
           disabled={disabled}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
           options={values}
         />
       );

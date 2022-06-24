@@ -1,5 +1,6 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import {
+  joinWith,
   standardClassnames,
   toArray,
   useValueEditor,
@@ -39,11 +40,11 @@ export const ChakraValueEditor = ({
     const valArray = toArray(value);
     const selector1handler = (v: string) => {
       const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     const selector2handler = (v: string) => {
       const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : val.join(','));
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     return (
       <span data-testid={testID} className={className} title={title}>
@@ -94,6 +95,7 @@ export const ChakraValueEditor = ({
           handleOnChange={handleOnChange}
           options={values}
           multiple
+          listsAsArrays={listsAsArrays}
         />
       );
 
