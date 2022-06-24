@@ -59,7 +59,7 @@ export const MaterialValueEditor = ({
           className={standardClassnames.valueListItem}
           handleOnChange={selector1handler}
           disabled={disabled}
-          value={valArray[0]}
+          value={valArray[0] ?? ''}
           options={values}
           listsAsArrays={listsAsArrays}
         />
@@ -68,7 +68,7 @@ export const MaterialValueEditor = ({
           className={standardClassnames.valueListItem}
           handleOnChange={selector2handler}
           disabled={disabled}
-          value={valArray[1]}
+          value={valArray[1] ?? ''}
           options={values}
           listsAsArrays={listsAsArrays}
         />
@@ -89,6 +89,7 @@ export const MaterialValueEditor = ({
           disabled={disabled}
           title={title}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 

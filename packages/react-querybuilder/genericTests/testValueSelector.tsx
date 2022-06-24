@@ -58,7 +58,7 @@ export const testSelect = (
       !skip.multi &&
       (('values' in props && props.type === 'multiselect') || 'options' in props)
     ) {
-      it('should have the values passed into the <select multiple />', async () => {
+      it('should have the values passed into the <select multiple />', () => {
         const onChange = jest.fn();
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
