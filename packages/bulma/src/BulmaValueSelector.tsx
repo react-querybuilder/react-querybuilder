@@ -23,13 +23,11 @@ export const BulmaValueSelector = ({
     [handleOnChange, listsAsArrays, multiple]
   );
 
+  const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
+
   return (
     <div title={title} className={`${className} select is-small`}>
-      <select
-        value={multiple && value ? splitBy(value, ',') : value}
-        multiple={!!multiple}
-        disabled={disabled}
-        onChange={onChange}>
+      <select value={val} multiple={!!multiple} disabled={disabled} onChange={onChange}>
         {toOptions(options)}
       </select>
     </div>

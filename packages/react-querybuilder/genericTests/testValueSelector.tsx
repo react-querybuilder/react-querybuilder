@@ -91,7 +91,13 @@ export const testSelect = (
         const onChange = jest.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
-          <Component {...props} {...multiselectProps} handleOnChange={onChange} listsAsArrays />
+          <Component
+            {...props}
+            {...multiselectProps}
+            handleOnChange={onChange}
+            listsAsArrays
+            value={[]}
+          />
         );
         await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
         expect(onChange).toHaveBeenCalledWith([testVal.name]);

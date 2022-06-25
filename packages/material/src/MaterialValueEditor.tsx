@@ -59,7 +59,7 @@ export const MaterialValueEditor = ({
           className={standardClassnames.valueListItem}
           handleOnChange={selector1handler}
           disabled={disabled}
-          value={valArray[0] ?? ''}
+          value={valArray[0]}
           options={values}
           listsAsArrays={listsAsArrays}
         />
@@ -132,7 +132,13 @@ export const MaterialValueEditor = ({
         <FormControl className={className} title={title} component="fieldset" disabled={disabled}>
           <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
             {values.map(v => (
-              <FormControlLabel key={v.name} value={v.name} control={<Radio />} label={v.label} />
+              <FormControlLabel
+                disabled={disabled}
+                key={v.name}
+                value={v.name}
+                control={<Radio />}
+                label={v.label}
+              />
             ))}
           </RadioGroup>
         </FormControl>
