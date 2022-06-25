@@ -29,12 +29,14 @@ const antdValueSelectorProps: ValueSelectorProps = {
   ...defaultValueSelectorProps,
   title: AntDValueSelector.displayName,
 };
+const valueEditorTitle = AntDValueEditor.displayName;
 const antdValueEditorProps: ValueEditorProps = {
   ...defaultValueEditorProps,
   type: 'select',
   title: AntDValueEditor.displayName,
   values: defaultValueSelectorProps.options,
 };
+const notToggleTitle = AntDNotToggle.displayName;
 
 const testAntDValueSelector = (
   title: string,
@@ -69,6 +71,8 @@ const testAntDValueSelector = (
           screen.getByTitle(props.title).querySelectorAll('.ant-select-selection-item-content')
         ).toHaveLength(testValues.length);
       });
+
+      // TODO: add listsAsArrays tests
     }
 
     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
@@ -114,7 +118,85 @@ const testAntDValueSelector = (
   });
 };
 
-const notToggleTitle = AntDNotToggle.displayName;
+describe(`${valueEditorTitle} ("between" selects)`, () => {
+  const user = userEventSetup();
+  const values = antdValueEditorProps.values!.slice(0, 2) as [NameLabelPair, NameLabelPair];
+  const betweenSelectProps: ValueEditorProps = {
+    ...antdValueEditorProps,
+    operator: 'between',
+    type: 'select',
+    value: values.map(v => v.name).join(','),
+    values,
+  };
+
+  it('should render the "between" selects', async () => {
+    render(<AntDValueEditor {...betweenSelectProps} />);
+    const betweenSelects = screen.getAllByRole('combobox');
+    expect(betweenSelects).toHaveLength(2);
+    for (const [bs, idx] of betweenSelects.map((b, i) => [b, i] as const)) {
+      await user.click(bs);
+      const listbox = within(screen.getAllByRole('listbox')[idx]);
+      expect(listbox.getAllByRole('option')[idx]).toHaveTextContent(values[idx].name);
+    }
+  });
+
+  it('should call the onChange handler', async () => {
+    const handleOnChange = jest.fn();
+    render(<AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
+    const betweenSelects = screen.getAllByRole('combobox');
+    expect(betweenSelects).toHaveLength(2);
+    for (const [bs, idx] of betweenSelects.map((b, i) => [b, i] as const)) {
+      await user.click(bs);
+      const listbox = within(screen.getAllByRole('listbox')[idx]);
+      expect(listbox.getAllByRole('option')).toHaveLength(values.length);
+      await user.click(listbox.getByText(idx === 0 ? values[1].name : values[0].name));
+    }
+    expect(handleOnChange).toHaveBeenNthCalledWith(1, `${values[1].name},${values[1].name}`);
+    expect(handleOnChange).toHaveBeenNthCalledWith(2, `${values[0].name},${values[0].name}`);
+  });
+
+  it('should assume the second value if not provided', async () => {
+    const handleOnChange = jest.fn();
+    render(<AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} value={[]} />);
+    const betweenSelects = screen.getAllByRole('combobox');
+    expect(betweenSelects).toHaveLength(2);
+    await user.click(betweenSelects[0]);
+    const listbox = within(screen.getAllByRole('listbox')[0]);
+    await user.click(listbox.getByText(values[1].name));
+    expect(handleOnChange).toHaveBeenNthCalledWith(1, `${values[1].name},${values[0].name}`);
+  });
+
+  it('should call the onChange handler with lists as arrays', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
+    );
+    const betweenSelects = screen.getAllByRole('combobox');
+    expect(betweenSelects).toHaveLength(2);
+    for (const [bs, idx] of betweenSelects.map((b, i) => [b, i] as const)) {
+      await user.click(bs);
+      const listbox = within(screen.getAllByRole('listbox')[idx]);
+      expect(listbox.getAllByRole('option')).toHaveLength(values.length);
+      await user.click(listbox.getByText(idx === 0 ? values[1].name : values[0].name));
+    }
+    expect(handleOnChange).toHaveBeenNthCalledWith(1, [values[1].name, values[1].name]);
+    expect(handleOnChange).toHaveBeenNthCalledWith(2, [values[0].name, values[0].name]);
+  });
+
+  it('should be disabled by the disabled prop', async () => {
+    const handleOnChange = jest.fn();
+    render(<AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} disabled />);
+    const betweenSelects = screen.getAllByRole('combobox');
+    expect(betweenSelects).toHaveLength(2);
+    for (const bs of betweenSelects) {
+      expect(bs).toBeDisabled();
+      await user.click(bs);
+      expect(() => screen.getByRole('listbox')).toThrow();
+    }
+    expect(handleOnChange).not.toHaveBeenCalled();
+  });
+});
+
 describe(notToggleTitle, () => {
   const user = userEventSetup();
   const label = 'Not';
@@ -146,7 +228,6 @@ describe(notToggleTitle, () => {
   });
 });
 
-const valueEditorTitle = AntDValueEditor.displayName;
 describe(`${valueEditorTitle} as switch`, () => {
   const user = userEventSetup();
   const props: ValueEditorProps = {

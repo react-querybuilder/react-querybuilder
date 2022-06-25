@@ -1,5 +1,5 @@
 import { theme, ThemeProvider } from '@chakra-ui/react';
-import { forwardRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 import {
   testActionElement,
   testDragHandle,
@@ -17,7 +17,7 @@ import {
 } from '.';
 
 const generateWrapper = (RQBComponent: any) => {
-  const Wrapper = (props: any) => (
+  const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
       <RQBComponent {...props} />
     </ThemeProvider>

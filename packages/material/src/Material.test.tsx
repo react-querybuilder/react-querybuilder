@@ -54,7 +54,7 @@ const materialValueEditorProps: ValueEditorProps = {
   values: defaultValueSelectorProps.options,
 };
 
-const testMaterialValueEditor = () => {
+const testMaterialValueEditorBetweenSelects = () => {
   const user = userEventSetup();
   const MVE = generateWrapper(MaterialValueEditor);
   const betweenSelectProps: ValueEditorProps = {
@@ -176,6 +176,7 @@ const testMaterialValueSelector = (
         expect(onChange).toHaveBeenCalledWith([secondNameLabel.name]);
       });
     }
+
     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
       it('should have the value passed into the <select />', () => {
         render(<Component {...props} value={secondNameLabel.name} />);
@@ -239,7 +240,7 @@ testValueEditor(generateWrapper(MaterialValueEditor), {
   multiselect: true,
   betweenSelect: true,
 });
-testMaterialValueEditor();
+testMaterialValueEditorBetweenSelects();
 const valueEditorAsSelectTitle = `${materialValueEditorProps.title} (as ValueSelector)`;
 testMaterialValueSelector(valueEditorAsSelectTitle, MaterialValueEditor, {
   ...materialValueEditorProps,
