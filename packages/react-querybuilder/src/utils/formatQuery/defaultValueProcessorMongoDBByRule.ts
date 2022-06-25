@@ -5,10 +5,10 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { escapeQuotes, parseNumbers } = {}
+  { parseNumbers } = {}
 ) => {
   const escapeDoubleQuotes = (v: any) =>
-    typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`"`, `\\"`);
+    typeof v !== 'string' ? v : v.replaceAll('\\', '\\\\').replaceAll(`"`, `\\"`);
   const valueIsField = valueSource === 'field';
   const useBareValue =
     typeof value === 'number' ||

@@ -352,17 +352,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, {
-              parseNumbers,
-              escapeQuotes: (rule.valueSource ?? 'value') === 'value',
-            });
+            return valueProcessorInternal(rule, { parseNumbers });
           })
           .filter(Boolean)
           .join(',');
 
-        return expression
-          ? `${combinator}:[${expression}]`.replaceAll('\\', '\\\\')
-          : fallbackExpression;
+        return expression ? `${combinator}:[${expression}]` : fallbackExpression;
       };
 
       const rgStandard = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
