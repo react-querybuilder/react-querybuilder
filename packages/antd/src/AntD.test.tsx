@@ -1,22 +1,20 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import type { SelectProps } from 'antd';
+import type { OptionProps } from 'antd/lib/select';
 import moment from 'moment';
+import type { OptionGroupFC } from 'rc-select/lib/OptGroup';
 import {
   defaultNotToggleProps,
   defaultValueEditorProps,
-  defaultValueSelectorProps,
   findInput,
   hasOrInheritsClass,
   testActionElement,
   testDragHandle,
   testValueEditor,
+  testValueSelector,
   userEventSetup,
 } from 'react-querybuilder/genericTests';
-import type {
-  NameLabelPair,
-  NotToggleProps,
-  ValueEditorProps,
-  ValueSelectorProps,
-} from 'react-querybuilder/src';
+import type { NotToggleProps, ValueEditorProps } from 'react-querybuilder/src';
 import {
   AntDActionElement,
   AntDDragHandle,
@@ -25,177 +23,38 @@ import {
   AntDValueSelector,
 } from '.';
 
-const antdValueSelectorProps: ValueSelectorProps = {
-  ...defaultValueSelectorProps,
-  title: AntDValueSelector.displayName,
-};
-const valueEditorTitle = AntDValueEditor.displayName;
-const antdValueEditorProps: ValueEditorProps = {
-  ...defaultValueEditorProps,
-  type: 'select',
-  title: AntDValueEditor.displayName,
-  values: defaultValueSelectorProps.options,
-};
-const notToggleTitle = AntDNotToggle.displayName;
+jest.mock('antd', () => {
+  // We only mock Select. Everything else can use the real antd components.
+  const AntD = jest.requireActual('antd');
 
-const testAntDValueSelector = (
-  title: string,
-  Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  props: any
-) => {
-  const user = userEventSetup();
-  const testValues: NameLabelPair[] = props.values ?? props.options;
-  const testVal = testValues[1];
+  const Select = (props: SelectProps) => (
+    <select
+      multiple={props.mode === 'multiple'}
+      disabled={props.disabled}
+      value={props.value}
+      onChange={e =>
+        props.onChange!(
+          props.mode === 'multiple'
+            ? Array.from(e.target.selectedOptions).map(opt => opt.value)
+            : e.target.value,
+          {
+            label: '',
+          }
+        )
+      }>
+      {props.children}
+    </select>
+  );
+  Select.Option = ({ value, children }: OptionProps) => <option value={value}>{children}</option>;
+  Select.OptGroup = (({ label, children }) => (
+    <optgroup label={label}>{children}</optgroup>
+  )) as OptionGroupFC;
 
-  describe(title, () => {
-    it('should render the correct number of options', async () => {
-      render(<Component {...props} />);
-      await user.click(screen.getByRole('combobox'));
-      const listbox = within(screen.getByRole('listbox'));
-      expect(listbox.getAllByRole('option')).toHaveLength(2);
-    });
-
-    it('should have the options passed into the <select />', async () => {
-      render(<Component {...props} />);
-      await user.click(screen.getByRole('combobox'));
-      const listbox = within(screen.getByRole('listbox'));
-      expect(listbox.getAllByRole('option')[1]).toHaveTextContent(testVal.name);
-    });
-
-    if (('values' in props && props.type === 'multiselect') || 'options' in props) {
-      it('should have the values passed into the <select multiple />', () => {
-        const value = testValues.map(v => v.name).join(',');
-        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
-        render(<Component {...props} value={value} {...multiselectProps} />);
-        expect(
-          screen.getByTitle(props.title).querySelectorAll('.ant-select-selection-item-content')
-        ).toHaveLength(testValues.length);
-      });
-
-      // TODO: add listsAsArrays tests
-    }
-
-    if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
-      it('should have the value passed into the <select />', () => {
-        render(<Component {...props} value={testVal.name} />);
-        expect(screen.getByTitle(props.title)).toHaveTextContent(testVal.label);
-      });
-    }
-
-    it('should call the onChange method passed in', async () => {
-      const handleOnChange = jest.fn();
-      render(<Component {...props} handleOnChange={handleOnChange} />);
-      await user.click(screen.getByRole('combobox'));
-      await user.click(screen.getByText(testVal.label));
-      expect(handleOnChange).toHaveBeenCalledWith(testVal.name);
-    });
-
-    it('should have the className passed into the <select />', () => {
-      render(<Component {...props} className="foo" />);
-      expect(screen.getByTitle(props.title)).toHaveClass('foo');
-    });
-
-    it('should render optgroups', async () => {
-      const optGroups = [
-        { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
-      ];
-      const newProps =
-        'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
-      render(<Component {...newProps} />);
-      await user.click(screen.getByRole('combobox'));
-      const listbox = within(screen.getByRole('listbox'));
-      expect(listbox.getAllByRole('option').pop()).toHaveTextContent(testVal.name);
-    });
-
-    it('should be disabled by the disabled prop', async () => {
-      const handleOnChange = jest.fn();
-      render(<Component {...props} handleOnChange={handleOnChange} disabled />);
-      expect(screen.getByRole('combobox')).toBeDisabled();
-      await user.click(screen.getByRole('combobox'));
-      expect(() => screen.getByRole('listbox')).toThrow();
-      expect(handleOnChange).not.toHaveBeenCalled();
-    });
-  });
-};
-
-describe(`${valueEditorTitle} ("between" selects)`, () => {
-  const user = userEventSetup();
-  const values = antdValueEditorProps.values!.slice(0, 2) as [NameLabelPair, NameLabelPair];
-  const betweenSelectProps: ValueEditorProps = {
-    ...antdValueEditorProps,
-    operator: 'between',
-    type: 'select',
-    value: values.map(v => v.name).join(','),
-    values,
-  };
-
-  it('should render the "between" selects', async () => {
-    render(<AntDValueEditor {...betweenSelectProps} />);
-    const betweenSelects = screen.getAllByRole('combobox');
-    expect(betweenSelects).toHaveLength(2);
-    for (const [bs, idx] of betweenSelects.map((b, i) => [b, i] as const)) {
-      await user.click(bs);
-      const listbox = within(screen.getAllByRole('listbox')[idx]);
-      expect(listbox.getAllByRole('option')[idx]).toHaveTextContent(values[idx].name);
-    }
-  });
-
-  it('should call the onChange handler', async () => {
-    const handleOnChange = jest.fn();
-    render(<AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
-    const betweenSelects = screen.getAllByRole('combobox');
-    expect(betweenSelects).toHaveLength(2);
-    for (const [bs, idx] of betweenSelects.map((b, i) => [b, i] as const)) {
-      await user.click(bs);
-      const listbox = within(screen.getAllByRole('listbox')[idx]);
-      expect(listbox.getAllByRole('option')).toHaveLength(values.length);
-      await user.click(listbox.getByText(idx === 0 ? values[1].name : values[0].name));
-    }
-    expect(handleOnChange).toHaveBeenNthCalledWith(1, `${values[1].name},${values[1].name}`);
-    expect(handleOnChange).toHaveBeenNthCalledWith(2, `${values[0].name},${values[0].name}`);
-  });
-
-  it('should assume the second value if not provided', async () => {
-    const handleOnChange = jest.fn();
-    render(<AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} value={[]} />);
-    const betweenSelects = screen.getAllByRole('combobox');
-    expect(betweenSelects).toHaveLength(2);
-    await user.click(betweenSelects[0]);
-    const listbox = within(screen.getAllByRole('listbox')[0]);
-    await user.click(listbox.getByText(values[1].name));
-    expect(handleOnChange).toHaveBeenNthCalledWith(1, `${values[1].name},${values[0].name}`);
-  });
-
-  it('should call the onChange handler with lists as arrays', async () => {
-    const handleOnChange = jest.fn();
-    render(
-      <AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
-    );
-    const betweenSelects = screen.getAllByRole('combobox');
-    expect(betweenSelects).toHaveLength(2);
-    for (const [bs, idx] of betweenSelects.map((b, i) => [b, i] as const)) {
-      await user.click(bs);
-      const listbox = within(screen.getAllByRole('listbox')[idx]);
-      expect(listbox.getAllByRole('option')).toHaveLength(values.length);
-      await user.click(listbox.getByText(idx === 0 ? values[1].name : values[0].name));
-    }
-    expect(handleOnChange).toHaveBeenNthCalledWith(1, [values[1].name, values[1].name]);
-    expect(handleOnChange).toHaveBeenNthCalledWith(2, [values[0].name, values[0].name]);
-  });
-
-  it('should be disabled by the disabled prop', async () => {
-    const handleOnChange = jest.fn();
-    render(<AntDValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} disabled />);
-    const betweenSelects = screen.getAllByRole('combobox');
-    expect(betweenSelects).toHaveLength(2);
-    for (const bs of betweenSelects) {
-      expect(bs).toBeDisabled();
-      await user.click(bs);
-      expect(() => screen.getByRole('listbox')).toThrow();
-    }
-    expect(handleOnChange).not.toHaveBeenCalled();
-  });
+  return { ...AntD, Select };
 });
+
+const valueEditorTitle = AntDValueEditor.displayName;
+const notToggleTitle = AntDNotToggle.displayName;
 
 describe(notToggleTitle, () => {
   const user = userEventSetup();
@@ -365,21 +224,5 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
 
 testActionElement(AntDActionElement);
 testDragHandle(AntDDragHandle);
-testValueEditor(AntDValueEditor, {
-  multiselect: true,
-  select: true,
-  switch: true,
-  betweenSelect: true,
-});
-const valueEditorAsSelectTitle = `${antdValueEditorProps.title} (as ValueSelector)`;
-testAntDValueSelector(valueEditorAsSelectTitle, AntDValueEditor, {
-  ...antdValueEditorProps,
-  title: valueEditorAsSelectTitle,
-});
-const valueEditorAsMultiselectTitle = `${antdValueEditorProps.title} (as ValueSelector multiselect)`;
-testAntDValueSelector(valueEditorAsMultiselectTitle, AntDValueEditor, {
-  ...antdValueEditorProps,
-  title: valueEditorAsMultiselectTitle,
-  type: 'multiselect',
-});
-testAntDValueSelector(antdValueSelectorProps.title!, AntDValueSelector, antdValueSelectorProps);
+testValueEditor(AntDValueEditor, { switch: true });
+testValueSelector(AntDValueSelector);
