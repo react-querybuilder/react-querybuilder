@@ -6,7 +6,12 @@ import type {
   SelectProps,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import {
+  cloneElement as mockCloneElement,
+  forwardRef,
+  isValidElement as mockIsValidElement,
+  type ComponentPropsWithoutRef,
+} from 'react';
 import {
   testActionElement,
   testDragHandle,
@@ -26,16 +31,18 @@ import {
 
 jest.mock('@mui/material', () => {
   const MuiMaterial = jest.requireActual('@mui/material');
-  const ListSubheader = (props: ListSubheaderProps) => (
-    <optgroup label={props.children as string} />
+  const ListSubheader = ({ children }: ListSubheaderProps) => (
+    <optgroup label={children as string} />
   );
-  const MenuItem = (props: MenuItemProps) => <option value={props.value}>{props.children}</option>;
+  const MenuItem = ({ value, children }: MenuItemProps) => (
+    <option value={value}>{children}</option>
+  );
   return { ...MuiMaterial, ListSubheader, MenuItem };
 });
 jest.mock('@mui/material/FormControl', () => {
-  const FormControl = (props: FormControlProps) => (
-    <div className={props.className} title={props.title} data-disabled={props.disabled}>
-      {props.children as ReactNode[]}
+  const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
+    <div className={className} title={title}>
+      {mockIsValidElement(children) ? mockCloneElement(children, { disabled }) : children}
     </div>
   );
   FormControl.useFormControl = () => {};
