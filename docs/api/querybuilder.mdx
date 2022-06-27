@@ -720,6 +720,34 @@ Pass `false` to automatically add an "empty" option with value `"~"` and label `
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
+### `listsAsArrays`
+
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#listsAsArrays=true)
+
+Pass `true` to update rule values that represent lists with proper arrays instead of comma-separated strings. Applies when `valueEditorType` is "multiselect" and when a rule's `operator` is "between", "notBetween", "in", or "notIn".
+
+For example, the default behavior for the "between" operator might produce this rule:
+
+```json {4}
+{
+  "field": "f1",
+  "operator": "between",
+  "value": "f2,f3",
+  "valueSource": "field"
+}
+```
+
+When `listsAsArrays` is true, the rule's `value` will be an array:
+
+```json {4}
+{
+  "field": "f1",
+  "operator": "between",
+  "value": ["f2", "f3"],
+  "valueSource": "field"
+}
+```
+
 ### `independentCombinators`
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#independentCombinators=true)
