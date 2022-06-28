@@ -50,6 +50,49 @@ const query: RuleGroupType = {
 };
 ```
 
+:::tip
+
+_<abbr title="Too long; didn't read">TL;DR</abbr>: For best results, use the [default combinators and operators](./misc#defaults) or map custom combinators/operators to the defaults with [`transformQuery`](./misc#transformquery)._
+
+While `formatQuery` technically accepts query objects of type `RuleGroupTypeAny` (i.e. `RuleGroupType` or `RuleGroupTypeIC`), it is not guaranteed to process a query correctly unless the query also conforms to the type `DefaultRuleGroupTypeAny` (i.e. `DefaultRuleGroupType` or `DefaultRuleGroupTypeIC`).
+
+In practice, this means that all `combinator` and `operator` properties in the query must match the `name` of an element in [`defaultCombinators` or `defaultOperators`](./misc#defaults), respectively. If you implement custom combinator/operator names, you can use the [`transformQuery` function](./misc#transformquery) to map your query properties to the defaults.
+
+For example, assume your implementation replaces the default "between" operator (`{ name: "between", label: "between" }`) with `{ name: "b/w", label: "b/w" }`. Any rules using this operator would have `operator: "b/w"` instead of `operator: "between"`. So if a query looked like this...
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "someNumber",
+      "operator": "b/w",
+      "value": "12,14"
+    }
+  ]
+}
+```
+
+...you could run it through `transformQuery` with the `operatorMap` option:
+
+```ts
+const newQuery = transformQuery(query, { operatorMap: { 'b/w': 'between' } });
+// {
+//   "combinator": "and",
+//   "rules": [
+//     {
+//       "field": "someNumber",
+//       "operator": "between",
+//       "value": "12,14"
+//     }
+//   ]
+// }
+```
+
+The `newQuery` object would be ready for processing by `formatQuery`, including its special handling of the "between" operator.
+
+:::
+
 ## Basic usage
 
 ### JSON
@@ -260,17 +303,17 @@ To avoid information loss, this option is more strict about what qualifies as "n
 The following expressions all evaluate to `true`:
 
 ```ts
-parseFloat('000111abcdef') === 111;
+parseFloat('000111abcdef') === 111; // everything from the 'a' on is ignored by `parseFloat`
 
 formatQuery(
   { rules: [{ field: 'f', operator: '=', value: '000111abcdef' }] },
   { format: 'sql', parseNumbers: true }
-) === "(f = '000111abcdef')";
+) === "(f = '000111abcdef')"; // `value` contains non-numeric characters, so remains as-is
 
 formatQuery(
   { rules: [{ field: 'f', operator: '=', value: '  000111  ' }] },
   { format: 'sql', parseNumbers: true }
-) === '(f = 111)';
+) === '(f = 111)'; // after trimming whitespace, `value` is wholly numeric
 ```
 
 :::
