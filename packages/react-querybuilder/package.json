@@ -59,6 +59,7 @@
     "vite-tsconfig-paths": "^3.3.17"
   },
   "dependencies": {
+    "bson": "^4.6.4",
     "immer": "^9.0.6",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1"
