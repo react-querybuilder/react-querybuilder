@@ -1,5 +1,11 @@
-import { useEffect } from 'react';
-import { ValueSelector, type ValueEditorProps } from 'react-querybuilder';
+import {
+  joinWith,
+  standardClassnames as sc,
+  toArray,
+  useValueEditor,
+  ValueSelector,
+  type ValueEditorProps,
+} from 'react-querybuilder';
 
 export const BootstrapValueEditor = ({
   fieldData,
@@ -10,20 +16,13 @@ export const BootstrapValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   disabled,
+  testID,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -33,6 +32,40 @@ export const BootstrapValueEditor = ({
   const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
     ? 'text'
     : inputType || 'text';
+
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <ValueSelector
+          {...props}
+          className={`${sc.valueListItem} ${className?.replaceAll(sc.value, '')}`}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <ValueSelector
+          {...props}
+          className={`${sc.valueListItem} ${className?.replaceAll(sc.value, '')}`}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
 
   switch (type) {
     case 'select':
@@ -46,7 +79,8 @@ export const BootstrapValueEditor = ({
           value={value}
           disabled={disabled}
           multiple={type === 'multiselect'}
-          options={values!}
+          listsAsArrays={listsAsArrays}
+          options={values}
         />
       );
 
@@ -91,7 +125,7 @@ export const BootstrapValueEditor = ({
     case 'radio':
       return (
         <span title={title}>
-          {values!.map(v => (
+          {values.map(v => (
             <div key={v.name} className="form-check form-check-inline">
               <input
                 className="form-check-input"

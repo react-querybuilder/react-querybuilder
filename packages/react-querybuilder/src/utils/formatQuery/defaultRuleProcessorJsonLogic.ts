@@ -1,6 +1,7 @@
 import type { JsonLogicVar } from 'json-logic-js';
 import type { RQBJsonLogic, RuleType, ValueProcessorOptions } from '../../types/index.noReact';
-import { isValidValue, shouldRenderAsNumber, toArray } from './utils';
+import { toArray } from '../arrayUtils';
+import { isValidValue, shouldRenderAsNumber } from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
   op

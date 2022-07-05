@@ -12,6 +12,7 @@ export type DemoOption =
   | 'addRuleToNewGroups'
   | 'validateQuery'
   | 'independentCombinators'
+  | 'listsAsArrays'
   | 'enableDragAndDrop'
   | 'disabled'
   | 'debugMode'

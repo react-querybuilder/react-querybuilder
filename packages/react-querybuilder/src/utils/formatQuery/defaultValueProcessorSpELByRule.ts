@@ -1,5 +1,6 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
-import { shouldRenderAsNumber, toArray, trimIfString } from './utils';
+import { toArray, trimIfString } from '../arrayUtils';
+import { shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 

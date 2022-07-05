@@ -80,3 +80,12 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
 [data-dnd='disabled'] .queryBuilder-dragHandle {
   display: none;
 }
+
+// Miscellaneous
+.rule {
+  .rule-value {
+    .rule-value-list-item:not(:first-of-type) {
+      margin-left: $rqb-spacing;
+    }
+  }
+}

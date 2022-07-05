@@ -15,7 +15,11 @@ export const App = () => {
 
   return (
     <div>
-      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+      />
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>
