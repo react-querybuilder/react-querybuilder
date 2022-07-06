@@ -101,7 +101,7 @@ If the `independentCombinators` prop is provided, then the `query` argument will
 
 `RuleGroupTypeAny`
 
-The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentCombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a controlled component.
+The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentcombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a controlled component.
 
 The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [examples](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
 
@@ -752,7 +752,15 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#independentCombinators=true)
 
-Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. Visually, this is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be rendered.
+
+Visually, this option has a similar effect as the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+
+:::caution
+
+When the `independentCombinators` option is enabled, the `query` (or `defaultQuery`) prop _must_ be of type `RuleGroupTypeIC` instead of the default `RuleGroupType`. See [`onQueryChange`](#onquerychange) above, or the [Rules and groups section](../typescript#rules-and-groups) of the TypeScript documentation for more information.
+
+:::
 
 ### `enableDragAndDrop`
 
