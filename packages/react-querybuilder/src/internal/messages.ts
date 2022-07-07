@@ -30,3 +30,9 @@ export const errorControlledToUncontrolled =
   'undefined, which should not happen. ' +
   'Decide between using a controlled or uncontrolled query builder ' +
   'for the lifetime of the component. More info: https://reactjs.org/link/controlled-components';
+
+export const errorEnabledDndWithoutReactDnD =
+  'QueryBuilder was rendered with the enableDragAndDrop prop set to true, ' +
+  'but either react-dnd or react-dnd-html5-backend (or both) was not installed. ' +
+  'Install both packages so they are available to react-querybuilder, or remove ' +
+  'the enableDragAndDrop prop.';

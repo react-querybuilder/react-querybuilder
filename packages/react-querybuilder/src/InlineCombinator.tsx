@@ -1,70 +1,22 @@
-import { useDrop } from 'react-dnd';
-import { DNDType, standardClassnames, TestID } from './defaults';
-import { c } from './internal';
-import type { CombinatorSelectorProps, DraggedItem, QueryActions, Schema } from './types';
-import { getParentPath, isAncestor, pathsAreEqual } from './utils';
+import { standardClassnames, TestID } from './defaults';
+import type { CombinatorSelectorProps, Schema } from './types';
 
 interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
   path: number[];
-  moveRule: QueryActions['moveRule'];
-  independentCombinators: boolean;
 }
 
 export const InlineCombinator = ({
   component: CombinatorSelectorComponent,
   path,
-  moveRule,
-  independentCombinators,
   ...props
-}: InlineCombinatorProps) => {
-  const [{ isOver, dropMonitorId }, drop] = useDrop(
-    () => ({
-      accept: [DNDType.rule, DNDType.ruleGroup],
-      canDrop: (item: DraggedItem) => {
-        const parentHoverPath = getParentPath(path);
-        const parentItemPath = getParentPath(item.path);
-        const hoverIndex = path[path.length - 1];
-        const itemIndex = item.path[item.path.length - 1];
-
-        // Don't allow drop if 1) item is ancestor of drop target,
-        // 2) item is hovered over itself (this should never happen since
-        // combinators don't have drag handles), or 3) combinators are
-        // independent and the drop target is just above the hovering item.
-        return !(
-          isAncestor(item.path, path) ||
-          pathsAreEqual(item.path, path) ||
-          (pathsAreEqual(parentHoverPath, parentItemPath) && hoverIndex - 1 === itemIndex) ||
-          (independentCombinators &&
-            pathsAreEqual(parentHoverPath, parentItemPath) &&
-            hoverIndex === itemIndex - 1)
-        );
-      },
-      collect: monitor => ({
-        isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId(),
-      }),
-      drop: (item: DraggedItem, _monitor) => {
-        const parentPath = getParentPath(path);
-        const index = path[path.length - 1];
-        moveRule(item.path, [...parentPath, index]);
-      },
-    }),
-    [moveRule, path, independentCombinators]
-  );
-
-  const dndOver = isOver ? standardClassnames.dndOver : '';
-  const wrapperClassName = c(dndOver, standardClassnames.betweenRules);
-
-  return (
-    <div
-      ref={drop}
-      className={wrapperClassName}
-      data-dropmonitorid={dropMonitorId}
-      data-testid={TestID.inlineCombinator}>
-      <CombinatorSelectorComponent {...props} path={path} testID={TestID.combinators} />
-    </div>
-  );
-};
+}: InlineCombinatorProps) => (
+  <div
+    key="no-dnd"
+    className={standardClassnames.betweenRules}
+    data-testid={TestID.inlineCombinator}>
+    <CombinatorSelectorComponent {...props} path={path} testID={TestID.combinators} />
+  </div>
+);
 
 InlineCombinator.displayName = 'InlineCombinator';

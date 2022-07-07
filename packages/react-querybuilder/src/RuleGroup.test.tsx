@@ -1,7 +1,6 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
-import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import { defaultControlElements } from './controls';
 import {
   defaultCombinators,
@@ -11,7 +10,8 @@ import {
   TestID,
 } from './defaults';
 import { errorDeprecatedRuleGroupProps } from './internal';
-import { RuleGroup as RuleGroupOriginal } from './RuleGroup';
+import { dndFallback } from './internal/hooks';
+import { RuleGroup } from './RuleGroup';
 import type {
   ActionProps,
   Classnames,
@@ -31,13 +31,6 @@ import type {
 import { add } from './utils';
 
 const user = userEvent.setup();
-
-const [RuleGroup, getDndBackendOriginal] = wrapWithTestBackend(RuleGroupOriginal);
-// This is just a type guard against `undefined`
-const getDndBackend = () => getDndBackendOriginal()!;
-
-const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
-  el.getAttribute(`data-${dragDrop}monitorid`);
 
 const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -193,6 +186,7 @@ const schema: Partial<Schema> = {
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],
+  dnd: dndFallback,
 };
 const actions: Partial<QueryActions> = {
   onPropChange: () => {},
@@ -200,7 +194,7 @@ const actions: Partial<QueryActions> = {
   onGroupAdd: () => {},
 };
 const UNUSED = 'UNUSED';
-const getProps = (
+export const getProps = (
   mergeIntoSchema: Partial<Schema> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ): RuleGroupProps => ({
@@ -458,165 +452,6 @@ describe('validation', () => {
   });
 });
 
-describe('enableDragAndDrop', () => {
-  it('should not have the drag class if not dragging', () => {
-    render(<RuleGroup {...getProps()} />);
-    const ruleGroup = screen.getByTestId(TestID.ruleGroup);
-    expect(ruleGroup).not.toHaveClass(sc.dndDragging);
-  });
-
-  it('should have the drag class if dragging', () => {
-    render(<RuleGroup {...getProps()} />);
-    const ruleGroup = screen.getByTestId(TestID.ruleGroup);
-    simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
-    expect(ruleGroup).toHaveClass(sc.dndDragging);
-    act(() => {
-      getDndBackend().simulateEndDrag();
-    });
-  });
-
-  it('should handle a dropped rule group', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <RuleGroup {...getProps({}, { moveRule })} path={[0]} />
-        <RuleGroup {...getProps({}, { moveRule })} path={[1]} />
-      </div>
-    );
-    const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
-    simulateDragDrop(
-      getHandlerId(ruleGroups[1], 'drag'),
-      getHandlerId(ruleGroups[0], 'drop'),
-      getDndBackend()
-    );
-    expect(ruleGroups[0]).not.toHaveClass(sc.dndDragging);
-    expect(ruleGroups[1]).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
-  });
-
-  it('should abort move if dropped on itself', () => {
-    const moveRule = jest.fn();
-    render(<RuleGroup {...getProps({}, { moveRule })} />);
-    const ruleGroup = screen.getByTestId(TestID.ruleGroup);
-    simulateDragDrop(
-      getHandlerId(ruleGroup, 'drag'),
-      getHandlerId(ruleGroup, 'drop'),
-      getDndBackend()
-    );
-    expect(ruleGroup).not.toHaveClass(sc.dndDragging);
-    expect(ruleGroup).not.toHaveClass(sc.dndOver);
-    expect(moveRule).not.toHaveBeenCalled();
-  });
-
-  it('should abort move if source item is first child of this group', () => {
-    const moveRule = jest.fn();
-    render(
-      <RuleGroup
-        {...getProps({}, { moveRule })}
-        ruleGroup={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
-      />
-    );
-    const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
-    simulateDragDrop(
-      getHandlerId(ruleGroups[1], 'drag'),
-      getHandlerId(ruleGroups[0], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).not.toHaveBeenCalled();
-  });
-
-  it('should handle drops on combinator between rules', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <RuleGroup
-          {...getProps({ showCombinatorsBetweenRules: true }, { moveRule })}
-          ruleGroup={{
-            combinator: 'and',
-            rules: [
-              { field: 'firstName', operator: '=', value: '0' },
-              { field: 'firstName', operator: '=', value: '1' },
-              { field: 'firstName', operator: '=', value: '2' },
-            ],
-          }}
-          path={[0]}
-        />
-      </div>
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    const combinatorEls = screen.getAllByTestId(TestID.inlineCombinator);
-    simulateDragDrop(
-      getHandlerId(rules[2], 'drag'),
-      getHandlerId(combinatorEls[1], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).not.toHaveBeenCalled();
-    simulateDragDrop(
-      getHandlerId(rules[2], 'drag'),
-      getHandlerId(combinatorEls[0], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1]);
-  });
-
-  it('should handle rule group drops on independent combinators', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <RuleGroup
-          {...getProps({ independentCombinators: true }, { moveRule })}
-          ruleGroup={{
-            rules: [
-              { field: 'firstName', operator: '=', value: 'Steve' },
-              'and',
-              { field: 'lastName', operator: '=', value: 'Vai' },
-            ],
-          }}
-          path={[0]}
-        />
-        <RuleGroup {...getProps({ independentCombinators: true }, { moveRule })} path={[1]} />
-      </div>
-    );
-    const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
-    const combinatorEl = screen.getByTestId(TestID.inlineCombinator);
-    simulateDragDrop(
-      getHandlerId(ruleGroups[1], 'drag'),
-      getHandlerId(combinatorEl, 'drop'),
-      getDndBackend()
-    );
-    expect(ruleGroups[1]).not.toHaveClass(sc.dndDragging);
-    expect(combinatorEl).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([1], [0, 1]);
-  });
-
-  it('should handle rule drops on independent combinators', () => {
-    const moveRule = jest.fn();
-    render(
-      <RuleGroup
-        {...getProps({ independentCombinators: true }, { moveRule })}
-        ruleGroup={{
-          rules: [
-            { field: 'firstName', operator: '=', value: 'Steve' },
-            'and',
-            { field: 'lastName', operator: '=', value: 'Vai' },
-            'and',
-            { field: 'age', operator: '>', value: 28 },
-          ],
-        }}
-        path={[0]}
-      />
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    const combinatorEls = screen.getAllByTestId(TestID.inlineCombinator);
-    simulateDragDrop(
-      getHandlerId(rules[2], 'drag'),
-      getHandlerId(combinatorEls[0], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 1]);
-  });
-});
-
 describe('disabled', () => {
   it('should have the correct classname', () => {
     render(<RuleGroup {...getProps()} disabled />);
@@ -732,23 +567,6 @@ describe('lock buttons', () => {
     render(<RuleGroup {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
-  });
-
-  it('prevents drops', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <RuleGroup {...getProps({}, { moveRule })} path={[0]} disabled />
-        <RuleGroup {...getProps({}, { moveRule })} path={[1]} />
-      </div>
-    );
-    const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
-    simulateDragDrop(
-      getHandlerId(ruleGroups[1], 'drag'),
-      getHandlerId(ruleGroups[0], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).not.toHaveBeenCalled();
   });
 });
 

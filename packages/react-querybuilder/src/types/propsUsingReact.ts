@@ -2,6 +2,8 @@ import type {
   ComponentType,
   ForwardRefExoticComponent,
   MouseEvent as ReactMouseEvent,
+  ReactElement,
+  Ref,
   RefAttributes,
 } from 'react';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from 'ruleGroupsIC';
@@ -63,6 +65,31 @@ export interface Controls {
   valueSourceSelector: ComponentType<ValueSourceSelectorProps>;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-html5-backend');
+
+export interface DnD {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  hooks: Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
+  rule: {
+    isDragging: boolean;
+    dragMonitorId: string | symbol | null;
+    isOver: boolean;
+    dropMonitorId: string | symbol | null;
+    dragRef: Ref<HTMLSpanElement>;
+    dndRef: Ref<HTMLDivElement>;
+  };
+  ruleGroup: {
+    isDragging: boolean;
+    dragMonitorId: string | symbol | null;
+    isOver: boolean;
+    dropMonitorId: string | symbol | null;
+    previewRef: Ref<HTMLDivElement>;
+    dragRef: Ref<HTMLSpanElement>;
+    dropRef: Ref<HTMLDivElement>;
+  };
+}
+
 export interface Schema {
   fields: Field[] | OptionGroup<Field>[];
   fieldMap: Record<string, Field>;
@@ -88,6 +115,7 @@ export interface Schema {
   independentCombinators: boolean;
   listsAsArrays: boolean;
   disabledPaths: number[][];
+  dnd: DnD;
 }
 
 interface CommonRuleAndGroupProps {
@@ -117,6 +145,18 @@ export interface RuleGroupProps extends CommonRuleAndGroupProps {
   not?: boolean;
 }
 
+export interface RuleGroupDndProps {
+  disabled: boolean;
+  parentDisabled: boolean;
+  path: number[];
+  moveRule: QueryActions['moveRule'];
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrag: typeof import('react-dnd')['useDrag'];
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrop: typeof import('react-dnd')['useDrop'];
+  children: ReactElement<RuleGroupProps>;
+}
+
 export interface RuleProps extends CommonRuleAndGroupProps {
   rule: RuleType;
   /**
@@ -135,6 +175,19 @@ export interface RuleProps extends CommonRuleAndGroupProps {
    * @deprecated Use the `valueSource` property of the `rule` prop instead
    */
   valueSource?: ValueSource;
+}
+
+export interface RuleDndProps {
+  moveRule: QueryActions['moveRule'];
+  disabled: boolean;
+  parentDisabled: boolean;
+  path: number[];
+  independentCombinators: boolean;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrag: typeof import('react-dnd')['useDrag'];
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrop: typeof import('react-dnd')['useDrop'];
+  children: ReactElement<RuleProps>;
 }
 
 type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG extends {
@@ -331,6 +384,13 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
    * Container for custom props that are passed to all components
    */
   context?: any;
+  /**
+   * For internal use only, unless `enableDragAndDrop` is `true` and you want the component
+   * to render immediately with drag-and-drop enabled. Otherwise, the component will
+   * asynchronously load react-dnd and enable  the drag-and-drop feature only once that
+   * (along with react-dnd-html5-backend) has loaded.
+   */
+  dnd?: UseReactDnD;
 };
 
 /**
