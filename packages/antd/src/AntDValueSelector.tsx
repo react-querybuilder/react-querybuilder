@@ -1,6 +1,6 @@
 import { Select } from 'antd';
 import { useMemo, type ComponentPropsWithoutRef } from 'react';
-import type { VersatileSelectorProps } from 'react-querybuilder';
+import { joinWith, splitBy, type VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 type AntDValueSelectorProps = VersatileSelectorProps &
@@ -14,6 +14,7 @@ export const AntDValueSelector = ({
   title,
   disabled,
   multiple,
+  listsAsArrays,
   // Props that should not be in extraProps
   testID: _testID,
   rules: _rules,
@@ -26,18 +27,25 @@ export const AntDValueSelector = ({
   fieldData: _fieldData,
   ...extraProps
 }: AntDValueSelectorProps) => {
-  const onChange = useMemo(() => {
-    if (multiple) {
-      return (v: string | string[]) =>
-        handleOnChange(Array.isArray(v) ? v.join(',') : /* istanbul ignore next */ v);
-    }
-    return (v: string) => handleOnChange(v);
-  }, [handleOnChange, multiple]);
+  const onChange = useMemo(
+    () =>
+      multiple
+        ? (v: string | string[]) =>
+            handleOnChange(
+              Array.isArray(v)
+                ? listsAsArrays
+                  ? v
+                  : joinWith(v, ',')
+                : /* istanbul ignore next */ v
+            )
+        : (v: string) => handleOnChange(v),
+    [handleOnChange, listsAsArrays, multiple]
+  );
 
   const val = multiple
     ? Array.isArray(value)
       ? /* istanbul ignore next */ value
-      : value?.split(',')
+      : splitBy(value, ',')
     : value;
 
   const modeObj = multiple ? { mode: 'multiple' as const } : {};

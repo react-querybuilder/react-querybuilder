@@ -6,5 +6,13 @@
   "trailingComma": "es5",
   "bracketSpacing": true,
   "bracketSameLine": true,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "examples/*/**",
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ]
 }

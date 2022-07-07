@@ -27,31 +27,27 @@ async function recursivelyGetFiles(dir) {
 }
 
 const templatePath = pathJoin(__dirname, '_template');
-const templatePublic = pathJoin(templatePath, 'public');
 const templateSrc = pathJoin(templatePath, 'src');
-const templateIndexHTML = (await readFile(pathJoin(templatePublic, 'index.html'))).toString(
-  'utf-8'
-);
+const templateIndexHTML = (await readFile(pathJoin(templatePath, 'index.html'))).toString('utf-8');
 const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
+const templateAppTSX = (await readFile(pathJoin(templateSrc, 'App.tsx'))).toString('utf-8');
 const templateIndexSCSS = (await readFile(pathJoin(templateSrc, 'index.scss'))).toString('utf-8');
 const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
 
 for (const exampleID in configs) {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
-  const examplePublic = pathJoin(examplePath, 'public');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
   await rm(examplePath, { recursive: true, force: true });
   await mkdir(examplePath);
-  await mkdir(examplePublic);
   await mkdir(exampleSrc);
 
   // #region public/index.html
-  await writeFile(
-    pathJoin(examplePublic, 'index.html'),
-    templateIndexHTML.replace('__TITLE__', exampleTitle)
-  );
+  const exampleIndexHTML = templateIndexHTML
+    .replace('__TITLE__', exampleTitle)
+    .replace(/((\/src\/index)\.tsx)/g, exampleConfig.compileToJS ? '$2.jsx' : '$1');
+  await writeFile(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
   // #endregion
 
   // #region src/index.scss
@@ -66,35 +62,44 @@ for (const exampleID in configs) {
   // #endregion
 
   // #region src/index.tsx
+  const processedTemplateIndexTSX = templateIndexTSX
+    .replace(/(!)/g, exampleConfig.compileToJS ? '' : '$1')
+    .replace(/((index\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
+  await writeFile(
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
+    processedTemplateIndexTSX
+  );
+  // #endregion
+
+  // #region src/App.tsx
   let baseImport = '';
   const props = [];
   if (exampleConfig.isCompatPackage) {
     baseImport = `import { ${
       exampleID === 'bootstrap' ? `${exampleID}ControlClassnames, ` : ''
     }${exampleID}ControlElements } from '@react-querybuilder/${exampleID}';`;
-    props.push(
-      `controlElements={${exampleID}ControlElements}`,
-      exampleID === 'bootstrap' ? `controlClassnames={${exampleID}ControlClassnames}` : ''
-    );
+    props.push(`controlElements={${exampleID}ControlElements}`);
+    if (exampleID === 'bootstrap') {
+      props.push(`controlClassnames={${exampleID}ControlClassnames}`);
+    }
   }
-  const processedTemplateTSX = templateIndexTSX
+  const processedTemplateAppTSX = templateAppTSX
     .replace('// __IMPORTS__', [baseImport, ...exampleConfig.tsxImports].join('\n'))
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
     .replace('// __WRAPPER_OPEN__', exampleConfig.wrapper?.[0] ?? '')
     .replace('// __WRAPPER_CLOSE__', exampleConfig.wrapper?.[1] ?? '')
-    .replace('// __RQB_PROPS__', props.join('\n'))
-    .replace(/((index\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
+    .replace('// __RQB_PROPS__', props.join('\n'));
   const sourceCode = exampleConfig.compileToJS
     ? (
-        await transformWithEsbuild(processedTemplateTSX, 'index.tsx', {
+        await transformWithEsbuild(processedTemplateAppTSX, 'App.tsx', {
           minify: false,
           minifyWhitespace: false,
           jsx: 'preserve',
         })
       ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1')
-    : processedTemplateTSX;
+    : processedTemplateAppTSX;
   await writeFile(
-    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     sourceCode
   );
   // #endregion
@@ -110,6 +115,7 @@ for (const exampleID in configs) {
   }
   if (exampleConfig.compileToJS) {
     delete examplePkgJSON.devDependencies['typescript'];
+    delete examplePkgJSON.devDependencies['sass'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
       if (devDep.match(/^@types\//)) {
         delete examplePkgJSON.devDependencies[devDep];
@@ -126,6 +132,14 @@ for (const exampleID in configs) {
   }
   // #endregion
 
+  // #region vite.config.js and sandbox.config.json
+  await copyFile(pathJoin(templatePath, 'vite.config.js'), pathJoin(examplePath, 'vite.config.js'));
+  await copyFile(
+    pathJoin(templatePath, 'sandbox.config.json'),
+    pathJoin(examplePath, 'sandbox.config.json')
+  );
+  // #endregion
+
   // #region README.md
   const exampleREADMEmd = templateREADMEmd.replace('/examples/_template', `/examples/${exampleID}`);
   await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
@@ -137,6 +151,7 @@ for (const exampleID in configs) {
     const fileContents = (await readFile(filePath)).toString('utf-8');
     const prettified = prettier.format(fileContents, {
       ...prettierConfig,
+      printWidth: 80, // narrower since codesandbox code panel is narrow
       filepath: filePath,
       plugins: ['prettier-plugin-organize-imports'],
     });

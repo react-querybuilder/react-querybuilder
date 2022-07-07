@@ -7,8 +7,13 @@ import RadioGroup from '@mui/material/RadioGroup';
 import { ThemeProvider, useTheme } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
-import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
+import {
+  joinWith,
+  standardClassnames,
+  toArray,
+  useValueEditor,
+  type ValueEditorProps,
+} from 'react-querybuilder';
 import { MaterialValueSelector } from './MaterialValueSelector';
 
 export const MaterialValueEditor = (props: ValueEditorProps) => {
@@ -30,21 +35,14 @@ const MaterialValueEditorInner = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   valueSource: _vs,
   disabled,
+  testID,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -55,6 +53,40 @@ const MaterialValueEditorInner = ({
     ? 'text'
     : inputType || 'text';
 
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <MaterialValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <MaterialValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1] ?? ''}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
+
   switch (type) {
     case 'select':
     case 'multiselect':
@@ -63,11 +95,12 @@ const MaterialValueEditorInner = ({
           {...props}
           className={className}
           handleOnChange={handleOnChange}
-          options={values!}
+          options={values}
           value={value}
           disabled={disabled}
           title={title}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 
@@ -109,8 +142,14 @@ const MaterialValueEditorInner = ({
       return (
         <FormControl className={className} title={title} component="fieldset" disabled={disabled}>
           <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
-            {values!.map(v => (
-              <FormControlLabel key={v.name} value={v.name} control={<Radio />} label={v.label} />
+            {values.map(v => (
+              <FormControlLabel
+                disabled={disabled}
+                key={v.name}
+                value={v.name}
+                control={<Radio />}
+                label={v.label}
+              />
             ))}
           </RadioGroup>
         </FormControl>

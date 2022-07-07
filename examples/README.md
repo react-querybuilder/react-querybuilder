@@ -5,4 +5,4 @@ To quickly set up CodeSandbox using any of these examples as a template:
 
 You will be forwarded to [codesandbox.io](https://codesandbox.io) with the example project preloaded.
 
-To update and regenerate the [basic](./basic/), [basic-ts](./basic-ts/), and compatibility package examples, modify the [template folder](./template/) then run `yarn generate-examples` from the repo root directory.
+To update and regenerate the [basic](./basic/), [basic-ts](./basic-ts/), and compatibility package examples, modify the [`_template` folder](./_template/) then run `yarn generate-examples` from the repo root directory.

@@ -1,5 +1,9 @@
 @import '../src/query-builder.scss';
 
+body {
+  margin: 0;
+}
+
 pre {
   margin: 0;
   white-space: pre-wrap;
@@ -10,6 +14,7 @@ pre {
 }
 
 #app {
+  margin: 1rem;
   display: flex;
   justify-content: space-between;
   column-gap: 1.5rem;

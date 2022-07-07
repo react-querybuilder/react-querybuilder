@@ -1,5 +1,6 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
-import { isValidValue, shouldRenderAsNumber, toArray, trimIfString } from './utils';
+import { toArray, trimIfString } from '../arrayUtils';
+import { isValidValue, shouldRenderAsNumber } from './utils';
 
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },

@@ -15,6 +15,7 @@ import type {
   ValidationMap,
   ValidationResult,
 } from '../../types/index.noReact';
+import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
@@ -28,7 +29,6 @@ import {
   mapSQLOperator,
   numerifyValues,
   shouldRenderAsNumber,
-  toArray,
 } from './utils';
 
 /**
@@ -352,10 +352,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, {
-              parseNumbers,
-              escapeQuotes: (rule.valueSource ?? 'value') === 'value',
-            });
+            return valueProcessorInternal(rule, { parseNumbers });
           })
           .filter(Boolean)
           .join(',');

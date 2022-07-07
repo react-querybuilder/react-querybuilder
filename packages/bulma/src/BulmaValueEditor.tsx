@@ -1,5 +1,10 @@
-import { useEffect } from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
+import {
+  joinWith,
+  standardClassnames,
+  toArray,
+  useValueEditor,
+  type ValueEditorProps,
+} from 'react-querybuilder';
 import { BulmaValueSelector } from './BulmaValueSelector';
 
 export const BulmaValueEditor = ({
@@ -11,20 +16,13 @@ export const BulmaValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   disabled,
+  testID,
   ...props
 }: ValueEditorProps) => {
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [inputType, operator, value, handleOnChange]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -35,6 +33,40 @@ export const BulmaValueEditor = ({
     ? 'text'
     : inputType || 'text';
 
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <BulmaValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <BulmaValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
+
   switch (type) {
     case 'select':
     case 'multiselect':
@@ -44,10 +76,11 @@ export const BulmaValueEditor = ({
           title={title}
           className={className}
           handleOnChange={handleOnChange}
-          options={values!}
+          options={values}
           value={value}
           disabled={disabled}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 
@@ -81,7 +114,7 @@ export const BulmaValueEditor = ({
     case 'radio':
       return (
         <div className={`${className} control`} title={title}>
-          {values!.map(v => (
+          {values.map(v => (
             <label key={v.name} className="radio">
               <input
                 type="radio"

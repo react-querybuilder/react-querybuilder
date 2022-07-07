@@ -3,35 +3,20 @@
   "description": "React Query Builder Template Example",
   "private": true,
   "dependencies": {
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-querybuilder": "^4.4.0"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-querybuilder": "^4.5.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.6.0"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@vitejs/plugin-react": "^1.3.0",
+    "typescript": "^4.6.0",
+    "sass": "^1.52.3",
+    "vite": "^2.7.10"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
+    "start": "vite",
+    "build": "vite build"
   }
 }

@@ -34,7 +34,10 @@ export const optionsOrder: CIOption[] = [
   'parseNumbers',
 ];
 
-export const optionsReducer = (state: CIOptions, action: CIOptionsAction): CIOptions => {
+export const optionsReducer = (
+  state: CIOptions,
+  action: CIOptionsAction
+): CIOptions => {
   const { optionName, value } = action.payload;
   return { ...state, [optionName]: value };
 };

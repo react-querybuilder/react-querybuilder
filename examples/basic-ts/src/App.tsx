@@ -1,24 +1,27 @@
-import { StrictMode, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import { useState } from 'react';
+import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
-import './index.css';
 
-const fields = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
 
-const initialQuery = {
+const initialQuery: RuleGroupType = {
   combinator: 'and',
   rules: [],
 };
 
-const App = () => {
+export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (
     <div>
-      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+      />
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>
@@ -26,9 +29,3 @@ const App = () => {
     </div>
   );
 };
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);

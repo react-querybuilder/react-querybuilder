@@ -5,6 +5,7 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "strict": true,
+    "lib": ["dom", "es2020"],
     "module": "es6",
     "moduleResolution": "node",
     "jsx": "react-jsx",

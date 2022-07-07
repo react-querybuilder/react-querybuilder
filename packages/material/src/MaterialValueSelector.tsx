@@ -2,7 +2,7 @@ import FormControl from '@mui/material/FormControl';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { useMemo, type ComponentPropsWithoutRef } from 'react';
-import type { VersatileSelectorProps } from 'react-querybuilder';
+import { joinWith, splitBy, type VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 type MaterialValueSelectorProps = VersatileSelectorProps & ComponentPropsWithoutRef<typeof Select>;
@@ -15,6 +15,7 @@ export const MaterialValueSelector = ({
   disabled,
   title,
   multiple,
+  listsAsArrays,
   // Props that should not be in extraProps
   testID: _testID,
   rules: _rules,
@@ -29,15 +30,22 @@ export const MaterialValueSelector = ({
 }: MaterialValueSelectorProps) => {
   const theme = useTheme();
 
-  const onChange = useMemo(() => {
-    if (multiple) {
-      return ({ target: { value: v } }: SelectChangeEvent<string | string[]>) =>
-        handleOnChange(Array.isArray(v) ? v.join(',') : /* istanbul ignore next */ v);
-    }
-    return ({ target: { value: v } }: SelectChangeEvent<string>) => handleOnChange(v);
-  }, [handleOnChange, multiple]);
+  const onChange = useMemo(
+    () =>
+      multiple
+        ? ({ target: { value: v } }: SelectChangeEvent<string | string[]>) =>
+            handleOnChange(
+              Array.isArray(v)
+                ? listsAsArrays
+                  ? v
+                  : joinWith(v, ',')
+                : /* istanbul ignore next */ v
+            )
+        : ({ target: { value: v } }: SelectChangeEvent<string>) => handleOnChange(v),
+    [handleOnChange, listsAsArrays, multiple]
+  );
 
-  const val = multiple ? (Array.isArray(value) ? value : value?.split(',')) : value;
+  const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 
   return (
     <ThemeProvider theme={theme}>

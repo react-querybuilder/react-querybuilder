@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { standardClassnames } from '../defaults';
 import type { ValueEditorProps } from '../types';
+import { joinWith, toArray, useValueEditor } from '../utils';
 import { ValueSelector } from './ValueSelector';
 
 export const ValueEditor = ({
@@ -10,25 +11,14 @@ export const ValueEditor = ({
   className,
   type,
   inputType,
-  values,
+  values = [],
+  listsAsArrays,
   fieldData,
   disabled,
   testID,
   ...props
 }: ValueEditorProps) => {
-  // This side effect blanks out the value if 1) the inputType is "number",
-  // 2) the operator is not "between", "notBetween", "in", or "notIn", and
-  // 3) the value contains a comma.
-  useEffect(() => {
-    if (
-      inputType === 'number' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      typeof value === 'string' &&
-      value.includes(',')
-    ) {
-      handleOnChange('');
-    }
-  }, [handleOnChange, inputType, operator, value]);
+  useValueEditor({ handleOnChange, inputType, operator, value });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -38,6 +28,40 @@ export const ValueEditor = ({
   const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
     ? 'text'
     : inputType || 'text';
+
+  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
+    const valArray = toArray(value);
+    const selector1handler = (v: string) => {
+      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    const selector2handler = (v: string) => {
+      const val = [valArray[0], v, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+    return (
+      <span data-testid={testID} className={className} title={title}>
+        <ValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector1handler}
+          disabled={disabled}
+          value={valArray[0]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+        <ValueSelector
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={selector2handler}
+          disabled={disabled}
+          value={valArray[1]}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      </span>
+    );
+  }
 
   switch (type) {
     case 'select':
@@ -51,8 +75,9 @@ export const ValueEditor = ({
           handleOnChange={handleOnChange}
           disabled={disabled}
           value={value}
-          options={values!}
+          options={values}
           multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 
@@ -86,19 +111,18 @@ export const ValueEditor = ({
     case 'radio':
       return (
         <span data-testid={testID} className={className} title={title}>
-          {values &&
-            values.map(v => (
-              <label key={v.name}>
-                <input
-                  type="radio"
-                  value={v.name}
-                  disabled={disabled}
-                  checked={value === v.name}
-                  onChange={e => handleOnChange(e.target.value)}
-                />
-                {v.label}
-              </label>
-            ))}
+          {values.map(v => (
+            <label key={v.name}>
+              <input
+                type="radio"
+                value={v.name}
+                disabled={disabled}
+                checked={value === v.name}
+                onChange={e => handleOnChange(e.target.value)}
+              />
+              {v.label}
+            </label>
+          ))}
         </span>
       );
   }

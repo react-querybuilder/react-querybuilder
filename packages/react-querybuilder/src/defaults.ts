@@ -14,6 +14,8 @@ export const defaultPlaceholderOperatorName = placeholderName;
 export const defaultPlaceholderOperatorLabel = placeholderLabel;
 export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
 
+export const defaultJoinChar = ',';
+
 export const defaultTranslations: TranslationsFull = {
   fields: {
     title: 'Fields',
@@ -139,6 +141,7 @@ export const standardClassnames = {
   lockRule: 'rule-lock',
   lockGroup: 'ruleGroup-lock',
   valueSource: 'rule-valueSource',
+  valueListItem: 'rule-value-list-item',
 } as const;
 
 export const defaultControlClassnames: Classnames = {

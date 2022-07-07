@@ -11,6 +11,7 @@ type ValueEditorTestsToSkip = Partial<{
   radio: boolean;
   textarea: boolean;
   switch: boolean;
+  betweenSelect: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: NameLabelPair[] | OptionGroup[];
@@ -85,8 +86,9 @@ export const testValueEditor = (
           expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
         });
 
-        it('should set the value to "" if operator is not "between" or "notBetween" and inputType is "number" and value contains a comma', () => {
+        it('should trim the value if operator is not "between"/"in", inputType is "number", and value contains a comma', () => {
           const handleOnChange = jest.fn();
+          let callCount = 0;
           const { rerender } = render(
             <ValueEditor
               {...props}
@@ -106,6 +108,8 @@ export const testValueEditor = (
             />
           );
           expect(handleOnChange).not.toHaveBeenCalledWith('');
+          expect(handleOnChange).not.toHaveBeenCalledWith('12');
+          expect(handleOnChange).not.toHaveBeenCalledWith('12,14');
           rerender(
             <ValueEditor
               {...props}
@@ -115,7 +119,27 @@ export const testValueEditor = (
               handleOnChange={handleOnChange}
             />
           );
-          expect(handleOnChange).toHaveBeenCalledWith('');
+          expect(handleOnChange).toHaveBeenNthCalledWith(++callCount, '12');
+          rerender(
+            <ValueEditor
+              {...props}
+              inputType="number"
+              operator="="
+              value={['12', '14']}
+              handleOnChange={handleOnChange}
+            />
+          );
+          expect(handleOnChange).toHaveBeenNthCalledWith(++callCount, '12');
+          rerender(
+            <ValueEditor
+              {...props}
+              inputType="number"
+              operator="="
+              value={[]}
+              handleOnChange={handleOnChange}
+            />
+          );
+          expect(handleOnChange).toHaveBeenNthCalledWith(++callCount, '');
         });
       });
     }
@@ -158,17 +182,17 @@ export const testValueEditor = (
 
     if (!skip.radio) {
       describe('when rendering a radio button set', () => {
+        const radioProps: ValueEditorProps = {
+          ...props,
+          type: 'radio',
+          values: [
+            { name: 'test1', label: 'Test 1' },
+            { name: 'test2', label: 'Test 2' },
+          ],
+        };
+
         it('should render the radio buttons with labels', () => {
-          render(
-            <ValueEditor
-              {...props}
-              type="radio"
-              values={[
-                { name: 'test1', label: 'Test 1' },
-                { name: 'test2', label: 'Test 2' },
-              ]}
-            />
-          );
+          render(<ValueEditor {...radioProps} />);
           const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           expect(radioButtons).toHaveLength(2);
           for (const r of radioButtons) {
@@ -178,17 +202,7 @@ export const testValueEditor = (
 
         it('should call the onChange handler', async () => {
           const handleOnChange = jest.fn();
-          render(
-            <ValueEditor
-              {...props}
-              type="radio"
-              handleOnChange={handleOnChange}
-              values={[
-                { name: 'test1', label: 'Test 1' },
-                { name: 'test2', label: 'Test 2' },
-              ]}
-            />
-          );
+          render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} />);
           const radioButtons = Array.from(
             screen.getByTitle(title).querySelectorAll('input[type="radio"]')
           );
@@ -201,19 +215,82 @@ export const testValueEditor = (
 
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
+          render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} disabled />);
+          for (const r of screen.getByTitle(title).querySelectorAll('input[type="radio"]')) {
+            expect(r).toBeDisabled();
+            await user.click(r);
+          }
+          expect(handleOnChange).not.toHaveBeenCalled();
+        });
+      });
+    }
+
+    if (!skip.betweenSelect) {
+      describe('when rendering a "between" select', () => {
+        const betweenSelectProps: ValueEditorProps = {
+          ...props,
+          operator: 'between',
+          type: 'select',
+          value: 'test1,test2',
+          values: [
+            { name: 'test1', label: 'Test 1' },
+            { name: 'test2', label: 'Test 2' },
+          ],
+        };
+
+        it('should render the "between" selects', () => {
+          render(<ValueEditor {...betweenSelectProps} />);
+          const betweenSelects = screen.getAllByRole('combobox');
+          expect(betweenSelects).toHaveLength(2);
+          expect(betweenSelects[0]).toHaveValue('test1');
+          expect(betweenSelects[1]).toHaveValue('test2');
+        });
+
+        it('should call the onChange handler', async () => {
+          const handleOnChange = jest.fn();
+          render(<ValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
+          const betweenSelects = screen.getAllByRole('combobox');
+          expect(betweenSelects).toHaveLength(2);
+          await user.selectOptions(betweenSelects[0], 'test2');
+          await user.selectOptions(betweenSelects[1], 'test1');
+          expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test2');
+          expect(handleOnChange).toHaveBeenNthCalledWith(2, 'test1,test1');
+        });
+
+        it('should assume the second value if not provided', async () => {
+          const handleOnChange = jest.fn();
           render(
             <ValueEditor
-              {...props}
-              type="radio"
+              {...betweenSelectProps}
               handleOnChange={handleOnChange}
-              values={[
-                { name: 'test1', label: 'Test 1' },
-                { name: 'test2', label: 'Test 2' },
-              ]}
-              disabled
+              value={['test1']}
             />
           );
-          for (const r of screen.getByTitle(title).querySelectorAll('input[type="radio"]')) {
+          const betweenSelects = screen.getAllByRole('combobox');
+          expect(betweenSelects).toHaveLength(2);
+          await user.selectOptions(betweenSelects[0], 'test2');
+          expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test1');
+        });
+
+        it('should call the onChange handler with lists as arrays', async () => {
+          const handleOnChange = jest.fn();
+          render(
+            <ValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
+          );
+          const betweenSelects = screen.getAllByRole('combobox');
+          expect(betweenSelects).toHaveLength(2);
+          await user.selectOptions(betweenSelects[0], 'test2');
+          await user.selectOptions(betweenSelects[1], 'test1');
+          expect(handleOnChange).toHaveBeenNthCalledWith(1, ['test2', 'test2']);
+          expect(handleOnChange).toHaveBeenNthCalledWith(2, ['test1', 'test1']);
+        });
+
+        it('should be disabled by the disabled prop', async () => {
+          const handleOnChange = jest.fn();
+          render(<ValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} disabled />);
+          const betweenSelects = screen.getAllByRole('combobox');
+          expect(betweenSelects).toHaveLength(2);
+          for (const r of betweenSelects) {
             expect(r).toBeDisabled();
             await user.click(r);
           }

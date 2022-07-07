@@ -24,7 +24,7 @@ export interface FormatQueryOptions {
    * when using the "sql"/"parameterized"/"parameterized_named" export
    * formats. If not defined, `defaultValueProcessor` will be used.
    */
-  valueProcessor?: ValueProcessor;
+  valueProcessor?: ValueProcessorLegacy | ValueProcessorByRule;
   /**
    * In the "sql"/"parameterized"/"parameterized_named" export formats,
    * field names will be bracketed by this string. Defaults to the empty
@@ -87,7 +87,7 @@ export type ValueProcessorLegacy = (
   valueSource?: ValueSource
 ) => string;
 
-export type ValueProcessor = ValueProcessorLegacy | ValueProcessorByRule;
+export type ValueProcessor = ValueProcessorLegacy;
 
 export interface ParameterizedSQL {
   sql: string;

@@ -86,6 +86,7 @@ export interface Schema {
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;
   independentCombinators: boolean;
+  listsAsArrays: boolean;
   disabledPaths: number[][];
 }
 
@@ -308,6 +309,10 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
    * Enables drag-and-drop features
    */
   enableDragAndDrop?: boolean;
+  /**
+   * Store list-type values as native arrays instead of comma-separated strings
+   */
+  listsAsArrays?: boolean;
   /**
    * Disables the entire query builder if true, or the rules and groups at
    * the specified paths (as well as all child rules/groups and subcomponents)
