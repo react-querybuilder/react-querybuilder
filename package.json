@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^1.1.0",
-    "@docusaurus/core": "2.0.0-beta.21",
-    "@docusaurus/preset-classic": "2.0.0-beta.21",
-    "@docusaurus/theme-search-algolia": "2.0.0-beta.21",
+    "@docusaurus/core": "^2.0.1",
+    "@docusaurus/preset-classic": "^2.0.1",
+    "@docusaurus/theme-search-algolia": "^2.0.1",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^6.1.2",
     "clsx": "^1.1.1",
@@ -34,7 +34,7 @@
     "url-loader": "^4.1.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.0.0-beta.21",
+    "@docusaurus/module-type-aliases": "^2.0.1",
     "@tsconfig/docusaurus": "^1.0.4",
     "typescript": "^4.4.4"
   },
