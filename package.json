@@ -1,5 +1,5 @@
 {
-  "name": "react-querybuilder",
+  "name": "react-querybuilder-monorepo",
   "private": true,
   "workspaces": [
     "packages/*"
