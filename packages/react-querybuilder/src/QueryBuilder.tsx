@@ -34,7 +34,6 @@ import type {
   Schema,
   TranslationsFull,
   UpdateableProperties,
-  ValueSources,
 } from './types';
 import {
   add,
@@ -244,7 +243,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   );
 
   const getValueSourcesMain = useCallback(
-    (field: string, operator: string): ValueSources =>
+    (field: string, operator: string) =>
       getValueSourcesUtil(fieldMap[field], operator, getValueSources),
     [fieldMap, getValueSources]
   );
