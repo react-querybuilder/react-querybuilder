@@ -2,7 +2,7 @@
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-26-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-27-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
@@ -100,6 +100,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/mylawacad"><img src="https://avatars.githubusercontent.com/u/20267295?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mylawacad</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=mylawacad" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/kyrylostepanchuk"><img src="https://avatars.githubusercontent.com/u/98354866?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kyrylo Stepanchuk</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=kyrylostepanchuk" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/kculmback-eig"><img src="https://avatars.githubusercontent.com/u/81175351?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kasey Culmback</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=kculmback-eig" title="Code">💻</a></td>
+    <td align="center"><a href="http://fasiha.github.io/"><img src="https://avatars.githubusercontent.com/u/37649?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ahmed Fasih</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=fasiha" title="Code">💻</a></td>
   </tr>
 </table>
 
