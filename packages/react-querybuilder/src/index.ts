@@ -4,7 +4,7 @@ enableES5();
 export * from './controls/';
 export * from './defaults';
 export * from './InlineCombinator';
-export { QueryBuilderWithoutDndProvider } from './QueryBuilderDnD';
+export * as messages from './messages';
 export * from './Rule';
 export * from './RuleGroup';
 export * from './types';

@@ -11,6 +11,7 @@ export const configs = {
     wrapper: null,
     compileToJS: true,
     isCompatPackage: false,
+    enableDnD: false,
   },
   'basic-ts': {
     name: 'Basic TypeScript',
@@ -22,6 +23,19 @@ export const configs = {
     wrapper: null,
     compileToJS: false,
     isCompatPackage: false,
+    enableDnD: false,
+  },
+  dnd: {
+    name: 'Drag-and-drop',
+    dependencies: { 'react-dnd': '>=14.0.0', 'react-dnd-html5-backend': '>=14.0.0' },
+    scssPre: [],
+    scssPost: [],
+    tsxImports: [`import { QueryBuilder } from '@react-querybuilder/dnd';`],
+    additionalDeclarations: [],
+    wrapper: null,
+    compileToJS: false,
+    isCompatPackage: false,
+    enableDnD: true,
   },
   antd: {
     name: 'Ant Design',
@@ -33,6 +47,7 @@ export const configs = {
     wrapper: null,
     compileToJS: false,
     isCompatPackage: true,
+    enableDnD: false,
   },
   bootstrap: {
     name: 'Bootstrap',
@@ -47,6 +62,7 @@ export const configs = {
     wrapper: null,
     compileToJS: false,
     isCompatPackage: true,
+    enableDnD: false,
   },
   bulma: {
     name: 'Bulma',
@@ -58,6 +74,7 @@ export const configs = {
     wrapper: null,
     compileToJS: false,
     isCompatPackage: true,
+    enableDnD: false,
   },
   chakra: {
     name: 'Chakra UI',
@@ -84,6 +101,7 @@ export const configs = {
     wrapper: ['<ChakraProvider theme={chakraTheme}>', '</ChakraProvider>'],
     compileToJS: false,
     isCompatPackage: true,
+    enableDnD: false,
   },
   material: {
     name: 'MUI/Material',
@@ -100,5 +118,6 @@ export const configs = {
     wrapper: ['<ThemeProvider theme={muiTheme}>', '</ThemeProvider>'],
     compileToJS: false,
     isCompatPackage: true,
+    enableDnD: false,
   },
 };

@@ -18,6 +18,7 @@ interface ExampleConfig {
   wrapper: [string, string] | null;
   compileToJS: boolean;
   isCompatPackage: boolean;
+  enableDnD: boolean;
 }
 
 export type ExampleConfigs = Record<string, ExampleConfig>;

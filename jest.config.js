@@ -2,6 +2,7 @@
 module.exports = {
   projects: [
     'packages/react-querybuilder',
+    'packages/dnd',
     'packages/antd',
     'packages/bootstrap',
     'packages/bulma',

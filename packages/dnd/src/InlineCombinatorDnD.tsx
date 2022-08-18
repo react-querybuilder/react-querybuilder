@@ -1,16 +1,6 @@
-import { standardClassnames, TestID } from './defaults';
-import { c } from './internal';
+import { c, standardClassnames, TestID } from 'react-querybuilder';
 import { useInlineCombinatorDnD } from './internal/hooks';
-import type { CombinatorSelectorProps, QueryActions, Schema } from './types';
-
-interface InlineCombinatorDndProps extends CombinatorSelectorProps {
-  component: Schema['controls']['combinatorSelector'];
-  path: number[];
-  moveRule: QueryActions['moveRule'];
-  independentCombinators: boolean;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: typeof import('react-dnd')['useDrop'];
-}
+import type { InlineCombinatorDndProps } from './types';
 
 export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,

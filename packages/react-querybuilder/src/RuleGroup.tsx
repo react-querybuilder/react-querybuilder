@@ -1,11 +1,9 @@
 import { Fragment, type MouseEvent as ReactMouseEvent } from 'react';
 import { defaultCombinators, standardClassnames, TestID } from './defaults';
-import { InlineCombinator } from './InlineCombinator';
-import { InlineCombinatorDnD } from './InlineCombinatorDnD';
-import { c, getValidationClassNames } from './internal';
-import { useDeprecatedProps } from './internal/hooks';
+import { getValidationClassNames } from './internal';
+import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
 import type { RuleGroupProps } from './types';
-import { getParentPath, pathsAreEqual } from './utils';
+import { c, getParentPath, pathsAreEqual } from './utils';
 
 export const RuleGroup = ({
   id,
@@ -20,6 +18,12 @@ export const RuleGroup = ({
   combinator: combinatorProp,
   rules: rulesProp,
   not: notProp,
+  // Drag-and-drop
+  dragMonitorId = '',
+  dropMonitorId = '',
+  previewRef = null,
+  dragRef = null,
+  dropRef = null,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -27,6 +31,7 @@ export const RuleGroup = ({
     controls: {
       dragHandle: DragHandleControlElement,
       combinatorSelector: CombinatorSelectorControlElement,
+      inlineCombinator: InlineCombinatorControlElement,
       notToggle: NotToggleControlElement,
       addRuleAction: AddRuleActionControlElement,
       addGroupAction: AddGroupActionControlElement,
@@ -46,10 +51,6 @@ export const RuleGroup = ({
     validationMap,
     disabledPaths,
     enableDragAndDrop,
-    dnd: {
-      hooks: { useDrop },
-      ruleGroup: { isDragging, dragMonitorId, isOver, dropMonitorId, previewRef, dragRef, dropRef },
-    },
   } = schema;
   const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
@@ -63,6 +64,11 @@ export const RuleGroup = ({
   }
 
   useDeprecatedProps('ruleGroup', !!ruleGroup);
+
+  useReactDndWarning(
+    enableDragAndDrop,
+    !!(dragMonitorId || dropMonitorId || previewRef || dragRef || dropRef)
+  );
 
   const onCombinatorChange = (value: any) => {
     if (!disabled) {
@@ -132,17 +138,12 @@ export const RuleGroup = ({
 
   const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
   const validationClassName = getValidationClassNames(validationResult);
-  const dndDragging = isDragging ? standardClassnames.dndDragging : '';
-  const dndOver = isOver ? standardClassnames.dndOver : '';
   const outerClassName = c(
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
     disabled ? standardClassnames.disabled : '',
-    validationClassName,
-    dndDragging
+    validationClassName
   );
-
-  const InlineCombinatorComponent = enableDragAndDrop ? InlineCombinatorDnD : InlineCombinator;
 
   return (
     <div
@@ -154,7 +155,7 @@ export const RuleGroup = ({
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      <div ref={dropRef} className={c(standardClassnames.header, classNames.header, dndOver)}>
+      <div ref={dropRef} className={c(standardClassnames.header, classNames.header)}>
         {level > 0 && (
           <DragHandleControlElement
             testID={TestID.dragHandle}
@@ -284,7 +285,7 @@ export const RuleGroup = ({
           return (
             <Fragment key={key}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
-                <InlineCombinatorComponent
+                <InlineCombinatorControlElement
                   options={combinators}
                   value={combinator}
                   title={translations.combinators.title}
@@ -299,11 +300,10 @@ export const RuleGroup = ({
                   path={thisPath}
                   disabled={thisPathDisabled}
                   independentCombinators={independentCombinators}
-                  useDrop={useDrop}
                 />
               )}
               {typeof r === 'string' ? (
-                <InlineCombinatorComponent
+                <InlineCombinatorControlElement
                   options={combinators}
                   value={r}
                   title={translations.combinators.title}
@@ -318,7 +318,6 @@ export const RuleGroup = ({
                   path={thisPath}
                   disabled={thisPathDisabled}
                   independentCombinators={independentCombinators}
-                  useDrop={useDrop}
                 />
               ) : 'rules' in r ? (
                 <RuleGroupControlElement

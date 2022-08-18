@@ -5,11 +5,13 @@
     "packages/bootstrap",
     "packages/bulma",
     "packages/chakra",
+    "packages/dnd",
     "packages/material",
     "packages/react-querybuilder"
   ],
   "sandboxes": [
     "/examples/ci",
+    "/examples/dnd",
     "/examples/antd",
     "/examples/bootstrap",
     "/examples/bulma",

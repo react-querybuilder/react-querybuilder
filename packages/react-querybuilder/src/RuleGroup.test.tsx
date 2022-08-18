@@ -9,8 +9,7 @@ import {
   standardClassnames as sc,
   TestID,
 } from './defaults';
-import { errorDeprecatedRuleGroupProps } from './internal';
-import { dndFallback } from './internal/hooks';
+import { errorDeprecatedRuleGroupProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { RuleGroup } from './RuleGroup';
 import type {
   ActionProps,
@@ -186,7 +185,6 @@ const schema: Partial<Schema> = {
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],
-  dnd: dndFallback,
 };
 const actions: Partial<QueryActions> = {
   onPropChange: () => {},
@@ -571,9 +569,10 @@ describe('lock buttons', () => {
 });
 
 describe('deprecated props', () => {
-  // TODO: May need to use https://www.npmjs.com/package/babel-plugin-dynamic-import-node
+  // TODO: We're invoking the useDeprecatedProps module twice (see two `it` calls below),
+  // so we may need to use https://www.npmjs.com/package/babel-plugin-dynamic-import-node
   // to reset the module import (to reset the "has already warned about this" switch
-  // in the useDeprecatedProps module).
+  // in the useDeprecatedProps module). Skipping this one until we can resolve the issue.
   it.skip('warns about deprecated props', () => {
     // @ts-expect-error ruleGroup is required
     render(<RuleGroup {...getProps()} ruleGroup={undefined} rules={[]} combinator="or" />);
@@ -605,5 +604,17 @@ describe('deprecated props', () => {
     expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
     await user.click(screen.getByTestId(TestID.addRule));
     expect(addListener.mock.calls[0][0].rules[1]).toBe(defaultCombinators[0].name);
+  });
+});
+
+describe('dnd warnings', () => {
+  it('warns about using dnd without react-dnd', () => {
+    render(
+      <RuleGroup
+        {...getProps({ enableDragAndDrop: true })}
+        ruleGroup={{ combinator: 'and', rules: [] }}
+      />
+    );
+    expect(consoleError).toHaveBeenCalledWith(errorEnabledDndWithoutReactDnD);
   });
 });

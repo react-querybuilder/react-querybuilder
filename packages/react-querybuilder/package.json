@@ -51,8 +51,6 @@
     "babel-plugin-istanbul": "^6.0.0",
     "copyfiles": "^2.4.1",
     "react": "^18.1.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.1.0",
     "replace": "^1.2.1",
     "rimraf": "^3.0.2",
@@ -64,17 +62,7 @@
     "immer": "^9.0.6"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dnd": ">=14.0.0",
-    "react-dnd-html5-backend": ">=14.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react-dnd": {
-      "optional": true
-    },
-    "react-dnd-html5-backend": {
-      "optional": true
-    }
+    "react": ">=16.8.0"
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {

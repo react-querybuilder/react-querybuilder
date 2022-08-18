@@ -1,4 +1,5 @@
 import { cloneElement, isValidElement } from 'react';
+import { standardClassnames } from 'react-querybuilder';
 import { useRuleDnD } from './internal/hooks';
 import type { RuleDndProps } from './types';
 
@@ -23,9 +24,17 @@ export const RuleDnD = ({
     useDrop,
   });
 
+  const rule = `${children.props.schema.classNames.rule}${
+    dndRefs.isOver ? ` ${standardClassnames.dndOver}` : ''
+  }${dndRefs.isDragging ? ` ${standardClassnames.dndDragging}` : ''}`;
+
   return isValidElement(children)
     ? cloneElement(children, {
-        schema: { ...children.props.schema, dnd: { ...children.props.schema.dnd, rule: dndRefs } },
+        ...dndRefs,
+        schema: {
+          ...children.props.schema,
+          classNames: { ...children.props.schema.classNames, rule },
+        },
       })
     : /* istanbul ignore next */ null;
 };

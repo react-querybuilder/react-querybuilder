@@ -6,14 +6,13 @@ import {
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import { standardClassnames as sc, TestID } from './defaults';
+import type { QueryActions, Schema } from 'react-querybuilder';
+import { Rule, standardClassnames as sc, TestID } from 'react-querybuilder';
+import { getProps } from 'react-querybuilder/src/Rule.test';
 import { getRuleWithDndWrapper } from './internal';
-import { Rule } from './Rule';
-import { getProps } from './Rule.test';
-import type { QueryActions, Schema } from './types';
 
 const [RuleWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(
-  getRuleWithDndWrapper(Rule)
+  getRuleWithDndWrapper({ rule: Rule, useDrag, useDrop })
 );
 // This is just a type guard against `undefined`
 const getDndBackend = () => getDndBackendOriginal()!;
@@ -31,7 +30,7 @@ const getRuleProps = (
     schema: {
       ...props.schema,
       enableDragAndDrop: true,
-      dnd: { ...props.schema.dnd, hooks: { useDrag, useDrop } },
+      dnd: { useDrag, useDrop },
     },
   };
 };

@@ -83,7 +83,10 @@ for (const exampleID in configs) {
       props.push(`controlClassnames={${exampleID}ControlClassnames}`);
     }
   }
-  const processedTemplateAppTSX = templateAppTSX
+  const tmplAppTSX = exampleConfig.enableDnD
+    ? templateAppTSX.replace(', QueryBuilder', '')
+    : templateAppTSX;
+  const processedTemplateAppTSX = tmplAppTSX
     .replace('// __IMPORTS__', [baseImport, ...exampleConfig.tsxImports].join('\n'))
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
     .replace('// __WRAPPER_OPEN__', exampleConfig.wrapper?.[0] ?? '')
@@ -109,7 +112,7 @@ for (const exampleID in configs) {
   const examplePkgJSON = JSON.parse(JSON.stringify(templatePkgJSON));
   examplePkgJSON.name = `react-querybuilder-${exampleID}-example`;
   examplePkgJSON.description = exampleTitle;
-  if (exampleConfig.isCompatPackage) {
+  if (exampleConfig.isCompatPackage || exampleConfig.enableDnD) {
     examplePkgJSON.dependencies[`@react-querybuilder/${exampleID}`] =
       templatePkgJSON.dependencies['react-querybuilder'];
   }

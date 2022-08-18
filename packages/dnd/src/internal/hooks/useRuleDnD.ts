@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { Ref, useRef } from 'react';
-import { DNDType } from '../../defaults';
-import type { DraggedItem, QueryActions } from '../../types';
-import { getParentPath, isAncestor, pathsAreEqual } from '../../utils';
+import type { DraggedItem, QueryActions } from 'react-querybuilder';
+import { DNDType, getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 
 interface UseRuleDndParams {
   path: number[];
@@ -15,9 +14,9 @@ interface UseRuleDndParams {
 
 interface UseRuleDnD {
   isDragging: boolean;
-  dragMonitorId: string | symbol | null;
+  dragMonitorId: string | symbol;
   isOver: boolean;
-  dropMonitorId: string | symbol | null;
+  dropMonitorId: string | symbol;
   dragRef: Ref<HTMLSpanElement>;
   dndRef: Ref<HTMLDivElement>;
 }
@@ -40,7 +39,7 @@ export const useRuleDnD = ({
       canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId(),
+        dragMonitorId: monitor.getHandlerId() ?? '',
       }),
     }),
     [disabled, path]
@@ -68,7 +67,7 @@ export const useRuleDnD = ({
       },
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId(),
+        dropMonitorId: monitor.getHandlerId() ?? '',
       }),
       drop: (item: DraggedItem, _monitor) => {
         const parentHoverPath = getParentPath(path);

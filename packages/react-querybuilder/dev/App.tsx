@@ -1,12 +1,6 @@
 import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
-import {
-  defaultValidator,
-  QueryBuilder,
-  type FormatQueryOptions,
-  type QueryBuilderProps,
-  type RuleGroupType,
-  type RuleGroupTypeIC,
-} from '../src';
+import type { FormatQueryOptions, QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from '../src';
+import { defaultValidator, QueryBuilder } from '../src';
 import {
   defaultOptions,
   emptyQuery,
@@ -22,11 +16,15 @@ import type { CommonRQBProps } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
 
 export const App = (
-  controls?: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'>
+  controls: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'> & {
+    queryBuilder?: typeof QueryBuilder;
+  }
 ) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, defaultOptions);
+
+  const QB = controls.queryBuilder ?? QueryBuilder;
 
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({
@@ -102,7 +100,7 @@ export const App = (
       </div>
       <div>
         {!optVals.independentCombinators ? (
-          <QueryBuilder
+          <QB
             key="query"
             {...commonRQBProps}
             independentCombinators={false}
@@ -110,7 +108,7 @@ export const App = (
             onQueryChange={onQueryChange}
           />
         ) : (
-          <QueryBuilder
+          <QB
             key="queryIC"
             {...commonRQBProps}
             independentCombinators

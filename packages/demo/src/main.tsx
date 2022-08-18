@@ -1,6 +1,7 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { QueryBuilder as QueryBuilderDnD } from '@react-querybuilder/dnd';
 import {
   Button,
   Checkbox,
@@ -263,6 +264,8 @@ const App = () => {
     [style]
   );
 
+  const QB = options.enableDragAndDrop ? QueryBuilderDnD : QueryBuilder;
+
   return (
     <>
       <Layout>
@@ -443,7 +446,7 @@ const App = () => {
                   <div className={qbWrapperClassName}>
                     <form className="form-inline" style={{ marginTop: '1rem' }}>
                       {options.independentCombinators ? (
-                        <QueryBuilder
+                        <QB
                           {...commonRQBProps}
                           independentCombinators
                           key={`queryIC-${style}`}
@@ -451,7 +454,7 @@ const App = () => {
                           onQueryChange={q => setQueryIC(q)}
                         />
                       ) : (
-                        <QueryBuilder
+                        <QB
                           {...commonRQBProps}
                           independentCombinators={false}
                           key={`query-${style}`}

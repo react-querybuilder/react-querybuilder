@@ -24,13 +24,11 @@ export default defineConfig(({ mode, command }) => {
         name: 'ReactQueryBuilder',
       },
       rollupOptions: {
-        external: ['immer', 'react', 'react-dnd', 'react-dnd-html5-backend'],
+        external: ['immer', 'react'],
         output: {
           globals: {
             immer: 'immer',
             react: 'React',
-            'react-dnd': 'ReactDnD',
-            'react-dnd-html5-backend': 'ReactDnDHTML5Backend',
           },
           exports: 'named',
         },

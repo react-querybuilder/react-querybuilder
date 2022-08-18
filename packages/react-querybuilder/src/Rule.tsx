@@ -1,9 +1,9 @@
 import { type MouseEvent as ReactMouseEvent } from 'react';
 import { standardClassnames, TestID } from './defaults';
-import { c, filterFieldsByComparator, getValidationClassNames } from './internal';
-import { useDeprecatedProps } from './internal/hooks';
+import { filterFieldsByComparator, getValidationClassNames } from './internal';
+import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
 import type { RuleProps, RuleType } from './types';
-import { getParentPath } from './utils';
+import { c, getParentPath } from './utils';
 
 export const Rule = ({
   id,
@@ -19,6 +19,10 @@ export const Rule = ({
   operator: operatorProp,
   value: valueProp,
   valueSource: valueSourceProp,
+  dragMonitorId = '',
+  dropMonitorId = '',
+  dndRef = null,
+  dragRef = null,
 }: RuleProps) => {
   const {
     classNames,
@@ -45,9 +49,7 @@ export const Rule = ({
     showLockButtons,
     listsAsArrays,
     validationMap,
-    dnd: {
-      rule: { isDragging, dragMonitorId, isOver, dropMonitorId, dndRef, dragRef },
-    },
+    enableDragAndDrop,
   } = schema;
   const { moveRule, onPropChange, onRuleRemove } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
@@ -57,6 +59,8 @@ export const Rule = ({
     : { field: fieldProp, operator: operatorProp, value: valueProp, valueSource: valueSourceProp };
 
   useDeprecatedProps('rule', !!rule);
+
+  useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 
   const generateOnChangeHandler =
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
@@ -117,15 +121,11 @@ export const Rule = ({
       ? fieldData.validator({ id, field, operator, value })
       : null);
   const validationClassName = getValidationClassNames(validationResult);
-  const dndDragging = isDragging ? standardClassnames.dndDragging : '';
-  const dndOver = isOver ? standardClassnames.dndOver : '';
   const outerClassName = c(
     standardClassnames.rule,
     classNames.rule,
     disabled ? standardClassnames.disabled : '',
-    validationClassName,
-    dndDragging,
-    dndOver
+    validationClassName
   );
 
   return (

@@ -8,8 +8,7 @@ import {
   standardClassnames as sc,
   TestID,
 } from './defaults';
-import { errorDeprecatedRuleProps } from './internal';
-import { dndFallback } from './internal/hooks';
+import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { Rule } from './Rule';
 import type {
   ActionProps,
@@ -124,7 +123,6 @@ const schema: Partial<Schema> = {
   ],
   showCloneButtons: false,
   validationMap: {},
-  dnd: dndFallback,
 };
 const actions: Partial<QueryActions> = {
   onPropChange: () => {},
@@ -445,5 +443,17 @@ describe('deprecated props', () => {
     // @ts-expect-error rule prop is required
     render(<Rule {...getProps()} rule={undefined} field="f1" operator="=" value="v1" />);
     expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleProps);
+  });
+});
+
+describe('dnd warnings', () => {
+  it('warns about using dnd without react-dnd', () => {
+    render(
+      <Rule
+        {...getProps({ enableDragAndDrop: true })}
+        rule={{ field: 'f1', operator: 'and', value: 'v1' }}
+      />
+    );
+    expect(consoleError).toHaveBeenCalledWith(errorEnabledDndWithoutReactDnD);
   });
 });

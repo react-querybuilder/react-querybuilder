@@ -1,21 +1,21 @@
-import { defaultControlElements } from '../controls';
+import type { Controls, RuleGroupProps, RuleProps } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 import { RuleDnD } from '../RuleDnD';
 import { RuleGroupDnD } from '../RuleGroupDnD';
-import type { Controls, RuleGroupProps, RuleProps } from '../types';
+import type { UseReactDnD } from '../types';
 
 export const getRuleGroupWithDndWrapper =
-  (RuleGroupComponent: Controls['ruleGroup'] = defaultControlElements.ruleGroup) =>
+  ({
+    ruleGroup: RuleGroupComponent = defaultControlElements.ruleGroup,
+    useDrag,
+    useDrop,
+  }: Pick<Partial<Controls>, 'ruleGroup'> & Pick<UseReactDnD, 'useDrag' | 'useDrop'>) =>
   (p: RuleGroupProps) => {
     const {
       path,
       disabled,
       parentDisabled,
       actions: { moveRule },
-      schema: {
-        dnd: {
-          hooks: { useDrag, useDrop },
-        },
-      },
     } = p;
 
     return (
@@ -32,19 +32,18 @@ export const getRuleGroupWithDndWrapper =
   };
 
 export const getRuleWithDndWrapper =
-  (RuleComponent: Controls['rule'] = defaultControlElements.rule) =>
+  ({
+    rule: RuleComponent = defaultControlElements.rule,
+    useDrag,
+    useDrop,
+  }: Pick<Partial<Controls>, 'rule'> & Pick<UseReactDnD, 'useDrag' | 'useDrop'>) =>
   (p: RuleProps) => {
     const {
       path,
       disabled,
       parentDisabled,
       actions: { moveRule },
-      schema: {
-        independentCombinators,
-        dnd: {
-          hooks: { useDrag, useDrop },
-        },
-      },
+      schema: { independentCombinators },
     } = p;
 
     return (

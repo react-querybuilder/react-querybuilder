@@ -12,9 +12,8 @@ import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
-} from './internal';
+} from './messages';
 import { QueryBuilder } from './QueryBuilder';
-import { QueryBuilderBase } from './QueryBuilderBase';
 import type {
   Field,
   NameLabelPair,
@@ -1345,7 +1344,7 @@ describe('disabled', () => {
   it('prevents changes when disabled', async () => {
     const onQueryChange = jest.fn();
     render(
-      <QueryBuilderBase
+      <QueryBuilder
         fields={[
           { name: 'field0', label: 'Field 0' },
           { name: 'field1', label: 'Field 1' },

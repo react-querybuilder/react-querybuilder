@@ -1,16 +1,19 @@
 import { act, render, screen } from '@testing-library/react';
 import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { standardClassnames as sc, TestID } from './defaults';
+import type { InlineCombinatorProps, QueryActions, Schema } from 'react-querybuilder';
+import { Rule, RuleGroup, standardClassnames as sc, TestID } from 'react-querybuilder';
+import { getProps } from 'react-querybuilder/src/RuleGroup.test';
+import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { getRuleGroupWithDndWrapper, getRuleWithDndWrapper } from './internal';
-import { Rule } from './Rule';
-import { RuleGroup } from './RuleGroup';
-import { getProps } from './RuleGroup.test';
-import type { QueryActions, Schema } from './types';
 
-const [RuleGroupWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(
-  getRuleGroupWithDndWrapper(RuleGroup)
+const ruleGroup = getRuleGroupWithDndWrapper({ ruleGroup: RuleGroup, useDrag, useDrop });
+const rule = getRuleWithDndWrapper({ rule: Rule, useDrag, useDrop });
+const inlineCombinator = (props: InlineCombinatorProps) => (
+  <InlineCombinatorDnD {...props} useDrop={useDrop} />
 );
+
+const [RuleGroupWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(ruleGroup);
 // This is just a type guard against `undefined`
 const getDndBackend = () => getDndBackendOriginal()!;
 
@@ -29,10 +32,11 @@ const getRuleGroupProps = (
       enableDragAndDrop: true,
       controls: {
         ...props.schema.controls,
-        ruleGroup: getRuleGroupWithDndWrapper(RuleGroup),
-        rule: getRuleWithDndWrapper(Rule),
+        ruleGroup,
+        rule,
+        inlineCombinator,
       },
-      dnd: { ...props.schema.dnd, hooks: { useDrag, useDrop } },
+      dnd: { useDrag, useDrop },
     },
   };
 };
@@ -155,7 +159,7 @@ describe('enableDragAndDrop', () => {
         />
         <RuleGroupWithDndWrapper
           {...getRuleGroupProps({ independentCombinators: true }, { moveRule })}
-          path={[1]}
+          path={[2]}
         />
       </div>
     );
@@ -168,7 +172,7 @@ describe('enableDragAndDrop', () => {
     );
     expect(ruleGroups[1]).not.toHaveClass(sc.dndDragging);
     expect(combinatorEl).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([1], [0, 1]);
+    expect(moveRule).toHaveBeenCalledWith([2], [0, 1]);
   });
 
   it('should handle rule drops on independent combinators', () => {

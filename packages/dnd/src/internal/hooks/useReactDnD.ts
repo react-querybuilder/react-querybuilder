@@ -1,8 +1,8 @@
 declare const __RQB_DEV__: boolean;
 
 import { useEffect, useState } from 'react';
+import { messages } from 'react-querybuilder';
 import type { DnD, UseReactDnD } from '../../types';
-import { errorEnabledDndWithoutReactDnD } from '../messages';
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
@@ -25,7 +25,7 @@ export const useReactDnD = (dndParam?: UseReactDnD) => {
         } else {
           // istanbul ignore else
           if (__RQB_DEV__ && !didWarnEnabledDndWithoutReactDnD) {
-            console.error(errorEnabledDndWithoutReactDnD);
+            console.error(messages.errorEnabledDndWithoutReactDnD);
             didWarnEnabledDndWithoutReactDnD = true;
           }
         }

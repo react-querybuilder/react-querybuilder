@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { useRef, type Ref } from 'react';
-import { DNDType } from '../../defaults';
-import { DraggedItem, QueryActions } from '../../types';
-import { getParentPath, isAncestor, pathsAreEqual } from '../../utils';
+import type { DraggedItem, QueryActions } from 'react-querybuilder';
+import { DNDType, getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 
 interface UseRuleGroupDndParams {
   path: number[];
@@ -14,9 +13,9 @@ interface UseRuleGroupDndParams {
 
 interface UseRuleGroupDnD {
   isDragging: boolean;
-  dragMonitorId: string | symbol | null;
+  dragMonitorId: string | symbol;
   isOver: boolean;
-  dropMonitorId: string | symbol | null;
+  dropMonitorId: string | symbol;
   previewRef: Ref<HTMLDivElement>;
   dragRef: Ref<HTMLSpanElement>;
   dropRef: Ref<HTMLDivElement>;
@@ -40,7 +39,7 @@ export const useRuleGroupDnD = ({
       canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId(),
+        dragMonitorId: monitor.getHandlerId() ?? '',
       }),
     }),
     [disabled, path]
@@ -64,7 +63,7 @@ export const useRuleGroupDnD = ({
       },
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId(),
+        dropMonitorId: monitor.getHandlerId() ?? '',
       }),
       drop: (item: DraggedItem, _monitor) => !disabled && moveRule(item.path, [...path, 0]),
     }),

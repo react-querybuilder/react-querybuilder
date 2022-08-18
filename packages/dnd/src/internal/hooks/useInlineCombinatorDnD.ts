@@ -1,7 +1,7 @@
-import { useRef, type Ref } from 'react';
-import { DNDType } from '../../defaults';
-import type { DraggedItem, QueryActions } from '../../types';
-import { getParentPath, isAncestor, pathsAreEqual } from '../../utils';
+import type { Ref } from 'react';
+import { useRef } from 'react';
+import type { DraggedItem, QueryActions } from 'react-querybuilder';
+import { DNDType, getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 
 interface UseInlineCombinatorDndParams {
   path: number[];

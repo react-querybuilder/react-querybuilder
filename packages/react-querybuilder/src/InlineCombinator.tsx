@@ -1,10 +1,5 @@
 import { standardClassnames, TestID } from './defaults';
-import type { CombinatorSelectorProps, Schema } from './types';
-
-interface InlineCombinatorProps extends CombinatorSelectorProps {
-  component: Schema['controls']['combinatorSelector'];
-  path: number[];
-}
+import type { InlineCombinatorProps } from './types';
 
 export const InlineCombinator = ({
   component: CombinatorSelectorComponent,
