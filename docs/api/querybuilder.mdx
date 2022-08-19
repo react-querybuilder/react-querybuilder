@@ -101,7 +101,7 @@ If the `independentCombinators` prop is provided, then the `query` argument will
 
 `RuleGroupTypeAny`
 
-The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentCombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a controlled component.
+The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentcombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a controlled component.
 
 The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [examples](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
 
@@ -720,11 +720,47 @@ Pass `false` to automatically add an "empty" option with value `"~"` and label `
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
+### `listsAsArrays`
+
+`boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#listsAsArrays=true)
+
+Pass `true` to update rule values that represent lists with proper arrays instead of comma-separated strings. Applies when `valueEditorType` is "multiselect" and when a rule's `operator` is "between", "notBetween", "in", or "notIn".
+
+For example, the default behavior for the "between" operator might produce this rule:
+
+```json {4}
+{
+  "field": "f1",
+  "operator": "between",
+  "value": "f2,f3",
+  "valueSource": "field"
+}
+```
+
+When `listsAsArrays` is true, the rule's `value` will be an array:
+
+```json {4}
+{
+  "field": "f1",
+  "operator": "between",
+  "value": ["f2", "f3"],
+  "valueSource": "field"
+}
+```
+
 ### `independentCombinators`
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#independentCombinators=true)
 
-Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be available. Visually, this is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be rendered.
+
+Visually, this option has a similar effect as the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+
+:::caution
+
+When the `independentCombinators` option is enabled, the `query` (or `defaultQuery`) prop _must_ be of type `RuleGroupTypeIC` instead of the default `RuleGroupType`. See [`onQueryChange`](#onquerychange) above, or the [Rules and groups section](../typescript#rules-and-groups) of the TypeScript documentation for more information.
+
+:::
 
 ### `enableDragAndDrop`
 

@@ -44,6 +44,17 @@ import { standardClassnames as sc } from 'react-querybuilder';
       label: `.${sc.valueSource}`,
       valueSources: ['value', 'field'],
     },
+    {
+      name: 'fb1',
+      label: `Value list`,
+      operators: [{ name: 'between', label: 'between' }],
+      valueSources: ['field', 'value'],
+      comparator: f => f.name === 'fb2',
+    },
+    {
+      name: 'fb2',
+      label: `.${sc.valueListItem}`,
+    },
   ]}
   combinators={[{ name: 'and', label: `.${sc.combinators}` }]}
   getOperators={() => [{ name: '=', label: `.${sc.operators}` }]}
@@ -138,6 +149,7 @@ import { standardClassnames as sc } from 'react-querybuilder';
         ],
       },
       { field: 'f3', operator: '=', value: 'f1' },
+      { field: 'fb1', operator: 'between', value: 'fb2,fb2', valueSource: 'field' },
     ],
   }}
 />
