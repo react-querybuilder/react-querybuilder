@@ -440,6 +440,23 @@ const App = () => {
                 to see sample usage.
               </div>
             )}
+            {options.enableDragAndDrop && (
+              <div style={{ marginBottom: '0.5rem', whiteSpace: 'normal' }}>
+                The drag-and-drop feature requires the companion package{' '}
+                <Link
+                  target="_blank"
+                  href={`https://www.npmjs.com/package/@react-querybuilder/dnd`}>
+                  @react-querybuilder/dnd
+                </Link>
+                . Click{' '}
+                <Link
+                  target="_blank"
+                  href={`https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/dnd`}>
+                  here
+                </Link>{' '}
+                to see sample usage.
+              </div>
+            )}
             <ChakraStyleProvider theme={chakraTheme}>
               <MUIThemeProvider theme={muiTheme}>
                 <Suspense fallback={loadingPlaceholder}>

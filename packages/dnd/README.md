@@ -1,6 +1,6 @@
 ## @react-querybuilder/dnd
 
-Drag-and-drop-enabled version of [react-querybuilder](https://npmjs.com/package/react-querybuilder).
+Companion package for [react-querybuilder](https://npmjs.com/package/react-querybuilder) to enable drag-and-drop functionality.
 
 To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/#enableDragAndDrop=true).
 
