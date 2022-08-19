@@ -1,7 +1,7 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { QueryBuilder as QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { QueryBuilder as QueryBuilderDnD } from '@react-querybuilder/dnd/src';
 import {
   Button,
   Checkbox,
