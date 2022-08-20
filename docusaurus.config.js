@@ -95,6 +95,10 @@ const config = {
           },
           // {to: '/blog', label: 'Blog', position: 'right'},
           {
+            type: "docsVersionDropdown",
+            position: "right",
+          },
+          {
             href: "https://github.com/react-querybuilder/react-querybuilder",
             "aria-label": "GitHub repository",
             position: "right",

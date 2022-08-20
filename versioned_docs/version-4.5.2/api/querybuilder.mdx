@@ -770,9 +770,7 @@ Pass `true` to display a drag handle to the left of each group header and rule. 
 
 :::caution
 
-Drag-and-drop features are only enabled when `<QueryBuilder />` is imported from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd). [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) will also need to be installed.
-
-If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), you should import and render `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />`. They are functionally the same, but the former will rely on your pre-existing `<DndProvider />` wrapper while the latter implements its own and will clash with a separate `<DndProvider />` higher up in the component tree (the error will typically look like this: "Cannot have two HTML5 backends at the same time.").
+`react-querybuilder` uses [`react-dnd`](https://react-dnd.github.io/react-dnd/) to enable drag-and-drop features. If your application already uses `react-dnd`, you should import and render `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />`. They are functionally the same, but the former will rely on your pre-existing `DndProvider` wrapper while the latter implements its own and will clash with a separate `DndProvider` higher up in the component tree (the error will typically look like this: "Cannot have two HTML5 backends at the same time.").
 
 :::
 
