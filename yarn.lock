@@ -5256,12 +5256,15 @@ __metadata:
     "@emotion/styled": ^11.8.1
     "@mui/icons-material": ^5.8.4
     "@mui/material": ^5.10.0
+    "@types/copyfiles": ^2
     "@types/react": ^18.0.17
     "@vitejs/plugin-react": ^2.0.1
+    copyfiles: ^2.4.1
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^4.5.2
     regenerator-runtime: ^0.13.9
+    replace: ^1.2.1
     typescript: ^4.7.4
     vite: ^3.0.7
   peerDependencies:
@@ -5437,6 +5440,13 @@ __metadata:
   dependencies:
     "@babel/types": ^7.3.0
   checksum: 8992d8c1eaaf1c793e9184b930767883446939d2744c40ea4e9591086e79b631189dc519931ed8864f1e016742a189703c217db59b800aca84870b865009d8b4
+  languageName: node
+  linkType: hard
+
+"@types/copyfiles@npm:^2":
+  version: 2.4.1
+  resolution: "@types/copyfiles@npm:2.4.1"
+  checksum: e586284f736c5e1336c7760972db44c26cb4aa02a7fea0d31694306b5569a499546f35990aec9c007df7506a9c0ab62ddb019d96d054560d39d423ebd5ecb917
   languageName: node
   linkType: hard
 
