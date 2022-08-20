@@ -1,4 +1,4 @@
-// WARNING: if the exports in this file change, ./index.ts must be updated
+// WARNING: if the exports in this file change, ./index.noReact.ts must be updated
 
 import type {
   DefaultCombinatorName,

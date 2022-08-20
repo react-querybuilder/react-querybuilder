@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/material",
   "description": "Custom MUI (Material Design) components for react-querybuilder",
-  "version": "4.5.1",
+  "version": "4.5.2",
   "publishConfig": {
     "access": "public"
   },
@@ -25,13 +25,18 @@
     "type-check:watch": "yarn type-check --watch"
   },
   "devDependencies": {
-    "@mui/icons-material": "^5.0.5",
-    "@mui/material": "^5.0.6",
-    "@types/react": "^18.0.0",
-    "@vitejs/plugin-react": "^1.3.0",
-    "react": "^18.1.0",
-    "react-querybuilder": "^4.5.1",
-    "typescript": "^4.5.0"
+    "@emotion/react": ">=11.0.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.10.1",
+    "@types/react": "^18.0.17",
+    "@vitejs/plugin-react": "^2.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-querybuilder": "^4.5.2",
+    "regenerator-runtime": "^0.13.9",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.9"
   },
   "peerDependencies": {
     "@emotion/react": ">=11.0.0",
