@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import type { ActionWithRulesProps } from '../src/types';
 import { userEventSetup } from './utils';
 
@@ -26,7 +26,9 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
       render(<ActionElement {...props} handleOnClick={handleOnClick} {...additionalProps} />);
       const btn = screen.getByTitle(testTitle);
       expect(btn).toBeEnabled();
-      await user.click(btn);
+      await act(async () => {
+        await user.click(btn);
+      });
       expect(handleOnClick).toHaveBeenCalled();
     });
   };
