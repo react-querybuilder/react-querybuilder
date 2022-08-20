@@ -17,7 +17,7 @@ export default defineConfig(({ mode, command }) => {
         formats: ['es', 'cjs'],
       },
       rollupOptions: {
-        external: ['react', 'react-querybuilder', 'antd', '@ant-design/icons'],
+        external: ['moment', 'react', 'react-querybuilder', 'antd', '@ant-design/icons'],
       },
       sourcemap: true,
     },

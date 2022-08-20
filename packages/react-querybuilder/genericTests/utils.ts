@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 
 export const findInput = (el: HTMLElement) =>
@@ -48,5 +49,21 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   return false;
 };
 
-export const userEventSetup = () =>
-  userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
+export const userEventSetup = () => {
+  const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
+  // TODO: figure out a way to avoid these wrapper functions.
+  // See http://kcd.im/react-act
+  const click: typeof userEvent['click'] = async el =>
+    act(async () => {
+      await user.click(el);
+    });
+  const type: typeof userEvent['type'] = async (el, txt) =>
+    act(async () => {
+      await user.type(el, txt);
+    });
+  const selectOptions: typeof userEvent['selectOptions'] = async (el, opts) =>
+    act(async () => {
+      await user.selectOptions(el, opts);
+    });
+  return { ...user, click, selectOptions, type };
+};
