@@ -21,7 +21,7 @@ export default defineConfig(({ mode, command }) => {
         },
         external: ['ruleGroupsIC'],
       },
-      sourcemap: true,
+      sourcemap: false,
     },
     css: { preprocessorOptions: { css: { charset: false }, scss: { charset: false } } },
     plugins: [
