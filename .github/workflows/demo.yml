@@ -6,6 +6,9 @@ on:
   release:
     branches: [main]
 
+env:
+  NODE_OPTIONS: --max-old-space-size=8192
+
 jobs:
   gh-release:
     runs-on: ubuntu-latest
