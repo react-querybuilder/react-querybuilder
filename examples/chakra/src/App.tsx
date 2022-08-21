@@ -22,19 +22,19 @@ export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (
-    <ChakraProvider theme={chakraTheme}>
-      <div>
+    <div>
+      <ChakraProvider theme={chakraTheme}>
         <QueryBuilder
           fields={fields}
           query={query}
           onQueryChange={q => setQuery(q)}
           controlElements={chakraControlElements}
         />
-        <h4>Query</h4>
-        <pre>
-          <code>{formatQuery(query, 'json')}</code>
-        </pre>
-      </div>
-    </ChakraProvider>
+      </ChakraProvider>
+      <h4>Query</h4>
+      <pre>
+        <code>{formatQuery(query, 'json')}</code>
+      </pre>
+    </div>
   );
 };

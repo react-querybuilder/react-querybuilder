@@ -83,14 +83,11 @@ for (const exampleID in configs) {
       props.push(`controlClassnames={${exampleID}ControlClassnames}`);
     }
   }
-  const tmplAppTSX = exampleConfig.enableDnD
-    ? templateAppTSX.replace(', QueryBuilder', '')
-    : templateAppTSX;
-  const processedTemplateAppTSX = tmplAppTSX
+  const processedTemplateAppTSX = templateAppTSX
     .replace('// __IMPORTS__', [baseImport, ...exampleConfig.tsxImports].join('\n'))
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
-    .replace('// __WRAPPER_OPEN__', exampleConfig.wrapper?.[0] ?? '')
-    .replace('// __WRAPPER_CLOSE__', exampleConfig.wrapper?.[1] ?? '')
+    .replace('{/* __WRAPPER_OPEN__ */}', exampleConfig.wrapper?.[0] ?? '')
+    .replace('{/* __WRAPPER_CLOSE__ */}', exampleConfig.wrapper?.[1] ?? '')
     .replace('// __RQB_PROPS__', props.join('\n'));
   const sourceCode = exampleConfig.compileToJS
     ? (

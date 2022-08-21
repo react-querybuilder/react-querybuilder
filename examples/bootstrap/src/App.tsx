@@ -28,6 +28,7 @@ export const App = () => {
         controlElements={bootstrapControlElements}
         controlClassnames={bootstrapControlClassnames}
       />
+
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

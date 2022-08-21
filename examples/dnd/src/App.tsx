@@ -1,7 +1,7 @@
-import { QueryBuilder } from '@react-querybuilder/dnd';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
+import { formatQuery, QueryBuilder } from 'react-querybuilder';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -18,11 +18,13 @@ export const App = () => {
 
   return (
     <div>
-      <QueryBuilder
-        fields={fields}
-        query={query}
-        onQueryChange={q => setQuery(q)}
-      />
+      <QueryBuilderDnD>
+        <QueryBuilder
+          fields={fields}
+          query={query}
+          onQueryChange={q => setQuery(q)}
+        />
+      </QueryBuilderDnD>
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

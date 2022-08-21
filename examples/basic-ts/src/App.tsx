@@ -22,6 +22,7 @@ export const App = () => {
         query={query}
         onQueryChange={q => setQuery(q)}
       />
+
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

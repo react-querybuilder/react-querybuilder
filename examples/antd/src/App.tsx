@@ -24,6 +24,7 @@ export const App = () => {
         onQueryChange={q => setQuery(q)}
         controlElements={antdControlElements}
       />
+
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

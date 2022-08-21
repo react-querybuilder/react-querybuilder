@@ -19,19 +19,19 @@ export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (
-    // __WRAPPER_OPEN__
     <div>
+      {/* __WRAPPER_OPEN__ */}
       <QueryBuilder
         fields={fields}
         query={query}
         onQueryChange={q => setQuery(q)}
         // __RQB_PROPS__
       />
+      {/* __WRAPPER_CLOSE__ */}
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>
       </pre>
     </div>
-    // __WRAPPER_CLOSE__
   );
 };

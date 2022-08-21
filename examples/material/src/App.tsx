@@ -20,19 +20,19 @@ export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (
-    <ThemeProvider theme={muiTheme}>
-      <div>
+    <div>
+      <ThemeProvider theme={muiTheme}>
         <QueryBuilder
           fields={fields}
           query={query}
           onQueryChange={q => setQuery(q)}
           controlElements={materialControlElements}
         />
-        <h4>Query</h4>
-        <pre>
-          <code>{formatQuery(query, 'json')}</code>
-        </pre>
-      </div>
-    </ThemeProvider>
+      </ThemeProvider>
+      <h4>Query</h4>
+      <pre>
+        <code>{formatQuery(query, 'json')}</code>
+      </pre>
+    </div>
   );
 };
