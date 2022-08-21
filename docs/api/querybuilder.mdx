@@ -176,6 +176,7 @@ interface Controls {
   cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction?: React.ComponentType<ActionProps>;
   combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
+  inlineCombinator: ComponentType<InlineCombinatorProps>;
   dragHandle?: React.ForwardRefExoticComponent<
     DragHandleProps & React.RefAttributes<HTMLSpanElement>
   >;
@@ -340,6 +341,19 @@ interface CombinatorSelectorProps {
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
+}
+```
+
+#### `inlineCombinator`
+
+A small wrapper around the `combinatorSelector` component. The following props are passed:
+
+```ts
+interface InlineCombinatorProps extends CombinatorSelectorProps {
+  component: Schema['controls']['combinatorSelector'];
+  path: number[];
+  moveRule: QueryActions['moveRule'];
+  independentCombinators?: boolean;
 }
 ```
 
