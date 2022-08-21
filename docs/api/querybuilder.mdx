@@ -768,11 +768,22 @@ When the `independentCombinators` option is enabled, the `query` (or `defaultQue
 
 Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
 
-:::caution
+Drag-and-drop functionality is only enabled when `<QueryBuilder />` is wrapped in `QueryBuilderDnD` from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd). [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) will also need to be installed.
 
-Drag-and-drop features are only enabled when `<QueryBuilder />` is imported from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd). [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) will also need to be installed.
+```tsx
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { QueryBuilder } from 'react-querybuilder';
 
-If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), you should import and render `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />`. They are functionally the same, but the former will rely on your pre-existing `<DndProvider />` wrapper while the latter implements its own and will clash with a separate `<DndProvider />` higher up in the component tree (the error will typically look like this: "Cannot have two HTML5 backends at the same time.").
+const App = () => (
+  <QueryBuilderDnD>
+    <QueryBuilder enableDragAndDrop />
+  </QueryBuilderDnD>
+);
+```
+
+:::tip
+
+If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), wrap `<QueryBuilder />` in `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD`. They add the same functionality, but the former will rely on your pre-existing `<DndProvider />`. The latter implements its own provider and will clash with a separate `<DndProvider />` higher up in the component tree. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
 
 :::
 
