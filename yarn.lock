@@ -5252,6 +5252,7 @@ __metadata:
     react-querybuilder: ^4.5.2
     react-syntax-highlighter: ^15.5.0
     terser: ^5.14.2
+    typescript: ^4.7.4
     vite: ^3.0.9
   languageName: unknown
   linkType: soft

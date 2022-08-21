@@ -1,6 +1,6 @@
 ## @react-querybuilder/dnd
 
-Companion package for [react-querybuilder](https://npmjs.com/package/react-querybuilder) to enable drag-and-drop functionality.
+Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with drag-and-drop functionality.
 
 To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/#enableDragAndDrop=true).
 
@@ -15,8 +15,8 @@ yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-ba
 ## Usage
 
 ```tsx
-import { QueryBuilder } from '@react-querybuilder/dnd';
-import { RuleGroupType } from 'react-querybuilder';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -27,21 +27,23 @@ const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      enableDragAndDrop
-    />
+    <QueryBuilderDnD>
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        enableDragAndDrop
+      />
+    </QueryBuilderDnD>
   );
 };
 ```
 
-If your application already uses `react-dnd` outside the scope of a query builder, use `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />` to inherit context from your existing `DndProvider`.
+If your application already uses `react-dnd` outside the scope of a query builder, use `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD` to inherit context from your existing `DndProvider`.
 
 ```tsx
 import { QueryBuilderWithoutDndProvider } from '@react-querybuilder/dnd';
-import { RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -52,12 +54,14 @@ const ChildComponentOfDndProvider = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilderWithoutDndProvider
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      enableDragAndDrop
-    />
+    <QueryBuilderWithoutDndProvider>
+      <QueryBuilder
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        enableDragAndDrop
+      />
+    <QueryBuilderWithoutDndProvider/>
   );
 };
 ```

@@ -29,7 +29,7 @@
     "lint": "eslint packages/*/src/**/*.{ts,tsx} packages/*/src/*.{ts,tsx}",
     "test": "jest",
     "test:watch": "jest --watch",
-    "type-check": "yarn workspaces run type-check && tsc -p examples",
+    "type-check": "yarn workspaces foreach --verbose --parallel --all --jobs unlimited run type-check && tsc -p examples",
     "publish:demo": "yarn build && node gh-pages.publish.js",
     "pretty-print": "prettier --write packages/*/src/** packages/*/dev/** ./*.js examples/**/*",
     "generate-changelog": "github-changes --owner react-querybuilder --repository react-querybuilder --auth --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\"",

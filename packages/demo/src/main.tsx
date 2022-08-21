@@ -1,7 +1,7 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { QueryBuilder as QueryBuilderDnD } from '@react-querybuilder/dnd/src';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd/src';
 import {
   Button,
   Checkbox,
@@ -264,7 +264,7 @@ const App = () => {
     [style]
   );
 
-  const QB = options.enableDragAndDrop ? QueryBuilderDnD : QueryBuilder;
+  const Wrapper = options.enableDragAndDrop ? QueryBuilderDnD : CustomFragment;
 
   return (
     <>
@@ -462,23 +462,25 @@ const App = () => {
                 <Suspense fallback={loadingPlaceholder}>
                   <div className={qbWrapperClassName}>
                     <form className="form-inline" style={{ marginTop: '1rem' }}>
-                      {options.independentCombinators ? (
-                        <QB
-                          {...commonRQBProps}
-                          independentCombinators
-                          key={`queryIC-${style}`}
-                          query={queryIC}
-                          onQueryChange={q => setQueryIC(q)}
-                        />
-                      ) : (
-                        <QB
-                          {...commonRQBProps}
-                          independentCombinators={false}
-                          key={`query-${style}`}
-                          query={query}
-                          onQueryChange={q => setQuery(q)}
-                        />
-                      )}
+                      <Wrapper>
+                        {options.independentCombinators ? (
+                          <QueryBuilder
+                            {...commonRQBProps}
+                            independentCombinators
+                            key={`queryIC-${style}`}
+                            query={queryIC}
+                            onQueryChange={q => setQueryIC(q)}
+                          />
+                        ) : (
+                          <QueryBuilder
+                            {...commonRQBProps}
+                            independentCombinators={false}
+                            key={`query-${style}`}
+                            query={query}
+                            onQueryChange={q => setQuery(q)}
+                          />
+                        )}
+                      </Wrapper>
                     </form>
                   </div>
                 </Suspense>

@@ -8,8 +8,8 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
 } from 'react-querybuilder';
-import { formatQuery, TestID } from 'react-querybuilder';
-import { QueryBuilderWithDndProvider, QueryBuilderWithoutDndProvider } from './QueryBuilderDnD';
+import QueryBuilder, { formatQuery, TestID } from 'react-querybuilder';
+import { QueryBuilderDnD, QueryBuilderWithoutDndProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
@@ -19,7 +19,11 @@ export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
 
 it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
   await act(async () => {
-    render(<QueryBuilderWithDndProvider />);
+    render(
+      <QueryBuilderDnD>
+        <QueryBuilder />
+      </QueryBuilderDnD>
+    );
     await new Promise(r => setTimeout(r, 500));
   });
   expect(screen.getByTestId(TestID.ruleGroup).parentElement).toHaveAttribute(
@@ -31,7 +35,11 @@ it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
 it('renders base QueryBuilder without dnd provider without enableDragAndDrop prop', async () => {
   const [QBWoDndProvider] = wrapWithTestBackend(QueryBuilderWithoutDndProvider);
   await act(async () => {
-    render(<QBWoDndProvider />);
+    render(
+      <QBWoDndProvider>
+        <QueryBuilder />
+      </QBWoDndProvider>
+    );
     await new Promise(r => setTimeout(r, 500));
   });
   expect(screen.getByTestId(TestID.ruleGroup).parentElement).toHaveAttribute(
@@ -42,7 +50,11 @@ it('renders base QueryBuilder without dnd provider without enableDragAndDrop pro
 
 it('renders with dnd provider without dnd prop', async () => {
   await act(async () => {
-    render(<QueryBuilderWithDndProvider enableDragAndDrop />);
+    render(
+      <QueryBuilderDnD>
+        <QueryBuilder enableDragAndDrop />
+      </QueryBuilderDnD>
+    );
     await new Promise(r => setTimeout(r, 500));
   });
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
@@ -51,7 +63,11 @@ it('renders with dnd provider without dnd prop', async () => {
 it('renders without dnd provider without dnd prop', async () => {
   const [QBWoDndProvider] = wrapWithTestBackend(QueryBuilderWithoutDndProvider);
   await act(async () => {
-    render(<QBWoDndProvider enableDragAndDrop />);
+    render(
+      <QBWoDndProvider>
+        <QueryBuilder enableDragAndDrop />
+      </QBWoDndProvider>
+    );
     await new Promise(r => setTimeout(r, 500));
   });
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
@@ -59,12 +75,14 @@ it('renders without dnd provider without dnd prop', async () => {
 
 // The drag-and-drop tests run once for QueryBuilderOriginal and once again
 // for QueryBuilderWithoutDndProvider.
-describe.each([{ QB: QueryBuilderWithDndProvider }, { QB: QueryBuilderWithoutDndProvider }])(
+describe.each([{ QB: QueryBuilderDnD }, { QB: QueryBuilderWithoutDndProvider }])(
   'enableDragAndDrop ($QB.displayName)',
   ({ QB }) => {
     const [QBforDnD, getBackend] = wrapWithTestBackend(
       (props: QueryBuilderProps<RuleGroupType | RuleGroupTypeIC>) => (
-        <QB {...props} dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} />
+        <QB dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+          <QueryBuilder {...props} />
+        </QB>
       )
     );
     const gDnDBe = () => getBackend()!;
@@ -395,7 +413,9 @@ describe.each([{ QB: QueryBuilderWithDndProvider }, { QB: QueryBuilderWithoutDnd
 it('prevents changes when disabled', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
     (props: QueryBuilderProps<RuleGroupType | RuleGroupTypeIC>) => (
-      <QueryBuilderWithDndProvider {...props} dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} />
+      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QueryBuilder {...props} />
+      </QueryBuilderDnD>
     )
   );
   const onQueryChange = jest.fn();

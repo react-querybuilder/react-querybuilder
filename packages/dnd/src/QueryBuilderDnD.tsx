@@ -1,57 +1,48 @@
-import type {
-  InlineCombinatorProps,
-  QueryBuilderProps,
-  RuleGroupType,
-  RuleGroupTypeIC,
-} from 'react-querybuilder';
-import { QueryBuilder } from 'react-querybuilder';
+import { cloneElement } from 'react';
+import type { InlineCombinatorProps, QueryBuilderProps } from 'react-querybuilder';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { getRuleGroupWithDndWrapper, getRuleWithDndWrapper } from './internal';
 import { useReactDnD } from './internal/hooks';
 import type { QueryBuilderDndProps } from './types';
 
-export const QueryBuilderWithDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderDndProps<RG>
-) => {
+export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
   const dnd = useReactDnD(props.dnd);
-  const key = props.enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
+  const key = props.children.props.enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
-  if (!props.enableDragAndDrop || !dnd) {
-    return <QueryBuilder<RG> key={key} {...props} />;
+  if (!props.children.props.enableDragAndDrop || !dnd) {
+    return cloneElement(props.children, { key });
   }
 
   const { DndProvider, HTML5Backend } = dnd;
-  const qbProps: QueryBuilderDndProps<RG> = { ...props, dnd };
 
   return (
-    <DndProvider key={key} backend={HTML5Backend} debugMode={props.debugMode}>
-      {/* TODO: get rid of `any` */}
-      <QueryBuilderWithoutDndProvider<RG> {...(qbProps as any)} />
+    <DndProvider key={key} backend={HTML5Backend} debugMode={props.children.props.debugMode}>
+      <QueryBuilderWithoutDndProvider dnd={dnd}>
+        {cloneElement(props.children)}
+      </QueryBuilderWithoutDndProvider>
     </DndProvider>
   );
 };
 
-QueryBuilderWithDndProvider.displayName = 'QueryBuilderWithDndProvider';
+QueryBuilderDnD.displayName = 'QueryBuilderDnD';
 
-export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderDndProps<RG>
-) => {
+export const QueryBuilderWithoutDndProvider = (props: QueryBuilderDndProps) => {
   const dnd = useReactDnD(props.dnd);
-  const key = props.enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
+  const key = props.children.props.enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
-  if (!props.enableDragAndDrop || !dnd) {
-    return <QueryBuilder<RG> key={key} {...props} />;
+  if (!props.children.props.enableDragAndDrop || !dnd) {
+    return cloneElement(props.children, { key });
   }
 
   const { useDrag, useDrop } = dnd;
 
   const ruleGroup = getRuleGroupWithDndWrapper({
-    ruleGroup: props.controlElements?.ruleGroup,
+    ruleGroup: props.children.props.controlElements?.ruleGroup,
     useDrag,
     useDrop,
   });
   const rule = getRuleWithDndWrapper({
-    rule: props.controlElements?.rule,
+    rule: props.children.props.controlElements?.rule,
     useDrag,
     useDrop,
   });
@@ -59,17 +50,15 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     <InlineCombinatorDnD {...props} useDrop={dnd.useDrop} />
   );
 
-  const newProps: QueryBuilderProps<RG> = {
-    ...props,
-    dnd,
-    controlElements: { ...props.controlElements, ruleGroup, rule, inlineCombinator },
+  const newProps: QueryBuilderProps = {
+    controlElements: { ...props.children.props.controlElements, ruleGroup, rule, inlineCombinator },
   };
 
   const { DndContext } = dnd;
 
   return (
     <DndContext.Consumer key={key}>
-      {() => <QueryBuilder<RG> key={key} {...newProps} />}
+      {() => cloneElement(props.children, newProps)}
     </DndContext.Consumer>
   );
 };

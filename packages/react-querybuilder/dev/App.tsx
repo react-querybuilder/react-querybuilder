@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
 import type { FormatQueryOptions, QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from '../src';
 import { defaultValidator, QueryBuilder } from '../src';
@@ -17,14 +18,14 @@ import { getFormatQueryString, optionsReducer } from './utils';
 
 export const App = (
   controls: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'> & {
-    queryBuilder?: typeof QueryBuilder;
+    wrapper?: ComponentType<any>;
   }
 ) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, defaultOptions);
 
-  const QB = controls.queryBuilder ?? QueryBuilder;
+  const Wrapper = controls.wrapper ?? Fragment;
 
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({
@@ -99,23 +100,25 @@ export const App = (
         ))}
       </div>
       <div>
-        {!optVals.independentCombinators ? (
-          <QB
-            key="query"
-            {...commonRQBProps}
-            independentCombinators={false}
-            query={query}
-            onQueryChange={onQueryChange}
-          />
-        ) : (
-          <QB
-            key="queryIC"
-            {...commonRQBProps}
-            independentCombinators
-            query={queryIC}
-            onQueryChange={onQueryChangeIC}
-          />
-        )}
+        <Wrapper>
+          {!optVals.independentCombinators ? (
+            <QueryBuilder
+              key="query"
+              {...commonRQBProps}
+              independentCombinators={false}
+              query={query}
+              onQueryChange={onQueryChange}
+            />
+          ) : (
+            <QueryBuilder
+              key="queryIC"
+              {...commonRQBProps}
+              independentCombinators
+              query={queryIC}
+              onQueryChange={onQueryChangeIC}
+            />
+          )}
+        </Wrapper>
         <div id="exports">
           {formatQueryResults.map(([fmt, result]) => (
             <Fragment key={fmt}>
