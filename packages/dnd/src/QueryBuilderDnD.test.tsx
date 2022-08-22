@@ -17,6 +17,13 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
 export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
+const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+afterEach(() => {
+  consoleError.mockReset();
+  consoleWarn.mockReset();
+});
+
 it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
   await act(async () => {
     render(

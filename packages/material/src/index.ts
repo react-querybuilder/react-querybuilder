@@ -1,4 +1,6 @@
-import type { Controls } from 'react-querybuilder';
+import type { ReactElement } from 'react';
+import { cloneElement } from 'react';
+import type { Controls, QueryBuilderProps } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
@@ -22,6 +24,15 @@ export const materialControlElements: Partial<Controls> = {
   dragHandle: MaterialDragHandle,
   valueSourceSelector: MaterialValueSelector,
 };
+
+export type QueryBuilderMaterialProps = {
+  children: ReactElement<QueryBuilderProps<any>>;
+};
+
+export const QueryBuilderMaterial = ({ children }: QueryBuilderMaterialProps) =>
+  cloneElement(children, {
+    controlElements: { ...materialControlElements, ...children.props.controlElements },
+  });
 
 export {
   MaterialActionElement,

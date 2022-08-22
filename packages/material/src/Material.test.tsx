@@ -6,6 +6,7 @@ import type {
   SelectProps,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { render, screen } from '@testing-library/react';
 import {
   cloneElement as mockCloneElement,
   forwardRef,
@@ -20,6 +21,7 @@ import {
   testValueSelector,
 } from 'react-querybuilder/genericTests';
 import type { DragHandleProps } from 'react-querybuilder/src';
+import { defaultTranslations, QueryBuilder, TestID } from 'react-querybuilder/src';
 import 'regenerator-runtime/runtime';
 import {
   MaterialActionElement,
@@ -27,7 +29,14 @@ import {
   MaterialNotToggle,
   MaterialValueEditor,
   MaterialValueSelector,
+  QueryBuilderMaterial,
 } from '.';
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __RQB_DEV__: boolean;
+}
+globalThis.__RQB_DEV__ = true;
 
 jest.mock('@mui/material', () => {
   const MuiMaterial = jest.requireActual('@mui/material');
@@ -94,3 +103,17 @@ testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(MaterialNotToggle));
 testValueEditor(generateWrapper(MaterialValueEditor));
 testValueSelector(generateWrapper(MaterialValueSelector));
+
+it('renders with composition', () => {
+  render(
+    <QueryBuilderMaterial>
+      <QueryBuilder />
+    </QueryBuilderMaterial>
+  );
+  expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
+  expect(
+    Array.from(screen.getByText(defaultTranslations.addRule.label).classList).some(c =>
+      c.startsWith('MuiButton')
+    )
+  ).toBe(true);
+});

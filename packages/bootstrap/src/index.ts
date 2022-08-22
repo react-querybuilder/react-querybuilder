@@ -1,4 +1,6 @@
-import type { Classnames, Controls } from 'react-querybuilder';
+import type { ReactElement } from 'react';
+import { cloneElement } from 'react';
+import type { Classnames, Controls, QueryBuilderProps } from 'react-querybuilder';
 import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
@@ -24,5 +26,15 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   value: 'form-control form-control-sm',
   valueSource: 'form-select form-select-sm',
 };
+
+export type QueryBuilderBootstrapProps = {
+  children: ReactElement<QueryBuilderProps<any>>;
+};
+
+export const QueryBuilderBootstrap = ({ children }: QueryBuilderBootstrapProps) =>
+  cloneElement(children, {
+    controlElements: { ...bootstrapControlElements, ...children.props.controlElements },
+    controlClassnames: { ...bootstrapControlClassnames, ...children.props.controlClassnames },
+  });
 
 export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };

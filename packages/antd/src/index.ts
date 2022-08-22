@@ -1,4 +1,6 @@
-import type { Controls } from 'react-querybuilder';
+import type { ReactElement } from 'react';
+import { cloneElement } from 'react';
+import type { Controls, QueryBuilderProps } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
@@ -22,5 +24,14 @@ export const antdControlElements: Partial<Controls> = {
   dragHandle: AntDDragHandle,
   valueSourceSelector: AntDValueSelector,
 };
+
+export type QueryBuilderAntDProps = {
+  children: ReactElement<QueryBuilderProps<any>>;
+};
+
+export const QueryBuilderAntD = ({ children }: QueryBuilderAntDProps) =>
+  cloneElement(children, {
+    controlElements: { ...antdControlElements, ...children.props.controlElements },
+  });
 
 export { AntDActionElement, AntDDragHandle, AntDNotToggle, AntDValueEditor, AntDValueSelector };

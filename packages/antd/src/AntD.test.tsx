@@ -15,13 +15,21 @@ import {
   userEventSetup,
 } from 'react-querybuilder/genericTests';
 import type { NotToggleProps, ValueEditorProps } from 'react-querybuilder/src';
+import { QueryBuilder, TestID } from 'react-querybuilder/src';
 import {
   AntDActionElement,
   AntDDragHandle,
   AntDNotToggle,
   AntDValueEditor,
   AntDValueSelector,
+  QueryBuilderAntD,
 } from '.';
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __RQB_DEV__: boolean;
+}
+globalThis.__RQB_DEV__ = true;
 
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.
@@ -226,3 +234,18 @@ testActionElement(AntDActionElement);
 testDragHandle(AntDDragHandle);
 testValueEditor(AntDValueEditor, { switch: true });
 testValueSelector(AntDValueSelector);
+
+it('renders with composition', () => {
+  render(
+    <QueryBuilderAntD>
+      <QueryBuilder />
+    </QueryBuilderAntD>
+  );
+  expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
+  expect(
+    screen
+      .getAllByRole('button')
+      .map(b => Array.from(b.classList))
+      .some(el => el.some(c => c.startsWith('ant-')))
+  ).toBe(true);
+});
