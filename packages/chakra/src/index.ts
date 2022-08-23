@@ -1,6 +1,5 @@
-import type { ReactElement } from 'react';
-import { cloneElement } from 'react';
-import type { Controls, QueryBuilderProps } from 'react-querybuilder';
+import type { Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
@@ -25,14 +24,10 @@ export const chakraControlElements: Partial<Controls> = {
   valueSourceSelector: ChakraValueSelector,
 };
 
-export type QueryBuilderChakraProps = {
-  children: ReactElement<QueryBuilderProps<any>>;
-};
-
-export const QueryBuilderChakra = ({ children }: QueryBuilderChakraProps) =>
-  cloneElement(children, {
-    controlElements: { ...chakraControlElements, ...children.props.controlElements },
-  });
+export const QueryBuilderChakra = getCompatContextProvider({
+  key: 'chakra',
+  controlElements: chakraControlElements,
+});
 
 export {
   ChakraActionElement,

@@ -8,7 +8,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
 } from 'react-querybuilder';
-import QueryBuilder, { formatQuery, TestID } from 'react-querybuilder';
+import QueryBuilder, { formatQuery, getCompatContextProvider, TestID } from 'react-querybuilder';
 import { QueryBuilderDnD, QueryBuilderWithoutDndProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
@@ -37,6 +37,29 @@ it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
     'data-dnd',
     'disabled'
   );
+});
+
+it('acts as a pass-through for context', async () => {
+  const combinatorSelectorClass = 'hello-dnd-world';
+  const combinatorSelectorText = 'Add rule';
+  const combinatorSelector = () => (
+    <button className={combinatorSelectorClass}>{combinatorSelectorText}</button>
+  );
+  const TestCompatContextProvider = getCompatContextProvider({
+    key: 'test',
+    controlElements: { combinatorSelector },
+  });
+  await act(async () => {
+    render(
+      <TestCompatContextProvider>
+        <QueryBuilderDnD>
+          <QueryBuilder />
+        </QueryBuilderDnD>
+      </TestCompatContextProvider>
+    );
+    await new Promise(r => setTimeout(r, 500));
+  });
+  expect(screen.getByText(combinatorSelectorText)).toHaveClass(combinatorSelectorClass);
 });
 
 it('renders base QueryBuilder without dnd provider without enableDragAndDrop prop', async () => {

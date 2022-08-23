@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
+import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,
   testNotToggle,
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
-import { QueryBuilder, TestID } from 'react-querybuilder/src';
 import {
   BulmaActionElement,
   BulmaNotToggle,

@@ -13,6 +13,8 @@ import {
   isValidElement as mockIsValidElement,
   type ComponentPropsWithoutRef,
 } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
+import { defaultTranslations, QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,
   testDragHandle,
@@ -20,8 +22,6 @@ import {
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
-import type { DragHandleProps } from 'react-querybuilder/src';
-import { defaultTranslations, QueryBuilder, TestID } from 'react-querybuilder/src';
 import 'regenerator-runtime/runtime';
 import {
   MaterialActionElement,

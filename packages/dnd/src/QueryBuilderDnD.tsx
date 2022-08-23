@@ -1,25 +1,37 @@
-import { cloneElement } from 'react';
-import type { InlineCombinatorProps, QueryBuilderProps } from 'react-querybuilder';
+import { Fragment, useContext } from 'react';
+import type { InlineCombinatorProps, QueryBuilderContextProps } from 'react-querybuilder';
+import { QueryBuilderContext, usePreferProp } from 'react-querybuilder';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { getRuleGroupWithDndWrapper, getRuleWithDndWrapper } from './internal';
 import { useReactDnD } from './internal/hooks';
 import type { QueryBuilderDndProps } from './types';
 
 export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
+  const rqbContext = useContext(QueryBuilderContext);
   const dnd = useReactDnD(props.dnd);
-  const key = props.children.props.enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
+  const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
+  const enableDragAndDrop = usePreferProp(
+    true,
+    props.enableDragAndDrop,
+    rqbContext.enableDragAndDrop
+  );
+  const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
-  if (!props.children.props.enableDragAndDrop || !dnd) {
-    return cloneElement(props.children, { key });
+  if (!enableDragAndDrop || !dnd) {
+    return (
+      <QueryBuilderContext.Provider value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+        <Fragment key={key}>{props.children}</Fragment>
+      </QueryBuilderContext.Provider>
+    );
   }
 
   const { DndProvider, HTML5Backend } = dnd;
 
   return (
-    <DndProvider key={key} backend={HTML5Backend} debugMode={props.children.props.debugMode}>
-      <QueryBuilderWithoutDndProvider dnd={dnd}>
-        {cloneElement(props.children)}
-      </QueryBuilderWithoutDndProvider>
+    <DndProvider key={key} backend={HTML5Backend} debugMode={debugMode}>
+      <QueryBuilderContext.Provider value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
+        <QueryBuilderWithoutDndProvider dnd={dnd}>{props.children}</QueryBuilderWithoutDndProvider>
+      </QueryBuilderContext.Provider>
     </DndProvider>
   );
 };
@@ -27,38 +39,60 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
 QueryBuilderDnD.displayName = 'QueryBuilderDnD';
 
 export const QueryBuilderWithoutDndProvider = (props: QueryBuilderDndProps) => {
+  const rqbContext = useContext(QueryBuilderContext);
   const dnd = useReactDnD(props.dnd);
-  const key = props.children.props.enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
+  const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
+  const enableDragAndDrop = usePreferProp(
+    true,
+    props.enableDragAndDrop,
+    rqbContext.enableDragAndDrop
+  );
+  const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
-  if (!props.children.props.enableDragAndDrop || !dnd) {
-    return cloneElement(props.children, { key });
+  if (!enableDragAndDrop || !dnd) {
+    return (
+      <QueryBuilderContext.Provider value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+        <Fragment key={key}>{props.children}</Fragment>
+      </QueryBuilderContext.Provider>
+    );
   }
 
   const { useDrag, useDrop } = dnd;
 
   const ruleGroup = getRuleGroupWithDndWrapper({
-    ruleGroup: props.children.props.controlElements?.ruleGroup,
+    // TODO: Detect and prefer the ruleGroup component defined in the child <QueryBuilder /> element.
+    ruleGroup: props.controlElements?.ruleGroup ?? rqbContext.controlElements?.ruleGroup,
     useDrag,
     useDrop,
   });
   const rule = getRuleWithDndWrapper({
-    rule: props.children.props.controlElements?.rule,
+    // TODO: Detect and prefer the rule component defined in the child <QueryBuilder /> element.
+    rule: props.controlElements?.rule ?? rqbContext.controlElements?.rule,
     useDrag,
     useDrop,
   });
-  const inlineCombinator = (props: InlineCombinatorProps) => (
-    <InlineCombinatorDnD {...props} useDrop={dnd.useDrop} />
+  const combinatorComponent: Partial<Pick<InlineCombinatorProps, 'component'>> = rqbContext
+    .controlElements?.combinatorSelector
+    ? { component: rqbContext.controlElements.combinatorSelector }
+    : {};
+  const inlineCombinator = (icProps: InlineCombinatorProps) => (
+    <InlineCombinatorDnD {...{ ...icProps, ...combinatorComponent }} useDrop={dnd.useDrop} />
   );
 
-  const newProps: QueryBuilderProps = {
-    controlElements: { ...props.children.props.controlElements, ruleGroup, rule, inlineCombinator },
+  const newContextProps: QueryBuilderContextProps = {
+    ...rqbContext,
+    controlElements: { ...rqbContext.controlElements, ruleGroup, rule, inlineCombinator },
   };
 
   const { DndContext } = dnd;
 
   return (
     <DndContext.Consumer key={key}>
-      {() => cloneElement(props.children, newProps)}
+      {() => (
+        <QueryBuilderContext.Provider value={newContextProps}>
+          {props.children}
+        </QueryBuilderContext.Provider>
+      )}
     </DndContext.Consumer>
   );
 };

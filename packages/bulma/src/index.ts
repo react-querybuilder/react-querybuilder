@@ -1,6 +1,5 @@
-import type { ReactElement } from 'react';
-import { cloneElement } from 'react';
-import type { Controls, QueryBuilderProps } from 'react-querybuilder';
+import type { Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { BulmaActionElement } from './BulmaActionElement';
 import { BulmaNotToggle } from './BulmaNotToggle';
 import { BulmaValueEditor } from './BulmaValueEditor';
@@ -23,13 +22,9 @@ export const bulmaControlElements: Partial<Controls> = {
   valueSourceSelector: BulmaValueSelector,
 };
 
-export type QueryBuilderBulmaProps = {
-  children: ReactElement<QueryBuilderProps<any>>;
-};
-
-export const QueryBuilderBulma = ({ children }: QueryBuilderBulmaProps) =>
-  cloneElement(children, {
-    controlElements: { ...bulmaControlElements, ...children.props.controlElements },
-  });
+export const QueryBuilderBulma = getCompatContextProvider({
+  key: 'bulma',
+  controlElements: bulmaControlElements,
+});
 
 export { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector };

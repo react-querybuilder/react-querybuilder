@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { defaultControlElements } from './controls';
 import {
   defaultCombinators,
@@ -12,13 +12,12 @@ import {
   filterFieldsByComparator,
   generateID,
   getValueSourcesUtil,
-  objectKeys,
   uniqByName,
   uniqOptGroups,
 } from './internal';
 import { useControlledOrUncontrolled } from './internal/hooks';
+import { QueryBuilderContext } from './QueryBuilderContext';
 import type {
-  Classnames,
   Controls,
   Field,
   NameLabelPair,
@@ -37,11 +36,14 @@ import {
   getFirstOption,
   isOptionGroupArray,
   joinWith,
+  mergeClassnames,
   move,
+  objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
   update,
+  usePreferProp,
 } from './utils';
 
 const noop = () => {};
@@ -53,8 +55,9 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   operators = defaultOperators,
   combinators = defaultCombinators,
   translations: translationsProp = defaultTranslations,
-  enableMountQueryChange = true,
-  controlElements,
+  enableMountQueryChange: enableMountQueryChangeProp = true,
+  controlClassnames: controlClassnamesProp,
+  controlElements: controlElementsProp,
   getDefaultField,
   getDefaultOperator,
   getDefaultValue,
@@ -66,7 +69,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   onAddRule = r => r,
   onAddGroup = rg => rg,
   onQueryChange = noop,
-  controlClassnames,
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
   showCloneButtons = false,
@@ -76,25 +78,68 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   autoSelectField = true,
   autoSelectOperator = true,
   addRuleToNewGroups = false,
-  enableDragAndDrop = false,
+  enableDragAndDrop: enableDragAndDropProp = false,
   independentCombinators,
   listsAsArrays = false,
   disabled = false,
   validator,
   context,
-  debugMode = false,
+  debugMode: debugModeProp = false,
   onLog = console.log,
 }: QueryBuilderProps<RG>) => {
-  // #region Set up `fields`
+  // #region Inherit context but props take precedence
+  const rqbContext = useContext(QueryBuilderContext);
+
+  const enableMountQueryChange = usePreferProp(
+    true,
+    enableMountQueryChangeProp,
+    rqbContext.enableMountQueryChange
+  );
+
+  // Drag-and-drop should be disabled if context sets it to false because
+  // QueryBuilderDnD might not have loaded react-dnd yet. Therefore we prefer
+  // the prop here only if context is true or undefined.
+  const enableDragAndDrop =
+    usePreferProp(false, enableDragAndDropProp, rqbContext.enableDragAndDrop) &&
+    rqbContext.enableDragAndDrop !== false;
+
+  const debugMode = usePreferProp(false, debugModeProp, rqbContext.debugMode);
+
+  const classNames = useMemo(
+    () =>
+      mergeClassnames(
+        defaultControlClassnames,
+        rqbContext.controlClassnames,
+        controlClassnamesProp
+      ),
+    [rqbContext.controlClassnames, controlClassnamesProp]
+  );
+
+  const controls = useMemo(
+    (): Controls => ({
+      ...defaultControlElements,
+      ...rqbContext.controlElements,
+      ...controlElementsProp,
+    }),
+    [controlElementsProp, rqbContext.controlElements]
+  );
+
   const translations = useMemo((): TranslationsFull => {
     const translationsTemp: Partial<TranslationsFull> = {};
     objectKeys(translationsProp).forEach(t => {
+      const contextTranslations = rqbContext.translations;
       // @ts-expect-error Different keys have different requirements
-      translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] };
+      translationsTemp[t] = {
+        ...defaultTranslations[t],
+        ...contextTranslations,
+        ...translationsProp[t],
+      };
     });
     return { ...defaultTranslations, ...translationsTemp };
-  }, [translationsProp]);
+  }, [rqbContext.translations, translationsProp]);
+  // #endregion
 
+  // #region Set up `fields`
   const defaultField = useMemo(
     (): Field => ({
       id: translations.fields.placeholderName,
@@ -518,16 +563,6 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     const validationMap = typeof validationResult === 'object' ? validationResult : {};
     return { validationResult, validationMap };
   }, [query, validator]);
-
-  const classNames = useMemo(
-    (): Classnames => ({ ...defaultControlClassnames, ...controlClassnames }),
-    [controlClassnames]
-  );
-
-  const controls = useMemo(
-    (): Controls => ({ ...defaultControlElements, ...controlElements }),
-    [controlElements]
-  );
 
   const schema = useMemo(
     (): Schema => ({

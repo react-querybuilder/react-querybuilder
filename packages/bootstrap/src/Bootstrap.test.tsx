@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { QueryBuilder, TestID } from 'react-querybuilder';
 import { testDragHandle, testNotToggle, testValueEditor } from 'react-querybuilder/genericTests';
-import { QueryBuilder, TestID } from 'react-querybuilder/src';
 import {
   BootstrapDragHandle,
   BootstrapNotToggle,

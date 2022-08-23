@@ -1,7 +1,7 @@
 import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { QueryBuilderDnD } from '@react-querybuilder/dnd/src';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import {
   Button,
   Checkbox,
@@ -17,7 +17,9 @@ import {
 } from 'antd';
 import 'antd/dist/antd.compact.css';
 import queryString from 'query-string';
+import type { CSSProperties, ReactNode } from 'react';
 import {
+  lazy,
   StrictMode,
   Suspense,
   useCallback,
@@ -25,10 +27,19 @@ import {
   useMemo,
   useReducer,
   useState,
-  type CSSProperties,
-  type ReactNode,
 } from 'react';
 import { createRoot } from 'react-dom/client';
+import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
+import {
+  convertToIC,
+  defaultValidator,
+  formatQuery,
+  parseCEL,
+  parseJsonLogic,
+  parseSQL,
+  QueryBuilder,
+} from 'react-querybuilder';
+import type { CommonRQBProps, DemoOptions } from 'react-querybuilder/dev';
 import {
   defaultOptions,
   fields,
@@ -39,28 +50,21 @@ import {
   optionOrder,
   optionsMetadata,
   optionsReducer,
-  type CommonRQBProps,
-  type DemoOptions,
 } from 'react-querybuilder/dev';
-import {
-  convertToIC,
-  defaultValidator,
-  formatQuery,
-  parseCEL,
-  parseJsonLogic,
-  parseSQL,
-  QueryBuilder,
-  type ExportFormat,
-  type FormatQueryOptions,
-} from 'react-querybuilder/src';
-import 'react-querybuilder/src/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.scss';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import plaintext from 'react-syntax-highlighter/dist/esm/languages/hljs/plaintext';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { styleConfigs } from './components';
-import { docsLink, npmLink, styleNameArray, styleNameMap, type StyleName } from './constants';
+import type { StyleName } from './constants';
+import { docsLink, npmLink, styleNameArray, styleNameMap } from './constants';
+
+const QueryBuilderAntD = lazy(() => import('./styleProviders/QueryBuilderAntD'));
+const QueryBuilderBootstrap = lazy(() => import('./styleProviders/QueryBuilderBootstrap'));
+const QueryBuilderBulma = lazy(() => import('./styleProviders/QueryBuilderBulma'));
+const QueryBuilderChakra = lazy(() => import('./styleProviders/QueryBuilderChakra'));
+const QueryBuilderMaterial = lazy(() => import('./styleProviders/QueryBuilderMaterial'));
 
 type DemoOptionsWithStyle = DemoOptions & { style?: StyleName };
 
@@ -244,14 +248,29 @@ const App = () => {
     [style]
   );
 
+  const StyleWrapper = useMemo(() => {
+    switch (style) {
+      case 'antd':
+        return QueryBuilderAntD;
+      case 'bootstrap':
+        return QueryBuilderBootstrap;
+      case 'bulma':
+        return QueryBuilderBulma;
+      case 'chakra':
+        return QueryBuilderChakra;
+      case 'material':
+        return QueryBuilderMaterial;
+    }
+    return CustomFragment;
+  }, [style]);
+
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({
-      ...styleConfigs[style],
       fields,
       ...options,
       validator: options.validateQuery ? defaultValidator : undefined,
     }),
-    [style, options]
+    [options]
   );
 
   const loadingPlaceholder = useMemo(
@@ -263,8 +282,6 @@ const App = () => {
     ),
     [style]
   );
-
-  const Wrapper = options.enableDragAndDrop ? QueryBuilderDnD : CustomFragment;
 
   return (
     <>
@@ -462,25 +479,27 @@ const App = () => {
                 <Suspense fallback={loadingPlaceholder}>
                   <div className={qbWrapperClassName}>
                     <form className="form-inline" style={{ marginTop: '1rem' }}>
-                      <Wrapper>
-                        {options.independentCombinators ? (
-                          <QueryBuilder
-                            {...commonRQBProps}
-                            independentCombinators
-                            key={`queryIC-${style}`}
-                            query={queryIC}
-                            onQueryChange={q => setQueryIC(q)}
-                          />
-                        ) : (
-                          <QueryBuilder
-                            {...commonRQBProps}
-                            independentCombinators={false}
-                            key={`query-${style}`}
-                            query={query}
-                            onQueryChange={q => setQuery(q)}
-                          />
-                        )}
-                      </Wrapper>
+                      <QueryBuilderDnD>
+                        <StyleWrapper>
+                          {options.independentCombinators ? (
+                            <QueryBuilder
+                              {...commonRQBProps}
+                              independentCombinators
+                              key={`queryIC-${style}`}
+                              query={queryIC}
+                              onQueryChange={q => setQueryIC(q)}
+                            />
+                          ) : (
+                            <QueryBuilder
+                              {...commonRQBProps}
+                              independentCombinators={false}
+                              key={`query-${style}`}
+                              query={query}
+                              onQueryChange={q => setQuery(q)}
+                            />
+                          )}
+                        </StyleWrapper>
+                      </QueryBuilderDnD>
                     </form>
                   </div>
                 </Suspense>

@@ -34,5 +34,5 @@ export const errorControlledToUncontrolled =
 export const errorEnabledDndWithoutReactDnD =
   'QueryBuilder was rendered with the enableDragAndDrop prop set to true, ' +
   'but either react-dnd or react-dnd-html5-backend (or both) was not installed. ' +
-  'Install both packages so they are available to react-querybuilder, or remove ' +
-  'the enableDragAndDrop prop.';
+  'To enable drag-and-drop functionality, install both packages and wrap ' +
+  'QueryBuilder in QueryBuilderDnD from @react-querybuilder/dnd.';

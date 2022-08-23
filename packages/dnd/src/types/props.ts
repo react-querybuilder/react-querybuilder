@@ -2,7 +2,7 @@ import type { ReactElement, Ref } from 'react';
 import type {
   InlineCombinatorProps,
   QueryActions,
-  QueryBuilderProps,
+  QueryBuilderContextProviderProps,
   RuleGroupProps,
   RuleProps,
 } from 'react-querybuilder';
@@ -62,7 +62,7 @@ export interface DnD {
   };
 }
 
-export type QueryBuilderDndProps = {
+export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   /**
    * Provide this prop if `enableDragAndDrop` is `true` for the child element and
    * you want the component to render immediately with drag-and-drop enabled.
@@ -71,5 +71,4 @@ export type QueryBuilderDndProps = {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
-  children: ReactElement<QueryBuilderProps<any>>;
 };

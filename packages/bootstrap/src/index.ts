@@ -1,6 +1,5 @@
-import type { ReactElement } from 'react';
-import { cloneElement } from 'react';
-import type { Classnames, Controls, QueryBuilderProps } from 'react-querybuilder';
+import type { Classnames, Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
@@ -27,14 +26,10 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   valueSource: 'form-select form-select-sm',
 };
 
-export type QueryBuilderBootstrapProps = {
-  children: ReactElement<QueryBuilderProps<any>>;
-};
-
-export const QueryBuilderBootstrap = ({ children }: QueryBuilderBootstrapProps) =>
-  cloneElement(children, {
-    controlElements: { ...bootstrapControlElements, ...children.props.controlElements },
-    controlClassnames: { ...bootstrapControlClassnames, ...children.props.controlClassnames },
-  });
+export const QueryBuilderBootstrap = getCompatContextProvider({
+  key: 'bootstrap',
+  controlClassnames: bootstrapControlClassnames,
+  controlElements: bootstrapControlElements,
+});
 
 export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };

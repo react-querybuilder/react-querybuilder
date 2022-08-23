@@ -1,3 +1,4 @@
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import 'core-js';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -81,24 +82,26 @@ const IE11 = () => {
   return (
     <div>
       <div className={qbWrapperClassName}>
-        <div style={getQBWrapperStyle(false)}>
-          <QueryBuilder
-            {...commonRQBProps}
-            independentCombinators={false}
-            query={initialQuery}
-            onQueryChange={q => setQuery(q)}
-            controlClassnames={controlClassnames}
-          />
-        </div>
-        <div style={getQBWrapperStyle(true)}>
-          <QueryBuilder
-            {...commonRQBProps}
-            independentCombinators
-            query={initialQueryIC}
-            onQueryChange={q => setQueryIC(q)}
-            controlClassnames={controlClassnames}
-          />
-        </div>
+        <QueryBuilderDnD>
+          <div style={getQBWrapperStyle(false)}>
+            <QueryBuilder
+              {...commonRQBProps}
+              independentCombinators={false}
+              query={initialQuery}
+              onQueryChange={q => setQuery(q)}
+              controlClassnames={controlClassnames}
+            />
+          </div>
+          <div style={getQBWrapperStyle(true)}>
+            <QueryBuilder
+              {...commonRQBProps}
+              independentCombinators
+              query={initialQueryIC}
+              onQueryChange={q => setQueryIC(q)}
+              controlClassnames={controlClassnames}
+            />
+          </div>
+        </QueryBuilderDnD>
       </div>
       <div style={{ marginTop: '1rem' }}>
         <div className="options-list">

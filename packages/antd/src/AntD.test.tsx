@@ -3,6 +3,8 @@ import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/lib/select';
 import moment from 'moment';
 import type { OptionGroupFC } from 'rc-select/lib/OptGroup';
+import type { NotToggleProps, ValueEditorProps } from 'react-querybuilder';
+import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
   defaultValueEditorProps,
@@ -14,8 +16,6 @@ import {
   testValueSelector,
   userEventSetup,
 } from 'react-querybuilder/genericTests';
-import type { NotToggleProps, ValueEditorProps } from 'react-querybuilder/src';
-import { QueryBuilder, TestID } from 'react-querybuilder/src';
 import {
   AntDActionElement,
   AntDDragHandle,

@@ -1,6 +1,5 @@
-import type { ReactElement } from 'react';
-import { cloneElement } from 'react';
-import type { Controls, QueryBuilderProps } from 'react-querybuilder';
+import type { Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
@@ -25,14 +24,10 @@ export const materialControlElements: Partial<Controls> = {
   valueSourceSelector: MaterialValueSelector,
 };
 
-export type QueryBuilderMaterialProps = {
-  children: ReactElement<QueryBuilderProps<any>>;
-};
-
-export const QueryBuilderMaterial = ({ children }: QueryBuilderMaterialProps) =>
-  cloneElement(children, {
-    controlElements: { ...materialControlElements, ...children.props.controlElements },
-  });
+export const QueryBuilderMaterial = getCompatContextProvider({
+  key: 'material',
+  controlElements: materialControlElements,
+});
 
 export {
   MaterialActionElement,

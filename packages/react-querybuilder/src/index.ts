@@ -5,6 +5,7 @@ export * from './controls/';
 export * from './defaults';
 export * from './InlineCombinator';
 export * as messages from './messages';
+export * from './QueryBuilderContext';
 export * from './Rule';
 export * from './RuleGroup';
 export * from './types';

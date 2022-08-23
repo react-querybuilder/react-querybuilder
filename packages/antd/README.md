@@ -14,8 +14,10 @@ yarn add react-querybuilder @react-querybuilder/antd @ant-design/icons antd
 
 ## Usage
 
+This package exports `antdControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderAntD />`, like this:
+
 ```tsx
-import { antdControlElements } from '@react-querybuilder/antd';
+import { QueryBuilderAntD } from '@react-querybuilder/antd';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
@@ -27,17 +29,14 @@ const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      controlElements={antdControlElements}
-    />
+    <QueryBuilderAntD>
+      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+    </QueryBuilderAntD>
   );
 };
 ```
 
-You may also want to reduce the width of the value editor component, which is 100% by default, with the following CSS rule:
+You may also want to reduce the width of the value editor component (100% by default) with the following CSS rule:
 
 ```css
 .queryBuilder .ant-input {
