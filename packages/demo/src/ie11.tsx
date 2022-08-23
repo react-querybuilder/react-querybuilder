@@ -2,6 +2,9 @@ import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import 'core-js';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import type { ExportFormat, QueryBuilderProps } from 'react-querybuilder';
+import { defaultValidator, QueryBuilder } from 'react-querybuilder';
+import type { CommonRQBProps, DemoOption } from 'react-querybuilder/dev';
 import {
   defaultOptions,
   fields,
@@ -12,15 +15,7 @@ import {
   optionOrder,
   optionsMetadata,
   optionsReducer,
-  type CommonRQBProps,
-  type DemoOption,
 } from 'react-querybuilder/dev';
-import {
-  defaultValidator,
-  QueryBuilder,
-  type ExportFormat,
-  type QueryBuilderProps,
-} from 'react-querybuilder/src';
 import { docsLink } from './constants';
 
 const IE11 = () => {
