@@ -10,7 +10,6 @@ import {
   QueryBuilder,
 } from 'react-querybuilder';
 import { fields } from './fields';
-import './index.scss';
 import { initialQuery, initialQueryIC } from './initialQuery';
 import './styles.scss';
 import type {
