@@ -1,8 +1,9 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { chakraControlElements } from '@react-querybuilder/chakra';
+import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
+import './styles.scss';
 
 const chakraTheme = extendTheme({
   config: { initialColorMode: 'light', useSystemColorMode: false },
@@ -24,12 +25,13 @@ export const App = () => {
   return (
     <div>
       <ChakraProvider theme={chakraTheme}>
-        <QueryBuilder
-          fields={fields}
-          query={query}
-          onQueryChange={q => setQuery(q)}
-          controlElements={chakraControlElements}
-        />
+        <QueryBuilderChakra>
+          <QueryBuilder
+            fields={fields}
+            query={query}
+            onQueryChange={q => setQuery(q)}
+          />
+        </QueryBuilderChakra>
       </ChakraProvider>
       <h4>Query</h4>
       <pre>

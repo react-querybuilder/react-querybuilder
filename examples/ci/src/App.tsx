@@ -1,3 +1,4 @@
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { useReducer, useState } from 'react';
 import type {
   DefaultRuleGroupType,
@@ -11,6 +12,7 @@ import {
 import { fields } from './fields';
 import './index.scss';
 import { initialQuery, initialQueryIC } from './initialQuery';
+import './styles.scss';
 import type {
   DefaultQBPropsNoDefaultQuery,
   DefaultQBPropsNoDefaultQueryIC,
@@ -37,23 +39,25 @@ export const App = () => {
 
   return (
     <div>
-      {independentCombinators ? (
-        <QueryBuilder
-          key="rqb-ic"
-          {...(commonProps as unknown as DefaultQBPropsNoDefaultQueryIC)}
-          independentCombinators
-          query={queryIC}
-          onQueryChange={qIC => setQueryIC(qIC)}
-        />
-      ) : (
-        <QueryBuilder
-          key="rqb"
-          {...(commonProps as DefaultQBPropsNoDefaultQuery)}
-          independentCombinators={false}
-          query={query}
-          onQueryChange={q => setQuery(q)}
-        />
-      )}
+      <QueryBuilderDnD>
+        {independentCombinators ? (
+          <QueryBuilder
+            key="rqb-ic"
+            {...(commonProps as unknown as DefaultQBPropsNoDefaultQueryIC)}
+            independentCombinators
+            query={queryIC}
+            onQueryChange={qIC => setQueryIC(qIC)}
+          />
+        ) : (
+          <QueryBuilder
+            key="rqb"
+            {...(commonProps as DefaultQBPropsNoDefaultQuery)}
+            independentCombinators={false}
+            query={query}
+            onQueryChange={q => setQuery(q)}
+          />
+        )}
+      </QueryBuilderDnD>
       <div>
         {optionsOrder.map(optionName => (
           <label key={optionName}>

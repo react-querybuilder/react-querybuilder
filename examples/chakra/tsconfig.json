@@ -1,17 +1,9 @@
 {
+  "include": ["./src/**/*"],
   "compilerOptions": {
-    "isolatedModules": true,
-    "declaration": true,
-    "sourceMap": true,
-    "strictNullChecks": true,
     "strict": true,
-    "lib": ["dom", "es2020"],
-    "module": "es6",
-    "moduleResolution": "node",
-    "jsx": "react-jsx",
-    "target": "esnext",
     "esModuleInterop": true,
-    "baseUrl": "."
-  },
-  "include": ["./src"]
+    "lib": ["dom", "es2020"],
+    "jsx": "react-jsx"
+  }
 }

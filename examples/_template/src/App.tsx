@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
+import './styles.scss';
 
 // __ADDITIONAL_DECLARATIONS__
 
