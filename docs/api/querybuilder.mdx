@@ -780,9 +780,24 @@ When the `independentCombinators` option is enabled, the `query` (or `defaultQue
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#enableDragAndDrop=true)
 
-Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
+:::caution
 
-Drag-and-drop functionality is only enabled when `<QueryBuilder />` is wrapped in `QueryBuilderDnD` from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd). [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) will also need to be installed.
+This prop does not need to be set directly. If used directly, it has no effect unless the following conditions are met:
+
+1. A `QueryBuilderDnD` context provider from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd) is rendered higher up in the component tree.
+2. [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) are also installed.
+
+If those conditions are met, and `enableDragAndDrop` is not explicitly set to `false` on the `<QueryBuilder />` element, then `enableDragAndDrop` is implicitly set to `true`.
+
+:::
+
+When `true` (under the conditions detailed above), a drag handle is displayed on the left-hand side of each group header and each rule. Clicking and dragging the handle element allows users to visually reorder the rules and groups.
+
+#### Example usage
+
+```bash
+yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+```
 
 ```tsx
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
@@ -790,14 +805,14 @@ import { QueryBuilder } from 'react-querybuilder';
 
 const App = () => (
   <QueryBuilderDnD>
-    <QueryBuilder enableDragAndDrop />
+    <QueryBuilder />
   </QueryBuilderDnD>
 );
 ```
 
 :::tip
 
-If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), wrap `<QueryBuilder />` in `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD`. They add the same functionality, but the former will rely on your pre-existing `<DndProvider />`. The latter implements its own provider and will clash with a separate `<DndProvider />` higher up in the component tree. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
+If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former relies on your pre-existing `<DndProvider />` (as long as it is higher up in the component tree). The latter renders its own provider which will clash with an ancestor `DndProvider`. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
 
 :::
 
