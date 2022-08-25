@@ -2572,6 +2572,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chakra-ui/styled-system@npm:^2.2.7":
+  version: 2.2.8
+  resolution: "@chakra-ui/styled-system@npm:2.2.8"
+  dependencies:
+    csstype: ^3.0.11
+    lodash.mergewith: 4.6.2
+  checksum: 31b182847dc05bbf703ee27a34606a4c19de5ed365e5cf371e7bae73790dc529467c205b754822e8bb1dd68b8a3dd0b06c3fa563b34bcc244f5d32ab11c53e4f
+  languageName: node
+  linkType: hard
+
 "@chakra-ui/switch@npm:2.0.10":
   version: 2.0.10
   resolution: "@chakra-ui/switch@npm:2.0.10"
@@ -5284,7 +5294,7 @@ __metadata:
     react: ">=16.8.0"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ">=5"
+    react-querybuilder: ^4.5.2
   languageName: unknown
   linkType: soft
 

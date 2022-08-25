@@ -43,6 +43,6 @@
     "react": ">=16.8.0",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
-    "react-querybuilder": ">=5"
+    "react-querybuilder": "^4.5.2"
   }
 }
