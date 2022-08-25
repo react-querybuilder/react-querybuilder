@@ -106,9 +106,11 @@ testValueSelector(generateWrapper(MaterialValueSelector));
 
 it('renders with composition', () => {
   render(
-    <QueryBuilderMaterial>
-      <QueryBuilder />
-    </QueryBuilderMaterial>
+    <ThemeProvider theme={theme}>
+      <QueryBuilderMaterial>
+        <QueryBuilder />
+      </QueryBuilderMaterial>
+    </ThemeProvider>
   );
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   expect(

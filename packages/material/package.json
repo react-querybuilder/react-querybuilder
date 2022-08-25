@@ -25,10 +25,10 @@
     "type-check:watch": "yarn type-check --watch"
   },
   "devDependencies": {
-    "@emotion/react": ">=11.0.0",
+    "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
-    "@mui/icons-material": "^5.8.4",
-    "@mui/material": "^5.10.1",
+    "@mui/icons-material": "^5.10.2",
+    "@mui/material": "^5.10.2",
     "@testing-library/react": "^13.3.0",
     "@types/react": "^18.0.17",
     "@vitejs/plugin-react": "^2.0.1",
@@ -40,8 +40,8 @@
     "vite": "^3.0.9"
   },
   "peerDependencies": {
-    "@emotion/react": ">=11.0.0",
-    "@emotion/styled": ">=11.0.0",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@mui/icons-material": ">=5.0.0",
     "@mui/material": ">=5.0.0",
     "react": ">=16.8.0",

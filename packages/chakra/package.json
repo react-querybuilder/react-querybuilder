@@ -25,9 +25,9 @@
     "type-check:watch": "yarn type-check --watch"
   },
   "devDependencies": {
-    "@chakra-ui/icons": "^2.0.8",
-    "@chakra-ui/react": "^2.2.8",
-    "@chakra-ui/system": "^2.2.6",
+    "@chakra-ui/icons": "^2.0.9",
+    "@chakra-ui/react": "^2.2.9",
+    "@chakra-ui/system": "^2.2.7",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@testing-library/react": "^13.3.0",

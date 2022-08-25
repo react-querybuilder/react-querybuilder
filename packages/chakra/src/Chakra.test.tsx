@@ -49,9 +49,11 @@ testValueSelector(generateWrapper(ChakraValueSelector), { multi: true });
 
 it('renders with composition', () => {
   render(
-    <QueryBuilderChakra>
-      <QueryBuilder />
-    </QueryBuilderChakra>
+    <ThemeProvider theme={theme}>
+      <QueryBuilderChakra>
+        <QueryBuilder />
+      </QueryBuilderChakra>
+    </ThemeProvider>
   );
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   expect(screen.getByTestId(TestID.ruleGroup).querySelector('button')).toHaveClass('chakra-button');
