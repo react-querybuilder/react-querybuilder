@@ -171,8 +171,8 @@ The array of combinators that should be used for RuleGroups. The default set inc
 
 ```ts
 interface Controls {
-  addGroupAction?: React.ComponentType<ActionWithRulesProps>;
-  addRuleAction?: React.ComponentType<ActionWithRulesProps>;
+  addGroupAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
+  addRuleAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
   cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction?: React.ComponentType<ActionProps>;
   combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
@@ -199,11 +199,11 @@ This is a custom controls object that allows you to override the default control
 By default a `<button />` is used. The following props are passed:
 
 ```ts
-interface ActionWithRulesProps {
+interface ActionWithRulesAndAddersProps {
   label: string; // translations.addGroup.label, e.g. "+Group"
   title: string; // translations.addGroup.title, e.g. "Add group"
   className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  handleOnClick: (e: React.MouseEvent, context?: any) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
@@ -267,11 +267,11 @@ interface ActionWithRulesProps {
 By default a `<button />` is used. The following props are passed:
 
 ```ts
-interface ActionWithRulesProps {
+interface ActionWithRulesAndAddersProps {
   label: string; // translations.addGroup.label, e.g. "+Rule"
   title: string; // translations.addGroup.title, e.g. "Add rule"
   className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
+  handleOnClick: (e: React.MouseEvent, context?: any) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
@@ -550,9 +550,9 @@ This function returns the default value for new rules.
 
 ### `onAddRule`
 
-`(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny) => RuleType | false`
+`(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny, context?: any) => RuleType | false`
 
-This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy.
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` callback prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary information.
 
 :::tip
 
@@ -562,9 +562,9 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 ### `onAddGroup`
 
-`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG) => RG | false`
+`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG, context?: any) => RG | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy.
+This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` callback prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary information.
 
 :::tip
 
