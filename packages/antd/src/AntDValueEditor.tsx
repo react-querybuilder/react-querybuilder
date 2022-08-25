@@ -161,6 +161,7 @@ export const AntDValueEditor = ({
           onChange={dates =>
             // TODO: the next line is currently untested (see the
             // "should render a date range picker" test in ./AntD.test.tsx)
+            /* istanbul ignore next */
             handleOnChange(dates?.map(d => d?.format(moment.HTML5_FMT.DATE)).join(','))
           }
         />

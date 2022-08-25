@@ -42,7 +42,10 @@ export const configs = {
   },
   antd: {
     name: 'Ant Design',
-    dependencies: { antd: '^4.20.5' },
+    dependencies: {
+      '@ant-design/icons': '^4.7.0',
+      antd: '^4.20.5',
+    },
     scssPre: [`@import 'antd/dist/antd.compact.css';`],
     scssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
     tsxImports: [`import { QueryBuilderAntD } from '@react-querybuilder/antd';`],
@@ -58,6 +61,7 @@ export const configs = {
     dependencies: {
       bootstrap: '^5.1.3',
       'bootstrap-icons': '^1.8.2',
+      '@popperjs/core': '^2.11.5',
     },
     scssPre: [`$code-color: #333333;`, `@import 'bootstrap/scss/bootstrap.scss';`],
     scssPost: [`.queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`],

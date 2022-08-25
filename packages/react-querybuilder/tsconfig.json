@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "ruleGroupsIC": ["src/types/ruleGroupsIC.ts"]
+      "ruleGroupsIC": ["src/types/ruleGroupsIC"]
     }
   },
   "include": ["./src/", "./dev/"]

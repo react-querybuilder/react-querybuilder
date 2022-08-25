@@ -8,12 +8,14 @@ const ruleGroupClassname = 'getCompatContextProvider-ruleGroup';
 const buttonClassname = 'getCompatContextProvider-button';
 const buttonText = 'Button';
 const propsWithClassnames: GetCompatContextProviderProps = {
+  key: 'testWith',
   controlClassnames: { ruleGroup: ruleGroupClassname },
   controlElements: {
     addRuleAction: () => <button className={buttonClassname}>{buttonText}</button>,
   },
 };
 const propsWithoutClassnames: GetCompatContextProviderProps = {
+  key: 'testWithout',
   controlElements: propsWithClassnames.controlElements,
 };
 

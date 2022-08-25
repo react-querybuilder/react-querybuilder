@@ -5,12 +5,12 @@
   "version": "1.0.0",
   "main": "src/index.tsx",
   "dependencies": {
-    "@react-querybuilder/dnd": "*",
+    "@react-querybuilder/dnd": "^4.5.2",
     "react": "^18.2.0",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^4.5.0"
+    "react-querybuilder": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.9",

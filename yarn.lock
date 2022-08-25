@@ -5154,6 +5154,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
+    "@testing-library/react": ^13.3.0
     "@types/react": ^18.0.17
     "@vitejs/plugin-react": ^2.0.1
     bootstrap-icons: ^1.9.1
@@ -5174,6 +5175,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
+    "@testing-library/react": ^13.3.0
     "@types/react": ^18.0.17
     "@vitejs/plugin-react": ^2.0.1
     react: ^18.2.0
@@ -5197,6 +5199,7 @@ __metadata:
     "@chakra-ui/system": ^2.2.6
     "@emotion/react": ^11.10.0
     "@emotion/styled": ^11.10.0
+    "@testing-library/react": ^13.3.0
     "@types/react": ^18.0.17
     "@vitejs/plugin-react": ^2.0.1
     framer-motion: ^6.5.1
@@ -5263,6 +5266,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
+    "@testing-library/react": ^13.3.0
     "@types/node": ^18.7.8
     "@types/react": ^18.0.17
     "@vitejs/plugin-react": ^2.0.1
@@ -5291,6 +5295,7 @@ __metadata:
     "@emotion/styled": ^11.10.0
     "@mui/icons-material": ^5.8.4
     "@mui/material": ^5.10.1
+    "@testing-library/react": ^13.3.0
     "@types/react": ^18.0.17
     "@vitejs/plugin-react": ^2.0.1
     react: ^18.2.0
@@ -14304,6 +14309,7 @@ __metadata:
     regenerator-runtime: ^0.13.9
     replace: ^1.2.1
     rimraf: ^3.0.2
+    ruleGroupsIC: "link:./src/types/ruleGroupsIC"
     sass: ^1.54.5
     typescript: ^4.7.4
     vite: ^3.0.9
@@ -14927,6 +14933,12 @@ __metadata:
   checksum: b179c68249584565ddb5664a241e8e48c293b2207718d885b08ee25797d98857a383f06b544bb89819407da5a71557f4713309a278f61c4778bb32b1d3321a1c
   languageName: node
   linkType: hard
+
+"ruleGroupsIC@link:./src/types/ruleGroupsIC::locator=react-querybuilder%40workspace%3Apackages%2Freact-querybuilder":
+  version: 0.0.0-use.local
+  resolution: "ruleGroupsIC@link:./src/types/ruleGroupsIC::locator=react-querybuilder%40workspace%3Apackages%2Freact-querybuilder"
+  languageName: node
+  linkType: soft
 
 "run-async@npm:^2.4.0":
   version: 2.4.1

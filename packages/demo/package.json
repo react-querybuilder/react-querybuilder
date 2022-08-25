@@ -26,6 +26,7 @@
     "@react-querybuilder/bootstrap": "^4.5.2",
     "@react-querybuilder/bulma": "^4.5.2",
     "@react-querybuilder/chakra": "^4.5.2",
+    "@react-querybuilder/dnd": "^4.5.2",
     "@react-querybuilder/material": "^4.5.2",
     "antd": "^4.22.6",
     "bootstrap": "^5.2.0",
