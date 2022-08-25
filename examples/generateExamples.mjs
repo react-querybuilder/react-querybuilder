@@ -128,7 +128,11 @@ for (const exampleID in configs) {
   // #endregion
 
   // #region README.md
-  const exampleREADMEmd = templateREADMEmd.replace('/examples/_template', `/examples/${exampleID}`);
+  const exampleREADMEmd =
+    templateREADMEmd.replace('/examples/_template', `/examples/${exampleID}`) +
+    '\n\n> _Development note: Do not modify these files directly. Edit corresponding files in the ' +
+    '[_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), then run ' +
+    '`yarn generate-examples` from the repository root directory._';
   await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
