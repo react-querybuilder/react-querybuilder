@@ -476,7 +476,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
-  const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
+  const onRuleAdd = (rule: RuleType, parentPath: number[], context?: any) => {
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
       // istanbul ignore else
       if (debugMode) {
@@ -484,7 +484,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       }
       return;
     }
-    const newRule = onAddRule(rule, parentPath, query);
+    const newRule = onAddRule(rule, parentPath, query, context);
     if (!newRule) {
       // istanbul ignore else
       if (debugMode) {
@@ -496,7 +496,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     dispatch(newQuery);
   };
 
-  const onGroupAdd = (ruleGroup: RG, parentPath: number[]) => {
+  const onGroupAdd = (ruleGroup: RG, parentPath: number[], context?: any) => {
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
       // istanbul ignore else
       if (debugMode) {
@@ -504,7 +504,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       }
       return;
     }
-    const newGroup = onAddGroup(ruleGroup, parentPath, query);
+    const newGroup = onAddGroup(ruleGroup, parentPath, query, context);
     if (!newGroup) {
       // istanbul ignore else
       if (debugMode) {

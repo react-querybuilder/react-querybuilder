@@ -88,23 +88,23 @@ export const RuleGroup = ({
     }
   };
 
-  const addRule = (event: ReactMouseEvent) => {
+  const addRule = (event: ReactMouseEvent, context?: any) => {
     event.preventDefault();
     event.stopPropagation();
 
     if (!disabled) {
       const newRule = createRule();
-      onRuleAdd(newRule, path);
+      onRuleAdd(newRule, path, context);
     }
   };
 
-  const addGroup = (event: ReactMouseEvent) => {
+  const addGroup = (event: ReactMouseEvent, context?: any) => {
     event.preventDefault();
     event.stopPropagation();
 
     if (!disabled) {
       const newGroup = createRuleGroup();
-      onGroupAdd(newGroup, path);
+      onGroupAdd(newGroup, path, context);
     }
   };
 

@@ -45,6 +45,14 @@ export interface ActionWithRulesProps extends ActionProps {
   rules?: RuleOrGroupArray;
 }
 
+export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
+  /**
+   * Triggers the addition of a new rule or group. The second parameter will
+   * be forwarded to the `onAddRule` or `onAddGroup` callback, appropriately.
+   */
+  handleOnClick(e: ReactMouseEvent, context?: any): void;
+}
+
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
   path: number[];
@@ -53,8 +61,8 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
 }
 
 export interface Controls {
-  addGroupAction: ComponentType<ActionWithRulesProps>;
-  addRuleAction: ComponentType<ActionWithRulesProps>;
+  addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
+  addRuleAction: ComponentType<ActionWithRulesAndAddersProps>;
   cloneGroupAction: ComponentType<ActionWithRulesProps>;
   cloneRuleAction: ComponentType<ActionProps>;
   combinatorSelector: ComponentType<CombinatorSelectorProps>;
@@ -298,12 +306,12 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * This callback is invoked before a new rule is added. The function should either manipulate
      * the rule and return it, or return `false` to cancel the addition of the rule.
      */
-    onAddRule?(rule: RuleType, parentPath: number[], query: RG): RuleType | false;
+    onAddRule?(rule: RuleType, parentPath: number[], query: RG, context?: any): RuleType | false;
     /**
      * This callback is invoked before a new group is added. The function should either manipulate
      * the group and return it, or return `false` to cancel the addition of the group.
      */
-    onAddGroup?(ruleGroup: RG, parentPath: number[], query: RG): RG | false;
+    onAddGroup?(ruleGroup: RG, parentPath: number[], query: RG, context?: any): RG | false;
     /**
      * This is a callback function that is invoked anytime the query configuration changes.
      */

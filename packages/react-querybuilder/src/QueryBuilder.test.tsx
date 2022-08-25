@@ -15,6 +15,7 @@ import {
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
 import type {
+  ActionWithRulesAndAddersProps,
   Field,
   NameLabelPair,
   OptionGroup,
@@ -753,6 +754,31 @@ describe('onAddRule prop', () => {
 
     expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('modified');
   });
+
+  it('passes handleOnClick context to onAddRule', async () => {
+    const onQueryChange = jest.fn();
+    const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
+    const AddRuleAction = (props: ActionWithRulesAndAddersProps) => (
+      <>
+        <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
+        <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
+      </>
+    );
+    render(
+      <QueryBuilder
+        onAddRule={(_r, _pp, _q, c) => c && rule}
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+        controlElements={{ addRuleAction: AddRuleAction }}
+      />
+    );
+
+    await user.click(screen.getByText('Fail'));
+    expect(onQueryChange).not.toHaveBeenCalled();
+
+    await user.click(screen.getByText('Succeed'));
+    expect(onQueryChange.mock.calls[0][0].rules[0].value).toBe('modified');
+  });
 });
 
 describe('onAddGroup prop', () => {
@@ -783,6 +809,31 @@ describe('onAddGroup prop', () => {
     await user.click(screen.getByTestId(TestID.addGroup));
 
     expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('fake');
+  });
+
+  it('passes handleOnClick context to onAddGroup', async () => {
+    const onQueryChange = jest.fn();
+    const ruleGroup: RuleGroupType = { combinator: 'fake', rules: [] };
+    const AddGroupAction = (props: ActionWithRulesAndAddersProps) => (
+      <>
+        <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
+        <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
+      </>
+    );
+    render(
+      <QueryBuilder
+        onAddGroup={(_g, _pp, _q, c) => c && ruleGroup}
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+        controlElements={{ addGroupAction: AddGroupAction }}
+      />
+    );
+
+    await user.click(screen.getByText('Fail'));
+    expect(onQueryChange).not.toHaveBeenCalled();
+
+    await user.click(screen.getByText('Succeed'));
+    expect(onQueryChange.mock.calls[0][0].rules[0].combinator).toBe('fake');
   });
 });
 
