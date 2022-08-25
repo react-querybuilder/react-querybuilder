@@ -5237,6 +5237,7 @@ __metadata:
     "@react-querybuilder/bootstrap": ^4.5.2
     "@react-querybuilder/bulma": ^4.5.2
     "@react-querybuilder/chakra": ^4.5.2
+    "@react-querybuilder/dnd": ^4.5.2
     "@react-querybuilder/material": ^4.5.2
     "@types/react": ^18.0.17
     "@types/react-dom": ^18.0.6
@@ -5262,7 +5263,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/dnd@workspace:packages/dnd":
+"@react-querybuilder/dnd@^4.5.2, @react-querybuilder/dnd@workspace:packages/dnd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
