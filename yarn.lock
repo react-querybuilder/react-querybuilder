@@ -1889,19 +1889,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-client@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@codesandbox/sandpack-client@npm:1.4.0"
+"@codesandbox/sandpack-client@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "@codesandbox/sandpack-client@npm:1.5.4"
   dependencies:
     codesandbox-import-utils: ^1.2.3
     lodash.isequal: ^4.5.0
-  checksum: a23599d5edc709c294aba6cb08888f883c79d5e4529868154ce7cf724ebba43672c8ee718d56a6f4afbc52d132a427f59e7e5849f916633b01ae97dc3e77a3dd
+  checksum: d99367308af8d1f2b5fd9609a219a8bc3de09b3c9395b424d2c3bf6229245f85ae8979078a1178cf49b556d962545fb337db4df2d85fa393462906f08ef53a49
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-react@npm:^1.1.0":
-  version: 1.5.1
-  resolution: "@codesandbox/sandpack-react@npm:1.5.1"
+"@codesandbox/sandpack-react@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "@codesandbox/sandpack-react@npm:1.5.4"
   dependencies:
     "@code-hike/classer": ^0.0.0-aa6efee
     "@codemirror/closebrackets": ^0.19.0
@@ -1918,7 +1918,7 @@ __metadata:
     "@codemirror/matchbrackets": ^0.19.3
     "@codemirror/state": ^0.19.6
     "@codemirror/view": ^0.19.32
-    "@codesandbox/sandpack-client": ^1.4.0
+    "@codesandbox/sandpack-client": ^1.5.4
     "@react-hook/intersection-observer": ^3.1.1
     "@stitches/core": ^1.2.6
     codesandbox-import-util-types: ^2.2.3
@@ -1929,7 +1929,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 162efdf19cae6bbf5b4676895ce59c96ad9aa852d83bd60ee96e428909b892536b713dd94a278337baffa01d6267f98b0de6b27ace92f8b70075b43837171955
+  checksum: 4106c82c4e7a239b2cd5e3a52232de292630bfe8a6fa3cab8a4dd9cad2949c6077831a9544216aa610f726be5d7c0b8ab9896ed0498417758ce669074e6aeb63
   languageName: node
   linkType: hard
 
@@ -2946,7 +2946,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@svgr/webpack@npm:^6.1.2, @svgr/webpack@npm:^6.2.1":
+"@svgr/webpack@npm:^6.2.1, @svgr/webpack@npm:^6.3.1":
   version: 6.3.1
   resolution: "@svgr/webpack@npm:6.3.1"
   dependencies:
@@ -2985,7 +2985,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/docusaurus@npm:^1.0.4":
+"@tsconfig/docusaurus@npm:^1.0.6":
   version: 1.0.6
   resolution: "@tsconfig/docusaurus@npm:1.0.6"
   checksum: fb0d7965c01fe64fc6369a72695b903d654bd5fb145f373d707c2bae3c2d828703517d812cef1c041ae44b108f44e52778b9d9837a54fdf782e68e6619a90a4d
@@ -4369,7 +4369,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.1, clsx@npm:^1.2.1":
+"clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
@@ -5144,7 +5144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-sass@npm:^0.2.1":
+"docusaurus-plugin-sass@npm:^0.2.2":
   version: 0.2.2
   resolution: "docusaurus-plugin-sass@npm:0.2.2"
   dependencies:
@@ -8819,7 +8819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prism-react-renderer@npm:^1.2.1, prism-react-renderer@npm:^1.3.5":
+"prism-react-renderer@npm:^1.3.5":
   version: 1.3.5
   resolution: "prism-react-renderer@npm:1.3.5"
   peerDependencies:
@@ -9109,7 +9109,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.1.0":
+"react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -9203,29 +9203,29 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-querybuilder.github.io@workspace:."
   dependencies:
-    "@codesandbox/sandpack-react": ^1.1.0
+    "@codesandbox/sandpack-react": ^1.5.4
     "@docusaurus/core": ^2.0.1
     "@docusaurus/module-type-aliases": ^2.0.1
     "@docusaurus/preset-classic": ^2.0.1
     "@docusaurus/theme-search-algolia": ^2.0.1
     "@mdx-js/react": ^1.6.21
-    "@svgr/webpack": ^6.1.2
-    "@tsconfig/docusaurus": ^1.0.4
-    clsx: ^1.1.1
-    docusaurus-plugin-sass: ^0.2.1
+    "@svgr/webpack": ^6.3.1
+    "@tsconfig/docusaurus": ^1.0.6
+    clsx: ^1.2.1
+    docusaurus-plugin-sass: ^0.2.2
     file-loader: ^6.2.0
-    prism-react-renderer: ^1.2.1
-    react: ^18.1.0
-    react-dom: ^18.1.0
-    react-querybuilder: ^4.0.0
-    remark-typescript-tools: ^1.0.10
-    sass: ^1.43.4
-    typescript: ^4.4.4
+    prism-react-renderer: ^1.3.5
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-querybuilder: ^4.5.2
+    remark-typescript-tools: ^1.0.11
+    sass: ^1.54.5
+    typescript: ^4.7.4
     url-loader: ^4.1.1
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@npm:^4.0.0":
+"react-querybuilder@npm:^4.5.2":
   version: 4.5.2
   resolution: "react-querybuilder@npm:4.5.2"
   dependencies:
@@ -9301,7 +9301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.1.0":
+"react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -9535,7 +9535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remark-typescript-tools@npm:^1.0.10":
+"remark-typescript-tools@npm:^1.0.11":
   version: 1.0.11
   resolution: "remark-typescript-tools@npm:1.0.11"
   dependencies:
@@ -9756,7 +9756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.43.4":
+"sass@npm:^1.54.5":
   version: 1.54.5
   resolution: "sass@npm:1.54.5"
   dependencies:
@@ -10683,7 +10683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.4.4":
+"typescript@npm:^4.7.4":
   version: 4.7.4
   resolution: "typescript@npm:4.7.4"
   bin:
@@ -10693,7 +10693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.4.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
   resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=a1c5e5"
   bin:
