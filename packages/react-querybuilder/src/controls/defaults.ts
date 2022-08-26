@@ -1,3 +1,4 @@
+import { InlineCombinator } from '../InlineCombinator';
 import { Rule } from '../Rule';
 import { RuleGroup } from '../RuleGroup';
 import type { Controls } from '../types';
@@ -15,6 +16,7 @@ export const defaultControlElements: Controls = {
   addRuleAction: ActionElement,
   removeRuleAction: ActionElement,
   combinatorSelector: ValueSelector,
+  inlineCombinator: InlineCombinator,
   fieldSelector: ValueSelector,
   operatorSelector: ValueSelector,
   valueEditor: ValueEditor,

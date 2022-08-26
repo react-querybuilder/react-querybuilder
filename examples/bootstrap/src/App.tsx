@@ -1,10 +1,8 @@
-import {
-  bootstrapControlClassnames,
-  bootstrapControlElements,
-} from '@react-querybuilder/bootstrap';
+import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
+import './styles.scss';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -21,13 +19,13 @@ export const App = () => {
 
   return (
     <div>
-      <QueryBuilder
-        fields={fields}
-        query={query}
-        onQueryChange={q => setQuery(q)}
-        controlElements={bootstrapControlElements}
-        controlClassnames={bootstrapControlClassnames}
-      />
+      <QueryBuilderBootstrap>
+        <QueryBuilder
+          fields={fields}
+          query={query}
+          onQueryChange={q => setQuery(q)}
+        />
+      </QueryBuilderBootstrap>
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

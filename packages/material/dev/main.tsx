@@ -1,5 +1,5 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { StrictMode } from 'react';
+import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from 'react-querybuilder/dev';
 import { materialControlElements } from '../src';
@@ -7,9 +7,9 @@ import { materialControlElements } from '../src';
 const muiTheme = createTheme();
 
 createRoot(document.getElementById('app')!).render(
-  <StrictMode>
+  <React.StrictMode>
     <ThemeProvider theme={muiTheme}>
       <App controlElements={materialControlElements} />
     </ThemeProvider>
-  </StrictMode>
+  </React.StrictMode>
 );

@@ -1,10 +1,14 @@
-import { QueryBuilder, QueryBuilderWithoutDndProvider } from './QueryBuilder';
+import { enableES5 } from 'immer';
+import { QueryBuilder } from './QueryBuilder';
+enableES5();
 export * from './controls/';
 export * from './defaults';
 export * from './InlineCombinator';
+export * as messages from './messages';
+export * from './QueryBuilderContext';
 export * from './Rule';
 export * from './RuleGroup';
 export * from './types';
 export * from './utils';
-export { QueryBuilder, QueryBuilderWithoutDndProvider };
+export { QueryBuilder };
 export default QueryBuilder;

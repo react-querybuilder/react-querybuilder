@@ -16,8 +16,10 @@ interface ExampleConfig {
   tsxImports: string[];
   additionalDeclarations: string[];
   wrapper: [string, string] | null;
+  props: string[];
   compileToJS: boolean;
   isCompatPackage: boolean;
+  enableDnD: boolean;
 }
 
 export type ExampleConfigs = Record<string, ExampleConfig>;

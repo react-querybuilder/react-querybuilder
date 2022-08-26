@@ -1,4 +1,5 @@
 import type { Classnames, Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
@@ -24,5 +25,11 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   value: 'form-control form-control-sm',
   valueSource: 'form-select form-select-sm',
 };
+
+export const QueryBuilderBootstrap = getCompatContextProvider({
+  key: 'bootstrap',
+  controlClassnames: bootstrapControlClassnames,
+  controlElements: bootstrapControlElements,
+});
 
 export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };

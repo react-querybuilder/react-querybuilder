@@ -14,13 +14,13 @@ yarn add react-querybuilder @react-querybuilder/bootstrap bootstrap bootstrap-ic
 
 ## Usage
 
+This package exports `bootstrapControlClassnames` and `bootstrapControlElements` which can be assigned directly to the `controlClassnames` and `controlElements` props, respectively, on `<QueryBuilder />`. Each component is also exported individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderBootstrap />`, like this:
+
 ```tsx
-import {
-  bootstrapControlClassnames,
-  bootstrapControlElements,
-} from '@react-querybuilder/bootstrap';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.scss';
 import 'bootstrap/scss/bootstrap.scss';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -31,13 +31,9 @@ const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      controlClassnames={bootstrapControlClassnames}
-      controlElements={bootstrapControlElements}
-    />
+    <QueryBuilderBootstrap>
+      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+    </QueryBuilderBootstrap>
   );
 };
 ```

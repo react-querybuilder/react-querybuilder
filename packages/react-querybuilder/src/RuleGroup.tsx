@@ -1,11 +1,9 @@
-import { Fragment, useRef, type MouseEvent as ReactMouseEvent } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
-import { defaultCombinators, DNDType, standardClassnames, TestID } from './defaults';
-import { InlineCombinator } from './InlineCombinator';
-import { c, getValidationClassNames } from './internal';
-import { useDeprecatedProps } from './internal/hooks';
-import type { DraggedItem, RuleGroupProps } from './types';
-import { getParentPath, isAncestor, pathsAreEqual } from './utils';
+import { Fragment, type MouseEvent as ReactMouseEvent } from 'react';
+import { defaultCombinators, standardClassnames, TestID } from './defaults';
+import { getValidationClassNames } from './internal';
+import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
+import type { RuleGroupProps } from './types';
+import { c, getParentPath, pathsAreEqual } from './utils';
 
 export const RuleGroup = ({
   id,
@@ -20,6 +18,12 @@ export const RuleGroup = ({
   combinator: combinatorProp,
   rules: rulesProp,
   not: notProp,
+  // Drag-and-drop
+  dragMonitorId = '',
+  dropMonitorId = '',
+  previewRef = null,
+  dragRef = null,
+  dropRef = null,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -27,6 +31,7 @@ export const RuleGroup = ({
     controls: {
       dragHandle: DragHandleControlElement,
       combinatorSelector: CombinatorSelectorControlElement,
+      inlineCombinator: InlineCombinatorControlElement,
       notToggle: NotToggleControlElement,
       addRuleAction: AddRuleActionControlElement,
       addGroupAction: AddGroupActionControlElement,
@@ -45,6 +50,7 @@ export const RuleGroup = ({
     showLockButtons,
     validationMap,
     disabledPaths,
+    enableDragAndDrop,
   } = schema;
   const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
@@ -59,50 +65,10 @@ export const RuleGroup = ({
 
   useDeprecatedProps('ruleGroup', !!ruleGroup);
 
-  const previewRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<HTMLSpanElement>(null);
-  const dropRef = useRef<HTMLDivElement>(null);
-  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(
-    () => ({
-      type: DNDType.ruleGroup,
-      item: (): DraggedItem => ({ path }),
-      canDrag: !disabled,
-      collect: monitor => ({
-        isDragging: !disabled && monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId(),
-      }),
-    }),
-    [disabled, path]
+  useReactDndWarning(
+    enableDragAndDrop,
+    !!(dragMonitorId || dropMonitorId || previewRef || dragRef || dropRef)
   );
-  const [{ isOver, dropMonitorId }, drop] = useDrop(
-    () => ({
-      accept: [DNDType.rule, DNDType.ruleGroup],
-      canDrop: (item: DraggedItem) => {
-        if (disabled) return false;
-        const parentItemPath = getParentPath(item.path);
-        const itemIndex = item.path[item.path.length - 1];
-        // Don't allow drop if 1) item is ancestor of drop target,
-        // 2) item is first child and is dropped on its own group header,
-        // or 3) the group is dropped on itself
-        return !(
-          isAncestor(item.path, path) ||
-          (pathsAreEqual(path, parentItemPath) && itemIndex === 0) ||
-          pathsAreEqual(path, item.path)
-        );
-      },
-      collect: monitor => ({
-        isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId(),
-      }),
-      drop: (item: DraggedItem, _monitor) => !disabled && moveRule(item.path, [...path, 0]),
-    }),
-    [disabled, moveRule, path]
-  );
-  if (path.length > 0) {
-    drag(dragRef);
-    preview(previewRef);
-  }
-  drop(dropRef);
 
   const onCombinatorChange = (value: any) => {
     if (!disabled) {
@@ -122,23 +88,23 @@ export const RuleGroup = ({
     }
   };
 
-  const addRule = (event: ReactMouseEvent) => {
+  const addRule = (event: ReactMouseEvent, context?: any) => {
     event.preventDefault();
     event.stopPropagation();
 
     if (!disabled) {
       const newRule = createRule();
-      onRuleAdd(newRule, path);
+      onRuleAdd(newRule, path, context);
     }
   };
 
-  const addGroup = (event: ReactMouseEvent) => {
+  const addGroup = (event: ReactMouseEvent, context?: any) => {
     event.preventDefault();
     event.stopPropagation();
 
     if (!disabled) {
       const newGroup = createRuleGroup();
-      onGroupAdd(newGroup, path);
+      onGroupAdd(newGroup, path, context);
     }
   };
 
@@ -172,14 +138,11 @@ export const RuleGroup = ({
 
   const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
   const validationClassName = getValidationClassNames(validationResult);
-  const dndDragging = isDragging ? standardClassnames.dndDragging : '';
-  const dndOver = isOver ? standardClassnames.dndOver : '';
   const outerClassName = c(
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
     disabled ? standardClassnames.disabled : '',
-    validationClassName,
-    dndDragging
+    validationClassName
   );
 
   return (
@@ -192,7 +155,7 @@ export const RuleGroup = ({
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      <div ref={dropRef} className={c(standardClassnames.header, classNames.header, dndOver)}>
+      <div ref={dropRef} className={c(standardClassnames.header, classNames.header)}>
         {level > 0 && (
           <DragHandleControlElement
             testID={TestID.dragHandle}
@@ -322,7 +285,7 @@ export const RuleGroup = ({
           return (
             <Fragment key={key}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (
-                <InlineCombinator
+                <InlineCombinatorControlElement
                   options={combinators}
                   value={combinator}
                   title={translations.combinators.title}
@@ -340,7 +303,7 @@ export const RuleGroup = ({
                 />
               )}
               {typeof r === 'string' ? (
-                <InlineCombinator
+                <InlineCombinatorControlElement
                   options={combinators}
                   value={r}
                   title={translations.combinators.title}

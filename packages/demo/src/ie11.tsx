@@ -1,6 +1,10 @@
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import 'core-js';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import type { ExportFormat, QueryBuilderProps } from 'react-querybuilder';
+import { defaultValidator, QueryBuilder } from 'react-querybuilder';
+import type { CommonRQBProps, DemoOption } from 'react-querybuilder/dev';
 import {
   defaultOptions,
   fields,
@@ -11,15 +15,7 @@ import {
   optionOrder,
   optionsMetadata,
   optionsReducer,
-  type CommonRQBProps,
-  type DemoOption,
 } from 'react-querybuilder/dev';
-import {
-  defaultValidator,
-  QueryBuilder,
-  type ExportFormat,
-  type QueryBuilderProps,
-} from 'react-querybuilder/src';
 import { docsLink } from './constants';
 
 const IE11 = () => {
@@ -81,24 +77,26 @@ const IE11 = () => {
   return (
     <div>
       <div className={qbWrapperClassName}>
-        <div style={getQBWrapperStyle(false)}>
-          <QueryBuilder
-            {...commonRQBProps}
-            independentCombinators={false}
-            query={initialQuery}
-            onQueryChange={q => setQuery(q)}
-            controlClassnames={controlClassnames}
-          />
-        </div>
-        <div style={getQBWrapperStyle(true)}>
-          <QueryBuilder
-            {...commonRQBProps}
-            independentCombinators
-            query={initialQueryIC}
-            onQueryChange={q => setQueryIC(q)}
-            controlClassnames={controlClassnames}
-          />
-        </div>
+        <QueryBuilderDnD>
+          <div style={getQBWrapperStyle(false)}>
+            <QueryBuilder
+              {...commonRQBProps}
+              independentCombinators={false}
+              query={initialQuery}
+              onQueryChange={q => setQuery(q)}
+              controlClassnames={controlClassnames}
+            />
+          </div>
+          <div style={getQBWrapperStyle(true)}>
+            <QueryBuilder
+              {...commonRQBProps}
+              independentCombinators
+              query={initialQueryIC}
+              onQueryChange={q => setQueryIC(q)}
+              controlClassnames={controlClassnames}
+            />
+          </div>
+        </QueryBuilderDnD>
       </div>
       <div style={{ marginTop: '1rem' }}>
         <div className="options-list">

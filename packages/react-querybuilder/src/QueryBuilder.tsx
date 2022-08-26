@@ -1,7 +1,4 @@
-import { enableES5 } from 'immer';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DndContext, DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { defaultControlElements } from './controls';
 import {
   defaultCombinators,
@@ -12,17 +9,15 @@ import {
   standardClassnames,
 } from './defaults';
 import {
-  c,
   filterFieldsByComparator,
   generateID,
   getValueSourcesUtil,
-  objectKeys,
   uniqByName,
   uniqOptGroups,
 } from './internal';
 import { useControlledOrUncontrolled } from './internal/hooks';
+import { QueryBuilderContext } from './QueryBuilderContext';
 import type {
-  Classnames,
   Controls,
   Field,
   NameLabelPair,
@@ -34,33 +29,35 @@ import type {
   Schema,
   TranslationsFull,
   UpdateableProperties,
-  ValueSources,
 } from './types';
 import {
   add,
+  c,
   getFirstOption,
   isOptionGroupArray,
   joinWith,
+  mergeClassnames,
   move,
+  objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
   update,
+  usePreferProp,
 } from './utils';
-
-enableES5();
 
 const noop = () => {};
 
-export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGroupTypeIC>({
+export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   defaultQuery,
   query: queryProp,
   fields: fieldsPropOriginal,
   operators = defaultOperators,
   combinators = defaultCombinators,
   translations: translationsProp = defaultTranslations,
-  enableMountQueryChange = true,
-  controlElements,
+  enableMountQueryChange: enableMountQueryChangeProp = true,
+  controlClassnames: controlClassnamesProp,
+  controlElements: controlElementsProp,
   getDefaultField,
   getDefaultOperator,
   getDefaultValue,
@@ -72,7 +69,6 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   onAddRule = r => r,
   onAddGroup = rg => rg,
   onQueryChange = noop,
-  controlClassnames,
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
   showCloneButtons = false,
@@ -82,25 +78,68 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   autoSelectField = true,
   autoSelectOperator = true,
   addRuleToNewGroups = false,
-  enableDragAndDrop = false,
+  enableDragAndDrop: enableDragAndDropProp = false,
   independentCombinators,
   listsAsArrays = false,
   disabled = false,
   validator,
   context,
-  debugMode = false,
+  debugMode: debugModeProp = false,
   onLog = console.log,
 }: QueryBuilderProps<RG>) => {
-  // #region Set up `fields`
+  // #region Inherit context but props take precedence
+  const rqbContext = useContext(QueryBuilderContext);
+
+  const enableMountQueryChange = usePreferProp(
+    true,
+    enableMountQueryChangeProp,
+    rqbContext.enableMountQueryChange
+  );
+
+  // Drag-and-drop should be disabled if context sets it to false because
+  // QueryBuilderDnD might not have loaded react-dnd yet. Therefore we prefer
+  // the prop here only if context is true or undefined.
+  const enableDragAndDrop =
+    usePreferProp(false, enableDragAndDropProp, rqbContext.enableDragAndDrop) &&
+    rqbContext.enableDragAndDrop !== false;
+
+  const debugMode = usePreferProp(false, debugModeProp, rqbContext.debugMode);
+
+  const classNames = useMemo(
+    () =>
+      mergeClassnames(
+        defaultControlClassnames,
+        rqbContext.controlClassnames,
+        controlClassnamesProp
+      ),
+    [rqbContext.controlClassnames, controlClassnamesProp]
+  );
+
+  const controls = useMemo(
+    (): Controls => ({
+      ...defaultControlElements,
+      ...rqbContext.controlElements,
+      ...controlElementsProp,
+    }),
+    [controlElementsProp, rqbContext.controlElements]
+  );
+
   const translations = useMemo((): TranslationsFull => {
     const translationsTemp: Partial<TranslationsFull> = {};
     objectKeys(translationsProp).forEach(t => {
+      const contextTranslations = rqbContext.translations;
       // @ts-expect-error Different keys have different requirements
-      translationsTemp[t] = { ...defaultTranslations[t], ...translationsProp[t] };
+      translationsTemp[t] = {
+        ...defaultTranslations[t],
+        ...contextTranslations,
+        ...translationsProp[t],
+      };
     });
     return { ...defaultTranslations, ...translationsTemp };
-  }, [translationsProp]);
+  }, [rqbContext.translations, translationsProp]);
+  // #endregion
 
+  // #region Set up `fields`
   const defaultField = useMemo(
     (): Field => ({
       id: translations.fields.placeholderName,
@@ -244,7 +283,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   );
 
   const getValueSourcesMain = useCallback(
-    (field: string, operator: string): ValueSources =>
+    (field: string, operator: string) =>
       getValueSourcesUtil(fieldMap[field], operator, getValueSources),
     [fieldMap, getValueSources]
   );
@@ -437,17 +476,17 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
-  const onRuleAdd = (rule: RuleType, parentPath: number[]) => {
+  const onRuleAdd = (rule: RuleType, parentPath: number[], context?: any) => {
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
-      // istanbul ignore if
+      // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.parentPathDisabled, rule, parentPath, query });
       }
       return;
     }
-    const newRule = onAddRule(rule, parentPath, query);
+    const newRule = onAddRule(rule, parentPath, query, context);
     if (!newRule) {
-      // istanbul ignore if
+      // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query });
       }
@@ -457,17 +496,17 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     dispatch(newQuery);
   };
 
-  const onGroupAdd = (ruleGroup: RG, parentPath: number[]) => {
+  const onGroupAdd = (ruleGroup: RG, parentPath: number[], context?: any) => {
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
-      // istanbul ignore if
+      // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.parentPathDisabled, ruleGroup, parentPath, query });
       }
       return;
     }
-    const newGroup = onAddGroup(ruleGroup, parentPath, query);
+    const newGroup = onAddGroup(ruleGroup, parentPath, query, context);
     if (!newGroup) {
-      // istanbul ignore if
+      // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query });
       }
@@ -479,7 +518,6 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   const onPropChange = (prop: UpdateableProperties, value: any, path: number[]) => {
     if ((pathIsDisabled(path, query) && prop !== 'disabled') || queryDisabled) {
-      // istanbul ignore if
       if (debugMode) {
         onLog({ type: LogType.pathDisabled, path, prop, value, query });
       }
@@ -497,7 +535,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   const onRuleOrGroupRemove = (path: number[]) => {
     if (pathIsDisabled(path, query) || queryDisabled) {
-      // istanbul ignore if
+      // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.pathDisabled, path, query });
       }
@@ -509,7 +547,7 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
     if (pathIsDisabled(oldPath, query) || pathIsDisabled(newPath, query) || queryDisabled) {
-      // istanbul ignore if
+      // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.pathDisabled, oldPath, newPath, query });
       }
@@ -525,16 +563,6 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
     const validationMap = typeof validationResult === 'object' ? validationResult : {};
     return { validationResult, validationMap };
   }, [query, validator]);
-
-  const classNames = useMemo(
-    (): Classnames => ({ ...defaultControlClassnames, ...controlClassnames }),
-    [controlClassnames]
-  );
-
-  const controls = useMemo(
-    (): Controls => ({ ...defaultControlElements, ...controlElements }),
-    [controlElements]
-  );
 
   const schema = useMemo(
     (): Schema => ({
@@ -624,44 +652,29 @@ export const QueryBuilderWithoutDndProvider = <RG extends RuleGroupType | RuleGr
   const { ruleGroup: RuleGroupControlElement } = controls;
 
   return (
-    <DndContext.Consumer>
-      {() => (
-        <div
-          className={wrapperClassName}
-          data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
-          data-inlinecombinators={
-            independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
-          }>
-          <RuleGroupControlElement
-            translations={translations}
-            ruleGroup={query}
-            rules={query.rules}
-            combinator={'combinator' in query ? query.combinator : undefined}
-            not={!!query.not}
-            schema={schema}
-            actions={actions}
-            id={query.id}
-            path={[]}
-            disabled={!!query.disabled || queryDisabled}
-            parentDisabled={queryDisabled}
-            context={context}
-          />
-        </div>
-      )}
-    </DndContext.Consumer>
+    <div
+      key={enableDragAndDrop ? 'dnd' : 'no-dnd'}
+      className={wrapperClassName}
+      data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
+      data-inlinecombinators={
+        independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
+      }>
+      <RuleGroupControlElement
+        translations={translations}
+        ruleGroup={query}
+        rules={query.rules}
+        combinator={'combinator' in query ? query.combinator : undefined}
+        not={!!query.not}
+        schema={schema}
+        actions={actions}
+        id={query.id}
+        path={[]}
+        disabled={!!query.disabled || queryDisabled}
+        parentDisabled={queryDisabled}
+        context={context}
+      />
+    </div>
   );
 };
-
-QueryBuilderWithoutDndProvider.displayName = 'QueryBuilderWithoutDndProvider';
-
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
-  debugMode = false,
-  ...props
-}: QueryBuilderProps<RG>) => (
-  <DndProvider backend={HTML5Backend} debugMode={debugMode}>
-    {/* TODO: Should/can the `RG` generic be used here? Would it make a difference? */}
-    <QueryBuilderWithoutDndProvider {...({ ...props, debugMode } as QueryBuilderProps)} />
-  </DndProvider>
-);
 
 QueryBuilder.displayName = 'QueryBuilder';

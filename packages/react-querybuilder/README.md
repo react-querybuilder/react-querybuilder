@@ -64,6 +64,8 @@ export const App = () => {
 };
 ```
 
+To enable drag-and-drop functionality, use the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/).
+
 ## Export/import
 
 To export queries as SQL, MongoDB, or [other formats](https://react-querybuilder.js.org/docs/api/export), use the `formatQuery` function.

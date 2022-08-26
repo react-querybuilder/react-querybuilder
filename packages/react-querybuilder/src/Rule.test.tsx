@@ -1,12 +1,6 @@
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { forwardRef } from 'react';
-import {
-  simulateDrag,
-  simulateDragDrop,
-  simulateDragHover,
-  wrapWithTestBackend,
-} from 'react-dnd-test-utils';
 import { defaultControlElements } from './controls';
 import {
   defaultControlClassnames,
@@ -14,8 +8,8 @@ import {
   standardClassnames as sc,
   TestID,
 } from './defaults';
-import { errorDeprecatedRuleProps } from './internal';
-import { Rule as RuleOriginal } from './Rule';
+import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
+import { Rule } from './Rule';
 import type {
   ActionProps,
   Classnames,
@@ -33,13 +27,6 @@ import type {
 } from './types';
 
 const user = userEvent.setup();
-
-const [Rule, getDndBackendOriginal] = wrapWithTestBackend(RuleOriginal);
-// This is just a type guard against `undefined`
-const getDndBackend = () => getDndBackendOriginal()!;
-
-const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
-  el.getAttribute(`data-${dragDrop}monitorid`);
 
 const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -142,7 +129,7 @@ const actions: Partial<QueryActions> = {
   onRuleRemove: () => {},
 };
 const UNUSED = 'UNUSED';
-const getProps = (
+export const getProps = (
   mergeIntoSchema: Partial<Schema> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ): RuleProps => ({
@@ -292,93 +279,6 @@ describe('validation', () => {
   });
 });
 
-describe('enableDragAndDrop', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
-  it('should not have the drag class if not dragging', () => {
-    render(<Rule {...getProps()} />);
-    const rule = screen.getByTestId(TestID.rule);
-    expect(rule).not.toHaveClass(sc.dndDragging);
-  });
-
-  it('should have the drag class if dragging', () => {
-    render(<Rule {...getProps()} />);
-    const rule = screen.getByTestId(TestID.rule);
-    simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
-    expect(rule).toHaveClass(sc.dndDragging);
-    act(() => {
-      getDndBackend().simulateEndDrag();
-    });
-  });
-
-  it('should have the over class if hovered', () => {
-    render(
-      <div>
-        <Rule {...getProps()} path={[0]} />
-        <Rule {...getProps()} path={[1]} />
-      </div>
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    simulateDragHover(
-      getHandlerId(rules[0], 'drag'),
-      getHandlerId(rules[1], 'drop'),
-      getDndBackend()
-    );
-    expect(rules[1]).toHaveClass(sc.dndOver);
-    act(() => {
-      getDndBackend().simulateEndDrag();
-    });
-  });
-
-  it('should handle a dropped rule', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <Rule {...getProps({}, { moveRule })} path={[0]} />
-        <Rule {...getProps({}, { moveRule })} path={[1]} />
-      </div>
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    simulateDragDrop(
-      getHandlerId(rules[0], 'drag'),
-      getHandlerId(rules[1], 'drop'),
-      getDndBackend()
-    );
-    expect(rules[0]).not.toHaveClass(sc.dndDragging);
-    expect(rules[1]).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([0], [2]);
-  });
-
-  it('should abort move if dropped on itself', () => {
-    const moveRule = jest.fn();
-    render(<Rule {...getProps({}, { moveRule })} />);
-    const rule = screen.getByTestId(TestID.rule);
-    simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
-    expect(rule).not.toHaveClass(sc.dndDragging);
-    expect(rule).not.toHaveClass(sc.dndOver);
-    expect(moveRule).not.toHaveBeenCalled();
-  });
-
-  it('should not try to update query if disabled', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <Rule {...getProps({}, { moveRule })} path={[0]} />
-        <Rule {...getProps({}, { moveRule })} path={[1]} disabled />
-      </div>
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    simulateDragDrop(
-      getHandlerId(rules[0], 'drag'),
-      getHandlerId(rules[1], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).not.toHaveBeenCalled();
-  });
-});
-
 describe('disabled', () => {
   it('should have the correct classname', () => {
     render(<Rule {...getProps()} disabled />);
@@ -441,23 +341,6 @@ describe('locked rule', () => {
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
     await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
-  });
-
-  it('prevents drops', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <Rule {...getProps({}, { moveRule })} path={[0]} disabled />
-        <Rule {...getProps({}, { moveRule })} path={[1]} />
-      </div>
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    simulateDragDrop(
-      getHandlerId(rules[1], 'drag'),
-      getHandlerId(rules[0], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).not.toHaveBeenCalled();
   });
 });
 
@@ -560,5 +443,17 @@ describe('deprecated props', () => {
     // @ts-expect-error rule prop is required
     render(<Rule {...getProps()} rule={undefined} field="f1" operator="=" value="v1" />);
     expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleProps);
+  });
+});
+
+describe('dnd warnings', () => {
+  it('warns about using dnd without react-dnd', () => {
+    render(
+      <Rule
+        {...getProps({ enableDragAndDrop: true })}
+        rule={{ field: 'f1', operator: 'and', value: 'v1' }}
+      />
+    );
+    expect(consoleError).toHaveBeenCalledWith(errorEnabledDndWithoutReactDnD);
   });
 });

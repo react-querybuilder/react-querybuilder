@@ -14,10 +14,12 @@ yarn add react-querybuilder @react-querybuilder/bulma bulma
 
 ## Usage
 
+This package exports `bulmaControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderBulma />`, like this:
+
 ```tsx
-import { bulmaControlElements } from '@react-querybuilder/bulma';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import 'bulma/bulma.sass';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -28,12 +30,9 @@ const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilder
-      fields={fields}
-      query={query}
-      onQueryChange={q => setQuery(q)}
-      controlElements={bulmaControlElements}
-    />
+    <QueryBuilderBulma>
+      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+    </QueryBuilderBulma>
   );
 };
 ```
