@@ -38,7 +38,7 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.18.10",
+    "@babel/core": "^7.18.13",
     "@babel/preset-env": "^7.18.10",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
@@ -48,7 +48,7 @@
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jscodeshift": "^0.11.5",
     "@types/json-logic-js": "^2.0.1",
-    "@types/node": "^18.7.3",
+    "@types/node": "^18.7.13",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.1",
@@ -57,24 +57,21 @@
     "jscodeshift": "^0.13.1",
     "json-logic-js": "^2.0.2",
     "react": "^18.2.0",
-    "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.13.9",
     "replace": "^1.2.1",
     "rimraf": "^3.0.2",
-    "sass": "^1.54.4",
+    "ruleGroupsIC": "link:./src/types/ruleGroupsIC",
+    "sass": "^1.54.5",
     "typescript": "^4.7.4",
-    "vite": "^3.0.7",
+    "vite": "^3.0.9",
     "vite-tsconfig-paths": "^3.5.0"
   },
   "dependencies": {
-    "immer": "^9.0.15",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1"
+    "immer": "^9.0.15"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": ">=16.8.0"
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {

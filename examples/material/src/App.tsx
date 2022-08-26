@@ -1,8 +1,9 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { materialControlElements } from '@react-querybuilder/material';
+import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
+import './styles.scss';
 
 const muiTheme = createTheme();
 
@@ -20,19 +21,20 @@ export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (
-    <ThemeProvider theme={muiTheme}>
-      <div>
-        <QueryBuilder
-          fields={fields}
-          query={query}
-          onQueryChange={q => setQuery(q)}
-          controlElements={materialControlElements}
-        />
-        <h4>Query</h4>
-        <pre>
-          <code>{formatQuery(query, 'json')}</code>
-        </pre>
-      </div>
-    </ThemeProvider>
+    <div>
+      <ThemeProvider theme={muiTheme}>
+        <QueryBuilderMaterial>
+          <QueryBuilder
+            fields={fields}
+            query={query}
+            onQueryChange={q => setQuery(q)}
+          />
+        </QueryBuilderMaterial>
+      </ThemeProvider>
+      <h4>Query</h4>
+      <pre>
+        <code>{formatQuery(query, 'json')}</code>
+      </pre>
+    </div>
   );
 };

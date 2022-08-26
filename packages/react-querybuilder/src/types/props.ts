@@ -38,12 +38,12 @@ export interface CommonSubComponentProps {
   testID?: string;
 }
 
-export interface SelectorEditorProps extends CommonSubComponentProps {
+interface SelectorOrEditorProps extends CommonSubComponentProps {
   value?: string;
   handleOnChange(value: any): void;
 }
 
-export interface BaseSelectorProps extends SelectorEditorProps {
+export interface BaseSelectorProps extends SelectorOrEditorProps {
   options: NameLabelPair[] | OptionGroup[];
 }
 
@@ -87,7 +87,7 @@ export type VersatileSelectorProps = ValueSelectorProps &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 
-export interface ValueEditorProps extends SelectorEditorProps {
+export interface ValueEditorProps extends SelectorOrEditorProps {
   field: string;
   operator: string;
   value?: any;
@@ -187,14 +187,14 @@ export interface Classnames {
 }
 
 export interface QueryActions {
-  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
+  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[], context?: any): void;
   onGroupRemove(path: number[]): void;
   onPropChange(
     prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
     value: any,
     path: number[]
   ): void;
-  onRuleAdd(rule: RuleType, parentPath: number[]): void;
+  onRuleAdd(rule: RuleType, parentPath: number[], context?: any): void;
   onRuleRemove(path: number[]): void;
   moveRule(oldPath: number[], newPath: number[], clone?: boolean): void;
 }

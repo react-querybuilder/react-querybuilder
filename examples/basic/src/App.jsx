@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
+import './styles.scss';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },

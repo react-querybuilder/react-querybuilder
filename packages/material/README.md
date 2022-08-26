@@ -14,9 +14,11 @@ yarn add react-querybuilder @react-querybuilder/material @mui/icons-material @mu
 
 ## Usage
 
+This package exports `materialControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderMaterial />`, like this:
+
 ```tsx
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { materialControlElements } from '@react-querybuilder/material';
+import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const muiTheme = createTheme();
@@ -31,12 +33,9 @@ const App = () => {
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <QueryBuilder
-        fields={fields}
-        query={query}
-        onQueryChange={q => setQuery(q)}
-        controlElements={materialControlElements}
-      />
+      <QueryBuilderMaterial>
+        <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      </QueryBuilderMaterial>
     </ThemeProvider>
   );
 };

@@ -6,7 +6,7 @@ import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
-} from '../messages';
+} from '../../messages';
 import { usePrevious } from './usePrevious';
 
 interface UseControlledOrUncontrolledParams {

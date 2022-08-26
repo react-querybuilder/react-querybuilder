@@ -1,4 +1,4 @@
-import { objectKeys } from 'react-querybuilder/src/internal';
+import { objectKeys } from 'react-querybuilder';
 
 export type StyleName = 'default' | 'antd' | 'bootstrap' | 'bulma' | 'chakra' | 'material';
 

@@ -14,9 +14,11 @@ yarn add react-querybuilder @react-querybuilder/chakra @chakra-ui/icons @chakra-
 
 ## Usage
 
+This package exports `chakraControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderChakra />`, like this:
+
 ```tsx
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { chakraControlElements } from '@react-querybuilder/chakra';
+import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
@@ -30,12 +32,9 @@ const App = () => {
 
   return (
     <ChakraProvider theme={chakraTheme}>
-      <QueryBuilder
-        fields={fields}
-        query={query}
-        onQueryChange={q => setQuery(q)}
-        controlElements={chakraControlElements}
-      />
+      <QueryBuilderChakra>
+        <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      </QueryBuilderChakra>
     </ChakraProvider>
   );
 };

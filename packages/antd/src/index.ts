@@ -1,4 +1,5 @@
 import type { Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
@@ -22,5 +23,10 @@ export const antdControlElements: Partial<Controls> = {
   dragHandle: AntDDragHandle,
   valueSourceSelector: AntDValueSelector,
 };
+
+export const QueryBuilderAntD = getCompatContextProvider({
+  key: 'antd',
+  controlElements: antdControlElements,
+});
 
 export { AntDActionElement, AntDDragHandle, AntDNotToggle, AntDValueEditor, AntDValueSelector };

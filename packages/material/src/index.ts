@@ -1,4 +1,5 @@
 import type { Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
@@ -22,6 +23,11 @@ export const materialControlElements: Partial<Controls> = {
   dragHandle: MaterialDragHandle,
   valueSourceSelector: MaterialValueSelector,
 };
+
+export const QueryBuilderMaterial = getCompatContextProvider({
+  key: 'material',
+  controlElements: materialControlElements,
+});
 
 export {
   MaterialActionElement,

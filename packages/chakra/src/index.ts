@@ -1,4 +1,5 @@
 import type { Controls } from 'react-querybuilder';
+import { getCompatContextProvider } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
@@ -22,6 +23,11 @@ export const chakraControlElements: Partial<Controls> = {
   valueEditor: ChakraValueEditor,
   valueSourceSelector: ChakraValueSelector,
 };
+
+export const QueryBuilderChakra = getCompatContextProvider({
+  key: 'chakra',
+  controlElements: chakraControlElements,
+});
 
 export {
   ChakraActionElement,
