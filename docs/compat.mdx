@@ -120,7 +120,7 @@ const MyAntDActionElement = (props: ActionWithRulesProps) => (
   <AntDActionElement {...props} size="large" />
 );
 
-export const App = () => {
+export function App() {
   return (
     <QueryBuilder
       controlElements={{
@@ -136,7 +136,7 @@ export const App = () => {
       }}
     />
   );
-};
+}
 ```
 
 This list shows which library components' props will be accepted by the compatibility components, in addition to those defined by `react-querybuilder`.
@@ -155,3 +155,59 @@ This list shows which library components' props will be accepted by the compatib
 | `MaterialDragHandle`    | `DragHandleProps`        | `import DragIndicator from '@mui/icons-material/DragIndicator'` |
 | `MaterialNotToggle`     | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |
 | `MaterialValueSelector` | `VersatileSelectorProps` | `import Select from '@mui/material/Select'`                     |
+
+## Preload MUI components
+
+By default, the `@react-querybuilder/material` compatibility package loads components from `@mui/material` asynchronously in order to properly inherit the theme context ([issue](https://github.com/react-querybuilder/react-querybuilder/issues/321)/[PR](https://github.com/react-querybuilder/react-querybuilder/pull/324)). This means that the query builder will initially be rendered with the default components, and then—very quickly, if all goes well—the MUI components will replace them.
+
+To avoid rendering the default components and render the MUI components immediately instead, import the MUI components in your application code and assign them as properties of the `muiComponents` prop on the `QueryBuilderMaterial` context provider. (Each individual compatibility component also accepts an optional `muiComponents` prop.)
+
+```tsx
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { QueryBuilderMaterial } from '@react-querybuilder/material';
+import { QueryBuilder } from 'react-querybuilder';
+import { defaultQuery, fields } from './constants';
+// highlight-start
+import Checkbox from '@mui/material/Checkbox';
+import DragIndicator from '@mui/material/DragIndicator';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Input from '@mui/material/Input';
+import ListSubheader from '@mui/material/ListSubheader';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+
+const muiComponents = {
+  Checkbox,
+  DragIndicator,
+  FormControl,
+  FormControlLabel,
+  Input,
+  ListSubheader,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Switch,
+  TextareaAutosize,
+};
+// highlight-end
+
+const muiTheme = createTheme();
+
+export function App() {
+  return (
+    <ThemeProvider theme={muiTheme}>
+      {/* highlight-start */}
+      <QueryBuilderMaterial muiComponents={muiComponents}>
+        {/* highlight-end */}
+        <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
+      </QueryBuilderMaterial>
+    </ThemeProvider>
+  );
+}
+```
