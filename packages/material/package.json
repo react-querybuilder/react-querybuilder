@@ -20,9 +20,7 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly && yarn copy-src-to-dist && yarn downgrade-dist-src",
-    "copy-src-to-dist": "copyfiles -f src/index.ts src/MaterialActionElement.tsx src/MaterialDragHandle.tsx src/MaterialNotToggle.tsx src/MaterialValueEditor.tsx src/MaterialValueSelector.tsx src/utils.tsx dist/ts",
-    "downgrade-dist-src": "replace \"import type\" \"import\" ./dist/ts -r --silent && replace \", type \" \", \" ./dist/ts -r --silent && replace \"{ type \" \"{ \" ./dist/ts -r --silent",
+    "build": "vite build && tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch"
   },
