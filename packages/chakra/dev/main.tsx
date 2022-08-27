@@ -6,6 +6,14 @@ import { chakraControlElements } from '../src';
 import './styles.scss';
 
 const chakraTheme = extendTheme({
+  components: {
+    Button: {
+      baseStyle: {
+        color: 'rebeccapurple',
+        fontWeight: 'bold', // Normally "semibold"
+      },
+    },
+  },
   config: {
     initialColorMode: 'light',
     useSystemColorMode: false,
