@@ -1,4 +1,5 @@
-import { formatQuery, type FormatQueryOptions, type RuleGroupTypeAny } from '../src';
+import type { FormatQueryOptions, RuleGroupTypeAny } from '../src';
+import { formatQuery } from '../src';
 import { defaultOptions, optionOrder } from './constants';
 import type { DemoOption, DemoOptions } from './types';
 

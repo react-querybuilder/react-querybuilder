@@ -1,6 +1,8 @@
 import { Select } from 'antd';
-import { useMemo, type ComponentPropsWithoutRef } from 'react';
-import { joinWith, splitBy, type VersatileSelectorProps } from 'react-querybuilder';
+import type { ComponentPropsWithoutRef } from 'react';
+import { useMemo } from 'react';
+import type { VersatileSelectorProps } from 'react-querybuilder';
+import { joinWith, splitBy } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 type AntDValueSelectorProps = VersatileSelectorProps &

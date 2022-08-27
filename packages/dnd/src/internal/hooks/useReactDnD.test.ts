@@ -1,4 +1,5 @@
-import { act, renderHook, type RenderHookResult } from '@testing-library/react';
+import type { RenderHookResult } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import type { UseReactDnD } from '../../types';
 import { useReactDnD } from './useReactDnD';
 

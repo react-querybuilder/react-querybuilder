@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
-import { useRef, type Ref } from 'react';
+import type { Ref } from 'react';
+import { useRef } from 'react';
 import type { DraggedItem, QueryActions } from 'react-querybuilder';
 import { DNDType, getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 

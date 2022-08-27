@@ -1,4 +1,5 @@
-import { Fragment, type MouseEvent as ReactMouseEvent } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
+import { Fragment } from 'react';
 import { defaultCombinators, standardClassnames, TestID } from './defaults';
 import { getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';

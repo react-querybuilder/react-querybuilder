@@ -1,4 +1,5 @@
-import { forwardRef, type ComponentPropsWithRef } from 'react';
+import type { ComponentPropsWithRef } from 'react';
+import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 import { DragHandle } from 'react-querybuilder';
 import type { DragIndicatorType, MuiComponentName, RQBMaterialComponents } from './types';

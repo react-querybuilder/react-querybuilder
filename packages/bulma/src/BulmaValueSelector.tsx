@@ -1,5 +1,7 @@
-import { useMemo, type ChangeEvent } from 'react';
-import { joinWith, splitBy, type ValueSelectorProps } from 'react-querybuilder';
+import type { ChangeEvent } from 'react';
+import { useMemo } from 'react';
+import type { ValueSelectorProps } from 'react-querybuilder';
+import { joinWith, splitBy } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 export const BulmaValueSelector = ({
