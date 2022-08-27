@@ -1,7 +1,7 @@
 import { forwardRef, type ComponentPropsWithRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 import { DragHandle } from 'react-querybuilder';
-import type { DragIndicatorType, RQBMaterialComponents } from './types';
+import type { DragIndicatorType, MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 type MaterialDragHandleProps = DragHandleProps &
@@ -10,7 +10,7 @@ type MaterialDragHandleProps = DragHandleProps &
   };
 
 type MaterialDragHandleComponents = Pick<RQBMaterialComponents, 'DragIndicator'>;
-const muiComponentNames: (keyof RQBMaterialComponents)[] = ['DragIndicator'];
+const muiComponentNames: MuiComponentName[] = ['DragIndicator'];
 
 export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(
   (

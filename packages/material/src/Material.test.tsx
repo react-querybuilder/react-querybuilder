@@ -133,11 +133,12 @@ describe('action element', () => {
   testActionElement(generateWrapper(MaterialActionElement));
 
   it('renders without preloaded components', async () => {
-    const { container } = render(
-      <MaterialActionElement handleOnClick={() => {}} path={[]} level={0} />
+    render(
+      <div data-testid="test">
+        <MaterialActionElement handleOnClick={() => {}} path={[]} level={0} />
+      </div>
     );
-    await new Promise(r => setTimeout(r, 500));
-    expect(container.querySelector('button')).toBeInTheDocument();
+    expect(screen.getByTestId('test').querySelector('button')).toBeInTheDocument();
   });
 });
 
@@ -145,9 +146,12 @@ describe('drag handle', () => {
   testDragHandle(WrapperDH);
 
   it('renders without preloaded components', async () => {
-    const { container } = render(<WrapperDH path={[]} level={0} muiComponents={null} />);
-    await new Promise(r => setTimeout(r, 500));
-    expect(container.querySelector('span')).toBeInTheDocument();
+    render(
+      <div data-testid="test">
+        <WrapperDH path={[]} level={0} muiComponents={null} />
+      </div>
+    );
+    expect(screen.getByTestId('test').querySelector('span')).toBeInTheDocument();
   });
 });
 
@@ -155,11 +159,12 @@ describe('not toggle', () => {
   testNotToggle(generateWrapper(MaterialNotToggle));
 
   it('renders without preloaded components', async () => {
-    const { container } = render(
-      <MaterialNotToggle handleOnChange={() => {}} path={[]} level={0} />
+    render(
+      <div data-testid="test">
+        <MaterialNotToggle handleOnChange={() => {}} path={[]} level={0} />
+      </div>
     );
-    await new Promise(r => setTimeout(r, 500));
-    expect(container.querySelector('input[type=checkbox]')).toBeInTheDocument();
+    expect(screen.getByTestId('test').querySelector('input[type=checkbox]')).toBeInTheDocument();
   });
 });
 
@@ -167,19 +172,20 @@ describe('value editor', () => {
   testValueEditor(generateWrapper(MaterialValueEditor));
 
   it('renders without preloaded components', async () => {
-    const { container } = render(
-      <MaterialValueEditor
-        handleOnChange={() => {}}
-        path={[]}
-        level={0}
-        valueSource="value"
-        field="f1"
-        operator="="
-        fieldData={{ name: 'f1', label: 'Field 1' }}
-      />
+    render(
+      <div data-testid="test">
+        <MaterialValueEditor
+          handleOnChange={() => {}}
+          path={[]}
+          level={0}
+          valueSource="value"
+          field="f1"
+          operator="="
+          fieldData={{ name: 'f1', label: 'Field 1' }}
+        />
+      </div>
     );
-    await new Promise(r => setTimeout(r, 500));
-    expect(container.querySelector('input')).toBeInTheDocument();
+    expect(screen.getByTestId('test').querySelector('input')).toBeInTheDocument();
   });
 });
 
@@ -187,17 +193,18 @@ describe('value selector', () => {
   testValueSelector(generateWrapper(MaterialValueSelector));
 
   it('renders without preloaded components', async () => {
-    const { container } = render(
-      <MaterialValueSelector
-        handleOnChange={() => {}}
-        path={[]}
-        level={0}
-        options={[{ name: 'opt1', label: 'Option 1' }]}
-      />
+    render(
+      <div data-testid="test">
+        <MaterialValueSelector
+          handleOnChange={() => {}}
+          path={[]}
+          level={0}
+          options={[{ name: 'opt1', label: 'Option 1' }]}
+        />
+      </div>
     );
-    await new Promise(r => setTimeout(r, 500));
-    expect(container.querySelector('select')).toBeInTheDocument();
-    expect(container.querySelector('option')).toBeInTheDocument();
+    expect(screen.getByTestId('test').querySelector('select')).toBeInTheDocument();
+    expect(screen.getByTestId('test').querySelector('option')).toBeInTheDocument();
   });
 });
 

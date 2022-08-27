@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 import { NotToggle } from 'react-querybuilder';
-import type { RQBMaterialComponents, SwitchType } from './types';
+import type { MuiComponentName, RQBMaterialComponents, SwitchType } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 type MaterialNotToggleProps = NotToggleProps &
@@ -10,7 +10,7 @@ type MaterialNotToggleProps = NotToggleProps &
   };
 
 type MaterialNotToggleComponents = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
-const muiComponentNames: (keyof RQBMaterialComponents)[] = ['FormControlLabel', 'Switch'];
+const muiComponentNames: MuiComponentName[] = ['FormControlLabel', 'Switch'];
 
 export const MaterialNotToggle = ({
   className,

@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 import { ActionElement } from 'react-querybuilder';
-import type { ButtonType, RQBMaterialComponents } from './types';
+import type { ButtonType, MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 type MaterialActionProps = ActionWithRulesProps &
@@ -10,7 +10,7 @@ type MaterialActionProps = ActionWithRulesProps &
   };
 
 type MaterialActionElementComponents = Pick<RQBMaterialComponents, 'Button'>;
-const muiComponentNames: (keyof RQBMaterialComponents)[] = ['Button'];
+const muiComponentNames: MuiComponentName[] = ['Button'];
 
 export const MaterialActionElement = ({
   className,

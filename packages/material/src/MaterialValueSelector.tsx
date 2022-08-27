@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import { useMemo } from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { joinWith, splitBy, ValueSelector } from 'react-querybuilder';
-import type { RQBMaterialComponents, SelectType } from './types';
+import type { MuiComponentName, RQBMaterialComponents, SelectType } from './types';
 import { useMuiComponents } from './useMuiComponents';
 import { toOptions } from './utils';
 
@@ -16,7 +16,7 @@ type MaterialValueSelectorComponents = Pick<
   RQBMaterialComponents,
   'FormControl' | 'Select' | 'ListSubheader' | 'MenuItem'
 >;
-const muiComponentNames: (keyof RQBMaterialComponents)[] = [
+const muiComponentNames: MuiComponentName[] = [
   'FormControl',
   'Select',
   'ListSubheader',

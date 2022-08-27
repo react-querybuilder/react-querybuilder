@@ -7,7 +7,7 @@ import {
   ValueEditor,
 } from 'react-querybuilder';
 import { MaterialValueSelector } from './MaterialValueSelector';
-import type { RQBMaterialComponents } from './types';
+import type { MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 type MaterialValueEditorProps = ValueEditorProps & {
@@ -30,7 +30,7 @@ type MaterialValueEditorComponents = Pick<
   | 'MenuItem'
 >;
 
-const muiComponentNames: (keyof RQBMaterialComponents)[] = [
+const muiComponentNames: MuiComponentName[] = [
   'Checkbox',
   'FormControl',
   'FormControlLabel',

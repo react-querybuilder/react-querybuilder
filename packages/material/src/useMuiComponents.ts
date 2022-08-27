@@ -2,7 +2,7 @@ declare const __RQB_DEV__: boolean;
 
 import type { ComponentType } from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { nullFreeArray } from 'react-querybuilder';
+import { nullFreeArray, objectKeys } from 'react-querybuilder';
 import { errorMaterialWithoutMUI } from './messages';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
@@ -74,15 +74,30 @@ export const useMuiComponents = (
   preloadedComponents?: Partial<RQBMaterialComponents>
 ) => {
   const muiComponentsFromContext = useContext(RQBMaterialContext);
+
+  const cachedComponents: Partial<RQBMaterialComponents> | null =
+    componentCache.size === 0 ? null : Object.fromEntries(componentCache);
+
+  const initialComponents =
+    muiComponentsFromContext && preloadedComponents
+      ? { ...muiComponentsFromContext, ...preloadedComponents, ...cachedComponents }
+      : preloadedComponents
+      ? { ...preloadedComponents, ...cachedComponents }
+      : muiComponentsFromContext
+      ? { ...muiComponentsFromContext, ...cachedComponents }
+      : cachedComponents && !__RQB_DEV__ // don't initialize with the cache in dev/tests
+      ? cachedComponents
+      : null;
   const [muiComponents, setMuiComponents] = useState<Partial<RQBMaterialComponents> | null>(
-    preloadedComponents ?? muiComponentsFromContext ?? null
+    initialComponents
   );
 
   useEffect(() => {
     let didCancel = false;
 
+    const missingComponentsAtStart = componentNames.filter(name => !componentCache.has(name));
+
     const getComponents = async () => {
-      const missingComponentsAtStart = componentNames.filter(name => !componentCache.has(name));
       const componentImports = await Promise.all(
         missingComponentsAtStart.map(name => importMuiComponent(name))
       );
@@ -114,8 +129,21 @@ export const useMuiComponents = (
       }
     };
 
-    if (!muiComponents || !componentNames.every(name => componentCache.has(name))) {
+    if (missingComponentsAtStart.length === 0) {
+      return;
+    } else if (
+      !muiComponents ||
+      !componentNames.every(name => objectKeys(muiComponents).includes(name))
+    ) {
       getComponents();
+    }
+
+    if (muiComponents && !componentNames.every(name => componentCache.has(name))) {
+      const missingComponentsFromCache = componentNames.filter(name => !componentCache.has(name));
+      missingComponentsFromCache.forEach(name => {
+        // TODO: Remove `as any`
+        componentCache.set(name, muiComponents[name] as any);
+      });
     }
 
     return () => {
