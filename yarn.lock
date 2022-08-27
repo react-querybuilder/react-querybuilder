@@ -2794,7 +2794,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/styled-system@npm:2.2.8, @chakra-ui/styled-system@npm:^2.2.7":
+"@chakra-ui/styled-system@npm:2.2.8, @chakra-ui/styled-system@npm:^2.2.8":
   version: 2.2.8
   resolution: "@chakra-ui/styled-system@npm:2.2.8"
   dependencies:
