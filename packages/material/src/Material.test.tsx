@@ -1,3 +1,4 @@
+import DragIndicator from '@mui/icons-material/DragIndicator';
 import type {
   FormControlProps,
   ListSubheaderProps,
@@ -5,8 +6,20 @@ import type {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Input from '@mui/material/Input';
+import ListSubheader from '@mui/material/ListSubheader';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { render, screen } from '@testing-library/react';
+import Switch from '@mui/material/Switch';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+import { act, render, screen } from '@testing-library/react';
 import {
   cloneElement as mockCloneElement,
   forwardRef,
@@ -31,6 +44,7 @@ import {
   MaterialValueSelector,
   QueryBuilderMaterial,
 } from '.';
+import type { RQBMaterialComponents } from './types';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -38,16 +52,12 @@ declare global {
 }
 globalThis.__RQB_DEV__ = true;
 
-jest.mock('@mui/material', () => {
-  const MuiMaterial = jest.requireActual('@mui/material');
-  const ListSubheader = ({ children }: ListSubheaderProps) => (
-    <optgroup label={children as string} />
-  );
-  const MenuItem = ({ value, children }: MenuItemProps) => (
-    <option value={value}>{children}</option>
-  );
-  return { ...MuiMaterial, ListSubheader, MenuItem };
-});
+jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
+  <optgroup label={children as string} />
+));
+jest.mock('@mui/material/MenuItem', () => ({ value, children }: MenuItemProps) => (
+  <option value={value}>{children}</option>
+));
 jest.mock('@mui/material/FormControl', () => {
   const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
     <div className={className} title={title}>
@@ -57,61 +67,146 @@ jest.mock('@mui/material/FormControl', () => {
   FormControl.useFormControl = () => {};
   return FormControl;
 });
-jest.mock('@mui/material/Select', () => {
-  const Select = (props: SelectProps<string | string[]>) => (
-    <select
-      disabled={!!props.disabled}
-      multiple={!!props.multiple}
-      value={props.value}
-      onChange={e =>
-        props.onChange!(
-          {
-            target: {
-              value: props.multiple
-                ? Array.from(e.target.selectedOptions).map(opt => opt.value)
-                : e.target.value,
-            },
-          } as SelectChangeEvent<string | string[]>,
-          ''
-        )
-      }>
-      {props.children}
-    </select>
-  );
-  return Select;
-});
+jest.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) => (
+  <select
+    disabled={!!props.disabled}
+    multiple={!!props.multiple}
+    value={props.value}
+    onChange={e =>
+      props.onChange!(
+        {
+          target: {
+            value: props.multiple
+              ? Array.from(e.target.selectedOptions).map(opt => opt.value)
+              : e.target.value,
+          },
+        } as SelectChangeEvent<string | string[]>,
+        ''
+      )
+    }>
+    {props.children}
+  </select>
+));
 
+const muiComponents = {
+  Button,
+  Checkbox,
+  DragIndicator,
+  FormControl,
+  FormControlLabel,
+  Input,
+  ListSubheader,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Switch,
+  TextareaAutosize,
+};
 const theme = createTheme();
 const generateWrapper = (RQBComponent: any) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
-      <RQBComponent {...props} />
+      <RQBComponent muiComponents={muiComponents} {...props} />
     </ThemeProvider>
   );
   Wrapper.displayName = RQBComponent.displayName;
   return Wrapper;
 };
-const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
+const WrapperDH = forwardRef<
+  HTMLSpanElement,
+  DragHandleProps & {
+    muiComponents?: Partial<RQBMaterialComponents> | null;
+  }
+>(({ muiComponents: muiComps, ...props }, ref) => (
   <ThemeProvider theme={theme}>
-    <MaterialDragHandle {...props} ref={ref} />
+    <MaterialDragHandle
+      ref={ref}
+      muiComponents={muiComps === null ? undefined : muiComponents}
+      {...props}
+    />
   </ThemeProvider>
 ));
 WrapperDH.displayName = MaterialDragHandle.displayName;
 
-testActionElement(generateWrapper(MaterialActionElement));
-testDragHandle(WrapperDH);
-testNotToggle(generateWrapper(MaterialNotToggle));
-testValueEditor(generateWrapper(MaterialValueEditor));
-testValueSelector(generateWrapper(MaterialValueSelector));
+describe('action element', () => {
+  testActionElement(generateWrapper(MaterialActionElement));
 
-it('renders with composition', () => {
-  render(
-    <ThemeProvider theme={theme}>
-      <QueryBuilderMaterial>
-        <QueryBuilder />
-      </QueryBuilderMaterial>
-    </ThemeProvider>
-  );
+  it('renders without preloaded components', () => {
+    const { container } = render(
+      <MaterialActionElement handleOnClick={() => {}} path={[]} level={0} />
+    );
+    expect(container.querySelector('button')).toBeInTheDocument();
+  });
+});
+
+describe('drag handle', () => {
+  testDragHandle(WrapperDH);
+
+  it('renders without preloaded components', () => {
+    const { container } = render(<WrapperDH path={[]} level={0} muiComponents={null} />);
+    expect(container.querySelector('span')).toBeInTheDocument();
+  });
+});
+
+describe('not toggle', () => {
+  testNotToggle(generateWrapper(MaterialNotToggle));
+
+  it('renders without preloaded components', () => {
+    const { container } = render(
+      <MaterialNotToggle handleOnChange={() => {}} path={[]} level={0} />
+    );
+    expect(container.querySelector('input[type=checkbox]')).toBeInTheDocument();
+  });
+});
+
+describe('value editor', () => {
+  testValueEditor(generateWrapper(MaterialValueEditor));
+
+  it('renders without preloaded components', () => {
+    const { container } = render(
+      <MaterialValueEditor
+        handleOnChange={() => {}}
+        path={[]}
+        level={0}
+        valueSource="value"
+        field="f1"
+        operator="="
+        fieldData={{ name: 'f1', label: 'Field 1' }}
+      />
+    );
+    expect(container.querySelector('input')).toBeInTheDocument();
+  });
+});
+
+describe('value selector', () => {
+  testValueSelector(generateWrapper(MaterialValueSelector));
+
+  it('renders without preloaded components', () => {
+    const { container } = render(
+      <MaterialValueSelector
+        handleOnChange={() => {}}
+        path={[]}
+        level={0}
+        options={[{ name: 'opt1', label: 'Option 1' }]}
+      />
+    );
+    expect(container.querySelector('select')).toBeInTheDocument();
+    expect(container.querySelector('option')).toBeInTheDocument();
+  });
+});
+
+it('renders with composition', async () => {
+  await act(async () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <QueryBuilderMaterial>
+          <QueryBuilder />
+        </QueryBuilderMaterial>
+      </ThemeProvider>
+    );
+    await new Promise(r => setTimeout(r, 500));
+  });
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   expect(
     Array.from(screen.getByText(defaultTranslations.addRule.label).classList).some(c =>

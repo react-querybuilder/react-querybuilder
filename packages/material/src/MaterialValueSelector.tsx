@@ -1,11 +1,27 @@
-import FormControl from '@mui/material/FormControl';
-import Select, { type SelectChangeEvent } from '@mui/material/Select';
-import { ThemeProvider, useTheme } from '@mui/material/styles';
-import { useMemo, type ComponentPropsWithoutRef } from 'react';
-import { joinWith, splitBy, type VersatileSelectorProps } from 'react-querybuilder';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import type { ComponentPropsWithoutRef, ComponentType } from 'react';
+import { useMemo } from 'react';
+import type { VersatileSelectorProps } from 'react-querybuilder';
+import { joinWith, splitBy, ValueSelector } from 'react-querybuilder';
+import type { RQBMaterialComponents, SelectType } from './types';
+import { useMuiComponents } from './useMuiComponents';
 import { toOptions } from './utils';
 
-type MaterialValueSelectorProps = VersatileSelectorProps & ComponentPropsWithoutRef<typeof Select>;
+type MaterialValueSelectorProps = VersatileSelectorProps &
+  ComponentPropsWithoutRef<SelectType> & {
+    muiComponents?: Partial<RQBMaterialComponents>;
+  };
+
+type GetMaterialValueSelectorProps = Pick<
+  RQBMaterialComponents,
+  'FormControl' | 'Select' | 'ListSubheader' | 'MenuItem'
+>;
+const muiComponentNames: (keyof RQBMaterialComponents)[] = [
+  'FormControl',
+  'Select',
+  'ListSubheader',
+  'MenuItem',
+];
 
 export const MaterialValueSelector = ({
   className,
@@ -16,19 +32,19 @@ export const MaterialValueSelector = ({
   title,
   multiple,
   listsAsArrays,
-  // Props that should not be in extraProps
-  testID: _testID,
-  rules: _rules,
-  level: _level,
-  path: _path,
-  context: _context,
-  validation: _validation,
-  operator: _operator,
-  field: _field,
-  fieldData: _fieldData,
-  ...extraProps
+  testID,
+  rules,
+  level,
+  path,
+  context,
+  validation,
+  operator,
+  field,
+  fieldData,
+  muiComponents,
+  ...otherProps
 }: MaterialValueSelectorProps) => {
-  const theme = useTheme();
+  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
 
   const onChange = useMemo(
     () =>
@@ -45,21 +61,54 @@ export const MaterialValueSelector = ({
     [handleOnChange, listsAsArrays, multiple]
   );
 
+  const key = muiComponentsInternal ? 'mui' : 'no-mui';
+  if (!muiComponentsInternal) {
+    const VS = ValueSelector as ComponentType<VersatileSelectorProps>;
+    return (
+      <VS
+        key={key}
+        className={className}
+        handleOnChange={handleOnChange}
+        options={options}
+        value={value}
+        disabled={disabled}
+        title={title}
+        multiple={multiple}
+        listsAsArrays={listsAsArrays}
+        testID={testID}
+        rules={rules}
+        level={level}
+        path={path}
+        context={context}
+        validation={validation}
+        operator={operator}
+        field={field}
+        fieldData={fieldData}
+      />
+    );
+  }
+
+  const { FormControl, Select, ListSubheader, MenuItem } =
+    muiComponentsInternal as GetMaterialValueSelectorProps;
+
   const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 
   return (
-    <ThemeProvider theme={theme}>
-      <FormControl variant="standard" className={className} title={title} disabled={disabled}>
-        <Select
-          value={val}
-          // @ts-expect-error onChange cannot accept string[]
-          onChange={onChange}
-          multiple={!!multiple}
-          {...extraProps}>
-          {toOptions(options)}
-        </Select>
-      </FormControl>
-    </ThemeProvider>
+    <FormControl
+      key={key}
+      variant="standard"
+      className={className}
+      title={title}
+      disabled={disabled}>
+      <Select
+        value={val}
+        // @ts-expect-error onChange cannot accept string[]
+        onChange={onChange}
+        multiple={!!multiple}
+        {...otherProps}>
+        {toOptions(options ?? /* istanbul ignore next */ [], { ListSubheader, MenuItem })}
+      </Select>
+    </FormControl>
   );
 };
 

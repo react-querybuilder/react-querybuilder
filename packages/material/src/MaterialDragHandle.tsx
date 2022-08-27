@@ -1,35 +1,58 @@
-import DragIndicator from '@mui/icons-material/DragIndicator';
-import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { forwardRef, type ComponentPropsWithRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
+import { DragHandle } from 'react-querybuilder';
+import type { DragIndicatorType, RQBMaterialComponents } from './types';
+import { useMuiComponents } from './useMuiComponents';
 
 type MaterialDragHandleProps = DragHandleProps &
-  Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'>;
+  Omit<ComponentPropsWithRef<DragIndicatorType>, 'path'> & {
+    muiComponents?: Partial<RQBMaterialComponents>;
+  };
+
+type GetMaterialDragHandleProps = Pick<RQBMaterialComponents, 'DragIndicator'>;
+const muiComponentNames: (keyof RQBMaterialComponents)[] = ['DragIndicator'];
 
 export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(
   (
     {
       className,
       title,
-      path: _path,
-      // Props that should not be in extraProps
-      testID: _testID,
-      level: _level,
-      label: _label,
-      disabled: _disabled,
-      context: _context,
-      validation: _validation,
-      ...extraProps
+      path,
+      level,
+      testID,
+      label,
+      disabled,
+      context,
+      validation,
+      muiComponents,
+      ...otherProps
     },
     dragRef
   ) => {
-    const theme = useTheme();
+    const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
+    const key = muiComponentsInternal ? 'mui' : 'no-mui';
+    if (!muiComponentsInternal) {
+      return (
+        <DragHandle
+          key={key}
+          path={path}
+          level={level}
+          className={className}
+          title={title}
+          testID={testID}
+          label={label}
+          disabled={disabled}
+          context={context}
+          validation={validation}
+        />
+      );
+    }
+
+    const { DragIndicator } = muiComponentsInternal as GetMaterialDragHandleProps;
 
     return (
-      <span ref={dragRef} className={className} title={title}>
-        <ThemeProvider theme={theme}>
-          <DragIndicator {...extraProps} />
-        </ThemeProvider>
+      <span key={key} ref={dragRef} className={className} title={title}>
+        <DragIndicator {...otherProps} />
       </span>
     );
   }

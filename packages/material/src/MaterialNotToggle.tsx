@@ -1,10 +1,16 @@
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { ThemeProvider, useTheme } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
 import type { ComponentPropsWithoutRef } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
+import { NotToggle } from 'react-querybuilder';
+import type { RQBMaterialComponents, SwitchType } from './types';
+import { useMuiComponents } from './useMuiComponents';
 
-type MaterialNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
+type MaterialNotToggleProps = NotToggleProps &
+  ComponentPropsWithoutRef<SwitchType> & {
+    muiComponents?: Partial<RQBMaterialComponents>;
+  };
+
+type GetMaterialNotToggleProps = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
+const muiComponentNames: (keyof RQBMaterialComponents)[] = ['FormControlLabel', 'Switch'];
 
 export const MaterialNotToggle = ({
   className,
@@ -13,31 +19,52 @@ export const MaterialNotToggle = ({
   checked,
   title,
   disabled,
-  // Props that should not be in extraProps
-  path: _path,
-  context: _context,
-  validation: _validation,
-  testID: _testID,
-  ...extraProps
+  level,
+  path,
+  context,
+  validation,
+  testID,
+  muiComponents,
+  ...otherProps
 }: MaterialNotToggleProps) => {
-  const theme = useTheme();
-
-  return (
-    <ThemeProvider theme={theme}>
-      <FormControlLabel
+  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
+  const key = muiComponentsInternal ? 'mui' : 'no-mui';
+  if (!muiComponentsInternal) {
+    return (
+      <NotToggle
+        key={key}
         className={className}
+        handleOnChange={handleOnChange}
+        label={label}
+        checked={checked}
         title={title}
         disabled={disabled}
-        control={
-          <Switch
-            checked={!!checked}
-            onChange={e => handleOnChange(e.target.checked)}
-            {...extraProps}
-          />
-        }
-        label={label ?? /* istanbul ignore next */ ''}
+        path={path}
+        level={level}
+        context={context}
+        validation={validation}
+        testID={testID}
       />
-    </ThemeProvider>
+    );
+  }
+
+  const { FormControlLabel, Switch } = muiComponentsInternal as GetMaterialNotToggleProps;
+
+  return (
+    <FormControlLabel
+      key={key}
+      className={className}
+      title={title}
+      disabled={disabled}
+      control={
+        <Switch
+          checked={!!checked}
+          onChange={e => handleOnChange(e.target.checked)}
+          {...otherProps}
+        />
+      }
+      label={label ?? /* istanbul ignore next */ ''}
+    />
   );
 };
 
