@@ -1,3 +1,11 @@
+/* istanbul ignore file */
+
+/**
+ * TODO: We should not ignore this entire file with regard to
+ * test coverage, but testing dynamic imports is hard so it's
+ * future us's problem for now.
+ */
+
 declare const __RQB_DEV__: boolean;
 
 import type { ComponentType } from 'react';
