@@ -2,7 +2,7 @@ declare const __RQB_DEV__: boolean;
 
 import { useEffect, useState } from 'react';
 import { messages } from 'react-querybuilder';
-import type { DnD, UseReactDnD } from '../../types';
+import type { UseReactDnD } from '../../types';
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
@@ -43,36 +43,4 @@ export const useReactDnD = (dndParam?: UseReactDnD) => {
   }, []);
 
   return dnd;
-};
-
-// istanbul ignore next
-export const dndFallback: DnD = {
-  hooks: {
-    useDrag: (): ReturnType<UseReactDnD['useDrag']> => [
-      { isDragging: false, dragMonitorId: null },
-      (r: any) => r,
-      (r: any) => r,
-    ],
-    useDrop: (): ReturnType<UseReactDnD['useDrop']> => [
-      { isOver: false, dropMonitorId: null },
-      (r: any) => r,
-    ],
-  } as Pick<UseReactDnD, 'useDrag' | 'useDrop'>,
-  rule: {
-    isDragging: false,
-    dragMonitorId: null,
-    isOver: false,
-    dropMonitorId: null,
-    dragRef: null,
-    dndRef: null,
-  },
-  ruleGroup: {
-    isDragging: false,
-    dragMonitorId: null,
-    isOver: false,
-    dropMonitorId: null,
-    previewRef: null,
-    dragRef: null,
-    dropRef: null,
-  },
 };

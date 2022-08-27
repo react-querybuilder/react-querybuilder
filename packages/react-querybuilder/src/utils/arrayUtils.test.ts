@@ -1,4 +1,4 @@
-import { joinWith, splitBy, toArray } from './arrayUtils';
+import { joinWith, nullFreeArray, splitBy, toArray } from './arrayUtils';
 
 const commaString = 'this\\,\\,that,,the other,,,\\,';
 const commaArray = ['this,,that', '', 'the other', '', '', ','];
@@ -28,4 +28,15 @@ it('converts stuff to an array', () => {
   expect(toArray('test')).toEqual(['test']);
   expect(toArray('test,  ,,,this')).toEqual(['test', 'this']);
   expect(toArray([null, 'test', 1214, '  '])).toEqual([null, 'test', 1214, '']);
+});
+
+it('detects null-free arrays', () => {
+  expect(nullFreeArray([])).toBe(true);
+  expect(nullFreeArray([1])).toBe(true);
+  expect(nullFreeArray([1, 2])).toBe(true);
+  expect(nullFreeArray([1, null, 2])).toBe(false);
+  expect(nullFreeArray(['1', '2'])).toBe(true);
+  expect(nullFreeArray(['1', null, '2'])).toBe(false);
+  expect(nullFreeArray([{}, {}])).toBe(true);
+  expect(nullFreeArray([{}, null, {}])).toBe(false);
 });

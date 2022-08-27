@@ -1,4 +1,4 @@
-import type { ReactElement, Ref } from 'react';
+import type { ReactElement } from 'react';
 import type {
   InlineCombinatorProps,
   QueryActions,
@@ -39,28 +39,6 @@ export interface InlineCombinatorDndProps extends InlineCombinatorProps {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-html5-backend');
-
-export interface DnD {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  hooks: Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
-  rule: {
-    isDragging: boolean;
-    dragMonitorId: string | symbol | null;
-    isOver: boolean;
-    dropMonitorId: string | symbol | null;
-    dragRef: Ref<HTMLSpanElement>;
-    dndRef: Ref<HTMLDivElement>;
-  };
-  ruleGroup: {
-    isDragging: boolean;
-    dragMonitorId: string | symbol | null;
-    isOver: boolean;
-    dropMonitorId: string | symbol | null;
-    previewRef: Ref<HTMLDivElement>;
-    dragRef: Ref<HTMLSpanElement>;
-    dropRef: Ref<HTMLDivElement>;
-  };
-}
 
 export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   /**

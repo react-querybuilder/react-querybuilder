@@ -1,21 +1,52 @@
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from '@mui/material/Input';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Switch from '@mui/material/Switch';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
+import type { ValueEditorProps } from 'react-querybuilder';
 import {
   joinWith,
   standardClassnames,
   toArray,
   useValueEditor,
-  type ValueEditorProps,
+  ValueEditor,
 } from 'react-querybuilder';
 import { MaterialValueSelector } from './MaterialValueSelector';
+import type { MuiComponentName, RQBMaterialComponents } from './types';
+import { useMuiComponents } from './useMuiComponents';
+
+type MaterialValueEditorProps = ValueEditorProps & {
+  muiComponents?: Partial<RQBMaterialComponents>;
+};
+
+type MaterialValueEditorComponents = Pick<
+  RQBMaterialComponents,
+  | 'Checkbox'
+  | 'FormControl'
+  | 'FormControlLabel'
+  | 'Input'
+  | 'Radio'
+  | 'RadioGroup'
+  | 'Switch'
+  | 'TextareaAutosize'
+  // These are needed for MaterialValueSelector
+  | 'Select'
+  | 'ListSubheader'
+  | 'MenuItem'
+>;
+
+const muiComponentNames: MuiComponentName[] = [
+  'Checkbox',
+  'FormControl',
+  'FormControlLabel',
+  'Input',
+  'Radio',
+  'RadioGroup',
+  'Switch',
+  'TextareaAutosize',
+  // These are needed for MaterialValueSelector
+  'Select',
+  'ListSubheader',
+  'MenuItem',
+];
 
 export const MaterialValueEditor = ({
+  field,
   fieldData,
   operator,
   value,
@@ -23,15 +54,55 @@ export const MaterialValueEditor = ({
   title,
   className,
   type,
+  path,
+  level,
   inputType,
   values = [],
   listsAsArrays,
-  valueSource: _vs,
+  valueSource,
   disabled,
   testID,
+  muiComponents,
   ...props
-}: ValueEditorProps) => {
+}: MaterialValueEditorProps) => {
+  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
   useValueEditor({ handleOnChange, inputType, operator, value });
+
+  const key = muiComponentsInternal ? 'mui' : 'no-mui';
+  if (!muiComponentsInternal) {
+    return (
+      <ValueEditor
+        key={key}
+        field={field}
+        fieldData={fieldData}
+        operator={operator}
+        value={value}
+        handleOnChange={handleOnChange}
+        title={title}
+        className={className}
+        type={type}
+        path={path}
+        level={level}
+        inputType={inputType}
+        values={values}
+        listsAsArrays={listsAsArrays}
+        valueSource={valueSource}
+        disabled={disabled}
+        testID={testID}
+      />
+    );
+  }
+
+  const {
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    Input,
+    Radio,
+    RadioGroup,
+    Switch,
+    TextareaAutosize,
+  } = muiComponentsInternal as MaterialValueEditorComponents;
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -53,9 +124,12 @@ export const MaterialValueEditor = ({
       handleOnChange(listsAsArrays ? val : joinWith(val, ','));
     };
     return (
-      <span data-testid={testID} className={className} title={title}>
+      <span key={key} data-testid={testID} className={className} title={title}>
         <MaterialValueSelector
           {...props}
+          muiComponents={muiComponents}
+          path={path}
+          level={level}
           className={standardClassnames.valueListItem}
           handleOnChange={selector1handler}
           disabled={disabled}
@@ -65,6 +139,9 @@ export const MaterialValueEditor = ({
         />
         <MaterialValueSelector
           {...props}
+          muiComponents={muiComponents}
+          path={path}
+          level={level}
           className={standardClassnames.valueListItem}
           handleOnChange={selector2handler}
           disabled={disabled}
@@ -82,6 +159,10 @@ export const MaterialValueEditor = ({
       return (
         <MaterialValueSelector
           {...props}
+          muiComponents={muiComponents}
+          key={key}
+          path={path}
+          level={level}
           className={className}
           handleOnChange={handleOnChange}
           options={values}
@@ -96,6 +177,7 @@ export const MaterialValueEditor = ({
     case 'textarea':
       return (
         <TextareaAutosize
+          key={key}
           value={value}
           title={title}
           disabled={disabled}
@@ -108,6 +190,7 @@ export const MaterialValueEditor = ({
     case 'switch':
       return (
         <Switch
+          key={key}
           checked={!!value}
           title={title}
           disabled={disabled}
@@ -119,6 +202,7 @@ export const MaterialValueEditor = ({
     case 'checkbox':
       return (
         <Checkbox
+          key={key}
           className={className}
           title={title}
           onChange={e => handleOnChange(e.target.checked)}
@@ -129,7 +213,12 @@ export const MaterialValueEditor = ({
 
     case 'radio':
       return (
-        <FormControl className={className} title={title} component="fieldset" disabled={disabled}>
+        <FormControl
+          key={key}
+          className={className}
+          title={title}
+          component="fieldset"
+          disabled={disabled}>
           <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
             {values.map(v => (
               <FormControlLabel
@@ -161,6 +250,7 @@ export const MaterialValueEditor = ({
 
   return (
     <Input
+      key={key}
       type={inputTypeCoerced}
       value={value}
       title={title}

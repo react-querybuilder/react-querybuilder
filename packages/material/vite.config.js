@@ -12,12 +12,19 @@ export default defineConfig(({ mode, command }) => {
     define,
     build: {
       lib: {
-        entry: path.resolve(__dirname, 'src/index.ts'),
+        entry: path.resolve(__dirname, 'src/index.tsx'),
         fileName: format => `index.${format}.js`,
         formats: ['es', 'cjs'],
       },
       rollupOptions: {
-        external: ['react', 'react-querybuilder', '@mui/icons-material', '@mui/material'],
+        external: [
+          'react',
+          'react-querybuilder',
+          '@emotion/react',
+          '@emotion/styled',
+          '@mui/icons-material',
+          '@mui/material',
+        ],
       },
       sourcemap: true,
     },

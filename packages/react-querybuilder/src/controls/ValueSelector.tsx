@@ -1,4 +1,5 @@
-import { useMemo, type ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import { useMemo } from 'react';
 import type { ValueSelectorProps } from '../types';
 import { joinWith, toArray, toOptions } from '../utils';
 

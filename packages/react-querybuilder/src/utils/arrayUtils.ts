@@ -56,3 +56,5 @@ export const toArray = (v: any) =>
     ? splitBy(v, defaultJoinChar).filter(s => !/^\s*$/.test(s))
     : []
   ).map(trimIfString);
+
+export const nullFreeArray = <T>(arr: T[]): arr is Exclude<T, null>[] => arr.every(Boolean);

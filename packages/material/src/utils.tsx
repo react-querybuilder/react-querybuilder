@@ -1,9 +1,15 @@
-import { ListSubheader, MenuItem } from '@mui/material';
-import { isOptionGroupArray, type NameLabelPair, type OptionGroup } from 'react-querybuilder';
+import type { NameLabelPair, OptionGroup } from 'react-querybuilder';
+import { isOptionGroupArray } from 'react-querybuilder';
+import type { RQBMaterialComponents } from './types';
 
 export { isOptionGroupArray };
 
-export const toOptions = (arr?: NameLabelPair[] | OptionGroup[]) => {
+type ToOptionsOptions = Pick<RQBMaterialComponents, 'ListSubheader' | 'MenuItem'>;
+
+export const toOptions = (
+  arr: NameLabelPair[] | OptionGroup[],
+  { ListSubheader, MenuItem }: ToOptionsOptions
+) => {
   if (isOptionGroupArray(arr)) {
     const optArray: JSX.Element[] = [];
     for (const og of arr) {
