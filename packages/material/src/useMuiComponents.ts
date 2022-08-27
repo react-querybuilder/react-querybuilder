@@ -93,9 +93,9 @@ export const useMuiComponents = (
       ? { ...preloadedComponents, ...cachedComponents }
       : muiComponentsFromContext
       ? { ...muiComponentsFromContext, ...cachedComponents }
-      : cachedComponents && !__RQB_DEV__ // don't initialize with the cache in dev/tests
-      ? cachedComponents
-      : null;
+      : /* TODO: why does this next line cause the app to crash? */
+        /* cachedComponents && !__RQB_DEV__ ? cachedComponents : */
+        null;
   const [muiComponents, setMuiComponents] = useState<Partial<RQBMaterialComponents> | null>(
     initialComponents
   );
