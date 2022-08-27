@@ -1,9 +1,10 @@
 declare const __RQB_DEV__: boolean;
 
 import type { ComponentType } from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { nullFreeArray } from 'react-querybuilder';
 import { errorMaterialWithoutMUI } from './messages';
+import { RQBMaterialContext } from './RQBMaterialContext';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
 
 let didWarnMaterialWithoutMUI = false;
@@ -72,8 +73,9 @@ export const useMuiComponents = (
   componentNames: MuiComponentName[],
   preloadedComponents?: Partial<RQBMaterialComponents>
 ) => {
+  const muiComponentsFromContext = useContext(RQBMaterialContext);
   const [muiComponents, setMuiComponents] = useState<Partial<RQBMaterialComponents> | null>(
-    preloadedComponents ?? null
+    preloadedComponents ?? muiComponentsFromContext ?? null
   );
 
   useEffect(() => {
@@ -112,7 +114,7 @@ export const useMuiComponents = (
       }
     };
 
-    if (!muiComponents) {
+    if (!muiComponents || !componentNames.every(name => componentCache.has(name))) {
       getComponents();
     }
 

@@ -9,7 +9,7 @@ type MaterialActionProps = ActionWithRulesProps &
     muiComponents?: Partial<RQBMaterialComponents>;
   };
 
-type GetMaterialActionElementProps = Pick<RQBMaterialComponents, 'Button'>;
+type MaterialActionElementComponents = Pick<RQBMaterialComponents, 'Button'>;
 const muiComponentNames: (keyof RQBMaterialComponents)[] = ['Button'];
 
 export const MaterialActionElement = ({
@@ -51,7 +51,7 @@ export const MaterialActionElement = ({
     );
   }
 
-  const { Button } = muiComponentsInternal as GetMaterialActionElementProps;
+  const { Button } = muiComponentsInternal as MaterialActionElementComponents;
 
   return (
     <Button

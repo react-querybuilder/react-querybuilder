@@ -9,7 +9,7 @@ type MaterialDragHandleProps = DragHandleProps &
     muiComponents?: Partial<RQBMaterialComponents>;
   };
 
-type GetMaterialDragHandleProps = Pick<RQBMaterialComponents, 'DragIndicator'>;
+type MaterialDragHandleComponents = Pick<RQBMaterialComponents, 'DragIndicator'>;
 const muiComponentNames: (keyof RQBMaterialComponents)[] = ['DragIndicator'];
 
 export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(
@@ -48,7 +48,7 @@ export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandle
       );
     }
 
-    const { DragIndicator } = muiComponentsInternal as GetMaterialDragHandleProps;
+    const { DragIndicator } = muiComponentsInternal as MaterialDragHandleComponents;
 
     return (
       <span key={key} ref={dragRef} className={className} title={title}>

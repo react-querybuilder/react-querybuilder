@@ -14,7 +14,7 @@ type MaterialValueEditorProps = ValueEditorProps & {
   muiComponents?: Partial<RQBMaterialComponents>;
 };
 
-type GetMaterialValueEditorProps = Pick<
+type MaterialValueEditorComponents = Pick<
   RQBMaterialComponents,
   | 'Checkbox'
   | 'FormControl'
@@ -24,6 +24,10 @@ type GetMaterialValueEditorProps = Pick<
   | 'RadioGroup'
   | 'Switch'
   | 'TextareaAutosize'
+  // These are needed for MaterialValueSelector
+  | 'Select'
+  | 'ListSubheader'
+  | 'MenuItem'
 >;
 
 const muiComponentNames: (keyof RQBMaterialComponents)[] = [
@@ -35,6 +39,10 @@ const muiComponentNames: (keyof RQBMaterialComponents)[] = [
   'RadioGroup',
   'Switch',
   'TextareaAutosize',
+  // These are needed for MaterialValueSelector
+  'Select',
+  'ListSubheader',
+  'MenuItem',
 ];
 
 export const MaterialValueEditor = ({
@@ -94,7 +102,7 @@ export const MaterialValueEditor = ({
     RadioGroup,
     Switch,
     TextareaAutosize,
-  } = muiComponentsInternal as GetMaterialValueEditorProps;
+  } = muiComponentsInternal as MaterialValueEditorComponents;
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -119,6 +127,7 @@ export const MaterialValueEditor = ({
       <span key={key} data-testid={testID} className={className} title={title}>
         <MaterialValueSelector
           {...props}
+          muiComponents={muiComponents}
           path={path}
           level={level}
           className={standardClassnames.valueListItem}
@@ -130,6 +139,7 @@ export const MaterialValueEditor = ({
         />
         <MaterialValueSelector
           {...props}
+          muiComponents={muiComponents}
           path={path}
           level={level}
           className={standardClassnames.valueListItem}
@@ -149,6 +159,7 @@ export const MaterialValueEditor = ({
       return (
         <MaterialValueSelector
           {...props}
+          muiComponents={muiComponents}
           key={key}
           path={path}
           level={level}

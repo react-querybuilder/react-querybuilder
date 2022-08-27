@@ -158,11 +158,11 @@ export const AntDValueEditor = ({
           className={className}
           disabled={disabled}
           placeholder={[placeHolderText, placeHolderText]}
-          onChange={dates =>
-            // TODO: the next line is currently untested (see the
-            // "should render a date range picker" test in ./AntD.test.tsx)
+          // TODO: the function below is currently untested (see the
+          // "should render a date range picker" test in ./AntD.test.tsx)
+          onChange={
             /* istanbul ignore next */
-            handleOnChange(dates?.map(d => d?.format(moment.HTML5_FMT.DATE)).join(','))
+            dates => handleOnChange(dates?.map(d => d?.format(moment.HTML5_FMT.DATE)).join(','))
           }
         />
       ) : (

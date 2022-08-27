@@ -12,7 +12,7 @@ type MaterialValueSelectorProps = VersatileSelectorProps &
     muiComponents?: Partial<RQBMaterialComponents>;
   };
 
-type GetMaterialValueSelectorProps = Pick<
+type MaterialValueSelectorComponents = Pick<
   RQBMaterialComponents,
   'FormControl' | 'Select' | 'ListSubheader' | 'MenuItem'
 >;
@@ -89,7 +89,7 @@ export const MaterialValueSelector = ({
   }
 
   const { FormControl, Select, ListSubheader, MenuItem } =
-    muiComponentsInternal as GetMaterialValueSelectorProps;
+    muiComponentsInternal as MaterialValueSelectorComponents;
 
   const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 

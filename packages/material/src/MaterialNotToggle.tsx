@@ -9,7 +9,7 @@ type MaterialNotToggleProps = NotToggleProps &
     muiComponents?: Partial<RQBMaterialComponents>;
   };
 
-type GetMaterialNotToggleProps = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
+type MaterialNotToggleComponents = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
 const muiComponentNames: (keyof RQBMaterialComponents)[] = ['FormControlLabel', 'Switch'];
 
 export const MaterialNotToggle = ({
@@ -48,7 +48,7 @@ export const MaterialNotToggle = ({
     );
   }
 
-  const { FormControlLabel, Switch } = muiComponentsInternal as GetMaterialNotToggleProps;
+  const { FormControlLabel, Switch } = muiComponentsInternal as MaterialNotToggleComponents;
 
   return (
     <FormControlLabel

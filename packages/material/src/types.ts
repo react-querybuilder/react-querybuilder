@@ -1,9 +1,3 @@
-// type MuiMaterialExports =
-//   /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
-//   | keyof typeof import('@mui/material')
-//   /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
-//   | keyof typeof import('@mui/icons-material');
-
 /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
 export type ButtonType = typeof import('@mui/material/Button').default;
 /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
