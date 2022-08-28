@@ -1,3 +1,11 @@
+#app {
+  margin: 0 !important;
+
+  & > *:nth-child(1) {
+    row-gap: 0 !important;
+  }
+}
+
 p {
   code {
     border: 1px solid lightgray;

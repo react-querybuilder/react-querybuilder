@@ -38,6 +38,7 @@ import {
   parseJsonLogic,
   parseSQL,
   QueryBuilder,
+  version,
 } from 'react-querybuilder';
 import type { CommonRQBProps, DemoOptions } from 'react-querybuilder/dev';
 import {
@@ -289,6 +290,9 @@ const App = () => {
         <Header>
           <Title level={3} style={{ display: 'inline-block' }}>
             <a href={docsLink}>React Query Builder Demo</a>
+          </Title>
+          <Title level={5} style={{ display: 'inline-block', marginLeft: '1rem' }}>
+            <a href={docsLink}>v{version}</a>
           </Title>
         </Header>
         <Layout>
