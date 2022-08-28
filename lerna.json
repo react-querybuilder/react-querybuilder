@@ -5,7 +5,8 @@
   "useWorkspaces": true,
   "command": {
     "version": {
-      "noPush": true
+      "noPush": true,
+      "forcePublish": true
     }
   }
 }
