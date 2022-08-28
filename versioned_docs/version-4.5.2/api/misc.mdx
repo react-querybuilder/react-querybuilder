@@ -8,8 +8,6 @@ import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
-A non-comprehensive list of exports from `react-querybuilder`.
-
 ## Utilities
 
 ### `defaultValidator`
@@ -42,7 +40,7 @@ function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 
 `convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](./querybuilder#independentcombinators)).
 
-`convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in the directions indicated by their respective names.
+`convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in one direction.
 
 ### `transformQuery`
 
@@ -87,7 +85,6 @@ The default components are also exported:
 
 - `ActionElement` - used for action buttons (to add rules, remove groups, etc.)
 - `DragHandle` - used for the drag handle on rules and group headers
-- `InlineCombinator` - used when either `showCombinatorsBetweenRules` or `independentCombinators` are `true`
 - `NotToggle` - used for the "Invert this group" toggle switch
 - `Rule` - the default rule component
 - `RuleGroup` - the default rule group component

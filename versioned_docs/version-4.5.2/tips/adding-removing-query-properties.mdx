@@ -35,31 +35,7 @@ console.log(formatQuery(query, 'json_without_ids'));
 
 ## Adding properties
 
-To produce a query object with additional properties, you can loop through the `rules` array recursively. The [`transformQuery`](../api/misc#transformquery) function is provided for use cases such as this.
-
-In the example below (inspired by [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)), the `inputType` from the `fields` array is added to each rule.
-
-```ts
-import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
-import { transformQuery } from 'react-querybuilder';
-
-const fields: Field[] = [
-  { name: 'description', label: 'Description', inputType: 'string' },
-  { name: 'price', label: 'Price', inputType: 'number' },
-];
-
-const ruleProcessor = (r: RuleType): RuleType & { inputType?: string } => ({
-  ...r,
-  inputType: fields.find(f => f.name === r.field)?.inputType,
-});
-
-const result = transformQuery(query, { ruleProcessor });
-```
-
-<details>
-<summary>Manual recursion</summary>
-
-This example (_directly_ from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)) demonstrates manual recursion to achieve exactly the same result as the `transformQuery` example above.
+To produce a query object with additional properties, you can loop through the `rules` array recursively. In the example below (from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)), the `inputType` from the `fields` array is added to each rule.
 
 ```ts
 import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
@@ -86,5 +62,3 @@ const processGroup = (rg: RuleGroupType): RuleGroupType => ({
 
 const result = processGroup(query);
 ```
-
-</details>

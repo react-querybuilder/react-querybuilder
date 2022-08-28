@@ -17,7 +17,7 @@ jobs:
           node-version: '16.x'
       - name: Test Build
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
           npm run build
   gh-release:
     if: github.event_name != 'pull_request'
@@ -37,5 +37,5 @@ jobs:
         run: |
           git config --global user.email "jakeboone02@gmail.com"
           git config --global user.name "Jake Boone"
-          yarn install --frozen-lockfile
+          yarn install --immutable
           npm run deploy

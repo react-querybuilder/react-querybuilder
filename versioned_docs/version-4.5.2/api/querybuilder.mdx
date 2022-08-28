@@ -171,12 +171,11 @@ The array of combinators that should be used for RuleGroups. The default set inc
 
 ```ts
 interface Controls {
-  addGroupAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
-  addRuleAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
+  addGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  addRuleAction?: React.ComponentType<ActionWithRulesProps>;
   cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction?: React.ComponentType<ActionProps>;
   combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
-  inlineCombinator: ComponentType<InlineCombinatorProps>;
   dragHandle?: React.ForwardRefExoticComponent<
     DragHandleProps & React.RefAttributes<HTMLSpanElement>
   >;
@@ -199,11 +198,11 @@ This is a custom controls object that allows you to override the default control
 By default a `<button />` is used. The following props are passed:
 
 ```ts
-interface ActionWithRulesAndAddersProps {
+interface ActionWithRulesProps {
   label: string; // translations.addGroup.label, e.g. "+Group"
   title: string; // translations.addGroup.title, e.g. "Add group"
   className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent, context?: any) => void; // Callback function to invoke adding a <RuleGroup />
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
@@ -267,11 +266,11 @@ interface ActionWithRulesProps {
 By default a `<button />` is used. The following props are passed:
 
 ```ts
-interface ActionWithRulesAndAddersProps {
+interface ActionWithRulesProps {
   label: string; // translations.addGroup.label, e.g. "+Rule"
   title: string; // translations.addGroup.title, e.g. "Add rule"
   className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent, context?: any) => void; // Callback function to invoke adding a <RuleGroup />
+  handleOnClick: (e: React.MouseEvent) => void; // Callback function to invoke adding a <RuleGroup />
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
@@ -341,19 +340,6 @@ interface CombinatorSelectorProps {
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
-}
-```
-
-#### `inlineCombinator`
-
-A small wrapper around the `combinatorSelector` component. The following props are passed:
-
-```ts
-interface InlineCombinatorProps extends CombinatorSelectorProps {
-  component: Schema['controls']['combinatorSelector'];
-  path: number[];
-  moveRule: QueryActions['moveRule'];
-  independentCombinators?: boolean;
 }
 ```
 
@@ -550,9 +536,9 @@ This function returns the default value for new rules.
 
 ### `onAddRule`
 
-`(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny, context?: any) => RuleType | false`
+`(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny) => RuleType | false`
 
-This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` callback prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary information.
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy.
 
 :::tip
 
@@ -562,9 +548,9 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 ### `onAddGroup`
 
-`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG, context?: any) => RG | false`
+`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG) => RG | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` callback prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary information.
+This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy.
 
 :::tip
 
@@ -780,39 +766,11 @@ When the `independentCombinators` option is enabled, the `query` (or `defaultQue
 
 `boolean` (default `false`) [_Click for demo_](https://react-querybuilder.js.org/react-querybuilder/#enableDragAndDrop=true)
 
+Pass `true` to display a drag handle to the left of each group header and rule. Clicking and dragging the handle element allows visual reordering of rules and groups.
+
 :::caution
 
-This prop does not need to be set directly. If used directly, it has no effect unless the following conditions are met:
-
-1. A `QueryBuilderDnD` context provider from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd) is rendered higher up in the component tree.
-2. [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) are also installed.
-
-If those conditions are met, and `enableDragAndDrop` is not explicitly set to `false` on the `<QueryBuilder />` element, then `enableDragAndDrop` is implicitly set to `true`.
-
-:::
-
-When `true` (under the conditions detailed above), a drag handle is displayed on the left-hand side of each group header and each rule. Clicking and dragging the handle element allows users to visually reorder the rules and groups.
-
-#### Example usage
-
-```bash
-yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
-```
-
-```tsx
-import { QueryBuilderDnD } from '@react-querybuilder/dnd';
-import { QueryBuilder } from 'react-querybuilder';
-
-const App = () => (
-  <QueryBuilderDnD>
-    <QueryBuilder />
-  </QueryBuilderDnD>
-);
-```
-
-:::tip
-
-If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former relies on your pre-existing `<DndProvider />` (as long as it is higher up in the component tree). The latter renders its own provider which will clash with an ancestor `DndProvider`. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
+`react-querybuilder` uses [`react-dnd`](https://react-dnd.github.io/react-dnd/) to enable drag-and-drop features. If your application already uses `react-dnd`, you should import and render `<QueryBuilderWithoutDndProvider />` instead of `<QueryBuilder />`. They are functionally the same, but the former will rely on your pre-existing `DndProvider` wrapper while the latter implements its own and will clash with a separate `DndProvider` higher up in the component tree (the error will typically look like this: "Cannot have two HTML5 backends at the same time.").
 
 :::
 
