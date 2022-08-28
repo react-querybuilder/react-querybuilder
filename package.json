@@ -35,7 +35,7 @@
     "generate-changelog": "github-changes --owner react-querybuilder --repository react-querybuilder --auth --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\"",
     "generate-examples": "node ./examples/generateExamples.mjs",
     "outdated": "yarn upgrade-interactive",
-    "version": "yarn && concurrently --group --timings --names packages,examples yarn:generate-examples yarn:build:packages && concurrently \"git add examples yarn.lock\""
+    "version": "yarn && concurrently --group --timings --names examples,packages yarn:generate-examples yarn:build:packages && concurrently \"git add examples yarn.lock\""
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
