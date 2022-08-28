@@ -812,7 +812,7 @@ const App = () => (
 
 :::tip
 
-If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former relies on your pre-existing `<DndProvider />` (as long as it is higher up in the component tree). The latter renders its own provider which will clash with an ancestor `DndProvider`. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
+If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former relies on your pre-existing `<DndProvider />` (as long as it is higher up in the component tree). The latter renders its own provider which will clash with an ancestor `DndProvider`. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
 
 :::
 
