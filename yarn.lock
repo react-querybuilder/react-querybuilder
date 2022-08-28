@@ -5220,7 +5220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/antd@^5.0.0-alpha.0, @react-querybuilder/antd@workspace:packages/antd":
+"@react-querybuilder/antd@^5.0.0-alpha.1, @react-querybuilder/antd@workspace:packages/antd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
   dependencies:
@@ -5233,7 +5233,7 @@ __metadata:
     rc-select: ^14.1.9
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
@@ -5243,7 +5243,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bootstrap@^5.0.0-alpha.0, @react-querybuilder/bootstrap@workspace:packages/bootstrap":
+"@react-querybuilder/bootstrap@^5.0.0-alpha.1, @react-querybuilder/bootstrap@workspace:packages/bootstrap":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
@@ -5253,7 +5253,7 @@ __metadata:
     bootstrap-icons: ^1.9.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
@@ -5263,7 +5263,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bulma@^5.0.0-alpha.0, @react-querybuilder/bulma@workspace:packages/bulma":
+"@react-querybuilder/bulma@^5.0.0-alpha.1, @react-querybuilder/bulma@workspace:packages/bulma":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
@@ -5272,7 +5272,7 @@ __metadata:
     "@vitejs/plugin-react": ^2.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
@@ -5281,7 +5281,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/chakra@^5.0.0-alpha.0, @react-querybuilder/chakra@workspace:packages/chakra":
+"@react-querybuilder/chakra@^5.0.0-alpha.1, @react-querybuilder/chakra@workspace:packages/chakra":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/chakra@workspace:packages/chakra"
   dependencies:
@@ -5296,7 +5296,7 @@ __metadata:
     framer-motion: ^6.5.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
@@ -5323,12 +5323,12 @@ __metadata:
     "@mui/icons-material": ^5.10.2
     "@mui/material": ^5.10.2
     "@popperjs/core": ^2.11.6
-    "@react-querybuilder/antd": ^5.0.0-alpha.0
-    "@react-querybuilder/bootstrap": ^5.0.0-alpha.0
-    "@react-querybuilder/bulma": ^5.0.0-alpha.0
-    "@react-querybuilder/chakra": ^5.0.0-alpha.0
-    "@react-querybuilder/dnd": ^5.0.0-alpha.0
-    "@react-querybuilder/material": ^5.0.0-alpha.0
+    "@react-querybuilder/antd": ^5.0.0-alpha.1
+    "@react-querybuilder/bootstrap": ^5.0.0-alpha.1
+    "@react-querybuilder/bulma": ^5.0.0-alpha.1
+    "@react-querybuilder/chakra": ^5.0.0-alpha.1
+    "@react-querybuilder/dnd": ^5.0.0-alpha.1
+    "@react-querybuilder/material": ^5.0.0-alpha.1
     "@types/react": ^18.0.17
     "@types/react-dom": ^18.0.6
     "@types/react-syntax-highlighter": ^15.5.5
@@ -5345,7 +5345,7 @@ __metadata:
     react-dnd: ^16.0.1
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     react-syntax-highlighter: ^15.5.0
     terser: ^5.15.0
     typescript: ^4.7.4
@@ -5353,7 +5353,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/dnd@^5.0.0-alpha.0, @react-querybuilder/dnd@workspace:packages/dnd":
+"@react-querybuilder/dnd@^5.0.0-alpha.1, @react-querybuilder/dnd@workspace:packages/dnd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
@@ -5367,7 +5367,7 @@ __metadata:
     react-dnd-test-backend: ^16.0.1
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
@@ -5377,7 +5377,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/material@^5.0.0-alpha.0, @react-querybuilder/material@workspace:packages/material":
+"@react-querybuilder/material@^5.0.0-alpha.1, @react-querybuilder/material@workspace:packages/material":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/material@workspace:packages/material"
   dependencies:
@@ -5392,7 +5392,7 @@ __metadata:
     copyfiles: ^2.4.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.0
+    react-querybuilder: ^5.0.0-alpha.1
     regenerator-runtime: ^0.13.9
     replace: ^1.2.1
     typescript: ^4.7.4
@@ -7473,6 +7473,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"concurrently@npm:^7.3.0":
+  version: 7.3.0
+  resolution: "concurrently@npm:7.3.0"
+  dependencies:
+    chalk: ^4.1.0
+    date-fns: ^2.16.1
+    lodash: ^4.17.21
+    rxjs: ^7.0.0
+    shell-quote: ^1.7.3
+    spawn-command: ^0.0.2-1
+    supports-color: ^8.1.0
+    tree-kill: ^1.2.2
+    yargs: ^17.3.1
+  bin:
+    concurrently: dist/bin/concurrently.js
+  checksum: 5de845e4947c550a6ff74ecc80e1897109abe339fe8a7fa117e7b8978362566ac4ee070e4475bdaa6fc453f780fadb9089739a02606e27e04affaa7dd8905d2d
+  languageName: node
+  linkType: hard
+
 "config-chain@npm:^1.1.12":
   version: 1.1.13
   resolution: "config-chain@npm:1.1.13"
@@ -7771,6 +7790,13 @@ __metadata:
   version: 2.28.0
   resolution: "date-fns@npm:2.28.0"
   checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.16.1":
+  version: 2.29.2
+  resolution: "date-fns@npm:2.29.2"
+  checksum: 08bebcceb0a5dbadae4c55e6592b9d5c07dbd7833433c7e9a1d4a424300db32589b8b48e5979b32863c9b00a48d9bab6663e580c2a4f9f203d46cbf9113b5664
   languageName: node
   linkType: hard
 
@@ -14337,6 +14363,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.35.1
     "@vitejs/plugin-legacy": ^2.0.1
     all-contributors-cli: ^6.20.0
+    concurrently: ^7.3.0
     eslint: ^8.22.0
     eslint-plugin-react: ^7.31.0
     eslint-plugin-react-hooks: ^4.6.0
@@ -14363,7 +14390,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@^5.0.0-alpha.0, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@^5.0.0-alpha.1, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
@@ -15047,7 +15074,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.5.5":
+"rxjs@npm:^7.0.0, rxjs@npm:^7.5.5":
   version: 7.5.6
   resolution: "rxjs@npm:7.5.6"
   dependencies:
@@ -15239,6 +15266,13 @@ __metadata:
   version: 3.0.0
   resolution: "shebang-regex@npm:3.0.0"
   checksum: 1a2bcae50de99034fcd92ad4212d8e01eedf52c7ec7830eedcf886622804fe36884278f2be8be0ea5fde3fd1c23911643a4e0f726c8685b61871c8908af01222
+  languageName: node
+  linkType: hard
+
+"shell-quote@npm:^1.7.3":
+  version: 1.7.3
+  resolution: "shell-quote@npm:1.7.3"
+  checksum: aca58e73a3a5d933d02e0bdddedc53ee14f7c2ec264f97ac915b9d4482d077a38e422aa664631d60a672cd3cdb4054eb2e6c0303f54882453dacb6483e482d34
   languageName: node
   linkType: hard
 
@@ -15453,6 +15487,13 @@ __metadata:
   version: 1.1.5
   resolution: "space-separated-tokens@npm:1.1.5"
   checksum: 8ef68f1cfa8ccad316b7f8d0df0919d0f1f6d32101e8faeee34ea3a923ce8509c1ad562f57388585ee4951e92d27afa211ed0a077d3d5995b5ba9180331be708
+  languageName: node
+  linkType: hard
+
+"spawn-command@npm:^0.0.2-1":
+  version: 0.0.2
+  resolution: "spawn-command@npm:0.0.2"
+  checksum: e35c5d28177b4d461d33c88cc11f6f3a5079e2b132c11e1746453bbb7a0c0b8a634f07541a2a234fa4758239d88203b758def509161b651e81958894c0b4b64b
   languageName: node
   linkType: hard
 
@@ -15788,7 +15829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^8.0.0":
+"supports-color@npm:^8.0.0, supports-color@npm:^8.1.0":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
   dependencies:
@@ -16065,6 +16106,15 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
+  languageName: node
+  linkType: hard
+
+"tree-kill@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "tree-kill@npm:1.2.2"
+  bin:
+    tree-kill: cli.js
+  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
   languageName: node
   linkType: hard
 

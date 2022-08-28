@@ -156,4 +156,8 @@ for (const exampleID in configs) {
     await writeFile(filepath, prettified);
   }
   // #endregion
+
+  console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
 }
+
+console.log('Finished generating examples');

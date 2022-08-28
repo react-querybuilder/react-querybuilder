@@ -35,7 +35,7 @@
     "generate-changelog": "github-changes --owner react-querybuilder --repository react-querybuilder --auth --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\"",
     "generate-examples": "node ./examples/generateExamples.mjs",
     "outdated": "yarn upgrade-interactive",
-    "version": "yarn build:packages && yarn generate-examples"
+    "version": "yarn && concurrently --group --timings --names packages,examples yarn:generate-examples yarn:build:packages"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
@@ -54,6 +54,7 @@
     "@typescript-eslint/parser": "^5.35.1",
     "@vitejs/plugin-legacy": "^2.0.1",
     "all-contributors-cli": "^6.20.0",
+    "concurrently": "^7.3.0",
     "eslint": "^8.22.0",
     "eslint-plugin-react": "^7.31.0",
     "eslint-plugin-react-hooks": "^4.6.0",
