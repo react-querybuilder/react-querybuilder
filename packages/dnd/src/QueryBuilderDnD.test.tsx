@@ -9,7 +9,7 @@ import type {
   RuleGroupTypeIC,
 } from 'react-querybuilder';
 import QueryBuilder, { formatQuery, getCompatContextProvider, TestID } from 'react-querybuilder';
-import { QueryBuilderDnD, QueryBuilderWithoutDndProvider } from './QueryBuilderDnD';
+import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
@@ -63,7 +63,7 @@ it('acts as a pass-through for context', async () => {
 });
 
 it('renders base QueryBuilder without dnd provider without enableDragAndDrop prop', async () => {
-  const [QBWoDndProvider] = wrapWithTestBackend(QueryBuilderWithoutDndProvider);
+  const [QBWoDndProvider] = wrapWithTestBackend(QueryBuilderDndWithoutProvider);
   await act(async () => {
     render(
       <QBWoDndProvider>
@@ -91,7 +91,7 @@ it('renders with dnd provider without dnd prop', async () => {
 });
 
 it('renders without dnd provider without dnd prop', async () => {
-  const [QBWoDndProvider] = wrapWithTestBackend(QueryBuilderWithoutDndProvider);
+  const [QBWoDndProvider] = wrapWithTestBackend(QueryBuilderDndWithoutProvider);
   await act(async () => {
     render(
       <QBWoDndProvider>
@@ -104,8 +104,8 @@ it('renders without dnd provider without dnd prop', async () => {
 });
 
 // The drag-and-drop tests run once for QueryBuilderOriginal and once again
-// for QueryBuilderWithoutDndProvider.
-describe.each([{ QB: QueryBuilderDnD }, { QB: QueryBuilderWithoutDndProvider }])(
+// for QueryBuilderDndWithoutProvider.
+describe.each([{ QB: QueryBuilderDnD }, { QB: QueryBuilderDndWithoutProvider }])(
   'enableDragAndDrop ($QB.displayName)',
   ({ QB }) => {
     const [QBforDnD, getBackend] = wrapWithTestBackend(

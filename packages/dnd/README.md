@@ -40,10 +40,10 @@ const App = () => {
 
 - `<QueryBuilderDnD />` will automatically set the `enableDragAndDrop` prop to `true` on any descendant `<QueryBuilder />` elements unless `enableDragAndDrop` is explicitly set to `false` on the `<QueryBuilder />` element.
 
-- If your application already uses `react-dnd` outside the scope of a query builder, use `QueryBuilderWithoutDndProvider` instead of `QueryBuilderDnD` to inherit context from your existing `DndProvider`.
+- If your application already uses `react-dnd` outside the scope of a query builder, use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD` to inherit context from your existing `DndProvider`.
 
   ```tsx
-  import { QueryBuilderWithoutDndProvider } from '@react-querybuilder/dnd';
+  import { QueryBuilderDndWithoutProvider } from '@react-querybuilder/dnd';
   import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
   const fields = [
@@ -55,9 +55,9 @@ const App = () => {
     const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
     return (
-      <QueryBuilderWithoutDndProvider>
+      <QueryBuilderDndWithoutProvider>
         <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
-      </QueryBuilderWithoutDndProvider>
+      </QueryBuilderDndWithoutProvider>
     );
   };
   ```

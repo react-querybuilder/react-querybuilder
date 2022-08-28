@@ -30,7 +30,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
   return (
     <DndProvider key={key} backend={HTML5Backend} debugMode={debugMode}>
       <QueryBuilderContext.Provider value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
-        <QueryBuilderWithoutDndProvider dnd={dnd}>{props.children}</QueryBuilderWithoutDndProvider>
+        <QueryBuilderDndWithoutProvider dnd={dnd}>{props.children}</QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
     </DndProvider>
   );
@@ -38,7 +38,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
 
 QueryBuilderDnD.displayName = 'QueryBuilderDnD';
 
-export const QueryBuilderWithoutDndProvider = (props: QueryBuilderDndProps) => {
+export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
   const rqbContext = useContext(QueryBuilderContext);
   const dnd = useReactDnD(props.dnd);
   const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
@@ -97,4 +97,4 @@ export const QueryBuilderWithoutDndProvider = (props: QueryBuilderDndProps) => {
   );
 };
 
-QueryBuilderWithoutDndProvider.displayName = 'QueryBuilderWithoutDndProvider';
+QueryBuilderDndWithoutProvider.displayName = 'QueryBuilderDndWithoutProvider';
