@@ -24,6 +24,9 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check --watch"
   },
+  "dependencies": {
+    "react-querybuilder": "^5.0.0-alpha.0"
+  },
   "devDependencies": {
     "@chakra-ui/icons": "^2.0.9",
     "@chakra-ui/react": "^2.2.9",
@@ -36,7 +39,6 @@
     "framer-motion": "^6.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^5.0.0-alpha.0",
     "typescript": "^4.7.4",
     "vite": "^3.0.9"
   },
@@ -47,7 +49,6 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "framer-motion": "^6.3.3",
-    "react": ">=16.8.0",
-    "react-querybuilder": "^5.0.0-alpha.0"
+    "react": ">=16.8.0"
   }
 }
