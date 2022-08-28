@@ -5220,7 +5220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/antd@^4.5.2, @react-querybuilder/antd@workspace:packages/antd":
+"@react-querybuilder/antd@^5.0.0-alpha.0, @react-querybuilder/antd@workspace:packages/antd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
   dependencies:
@@ -5233,18 +5233,18 @@ __metadata:
     rc-select: ^14.1.9
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
     "@ant-design/icons": ">=4.7.0"
     antd: ">=4.10.0"
     react: ">=16.8.0"
-    react-querybuilder: ">=4"
+    react-querybuilder: ^5.0.0-alpha.0
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bootstrap@^4.5.2, @react-querybuilder/bootstrap@workspace:packages/bootstrap":
+"@react-querybuilder/bootstrap@^5.0.0-alpha.0, @react-querybuilder/bootstrap@workspace:packages/bootstrap":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
@@ -5254,18 +5254,18 @@ __metadata:
     bootstrap-icons: ^1.9.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
     bootstrap: ">=5"
     bootstrap-icons: ">=1.7.0"
     react: ">=16.8.0"
-    react-querybuilder: ">=4"
+    react-querybuilder: ^5.0.0-alpha.0
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bulma@^4.5.2, @react-querybuilder/bulma@workspace:packages/bulma":
+"@react-querybuilder/bulma@^5.0.0-alpha.0, @react-querybuilder/bulma@workspace:packages/bulma":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
@@ -5274,17 +5274,17 @@ __metadata:
     "@vitejs/plugin-react": ^2.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
     bulma: ^0.9.3
     react: ">=16.8.0"
-    react-querybuilder: ">=4"
+    react-querybuilder: ^5.0.0-alpha.0
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/chakra@^4.5.2, @react-querybuilder/chakra@workspace:packages/chakra":
+"@react-querybuilder/chakra@^5.0.0-alpha.0, @react-querybuilder/chakra@workspace:packages/chakra":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/chakra@workspace:packages/chakra"
   dependencies:
@@ -5299,7 +5299,7 @@ __metadata:
     framer-motion: ^6.5.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
@@ -5310,7 +5310,7 @@ __metadata:
     "@emotion/styled": ^11
     framer-motion: ^6.3.3
     react: ">=16.8.0"
-    react-querybuilder: ">=4"
+    react-querybuilder: ^5.0.0-alpha.0
   languageName: unknown
   linkType: soft
 
@@ -5327,12 +5327,12 @@ __metadata:
     "@mui/icons-material": ^5.10.2
     "@mui/material": ^5.10.2
     "@popperjs/core": ^2.11.6
-    "@react-querybuilder/antd": ^4.5.2
-    "@react-querybuilder/bootstrap": ^4.5.2
-    "@react-querybuilder/bulma": ^4.5.2
-    "@react-querybuilder/chakra": ^4.5.2
-    "@react-querybuilder/dnd": ^4.5.2
-    "@react-querybuilder/material": ^4.5.2
+    "@react-querybuilder/antd": ^5.0.0-alpha.0
+    "@react-querybuilder/bootstrap": ^5.0.0-alpha.0
+    "@react-querybuilder/bulma": ^5.0.0-alpha.0
+    "@react-querybuilder/chakra": ^5.0.0-alpha.0
+    "@react-querybuilder/dnd": ^5.0.0-alpha.0
+    "@react-querybuilder/material": ^5.0.0-alpha.0
     "@types/react": ^18.0.17
     "@types/react-dom": ^18.0.6
     "@types/react-syntax-highlighter": ^15.5.5
@@ -5349,7 +5349,7 @@ __metadata:
     react-dnd: ^16.0.1
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     react-syntax-highlighter: ^15.5.0
     terser: ^5.15.0
     typescript: ^4.7.4
@@ -5357,7 +5357,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/dnd@^4.5.2, @react-querybuilder/dnd@workspace:packages/dnd":
+"@react-querybuilder/dnd@^5.0.0-alpha.0, @react-querybuilder/dnd@workspace:packages/dnd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
@@ -5371,18 +5371,18 @@ __metadata:
     react-dnd-test-backend: ^16.0.1
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     typescript: ^4.7.4
     vite: ^3.0.9
   peerDependencies:
     react: ">=16.8.0"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/material@^4.5.2, @react-querybuilder/material@workspace:packages/material":
+"@react-querybuilder/material@^5.0.0-alpha.0, @react-querybuilder/material@workspace:packages/material":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/material@workspace:packages/material"
   dependencies:
@@ -5397,7 +5397,7 @@ __metadata:
     copyfiles: ^2.4.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
+    react-querybuilder: ^5.0.0-alpha.0
     regenerator-runtime: ^0.13.9
     replace: ^1.2.1
     typescript: ^4.7.4
@@ -5408,7 +5408,7 @@ __metadata:
     "@mui/icons-material": ">=5.0.0"
     "@mui/material": ">=5.0.0"
     react: ">=16.8.0"
-    react-querybuilder: ">=4"
+    react-querybuilder: ^5.0.0-alpha.0
   languageName: unknown
   linkType: soft
 
@@ -14369,7 +14369,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@^4.5.2, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@^5.0.0-alpha.0, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
