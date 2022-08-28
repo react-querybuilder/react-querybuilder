@@ -8,9 +8,10 @@ import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
 const require = createRequire(import.meta.url);
+/** @type {import('../lerna').LernaJSON} */
+const lernaJSON = require('../lerna.json');
 /** @type {import('prettier').Config} */
 const prettierConfig = require('../.prettierrc.json');
-const templatePkgJSON = require('./_template/package.json');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -36,6 +37,12 @@ const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).to
 const templateAppTSX = (await readFile(pathJoin(templateSrc, 'App.tsx'))).toString('utf-8');
 const templateStylesSCSS = (await readFile(pathJoin(templateSrc, 'styles.scss'))).toString('utf-8');
 const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
+
+const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.json')))
+  .toString('utf-8')
+  .replace(/("react-querybuilder": ").*?"/g, `$1^${lernaJSON.version}"`);
+await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
+const templatePkgJSON = require('./_template/package.json');
 
 for (const exampleID in configs) {
   const exampleConfig = configs[exampleID];

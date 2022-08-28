@@ -34,7 +34,8 @@
     "pretty-print": "prettier --write packages/*/src/** packages/*/dev/** ./*.js examples/**/*",
     "generate-changelog": "github-changes --owner react-querybuilder --repository react-querybuilder --auth --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\"",
     "generate-examples": "node ./examples/generateExamples.mjs",
-    "outdated": "yarn upgrade-interactive"
+    "outdated": "yarn upgrade-interactive",
+    "version": "yarn generate-examples"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
