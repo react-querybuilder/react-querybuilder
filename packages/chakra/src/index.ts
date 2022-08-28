@@ -5,6 +5,14 @@ import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
+export { version } from '../package.json';
+export {
+  ChakraActionElement,
+  ChakraDragHandle,
+  ChakraNotToggle,
+  ChakraValueEditor,
+  ChakraValueSelector,
+};
 
 export const chakraControlElements: Partial<Controls> = {
   addGroupAction: ChakraActionElement,
@@ -28,11 +36,3 @@ export const QueryBuilderChakra = getCompatContextProvider({
   key: 'chakra',
   controlElements: chakraControlElements,
 });
-
-export {
-  ChakraActionElement,
-  ChakraDragHandle,
-  ChakraNotToggle,
-  ChakraValueEditor,
-  ChakraValueSelector,
-};

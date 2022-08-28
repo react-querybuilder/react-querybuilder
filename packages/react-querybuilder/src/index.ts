@@ -1,6 +1,7 @@
 import { enableES5 } from 'immer';
 import { QueryBuilder } from './QueryBuilder';
 enableES5();
+export { version } from '../package.json';
 export * from './controls/';
 export * from './defaults';
 export * from './InlineCombinator';

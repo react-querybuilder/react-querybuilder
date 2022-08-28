@@ -4,6 +4,8 @@ import { BulmaActionElement } from './BulmaActionElement';
 import { BulmaNotToggle } from './BulmaNotToggle';
 import { BulmaValueEditor } from './BulmaValueEditor';
 import { BulmaValueSelector } from './BulmaValueSelector';
+export { version } from '../package.json';
+export { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector };
 
 export const bulmaControlElements: Partial<Controls> = {
   notToggle: BulmaNotToggle,
@@ -26,5 +28,3 @@ export const QueryBuilderBulma = getCompatContextProvider({
   key: 'bulma',
   controlElements: bulmaControlElements,
 });
-
-export { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector };

@@ -3,6 +3,8 @@ import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
+export { version } from '../package.json';
+export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };
 
 export const bootstrapControlElements: Partial<Controls> = {
   dragHandle: BootstrapDragHandle,
@@ -31,5 +33,3 @@ export const QueryBuilderBootstrap = getCompatContextProvider({
   controlClassnames: bootstrapControlClassnames,
   controlElements: bootstrapControlElements,
 });
-
-export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };

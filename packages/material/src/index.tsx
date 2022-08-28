@@ -12,6 +12,14 @@ import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
+export { version } from '../package.json';
+export {
+  MaterialActionElement,
+  MaterialDragHandle,
+  MaterialNotToggle,
+  MaterialValueEditor,
+  MaterialValueSelector,
+};
 
 export const materialControlElements: Partial<Controls> = {
   addGroupAction: MaterialActionElement,
@@ -73,12 +81,4 @@ export const QueryBuilderMaterial: QueryBuilderContextProvider = ({
       <MaterialContextProvider {...props} />
     </RQBMaterialContext.Provider>
   );
-};
-
-export {
-  MaterialActionElement,
-  MaterialDragHandle,
-  MaterialNotToggle,
-  MaterialValueEditor,
-  MaterialValueSelector,
 };

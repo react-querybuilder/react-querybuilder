@@ -14409,6 +14409,7 @@ __metadata:
     "@types/react-dom": ^18.0.6
     "@vitejs/plugin-react": ^2.0.1
     babel-plugin-istanbul: ^6.1.1
+    concurrently: ^7.3.0
     copyfiles: ^2.4.1
     immer: ^9.0.15
     jscodeshift: ^0.13.1

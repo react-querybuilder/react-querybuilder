@@ -4,11 +4,11 @@
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "typesVersions": {
     "<4.5": {
-      "dist/types/*": [
-        "dist/typesPre45/*"
+      "dist/types/src/*": [
+        "dist/typesPre45/src/*"
       ]
     }
   },
@@ -53,6 +53,7 @@
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.1",
     "babel-plugin-istanbul": "^6.1.1",
+    "concurrently": "^7.3.0",
     "copyfiles": "^2.4.1",
     "jscodeshift": "^0.13.1",
     "json-logic-js": "^2.0.2",
@@ -76,11 +77,12 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "yarn build:main && yarn build:css && yarn build:formatQuery && yarn build:parseCEL && yarn build:parseJsonLogic && yarn build:parseSQL && yarn build:transformQuery && yarn build:types",
+    "build": "yarn build:main && concurrently --group --timings --names css,formatQuery,parseCEL,parseJsonLogic,parseSQL,transformQuery,types yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseSQL yarn:build:transformQuery yarn:build:types",
     "build:main": "vite build",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC'\" ./dist/types/types -r --silent && yarn build:typesPre45",
-    "build:typesPre45": "tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace \"import type\" \"import\" ./dist/typesPre45 -r --silent && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC.pre45'\" ./dist/typesPre45/types -r --silent",
+    "build:types": "concurrently --group --timings --names typesPost45,typesPre45 yarn:build:typesPost45 yarn:build:typesPre45",
+    "build:typesPost45": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC'\" ./dist/types/src/types -r --silent",
+    "build:typesPre45": "tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace \"import type\" \"import\" ./dist/typesPre45/src -r --silent && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC.pre45'\" ./dist/typesPre45/src/types -r --silent",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseCEL": "vite build --config vite.config.parseCEL.js",
     "build:parseJsonLogic": "vite build --config vite.config.parseJsonLogic.js",
