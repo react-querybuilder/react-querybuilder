@@ -42,6 +42,7 @@ If your application already uses `react-dnd` and renders `DndProvider` higher up
 ### Fixed
 
 - [#324](https://github.com/react-querybuilder/react-querybuilder/pull/324) The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
+- `parseCEL` now handles strings, including multi-line strings, correctly.
 
 ### Added
 
