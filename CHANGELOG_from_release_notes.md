@@ -124,7 +124,7 @@ _TL;DR: These are probably not breaking changes._
     - `defaultValueProcessorCELByRule`
     - `defaultValueProcessorMongoDBByRule`
     - `defaultValueProcessorSpELByRule`
-- #320/#323: New parser functions (also available as standalone builds in the `dist` folder). Click the respective "Import from [format]" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try them out.
+- #320, #323: New parser functions (also available as standalone builds in the `dist` folder). Click the respective "Import from [format]" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try them out.
   - `parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
   - `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`. Click the "Import from CEL" button in [the demo](https://react-querybuilder.js.org/react-querybuilder).
 - #328 New utility function `transformQuery` recursively processes rule groups and rules with the provided `ruleProcessor`, `ruleGroupProcessor`, and other options ([documentation](https://react-querybuilder.js.org/docs/api/misc#transformquery)).
@@ -787,11 +787,182 @@ Only one new feature in this release.
 - Added missing props to new `ValueEditor` types
 - Added `title` prop and completed `ValueEditor` props
 
-## v2.1.0 - 2019-08-27
+## [v2.1.0] - 2019-08-27
 
 ### Added
 
 - Enhanced default `ValueEditor` to handle multiple input types (#94)
+
+## [v2.0.1] - 2019-08-27
+
+### Added
+
+- #93 Pass in new root to `_notifyQueryChange` [@pumbor](https://github.com/pumbor)
+- #84 Add `className` prop to `ValueEditor`, pass it on to `input` element (#84) [@kkkrist](https://github.com/kkkrist)
+
+## [v2.0.0] - 2019-08-18
+
+### Changed
+
+- #87 Hooks rewrite and increased test coverage [@jakeboone02](https://github.com/jakeboone02)
+
+### Fixed
+
+- #82 Removed type restrictions on rule `value`s [@jakeboone02](https://github.com/jakeboone02)
+
+## [v1.4.3] - 2018-04-08
+
+### Fixed
+
+- #60 Fixed TypeScript function parameter definitions [@jakeboone02](https://github.com/jakeboone02)
+
+## [v1.4.2] - 2018-03-02
+
+### Added
+
+- #55 Add optional `id` information in README [@CharlyJazz](https://github.com/CharlyJazz)
+
+## [v1.4.1] - 2018-03-02
+
+### Added
+
+- #53 Add optional `id` property to `fields` [@CharlyJazz](https://github.com/CharlyJazz)
+
+## [v1.4.0] - 2017-12-11
+
+### Fixed
+
+- #46 Types: Added `id` attribute to `RuleGroup` [@jakeboone02](https://github.com/jakeboone02)
+
+### Added
+
+- #47 Add `translations` prop to be able to set translatable texts [@bubenkoff](https://github.com/bubenkoff)
+- #44 Add TypeScript typings [@jakeboone02](https://github.com/jakeboone02)
+- #42 Converted `Rule` subcomponents to SFCs [@jakeboone02](https://github.com/jakeboone02)
+
+## [v1.3.8] - 2017-07-14
+
+### Fixed
+
+- #37 package updates and making it compatible with codesandbox.io [@pavanpodila](https://github.com/pavanpodila)
+
+## [v1.3.6] - 2017-03-13
+
+### Added
+
+- #28 Add `field` to operator selector control element [@SamLoy](https://github.com/SamLoy)
+- #27 Added more context information to `controlElements` [@SamLoy](https://github.com/SamLoy)
+
+## [v1.3.5] - 2017-02-06
+
+### Fixed
+
+- #24 README: Update live demo link to use v1.3.4 and React 15 [@mreishus](https://github.com/mreishus)
+- #23 README.md Usage - destructuring removed from import [@mreishus](https://github.com/mreishus)
+
+## [v1.3.4] - 2017-01-23
+
+### Added
+
+- #17 Add npm-based changelog generator [@maniax89](https://github.com/maniax89)
+- #18 Add code coverage & TravisCI [@maniax89](https://github.com/maniax89)
+
+## [v1.3.0] - 2016-10-12
+
+### Fixed
+
+- #15 Fix test setup [@maniax89](https://github.com/maniax89)
+- #11 Move 'this' binding to `componentWillMount` [@maniax89](https://github.com/maniax89)
+- #9 Remove unnecessary imports [@maniax89](https://github.com/maniax89)
+
+### Added
+
+- #13 Rule group tests [@maniax89](https://github.com/maniax89)
+- #12 Add `ActionElement` tests to `<Rule />` [@maniax89](https://github.com/maniax89)
+- #8 WIP: Added CHANGELOG.md [@maniax89](https://github.com/maniax89)
+- #7 Add in `ActionElement` for custom `<button />` elements [@maniax89](https://github.com/maniax89)
+- #10 WIP: Add `<Rule />` Tests [@maniax89](https://github.com/maniax89)
+- #6 Custom rule controls [@maniax89](https://github.com/maniax89)
+
+## [v1.2.0] - 2016-07-11
+
+### Fixed
+
+- #1 fix missing field [@vitorhsb](https://github.com/vitorhsb)
+
+## [v1.1.0] - 2016-06-27
+
+### Added
+
+- `controlClassnames` prop
+- Documentation update
+
+## [v1.0.10] - 2016-06-26
+
+### Fixed
+
+- Stop event propagation for buttons
+- Proper `dist` path
+
+## [v1.0.9] - 2016-06-20
+
+### Added
+
+- Documentation update
+
+## [v1.0.8] - 2016-06-19
+
+### Added
+
+- Documentation update
+
+## [v1.0.7] - 2016-06-19
+
+### Added
+
+- Live demo URL to README
+
+## [v1.0.6] - 2016-06-19
+
+### Added
+
+- `react` and `react-dom` to `devDependencies`
+
+## [v1.0.5] - 2016-06-19
+
+### Fixed
+
+- Documentation update
+
+## [v1.0.4] - 2016-06-19
+
+### Added
+
+- Documentation and demo
+
+## [v1.0.3] - 2016-06-19
+
+### Added
+
+- Include query-builder.scss in `dist`
+
+## [v1.0.2] - 2016-06-19
+
+### Added
+
+- "Pending" documentation note
+
+## [v1.0.1] - 2016-06-19
+
+### Changed
+
+- Build artifacts moved from `lib` to `dist`
+
+## [v1.0.0] - 2016-06-19
+
+### Added
+
+- Initial publish
 
 [unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.2...HEAD
 [v5.0.0-alpha.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.1...v5.0.0-alpha.2
@@ -863,3 +1034,28 @@ Only one new feature in this release.
 [v2.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v2.2.1...v2.3.0
 [v2.2.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v2.1.0...v2.2.0
+[v2.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v2.0.1...v2.1.0
+[v2.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v2.0.0...v2.0.1
+[v2.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.4.3...v2.0.0
+[v1.4.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.4.2...v1.4.3
+[v1.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.4.1...v1.4.2
+[v1.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.4.0...v1.4.1
+[v1.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.3.8...v1.4.0
+[v1.3.8]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.3.6...v1.3.8
+[v1.3.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.3.5...v1.3.6
+[v1.3.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.3.4...v1.3.5
+[v1.3.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.3.0...v1.3.4
+[v1.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.2.0...v1.3.0
+[v1.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.1.0...v1.2.0
+[v1.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.10...v1.1.0
+[v1.0.10]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.9...v1.0.10
+[v1.0.9]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.8...v1.0.9
+[v1.0.8]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.7...v1.0.8
+[v1.0.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.6...v1.0.7
+[v1.0.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.5...v1.0.6
+[v1.0.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.4...v1.0.5
+[v1.0.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.3...v1.0.4
+[v1.0.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.2...v1.0.3
+[v1.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.1...v1.0.2
+[v1.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.0...v1.0.1
+[v1.0.0]: https://github.com/react-querybuilder/react-querybuilder/releases/tag/v1.0.0
