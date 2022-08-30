@@ -20,12 +20,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { act, render, screen } from '@testing-library/react';
+import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import {
   cloneElement as mockCloneElement,
   forwardRef,
   isValidElement as mockIsValidElement,
-  ReactElement,
-  type ComponentPropsWithoutRef,
 } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 import { defaultTranslations, QueryBuilder, TestID } from 'react-querybuilder';
