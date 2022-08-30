@@ -68,4 +68,4 @@ jobs:
   #         yarn workspace @react-querybuilder/demo add -D typescript@${{ matrix.ts }}
   #         yarn workspace @react-querybuilder/demo tsc --version
   #         yarn tsc --version
-  #         yarn workspace @react-querybuilder/demo type-check
+  #         yarn workspace @react-querybuilder/demo typecheck

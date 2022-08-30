@@ -24,6 +24,7 @@ import {
   cloneElement as mockCloneElement,
   forwardRef,
   isValidElement as mockIsValidElement,
+  ReactElement,
   type ComponentPropsWithoutRef,
 } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
@@ -61,7 +62,9 @@ jest.mock('@mui/material/MenuItem', () => ({ value, children }: MenuItemProps) =
 jest.mock('@mui/material/FormControl', () => {
   const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
     <div className={className} title={title}>
-      {mockIsValidElement(children) ? mockCloneElement(children, { disabled }) : children}
+      {mockIsValidElement(children)
+        ? mockCloneElement(children as ReactElement<any>, { disabled })
+        : children}
     </div>
   );
   FormControl.useFormControl = () => {};
