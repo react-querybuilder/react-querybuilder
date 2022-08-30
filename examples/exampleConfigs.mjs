@@ -3,7 +3,7 @@
 export const configs = {
   basic: {
     name: 'Basic',
-    dependencies: {},
+    dependencyKeys: [],
     scssPre: [],
     scssPost: [],
     tsxImports: [],
@@ -16,7 +16,7 @@ export const configs = {
   },
   'basic-ts': {
     name: 'Basic TypeScript',
-    dependencies: {},
+    dependencyKeys: [],
     scssPre: [],
     scssPost: [],
     tsxImports: [],
@@ -29,7 +29,7 @@ export const configs = {
   },
   dnd: {
     name: 'Drag-and-drop',
-    dependencies: { 'react-dnd': '>=14.0.0', 'react-dnd-html5-backend': '>=14.0.0' },
+    dependencyKeys: ['react-dnd', 'react-dnd-html5-backend'],
     scssPre: [],
     scssPost: [],
     tsxImports: [`import { QueryBuilderDnD } from '@react-querybuilder/dnd';`],
@@ -42,10 +42,7 @@ export const configs = {
   },
   antd: {
     name: 'Ant Design',
-    dependencies: {
-      '@ant-design/icons': '^4.7.0',
-      antd: '^4.20.5',
-    },
+    dependencyKeys: ['@ant-design/icons', 'antd'],
     scssPre: [`@import 'antd/dist/antd.compact.css';`],
     scssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
     tsxImports: [`import { QueryBuilderAntD } from '@react-querybuilder/antd';`],
@@ -58,11 +55,7 @@ export const configs = {
   },
   bootstrap: {
     name: 'Bootstrap',
-    dependencies: {
-      bootstrap: '^5.1.3',
-      'bootstrap-icons': '^1.8.2',
-      '@popperjs/core': '^2.11.5',
-    },
+    dependencyKeys: ['bootstrap', 'bootstrap-icons', ['@popperjs/core', '^2.11.5']],
     scssPre: [`$code-color: #333333;`, `@import 'bootstrap/scss/bootstrap.scss';`],
     scssPost: [`.queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`],
     tsxImports: [`import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';`],
@@ -75,7 +68,7 @@ export const configs = {
   },
   bulma: {
     name: 'Bulma',
-    dependencies: { bulma: '^0.9.4' },
+    dependencyKeys: ['bulma'],
     scssPre: [`$code: #333333;`, `$code-background: unset;`, `@import 'bulma/bulma.sass';`],
     scssPost: [`.queryBuilder{.input{width: auto;}}`],
     tsxImports: [`import { QueryBuilderBulma } from '@react-querybuilder/bulma';`],
@@ -88,14 +81,14 @@ export const configs = {
   },
   chakra: {
     name: 'Chakra UI',
-    dependencies: {
-      '@chakra-ui/icons': '^2.0.0',
-      '@chakra-ui/react': '^2.0.2',
-      '@chakra-ui/system': '^2.0.2',
-      '@emotion/react': '^11.9.0',
-      '@emotion/styled': '^11.8.1',
-      'framer-motion': '^6.3.3',
-    },
+    dependencyKeys: [
+      '@chakra-ui/icons',
+      '@chakra-ui/react',
+      '@chakra-ui/system',
+      '@emotion/react',
+      '@emotion/styled',
+      'framer-motion',
+    ],
     scssPre: [],
     scssPost: [
       `.queryBuilder {
@@ -122,12 +115,7 @@ export const configs = {
   },
   material: {
     name: 'MUI/Material',
-    dependencies: {
-      '@emotion/react': '^11.9.0',
-      '@emotion/styled': '^11.8.1',
-      '@mui/icons-material': '^5.0.5',
-      '@mui/material': '^5.8.0',
-    },
+    dependencyKeys: ['@emotion/react', '@emotion/styled', '@mui/icons-material', '@mui/material'],
     scssPre: [],
     scssPost: [],
     tsxImports: [

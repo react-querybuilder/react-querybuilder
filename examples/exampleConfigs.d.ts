@@ -5,12 +5,13 @@ export type PackageJSON = {
   description: string;
   dependencies: Dependencies;
   devDependencies: Dependencies;
+  peerDependencies: Dependencies;
   [x: string]: any;
 };
 
 interface ExampleConfig {
   name: string;
-  dependencies: Dependencies;
+  dependencyKeys: (string | [string, string])[];
   scssPre: string[];
   scssPost: string[];
   tsxImports: string[];

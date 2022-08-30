@@ -27,6 +27,7 @@ async function recursivelyGetFiles(dir) {
   return files.flat();
 }
 
+const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
 const templatePublic = pathJoin(templatePath, 'public');
 const templateSrc = pathJoin(templatePath, 'src');
@@ -120,7 +121,15 @@ for (const exampleID in configs) {
       }
     }
   }
-  examplePkgJSON.dependencies = { ...examplePkgJSON.dependencies, ...exampleConfig.dependencies };
+  for (const depKey of exampleConfig.dependencyKeys) {
+    /** @type {import('./exampleConfigs').PackageJSON} */
+    const compatPkgJson = require(pathJoin(packagesPath, `${exampleID}/package.json`));
+    if (Array.isArray(depKey)) {
+      examplePkgJSON.dependencies[depKey[0]] = depKey[1];
+    } else {
+      examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
+    }
+  }
   await writeFile(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON));
   // #endregion
 
