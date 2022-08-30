@@ -534,7 +534,7 @@ Only one new feature in this release.
 
 ### Added
 
-- Added the `mongodb` query export format (#214). Thanks, @CodMonk!
+- #214 `mongodb` query export format ([@CodMonk](https://github.com/CodMonk))
 
 ## [v3.10.0] - 2021-07-27
 
@@ -773,7 +773,7 @@ Only one new feature in this release.
 
 ### Fixed
 
-- TS definitions
+- TypeScript definitions
 
 ## [v2.2.0] - 2019-08-29
 
@@ -797,98 +797,98 @@ Only one new feature in this release.
 
 ### Added
 
-- #93 Pass in new root to `_notifyQueryChange` [@pumbor](https://github.com/pumbor)
-- #84 Add `className` prop to `ValueEditor`, pass it on to `input` element (#84) [@kkkrist](https://github.com/kkkrist)
+- #93 Pass in new root to `_notifyQueryChange` ([@pumbor](https://github.com/pumbor))
+- #84 Add `className` prop to `ValueEditor`, pass it on to `input` element (#84) ([@kkkrist](https://github.com/kkkrist))
 
 ## [v2.0.0] - 2019-08-18
 
 ### Changed
 
-- #87 Hooks rewrite and increased test coverage [@jakeboone02](https://github.com/jakeboone02)
+- #87 Hooks rewrite and increased test coverage ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Fixed
 
-- #82 Removed type restrictions on rule `value`s [@jakeboone02](https://github.com/jakeboone02)
+- #82 Removed type restrictions on rule `value`s ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v1.4.3] - 2018-04-08
 
 ### Fixed
 
-- #60 Fixed TypeScript function parameter definitions [@jakeboone02](https://github.com/jakeboone02)
+- #60 Fixed TypeScript function parameter definitions ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v1.4.2] - 2018-03-02
 
 ### Added
 
-- #55 Add optional `id` information in README [@CharlyJazz](https://github.com/CharlyJazz)
+- #55 Add optional `id` information in README ([@CharlyJazz](https://github.com/CharlyJazz))
 
 ## [v1.4.1] - 2018-03-02
 
 ### Added
 
-- #53 Add optional `id` property to `fields` [@CharlyJazz](https://github.com/CharlyJazz)
+- #53 Add optional `id` property to `fields` ([@CharlyJazz](https://github.com/CharlyJazz))
 
 ## [v1.4.0] - 2017-12-11
 
 ### Fixed
 
-- #46 Types: Added `id` attribute to `RuleGroup` [@jakeboone02](https://github.com/jakeboone02)
+- #46 Types: Added `id` attribute to `RuleGroup` ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Added
 
-- #47 Add `translations` prop to be able to set translatable texts [@bubenkoff](https://github.com/bubenkoff)
-- #44 Add TypeScript typings [@jakeboone02](https://github.com/jakeboone02)
-- #42 Converted `Rule` subcomponents to SFCs [@jakeboone02](https://github.com/jakeboone02)
+- #47 Add `translations` prop to be able to set translatable texts ([@bubenkoff](https://github.com/bubenkoff))
+- #44 Add TypeScript typings ([@jakeboone02](https://github.com/jakeboone02))
+- #42 Converted `Rule` subcomponents to SFCs ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v1.3.8] - 2017-07-14
 
 ### Fixed
 
-- #37 package updates and making it compatible with codesandbox.io [@pavanpodila](https://github.com/pavanpodila)
+- #37 package updates and making it compatible with codesandbox.io ([@pavanpodila](https://github.com/pavanpodila))
 
 ## [v1.3.6] - 2017-03-13
 
 ### Added
 
-- #28 Add `field` to operator selector control element [@SamLoy](https://github.com/SamLoy)
-- #27 Added more context information to `controlElements` [@SamLoy](https://github.com/SamLoy)
+- #28 Add `field` to operator selector control element ([@SamLoy](https://github.com/SamLoy))
+- #27 Added more context information to `controlElements` ([@SamLoy](https://github.com/SamLoy))
 
 ## [v1.3.5] - 2017-02-06
 
 ### Fixed
 
-- #24 README: Update live demo link to use v1.3.4 and React 15 [@mreishus](https://github.com/mreishus)
-- #23 README.md Usage - destructuring removed from import [@mreishus](https://github.com/mreishus)
+- #24 README: Update live demo link to use v1.3.4 and React 15 ([@mreishus](https://github.com/mreishus))
+- #23 README.md Usage - destructuring removed from import ([@mreishus](https://github.com/mreishus))
 
 ## [v1.3.4] - 2017-01-23
 
 ### Added
 
-- #17 Add npm-based changelog generator [@maniax89](https://github.com/maniax89)
-- #18 Add code coverage & TravisCI [@maniax89](https://github.com/maniax89)
+- #17 Add npm-based changelog generator ([@maniax89](https://github.com/maniax89))
+- #18 Add code coverage & TravisCI ([@maniax89](https://github.com/maniax89))
 
 ## [v1.3.0] - 2016-10-12
 
 ### Fixed
 
-- #15 Fix test setup [@maniax89](https://github.com/maniax89)
-- #11 Move 'this' binding to `componentWillMount` [@maniax89](https://github.com/maniax89)
-- #9 Remove unnecessary imports [@maniax89](https://github.com/maniax89)
+- #15 Fix test setup ([@maniax89](https://github.com/maniax89))
+- #11 Move 'this' binding to `componentWillMount` ([@maniax89](https://github.com/maniax89))
+- #9 Remove unnecessary imports ([@maniax89](https://github.com/maniax89))
 
 ### Added
 
-- #13 Rule group tests [@maniax89](https://github.com/maniax89)
-- #12 Add `ActionElement` tests to `<Rule />` [@maniax89](https://github.com/maniax89)
-- #8 WIP: Added CHANGELOG.md [@maniax89](https://github.com/maniax89)
-- #7 Add in `ActionElement` for custom `<button />` elements [@maniax89](https://github.com/maniax89)
-- #10 WIP: Add `<Rule />` Tests [@maniax89](https://github.com/maniax89)
-- #6 Custom rule controls [@maniax89](https://github.com/maniax89)
+- #13 Rule group tests ([@maniax89](https://github.com/maniax89))
+- #12 Add `ActionElement` tests to `<Rule />` ([@maniax89](https://github.com/maniax89))
+- #8 WIP: Added CHANGELOG.md ([@maniax89](https://github.com/maniax89))
+- #7 Add in `ActionElement` for custom `<button />` elements ([@maniax89](https://github.com/maniax89))
+- #10 WIP: Add `<Rule />` Tests ([@maniax89](https://github.com/maniax89))
+- #6 Custom rule controls ([@maniax89](https://github.com/maniax89))
 
 ## [v1.2.0] - 2016-07-11
 
 ### Fixed
 
-- #1 fix missing field [@vitorhsb](https://github.com/vitorhsb)
+- #1 fix missing field ([@vitorhsb](https://github.com/vitorhsb))
 
 ## [v1.1.0] - 2016-06-27
 
