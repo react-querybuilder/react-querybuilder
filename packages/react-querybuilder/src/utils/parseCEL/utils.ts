@@ -67,7 +67,7 @@ function evalCELLiteralValue(literal: CELNullLiteral): null;
 function evalCELLiteralValue(literal: CELLiteral): string | boolean | number | null;
 function evalCELLiteralValue(literal: CELLiteral) {
   if (literal.type === 'StringLiteral') {
-    return literal.value.replace(/^(['"]?)(.+?)\1$/, '$2');
+    return literal.value.replace(/^((?:'''|"""|'|")?)([\s\S]*?)\1$/gm, '$2');
   } else if (literal.type === 'BooleanLiteral') {
     return literal.value;
   } else if (literal.type === 'NullLiteral' || literal.type === 'BytesLiteral') {

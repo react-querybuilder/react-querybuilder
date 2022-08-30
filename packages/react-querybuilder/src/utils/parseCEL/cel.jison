@@ -121,10 +121,10 @@ false                                                             return 'BOOL_L
 // Identfiers
 [_a-zA-Z][_a-zA-Z0-9]*                                            return 'IDENT'
 // Literals
-[rR]?['](\\.|[^'\\n\\r])*[']                                      return 'STRING_LIT'
-[rR]?["](\\.|[^"\\n\\r])*["]                                      return 'STRING_LIT'
-[rR]?['''](\\.)*[''']                                             return 'STRING_LIT'
-[rR]?["""](\\.)*["""]                                             return 'STRING_LIT'
+[rR]?['][']['](\.|[^'])*[']['][']                                 return 'STRING_LIT'
+[rR]?["]["]["](\.|[^"])*["]["]["]                                 return 'STRING_LIT'
+[rR]?['](\.|[^'\n\r])*[']                                         return 'STRING_LIT'
+[rR]?["](\.|[^"\n\r])*["]                                         return 'STRING_LIT'
 [-]?([0-9]+|0x[0-9a-fA-F]+)                                       return 'INT_LIT'
 ([0-9]+|0x[0-9a-fA-F]+)[uU]                                       return 'UINT_LIT'
 [-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?                return 'FLOAT_LIT'

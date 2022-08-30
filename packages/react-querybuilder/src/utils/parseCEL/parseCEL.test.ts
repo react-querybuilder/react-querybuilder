@@ -64,6 +64,21 @@ it('works for basic relations', () => {
   testParseCEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
+it('handles every letter within strings', () => {
+  for (const value of 'abcdefghijklmnopqrstuvwxyz') {
+    testParseCEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
+  }
+});
+
+it('handles multi-line strings', () => {
+  for (const q of `'"`) {
+    testParseCEL(
+      `f1 == ${q}${q}${q}multi-line\nstring${q}${q}${q}`,
+      wrapRule({ field: 'f1', operator: '=', value: 'multi-line\nstring' })
+    );
+  }
+});
+
 it('handles "like" comparisons', () => {
   testParseCEL(
     'f1.contains("Test")',
