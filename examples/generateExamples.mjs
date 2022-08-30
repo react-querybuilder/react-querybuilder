@@ -8,8 +8,8 @@ import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
 const require = createRequire(import.meta.url);
-/** @type {import('../lerna').LernaJSON} */
-const lernaJSON = require('../lerna.json');
+/** @type {{ version: string; }} */
+const { version } = require('../lerna.json');
 /** @type {import('prettier').Config} */
 const prettierConfig = require('../.prettierrc.json');
 const __filename = fileURLToPath(import.meta.url);
@@ -40,7 +40,7 @@ const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).t
 
 const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.json')))
   .toString('utf-8')
-  .replace(/("react-querybuilder": ").*?"/g, `$1^${lernaJSON.version}"`);
+  .replace(/("react-querybuilder": ").*?"/g, `$1^${version}"`);
 await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON = require('./_template/package.json');
 
