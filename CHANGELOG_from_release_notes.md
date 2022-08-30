@@ -366,7 +366,7 @@ Generated `RuleType` object
 ### Fixed
 
 - The default `ValueEditor` component was calling the `useEffect` hook conditionally, which is _way_ against the [Rules of Hooks](https://reactjs.org/docs/hooks-rules.html). It is now called unconditionally.
-- When the `formatQuery` export format is "mongodb", the resulting string can be parsed by `JSON.parse`.
+- #258 When the `formatQuery` export format is "mongodb", the resulting string can be parsed by `JSON.parse` ([@mylawacad](https://github.com/mylawacad))
 
 ### Added
 
@@ -385,22 +385,24 @@ Generated `RuleType` object
 
 ### Fixed
 
-- Couple of issues with the "mongodb" `formatQuery` export type.
+- #255 Fix a couple of issues with the "mongodb" `formatQuery` export type ([@mylawacad](https://github.com/mylawacad))
 
 ### Added
 
-- `disabled` prop
-- Default `RuleGroup` component is exported
+- #261 `valueProcessor` for "mongodb" export format
+- #252 Export `RuleGroup` component ([@ZigZagT](https://github.com/ZigZagT))
+- #250 Bulma compatibility package and demo
+- #248 `disabled` prop
 
 ## [v4.0.0-beta.7] - 2021-12-13
 
 ### Fixed
 
-- This release (hopefully) fixes an issue with drag-and-drop when using `independentCombinators`.
+- #247 Fix drag-and-drop for `independentCombinators`
 
 ## [v4.0.0-beta.6] - 2021-11-27
 
-This was primarily a maintenance release focused on converting to a monorepo with Vite driving the build process.
+Maintenance release focused on converting to a monorepo with Vite driving the build process.
 
 ### Added
 
@@ -428,14 +430,14 @@ This was primarily a maintenance release focused on converting to a monorepo wit
 
 ### Added
 
-- Drag-and-drop! Pass the `enableDragAndDrop` prop to display a drag handle on each rule and group header. Users will be able to reorder rules and groups with the click (and drag) of a mouse.
+- #235 Drag-and-drop! Pass the `enableDragAndDrop` prop to display a drag handle on each rule and group header. Users will be able to reorder rules and groups with the click (and drag) of a mouse.
 - New IE11-compatible demo page.
 
 ## [v4.0.0-beta.4] - 2021-11-03
 
 ### Fixed
 
-- v4.0.0-beta.3 had an outdated build
+- [v4.0.0-beta.3] had an outdated build
 
 ### Added
 
@@ -445,42 +447,31 @@ This was primarily a maintenance release focused on converting to a monorepo wit
 
 ### Added
 
-- `inlineCombinators` prop. When `true`, `<QueryBuilder />` will insert an independent combinator (and/or) selector between each pair of sibling rules/groups. This new feature shouldn't introduce any breaking changes, i.e. if `inlineCombinators` is undefined or `false`, then the `<QueryBuilder />` should behave the same as it did in v4.0.0-beta.2. However, the TypeScript types are _significantly_ more complex in this release so we're going to leave this beta out for a while before releasing v4.0.0 properly.
+- #231 `inlineCombinators` prop. When `true`, `<QueryBuilder />` will insert an independent combinator (and/or) selector between each pair of sibling rules/groups. This new feature shouldn't introduce any breaking changes, i.e. if `inlineCombinators` is undefined or `false`, then the `<QueryBuilder />` should behave the same as it did in v4.0.0-beta.2. However, the TypeScript types are _significantly_ more complex in this release so we're going to leave this beta out for a while before releasing v4.0.0 properly.
 
 ## [v4.0.0-beta.2] - 2021-10-29
 
 ### Added
 
-- `parseSQL` method to import queries from SQL (try the [demo](https://react-querybuilder.js.org/react-querybuilder/)).
+- #230 `parseSQL` method to import queries from SQL (try the [demo](https://react-querybuilder.js.org/react-querybuilder/)).
 
 ## [v4.0.0-beta.1] - 2021-10-23
 
 ### Changed
 
-This release introduces several small API changes, both internal and external, that warrant a major version bump.
-
-#### Internal
-
-These changes shouldn't affect most users.
-
-- `Rule` and `RuleGroup` props now include `path: number[]`, and `id` may be undefined.
-- `getLevel` has been removed from the `schema` prop.
-- The following functions that are part of the `schema` prop have been refactored to use `path` or `parentPath` instead of `id` or `parentId`: `onGroupAdd`, `onGroupRemove`, `onPropChange`, `onRuleAdd`, `onRuleRemove`.
-
-#### External
-
-These changes could potentially affect users that depend on certain features.
-
-- `onAddRule` and `onAddGroup` callbacks now pass a `number[]` (`parentPath`) as the second argument instead of a `string` (`parentId`).
-- The exported method `findRule` has been replaced by `findPath`, which is useful in conjunction with the previously mentioned, refactored `onAddRule` and `onAddGroup` callbacks.
-- The `onQueryChange` callback's argument, the current query object, will include a `path` for each rule and group. The `formatQuery` default output format, "json", will also include `path`s.
-- Rule and group `div`s now include a `data-path` attribute.
+- #229 Path-based query management
+  - `Rule` and `RuleGroup` props now include `path: number[]`, and `id` may be undefined.
+  - `getLevel` has been removed from the `schema` prop.
+  - The following functions that are part of the `schema` prop have been refactored to use `path` or `parentPath` instead of `id` or `parentId`: `onGroupAdd`, `onGroupRemove`, `onPropChange`, `onRuleAdd`, `onRuleRemove`.
+  - `onAddRule` and `onAddGroup` callbacks now pass a `number[]` (`parentPath`) as the second argument instead of a `string` (`parentId`).
+  - The exported method `findRule` has been replaced by `findPath`, which is useful in conjunction with the previously mentioned, refactored `onAddRule` and `onAddGroup` callbacks.
+  - The `onQueryChange` callback's argument, the current query object, will include a `path` for each rule and group. The `formatQuery` default output format, "json", will also include `path`s.
+  - Rule and group `div`s now include a `data-path` attribute.
 
 ### Added
 
-Only one new feature in this release.
-
 - `formatQuery` accepts a new `format` type: `"parameterized_named"`. This new format is similar to `"parameterized"`, but instead of anonymous `?`-style bind variables, each parameter is given a unique name based on the field name and the order in the query. A corresponding option `paramPrefix` is available in order to use a different character than the default ":" within the `sql` string.
+- #228 CodeSandbox CI
 
 ## [v3.12.1] - 2021-10-06
 
@@ -507,13 +498,13 @@ Only one new feature in this release.
 
 ### Added
 
-- [Validation](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#validator-optional): pass a `validator` prop to validate the entire query, or include a `validator` attribute on each field in the `fields` array to validate each rule based on the selected field.
+- #225 [Validation](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#validator-optional): pass a `validator` prop to validate the entire query, or include a `validator` attribute on each field in the `fields` array to validate each rule based on the selected field.
   - CSS classes will be added (`"queryBuilder-valid"` or `"queryBuilder-invalid"`) to validated rules and groups, and all sub-components will receive the validation result as a prop.
   - The `formatQuery` function has two new validation-related options: 1) `validator` (same signature as the prop mentioned earlier) and 2) `fields` (same shape as the `fields` prop). Rules and groups deemed invalid will be ignored if the output format is "sql", "parameterized", or "mongodb".
-- [Rule/group cloning](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#showclonebuttons-optional): pass the `showCloneButtons` prop to enable duplication of rules and groups. Associated `controlElements` properties are also available for custom clone button components.
-- [Add rule to new groups](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#addruletonewgroups-optional): pass the `addRuleToNewGroups` prop to add the default rule to all new groups automatically.
-- [Default operator](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#getdefaultoperator-optional): pass a `getDefaultOperator` function prop to determine which operator is set for new rules (or include a `defaultOperator` attribute on objects in the `fields` array to set the default operator for specific fields).
-- [Cancel or modify a new rule](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddrule-optional)/[group](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddgroup-optional): use the `onAddRule` and `onAddGroup` callbacks to return a new rule/group that will be added instead of the default, or return `false` to cancel the addition of the new rule/group. _(Note: to completely prevent the addition of new groups, you can also pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_
+- #223 [Rule/group cloning](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#showclonebuttons-optional): pass the `showCloneButtons` prop to enable duplication of rules and groups. Associated `controlElements` properties are also available for custom clone button components.
+- #224 [Add rule to new groups](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#addruletonewgroups-optional): pass the `addRuleToNewGroups` prop to add the default rule to all new groups automatically.
+- #224 [Default operator](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#getdefaultoperator-optional): pass a `getDefaultOperator` function prop to determine which operator is set for new rules (or include a `defaultOperator` attribute on objects in the `fields` array to set the default operator for specific fields).
+- #224 [Cancel or modify a new rule](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddrule-optional)/[group](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddgroup-optional): use the `onAddRule` and `onAddGroup` callbacks to return a new rule/group that will be added instead of the default, or return `false` to cancel the addition of the new rule/group. _(Note: to completely prevent the addition of new groups, you can also pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_
 - [New "between" and "not between" default operators](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#operators-optional): the [`formatQuantity`](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#formatquantity) function has also been updated to handle the new operators properly.
 - The [demo](https://react-querybuilder.js.org/react-querybuilder/) has been updated with all the new features, and now includes tooltips on options and links to relevant documentation.
 
@@ -528,19 +519,20 @@ Only one new feature in this release.
 
 ### Added
 
-- Added `autoSelectField` prop, which when set to `false` will prevent automatic selection of the first field in new rules by adding an empty choice as the first option. When the empty option is selected, the operator and value components for that rule will not display.
+- #218 `autoSelectField` prop. When set to `false`, prevents automatic selection of the first field in new rules by adding an "empty" choice as the first option. When the "empty" option is selected, the operator and value components for that rule will not be displayed.
 
 ## [v3.10.1] - 2021-08-19
 
 ### Added
 
-- #214 `mongodb` query export format ([@CodMonk](https://github.com/CodMonk))
+- #214 `"mongodb"` query export format ([@CodMonk](https://github.com/CodMonk))
 
 ## [v3.10.0] - 2021-07-27
 
 ### Added
 
 - New item in the `translations` prop object: `notToggle.label`
+- #210 Customizable label for "not" toggle component ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.9.9] - 2021-03-05
 
@@ -552,19 +544,19 @@ Only one new feature in this release.
 
 ### Added
 
-- Default components `ActionElement`, `NotToggle`, `ValueEditor`, and `ValueSelector` are now exported.
+- #190 Export default components `ActionElement`, `NotToggle`, `ValueEditor`, and `ValueSelector` ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.9.7] - 2021-02-18
 
 ### Fixed
 
-- Any extra attributes in the `query` prop will be persisted (#187)
+- #188 Any extra attributes in the `query` prop will be persisted ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.9.6] - 2021-02-15
 
-### Changed
+### Fixed
 
-- This release adds the base CSS to the package
+- Add base CSS to the package
 
 ## [v3.9.5] - 2021-02-08
 
@@ -576,25 +568,29 @@ Only one new feature in this release.
 
 ### Fixed
 
-- Critical bug with v3.9.3 where React wasn't in scope
+- Critical bug with [v3.9.3] where React wasn't in scope
 
 ## [v3.9.3] - 2021-02-05
 
 ### Added
 
-- `enableMountQueryChange` prop
+- #179 Added `enableMountQueryChange` prop to allow disabling initial `onQueryChange` call ([@saurabhnemade](https://github.com/saurabhnemade))
 
 ## [v3.9.2] - 2021-01-24
 
 ### Added
 
-- These default configuration options are now exported:
+- #178 Export several default configuration options ([@jakeboone02](https://github.com/jakeboone02))
   - `defaultCombinators`
   - `defaultOperators`
   - `defaultTranslations`
   - `defaultValueProcessor`
 
 ## [v3.9.1] - 2021-01-17
+
+### Changed
+
+- #175 Replaced `nanoid` with `Math.random()` ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Fixed
 
@@ -604,13 +600,13 @@ Only one new feature in this release.
 
 ### Added
 
-- `context` prop to pass arbitrary data to custom components
+- #171 Add `context` prop to pass arbitrary data to custom components ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.8.4] - 2020-11-16
 
 ### Added
 
-- Placeholder support for text fields
+- #167 `placeholder` support for text fields ([@eddie-xavi](https://github.com/eddie-xavi))
 
 ## [v3.8.3] - 2020-11-04
 
@@ -622,7 +618,7 @@ Only one new feature in this release.
 
 ### Fixed
 
-- Setting of default values
+- #164 Fixed setting of default values ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.8.1] - 2020-10-23
 
@@ -644,19 +640,19 @@ Only one new feature in this release.
   - Input type: use the `inputType` property on a field instead of the `getInputType` prop
   - Values: if the value editor type is `select` or `radio`, use the `values` property on a field instead of the `getValues` prop
   - Default value: use the `defaultValue` property on a field instead of the `getDefaultValue` prop
-- Field-level configuration options
+- #160 Added field-level configuration options ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.7.1] - 2020-10-07
 
 ### Fixed
 
-- `createRule` was setting `name` to `undefined` when fields were empty
+- #158 `createRule` was setting `name` to `undefined` when fields are empty ([@saurabhnemade](https://github.com/saurabhnemade))
 
 ## [v3.7.0] - 2020-10-04
 
 ### Added
 
-- `getDefaultField` and `getDefaultValue` props
+- #157 `getDefaultField` and `getDefaultValue` props ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Fixed
 
@@ -666,8 +662,9 @@ Only one new feature in this release.
 
 ### Changed
 
-- `valueProcessor` is no longer the third argument of `formatQuery`. To use a custom `valueProcessor`, pass an options object as the second parameter and include `valueProcessor` as a key in that object.
-- When the `formatQuery` format is set to `sql` (either by `formatQuery(query, 'sql')` or `formatQuery(query, { format: 'sql' })`), the values will be quoted with single quotes instead of double quotes, e.g. `(name = 'Peter Parker')`.
+- #155 Refactored `formatQuery` options ([@jakeboone02](https://github.com/jakeboone02))
+  - `valueProcessor` is no longer the third argument of `formatQuery`. To use a custom `valueProcessor`, pass an options object as the second parameter and include `valueProcessor` as a key in that object.
+  - When the `formatQuery` format is set to `sql` (either by `formatQuery(query, 'sql')` or `formatQuery(query, { format: 'sql' })`), the values will be quoted with single quotes instead of double quotes, e.g. `(name = 'Peter Parker')`.
 
 ## [v3.5.1] - 2020-06-22
 
@@ -677,32 +674,37 @@ Only one new feature in this release.
 
 ## [v3.5.0] - 2020-06-20
 
+### Changed
+
+- #145 Convert source to TypeScript ([@jakeboone02](https://github.com/jakeboone02))
+- #135 Reset `value` on `operator` change ([@artenator](https://github.com/artenator))
+
 ### Added
 
 - Option to reset rule on operator change
-- IE11 support
+- #144 IE11 support ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.4.0] - 2020-06-15
 
 ### Added
 
-- Customizable `Rule` component
+- #142 Customizable `Rule` component ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.3.0] - 2020-06-12
 
 ### Added
 
-- `RuleGroup` can now be replaced with a custom component.
+- #141 `RuleGroup` can now be replaced with a custom component ([@rbalaine](https://github.com/rbalaine))
 
 ### Changed
 
-- Some TypeScript type names have changed, e.g. `Rule` is now `RuleType` since `Rule` is now an exported React component.
+- Some TypeScript type names have changed, e.g. `Rule` is now `RuleType` since `Rule` is an exported React component.
 
 ## [v3.2.0] - 2020-05-28
 
 ### Added
 
-- `"parameterized"` option for `formatQuery`
+- #139 `"parameterized"` option for `formatQuery` ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.1.2] - 2020-03-19
 
@@ -720,31 +722,32 @@ Only one new feature in this release.
 
 ### Added
 
-- `resetOnFieldChange` prop
+- #122 `resetOnFieldChange` prop to control `value` and `operator` reset functionality on `field` change ([@lakk1](https://github.com/lakk1))
 
 ## [v3.0.2] - 2019-12-09
 
 ### Fixed
 
-- v3.0.1 published files were outdated
+- [v3.0.1] published files were outdated
 
 ## [v3.0.1] - 2019-12-06
 
 ### Fixed
 
-- Rule default value on add/change
+- #117 Rule default value on add/change ([@xxsnakerxx](https://github.com/xxsnakerxx))
 
 ## [v3.0.0] - 2019-11-29
 
 ### Added
 
-- A `div` with class `ruleGroup-header` was added wrapping around the rule group header elements to assist with styling those elements as a group. This may affect some custom CSS rules that depend on the particular HTML arrangement in versions <3.0.0.
+- #115 Add `div.ruleGroup-header` ([@jakeboone02](https://github.com/jakeboone02))
+  - A `div` with class `ruleGroup-header` now wraps around the rule group header elements to assist with styling those elements as a group. This may affect some custom CSS rules that depend on the particular HTML arrangement in versions earlier than 3.0.0.
 
 ## [v2.5.1] - 2019-11-11
 
 ### Fixed
 
-- Passing `not` property to rule groups below root
+- #113 Passing `not` property to rule groups below root ([@RomanLamsal1337](https://github.com/RomanLamsal1337))
 
 ## [v2.5.0] - 2019-11-10
 
@@ -752,22 +755,26 @@ Only one new feature in this release.
 
 - Lowercase operator labels
 
+### Fixed
+
+- #111, #112 `formatQuery` handle more operators ([@oumar-sh](https://github.com/oumar-sh))
+
 ## [v2.4.0] - 2019-09-23
 
 ### Added
 
-- `fieldData` prop for custom `OperatorSelector` and `ValueEditor` components
+- #107 `fieldData` prop for custom `OperatorSelector` and `ValueEditor` components ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v2.3.0] - 2019-09-16
 
 ### Added
 
-- Inversion (`"not"`) toggle switch for rule groups
-- Added `level` and rule `id` to DOM elements
+- #104 Inversion (`"not"`) toggle switch for rule groups ([@jakeboone02](https://github.com/jakeboone02))
+- #103 Added `level` and rule `id` to DOM elements ([@srinivasdamam](https://github.com/srinivasdamam))
 
 ### Changed
 
-- Replace uuid with nanoid
+- #102 Replace `uuid` with `nanoid` ([@srinivasdamam](https://github.com/srinivasdamam))
 
 ## [v2.2.1] - 2019-08-29
 
@@ -779,8 +786,8 @@ Only one new feature in this release.
 
 ### Added
 
-- `formatQuery` function
-- `showCombinatorsBetweenRules` prop
+- #95 `formatQuery` function
+- #96 `showCombinatorsBetweenRules` prop
 
 ### Fixed
 
