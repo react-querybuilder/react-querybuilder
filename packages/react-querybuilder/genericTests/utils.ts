@@ -1,6 +1,8 @@
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 
+export const UNUSED = 'UNUSED';
+
 export const findInput = (el: HTMLElement) =>
   (el.tagName === 'INPUT' ? el : el.querySelector('input')) as HTMLInputElement;
 

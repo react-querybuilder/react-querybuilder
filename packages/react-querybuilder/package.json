@@ -2,8 +2,23 @@
   "name": "react-querybuilder",
   "version": "5.0.0-alpha.3",
   "description": "The React <QueryBuilder /> component for constructing queries",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./dev": "./dev/index.ts",
+    "./genericTests": "./genericTests/index.ts",
+    "./css": "./dist/query-builder.css",
+    "./scss": "./dist/query-builder.scss",
+    "./dist/query-builder.css": "./dist/query-builder.css",
+    "./dist/query-builder.scss": "./dist/query-builder.scss",
+    "./formatQuery": "./dist/formatQuery.js",
+    "./parseCEL": "./dist/parseCEL.js",
+    "./parseJsonLogic": "./dist/parseJsonLogic.js",
+    "./parseSQL": "./dist/parseSQL.js",
+    "./transformQuery": "./dist/transformQuery.js"
+  },
+  "type": "module",
   "types": "dist/types/src/index.d.ts",
   "typesVersions": {
     "<4.5": {

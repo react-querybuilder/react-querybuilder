@@ -4,12 +4,7 @@ import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default defineConfig(({ mode, command }) => {
-  const fileName = format => {
-    return `index.${format}.js`;
-    // Use this line instead if we ever want to do a "development"-mode build:
-    // return `index.${format}${mode === 'production' ? '' : '.development'}.js`;
-  };
+export default defineConfig(({ mode: _mode, command }) => {
   const define = {
     __RQB_DEV__: command === 'build' ? 'process.env.NODE_ENV !== "production"' : 'true',
   };
@@ -19,23 +14,18 @@ export default defineConfig(({ mode, command }) => {
     build: {
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
-        fileName,
-        formats: ['es', 'cjs', 'umd'],
-        name: 'ReactQueryBuilder',
+        fileName: 'index',
+        formats: ['es'],
       },
       rollupOptions: {
-        external: ['immer', 'react'],
-        output: {
-          globals: {
-            immer: 'immer',
-            react: 'React',
-          },
-          exports: 'named',
-        },
+        external: ['immer', 'react', 'react/jsx-runtime'],
       },
       sourcemap: true,
     },
     plugins: [tsconfigPaths(), vitePluginReact()],
+    // optimizeDeps: {
+    //   include: ['react/jsx-runtime'],
+    // },
     server: {
       port: 3100,
     },

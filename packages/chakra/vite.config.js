@@ -3,7 +3,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default defineConfig(({ mode, command }) => {
+export default defineConfig(({ mode: _mode, command }) => {
   const define = {
     __RQB_DEV__: command === 'build' ? 'false' : 'true',
   };
@@ -13,8 +13,8 @@ export default defineConfig(({ mode, command }) => {
     build: {
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
-        fileName: format => `index.${format}.js`,
-        formats: ['es', 'cjs'],
+        fileName: 'index',
+        formats: ['es'],
       },
       rollupOptions: {
         external: ['react', 'react-querybuilder', '@chakra-ui/react', '@chakra-ui/icons'],

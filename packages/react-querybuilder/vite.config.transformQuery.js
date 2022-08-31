@@ -8,9 +8,13 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src/utils/transformQuery.ts'),
-      fileName: () => 'transformQuery.js',
-      formats: ['cjs'],
+      fileName: 'transformQuery',
+      formats: ['es'],
     },
+    rollupOptions: {
+      external: ['immer'],
+    },
+    sourcemap: true,
   },
   plugins: [tsconfigPaths()],
 });

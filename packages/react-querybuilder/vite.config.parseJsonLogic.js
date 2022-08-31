@@ -8,9 +8,10 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src/utils/parseJsonLogic/index.ts'),
-      fileName: () => 'parseJsonLogic.js',
-      formats: ['cjs'],
+      fileName: 'parseJsonLogic',
+      formats: ['es'],
     },
+    sourcemap: true,
   },
   plugins: [tsconfigPaths()],
 });

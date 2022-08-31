@@ -8,7 +8,7 @@ import {
 } from 'react-dnd-test-utils';
 import type { QueryActions, Schema } from 'react-querybuilder';
 import { Rule, standardClassnames as sc, TestID } from 'react-querybuilder';
-import { getProps } from 'react-querybuilder/src/Rule.test';
+import { getRuleProps } from 'react-querybuilder/genericTests';
 import { getRuleWithDndWrapper } from './internal';
 
 const [RuleWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(
@@ -20,11 +20,11 @@ const getDndBackend = () => getDndBackendOriginal()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
-const getRuleProps = (
+const getProps = (
   mergeIntoSchema: Partial<Schema> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ) => {
-  const props = getProps(mergeIntoSchema, mergeIntoActions);
+  const props = getRuleProps(mergeIntoSchema, mergeIntoActions);
   return {
     ...props,
     schema: {
@@ -41,13 +41,13 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should not have the drag class if not dragging', () => {
-    render(<RuleWithDndWrapper {...getRuleProps()} />);
+    render(<RuleWithDndWrapper {...getProps()} />);
     const rule = screen.getByTestId(TestID.rule);
     expect(rule).not.toHaveClass(sc.dndDragging);
   });
 
   it('should have the drag class if dragging', () => {
-    render(<RuleWithDndWrapper {...getRuleProps()} />);
+    render(<RuleWithDndWrapper {...getProps()} />);
     const rule = screen.getByTestId(TestID.rule);
     simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
     expect(rule).toHaveClass(sc.dndDragging);
@@ -59,8 +59,8 @@ describe('enableDragAndDrop', () => {
   it('should have the over class if hovered', () => {
     render(
       <div>
-        <RuleWithDndWrapper {...getRuleProps()} path={[0]} />
-        <RuleWithDndWrapper {...getRuleProps()} path={[1]} />
+        <RuleWithDndWrapper {...getProps()} path={[0]} />
+        <RuleWithDndWrapper {...getProps()} path={[1]} />
       </div>
     );
     const rules = screen.getAllByTestId(TestID.rule);
@@ -79,8 +79,8 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleWithDndWrapper {...getRuleProps({}, { moveRule })} path={[0]} />
-        <RuleWithDndWrapper {...getRuleProps({}, { moveRule })} path={[1]} />
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[1]} />
       </div>
     );
     const rules = screen.getAllByTestId(TestID.rule);
@@ -96,7 +96,7 @@ describe('enableDragAndDrop', () => {
 
   it('should abort move if dropped on itself', () => {
     const moveRule = jest.fn();
-    render(<RuleWithDndWrapper {...getRuleProps({}, { moveRule })} />);
+    render(<RuleWithDndWrapper {...getProps({}, { moveRule })} />);
     const rule = screen.getByTestId(TestID.rule);
     simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
     expect(rule).not.toHaveClass(sc.dndDragging);
@@ -108,8 +108,8 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleWithDndWrapper {...getRuleProps({}, { moveRule })} path={[0]} />
-        <RuleWithDndWrapper {...getRuleProps({}, { moveRule })} path={[1]} disabled />
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[1]} disabled />
       </div>
     );
     const rules = screen.getAllByTestId(TestID.rule);
@@ -125,8 +125,8 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleWithDndWrapper {...getRuleProps({}, { moveRule })} path={[0]} disabled />
-        <RuleWithDndWrapper {...getRuleProps({}, { moveRule })} path={[1]} />
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} disabled />
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[1]} />
       </div>
     );
     const rules = screen.getAllByTestId(TestID.rule);

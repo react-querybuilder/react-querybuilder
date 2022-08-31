@@ -8,9 +8,10 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src/utils/formatQuery/index.ts'),
-      fileName: () => 'formatQuery.js',
-      formats: ['cjs'],
+      fileName: 'formatQuery',
+      formats: ['es'],
     },
+    sourcemap: true,
   },
   plugins: [tsconfigPaths()],
 });

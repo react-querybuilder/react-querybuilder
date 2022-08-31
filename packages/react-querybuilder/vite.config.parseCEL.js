@@ -8,9 +8,10 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src/utils/parseCEL/index.ts'),
-      fileName: () => 'parseCEL.js',
-      formats: ['cjs'],
+      fileName: 'parseCEL',
+      formats: ['es'],
     },
+    sourcemap: true,
   },
   plugins: [tsconfigPaths()],
 });

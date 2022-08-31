@@ -3,7 +3,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import type { InlineCombinatorProps, QueryActions, Schema } from 'react-querybuilder';
 import { Rule, RuleGroup, standardClassnames as sc, TestID } from 'react-querybuilder';
-import { getProps } from 'react-querybuilder/src/RuleGroup.test';
+import { getRuleGroupProps } from 'react-querybuilder/genericTests';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { getRuleGroupWithDndWrapper, getRuleWithDndWrapper } from './internal';
 
@@ -20,11 +20,11 @@ const getDndBackend = () => getDndBackendOriginal()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
-const getRuleGroupProps = (
+const getProps = (
   mergeIntoSchema: Partial<Schema> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ) => {
-  const props = getProps(mergeIntoSchema, mergeIntoActions);
+  const props = getRuleGroupProps(mergeIntoSchema, mergeIntoActions);
   return {
     ...props,
     schema: {
@@ -43,13 +43,13 @@ const getRuleGroupProps = (
 
 describe('enableDragAndDrop', () => {
   it('should not have the drag class if not dragging', () => {
-    render(<RuleGroupWithDndWrapper {...getRuleGroupProps()} />);
+    render(<RuleGroupWithDndWrapper {...getProps()} />);
     const ruleGroup = screen.getByTestId(TestID.ruleGroup);
     expect(ruleGroup).not.toHaveClass(sc.dndDragging);
   });
 
   it('should have the drag class if dragging', () => {
-    render(<RuleGroupWithDndWrapper {...getRuleGroupProps()} />);
+    render(<RuleGroupWithDndWrapper {...getProps()} />);
     const ruleGroup = screen.getByTestId(TestID.ruleGroup);
     simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
     expect(ruleGroup).toHaveClass(sc.dndDragging);
@@ -62,8 +62,8 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleGroupWithDndWrapper {...getRuleGroupProps({}, { moveRule })} path={[0]} />
-        <RuleGroupWithDndWrapper {...getRuleGroupProps({}, { moveRule })} path={[1]} />
+        <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
+        <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[1]} />
       </div>
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
@@ -79,7 +79,7 @@ describe('enableDragAndDrop', () => {
 
   it('should abort move if dropped on itself', () => {
     const moveRule = jest.fn();
-    render(<RuleGroupWithDndWrapper {...getRuleGroupProps({}, { moveRule })} />);
+    render(<RuleGroupWithDndWrapper {...getProps({}, { moveRule })} />);
     const ruleGroup = screen.getByTestId(TestID.ruleGroup);
     simulateDragDrop(
       getHandlerId(ruleGroup, 'drag'),
@@ -95,7 +95,7 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <RuleGroupWithDndWrapper
-        {...getRuleGroupProps({}, { moveRule })}
+        {...getProps({}, { moveRule })}
         ruleGroup={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
       />
     );
@@ -113,7 +113,7 @@ describe('enableDragAndDrop', () => {
     render(
       <div>
         <RuleGroupWithDndWrapper
-          {...getRuleGroupProps({ showCombinatorsBetweenRules: true }, { moveRule })}
+          {...getProps({ showCombinatorsBetweenRules: true }, { moveRule })}
           ruleGroup={{
             combinator: 'and',
             rules: [
@@ -147,7 +147,7 @@ describe('enableDragAndDrop', () => {
     render(
       <div>
         <RuleGroupWithDndWrapper
-          {...getRuleGroupProps({ independentCombinators: true }, { moveRule })}
+          {...getProps({ independentCombinators: true }, { moveRule })}
           ruleGroup={{
             rules: [
               { field: 'firstName', operator: '=', value: 'Steve' },
@@ -158,7 +158,7 @@ describe('enableDragAndDrop', () => {
           path={[0]}
         />
         <RuleGroupWithDndWrapper
-          {...getRuleGroupProps({ independentCombinators: true }, { moveRule })}
+          {...getProps({ independentCombinators: true }, { moveRule })}
           path={[2]}
         />
       </div>
@@ -179,7 +179,7 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <RuleGroupWithDndWrapper
-        {...getRuleGroupProps({ independentCombinators: true }, { moveRule })}
+        {...getProps({ independentCombinators: true }, { moveRule })}
         ruleGroup={{
           rules: [
             { field: 'firstName', operator: '=', value: 'Steve' },
@@ -206,8 +206,8 @@ describe('enableDragAndDrop', () => {
     const moveRule = jest.fn();
     render(
       <div>
-        <RuleGroupWithDndWrapper {...getRuleGroupProps({}, { moveRule })} path={[0]} disabled />
-        <RuleGroupWithDndWrapper {...getRuleGroupProps({}, { moveRule })} path={[1]} />
+        <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} disabled />
+        <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[1]} />
       </div>
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
