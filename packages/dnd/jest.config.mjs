@@ -5,5 +5,4 @@ export default {
   setupFilesAfterEnv: ['../../jestSetup.ts'],
   transformIgnorePatterns: ['/node[_]modules/(?!react-dnd|dnd-core|@react-dnd)'],
   globals: { __RQB_DEV__: true },
-  moduleDirectories: ['node_modules', 'packages'],
 };

@@ -4,5 +4,4 @@ export default {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['../../jestSetup.ts'],
   globals: { __RQB_DEV__: true },
-  moduleDirectories: ['node_modules', 'packages'],
 };

@@ -2,10 +2,10 @@
   "name": "react-querybuilder",
   "version": "5.0.0-alpha.3",
   "description": "The React <QueryBuilder /> component for constructing queries",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    },
+    ".": "./dist/index.js",
     "./dev": "./dev/index.ts",
     "./genericTests": "./genericTests/index.ts",
     "./css": "./dist/query-builder.css",

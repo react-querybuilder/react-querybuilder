@@ -5,10 +5,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "main": "./dist/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    }
+    ".": "./dist/index.js"
   },
   "type": "module",
   "types": "dist/types/src/index.d.ts",

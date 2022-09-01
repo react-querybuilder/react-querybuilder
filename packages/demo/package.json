@@ -2,6 +2,7 @@
   "name": "@react-querybuilder/demo",
   "version": "5.0.0-alpha.3",
   "private": true,
+  "type": "module",
   "devDependencies": {
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
