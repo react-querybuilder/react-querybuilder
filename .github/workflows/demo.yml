@@ -19,9 +19,8 @@ jobs:
           node-version: '16.x'
       - name: Install and build
         run: |
-          yarn install --frozen-lockfile
-          yarn build:rqb
-          yarn build:demo
+          yarn install --immutable
+          yarn build
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.8
         with:
