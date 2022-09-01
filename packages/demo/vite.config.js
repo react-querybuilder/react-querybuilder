@@ -31,5 +31,8 @@ export default defineConfig(({ mode: _mode, command }) => {
         additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
       }),
     ],
+    esbuild: {
+      logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    },
   };
 });
