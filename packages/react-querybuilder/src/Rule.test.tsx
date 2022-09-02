@@ -1,30 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { forwardRef } from 'react';
-import { defaultControlElements } from './controls';
-import {
-  defaultControlClassnames,
-  defaultTranslations as t,
-  standardClassnames as sc,
-  TestID,
-} from './defaults';
+import { getFieldMapFromArray, getRuleProps as getProps, ruleClassnames } from '../genericTests';
+import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { Rule } from './Rule';
-import type {
-  ActionProps,
-  Classnames,
-  Controls,
-  Field,
-  FieldSelectorProps,
-  OperatorSelectorProps,
-  QueryActions,
-  RuleProps,
-  Schema,
-  ValidationResult,
-  ValueEditorProps,
-  ValueSelectorProps,
-  ValueSources,
-} from './types';
+import type { Field, ValidationResult, ValueSelectorProps, ValueSources } from './types';
 
 const user = userEvent.setup();
 
@@ -35,122 +15,9 @@ afterEach(() => {
   consoleWarn.mockReset();
 });
 
-const getFieldMapFromArray = (fa: Field[]) => {
-  const map: Record<string, Field> = {};
-  for (const f of fa) {
-    map[f.name] = f;
-  }
-  return map;
-};
-
-const defaultFields: Field[] = [
-  { name: 'field1', label: 'Field 1' },
-  { name: 'field2', label: 'Field 2' },
-];
-const fieldMap = getFieldMapFromArray(defaultFields);
-const controls: Partial<Controls> = {
-  cloneRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.cloneRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      ⧉
-    </button>
-  ),
-  fieldSelector: (props: FieldSelectorProps) => (
-    <select
-      data-testid={TestID.fields}
-      className={props.className}
-      onChange={e => props.handleOnChange(e.target.value)}>
-      <option value="field">Field</option>
-      <option value="any_field">Any Field</option>
-    </select>
-  ),
-  operatorSelector: (props: OperatorSelectorProps) => (
-    <select
-      data-testid={TestID.operators}
-      className={props.className}
-      onChange={e => props.handleOnChange(e.target.value)}>
-      <option value="operator">Operator</option>
-      <option value="any_operator">Any Operator</option>
-    </select>
-  ),
-  valueEditor: (props: ValueEditorProps) => (
-    <input
-      data-testid={TestID.valueEditor}
-      className={props.className}
-      type="text"
-      onChange={e => props.handleOnChange(e.target.value)}
-    />
-  ),
-  removeRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.removeRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      x
-    </button>
-  ),
-  dragHandle: forwardRef(({ className, label }, ref) => (
-    <span ref={ref} className={className}>
-      {label}
-    </span>
-  )),
-};
-const classNames: Partial<Classnames> = {
-  cloneRule: 'custom-cloneRule-class',
-  dragHandle: 'custom-dragHandle-class',
-  fields: 'custom-fields-class',
-  operators: 'custom-operators-class',
-  removeRule: 'custom-removeRule-class',
-  rule: 'custom-rule-class',
-};
-const schema: Partial<Schema> = {
-  fields: defaultFields,
-  fieldMap,
-  controls: { ...defaultControlElements, ...controls },
-  classNames: { ...defaultControlClassnames, ...classNames },
-  getOperators: () => [
-    { name: '=', label: 'is' },
-    { name: '!=', label: 'is not' },
-  ],
-  getValueEditorType: () => 'text',
-  getValueSources: () => ['value'],
-  getInputType: () => 'text',
-  getValues: () => [
-    { name: 'one', label: 'One' },
-    { name: 'two', label: 'Two' },
-  ],
-  showCloneButtons: false,
-  validationMap: {},
-};
-const actions: Partial<QueryActions> = {
-  onPropChange: () => {},
-  onRuleRemove: () => {},
-};
-const UNUSED = 'UNUSED';
-export const getProps = (
-  mergeIntoSchema: Partial<Schema> = {},
-  mergeIntoActions: Partial<QueryActions> = {}
-): RuleProps => ({
-  id: 'id',
-  rule: {
-    field: 'field', // note that this is not a valid field name based on the defaultFields
-    value: 'value',
-    operator: 'operator',
-  },
-  field: UNUSED,
-  operator: UNUSED,
-  value: UNUSED,
-  schema: { ...schema, ...mergeIntoSchema } as Schema,
-  actions: { ...actions, ...mergeIntoActions } as QueryActions,
-  path: [0],
-  translations: t,
-});
-
 it('should have correct classNames', () => {
   render(<Rule {...getProps()} />);
-  expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, 'custom-rule-class');
+  expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, ruleClassnames.rule!);
 });
 
 describe('onElementChanged methods', () => {
