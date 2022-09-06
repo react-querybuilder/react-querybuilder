@@ -1,8 +1,7 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { defaultControlElements } from './controls';
+import { QueryBuilderContext } from '@react-querybuilder/ctx';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   defaultCombinators,
-  defaultControlClassnames,
   defaultOperators,
   defaultTranslations,
   LogType,
@@ -16,9 +15,7 @@ import {
   uniqOptGroups,
 } from './internal';
 import { useControlledOrUncontrolled } from './internal/hooks';
-import { QueryBuilderContext } from './QueryBuilderContext';
 import type {
-  Controls,
   Field,
   NameLabelPair,
   QueryActions,
@@ -27,7 +24,6 @@ import type {
   RuleGroupTypeIC,
   RuleType,
   Schema,
-  TranslationsFull,
   UpdateableProperties,
 } from './types';
 import {
@@ -36,14 +32,13 @@ import {
   getFirstOption,
   isOptionGroupArray,
   joinWith,
-  mergeClassnames,
   move,
   objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
   update,
-  usePreferProp,
+  useMergedContext,
 } from './utils';
 
 const noop = () => {};
@@ -87,57 +82,23 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   debugMode: debugModeProp = false,
   onLog = console.log,
 }: QueryBuilderProps<RG>) => {
-  // #region Inherit context but props take precedence
-  const rqbContext = useContext(QueryBuilderContext);
+  const rqbContext = useMergedContext({
+    controlClassnames: controlClassnamesProp,
+    controlElements: controlElementsProp,
+    debugMode: debugModeProp,
+    enableDragAndDrop: enableDragAndDropProp,
+    enableMountQueryChange: enableMountQueryChangeProp,
+    translations: translationsProp,
+  });
 
-  const enableMountQueryChange = usePreferProp(
-    true,
-    enableMountQueryChangeProp,
-    rqbContext.enableMountQueryChange
-  );
-
-  // Drag-and-drop should be disabled if context sets it to false because
-  // QueryBuilderDnD might not have loaded react-dnd yet. Therefore we prefer
-  // the prop here only if context is true or undefined.
-  const enableDragAndDrop =
-    usePreferProp(false, enableDragAndDropProp, rqbContext.enableDragAndDrop) &&
-    rqbContext.enableDragAndDrop !== false;
-
-  const debugMode = usePreferProp(false, debugModeProp, rqbContext.debugMode);
-
-  const classNames = useMemo(
-    () =>
-      mergeClassnames(
-        defaultControlClassnames,
-        rqbContext.controlClassnames,
-        controlClassnamesProp
-      ),
-    [rqbContext.controlClassnames, controlClassnamesProp]
-  );
-
-  const controls = useMemo(
-    (): Controls => ({
-      ...defaultControlElements,
-      ...rqbContext.controlElements,
-      ...controlElementsProp,
-    }),
-    [controlElementsProp, rqbContext.controlElements]
-  );
-
-  const translations = useMemo((): TranslationsFull => {
-    const translationsTemp: Partial<TranslationsFull> = {};
-    objectKeys(translationsProp).forEach(t => {
-      const contextTranslations = rqbContext.translations;
-      // @ts-expect-error Different keys have different requirements
-      translationsTemp[t] = {
-        ...defaultTranslations[t],
-        ...contextTranslations,
-        ...translationsProp[t],
-      };
-    });
-    return { ...defaultTranslations, ...translationsTemp };
-  }, [rqbContext.translations, translationsProp]);
-  // #endregion
+  const {
+    controlClassnames,
+    controlElements,
+    debugMode,
+    enableDragAndDrop,
+    enableMountQueryChange,
+    translations,
+  } = rqbContext;
 
   // #region Set up `fields`
   const defaultField = useMemo(
@@ -569,10 +530,10 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       fields,
       fieldMap,
       combinators,
-      classNames,
+      classNames: controlClassnames,
       createRule,
       createRuleGroup,
-      controls,
+      controls: controlElements,
       getOperators: getOperatorsMain,
       getValueEditorType: getValueEditorTypeMain,
       getValueSources: getValueSourcesMain,
@@ -595,9 +556,9 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       addRuleToNewGroups,
       autoSelectField,
       autoSelectOperator,
-      classNames,
+      controlClassnames,
       combinators,
-      controls,
+      controlElements,
       createRule,
       createRuleGroup,
       disabledPaths,
@@ -632,7 +593,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     () =>
       c(
         standardClassnames.queryBuilder,
-        classNames.queryBuilder,
+        controlClassnames.queryBuilder,
         query.disabled || queryDisabled ? standardClassnames.disabled : '',
         typeof validationResult === 'boolean'
           ? validationResult
@@ -640,7 +601,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
             : standardClassnames.invalid
           : ''
       ),
-    [classNames.queryBuilder, queryDisabled, query.disabled, validationResult]
+    [controlClassnames.queryBuilder, queryDisabled, query.disabled, validationResult]
   );
 
   useEffect(() => {
@@ -649,31 +610,32 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     }
   }, [debugMode, onLog, queryState, query, schema]);
 
-  const { ruleGroup: RuleGroupControlElement } = controls;
+  const { ruleGroup: RuleGroupControlElement } = controlElements;
 
   return (
-    <div
-      key={enableDragAndDrop ? 'dnd' : 'no-dnd'}
-      className={wrapperClassName}
-      data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
-      data-inlinecombinators={
-        independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
-      }>
-      <RuleGroupControlElement
-        translations={translations}
-        ruleGroup={query}
-        rules={query.rules}
-        combinator={'combinator' in query ? query.combinator : undefined}
-        not={!!query.not}
-        schema={schema}
-        actions={actions}
-        id={query.id}
-        path={[]}
-        disabled={!!query.disabled || queryDisabled}
-        parentDisabled={queryDisabled}
-        context={context}
-      />
-    </div>
+    <QueryBuilderContext.Provider key={enableDragAndDrop ? 'dnd' : 'no-dnd'} value={rqbContext}>
+      <div
+        className={wrapperClassName}
+        data-dnd={enableDragAndDrop ? 'enabled' : 'disabled'}
+        data-inlinecombinators={
+          independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'
+        }>
+        <RuleGroupControlElement
+          translations={translations}
+          ruleGroup={query}
+          rules={query.rules}
+          combinator={'combinator' in query ? query.combinator : undefined}
+          not={!!query.not}
+          schema={schema}
+          actions={actions}
+          id={query.id}
+          path={[]}
+          disabled={!!query.disabled || queryDisabled}
+          parentDisabled={queryDisabled}
+          context={context}
+        />
+      </div>
+    </QueryBuilderContext.Provider>
   );
 };
 

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { QueryBuilderContextProps } from './types';
+import type { QueryBuilderContextProps } from 'react-querybuilder';
 
 export const QueryBuilderContext = createContext<QueryBuilderContextProps>({});
 

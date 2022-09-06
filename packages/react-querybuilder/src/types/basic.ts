@@ -42,3 +42,5 @@ export interface Field extends NameLabelPair {
 export interface DraggedItem {
   path: number[];
 }
+
+export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };

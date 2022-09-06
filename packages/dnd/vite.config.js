@@ -23,9 +23,17 @@ export default defineConfig(({ mode, command }) => {
         name: 'ReactQueryBuilderDnD',
       },
       rollupOptions: {
-        external: ['immer', 'react', 'react-dnd', 'react-dnd-html5-backend', 'react-querybuilder'],
+        external: [
+          '@react-querybuilder/ctx',
+          'immer',
+          'react',
+          'react-dnd',
+          'react-dnd-html5-backend',
+          'react-querybuilder',
+        ],
         output: {
           globals: {
+            '@react-querybuilder/ctx': 'ReactQueryBuilderContext',
             immer: 'immer',
             react: 'React',
             'react-dnd': 'ReactDnD',

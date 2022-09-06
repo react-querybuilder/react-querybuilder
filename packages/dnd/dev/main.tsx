@@ -5,6 +5,8 @@ import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
 
 createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
-    <App wrapper={QueryBuilderDnD} />
+    <QueryBuilderDnD>
+      <App />
+    </QueryBuilderDnD>
   </React.StrictMode>
 );

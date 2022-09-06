@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import type {
+  Controls,
   InlineCombinatorProps,
   QueryActions,
   QueryBuilderContextProviderProps,
@@ -49,4 +50,12 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
+};
+
+export type QueryBuilderDndContextProps = {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrag?: typeof import('react-dnd')['useDrag'];
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrop?: typeof import('react-dnd')['useDrop'];
+  baseControls: Pick<Controls, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
 };

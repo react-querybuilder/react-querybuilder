@@ -1,5 +1,5 @@
+import { QueryBuilderContext } from '@react-querybuilder/ctx';
 import { useContext } from 'react';
-import { QueryBuilderContext } from '../QueryBuilderContext';
 import type { QueryBuilderContextProps, QueryBuilderContextProvider } from '../types';
 import { mergeClassnames } from './mergeClassnames';
 

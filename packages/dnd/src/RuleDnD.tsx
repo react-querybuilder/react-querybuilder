@@ -1,18 +1,21 @@
-import { cloneElement, isValidElement } from 'react';
+import { useContext, useMemo } from 'react';
+import type { RuleProps } from 'react-querybuilder';
 import { standardClassnames } from 'react-querybuilder';
-import { useRuleDnD } from './internal/hooks';
-import type { RuleDndProps } from './types';
+import { useRuleDnD } from './hooks';
+import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
-export const RuleDnD = ({
-  children,
-  moveRule,
-  disabled: disabledProp,
-  parentDisabled,
-  path,
-  independentCombinators,
-  useDrag,
-  useDrop,
-}: RuleDndProps) => {
+export const RuleDnD = (props: RuleProps) => {
+  const rqbDndContext = useContext(QueryBuilderDndContext);
+
+  const { useDrag, useDrop } = rqbDndContext;
+  const {
+    path,
+    disabled: disabledProp,
+    parentDisabled,
+    actions: { moveRule },
+    schema: { independentCombinators },
+  } = props;
+
   const disabled = !!parentDisabled || !!disabledProp;
 
   const dndRefs = useRuleDnD({
@@ -20,23 +23,32 @@ export const RuleDnD = ({
     disabled,
     independentCombinators,
     moveRule,
-    useDrag,
-    useDrop,
+    useDrag: useDrag!,
+    useDrop: useDrop!,
   });
 
-  const rule = `${children.props.schema.classNames.rule}${
-    dndRefs.isOver ? ` ${standardClassnames.dndOver}` : ''
-  }${dndRefs.isDragging ? ` ${standardClassnames.dndDragging}` : ''}`;
+  const rule = useMemo(
+    () =>
+      `${props.schema.classNames.rule}${dndRefs.isOver ? ` ${standardClassnames.dndOver}` : ''}${
+        dndRefs.isDragging ? ` ${standardClassnames.dndDragging}` : ''
+      }`,
+    [dndRefs.isDragging, dndRefs.isOver, props.schema.classNames.rule]
+  );
 
-  return isValidElement(children)
-    ? cloneElement(children, {
-        ...dndRefs,
-        schema: {
-          ...children.props.schema,
-          classNames: { ...children.props.schema.classNames, rule },
-        },
-      })
-    : /* istanbul ignore next */ null;
+  const { rule: BaseRuleComponent } = rqbDndContext.baseControls;
+
+  return (
+    <QueryBuilderDndContext.Provider value={rqbDndContext}>
+      <BaseRuleComponent
+        {...props}
+        schema={{
+          ...props.schema,
+          classNames: { ...props.schema.classNames, rule },
+        }}
+        {...dndRefs}
+      />
+    </QueryBuilderDndContext.Provider>
+  );
 };
 
 RuleDnD.displayName = 'RuleDnD';

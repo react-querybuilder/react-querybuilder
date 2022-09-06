@@ -1,7 +1,6 @@
 import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode, command }) => {
@@ -11,7 +10,7 @@ export default defineConfig(({ mode, command }) => {
     // return `index.${format}${mode === 'production' ? '' : '.development'}.js`;
   };
   const define = {
-    __RQB_DEV__: command === 'build' ? 'process.env.NODE_ENV !== "production"' : 'true',
+    __RQB_DEV__: command === 'build' ? 'false' : 'true',
   };
 
   return {
@@ -21,24 +20,24 @@ export default defineConfig(({ mode, command }) => {
         entry: path.resolve(__dirname, 'src/index.ts'),
         fileName,
         formats: ['es', 'cjs', 'umd'],
-        name: 'ReactQueryBuilder',
+        name: 'ReactQueryBuilderContext',
       },
       rollupOptions: {
-        external: ['@react-querybuilder/ctx', 'immer', 'react'],
+        external: ['immer', 'react', 'react-querybuilder'],
         output: {
           globals: {
-            '@react-querybuilder/ctx': 'ReactQueryBuilderContext',
             immer: 'immer',
             react: 'React',
+            'react-querybuilder': 'ReactQueryBuilder',
           },
           exports: 'named',
         },
       },
       sourcemap: true,
     },
-    plugins: [tsconfigPaths(), vitePluginReact()],
+    plugins: [vitePluginReact()],
     server: {
-      port: 3100,
+      port: 3107,
     },
   };
 });

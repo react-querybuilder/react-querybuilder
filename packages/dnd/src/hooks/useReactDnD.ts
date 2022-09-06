@@ -2,7 +2,7 @@ declare const __RQB_DEV__: boolean;
 
 import { useEffect, useState } from 'react';
 import { messages } from 'react-querybuilder';
-import type { UseReactDnD } from '../../types';
+import type { UseReactDnD } from '../types';
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
