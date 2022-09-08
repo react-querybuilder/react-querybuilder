@@ -9,6 +9,7 @@
     "@popperjs/core": "^2.11.5",
     "@react-querybuilder/bootstrap": "^5.0.0-alpha.3",
     "@react-querybuilder/ctx": "^5.0.0-alpha.3",
+    "@react-querybuilder/ts": "^5.0.0-alpha.3",
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
     "react": "^18.2.0",

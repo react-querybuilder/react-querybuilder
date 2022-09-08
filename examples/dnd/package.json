@@ -8,6 +8,7 @@
   "dependencies": {
     "@react-querybuilder/ctx": "^5.0.0-alpha.3",
     "@react-querybuilder/dnd": "^5.0.0-alpha.3",
+    "@react-querybuilder/ts": "^5.0.0-alpha.3",
     "react": "^18.2.0",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
