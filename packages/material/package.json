@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/material",
   "description": "Custom MUI (Material Design) components for react-querybuilder",
-  "version": "5.0.0-alpha.3",
+  "version": "5.0.0-alpha.4",
   "publishConfig": {
     "access": "public"
   },
@@ -25,8 +25,8 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "dependencies": {
-    "@react-querybuilder/ts": "^5.0.0-alpha.3",
-    "react-querybuilder": "^5.0.0-alpha.3"
+    "@react-querybuilder/ts": "^5.0.0-alpha.4",
+    "react-querybuilder": "^5.0.0-alpha.4"
   },
   "devDependencies": {
     "@emotion/react": "^11.10.4",
