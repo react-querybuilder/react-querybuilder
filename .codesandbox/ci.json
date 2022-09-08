@@ -5,9 +5,11 @@
     "packages/bootstrap",
     "packages/bulma",
     "packages/chakra",
+    "packages/ctx",
     "packages/dnd",
     "packages/material",
-    "packages/react-querybuilder"
+    "packages/react-querybuilder",
+    "packages/ts"
   ],
   "sandboxes": [
     "/examples/ci",

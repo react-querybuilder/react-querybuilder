@@ -2,7 +2,7 @@ import type {
   Controls,
   QueryBuilderContextProvider,
   QueryBuilderContextProviderProps,
-} from 'react-querybuilder';
+} from '@react-querybuilder/ts';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
@@ -63,7 +63,9 @@ const allMuiComponentNames: MuiComponentName[] = [
 export const QueryBuilderMaterial: QueryBuilderContextProvider = ({
   muiComponents = {},
   ...props
-}: QueryBuilderContextProviderProps & { muiComponents?: Partial<RQBMaterialComponents> }) => {
+}: QueryBuilderContextProviderProps & {
+  muiComponents?: Partial<RQBMaterialComponents>;
+}) => {
   const muiComponentsInternal = useMuiComponents(allMuiComponentNames, muiComponents);
 
   // istanbul ignore next

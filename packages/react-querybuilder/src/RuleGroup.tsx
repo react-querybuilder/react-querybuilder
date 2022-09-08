@@ -1,9 +1,9 @@
+import type { RuleGroupProps } from '@react-querybuilder/ts';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { Fragment } from 'react';
 import { defaultCombinators, standardClassnames, TestID } from './defaults';
 import { getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import type { RuleGroupProps } from './types';
 import { c, getParentPath, pathsAreEqual } from './utils';
 
 export const RuleGroup = ({

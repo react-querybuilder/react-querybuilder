@@ -1,4 +1,7 @@
-import type { RuleGroupTypeAny, RuleType } from '../types/index.noReact';
+import type {
+  RuleGroupTypeAny,
+  RuleType,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
 type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 

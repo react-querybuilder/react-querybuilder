@@ -1,3 +1,9 @@
+import type {
+  ActionProps,
+  RuleGroupICArray,
+  ValidationResult,
+  ValueSelectorProps,
+} from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRule, getRuleGroupProps, ruleGroupClassnames } from '../genericTests';
@@ -9,7 +15,6 @@ import {
 } from './defaults';
 import { errorDeprecatedRuleGroupProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { RuleGroup } from './RuleGroup';
-import type { ActionProps, RuleGroupICArray, ValidationResult, ValueSelectorProps } from './types';
 import { add } from './utils';
 
 const user = userEvent.setup();
@@ -130,7 +135,10 @@ describe('showCombinatorsBetweenRules', () => {
     const { container } = render(
       <RuleGroup
         {...getRuleGroupProps({ showCombinatorsBetweenRules: true })}
-        ruleGroup={{ combinator: 'and', rules: [{ field: 'test', value: 'Test', operator: '=' }] }}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [{ field: 'test', value: 'Test', operator: '=' }],
+        }}
       />
     );
     expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(0);
@@ -279,7 +287,10 @@ describe('disabled', () => {
     render(
       <RuleGroup
         {...getRuleGroupProps({ disabledPaths: [[0, 0]] })}
-        ruleGroup={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+        }}
       />
     );
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.disabled);
@@ -299,7 +310,14 @@ describe('disabled', () => {
             showCloneButtons: true,
             showNotToggle: true,
           },
-          { onRuleAdd, onRuleRemove, onGroupAdd, onGroupRemove, onPropChange, moveRule }
+          {
+            onRuleAdd,
+            onRuleRemove,
+            onGroupAdd,
+            onGroupRemove,
+            onPropChange,
+            moveRule,
+          }
         )}
         disabled
         ruleGroup={{
@@ -341,7 +359,14 @@ describe('disabled', () => {
             showNotToggle: true,
             independentCombinators: true,
           },
-          { onRuleAdd, onRuleRemove, onGroupAdd, onGroupRemove, onPropChange, moveRule }
+          {
+            onRuleAdd,
+            onRuleRemove,
+            onGroupAdd,
+            onGroupRemove,
+            onPropChange,
+            moveRule,
+          }
         )}
         disabled
         ruleGroup={{

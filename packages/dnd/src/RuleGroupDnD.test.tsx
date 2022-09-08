@@ -1,19 +1,41 @@
 import { act, render, screen } from '@testing-library/react';
 import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import type { InlineCombinatorProps, QueryActions, Schema } from 'react-querybuilder';
-import { Rule, RuleGroup, standardClassnames as sc, TestID } from 'react-querybuilder';
+import type { QueryActions, RuleGroupProps, Schema } from 'react-querybuilder';
+import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
 import { getRuleGroupProps } from 'react-querybuilder/genericTests';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
-import { getRuleGroupWithDndWrapper, getRuleWithDndWrapper } from './internal';
+import { QueryBuilderDndContext } from './QueryBuilderDndContext';
+import { RuleDnD } from './RuleDnD';
+import { RuleGroupDnD } from './RuleGroupDnD';
 
-const ruleGroup = getRuleGroupWithDndWrapper({ ruleGroup: RuleGroup, useDrag, useDrop });
-const rule = getRuleWithDndWrapper({ rule: Rule, useDrag, useDrop });
-const inlineCombinator = (props: InlineCombinatorProps) => (
-  <InlineCombinatorDnD {...props} useDrop={useDrop} />
+const { rule, ruleGroup, combinatorSelector } = defaultControlElements;
+
+const [RuleGroupWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(
+  (props: RuleGroupProps) => (
+    <QueryBuilderDndContext.Provider
+      value={{
+        baseControls: { rule, ruleGroup, combinatorSelector },
+        useDrag,
+        useDrop,
+      }}>
+      <RuleGroupDnD
+        {...{
+          ...props,
+          schema: {
+            ...props.schema,
+            controls: {
+              ...props.schema.controls,
+              rule: RuleDnD,
+              ruleGroup: RuleGroupDnD,
+              inlineCombinator: InlineCombinatorDnD,
+            },
+          },
+        }}
+      />
+    </QueryBuilderDndContext.Provider>
+  )
 );
-
-const [RuleGroupWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(ruleGroup);
 // This is just a type guard against `undefined`
 const getDndBackend = () => getDndBackendOriginal()!;
 
@@ -30,13 +52,6 @@ const getProps = (
     schema: {
       ...props.schema,
       enableDragAndDrop: true,
-      controls: {
-        ...props.schema.controls,
-        ruleGroup,
-        rule,
-        inlineCombinator,
-      },
-      dnd: { useDrag, useDrop },
     },
   };
 };
@@ -96,7 +111,10 @@ describe('enableDragAndDrop', () => {
     render(
       <RuleGroupWithDndWrapper
         {...getProps({}, { moveRule })}
-        ruleGroup={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [{ combinator: 'and', rules: [] }],
+        }}
       />
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);

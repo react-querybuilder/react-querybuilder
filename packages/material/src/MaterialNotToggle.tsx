@@ -1,5 +1,5 @@
+import type { NotToggleProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef } from 'react';
-import type { NotToggleProps } from 'react-querybuilder';
 import { NotToggle } from 'react-querybuilder';
 import type { MuiComponentName, RQBMaterialComponents, SwitchType } from './types';
 import { useMuiComponents } from './useMuiComponents';

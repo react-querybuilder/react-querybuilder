@@ -27,4 +27,4 @@ export type CommonRQBProps = Pick<
   | Exclude<DemoOption, 'validateQuery' | 'independentCombinators' | 'parseNumbers'>
 > & { independentCombinators?: boolean };
 
-export type HttpsURL = `https://${string}`;
+export type HttpsURL = `${'https'}://${string}`;

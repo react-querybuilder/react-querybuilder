@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { NameLabelPair, OptionGroup, ValueEditorProps } from '../src/types';
+import type { NameLabelPair, OptionGroup, ValueEditorProps } from '@react-querybuilder/ts';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { findInput, findTextarea, userEventSetup } from './utils';
 

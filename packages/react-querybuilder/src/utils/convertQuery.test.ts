@@ -1,4 +1,4 @@
-import type { RuleType } from '../types/index.noReact';
+import type { RuleType } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { convertQuery } from './convertQuery';
 
 const [rule1, rule2, rule3, rule4]: RuleType[] = [
@@ -26,10 +26,14 @@ const [rule1, rule2, rule3, rule4]: RuleType[] = [
 
 describe('converts RuleGroupType to RuleGroupTypeIC', () => {
   it('no rules', () => {
-    expect(convertQuery({ combinator: 'and', rules: [] })).toEqual({ rules: [] });
+    expect(convertQuery({ combinator: 'and', rules: [] })).toEqual({
+      rules: [],
+    });
   });
   it('one rule', () => {
-    expect(convertQuery({ combinator: 'and', rules: [rule1] })).toEqual({ rules: [rule1] });
+    expect(convertQuery({ combinator: 'and', rules: [rule1] })).toEqual({
+      rules: [rule1],
+    });
   });
   it('two rules', () => {
     expect(convertQuery({ combinator: 'and', rules: [rule1, rule2] })).toEqual({
@@ -67,10 +71,16 @@ describe('converts RuleGroupType to RuleGroupTypeIC', () => {
 
 describe('converts RuleGroupTypeIC to RuleGroupType', () => {
   it('no rules', () => {
-    expect(convertQuery({ rules: [] })).toEqual({ combinator: 'and', rules: [] });
+    expect(convertQuery({ rules: [] })).toEqual({
+      combinator: 'and',
+      rules: [],
+    });
   });
   it('one rule', () => {
-    expect(convertQuery({ rules: [rule1] })).toEqual({ combinator: 'and', rules: [rule1] });
+    expect(convertQuery({ rules: [rule1] })).toEqual({
+      combinator: 'and',
+      rules: [rule1],
+    });
   });
   it('two rules', () => {
     expect(

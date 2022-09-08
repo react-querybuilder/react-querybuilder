@@ -88,7 +88,11 @@ export const useMuiComponents = (
 
   const initialComponents =
     muiComponentsFromContext && preloadedComponents
-      ? { ...muiComponentsFromContext, ...preloadedComponents, ...cachedComponents }
+      ? {
+          ...muiComponentsFromContext,
+          ...preloadedComponents,
+          ...cachedComponents,
+        }
       : preloadedComponents
       ? { ...preloadedComponents, ...cachedComponents }
       : muiComponentsFromContext

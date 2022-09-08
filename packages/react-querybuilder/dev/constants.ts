@@ -270,7 +270,12 @@ export const initialQuery: RuleGroupType = {
         },
       ],
     },
-    { field: 'groupedField1', operator: '=', value: 'groupedField4', valueSource: 'field' },
+    {
+      field: 'groupedField1',
+      operator: '=',
+      value: 'groupedField4',
+      valueSource: 'field',
+    },
   ],
 };
 

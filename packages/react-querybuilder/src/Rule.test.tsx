@@ -1,10 +1,15 @@
+import type {
+  Field,
+  ValidationResult,
+  ValueSelectorProps,
+  ValueSources,
+} from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getFieldMapFromArray, getRuleProps as getProps, ruleClassnames } from '../genericTests';
 import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { Rule } from './Rule';
-import type { Field, ValidationResult, ValueSelectorProps, ValueSources } from './types';
 
 const user = userEvent.setup();
 
@@ -72,7 +77,10 @@ describe('valueEditorType as function', () => {
     const props = getProps({
       fields,
       fieldMap,
-      controls: { ...controls, valueEditor: ({ type }) => <button>{type}</button> },
+      controls: {
+        ...controls,
+        valueEditor: ({ type }) => <button>{type}</button>,
+      },
     });
     render(<Rule {...props} rule={{ ...rule, field: 'f1' }} />);
     expect(screen.getByText('radio')).toBeInTheDocument();
@@ -106,7 +114,9 @@ describe('validation', () => {
 
   it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
     const validator = jest.fn(() => true);
-    const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
+    const fieldMap = {
+      field1: { name: 'field1', label: 'Field 1', validator },
+    };
     const validationMap = { id: false };
     render(<Rule {...getProps({ fieldMap, validationMap })} />);
     expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
@@ -123,7 +133,9 @@ describe('validation', () => {
 
   it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
-    const fieldMap = { field1: { name: 'field1', label: 'Field 1', validator } };
+    const fieldMap = {
+      field1: { name: 'field1', label: 'Field 1', validator },
+    };
     const props = getProps({ fieldMap });
     render(<Rule {...props} rule={{ ...props.rule, field: 'field1' }} />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
@@ -256,7 +268,11 @@ describe('valueSource', () => {
   });
 
   it('valueSources as array', () => {
-    const props = getProps({ getValueSources: () => ['value'], fields, fieldMap });
+    const props = getProps({
+      getValueSources: () => ['value'],
+      fields,
+      fieldMap,
+    });
     render(<Rule {...props} rule={{ ...props.rule, field: 'fvsa', valueSource: 'field' }} />);
     expect(
       screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
@@ -265,7 +281,11 @@ describe('valueSource', () => {
   });
 
   it('valueSources as function', () => {
-    const props = getProps({ getValueSources: () => ['value'], fields, fieldMap });
+    const props = getProps({
+      getValueSources: () => ['value'],
+      fields,
+      fieldMap,
+    });
     render(<Rule {...props} rule={{ ...props.rule, field: 'fvsf', valueSource: 'field' }} />);
     expect(
       screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
@@ -295,7 +315,12 @@ describe('valueSource', () => {
     render(
       <Rule
         {...props}
-        rule={{ ...props.rule, field: 'fvsa', value: 'fc2', valueSource: 'field' }}
+        rule={{
+          ...props.rule,
+          field: 'fvsa',
+          value: 'fc2',
+          valueSource: 'field',
+        }}
       />
     );
     expect(

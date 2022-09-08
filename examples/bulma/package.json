@@ -7,6 +7,8 @@
   ],
   "dependencies": {
     "@react-querybuilder/bulma": "^5.0.0-alpha.3",
+    "@react-querybuilder/ctx": "^5.0.0-alpha.3",
+    "@react-querybuilder/ts": "^5.0.0-alpha.3",
     "bulma": "^0.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

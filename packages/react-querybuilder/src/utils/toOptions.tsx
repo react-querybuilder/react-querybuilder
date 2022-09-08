@@ -1,4 +1,7 @@
-import type { NameLabelPair, OptionGroup } from '../types/index.noReact';
+import type {
+  NameLabelPair,
+  OptionGroup,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { isOptionGroupArray } from './optGroupUtils';
 
 export const toOptions = (arr?: NameLabelPair[] | OptionGroup[]) =>

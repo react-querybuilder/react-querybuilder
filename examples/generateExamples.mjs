@@ -41,7 +41,7 @@ const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).t
 
 const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.json')))
   .toString('utf-8')
-  .replace(/("react-querybuilder": ").*?"/g, `$1^${version}"`);
+  .replace(/("@?react-querybuilder(?:\/\w+)?": ").*?"/g, `$1^${version}"`);
 await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON = require('./_template/package.json');
 
@@ -158,7 +158,7 @@ for (const exampleID in configs) {
     const fileContents = (await readFile(filepath)).toString('utf-8');
     const prettified = prettier.format(fileContents, {
       ...prettierConfig,
-      printWidth: 80, // narrower since codesandbox code panel is narrow
+      printWidth: filepath.endsWith('css') ? 100 : 80, // narrower since codesandbox code panel is narrow
       filepath,
       plugins: ['prettier-plugin-organize-imports'],
     });

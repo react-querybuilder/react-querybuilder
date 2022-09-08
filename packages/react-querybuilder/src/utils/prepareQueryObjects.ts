@@ -1,11 +1,11 @@
-import { produce } from 'immer';
-import { generateID } from '../internal/generateID';
 import type {
   RuleGroupArray,
   RuleGroupICArray,
   RuleGroupTypeAny,
   RuleType,
-} from '../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import { produce } from 'immer';
+import { generateID } from '../internal/generateID';
 
 /**
  * Generates a valid rule

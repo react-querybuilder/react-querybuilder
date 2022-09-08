@@ -1,8 +1,8 @@
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import type { ExportFormat, QueryBuilderProps } from '@react-querybuilder/ts';
 import 'core-js';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { ExportFormat, QueryBuilderProps } from 'react-querybuilder';
 import { defaultValidator, QueryBuilder } from 'react-querybuilder';
 import type { CommonRQBProps, DemoOption } from 'react-querybuilder/dev';
 import {

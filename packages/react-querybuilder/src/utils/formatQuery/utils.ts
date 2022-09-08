@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeAny,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
 export const numericRegex = /^\s*[+-]?(\d+|\d*\.\d+|\d+\.\d*)([Ee][+-]?\d+)?\s*$/;
 

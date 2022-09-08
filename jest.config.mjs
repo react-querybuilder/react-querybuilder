@@ -1,15 +1,17 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
-module.exports = {
+export default {
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
   projects: [
-    'packages/react-querybuilder',
-    'packages/dnd',
     'packages/antd',
     'packages/bootstrap',
     'packages/bulma',
     'packages/chakra',
+    'packages/ctx',
+    'packages/dnd',
     'packages/material',
+    'packages/react-querybuilder',
+    'packages/ts',
   ],
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
   watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
 };

@@ -1,9 +1,9 @@
-import { act, renderHook } from '@testing-library/react';
 import type { RenderHookResult } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
-jest.setTimeout(20_000);
+jest.setTimeout(60_000);
 
 const componentNames: MuiComponentName[] = [
   'Button',

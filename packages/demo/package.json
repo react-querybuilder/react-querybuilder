@@ -28,6 +28,7 @@
     "@react-querybuilder/chakra": "^5.0.0-alpha.3",
     "@react-querybuilder/dnd": "^5.0.0-alpha.3",
     "@react-querybuilder/material": "^5.0.0-alpha.3",
+    "@react-querybuilder/ts": "^5.0.0-alpha.3",
     "antd": "^4.22.8",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",

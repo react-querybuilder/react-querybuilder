@@ -1,11 +1,16 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { transformQuery } from './transformQuery';
 
 const query: RuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'f1', operator: '=', value: 'v1' }],
 };
-const queryIC: RuleGroupTypeIC = { rules: [{ rules: [] }, 'and', { rules: [] }] };
+const queryIC: RuleGroupTypeIC = {
+  rules: [{ rules: [] }, 'and', { rules: [] }],
+};
 
 const combinatorMap = { and: '&&', or: '||' } as const;
 
@@ -27,14 +32,18 @@ it('only adds path by default', () => {
 
 it('respects the ruleProcessor option', () => {
   expect(
-    transformQuery(query, { ruleProcessor: r => `${r.field} ${r.operator} ${r.value}` })
+    transformQuery(query, {
+      ruleProcessor: r => `${r.field} ${r.operator} ${r.value}`,
+    })
   ).toEqual({ combinator: 'and', rules: ['f1 = v1'], path: [] });
 });
 
 it('respects the ruleGroupProcessor option', () => {
   expect(
     transformQuery(query, {
-      ruleGroupProcessor: rg => ({ text: `rules.length == ${rg.rules.length}` }),
+      ruleGroupProcessor: rg => ({
+        text: `rules.length == ${rg.rules.length}`,
+      }),
     })
   ).toEqual({
     text: 'rules.length == 1',
@@ -43,7 +52,11 @@ it('respects the ruleGroupProcessor option', () => {
 });
 
 it('respects the propertyMap option', () => {
-  expect(transformQuery(query, { propertyMap: { combinator: 'AndOr', value: 'val' } })).toEqual({
+  expect(
+    transformQuery(query, {
+      propertyMap: { combinator: 'AndOr', value: 'val' },
+    })
+  ).toEqual({
     AndOr: 'and',
     path: [],
     rules: [{ field: 'f1', operator: '=', val: 'v1', path: [0] }],

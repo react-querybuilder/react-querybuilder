@@ -1,11 +1,12 @@
-import type { ReactElement } from 'react';
 import type {
+  Controls,
   InlineCombinatorProps,
   QueryActions,
   QueryBuilderContextProviderProps,
   RuleGroupProps,
   RuleProps,
-} from 'react-querybuilder';
+} from '@react-querybuilder/ts';
+import type { ReactElement } from 'react';
 
 export interface RuleGroupDndProps {
   disabled: boolean;
@@ -49,4 +50,12 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
+};
+
+export type QueryBuilderDndContextProps = {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrag?: typeof import('react-dnd')['useDrag'];
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  useDrop?: typeof import('react-dnd')['useDrop'];
+  baseControls: Pick<Controls, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
 };

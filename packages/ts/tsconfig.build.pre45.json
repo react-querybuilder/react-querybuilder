@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist/typesPre45",
+    "paths": {
+      "ruleGroupsIC": ["src/ruleGroupsIC/ruleGroupsIC.pre45.ts"]
+    }
+  },
+  "files": ["./src/index.ts"],
+  "exclude": [
+    "../../*.ts",
+    "./src/**/*",
+    "./src/ruleGroupsIC/index.ts",
+    "./src/ruleGroupsIC/ruleGroupsIC.post45.ts",
+    "./src/ruleGroupsIC/ruleGroupsIC.post45.utils.ts"
+  ]
+}

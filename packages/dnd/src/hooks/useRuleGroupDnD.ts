@@ -77,5 +77,13 @@ export const useRuleGroupDnD = ({
   }
   drop(dropRef);
 
-  return { isDragging, dragMonitorId, isOver, dropMonitorId, previewRef, dragRef, dropRef };
+  return {
+    isDragging,
+    dragMonitorId,
+    isOver,
+    dropMonitorId,
+    previewRef,
+    dragRef,
+    dropRef,
+  };
 };

@@ -4,7 +4,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from '../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { generateID } from './generateID';
 
 export const regenerateID = (rule: RuleType): RuleType =>

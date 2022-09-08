@@ -1,8 +1,8 @@
+import type { RuleProps, RuleType } from '@react-querybuilder/ts';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { standardClassnames, TestID } from './defaults';
 import { filterFieldsByComparator, getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import type { RuleProps, RuleType } from './types';
 import { c, getParentPath } from './utils';
 
 export const Rule = ({
@@ -56,7 +56,12 @@ export const Rule = ({
 
   const { field, operator, value, valueSource } = rule
     ? rule
-    : { field: fieldProp, operator: operatorProp, value: valueProp, valueSource: valueSourceProp };
+    : {
+        field: fieldProp,
+        operator: operatorProp,
+        value: valueProp,
+        valueSource: valueSourceProp,
+      };
 
   useDeprecatedProps('rule', !!rule);
 

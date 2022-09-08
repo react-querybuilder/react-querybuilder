@@ -1,5 +1,5 @@
+import type { NameLabelPair, OptionGroup } from '@react-querybuilder/ts';
 import { Select } from 'antd';
-import type { NameLabelPair, OptionGroup } from 'react-querybuilder';
 import { isOptionGroupArray } from 'react-querybuilder';
 
 const { OptGroup, Option } = Select;

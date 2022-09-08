@@ -1,4 +1,7 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { prepareRule, prepareRuleGroup } from './prepareQueryObjects';
 
 describe('prepareRule', () => {

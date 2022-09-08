@@ -1,7 +1,8 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
-module.exports = {
+export default {
   coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['../../jestSetup.ts'],
+  displayName: 'bootstrap',
   globals: { __RQB_DEV__: true },
+  setupFilesAfterEnv: ['../../jestSetup.ts'],
+  testEnvironment: 'jsdom',
 };

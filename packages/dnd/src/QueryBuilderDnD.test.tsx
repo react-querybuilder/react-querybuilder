@@ -1,14 +1,14 @@
-import { act, render, screen } from '@testing-library/react';
-import * as reactDnD from 'react-dnd';
-import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
-import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import type {
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-} from 'react-querybuilder';
-import QueryBuilder, { formatQuery, getCompatContextProvider, TestID } from 'react-querybuilder';
+} from '@react-querybuilder/ts';
+import { act, render, screen } from '@testing-library/react';
+import * as reactDnD from 'react-dnd';
+import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
+import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
+import { formatQuery, getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>

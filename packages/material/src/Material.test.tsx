@@ -19,6 +19,7 @@ import Select from '@mui/material/Select';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
+import type { DragHandleProps } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import {
@@ -26,7 +27,6 @@ import {
   forwardRef,
   isValidElement as mockIsValidElement,
 } from 'react';
-import type { DragHandleProps } from 'react-querybuilder';
 import { defaultTranslations, QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,

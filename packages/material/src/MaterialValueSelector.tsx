@@ -1,7 +1,7 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
+import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import { useMemo } from 'react';
-import type { VersatileSelectorProps } from 'react-querybuilder';
 import { joinWith, splitBy, ValueSelector } from 'react-querybuilder';
 import type { MuiComponentName, RQBMaterialComponents, SelectType } from './types';
 import { useMuiComponents } from './useMuiComponents';
@@ -106,7 +106,10 @@ export const MaterialValueSelector = ({
         onChange={onChange}
         multiple={!!multiple}
         {...otherProps}>
-        {toOptions(options ?? /* istanbul ignore next */ [], { ListSubheader, MenuItem })}
+        {toOptions(options ?? /* istanbul ignore next */ [], {
+          ListSubheader,
+          MenuItem,
+        })}
       </Select>
     </FormControl>
   );

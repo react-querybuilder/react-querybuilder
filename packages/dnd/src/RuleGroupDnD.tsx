@@ -1,47 +1,49 @@
-import { cloneElement, isValidElement } from 'react';
+import { useContext, useMemo } from 'react';
+import type { RuleGroupProps } from 'react-querybuilder';
 import { standardClassnames } from 'react-querybuilder';
-import { useRuleGroupDnD } from './internal/hooks';
-import type { RuleGroupDndProps } from './types';
+import { useRuleGroupDnD } from './hooks';
+import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
-export const RuleGroupDnD = ({
-  children,
-  path,
-  disabled: disabledProp,
-  parentDisabled,
-  moveRule,
-  useDrag,
-  useDrop,
-}: RuleGroupDndProps) => {
+export const RuleGroupDnD = (props: RuleGroupProps) => {
+  const rqbDndContext = useContext(QueryBuilderDndContext);
+
+  const { useDrag, useDrop } = rqbDndContext;
+  const {
+    path,
+    disabled: disabledProp,
+    parentDisabled,
+    actions: { moveRule },
+  } = props;
+
   const disabled = !!parentDisabled || !!disabledProp;
 
   const dndRefs = useRuleGroupDnD({
     disabled,
     path,
     moveRule,
-    useDrag,
-    useDrop,
+    useDrag: useDrag!,
+    useDrop: useDrop!,
   });
 
-  /* istanbul ignore else */
-  if (isValidElement(children)) {
-    const header = `${children.props.schema.classNames.header}${
-      dndRefs.isOver ? ` ${standardClassnames.dndOver}` : ''
-    }`;
-    const ruleGroup = `${children.props.schema.classNames.ruleGroup}${
-      dndRefs.isDragging ? ` ${standardClassnames.dndDragging}` : ''
-    }`;
-
-    return cloneElement(children, {
-      ...dndRefs,
-      schema: {
-        ...children.props.schema,
-        classNames: { ...children.props.schema.classNames, header, ruleGroup },
+  const schema = useMemo(
+    () => ({
+      ...props.schema,
+      classNames: {
+        ...props.schema.classNames,
+        header: `${props.schema.classNames.header}${
+          dndRefs.isOver ? ` ${standardClassnames.dndOver}` : ''
+        }`,
+        ruleGroup: `${props.schema.classNames.ruleGroup}${
+          dndRefs.isDragging ? ` ${standardClassnames.dndDragging}` : ''
+        }`,
       },
-    });
-  }
+    }),
+    [props.schema, dndRefs.isOver, dndRefs.isDragging]
+  );
 
-  /* istanbul ignore next */
-  return null;
+  const { ruleGroup: BaseRuleGroupComponent } = rqbDndContext.baseControls;
+
+  return <BaseRuleGroupComponent {...props} schema={schema} {...dndRefs} />;
 };
 
 RuleGroupDnD.displayName = 'RuleGroupDnD';

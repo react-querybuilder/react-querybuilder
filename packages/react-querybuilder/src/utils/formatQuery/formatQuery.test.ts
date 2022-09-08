@@ -1,3 +1,9 @@
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+  ValueProcessorByRule,
+  ValueProcessorLegacy,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import {
   defaultCELValueProcessor,
   defaultMongoDBValueProcessor,
@@ -5,12 +11,6 @@ import {
   defaultValueProcessor,
 } from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import type {
-  RuleGroupType,
-  RuleGroupTypeIC,
-  ValueProcessorByRule,
-  ValueProcessorLegacy,
-} from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
 import { formatQuery } from './formatQuery';
@@ -678,11 +678,25 @@ const jsonLogicQueryObjectForValueSourceField = {
   and: [
     { '==': [{ var: 'firstName' }, null] },
     { '!=': [{ var: 'lastName' }, null] },
-    { in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]] },
-    { '!': { in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]] } },
-    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
-    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
-    { '!': { '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }] } },
+    {
+      in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]],
+    },
+    {
+      '!': {
+        in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]],
+      },
+    },
+    {
+      '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }],
+    },
+    {
+      '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }],
+    },
+    {
+      '!': {
+        '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }],
+      },
+    },
     { '==': [{ var: 'age' }, { var: 'iq' }] },
     { '==': [{ var: 'isMusician' }, { var: 'isCreative' }] },
     {
@@ -776,7 +790,10 @@ it('formats CEL correctly', () => {
   ).toBe(celStringForValueSourceField);
   expect(
     formatQuery(
-      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
+      {
+        combinator: 'and',
+        rules: [{ field: 'f', operator: 'between', value: [14, 12] }],
+      },
       'cel'
     )
   ).toBe('(f >= 12 && f <= 14)');
@@ -794,7 +811,10 @@ it('formats SpEL correctly', () => {
   ).toBe(spelStringForValueSourceField);
   expect(
     formatQuery(
-      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
+      {
+        combinator: 'and',
+        rules: [{ field: 'f', operator: 'between', value: [14, 12] }],
+      },
       'spel'
     )
   ).toBe('(f >= 12 and f <= 14)');
@@ -813,7 +833,10 @@ it('formats JSONLogic correctly', () => {
   );
   expect(
     formatQuery(
-      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
+      {
+        combinator: 'and',
+        rules: [{ field: 'f', operator: 'between', value: [14, 12] }],
+      },
       'jsonlogic'
     )
   ).toEqual({ '<=': [12, { var: 'f' }, 14] });
@@ -852,7 +875,10 @@ it('handles custom valueProcessors correctly', () => {
   };
 
   expect(
-    formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor: valueProcessorLegacy })
+    formatQuery(queryWithArrayValue, {
+      format: 'sql',
+      valueProcessor: valueProcessorLegacy,
+    })
   ).toBe(`(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`);
 
   const queryForNewValueProcessor: RuleGroupType = {
@@ -866,7 +892,11 @@ it('handles custom valueProcessors correctly', () => {
   ) => `${field}-${operator}-${value}-${valueSource}-${!!parseNumbers}`;
 
   expect(
-    formatQuery(queryForNewValueProcessor, { format: 'sql', parseNumbers: true, valueProcessor })
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      parseNumbers: true,
+      valueProcessor,
+    })
   ).toBe('(f1 = f1-=-v1-value-true)');
 });
 
@@ -929,7 +959,12 @@ it('uses paramPrefix correctly', () => {
     combinator: 'and',
     rules: [{ field: 'firstName', operator: '=', value: 'Test' }],
   };
-  expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix: '$' })).toEqual({
+  expect(
+    formatQuery(queryToTest, {
+      format: 'parameterized_named',
+      paramPrefix: '$',
+    })
+  ).toEqual({
     sql: '(firstName = $firstName_1)',
     params: { firstName_1: 'Test' },
   });
@@ -944,7 +979,10 @@ describe('escapes quotes when appropriate', () => {
   it.each([
     { fmt: 'sql', result: `(f1 = 'Te''st')` },
     { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
-    { fmt: 'parameterized_named', result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } } },
+    {
+      fmt: 'parameterized_named',
+      result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } },
+    },
     { fmt: 'spel', result: `f1 == 'Te\\'st'` },
   ])('escapes single quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
     // @ts-expect-error Conflicting formatQuery overloads
@@ -1027,7 +1065,11 @@ describe('validation', () => {
     it('should invalidate sql even if fields are valid', () => {
       expect(
         formatQuery(
-          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ field: 'field', operator: '=', value: '' }],
+          },
           {
             format: 'sql',
             validator: () => false,
@@ -1153,15 +1195,25 @@ describe('validation', () => {
     });
 
     it('should invalidate parameterized', () => {
-      const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
-      expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual(
-        {
-          sql: '(1 = 1)',
-          params: [],
-        }
-      );
+      const queryToTest: RuleGroupType = {
+        id: 'root',
+        combinator: 'and',
+        rules: [],
+      };
       expect(
-        formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
+        formatQuery(queryToTest, {
+          format: 'parameterized',
+          validator: () => false,
+        })
+      ).toEqual({
+        sql: '(1 = 1)',
+        params: [],
+      });
+      expect(
+        formatQuery(queryToTest, {
+          format: 'parameterized_named',
+          validator: () => false,
+        })
       ).toEqual({ sql: '(1 = 1)', params: {} });
     });
   });
@@ -1187,7 +1239,10 @@ describe('validation', () => {
               { field: 'otherfield', operator: '=', value: '' },
             ],
           },
-          { format: 'mongodb', fields: [{ name: 'field', validator: () => false }] }
+          {
+            format: 'mongodb',
+            fields: [{ name: 'field', validator: () => false }],
+          }
         )
       ).toBe('{"$and":[{"otherfield":{"$eq":""}}]}');
     });
@@ -1195,7 +1250,11 @@ describe('validation', () => {
     it('should invalidate mongodb even if fields are valid', () => {
       expect(
         formatQuery(
-          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ field: 'field', operator: '=', value: '' }],
+          },
           {
             format: 'mongodb',
             validator: () => false,
@@ -1267,7 +1326,11 @@ describe('validation', () => {
     it('should invalidate cel even if fields are valid', () => {
       expect(
         formatQuery(
-          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ field: 'field', operator: '=', value: '' }],
+          },
           {
             format: 'cel',
             validator: () => false,
@@ -1331,7 +1394,10 @@ describe('validation', () => {
               { field: 'otherfield', operator: '=', value: '' },
             ],
           },
-          { format: 'spel', fields: [{ name: 'field', validator: () => false }] }
+          {
+            format: 'spel',
+            fields: [{ name: 'field', validator: () => false }],
+          }
         )
       ).toBe("otherfield == ''");
     });
@@ -1339,7 +1405,11 @@ describe('validation', () => {
     it('should invalidate spel even if fields are valid', () => {
       expect(
         formatQuery(
-          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ field: 'field', operator: '=', value: '' }],
+          },
           {
             format: 'spel',
             validator: () => false,
@@ -1403,7 +1473,10 @@ describe('validation', () => {
               { field: 'otherfield', operator: '=', value: '' },
             ],
           },
-          { format: 'jsonlogic', fields: [{ name: 'field', validator: () => false }] }
+          {
+            format: 'jsonlogic',
+            fields: [{ name: 'field', validator: () => false }],
+          }
         )
       ).toEqual({ '==': [{ var: 'otherfield' }, ''] });
     });
@@ -1411,7 +1484,11 @@ describe('validation', () => {
     it('should invalidate jsonlogic even if fields are valid', () => {
       expect(
         formatQuery(
-          { id: 'root', combinator: 'and', rules: [{ field: 'field', operator: '=', value: '' }] },
+          {
+            id: 'root',
+            combinator: 'and',
+            rules: [{ field: 'field', operator: '=', value: '' }],
+          },
           {
             format: 'jsonlogic',
             validator: () => false,
@@ -1654,7 +1731,10 @@ describe('parseNumbers', () => {
   });
   it('parses numbers for json_without_ids', () => {
     expect(
-      formatQuery(queryForNumberParsing, { format: 'json_without_ids', parseNumbers: true })
+      formatQuery(queryForNumberParsing, {
+        format: 'json_without_ids',
+        parseNumbers: true,
+      })
     ).toBe(
       '{"rules":[{"field":"f","value":"NaN","operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"="},{"field":"f","value":1.5,"operator":"="}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
     );
@@ -1676,7 +1756,10 @@ describe('parseNumbers', () => {
   });
   it('parses numbers for parameterized', () => {
     expect(
-      formatQuery(queryForNumberParsing, { format: 'parameterized', parseNumbers: true })
+      formatQuery(queryForNumberParsing, {
+        format: 'parameterized',
+        parseNumbers: true,
+      })
     ).toHaveProperty('params', [
       'NaN',
       0,
@@ -1705,7 +1788,10 @@ describe('parseNumbers', () => {
   });
   it('parses numbers for parameterized_named', () => {
     expect(
-      formatQuery(queryForNumberParsing, { format: 'parameterized_named', parseNumbers: true })
+      formatQuery(queryForNumberParsing, {
+        format: 'parameterized_named',
+        parseNumbers: true,
+      })
     ).toHaveProperty('params', {
       f_1: 'NaN',
       f_2: 0,
@@ -1733,7 +1819,12 @@ describe('parseNumbers', () => {
     });
   });
   it('parses numbers for mongodb', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'mongodb', parseNumbers: true })).toBe(
+    expect(
+      formatQuery(queryForNumberParsing, {
+        format: 'mongodb',
+        parseNumbers: true,
+      })
+    ).toBe(
       '{"$and":[{"f":{"$eq":"NaN"}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"$or":[{"f":{"$eq":1.5}},{"f":{"$eq":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":"abc"}}]},{"$and":[{"f":{"$gte":"[object Object]"}},{"f":{"$lte":"[object Object]"}}]}]}'
     );
   });
@@ -1748,9 +1839,12 @@ describe('parseNumbers', () => {
         { field: 'f', operator: 'endsWith', value: 1 },
       ],
     };
-    expect(formatQuery(queryForNumberParsingCEL, { format: 'cel', parseNumbers: true })).toBe(
-      `f.startsWith("1") && f.endsWith("1")`
-    );
+    expect(
+      formatQuery(queryForNumberParsingCEL, {
+        format: 'cel',
+        parseNumbers: true,
+      })
+    ).toBe(`f.startsWith("1") && f.endsWith("1")`);
   });
   it('parses numbers for spel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
@@ -1765,29 +1859,37 @@ describe('parseNumbers', () => {
         { field: 'f', operator: 'endsWith', value: 'hasDollarSign$' },
       ],
     };
-    expect(formatQuery(queryForNumberParsingSpEL, { format: 'spel', parseNumbers: true })).toBe(
+    expect(
+      formatQuery(queryForNumberParsingSpEL, {
+        format: 'spel',
+        parseNumbers: true,
+      })
+    ).toBe(
       `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
     );
   });
   it('parses numbers for jsonlogic', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'jsonlogic', parseNumbers: true })).toEqual(
-      {
-        and: [
-          { '==': [{ var: 'f' }, 'NaN'] },
-          { '==': [{ var: 'f' }, 0] },
-          { '==': [{ var: 'f' }, 0] },
-          { '==': [{ var: 'f' }, 0] },
-          { or: [{ '==': [{ var: 'f' }, 1.5] }, { '==': [{ var: 'f' }, 1.5] }] },
-          { in: [{ var: 'f' }, [0, 1, 2]] },
-          { in: [{ var: 'f' }, [0, 1, 2]] },
-          { in: [{ var: 'f' }, [0, 'abc', 2]] },
-          { '<=': [0, { var: 'f' }, 1] },
-          { '<=': [0, { var: 'f' }, 1] },
-          { '<=': ['0', { var: 'f' }, 'abc'] },
-          { '<=': [{}, { var: 'f' }, {}] },
-        ],
-      }
-    );
+    expect(
+      formatQuery(queryForNumberParsing, {
+        format: 'jsonlogic',
+        parseNumbers: true,
+      })
+    ).toEqual({
+      and: [
+        { '==': [{ var: 'f' }, 'NaN'] },
+        { '==': [{ var: 'f' }, 0] },
+        { '==': [{ var: 'f' }, 0] },
+        { '==': [{ var: 'f' }, 0] },
+        { or: [{ '==': [{ var: 'f' }, 1.5] }, { '==': [{ var: 'f' }, 1.5] }] },
+        { in: [{ var: 'f' }, [0, 1, 2]] },
+        { in: [{ var: 'f' }, [0, 1, 2]] },
+        { in: [{ var: 'f' }, [0, 'abc', 2]] },
+        { '<=': [0, { var: 'f' }, 1] },
+        { '<=': [0, { var: 'f' }, 1] },
+        { '<=': ['0', { var: 'f' }, 'abc'] },
+        { '<=': [{}, { var: 'f' }, {}] },
+      ],
+    });
   });
 });
 
@@ -1798,10 +1900,18 @@ describe('placeholder names', () => {
   const queryForPlaceholders: RuleGroupType = {
     combinator: 'and',
     rules: [
-      { field: defaultPlaceholderFieldName, operator: defaultPlaceholderOperatorName, value: 'v1' },
+      {
+        field: defaultPlaceholderFieldName,
+        operator: defaultPlaceholderOperatorName,
+        value: 'v1',
+      },
       { field: placeholderFieldName, operator: '=', value: 'v2' },
       { field: 'f3', operator: placeholderOperatorName, value: 'v3' },
-      { field: placeholderFieldName, operator: placeholderOperatorName, value: 'v4' },
+      {
+        field: placeholderFieldName,
+        operator: placeholderOperatorName,
+        value: 'v4',
+      },
     ],
   };
 

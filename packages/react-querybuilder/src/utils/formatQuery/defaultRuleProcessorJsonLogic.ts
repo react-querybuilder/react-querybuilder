@@ -1,5 +1,9 @@
+import type {
+  RQBJsonLogic,
+  RuleType,
+  ValueProcessorOptions,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import type { JsonLogicVar } from 'json-logic-js';
-import type { RQBJsonLogic, RuleType, ValueProcessorOptions } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
@@ -33,7 +37,9 @@ export const defaultRuleProcessorJsonLogic = (
       [convertOperator(operator)]: [fieldObject, fieldOrNumberRenderer(value)],
     } as RQBJsonLogic;
   } else if (operator === 'null' || operator === 'notNull') {
-    return { [`${operator === 'notNull' ? '!' : '='}=`]: [fieldObject, null] } as RQBJsonLogic;
+    return {
+      [`${operator === 'notNull' ? '!' : '='}=`]: [fieldObject, null],
+    } as RQBJsonLogic;
   } else if (operator === 'in' || operator === 'notIn') {
     // TODO: extract this map function
     const valArray = toArray(value).map(fieldOrNumberRenderer);
@@ -70,13 +76,19 @@ export const defaultRuleProcessorJsonLogic = (
     }
     return false;
   } else if (operator === 'contains' || operator === 'doesNotContain') {
-    const jsonRule: RQBJsonLogic = { in: [fieldOrNumberRenderer(value), fieldObject] };
+    const jsonRule: RQBJsonLogic = {
+      in: [fieldOrNumberRenderer(value), fieldObject],
+    };
     return negateIfNotOp(operator, jsonRule);
   } else if (operator === 'beginsWith' || operator === 'doesNotBeginWith') {
-    const jsonRule: RQBJsonLogic = { startsWith: [fieldObject, fieldOrNumberRenderer(value)] };
+    const jsonRule: RQBJsonLogic = {
+      startsWith: [fieldObject, fieldOrNumberRenderer(value)],
+    };
     return negateIfNotOp(operator, jsonRule);
   } else if (operator === 'endsWith' || operator === 'doesNotEndWith') {
-    const jsonRule: RQBJsonLogic = { endsWith: [fieldObject, fieldOrNumberRenderer(value)] };
+    const jsonRule: RQBJsonLogic = {
+      endsWith: [fieldObject, fieldOrNumberRenderer(value)],
+    };
     return negateIfNotOp(operator, jsonRule);
   }
   return false;
