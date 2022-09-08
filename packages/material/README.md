@@ -50,8 +50,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 // MUI component imports
+import DragIndicator from '@mui/icons-material/DragIndicator';
 import Checkbox from '@mui/material/Checkbox';
-import DragIndicator from '@mui/material/DragIndicator';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Input from '@mui/material/Input';
