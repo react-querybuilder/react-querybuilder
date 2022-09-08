@@ -1,9 +1,9 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
-module.exports = {
-  displayName: 'dnd',
+export default {
   coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['../../jestSetup.ts'],
-  transformIgnorePatterns: ['/node[_]modules/(?!react-dnd|dnd-core|@react-dnd)'],
+  displayName: 'dnd',
   globals: { __RQB_DEV__: true },
+  setupFilesAfterEnv: ['../../jestSetup.ts'],
+  testEnvironment: 'jsdom',
+  transformIgnorePatterns: ['/node[_]modules/(?!react-dnd|dnd-core|@react-dnd)'],
 };

@@ -1,8 +1,8 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
-module.exports = {
-  displayName: 'chakra',
+export default {
   coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['../../jestSetup.ts'],
+  displayName: 'bulma',
   globals: { __RQB_DEV__: true },
+  setupFilesAfterEnv: ['../../jestSetup.ts'],
+  testEnvironment: 'jsdom',
 };
