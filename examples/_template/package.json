@@ -4,11 +4,11 @@
   "private": true,
   "main": "src/index.tsx",
   "dependencies": {
-    "@react-querybuilder/ctx": "^5.0.0-alpha.4",
-    "@react-querybuilder/ts": "^5.0.0-alpha.4",
+    "@react-querybuilder/ctx": "^5.0.0-alpha.5",
+    "@react-querybuilder/ts": "^5.0.0-alpha.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^5.0.0-alpha.4"
+    "react-querybuilder": "^5.0.0-alpha.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
