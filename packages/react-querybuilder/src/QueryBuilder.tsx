@@ -73,7 +73,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   autoSelectField = true,
   autoSelectOperator = true,
   addRuleToNewGroups = false,
-  enableDragAndDrop: enableDragAndDropProp = false,
+  enableDragAndDrop: enableDragAndDropProp,
   independentCombinators,
   listsAsArrays = false,
   disabled = false,
