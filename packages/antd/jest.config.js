@@ -1,5 +1,6 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
+  displayName: 'antd',
   coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['../../jestSetup.ts'],

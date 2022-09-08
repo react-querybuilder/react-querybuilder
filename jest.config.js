@@ -1,13 +1,15 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
   projects: [
-    'packages/react-querybuilder',
-    'packages/dnd',
     'packages/antd',
     'packages/bootstrap',
     'packages/bulma',
     'packages/chakra',
+    'packages/ctx',
+    'packages/dnd',
     'packages/material',
+    'packages/react-querybuilder',
+    'packages/ts',
   ],
   collectCoverage: true,
   coverageDirectory: 'coverage',
