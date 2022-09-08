@@ -42,7 +42,8 @@ If your application already uses `react-dnd` and renders `DndProvider` higher up
 ### Fixed
 
 - [#324](https://github.com/react-querybuilder/react-querybuilder/pull/324) The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
-- `parseCEL` now handles strings, including multi-line strings, correctly.
+- `parseCEL` now handles strings correctly (including multi-line strings).
+- [#364](https://github.com/react-querybuilder/react-querybuilder/issues/364) The array passed to the `fields` prop was being mutated if it contained duplicates, whether they were duplicate field `name`s or option group `label`s. The `fields` prop is now treated as immutable.
 
 ### Added
 
@@ -54,7 +55,7 @@ If your application already uses `react-dnd` and renders `DndProvider` higher up
 <summary>Miscellaneous</summary>
 
 - The [documentation site](https://react-querybuilder.js.org/) now has documentation for past versions.
-- The `controlElements` prop has a new option: `inlineCombinator`. By default, this is a small wrapper around the `combinatorSelector` component that is used when either `showCombinatorsBetweenRules` or `independentCombinators` is `true`. The `inlineCombinator` option was only added to support `@react-querybuilder/dnd`, so there is almost certainly no reason to use it directly.
+- The `controlElements` prop has a new option: `inlineCombinator`. By default, this is a small wrapper around the `combinatorSelector` component that is used when either `showCombinatorsBetweenRules` or `independentCombinators` is `true`. (The `inlineCombinator` option was only added to support `@react-querybuilder/dnd`, so there is almost certainly no reason to use it directly.)
 
 </details>
 
