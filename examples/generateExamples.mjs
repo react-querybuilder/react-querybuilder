@@ -1,8 +1,9 @@
 // @ts-check
 import stableStringify from 'fast-json-stable-stringify';
+import glob from 'glob';
 import { createRequire } from 'module';
-import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { dirname, join as pathJoin, resolve } from 'node:path';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { dirname, join as pathJoin } from 'node:path';
 import prettier from 'prettier';
 import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
@@ -10,22 +11,9 @@ import { configs } from './exampleConfigs.mjs';
 const require = createRequire(import.meta.url);
 /** @type {{ version: string; }} */
 const { version } = require('../lerna.json');
-/** @type {import('prettier').Config} */
-const prettierConfig = require('../.prettierrc.json');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-/** @type {(dir: string) => Promise<string[]>} */
-async function recursivelyGetFiles(dir) {
-  const dirents = await readdir(dir, { withFileTypes: true });
-  const files = await Promise.all(
-    dirents.map(dirent => {
-      const res = resolve(dir, dirent.name);
-      return dirent.isDirectory() ? recursivelyGetFiles(res) : res;
-    })
-  );
-  return files.flat();
-}
+const rootPrettierConfig = await prettier.resolveConfig(__filename);
 
 const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
@@ -152,17 +140,24 @@ for (const exampleID in configs) {
   await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
-  // #region Prettify everything
-  const fileList = await recursivelyGetFiles(examplePath);
+  // #region Prettify this example
+  const fileList = glob.sync(`examples/${exampleID}/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}`);
   for (const filepath of fileList) {
     const fileContents = (await readFile(filepath)).toString('utf-8');
-    const prettified = prettier.format(fileContents, {
-      ...prettierConfig,
-      printWidth: filepath.endsWith('css') ? 100 : 80, // narrower since codesandbox code panel is narrow
+    const printWidth = filepath.endsWith('css')
+      ? rootPrettierConfig?.printWidth
+      : (await prettier.resolveConfig(filepath))?.printWidth;
+    /** @type {import('prettier').Options} */
+    const prettierOptions = {
+      ...rootPrettierConfig,
+      printWidth,
       filepath,
       plugins: ['prettier-plugin-organize-imports'],
-    });
-    await writeFile(filepath, prettified);
+    };
+    if (!prettier.check(fileContents, prettierOptions)) {
+      const prettified = prettier.format(fileContents, prettierOptions);
+      await writeFile(filepath, prettified);
+    }
   }
   // #endregion
 
