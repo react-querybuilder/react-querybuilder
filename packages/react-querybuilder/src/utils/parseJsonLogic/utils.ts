@@ -1,4 +1,10 @@
 import type {
+  RQBJsonLogic,
+  RQBJsonLogicEndsWith,
+  RQBJsonLogicStartsWith,
+  RQBJsonLogicVar,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type {
   JsonLogicAnd,
   JsonLogicDoubleNegation,
   JsonLogicEqual,
@@ -15,12 +21,6 @@ import type {
   JsonLogicStrictNotEqual,
   JsonLogicVar,
 } from 'json-logic-js';
-import type {
-  RQBJsonLogic,
-  RQBJsonLogicEndsWith,
-  RQBJsonLogicStartsWith,
-  RQBJsonLogicVar,
-} from '../../types/index.noReact';
 
 // Standard JsonLogic operations
 export const isJsonLogicVar = (

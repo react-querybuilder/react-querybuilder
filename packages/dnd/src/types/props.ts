@@ -1,4 +1,3 @@
-import type { ReactElement } from 'react';
 import type {
   Controls,
   InlineCombinatorProps,
@@ -6,7 +5,8 @@ import type {
   QueryBuilderContextProviderProps,
   RuleGroupProps,
   RuleProps,
-} from 'react-querybuilder';
+} from '@react-querybuilder/ts';
+import type { ReactElement } from 'react';
 
 export interface RuleGroupDndProps {
   disabled: boolean;

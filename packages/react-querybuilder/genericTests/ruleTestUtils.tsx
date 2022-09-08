@@ -16,7 +16,7 @@ import type {
   RuleProps,
   Schema,
   ValueEditorProps,
-} from '../src/types';
+} from '@react-querybuilder/ts';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: Field[]) =>

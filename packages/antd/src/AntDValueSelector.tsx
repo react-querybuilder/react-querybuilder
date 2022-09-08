@@ -1,7 +1,7 @@
+import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import { Select } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
 import { useMemo } from 'react';
-import type { VersatileSelectorProps } from 'react-querybuilder';
 import { joinWith, splitBy } from 'react-querybuilder';
 import { toOptions } from './utils';
 

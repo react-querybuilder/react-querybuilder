@@ -1,5 +1,5 @@
+import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
-import type { ValueEditorProps } from '../../types';
 import { toArray } from '../arrayUtils';
 
 type useValueEditorParams = Pick<

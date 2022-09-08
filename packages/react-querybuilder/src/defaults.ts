@@ -3,7 +3,7 @@ import type {
   DefaultCombinator,
   DefaultOperator,
   TranslationsFull,
-} from './types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
 const placeholderName = '~';
 const placeholderLabel = '------';

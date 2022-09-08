@@ -1,5 +1,5 @@
+import type { ActionWithRulesProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
 import { ActionElement } from 'react-querybuilder';
 import type { ButtonType, MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';

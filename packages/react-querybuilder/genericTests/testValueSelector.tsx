@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '../src/types';
+import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '@react-querybuilder/ts';
 import { findSelect, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{

@@ -1,4 +1,15 @@
 import { QueryBuilderContext } from '@react-querybuilder/ctx';
+import type {
+  Field,
+  NameLabelPair,
+  QueryActions,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+  Schema,
+  UpdateableProperties,
+} from '@react-querybuilder/ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   defaultCombinators,
@@ -15,17 +26,6 @@ import {
   uniqOptGroups,
 } from './internal';
 import { useControlledOrUncontrolled } from './internal/hooks';
-import type {
-  Field,
-  NameLabelPair,
-  QueryActions,
-  QueryBuilderProps,
-  RuleGroupType,
-  RuleGroupTypeIC,
-  RuleType,
-  Schema,
-  UpdateableProperties,
-} from './types';
 import {
   add,
   c,
@@ -125,7 +125,10 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
         f = uniqOptGroups(f);
       } else {
         f = uniqOptGroups([
-          { label: translations.fields.placeholderGroupLabel, options: [defaultField] },
+          {
+            label: translations.fields.placeholderGroupLabel,
+            options: [defaultField],
+          },
           ...f,
         ]);
       }
@@ -186,7 +189,10 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       if (!autoSelectOperator) {
         if (isOptionGroupArray(opsFinal)) {
           opsFinal = [
-            { label: translations.operators.placeholderGroupLabel, options: [defaultOperator] },
+            {
+              label: translations.operators.placeholderGroupLabel,
+              options: [defaultOperator],
+            },
             ...opsFinal,
           ];
         } else {
@@ -396,7 +402,11 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       : queryProp
     : queryState;
 
-  useControlledOrUncontrolled({ defaultQuery, queryProp, isFirstRender: isFirstRender.current });
+  useControlledOrUncontrolled({
+    defaultQuery,
+    queryProp,
+    isFirstRender: isFirstRender.current,
+  });
 
   isFirstRender.current = false;
 
@@ -461,7 +471,12 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
       // istanbul ignore else
       if (debugMode) {
-        onLog({ type: LogType.parentPathDisabled, ruleGroup, parentPath, query });
+        onLog({
+          type: LogType.parentPathDisabled,
+          ruleGroup,
+          parentPath,
+          query,
+        });
       }
       return;
     }

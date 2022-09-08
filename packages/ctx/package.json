@@ -24,6 +24,9 @@
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
   },
+  "dependencies": {
+    "@react-querybuilder/ts": "^5.0.0-alpha.3"
+  },
   "devDependencies": {
     "@testing-library/react": "^13.3.0",
     "@types/node": "^18.7.14",

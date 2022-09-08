@@ -1,7 +1,3 @@
-import type { ReservedOperations } from 'json-logic-js';
-import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';
-import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
-import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
@@ -10,7 +6,11 @@ import type {
   ParseJsonLogicOptions,
   RQBJsonLogic,
   ValueSource,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { ReservedOperations } from 'json-logic-js';
+import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';
+import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
+import { uniqByName } from '../../internal/uniq';
 import { isOptionGroupArray } from '../optGroupUtils';
 import {
   isJsonLogicAnd,

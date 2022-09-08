@@ -5,13 +5,6 @@
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/types/src/index.d.ts",
-  "typesVersions": {
-    "<4.5": {
-      "dist/types/src/*": [
-        "dist/typesPre45/src/*"
-      ]
-    }
-  },
   "files": [
     "dist"
   ],
@@ -70,6 +63,7 @@
   },
   "dependencies": {
     "@react-querybuilder/ctx": "^5.0.0-alpha.3",
+    "@react-querybuilder/ts": "^5.0.0-alpha.3",
     "immer": "^9.0.15"
   },
   "peerDependencies": {
@@ -78,12 +72,10 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "yarn build:main && concurrently --timings --max-processes 10 --names css,formatQuery,parseCEL,parseJsonLogic,parseSQL,transformQuery,typesGTE45,typesPre45 yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseSQL yarn:build:transformQuery yarn:build:typesGTE45 yarn:build:typesPre45",
+    "build": "yarn build:main && concurrently --timings --max-processes 10 --names css,formatQuery,parseCEL,parseJsonLogic,parseSQL,transformQuery,types yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseSQL yarn:build:transformQuery yarn:build:types",
     "build:main": "vite build",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "build:types": "concurrently --timings --names typesGTE45,typesPre45 yarn:build:typesGTE45 yarn:build:typesPre45",
-    "build:typesGTE45": "tsc --project ./tsconfig.build.GTE45.json --emitDeclarationOnly && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC'\" ./dist/types/src/types -r --silent",
-    "build:typesPre45": "tsc --project ./tsconfig.build.pre45.json --emitDeclarationOnly && replace \"import type\" \"import\" ./dist/typesPre45/src -r --silent && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC.pre45'\" ./dist/typesPre45/src/types -r --silent",
+    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly",
     "build:formatQuery": "vite build --config vite.config.formatQuery.js",
     "build:parseCEL": "vite build --config vite.config.parseCEL.js",
     "build:parseJsonLogic": "vite build --config vite.config.parseJsonLogic.js",

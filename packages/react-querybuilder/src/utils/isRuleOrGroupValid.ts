@@ -3,7 +3,7 @@ import type {
   RuleType,
   RuleValidator,
   ValidationResult,
-} from '../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
 export const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
   typeof vr === 'object' && vr !== null && typeof vr.valid === 'boolean';

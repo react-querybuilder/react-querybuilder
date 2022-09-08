@@ -1,4 +1,4 @@
-import type { Field, ValueSources } from '../types/index.noReact';
+import type { Field, ValueSources } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
 export const getValueSourcesUtil = (
   fieldData: Field,

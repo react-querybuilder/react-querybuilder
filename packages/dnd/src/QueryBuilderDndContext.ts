@@ -1,5 +1,5 @@
-import { defaultControlElements } from 'react-querybuilder';
 import { createContext } from 'react';
+import { defaultControlElements } from 'react-querybuilder';
 import type { QueryBuilderDndContextProps } from './types';
 
 const { rule, ruleGroup, combinatorSelector } = defaultControlElements;

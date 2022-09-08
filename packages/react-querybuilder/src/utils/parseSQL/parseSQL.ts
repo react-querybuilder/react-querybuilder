@@ -1,4 +1,3 @@
-import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -10,7 +9,8 @@ import type {
   DefaultRuleType,
   Field,
   ParseSQLOptions,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import { uniqByName } from '../../internal/uniq';
 import { isOptionGroupArray } from '../optGroupUtils';
 import { fieldIsValidUtil } from '../parserUtils';
 import { sqlParser } from './sqlParser';
@@ -34,11 +34,15 @@ import {
 function parseSQL(sql: string): DefaultRuleGroupType;
 function parseSQL(
   sql: string,
-  options: Omit<ParseSQLOptions, 'independentCombinators'> & { independentCombinators?: false }
+  options: Omit<ParseSQLOptions, 'independentCombinators'> & {
+    independentCombinators?: false;
+  }
 ): DefaultRuleGroupType;
 function parseSQL(
   sql: string,
-  options: Omit<ParseSQLOptions, 'independentCombinators'> & { independentCombinators: true }
+  options: Omit<ParseSQLOptions, 'independentCombinators'> & {
+    independentCombinators: true;
+  }
 ): DefaultRuleGroupTypeIC;
 function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny {
   let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
@@ -108,7 +112,11 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         if ('rules' in rule) {
           return { ...rule, not: true };
         }
-        return { rules: [rule], not: true, ...(ic ? {} : { combinator: 'and' }) };
+        return {
+          rules: [rule],
+          not: true,
+          ...(ic ? {} : { combinator: 'and' }),
+        };
       }
     } else if (expr.type === 'SimpleExprParentheses') {
       const ex = expr.value.value[0];
@@ -224,7 +232,12 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           return { field: getFieldName(expr.left), operator, value };
         } else if (fieldArray.length > 0) {
           const value = options?.listsAsArrays ? fieldArray : fieldArray.join(', ');
-          return { field: getFieldName(expr.left), operator, value, valueSource: 'field' };
+          return {
+            field: getFieldName(expr.left),
+            operator,
+            value,
+            valueSource: 'field',
+          };
         }
       }
     } else if (expr.type === 'BetweenPredicate') {

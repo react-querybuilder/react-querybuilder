@@ -1,6 +1,4 @@
-import { enableES5 } from 'immer';
-import { QueryBuilder } from './QueryBuilder';
-enableES5();
+export * from '@react-querybuilder/ts';
 export { version } from '../package.json';
 export * from './controls/';
 export * from './defaults';
@@ -8,7 +6,9 @@ export * from './InlineCombinator';
 export * as messages from './messages';
 export * from './Rule';
 export * from './RuleGroup';
-export * from './types';
 export * from './utils';
 export { QueryBuilder };
+import { enableES5 } from 'immer';
+import { QueryBuilder } from './QueryBuilder';
+enableES5();
 export default QueryBuilder;

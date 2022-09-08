@@ -1,5 +1,9 @@
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+  ValidationMap,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { groupInvalidReasons } from '../defaults';
-import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../types/index.noReact';
 import { defaultValidator } from './defaultValidator';
 
 // standard rule groups
@@ -59,7 +63,10 @@ const queryWithOneGroupWithOneRule: RuleGroupType = {
     },
   ],
 };
-const queryWithOneGroupWithOneRuleValidationMap: ValidationMap = { root: true, innerGroup: true };
+const queryWithOneGroupWithOneRuleValidationMap: ValidationMap = {
+  root: true,
+  innerGroup: true,
+};
 
 // independent combinators
 const emptyQueryIC: RuleGroupTypeIC = { id: 'root', rules: [] };
@@ -85,7 +92,10 @@ const queryWithRulesAndInvalidCombinatorIC: RuleGroupTypeIC = {
   ],
 };
 const queryWithRulesValidationMapIC: ValidationMap = {
-  root: { valid: false, reasons: [groupInvalidReasons.invalidIndependentCombinators] },
+  root: {
+    valid: false,
+    reasons: [groupInvalidReasons.invalidIndependentCombinators],
+  },
 };
 const queryWithOneGroupWithOneRuleIC: RuleGroupTypeIC = {
   id: 'root',
@@ -103,7 +113,10 @@ const queryWithOneGroupWithOneRuleIC: RuleGroupTypeIC = {
     },
   ],
 };
-const queryWithOneGroupWithOneRuleValidationMapIC: ValidationMap = { root: true, innerGroup: true };
+const queryWithOneGroupWithOneRuleValidationMapIC: ValidationMap = {
+  root: true,
+  innerGroup: true,
+};
 
 describe('standard rule groups', () => {
   it('should invalidate an empty query', () => {

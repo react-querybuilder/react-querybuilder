@@ -1,4 +1,4 @@
-import type { Field, OptionGroup } from '../types/index.noReact';
+import type { Field, OptionGroup } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { isOptionGroupArray } from '../utils/optGroupUtils';
 
 export const filterFieldsByComparator = (
@@ -9,7 +9,10 @@ export const filterFieldsByComparator = (
   if (!field.comparator) {
     const filterOutSameName = (f: Field) => f.name !== field.name;
     if (isOptionGroupArray(fields)) {
-      return fields.map(og => ({ ...og, options: og.options.filter(filterOutSameName) }));
+      return fields.map(og => ({
+        ...og,
+        options: og.options.filter(filterOutSameName),
+      }));
     }
     return fields.filter(filterOutSameName);
   }

@@ -1,6 +1,6 @@
 import { QueryBuilderContext } from '@react-querybuilder/ctx';
+import type { QueryBuilderContextProps, QueryBuilderContextProvider } from '@react-querybuilder/ts';
 import { useContext } from 'react';
-import type { QueryBuilderContextProps, QueryBuilderContextProvider } from '../types';
 import { mergeClassnames } from './mergeClassnames';
 
 export type GetCompatContextProviderProps = Pick<

@@ -1,6 +1,3 @@
-import { produce } from 'immer';
-import { defaultCombinators } from '../defaults';
-import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';
 import type {
   NameLabelPair,
   OptionGroup,
@@ -8,7 +5,10 @@ import type {
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import { produce } from 'immer';
+import { defaultCombinators } from '../defaults';
+import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';

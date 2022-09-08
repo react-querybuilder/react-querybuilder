@@ -14,7 +14,11 @@ const { rule, ruleGroup, combinatorSelector } = defaultControlElements;
 const [RuleGroupWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend(
   (props: RuleGroupProps) => (
     <QueryBuilderDndContext.Provider
-      value={{ baseControls: { rule, ruleGroup, combinatorSelector }, useDrag, useDrop }}>
+      value={{
+        baseControls: { rule, ruleGroup, combinatorSelector },
+        useDrag,
+        useDrop,
+      }}>
       <RuleGroupDnD
         {...{
           ...props,
@@ -107,7 +111,10 @@ describe('enableDragAndDrop', () => {
     render(
       <RuleGroupWithDndWrapper
         {...getProps({}, { moveRule })}
-        ruleGroup={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
+        ruleGroup={{
+          combinator: 'and',
+          rules: [{ combinator: 'and', rules: [] }],
+        }}
       />
     );
     const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);

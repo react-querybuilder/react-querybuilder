@@ -1,4 +1,3 @@
-import { parseSQL } from '.';
 import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
@@ -6,7 +5,8 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import { parseSQL } from '.';
 import { isWildcardsOnly } from './utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
@@ -105,7 +105,11 @@ describe('boolean operators', () => {
       wrapRule({ field: 'firstName', operator: 'in', value: 'Test, 12, true' })
     );
     expect(parseSQL(`firstName NOT IN ('Test', 12, true, lastName)`)).toEqual(
-      wrapRule({ field: 'firstName', operator: 'notIn', value: 'Test, 12, true' })
+      wrapRule({
+        field: 'firstName',
+        operator: 'notIn',
+        value: 'Test, 12, true',
+      })
     );
   });
 
@@ -120,13 +124,25 @@ describe('boolean operators', () => {
       wrapRule({ field: 'firstName', operator: 'endsWith', value: 'Steve' })
     );
     expect(parseSQL(`firstName NOT LIKE '%Steve%'`)).toEqual(
-      wrapRule({ field: 'firstName', operator: 'doesNotContain', value: 'Steve' })
+      wrapRule({
+        field: 'firstName',
+        operator: 'doesNotContain',
+        value: 'Steve',
+      })
     );
     expect(parseSQL(`firstName NOT LIKE 'Steve%'`)).toEqual(
-      wrapRule({ field: 'firstName', operator: 'doesNotBeginWith', value: 'Steve' })
+      wrapRule({
+        field: 'firstName',
+        operator: 'doesNotBeginWith',
+        value: 'Steve',
+      })
     );
     expect(parseSQL(`firstName NOT LIKE '%Steve'`)).toEqual(
-      wrapRule({ field: 'firstName', operator: 'doesNotEndWith', value: 'Steve' })
+      wrapRule({
+        field: 'firstName',
+        operator: 'doesNotEndWith',
+        value: 'Steve',
+      })
     );
   });
 
@@ -223,11 +239,21 @@ describe('options', () => {
       );
       // fields as option groups
       expect(parseSQL(`f3 = f1`, { fields: optionGroups })).toEqual(
-        wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
+        wrapRule({
+          field: 'f3',
+          operator: '=',
+          value: 'f1',
+          valueSource: 'field',
+        })
       );
       // fields as object
       expect(parseSQL(`f3 = f1`, { fields: fieldsObject })).toEqual(
-        wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
+        wrapRule({
+          field: 'f3',
+          operator: '=',
+          value: 'f1',
+          valueSource: 'field',
+        })
       );
       // `f3` and `f4` allow the valueSource "field" and have no filter
       const baseFields = ['f3', 'f4'];
@@ -236,7 +262,12 @@ describe('options', () => {
           expect(parseSQL(`${baseField} = ${f.name}`, { fields })).toEqual(
             f.name === baseField
               ? wrapRule()
-              : wrapRule({ field: baseField, operator: '=', value: f.name, valueSource: 'field' })
+              : wrapRule({
+                  field: baseField,
+                  operator: '=',
+                  value: f.name,
+                  valueSource: 'field',
+                })
           );
         }
       }
@@ -244,19 +275,44 @@ describe('options', () => {
 
     it('uses the getValueSources option', () => {
       expect(parseSQL(`f5 = f6`, { fields, getValueSources })).toEqual(
-        wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
+        wrapRule({
+          field: 'f5',
+          operator: '=',
+          value: 'f6',
+          valueSource: 'field',
+        })
       );
       expect(parseSQL(`f8 = f7`, { fields, getValueSources })).toEqual(
-        wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
+        wrapRule({
+          field: 'f8',
+          operator: '=',
+          value: 'f7',
+          valueSource: 'field',
+        })
       );
       expect(parseSQL(`f9 = f1`, { fields, getValueSources })).toEqual(
-        wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
+        wrapRule({
+          field: 'f9',
+          operator: '=',
+          value: 'f1',
+          valueSource: 'field',
+        })
       );
       expect(parseSQL(`f10 = f7`, { fields, getValueSources })).toEqual(
-        wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
+        wrapRule({
+          field: 'f10',
+          operator: '=',
+          value: 'f7',
+          valueSource: 'field',
+        })
       );
       expect(parseSQL(`f10 = f8`, { fields, getValueSources })).toEqual(
-        wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
+        wrapRule({
+          field: 'f10',
+          operator: '=',
+          value: 'f8',
+          valueSource: 'field',
+        })
       );
     });
 
@@ -300,7 +356,12 @@ describe('options', () => {
       expect(parseSQL(`${invalidField} = ${subField}`, { fields })).toEqual(wrapRule());
       expect(parseSQL(`${baseField} = ${invalidSubField}`, { fields })).toEqual(wrapRule());
       expect(parseSQL(`${baseField} = ${subField}`, { fields })).toEqual(
-        wrapRule({ field: baseField, operator: '=', value: subField, valueSource: 'field' })
+        wrapRule({
+          field: baseField,
+          operator: '=',
+          value: subField,
+          valueSource: 'field',
+        })
       );
       // InExpressionListPredicate
       expect(parseSQL(`${invalidField} in (${subField})`, { fields })).toEqual(wrapRule());
@@ -314,7 +375,10 @@ describe('options', () => {
         })
       );
       expect(
-        parseSQL(`${baseField} in (${subField}, ${subField2})`, { fields, listsAsArrays: true })
+        parseSQL(`${baseField} in (${subField}, ${subField2})`, {
+          fields,
+          listsAsArrays: true,
+        })
       ).toEqual(
         wrapRule({
           field: baseField,
@@ -324,13 +388,21 @@ describe('options', () => {
         })
       );
       // BetweenPredicate
-      expect(parseSQL(`${invalidField} between ${subField} and ${subField2}`, { fields })).toEqual(
-        wrapRule()
-      );
       expect(
-        parseSQL(`${baseField} between ${invalidSubField} and ${subField2}`, { fields })
+        parseSQL(`${invalidField} between ${subField} and ${subField2}`, {
+          fields,
+        })
       ).toEqual(wrapRule());
-      expect(parseSQL(`${baseField} between ${subField} and ${subField2}`, { fields })).toEqual(
+      expect(
+        parseSQL(`${baseField} between ${invalidSubField} and ${subField2}`, {
+          fields,
+        })
+      ).toEqual(wrapRule());
+      expect(
+        parseSQL(`${baseField} between ${subField} and ${subField2}`, {
+          fields,
+        })
+      ).toEqual(
         wrapRule({
           field: baseField,
           operator: 'between',
@@ -342,7 +414,12 @@ describe('options', () => {
       expect(parseSQL(`${invalidField} like ${subField}`, { fields })).toEqual(wrapRule());
       expect(parseSQL(`${baseField} like ${invalidSubField}`, { fields })).toEqual(wrapRule());
       expect(parseSQL(`${baseField} like ${subField}`, { fields })).toEqual(
-        wrapRule({ field: baseField, operator: '=', value: `${subField}`, valueSource: 'field' })
+        wrapRule({
+          field: baseField,
+          operator: '=',
+          value: `${subField}`,
+          valueSource: 'field',
+        })
       );
     });
 
@@ -355,12 +432,42 @@ describe('options', () => {
       ).toEqual({
         combinator: 'and',
         rules: [
-          { field: 'f3', operator: 'contains', value: 'f1', valueSource: 'field' },
-          { field: 'f3', operator: 'beginsWith', value: 'f1', valueSource: 'field' },
-          { field: 'f3', operator: 'endsWith', value: 'f1', valueSource: 'field' },
-          { field: 'f3', operator: 'doesNotContain', value: 'f1', valueSource: 'field' },
-          { field: 'f3', operator: 'doesNotBeginWith', value: 'f1', valueSource: 'field' },
-          { field: 'f3', operator: 'doesNotEndWith', value: 'f1', valueSource: 'field' },
+          {
+            field: 'f3',
+            operator: 'contains',
+            value: 'f1',
+            valueSource: 'field',
+          },
+          {
+            field: 'f3',
+            operator: 'beginsWith',
+            value: 'f1',
+            valueSource: 'field',
+          },
+          {
+            field: 'f3',
+            operator: 'endsWith',
+            value: 'f1',
+            valueSource: 'field',
+          },
+          {
+            field: 'f3',
+            operator: 'doesNotContain',
+            value: 'f1',
+            valueSource: 'field',
+          },
+          {
+            field: 'f3',
+            operator: 'doesNotBeginWith',
+            value: 'f1',
+            valueSource: 'field',
+          },
+          {
+            field: 'f3',
+            operator: 'doesNotEndWith',
+            value: 'f1',
+            valueSource: 'field',
+          },
         ],
       });
     });
@@ -506,7 +613,10 @@ describe('NOT expressions', () => {
       rules: [
         { field: 'firstName', operator: '=', value: 'Steve' },
         'or',
-        { rules: [{ field: 'lastName', operator: '=', value: 'Vai' }], not: true },
+        {
+          rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
+          not: true,
+        },
       ],
     });
   });

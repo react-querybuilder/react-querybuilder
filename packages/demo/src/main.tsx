@@ -2,6 +2,7 @@ import { LinkOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import type { ExportFormat, FormatQueryOptions } from '@react-querybuilder/ts';
 import {
   Button,
   Checkbox,
@@ -29,7 +30,6 @@ import {
   useState,
 } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
   convertToIC,
   defaultValidator,
@@ -175,7 +175,10 @@ const App = () => {
         default: defaultOptions[opt],
         checked: options[opt],
         setter: (v: boolean) =>
-          setOptions({ type: 'update', payload: { optionName: opt, value: v } }),
+          setOptions({
+            type: 'update',
+            payload: { optionName: opt, value: v },
+          }),
       })),
     [options]
   );
@@ -384,7 +387,11 @@ const App = () => {
               </a>
             </Title>
             <div
-              style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'column',
+              }}>
               {formatMap.map(([fmt, lbl, lnk]) => (
                 <div key={fmt}>
                   <Radio checked={format === fmt} onChange={() => setFormat(fmt)}>

@@ -1,6 +1,6 @@
+import type { ValueSelectorProps } from '@react-querybuilder/ts';
 import type { ChangeEvent } from 'react';
 import { useMemo } from 'react';
-import type { ValueSelectorProps } from '../types';
 import { joinWith, toArray, toOptions } from '../utils';
 
 export const ValueSelector = ({

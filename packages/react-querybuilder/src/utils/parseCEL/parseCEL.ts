@@ -9,7 +9,7 @@ import type {
   DefaultRuleType,
   ParseCELOptions,
   ValueSource,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLiteral } from './types';
@@ -38,11 +38,15 @@ import {
 function parseCEL(cel: string): DefaultRuleGroupType;
 function parseCEL(
   cel: string,
-  options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators?: false }
+  options: Omit<ParseCELOptions, 'independentCombinators'> & {
+    independentCombinators?: false;
+  }
 ): DefaultRuleGroupType;
 function parseCEL(
   cel: string,
-  options: Omit<ParseCELOptions, 'independentCombinators'> & { independentCombinators: true }
+  options: Omit<ParseCELOptions, 'independentCombinators'> & {
+    independentCombinators: true;
+  }
 ): DefaultRuleGroupTypeIC;
 function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
   const { fields, independentCombinators, listsAsArrays } = options;
@@ -62,11 +66,17 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       getValueSources: options?.getValueSources,
     });
 
-  const emptyQuery: DefaultRuleGroupTypeAny = { rules: [], ...(ic ? {} : { combinator: 'and' }) };
+  const emptyQuery: DefaultRuleGroupTypeAny = {
+    rules: [],
+    ...(ic ? {} : { combinator: 'and' }),
+  };
 
   const processCELExpression = (
     expr: CELExpression,
-    processOpts: { groupOnlyIfNecessary?: boolean; forwardNegation?: boolean } = {}
+    processOpts: {
+      groupOnlyIfNecessary?: boolean;
+      forwardNegation?: boolean;
+    } = {}
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
     const { forwardNegation: forwardedNegation, groupOnlyIfNecessary } = processOpts;
     /* istanbul ignore if */
@@ -88,14 +98,23 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         ) {
           return ic
             ? ({ rules: [negatedExpr] } as DefaultRuleGroupTypeIC)
-            : ({ combinator: 'and', rules: [negatedExpr] } as DefaultRuleGroupType);
+            : ({
+                combinator: 'and',
+                rules: [negatedExpr],
+              } as DefaultRuleGroupType);
         }
         return ic
           ? ({ rules: [negatedExpr], not: true } as DefaultRuleGroupTypeIC)
-          : ({ combinator: 'and', rules: [negatedExpr], not: true } as DefaultRuleGroupType);
+          : ({
+              combinator: 'and',
+              rules: [negatedExpr],
+              not: true,
+            } as DefaultRuleGroupType);
       }
     } else if (isCELExpressionGroup(expr)) {
-      const rule = processCELExpression(expr.value, { groupOnlyIfNecessary: true });
+      const rule = processCELExpression(expr.value, {
+        groupOnlyIfNecessary: true,
+      });
       if (rule) {
         if ('rules' in rule || (groupOnlyIfNecessary && isCELExpressionGroup(expr.value))) {
           return rule;

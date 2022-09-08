@@ -1,4 +1,8 @@
-import type { Field, NameLabelPair, OptionGroup } from '../types/index.noReact';
+import type {
+  Field,
+  NameLabelPair,
+  OptionGroup,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
 export const isOptionGroupArray = (arr: Field['values']): arr is OptionGroup[] =>
   Array.isArray(arr) && arr.length > 0 && 'options' in arr[0];

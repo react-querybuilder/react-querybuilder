@@ -25,6 +25,7 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "dependencies": {
+    "@react-querybuilder/ts": "^5.0.0-alpha.3",
     "react-querybuilder": "^5.0.0-alpha.3"
   },
   "devDependencies": {

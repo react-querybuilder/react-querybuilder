@@ -7,8 +7,7 @@ import {
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
 import type { QueryActions, RuleProps, Schema } from 'react-querybuilder';
-import { defaultControlElements } from 'react-querybuilder';
-import { standardClassnames as sc, TestID } from 'react-querybuilder';
+import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
 import { getRuleProps } from 'react-querybuilder/genericTests';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
@@ -17,7 +16,11 @@ const { rule, ruleGroup, combinatorSelector } = defaultControlElements;
 
 const [RuleWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend((props: RuleProps) => (
   <QueryBuilderDndContext.Provider
-    value={{ baseControls: { rule, ruleGroup, combinatorSelector }, useDrag, useDrop }}>
+    value={{
+      baseControls: { rule, ruleGroup, combinatorSelector },
+      useDrag,
+      useDrop,
+    }}>
     <RuleDnD {...props} />
   </QueryBuilderDndContext.Provider>
 ));

@@ -4,7 +4,7 @@ import type {
   OptionGroup,
   RQBJsonLogic,
   ValueSources,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { parseJsonLogic } from './parseJsonLogic';
 
 const rqbJsonLogic: RQBJsonLogic = {
@@ -94,9 +94,24 @@ const ruleGroup: DefaultRuleGroupType = {
         { field: 'f1', operator: '<', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: '<=', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' },
-        { field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' },
-        { field: 'f1', operator: 'beginsWith', value: 'f2', valueSource: 'field' },
-        { field: 'f1', operator: 'endsWith', value: 'f2', valueSource: 'field' },
+        {
+          field: 'f1',
+          operator: 'contains',
+          value: 'f2',
+          valueSource: 'field',
+        },
+        {
+          field: 'f1',
+          operator: 'beginsWith',
+          value: 'f2',
+          valueSource: 'field',
+        },
+        {
+          field: 'f1',
+          operator: 'endsWith',
+          value: 'f2',
+          valueSource: 'field',
+        },
       ],
     },
   ],
@@ -151,12 +166,18 @@ it('parses JsonLogic and validates fields', () => {
   expect(parseJsonLogic(jsonLogicForFields, { getValueSources, fields })).toEqual(
     ruleGroupForFields
   );
-  expect(parseJsonLogic(jsonLogicForFields, { getValueSources, fields: fieldsAsOptGroup })).toEqual(
-    ruleGroupForFields
-  );
-  expect(parseJsonLogic(jsonLogicForFields, { getValueSources, fields: fieldsAsObject })).toEqual(
-    ruleGroupForFields
-  );
+  expect(
+    parseJsonLogic(jsonLogicForFields, {
+      getValueSources,
+      fields: fieldsAsOptGroup,
+    })
+  ).toEqual(ruleGroupForFields);
+  expect(
+    parseJsonLogic(jsonLogicForFields, {
+      getValueSources,
+      fields: fieldsAsObject,
+    })
+  ).toEqual(ruleGroupForFields);
 });
 
 it('invalidates primitives as root object', () => {
@@ -181,7 +202,12 @@ it('translates lists as arrays', () => {
     combinator: 'and',
     rules: [
       { field: 'f1', operator: 'in', value: [12, 14] },
-      { field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' },
+      {
+        field: 'f1',
+        operator: 'in',
+        value: ['f2', 'f3'],
+        valueSource: 'field',
+      },
     ],
   });
 });

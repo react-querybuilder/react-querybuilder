@@ -1,9 +1,9 @@
+import type { NotToggleProps, ValueEditorProps } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/lib/select';
 import moment from 'moment';
 import type { OptionGroupFC } from 'rc-select/lib/OptGroup';
-import type { NotToggleProps, ValueEditorProps } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
@@ -67,7 +67,11 @@ const notToggleTitle = AntDNotToggle.displayName;
 describe(notToggleTitle, () => {
   const user = userEventSetup();
   const label = 'Not';
-  const props: NotToggleProps = { ...defaultNotToggleProps, label, title: notToggleTitle };
+  const props: NotToggleProps = {
+    ...defaultNotToggleProps,
+    label,
+    title: notToggleTitle,
+  };
 
   it('should have the value passed in', () => {
     render(<AntDNotToggle {...props} checked />);
@@ -131,7 +135,10 @@ describe(`${valueEditorTitle} as switch`, () => {
 
 describe(`${valueEditorTitle} date/time pickers`, () => {
   const user = userEventSetup();
-  const props: ValueEditorProps = { ...defaultValueEditorProps, title: valueEditorTitle };
+  const props: ValueEditorProps = {
+    ...defaultValueEditorProps,
+    title: valueEditorTitle,
+  };
   const today = moment().format(moment.HTML5_FMT.DATE);
   const tomorrow = moment().add(1, 'day').format(moment.HTML5_FMT.DATE);
   // const rightNow = moment().format('HH:mm');

@@ -1,3 +1,16 @@
+import type {
+  ActionWithRulesAndAddersProps,
+  Field,
+  NameLabelPair,
+  OptionGroup,
+  QueryBuilderProps,
+  RuleGroupProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleType,
+  ValidationMap,
+} from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -14,19 +27,6 @@ import {
   errorUncontrolledToControlled,
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
-import type {
-  ActionWithRulesAndAddersProps,
-  Field,
-  NameLabelPair,
-  OptionGroup,
-  QueryBuilderProps,
-  RuleGroupProps,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-  RuleType,
-  ValidationMap,
-} from './types';
 import { defaultValidator, findPath, formatQuery } from './utils';
 
 const user = userEvent.setup();
@@ -111,7 +111,10 @@ describe('when initial query with fields object is provided', () => {
   it('passes down fields sorted by label using the key as name', async () => {
     render(
       <QueryBuilder
-        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
+        fields={{
+          xyz: { name: 'dupe', label: 'One' },
+          abc: { name: 'dupe', label: 'Two' },
+        }}
       />
     );
     await user.click(screen.getByTestId(TestID.addRule));
@@ -133,7 +136,10 @@ describe('when initial query with fields object is provided', () => {
   it('respects autoSelectField={false}', async () => {
     render(
       <QueryBuilder
-        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
+        fields={{
+          xyz: { name: 'dupe', label: 'One' },
+          abc: { name: 'dupe', label: 'Two' },
+        }}
         autoSelectField={false}
       />
     );
@@ -1132,8 +1138,14 @@ describe('showCloneButtons', () => {
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         combinator: 'and',
         rules: [
-          { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
-          { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
+          {
+            combinator: 'or',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+          },
+          {
+            combinator: 'or',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+          },
           { field: 'lastName', operator: '=', value: 'Vai' },
         ],
       });
@@ -1372,7 +1384,9 @@ describe('validation', () => {
   });
 
   it('should pass down validationMap to children', () => {
-    const valMap: ValidationMap = { id: { valid: false, reasons: ['invalid'] } };
+    const valMap: ValidationMap = {
+      id: { valid: false, reasons: ['invalid'] },
+    };
     const RuleGroupValMapDisplay = (props: RuleGroupProps) => (
       <div data-testid={TestID.ruleGroup}>{JSON.stringify(props.schema.validationMap)}</div>
     );
@@ -1450,7 +1464,10 @@ describe('disabled', () => {
           rules: [
             { field: 'firstName', operator: '=', value: 'Steve' },
             { field: 'lastName', operator: '=', value: 'Vai' },
-            { combinator: 'and', rules: [{ field: 'age', operator: '>', value: 28 }] },
+            {
+              combinator: 'and',
+              rules: [{ field: 'age', operator: '>', value: 28 }],
+            },
           ],
         }}
       />
@@ -1602,7 +1619,10 @@ describe('locked rules', () => {
           rules: [
             { field: 'field0', operator: '=', value: '0' },
             'and',
-            { disabled: true, rules: [{ field: 'field1', operator: '=', value: '1' }] },
+            {
+              disabled: true,
+              rules: [{ field: 'field1', operator: '=', value: '1' }],
+            },
           ],
         }}
       />
@@ -1619,13 +1639,23 @@ describe('value source field', () => {
   const fields: Field[] = [
     { name: 'f1', label: 'Field 1', valueSources: ['field'] },
     { name: 'f2', label: 'Field 2', valueSources: ['field'] },
-    { name: 'f3', label: 'Field 3', valueSources: ['field'], comparator: () => false },
+    {
+      name: 'f3',
+      label: 'Field 3',
+      valueSources: ['field'],
+      comparator: () => false,
+    },
     // @ts-expect-error valueSources cannot be an empty array
     { name: 'f4', label: 'Field 4', valueSources: [] },
     { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
   const fieldsWithBetween: Field[] = [
-    { name: 'fb', label: 'Field B', valueSources: ['field'], defaultOperator: 'between' },
+    {
+      name: 'fb',
+      label: 'Field B',
+      valueSources: ['field'],
+      defaultOperator: 'between',
+    },
     ...fields,
   ];
 
@@ -1691,7 +1721,11 @@ describe('value source field', () => {
 describe('nested object immutability', () => {
   it('does not modify rules it does not have to modify', async () => {
     const onQueryChange = jest.fn();
-    const immutableRule: RuleType = { field: 'this', operator: '=', value: 'should stay the same' };
+    const immutableRule: RuleType = {
+      field: 'this',
+      operator: '=',
+      value: 'should stay the same',
+    };
     const defaultQuery: RuleGroupType = {
       combinator: 'and',
       rules: [
@@ -1699,7 +1733,11 @@ describe('nested object immutability', () => {
         { combinator: 'and', rules: [immutableRule] },
       ],
     };
-    const props: QueryBuilderProps = { onQueryChange, defaultQuery, enableMountQueryChange: false };
+    const props: QueryBuilderProps = {
+      onQueryChange,
+      defaultQuery,
+      enableMountQueryChange: false,
+    };
     render(<QueryBuilder {...props} />);
     const { calls } = onQueryChange.mock;
     await user.click(screen.getAllByTestId(TestID.addRule)[0]);
@@ -1796,7 +1834,10 @@ describe('debug mode', () => {
 
 describe('controlled/uncontrolled warnings', () => {
   it('tracks changes from controlled to uncontrolled and vice versa', () => {
-    const getQuery = (): RuleGroupType => ({ combinator: `${Math.random()}`, rules: [] });
+    const getQuery = (): RuleGroupType => ({
+      combinator: `${Math.random()}`,
+      rules: [],
+    });
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
     expect(consoleError).not.toHaveBeenCalled();
     rerender(<QueryBuilder query={getQuery()} />);

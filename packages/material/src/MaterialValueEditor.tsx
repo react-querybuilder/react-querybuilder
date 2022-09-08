@@ -1,4 +1,4 @@
-import type { ValueEditorProps } from 'react-querybuilder';
+import type { ValueEditorProps } from '@react-querybuilder/ts';
 import {
   joinWith,
   standardClassnames,

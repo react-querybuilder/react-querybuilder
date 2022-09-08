@@ -1,4 +1,4 @@
-import type { NotToggleProps } from '../types';
+import type { NotToggleProps } from '@react-querybuilder/ts';
 
 export const NotToggle = ({
   className,

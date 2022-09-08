@@ -1,12 +1,12 @@
-import { defaultCombinators } from '../defaults';
-import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ValueSources,
-} from '../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import { defaultCombinators } from '../defaults';
+import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { formatQuery } from './formatQuery';
 import { add, move, remove, update } from './queryTools';
 
@@ -28,8 +28,14 @@ const rg3: DefaultRuleGroupType = { combinator: and, rules: [r1, r2, r3] };
 const rgic1: DefaultRuleGroupTypeIC = { rules: [] };
 const rgic2: DefaultRuleGroupTypeIC = { rules: [r1, and, r2] };
 const rgvsu: DefaultRuleGroupType = { combinator: 'and', rules: [r1] };
-const rgvsv: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueSource: 'value' }] };
-const rgvsf: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueSource: 'field' }] };
+const rgvsv: DefaultRuleGroupType = {
+  combinator: 'and',
+  rules: [{ ...r1, valueSource: 'value' }],
+};
+const rgvsf: DefaultRuleGroupType = {
+  combinator: 'and',
+  rules: [{ ...r1, valueSource: 'field' }],
+};
 
 const testQT = (
   title: string,
@@ -58,7 +64,10 @@ describe('add', () => {
         rules: [r1, r2],
       }
     );
-    testQT('adds a group', add(rg1, rg2, []), { combinator: and, rules: [{ ...rg2, not: false }] });
+    testQT('adds a group', add(rg1, rg2, []), {
+      combinator: and,
+      rules: [{ ...rg2, not: false }],
+    });
   });
 
   describe('independent combinators', () => {
@@ -77,7 +86,9 @@ describe('add', () => {
         rules: [r1, or, r2, or, r3],
       }
     );
-    testQT('adds a group', add(rgic1, rgic2, []), { rules: [{ ...rgic2, not: false }] });
+    testQT('adds a group', add(rgic1, rgic2, []), {
+      rules: [{ ...rgic2, not: false }],
+    });
   });
 });
 
@@ -104,7 +115,9 @@ describe('remove', () => {
 
   describe('independent combinators', () => {
     testQT('removes a lonely rule', remove({ rules: [r1] }, [0]), rgic1);
-    testQT('removes the second of two rules', remove(rgic2, [2]), { rules: [r1] });
+    testQT('removes the second of two rules', remove(rgic2, [2]), {
+      rules: [r1],
+    });
     testQT('removes the first of three rules', remove({ rules: [r1, and, r2, or, r3] }, [0]), {
       rules: [r2, or, r3],
     });
@@ -114,7 +127,9 @@ describe('remove', () => {
     testQT('removes the third of three rules', remove({ rules: [r1, and, r2, or, r3] }, [4]), {
       rules: [r1, and, r2],
     });
-    testQT('removes a group', remove({ rules: [rgic1, and, rgic2] }, [0]), { rules: [rgic2] });
+    testQT('removes a group', remove({ rules: [rgic1, and, rgic2] }, [0]), {
+      rules: [rgic2],
+    });
     testQT('does not remove the root group', remove(rgic1, []), rgic1, true);
     testQT('does not remove independent combinators', remove(rgic2, [1]), rgic2, true);
   });
@@ -129,7 +144,10 @@ describe('update', () => {
     testQT(
       'updates a rule and resets the value by default',
       update(
-        { combinator: and, rules: [{ field: 'f1', operator: '<', value: 'v1' }] },
+        {
+          combinator: and,
+          rules: [{ field: 'f1', operator: '<', value: 'v1' }],
+        },
         'field',
         'fu',
         [0]
@@ -168,7 +186,10 @@ describe('update', () => {
       rules: [r1, r2, { ...r3, value: 'vu' }],
     });
     testQT('updates a group combinator', update(rg1, 'combinator', or, []), rg2);
-    testQT('updates a group "not" value', update(rg1, 'not', true, []), { ...rg1, not: true });
+    testQT('updates a group "not" value', update(rg1, 'not', true, []), {
+      ...rg1,
+      not: true,
+    });
     testQT(
       'updates a child group combinator',
       update({ combinator: and, rules: [rg1] }, 'combinator', or, [0]),
@@ -200,7 +221,9 @@ describe('update', () => {
   });
 
   describe('independent combinators', () => {
-    testQT('updates a combinator', update(rgic2, 'combinator', or, [1]), { rules: [r1, or, r2] });
+    testQT('updates a combinator', update(rgic2, 'combinator', or, [1]), {
+      rules: [r1, or, r2],
+    });
     testQT(
       'does not alter the query if the path ends in an even number',
       update(rgic2, 'combinator', or, [2]),
@@ -225,7 +248,9 @@ describe('update', () => {
     });
     testQT(
       'resets value source to default of "field" on field change',
-      update(rgvsv, 'field', 'fu', [0], { getValueSources: () => ['field', 'value'] }),
+      update(rgvsv, 'field', 'fu', [0], {
+        getValueSources: () => ['field', 'value'],
+      }),
       {
         combinator: 'and',
         rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
@@ -244,7 +269,9 @@ describe('update', () => {
     );
     testQT(
       'resets value source to default on operator change',
-      update(rgvsf, 'operator', 'between', [0], { resetOnOperatorChange: true }),
+      update(rgvsf, 'operator', 'between', [0], {
+        resetOnOperatorChange: true,
+      }),
       {
         combinator: 'and',
         rules: [{ ...r1, operator: 'between', value: '', valueSource: 'value' }],
@@ -315,7 +342,9 @@ describe('move', () => {
     });
     testQT(
       'clones a group',
-      move({ combinator: and, rules: [r1, rg3, r2] }, [1], [0], { clone: true }),
+      move({ combinator: and, rules: [r1, rg3, r2] }, [1], [0], {
+        clone: true,
+      }),
       {
         combinator: and,
         rules: [rg3, r1, rg3, r2],

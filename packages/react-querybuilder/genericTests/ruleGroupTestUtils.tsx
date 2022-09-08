@@ -15,7 +15,7 @@ import type {
   RuleGroupProps,
   RuleType,
   Schema,
-} from '../src/types';
+} from '@react-querybuilder/ts';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => {

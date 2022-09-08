@@ -1,4 +1,7 @@
-import type { DefaultCombinatorName, DefaultOperatorName } from '../../types/index.noReact';
+import type {
+  DefaultCombinatorName,
+  DefaultOperatorName,
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import type {
   AndOperator,
   ComparisonOperator,

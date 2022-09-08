@@ -1,5 +1,3 @@
-import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import { uniqByName } from '../../internal/uniq';
 import type {
   DefaultCombinatorName,
   ExportFormat,
@@ -14,7 +12,9 @@ import type {
   RuleValidator,
   ValidationMap,
   ValidationResult,
-} from '../../types/index.noReact';
+} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+import { uniqByName } from '../../internal/uniq';
 import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';

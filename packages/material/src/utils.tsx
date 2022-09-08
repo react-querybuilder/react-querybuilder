@@ -1,4 +1,4 @@
-import type { NameLabelPair, OptionGroup } from 'react-querybuilder';
+import type { NameLabelPair, OptionGroup } from '@react-querybuilder/ts';
 import { isOptionGroupArray } from 'react-querybuilder';
 import type { RQBMaterialComponents } from './types';
 

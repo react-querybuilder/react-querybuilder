@@ -1,4 +1,4 @@
-import type { Field } from '../types/index.noReact';
+import type { Field } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 
 const f: Field = { name: 'f', label: 'F' };
@@ -8,8 +8,16 @@ const f3: Field = { name: 'f3', label: 'F3', valueSources: ['value', 'field'] };
 const f4: Field = { name: 'f4', label: 'F4', valueSources: ['field', 'value'] };
 const f1f: Field = { name: 'f1f', label: 'F1F', valueSources: () => ['value'] };
 const f2f: Field = { name: 'f2f', label: 'F2F', valueSources: () => ['field'] };
-const f3f: Field = { name: 'f3f', label: 'F3F', valueSources: () => ['value', 'field'] };
-const f4f: Field = { name: 'f4f', label: 'F4F', valueSources: () => ['field', 'value'] };
+const f3f: Field = {
+  name: 'f3f',
+  label: 'F3F',
+  valueSources: () => ['value', 'field'],
+};
+const f4f: Field = {
+  name: 'f4f',
+  label: 'F4F',
+  valueSources: () => ['field', 'value'],
+};
 const f1fo: Field = {
   name: 'f1fo',
   label: 'F1FO',
