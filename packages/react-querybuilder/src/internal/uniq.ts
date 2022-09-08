@@ -29,8 +29,7 @@ export const uniqOptGroups = <T extends NameLabelPair>(originalArray: OptionGrou
           optionsForThisGroup.push(opt);
         }
       });
-      el.options = optionsForThisGroup;
-      newArray.push(el);
+      newArray.push({ ...el, options: optionsForThisGroup });
     }
   });
   return newArray;

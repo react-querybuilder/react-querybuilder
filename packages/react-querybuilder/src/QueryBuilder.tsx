@@ -115,16 +115,16 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   );
 
   const fields = useMemo(() => {
-    let f = Array.isArray(fieldsProp)
+    const f = Array.isArray(fieldsProp)
       ? fieldsProp
       : objectKeys(fieldsProp)
           .map((fld): Field => ({ ...fieldsProp[fld], name: fld }))
           .sort((a, b) => a.label.localeCompare(b.label));
     if (isOptionGroupArray(f)) {
       if (autoSelectField) {
-        f = uniqOptGroups(f);
+        return uniqOptGroups(f);
       } else {
-        f = uniqOptGroups([
+        return uniqOptGroups([
           {
             label: translations.fields.placeholderGroupLabel,
             options: [defaultField],
@@ -134,12 +134,11 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       }
     } else {
       if (autoSelectField) {
-        f = uniqByName(f);
+        return uniqByName(f);
       } else {
-        f = uniqByName([defaultField, ...f]);
+        return uniqByName([defaultField, ...f]);
       }
     }
-    return f;
   }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
 
   const fieldMap = useMemo(() => {

@@ -161,6 +161,29 @@ describe('when initial query with fields object is provided', () => {
       Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[2]
     ).toHaveTextContent('Two');
   });
+
+  it('does not mutate a fields array with duplicates', () => {
+    const fields: Field[] = [
+      { name: 'f', label: 'Field' },
+      { name: 'f', label: 'Field' },
+    ];
+    render(<QueryBuilder fields={fields} />);
+    expect(fields).toHaveLength(2);
+  });
+
+  it('does not mutate a fields option group array with duplicates', () => {
+    const optgroups: OptionGroup<Field>[] = [
+      { label: 'OG1', options: [{ name: 'f1', label: 'Field' }] },
+      { label: 'OG1', options: [{ name: 'f2', label: 'Field' }] },
+      { label: 'OG2', options: [{ name: 'f1', label: 'Field' }] },
+    ];
+    render(<QueryBuilder fields={optgroups} />);
+    console.log(JSON.stringify(optgroups));
+    expect(optgroups).toHaveLength(3);
+    for (const og of optgroups.map(og => og.options)) {
+      expect(og).toHaveLength(1);
+    }
+  });
 });
 
 describe('when initial query, without ID, is provided', () => {
