@@ -21,6 +21,7 @@ import type {
   JsonLogicStrictNotEqual,
   JsonLogicVar,
 } from 'json-logic-js';
+import type { JsonLogicBetweenExclusive, JsonLogicBetweenInclusive } from './types';
 
 // Standard JsonLogic operations
 export const isJsonLogicVar = (
@@ -60,11 +61,11 @@ export const isJsonLogicGreaterThanOrEqual = (
 export const isJsonLogicLessThan = (
   logic: RQBJsonLogic
 ): logic is JsonLogicLessThan<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
-  typeof logic === 'object' && '<' in logic;
+  typeof logic === 'object' && '<' in logic && logic['<'].length === 2;
 export const isJsonLogicLessThanOrEqual = (
   logic: RQBJsonLogic
 ): logic is JsonLogicLessThanOrEqual<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
-  typeof logic === 'object' && '<=' in logic;
+  typeof logic === 'object' && '<=' in logic && logic['<='].length === 2;
 export const isJsonLogicInArray = (
   logic: RQBJsonLogic
 ): logic is JsonLogicInArray<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
@@ -73,6 +74,19 @@ export const isJsonLogicInString = (
   logic: RQBJsonLogic
 ): logic is JsonLogicInString<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   typeof logic === 'object' && 'in' in logic && !Array.isArray(logic.in[1]);
+
+// "Between" operations are special cases of '<' and '<='
+export const isJsonLogicBetweenExclusive = (
+  logic: RQBJsonLogic
+): logic is JsonLogicBetweenExclusive =>
+  typeof logic === 'object' && '<' in logic && Array.isArray(logic['<']) && logic['<'].length === 3;
+export const isJsonLogicBetweenInclusive = (
+  logic: RQBJsonLogic
+): logic is JsonLogicBetweenInclusive =>
+  typeof logic === 'object' &&
+  '<=' in logic &&
+  Array.isArray(logic['<=']) &&
+  logic['<='].length === 3;
 
 // RQB extensions
 export const isRQBJsonLogicStartsWith = (logic: RQBJsonLogic): logic is RQBJsonLogicStartsWith =>

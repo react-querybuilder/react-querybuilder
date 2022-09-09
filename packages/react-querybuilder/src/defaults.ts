@@ -2,6 +2,7 @@ import type {
   Classnames,
   DefaultCombinator,
   DefaultOperator,
+  DefaultOperatorName,
   TranslationsFull,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
@@ -108,6 +109,27 @@ export const defaultOperators: DefaultOperator[] = [
   { name: 'between', label: 'between' },
   { name: 'notBetween', label: 'not between' },
 ];
+
+export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
+  '=': '!=',
+  '!=': '=',
+  '<': '>=',
+  '<=': '>',
+  '>': '<=',
+  '>=': '<',
+  beginsWith: 'doesNotBeginWith',
+  doesNotBeginWith: 'beginsWith',
+  endsWith: 'doesNotEndWith',
+  doesNotEndWith: 'endsWith',
+  contains: 'doesNotContain',
+  doesNotContain: 'contains',
+  between: 'notBetween',
+  notBetween: 'between',
+  in: 'notIn',
+  notIn: 'in',
+  notNull: 'null',
+  null: 'notNull',
+};
 
 export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },

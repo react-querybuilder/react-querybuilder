@@ -178,7 +178,6 @@ describe('when initial query with fields object is provided', () => {
       { label: 'OG2', options: [{ name: 'f1', label: 'Field' }] },
     ];
     render(<QueryBuilder fields={optgroups} />);
-    console.log(JSON.stringify(optgroups));
     expect(optgroups).toHaveLength(3);
     for (const og of optgroups.map(og => og.options)) {
       expect(og).toHaveLength(1);

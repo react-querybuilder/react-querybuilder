@@ -5,15 +5,20 @@ import type {
   Field,
   ParseJsonLogicOptions,
   RQBJsonLogic,
+  RQBJsonLogicVar,
   ValueSource,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import type { ReservedOperations } from 'json-logic-js';
+import { defaultOperatorNegationMap } from '../../defaults';
 import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';
 import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
 import { uniqByName } from '../../internal/uniq';
+import { isRuleGroupType } from '../isRuleGroup';
 import { isOptionGroupArray } from '../optGroupUtils';
 import {
   isJsonLogicAnd,
+  isJsonLogicBetweenExclusive,
+  isJsonLogicBetweenInclusive,
   isJsonLogicDoubleNegation,
   isJsonLogicEqual,
   isJsonLogicGreaterThan,
@@ -146,7 +151,22 @@ export const parseJsonLogic = (
       };
     } else if (isJsonLogicNegation(logic)) {
       const rule = processLogic(logic['!']);
-      return rule ? { combinator: 'and', rules: [rule], not: true } : false;
+      if (rule) {
+        if (
+          !isRuleGroupType(rule) &&
+          (rule.operator === 'between' ||
+            rule.operator === 'in' ||
+            rule.operator === 'contains' ||
+            rule.operator === 'beginsWith' ||
+            rule.operator === 'endsWith')
+        ) {
+          return { ...rule, operator: defaultOperatorNegationMap[rule.operator] };
+        } else if (isJsonLogicBetweenExclusive(logic['!']) && isRuleGroupType(rule)) {
+          return { ...rule, not: true };
+        }
+        return { combinator: 'and', rules: [rule], not: true };
+      }
+      return false;
     } else if (isJsonLogicDoubleNegation(logic)) {
       const rule = processLogic(logic['!!']);
       return rule || false;
@@ -206,6 +226,45 @@ export const parseJsonLogic = (
       if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         rule = { field, operator, value, valueSource };
       }
+    } else if (isJsonLogicBetweenExclusive(logic) && isRQBJsonLogicVar(logic['<'][1])) {
+      field = logic['<'][1].var;
+      const values = [logic['<'][0], logic['<'][2]];
+      // istanbul ignore else
+      if (
+        values.every(isRQBJsonLogicVar) ||
+        values.every(el => typeof el === 'string') ||
+        values.every(el => typeof el === 'number') ||
+        values.every(el => typeof el === 'boolean')
+      ) {
+        return (
+          processLogic({
+            and: [{ '>': [{ var: field }, values[0]] }, { '<': [{ var: field }, values[1]] }],
+          }) || /* istanbul ignore next */ false
+        );
+      }
+    } else if (isJsonLogicBetweenInclusive(logic) && isRQBJsonLogicVar(logic['<='][1])) {
+      field = logic['<='][1].var;
+      operator = 'between';
+      const values = [logic['<='][0], logic['<='][2]];
+      if (logic['<='].every(isRQBJsonLogicVar)) {
+        const vars = values as RQBJsonLogicVar[];
+        valueSource = 'field';
+        const fieldList = vars.map(el => el.var).filter(sf => fieldIsValid(field, operator, sf));
+        value = listsAsArrays ? fieldList : fieldList.join(',');
+      } else {
+        // istanbul ignore else
+        if (
+          values.every(el => typeof el === 'string') ||
+          values.every(el => typeof el === 'number') ||
+          values.every(el => typeof el === 'boolean')
+        ) {
+          value = listsAsArrays ? values : values.map(el => `${el}`).join(',');
+        }
+      }
+
+      if (fieldIsValid(field, operator) && value.length >= 2) {
+        rule = { field, operator, value, valueSource };
+      }
     } else if (isJsonLogicInArray(logic) && isRQBJsonLogicVar(keyValue[0])) {
       field = keyValue[0].var;
       operator = 'in';
@@ -232,7 +291,7 @@ export const parseJsonLogic = (
       }
     }
 
-    return !rule ? false : outermost ? { combinator: 'and', rules: [rule], not: false } : rule;
+    return !rule ? false : outermost ? { combinator: 'and', rules: [rule] } : rule;
   }
 
   let logicRoot = rqbJsonLogic;
