@@ -1,6 +1,12 @@
 import type { ComponentType } from 'react';
 import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
-import type { FormatQueryOptions, QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from '../src';
+import type {
+  FormatQueryOptions,
+  QueryBuilderContextProps,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeIC,
+} from '../src';
 import { defaultValidator, QueryBuilder } from '../src';
 import {
   defaultOptions,
@@ -16,25 +22,29 @@ import './styles.scss';
 import type { CommonRQBProps } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
 
-export const App = (
-  controls: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'> & {
-    wrapper?: ComponentType<any>;
-  }
-) => {
+export const App = ({
+  controlClassnames,
+  controlElements,
+  wrapper: Wrapper = Fragment,
+  ...initialProps
+}: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'> & {
+  wrapper?: ComponentType<any>;
+} & QueryBuilderContextProps) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
-  const [optVals, updateOptions] = useReducer(optionsReducer, defaultOptions);
-
-  const Wrapper = controls.wrapper ?? Fragment;
+  const [optVals, updateOptions] = useReducer(optionsReducer, {
+    ...defaultOptions,
+    ...initialProps,
+  });
 
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({
       fields,
       ...optVals,
       validator: optVals.validateQuery ? defaultValidator : undefined,
-      ...controls,
+      ...{ controlClassnames, controlElements },
     }),
-    [controls, optVals]
+    [controlClassnames, controlElements, optVals]
   );
 
   const formatQueryResults = formatMap.map(([format]) => {
