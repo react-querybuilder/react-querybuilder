@@ -13,21 +13,29 @@ import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 
+interface AddOptions {
+  combinators: NameLabelPair[] | OptionGroup[];
+}
 export const add = <RG extends RuleGroupTypeAny>(
   query: RG,
   ruleOrGroup: RG | RuleType,
-  parentPath: number[]
+  parentPath: number[],
+  { combinators = defaultCombinators }: Partial<AddOptions> = {}
 ) =>
   produce(query, draft => {
     const parent = findPath(parentPath, draft) as RG;
     if (!('combinator' in parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
+      // TODO: Instead of just getting the first custom/default combinator,
+      // we could search the query for the first combinator we find and
+      // use that in case custom combinator names are being used. Would
+      // still need to fall back to custom/default combinators in case there
+      // are no combinators defined in the query yet.
       parent.rules.push(
-        // TODO: @ts-expect-error once we don't support TS@<4.5
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore this is technically a violation until the next push
-        // (which happens immediately and unconditionally)
-        typeof prevCombinator === 'string' ? prevCombinator : defaultCombinators[0].name
+        // @ts-ignore This is technically a type violation until the next push, but
+        // that happens immediately and unconditionally so there's no actual risk
+        typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators)
       );
     }
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup) as RuleType);
@@ -154,9 +162,6 @@ export const move = <RG extends RuleGroupTypeAny>(
       : regenerateID(ruleOrGroupOriginal)
     : ruleOrGroupOriginal;
 
-  const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
-  const movingOnUp = newPath[commonAncestorPath.length] <= oldPath[commonAncestorPath.length];
-
   return produce(query, draft => {
     const independentCombinators = !('combinator' in draft);
     const parentOfRuleToRemove = findPath(getParentPath(oldPath), draft) as RG;
@@ -169,25 +174,36 @@ export const move = <RG extends RuleGroupTypeAny>(
       independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
         ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
         : null;
+
+    // Remove the source item if not cloning
     if (!clone) {
       const idxStartDelete = independentCombinators
         ? Math.max(0, ruleToRemoveIndex - 1)
         : ruleToRemoveIndex;
       const deleteLength = independentCombinators ? 2 : 1;
-      // Remove the source item
       parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
     }
 
     const newNewPath = [...newPath];
-    if (!movingOnUp && !clone) {
+    const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
+    if (
+      !clone &&
+      oldPath.length === commonAncestorPath.length + 1 &&
+      newPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
+    ) {
+      // Getting here means there will be a shift of paths upward at the common
+      // ancestor level because the object at `oldPath` will be spliced out. The
+      // real new path should therefore be one or two higher than `newPath`.
       newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
     }
     const newNewParentPath = getParentPath(newNewPath);
     const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
     const newIndex = newNewPath[newNewPath.length - 1];
 
-    // This function 1) glosses over the need for type assertions to splice directly
-    // into parentToInsertInto.rules, and 2) simplifies the actual insertion code.
+    /**
+     * This function 1) glosses over the need for type assertions to splice directly
+     * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
+     */
     const insertRuleOrGroup = (...args: any[]) =>
       parentToInsertInto.rules.splice(newIndex, 0, ...args);
 

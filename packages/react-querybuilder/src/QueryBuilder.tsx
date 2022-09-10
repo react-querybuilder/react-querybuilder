@@ -462,7 +462,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       }
       return;
     }
-    const newQuery = add(query, newRule, parentPath);
+    const newQuery = add(query, newRule, parentPath, { combinators });
     dispatch(newQuery);
   };
 
@@ -487,7 +487,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       }
       return;
     }
-    const newQuery = add(query, newGroup, parentPath);
+    const newQuery = add(query, newGroup, parentPath, { combinators });
     dispatch(newQuery);
   };
 
