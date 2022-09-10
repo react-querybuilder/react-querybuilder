@@ -1,16 +1,16 @@
 import type { NotToggleProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef } from 'react';
+import { useContext } from 'react';
 import { NotToggle } from 'react-querybuilder';
-import type { MuiComponentName, RQBMaterialComponents, SwitchType } from './types';
-import { useMuiComponents } from './useMuiComponents';
+import { RQBMaterialContext } from './RQBMaterialContext';
+import type { RQBMaterialComponents, SwitchType } from './types';
 
 type MaterialNotToggleProps = NotToggleProps &
   ComponentPropsWithoutRef<SwitchType> & {
-    muiComponents?: Partial<RQBMaterialComponents>;
+    muiComponents?: RQBMaterialComponents;
   };
 
 type MaterialNotToggleComponents = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
-const muiComponentNames: MuiComponentName[] = ['FormControlLabel', 'Switch'];
 
 export const MaterialNotToggle = ({
   className,
@@ -24,12 +24,12 @@ export const MaterialNotToggle = ({
   context,
   validation,
   testID,
-  muiComponents,
+  muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialNotToggleProps) => {
-  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
-  const key = muiComponentsInternal ? 'mui' : 'no-mui';
-  if (!muiComponentsInternal) {
+  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+  const key = muiComponents ? 'mui' : 'no-mui';
+  if (!muiComponents) {
     return (
       <NotToggle
         key={key}
@@ -48,7 +48,7 @@ export const MaterialNotToggle = ({
     );
   }
 
-  const { FormControlLabel, Switch } = muiComponentsInternal as MaterialNotToggleComponents;
+  const { FormControlLabel, Switch } = muiComponents as MaterialNotToggleComponents;
 
   return (
     <FormControlLabel

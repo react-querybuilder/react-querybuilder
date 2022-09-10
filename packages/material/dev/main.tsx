@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from 'react-querybuilder/dev';
-import { materialControlElements } from '../src';
+import { QueryBuilderMaterial } from '../src';
 
 const muiTheme = createTheme({
   palette: {
@@ -19,7 +19,7 @@ const muiTheme = createTheme({
 createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
     <ThemeProvider theme={muiTheme}>
-      <App controlElements={materialControlElements} />
+      <App wrapper={QueryBuilderMaterial} />
     </ThemeProvider>
   </React.StrictMode>
 );

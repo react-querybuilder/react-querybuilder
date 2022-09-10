@@ -1,27 +1,17 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
+import { useContext } from 'react';
 import { useMemo } from 'react';
 import { joinWith, splitBy, ValueSelector } from 'react-querybuilder';
-import type { MuiComponentName, RQBMaterialComponents, SelectType } from './types';
-import { useMuiComponents } from './useMuiComponents';
+import { RQBMaterialContext } from './RQBMaterialContext';
+import type { RQBMaterialComponents, SelectType } from './types';
 import { toOptions } from './utils';
 
 type MaterialValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<SelectType> & {
-    muiComponents?: Partial<RQBMaterialComponents>;
+    muiComponents?: RQBMaterialComponents;
   };
-
-type MaterialValueSelectorComponents = Pick<
-  RQBMaterialComponents,
-  'FormControl' | 'Select' | 'ListSubheader' | 'MenuItem'
->;
-const muiComponentNames: MuiComponentName[] = [
-  'FormControl',
-  'Select',
-  'ListSubheader',
-  'MenuItem',
-];
 
 export const MaterialValueSelector = ({
   className,
@@ -41,10 +31,10 @@ export const MaterialValueSelector = ({
   operator,
   field,
   fieldData,
-  muiComponents,
+  muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialValueSelectorProps) => {
-  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
+  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
 
   const onChange = useMemo(
     () =>
@@ -61,8 +51,8 @@ export const MaterialValueSelector = ({
     [handleOnChange, listsAsArrays, multiple]
   );
 
-  const key = muiComponentsInternal ? 'mui' : 'no-mui';
-  if (!muiComponentsInternal) {
+  const key = muiComponents ? 'mui' : 'no-mui';
+  if (!muiComponents) {
     const VS = ValueSelector as ComponentType<VersatileSelectorProps>;
     return (
       <VS
@@ -88,8 +78,7 @@ export const MaterialValueSelector = ({
     );
   }
 
-  const { FormControl, Select, ListSubheader, MenuItem } =
-    muiComponentsInternal as MaterialValueSelectorComponents;
+  const { FormControl, Select, ListSubheader, MenuItem } = muiComponents;
 
   const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 

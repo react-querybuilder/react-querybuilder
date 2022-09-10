@@ -1,4 +1,5 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
+import { useContext } from 'react';
 import {
   joinWith,
   standardClassnames,
@@ -7,43 +8,12 @@ import {
   ValueEditor,
 } from 'react-querybuilder';
 import { MaterialValueSelector } from './MaterialValueSelector';
-import type { MuiComponentName, RQBMaterialComponents } from './types';
-import { useMuiComponents } from './useMuiComponents';
+import { RQBMaterialContext } from './RQBMaterialContext';
+import type { RQBMaterialComponents } from './types';
 
 type MaterialValueEditorProps = ValueEditorProps & {
-  muiComponents?: Partial<RQBMaterialComponents>;
+  muiComponents?: RQBMaterialComponents;
 };
-
-type MaterialValueEditorComponents = Pick<
-  RQBMaterialComponents,
-  | 'Checkbox'
-  | 'FormControl'
-  | 'FormControlLabel'
-  | 'Input'
-  | 'Radio'
-  | 'RadioGroup'
-  | 'Switch'
-  | 'TextareaAutosize'
-  // These are needed for MaterialValueSelector
-  | 'Select'
-  | 'ListSubheader'
-  | 'MenuItem'
->;
-
-const muiComponentNames: MuiComponentName[] = [
-  'Checkbox',
-  'FormControl',
-  'FormControlLabel',
-  'Input',
-  'Radio',
-  'RadioGroup',
-  'Switch',
-  'TextareaAutosize',
-  // These are needed for MaterialValueSelector
-  'Select',
-  'ListSubheader',
-  'MenuItem',
-];
 
 export const MaterialValueEditor = ({
   field,
@@ -62,14 +32,14 @@ export const MaterialValueEditor = ({
   valueSource,
   disabled,
   testID,
-  muiComponents,
+  muiComponents: muiComponentsProp,
   ...props
 }: MaterialValueEditorProps) => {
-  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
+  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
   useValueEditor({ handleOnChange, inputType, operator, value });
 
-  const key = muiComponentsInternal ? 'mui' : 'no-mui';
-  if (!muiComponentsInternal) {
+  const key = muiComponents ? 'mui' : 'no-mui';
+  if (!muiComponents) {
     return (
       <ValueEditor
         key={key}
@@ -102,7 +72,7 @@ export const MaterialValueEditor = ({
     RadioGroup,
     Switch,
     TextareaAutosize,
-  } = muiComponentsInternal as MaterialValueEditorComponents;
+  } = muiComponents;
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

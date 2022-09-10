@@ -2,7 +2,7 @@
   "editor.formatOnSave": true,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.test.ts",
+    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.test.ts, ${capture}.test.tsx, ${capture}.*.test.ts, ${capture}.*.test.tsx",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
     "*.css": "${capture}.css.map, ${capture}.min.css",
     "*.jsx": "${capture}.js",

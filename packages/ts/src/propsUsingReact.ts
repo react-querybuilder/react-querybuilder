@@ -197,7 +197,8 @@ export interface QueryBuilderContextProps {
 export type QueryBuilderContextProviderProps = QueryBuilderContextProps & {
   children?: ReactNode;
 };
-export type QueryBuilderContextProvider = ComponentType<QueryBuilderContextProviderProps>;
+export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
+  ComponentType<QueryBuilderContextProviderProps & ExtraProps>;
 
 type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG extends {
   combinator: string;
