@@ -50,6 +50,7 @@
     "copyfiles": "^2.4.1",
     "jscodeshift": "^0.13.1",
     "json-logic-js": "^2.0.2",
+    "query-string": "^7.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.13.9",

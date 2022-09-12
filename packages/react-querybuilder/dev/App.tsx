@@ -1,9 +1,9 @@
+import queryString from 'query-string';
 import type { ComponentType } from 'react';
-import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type {
   FormatQueryOptions,
   QueryBuilderContextProps,
-  QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
 } from '../src';
@@ -19,23 +19,48 @@ import {
   optionOrder,
 } from './constants';
 import './styles.scss';
-import type { CommonRQBProps } from './types';
+import type { CommonRQBProps, DemoOptions, DemoOptionsHash } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
+
+const getOptionsFromHash = (hash: DemoOptionsHash): Partial<DemoOptions> =>
+  Object.fromEntries(Object.entries(hash).map(([opt, val]) => [opt, val === 'true']));
+
+// Initialize options from URL hash
+const initialOptionsFromHash = getOptionsFromHash(queryString.parse(location.hash));
 
 export const App = ({
   controlClassnames,
   controlElements,
   wrapper: Wrapper = Fragment,
   ...initialProps
-}: Pick<QueryBuilderProps, 'controlClassnames' | 'controlElements'> & {
-  wrapper?: ComponentType<any>;
-} & QueryBuilderContextProps) => {
+}: QueryBuilderContextProps & { wrapper?: ComponentType<any> }) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
     ...initialProps,
+    ...initialOptionsFromHash,
   });
+
+  const permalinkHash = useMemo(() => `#${queryString.stringify(optVals)}`, [optVals]);
+
+  const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
+    const optionsFromHash = getOptionsFromHash(
+      queryString.parse(
+        queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
+      )
+    );
+    const payload = { ...defaultOptions, ...optionsFromHash };
+
+    updateOptions({ type: 'replace', payload });
+  }, []);
+
+  useEffect(() => {
+    history.pushState(null, '', permalinkHash);
+    window.addEventListener('hashchange', updateOptionsFromHash);
+
+    return () => window.removeEventListener('hashchange', updateOptionsFromHash);
+  }, [permalinkHash, updateOptionsFromHash]);
 
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({

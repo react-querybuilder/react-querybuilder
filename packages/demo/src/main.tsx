@@ -68,7 +68,11 @@ const QueryBuilderBulma = lazy(() => import('./styleProviders/QueryBuilderBulma'
 const QueryBuilderChakra = lazy(() => import('./styleProviders/QueryBuilderChakra'));
 const QueryBuilderMaterial = lazy(() => import('./styleProviders/QueryBuilderMaterial'));
 
-type DemoOptionsWithStyle = DemoOptions & { style?: StyleName };
+type StyleOptionType = { style: StyleName };
+type DemoOptionsWithStyle = DemoOptions & StyleOptionType;
+type DemoOptionsWithStyleHash = Partial<
+  Record<keyof DemoOptions, 'true' | 'false'> & StyleOptionType
+>;
 
 const { TextArea } = Input;
 const { Header, Sider, Content } = Layout;
@@ -113,21 +117,20 @@ const CustomFragment = (props: { children?: ReactNode }) => <>{props.children}</
 const permalinkText = 'Copy link';
 const permalinkCopiedText = 'Copied!';
 
-const getOptionsFromHash = (hash: Partial<DemoOptionsWithStyle>) => {
-  const optionsFromHash: DemoOptionsWithStyle = defaultOptions;
-  for (const opt of optionOrder) {
-    optionsFromHash[opt] = (hash[opt] ?? `${defaultOptions[opt]}`) === 'true';
-  }
-  optionsFromHash.style = hash.style ?? 'default';
-  return optionsFromHash;
-};
+const getOptionsFromHash = (hash: DemoOptionsWithStyleHash): Partial<DemoOptionsWithStyle> =>
+  Object.fromEntries(
+    Object.entries(hash).map(([opt, val]) => [
+      opt,
+      val === 'true' || styleNameArray.includes(val as any),
+    ])
+  );
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
 // Initialize options from URL hash
-const { style: initialStyle, ...initialOptions } = getOptionsFromHash(
+const { style: initialStyle, ...initialOptionsFromHash } = getOptionsFromHash(
   queryString.parse(location.hash)
 );
 
@@ -135,7 +138,10 @@ const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
-  const [options, setOptions] = useReducer(optionsReducer, initialOptions);
+  const [options, setOptions] = useReducer(optionsReducer, {
+    ...defaultOptions,
+    ...initialOptionsFromHash,
+  });
   const [isSQLModalVisible, setIsSQLModalVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -153,21 +159,23 @@ const App = () => {
     [options, style]
   );
 
+  const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
+    const { style: styleFromHash, ...optionsFromHash } = getOptionsFromHash(
+      queryString.parse(
+        queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
+      )
+    );
+    const payload = { ...defaultOptions, ...optionsFromHash };
+    setOptions({ type: 'replace', payload });
+    setStyle(styleFromHash ?? 'default');
+  }, []);
+
   useEffect(() => {
     history.pushState(null, '', permalinkHash);
-    const updateOptionsFromHash = (e: HashChangeEvent) => {
-      const { style: s, ...opts } = getOptionsFromHash(
-        queryString.parse(
-          queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
-        )
-      );
-      setOptions({ type: 'replace', payload: opts });
-      setStyle(s ?? 'default');
-    };
     window.addEventListener('hashchange', updateOptionsFromHash);
 
     return () => window.removeEventListener('hashchange', updateOptionsFromHash);
-  }, [permalinkHash]);
+  }, [permalinkHash, updateOptionsFromHash]);
 
   const optionsInfo = useMemo(
     () =>
