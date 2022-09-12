@@ -1,5 +1,5 @@
+import type { RuleGroupProps } from '@react-querybuilder/ts';
 import { useContext, useMemo } from 'react';
-import type { RuleGroupProps } from 'react-querybuilder';
 import { standardClassnames } from 'react-querybuilder';
 import { useRuleGroupDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
@@ -13,6 +13,7 @@ export const RuleGroupDnD = (props: RuleGroupProps) => {
     disabled: disabledProp,
     parentDisabled,
     actions: { moveRule },
+    schema: { independentCombinators },
   } = props;
 
   const disabled = !!parentDisabled || !!disabledProp;
@@ -20,6 +21,7 @@ export const RuleGroupDnD = (props: RuleGroupProps) => {
   const dndRefs = useRuleGroupDnD({
     disabled,
     path,
+    independentCombinators,
     moveRule,
     useDrag: useDrag!,
     useDrop: useDrop!,

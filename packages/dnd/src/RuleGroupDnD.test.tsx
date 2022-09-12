@@ -89,7 +89,7 @@ describe('enableDragAndDrop', () => {
     );
     expect(ruleGroups[0]).not.toHaveClass(sc.dndDragging);
     expect(ruleGroups[1]).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([1], [0, 0]);
+    expect(moveRule).toHaveBeenCalledWith([1], [0, 0], false);
   });
 
   it('should abort move if dropped on itself', () => {
@@ -157,7 +157,7 @@ describe('enableDragAndDrop', () => {
       getHandlerId(combinatorEls[0], 'drop'),
       getDndBackend()
     );
-    expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1]);
+    expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1], false);
   });
 
   it('should handle rule group drops on independent combinators', () => {
@@ -190,7 +190,7 @@ describe('enableDragAndDrop', () => {
     );
     expect(ruleGroups[1]).not.toHaveClass(sc.dndDragging);
     expect(combinatorEl).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([2], [0, 1]);
+    expect(moveRule).toHaveBeenCalledWith([2], [0, 1], false);
   });
 
   it('should handle rule drops on independent combinators', () => {
@@ -217,7 +217,7 @@ describe('enableDragAndDrop', () => {
       getHandlerId(combinatorEls[0], 'drop'),
       getDndBackend()
     );
-    expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 1]);
+    expect(moveRule).toHaveBeenCalledWith([0, 4], [0, 1], false);
   });
 
   it('prevents drops when locked', () => {

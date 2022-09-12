@@ -1,12 +1,17 @@
 import type { Ref } from 'react';
 import { useRef } from 'react';
-import type { DraggedItem, QueryActions } from 'react-querybuilder';
-import { DNDType, getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import type {
+  DndDropTargetType,
+  DraggedItem,
+  DropCollection,
+  DropEffect,
+  DropResult,
+} from '../types';
 
 interface UseInlineCombinatorDndParams {
   path: number[];
   independentCombinators?: boolean;
-  moveRule: QueryActions['moveRule'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop: typeof import('react-dnd')['useDrop'];
 }
@@ -15,19 +20,19 @@ interface UseInlineCombinatorDnD {
   isOver: boolean;
   dropMonitorId: string | symbol | null;
   dropRef: Ref<HTMLDivElement>;
+  dropEffect?: DropEffect;
 }
 
 export const useInlineCombinatorDnD = ({
   path,
   independentCombinators,
-  moveRule,
   useDrop,
 }: UseInlineCombinatorDndParams): UseInlineCombinatorDnD => {
   const dropRef = useRef<HTMLDivElement>(null);
 
-  const [{ isOver, dropMonitorId }, drop] = useDrop(
+  const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
     () => ({
-      accept: [DNDType.rule, DNDType.ruleGroup],
+      accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: (item: DraggedItem) => {
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
@@ -49,15 +54,12 @@ export const useInlineCombinatorDnD = ({
       },
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId(),
+        dropMonitorId: monitor.getHandlerId() ?? '',
+        dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
       }),
-      drop: (item: DraggedItem, _monitor) => {
-        const parentPath = getParentPath(path);
-        const index = path[path.length - 1];
-        moveRule(item.path, [...parentPath, index]);
-      },
+      drop: () => ({ type: 'inlineCombinator', path }),
     }),
-    [moveRule, path, independentCombinators]
+    [path, independentCombinators]
   );
 
   drop(dropRef);

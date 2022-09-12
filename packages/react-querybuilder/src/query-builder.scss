@@ -6,6 +6,7 @@ $rqb-border-style: solid !default;
 $rqb-border-radius: 4px !default;
 $rqb-border-width: 1px !default;
 $rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
+$rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
 $rqb-dnd-hover-border-bottom-style: dashed !default;
 $rqb-dnd-hover-border-bottom-width: 2px !default;
 
@@ -37,7 +38,17 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
     column-gap: $rqb-spacing;
     align-items: center;
   }
+
+  .rule {
+    .rule-value {
+      .rule-value-list-item:not(:first-of-type) {
+        margin-left: $rqb-spacing;
+      }
+    }
+  }
 }
+
+// #region Drag-and-drop
 
 // Hover styles
 [data-inlinecombinators='disabled'] {
@@ -48,6 +59,10 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
       border-bottom-style: $rqb-dnd-hover-border-bottom-style;
       border-bottom-color: $rqb-dnd-hover-border-bottom-color;
       padding-bottom: $rqb-spacing;
+
+      &.dndCopy {
+        border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
+      }
     }
   }
 }
@@ -61,6 +76,10 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
       border-bottom-style: $rqb-dnd-hover-border-bottom-style;
       border-bottom-color: $rqb-dnd-hover-border-bottom-color;
       padding-bottom: $rqb-spacing;
+
+      &.dndCopy {
+        border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
+      }
     }
   }
 }
@@ -76,16 +95,10 @@ $rqb-dnd-hover-border-bottom-width: 2px !default;
     cursor: move;
   }
 }
+
 // When drag-and-drop is disabled, hide all drag handles
 [data-dnd='disabled'] .queryBuilder-dragHandle {
   display: none;
 }
 
-// Miscellaneous
-.rule {
-  .rule-value {
-    .rule-value-list-item:not(:first-of-type) {
-      margin-left: $rqb-spacing;
-    }
-  }
-}
+// #endregion

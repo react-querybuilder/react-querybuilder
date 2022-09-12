@@ -7,7 +7,6 @@ import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,
   path,
-  moveRule,
   independentCombinators,
   ...props
 }: InlineCombinatorProps) => {
@@ -16,7 +15,6 @@ export const InlineCombinatorDnD = ({
   const { dropRef, dropMonitorId, isOver } = useInlineCombinatorDnD({
     path,
     independentCombinators,
-    moveRule,
     useDrop: useDrop!,
   });
 

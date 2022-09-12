@@ -158,6 +158,7 @@ export const standardClassnames = {
   invalid: 'queryBuilder-invalid',
   dndDragging: 'dndDragging',
   dndOver: 'dndOver',
+  dndCopy: 'dndCopy',
   dragHandle: 'queryBuilder-dragHandle',
   disabled: 'queryBuilder-disabled',
   lockRule: 'rule-lock',
@@ -193,11 +194,6 @@ export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
   invalidIndependentCombinators: 'invalid independent combinators',
-} as const;
-
-export const DNDType = {
-  rule: 'rule',
-  ruleGroup: 'ruleGroup',
 } as const;
 
 export const TestID = {

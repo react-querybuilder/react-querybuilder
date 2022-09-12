@@ -1,6 +1,6 @@
 import { QueryBuilderContext } from '@react-querybuilder/ctx';
+import type { QueryBuilderContextProps } from '@react-querybuilder/ts';
 import { useContext } from 'react';
-import type { QueryBuilderContextProps } from 'react-querybuilder';
 import { useMergedContext, usePreferProp } from 'react-querybuilder';
 import { useReactDnD } from './hooks';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
