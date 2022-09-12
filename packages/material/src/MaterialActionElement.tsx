@@ -1,16 +1,14 @@
 import type { ActionWithRulesProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
+import { useContext } from 'react';
 import { ActionElement } from 'react-querybuilder';
-import type { ButtonType, MuiComponentName, RQBMaterialComponents } from './types';
-import { useMuiComponents } from './useMuiComponents';
+import { RQBMaterialContext } from './RQBMaterialContext';
+import type { ButtonType, RQBMaterialComponents } from './types';
 
 type MaterialActionProps = ActionWithRulesProps &
   ComponentPropsWithoutRef<ButtonType> & {
-    muiComponents?: Partial<RQBMaterialComponents>;
+    muiComponents?: RQBMaterialComponents;
   };
-
-type MaterialActionElementComponents = Pick<RQBMaterialComponents, 'Button'>;
-const muiComponentNames: MuiComponentName[] = ['Button'];
 
 export const MaterialActionElement = ({
   className,
@@ -25,12 +23,12 @@ export const MaterialActionElement = ({
   rules,
   context,
   validation,
-  muiComponents,
+  muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialActionProps) => {
-  const muiComponentsInternal = useMuiComponents(muiComponentNames, muiComponents);
-  const key = muiComponentsInternal ? 'mui' : 'no-mui';
-  if (!muiComponentsInternal) {
+  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+  const key = muiComponents ? 'mui' : 'no-mui';
+  if (!muiComponents) {
     const AE = ActionElement as ComponentType<ActionWithRulesProps>;
     return (
       <AE
@@ -51,7 +49,7 @@ export const MaterialActionElement = ({
     );
   }
 
-  const { Button } = muiComponentsInternal as MaterialActionElementComponents;
+  const { Button } = muiComponents;
 
   return (
     <Button

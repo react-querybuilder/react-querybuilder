@@ -17,6 +17,7 @@ import {
   Typography,
 } from 'antd';
 import 'antd/dist/antd.compact.css';
+import 'bootstrap-icons/font/bootstrap-icons.scss';
 import queryString from 'query-string';
 import type { CSSProperties, ReactNode } from 'react';
 import {

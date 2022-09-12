@@ -1,8 +1,4 @@
-import type {
-  Controls,
-  QueryBuilderContextProvider,
-  QueryBuilderContextProviderProps,
-} from '@react-querybuilder/ts';
+import type { Controls, QueryBuilderContextProvider } from '@react-querybuilder/ts';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
@@ -10,7 +6,7 @@ import { MaterialNotToggle } from './MaterialNotToggle';
 import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { MuiComponentName, RQBMaterialComponents } from './types';
+import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 export { version } from '../package.json';
 export {
@@ -44,39 +40,16 @@ const MaterialContextProvider = getCompatContextProvider({
   controlElements: materialControlElements,
 });
 
-const allMuiComponentNames: MuiComponentName[] = [
-  'Button',
-  'Checkbox',
-  'DragIndicator',
-  'FormControl',
-  'FormControlLabel',
-  'Input',
-  'ListSubheader',
-  'MenuItem',
-  'Radio',
-  'RadioGroup',
-  'Select',
-  'Switch',
-  'TextareaAutosize',
-];
-
-export const QueryBuilderMaterial: QueryBuilderContextProvider = ({
-  muiComponents = {},
-  ...props
-}: QueryBuilderContextProviderProps & {
-  muiComponents?: Partial<RQBMaterialComponents>;
-}) => {
-  const muiComponentsInternal = useMuiComponents(allMuiComponentNames, muiComponents);
+export const QueryBuilderMaterial: QueryBuilderContextProvider<{
+  muiComponents?: RQBMaterialComponents;
+}> = ({ muiComponents: muiComponentsProp, ...props }) => {
+  const muiComponents = useMuiComponents(muiComponentsProp);
 
   // istanbul ignore next
   const ctxValue =
-    muiComponentsInternal && muiComponents
-      ? { ...muiComponentsInternal, ...muiComponents }
-      : muiComponentsInternal
-      ? muiComponentsInternal
-      : muiComponents
-      ? muiComponents
-      : null;
+    muiComponents && muiComponentsProp
+      ? { ...muiComponents, ...muiComponentsProp }
+      : muiComponents ?? muiComponentsProp ?? null;
 
   return (
     <RQBMaterialContext.Provider value={ctxValue}>

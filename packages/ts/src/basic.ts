@@ -39,8 +39,4 @@ export interface Field extends NameLabelPair {
   comparator?: string | ((f: Field, operator: string) => boolean);
 }
 
-export interface DraggedItem {
-  path: number[];
-}
-
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };

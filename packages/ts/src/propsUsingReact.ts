@@ -56,7 +56,6 @@ export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
   path: number[];
-  moveRule: QueryActions['moveRule'];
   independentCombinators?: boolean;
 }
 
@@ -197,7 +196,8 @@ export interface QueryBuilderContextProps {
 export type QueryBuilderContextProviderProps = QueryBuilderContextProps & {
   children?: ReactNode;
 };
-export type QueryBuilderContextProvider = ComponentType<QueryBuilderContextProviderProps>;
+export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
+  ComponentType<QueryBuilderContextProviderProps & ExtraProps>;
 
 type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG extends {
   combinator: string;

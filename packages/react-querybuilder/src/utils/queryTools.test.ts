@@ -80,6 +80,15 @@ describe('add', () => {
       }
     );
     testQT(
+      'adds a rule and a custom combinator',
+      add({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, [], {
+        combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
+      }),
+      {
+        rules: [r1, `custom-${and}` as any, r2],
+      }
+    );
+    testQT(
       'adds a rule and copies existing combinator',
       add({ rules: [r1, or, r2] } as DefaultRuleGroupTypeIC, r3, []),
       {
@@ -316,7 +325,7 @@ describe('move', () => {
       }
     );
     testQT(
-      'moves a rule up to another group',
+      'moves a rule up to a sibling group',
       move(
         {
           combinator: and,
@@ -333,6 +342,27 @@ describe('move', () => {
         rules: [
           { combinator: and, rules: [r1, r3] },
           { combinator: and, rules: [r2] },
+        ],
+      }
+    );
+    testQT(
+      'moves a rule down to a sibling group',
+      move(
+        {
+          combinator: and,
+          rules: [
+            { combinator: and, rules: [r1, r2] },
+            { combinator: and, rules: [r3, r4] },
+          ],
+        },
+        [0, 1],
+        [1, 1]
+      ),
+      {
+        combinator: and,
+        rules: [
+          { combinator: and, rules: [r1] },
+          { combinator: and, rules: [r3, r2, r4] },
         ],
       }
     );

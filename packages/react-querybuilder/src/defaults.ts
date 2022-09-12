@@ -2,6 +2,7 @@ import type {
   Classnames,
   DefaultCombinator,
   DefaultOperator,
+  DefaultOperatorName,
   TranslationsFull,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 
@@ -109,6 +110,27 @@ export const defaultOperators: DefaultOperator[] = [
   { name: 'notBetween', label: 'not between' },
 ];
 
+export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
+  '=': '!=',
+  '!=': '=',
+  '<': '>=',
+  '<=': '>',
+  '>': '<=',
+  '>=': '<',
+  beginsWith: 'doesNotBeginWith',
+  doesNotBeginWith: 'beginsWith',
+  endsWith: 'doesNotEndWith',
+  doesNotEndWith: 'endsWith',
+  contains: 'doesNotContain',
+  doesNotContain: 'contains',
+  between: 'notBetween',
+  notBetween: 'between',
+  in: 'notIn',
+  notIn: 'in',
+  notNull: 'null',
+  null: 'notNull',
+};
+
 export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' },
@@ -136,6 +158,7 @@ export const standardClassnames = {
   invalid: 'queryBuilder-invalid',
   dndDragging: 'dndDragging',
   dndOver: 'dndOver',
+  dndCopy: 'dndCopy',
   dragHandle: 'queryBuilder-dragHandle',
   disabled: 'queryBuilder-disabled',
   lockRule: 'rule-lock',
@@ -171,11 +194,6 @@ export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
   invalidIndependentCombinators: 'invalid independent combinators',
-} as const;
-
-export const DNDType = {
-  rule: 'rule',
-  ruleGroup: 'ruleGroup',
 } as const;
 
 export const TestID = {

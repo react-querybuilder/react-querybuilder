@@ -9,6 +9,8 @@ import {
 import type { QueryActions, RuleProps, Schema } from 'react-querybuilder';
 import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
 import { getRuleProps } from 'react-querybuilder/genericTests';
+import type { GenericDropTargetProps } from './genericTests';
+import { GenericDropTarget as GenericDropTargetOriginal } from './genericTests';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 
@@ -22,6 +24,11 @@ const [RuleWithDndWrapper, getDndBackendOriginal] = wrapWithTestBackend((props: 
       useDrop,
     }}>
     <RuleDnD {...props} />
+  </QueryBuilderDndContext.Provider>
+));
+const [GenericDropTarget] = wrapWithTestBackend((props: GenericDropTargetProps) => (
+  <QueryBuilderDndContext.Provider value={{ useDrop } as any}>
+    <GenericDropTargetOriginal {...props} />
   </QueryBuilderDndContext.Provider>
 ));
 // This is just a type guard against `undefined`
@@ -89,7 +96,7 @@ describe('enableDragAndDrop', () => {
     render(
       <div>
         <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
-        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[1]} />
+        <GenericDropTarget type="rule" useDrop={useDrop} path={[1]} dropEffect="move" />
       </div>
     );
     const rules = screen.getAllByTestId(TestID.rule);
@@ -100,7 +107,26 @@ describe('enableDragAndDrop', () => {
     );
     expect(rules[0]).not.toHaveClass(sc.dndDragging);
     expect(rules[1]).not.toHaveClass(sc.dndOver);
-    expect(moveRule).toHaveBeenCalledWith([0], [2]);
+    expect(moveRule).toHaveBeenCalledWith([0], [2], false);
+  });
+
+  it('should copy a dropped rule', () => {
+    const moveRule = jest.fn();
+    render(
+      <div>
+        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
+        <GenericDropTarget type="rule" useDrop={useDrop} path={[1]} dropEffect="copy" />
+      </div>
+    );
+    const rules = screen.getAllByTestId(TestID.rule);
+    simulateDragDrop(
+      getHandlerId(rules[0], 'drag'),
+      getHandlerId(rules[1], 'drop'),
+      getDndBackend()
+    );
+    expect(rules[0]).not.toHaveClass(sc.dndDragging);
+    expect(rules[1]).not.toHaveClass(sc.dndOver);
+    expect(moveRule).toHaveBeenCalledWith([0], [2], true);
   });
 
   it('should abort move if dropped on itself', () => {

@@ -1,14 +1,24 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+import type { QueryActions } from '@react-querybuilder/ts';
 import type { Ref } from 'react';
 import { useRef } from 'react';
-import type { DraggedItem, QueryActions } from 'react-querybuilder';
-import { DNDType, getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import type {
+  DndDropTargetType,
+  DraggedItem,
+  DropCollection,
+  DropEffect,
+  DropResult,
+} from '../types';
+import { useDragCommon } from './useDragCommon';
 
 interface UseRuleGroupDndParams {
   path: number[];
   disabled?: boolean;
+  independentCombinators?: boolean;
   moveRule: QueryActions['moveRule'];
+  /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
   useDrag: typeof import('react-dnd')['useDrag'];
+  /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
   useDrop: typeof import('react-dnd')['useDrop'];
 }
 
@@ -20,11 +30,13 @@ interface UseRuleGroupDnD {
   previewRef: Ref<HTMLDivElement>;
   dragRef: Ref<HTMLSpanElement>;
   dropRef: Ref<HTMLDivElement>;
+  dropEffect?: DropEffect;
 }
 
 export const useRuleGroupDnD = ({
   disabled,
   path,
+  independentCombinators,
   moveRule,
   useDrag,
   useDrop,
@@ -33,23 +45,23 @@ export const useRuleGroupDnD = ({
   const dragRef = useRef<HTMLSpanElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
 
-  const [{ isDragging, dragMonitorId }, drag, preview] = useDrag(
-    () => ({
-      type: DNDType.ruleGroup,
-      item: (): DraggedItem => ({ path }),
-      canDrag: !disabled,
-      collect: monitor => ({
-        isDragging: !disabled && monitor.isDragging(),
-        dragMonitorId: monitor.getHandlerId() ?? '',
-      }),
-    }),
-    [disabled, path]
-  );
+  const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
+    type: 'ruleGroup',
+    path,
+    disabled,
+    independentCombinators,
+    moveRule,
+    useDrag,
+  });
 
-  const [{ isOver, dropMonitorId }, drop] = useDrop(
+  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
+    DraggedItem,
+    DropResult,
+    DropCollection
+  >(
     () => ({
-      accept: [DNDType.rule, DNDType.ruleGroup],
-      canDrop: (item: DraggedItem) => {
+      accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
+      canDrop: item => {
         if (disabled) return false;
         const parentItemPath = getParentPath(item.path);
         const itemIndex = item.path[item.path.length - 1];
@@ -65,8 +77,10 @@ export const useRuleGroupDnD = ({
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
+        dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
       }),
-      drop: (item: DraggedItem, _monitor) => !disabled && moveRule(item.path, [...path, 0]),
+      // `dropEffect` gets added automatically to the object returned from `drop`:
+      drop: (_item, monitor) => monitor.getDropResult() ?? { type: 'ruleGroup', path },
     }),
     [disabled, moveRule, path]
   );
@@ -85,5 +99,6 @@ export const useRuleGroupDnD = ({
     previewRef,
     dragRef,
     dropRef,
+    dropEffect,
   };
 };

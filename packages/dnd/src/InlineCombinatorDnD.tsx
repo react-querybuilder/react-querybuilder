@@ -1,27 +1,25 @@
-import { QueryBuilderContext } from '@react-querybuilder/ctx';
 import { useContext } from 'react';
 import type { InlineCombinatorProps } from 'react-querybuilder';
-import { c, defaultControlElements, standardClassnames, TestID } from 'react-querybuilder';
+import { c, standardClassnames, TestID } from 'react-querybuilder';
 import { useInlineCombinatorDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
-export const InlineCombinatorDnD = (props: InlineCombinatorProps) => {
-  const rqbContext = useContext(QueryBuilderContext);
+export const InlineCombinatorDnD = ({
+  component: CombinatorSelectorComponent,
+  path,
+  independentCombinators,
+  ...props
+}: InlineCombinatorProps) => {
   const { useDrop } = useContext(QueryBuilderDndContext);
-  const { path, moveRule, independentCombinators } = props;
 
   const { dropRef, dropMonitorId, isOver } = useInlineCombinatorDnD({
     path,
     independentCombinators,
-    moveRule,
     useDrop: useDrop!,
   });
 
   const dndOver = isOver ? standardClassnames.dndOver : '';
   const wrapperClassName = c(dndOver, standardClassnames.betweenRules);
-
-  const CombinatorSelectorComponent =
-    rqbContext.controlElements?.combinatorSelector ?? defaultControlElements.combinatorSelector;
 
   return (
     <div

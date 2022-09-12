@@ -4,6 +4,7 @@ import { standardClassnames, TestID } from './defaults';
 export const InlineCombinator = ({
   component: CombinatorSelectorComponent,
   path,
+  independentCombinators: _independentCombinators,
   ...props
 }: InlineCombinatorProps) => (
   <div

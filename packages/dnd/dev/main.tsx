@@ -6,7 +6,7 @@ import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
 createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
     <QueryBuilderDnD>
-      <App />
+      <App enableDragAndDrop />
     </QueryBuilderDnD>
   </React.StrictMode>
 );

@@ -33,10 +33,7 @@ it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
     );
     await new Promise(r => setTimeout(r, 500));
   });
-  expect(screen.getByTestId(TestID.ruleGroup).parentElement).toHaveAttribute(
-    'data-dnd',
-    'disabled'
-  );
+  expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
 });
 
 it('acts as a pass-through for context', async () => {
@@ -105,20 +102,20 @@ it('renders without dnd provider without dnd prop', async () => {
 
 // The drag-and-drop tests run once for QueryBuilderOriginal and once again
 // for QueryBuilderDndWithoutProvider.
-describe.each([{ QB: QueryBuilderDnD }, { QB: QueryBuilderDndWithoutProvider }])(
-  'enableDragAndDrop ($QB.displayName)',
-  ({ QB }) => {
+describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvider }])(
+  'enableDragAndDrop ($QBctx.displayName)',
+  ({ QBctx }) => {
     const [QBforDnD, getBackend] = wrapWithTestBackend(
       (props: QueryBuilderProps<RuleGroupType | RuleGroupTypeIC>) => (
-        <QB dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QBctx dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
           <QueryBuilder {...props} />
-        </QB>
+        </QBctx>
       )
     );
     const gDnDBe = () => getBackend()!;
     describe('standard rule groups', () => {
       it('should set data-dnd attribute appropriately', () => {
-        const { container, rerender } = render(<QBforDnD />);
+        const { container, rerender } = render(<QBforDnD enableDragAndDrop={false} />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('disabled');
         rerender(<QBforDnD enableDragAndDrop />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('enabled');

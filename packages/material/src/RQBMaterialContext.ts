@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import type { RQBMaterialComponents } from './types';
 
-export const RQBMaterialContext = createContext<Partial<RQBMaterialComponents> | null>(null);
+export const RQBMaterialContext = createContext<RQBMaterialComponents | null>(null);
 
 RQBMaterialContext.displayName = 'RQBMaterialContext';
