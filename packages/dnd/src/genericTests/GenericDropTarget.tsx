@@ -21,7 +21,9 @@ export const GenericDropTarget = ({ useDrop, path, type, dropEffect }: GenericDr
   }));
 
   return (
-    <div data-testid={type === 'rule' ? 'rule' : 'rule-group'} data-dropmonitorid={dropMonitorId}>
+    <div
+      data-testid={type === 'rule' ? 'rule' : /* istanbul ignore next */ 'rule-group'}
+      data-dropmonitorid={dropMonitorId}>
       DnD
     </div>
   );
