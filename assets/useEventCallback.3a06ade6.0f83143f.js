@@ -1,0 +1,1 @@
+import{r as e}from"./constants.480c1b1f.js";import{t as n}from"./useEnhancedEffect.cb67364c.ffd0bb6b.js";function u(r){const t=e.exports.useRef(r);return n(()=>{t.current=r}),e.exports.useCallback((...o)=>(0,t.current)(...o),[])}export{u as n};

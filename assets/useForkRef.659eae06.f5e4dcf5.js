@@ -1,0 +1,1 @@
+import{r as t}from"./constants.480c1b1f.js";function u(o,r){typeof o=="function"?o(r):o&&(o.current=r)}function n(o,r){return t.exports.useMemo(()=>o==null&&r==null?null:e=>{u(o,e),u(r,e)},[o,r])}export{n as i,u as o};

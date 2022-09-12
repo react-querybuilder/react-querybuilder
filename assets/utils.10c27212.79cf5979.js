@@ -1,0 +1,1 @@
+function t(n){return n!=null&&!(Array.isArray(n)&&n.length===0)}function u(n,e=!1){return n&&(t(n.value)&&n.value!==""||e&&t(n.defaultValue)&&n.defaultValue!=="")}function a(n){return n.startAdornment}export{u as e,a as n};

@@ -1,0 +1,1 @@
+System.register(["./index.a8a59334-legacy.f12bfba8.js"],(function(e,t){"use strict";var n;return{setters:[function(e){n=e.f}],execute:function(){n.exports.oneOfType([n.exports.func,n.exports.object])}}}));

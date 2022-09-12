@@ -1,0 +1,1 @@
+import{r}from"./constants.480c1b1f.js";let n=0;function c(t){const[e,u]=r.exports.useState(t),s=t||e;return r.exports.useEffect(()=>{e==null&&(n+=1,u(`mui-${n}`))},[e]),s}const o=r.exports.useId;function i(t){if(o!==void 0){const e=o();return t!=null?t:e}return c(t)}export{i as c};

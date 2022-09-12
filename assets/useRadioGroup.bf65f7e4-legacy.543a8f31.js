@@ -1,0 +1,1 @@
+System.register(["./constants-legacy.0c648b7e.js"],(function(t,e){"use strict";var n;return{setters:[function(t){n=t.r}],execute:function(){t("n",(function(){return n.exports.useContext(e)}));var e=t("e",n.exports.createContext(void 0))}}}));
