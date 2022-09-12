@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/ts",
-  "version": "5.0.0-alpha.5",
+  "version": "5.0.0-alpha.6",
   "description": "React context provider for react-querybuilder",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",

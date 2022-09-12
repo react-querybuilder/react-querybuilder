@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/demo",
-  "version": "5.0.0-alpha.5",
+  "version": "5.0.0-alpha.6",
   "private": true,
   "devDependencies": {
     "@types/react": "^18.0.19",
@@ -22,13 +22,13 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.5",
     "@popperjs/core": "^2.11.6",
-    "@react-querybuilder/antd": "^5.0.0-alpha.5",
-    "@react-querybuilder/bootstrap": "^5.0.0-alpha.5",
-    "@react-querybuilder/bulma": "^5.0.0-alpha.5",
-    "@react-querybuilder/chakra": "^5.0.0-alpha.5",
-    "@react-querybuilder/dnd": "^5.0.0-alpha.5",
-    "@react-querybuilder/material": "^5.0.0-alpha.5",
-    "@react-querybuilder/ts": "^5.0.0-alpha.5",
+    "@react-querybuilder/antd": "^5.0.0-alpha.6",
+    "@react-querybuilder/bootstrap": "^5.0.0-alpha.6",
+    "@react-querybuilder/bulma": "^5.0.0-alpha.6",
+    "@react-querybuilder/chakra": "^5.0.0-alpha.6",
+    "@react-querybuilder/dnd": "^5.0.0-alpha.6",
+    "@react-querybuilder/material": "^5.0.0-alpha.6",
+    "@react-querybuilder/ts": "^5.0.0-alpha.6",
     "antd": "^4.23.1",
     "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.1",
@@ -40,7 +40,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^5.0.0-alpha.5",
+    "react-querybuilder": "^5.0.0-alpha.6",
     "react-syntax-highlighter": "^15.5.0"
   },
   "scripts": {

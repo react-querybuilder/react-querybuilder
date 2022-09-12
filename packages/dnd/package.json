@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/dnd",
   "description": "Drag-and-drop-enabled version of react-querybuilder",
-  "version": "5.0.0-alpha.5",
+  "version": "5.0.0-alpha.6",
   "publishConfig": {
     "access": "public"
   },
@@ -26,9 +26,9 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "dependencies": {
-    "@react-querybuilder/ctx": "^5.0.0-alpha.5",
-    "@react-querybuilder/ts": "^5.0.0-alpha.5",
-    "react-querybuilder": "^5.0.0-alpha.5"
+    "@react-querybuilder/ctx": "^5.0.0-alpha.6",
+    "@react-querybuilder/ts": "^5.0.0-alpha.6",
+    "react-querybuilder": "^5.0.0-alpha.6"
   },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",

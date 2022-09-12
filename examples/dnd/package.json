@@ -6,14 +6,14 @@
     "not op_mini all"
   ],
   "dependencies": {
-    "@react-querybuilder/ctx": "^5.0.0-alpha.5",
-    "@react-querybuilder/dnd": "^5.0.0-alpha.5",
-    "@react-querybuilder/ts": "^5.0.0-alpha.5",
+    "@react-querybuilder/ctx": "^5.0.0-alpha.6",
+    "@react-querybuilder/dnd": "^5.0.0-alpha.6",
+    "@react-querybuilder/ts": "^5.0.0-alpha.6",
     "react": "^18.2.0",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^5.0.0-alpha.5"
+    "react-querybuilder": "^5.0.0-alpha.6"
   },
   "description": "React Query Builder Drag-and-drop Example",
   "devDependencies": {
