@@ -6,7 +6,14 @@ import { readFile } from 'node:fs/promises';
 import prettier from 'prettier';
 
 const rootPrettierConfig = await prettier.resolveConfig(process.cwd());
-const fileGlob = '{packages/*/src/**,packages/*/dev/**,*.js,examples/**/*}';
+const fileGlob = `{${[
+  '*.js',
+  'examples/**/*',
+  'packages/*/src/**',
+  'packages/*/dev/**',
+  'website/*.js',
+  `website/{${['docs', 'src', 'versioned_docs', 'versioned_sidebars'].join(',')}}/**`,
+].join(',')}}`;
 const prettierIgnoreGlobs = (await readFile('.prettierignore'))
   .toString('utf-8')
   .split('\n')

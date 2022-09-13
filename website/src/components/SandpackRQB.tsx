@@ -1,14 +1,21 @@
-import { Sandpack, SandpackFile, SandpackProps } from '@codesandbox/sandpack-react';
+import type { SandpackFile, SandpackProps } from '@codesandbox/sandpack-react';
+import { Sandpack } from '@codesandbox/sandpack-react';
 import { useColorMode } from '@docusaurus/theme-common';
 import * as React from 'react';
 import './SandpackRQB.scss';
 
 interface SandpackRQBProps extends SandpackProps {
   children: React.ReactNode;
+  rqbVersion?: 4 | 5;
 }
 
-export const SandpackRQB = ({ children, customSetup, options }: SandpackRQBProps) => {
-  const { isDarkTheme } = useColorMode();
+export const SandpackRQB = ({
+  children,
+  customSetup,
+  options,
+  rqbVersion = 5,
+}: SandpackRQBProps) => {
+  const isDarkTheme = useColorMode().colorMode === 'dark';
   const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
   const bkgdColor = isDarkTheme ? '#343a46' : '#ffffff';
   let hideStylesCSS = true;
@@ -75,13 +82,23 @@ export const SandpackRQB = ({ children, customSetup, options }: SandpackRQBProps
     hidden: hideStylesCSS,
   };
 
+  const rqbDependencies =
+    rqbVersion === 4
+      ? { 'react-querybuilder': '^4.5.2' }
+      : {
+          '@react-querybuilder/ctx': 'next',
+          '@react-querybuilder/dnd': 'next',
+          '@react-querybuilder/ts': 'next',
+          'react-querybuilder': 'next',
+        };
+
   const setup = {
     ...customSetup,
-    dependencies: { ...customSetup?.dependencies, 'react-querybuilder': 'latest' },
+    dependencies: { ...customSetup?.dependencies, ...rqbDependencies },
   };
 
   return (
-    <div className="sandpackrqb">
+    <div key={`v${rqbVersion}`} className="sandpackrqb">
       <Sandpack
         files={files}
         theme={isDarkTheme ? 'dark' : undefined}

@@ -36,7 +36,7 @@ To hide the "+Group" button with CSS, use the `ruleGroup-addGroup` class which i
 
 Either of those methods will generate a query builder like this:
 
-<QueryBuilderEmbed controlElements={{ addGroupAction: () => null }} />
+<QueryBuilderEmbed version={4} controlElements={{ addGroupAction: () => null }} />
 
 ## Conditionally allow new groups
 
@@ -66,6 +66,7 @@ And the CSS method for the same effect:
 Either of those methods will generate a query builder like this:
 
 <QueryBuilderEmbed
+  version={4}
   defaultQuery={{
     combinator: 'and',
     rules: [

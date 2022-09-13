@@ -1,7 +1,6 @@
 import type { DragHandleProps } from '@react-querybuilder/ts';
-import { useContext } from 'react';
 import type { ComponentPropsWithRef } from 'react';
-import { forwardRef } from 'react';
+import { forwardRef, useContext } from 'react';
 import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { DragIndicatorType, RQBMaterialComponents } from './types';

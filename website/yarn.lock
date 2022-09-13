@@ -2761,6 +2761,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-querybuilder/ctx@npm:^5.0.0-alpha.6, @react-querybuilder/ctx@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "@react-querybuilder/ctx@npm:5.0.0-alpha.6"
+  dependencies:
+    "@react-querybuilder/ts": ^5.0.0-alpha.6
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 014d13abef9af8700d4e501f9205848418024485c0b246a006b9381e23d3b8d9f398242ce7f62fe370ea0f2af5f62704999b22aa3c6c6a29883d6283311702ab
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/dnd@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "@react-querybuilder/dnd@npm:5.0.0-alpha.6"
+  dependencies:
+    "@react-querybuilder/ctx": ^5.0.0-alpha.6
+    "@react-querybuilder/ts": ^5.0.0-alpha.6
+    react-querybuilder: ^5.0.0-alpha.6
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dnd: ">=14.0.0"
+    react-dnd-html5-backend: ">=14.0.0"
+  checksum: a2feac8c00e5e699d6425062fd92f248ee7cf9c5f155a67813fa5657435c47c98b4db7e345486818b0f8ca3b48f227e94aa5b901bdc765f2127583145831f9ac
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/ts@npm:^5.0.0-alpha.6, @react-querybuilder/ts@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "@react-querybuilder/ts@npm:5.0.0-alpha.6"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: afbd2fef5eb94dcd5588340cea7e1f7469ebae7af930d7ca4c4b71a93d98335fb2f7a9a31c51f11f268d162d82dd37762d7455d1b61b85f4a28703dc262dacba
+  languageName: node
+  linkType: hard
+
 "@sideway/address@npm:^4.1.3":
   version: 4.1.4
   resolution: "@sideway/address@npm:4.1.4"
@@ -6622,7 +6657,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^9.0.6, immer@npm:^9.0.7":
+"immer@npm:^9.0.15, immer@npm:^9.0.6, immer@npm:^9.0.7":
   version: 9.0.15
   resolution: "immer@npm:9.0.15"
   checksum: 92e3d63e810e3c3c2bb61b70c45443e37ef983ad12924e3edaf03725ae5979618f5b473439bb3bb4a8c4769f25132f18dec10ea15c40f0b20da5691ff96ff611
@@ -9207,33 +9242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-querybuilder.github.io@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "react-querybuilder.github.io@workspace:."
-  dependencies:
-    "@codesandbox/sandpack-react": ^1.7.2
-    "@docusaurus/core": ^2.1.0
-    "@docusaurus/module-type-aliases": ^2.1.0
-    "@docusaurus/preset-classic": ^2.1.0
-    "@docusaurus/theme-search-algolia": ^2.1.0
-    "@mdx-js/react": ^1.6.22
-    "@svgr/webpack": ^6.3.1
-    "@tsconfig/docusaurus": ^1.0.6
-    clsx: ^1.2.1
-    docusaurus-plugin-sass: ^0.2.2
-    file-loader: ^6.2.0
-    prism-react-renderer: ^1.3.5
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-querybuilder: ^4.5.2
-    remark-typescript-tools: ^1.0.11
-    sass: ^1.54.9
-    typescript: ^4.8.3
-    url-loader: ^4.1.1
-  languageName: unknown
-  linkType: soft
-
-"react-querybuilder@npm:^4.5.2":
+"react-querybuilder-v4@npm:react-querybuilder@^4.5.2":
   version: 4.5.2
   resolution: "react-querybuilder@npm:4.5.2"
   dependencies:
@@ -9244,6 +9253,19 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: c56f39ed358c6a404a5e6d2717e95a9692db50777925dc10a9a6ee4b23bcd6ec68b84a2d887b38c65a423224c31ddce03641932d302ff203db864e71c208c7e9
+  languageName: node
+  linkType: hard
+
+"react-querybuilder@npm:^5.0.0-alpha.6, react-querybuilder@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "react-querybuilder@npm:5.0.0-alpha.6"
+  dependencies:
+    "@react-querybuilder/ctx": ^5.0.0-alpha.6
+    "@react-querybuilder/ts": ^5.0.0-alpha.6
+    immer: ^9.0.15
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 356726c8993e6581916a9a268fb2e3f1f50c81e04d1876af227901b3501ed9b15e181048cbdb35ddbd89c3bf944d3b285571fc346e88e5d904d6917be44d391c
   languageName: node
   linkType: hard
 
@@ -9678,6 +9700,36 @@ __metadata:
   checksum: 87f4164e396f0171b0a3386cc1877a817f572148ee13a7e113b238e48e8a9f2f31d009a92ec38a591ff1567d9662c6b67fd8818a2dbbaed74bc26a87a2a4a9a0
   languageName: node
   linkType: hard
+
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
+  dependencies:
+    "@codesandbox/sandpack-react": ^1.7.2
+    "@docusaurus/core": ^2.1.0
+    "@docusaurus/module-type-aliases": ^2.1.0
+    "@docusaurus/preset-classic": ^2.1.0
+    "@docusaurus/theme-search-algolia": ^2.1.0
+    "@mdx-js/react": ^1.6.22
+    "@react-querybuilder/ctx": next
+    "@react-querybuilder/dnd": next
+    "@react-querybuilder/ts": next
+    "@svgr/webpack": ^6.3.1
+    "@tsconfig/docusaurus": ^1.0.6
+    clsx: ^1.2.1
+    docusaurus-plugin-sass: ^0.2.2
+    file-loader: ^6.2.0
+    prism-react-renderer: ^1.3.5
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-querybuilder: next
+    react-querybuilder-v4: "npm:react-querybuilder@^4.5.2"
+    remark-typescript-tools: ^1.0.11
+    sass: ^1.54.9
+    typescript: ^4.8.3
+    url-loader: ^4.1.1
+  languageName: unknown
+  linkType: soft
 
 "rtl-detect@npm:^1.0.4":
   version: 1.0.4
@@ -10703,11 +10755,11 @@ __metadata:
 
 "typescript@patch:typescript@^4.8.3#~builtin<compat/typescript>":
   version: 4.8.3
-  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
+  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=f456af"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2222d2382fb3146089b1d27ce2b55e9d1f99cc64118f1aba75809b693b856c5d3c324f052f60c75b577947fc538bc1c27bad0eb76cbdba9a63a253489504ba7e
+  checksum: 0404a09c625df01934ef774b45ce1ca57ccae41cd625fcdbb82056715320d9329e70d9d75c2c732ec6ef947444ca978c189a332b71fa21f5c1437d5a83e24906
   languageName: node
   linkType: hard
 
