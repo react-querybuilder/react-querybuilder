@@ -15,6 +15,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
       - name: Check code is prettified
         uses: creyD/prettier_action@v4.2
         with:
