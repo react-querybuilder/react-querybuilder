@@ -5,7 +5,6 @@ import { writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import prettier from 'prettier';
 
-const rootPrettierConfig = await prettier.resolveConfig(process.cwd());
 const fileGlob = `{${[
   '*.js',
   'examples/**/*',
@@ -27,12 +26,8 @@ const fileList = glob.sync(fileGlob, { nodir: true }).filter(prettierAllow);
 for (const filepath of fileList) {
   const fileContents = (await readFile(filepath)).toString('utf-8').replace(/\r\n/g, '\n');
   const prettierConfig = await prettier.resolveConfig(filepath);
-  const printWidth = /\.s?css$/.test(filepath)
-    ? rootPrettierConfig?.printWidth
-    : prettierConfig?.printWidth;
   const prettierOptions = {
     ...prettierConfig,
-    printWidth,
     filepath,
     plugins: ['prettier-plugin-organize-imports'],
   };
