@@ -8,6 +8,7 @@ on:
 
 jobs:
   prettier:
+    name: Prettier
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,6 +16,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
         with:
