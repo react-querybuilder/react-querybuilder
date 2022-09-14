@@ -25,7 +25,7 @@ const prettierAllow = f => prettierIgnoreREs.every(pire => !pire.test(f));
 const fileList = glob.sync(fileGlob, { nodir: true }).filter(prettierAllow);
 
 for (const filepath of fileList) {
-  const fileContents = (await readFile(filepath)).toString('utf-8');
+  const fileContents = (await readFile(filepath)).toString('utf-8').replace(/\r\n/g, '\n');
   const prettierConfig = await prettier.resolveConfig(filepath);
   const printWidth = /\.s?css$/.test(filepath)
     ? rootPrettierConfig?.printWidth
