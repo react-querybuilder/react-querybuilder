@@ -15,8 +15,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - name: Prettify code
-        uses: creyD/prettier_action@v3.1
+      - name: Check code is prettified
+        uses: creyD/prettier_action@v4.2
         with:
           dry: true
           prettier_options: --check "*.js" "examples/**/*" "packages/*/src/**" "packages/*/dev/**" "website/*.js" "website/{docs,src,versioned_docs,versioned_sidebars}/**"
