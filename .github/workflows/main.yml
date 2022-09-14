@@ -19,7 +19,7 @@ jobs:
         uses: creyD/prettier_action@v4.2
         with:
           dry: true
-          prettier_options: --check "*.js" "examples/**/*" "packages/*/src/**" "packages/*/dev/**" "website/*.js" "website/{docs,src,versioned_docs,versioned_sidebars}/**"
+          prettier_options: --check *.js examples/**/* packages/*/src/** packages/*/dev/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
           prettier_version: 2.7.1
           prettier_plugins: prettier-plugin-organize-imports
         env:
