@@ -18,9 +18,11 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.1
         with:
-          prettier_options: --write packages/*/src/** packages/*/dev/** ./*.js examples/**/*
-          prettier_version: 2.6.2
-          commit_message: 'Prettified code'
+          dry: true
+          prettier_options: --check "*.js examples/**/*" "packages/*/src/**" "packages/*/dev/**" "website/*.js" "website/{docs,src,versioned_docs,versioned_sidebars}/**"
+          prettier_version: 2.7.1
+          prettier_plugins:
+            - prettier-plugin-organize-imports
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -34,6 +36,8 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
       - run: yarn lint
       - run: yarn build
       - run: yarn test

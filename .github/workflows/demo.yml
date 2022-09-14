@@ -19,6 +19,8 @@ jobs:
           node-version: '16.x'
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
       - name: Build everything
         run: yarn build
       - name: Deploy
