@@ -15,7 +15,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '16.x'
-      - name: Install dependencies
+      - name: Install main dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
+      - name: Install website dependencies
         run: yarn website:install --immutable
       - name: Build Website
         run: yarn website:build
@@ -27,7 +31,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '16.x'
-      - name: Install dependencies
+      - name: Install main dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
+      - name: Install website dependencies
         run: yarn website:install --immutable
       - name: Build Website
         run: yarn website:build
