@@ -10,6 +10,7 @@ import type {
   Schema,
   UpdateableProperties,
 } from '@react-querybuilder/ts';
+import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   defaultCombinators,
@@ -28,7 +29,6 @@ import {
 import { useControlledOrUncontrolled } from './internal/hooks';
 import {
   add,
-  c,
   getFirstOption,
   isOptionGroupArray,
   joinWith,
@@ -605,16 +605,11 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
 
   const wrapperClassName = useMemo(
     () =>
-      c(
-        standardClassnames.queryBuilder,
-        controlClassnames.queryBuilder,
-        query.disabled || queryDisabled ? standardClassnames.disabled : '',
-        typeof validationResult === 'boolean'
-          ? validationResult
-            ? standardClassnames.valid
-            : standardClassnames.invalid
-          : ''
-      ),
+      clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
+        [standardClassnames.disabled]: query.disabled || queryDisabled,
+        [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
+        [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
+      }),
     [controlClassnames.queryBuilder, queryDisabled, query.disabled, validationResult]
   );
 

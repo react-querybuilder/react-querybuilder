@@ -1,8 +1,9 @@
 import type { Classnames } from '@react-querybuilder/ts';
+import clsx from 'clsx';
 
 export const mergeClassnames = (...args: (Partial<Classnames> | undefined)[]): Classnames => {
   const joinClassnamesByName = (name: keyof Classnames) =>
-    (args.filter(Boolean) as Partial<Classnames>[]).map(c => c[name]).join(' ');
+    clsx((args.filter(Boolean) as Partial<Classnames>[]).map(c => clsx(c[name])));
   return {
     queryBuilder: joinClassnamesByName('queryBuilder'),
     ruleGroup: joinClassnamesByName('ruleGroup'),

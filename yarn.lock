@@ -5604,6 +5604,7 @@ __metadata:
     "@types/react": ^18.0.19
     "@vitejs/plugin-react": ^2.1.0
     babel-plugin-istanbul: ^6.1.1
+    clsx: ^1.2.1
     concurrently: ^7.4.0
     copyfiles: ^2.4.1
     jscodeshift: ^0.13.1
@@ -14709,6 +14710,7 @@ __metadata:
     "@types/react-dom": ^18.0.6
     "@vitejs/plugin-react": ^2.1.0
     babel-plugin-istanbul: ^6.1.1
+    clsx: ^1.2.1
     concurrently: ^7.4.0
     copyfiles: ^2.4.1
     immer: ^9.0.15

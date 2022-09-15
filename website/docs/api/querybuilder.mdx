@@ -574,30 +574,30 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 
 ### `controlClassnames`
 
-This prop can be used to assign specific CSS classes to various controls that are rendered by the `<QueryBuilder />` component. This is an object with the following signature:
+This prop can be used to assign specific CSS classes to various controls that are rendered by the `<QueryBuilder />` component. This is an object with the following signature. Each attribute is a `Classname` which can be a `string`, `string[]`, or `Record<string, any>` (see documentation for [`clsx`](https://www.npmjs.com/package/clsx)):
 
 ```ts
 interface Classnames {
-  queryBuilder?: string; // Root <div> element
-  ruleGroup?: string; // <div> containing a RuleGroup
-  header?: string; // <div> containing the RuleGroup header controls
-  body?: string; // <div> containing the RuleGroup child rules/groups
-  combinators?: string; // <select> control for combinators
-  addRule?: string; // <button> to add a Rule
-  addGroup?: string; // <button> to add a RuleGroup
-  cloneRule?: string; // <button> to clone a Rule
-  cloneGroup?: string; // <button> to clone a RuleGroup
-  removeGroup?: string; // <button> to remove a RuleGroup
-  lockRule?: string; // <button> to lock/disable a Rule
-  lockGroup?: string; // <button> to lock/disable a RuleGroup
-  notToggle?: string; // <label> on the "not" toggle
-  rule?: string; // <div> containing the Rule
-  fields?: string; // <select> control for fields
-  operators?: string; // <select> control for operators
-  value?: string; // <input> for the field value
-  removeRule?: string; // <button> to remove a Rule
-  dragHandle?: string; // <span> as drag-and-drop handle
-  valueSource?: string; // <select> control for value source
+  queryBuilder?: Classname; // Root <div> element
+  ruleGroup?: Classname; // <div> containing a RuleGroup
+  header?: Classname; // <div> containing the RuleGroup header controls
+  body?: Classname; // <div> containing the RuleGroup child rules/groups
+  combinators?: Classname; // <select> control for combinators
+  addRule?: Classname; // <button> to add a Rule
+  addGroup?: Classname; // <button> to add a RuleGroup
+  cloneRule?: Classname; // <button> to clone a Rule
+  cloneGroup?: Classname; // <button> to clone a RuleGroup
+  removeGroup?: Classname; // <button> to remove a RuleGroup
+  lockRule?: Classname; // <button> to lock/disable a Rule
+  lockGroup?: Classname; // <button> to lock/disable a RuleGroup
+  notToggle?: Classname; // <label> on the "not" toggle
+  rule?: Classname; // <div> containing the Rule
+  fields?: Classname; // <select> control for fields
+  operators?: Classname; // <select> control for operators
+  value?: Classname; // <input> for the field value
+  removeRule?: Classname; // <button> to remove a Rule
+  dragHandle?: Classname; // <span> as drag-and-drop handle
+  valueSource?: Classname; // <select> control for value source
 }
 ```
 

@@ -1,10 +1,11 @@
 import type { RuleGroupProps } from '@react-querybuilder/ts';
+import { clsx } from 'clsx';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import { defaultCombinators, standardClassnames, TestID } from './defaults';
 import { getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { c, getParentPath, pathsAreEqual } from './utils';
+import { getParentPath, pathsAreEqual } from './utils';
 
 export const RuleGroup = ({
   id,
@@ -65,6 +66,22 @@ export const RuleGroup = ({
   }
 
   useDeprecatedProps('ruleGroup', !!ruleGroup);
+
+  const classNamesMemo = useMemo(
+    () => ({
+      header: clsx(standardClassnames.header, classNames.header),
+      dragHandle: clsx(standardClassnames.dragHandle, classNames.dragHandle),
+      combinators: clsx(standardClassnames.combinators, classNames.combinators),
+      notToggle: clsx(standardClassnames.notToggle, classNames.notToggle),
+      addRule: clsx(standardClassnames.addRule, classNames.addRule),
+      addGroup: clsx(standardClassnames.addGroup, classNames.addGroup),
+      cloneGroup: clsx(standardClassnames.cloneGroup, classNames.cloneGroup),
+      lockGroup: clsx(standardClassnames.lockGroup, classNames.lockGroup),
+      removeGroup: clsx(standardClassnames.removeGroup, classNames.removeGroup),
+      body: clsx(standardClassnames.body, classNames.body),
+    }),
+    [classNames]
+  );
 
   useReactDndWarning(
     enableDragAndDrop,
@@ -139,10 +156,10 @@ export const RuleGroup = ({
 
   const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
   const validationClassName = getValidationClassNames(validationResult);
-  const outerClassName = c(
+  const outerClassName = clsx(
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
-    disabled ? standardClassnames.disabled : '',
+    { [standardClassnames.disabled]: disabled },
     validationClassName
   );
 
@@ -156,7 +173,7 @@ export const RuleGroup = ({
       data-rule-group-id={id}
       data-level={level}
       data-path={JSON.stringify(path)}>
-      <div ref={dropRef} className={c(standardClassnames.header, classNames.header)}>
+      <div ref={dropRef} className={classNamesMemo.header}>
         {level > 0 && (
           <DragHandleControlElement
             testID={TestID.dragHandle}
@@ -165,7 +182,7 @@ export const RuleGroup = ({
             path={path}
             title={translations.dragHandle.title}
             label={translations.dragHandle.label}
-            className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+            className={classNamesMemo.dragHandle}
             disabled={disabled}
             context={context}
             validation={validationResult}
@@ -177,7 +194,7 @@ export const RuleGroup = ({
             options={combinators}
             value={combinator}
             title={translations.combinators.title}
-            className={c(standardClassnames.combinators, classNames.combinators)}
+            className={classNamesMemo.combinators}
             handleOnChange={onCombinatorChange}
             rules={rules}
             level={level}
@@ -190,7 +207,7 @@ export const RuleGroup = ({
         {showNotToggle && (
           <NotToggleControlElement
             testID={TestID.notToggle}
-            className={c(standardClassnames.notToggle, classNames.notToggle)}
+            className={classNamesMemo.notToggle}
             title={translations.notToggle.title}
             label={translations.notToggle.label}
             checked={not}
@@ -206,7 +223,7 @@ export const RuleGroup = ({
           testID={TestID.addRule}
           label={translations.addRule.label}
           title={translations.addRule.title}
-          className={c(standardClassnames.addRule, classNames.addRule)}
+          className={classNamesMemo.addRule}
           handleOnClick={addRule}
           rules={rules}
           level={level}
@@ -219,7 +236,7 @@ export const RuleGroup = ({
           testID={TestID.addGroup}
           label={translations.addGroup.label}
           title={translations.addGroup.title}
-          className={c(standardClassnames.addGroup, classNames.addGroup)}
+          className={classNamesMemo.addGroup}
           handleOnClick={addGroup}
           rules={rules}
           level={level}
@@ -233,7 +250,7 @@ export const RuleGroup = ({
             testID={TestID.cloneGroup}
             label={translations.cloneRuleGroup.label}
             title={translations.cloneRuleGroup.title}
-            className={c(standardClassnames.cloneGroup, classNames.cloneGroup)}
+            className={classNamesMemo.cloneGroup}
             handleOnClick={cloneGroup}
             rules={rules}
             level={level}
@@ -248,7 +265,7 @@ export const RuleGroup = ({
             testID={TestID.lockGroup}
             label={translations.lockGroup.label}
             title={translations.lockGroup.title}
-            className={c(standardClassnames.lockGroup, classNames.lockGroup)}
+            className={classNamesMemo.lockGroup}
             handleOnClick={toggleLockGroup}
             rules={rules}
             level={level}
@@ -264,7 +281,7 @@ export const RuleGroup = ({
             testID={TestID.removeGroup}
             label={translations.removeGroup.label}
             title={translations.removeGroup.title}
-            className={c(standardClassnames.removeGroup, classNames.removeGroup)}
+            className={classNamesMemo.removeGroup}
             handleOnClick={removeGroup}
             rules={rules}
             level={level}
@@ -275,7 +292,7 @@ export const RuleGroup = ({
           />
         )}
       </div>
-      <div className={c(standardClassnames.body, classNames.body)}>
+      <div className={classNamesMemo.body}>
         {rules.map((r, idx) => {
           const thisPath = [...path, idx];
           const thisPathDisabled =
@@ -290,7 +307,7 @@ export const RuleGroup = ({
                   options={combinators}
                   value={combinator}
                   title={translations.combinators.title}
-                  className={c(standardClassnames.combinators, classNames.combinators)}
+                  className={classNamesMemo.combinators}
                   handleOnChange={onCombinatorChange}
                   rules={rules}
                   level={level}
@@ -307,7 +324,7 @@ export const RuleGroup = ({
                   options={combinators}
                   value={r}
                   title={translations.combinators.title}
-                  className={c(standardClassnames.combinators, classNames.combinators)}
+                  className={classNamesMemo.combinators}
                   handleOnChange={val => onIndependentCombinatorChange(val, idx)}
                   rules={rules}
                   level={level}

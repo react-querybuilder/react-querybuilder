@@ -103,87 +103,89 @@ export interface DragHandleProps extends CommonSubComponentProps {
   label?: string;
 }
 
+export type Classname = string | string[] | Record<string, any>;
+
 export interface Classnames {
   /**
    * Root `<div>` element
    */
-  queryBuilder: string;
+  queryBuilder: Classname;
   /**
    * `<div>` containing the RuleGroup
    */
-  ruleGroup: string;
+  ruleGroup: Classname;
   /**
    * `<div>` containing the RuleGroup header controls
    */
-  header: string;
+  header: Classname;
   /**
    * `<div>` containing the RuleGroup child rules/groups
    */
-  body: string;
+  body: Classname;
   /**
    * `<select>` control for combinators
    */
-  combinators: string;
+  combinators: Classname;
   /**
    * `<button>` to add a Rule
    */
-  addRule: string;
+  addRule: Classname;
   /**
    * `<button>` to add a RuleGroup
    */
-  addGroup: string;
+  addGroup: Classname;
   /**
    * `<button>` to clone a Rule
    */
-  cloneRule: string;
+  cloneRule: Classname;
   /**
    * `<button>` to clone a RuleGroup
    */
-  cloneGroup: string;
+  cloneGroup: Classname;
   /**
    * `<button>` to remove a RuleGroup
    */
-  removeGroup: string;
+  removeGroup: Classname;
   /**
    * `<div>` containing the Rule
    */
-  rule: string;
+  rule: Classname;
   /**
    * `<select>` control for fields
    */
-  fields: string;
+  fields: Classname;
   /**
    * `<select>` control for operators
    */
-  operators: string;
+  operators: Classname;
   /**
    * `<input>` for the field value
    */
-  value: string;
+  value: Classname;
   /**
    * `<button>` to remove a Rule
    */
-  removeRule: string;
+  removeRule: Classname;
   /**
    * `<label>` on the "not" toggle
    */
-  notToggle: string;
+  notToggle: Classname;
   /**
    * `<span>` handle for dragging rules/groups
    */
-  dragHandle: string;
+  dragHandle: Classname;
   /**
    * `<button>` to lock (i.e. disable) a Rule
    */
-  lockRule: string;
+  lockRule: Classname;
   /**
    * `<button>` to lock (i.e. disable) a RuleGroup
    */
-  lockGroup: string;
+  lockGroup: Classname;
   /**
    * Value source selector
    */
-  valueSource: string;
+  valueSource: Classname;
 }
 
 export interface QueryActions {
