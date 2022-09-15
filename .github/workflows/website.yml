@@ -1,0 +1,52 @@
+name: Website publish
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Install main dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
+      - name: Install website dependencies
+        run: yarn website:install --immutable
+      - name: Build Website
+        run: yarn website:build
+  gh-release:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Install main dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
+      - name: Install website dependencies
+        run: yarn website:install --immutable
+      - name: Build Website
+        run: yarn website:build
+      - uses: webfactory/ssh-agent@v0.5.0
+        with:
+          ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
+      - name: Deploy Website to GitHub Pages
+        env:
+          USE_SSH: true
+          GIT_USER: git
+        run: |
+          git config --global user.email "jakeboone02@gmail.com"
+          git config --global user.name "Jake Boone"
+          yarn website:deploy

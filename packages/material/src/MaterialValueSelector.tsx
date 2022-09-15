@@ -1,8 +1,7 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
-import { useContext } from 'react';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { joinWith, splitBy, ValueSelector } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents, SelectType } from './types';

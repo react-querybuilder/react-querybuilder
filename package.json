@@ -43,11 +43,16 @@
     "typecheck:ts": "yarn workspace @react-querybuilder/ts typecheck",
     "typecheck:examples": "tsc -p examples",
     "publish:demo": "yarn build && node gh-pages.publish.js",
-    "pretty-print": "yarn node prettyPrint.mjs",
+    "pretty-print": "prettier --write \"*.js\" \"examples/**/*\" \"packages/*/src/**\" \"packages/*/dev/**\" \"website/*.js\" \"website/{docs,src,versioned_docs,versioned_sidebars}/**\"",
     "generate-changelog": "github-changes --owner react-querybuilder --repository react-querybuilder --auth --use-commit-body --only-pulls --date-format=\"(YYYY-MM-DD)\"",
     "generate-examples": "node ./examples/generateExamples.mjs",
     "outdated": "yarn upgrade-interactive",
-    "version": "yarn && concurrently --timings --names examples,packages yarn:generate-examples yarn:build:packages && concurrently \"git add examples yarn.lock\""
+    "version": "yarn && concurrently --timings --names examples,packages yarn:generate-examples yarn:build:packages && concurrently \"git add examples yarn.lock\"",
+    "website:install": "cd website && yarn",
+    "website:outdated": "cd website && yarn upgrade-interactive",
+    "website:start": "cd website && yarn start",
+    "website:build": "cd website && yarn build",
+    "website:deploy": "cd website && yarn deploy"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",

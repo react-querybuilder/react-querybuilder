@@ -1,0 +1,213 @@
+---
+title: Compatibility packages
+---
+
+The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./api/querybuilder#controlclassnames)). However, some style libraries require different HTML structure to style their form controls correctly.
+
+## Packages
+
+Official component packages compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
+
+You can see each alternate component package in action by selecting different options in the "Style" dropdown list on the [demo page](https://react-querybuilder.js.org/react-querybuilder/). The "Demo" links in the table below will load the demo with the respective style library preselected, and the CodeSandbox links will open [codesandbox.io](https://codesandbox.io) with a live, editable example of the library preloaded.
+
+| Official site                          | Compatibility package                                                                        | Demo                                                                          | CodeSandbox                                                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [Ant Design](https://ant.design/)      | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=antd)      | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd)      |
+| [Bootstrap](https://getbootstrap.com/) | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=bootstrap) | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap) |
+| [Bulma](https://bulma.io/)             | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=bulma)     | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma)     |
+| [Chakra UI](https://chakra-ui.com/)    | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=chakra)    | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra)    |
+| [MUI](https://mui.com/)                | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](https://react-querybuilder.js.org/react-querybuilder/#style=material)  | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
+
+## Usage
+
+The recommended way to apply a compatibility package to `<QueryBuilder />` is to wrap it in the `QueryBuilder*` context provider from the compatibility library.
+
+This example uses the Ant Design library:
+
+```tsx
+import { QueryBuilderAntD } from '@react-querybuilder/antd';
+import 'antd/dist/antd.compact.css';
+import { QueryBuilder } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
+import { defaultQuery, fields } from './constants';
+
+export function App() {
+  return (
+    <QueryBuilderAntD>
+      <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
+    </QueryBuilderAntD>
+  );
+}
+```
+
+Each compatibility package exports its own context provider.
+
+| Compatibility package           | Context provider        |
+| ------------------------------- | ----------------------- |
+| `@react-querybuilder/antd`      | `QueryBuilderAntD`      |
+| `@react-querybuilder/bootstrap` | `QueryBuilderBootstrap` |
+| `@react-querybuilder/bulma`     | `QueryBuilderBulma`     |
+| `@react-querybuilder/chakra`    | `QueryBuilderChakra`    |
+| `@react-querybuilder/material`  | `QueryBuilderMaterial`  |
+
+:::tip
+
+React Query Builder context providers can be nested beneath one another to progressively add features and customization. For example, `QueryBuilderDnD` adds drag-and-drop features to the query builder, and you can nest the compatibility package context providers beneath it (or vice versa) to add the style library's components while maintaining the drag-and-drop features.
+
+This example uses the Bulma library _and_ enables drag-and-drop:
+
+```tsx
+import { QueryBuilderBulma } from '@react-querybuilder/bulma';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import 'bulma/bulma.sass';
+import { QueryBuilder } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
+import { defaultQuery, fields } from './constants';
+
+export function App() {
+  return (
+    <QueryBuilderDnD>
+      <QueryBuilderBulma>
+        <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
+      </QueryBuilderBulma>
+    </QueryBuilderDnD>
+  );
+}
+```
+
+:::
+
+## Other exports
+
+Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./api/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./api/querybuilder#controlclassnames). Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
+
+This example uses the Bootstrap library:
+
+```tsx
+import {
+  bootstrapControlClassnames,
+  bootstrapControlElements,
+} from '@react-querybuilder/bootstrap';
+import 'bootstrap/scss/bootstrap.scss';
+import { QueryBuilder } from 'react-querybuilder';
+import { defaultQuery, fields } from './constants';
+
+export function App() {
+  return (
+    <QueryBuilder
+      fields={fields}
+      defaultQuery={defaultQuery}
+      controlElements={bootstrapControlElements}
+      controlClassnames={bootstrapControlClassnames}
+    />
+  );
+}
+```
+
+## Customization
+
+Many of the compatibility components accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving the query builder integration up to the compatibility layer.
+
+For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders the `Button` component from `antd`, so it can accept properties of the `ActionWithRulesProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
+
+In the example below, the `size` prop is accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface), even though it's not included in the `ActionWithRulesProps` interface.
+
+```tsx
+import { AntDActionElement, antdControlElements } from '@react-querybuilder/antd';
+import { QueryBuilder, type ActionWithRulesProps } from 'react-querybuilder';
+
+const MyAntDActionElement = (props: ActionWithRulesProps) => (
+  <AntDActionElement {...props} size="large" />
+);
+
+export function App() {
+  return (
+    <QueryBuilder
+      controlElements={{
+        ...antdControlElements,
+        addRuleAction: MyAntDActionElement,
+        addGroupAction: MyAntDActionElement,
+        cloneRuleAction: MyAntDActionElement,
+        cloneGroupAction: MyAntDActionElement,
+        lockRuleAction: MyAntDActionElement,
+        lockGroupAction: MyAntDActionElement,
+        removeRuleAction: MyAntDActionElement,
+        removeGroupAction: MyAntDActionElement,
+      }}
+    />
+  );
+}
+```
+
+This list shows which library components' props will be accepted by the compatibility components, in addition to those defined by `react-querybuilder`.
+
+| Component               | Base props (from RQB)    | Rendered library component                                      |
+| ----------------------- | ------------------------ | --------------------------------------------------------------- |
+| `AntDActionElement`     | `ActionWithRulesProps`   | `import { Button } from 'antd'`                                 |
+| `AntDDragHandle`        | `DragHandleProps`        | `import { HolderOutlined } from '@ant-design/icons'`            |
+| `AntDNotToggle`         | `NotToggleProps`         | `import { Switch } from 'antd'`                                 |
+| `AntDValueSelector`     | `VersatileSelectorProps` | `import { Select } from 'antd'`                                 |
+| `ChakraActionElement`   | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                     |
+| `ChakraDragHandle`      | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
+| `ChakraNotToggle`       | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
+| `ChakraValueSelector`   | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
+| `MaterialActionElement` | `ActionWithRulesProps`   | `import Button from '@mui/material/Button'`                     |
+| `MaterialDragHandle`    | `DragHandleProps`        | `import DragIndicator from '@mui/icons-material/DragIndicator'` |
+| `MaterialNotToggle`     | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |
+| `MaterialValueSelector` | `VersatileSelectorProps` | `import Select from '@mui/material/Select'`                     |
+
+## Preload MUI components
+
+By default, the `@react-querybuilder/material` compatibility package loads components from `@mui/material` asynchronously in order to properly inherit the theme context ([issue](https://github.com/react-querybuilder/react-querybuilder/issues/321)/[PR](https://github.com/react-querybuilder/react-querybuilder/pull/324)). This means that the query builder will initially be rendered with the default components, and then—very quickly, if all goes well—the MUI components will replace them.
+
+To avoid rendering the default components and render the MUI components immediately instead, import the MUI components in your application code and assign them as properties of the `muiComponents` prop on the `QueryBuilderMaterial` context provider. (Each individual compatibility component also accepts an optional `muiComponents` prop.)
+
+```tsx
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { QueryBuilderMaterial } from '@react-querybuilder/material';
+import { QueryBuilder } from 'react-querybuilder';
+import { defaultQuery, fields } from './constants';
+// highlight-start
+import Checkbox from '@mui/material/Checkbox';
+import DragIndicator from '@mui/material/DragIndicator';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Input from '@mui/material/Input';
+import ListSubheader from '@mui/material/ListSubheader';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+
+const muiComponents = {
+  Checkbox,
+  DragIndicator,
+  FormControl,
+  FormControlLabel,
+  Input,
+  ListSubheader,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Switch,
+  TextareaAutosize,
+};
+// highlight-end
+
+const muiTheme = createTheme();
+
+export function App() {
+  return (
+    <ThemeProvider theme={muiTheme}>
+      {/* highlight-start */}
+      <QueryBuilderMaterial muiComponents={muiComponents}>
+        {/* highlight-end */}
+        <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
+      </QueryBuilderMaterial>
+    </ThemeProvider>
+  );
+}
+```

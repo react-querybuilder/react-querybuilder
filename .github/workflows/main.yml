@@ -8,6 +8,7 @@ on:
 
 jobs:
   prettier:
+    name: Prettier
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,14 +16,15 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - name: Prettify code
-        uses: creyD/prettier_action@v3.1
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
         with:
-          prettier_options: --write packages/*/src/** packages/*/dev/** ./*.js examples/**/*
-          prettier_version: 2.6.2
-          commit_message: 'Prettified code'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          install-command: yarn --immutable
+      - name: Prettify code
+        run: yarn pretty-print
+      - name: Git diff
+        if: ${{ failure() }}
+        run: git diff
 
   build_and_test:
     name: Build and test
@@ -32,7 +34,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - run: yarn install --immutable
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
       - run: yarn lint
       - run: yarn build
       - run: yarn test

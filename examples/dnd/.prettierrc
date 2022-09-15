@@ -7,7 +7,13 @@
   "trailingComma": "es5",
   "bracketSpacing": true,
   "bracketSameLine": true,
-  "jsxBracketSameLine": true,
-  "fluid": false,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "src/*.{s,}css",
+      "options": {
+        "printWidth": 100
+      }
+    }
+  ]
 }
