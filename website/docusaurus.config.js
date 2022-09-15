@@ -28,7 +28,7 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/react-querybuilder/react-querybuilder.github.io/edit/main/',
+          editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
           // Re-enable this when we get it working properly
           // remarkPlugins: [
           //   [
