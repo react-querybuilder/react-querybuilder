@@ -1,11 +1,3 @@
-import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
-import {
-  defaultCombinators,
-  defaultControlClassnames,
-  defaultTranslations as translations,
-  TestID,
-} from '../src/defaults';
 import type {
   Classnames,
   Controls,
@@ -16,6 +8,14 @@ import type {
   RuleType,
   Schema,
 } from '@react-querybuilder/ts';
+import { forwardRef } from 'react';
+import { defaultControlElements } from '../src/controls';
+import {
+  defaultCombinators,
+  defaultControlClassnames,
+  defaultTranslations as translations,
+  TestID,
+} from '../src/defaults';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => {
@@ -131,8 +131,8 @@ export const ruleGroupClassnames: Partial<Classnames> = {
   addGroup: 'custom-addGroup-class',
   cloneGroup: 'custom-cloneGroup-class',
   removeGroup: 'custom-removeGroup-class',
-  notToggle: 'custom-notToggle-class',
-  ruleGroup: 'custom-ruleGroup-class',
+  notToggle: { 'custom-notToggle-class': true },
+  ruleGroup: ['custom-ruleGroup-class'],
 };
 
 const ruleGroupSchema: Partial<Schema> = {

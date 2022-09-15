@@ -1,10 +1,3 @@
-import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
-import {
-  defaultControlClassnames,
-  defaultTranslations as translations,
-  TestID,
-} from '../src/defaults';
 import type {
   ActionProps,
   Classnames,
@@ -17,6 +10,13 @@ import type {
   Schema,
   ValueEditorProps,
 } from '@react-querybuilder/ts';
+import { forwardRef } from 'react';
+import { defaultControlElements } from '../src/controls';
+import {
+  defaultControlClassnames,
+  defaultTranslations as translations,
+  TestID,
+} from '../src/defaults';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: Field[]) =>
@@ -84,8 +84,8 @@ export const ruleClassnames: Partial<Classnames> = {
   dragHandle: 'custom-dragHandle-class',
   fields: 'custom-fields-class',
   operators: 'custom-operators-class',
-  removeRule: 'custom-removeRule-class',
-  rule: 'custom-rule-class',
+  removeRule: { 'custom-removeRule-class': true },
+  rule: ['custom-rule-class'],
 };
 
 const ruleSchema: Partial<Schema> = {

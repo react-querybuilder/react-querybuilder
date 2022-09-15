@@ -1,9 +1,11 @@
 import type { RuleProps, RuleType } from '@react-querybuilder/ts';
+import { clsx } from 'clsx';
 import type { MouseEvent as ReactMouseEvent } from 'react';
+import { useMemo } from 'react';
 import { standardClassnames, TestID } from './defaults';
 import { filterFieldsByComparator, getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { c, getParentPath } from './utils';
+import { getParentPath } from './utils';
 
 export const Rule = ({
   id,
@@ -67,6 +69,20 @@ export const Rule = ({
 
   useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 
+  const classNamesMemo = useMemo(
+    () => ({
+      dragHandle: clsx(standardClassnames.dragHandle, classNames.dragHandle),
+      fields: clsx(standardClassnames.fields, classNames.fields),
+      operators: clsx(standardClassnames.operators, classNames.operators),
+      valueSource: clsx(standardClassnames.valueSource, classNames.valueSource),
+      value: clsx(standardClassnames.value, classNames.value),
+      cloneRule: clsx(standardClassnames.cloneRule, classNames.cloneRule),
+      lockRule: clsx(standardClassnames.lockRule, classNames.lockRule),
+      removeRule: clsx(standardClassnames.removeRule, classNames.removeRule),
+    }),
+    [classNames]
+  );
+
   const generateOnChangeHandler =
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
       if (!disabled) {
@@ -126,7 +142,7 @@ export const Rule = ({
       ? fieldData.validator({ id, field, operator, value })
       : null);
   const validationClassName = getValidationClassNames(validationResult);
-  const outerClassName = c(
+  const outerClassName = clsx(
     standardClassnames.rule,
     classNames.rule,
     disabled ? standardClassnames.disabled : '',
@@ -150,7 +166,7 @@ export const Rule = ({
         path={path}
         title={translations.dragHandle.title}
         label={translations.dragHandle.label}
-        className={c(standardClassnames.dragHandle, classNames.dragHandle)}
+        className={classNamesMemo.dragHandle}
         disabled={disabled}
         context={context}
         validation={validationResult}
@@ -161,7 +177,7 @@ export const Rule = ({
         title={translations.fields.title}
         value={field}
         operator={operator}
-        className={c(standardClassnames.fields, classNames.fields)}
+        className={classNamesMemo.fields}
         handleOnChange={generateOnChangeHandler('field')}
         level={level}
         path={path}
@@ -178,7 +194,7 @@ export const Rule = ({
             title={translations.operators.title}
             options={operators}
             value={operator}
-            className={c(standardClassnames.operators, classNames.operators)}
+            className={classNamesMemo.operators}
             handleOnChange={generateOnChangeHandler('operator')}
             level={level}
             path={path}
@@ -196,7 +212,7 @@ export const Rule = ({
                   title={translations.valueSourceSelector.title}
                   options={vsOptions}
                   value={valueSource ?? 'value'}
-                  className={c(standardClassnames.valueSource, classNames.valueSource)}
+                  className={classNamesMemo.valueSource}
                   handleOnChange={generateOnChangeHandler('valueSource')}
                   level={level}
                   path={path}
@@ -217,7 +233,7 @@ export const Rule = ({
                 inputType={inputType}
                 values={values}
                 listsAsArrays={listsAsArrays}
-                className={c(standardClassnames.value, classNames.value)}
+                className={classNamesMemo.value}
                 handleOnChange={generateOnChangeHandler('value')}
                 level={level}
                 path={path}
@@ -234,7 +250,7 @@ export const Rule = ({
           testID={TestID.cloneRule}
           label={translations.cloneRule.label}
           title={translations.cloneRule.title}
-          className={c(standardClassnames.cloneRule, classNames.cloneRule)}
+          className={classNamesMemo.cloneRule}
           handleOnClick={cloneRule}
           level={level}
           path={path}
@@ -248,7 +264,7 @@ export const Rule = ({
           testID={TestID.lockRule}
           label={translations.lockRule.label}
           title={translations.lockRule.title}
-          className={c(standardClassnames.lockRule, classNames.lockRule)}
+          className={classNamesMemo.lockRule}
           handleOnClick={toggleLockRule}
           level={level}
           path={path}
@@ -262,7 +278,7 @@ export const Rule = ({
         testID={TestID.removeRule}
         label={translations.removeRule.label}
         title={translations.removeRule.title}
-        className={c(standardClassnames.removeRule, classNames.removeRule)}
+        className={classNamesMemo.removeRule}
         handleOnClick={removeRule}
         level={level}
         path={path}

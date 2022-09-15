@@ -65,6 +65,7 @@
   "dependencies": {
     "@react-querybuilder/ctx": "^5.0.0-alpha.6",
     "@react-querybuilder/ts": "^5.0.0-alpha.6",
+    "clsx": "^1.2.1",
     "immer": "^9.0.15"
   },
   "peerDependencies": {

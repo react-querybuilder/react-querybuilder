@@ -67,7 +67,13 @@ export const App = ({
       fields,
       ...optVals,
       validator: optVals.validateQuery ? defaultValidator : undefined,
-      ...{ controlClassnames, controlElements },
+      ...{
+        controlClassnames: {
+          ...controlClassnames,
+          queryBuilder: ['qb', ['qb2', 'qb3'], { qb4: true }],
+        },
+        controlElements,
+      },
     }),
     [controlClassnames, controlElements, optVals]
   );
