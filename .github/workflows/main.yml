@@ -20,14 +20,8 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --immutable
-      - name: Check code is prettified
-        uses: creyD/prettier_action@v4.2
-        with:
-          prettier_options: --write *.js examples/**/* packages/*/src/** packages/*/dev/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
-          prettier_version: 2.7.1
-          prettier_plugins: prettier-plugin-organize-imports
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prettify code
+        run: yarn pretty-print
       - name: Git diff
         if: ${{ failure() }}
         run: git diff
