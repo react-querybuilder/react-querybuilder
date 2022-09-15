@@ -32,6 +32,9 @@ jobs:
           prettier_plugins: prettier-plugin-organize-imports
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Git diff
+        if: ${{ failure() }}
+        run: git diff
 
   build_and_test:
     name: Build and test
