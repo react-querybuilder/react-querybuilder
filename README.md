@@ -49,9 +49,9 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 ## Development
 
-To load a test page with a basic query builder using the default components, run `yarn start`.
+To run a test page with a basic query builder using the default components, run `yarn start`.
 
-To load the full demo featuring all the compatibility components, run `yarn demo`.
+To run the documentation website, run `yarn website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
 
 ## Credits
 
