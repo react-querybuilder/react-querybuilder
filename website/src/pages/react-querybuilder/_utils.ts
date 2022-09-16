@@ -1,7 +1,7 @@
 import type { FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './_constants';
-import type { DemoOption, DemoOptions } from './_types';
+import type { DemoOption, DemoOptions, DemoOptionsHash } from './_types';
 
 type OptionsAction =
   | { type: 'all' }
@@ -17,6 +17,9 @@ type OptionsAction =
       type: 'replace';
       payload: DemoOptions;
     };
+
+export const getOptionsFromHash = (hash: DemoOptionsHash): Partial<DemoOptions> =>
+  Object.fromEntries(Object.entries(hash).map(([opt, val]) => [opt, val === 'true']));
 
 export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoOptions => {
   if (action.type === 'reset') {

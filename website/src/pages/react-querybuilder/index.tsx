@@ -3,7 +3,8 @@
 import Link from '@docusaurus/Link';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import Layout from '@theme/Layout';
-import React, { useCallback, useMemo, useReducer, useState } from 'react';
+import queryString from 'query-string';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
   convertToIC,
@@ -25,13 +26,19 @@ import {
   optionsMetadata,
 } from './_constants';
 import type { CommonRQBProps } from './_types';
-import { getFormatQueryString, optionsReducer } from './_utils';
+import { getFormatQueryString, getOptionsFromHash, optionsReducer } from './_utils';
 
 const docsPreferredVersionDefault = localStorage.getItem('docs-preferred-version-default');
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
+
+// Initialize options from URL hash
+const initialOptionsFromHash = getOptionsFromHash(queryString.parse(location.hash));
+
+const permalinkText = 'Copy link';
+const permalinkCopiedText = 'Copied!';
 
 export default function ReactQueryBuilder() {
   // const dsCtx = useDocusaurusContext();
@@ -41,6 +48,7 @@ export default function ReactQueryBuilder() {
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
   const [options, setOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
+    ...initialOptionsFromHash,
   });
   const [isSQLInputVisible, setIsSQLInputVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
@@ -51,6 +59,27 @@ export default function ReactQueryBuilder() {
   const [isJsonLogicInputVisible, setIsJsonLogicInputVisible] = useState(false);
   const [jsonLogic, setJsonLogic] = useState(initialJsonLogic);
   const [jsonLogicParseError, setJsonLogicParseError] = useState('');
+  const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
+
+  const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
+
+  const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
+    const optionsFromHash = getOptionsFromHash(
+      queryString.parse(
+        queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
+      )
+    );
+    const payload = { ...defaultOptions, ...optionsFromHash };
+
+    setOptions({ type: 'replace', payload });
+  }, []);
+
+  useEffect(() => {
+    history.pushState(null, '', permalinkHash);
+    window.addEventListener('hashchange', updateOptionsFromHash);
+
+    return () => window.removeEventListener('hashchange', updateOptionsFromHash);
+  }, [permalinkHash, updateOptionsFromHash]);
 
   const optionsInfo = useMemo(
     () =>
@@ -115,6 +144,16 @@ export default function ReactQueryBuilder() {
     }
   }, [jsonLogic]);
 
+  const onClickCopyPermalink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${location.origin}${location.pathname}${permalinkHash}`);
+      setCopyPermalinkText(permalinkCopiedText);
+    } catch (e) {
+      console.error('Clipboard error', e);
+    }
+    setTimeout(() => setCopyPermalinkText(permalinkText), 1214);
+  };
+
   const commonRQBProps = useMemo(
     (): CommonRQBProps => ({
       fields,
@@ -178,6 +217,14 @@ export default function ReactQueryBuilder() {
             <div title={`Enable all features except "${optionsMetadata.disabled.label}"`}>
               <button type="button" onClick={() => setOptions({ type: 'all' })}>
                 Select all
+              </button>
+            </div>
+            <div
+              title={
+                'Copy a URL that will load this demo with the options set as they are currently'
+              }>
+              <button type="button" onClick={onClickCopyPermalink}>
+                {copyPermalinkText}
               </button>
             </div>
           </div>
