@@ -13,6 +13,7 @@ import {
   parseJsonLogic,
   parseSQL,
   QueryBuilder,
+  version as rqbVersion,
 } from 'react-querybuilder';
 import {
   defaultOptions,
@@ -127,10 +128,10 @@ export default function ReactQueryBuilder() {
     <Layout description="React Query Builder Demo">
       <div
         style={{
-          padding: 'var(--ifm-heading-margin-bottom)',
+          padding: 'var(--ifm-global-spacing)',
           display: 'grid',
           gridTemplateColumns: '250px 1fr',
-          columnGap: 'var(--ifm-heading-margin-bottom)',
+          columnGap: 'var(--ifm-global-spacing)',
         }}>
         <div>
           <h3>
@@ -166,8 +167,8 @@ export default function ReactQueryBuilder() {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'flex-start',
-              columnGap: 'var(--ifm-heading-margin-bottom)',
-              margin: 'var(--ifm-heading-margin-bottom) auto',
+              columnGap: 'var(--ifm-global-spacing)',
+              margin: 'var(--ifm-global-spacing) auto',
             }}>
             <div title="Reset the options above to their default values">
               <button type="button" onClick={() => setOptions({ type: 'reset' })}>
@@ -180,6 +181,7 @@ export default function ReactQueryBuilder() {
               </button>
             </div>
           </div>
+          <hr />
           <h3>
             <Link
               href={'/docs/api/export'}
@@ -215,9 +217,13 @@ export default function ReactQueryBuilder() {
               </div>
             ))}
           </div>
+          <hr />
+          <code style={{ fontSize: '8pt', marginBottom: 'var(--ifm-global-spacing)' }}>
+            react-querybuilder@{rqbVersion}
+          </code>
         </div>
-        <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
-          <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
+        <div style={{ marginBottom: 'var(--ifm-global-spacing)' }}>
+          <div style={{ marginBottom: 'var(--ifm-global-spacing)' }}>
             <QueryBuilderDnD>
               {options.independentCombinators ? (
                 <QueryBuilder

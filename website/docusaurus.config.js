@@ -126,11 +126,7 @@ const config = {
             items: [
               {
                 label: 'Kitchen Sink',
-                href: 'https://react-querybuilder.js.org/react-querybuilder/',
-              },
-              {
-                label: 'IE Compatible',
-                href: 'https://react-querybuilder.js.org/react-querybuilder/ie11.html',
+                to: '/react-querybuilder',
               },
             ],
           },
@@ -165,6 +161,10 @@ const config = {
               {
                 label: 'npm',
                 href: 'https://www.npmjs.com/package/react-querybuilder',
+              },
+              {
+                label: 'npm org',
+                href: 'https://www.npmjs.com/org/react-querybuilder',
               },
             ],
           },
