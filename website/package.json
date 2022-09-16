@@ -15,9 +15,11 @@
   "dependencies": {
     "@codesandbox/sandpack-react": "^1.7.2",
     "@docusaurus/core": "^2.1.0",
+    "@docusaurus/plugin-client-redirects": "^2.1.0",
     "@docusaurus/preset-classic": "^2.1.0",
     "@docusaurus/theme-search-algolia": "^2.1.0",
     "@mdx-js/react": "^1.6.22",
+    "@react-querybuilder/bootstrap": "next",
     "@react-querybuilder/ctx": "next",
     "@react-querybuilder/dnd": "next",
     "@react-querybuilder/ts": "next",

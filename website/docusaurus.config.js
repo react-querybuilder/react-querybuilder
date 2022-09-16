@@ -20,7 +20,22 @@ const config = {
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
 
-  plugins: ['docusaurus-plugin-sass'],
+  plugins: [
+    'docusaurus-plugin-sass',
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        fromExtensions: ['html', 'htm'], // /myPage.html -> /myPage
+        toExtensions: ['exe', 'zip'], // /myAsset -> /myAsset.zip (if latter exists)
+        redirects: [
+          {
+            from: '/demo',
+            to: '/react-querybuilder',
+          },
+        ],
+      },
+    ],
+  ],
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -88,7 +103,7 @@ const config = {
             label: 'Docs',
           },
           {
-            href: '/react-querybuilder',
+            href: 'react-querybuilder',
             label: 'Demo',
             position: 'right',
           },
@@ -102,6 +117,12 @@ const config = {
             'aria-label': 'GitHub repository',
             position: 'right',
             className: 'header-github-link',
+          },
+          {
+            href: 'discord',
+            'aria-label': 'Discord server',
+            position: 'right',
+            className: 'header-discord-link',
           },
         ],
       },

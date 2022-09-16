@@ -2124,6 +2124,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@docusaurus/plugin-client-redirects@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@docusaurus/plugin-client-redirects@npm:2.1.0"
+  dependencies:
+    "@docusaurus/core": 2.1.0
+    "@docusaurus/logger": 2.1.0
+    "@docusaurus/utils": 2.1.0
+    "@docusaurus/utils-common": 2.1.0
+    "@docusaurus/utils-validation": 2.1.0
+    eta: ^1.12.3
+    fs-extra: ^10.1.0
+    lodash: ^4.17.21
+    tslib: ^2.4.0
+  peerDependencies:
+    react: ^16.8.4 || ^17.0.0
+    react-dom: ^16.8.4 || ^17.0.0
+  checksum: 22fb5be28379b92799e596942a4cefc99aeaa036da7d2ca1895439c0470db79d25130daddfc1220d796a16137e6a4adc3e786e5d234a4c329c2be72c6c41f41e
+  languageName: node
+  linkType: hard
+
 "@docusaurus/plugin-content-blog@npm:2.1.0":
   version: 2.1.0
   resolution: "@docusaurus/plugin-content-blog@npm:2.1.0"
@@ -2758,6 +2778,20 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 217cb8aa90fb8e677672319a9a466d7752890cf4357c76df000b207696e9cc717cf2ee88080671cc9dae238a82f92093ab4f61ab2f6032d2a8db958fc7d99b5d
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/bootstrap@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "@react-querybuilder/bootstrap@npm:5.0.0-alpha.6"
+  dependencies:
+    "@react-querybuilder/ts": ^5.0.0-alpha.6
+    react-querybuilder: ^5.0.0-alpha.6
+  peerDependencies:
+    bootstrap: ">=5"
+    bootstrap-icons: ">=1.7.0"
+    react: ">=16.8.0"
+  checksum: d4e98592795ccb3e815a661def7b04f682b8ad45da8fe8150c46f558697087fc1422614a6da360912267da866db6c71a88bca9e0f5f42e7818d1141d528680ee
   languageName: node
   linkType: hard
 
@@ -9734,9 +9768,11 @@ __metadata:
     "@codesandbox/sandpack-react": ^1.7.2
     "@docusaurus/core": ^2.1.0
     "@docusaurus/module-type-aliases": ^2.1.0
+    "@docusaurus/plugin-client-redirects": ^2.1.0
     "@docusaurus/preset-classic": ^2.1.0
     "@docusaurus/theme-search-algolia": ^2.1.0
     "@mdx-js/react": ^1.6.22
+    "@react-querybuilder/bootstrap": next
     "@react-querybuilder/ctx": next
     "@react-querybuilder/dnd": next
     "@react-querybuilder/ts": next
