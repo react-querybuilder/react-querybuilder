@@ -22,6 +22,7 @@ export const defaultOptions: DemoOptions = {
   disabled: false,
   debugMode: false,
   parseNumbers: false,
+  justifiedLayout: false,
 };
 
 export const optionOrder: DemoOption[] = [
@@ -41,6 +42,7 @@ export const optionOrder: DemoOption[] = [
   'disabled',
   'debugMode',
   'parseNumbers',
+  'justifiedLayout',
 ];
 
 export const optionsMetadata: Record<
@@ -95,7 +97,7 @@ export const optionsMetadata: Record<
     link: '/docs/api/validation',
     label: 'Use validation',
     title:
-      'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+Rule" button for empty groups',
+      'The validator function(s) will be used to bold the "+Rule" button for empty groups and put a purple background on empty text fields and emtpy groups',
   },
   independentCombinators: {
     link: '/docs/api/querybuilder#independentcombinators',
@@ -131,6 +133,11 @@ export const optionsMetadata: Record<
     link: '/docs/api/export#parsing-numbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values',
+  },
+  justifiedLayout: {
+    link: '',
+    label: 'Justified layout',
+    title: 'Add custom CSS to push the clone, lock, and remove buttons to the right edge',
   },
 };
 

@@ -103,7 +103,7 @@ const config = {
             label: 'Docs',
           },
           {
-            href: 'react-querybuilder',
+            to: '/react-querybuilder',
             label: 'Demo',
             position: 'right',
           },

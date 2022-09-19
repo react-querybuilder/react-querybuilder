@@ -16,7 +16,8 @@ export type DemoOption =
   | 'enableDragAndDrop'
   | 'disabled'
   | 'debugMode'
-  | 'parseNumbers';
+  | 'parseNumbers'
+  | 'justifiedLayout';
 
 export type DemoOptions = Record<DemoOption, boolean>;
 
@@ -28,7 +29,10 @@ export type CommonRQBProps = Pick<
   | 'validator'
   | 'controlClassnames'
   | 'controlElements'
-  | Exclude<DemoOption, 'validateQuery' | 'independentCombinators' | 'parseNumbers'>
-> & { independentCombinators?: boolean };
+  | Exclude<
+      DemoOption,
+      'validateQuery' | 'independentCombinators' | 'parseNumbers' | 'justifiedLayout'
+    >
+> & { independentCombinators?: boolean; justifiedLayout?: boolean };
 
 export type HttpsURL = `${'https'}://${string}`;

@@ -1,9 +1,8 @@
-// import { useLocation } from '@docusaurus/router';
-// import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Link from '@docusaurus/Link';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { clsx } from 'clsx';
 import queryString from 'query-string';
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
   convertToIC,
@@ -30,7 +29,10 @@ import { getFormatQueryString, getOptionsFromHash, optionsReducer } from './_uti
 // TODO: show Bootstrap compatibility package
 // const QueryBuilderBootstrap = lazy(() => import('./_QueryBuilderBootstrap'));
 
-const lsKey_docsPreferredVersionDefault = 'docs-preferred-version-default';
+const infoChar = 'ⓘ';
+
+const useGetDocsPreferredVersionDefault = () =>
+  useRef(localStorage.getItem('docs-preferred-version-default')).current;
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
@@ -43,9 +45,7 @@ const permalinkText = 'Copy link';
 const permalinkCopiedText = 'Copied!';
 
 export default function Demo() {
-  // const dsCtx = useDocusaurusContext();
-  // const location = useLocation();
-  const [docsPreferredVersionDefault, setDocsPreferredVersionDefault] = useState('');
+  const docsPreferredVersionDefault = useGetDocsPreferredVersionDefault();
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
@@ -63,13 +63,6 @@ export default function Demo() {
   const [jsonLogic, setJsonLogic] = useState(initialJsonLogic);
   const [jsonLogicParseError, setJsonLogicParseError] = useState('');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
-
-  // TODO: debounce this by ~1s?
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // useEffect(() => {
-  //   const dpvd = localStorage.getItem(lsKey_docsPreferredVersionDefault);
-  //   if (dpvd && dpvd !== docsPreferredVersionDefault) setDocsPreferredVersionDefault(dpvd);
-  // });
 
   const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
 
@@ -173,6 +166,11 @@ export default function Demo() {
     [options]
   );
 
+  const qbWrapperClassName = useMemo(
+    () => clsx({ validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout }),
+    [options.justifiedLayout, options.validateQuery]
+  );
+
   return (
     <div
       style={{
@@ -186,30 +184,44 @@ export default function Demo() {
           <Link
             href={'/docs/api/querybuilder'}
             title={'Boolean props on the QueryBuilder component (click for documentation)'}
-            style={{ textDecoration: 'none' }}>
-            Options
-          </Link>
-        </h3>
-        {optionsInfo.map(({ checked, label, link, setter, title }) => (
-          <div
-            key={label}
             style={{
+              textDecoration: 'none',
               display: 'flex',
               justifyContent: 'space-between',
               flexDirection: 'row',
             }}>
-            <label>
-              <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
-              {label}
-            </label>
-            <Link
-              href={`${link}`}
-              title={`${title} (click for documentation)`}
-              style={{ textDecoration: 'none' }}>
-              ⓘ
-            </Link>
-          </div>
-        ))}
+            <span>Options</span>
+            <span>{infoChar}</span>
+          </Link>
+        </h3>
+        <div>
+          {optionsInfo.map(({ checked, label, link, setter, title }) => (
+            <div
+              key={label}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <label>
+                <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
+                {label}
+              </label>
+              {link ? (
+                <Link
+                  href={`${link}`}
+                  title={`${title} (click for documentation)`}
+                  style={{ textDecoration: 'none' }}>
+                  {infoChar}
+                </Link>
+              ) : (
+                <span title={title} style={{ cursor: 'pointer' }}>
+                  {infoChar}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
         <div
           style={{
             display: 'flex',
@@ -237,13 +249,18 @@ export default function Demo() {
             </button>
           </div>
         </div>
-        <hr />
         <h3>
           <Link
             href={'/docs/api/export'}
             title={'The export format of the formatQuery function (click for documentation)'}
-            style={{ textDecoration: 'none' }}>
-            Export
+            style={{
+              textDecoration: 'none',
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+            }}>
+            <span>Export</span>
+            <span>{infoChar}</span>
           </Link>
         </h3>
         <div
@@ -251,6 +268,7 @@ export default function Demo() {
             display: 'flex',
             justifyContent: 'space-between',
             flexDirection: 'column',
+            marginBottom: 'var(--ifm-heading-margin-bottom)',
           }}>
           {formatMap.map(([fmt, lbl, lnk]) => (
             <div
@@ -268,38 +286,48 @@ export default function Demo() {
                 href={lnk}
                 title={`formatQuery(query, "${fmt}") (click for information)`}
                 style={{ textDecoration: 'none' }}>
-                ⓘ
+                {infoChar}
               </Link>
             </div>
           ))}
         </div>
-        <hr />
         <h3>
           <Link
             href={'/docs/api/import'}
             title={
               'Use the parse* methods to set the query from SQL/JsonLogic/etc. (click for documentation)'
             }
-            style={{ textDecoration: 'none' }}>
-            Import
+            style={{
+              textDecoration: 'none',
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+            }}>
+            <span>Import</span>
+            <span>{infoChar}</span>
           </Link>
         </h3>
-        <button type="button" onClick={() => setIsSQLInputVisible(true)}>
-          Import SQL
-        </button>
-        <button type="button" onClick={() => setIsCELInputVisible(true)}>
-          Import CEL
-        </button>
-        <button type="button" onClick={() => setIsJsonLogicInputVisible(true)}>
-          Import JsonLogic
-        </button>
-        <hr />
-        <code style={{ fontSize: '8pt', marginBottom: 'var(--ifm-global-spacing)' }}>
-          react-querybuilder@{rqbVersion}
-        </code>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
+          <button type="button" onClick={() => setIsSQLInputVisible(true)}>
+            Import SQL
+          </button>
+          <button type="button" onClick={() => setIsCELInputVisible(true)}>
+            Import CEL
+          </button>
+          <button type="button" onClick={() => setIsJsonLogicInputVisible(true)}>
+            Import JsonLogic
+          </button>
+          <div>
+            <code style={{ fontSize: '8pt', marginBottom: 'var(--ifm-global-spacing)' }}>
+              react-querybuilder@{rqbVersion}
+            </code>
+          </div>
+        </div>
       </div>
-      <div style={{ marginBottom: 'var(--ifm-global-spacing)' }}>
-        <div style={{ marginBottom: 'var(--ifm-global-spacing)' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
+        <div className={qbWrapperClassName}>
           <QueryBuilderDnD>
             {options.independentCombinators ? (
               <QueryBuilder
@@ -320,7 +348,6 @@ export default function Demo() {
             )}
           </QueryBuilderDnD>
         </div>
-        <hr />
         <pre style={{ whiteSpace: 'pre-wrap' }}>{formatString}</pre>
       </div>
     </div>

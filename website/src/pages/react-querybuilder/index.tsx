@@ -1,12 +1,18 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import React from 'react';
-import Demo from './_Demo';
+import './demo.scss';
 
 export default function ReactQueryBuilderDemo() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<div>Loading...</div>}>{() => <Demo />}</BrowserOnly>
+      <BrowserOnly fallback={<div>Loading...</div>}>
+        {() => {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const Demo = require('./_Demo').default;
+          return <Demo />;
+        }}
+      </BrowserOnly>
     </Layout>
   );
 }
