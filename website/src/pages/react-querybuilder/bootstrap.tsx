@@ -15,7 +15,7 @@ export default function ReactQueryBuilderDemo() {
           const Demo: typeof import('./_Demo').default = require('./_Demo').default;
           return (
             <QueryBuilderBootstrap>
-              <Demo variant="bootstrap" variantClassName="rqb-bootstrap" />
+              <Demo variant="bootstrap" />
             </QueryBuilderBootstrap>
           );
         }}

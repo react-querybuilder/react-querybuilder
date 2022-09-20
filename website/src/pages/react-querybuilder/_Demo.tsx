@@ -49,10 +49,9 @@ const permalinkCopiedText = 'Copied!';
 
 interface DemoProps {
   variant?: StyleName;
-  variantClassName?: string;
 }
 
-export default function Demo({ variant = 'default', variantClassName = '' }: DemoProps) {
+export default function Demo({ variant = 'default' }: DemoProps) {
   const docsPreferredVersionDefault = useGetDocsPreferredVersionDefault();
   const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
@@ -201,9 +200,9 @@ export default function Demo({ variant = 'default', variantClassName = '' }: Dem
     () =>
       clsx(
         { validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout },
-        variantClassName
+        variant === 'default' ? '' : `rqb-${variant}`
       ),
-    [options.justifiedLayout, options.validateQuery, variantClassName]
+    [options.justifiedLayout, options.validateQuery, variant]
   );
 
   return (

@@ -14,7 +14,7 @@ export default function ReactQueryBuilderDemo() {
           const Demo: typeof import('./_Demo').default = require('./_Demo').default;
           return (
             <QueryBuilderBulma>
-              <Demo variant="bulma" variantClassName="rqb-bulma" />
+              <Demo variant="bulma" />
             </QueryBuilderBulma>
           );
         }}

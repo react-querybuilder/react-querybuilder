@@ -1,6 +1,5 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { extendTheme } from '@chakra-ui/react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
 import React from 'react';
 import './demo.scss';
@@ -15,12 +14,19 @@ export default function ReactQueryBuilderDemo() {
     <Layout description="React Query Builder Demo">
       <BrowserOnly fallback={<div>Loading...</div>}>
         {() => {
+          const { ChakraProvider } =
+            // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
+            require('@chakra-ui/react') as typeof import('@chakra-ui/react');
+          const { QueryBuilderChakra } =
+            // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
+            require('@react-querybuilder/chakra') as typeof import('@react-querybuilder/chakra');
           // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
-          const Demo: typeof import('./_Demo').default = require('./_Demo').default;
+          const Demo = (require('./_Demo') as typeof import('./_Demo')).default;
+
           return (
             <ChakraProvider theme={chakraTheme}>
               <QueryBuilderChakra>
-                <Demo variant="chakra" variantClassName="rqb-chakra" />
+                <Demo variant="chakra" />
               </QueryBuilderChakra>
             </ChakraProvider>
           );
