@@ -2795,6 +2795,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-querybuilder/bulma@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "@react-querybuilder/bulma@npm:5.0.0-alpha.6"
+  dependencies:
+    "@react-querybuilder/ts": ^5.0.0-alpha.6
+    react-querybuilder: ^5.0.0-alpha.6
+  peerDependencies:
+    bulma: ^0.9.3
+    react: ">=16.8.0"
+  checksum: 7e41204a587ca4a6e0733146cd537b40da33178fc7a24b727c45cf4f592202b01ac2986923fea9133c8fdc7ff9af2036aa1c0f3d34e0d6d68260db91e0525533
+  languageName: node
+  linkType: hard
+
 "@react-querybuilder/ctx@npm:^5.0.0-alpha.6, @react-querybuilder/ctx@npm:next":
   version: 5.0.0-alpha.6
   resolution: "@react-querybuilder/ctx@npm:5.0.0-alpha.6"
@@ -3232,6 +3245,13 @@ __metadata:
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
   checksum: aa04366b9103b7d6cfd6b2ef64182e0eaa7d4462c3f817618486ea0422984c51fc69fd0d436eae6c9e696ddfdbec9ccaa27a917f7c2e8c75c5d57827fe3d95e8
+  languageName: node
+  linkType: hard
+
+"@types/pako@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@types/pako@npm:2.0.0"
+  checksum: 50240a036b5e6acabbf36ac4dca93ec9e619241f0404da8d401cdb427bec3029833324b8a04c4b1ae2ecbc33422fdec31dbf9f43653d9d07cafb82ace78dfccd
   languageName: node
   linkType: hard
 
@@ -3995,6 +4015,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base64-js@npm:^1.3.1":
+  version: 1.5.1
+  resolution: "base64-js@npm:1.5.1"
+  checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
+  languageName: node
+  linkType: hard
+
 "batch@npm:0.6.1":
   version: 0.6.1
   resolution: "batch@npm:0.6.1"
@@ -4059,6 +4086,22 @@ __metadata:
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
   checksum: 3e25c80ef626c3a3487c73dbfc70ac322ec830666c9ad915d11b701142fab25ec1e63eff2c450c74347acfd2de854ccde865cd79ef4db1683f7c7b046ea43bb0
+  languageName: node
+  linkType: hard
+
+"bootstrap-icons@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "bootstrap-icons@npm:1.9.1"
+  checksum: b388264719b5d2526809df509b83aa7e696d467f3b976d79faefb6fc7f07cee5427a894331af90b00b1ceb8d28a99fc398f1ca0553afaa53eb77a7749bb73ea5
+  languageName: node
+  linkType: hard
+
+"bootstrap@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "bootstrap@npm:5.2.1"
+  peerDependencies:
+    "@popperjs/core": ^2.11.6
+  checksum: f7d733ae5d27177d813adb2ac2158f08069a558d8f664b3db8857aba0ab07423d83b4276dba6123dde52309e707bb06ec13e040fb905eaa293c53453110bb802
   languageName: node
   linkType: hard
 
@@ -4140,6 +4183,16 @@ __metadata:
   version: 1.1.2
   resolution: "buffer-from@npm:1.1.2"
   checksum: 0448524a562b37d4d7ed9efd91685a5b77a50672c556ea254ac9a6d30e3403a517d8981f10e565db24e8339413b43c97ca2951f10e399c6125a0d8911f5679bb
+  languageName: node
+  linkType: hard
+
+"buffer@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "buffer@npm:6.0.3"
+  dependencies:
+    base64-js: ^1.3.1
+    ieee754: ^1.2.1
+  checksum: 5ad23293d9a731e4318e420025800b42bf0d264004c0286c8cc010af7a270c7a0f6522e84f54b9ad65cbd6db20b8badbfd8d2ebf4f80fa03dab093b89e68c3f9
   languageName: node
   linkType: hard
 
@@ -6687,6 +6740,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ieee754@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "ieee754@npm:1.2.1"
+  checksum: 5144c0c9815e54ada181d80a0b810221a253562422e7c6c3a60b1901154184f49326ec239d618c416c1c5945a2e197107aee8d986a3dd836b53dffefd99b5e7e
+  languageName: node
+  linkType: hard
+
 "ignore@npm:^5.2.0":
   version: 5.2.0
   resolution: "ignore@npm:5.2.0"
@@ -8233,6 +8293,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pako@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "pako@npm:2.0.4"
+  checksum: 82b9b0b99dd830c9103856a6dbd10f0cb2c8c32b9768184727ea381a99666de9a47a069d2e6efe6acf09336f363956b50835c196ef9311b34b7274d420eb0d88
+  languageName: node
+  linkType: hard
+
 "param-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
@@ -9773,14 +9840,20 @@ __metadata:
     "@docusaurus/theme-search-algolia": ^2.1.0
     "@mdx-js/react": ^1.6.22
     "@react-querybuilder/bootstrap": next
+    "@react-querybuilder/bulma": next
     "@react-querybuilder/ctx": next
     "@react-querybuilder/dnd": next
     "@react-querybuilder/ts": next
     "@svgr/webpack": ^6.3.1
     "@tsconfig/docusaurus": ^1.0.6
+    "@types/pako": ^2.0.0
+    bootstrap: ^5.2.1
+    bootstrap-icons: ^1.9.1
+    buffer: ^6.0.3
     clsx: ^1.2.1
     docusaurus-plugin-sass: ^0.2.2
     file-loader: ^6.2.0
+    pako: ^2.0.4
     prism-react-renderer: ^1.3.5
     query-string: ^7.1.1
     react: ^18.2.0

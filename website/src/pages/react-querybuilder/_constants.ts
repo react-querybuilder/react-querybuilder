@@ -1,7 +1,7 @@
 import type { ExportFormat, Field, RuleGroupType, RuleType } from 'react-querybuilder';
-import { convertToIC, defaultOperators } from 'react-querybuilder';
+import { convertToIC, defaultOperators, objectKeys } from 'react-querybuilder';
 import { musicalInstruments } from './_musicalInstruments';
-import type { DemoOption, DemoOptions, HttpsURL } from './_types';
+import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './_types';
 
 export const validator = (r: RuleType) => !!r.value;
 
@@ -293,3 +293,16 @@ export const formatMap: [ExportFormat, string, HttpsURL][] = [
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
 ];
+
+export const styleNameMap: Record<StyleName, string> = {
+  default: 'Default',
+  bootstrap: 'Bootstrap',
+  material: 'MUI/Material',
+  antd: 'Ant Design',
+  chakra: 'Chakra UI',
+  bulma: 'Bulma',
+};
+
+const { default: _d, ...compatStyles } = styleNameMap;
+
+export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];

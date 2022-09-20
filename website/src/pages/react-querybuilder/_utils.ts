@@ -1,7 +1,9 @@
+import { Buffer } from 'buffer';
+import pako from 'pako';
 import type { FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './_constants';
-import type { DemoOption, DemoOptions, DemoOptionsHash } from './_types';
+import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState } from './_types';
 
 type OptionsAction =
   | { type: 'all' }
@@ -18,8 +20,25 @@ type OptionsAction =
       payload: DemoOptions;
     };
 
-export const getOptionsFromHash = (hash: DemoOptionsHash): Partial<DemoOptions> =>
-  Object.fromEntries(Object.entries(hash).map(([opt, val]) => [opt, val === 'true']));
+export const getHashFromState = (s: DemoState) =>
+  Buffer.from(pako.deflate(JSON.stringify(s))).toString('base64');
+
+export const unzip = (b64string: string) => {
+  const buff = Buffer.from(b64string, 'base64');
+  const result = pako.inflate(buff, { to: 'string' });
+  return JSON.parse(result);
+};
+
+export const getStateFromHash = ({ s, ...hash }: DemoOptionsHash): DemoState => {
+  let state: DemoState | null = null;
+  if (s) {
+    state = unzip(s);
+  }
+  const hashOptions = Object.fromEntries(
+    Object.entries(hash).map(([opt, val]) => [opt, val === 'true'])
+  );
+  return { ...state, options: { ...state?.options, ...hashOptions } };
+};
 
 export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoOptions => {
   if (action.type === 'reset') {

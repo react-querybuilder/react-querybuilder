@@ -1,4 +1,5 @@
 import Link from '@docusaurus/Link';
+import { useLocation } from '@docusaurus/router';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
@@ -18,34 +19,42 @@ import {
   defaultOptions,
   fields,
   formatMap,
-  initialQuery,
-  initialQueryIC,
+  initialQuery as defaultInitialQuery,
+  initialQueryIC as defaultInitialQueryIC,
   optionOrder,
   optionsMetadata,
+  styleNameArray,
+  styleNameMap,
 } from './_constants';
-import type { CommonRQBProps } from './_types';
-import { getFormatQueryString, getOptionsFromHash, optionsReducer } from './_utils';
-
-// TODO: show Bootstrap compatibility package
-// const QueryBuilderBootstrap = lazy(() => import('./_QueryBuilderBootstrap'));
+import type { CommonRQBProps, StyleName } from './_types';
+import { getFormatQueryString, getHashFromState, getStateFromHash, optionsReducer } from './_utils';
 
 const infoChar = 'ⓘ';
 
 const useGetDocsPreferredVersionDefault = () =>
   useRef(localStorage.getItem('docs-preferred-version-default')).current;
 
+// Initialize options from URL hash
+const initialStateFromHash = getStateFromHash(queryString.parse(location.hash));
+const initialOptionsFromHash = initialStateFromHash.options;
+const initialQuery = initialStateFromHash.query ?? defaultInitialQuery;
+const initialQueryIC = initialStateFromHash.queryIC ?? defaultInitialQueryIC;
+
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
-// Initialize options from URL hash
-const initialOptionsFromHash = getOptionsFromHash(queryString.parse(location.hash));
-
 const permalinkText = 'Copy link';
 const permalinkCopiedText = 'Copied!';
 
-export default function Demo() {
+interface DemoProps {
+  variant?: StyleName;
+  variantClassName?: string;
+}
+
+export default function Demo({ variant = 'default', variantClassName = '' }: DemoProps) {
   const docsPreferredVersionDefault = useGetDocsPreferredVersionDefault();
+  const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
@@ -67,14 +76,20 @@ export default function Demo() {
   const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
 
   const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
-    const optionsFromHash = getOptionsFromHash(
+    const stateFromHash = getStateFromHash(
       queryString.parse(
         queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
       )
     );
-    const payload = { ...defaultOptions, ...optionsFromHash };
-
+    const payload = { ...defaultOptions, ...stateFromHash.options };
     setOptions({ type: 'replace', payload });
+    if (stateFromHash.query) {
+      setQuery(stateFromHash.query);
+    }
+    if (stateFromHash.queryIC) {
+      setQueryIC(stateFromHash.queryIC);
+    }
+    // TODO: handle `style`
   }, []);
 
   useEffect(() => {
@@ -110,7 +125,7 @@ export default function Demo() {
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
 
-  const loadFromSQL = useCallback(() => {
+  const loadFromSQL = () => {
     try {
       const q = parseSQL(sql);
       const qIC = parseSQL(sql, { independentCombinators: true });
@@ -121,8 +136,8 @@ export default function Demo() {
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
-  }, [sql]);
-  const loadFromCEL = useCallback(() => {
+  };
+  const loadFromCEL = () => {
     try {
       const q = parseCEL(cel);
       const qIC = parseCEL(cel, { independentCombinators: true });
@@ -133,8 +148,8 @@ export default function Demo() {
     } catch (err) {
       setCELParseError((err as Error).message);
     }
-  }, [cel]);
-  const loadFromJsonLogic = useCallback(() => {
+  };
+  const loadFromJsonLogic = () => {
     try {
       const q = parseJsonLogic(jsonLogic);
       const qIC = convertToIC(q);
@@ -145,11 +160,27 @@ export default function Demo() {
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
     }
-  }, [jsonLogic]);
+  };
+
+  const _getPermalinkUncompressed = () =>
+    `${location.origin}${siteLocation.pathname}${permalinkHash}`;
+
+  const getCompressedState = () =>
+    encodeURIComponent(
+      getHashFromState({
+        query,
+        queryIC,
+        options,
+        style: variant,
+      })
+    );
+
+  const getPermalinkCompressed = () =>
+    `${location.origin}${siteLocation.pathname}#s=${getCompressedState()}`;
 
   const onClickCopyPermalink = async () => {
     try {
-      await navigator.clipboard.writeText(`${location.origin}${location.pathname}${permalinkHash}`);
+      await navigator.clipboard.writeText(getPermalinkCompressed());
       setCopyPermalinkText(permalinkCopiedText);
     } catch (e) {
       console.error('Clipboard error', e);
@@ -167,8 +198,12 @@ export default function Demo() {
   );
 
   const qbWrapperClassName = useMemo(
-    () => clsx({ validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout }),
-    [options.justifiedLayout, options.validateQuery]
+    () =>
+      clsx(
+        { validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout },
+        variantClassName
+      ),
+    [options.justifiedLayout, options.validateQuery, variantClassName]
   );
 
   return (
@@ -327,6 +362,27 @@ export default function Demo() {
       </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            columnGap: 'var(--ifm-global-spacing)',
+          }}>
+          <strong>Compatibility:</strong>
+          {styleNameArray.map(s => {
+            if (variant === s) return <span key={s}>{styleNameMap[s]}</span>;
+
+            const link = `${siteLocation.pathname.replace(RegExp(`\\/${variant}$`), '')}${
+              s === 'default' ? '' : `/${s}`
+            }#s=${getCompressedState()}`;
+
+            return (
+              <a key={s} href={link}>
+                {styleNameMap[s]}
+              </a>
+            );
+          })}
+        </div>
         <div className={qbWrapperClassName}>
           <QueryBuilderDnD>
             {options.independentCombinators ? (

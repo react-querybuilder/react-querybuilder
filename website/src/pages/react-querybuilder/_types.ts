@@ -1,4 +1,4 @@
-import type { QueryBuilderProps } from 'react-querybuilder';
+import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
@@ -21,7 +21,7 @@ export type DemoOption =
 
 export type DemoOptions = Record<DemoOption, boolean>;
 
-export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>>;
+export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>> & { s?: string };
 
 export type CommonRQBProps = Pick<
   QueryBuilderProps,
@@ -36,3 +36,12 @@ export type CommonRQBProps = Pick<
 > & { independentCombinators?: boolean; justifiedLayout?: boolean };
 
 export type HttpsURL = `${'https'}://${string}`;
+
+export type StyleName = 'default' | 'antd' | 'bootstrap' | 'bulma' | 'chakra' | 'material';
+
+export interface DemoState {
+  options: Partial<DemoOptions>;
+  style?: StyleName;
+  query?: RuleGroupType;
+  queryIC?: RuleGroupTypeIC;
+}
