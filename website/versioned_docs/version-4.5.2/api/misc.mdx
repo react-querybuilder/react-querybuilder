@@ -20,7 +20,7 @@ function defaultValidator(query: RuleGroupTypeAny): {
 
 Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`query.rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`).
 
-You can see an example of the default validator in action in the [demo](https://react-querybuilder.js.org/react-querybuilder/) if you check the ["Use validation" option](/react-querybuilder/#validateQuery=true). Empty groups will have bold text on their "+Rule" button and a description of the situation where the rules normally appear.
+You can see an example of the default validator in action in the [demo](https://react-querybuilder.js.org/react-querybuilder) if you check the ["Use validation" option](/react-querybuilder#validateQuery=true). Empty groups will have bold text on their "+Rule" button and a description of the situation where the rules normally appear.
 
 ### `findPath`
 
