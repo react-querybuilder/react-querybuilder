@@ -368,16 +368,16 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   }, [fields, getDefaultField, getRuleDefaultOperator, getRuleDefaultValue, getValueSourcesMain]);
 
   const createRuleGroup = useCallback((): RG => {
-    // TODO: figure out how to avoid `as any` here
+    // TODO: figure out how to avoid `@ts-expect-error` here
     if (independentCombinators) {
-      // @ts-expect-error TS can't tell that RG is RuleGroupTypeIC
+      // @ts-expect-error TS can't tell that RG means RuleGroupTypeIC
       return {
         id: `g-${generateID()}`,
         rules: addRuleToNewGroups ? [createRule()] : [],
         not: false,
       };
     }
-    // @ts-expect-error TS can't tell that RG is RuleGroupType
+    // @ts-expect-error TS can't tell that RG means RuleGroupType
     return {
       id: `g-${generateID()}`,
       rules: addRuleToNewGroups ? [createRule()] : [],
