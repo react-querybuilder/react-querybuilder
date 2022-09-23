@@ -71,12 +71,10 @@ for (const exampleID in configs) {
   // #endregion
 
   // #region src/index.tsx
-  const processedTemplateIndexTSX = templateIndexTSX
-    .replace(/styles\.scss/g, exampleConfig.compileToJS ? 'styles.css' : '$&')
-    .replace(
-      /import +(\{(.*?)\} +from +['"]react['"])/g,
-      exampleConfig.compileToJS ? 'import React, $1' : '$&'
-    );
+  const processedTemplateIndexTSX = templateIndexTSX.replace(
+    /styles\.scss/g,
+    exampleConfig.compileToJS ? 'styles.css' : '$&'
+  );
   const exampleIndexSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
     : processedTemplateIndexTSX;
@@ -171,7 +169,13 @@ for (const exampleID in configs) {
       plugins: ['prettier-plugin-organize-imports'],
     };
     if (!prettier.check(fileContents, prettierOptions)) {
-      const prettified = prettier.format(fileContents, prettierOptions);
+      let prettified = prettier.format(fileContents, prettierOptions);
+      if (exampleConfig.compileToJS) {
+        prettified = prettified.replace(
+          /^import +(\{(.*?)\} +from +['"]react['"])/g,
+          'import React, $1'
+        );
+      }
       await writeFile(filepath, prettified);
     }
   }
