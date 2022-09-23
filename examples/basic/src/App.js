@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
-import './styles.scss';
+import './styles.css';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -9,7 +9,10 @@ const fields = [
 
 const initialQuery = {
   combinator: 'and',
-  rules: [],
+  rules: [
+    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+    { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
+  ],
 };
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -23,7 +26,7 @@ export const App = () => {
       />
       <h4>Query</h4>
       <pre>
-        <code>{formatQuery(query, 'json')}</code>
+        <code>{formatQuery(query, 'json_without_ids')}</code>
       </pre>
     </div>
   );

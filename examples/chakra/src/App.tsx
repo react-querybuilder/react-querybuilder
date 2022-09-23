@@ -16,7 +16,10 @@ const fields: Field[] = [
 
 const initialQuery: RuleGroupType = {
   combinator: 'and',
-  rules: [],
+  rules: [
+    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+    { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
+  ],
 };
 
 export const App = () => {
@@ -35,7 +38,7 @@ export const App = () => {
       </ChakraProvider>
       <h4>Query</h4>
       <pre>
-        <code>{formatQuery(query, 'json')}</code>
+        <code>{formatQuery(query, 'json_without_ids')}</code>
       </pre>
     </div>
   );

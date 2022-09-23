@@ -15,6 +15,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootPrettierConfig = await prettier.resolveConfig(__filename);
 
+/** @type {(code: string, fileName: string) => Promise<string>} */
+const compileToJS = async (code, fileName) =>
+  (
+    await transformWithEsbuild(code, fileName, {
+      minify: false,
+      minifyWhitespace: false,
+      jsx: 'preserve',
+    })
+  ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1');
+
 const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
 const templatePublic = pathJoin(templatePath, 'public');
@@ -62,11 +72,17 @@ for (const exampleID in configs) {
 
   // #region src/index.tsx
   const processedTemplateIndexTSX = templateIndexTSX
-    .replace(/(!)/g, exampleConfig.compileToJS ? '' : '$1')
-    .replace(/((styles\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
+    .replace(/styles\.scss/g, exampleConfig.compileToJS ? 'styles.css' : '$&')
+    .replace(
+      /import +(\{(.*?)\} +from +['"]react['"])/g,
+      exampleConfig.compileToJS ? 'import React, $1' : '$&'
+    );
+  const exampleIndexSourceCode = exampleConfig.compileToJS
+    ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
+    : processedTemplateIndexTSX;
   await writeFile(
-    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
-    processedTemplateIndexTSX
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    exampleIndexSourceCode
   );
   // #endregion
 
@@ -76,19 +92,14 @@ for (const exampleID in configs) {
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
     .replace('{/* __WRAPPER_OPEN__ */}', exampleConfig.wrapper?.[0] ?? '')
     .replace('{/* __WRAPPER_CLOSE__ */}', exampleConfig.wrapper?.[1] ?? '')
-    .replace('// __RQB_PROPS__', exampleConfig.props.join('\n'));
-  const sourceCode = exampleConfig.compileToJS
-    ? (
-        await transformWithEsbuild(processedTemplateAppTSX, 'App.tsx', {
-          minify: false,
-          minifyWhitespace: false,
-          jsx: 'preserve',
-        })
-      ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1')
+    .replace('// __RQB_PROPS__', exampleConfig.props.join('\n'))
+    .replace(/styles\.scss/g, exampleConfig.compileToJS ? 'styles.css' : '$&');
+  const exampleAppSourceCode = exampleConfig.compileToJS
+    ? await compileToJS(processedTemplateAppTSX, 'App.tsx')
     : processedTemplateAppTSX;
   await writeFile(
-    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
-    sourceCode
+    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    exampleAppSourceCode
   );
   // #endregion
 
@@ -133,8 +144,13 @@ for (const exampleID in configs) {
 
   // #region README.md
   const exampleREADMEmd =
-    templateREADMEmd.replace('/examples/_template', `/examples/${exampleID}`) +
-    '\n\n> _Development note: Do not modify these files directly. Edit corresponding files in the ' +
+    `## ${exampleTitle}` +
+    '\n\n' +
+    templateREADMEmd
+      .replace(/\/examples\/_template/g, `/examples/${exampleID}`)
+      .replace(/App.tsx/g, exampleConfig.compileToJS ? 'App.js' : '$&') +
+    '\n\n' +
+    '> _Development note: Do not modify these files directly. Edit corresponding files in the ' +
     '[_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), then run ' +
     '`yarn generate-examples` from the repository root directory._';
   await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
