@@ -23,16 +23,14 @@ import {
   initialQueryIC as defaultInitialQueryIC,
   optionOrder,
   optionsMetadata,
-  styleNameArray,
-  styleNameMap,
 } from './_constants';
+import StyleLinks from './_StyleLinks';
 import type { CommonRQBProps, StyleName } from './_types';
 import { getFormatQueryString, getHashFromState, getStateFromHash, optionsReducer } from './_utils';
 
 const infoChar = 'ⓘ';
 
-const useGetDocsPreferredVersionDefault = () =>
-  useRef(localStorage.getItem('docs-preferred-version-default')).current;
+const getDocsPreferredVersionDefault = () => localStorage.getItem('docs-preferred-version-default');
 
 // Initialize options from URL hash
 const initialStateFromHash = getStateFromHash(queryString.parse(location.hash));
@@ -52,7 +50,7 @@ interface DemoProps {
 }
 
 export default function Demo({ variant = 'default' }: DemoProps) {
-  const docsPreferredVersionDefault = useGetDocsPreferredVersionDefault();
+  const docsPreferredVersionDefault = useRef(getDocsPreferredVersionDefault());
   const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
@@ -196,6 +194,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
     [options]
   );
 
+  const qbWrapperId = `rqb-${variant}`;
   const qbWrapperClassName = useMemo(
     () =>
       clsx(
@@ -361,28 +360,8 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            columnGap: 'var(--ifm-global-spacing)',
-          }}>
-          <strong>Compatibility:</strong>
-          {styleNameArray.map(s => {
-            if (variant === s) return <span key={s}>{styleNameMap[s]}</span>;
-
-            const link = `${siteLocation.pathname.replace(RegExp(`\\/${variant}$`), '')}${
-              s === 'default' ? '' : `/${s}`
-            }#s=${getCompressedState()}`;
-
-            return (
-              <a key={s} href={link}>
-                {styleNameMap[s]}
-              </a>
-            );
-          })}
-        </div>
-        <div className={qbWrapperClassName}>
+        <StyleLinks variant={variant} compressedState={getCompressedState()} />
+        <div id={qbWrapperId} className={qbWrapperClassName}>
           <QueryBuilderDnD>
             {options.independentCombinators ? (
               <QueryBuilder

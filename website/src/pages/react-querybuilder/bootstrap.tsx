@@ -6,9 +6,9 @@ import React from 'react';
 import './demo.scss';
 import './rqb-bootstrap.scss';
 
-export default function ReactQueryBuilderDemo() {
+export default function ReactQueryBuilderDemo_Bootstrap() {
   return (
-    <Layout description="React Query Builder Demo">
+    <Layout description="React Query Builder Bootstrap Demo">
       <BrowserOnly fallback={<div>Loading...</div>}>
         {() => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports

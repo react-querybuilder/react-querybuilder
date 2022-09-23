@@ -5,9 +5,9 @@ import React from 'react';
 import './demo.scss';
 import './rqb-bulma.scss';
 
-export default function ReactQueryBuilderDemo() {
+export default function ReactQueryBuilderDemo_Bulma() {
   return (
-    <Layout description="React Query Builder Demo">
+    <Layout description="React Query Builder Bulma Demo">
       <BrowserOnly fallback={<div>Loading...</div>}>
         {() => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
