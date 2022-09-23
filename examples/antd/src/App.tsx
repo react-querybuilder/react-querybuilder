@@ -31,7 +31,7 @@ export const App = () => {
       </QueryBuilderAntD>
       <h4>Query</h4>
       <pre>
-        <code>{formatQuery(query, 'json_without_ids')}</code>
+        <code>{formatQuery(query, 'json')}</code>
       </pre>
     </div>
   );
