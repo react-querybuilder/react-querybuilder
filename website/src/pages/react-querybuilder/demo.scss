@@ -63,7 +63,13 @@ html[data-theme='dark'] {
     .rule-operators + button.rule-remove,
     .rule-value + button.rule-cloneRule,
     .rule-value + button.rule-lock,
-    .rule-value + button.rule-remove {
+    .rule-value + button.rule-remove,
+    .control + button.rule-cloneRule,
+    .control + button.rule-lock,
+    .control + button.rule-remove,
+    .chakra-select__wrapper + button.rule-cloneRule,
+    .chakra-select__wrapper + button.rule-lock,
+    .chakra-select__wrapper + button.rule-remove {
       margin-left: auto;
     }
   }
