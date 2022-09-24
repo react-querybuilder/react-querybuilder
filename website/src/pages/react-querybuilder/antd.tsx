@@ -3,7 +3,7 @@ import { QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
 import './demo.scss';
-import './rqb-antd.scss';
+import './rqb-antd.less';
 
 function ReactQueryBuilderDemo_AntdBrowser() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
