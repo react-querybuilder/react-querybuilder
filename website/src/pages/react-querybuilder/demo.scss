@@ -1,5 +1,9 @@
 @use 'sass:color';
 
+.svg-font-color svg > path {
+  fill: var(--ifm-font-color-base);
+}
+
 .queryBuilder {
   min-width: 420px;
 }

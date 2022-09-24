@@ -376,6 +376,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
               href={`https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/${
                 variant === 'default' ? 'basic-ts' : variant
               }?file=/src/App.tsx`}
+              className="svg-font-color"
               target="_blank"
               rel="noreferrer"
               style={{ minWidth: '1rem' }}>
@@ -385,6 +386,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
               href={`https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/${
                 variant === 'default' ? 'basic-ts' : variant
               }?file=src/App.tsx`}
+              className="svg-font-color"
               target="_blank"
               rel="noreferrer"
               style={{ minWidth: '1rem' }}>
