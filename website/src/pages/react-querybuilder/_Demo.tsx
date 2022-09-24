@@ -21,12 +21,10 @@ import {
   formatMap,
   initialQuery as defaultInitialQuery,
   initialQueryIC as defaultInitialQueryIC,
-  optionOrder,
+  optionOrderByLabel,
   optionsMetadata,
 } from './_constants';
-import CodeSandBoxLogo from './_Logo-CodeSandbox';
-import StackBlitzLogo from './_Logo-StackBlitz';
-import StyleLinks from './_StyleLinks';
+import Nav from './_Nav';
 import type { CommonRQBProps, StyleName } from './_types';
 import { getFormatQueryString, getHashFromState, getStateFromHash, optionsReducer } from './_utils';
 
@@ -100,7 +98,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
 
   const optionsInfo = useMemo(
     () =>
-      optionOrder.map(opt => ({
+      optionOrderByLabel.map(opt => ({
         ...optionsMetadata[opt],
         default: defaultOptions[opt],
         checked: options[opt],
@@ -270,7 +268,8 @@ export default function Demo({ variant = 'default' }: DemoProps) {
               Reset
             </button>
           </div>
-          <div title={`Enable all features except "${optionsMetadata.disabled.label}"`}>
+          <div
+            title={`Enable all features except "${optionsMetadata.disabled.label}" and "${optionsMetadata.independentCombinators.label}"`}>
             <button type="button" onClick={() => setOptions({ type: 'all' })}>
               Select all
             </button>
@@ -362,39 +361,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', gap: 'var(--ifm-global-spacing)' }}>
-            {variant !== 'default' && (
-              <a
-                href={`https://www.npmjs.com/package/@react-querybuilder/${variant}`}
-                target="_blank"
-                rel="noreferrer">
-                @react-querybuilder/{variant}
-              </a>
-            )}
-            <a
-              href={`https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/${
-                variant === 'default' ? 'basic-ts' : variant
-              }?file=/src/App.tsx`}
-              className="svg-font-color"
-              target="_blank"
-              rel="noreferrer"
-              style={{ minWidth: '1rem' }}>
-              <CodeSandBoxLogo />
-            </a>
-            <a
-              href={`https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/${
-                variant === 'default' ? 'basic-ts' : variant
-              }?file=src/App.tsx`}
-              className="svg-font-color"
-              target="_blank"
-              rel="noreferrer"
-              style={{ minWidth: '1rem' }}>
-              <StackBlitzLogo />
-            </a>
-          </div>
-          <StyleLinks variant={variant} compressedState={getCompressedState()} />
-        </div>
+        <Nav variant={variant} compressedState={getCompressedState()} />
         <div id={qbWrapperId} className={qbWrapperClassName}>
           <QueryBuilderDnD>
             {options.independentCombinators ? (

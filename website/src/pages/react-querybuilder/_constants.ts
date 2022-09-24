@@ -141,6 +141,10 @@ export const optionsMetadata: Record<
   },
 };
 
+export const optionOrderByLabel = optionOrder.sort((a, b) =>
+  optionsMetadata[a].label.localeCompare(optionsMetadata[b].label)
+);
+
 export const fields: Field[] = [
   {
     name: 'firstName',
