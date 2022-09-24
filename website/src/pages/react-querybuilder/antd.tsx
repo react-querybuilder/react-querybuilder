@@ -4,6 +4,7 @@ import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import './demo.scss';
+import './rqb-antd-dark.less';
 import './rqb-antd.less';
 
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
