@@ -24,6 +24,8 @@ import {
   optionOrder,
   optionsMetadata,
 } from './_constants';
+import CodeSandBoxLogo from './_Logo-CodeSandbox';
+import StackBlitzLogo from './_Logo-StackBlitz';
 import StyleLinks from './_StyleLinks';
 import type { CommonRQBProps, StyleName } from './_types';
 import { getFormatQueryString, getHashFromState, getStateFromHash, optionsReducer } from './_utils';
@@ -360,7 +362,37 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
-        <StyleLinks variant={variant} compressedState={getCompressedState()} />
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: 'var(--ifm-global-spacing)' }}>
+            {variant !== 'default' && (
+              <a
+                href={`https://www.npmjs.com/package/@react-querybuilder/${variant}`}
+                target="_blank"
+                rel="noreferrer">
+                @react-querybuilder/{variant}
+              </a>
+            )}
+            <a
+              href={`https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/${
+                variant === 'default' ? 'basic-ts' : variant
+              }?file=/src/App.tsx`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ minWidth: '1rem' }}>
+              <CodeSandBoxLogo />
+            </a>
+            <a
+              href={`https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/${
+                variant === 'default' ? 'basic-ts' : variant
+              }?file=src/App.tsx`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ minWidth: '1rem' }}>
+              <StackBlitzLogo />
+            </a>
+          </div>
+          <StyleLinks variant={variant} compressedState={getCompressedState()} />
+        </div>
         <div id={qbWrapperId} className={qbWrapperClassName}>
           <QueryBuilderDnD>
             {options.independentCombinators ? (

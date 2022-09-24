@@ -11,6 +11,11 @@ export default function ReactQueryBuilderDemo_Material() {
           <StyleLinks variant="material" />
         </div>
         <div>🚧 Under construction 🚧</div>
+        <div>
+          <a href="https://www.npmjs.com/package/@react-querybuilder/material">
+            @react-querybuilder/material
+          </a>
+        </div>
       </div>
     </Layout>
   );
