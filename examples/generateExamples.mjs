@@ -148,9 +148,9 @@ for (const exampleID in configs) {
       .replace(/\/examples\/_template/g, `/examples/${exampleID}`)
       .replace(/App.tsx/g, exampleConfig.compileToJS ? 'App.js' : '$&') +
     '\n\n' +
-    '> _Development note: Do not modify these files directly. Edit corresponding files in the ' +
-    '[_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), then run ' +
-    '`yarn generate-examples` from the repository root directory._';
+    '> _Development note: Do not modify the files in this folder directly. Edit corresponding ' +
+    'files in the [_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), ' +
+    'then run `yarn generate-examples` from the repository root directory._';
   await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 

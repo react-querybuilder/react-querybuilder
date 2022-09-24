@@ -1,7 +1,7 @@
 ## React Query Builder Basic Example
 
-[Click here](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=/src/App.js) to load this example in [CodeSandbox](https://codesandbox.io/).
+[![Open in CodeSandbox](https://img.shields.io/badge/Open_in-CodeSandbox-000000?logo=codesandbox)](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=/src/App.js)
 
-[Click here](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=src/App.js) to load this example in [StackBlitz](https://stackblitz.com/).
+[![Open in StackBlitz](https://img.shields.io/badge/Open_in-StackBlitz-1269D3?logo=stackblitz)](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=src/App.js)
 
-> _Development note: Do not modify these files directly. Edit corresponding files in the [\_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), then run `yarn generate-examples` from the repository root directory._
+> _Development note: Do not modify the files in this folder directly. Edit corresponding files in the [\_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), then run `yarn generate-examples` from the repository root directory._
