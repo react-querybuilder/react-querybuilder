@@ -4182,6 +4182,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-querybuilder/antd@npm:next":
+  version: 5.0.0-alpha.6
+  resolution: "@react-querybuilder/antd@npm:5.0.0-alpha.6"
+  dependencies:
+    "@react-querybuilder/ts": ^5.0.0-alpha.6
+    react-querybuilder: ^5.0.0-alpha.6
+  peerDependencies:
+    "@ant-design/icons": ">=4.7.0"
+    antd: ">=4.10.0"
+    react: ">=16.8.0"
+  checksum: 385be3b869187c98a88739fc4904036f884353437280759c47473af6c31375e8132324fad6fc6f8319c5768ea4ca5bc3420db0939b90dd00cfd5eaf20625b8a6
+  languageName: node
+  linkType: hard
+
 "@react-querybuilder/bootstrap@npm:next":
   version: 5.0.0-alpha.6
   resolution: "@react-querybuilder/bootstrap@npm:5.0.0-alpha.6"
@@ -12222,6 +12236,7 @@ __metadata:
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@mdx-js/react": ^1.6.22
+    "@react-querybuilder/antd": next
     "@react-querybuilder/bootstrap": next
     "@react-querybuilder/bulma": next
     "@react-querybuilder/chakra": next

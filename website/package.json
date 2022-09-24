@@ -25,6 +25,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@mdx-js/react": "^1.6.22",
+    "@react-querybuilder/antd": "next",
     "@react-querybuilder/bootstrap": "next",
     "@react-querybuilder/bulma": "next",
     "@react-querybuilder/chakra": "next",
