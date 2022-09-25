@@ -3,17 +3,20 @@ import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
-import './demo.scss';
-import './rqb-antd-dark.less';
-import './rqb-antd.less';
+import './_styles/demo.scss';
+import './_styles/rqb-antd-dark.less';
+import './_styles/rqb-antd.less';
 
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
   <AntDValueSelector {...props} getPopupContainer={() => document.getElementById('rqb-antd')} />
 );
 
 function ReactQueryBuilderDemo_AntdBrowser() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
-  const Demo = useMemo(() => (require('./_Demo') as typeof import('./_Demo')).default, []);
+  const Demo = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
+    () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
+    []
+  );
   return (
     <QueryBuilderAntD
       controlElements={{

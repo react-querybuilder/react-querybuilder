@@ -2,8 +2,8 @@ import { Buffer } from 'buffer';
 import pako from 'pako';
 import type { FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { defaultOptions, optionOrder } from './_constants';
-import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState } from './_types';
+import { defaultOptions, optionOrder } from '.';
+import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState } from './types';
 
 type OptionsAction =
   | { type: 'all' }

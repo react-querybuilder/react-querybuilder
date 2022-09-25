@@ -1,7 +1,7 @@
 import Layout from '@theme/Layout';
 import React from 'react';
-import './rqb-material.scss';
-import Nav from './_Nav';
+import Nav from './_components/Nav';
+import './_styles/rqb-material.scss';
 
 export default function ReactQueryBuilderDemo_Material() {
   return (
@@ -11,11 +11,6 @@ export default function ReactQueryBuilderDemo_Material() {
           <Nav variant={'material'} />
         </div>
         <div>🚧 Under construction 🚧</div>
-        <div>
-          <a href="https://www.npmjs.com/package/@react-querybuilder/material">
-            @react-querybuilder/material
-          </a>
-        </div>
       </div>
     </Layout>
   );

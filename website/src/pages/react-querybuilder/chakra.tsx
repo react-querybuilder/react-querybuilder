@@ -5,8 +5,8 @@ import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
 import { prefixer } from 'stylis';
 import createExtraScopePlugin from 'stylis-plugin-extra-scope';
-import './demo.scss';
-import './rqb-chakra.scss';
+import './_styles/demo.scss';
+import './_styles/rqb-chakra.scss';
 
 const emotionCache = createEmotionCache({
   key: 'rqb-chakra-emotion-cache',
@@ -22,8 +22,11 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
     () => require('@react-querybuilder/chakra') as typeof import('@react-querybuilder/chakra'),
     []
   );
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
-  const Demo = useMemo(() => (require('./_Demo') as typeof import('./_Demo')).default, []);
+  const Demo = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
+    () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
+    []
+  );
 
   const chakraTheme = useMemo(
     () =>

@@ -1,7 +1,7 @@
 import type { ExportFormat, Field, RuleGroupType, RuleType } from 'react-querybuilder';
 import { convertToIC, defaultOperators, objectKeys } from 'react-querybuilder';
-import { musicalInstruments } from './_musicalInstruments';
-import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './_types';
+import { musicalInstruments } from './musicalInstruments';
+import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
 export const validator = (r: RuleType) => !!r.value;
 

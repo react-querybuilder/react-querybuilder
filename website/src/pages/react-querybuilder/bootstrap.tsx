@@ -3,16 +3,18 @@ import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
 import Layout from '@theme/Layout';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 import React from 'react';
-import './demo.scss';
-import './rqb-bootstrap.scss';
+import './_styles/demo.scss';
+import './_styles/rqb-bootstrap.scss';
 
 export default function ReactQueryBuilderDemo_Bootstrap() {
   return (
     <Layout description="React Query Builder Bootstrap Demo">
       <BrowserOnly fallback={<div>Loading...</div>}>
         {() => {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
-          const Demo: typeof import('./_Demo').default = require('./_Demo').default;
+          // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+          const Demo: typeof import('./_components/Demo').default =
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            require('./_components/Demo').default;
           return (
             <QueryBuilderBootstrap>
               <Demo variant="bootstrap" />

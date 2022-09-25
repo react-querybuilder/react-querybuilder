@@ -1,6 +1,6 @@
 import { useLocation } from '@docusaurus/router';
 import React from 'react';
-import { styleNameArray, styleNameMap } from './_constants';
+import { styleNameArray, styleNameMap } from '../_constants';
 
 interface StyleLinksProps {
   variant: string;

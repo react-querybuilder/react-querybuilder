@@ -23,10 +23,15 @@ import {
   initialQueryIC as defaultInitialQueryIC,
   optionOrderByLabel,
   optionsMetadata,
-} from './_constants';
-import Nav from './_Nav';
-import type { CommonRQBProps, StyleName } from './_types';
-import { getFormatQueryString, getHashFromState, getStateFromHash, optionsReducer } from './_utils';
+} from '../_constants';
+import type { CommonRQBProps, StyleName } from '../_constants/types';
+import {
+  getFormatQueryString,
+  getHashFromState,
+  getStateFromHash,
+  optionsReducer,
+} from '../_constants/utils';
+import Nav from './Nav';
 
 const infoChar = 'ⓘ';
 

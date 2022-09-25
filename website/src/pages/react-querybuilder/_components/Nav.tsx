@@ -1,8 +1,8 @@
 import React from 'react';
-import CodeSandBoxLogo from './_Logo-CodeSandbox';
-import StackBlitzLogo from './_Logo-StackBlitz';
-import StyleLinks from './_StyleLinks';
-import type { StyleName } from './_types';
+import type { StyleName } from '../_constants/types';
+import CodeSandBoxLogo from './Logo-CodeSandbox';
+import StackBlitzLogo from './Logo-StackBlitz';
+import StyleLinks from './StyleLinks';
 
 interface NavProps {
   variant: StyleName;
