@@ -3,7 +3,8 @@ import { useLocation } from '@docusaurus/router';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
-import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import Modal from 'react-modal';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
   convertToIC,
@@ -31,11 +32,12 @@ import {
   getStateFromHash,
   optionsReducer,
 } from '../_constants/utils';
+import { reactModalStyles } from '../_styles/reactModalStyles';
 import Nav from './Nav';
 
 const infoChar = 'ⓘ';
 
-const getDocsPreferredVersionDefault = () => localStorage.getItem('docs-preferred-version-default');
+// const getDocsPreferredVersionDefault = () => localStorage.getItem('docs-preferred-version-default');
 
 // Initialize options from URL hash
 const initialStateFromHash = getStateFromHash(queryString.parse(location.hash));
@@ -55,7 +57,7 @@ interface DemoProps {
 }
 
 export default function Demo({ variant = 'default' }: DemoProps) {
-  const docsPreferredVersionDefault = useRef(getDocsPreferredVersionDefault());
+  // const docsPreferredVersionDefault = useRef(getDocsPreferredVersionDefault());
   const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
@@ -135,6 +137,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       setQueryIC(qIC);
       setIsSQLInputVisible(false);
       setSQLParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
@@ -147,6 +150,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       setQueryIC(qIC);
       setIsCELInputVisible(false);
       setCELParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setCELParseError((err as Error).message);
     }
@@ -159,6 +163,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       setQueryIC(qIC);
       setIsJsonLogicInputVisible(false);
       setJsonLogicParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
     }
@@ -388,6 +393,100 @@ export default function Demo({ variant = 'default' }: DemoProps) {
             )}
           </QueryBuilderDnD>
         </div>
+        <Modal
+          contentLabel="Import SQL"
+          isOpen={isSQLInputVisible}
+          onRequestClose={() => setIsSQLInputVisible(false)}
+          style={reactModalStyles}>
+          <h3 style={{ margin: 'unset' }}>Import SQL</h3>
+          <textarea
+            style={{ height: 160, width: '100%' }}
+            spellCheck={false}
+            onChange={e => setSQL(e.target.value)}>
+            {sql}
+          </textarea>
+          <p style={{ fontSize: 'smaller', margin: 'unset' }}>
+            <em>
+              SQL can either be the full <code>SELECT</code> statement (with all keywords and
+              optional trailing semicolon) or the <code>WHERE</code> clause by itself (without the
+              word &quot;WHERE&quot;&mdash;just the clauses).
+            </em>
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 'var(--ifm-global-spacing)',
+            }}>
+            <button type="button" onClick={() => loadFromSQL()}>
+              Import SQL
+            </button>
+            <button type="button" onClick={() => setIsSQLInputVisible(false)}>
+              Cancel
+            </button>
+          </div>
+          {!!sqlParseError && <pre>{sqlParseError}</pre>}
+        </Modal>
+        <Modal
+          contentLabel="Import CEL"
+          isOpen={isCELInputVisible}
+          onRequestClose={() => setIsCELInputVisible(false)}
+          style={reactModalStyles}>
+          <h3 style={{ margin: 'unset' }}>Import CEL</h3>
+          <textarea
+            style={{ height: 160, minWidth: 690, width: '100%' }}
+            spellCheck={false}
+            onChange={e => setCEL(e.target.value)}>
+            {cel}
+          </textarea>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 'var(--ifm-global-spacing)',
+            }}>
+            <button type="button" onClick={() => loadFromCEL()}>
+              Import CEL
+            </button>
+            <button type="button" onClick={() => setIsCELInputVisible(false)}>
+              Cancel
+            </button>
+          </div>
+          {!!celParseError && <pre>{celParseError}</pre>}
+        </Modal>
+        <Modal
+          contentLabel="Import JsonLogic"
+          isOpen={isJsonLogicInputVisible}
+          onRequestClose={() => setIsJsonLogicInputVisible(false)}
+          style={reactModalStyles}>
+          <h3 style={{ margin: 'unset' }}>Import JsonLogic</h3>
+          <textarea
+            style={{ height: 160, minWidth: 690, width: '100%' }}
+            spellCheck={false}
+            onChange={e => setJsonLogic(e.target.value)}>
+            {jsonLogic}
+          </textarea>
+          <p style={{ fontSize: 'smaller', margin: 'unset' }}>
+            <em>
+              Only strings that evaluate to JavaScript objects when processed with{' '}
+              <code>JSON.parse</code> will translate into queries.
+            </em>
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 'var(--ifm-global-spacing)',
+            }}>
+            <button type="button" onClick={() => loadFromJsonLogic()}>
+              Import JsonLogic
+            </button>
+            <button type="button" onClick={() => setIsJsonLogicInputVisible(false)}>
+              Cancel
+            </button>
+          </div>
+          {!!jsonLogicParseError && <pre>{jsonLogicParseError}</pre>}
+        </Modal>
         <pre style={{ whiteSpace: 'pre-wrap' }}>{formatString}</pre>
       </div>
     </div>
