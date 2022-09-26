@@ -4,7 +4,6 @@ import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import Modal from 'react-modal';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
   convertToIC,
@@ -32,7 +31,7 @@ import {
   getStateFromHash,
   optionsReducer,
 } from '../_constants/utils';
-import { reactModalStyles } from '../_styles/reactModalStyles';
+import ImportModal from './ImportModal';
 import Nav from './Nav';
 
 const infoChar = 'ⓘ';
@@ -55,6 +54,21 @@ const permalinkCopiedText = 'Copied!';
 interface DemoProps {
   variant?: StyleName;
 }
+
+const notesSQL = (
+  <em>
+    SQL can either be the full <code>SELECT</code> statement (with all keywords and optional
+    trailing semicolon) or the <code>WHERE</code> clause by itself (without the word
+    &quot;WHERE&quot;&mdash;just the clauses).
+  </em>
+);
+const notesCEL = '';
+const notesJsonLogic = (
+  <em>
+    Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
+    will translate into queries.
+  </em>
+);
 
 export default function Demo({ variant = 'default' }: DemoProps) {
   // const docsPreferredVersionDefault = useRef(getDocsPreferredVersionDefault());
@@ -393,102 +407,38 @@ export default function Demo({ variant = 'default' }: DemoProps) {
             )}
           </QueryBuilderDnD>
         </div>
-        <Modal
-          contentLabel="Import SQL"
-          isOpen={isSQLInputVisible}
-          onRequestClose={() => setIsSQLInputVisible(false)}
-          style={reactModalStyles}>
-          <h3 style={{ margin: 'unset' }}>Import SQL</h3>
-          <textarea
-            style={{ height: 160, width: '100%' }}
-            spellCheck={false}
-            onChange={e => setSQL(e.target.value)}>
-            {sql}
-          </textarea>
-          <p style={{ fontSize: 'smaller', margin: 'unset' }}>
-            <em>
-              SQL can either be the full <code>SELECT</code> statement (with all keywords and
-              optional trailing semicolon) or the <code>WHERE</code> clause by itself (without the
-              word &quot;WHERE&quot;&mdash;just the clauses).
-            </em>
-          </p>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 'var(--ifm-global-spacing)',
-            }}>
-            <button type="button" onClick={() => loadFromSQL()}>
-              Import SQL
-            </button>
-            <button type="button" onClick={() => setIsSQLInputVisible(false)}>
-              Cancel
-            </button>
-          </div>
-          {!!sqlParseError && <pre>{sqlParseError}</pre>}
-        </Modal>
-        <Modal
-          contentLabel="Import CEL"
-          isOpen={isCELInputVisible}
-          onRequestClose={() => setIsCELInputVisible(false)}
-          style={reactModalStyles}>
-          <h3 style={{ margin: 'unset' }}>Import CEL</h3>
-          <textarea
-            style={{ height: 160, minWidth: 690, width: '100%' }}
-            spellCheck={false}
-            onChange={e => setCEL(e.target.value)}>
-            {cel}
-          </textarea>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 'var(--ifm-global-spacing)',
-            }}>
-            <button type="button" onClick={() => loadFromCEL()}>
-              Import CEL
-            </button>
-            <button type="button" onClick={() => setIsCELInputVisible(false)}>
-              Cancel
-            </button>
-          </div>
-          {!!celParseError && <pre>{celParseError}</pre>}
-        </Modal>
-        <Modal
-          contentLabel="Import JsonLogic"
-          isOpen={isJsonLogicInputVisible}
-          onRequestClose={() => setIsJsonLogicInputVisible(false)}
-          style={reactModalStyles}>
-          <h3 style={{ margin: 'unset' }}>Import JsonLogic</h3>
-          <textarea
-            style={{ height: 160, minWidth: 690, width: '100%' }}
-            spellCheck={false}
-            onChange={e => setJsonLogic(e.target.value)}>
-            {jsonLogic}
-          </textarea>
-          <p style={{ fontSize: 'smaller', margin: 'unset' }}>
-            <em>
-              Only strings that evaluate to JavaScript objects when processed with{' '}
-              <code>JSON.parse</code> will translate into queries.
-            </em>
-          </p>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 'var(--ifm-global-spacing)',
-            }}>
-            <button type="button" onClick={() => loadFromJsonLogic()}>
-              Import JsonLogic
-            </button>
-            <button type="button" onClick={() => setIsJsonLogicInputVisible(false)}>
-              Cancel
-            </button>
-          </div>
-          {!!jsonLogicParseError && <pre>{jsonLogicParseError}</pre>}
-        </Modal>
         <pre style={{ whiteSpace: 'pre-wrap' }}>{formatString}</pre>
       </div>
+      <ImportModal
+        heading="Import SQL"
+        isOpen={isSQLInputVisible}
+        setIsOpen={setIsSQLInputVisible}
+        code={sql}
+        setCode={setSQL}
+        error={sqlParseError}
+        loadQueryFromCode={loadFromSQL}
+        notes={notesSQL}
+      />
+      <ImportModal
+        heading="Import CEL"
+        isOpen={isCELInputVisible}
+        setIsOpen={setIsCELInputVisible}
+        code={cel}
+        setCode={setCEL}
+        error={celParseError}
+        loadQueryFromCode={loadFromCEL}
+        notes={notesCEL}
+      />
+      <ImportModal
+        heading="Import JsonLogic"
+        isOpen={isJsonLogicInputVisible}
+        setIsOpen={setIsJsonLogicInputVisible}
+        code={jsonLogic}
+        setCode={setJsonLogic}
+        error={jsonLogicParseError}
+        loadQueryFromCode={loadFromJsonLogic}
+        notes={notesJsonLogic}
+      />
     </div>
   );
 }
