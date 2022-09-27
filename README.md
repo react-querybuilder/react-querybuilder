@@ -8,8 +8,7 @@
 
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=86400)](https://www.npmjs.com/package/react-querybuilder)
 [![Docs](https://img.shields.io/badge/docs-blue)](https://react-querybuilder.js.org/)
-[![Full demo](https://img.shields.io/badge/demo-full-blue)](https://react-querybuilder.js.org/react-querybuilder/)
-[![IE11-compatible demo](https://img.shields.io/badge/demo-ie11-blue)](https://react-querybuilder.js.org/react-querybuilder/ie11.html)
+[![Full demo](https://img.shields.io/badge/demo-full-blue)](https://react-querybuilder.js.org/react-querybuilder)
 [![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
 [![All Contributors][badge-all-contributors]](#contributors-)

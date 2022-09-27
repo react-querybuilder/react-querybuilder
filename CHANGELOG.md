@@ -16,6 +16,10 @@ All packages published from this repository are now built as [ES modules only](h
 
 -->
 
+#### Dropped IE11 support
+
+- As of v5.0.0, React Query Builder will no longer support any version of Internet Explorer.
+
 #### Drag-and-drop functionality migrated
 
 [#343](https://github.com/react-querybuilder/react-querybuilder/pull/343) In order to make the `react-dnd` dependency completely optional when the `enableDragAndDrop` prop was not set to `true`, drag-and-drop functionality was extracted from `react-querybuilder` into a new package called [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).

@@ -3050,9 +3050,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-react@npm:^1.7.2":
-  version: 1.7.2
-  resolution: "@codesandbox/sandpack-react@npm:1.7.2"
+"@codesandbox/sandpack-react@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@codesandbox/sandpack-react@npm:1.8.0"
   dependencies:
     "@code-hike/classer": ^0.0.0-aa6efee
     "@codemirror/closebrackets": ^0.19.0
@@ -3081,7 +3081,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 56745a6df295c050a4bb3c635167a75f168405b9a3a316b31fc77042dec804ccc55a81217f40a24879fd3952cc93616fd34c866387af9a9576eb9a651bfd9be2
+  checksum: c54c4f455494ccd6517b9fc93a7ffa393737b134f3fb8c8ad0a3390fb9604d0ea2b7bc2a45afb33d0f21e1e94ba91cb8e3a3f53de678a7d89a524b9802fe49df
   languageName: node
   linkType: hard
 
@@ -5273,7 +5273,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^4.23.1":
+"antd@npm:^4.23.2":
   version: 4.23.2
   resolution: "antd@npm:4.23.2"
   dependencies:
@@ -12405,7 +12405,7 @@ __metadata:
     "@chakra-ui/icons": ">=1.0.0"
     "@chakra-ui/react": ">=1.6.0"
     "@chakra-ui/system": ">=1.8.0"
-    "@codesandbox/sandpack-react": ^1.7.2
+    "@codesandbox/sandpack-react": ^1.8.0
     "@docusaurus/core": ^2.1.0
     "@docusaurus/module-type-aliases": ^2.1.0
     "@docusaurus/plugin-client-redirects": ^2.1.0
@@ -12425,7 +12425,7 @@ __metadata:
     "@tsconfig/docusaurus": ^1.0.6
     "@types/pako": ^2.0.0
     "@types/react-modal": ^3.13.1
-    antd: ^4.23.1
+    antd: ^4.23.2
     bootstrap: ^5.2.1
     bootstrap-icons: ^1.9.1
     buffer: ^6.0.3
@@ -12447,7 +12447,7 @@ __metadata:
     react-querybuilder: next
     react-querybuilder-v4: "npm:react-querybuilder@^4.5.2"
     remark-typescript-tools: ^1.0.11
-    sass: ^1.54.9
+    sass: ^1.55.0
     stylis-plugin-extra-scope: ^0.3.0
     typescript: ^4.8.3
     url-loader: ^4.1.1
@@ -12539,16 +12539,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.54.9":
-  version: 1.54.9
-  resolution: "sass@npm:1.54.9"
+"sass@npm:^1.55.0":
+  version: 1.55.0
+  resolution: "sass@npm:1.55.0"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 90182b566072b48e2263c5a87229ab85164e13b71b24847ba76a8e68eb952cb69a7dcef815f4ccc0189dd2d0c254311acff6972166603338d33bbc96f6d500c6
+  checksum: 7d769ed08efce4e6134e0f3dc11c4f07e32c413ac8eb43c5855f2686890fdcbd80da34165c91fb4ba407f478ca108e171574b5a60cb9814a5ed09d80f6014f96
   languageName: node
   linkType: hard
 

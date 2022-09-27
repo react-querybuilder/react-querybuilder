@@ -1,9 +1,11 @@
 import Layout from '@theme/Layout';
 import React, { useEffect } from 'react';
 
+const discordLink = 'https://discord.gg/MnAQWyUtEg';
+
 export default function DiscordRedirect() {
   useEffect(() => {
-    setTimeout(() => window.location.replace('https://discord.gg/MnAQWyUtEg'), 500);
+    setTimeout(() => window.location.replace(discordLink), 500);
   }, []);
 
   return (
@@ -15,8 +17,7 @@ export default function DiscordRedirect() {
           justifyContent: 'center',
           margin: 'var(--ifm-global-spacing)',
         }}>
-        Redirecting to{'\u00a0'}
-        <a href="https://discord.gg/MnAQWyUtEg">React Query Builder Discord server</a>...
+        Redirecting to <a href={discordLink}>React Query Builder Discord server</a>...
       </div>
     </Layout>
   );

@@ -8,7 +8,5 @@ export * from './Rule';
 export * from './RuleGroup';
 export * from './utils';
 export { QueryBuilder };
-import { enableES5 } from 'immer';
 import { QueryBuilder } from './QueryBuilder';
-enableES5();
 export default QueryBuilder;
