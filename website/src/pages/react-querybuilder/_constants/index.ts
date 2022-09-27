@@ -111,7 +111,7 @@ export const optionsMetadata: Record<
   },
   enableDragAndDrop: {
     link: '/docs/api/querybuilder#enabledraganddrop',
-    label: 'Enable drag-and-drop',
+    label: 'Drag-and-drop enabled',
     title: 'Rules and groups can be reordered and dragged to different groups',
   },
   disabled: {
@@ -137,7 +137,7 @@ export const optionsMetadata: Record<
   justifiedLayout: {
     link: '',
     label: 'Justified layout',
-    title: 'Add custom CSS to push the clone, lock, and remove buttons to the right edge',
+    title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
   },
 };
 

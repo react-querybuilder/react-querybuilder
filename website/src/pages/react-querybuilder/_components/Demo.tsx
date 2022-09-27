@@ -31,6 +31,7 @@ import {
   getStateFromHash,
   optionsReducer,
 } from '../_constants/utils';
+import styles from './Demo.module.css';
 import ImportModal from './ImportModal';
 import Nav from './Nav';
 
@@ -229,37 +230,20 @@ export default function Demo({ variant = 'default' }: DemoProps) {
   );
 
   return (
-    <div
-      style={{
-        padding: 'var(--ifm-global-spacing)',
-        display: 'grid',
-        gridTemplateColumns: '250px 1fr',
-        columnGap: 'var(--ifm-global-spacing)',
-      }}>
+    <div className={styles.demoLayout}>
       <div>
         <h3>
           <Link
             href={'/docs/api/querybuilder'}
             title={'Boolean props on the QueryBuilder component (click for documentation)'}
-            style={{
-              textDecoration: 'none',
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-            }}>
+            className={styles.demoSidebarHeader}>
             <span>Options</span>
             <span>{infoChar}</span>
           </Link>
         </h3>
         <div>
           {optionsInfo.map(({ checked, label, link, setter, title }) => (
-            <div
-              key={label}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-              }}>
+            <div key={label} className={styles.demoOption}>
               <label>
                 <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
                 {label}
@@ -279,14 +263,7 @@ export default function Demo({ variant = 'default' }: DemoProps) {
             </div>
           ))}
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            columnGap: 'var(--ifm-global-spacing)',
-            margin: 'var(--ifm-global-spacing) auto',
-          }}>
+        <div className={styles.demoOptionCommands}>
           <div title="Reset the options above to their default values">
             <button type="button" onClick={() => setOptions({ type: 'reset' })}>
               Reset
@@ -311,23 +288,12 @@ export default function Demo({ variant = 'default' }: DemoProps) {
           <Link
             href={'/docs/api/export'}
             title={'The export format of the formatQuery function (click for documentation)'}
-            style={{
-              textDecoration: 'none',
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-            }}>
+            className={styles.demoSidebarHeader}>
             <span>Export</span>
             <span>{infoChar}</span>
           </Link>
         </h3>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'column',
-            marginBottom: 'var(--ifm-heading-margin-bottom)',
-          }}>
+        <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
           {formatMap.map(([fmt, lbl, lnk]) => (
             <div
               key={fmt}
@@ -355,18 +321,12 @@ export default function Demo({ variant = 'default' }: DemoProps) {
             title={
               'Use the parse* methods to set the query from SQL/JsonLogic/etc. (click for documentation)'
             }
-            style={{
-              textDecoration: 'none',
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-            }}>
+            className={styles.demoSidebarHeader}>
             <span>Import</span>
             <span>{infoChar}</span>
           </Link>
         </h3>
-        <div
-          style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
+        <div className={styles.demoImportCommands}>
           <button type="button" onClick={() => setIsSQLInputVisible(true)}>
             Import SQL
           </button>
@@ -385,7 +345,11 @@ export default function Demo({ variant = 'default' }: DemoProps) {
       </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
-        <Nav variant={variant} compressedState={getCompressedState()} />
+        <Nav
+          variant={variant}
+          dnd={options.enableDragAndDrop}
+          compressedState={getCompressedState()}
+        />
         <div id={qbWrapperId} className={qbWrapperClassName}>
           <QueryBuilderDnD>
             {options.independentCombinators ? (
