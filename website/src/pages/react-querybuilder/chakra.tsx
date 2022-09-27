@@ -1,19 +1,12 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import createEmotionCache from '@emotion/cache';
-import { CacheProvider } from '@emotion/react';
+import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
-import { prefixer } from 'stylis';
-import createExtraScopePlugin from 'stylis-plugin-extra-scope';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
 
-const emotionCache = createEmotionCache({
-  key: 'rqb-chakra-emotion-cache',
-  stylisPlugins: [createExtraScopePlugin('#rqb-chakra'), prefixer],
-});
-
 function ReactQueryBuilderDemo_ChakraBrowser() {
+  const { colorMode } = useColorMode();
   const { ChakraProvider, extendTheme } =
     // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
     useMemo(() => require('@chakra-ui/react') as typeof import('@chakra-ui/react'), []);
@@ -31,20 +24,17 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
   const chakraTheme = useMemo(
     () =>
       extendTheme({
-        config: { initialColorMode: 'light', useSystemColorMode: false },
+        config: { initialColorMode: colorMode, useSystemColorMode: false },
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [colorMode, extendTheme]
   );
 
   return (
-    <CacheProvider value={emotionCache}>
-      <ChakraProvider theme={chakraTheme}>
-        <QueryBuilderChakra>
-          <Demo variant="chakra" />
-        </QueryBuilderChakra>
-      </ChakraProvider>
-    </CacheProvider>
+    <ChakraProvider theme={chakraTheme} resetCSS={false}>
+      <QueryBuilderChakra>
+        <Demo variant="chakra" />
+      </QueryBuilderChakra>
+    </ChakraProvider>
   );
 }
 

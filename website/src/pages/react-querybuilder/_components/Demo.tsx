@@ -54,6 +54,7 @@ const permalinkCopiedText = 'Copied!';
 
 interface DemoProps {
   variant?: StyleName;
+  queryWrapper?: React.ComponentType<{ children: React.ReactNode }>;
 }
 
 const notesSQL = (
@@ -71,7 +72,12 @@ const notesJsonLogic = (
   </em>
 );
 
-export default function Demo({ variant = 'default' }: DemoProps) {
+const defaultQueryWrapper = (props: { children: React.ReactNode }) => <>{props.children}</>;
+
+export default function Demo({
+  variant = 'default',
+  queryWrapper: QueryWrapper = defaultQueryWrapper,
+}: DemoProps) {
   // const docsPreferredVersionDefault = useRef(getDocsPreferredVersionDefault());
   const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
@@ -351,25 +357,27 @@ export default function Demo({ variant = 'default' }: DemoProps) {
           compressedState={getCompressedState()}
         />
         <div id={qbWrapperId} className={qbWrapperClassName}>
-          <QueryBuilderDnD>
-            {options.independentCombinators ? (
-              <QueryBuilder
-                {...commonRQBProps}
-                independentCombinators
-                key={'queryIC'}
-                query={queryIC}
-                onQueryChange={q => setQueryIC(q)}
-              />
-            ) : (
-              <QueryBuilder
-                {...commonRQBProps}
-                independentCombinators={false}
-                key={'query'}
-                query={query}
-                onQueryChange={q => setQuery(q)}
-              />
-            )}
-          </QueryBuilderDnD>
+          <QueryWrapper>
+            <QueryBuilderDnD>
+              {options.independentCombinators ? (
+                <QueryBuilder
+                  {...commonRQBProps}
+                  independentCombinators
+                  key={'queryIC'}
+                  query={queryIC}
+                  onQueryChange={q => setQueryIC(q)}
+                />
+              ) : (
+                <QueryBuilder
+                  {...commonRQBProps}
+                  independentCombinators={false}
+                  key={'query'}
+                  query={query}
+                  onQueryChange={q => setQuery(q)}
+                />
+              )}
+            </QueryBuilderDnD>
+          </QueryWrapper>
         </div>
         <pre style={{ whiteSpace: 'pre-wrap' }}>{formatString}</pre>
       </div>
