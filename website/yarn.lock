@@ -5969,6 +5969,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bulma@npm:^0.9.3":
+  version: 0.9.4
+  resolution: "bulma@npm:0.9.4"
+  checksum: bc0ab8c203deb0ae200fab5b38547ad4bc8ed1e3abcf6f4ac8a2229af46540419bbcb78c9d2e80f3ddda8825d64fa186ed8775674656cdcabe5544be4d0f3d85
+  languageName: node
+  linkType: hard
+
 "bytes@npm:3.0.0":
   version: 3.0.0
   resolution: "bytes@npm:3.0.0"
@@ -12670,6 +12677,7 @@ __metadata:
     bootstrap: ^5.2.1
     bootstrap-icons: ^1.9.1
     buffer: ^6.0.3
+    bulma: ^0.9.3
     clsx: ^1.2.1
     docusaurus-plugin-less: ^2.0.2
     docusaurus-plugin-sass: ^0.2.2

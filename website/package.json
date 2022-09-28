@@ -40,6 +40,7 @@
     "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.1",
     "buffer": "^6.0.3",
+    "bulma": "^0.9.3",
     "clsx": "^1.2.1",
     "docusaurus-plugin-less": "^2.0.2",
     "docusaurus-plugin-sass": "^0.2.2",
