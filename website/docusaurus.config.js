@@ -45,6 +45,14 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
+          versions: {
+            '4.5.2': {
+              label: 'v4.x',
+            },
+            current: {
+              label: 'Next (v5)',
+            },
+          },
           // Re-enable this when we get it working properly
           // remarkPlugins: [
           //   [
