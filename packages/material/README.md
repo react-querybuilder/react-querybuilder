@@ -51,6 +51,7 @@ import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 // MUI component imports
 import DragIndicator from '@mui/icons-material/DragIndicator';
+import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -65,6 +66,7 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 
 // Assign the MUI components to an object
 const muiComponents = {
+  Button,
   Checkbox,
   DragIndicator,
   FormControl,
