@@ -84,7 +84,7 @@ export const SandpackRQB = ({
 
   const rqbDependencies =
     rqbVersion === 4
-      ? { 'react-querybuilder': '^4.5.2' }
+      ? { 'react-querybuilder': '^4.5.3' }
       : {
           '@react-querybuilder/ctx': 'next',
           '@react-querybuilder/dnd': 'next',
