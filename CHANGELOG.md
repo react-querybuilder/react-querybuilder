@@ -43,7 +43,6 @@ If your application already uses `react-dnd` and renders `DndProvider` higher up
 
 - [#324](https://github.com/react-querybuilder/react-querybuilder/pull/324) The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
 - `parseCEL` now handles strings correctly (including multi-line strings).
-- [#364](https://github.com/react-querybuilder/react-querybuilder/issues/364) The array passed to the `fields` prop was being mutated if it contained duplicates, whether they were duplicate field `name`s or option group `label`s. The `fields` prop is now treated as immutable.
 
 ### Added
 
@@ -60,17 +59,40 @@ If your application already uses `react-dnd` and renders `DndProvider` higher up
 
 </details>
 
+## [v5.0.0-alpha.6] - 2022-09-12
+
+See [Unreleased](#unreleased).
+
+## [v5.0.0-alpha.5] - 2022-09-08
+
+See [Unreleased](#unreleased).
+
+## [v5.0.0-alpha.4] - 2022-09-08
+
+See [Unreleased](#unreleased).
+
+## [v5.0.0-alpha.3] - 2022-08-30
+
+See [Unreleased](#unreleased).
+
 ## [v5.0.0-alpha.2] - 2022-08-28
 
-Maintenance release. No changes.
+See [Unreleased](#unreleased).
 
 ## [v5.0.0-alpha.1] - 2022-08-28
 
-Maintenance release. No changes.
+See [Unreleased](#unreleased).
 
 ## [v5.0.0-alpha.0] - 2022-08-27
 
-[Documentation](https://react-querybuilder.js.org/docs/next/intro) (see [`enableDragAndDrop`](https://react-querybuilder.js.org/docs/next/api/querybuilder#enabledraganddrop) and [compatibility packages](https://react-querybuilder.js.org/docs/next/compat))
+[Documentation](https://react-querybuilder.js.org/docs/next/intro) (in particular, see [`enableDragAndDrop`](https://react-querybuilder.js.org/docs/next/api/querybuilder#enabledraganddrop) and [compatibility packages](https://react-querybuilder.js.org/docs/next/compat))
+
+## [v4.5.3] - 2022-09-28
+
+### Fixed
+
+- [#364](https://github.com/react-querybuilder/react-querybuilder/issues/364) The array passed to the `fields` prop was being mutated if it contained duplicates, whether they were duplicate field `name`s or option group `label`s. The `fields` prop is now treated as immutable.
+- [#374](https://github.com/react-querybuilder/react-querybuilder/issues/374) `RuleGroup` was using unstable keys to render elements in the `rules` array. Keys are now stable based on `id` properties, which are auto-generated if not provided in the `query`/`defaultQuery` prop.
 
 ## [v4.5.2] - 2022-08-19
 
@@ -974,10 +996,15 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.6...HEAD
+[v5.0.0-alpha.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.5...v5.0.0-alpha.6
+[v5.0.0-alpha.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.4...v5.0.0-alpha.5
+[v5.0.0-alpha.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.3...v5.0.0-alpha.4
+[v5.0.0-alpha.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.2...v5.0.0-alpha.3
 [v5.0.0-alpha.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.1...v5.0.0-alpha.2
 [v5.0.0-alpha.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.0...v5.0.0-alpha.1
-[v5.0.0-alpha.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.2...v5.0.0-alpha.0
+[v5.0.0-alpha.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.3...v5.0.0-alpha.0
+[v4.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.2...v4.5.3
 [v4.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.1...v4.5.2
 [v4.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.0...v4.5.1
 [v4.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.4.1...v4.5.0
