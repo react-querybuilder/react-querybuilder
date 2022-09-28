@@ -3,6 +3,7 @@ import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import Layout from '@theme/Layout';
 import React from 'react';
 import './_styles/demo.scss';
+import './_styles/rqb-bulma-dark.scss';
 import './_styles/rqb-bulma.scss';
 
 export default function ReactQueryBuilderDemo_Bulma() {
