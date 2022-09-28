@@ -23,6 +23,7 @@ jobs:
         run: yarn website:install --immutable
       - name: Build Website
         run: yarn website:build
+
   gh-release:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
