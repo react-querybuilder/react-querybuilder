@@ -1,7 +1,7 @@
 declare const __RQB_DEV__: boolean;
 
 import type { ComponentType } from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { errorMaterialWithoutMUI } from './messages';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
@@ -49,20 +49,23 @@ export const useMuiComponents = (
 ): RQBMaterialComponents | null => {
   const muiComponentsFromContext = useContext(RQBMaterialContext);
 
-  const initialComponents =
-    preloadedComponents && muiComponentsFromContext
-      ? {
-          ...componentCache,
-          ...muiComponentsFromContext,
-          ...preloadedComponents,
-        }
-      : preloadedComponents
-      ? { ...componentCache, ...preloadedComponents }
-      : muiComponentsFromContext
-      ? { ...componentCache, ...muiComponentsFromContext }
-      : /* TODO: why does this next line cause the app to crash? */
-        /* componentCache && !__RQB_DEV__ ? componentCache : */
-        componentCache;
+  const initialComponents = useMemo(
+    () =>
+      preloadedComponents && muiComponentsFromContext
+        ? {
+            ...componentCache,
+            ...muiComponentsFromContext,
+            ...preloadedComponents,
+          }
+        : preloadedComponents
+        ? { ...componentCache, ...preloadedComponents }
+        : muiComponentsFromContext
+        ? { ...componentCache, ...muiComponentsFromContext }
+        : /* TODO: why does this next line cause the app to crash? */
+          /* componentCache && !__RQB_DEV__ ? componentCache : */
+          componentCache,
+    [muiComponentsFromContext, preloadedComponents]
+  );
 
   const [muiComponents, setMuiComponents] = useState<RQBMaterialComponents | null>(
     initialComponents
