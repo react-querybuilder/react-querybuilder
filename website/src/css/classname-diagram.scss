@@ -1,0 +1,50 @@
+$structure-padding: 14px;
+
+.rqb-structure {
+  &.queryBuilder {
+    border: 2px solid black;
+    padding: $structure-padding;
+  }
+
+  .ruleGroup {
+    background-color: #00000011;
+    border: 2px solid maroon;
+    padding: $structure-padding;
+    row-gap: $structure-padding !important;
+  }
+
+  .ruleGroup-header {
+    border: 2px solid rebeccapurple;
+    padding: $structure-padding;
+  }
+
+  .ruleGroup-body {
+    border: 2px solid blue;
+    padding: $structure-padding;
+    row-gap: $structure-padding !important;
+  }
+
+  .rule {
+    border: 2px solid gray;
+    padding: $structure-padding;
+    column-gap: 1rem !important;
+
+    &.queryBuilder-disabled {
+      border-color: gray !important;
+    }
+
+    &.queryBuilder-valid {
+      border-color: green;
+    }
+
+    &.queryBuilder-invalid {
+      border-color: red;
+    }
+  }
+
+  .queryBuilder-dragHandle,
+  .ruleGroup-notToggle {
+    border: 2px dotted gray;
+    padding: 4px;
+  }
+}

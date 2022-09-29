@@ -11,7 +11,10 @@ const fields: Field[] = [
 
 const initialQuery: RuleGroupType = {
   combinator: 'and',
-  rules: [],
+  rules: [
+    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+    { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
+  ],
 };
 
 export const App = () => {

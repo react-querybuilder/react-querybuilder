@@ -20,7 +20,23 @@ const config = {
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
 
-  plugins: ['docusaurus-plugin-sass'],
+  plugins: [
+    ['docusaurus-plugin-less', { lessOptions: { javascriptEnabled: true } }],
+    'docusaurus-plugin-sass',
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        fromExtensions: ['html', 'htm'], // /myPage.html -> /myPage
+        toExtensions: ['exe', 'zip'], // /myAsset -> /myAsset.zip (if latter exists)
+        redirects: [
+          {
+            from: '/demo',
+            to: '/react-querybuilder',
+          },
+        ],
+      },
+    ],
+  ],
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -29,6 +45,14 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
+          versions: {
+            4: {
+              label: 'v4.x',
+            },
+            current: {
+              label: 'Next (v5)',
+            },
+          },
           // Re-enable this when we get it working properly
           // remarkPlugins: [
           //   [
@@ -88,7 +112,7 @@ const config = {
             label: 'Docs',
           },
           {
-            href: 'https://react-querybuilder.js.org/react-querybuilder',
+            to: '/react-querybuilder',
             label: 'Demo',
             position: 'right',
           },
@@ -102,6 +126,12 @@ const config = {
             'aria-label': 'GitHub repository',
             position: 'right',
             className: 'header-github-link',
+          },
+          {
+            href: 'discord',
+            'aria-label': 'Discord server',
+            position: 'right',
+            className: 'header-discord-link',
           },
         ],
       },
@@ -126,11 +156,7 @@ const config = {
             items: [
               {
                 label: 'Kitchen Sink',
-                href: 'https://react-querybuilder.js.org/react-querybuilder/',
-              },
-              {
-                label: 'IE Compatible',
-                href: 'https://react-querybuilder.js.org/react-querybuilder/ie11.html',
+                to: '/react-querybuilder',
               },
             ],
           },
@@ -165,6 +191,10 @@ const config = {
               {
                 label: 'npm',
                 href: 'https://www.npmjs.com/package/react-querybuilder',
+              },
+              {
+                label: 'npm org',
+                href: 'https://www.npmjs.com/org/react-querybuilder',
               },
             ],
           },

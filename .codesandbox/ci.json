@@ -1,16 +1,5 @@
 {
-  "buildCommand": "build:packages",
-  "packages": [
-    "packages/antd",
-    "packages/bootstrap",
-    "packages/bulma",
-    "packages/chakra",
-    "packages/ctx",
-    "packages/dnd",
-    "packages/material",
-    "packages/react-querybuilder",
-    "packages/ts"
-  ],
+  "packages": ["packages/*"],
   "sandboxes": [
     "/examples/ci",
     "/examples/dnd",

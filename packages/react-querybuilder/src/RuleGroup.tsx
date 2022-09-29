@@ -299,7 +299,7 @@ export const RuleGroup = ({
             disabled ||
             (typeof r !== 'string' && r.disabled) ||
             disabledPaths.some(p => pathsAreEqual(thisPath, p));
-          const key = thisPath.join('-');
+          const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
           return (
             <Fragment key={key}>
               {idx > 0 && !independentCombinators && showCombinatorsBetweenRules && (

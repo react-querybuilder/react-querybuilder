@@ -113,7 +113,7 @@ describe('enableDragAndDrop', () => {
         {...getProps({}, { moveRule })}
         ruleGroup={{
           combinator: 'and',
-          rules: [{ combinator: 'and', rules: [] }],
+          rules: [{ id: 'rg1', combinator: 'and', rules: [] }],
         }}
       />
     );
@@ -135,9 +135,9 @@ describe('enableDragAndDrop', () => {
           ruleGroup={{
             combinator: 'and',
             rules: [
-              { field: 'firstName', operator: '=', value: '0' },
-              { field: 'firstName', operator: '=', value: '1' },
-              { field: 'firstName', operator: '=', value: '2' },
+              { id: '0', field: 'firstName', operator: '=', value: '0' },
+              { id: '1', field: 'firstName', operator: '=', value: '1' },
+              { id: '2', field: 'firstName', operator: '=', value: '2' },
             ],
           }}
           path={[0]}
@@ -168,9 +168,9 @@ describe('enableDragAndDrop', () => {
           {...getProps({ independentCombinators: true }, { moveRule })}
           ruleGroup={{
             rules: [
-              { field: 'firstName', operator: '=', value: 'Steve' },
+              { id: 'Steve', field: 'firstName', operator: '=', value: 'Steve' },
               'and',
-              { field: 'lastName', operator: '=', value: 'Vai' },
+              { id: 'Vai', field: 'lastName', operator: '=', value: 'Vai' },
             ],
           }}
           path={[0]}
@@ -200,11 +200,11 @@ describe('enableDragAndDrop', () => {
         {...getProps({ independentCombinators: true }, { moveRule })}
         ruleGroup={{
           rules: [
-            { field: 'firstName', operator: '=', value: 'Steve' },
+            { id: 'Steve', field: 'firstName', operator: '=', value: 'Steve' },
             'and',
-            { field: 'lastName', operator: '=', value: 'Vai' },
+            { id: 'Vai', field: 'lastName', operator: '=', value: 'Vai' },
             'and',
-            { field: 'age', operator: '>', value: 28 },
+            { id: '28', field: 'age', operator: '>', value: 28 },
           ],
         }}
         path={[0]}

@@ -29,19 +29,19 @@
     "react-querybuilder": "^5.0.0-alpha.6"
   },
   "devDependencies": {
-    "@chakra-ui/icons": "^2.0.9",
-    "@chakra-ui/react": "^2.3.2",
-    "@chakra-ui/system": "^2.2.9",
+    "@chakra-ui/icons": "^2.0.10",
+    "@chakra-ui/react": "^2.3.4",
+    "@chakra-ui/system": "^2.2.11",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.19",
+    "@types/react": "^18.0.21",
     "@vitejs/plugin-react": "^2.1.0",
     "framer-motion": "^6.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^4.8.3",
-    "vite": "^3.1.0"
+    "typescript": "^4.8.4",
+    "vite": "^3.1.4"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

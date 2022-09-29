@@ -18,13 +18,13 @@ const fields = [
   { name: 'phone', label: 'Phone' },
   { name: 'email', label: 'Email', validator: ({ value }) => /^[^@]+@[^@]+/.test(value) },
   { name: 'twitter', label: 'Twitter' },
-  { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false }
+  { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false },
 ];
 
 export const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({
     combinator: 'and',
-    rules: []
+    rules: [],
   });
 
   return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
@@ -39,7 +39,7 @@ The default export of this library is the `QueryBuilder` React component, which 
 
 `{ id?: string; combinator: string; rules: ({ field: string; operator: string; value: any; } | { combinator: string; rules: ...[]; })[]; }`
 
-The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional. See [the demo source](packages/demo/src/main.tsx) for examples.
+The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional.
 
 #### `fields` _(Required)_
 
@@ -94,7 +94,7 @@ The array of operators that should be used. The default operators include:
   { name: 'in', label: 'in' },
   { name: 'notIn', label: 'not in' },
   { name: 'between', label: 'between' },
-  { name: 'notBetween', label: 'not between' }
+  { name: 'notBetween', label: 'not between' },
 ];
 ```
 
@@ -107,7 +107,7 @@ The array of combinators that should be used for RuleGroups. The default set inc
 ```ts
 [
   { name: 'and', label: 'AND' },
-  { name: 'or', label: 'OR' }
+  { name: 'or', label: 'OR' },
 ];
 ```
 
@@ -631,14 +631,14 @@ const query = {
     {
       field: 'firstName',
       value: 'Steve',
-      operator: '='
+      operator: '=',
     },
     {
       field: 'lastName',
       value: 'Vai',
-      operator: '='
-    }
-  ]
+      operator: '=',
+    },
+  ],
 };
 
 console.log(formatQuery(query, 'sql')); // '(firstName = "Steve" and lastName = "Vai")'
@@ -670,20 +670,20 @@ const query = {
     {
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
-      operator: 'in'
+      operator: 'in',
     },
     {
       field: 'lastName',
       value: 'Vai',
-      operator: '='
-    }
-  ]
+      operator: '=',
+    },
+  ],
 };
 
 const valueProcessor = (field, operator, value) => {
   if (operator === 'in') {
     // Assuming `value` is an array, such as from a multi-select
-    return `(${value.map((v) => `"${v.trim()}"`).join(',')})`;
+    return `(${value.map(v => `"${v.trim()}"`).join(',')})`;
   } else {
     return defaultValueProcessor(field, operator, value);
   }
@@ -702,17 +702,17 @@ const query = {
       id: 'r1',
       field: 'instrument',
       value: ['Guitar', 'Vocals'],
-      operator: 'in'
+      operator: 'in',
     },
     {
       id: 'r2',
       field: 'lastName',
       value: 'Vai',
-      operator: '='
-    }
+      operator: '=',
+    },
   ],
   combinator: 'and',
-  not: false
+  not: false,
 };
 
 console.log(formatQuery(query, 'json_without_ids'));
@@ -731,17 +731,17 @@ const query = {
       id: 'r1',
       field: 'firstName',
       value: '',
-      operator: '='
+      operator: '=',
     },
     {
       id: 'r2',
       field: 'lastName',
       value: 'Vai',
-      operator: '='
-    }
+      operator: '=',
+    },
   ],
   combinator: 'and',
-  not: false
+  not: false,
 };
 
 // Invalid query
@@ -765,7 +765,7 @@ A basic form of validation will be used by `formatQuery` for the "in", "notIn", 
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupType;
 ```
 
-`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.js.org/react-querybuilder/) by clicking the "Load from SQL" button.
+`parseSQL` takes a SQL `SELECT` statement (either the full statement, or just the `WHERE` clause by itself) and returns a query object fit for using as the `query` prop in the `<QueryBuilder />` component. Try it out in the [demo](https://react-querybuilder.js.org/react-querybuilder) by clicking the "Load from SQL" button.
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables.
 
@@ -782,14 +782,14 @@ Examples:
 ```ts
 const standardSQL = parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`);
 const paramsArray = parseSQL(`SELECT * FROM t WHERE firstName = ? AND lastName = ?`, {
-  params: ['Steve', 'Vai']
+  params: ['Steve', 'Vai'],
 });
 const paramsObject = parseSQL(`SELECT * FROM t WHERE firstName = :p1 AND lastName = :p2`, {
-  params: { p1: 'Steve', p2: 'Vai' }
+  params: { p1: 'Steve', p2: 'Vai' },
 });
 const paramsObject$ = parseSQL(`SELECT * FROM t WHERE firstName = $p1 AND lastName = $p2`, {
   params: { p1: 'Steve', p2: 'Vai' },
-  paramPrefix: '$'
+  paramPrefix: '$',
 });
 
 // Running any of the following statements will log the same result (see below)

@@ -1,0 +1,7 @@
+[data-theme='dark'] {
+  .rqb-bulma {
+    @import 'bulma-darkly_variables';
+    @import 'bulma/bulma.sass';
+    @import 'bulma-darkly_overrides';
+  }
+}

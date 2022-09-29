@@ -8,8 +8,7 @@
 
 [![npm](https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=86400)](https://www.npmjs.com/package/react-querybuilder)
 [![Docs](https://img.shields.io/badge/docs-blue)](https://react-querybuilder.js.org/)
-[![Full demo](https://img.shields.io/badge/demo-full-blue)](https://react-querybuilder.js.org/react-querybuilder/)
-[![IE11-compatible demo](https://img.shields.io/badge/demo-ie11-blue)](https://react-querybuilder.js.org/react-querybuilder/ie11.html)
+[![Full demo](https://img.shields.io/badge/demo-full-blue)](https://react-querybuilder.js.org/react-querybuilder)
 [![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
 [![All Contributors][badge-all-contributors]](#contributors-)
@@ -49,9 +48,9 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 ## Development
 
-To load a test page with a basic query builder using the default components, run `yarn start`.
+To run a test page with a basic query builder using the default components, run `yarn start`.
 
-To load the full demo featuring all the compatibility components, run `yarn demo`.
+To run the documentation website, run `yarn website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
 
 ## Credits
 

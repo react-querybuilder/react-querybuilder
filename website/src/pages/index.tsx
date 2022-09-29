@@ -17,9 +17,7 @@ function HomepageHeader() {
           <Link className="button button--secondary button--lg" to="/docs/intro">
             Get started
           </Link>
-          <Link
-            className="button button--secondary button--lg"
-            href="https://react-querybuilder.js.org/react-querybuilder">
+          <Link className="button button--secondary button--lg" href="/react-querybuilder">
             Try it out
           </Link>
         </div>
