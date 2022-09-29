@@ -8,14 +8,14 @@ import type {
   RuleType,
   Schema,
 } from '@react-querybuilder/ts';
-import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
 import {
   defaultCombinators,
   defaultControlClassnames,
   defaultTranslations as translations,
   TestID,
-} from '../src/defaults';
+} from '@react-querybuilder/util';
+import { forwardRef } from 'react';
+import { defaultControlElements } from '../src/controls';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => {

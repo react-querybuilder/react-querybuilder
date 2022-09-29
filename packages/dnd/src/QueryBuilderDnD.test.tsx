@@ -8,14 +8,24 @@ import { act, render, screen } from '@testing-library/react';
 import * as reactDnD from 'react-dnd';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
 import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { formatQuery, getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
+import { getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
 export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
-  JSON.parse(formatQuery(query, 'json_without_ids'));
+  JSON.parse(
+    JSON.stringify(query, [
+      'combinator',
+      'rules',
+      'not',
+      'field',
+      'operator',
+      'value',
+      'valueSource',
+    ])
+  );
 
 const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});

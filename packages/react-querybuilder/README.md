@@ -119,11 +119,11 @@ console.log(query);
 */
 ```
 
-Note: `formatQuery` and the `parse*` functions can be used without importing React (for example, on the server) like this:
+Note: Utilities like `formatQuery` and the `parse*` functions are available in separate packages, and can be used without importing React (for example, on the server) like this:
 
 ```js
-import { formatQuery } from 'react-querybuilder/dist/formatQuery';
-import { parseCEL } from 'react-querybuilder/dist/parseCEL';
-import { parseJsonLogic } from 'react-querybuilder/dist/parseJsonLogic';
-import { parseSQL } from 'react-querybuilder/dist/parseSQL';
+import { formatQuery } from '@react-querybuilder/format-query';
+import { parseCEL } from '@react-querybuilder/parse';
+import { parseJsonLogic } from '@react-querybuilder/parse';
+import { parseSQL } from '@react-querybuilder/parse';
 ```

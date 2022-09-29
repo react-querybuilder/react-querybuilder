@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { TestID } from '../defaults';
 import { QueryBuilder } from '../QueryBuilder';
+import { TestID } from '@react-querybuilder/util';
 import type { GetCompatContextProviderProps } from './getCompatContextProvider';
 import { getCompatContextProvider } from './getCompatContextProvider';
 
@@ -39,3 +39,4 @@ it('works with classnames', () => {
   expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(ruleGroupClassname);
   expect(screen.getByText(buttonText)).toHaveClass(buttonClassname);
 });
+*/

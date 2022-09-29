@@ -4,18 +4,18 @@ import type {
   ValidationResult,
   ValueSelectorProps,
 } from '@react-querybuilder/ts';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { createRule, getRuleGroupProps, ruleGroupClassnames } from '../genericTests';
 import {
+  add,
   defaultCombinators,
   defaultTranslations as t,
   standardClassnames as sc,
   TestID,
-} from './defaults';
+} from '@react-querybuilder/util';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { createRule, getRuleGroupProps, ruleGroupClassnames } from '../genericTests';
 import { errorDeprecatedRuleGroupProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { RuleGroup } from './RuleGroup';
-import { add } from './utils';
 
 const user = userEvent.setup();
 

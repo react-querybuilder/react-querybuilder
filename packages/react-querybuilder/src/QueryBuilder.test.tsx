@@ -11,28 +11,39 @@ import type {
   RuleType,
   ValidationMap,
 } from '@react-querybuilder/ts';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import {
   defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,
   defaultPlaceholderOperatorName,
   defaultTranslations as t,
+  defaultValidator,
+  findPath,
   standardClassnames as sc,
   TestID,
-} from './defaults';
+} from '@react-querybuilder/util';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
-import { defaultValidator, findPath, formatQuery } from './utils';
 
 const user = userEvent.setup();
 
 export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
-  JSON.parse(formatQuery(query, 'json_without_ids'));
+  JSON.parse(
+    JSON.stringify(query, [
+      'combinator',
+      'rules',
+      'not',
+      'field',
+      'operator',
+      'value',
+      'valueSource',
+    ])
+  );
 
 const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -1782,9 +1793,7 @@ describe('debug mode', () => {
     };
     render(<QueryBuilder debugMode query={defaultQuery} onLog={onLog} />);
     const { query, queryState, schema } = onLog.mock.calls[0][0];
-    const [processedRoot, processedQueryState] = [query, queryState].map(q =>
-      JSON.parse(formatQuery(q, 'json_without_ids'))
-    );
+    const [processedRoot, processedQueryState] = [query, queryState].map(stripQueryIds);
     expect(processedRoot).toEqual(defaultQuery);
     expect(processedQueryState).toEqual({ ...defaultQuery, rules: [] });
     expect(schema).toBeDefined();

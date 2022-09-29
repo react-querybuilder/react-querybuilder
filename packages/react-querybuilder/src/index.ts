@@ -1,7 +1,10 @@
+export * from '@react-querybuilder/format-query';
+export * from '@react-querybuilder/parse';
 export * from '@react-querybuilder/ts';
+export * from '@react-querybuilder/util';
 export { version } from '../package.json';
 export * from './controls/';
-export * from './defaults';
+export { useMergedContext, usePreferProp, useValueEditor } from './hooks';
 export * from './InlineCombinator';
 export * as messages from './messages';
 export * from './Rule';

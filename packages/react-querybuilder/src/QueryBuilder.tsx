@@ -10,36 +10,31 @@ import type {
   Schema,
   UpdateableProperties,
 } from '@react-querybuilder/ts';
-import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  add,
   defaultCombinators,
   defaultOperators,
   defaultTranslations,
-  LogType,
-  standardClassnames,
-} from './defaults';
-import {
   filterFieldsByComparator,
   generateID,
-  getValueSourcesUtil,
-  uniqByName,
-  uniqOptGroups,
-} from './internal';
-import { useControlledOrUncontrolled } from './internal/hooks';
-import {
-  add,
   getFirstOption,
+  getValueSourcesUtil,
   isOptionGroupArray,
   joinWith,
+  LogType,
   move,
   objectKeys,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
+  standardClassnames,
+  uniqByName,
+  uniqOptGroups,
   update,
-  useMergedContext,
-} from './utils';
+} from '@react-querybuilder/util';
+import { clsx } from 'clsx';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useControlledOrUncontrolled, useMergedContext } from './hooks';
 
 const noop = () => {};
 

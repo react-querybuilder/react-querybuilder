@@ -40,7 +40,6 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jscodeshift": "^0.11.5",
-    "@types/json-logic-js": "^2.0.1",
     "@types/node": "^18.7.23",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
@@ -49,7 +48,6 @@
     "concurrently": "^7.4.0",
     "copyfiles": "^2.4.1",
     "jscodeshift": "^0.13.1",
-    "json-logic-js": "^2.0.2",
     "query-string": "^7.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -64,9 +62,11 @@
   },
   "dependencies": {
     "@react-querybuilder/ctx": "^5.0.0-alpha.6",
+    "@react-querybuilder/format-query": "^5.0.0-alpha.6",
+    "@react-querybuilder/parse": "^5.0.0-alpha.6",
     "@react-querybuilder/ts": "^5.0.0-alpha.6",
-    "clsx": "^1.2.1",
-    "immer": "^9.0.15"
+    "@react-querybuilder/util": "^5.0.0-alpha.6",
+    "clsx": "^1.2.1"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
@@ -74,22 +74,11 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "yarn build:main && concurrently --timings --max-processes 10 --names css,formatQuery,parseCEL,parseJsonLogic,parseSQL,transformQuery,types yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseSQL yarn:build:transformQuery yarn:build:types",
+    "build": "yarn build:main && concurrently --timings --max-processes 10 --names css,types yarn:build:css yarn:build:types",
     "build:main": "vite build",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
     "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly",
-    "build:formatQuery": "vite build --config vite.config.formatQuery.js",
-    "build:parseCEL": "vite build --config vite.config.parseCEL.js",
-    "build:parseJsonLogic": "vite build --config vite.config.parseJsonLogic.js",
-    "build:parseSQL": "vite build --config vite.config.parseSQL.js",
-    "build:transformQuery": "vite build --config vite.config.transformQuery.js",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "yarn typecheck --watch",
-    "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
-    "generate-sqlparser-base": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate-sqlparser-codemod": "npx jscodeshift -t src/internal/langParser.codemod.js src/utils/parseSQL/sqlParser.js",
-    "generate-celparser": "yarn generate-celparser-base && yarn generate-celparser-codemod",
-    "generate-celparser-base": "npx jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate-celparser-codemod": "npx jscodeshift -t src/internal/langParser.codemod.js src/utils/parseCEL/celParser.js"
+    "typecheck:watch": "yarn typecheck --watch"
   }
 }

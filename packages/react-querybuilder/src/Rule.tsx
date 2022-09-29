@@ -1,11 +1,15 @@
 import type { RuleProps, RuleType } from '@react-querybuilder/ts';
+import {
+  filterFieldsByComparator,
+  getParentPath,
+  getValidationClassNames,
+  standardClassnames,
+  TestID,
+} from '@react-querybuilder/util';
 import { clsx } from 'clsx';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
-import { standardClassnames, TestID } from './defaults';
-import { filterFieldsByComparator, getValidationClassNames } from './internal';
-import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { getParentPath } from './utils';
+import { useDeprecatedProps, useReactDndWarning } from './hooks';
 
 export const Rule = ({
   id,

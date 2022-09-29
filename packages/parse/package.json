@@ -1,0 +1,44 @@
+{
+  "name": "@react-querybuilder/parse",
+  "description": "React Query Builder Query Parsers",
+  "version": "5.0.0-alpha.6",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/parse"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "yarn typecheck --watch",
+    "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
+    "generate-sqlparser-base": "npx jison src/parseSQL/sql.jison --outfile src/parseSQL/sqlParser.js --module-type commonjs",
+    "generate-sqlparser-codemod": "npx jscodeshift -t src/langParser.codemod.js src/parseSQL/sqlParser.js",
+    "generate-celparser": "yarn generate-celparser-base && yarn generate-celparser-codemod",
+    "generate-celparser-base": "npx jison src/parseCEL/cel.jison --outfile src/parseCEL/celParser.js --module-type commonjs",
+    "generate-celparser-codemod": "npx jscodeshift -t src/langParser.codemod.js src/parseCEL/celParser.js"
+  },
+  "dependencies": {
+    "@react-querybuilder/ts": "^5.0.0-alpha.6",
+    "@react-querybuilder/util": "^5.0.0-alpha.6",
+    "json-logic-js": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/json-logic-js": "^2.0.1",
+    "@types/node": "^18.7.23",
+    "typescript": "^4.8.4",
+    "vite": "^3.1.4"
+  }
+}

@@ -1,3 +1,4 @@
+import { defaultValidator } from '@react-querybuilder/util';
 import queryString from 'query-string';
 import type { ComponentType } from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -7,7 +8,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
 } from '../src';
-import { defaultValidator, QueryBuilder } from '../src';
+import { QueryBuilder } from '../src';
 import {
   defaultOptions,
   emptyQuery,

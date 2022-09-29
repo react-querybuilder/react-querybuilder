@@ -4,10 +4,14 @@ import type {
   ValueSelectorProps,
   ValueSources,
 } from '@react-querybuilder/ts';
+import {
+  defaultTranslations as t,
+  standardClassnames as sc,
+  TestID,
+} from '@react-querybuilder/util';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getFieldMapFromArray, getRuleProps as getProps, ruleClassnames } from '../genericTests';
-import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { Rule } from './Rule';
 

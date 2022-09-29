@@ -10,13 +10,13 @@ import type {
   Schema,
   ValueEditorProps,
 } from '@react-querybuilder/ts';
-import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
 import {
   defaultControlClassnames,
   defaultTranslations as translations,
   TestID,
-} from '../src/defaults';
+} from '@react-querybuilder/util';
+import { forwardRef } from 'react';
+import { defaultControlElements } from '../src/controls';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: Field[]) =>

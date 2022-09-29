@@ -1,6 +1,6 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
-import { standardClassnames } from '../defaults';
-import { joinWith, toArray, useValueEditor } from '../utils';
+import { joinWith, standardClassnames, toArray } from '@react-querybuilder/util';
+import { useValueEditor } from '../hooks';
 import { ValueSelector } from './ValueSelector';
 
 export const ValueEditor = ({

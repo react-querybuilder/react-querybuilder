@@ -1,11 +1,16 @@
 import type { RuleGroupProps } from '@react-querybuilder/ts';
+import {
+  defaultCombinators,
+  getParentPath,
+  getValidationClassNames,
+  pathsAreEqual,
+  standardClassnames,
+  TestID,
+} from '@react-querybuilder/util';
 import { clsx } from 'clsx';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { Fragment, useMemo } from 'react';
-import { defaultCombinators, standardClassnames, TestID } from './defaults';
-import { getValidationClassNames } from './internal';
-import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { getParentPath, pathsAreEqual } from './utils';
+import { useDeprecatedProps, useReactDndWarning } from './hooks';
 
 export const RuleGroup = ({
   id,
