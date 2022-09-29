@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
@@ -13,7 +15,6 @@ const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
 
 function ReactQueryBuilderDemo_AntdBrowser() {
   const Demo = useMemo(
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
     () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
     []
   );

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import Layout from '@theme/Layout';
@@ -11,9 +13,7 @@ export default function ReactQueryBuilderDemo_Bulma() {
     <Layout description="React Query Builder Bulma Demo">
       <BrowserOnly fallback={<div>Loading...</div>}>
         {() => {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-imports
           const Demo: typeof import('./_components/Demo').default =
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
             require('./_components/Demo').default;
           return (
             <QueryBuilderBulma>

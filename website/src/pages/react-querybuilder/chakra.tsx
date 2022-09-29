@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
@@ -7,16 +9,15 @@ import './_styles/rqb-chakra.scss';
 
 function ReactQueryBuilderDemo_ChakraBrowser() {
   const { colorMode } = useColorMode();
-  const { ChakraProvider, extendTheme } =
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
-    useMemo(() => require('@chakra-ui/react') as typeof import('@chakra-ui/react'), []);
+  const { ChakraProvider, extendTheme } = useMemo(
+    () => require('@chakra-ui/react') as typeof import('@chakra-ui/react'),
+    []
+  );
   const { QueryBuilderChakra } = useMemo(
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
     () => require('@react-querybuilder/chakra') as typeof import('@react-querybuilder/chakra'),
     []
   );
   const Demo = useMemo(
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/consistent-type-imports
     () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
     []
   );

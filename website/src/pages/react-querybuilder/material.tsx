@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/consistent-type-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
@@ -74,7 +74,6 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
     []
   );
 
-  // Assign the MUI components to an object
   const muiComponents = {
     Button,
     Checkbox,
