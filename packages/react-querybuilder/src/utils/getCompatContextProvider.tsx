@@ -1,6 +1,6 @@
 import { QueryBuilderContext } from '@react-querybuilder/ctx';
 import type { QueryBuilderContextProps, QueryBuilderContextProvider } from '@react-querybuilder/ts';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { mergeClassnames } from './mergeClassnames';
 
 export type GetCompatContextProviderProps = Pick<
@@ -16,24 +16,31 @@ export const getCompatContextProvider =
   }: GetCompatContextProviderProps): QueryBuilderContextProvider =>
   props => {
     const rqbContext = useContext(QueryBuilderContext);
-    const classnamesObject = compatClassnames
-      ? {
-          controlClassnames: mergeClassnames(
-            rqbContext.controlClassnames,
-            props.controlClassnames,
-            compatClassnames
-          ),
-        }
-      : {};
-    const newContextProps: QueryBuilderContextProps = {
-      ...rqbContext,
-      ...classnamesObject,
-      controlElements: {
-        ...rqbContext.controlElements,
-        ...compatElements,
-        ...props.controlElements,
-      },
-    };
+    const classnamesObject = useMemo(
+      () =>
+        compatClassnames
+          ? {
+              controlClassnames: mergeClassnames(
+                rqbContext.controlClassnames,
+                props.controlClassnames,
+                compatClassnames
+              ),
+            }
+          : {},
+      [props.controlClassnames, rqbContext.controlClassnames]
+    );
+    const newContextProps = useMemo(
+      (): QueryBuilderContextProps => ({
+        ...rqbContext,
+        ...classnamesObject,
+        controlElements: {
+          ...rqbContext.controlElements,
+          ...compatElements,
+          ...props.controlElements,
+        },
+      }),
+      [classnamesObject, props.controlElements, rqbContext]
+    );
 
     return (
       <QueryBuilderContext.Provider value={newContextProps} key={key}>
