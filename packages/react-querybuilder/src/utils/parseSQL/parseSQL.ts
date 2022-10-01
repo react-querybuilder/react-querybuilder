@@ -115,17 +115,25 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         return {
           rules: [rule],
           not: true,
-          ...(ic ? {} : { combinator: 'and' }),
+          ...(!ic && { combinator: 'and' }),
         };
       }
     } else if (expr.type === 'SimpleExprParentheses') {
       const ex = expr.value.value[0];
-      if (ex.type === 'AndExpression' || ex.type === 'OrExpression') {
+      if (
+        ex.type === 'AndExpression' ||
+        ex.type === 'OrExpression' ||
+        ex.type === 'XorExpression'
+      ) {
         return processSQLExpression(ex);
       }
       const rule = processSQLExpression(ex) as DefaultRuleType;
       return rule ? { rules: [rule], ...(ic ? {} : { combinator: 'and' }) } : null;
-    } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
+    } else if (
+      expr.type === 'AndExpression' ||
+      expr.type === 'OrExpression' ||
+      expr.type === 'XorExpression'
+    ) {
       if (ic) {
         const andOrList = generateFlatAndOrList(expr);
         const rules = andOrList.map(v => {
@@ -156,14 +164,12 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           if (Array.isArray(exp)) {
             return {
               combinator: 'and',
-              rules: exp
-                .map(e => processSQLExpression(e))
-                .filter(r => !!r) as DefaultRuleGroupArray,
+              rules: exp.map(e => processSQLExpression(e)).filter(Boolean) as DefaultRuleGroupArray,
             };
           }
           return processSQLExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
-        .filter(r => !!r) as DefaultRuleGroupArray;
+        .filter(Boolean) as DefaultRuleGroupArray;
       /* istanbul ignore else */
       if (rules.length > 0) {
         return { combinator, rules };

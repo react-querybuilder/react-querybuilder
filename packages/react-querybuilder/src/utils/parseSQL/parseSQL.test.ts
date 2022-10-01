@@ -506,6 +506,17 @@ describe('AND/OR expressions', () => {
     });
   });
 
+  it('XOR', () => {
+    expect(parseSQL(`firstName = 'Steve' XOR lastName = 'Vai' XOR middleName IS NULL`)).toEqual({
+      combinator: 'xor',
+      rules: [
+        { field: 'firstName', operator: '=', value: 'Steve' },
+        { field: 'lastName', operator: '=', value: 'Vai' },
+        { field: 'middleName', operator: 'null', value: null },
+      ],
+    });
+  });
+
   it('mixed AND/OR', () => {
     expect(parseSQL(`firstName = 'Steve' AND lastName = 'Vai' OR middleName IS NULL`)).toEqual({
       combinator: 'or',

@@ -311,7 +311,7 @@ case 136:
 this.$ = { type: 'AndExpression', operator: $$[$0-1], left: $$[$0-2], right: $$[$0] };
 break;
 case 137:
-this.$ = { type: 'XORExpression', left: $$[$0-2], right: $$[$0] };
+this.$ = { type: 'XorExpression', operator: $$[$0-1], left: $$[$0-2], right: $$[$0] };
 break;
 case 138:
 this.$ = { type: 'ExpressionList', value: [ $$[$0] ] };

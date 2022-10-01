@@ -1,5 +1,5 @@
 import type {
-  DefaultCombinatorName,
+  DefaultCombinatorNameExtended,
   DefaultOperatorName,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import type {
@@ -12,6 +12,8 @@ import type {
   SQLLiteralValue,
   SQLOrExpression,
   SQLWhereObjectAny,
+  SQLXorExpression,
+  XorOperator,
 } from './types';
 
 export const isSQLExpressionNotString = (v?: string | SQLExpression): v is SQLExpression =>
@@ -40,8 +42,8 @@ export const getParamString = (param: any) => {
 export const getFieldName = (f: string | SQLIdentifier) =>
   (typeof f === 'string' ? f : f.value).replace(/(^`|`$)/g, '');
 
-const normalizeCombinator = (c: AndOperator | OrOperator) =>
-  c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorName;
+const normalizeCombinator = (c: AndOperator | OrOperator | XorOperator) =>
+  c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorNameExtended;
 
 export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): DefaultOperatorName => {
   if (flip) {
@@ -62,18 +64,25 @@ export const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
     : parseFloat(valueObj.value);
 
 export const generateFlatAndOrList = (
-  expr: SQLAndExpression | SQLOrExpression
-): (DefaultCombinatorName | SQLExpression)[] => {
+  expr: SQLAndExpression | SQLOrExpression | SQLXorExpression
+): (DefaultCombinatorNameExtended | SQLExpression)[] => {
   const combinator = normalizeCombinator(expr.operator);
-  if (expr.left.type === 'AndExpression' || expr.left.type === 'OrExpression') {
+  if (
+    expr.left.type === 'AndExpression' ||
+    expr.left.type === 'OrExpression' ||
+    expr.left.type === 'XorExpression'
+  ) {
     return [...generateFlatAndOrList(expr.left), combinator, expr.right];
   }
   return [expr.left, combinator, expr.right];
 };
 
-export const generateMixedAndOrList = (expr: SQLAndExpression | SQLOrExpression) => {
+export const generateMixedAndOrList = (
+  expr: SQLAndExpression | SQLOrExpression | SQLXorExpression
+) => {
   const arr = generateFlatAndOrList(expr);
-  const returnArray: (DefaultCombinatorName | SQLExpression | ('and' | SQLExpression)[])[] = [];
+  const returnArray: (DefaultCombinatorNameExtended | SQLExpression | ('and' | SQLExpression)[])[] =
+    [];
   let startIndex = 0;
   for (let i = 0; i < arr.length; i += 2) {
     if (arr[i + 1] === 'and') {
@@ -86,9 +95,9 @@ export const generateMixedAndOrList = (expr: SQLAndExpression | SQLOrExpression)
       const tempAndArray = arr.slice(startIndex, i + 1) as ('and' | SQLExpression)[];
       returnArray.push(tempAndArray);
       i -= 2;
-    } else if (arr[i + 1] === 'or') {
+    } else if (arr[i + 1] === 'or' || arr[i + 1] === 'xor') {
       if (i === 0 || i === arr.length - 3) {
-        if (i === 0 || arr[i - 1] === 'or') {
+        if (i === 0 || arr[i - 1] === 'or' || arr[i - 1] === 'xor') {
           returnArray.push(arr[i]);
         }
         returnArray.push(arr[i + 1]);
