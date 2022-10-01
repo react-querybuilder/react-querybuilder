@@ -6,7 +6,6 @@ import type {
   QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
-  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   ValidationMap,
@@ -23,6 +22,7 @@ import {
 } from '@react-querybuilder/util';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { stripQueryIds } from '../genericTests';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
@@ -31,19 +31,6 @@ import {
 import { QueryBuilder } from './QueryBuilder';
 
 const user = userEvent.setup();
-
-export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
-  JSON.parse(
-    JSON.stringify(query, [
-      'combinator',
-      'rules',
-      'not',
-      'field',
-      'operator',
-      'value',
-      'valueSource',
-    ])
-  );
 
 const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});

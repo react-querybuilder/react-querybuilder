@@ -1,8 +1,9 @@
+import type { QueryActions, RuleGroupProps, Schema } from '@react-querybuilder/ts';
+import { standardClassnames as sc, TestID } from '@react-querybuilder/util';
 import { act, render, screen } from '@testing-library/react';
 import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import type { QueryActions, RuleGroupProps, Schema } from 'react-querybuilder';
-import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 import { getRuleGroupProps } from 'react-querybuilder/genericTests';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';

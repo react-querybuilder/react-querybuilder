@@ -1,3 +1,5 @@
+import type { QueryActions, RuleProps, Schema } from '@react-querybuilder/ts';
+import { standardClassnames as sc, TestID } from '@react-querybuilder/util';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { useDrag, useDrop } from 'react-dnd';
 import {
@@ -6,8 +8,7 @@ import {
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import type { QueryActions, RuleProps, Schema } from 'react-querybuilder';
-import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 import { getRuleProps } from 'react-querybuilder/genericTests';
 import type { GenericDropTargetProps } from './genericTests';
 import { GenericDropTarget as GenericDropTargetOriginal } from './genericTests';

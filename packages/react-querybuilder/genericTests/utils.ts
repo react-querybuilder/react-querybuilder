@@ -1,3 +1,4 @@
+import type { RuleGroupTypeAny } from '@react-querybuilder/ts';
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 
@@ -18,6 +19,19 @@ export const hasOrInheritsClass = (el: HTMLElement | null, className: string) =>
   }
   return false;
 };
+
+export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
+  JSON.parse(
+    JSON.stringify(query, [
+      'combinator',
+      'rules',
+      'not',
+      'field',
+      'operator',
+      'value',
+      'valueSource',
+    ])
+  );
 
 export const hasOrInheritsData = (
   el: HTMLElement | null,
