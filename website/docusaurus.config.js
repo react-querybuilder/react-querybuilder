@@ -30,8 +30,8 @@ const config = {
         toExtensions: ['exe', 'zip'], // /myAsset -> /myAsset.zip (if latter exists)
         redirects: [
           {
-            from: '/demo',
-            to: '/react-querybuilder',
+            from: '/react-querybuilder',
+            to: '/demo',
           },
         ],
       },
@@ -69,7 +69,7 @@ const config = {
         // blog: {
         //   showReadingTime: true,
         //   editUrl:
-        //     'https://github.com/react-querybuilder/react-querybuilder.github.io/edit/main/',
+        //     'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
         // },
         blog: false,
         theme: {
@@ -112,7 +112,7 @@ const config = {
             label: 'Docs',
           },
           {
-            to: '/react-querybuilder',
+            to: '/demo',
             label: 'Demo',
             position: 'right',
           },
@@ -156,7 +156,7 @@ const config = {
             items: [
               {
                 label: 'Kitchen Sink',
-                to: '/react-querybuilder',
+                to: '/demo',
               },
             ],
           },

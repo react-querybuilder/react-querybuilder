@@ -6,4 +6,4 @@ This package does not need to be installed independently.
 
 [Full documentation](https://react-querybuilder.js.org/)
 
-[Demo](https://react-querybuilder.js.org/react-querybuilder)
+[Demo](https://react-querybuilder.js.org/demo)

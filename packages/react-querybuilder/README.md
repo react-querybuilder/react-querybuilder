@@ -10,7 +10,7 @@ Complete documentation is available at [react-querybuilder.js.org](https://react
 
 ## Demo
 
-[Click here to see a live, interactive demo](https://react-querybuilder.js.org/react-querybuilder).
+[Click here to see a live, interactive demo](https://react-querybuilder.js.org/demo).
 
 <detail>
 <summary>To run the demo locally:</summary>
@@ -24,11 +24,13 @@ Complete documentation is available at [react-querybuilder.js.org](https://react
 
 To use the official compatibility components as seen in the demo (select options from the Style dropdown), take a look at the packages under the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder). We currently support:
 
-- [Ant Design](https://ant.design/) ([@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd) - [demo](https://react-querybuilder.js.org/react-querybuilder/antd), [usage](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd))
-- [Bootstrap](https://getbootstrap.com/) ([@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) - [demo](https://react-querybuilder.js.org/react-querybuilder/bootstrap), [usage](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap))
-- [Bulma](https://bulma.io/) ([@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma) - [demo](https://react-querybuilder.js.org/react-querybuilder/bulma), [usage](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma))
-- [Chakra UI](https://chakra-ui.com/) ([@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra) - [demo](https://react-querybuilder.js.org/react-querybuilder/chakra), [usage](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra))
-- [MUI](https://mui.com/) ([@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material) - [demo](https://react-querybuilder.js.org/react-querybuilder/material), [usage](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material))
+| Library                                | npm                                                                                          | Demo                                                     | Example                                                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [Ant Design](https://ant.design/)      | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [demo](https://react-querybuilder.js.org/demo/antd)      | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd)      |
+| [Bootstrap](https://getbootstrap.com/) | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [demo](https://react-querybuilder.js.org/demo/bootstrap) | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap) |
+| [Bulma](https://bulma.io/)             | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [demo](https://react-querybuilder.js.org/demo/bulma)     | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma)     |
+| [Chakra UI](https://chakra-ui.com/)    | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [demo](https://react-querybuilder.js.org/demo/chakra)    | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra)    |
+| [MUI](https://mui.com/)                | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
 
 ## Basic usage
 

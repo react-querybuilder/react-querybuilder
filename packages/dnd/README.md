@@ -2,7 +2,7 @@
 
 Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with drag-and-drop functionality.
 
-To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder#enableDragAndDrop=true) with the drag-and-drop option enabled.
+To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo#enableDragAndDrop=true) with the drag-and-drop option enabled.
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 

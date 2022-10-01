@@ -2,7 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [MUI](https://mui.com/)/[Material Design](https://material.io/design).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/react-querybuilder/material) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material).
+To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/material) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material).
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 

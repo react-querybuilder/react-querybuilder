@@ -15,7 +15,7 @@ Use the `parseSQL` function to convert SQL `SELECT` statements into a format sui
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 ```
 
-`parseSQL` takes a SQL `SELECT` statement (either the full statement or the `WHERE` clause by itself). Try it out in the [demo](/react-querybuilder) by clicking the "Load from SQL" button.
+`parseSQL` takes a SQL `SELECT` statement (either the full statement or the `WHERE` clause by itself). Try it out in the [demo](/demo) by clicking the "Load from SQL" button.
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables within the SQL string.
 
@@ -64,13 +64,13 @@ Output (`RuleGroupType`):
 
 `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`.
 
-Click the "Import from CEL" button in [the demo](/react-querybuilder) to try it out.
+Click the "Import from CEL" button in [the demo](/demo) to try it out.
 
 ## JsonLogic
 
 `parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
 
-Click the "Import from JsonLogic" button in [the demo](/react-querybuilder) to try it out.
+Click the "Import from JsonLogic" button in [the demo](/demo) to try it out.
 
 ## Configuration
 
