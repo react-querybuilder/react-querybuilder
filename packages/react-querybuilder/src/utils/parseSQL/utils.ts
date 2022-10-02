@@ -3,8 +3,12 @@ import type {
   DefaultOperatorName,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import type {
+  AndList,
   AndOperator,
   ComparisonOperator,
+  GenerateMixedAndXorOrListReturn,
+  MixedAndXorList,
+  MixedAndXorOrList,
   OrOperator,
   SQLAndExpression,
   SQLExpression,
@@ -118,5 +122,116 @@ export const generateMixedAndOrList = (
     // If length is 1, then the only element is an AND array so just return that
     return returnArray[0];
   }
+  return returnArray;
+};
+
+export const generateMixedAndXorOrList = (
+  expr: SQLAndExpression | SQLOrExpression | SQLXorExpression
+): GenerateMixedAndXorOrListReturn => {
+  const arr = generateFlatAndOrList(expr);
+  let currentLevel = 0;
+  const orArray: MixedAndXorOrList = [];
+  let xorArray: MixedAndXorList = [];
+  let andArray: AndList = [];
+
+  for (let i = 0; i < arr.length - 2; i += 2) {
+    let levelDelta = 0;
+
+    if (arr[i + 1] === 'and') {
+      levelDelta = 2 - currentLevel;
+    } else if (arr[i + 1] === 'xor') {
+      levelDelta = 1 - currentLevel;
+    } else if (arr[i + 1] === 'or') {
+      levelDelta = 0 - currentLevel;
+    }
+
+    if (levelDelta > 0) {
+      for (let d = 0; d < levelDelta; d++) {
+        currentLevel += 1;
+        if (currentLevel === 1) {
+          xorArray = [];
+          if (levelDelta === 1) {
+            xorArray.push(arr[i] as SQLExpression, arr[i + 2] as SQLExpression);
+          }
+        } else if (currentLevel === 2) {
+          andArray = [];
+          andArray.push(arr[i] as SQLExpression, arr[i + 2] as SQLExpression);
+        }
+      }
+    } else if (levelDelta < 0) {
+      for (let d = 0; d > levelDelta; d--) {
+        currentLevel -= 1;
+        if (currentLevel === 1) {
+          xorArray.push(andArray);
+          if (levelDelta === -1) {
+            xorArray.push(arr[i + 2] as SQLExpression);
+          }
+        } else if (currentLevel === 0) {
+          orArray.push(xorArray);
+          orArray.push(arr[i + 2] as SQLExpression);
+        }
+      }
+    } else {
+      // levelDelta === 0
+      if (currentLevel === 0) {
+        if (i === 0) {
+          orArray.push(arr[i] as SQLExpression);
+        }
+        orArray.push(arr[i + 2] as SQLExpression);
+      } else if (currentLevel === 1) {
+        xorArray.push(arr[i + 2] as SQLExpression);
+      } else if (currentLevel === 2) {
+        andArray.push(arr[i + 2] as SQLExpression);
+      }
+    }
+  }
+
+  // Close up
+  if (currentLevel === 2) {
+    xorArray.push(andArray);
+    currentLevel -= 1;
+  }
+  if (currentLevel === 1) {
+    orArray.push(xorArray);
+    currentLevel -= 1;
+  }
+
+  // Collapse single-element arrays
+  if (orArray.length === 1 && Array.isArray(orArray[0])) {
+    if (orArray[0].length === 1 && Array.isArray(orArray[0][0])) {
+      const retArr: GenerateMixedAndXorOrListReturn = orArray[0][0];
+      retArr.combinator = 'and';
+      return retArr;
+    } else {
+      const retArr: GenerateMixedAndXorOrListReturn = orArray[0];
+      retArr.combinator = 'xor';
+      return retArr;
+    }
+  }
+
+  const returnArray: GenerateMixedAndXorOrListReturn = [];
+  returnArray.combinator = 'or';
+
+  for (const o of orArray) {
+    if (Array.isArray(o)) {
+      if (o.length === 1 && Array.isArray(o[0])) {
+        returnArray.push(o[0]);
+        (returnArray[0] as AndList).combinator = 'and';
+      } else {
+        o.combinator = 'xor';
+        returnArray.push(
+          ...o.map(ox => {
+            if (Array.isArray(ox)) {
+              ox.combinator = 'and';
+            }
+            return ox;
+          })
+        );
+      }
+    } else {
+      returnArray.push(o);
+    }
+  }
+
   return returnArray;
 };

@@ -1,3 +1,5 @@
+import type { DefaultCombinatorNameExtended } from '@react-querybuilder/ts';
+
 type AnyCase<T extends string> = string extends T
   ? string
   : T extends `${infer F1}${infer F2}${infer R}`
@@ -269,3 +271,9 @@ export interface ParsedSQL {
   };
   hasSemicolon: boolean;
 }
+
+export type MaybeWithCombinator = { combinator?: DefaultCombinatorNameExtended };
+export type AndList = SQLExpression[] & MaybeWithCombinator;
+export type MixedAndXorList = (SQLExpression | AndList)[] & MaybeWithCombinator;
+export type MixedAndXorOrList = (SQLExpression | MixedAndXorList | AndList)[] & MaybeWithCombinator;
+export type GenerateMixedAndXorOrListReturn = MixedAndXorOrList & MaybeWithCombinator;
