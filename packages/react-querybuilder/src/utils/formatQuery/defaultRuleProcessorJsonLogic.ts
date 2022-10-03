@@ -1,7 +1,7 @@
 import type {
   RQBJsonLogic,
+  RuleProcessor,
   RuleType,
-  ValueProcessorOptions,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import type { JsonLogicVar } from 'json-logic-js';
 import { toArray } from '../arrayUtils';
@@ -16,9 +16,9 @@ const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
 const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
   /^(does)?not/i.test(op) ? { '!': jsonRule } : jsonRule;
 
-export const defaultRuleProcessorJsonLogic = (
+export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   { field, operator, value, valueSource }: RuleType,
-  { parseNumbers }: ValueProcessorOptions
+  { parseNumbers } = {}
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };

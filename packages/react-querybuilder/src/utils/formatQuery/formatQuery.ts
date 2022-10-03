@@ -8,6 +8,7 @@ import type {
   RQBJsonLogic,
   RuleGroupType,
   RuleGroupTypeAny,
+  RuleProcessor,
   RuleType,
   RuleValidator,
   ValidationMap,
@@ -18,11 +19,11 @@ import { uniqByName } from '../../internal/uniq';
 import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { defaultValueProcessorCELByRule } from './defaultValueProcessorCELByRule';
-import { defaultValueProcessorMongoDBByRule } from './defaultValueProcessorMongoDBByRule';
-import { defaultValueProcessorSpELByRule } from './defaultValueProcessorSpELByRule';
 import {
   celCombinatorMap,
   isValueProcessorLegacy,
@@ -66,6 +67,7 @@ function formatQuery(
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
   let format: ExportFormat = 'json';
   let valueProcessorInternal = defaultValueProcessorByRule;
+  let ruleProcessorInternal: RuleProcessor | null = null;
   let quoteFieldNamesWith = '';
   let validator: QueryValidator = () => true;
   let fields: Required<FormatQueryOptions>['fields'] = [];
@@ -79,15 +81,20 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
     if (format === 'mongodb') {
-      valueProcessorInternal = defaultValueProcessorMongoDBByRule;
+      ruleProcessorInternal = defaultRuleProcessorMongoDB;
     } else if (format === 'cel') {
-      valueProcessorInternal = defaultValueProcessorCELByRule;
+      ruleProcessorInternal = defaultRuleProcessorCEL;
     } else if (format === 'spel') {
-      valueProcessorInternal = defaultValueProcessorSpELByRule;
+      ruleProcessorInternal = defaultRuleProcessorSpEL;
+    } else if (format === 'jsonlogic') {
+      ruleProcessorInternal = defaultRuleProcessorJsonLogic;
     }
   } else {
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
-    const { valueProcessor = null } = options;
+    const { valueProcessor = null, ruleProcessor = null } = options;
+    if (typeof ruleProcessor === 'function') {
+      ruleProcessorInternal = ruleProcessor;
+    }
     valueProcessorInternal =
       typeof valueProcessor === 'function'
         ? r =>
@@ -95,11 +102,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
               : valueProcessor(r, { parseNumbers })
         : format === 'mongodb'
-        ? defaultValueProcessorMongoDBByRule
+        ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
         : format === 'cel'
-        ? defaultValueProcessorCELByRule
+        ? ruleProcessorInternal ?? defaultRuleProcessorCEL
         : format === 'spel'
-        ? defaultValueProcessorSpELByRule
+        ? ruleProcessorInternal ?? defaultRuleProcessorSpEL
+        : format === 'jsonlogic'
+        ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
         : defaultValueProcessorByRule;
     quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
     validator = options.validator ?? (() => true);
@@ -352,7 +361,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, { parseNumbers });
+            return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
           })
           .filter(Boolean)
           .join(',');
@@ -384,7 +393,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, {
+            return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
               parseNumbers,
               escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             });
@@ -424,7 +433,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return '';
             }
-            return valueProcessorInternal(rule, {
+            return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
               parseNumbers,
               escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             });
@@ -459,7 +468,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ) {
               return false;
             }
-            return defaultRuleProcessorJsonLogic(rule, { parseNumbers });
+            return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
           })
           .filter(Boolean);
 

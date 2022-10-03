@@ -1,18 +1,23 @@
 import type {
   RuleGroupType,
   RuleGroupTypeIC,
+  RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import {
   defaultCELValueProcessor,
   defaultMongoDBValueProcessor,
+  defaultRuleProcessorCEL,
+  defaultRuleProcessorMongoDB,
+  defaultRuleProcessorSpEL,
   defaultSpELValueProcessor,
   defaultValueProcessor,
 } from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
+import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { formatQuery } from './formatQuery';
 import { jsonLogicAdditionalOperators } from './utils';
 
@@ -1528,6 +1533,64 @@ describe('validation', () => {
           }
         )
       ).toBe(false);
+    });
+  });
+});
+
+describe('ruleProcessor', () => {
+  const queryForRuleProcessor: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'custom_operator', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  it('handles custom MongoDB rule processor', () => {
+    const ruleProcessor: RuleProcessor = r =>
+      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorMongoDB(r);
+    expect(formatQuery(queryForRuleProcessor, { format: 'mongodb', ruleProcessor })).toBe(
+      '{"$and":[custom_operator,{"f2":{"$eq":"v2"}}]}'
+    );
+    expect(
+      formatQuery(queryForRuleProcessor, { format: 'mongodb', valueProcessor: ruleProcessor })
+    ).toBe('{"$and":[custom_operator,{"f2":{"$eq":"v2"}}]}');
+  });
+
+  it('handles custom CEL rule processor', () => {
+    const ruleProcessor: RuleProcessor = r =>
+      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorCEL(r);
+    expect(formatQuery(queryForRuleProcessor, { format: 'cel', ruleProcessor })).toBe(
+      'custom_operator && f2 == "v2"'
+    );
+    expect(
+      formatQuery(queryForRuleProcessor, { format: 'cel', valueProcessor: ruleProcessor })
+    ).toBe('custom_operator && f2 == "v2"');
+  });
+
+  it('handles custom SpEL rule processor', () => {
+    const ruleProcessor: RuleProcessor = r =>
+      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSpEL(r);
+    expect(formatQuery(queryForRuleProcessor, { format: 'spel', ruleProcessor })).toBe(
+      "custom_operator and f2 == 'v2'"
+    );
+    expect(
+      formatQuery(queryForRuleProcessor, { format: 'spel', valueProcessor: ruleProcessor })
+    ).toBe("custom_operator and f2 == 'v2'");
+  });
+
+  it('handles custom JsonLogic rule processor', () => {
+    const ruleProcessor: RuleProcessor = r =>
+      r.operator === 'custom_operator'
+        ? { [r.operator]: [{ var: r.field }, r.value] }
+        : defaultRuleProcessorJsonLogic(r);
+    expect(formatQuery(queryForRuleProcessor, { format: 'jsonlogic', ruleProcessor })).toEqual({
+      and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
+    });
+    expect(
+      formatQuery(queryForRuleProcessor, { format: 'jsonlogic', valueProcessor: ruleProcessor })
+    ).toEqual({
+      and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
     });
   });
 });

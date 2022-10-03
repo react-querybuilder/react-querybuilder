@@ -1,10 +1,10 @@
-import type { ValueProcessorByRule } from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { RuleProcessor } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
-export const defaultValueProcessorCELByRule: ValueProcessorByRule = (
+export const defaultRuleProcessorCEL: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
   { escapeQuotes, parseNumbers } = {}
