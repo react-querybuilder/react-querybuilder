@@ -1,8 +1,8 @@
-import type { ValueProcessorByRule } from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { RuleProcessor } from '@react-querybuilder/ts/dist/types/src/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
-export const defaultValueProcessorMongoDBByRule: ValueProcessorByRule = (
+export const defaultRuleProcessorMongoDB: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
   { parseNumbers } = {}

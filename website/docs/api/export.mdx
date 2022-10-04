@@ -318,9 +318,52 @@ formatQuery(
 
 :::
 
+### Rule processor
+
+To customize how rules are formatted, use the `ruleProcessor` configuration option. Rules must pass validation before being passed to the provided function.
+
+The default rule processor for each non-SQL <abbr title="All formats except 'json' and 'json_without_ids'">query language format</abbr> is available as a named export from `react-querybuilder`, for use as a fallback in case your custom rule processor is not applicable.
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  not: false,
+  rules: [
+    {
+      field: 'firstName',
+      operator: 'has', // <-- non-standard operator
+      value: 'S',
+    },
+    {
+      field: 'lastName',
+      operator: '=',
+      value: 'Vai',
+    },
+  ],
+};
+
+const customRuleProcessor = (rule, options) => {
+  if (operator === 'has') {
+    // "has" operator not handled by default "jsonlogic" rule processor
+    return { in: [rule.value, { var: rule.field }] };
+  }
+  // Fall back to the default rule processor for all other operators
+  return defaultRuleProcessorJsonLogic(rule, options);
+};
+
+formatQuery(query, { format: 'jsonlogic', ruleProcessor: customRuleProcessor });
+// Returns:
+// {
+//   and: [
+//     { in: ["S", { var: "firstName" }] },
+//     { "==": [{ var: "lastName" }, "Vai"] }
+//   ]
+// }
+```
+
 ### Value processor
 
-If you need to control the way the value portion of the output is processed, you can specify a custom `valueProcessor` (only applicable for certain formats).
+If you only need to control the way the _value_ portion of the output is processed, you can specify a custom `valueProcessor` applicable for query language formats.
 
 ```ts
 const query: RuleGroupType = {
@@ -355,7 +398,9 @@ formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
 
 :::caution
 
-When using the "mongodb", "cel", or "spel" export formats, `valueProcessor` functions must produce the entire MongoDB rule object or CEL/SpEL rule string, not just the expression on the right-hand side of the operator like with SQL-based formats.
+When producing non-SQL query language formats—including "mongodb", "cel", "spel", and "jsonlogic"—`valueProcessor` functions must produce the entire rule object (for MongoDB/JsonLogic) or rule string (for CEL/SpEL), not just the expression on the right-hand side of the operator like with SQL-based formats.
+
+This situation exists for backwards-compatibility reasons, but to increase the clarity of your own code we recommend using the `ruleProcessor` option which has the same interface and effect as `valueProcessor` for all non-SQL query language formats.
 
 :::
 
@@ -371,7 +416,7 @@ valueProcessor(rule, { parseNumbers });
 
 The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`, which is equivalent to `Pick<FormatQueryOptions, "parseNumbers">`).
 
-Invoking `valueProcessor` with the full `RuleType` object provides access to much more information about each rule. Standard properties that were previously unavailable include `path`, `id`, and `disabled`, but any custom properties will also be accessible.
+Invoking `valueProcessor` with the full `RuleType` object provides access to much more information about each rule. Standard properties that were previously unavailable include `path`, `id`, and `disabled`. Perhaps more importantly, any custom properties will also be accessible.
 
 The default value processors have not changed from the legacy function signature, but alternate functions using the new `fn(rule, options)` signature are now available:
 
@@ -380,7 +425,13 @@ The default value processors have not changed from the legacy function signature
 - `defaultValueProcessorMongoDBByRule`
 - `defaultValueProcessorSpELByRule`
 
-To maintain the legacy signature (`valueProcessor(field, operator, value, valueSource)`), make sure your custom `valueProcessor` function accepts at least three arguments _with no default values_ (i.e. do not use `=` for the first three arguments). For example, the following code will log `length: 1` and the function would be called with the `(rule, options)` arguments:
+:::info
+
+While these enhanced CEL, SpEL, and MongoDB value processors are available, we recommend using the `ruleProcessor` option instead—if for no other reason than clarity of your own code. As mentioned above, they ultimately do the same thing anyway.
+
+:::
+
+To maintain the legacy signature (`valueProcessor(field, operator, value, valueSource)`), make sure your custom `valueProcessor` function accepts at least three arguments _with no default values_ (do not use `=` for the first three arguments). For example, the following code will log `length: 1` and the function would be called with the `(rule, options)` arguments:
 
 ```ts
 const valueProcessor = (field: string, operator = '=', value = '') => '...';

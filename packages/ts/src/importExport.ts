@@ -21,10 +21,16 @@ export interface FormatQueryOptions {
   format?: ExportFormat;
   /**
    * This function will be used to process the `value` from each rule
-   * when using the "sql"/"parameterized"/"parameterized_named" export
-   * formats. If not defined, `defaultValueProcessor` will be used.
+   * for query language formats. If not defined, the appropriate
+   * `defaultValueProcessor` for the format will be used.
    */
   valueProcessor?: ValueProcessorLegacy | ValueProcessorByRule;
+  /**
+   * This function will be used to process each rule for query language
+   * formats. If not defined, the appropriate `defaultRuleProcessor`
+   * for the format will be used.
+   */
+  ruleProcessor?: RuleProcessor;
   /**
    * In the "sql"/"parameterized"/"parameterized_named" export formats,
    * field names will be bracketed by this string. Defaults to the empty
@@ -42,8 +48,7 @@ export interface FormatQueryOptions {
    */
   fields?: (Pick<Field, 'name' | 'validator'> & Record<string, any>)[];
   /**
-   * This string will be inserted in place of invalid groups for "sql",
-   * "parameterized", "parameterized_named", and "mongodb" formats.
+   * This string will be inserted in place of invalid groups for non-JSON formats.
    * Defaults to '(1 = 1)' for "sql"/"parameterized"/"parameterized_named",
    * '$and:[{$expr:true}]' for "mongodb".
    */
@@ -88,6 +93,9 @@ export type ValueProcessorLegacy = (
 ) => string;
 
 export type ValueProcessor = ValueProcessorLegacy;
+
+// TODO: narrow the return type based on options.format? (must add format to options first)
+export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
 
 export interface ParameterizedSQL {
   sql: string;
