@@ -71,6 +71,10 @@ export interface DefaultCombinator extends NameLabelPair {
   name: DefaultCombinatorName;
 }
 
+export interface DefaultCombinatorExtended extends NameLabelPair {
+  name: DefaultCombinatorNameExtended;
+}
+
 export interface DefaultOperator extends NameLabelPair {
   name: DefaultOperatorName;
 }

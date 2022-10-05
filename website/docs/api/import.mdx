@@ -60,6 +60,22 @@ Output (`RuleGroupType`):
 }
 ```
 
+:::info
+
+Since v5.0, `parseSQL` can detect `XOR` operators and convert the expressions into rule groups with combinator "xor". However, since "xor" is not one of the members of `defaultCombinators`, you will need to specify `defaultCombinatorsExtended` (or some derivation of that) in your `<QueryBuilder />` props if you believe the original SQL might contain `XOR` clauses.
+
+```ts
+import { defaultCombinatorsExtended, parseSQL, QueryBuilder } from 'react-querybuilder';
+
+const query = parseSQL(sql);
+
+const App = () => {
+  return <QueryBuilder query={query} combinators={defaultCombinatorsExtended} />;
+};
+```
+
+:::
+
 ## Common Expression Language (CEL)
 
 `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`.
