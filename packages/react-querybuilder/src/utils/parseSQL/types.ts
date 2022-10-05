@@ -272,8 +272,7 @@ export interface ParsedSQL {
   hasSemicolon: boolean;
 }
 
-export type MaybeWithCombinator = { combinator?: DefaultCombinatorNameExtended };
-export type AndList = SQLExpression[] & MaybeWithCombinator;
-export type MixedAndXorList = (SQLExpression | AndList)[] & MaybeWithCombinator;
-export type MixedAndXorOrList = (SQLExpression | MixedAndXorList | AndList)[] & MaybeWithCombinator;
-export type GenerateMixedAndXorOrListReturn = MixedAndXorOrList & MaybeWithCombinator;
+export type GenerateMixedAndXorOrListReturn = {
+  combinator: DefaultCombinatorNameExtended;
+  expressions: (GenerateMixedAndXorOrListReturn | SQLExpression)[];
+};
