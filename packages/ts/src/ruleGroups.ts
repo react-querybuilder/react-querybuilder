@@ -38,13 +38,14 @@ export type UpdateableProperties = Exclude<
 
 export type DefaultRuleGroupArray = RuleGroupArray<DefaultRuleGroupType, DefaultRuleType>;
 
-export type DefaultRuleGroupType = RuleGroupType<DefaultRuleType, DefaultCombinatorName> & {
+export type DefaultRuleGroupType = RuleGroupType<DefaultRuleType, DefaultCombinatorNameExtended> & {
   rules: DefaultRuleGroupArray;
 };
 
 export type DefaultRuleType = RuleType<string, DefaultOperatorName>;
 
 export type DefaultCombinatorName = 'and' | 'or';
+export type DefaultCombinatorNameExtended = DefaultCombinatorName | 'xor';
 
 export type DefaultOperatorName =
   | '='
@@ -68,6 +69,10 @@ export type DefaultOperatorName =
 
 export interface DefaultCombinator extends NameLabelPair {
   name: DefaultCombinatorName;
+}
+
+export interface DefaultCombinatorExtended extends NameLabelPair {
+  name: DefaultCombinatorNameExtended;
 }
 
 export interface DefaultOperator extends NameLabelPair {

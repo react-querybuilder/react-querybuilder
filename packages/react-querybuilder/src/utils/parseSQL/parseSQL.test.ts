@@ -211,6 +211,22 @@ describe('options', () => {
         { field: 'middleName', operator: 'null', value: null },
       ],
     });
+    expect(
+      parseSQL(
+        `firstName = 'Steve' AND lastName = 'Vai' XOR age = 26 OR middleName IS NULL`,
+        icOpts
+      )
+    ).toEqual({
+      rules: [
+        { field: 'firstName', operator: '=', value: 'Steve' },
+        'and',
+        { field: 'lastName', operator: '=', value: 'Vai' },
+        'xor',
+        { field: 'age', operator: '=', value: 26 },
+        'or',
+        { field: 'middleName', operator: 'null', value: null },
+      ],
+    });
   });
 
   describe('fields and getValueSources', () => {
@@ -483,7 +499,7 @@ describe('options', () => {
   });
 });
 
-describe('AND/OR expressions', () => {
+describe('AND/OR/XOR expressions', () => {
   it('AND', () => {
     expect(parseSQL(`firstName = 'Steve' AND lastName = 'Vai' AND middleName IS NULL`)).toEqual({
       combinator: 'and',
@@ -502,6 +518,58 @@ describe('AND/OR expressions', () => {
         { field: 'firstName', operator: '=', value: 'Steve' },
         { field: 'lastName', operator: '=', value: 'Vai' },
         { field: 'middleName', operator: 'null', value: null },
+      ],
+    });
+  });
+
+  it('XOR', () => {
+    expect(parseSQL(`firstName = 'Steve' XOR lastName = 'Vai' XOR middleName IS NULL`)).toEqual({
+      combinator: 'xor',
+      rules: [
+        { field: 'firstName', operator: '=', value: 'Steve' },
+        { field: 'lastName', operator: '=', value: 'Vai' },
+        { field: 'middleName', operator: 'null', value: null },
+      ],
+    });
+  });
+
+  it('order of precedence is AND -> XOR -> OR', () => {
+    expect(parseSQL(`f1 = 'v1' AND f2 = 'v2' XOR f3 = 'v3' OR f4 = 'v4'`)).toEqual({
+      combinator: 'or',
+      rules: [
+        {
+          combinator: 'xor',
+          rules: [
+            {
+              combinator: 'and',
+              rules: [
+                { field: 'f1', operator: '=', value: 'v1' },
+                { field: 'f2', operator: '=', value: 'v2' },
+              ],
+            },
+            { field: 'f3', operator: '=', value: 'v3' },
+          ],
+        },
+        { field: 'f4', operator: '=', value: 'v4' },
+      ],
+    });
+    expect(parseSQL(`f1 = 'v1' OR f2 = 'v2' XOR f3 = 'v3' AND f4 = 'v4'`)).toEqual({
+      combinator: 'or',
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        {
+          combinator: 'xor',
+          rules: [
+            { field: 'f2', operator: '=', value: 'v2' },
+            {
+              combinator: 'and',
+              rules: [
+                { field: 'f3', operator: '=', value: 'v3' },
+                { field: 'f4', operator: '=', value: 'v4' },
+              ],
+            },
+          ],
+        },
       ],
     });
   });

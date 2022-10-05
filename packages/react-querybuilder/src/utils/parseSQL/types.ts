@@ -1,3 +1,5 @@
+import type { DefaultCombinatorNameExtended } from '@react-querybuilder/ts';
+
 type AnyCase<T extends string> = string extends T
   ? string
   : T extends `${infer F1}${infer F2}${infer R}`
@@ -65,12 +67,13 @@ type TokenType =
   | 'UseIndexHint'
   | 'UsingJoinCondition'
   | 'WhenThenList'
-  | 'XORExpression';
+  | 'XorExpression';
 
 export type ComparisonOperator = '=' | '>=' | '>' | '<=' | '<' | '<>' | '!=';
 export type NotOpt = AnyCase<'NOT'> | null;
 export type AndOperator = AnyCase<'AND'>;
 export type OrOperator = AnyCase<'OR'>;
+export type XorOperator = AnyCase<'XOR'>;
 
 export interface SQLWhereObject {
   type: TokenType;
@@ -170,11 +173,14 @@ export interface SQLOrExpression extends SQLWhereObject {
   left: SQLExpression;
   right: SQLExpression;
 }
+export interface SQLXorExpression extends SQLWhereObject {
+  type: 'XorExpression';
+  operator: XorOperator;
+  left: SQLExpression;
+  right: SQLExpression;
+}
 
 // Interfaces that might show up but will be ignored
-export interface SQLXORExpression extends SQLWhereObjectAny {
-  type: 'XORExpression';
-}
 export interface SQLFunctionCall extends SQLWhereObjectAny {
   type: 'FunctionCall';
 }
@@ -237,7 +243,7 @@ export type SQLExpression =
   | SQLNotExpression
   | SQLAndExpression
   | SQLOrExpression
-  | SQLXORExpression;
+  | SQLXorExpression;
 
 export interface ParsedSQL {
   nodeType: 'Main';
@@ -265,3 +271,8 @@ export interface ParsedSQL {
   };
   hasSemicolon: boolean;
 }
+
+export type MixedAndXorOrList = {
+  combinator: DefaultCombinatorNameExtended;
+  expressions: (MixedAndXorOrList | SQLExpression)[];
+};

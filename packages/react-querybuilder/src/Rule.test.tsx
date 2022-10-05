@@ -6,6 +6,7 @@ import type {
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { clsx } from 'clsx';
 import { getFieldMapFromArray, getRuleProps as getProps, ruleClassnames } from '../genericTests';
 import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
@@ -22,7 +23,7 @@ afterEach(() => {
 
 it('should have correct classNames', () => {
   render(<Rule {...getProps()} />);
-  expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, ruleClassnames.rule!);
+  expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, clsx(ruleClassnames.rule));
 });
 
 describe('onElementChanged methods', () => {

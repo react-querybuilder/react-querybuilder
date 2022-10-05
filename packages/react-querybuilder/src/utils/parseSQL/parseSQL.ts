@@ -1,5 +1,4 @@
 import type {
-  DefaultCombinatorName,
   DefaultOperatorName,
   DefaultRuleGroupArray,
   DefaultRuleGroupICArray,
@@ -14,14 +13,13 @@ import { uniqByName } from '../../internal/uniq';
 import { isOptionGroupArray } from '../optGroupUtils';
 import { fieldIsValidUtil } from '../parserUtils';
 import { sqlParser } from './sqlParser';
-import type { SQLExpression, SQLIdentifier } from './types';
+import type { MixedAndXorOrList, SQLExpression, SQLIdentifier } from './types';
 import {
   evalSQLLiteralValue,
   generateFlatAndOrList,
-  generateMixedAndOrList,
+  generateMixedAndXorOrList,
   getFieldName,
   getParamString,
-  isSQLExpressionNotString,
   isSQLIdentifier,
   isSQLLiteralValue,
   normalizeOperator,
@@ -115,17 +113,25 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
         return {
           rules: [rule],
           not: true,
-          ...(ic ? {} : { combinator: 'and' }),
+          ...(!ic && { combinator: 'and' }),
         };
       }
     } else if (expr.type === 'SimpleExprParentheses') {
       const ex = expr.value.value[0];
-      if (ex.type === 'AndExpression' || ex.type === 'OrExpression') {
+      if (
+        ex.type === 'AndExpression' ||
+        ex.type === 'OrExpression' ||
+        ex.type === 'XorExpression'
+      ) {
         return processSQLExpression(ex);
       }
       const rule = processSQLExpression(ex) as DefaultRuleType;
       return rule ? { rules: [rule], ...(ic ? {} : { combinator: 'and' }) } : null;
-    } else if (expr.type === 'AndExpression' || expr.type === 'OrExpression') {
+    } else if (
+      expr.type === 'AndExpression' ||
+      expr.type === 'OrExpression' ||
+      expr.type === 'XorExpression'
+    ) {
       if (ic) {
         const andOrList = generateFlatAndOrList(expr);
         const rules = andOrList.map(v => {
@@ -143,27 +149,32 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           rules: rules as DefaultRuleGroupICArray,
         };
       }
-      const andOrList = generateMixedAndOrList(expr);
-      const combinator = andOrList[1] as DefaultCombinatorName;
-      const filteredList = andOrList
-        .filter(v => Array.isArray(v) || isSQLExpressionNotString(v))
-        .map(v => (Array.isArray(v) ? v.filter(isSQLExpressionNotString) : v)) as (
-        | SQLExpression
-        | SQLExpression[]
-      )[];
-      const rules = filteredList
-        .map((exp): DefaultRuleGroupType | DefaultRuleType | null => {
-          if (Array.isArray(exp)) {
+      const andXorOrList = generateMixedAndXorOrList(expr);
+      const { combinator } = andXorOrList;
+      const rules = andXorOrList.expressions
+        .map((obj): DefaultRuleGroupType | DefaultRuleType | null => {
+          if ('combinator' in obj) {
             return {
-              combinator: 'and',
-              rules: exp
-                .map(e => processSQLExpression(e))
-                .filter(r => !!r) as DefaultRuleGroupArray,
+              combinator: obj.combinator,
+              rules: (obj.expressions as (SQLExpression | MixedAndXorOrList)[])
+                .map(o => {
+                  if ('combinator' in o) {
+                    return {
+                      combinator: o.combinator,
+                      rules: (o.expressions as SQLExpression[])
+                        .map(oa => processSQLExpression(oa))
+                        .filter(Boolean),
+                    };
+                  } else {
+                    return processSQLExpression(o);
+                  }
+                })
+                .filter(Boolean) as DefaultRuleGroupArray,
             };
           }
-          return processSQLExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
+          return processSQLExpression(obj) as DefaultRuleType | DefaultRuleGroupType | null;
         })
-        .filter(r => !!r) as DefaultRuleGroupArray;
+        .filter(Boolean) as DefaultRuleGroupArray;
       /* istanbul ignore else */
       if (rules.length > 0) {
         return { combinator, rules };

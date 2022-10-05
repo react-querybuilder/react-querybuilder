@@ -256,6 +256,24 @@ Output:
 { "and": [{ "==": [{ "var": "firstName" }, "Steve"] }, { "==": [{ "var": "lastName" }, "Vai"] }] }
 ```
 
+:::info
+
+Before using `jsonLogic.apply()` to apply the result of `formatQuery(query, 'jsonlogic')`, register the additional operators `startsWith` and `endsWith`. These are not [standard JsonLogic operations](https://jsonlogic.com/operations.html), but they correspond to the "beginsWith" and "endsWith" operators, respectively, from `react-querybuilder`.
+
+The most future-proof way is to loop through the `jsonLogicAdditionalOperators` entries like below. This way if any more operators are added in the future, they will be automatically available.
+
+```ts
+import { jsonLogicAdditionalOperators } from 'react-querybuilder';
+
+for (const [op, func] of Object.entries(jsonLogicAdditionalOperators)) {
+  jsonLogic.add_operation(op, func);
+}
+
+jsonLogic.apply({ startsWith: [{ var: 'firstName' }, 'Stev'] }, data);
+```
+
+:::
+
 ## Configuration
 
 An object can be passed as the second argument instead of a string to have more fine-grained control over the output.

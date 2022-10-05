@@ -429,7 +429,7 @@ expr
   | NOT expr -> { type: 'NotExpression', value: $2 }
   | expr OR expr -> { type: 'OrExpression', operator: $2, left: $1, right: $3 }
   | expr AND expr -> { type: 'AndExpression', operator: $2, left: $1, right: $3 }
-  | expr XOR expr -> { type: 'XORExpression', left: $1, right: $3 }
+  | expr XOR expr -> { type: 'XorExpression', operator: $2, left: $1, right: $3 }
   ;
 expr_list
   : expr -> { type: 'ExpressionList', value: [ $1 ] }

@@ -1,6 +1,7 @@
 import type {
   Classnames,
   DefaultCombinator,
+  DefaultCombinatorExtended,
   DefaultOperator,
   DefaultOperatorName,
   TranslationsFull,
@@ -134,6 +135,11 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
 export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' },
+];
+
+export const defaultCombinatorsExtended: DefaultCombinatorExtended[] = [
+  ...defaultCombinators,
+  { name: 'xor', label: 'XOR' },
 ];
 
 export const standardClassnames = {
