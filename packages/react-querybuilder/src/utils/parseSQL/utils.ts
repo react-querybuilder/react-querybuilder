@@ -5,7 +5,7 @@ import type {
 import type {
   AndOperator,
   ComparisonOperator,
-  GenerateMixedAndXorOrListReturn,
+  MixedAndXorOrList,
   OrOperator,
   SQLAndExpression,
   SQLExpression,
@@ -16,9 +16,6 @@ import type {
   SQLXorExpression,
   XorOperator,
 } from './types';
-
-export const isSQLExpressionNotString = (v?: string | SQLExpression): v is SQLExpression =>
-  !!v && typeof v !== 'string';
 
 export const isSQLLiteralValue = (v?: SQLWhereObjectAny): v is SQLLiteralValue =>
   !!v && (v.type === 'String' || v.type === 'Number' || v.type === 'Boolean');
@@ -78,62 +75,19 @@ export const generateFlatAndOrList = (
   return [expr.left, combinator, expr.right];
 };
 
-export const generateMixedAndOrList = (
-  expr: SQLAndExpression | SQLOrExpression | SQLXorExpression
-) => {
-  const arr = generateFlatAndOrList(expr);
-  const returnArray: (DefaultCombinatorNameExtended | SQLExpression | ('and' | SQLExpression)[])[] =
-    [];
-  let startIndex = 0;
-  for (let i = 0; i < arr.length; i += 2) {
-    if (arr[i + 1] === 'and') {
-      startIndex = i;
-      let j = 1;
-      while (arr[startIndex + j] === 'and') {
-        i += 2;
-        j += 2;
-      }
-      const tempAndArray = arr.slice(startIndex, i + 1) as ('and' | SQLExpression)[];
-      returnArray.push(tempAndArray);
-      i -= 2;
-    } else if (arr[i + 1] === 'or' || arr[i + 1] === 'xor') {
-      if (i === 0 || i === arr.length - 3) {
-        if (i === 0 || arr[i - 1] === 'or' || arr[i - 1] === 'xor') {
-          returnArray.push(arr[i]);
-        }
-        returnArray.push(arr[i + 1]);
-        if (i === arr.length - 3) {
-          returnArray.push(arr[i + 2]);
-        }
-      } else {
-        if (arr[i - 1] === 'and') {
-          returnArray.push(arr[i + 1]);
-        } else {
-          returnArray.push(arr[i]);
-          returnArray.push(arr[i + 1]);
-        }
-      }
-    }
-  }
-  if (returnArray.length === 1 && Array.isArray(returnArray[0])) {
-    // If length is 1, then the only element is an AND array so just return that
-    return returnArray[0];
-  }
-  return returnArray;
-};
-
 export const generateMixedAndXorOrList = (
   expr: SQLAndExpression | SQLOrExpression | SQLXorExpression
-): GenerateMixedAndXorOrListReturn => {
+): MixedAndXorOrList => {
   const arr = generateFlatAndOrList(expr);
   let currentLevel = 0;
-  const orArray: GenerateMixedAndXorOrListReturn = { combinator: 'or', expressions: [] };
-  let xorArray: GenerateMixedAndXorOrListReturn = { combinator: 'xor', expressions: [] };
-  let andArray: GenerateMixedAndXorOrListReturn = { combinator: 'and', expressions: [] };
+  const orArray: MixedAndXorOrList = { combinator: 'or', expressions: [] };
+  let xorArray: MixedAndXorOrList = { combinator: 'xor', expressions: [] };
+  let andArray: MixedAndXorOrList = { combinator: 'and', expressions: [] };
 
   for (let i = 0; i < arr.length - 2; i += 2) {
     let levelDelta = 0;
 
+    // istanbul ignore else
     if (arr[i + 1] === 'and') {
       levelDelta = 2 - currentLevel;
     } else if (arr[i + 1] === 'xor') {
@@ -145,6 +99,7 @@ export const generateMixedAndXorOrList = (
     if (levelDelta > 0) {
       for (let d = 0; d < levelDelta; d++) {
         currentLevel += 1;
+        // istanbul ignore else
         if (currentLevel === 1) {
           xorArray = { combinator: 'xor', expressions: [] };
           if (levelDelta === 1) {
@@ -161,6 +116,7 @@ export const generateMixedAndXorOrList = (
     } else if (levelDelta < 0) {
       for (let d = 0; d > levelDelta; d--) {
         currentLevel -= 1;
+        // istanbul ignore else
         if (currentLevel === 1) {
           xorArray.expressions.push(andArray);
           if (levelDelta === -1) {
@@ -175,8 +131,9 @@ export const generateMixedAndXorOrList = (
       }
     } else {
       // If here, then levelDelta === 0
+      // istanbul ignore else
       if (currentLevel === 0) {
-        if (i === 0) {
+        if (i === 0 || (i > 3 && arr[i - 3] !== 'or')) {
           orArray.expressions.push(arr[i] as SQLExpression);
         }
         if (i >= arr.length - 3 || arr[i + 3] === 'or') {
@@ -206,13 +163,13 @@ export const generateMixedAndXorOrList = (
       orArray.expressions[0].expressions.length === 1 &&
       'combinator' in orArray.expressions[0].expressions[0]
     ) {
-      return orArray.expressions[0].expressions[0] as GenerateMixedAndXorOrListReturn;
+      return orArray.expressions[0].expressions[0] as MixedAndXorOrList;
     } else {
-      return orArray.expressions[0] as GenerateMixedAndXorOrListReturn;
+      return orArray.expressions[0] as MixedAndXorOrList;
     }
   }
 
-  const returnArray: GenerateMixedAndXorOrListReturn = { combinator: 'or', expressions: [] };
+  const returnArray: MixedAndXorOrList = { combinator: 'or', expressions: [] };
 
   // Collapse multi-element arrays, in case XOR level is unnecessary
   for (const o of orArray.expressions) {

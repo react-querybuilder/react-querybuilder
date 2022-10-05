@@ -1,4 +1,4 @@
-import type { GenerateMixedAndXorOrListReturn, SQLExpression } from './types';
+import type { MixedAndXorOrList, SQLExpression } from './types';
 import { generateMixedAndXorOrList } from './utils';
 
 const isNullExpr: SQLExpression = {
@@ -23,7 +23,7 @@ const isNotNullExpr2: SQLExpression = {
 };
 
 it('simple AND operator', () => {
-  const expectation: GenerateMixedAndXorOrListReturn = {
+  const expectation: MixedAndXorOrList = {
     combinator: 'and',
     expressions: [isNullExpr, isNullExpr],
   };
@@ -38,7 +38,7 @@ it('simple AND operator', () => {
 });
 
 it('simple XOR operator', () => {
-  const expectation: GenerateMixedAndXorOrListReturn = {
+  const expectation: MixedAndXorOrList = {
     combinator: 'xor',
     expressions: [isNullExpr, isNullExpr],
   };
@@ -53,7 +53,7 @@ it('simple XOR operator', () => {
 });
 
 it('simple OR operator', () => {
-  const expectation: GenerateMixedAndXorOrListReturn = {
+  const expectation: MixedAndXorOrList = {
     combinator: 'or',
     expressions: [isNullExpr, isNullExpr],
   };
@@ -68,7 +68,7 @@ it('simple OR operator', () => {
 });
 
 it('chained AND operators', () => {
-  const expectation: GenerateMixedAndXorOrListReturn = {
+  const expectation: MixedAndXorOrList = {
     combinator: 'and',
     expressions: [isNullExpr, isNullExpr, isNullExpr, isNullExpr],
   };
@@ -93,7 +93,7 @@ it('chained AND operators', () => {
 });
 
 it('chained XOR operators', () => {
-  const expectation: GenerateMixedAndXorOrListReturn = {
+  const expectation: MixedAndXorOrList = {
     combinator: 'xor',
     expressions: [isNullExpr, isNullExpr, isNullExpr, isNullExpr],
   };
@@ -118,7 +118,7 @@ it('chained XOR operators', () => {
 });
 
 it('chained OR operators', () => {
-  const expectation: GenerateMixedAndXorOrListReturn = {
+  const expectation: MixedAndXorOrList = {
     combinator: 'or',
     expressions: [isNullExpr, isNullExpr, isNullExpr, isNullExpr],
   };
@@ -144,7 +144,7 @@ it('chained OR operators', () => {
 
 describe('complex AND/XOR/OR chains', () => {
   it('a AND b OR c', () => {
-    const expectation: GenerateMixedAndXorOrListReturn = {
+    const expectation: MixedAndXorOrList = {
       combinator: 'or',
       expressions: [{ combinator: 'and', expressions: [isNullExpr, isNullExpr] }, isNotNullExpr],
     };
@@ -163,7 +163,7 @@ describe('complex AND/XOR/OR chains', () => {
   });
 
   it('a OR b AND c', () => {
-    const expectation: GenerateMixedAndXorOrListReturn = {
+    const expectation: MixedAndXorOrList = {
       combinator: 'or',
       expressions: [isNotNullExpr, { combinator: 'and', expressions: [isNullExpr, isNotNullExpr] }],
     };
@@ -182,7 +182,7 @@ describe('complex AND/XOR/OR chains', () => {
   });
 
   it('a AND b XOR c OR d', () => {
-    const expectation: GenerateMixedAndXorOrListReturn = {
+    const expectation: MixedAndXorOrList = {
       combinator: 'or',
       expressions: [
         {
@@ -216,7 +216,7 @@ describe('complex AND/XOR/OR chains', () => {
   });
 
   it('a OR b XOR c AND d', () => {
-    const expectation: GenerateMixedAndXorOrListReturn = {
+    const expectation: MixedAndXorOrList = {
       combinator: 'or',
       expressions: [
         isNotNullExpr,
@@ -250,7 +250,7 @@ describe('complex AND/XOR/OR chains', () => {
   });
 
   it('a AND b OR c XOR d', () => {
-    const expectation: GenerateMixedAndXorOrListReturn = {
+    const expectation: MixedAndXorOrList = {
       combinator: 'or',
       expressions: [
         { combinator: 'and', expressions: [isNullExpr, isNotNullExpr] },
@@ -263,6 +263,89 @@ describe('complex AND/XOR/OR chains', () => {
     const testResult = generateMixedAndXorOrList({
       type: 'XorExpression',
       operator: 'XOR',
+      left: {
+        type: 'OrExpression',
+        operator: 'OR',
+        left: {
+          type: 'AndExpression',
+          operator: 'AND',
+          left: isNullExpr,
+          right: isNotNullExpr,
+        },
+        right: isNullExpr2,
+      },
+      right: isNotNullExpr2,
+    });
+    expect(testResult).toEqual(expectation);
+  });
+
+  it('a AND b OR c OR d', () => {
+    const expectation: MixedAndXorOrList = {
+      combinator: 'or',
+      expressions: [
+        { combinator: 'and', expressions: [isNullExpr, isNotNullExpr] },
+        isNullExpr2,
+        isNotNullExpr2,
+      ],
+    };
+    const testResult = generateMixedAndXorOrList({
+      type: 'OrExpression',
+      operator: 'OR',
+      left: {
+        type: 'OrExpression',
+        operator: 'OR',
+        left: {
+          type: 'AndExpression',
+          operator: 'AND',
+          left: isNullExpr,
+          right: isNotNullExpr,
+        },
+        right: isNullExpr2,
+      },
+      right: isNotNullExpr2,
+    });
+    expect(testResult).toEqual(expectation);
+  });
+
+  it('a AND b XOR c XOR d', () => {
+    const expectation: MixedAndXorOrList = {
+      combinator: 'xor',
+      expressions: [
+        { combinator: 'and', expressions: [isNullExpr, isNotNullExpr] },
+        isNullExpr2,
+        isNotNullExpr2,
+      ],
+    };
+    const testResult = generateMixedAndXorOrList({
+      type: 'XorExpression',
+      operator: 'XOR',
+      left: {
+        type: 'XorExpression',
+        operator: 'XOR',
+        left: {
+          type: 'AndExpression',
+          operator: 'AND',
+          left: isNullExpr,
+          right: isNotNullExpr,
+        },
+        right: isNullExpr2,
+      },
+      right: isNotNullExpr2,
+    });
+    expect(testResult).toEqual(expectation);
+  });
+
+  it('a AND b OR c AND d', () => {
+    const expectation: MixedAndXorOrList = {
+      combinator: 'or',
+      expressions: [
+        { combinator: 'and', expressions: [isNullExpr, isNotNullExpr] },
+        { combinator: 'and', expressions: [isNullExpr2, isNotNullExpr2] },
+      ],
+    };
+    const testResult = generateMixedAndXorOrList({
+      type: 'AndExpression',
+      operator: 'AND',
       left: {
         type: 'OrExpression',
         operator: 'OR',

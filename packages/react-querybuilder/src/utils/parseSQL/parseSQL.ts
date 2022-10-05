@@ -1,5 +1,4 @@
 import type {
-  DefaultCombinatorName,
   DefaultOperatorName,
   DefaultRuleGroupArray,
   DefaultRuleGroupICArray,
@@ -14,14 +13,13 @@ import { uniqByName } from '../../internal/uniq';
 import { isOptionGroupArray } from '../optGroupUtils';
 import { fieldIsValidUtil } from '../parserUtils';
 import { sqlParser } from './sqlParser';
-import type { SQLExpression, SQLIdentifier } from './types';
+import type { MixedAndXorOrList, SQLExpression, SQLIdentifier } from './types';
 import {
   evalSQLLiteralValue,
   generateFlatAndOrList,
-  generateMixedAndOrList,
+  generateMixedAndXorOrList,
   getFieldName,
   getParamString,
-  isSQLExpressionNotString,
   isSQLIdentifier,
   isSQLLiteralValue,
   normalizeOperator,
@@ -151,23 +149,30 @@ function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeA
           rules: rules as DefaultRuleGroupICArray,
         };
       }
-      const andOrList = generateMixedAndOrList(expr);
-      const combinator = andOrList[1] as DefaultCombinatorName;
-      const filteredList = andOrList
-        .filter(v => Array.isArray(v) || isSQLExpressionNotString(v))
-        .map(v => (Array.isArray(v) ? v.filter(isSQLExpressionNotString) : v)) as (
-        | SQLExpression
-        | SQLExpression[]
-      )[];
-      const rules = filteredList
-        .map((exp): DefaultRuleGroupType | DefaultRuleType | null => {
-          if (Array.isArray(exp)) {
+      const andXorOrList = generateMixedAndXorOrList(expr);
+      const { combinator } = andXorOrList;
+      const rules = andXorOrList.expressions
+        .map((obj): DefaultRuleGroupType | DefaultRuleType | null => {
+          if ('combinator' in obj) {
             return {
-              combinator: 'and',
-              rules: exp.map(e => processSQLExpression(e)).filter(Boolean) as DefaultRuleGroupArray,
+              combinator: obj.combinator,
+              rules: (obj.expressions as (SQLExpression | MixedAndXorOrList)[])
+                .map(o => {
+                  if ('combinator' in o) {
+                    return {
+                      combinator: o.combinator,
+                      rules: (o.expressions as SQLExpression[])
+                        .map(oa => processSQLExpression(oa))
+                        .filter(Boolean),
+                    };
+                  } else {
+                    return processSQLExpression(o);
+                  }
+                })
+                .filter(Boolean) as DefaultRuleGroupArray,
             };
           }
-          return processSQLExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
+          return processSQLExpression(obj) as DefaultRuleType | DefaultRuleGroupType | null;
         })
         .filter(Boolean) as DefaultRuleGroupArray;
       /* istanbul ignore else */
