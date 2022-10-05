@@ -1989,6 +1989,20 @@ describe('placeholder names', () => {
   });
 });
 
+describe('non-standard combinators', () => {
+  const queryForXor: RuleGroupType = {
+    combinator: 'xor',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  it('handles XOR operator', () => {
+    expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
+  });
+});
+
 describe('misc', () => {
   it('runs the jsonLogic additional operators', () => {
     const { startsWith, endsWith } = jsonLogicAdditionalOperators;
