@@ -8,8 +8,6 @@
   "dependencies": {
     "@ant-design/icons": ">=4.7.0",
     "@react-querybuilder/antd": "^5.0.0-alpha.7",
-    "@react-querybuilder/ctx": "^5.0.0-alpha.7",
-    "@react-querybuilder/ts": "^5.0.0-alpha.7",
     "antd": ">=4.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
