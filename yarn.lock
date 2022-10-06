@@ -5676,7 +5676,6 @@ __metadata:
     react: ">=16.8.0"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ^5.0.0-alpha.7
   languageName: unknown
   linkType: soft
 
