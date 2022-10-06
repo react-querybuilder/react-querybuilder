@@ -80,6 +80,7 @@ export const useMuiComponents = (
     const getComponents = async () => {
       const componentImports = await importMuiComponents();
 
+      /* istanbul ignore else */
       if (!didCancel) {
         if (componentImports) {
           componentCache = componentImports;
