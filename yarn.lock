@@ -14273,7 +14273,6 @@ __metadata:
     regenerator-runtime: ^0.13.9
     replace: ^1.2.1
     rimraf: ^3.0.2
-    ruleGroupsIC: "link:./src/types/ruleGroupsIC"
     sass: ^1.55.0
     typescript: ^4.8.4
     vite: ^3.1.4
@@ -14849,12 +14848,6 @@ __metadata:
 "ruleGroupsIC@link:./src/ruleGroupsIC::locator=%40react-querybuilder%2Fts%40workspace%3Apackages%2Fts":
   version: 0.0.0-use.local
   resolution: "ruleGroupsIC@link:./src/ruleGroupsIC::locator=%40react-querybuilder%2Fts%40workspace%3Apackages%2Fts"
-  languageName: node
-  linkType: soft
-
-"ruleGroupsIC@link:./src/types/ruleGroupsIC::locator=react-querybuilder%40workspace%3Apackages%2Freact-querybuilder":
-  version: 0.0.0-use.local
-  resolution: "ruleGroupsIC@link:./src/types/ruleGroupsIC::locator=react-querybuilder%40workspace%3Apackages%2Freact-querybuilder"
   languageName: node
   linkType: soft
 

@@ -1,7 +1,7 @@
 declare const __RQB_DEV__: boolean;
 
+import type { RuleGroupTypeAny } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
-import type { RuleGroupTypeAny } from 'ruleGroupsIC';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
