@@ -66,7 +66,7 @@ describe('add', () => {
     );
     testQT('adds a group', add(rg1, rg2, []), {
       combinator: and,
-      rules: [{ ...rg2, not: false }],
+      rules: [rg2],
     });
   });
 
@@ -96,7 +96,7 @@ describe('add', () => {
       }
     );
     testQT('adds a group', add(rgic1, rgic2, []), {
-      rules: [{ ...rgic2, not: false }],
+      rules: [rgic2],
     });
   });
 });

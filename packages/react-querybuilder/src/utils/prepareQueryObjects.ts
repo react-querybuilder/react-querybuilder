@@ -28,7 +28,6 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(queryObject: RG): 
     draft.rules = draft.rules.map(r =>
       typeof r === 'string' ? r : 'rules' in r ? prepareRuleGroup(r) : prepareRule(r)
     ) as RuleGroupArray | RuleGroupICArray;
-    draft.not = !!draft.not;
   });
 
 /**

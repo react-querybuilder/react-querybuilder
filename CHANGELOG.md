@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
+- Related to the previous bullet, the `prepareRuleGroup` utility function will no longer coerce the `not` property of groups to be a `boolean` type (or even defined at all).
+
 <!--
 #### ESM only
 

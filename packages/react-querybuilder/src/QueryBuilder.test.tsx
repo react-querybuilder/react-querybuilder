@@ -55,14 +55,17 @@ describe('when rendered', () => {
 
 describe('when rendered with defaultQuery only', () => {
   it('changes the query in uncontrolled state', async () => {
+    const onQueryChange = jest.fn();
     render(
       <QueryBuilder
         defaultQuery={{
           combinator: 'and',
           rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
         }}
+        onQueryChange={onQueryChange}
       />
     );
+    expect(onQueryChange.mock.calls[0][0]).toHaveProperty('id');
     expect(screen.getAllByTestId(TestID.rule)).toHaveLength(1);
     await user.click(screen.getByTestId(TestID.addRule));
     expect(screen.getAllByTestId(TestID.rule)).toHaveLength(2);
@@ -79,6 +82,7 @@ describe('when rendered with onQueryChange callback', () => {
       rules: [],
       not: false,
     };
+    expect(onQueryChange.mock.calls[0][0]).toHaveProperty('id');
     expect(onQueryChange.mock.calls[0][0]).toMatchObject(query);
   });
 });
@@ -1764,11 +1768,11 @@ describe('nested object immutability', () => {
     const { calls } = onQueryChange.mock;
     await user.click(screen.getAllByTestId(TestID.addRule)[0]);
     expect(calls[0][0]).not.toBe(defaultQuery);
-    expect(findPath([0], calls[0][0])).toBe(findPath([0], defaultQuery));
-    expect(findPath([1, 0], calls[0][0])).toBe(immutableRule);
+    expect(findPath([0], calls[0][0])).toMatchObject(findPath([0], defaultQuery) as RuleType);
+    expect(findPath([1, 0], calls[0][0])).toMatchObject(immutableRule);
     await user.selectOptions(screen.getAllByTestId(TestID.operators)[0], '>');
     expect(findPath([0], calls[1][0])).not.toBe(findPath([0], calls[0][0]));
-    expect(findPath([1, 0], calls[1][0])).toBe(immutableRule);
+    expect(findPath([1, 0], calls[1][0])).toMatchObject(immutableRule);
   });
 });
 

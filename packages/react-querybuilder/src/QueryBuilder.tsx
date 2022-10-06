@@ -390,7 +390,9 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   // #region Handle controlled mode vs uncontrolled mode
   const isFirstRender = useRef(true);
   // This state variable is only used when the component is uncontrolled
-  const [queryState, setQueryState] = useState(defaultQuery ?? createRuleGroup());
+  const [queryState, setQueryState] = useState(
+    defaultQuery ? prepareRuleGroup(defaultQuery) : createRuleGroup()
+  );
   // We assume here that if `queryProp` is passed in, and it's not the first render,
   // that `queryProp` has already been prepared, i.e. the user is just passing back
   // the `onQueryChange` callback parameter as `queryProp`. This appears to have a huge

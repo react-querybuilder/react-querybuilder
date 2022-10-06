@@ -18,7 +18,7 @@ export let componentCache: RQBMaterialComponents | null = null;
 const importMuiComponents = async () => {
   componentCacheStatus = 'loading';
   try {
-    const componentImports = await Promise.all([
+    const componentPromise = Promise.all([
       ['Button', (await import('@mui/material/Button')).default],
       ['Checkbox', (await import('@mui/material/Checkbox')).default],
       ['DragIndicator', (await import('@mui/icons-material/DragIndicator')).default],
@@ -33,6 +33,9 @@ const importMuiComponents = async () => {
       ['Switch', (await import('@mui/material/Switch')).default],
       ['TextareaAutosize', (await import('@mui/material/TextareaAutosize')).default],
     ] as [MuiComponentName, ComponentType<any>][]);
+    // istanbul ignore next
+    componentPromise.catch(reason => console.error(reason));
+    const componentImports = await componentPromise;
     componentCacheStatus = 'loaded';
     return Object.fromEntries(componentImports) as RQBMaterialComponents;
   } catch (err) {
@@ -95,6 +98,7 @@ export const useMuiComponents = (
 
     return () => {
       didCancel = true;
+      componentCacheStatus = 'initial';
     };
   }, [muiComponents]);
 

@@ -1,3 +1,5 @@
+import 'bootstrap-icons/font/bootstrap-icons.scss';
+import 'bootstrap/scss/bootstrap.scss';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from 'react-querybuilder/dev';

@@ -24,7 +24,7 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
   } else if (action.type === 'all') {
     const allSelected: DemoOptions = { ...defaultOptions };
     for (const opt of optionOrder) {
-      allSelected[opt] = opt !== 'disabled';
+      allSelected[opt] = opt !== 'disabled' && opt !== 'independentCombinators';
     }
     return allSelected;
   } else if (action.type === 'replace') {
