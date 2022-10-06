@@ -202,7 +202,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const rules = screen.getAllByTestId(TestID.rule);
         simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), gDnDBe());
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
@@ -231,7 +230,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[0];
         simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(ruleGroup, 'drop'), gDnDBe());
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
@@ -261,7 +259,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const rules = screen.getAllByTestId(TestID.rule);
         simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[2], 'drop'), gDnDBe());
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             { field: 'field1', operator: '=', value: '1' },
             'and',
@@ -294,7 +291,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[0];
         simulateDragDrop(getHandlerId(rules[2], 'drag'), getHandlerId(ruleGroup, 'drop'), gDnDBe());
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             { field: 'field2', operator: '=', value: '2' },
             'and',
@@ -331,7 +327,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBe()
         );
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             { field: 'field0', operator: '=', value: '0' },
             'and',
@@ -368,10 +363,8 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[1];
         simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(ruleGroup, 'drop'), gDnDBe());
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             {
-              not: false,
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
                 'and',
@@ -414,14 +407,12 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const dropRule = screen.getAllByTestId(TestID.rule)[3];
         simulateDragDrop(getHandlerId(dragRule, 'drag'), getHandlerId(dropRule, 'drop'), gDnDBe());
         expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
-          not: false,
           rules: [
             { field: 'field0', operator: '=', value: '0' },
             'and',
             { field: 'field2', operator: '=', value: '2' },
             'and',
             {
-              not: false,
               rules: [
                 { field: 'field3', operator: '=', value: '3' },
                 'and',
