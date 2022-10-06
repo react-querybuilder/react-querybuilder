@@ -80,14 +80,16 @@ export const useMuiComponents = (
     const getComponents = async () => {
       const componentImports = await importMuiComponents();
 
-      if (!didCancel && componentImports) {
-        componentCache = componentImports;
-        setMuiComponents(componentImports);
-      } else {
-        /* istanbul ignore else */
-        if (__RQB_DEV__ && !didWarnMaterialWithoutMUI) {
-          console.error(errorMaterialWithoutMUI);
-          didWarnMaterialWithoutMUI = true;
+      if (!didCancel) {
+        if (componentImports) {
+          componentCache = componentImports;
+          setMuiComponents(componentImports);
+        } else {
+          /* istanbul ignore else */
+          if (__RQB_DEV__ && !didWarnMaterialWithoutMUI) {
+            console.error(errorMaterialWithoutMUI);
+            didWarnMaterialWithoutMUI = true;
+          }
         }
       }
     };
