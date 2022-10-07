@@ -102,7 +102,7 @@ export const configs = {
       `import { QueryBuilderChakra } from '@react-querybuilder/chakra';`,
     ],
     additionalDeclarations: [
-      `const chakraTheme = extendTheme({config:{initialColorMode: 'light',useSystemColorMode: false}});`,
+      `const chakraTheme = extendTheme({ config:{ initialColorMode: 'light', useSystemColorMode: false } });`,
     ],
     wrapper: [
       '<ChakraProvider theme={chakraTheme}><QueryBuilderChakra>',
@@ -119,10 +119,19 @@ export const configs = {
     scssPre: [],
     scssPost: [],
     tsxImports: [
+      `import { teal } from "@mui/material/colors";`,
       `import { createTheme, ThemeProvider } from '@mui/material/styles';`,
       `import { QueryBuilderMaterial } from '@react-querybuilder/material';`,
     ],
-    additionalDeclarations: [`const muiTheme = createTheme();`],
+    additionalDeclarations: [
+      `const muiTheme = createTheme({
+  palette: {
+    secondary: {
+      main: teal[500]
+    }
+  }
+});`,
+    ],
     wrapper: [
       '<ThemeProvider theme={muiTheme}><QueryBuilderMaterial>',
       '</QueryBuilderMaterial></ThemeProvider>',
