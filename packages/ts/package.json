@@ -3,9 +3,7 @@
   "version": "5.0.0-alpha.7",
   "description": "TypeScript types for react-querybuilder",
   "main": "src/index.ts",
-  "types": "dist/types/src/index.d.ts",
   "files": [
-    "dist",
     "src"
   ],
   "repository": {
@@ -28,7 +26,6 @@
     "react": ">=16.8.0"
   },
   "scripts": {
-    "build": "rimraf dist && tsc --project './tsconfig.build.json'",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
   }
