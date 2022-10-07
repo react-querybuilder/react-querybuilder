@@ -7,7 +7,7 @@ import type {
   RQBJsonLogic,
   RQBJsonLogicVar,
   ValueSource,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import type { ReservedOperations } from 'json-logic-js';
 import { defaultOperatorNegationMap } from '../../defaults';
 import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';

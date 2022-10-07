@@ -3,7 +3,7 @@ import type {
   RuleGroupICArray,
   RuleGroupTypeAny,
   RuleType,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { produce } from 'immer';
 import { generateID } from '../internal/generateID';
 

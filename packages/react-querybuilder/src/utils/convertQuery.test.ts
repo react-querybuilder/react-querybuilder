@@ -1,4 +1,4 @@
-import type { RuleType } from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { RuleType } from '@react-querybuilder/ts/src/index.noReact';
 import { convertQuery } from './convertQuery';
 
 const [rule1, rule2, rule3, rule4]: RuleType[] = [

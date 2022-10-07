@@ -1,12 +1,12 @@
 {
   "name": "@react-querybuilder/ts",
   "version": "5.0.0-alpha.7",
-  "description": "React context provider for react-querybuilder",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
+  "description": "TypeScript types for react-querybuilder",
+  "main": "src/index.ts",
   "types": "dist/types/src/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "repository": {
     "type": "git",
@@ -16,34 +16,19 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.19.3",
-    "@babel/preset-env": "^7.19.3",
-    "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.18.6",
-    "@types/jscodeshift": "^0.11.5",
     "@types/json-logic-js": "^2.0.1",
     "@types/node": "^18.8.2",
     "@types/react": "^18.0.21",
-    "@vitejs/plugin-react": "^2.1.0",
-    "babel-plugin-istanbul": "^6.1.1",
-    "jscodeshift": "^0.14.0",
     "json-logic-js": "^2.0.2",
     "react": "^18.2.0",
-    "regenerator-runtime": "^0.13.9",
-    "replace": "^1.2.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.8.4",
-    "vite": "^3.1.4"
+    "typescript": "^4.8.4"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
   },
-  "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "start": "vite",
-    "build": "yarn build:main && yarn build:types",
-    "build:main": "vite build",
-    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly && replace \"'ruleGroupsIC'\" \"'./ruleGroupsIC'\" ./dist/types -r --silent",
+    "build": "rimraf dist && tsc --project './tsconfig.build.json'",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
   }

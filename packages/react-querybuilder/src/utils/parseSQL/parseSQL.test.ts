@@ -5,7 +5,7 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { parseSQL } from '.';
 import { isWildcardsOnly } from './utils';
 

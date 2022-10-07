@@ -1,7 +1,4 @@
-import type {
-  RuleGroupTypeAny,
-  RuleType,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/ts/src/index.noReact';
 import produce from 'immer';
 
 interface QueryTransformerOptions {

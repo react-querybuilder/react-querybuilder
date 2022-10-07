@@ -5,7 +5,7 @@ import type {
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';

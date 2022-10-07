@@ -13,7 +13,7 @@ import type {
   RuleValidator,
   ValidationMap,
   ValidationResult,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import { uniqByName } from '../../internal/uniq';
 import { toArray } from '../arrayUtils';

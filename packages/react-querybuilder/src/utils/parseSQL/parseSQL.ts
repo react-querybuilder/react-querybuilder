@@ -8,7 +8,7 @@ import type {
   DefaultRuleType,
   Field,
   ParseSQLOptions,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { uniqByName } from '../../internal/uniq';
 import { isOptionGroupArray } from '../optGroupUtils';
 import { fieldIsValidUtil } from '../parserUtils';
