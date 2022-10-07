@@ -1,7 +1,6 @@
 import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ command }) => ({
   define: {
@@ -27,7 +26,7 @@ export default defineConfig(({ command }) => ({
     },
     sourcemap: true,
   },
-  plugins: [tsconfigPaths(), vitePluginReact()],
+  plugins: [vitePluginReact()],
   server: {
     port: 3100,
   },

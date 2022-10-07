@@ -6,7 +6,6 @@ import type {
   Ref,
   RefAttributes,
 } from 'react';
-import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from 'ruleGroupsIC';
 import type {
   Field,
   NameLabelPair,
@@ -30,6 +29,7 @@ import type {
   ValueSourceSelectorProps,
 } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
 import type { QueryValidator, ValidationMap } from './validation';
 
 export interface ActionProps extends CommonSubComponentProps {
