@@ -48,6 +48,26 @@ describe('ignored/missing WHERE clauses', () => {
   });
 });
 
+describe('leading keywords/whitespace', () => {
+  const expected = wrapRule({ field: 'firstName', operator: '=', value: 'Steve' });
+
+  it('handles SQL strings beginning with WHERE keyword only', () => {
+    expect(parseSQL(`WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
+  it('handles SQL strings beginning with WHERE keyword and leading whitespace', () => {
+    expect(parseSQL(` \t \r\n  WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
+  it('handles SQL strings beginning with SELECT keyword', () => {
+    expect(parseSQL(`SELECT * FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
+  it('handles SQL strings beginning with SELECT keyword and leading whitespace', () => {
+    expect(parseSQL(` \t \r\n  SELECT * FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+});
+
 describe('boolean operators', () => {
   it('basic comparisons of strings and numbers', () => {
     expect(parseSQL(`firstName = 'Steve'`)).toEqual(
