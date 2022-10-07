@@ -92,17 +92,22 @@ export const configs = {
     scssPre: [],
     scssPost: [
       `.queryBuilder {
-        .chakra-select__wrapper {width: fit-content;display: inline-block;}
-        .chakra-input {width: auto;display: inline-block;}
-        .chakra-radio-group {display: inline-block;}
-      }`,
+  .chakra-select__wrapper {width: fit-content;display: inline-block;}
+  .chakra-input {width: auto;display: inline-block;}
+  .chakra-radio-group {display: inline-block;}
+}`,
     ],
     tsxImports: [
       `import { ChakraProvider, extendTheme } from '@chakra-ui/react';`,
       `import { QueryBuilderChakra } from '@react-querybuilder/chakra';`,
     ],
     additionalDeclarations: [
-      `const chakraTheme = extendTheme({ config:{ initialColorMode: 'light', useSystemColorMode: false } });`,
+      `const chakraTheme = extendTheme({
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  }
+});`,
     ],
     wrapper: [
       '<ChakraProvider theme={chakraTheme}><QueryBuilderChakra>',
