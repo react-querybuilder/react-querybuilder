@@ -8,6 +8,9 @@ import prettier from 'prettier';
 import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
+
+console.log('Generating examples');
+
 const require = createRequire(import.meta.url);
 /** @type {{ version: string; }} */
 const { version } = require('../lerna.json');
@@ -185,3 +188,21 @@ for (const exampleID in configs) {
 }
 
 console.log('Finished generating examples');
+
+// #region CI package.json
+console.log('Updating CI');
+const ciPkgJSON = require('./ci/package.json');
+for (const dep of Object.keys(ciPkgJSON.dependencies)) {
+  if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
+    ciPkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+  }
+}
+const ciPkgJsonPath = pathJoin(__dirname, 'ci/package.json');
+const prettierOptions = await prettier.resolveConfig(ciPkgJsonPath);
+const fileContents = prettier.format(stableStringify(ciPkgJSON), {
+  ...prettierOptions,
+  filepath: ciPkgJsonPath,
+});
+await writeFile(ciPkgJsonPath, fileContents);
+console.log('Finished updating CI');
+// #endregion

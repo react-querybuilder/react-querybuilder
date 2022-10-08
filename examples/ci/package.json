@@ -1,9 +1,10 @@
 {
-  "name": "react-querybuilder-ci",
-  "description": "React Query Builder CI Base",
-  "private": true,
-  "version": "1.0.0",
-  "main": "src/index.tsx",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "dependencies": {
     "@react-querybuilder/dnd": "^5.0.0-alpha.8",
     "react": "^18.2.0",
@@ -12,20 +13,18 @@
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.0.0-alpha.8"
   },
+  "description": "React Query Builder CI Base",
   "devDependencies": {
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
     "react-scripts": "5.0.1",
     "typescript": "^4.6.0"
   },
+  "main": "src/index.tsx",
+  "name": "react-querybuilder-ci",
+  "private": true,
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+    "build": "react-scripts build",
+    "start": "react-scripts start"
+  }
 }
