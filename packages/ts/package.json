@@ -3,7 +3,7 @@
   "version": "5.0.0-alpha.7",
   "description": "TypeScript types for react-querybuilder",
   "main": "src/index.ts",
-  "types": "dist/types/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "src"

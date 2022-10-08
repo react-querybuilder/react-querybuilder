@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "emitDeclarationOnly": true,
-    "outDir": "./dist/types"
+    "outDir": "./dist"
   },
   "files": ["./src/index.ts"],
   "exclude": ["../../*.ts", "./src/**/*"]
