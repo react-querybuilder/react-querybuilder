@@ -16,7 +16,7 @@ yarn add react-querybuilder @react-querybuilder/bulma bulma
 
 ## Usage
 
-This package exports `bulmaControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderBulma />`, like this:
+To render Bulma-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderBulma />`.
 
 ```tsx
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
@@ -39,10 +39,14 @@ const App = () => {
 };
 ```
 
-Some additional styling may be necessary, e.g.:
+## Notes
 
-```css
-.queryBuilder .input {
-  width: auto;
-}
-```
+- Some additional styling may be necessary, e.g.:
+
+  ```css
+  .queryBuilder .input {
+    width: auto;
+  }
+  ```
+
+- This package exports `bulmaControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but wrapping `<QueryBuilder />` in `<QueryBuilderBulma />` is the recommended method.

@@ -16,12 +16,14 @@ yarn add react-querybuilder @react-querybuilder/chakra @chakra-ui/icons @chakra-
 
 ## Usage
 
-This package exports `chakraControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderChakra />`, like this:
+To render Chakra-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderChakra />`.
 
 ```tsx
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+
+const chakraTheme = extendTheme();
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -30,7 +32,6 @@ const fields = [
 
 const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
-  const chakraTheme = extendTheme();
 
   return (
     <ChakraProvider theme={chakraTheme}>
@@ -42,20 +43,24 @@ const App = () => {
 };
 ```
 
-Some additional styling may be necessary, e.g.:
+## Notes
 
-```css
-.queryBuilder .chakra-select__wrapper {
-  width: fit-content;
-  display: inline-block;
-}
+- Some additional styling may be necessary, e.g.:
 
-.queryBuilder .chakra-input {
-  width: auto;
-  display: inline-block;
-}
+  ```css
+  .queryBuilder .chakra-select__wrapper {
+    width: fit-content;
+    display: inline-block;
+  }
 
-.queryBuilder .chakra-radio-group {
-  display: inline-block;
-}
-```
+  .queryBuilder .chakra-input {
+    width: auto;
+    display: inline-block;
+  }
+
+  .queryBuilder .chakra-radio-group {
+    display: inline-block;
+  }
+  ```
+
+- This package exports `chakraControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but this method does not support customized Chakra themes like `<QueryBuilderChakra />`.
