@@ -37,6 +37,7 @@
     },
     "compat",
     "typescript",
-    "umd"
+    "umd",
+    "migrate"
   ]
 }

@@ -1,9 +1,13 @@
 // @ts-check
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
 const { resolve } = require('path');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
 const { transpileCodeblocks } = require('remark-typescript-tools');
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const lightCodeTheme = require('prism-react-renderer/themes/github');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */

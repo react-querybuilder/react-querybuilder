@@ -41,6 +41,7 @@ const sidebars = {
     'compat',
     'typescript',
     'umd',
+    'migrate',
   ],
 };
 

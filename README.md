@@ -34,6 +34,8 @@ For a more complete introduction, see the [main package README](packages/react-q
 
 To enable drag-and-drop functionality, see the [`@react-querybuilder/dnd` package README](packages/dnd/README.md).
 
+_For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
+
 _For documentation on `react-querybuilder` v3.12.1, [click here](README.v3.12.1.md)._
 
 ## Compatibility packages
