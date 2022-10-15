@@ -25,7 +25,6 @@ const config = {
   deploymentBranch: 'gh-pages',
 
   plugins: [
-    ['docusaurus-plugin-less', { lessOptions: { javascriptEnabled: true } }],
     'docusaurus-plugin-sass',
     [
       '@docusaurus/plugin-client-redirects',
