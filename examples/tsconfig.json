@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "jsx": "react",
     "noEmit": true,
     "resolveJsonModule": true
   },
