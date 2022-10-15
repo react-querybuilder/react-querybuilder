@@ -636,9 +636,9 @@ const params_named = {
   email_3: '%fr',
 };
 const mongoQueryString =
-  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$and":[{"firstName":{"$gte":"Test"}},{"firstName":{"$lte":"This"}}]},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"$and":[{"age":{"$gte":12}},{"age":{"$lte":14}}]},{"age":{"$eq":"26"}},{"isMusician":{"$eq":true}},{"email":{"$regex":"@"}},{"email":{"$regex":"^ab"}},{"email":{"$regex":"com$"}},{"hello":{"$not":{"$regex":"com"}}},{"job":{"$not":{"$regex":"^Man"}}},{"job":{"$not":{"$regex":"ger$"}}},{"$or":[{"job":{"$eq":"Sales Executive"}}]}]}';
+  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"firstName":{"$gte":"Test","$lte":"This"}},{"firstName":{"$gte":"Test","$lte":"This"}},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"age":{"$gte":12,"$lte":14}},{"age":"26"},{"isMusician":true},{"email":{"$regex":"@"}},{"email":{"$regex":"^ab"}},{"email":{"$regex":"com$"}},{"hello":{"$not":{"$regex":"com"}}},{"job":{"$not":{"$regex":"^Man"}}},{"job":{"$not":{"$regex":"ger$"}}},{{"job":"Sales Executive"}}]}';
 const mongoQueryStringForValueSourceField =
-  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"$where":"[this.middleName,this.lastName].includes(this.firstName)"},{"$where":"![this.middleName,this.lastName].includes(this.lastName)"},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$or":[{"$expr":{"$lt":["$lastName","$middleName"]}},{"$expr":{"$gt":["$lastName","$lastName"]}}]},{"$expr":{"$eq":["$age","$iq"]}},{"$expr":{"$eq":["$isMusician","$isCreative"]}},{"$where":"this.email.includes(this.atSign)"},{"$where":"this.email.startsWith(this.name)"},{"$where":"this.email.endsWith(this.dotCom)"},{"$where":"!this.hello.includes(this.dotCom)"},{"$where":"!this.job.startsWith(this.noJob)"},{"$where":"!this.job.endsWith(this.noJob)"},{"$or":[{"$expr":{"$eq":["$job","$executiveJobName"]}}]}]}';
+  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"$where":"[this.middleName,this.lastName].includes(this.firstName)"},{"$where":"![this.middleName,this.lastName].includes(this.lastName)"},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$or":[{"$expr":{"$lt":["$lastName","$middleName"]}},{"$expr":{"$gt":["$lastName","$lastName"]}}]},{"$expr":{"$eq":["$age","$iq"]}},{"$expr":{"$eq":["$isMusician","$isCreative"]}},{"$where":"this.email.includes(this.atSign)"},{"$where":"this.email.startsWith(this.name)"},{"$where":"this.email.endsWith(this.dotCom)"},{"$where":"!this.hello.includes(this.dotCom)"},{"$where":"!this.job.startsWith(this.noJob)"},{"$where":"!this.job.endsWith(this.noJob)"},{{"$expr":{"$eq":["$job","$executiveJobName"]}}}]}';
 const celString =
   'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
 const celStringForValueSourceField =
@@ -1000,7 +1000,7 @@ describe('escapes quotes when appropriate', () => {
   };
 
   it.each([
-    { fmt: 'mongodb', result: `{"$and":[{"f1":{"$eq":"Te\\"st"}}]}` },
+    { fmt: 'mongodb', result: `{{"f1":"Te\\"st"}}` },
     { fmt: 'cel', result: `f1 == "Te\\"st"` },
   ])('escapes double quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
     expect(formatQuery(testQueryDQ, fmt as 'cel' | 'mongodb')).toEqual(result);
@@ -1037,7 +1037,7 @@ describe('independent combinators', () => {
 
   it('handles independent combinators for mongodb', () => {
     expect(formatQuery(queryIC, 'mongodb')).toBe(
-      '{"$or":[{"$and":[{"firstName":{"$eq":"Test"}},{"middleName":{"$eq":"Test"}}]},{"lastName":{"$eq":"Test"}}]}'
+      '{"$or":[{"$and":[{"firstName":"Test"},{"middleName":"Test"}]},{"lastName":"Test"}]}'
     );
   });
 
@@ -1249,7 +1249,7 @@ describe('validation', () => {
             fields: [{ name: 'field', validator: () => false }],
           }
         )
-      ).toBe('{"$and":[{"otherfield":{"$eq":""}}]}');
+      ).toBe('{{"otherfield":""}}');
     });
 
     it('should invalidate mongodb even if fields are valid', () => {
@@ -1550,11 +1550,11 @@ describe('ruleProcessor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorMongoDB(r);
     expect(formatQuery(queryForRuleProcessor, { format: 'mongodb', ruleProcessor })).toBe(
-      '{"$and":[custom_operator,{"f2":{"$eq":"v2"}}]}'
+      '{"$and":[custom_operator,{"f2":"v2"}]}'
     );
     expect(
       formatQuery(queryForRuleProcessor, { format: 'mongodb', valueProcessor: ruleProcessor })
-    ).toBe('{"$and":[custom_operator,{"f2":{"$eq":"v2"}}]}');
+    ).toBe('{"$and":[custom_operator,{"f2":"v2"}]}');
   });
 
   it('handles custom CEL rule processor', () => {
@@ -1601,7 +1601,7 @@ describe('parseNumbers', () => {
     rules: [
       {
         field: 'f',
-        operator: '=',
+        operator: '>',
         value: 'NaN',
       },
       {
@@ -1624,12 +1624,12 @@ describe('parseNumbers', () => {
         rules: [
           {
             field: 'f',
-            operator: '=',
+            operator: '<',
             value: '1.5',
           },
           {
             field: 'f',
-            operator: '=',
+            operator: '>',
             value: 1.5,
           },
         ],
@@ -1693,7 +1693,7 @@ describe('parseNumbers', () => {
   "rules": [
     {
       "field": "f",
-      "operator": "=",
+      "operator": ">",
       "value": "NaN"
     },
     {
@@ -1716,12 +1716,12 @@ describe('parseNumbers', () => {
       "rules": [
         {
           "field": "f",
-          "operator": "=",
+          "operator": "<",
           "value": 1.5
         },
         {
           "field": "f",
-          "operator": "=",
+          "operator": ">",
           "value": 1.5
         }
       ]
@@ -1799,7 +1799,7 @@ describe('parseNumbers', () => {
         parseNumbers: true,
       })
     ).toBe(
-      '{"rules":[{"field":"f","value":"NaN","operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"="},{"field":"f","value":1.5,"operator":"="}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
+      '{"rules":[{"field":"f","value":"NaN","operator":">"},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"<"},{"field":"f","value":1.5,"operator":">"}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
     );
   });
   it('parses numbers for json_without_ids with independentCombinators', () => {
@@ -1809,12 +1809,12 @@ describe('parseNumbers', () => {
         parseNumbers: true,
       })
     ).toBe(
-      '{"rules":[{"field":"f","value":"NaN","operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"="},"or",{"field":"f","value":1.5,"operator":"="}]},"and",{"field":"f","value":"0, 1, 2","operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":"0, 1","operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
+      '{"rules":[{"field":"f","value":"NaN","operator":">"},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"<"},"or",{"field":"f","value":1.5,"operator":">"}]},"and",{"field":"f","value":"0, 1, 2","operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":"0, 1","operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
     );
   });
   it('parses numbers for sql', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'sql', parseNumbers: true })).toBe(
-      "(f = 'NaN' and f = 0 and f = 0 and f = 0 and (f = 1.5 or f = 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')"
+      "(f > 'NaN' and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')"
     );
   });
   it('parses numbers for parameterized', () => {
@@ -1888,12 +1888,12 @@ describe('parseNumbers', () => {
         parseNumbers: true,
       })
     ).toBe(
-      '{"$and":[{"f":{"$eq":"NaN"}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"f":{"$eq":0}},{"$or":[{"f":{"$eq":1.5}},{"f":{"$eq":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":1}}]},{"$and":[{"f":{"$gte":0}},{"f":{"$lte":"abc"}}]},{"$and":[{"f":{"$gte":"[object Object]"}},{"f":{"$lte":"[object Object]"}}]}]}'
+      '{"$and":[{"f":{"$gt":"NaN"}},{"f":0},{"f":0},{"f":0},{"$or":[{"f":{"$lt":1.5}},{"f":{"$gt":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":"abc"}},{"f":{"$gte":"[object Object]","$lte":"[object Object]"}}]}'
     );
   });
   it('parses numbers for cel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'cel', parseNumbers: true })).toBe(
-      'f == "NaN" && f == 0 && f == 0 && f == 0 && (f == 1.5 || f == 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
+      'f > "NaN" && f == 0 && f == 0 && f == 0 && (f < 1.5 || f > 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
     );
     const queryForNumberParsingCEL: RuleGroupType = {
       combinator: 'and',
@@ -1911,7 +1911,7 @@ describe('parseNumbers', () => {
   });
   it('parses numbers for spel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
-      "f == 'NaN' and f == 0 and f == 0 and f == 0 and (f == 1.5 or f == 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
+      "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
     );
     const queryForNumberParsingSpEL: RuleGroupType = {
       combinator: 'and',
@@ -1939,11 +1939,11 @@ describe('parseNumbers', () => {
       })
     ).toEqual({
       and: [
-        { '==': [{ var: 'f' }, 'NaN'] },
+        { '>': [{ var: 'f' }, 'NaN'] },
         { '==': [{ var: 'f' }, 0] },
         { '==': [{ var: 'f' }, 0] },
         { '==': [{ var: 'f' }, 0] },
-        { or: [{ '==': [{ var: 'f' }, 1.5] }, { '==': [{ var: 'f' }, 1.5] }] },
+        { or: [{ '<': [{ var: 'f' }, 1.5] }, { '>': [{ var: 'f' }, 1.5] }] },
         { in: [{ var: 'f' }, [0, 1, 2]] },
         { in: [{ var: 'f' }, [0, 1, 2]] },
         { in: [{ var: 'f' }, [0, 'abc', 2]] },

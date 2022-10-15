@@ -9,11 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Internet Explorer is no longer supported.
-- The minimum TypeScript version is now 4.5.
-- When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback parameter. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
-- Related to the previous bullet, the `prepareRuleGroup` utility function will no longer coerce the `not` property of groups to be a `boolean` type (or even defined at all).
-
 <!--
 #### ESM only
 
@@ -21,6 +16,11 @@ All packages published from this repository are now built as [ES modules only](h
 
 -->
 
+- Internet Explorer is no longer supported.
+- The minimum TypeScript version is now 4.5.
+- When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback parameter. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
+- Related to the previous bullet, the `prepareRuleGroup` utility function will no longer coerce the `not` property of groups to be a `boolean` type (or even defined at all).
+- [#385](https://github.com/react-querybuilder/react-querybuilder/issues/385) MongoDB output has been simplified: The `$eq` and `$and` operators are only used when necessary.
 - [#343](https://github.com/react-querybuilder/react-querybuilder/pull/343) Drag-and-drop functionality migrated
   - In order to make the `react-dnd` dependency completely optional when the `enableDragAndDrop` prop was not set to `true`, drag-and-drop functionality was extracted from `react-querybuilder` into a new package called [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
   - The new package has `peerDependencies` of `react-dnd` and `react-dnd-html5-backend` (each of which can be any version >= 14, as long as they match), but no hard `dependencies`. The only external dependencies in the main package now are `immer` and `clsx`.
