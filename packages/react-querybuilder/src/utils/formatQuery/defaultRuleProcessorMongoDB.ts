@@ -15,7 +15,9 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
     typeof value === 'boolean' ||
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
-  if (
+  if (operator === '=' && !valueIsField) {
+    return `{"${field}":${useBareValue ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`}}`;
+  } else if (
     operator === '<' ||
     operator === '<=' ||
     operator === '=' ||
@@ -87,7 +89,7 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
       if (operator === 'between') {
         return valueIsField
           ? `{"$and":[{"$expr":{"$gte":["$${field}","$${firstValue}"]}},{"$expr":{"$lte":["$${field}","$${secondValue}"]}}]}`
-          : `{"$and":[{"${field}":{"$gte":${firstValue}}},{"${field}":{"$lte":${secondValue}}}]}`;
+          : `{"${field}":{"$gte":${firstValue},"$lte":${secondValue}}}`;
       } else {
         return valueIsField
           ? `{"$or":[{"$expr":{"$lt":["$${field}","$${firstValue}"]}},{"$expr":{"$gt":["$${field}","$${secondValue}"]}}]}`

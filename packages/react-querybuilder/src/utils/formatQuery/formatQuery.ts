@@ -345,13 +345,18 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return outermost ? fallbackExpression : '';
         }
 
-        const combinator = `"$${rg.combinator}"`;
+        const combinator = `"$${rg.combinator.toLowerCase()}"`;
+        let hasChildRules = false;
 
-        const expression: string = rg.rules
+        const expressions: string[] = rg.rules
           .map(rule => {
             if ('rules' in rule) {
               const processedRuleGroup = processRuleGroup(rule);
-              return processedRuleGroup ? `{${processedRuleGroup}}` : '';
+              if (processedRuleGroup) {
+                hasChildRules = true;
+                return `{${processedRuleGroup}}`;
+              }
+              return '';
             }
             const [validationResult, fieldValidator] = validateRule(rule);
             if (
@@ -363,10 +368,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             }
             return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
           })
-          .filter(Boolean)
-          .join(',');
+          .filter(Boolean);
 
-        return expression ? `${combinator}:[${expression}]` : fallbackExpression;
+        return expressions.length > 0
+          ? expressions.length === 1 && !hasChildRules
+            ? expressions[0]
+            : `${combinator}:[${expressions.join(',')}]`
+          : fallbackExpression;
       };
 
       const rgStandard = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
