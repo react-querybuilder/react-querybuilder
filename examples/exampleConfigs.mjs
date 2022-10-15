@@ -43,7 +43,7 @@ export const configs = {
   antd: {
     name: 'Ant Design',
     dependencyKeys: ['@ant-design/icons', 'antd'],
-    scssPre: [`@import 'antd/dist/antd.compact.css';`],
+    scssPre: [],
     scssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
     tsxImports: [`import { QueryBuilderAntD } from '@react-querybuilder/antd';`],
     additionalDeclarations: [],

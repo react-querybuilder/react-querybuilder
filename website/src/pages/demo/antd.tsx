@@ -6,8 +6,7 @@ import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import './_styles/demo.scss';
-import './_styles/rqb-antd-dark.less';
-import './_styles/rqb-antd.less';
+import './_styles/rqb-antd.scss';
 
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
   <AntDValueSelector {...props} getPopupContainer={() => document.getElementById('rqb-antd')} />
