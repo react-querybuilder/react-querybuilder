@@ -2,7 +2,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 
 const rule: RuleType = {

@@ -1,10 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "ruleGroupsIC": ["src/types/ruleGroupsIC"]
-    }
+    "baseUrl": "."
   },
   "include": ["./src/", "./dev/"]
 }

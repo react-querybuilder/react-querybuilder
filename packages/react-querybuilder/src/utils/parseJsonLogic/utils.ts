@@ -3,7 +3,7 @@ import type {
   RQBJsonLogicEndsWith,
   RQBJsonLogicStartsWith,
   RQBJsonLogicVar,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import type {
   JsonLogicAnd,
   JsonLogicDoubleNegation,

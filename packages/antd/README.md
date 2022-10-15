@@ -16,7 +16,7 @@ yarn add react-querybuilder @react-querybuilder/antd @ant-design/icons antd
 
 ## Usage
 
-This package exports `antdControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />`, and also exports each component individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderAntD />`, like this:
+To render Ant Design-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderAntD />`.
 
 ```tsx
 import { QueryBuilderAntD } from '@react-querybuilder/antd';
@@ -38,10 +38,14 @@ const App = () => {
 };
 ```
 
-You may also want to reduce the width of the value editor component (100% by default) with the following CSS rule:
+## Notes
 
-```css
-.queryBuilder .ant-input {
-  width: auto;
-}
-```
+- You may also want to reduce the width of the value editor component (100% by default) with the following CSS rule:
+
+  ```css
+  .queryBuilder .ant-input {
+    width: auto;
+  }
+  ```
+
+- This package exports `antdControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but wrapping `<QueryBuilder />` in `<QueryBuilderAntD />` is the recommended method.

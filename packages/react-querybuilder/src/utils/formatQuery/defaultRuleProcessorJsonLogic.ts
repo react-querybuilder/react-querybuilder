@@ -2,7 +2,7 @@ import type {
   RQBJsonLogic,
   RuleProcessor,
   RuleType,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import type { JsonLogicVar } from 'json-logic-js';
 import { toArray } from '../arrayUtils';
 import { isValidValue, shouldRenderAsNumber } from './utils';

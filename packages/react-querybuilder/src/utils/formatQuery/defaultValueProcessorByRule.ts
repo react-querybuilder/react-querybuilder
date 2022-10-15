@@ -1,4 +1,4 @@
-import type { ValueProcessorByRule } from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { ValueProcessorByRule } from '@react-querybuilder/ts/src/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 

@@ -8,7 +8,7 @@ import type {
   DefaultRuleType,
   Field,
   ParseSQLOptions,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { uniqByName } from '../../internal/uniq';
 import { isOptionGroupArray } from '../optGroupUtils';
 import { fieldIsValidUtil } from '../parserUtils';
@@ -43,7 +43,11 @@ function parseSQL(
   }
 ): DefaultRuleGroupTypeIC;
 function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny {
-  let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql) ? sql : `SELECT * FROM t WHERE ${sql}`;
+  let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql)
+    ? sql
+    : /^[ \t\n\r\s]*WHERE\b/i.test(sql)
+    ? `SELECT * FROM t ${sql}`
+    : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
   let fieldsFlat: Field[] = [];
   const getValueSources = options?.getValueSources;

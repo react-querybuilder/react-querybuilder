@@ -793,7 +793,7 @@ If those conditions are met, and `enableDragAndDrop` is not explicitly set to `f
 
 When `true` (under the conditions detailed above), a drag handle is displayed on the left-hand side of each group header and each rule. Clicking and dragging the handle element allows users to visually reorder the rules and groups.
 
-#### Example usage
+#### Recommended usage
 
 ```bash
 yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
@@ -801,10 +801,12 @@ yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-ba
 
 ```tsx
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import * as ReactDnD from 'react-dnd';
+import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import { QueryBuilder } from 'react-querybuilder';
 
 const App = () => (
-  <QueryBuilderDnD>
+  <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
     <QueryBuilder />
   </QueryBuilderDnD>
 );

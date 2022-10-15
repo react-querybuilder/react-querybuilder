@@ -1,7 +1,4 @@
-import type {
-  RuleGroupType,
-  RuleGroupTypeIC,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/src/index.noReact';
 import { regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {

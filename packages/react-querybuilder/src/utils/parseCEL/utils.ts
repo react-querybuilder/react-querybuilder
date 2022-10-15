@@ -1,7 +1,7 @@
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import type {
   CELBooleanLiteral,
   CELBytesLiteral,

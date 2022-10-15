@@ -1,4 +1,4 @@
-import type { Field, OptionGroup } from '@react-querybuilder/ts/dist/types/src/index.noReact';
+import type { Field, OptionGroup } from '@react-querybuilder/ts/src/index.noReact';
 import { isOptionGroupArray } from '../utils/optGroupUtils';
 
 export const filterFieldsByComparator = (

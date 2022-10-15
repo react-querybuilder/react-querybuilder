@@ -2,10 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "./dist/types",
-    "paths": {
-      "ruleGroupsIC": ["src/ruleGroupsIC"]
-    }
+    "emitDeclarationOnly": true,
+    "outDir": "./dist"
   },
   "files": ["./src/index.ts"],
   "exclude": ["../../*.ts", "./src/**/*"]

@@ -12,17 +12,7 @@ Complete documentation is available at [react-querybuilder.js.org](https://react
 
 [Click here to see a live, interactive demo](https://react-querybuilder.js.org/demo).
 
-<detail>
-<summary>To run the demo locally:</summary>
-
-1. _Clone this repo_
-2. `yarn` _Install dependencies_
-3. `yarn demo` _Run a local server_
-4. _Visit http://localhost:8080 in your browser_
-
-</detail>
-
-To use the official compatibility components as seen in the demo (select options from the Style dropdown), take a look at the packages under the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder). We currently support:
+To use the official compatibility components as seen in the demo, take a look at the packages under the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder). We currently support:
 
 | Library                                | npm                                                                                          | Demo                                                     | Example                                                                                                       |
 | -------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -56,21 +46,23 @@ const fields = [
   { name: 'isDev', label: 'Is a Developer?', valueEditorType: 'checkbox', defaultValue: false },
 ];
 
+const initialQuery: RuleGroupType = {
+  combinator: 'and',
+  rules: [],
+};
+
 export const App = () => {
-  const [query, setQuery] = useState<RuleGroupType>({
-    combinator: 'and',
-    rules: [],
-  });
+  const [query, setQuery] = useState(initialQuery);
 
   return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
 };
 ```
 
-To enable drag-and-drop functionality, use the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/).
+To enable drag-and-drop functionality, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/) and nest `<QueryBuilder />` under `<QueryBuilderDnD />`.
 
-## Export/import
+## Export
 
-To export queries as SQL, MongoDB, or [other formats](https://react-querybuilder.js.org/docs/api/export), use the `formatQuery` function.
+To [export queries](https://react-querybuilder.js.org/docs/api/export) as SQL, MongoDB, or one of several other formats, use the `formatQuery` function.
 
 ```ts
 const query = {
@@ -95,7 +87,11 @@ console.log(sqlWhere);
 */
 ```
 
-To [import queries from SQL](https://react-querybuilder.js.org/docs/api/import), use `parseSQL`. You can pass a full `SELECT` statement or the `WHERE` clause by itself.
+## Import
+
+To [import queries](https://react-querybuilder.js.org/docs/api/import) use `parseSQL`, `parseCEL`, or `parseJsonLogic` depending on the source.
+
+**Tip:** `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself. Trailing semicolon is optional.
 
 ```ts
 const query = parseSQL(
@@ -121,7 +117,7 @@ console.log(query);
 */
 ```
 
-Note: `formatQuery` and the `parse*` functions can be used without importing React (for example, on the server) like this:
+Note: `formatQuery` and the `parse*` functions can be used without importing React (e.g., on the server) like this:
 
 ```js
 import { formatQuery } from 'react-querybuilder/dist/formatQuery';

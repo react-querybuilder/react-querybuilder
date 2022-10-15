@@ -25,15 +25,12 @@ $primary-color-lightest: color.scale($primary-color-lighter, $lightness: 10%);
   --ifm-code-font-size: 95%;
 }
 
-.docusaurus-highlight-code-line {
-  background-color: rgba(0, 0, 0, 0.1);
-  display: block;
-  margin: 0 calc(-1 * var(--ifm-pre-padding));
-  padding: 0 var(--ifm-pre-padding);
+// Slightly alter the code block line highlight color
+:root {
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
-
-html[data-theme='dark'] .docusaurus-highlight-code-line {
-  background-color: rgba(0, 0, 0, 0.3);
+html[data-theme='dark'] {
+  --docusaurus-highlighted-code-line-bg: rgb(69 69 69);
 }
 
 // Header GitHub link

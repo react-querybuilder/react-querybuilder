@@ -4,7 +4,7 @@ import type {
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import {
   defaultCELValueProcessor,
   defaultMongoDBValueProcessor,

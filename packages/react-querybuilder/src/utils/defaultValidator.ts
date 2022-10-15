@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeAny,
   RuleType,
   ValidationMap,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { defaultCombinators, groupInvalidReasons } from '../defaults';
 
 /**

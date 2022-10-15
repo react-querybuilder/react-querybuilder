@@ -4,7 +4,7 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ValueSources,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { defaultCombinators } from '../defaults';
 import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { formatQuery } from './formatQuery';

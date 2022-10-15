@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
-  "version": "5.0.0-alpha.7",
+  "version": "5.0.0-alpha.8",
   "publishConfig": {
     "access": "public"
   },
@@ -24,22 +24,20 @@
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
   },
-  "dependencies": {
-    "@react-querybuilder/ts": "^5.0.0-alpha.7"
-  },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@react-querybuilder/ts": "^5.0.0-alpha.8",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.21",
     "@vitejs/plugin-react": "^2.1.0",
-    "antd": "^4.23.4",
+    "antd": "^4.23.5",
     "moment": "^2.29.4",
     "rc-select": "^14.1.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^5.0.0-alpha.7",
+    "react-querybuilder": "^5.0.0-alpha.8",
     "typescript": "^4.8.4",
-    "vite": "^3.1.4"
+    "vite": "^3.1.8"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=4.7.0",

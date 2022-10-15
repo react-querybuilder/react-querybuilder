@@ -16,7 +16,7 @@ yarn add react-querybuilder @react-querybuilder/bootstrap bootstrap bootstrap-ic
 
 ## Usage
 
-This package exports `bootstrapControlClassnames` and `bootstrapControlElements` which can be assigned directly to the `controlClassnames` and `controlElements` props, respectively, on `<QueryBuilder />`. Each component is also exported individually. However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderBootstrap />`, like this:
+To render Bootstrap-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderBootstrap />`.
 
 ```tsx
 import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
@@ -40,12 +40,16 @@ const App = () => {
 };
 ```
 
-Some additional styling may be necessary, e.g.:
+## Notes
 
-```css
-.queryBuilder .form-control,
-.queryBuilder .form-select {
-  display: inline-block;
-  width: auto;
-}
-```
+- Some additional styling may be necessary, e.g.:
+
+  ```css
+  .queryBuilder .form-control,
+  .queryBuilder .form-select {
+    display: inline-block;
+    width: auto;
+  }
+  ```
+
+- This package exports `bootstrapControlClassnames` and `bootstrapControlElements` which can be assigned directly to the `controlClassnames` and `controlElements` props, respectively, on `<QueryBuilder />` (each component is also exported individually). However, the recommended usage is to wrap a `<QueryBuilder />` element in `<QueryBuilderBootstrap />`.

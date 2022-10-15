@@ -3,7 +3,7 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { filterFieldsByComparator } from '../internal/filterFieldsByComparator';
 import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { uniqByName } from '../internal/uniq';

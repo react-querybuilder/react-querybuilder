@@ -5,7 +5,7 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { parseSQL } from '.';
 import { isWildcardsOnly } from './utils';
 
@@ -45,6 +45,26 @@ describe('ignored/missing WHERE clauses', () => {
     expect(parseSQL(`SELECT * FROM t WHERE x = 1 UNION ALL SELECT * FROM u WHERE y = 2`)).toEqual(
       wrapRule()
     );
+  });
+});
+
+describe('leading keywords/whitespace', () => {
+  const expected = wrapRule({ field: 'firstName', operator: '=', value: 'Steve' });
+
+  it('handles SQL strings beginning with WHERE keyword only', () => {
+    expect(parseSQL(`WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
+  it('handles SQL strings beginning with WHERE keyword and leading whitespace', () => {
+    expect(parseSQL(` \t \r\n  WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
+  it('handles SQL strings beginning with SELECT keyword', () => {
+    expect(parseSQL(`SELECT * FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
+  it('handles SQL strings beginning with SELECT keyword and leading whitespace', () => {
+    expect(parseSQL(` \t \r\n  SELECT * FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
   });
 });
 

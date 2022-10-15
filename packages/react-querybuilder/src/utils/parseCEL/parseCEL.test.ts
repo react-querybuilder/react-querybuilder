@@ -6,7 +6,7 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/dist/types/src/index.noReact';
+} from '@react-querybuilder/ts/src/index.noReact';
 import { parseCEL } from './parseCEL';
 
 const wrapRule = (

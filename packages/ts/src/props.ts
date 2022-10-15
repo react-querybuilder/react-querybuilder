@@ -1,6 +1,6 @@
-import type { RuleGroupTypeAny, RuleOrGroupArray } from 'ruleGroupsIC';
 import type { Field, NameLabelPair, OptionGroup, ValueEditorType, ValueSource } from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
 
 export interface CommonSubComponentProps {

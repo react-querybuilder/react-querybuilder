@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
+- Internet Explorer is no longer supported.
+- The minimum TypeScript version is now 4.5.
+- When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback parameter. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
 - Related to the previous bullet, the `prepareRuleGroup` utility function will no longer coerce the `not` property of groups to be a `boolean` type (or even defined at all).
 
 <!--
@@ -19,32 +21,21 @@ All packages published from this repository are now built as [ES modules only](h
 
 -->
 
-#### Dropped IE11 support
-
-- As of v5.0.0, React Query Builder will no longer support any version of Internet Explorer.
-
-#### Drag-and-drop functionality migrated
-
-[#343](https://github.com/react-querybuilder/react-querybuilder/pull/343) In order to make the `react-dnd` dependency completely optional when the `enableDragAndDrop` prop was not set to `true`, drag-and-drop functionality was extracted from `react-querybuilder` into a new package called [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
-
-The new package has `peerDependencies` of `react-dnd` and `react-dnd-html5-backend` (each of which can be any version >= 14, as long as they match), but no hard `dependencies`. The only external dependencies in the main package now are `immer` and `clsx`.
-
-##### Upgrade path
-
-To enable drag-and-drop functionality in v5, nest `<QueryBuilder />` within a `<QueryBuilderDnD />` element. The `enableDragAndDrop` prop is implicitly `true` when using `QueryBuilderDnD`, so you no longer need to set it explicitly unless it should be `false` (whcih can be set on `QueryBuilderDnD` _or_ `QueryBuilder`).
-
-```diff
- export function App() {
-   return (
--    <QueryBuilder enableDragAndDrop />
-+    <QueryBuilderDnD>
-+      <QueryBuilder />
-+    </QueryBuilderDnD>
-   );
- }
-```
-
-If your application already uses `react-dnd` and renders `DndProvider` higher up in the component tree, replace `QueryBuilderDnD` with `QueryBuilderWithoutDndProvider`.
+- [#343](https://github.com/react-querybuilder/react-querybuilder/pull/343) Drag-and-drop functionality migrated
+  - In order to make the `react-dnd` dependency completely optional when the `enableDragAndDrop` prop was not set to `true`, drag-and-drop functionality was extracted from `react-querybuilder` into a new package called [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
+  - The new package has `peerDependencies` of `react-dnd` and `react-dnd-html5-backend` (each of which can be any version >= 14, as long as they match), but no hard `dependencies`. The only external dependencies in the main package now are `immer` and `clsx`.
+  - **Upgrade path:** To enable drag-and-drop functionality in v5, nest `<QueryBuilder />` within a `<QueryBuilderDnD />` element. The `enableDragAndDrop` prop is implicitly `true` when using `QueryBuilderDnD`, so you no longer need to set it explicitly unless it should be `false` (which can be set on `QueryBuilderDnD` _or_ `QueryBuilder`).
+    ```diff
+     export function App() {
+       return (
+    -    <QueryBuilder enableDragAndDrop />
+    +    <QueryBuilderDnD>
+    +      <QueryBuilder />
+    +    </QueryBuilderDnD>
+       );
+     }
+    ```
+  - If your application already uses `react-dnd` and renders `DndProvider` higher in the component tree, replace `QueryBuilderDnD` with `QueryBuilderDndWithoutProvider`.
 
 ### Fixed
 
@@ -57,6 +48,7 @@ If your application already uses `react-dnd` and renders `DndProvider` higher up
 - The [`onAddRule`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddrule) and [`onAddGroup`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddgroup) callback props now receive an optional "context" parameter as the fourth argument. This parameter can be provided by a custom `addRuleAction`/`addGroupAction` component to its `handleOnClick` prop. This allows users to alter or replace the default rule based on arbitrary data. For example, the `addRuleAction` component could render two "add rule" buttons which add different rules depending on which one was clicked, as long as they provided a different `context` parameter.
 - When drag-and-drop is enabled, rules will be copied instead of moved if the user has a modifier key (`Alt` on Windows/Linux, `Option ⌥` on Mac) pressed when the drop occurs.
 - `formatQuery` has a new `ruleProcessor` configuration option applicable to non-SQL query language formats. When provided, the entire rule output will be determined by the function. For the relevant formats, `valueProcessor` already behaved this way; the default "value" processors have been renamed to `defaultRuleProcessor[Format]` to clarify the behavior. The default processors' original "value" names are deprecated, but still available for now.
+- `parseSQL` will now ignore a leading `WHERE` keyword, e.g. `parseSQL("WHERE firstName = 'Steve'")` will not fail to produce a query rule like in v4.
 
 <details>
 

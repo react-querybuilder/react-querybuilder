@@ -75,7 +75,25 @@ export const SandpackRQB = ({
   )
     ? ''
     : `@import 'react-querybuilder/dist/query-builder.css';`;
-  const sandboxStyle = `body { background-color: ${bkgdColor}; } pre { padding: 1rem; background-color: white; border: 1px solid lightgray; border-radius: 4px; white-space: pre-wrap; }`;
+  const sandboxStyle = `
+body {
+  background-color: ${bkgdColor};
+}
+pre {
+  padding: 1rem;
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+${
+  isDarkTheme
+    ? `
+h1, h2, h3, h4, h5, h6 {
+  color: white;
+}`
+    : ''
+}`;
 
   files['/styles.css'] = {
     code: [rqbCSSimport, sandboxStyle, files['/styles.css']?.code ?? ''].join('\n\n'),
@@ -86,9 +104,7 @@ export const SandpackRQB = ({
     rqbVersion === 4
       ? { 'react-querybuilder': '^4.5.3' }
       : {
-          '@react-querybuilder/ctx': 'next',
           '@react-querybuilder/dnd': 'next',
-          '@react-querybuilder/ts': 'next',
           'react-querybuilder': 'next',
         };
 

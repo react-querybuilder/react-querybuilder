@@ -59,9 +59,8 @@ interface DemoProps {
 
 const notesSQL = (
   <em>
-    SQL can either be the full <code>SELECT</code> statement (with all keywords and optional
-    trailing semicolon) or the <code>WHERE</code> clause by itself (without the word
-    &quot;WHERE&quot;&mdash;just the clauses).
+    SQL can either be the full <code>SELECT</code> statement or the <code>WHERE</code> clause by
+    itself. Trailing semicolon is optional.
   </em>
 );
 const notesCEL = '';

@@ -8,7 +8,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
-      "ruleGroupsIC": ["packages/react-querybuilder/src/types/ruleGroupsIC.ts"]
+      "ruleGroupsIC": ["packages/ts/src/ruleGroupsIC.ts"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
