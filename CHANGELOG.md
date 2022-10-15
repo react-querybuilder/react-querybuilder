@@ -59,6 +59,14 @@ All packages published from this repository are now built as [ES modules only](h
 
 </details>
 
+## [v5.0.0-alpha.8] - 2022-10-07
+
+See [Unreleased](#unreleased).
+
+## [v5.0.0-alpha.7] - 2022-10-05
+
+See [Unreleased](#unreleased).
+
 ## [v5.0.0-alpha.6] - 2022-09-12
 
 See [Unreleased](#unreleased).
@@ -996,7 +1004,9 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.6...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.8...HEAD
+[v5.0.0-alpha.8]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.7...v5.0.0-alpha.8
+[v5.0.0-alpha.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.6...v5.0.0-alpha.7
 [v5.0.0-alpha.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.5...v5.0.0-alpha.6
 [v5.0.0-alpha.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.4...v5.0.0-alpha.5
 [v5.0.0-alpha.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.3...v5.0.0-alpha.4
