@@ -5535,7 +5535,7 @@ __metadata:
     "@types/react": ^18.0.21
     "@vitejs/plugin-react": ^2.1.0
     antd: 5.0.0-alpha.2
-    moment: ^2.29.4
+    dayjs: ^1.11.5
     rc-select: ^14.1.13
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -7906,7 +7906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.1":
+"dayjs@npm:^1.11.1, dayjs@npm:^1.11.5":
   version: 1.11.5
   resolution: "dayjs@npm:1.11.5"
   checksum: e3bbaa7b4883b31be4bf75a181f1447fbb19800c29b332852125aab96baeff3ac232dcba8b88c4ea17d3b636c99dac5fb9d1af4bb6ae26615698bbc4a852dffb
@@ -11812,13 +11812,6 @@ __metadata:
   version: 2.29.3
   resolution: "moment@npm:2.29.3"
   checksum: 2e780e36d9a1823c08a1b6313cbb08bd01ecbb2a9062095820a34f42c878991ccba53abaa6abb103fd5c01e763724f295162a8c50b7e95b4f1c992ef0772d3f0
-  languageName: node
-  linkType: hard
-
-"moment@npm:^2.29.4":
-  version: 2.29.4
-  resolution: "moment@npm:2.29.4"
-  checksum: 0ec3f9c2bcba38dc2451b1daed5daded747f17610b92427bebe1d08d48d8b7bdd8d9197500b072d14e326dd0ccf3e326b9e3d07c5895d3d49e39b6803b76e80e
   languageName: node
   linkType: hard
 

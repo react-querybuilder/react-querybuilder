@@ -13,7 +13,15 @@ export default defineConfig(({ command }) => ({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['moment', 'react', 'react-querybuilder', 'antd', '@ant-design/icons'],
+      external: [
+        '@ant-design/icons',
+        'antd',
+        'date-fns',
+        'dayjs',
+        'moment',
+        'react',
+        'react-querybuilder',
+      ],
     },
     sourcemap: true,
   },
