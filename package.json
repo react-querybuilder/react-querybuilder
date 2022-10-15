@@ -38,7 +38,7 @@
     "typecheck:rqb": "yarn workspace react-querybuilder typecheck",
     "typecheck:ts": "yarn workspace @react-querybuilder/ts typecheck",
     "typecheck:examples": "tsc -p examples",
-    "pretty-print": "prettier --write \"*.js\" \"examples/**/*\" \"packages/*/src/**\" \"packages/*/dev/**\" \"website/*.js\" \"website/{docs,src,versioned_docs,versioned_sidebars}/**\"",
+    "pretty-print": "prettier --write \"*.{mj,t}s\" \"examples/**/*\" \"packages/*/src/**\" \"packages/*/dev/**\" \"website/*.js\" \"website/{docs,src,versioned_docs,versioned_sidebars}/**\"",
     "generate-examples": "node ./examples/generateExamples.mjs",
     "outdated": "yarn upgrade-interactive",
     "version": "yarn && concurrently --timings --names examples,packages yarn:generate-examples yarn:build && concurrently \"git add examples yarn.lock\"",
