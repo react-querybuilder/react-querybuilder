@@ -1,10 +1,4 @@
 import type {
-  RQBJsonLogic,
-  RQBJsonLogicEndsWith,
-  RQBJsonLogicStartsWith,
-  RQBJsonLogicVar,
-} from '@react-querybuilder/ts/src/index.noReact';
-import type {
   JsonLogicAnd,
   JsonLogicDoubleNegation,
   JsonLogicEqual,
@@ -20,7 +14,11 @@ import type {
   JsonLogicStrictEqual,
   JsonLogicStrictNotEqual,
   JsonLogicVar,
-} from 'json-logic-js';
+  RQBJsonLogic,
+  RQBJsonLogicEndsWith,
+  RQBJsonLogicStartsWith,
+  RQBJsonLogicVar,
+} from '@react-querybuilder/ts/src/index.noReact';
 import type { JsonLogicBetweenExclusive, JsonLogicBetweenInclusive } from './types';
 
 // Standard JsonLogic operations
@@ -117,7 +115,7 @@ export const isRQBJsonLogicEndsWith = (logic: RQBJsonLogic): logic is RQBJsonLog
 //   JsonLogicSome,
 //   JsonLogicSubstr,
 //   JsonLogicSum,
-// } from 'json-logic-js';
+// } from '@react-querybuilder/ts/src/index.noReact';
 //
 // export const isJsonLogicMissing = (
 //   logic: RQBJsonLogic

@@ -1,5 +1,5 @@
-import type { RulesLogic } from 'json-logic-js';
 import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
+import type { RulesLogic } from './json-logic-js';
 import type { RuleType } from './ruleGroups';
 import type { QueryValidator } from './validation';
 

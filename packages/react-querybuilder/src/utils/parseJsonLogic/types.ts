@@ -1,8 +1,12 @@
-import type { JsonLogicLessThan, JsonLogicLessThanOrEqual, RulesLogic } from 'json-logic-js';
+import type {
+  JsonLogicLessThan,
+  JsonLogicLessThanOrEqual,
+  JsonLogicRulesLogic,
+} from '@react-querybuilder/ts/src/index.noReact';
 
 export interface JsonLogicBetweenExclusive extends JsonLogicLessThan {
-  '<': [RulesLogic, RulesLogic, RulesLogic];
+  '<': [JsonLogicRulesLogic, JsonLogicRulesLogic, JsonLogicRulesLogic];
 }
 export interface JsonLogicBetweenInclusive extends JsonLogicLessThanOrEqual {
-  '<=': [RulesLogic, RulesLogic, RulesLogic];
+  '<=': [JsonLogicRulesLogic, JsonLogicRulesLogic, JsonLogicRulesLogic];
 }

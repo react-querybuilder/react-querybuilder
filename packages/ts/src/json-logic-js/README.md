@@ -1,0 +1,1 @@
+[index.d.ts](./index.d.ts) was copied from the [`json-logic-js` type definitions in the DefinitelyTyped repository](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/f8e745a63ae4890edbc871f2adf8c292f313c7cf/types/json-logic-js/index.d.ts).

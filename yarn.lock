@@ -5611,10 +5611,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ts@workspace:packages/ts"
   dependencies:
-    "@types/json-logic-js": ^2.0.1
     "@types/node": ^18.11.0
     "@types/react": ^18.0.21
-    json-logic-js: ^2.0.2
     react: ^18.2.0
     rimraf: ^3.0.2
     typescript: ^4.8.4
@@ -5881,13 +5879,6 @@ __metadata:
     "@types/tough-cookie": "*"
     parse5: ^7.0.0
   checksum: 13e67d31347e02d46ec6a23919b3ce39d86136665922a2a6cb977e216a2f46c22d2f025d0586a64ab492ebaa5f43da669b6f173a5a8cfd3e3bb7c9d19b6cfa9e
-  languageName: node
-  linkType: hard
-
-"@types/json-logic-js@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@types/json-logic-js@npm:2.0.1"
-  checksum: 79ad033c01c1ac4003d495be45af7d8a3e0cbd70c65f3ee285b9458b2ab79dba82d3da44964b5dc89dd49b248084f77c9e9af18099d0d9b24f1799cc6510cb4a
   languageName: node
   linkType: hard
 
@@ -10959,13 +10950,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-logic-js@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "json-logic-js@npm:2.0.2"
-  checksum: 34846500b76a25a86de65560afe358e844b384f0f61c1832fed6a9dfc8f45d884be0b0c8ab033d1a2df7c92b33910d8cee1b3d28e0f461cc55c715d2761219ef
-  languageName: node
-  linkType: hard
-
 "json-parse-better-errors@npm:^1.0.1":
   version: 1.0.2
   resolution: "json-parse-better-errors@npm:1.0.2"
@@ -13794,7 +13778,6 @@ __metadata:
     "@testing-library/user-event": ^14.4.3
     "@types/hoist-non-react-statics": ^3.3.1
     "@types/jscodeshift": ^0.11.5
-    "@types/json-logic-js": ^2.0.1
     "@types/node": ^18.11.0
     "@types/react": ^18.0.21
     "@types/react-dom": ^18.0.6
@@ -13805,7 +13788,6 @@ __metadata:
     copyfiles: ^2.4.1
     immer: ^9.0.15
     jscodeshift: ^0.14.0
-    json-logic-js: ^2.0.2
     query-string: ^7.1.1
     react: ^18.2.0
     react-dom: ^18.2.0

@@ -3,12 +3,12 @@ import type {
   DefaultRuleGroupType,
   DefaultRuleType,
   Field,
+  JsonLogicReservedOperations,
   ParseJsonLogicOptions,
   RQBJsonLogic,
   RQBJsonLogicVar,
   ValueSource,
 } from '@react-querybuilder/ts/src/index.noReact';
-import type { ReservedOperations } from 'json-logic-js';
 import { defaultOperatorNegationMap } from '../../defaults';
 import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';
 import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
@@ -129,7 +129,7 @@ export const parseJsonLogic = (
     if (outermost && typeof logic !== 'object') {
       return false;
     }
-    const key = Object.keys(logic)[0] as ReservedOperations;
+    const key = Object.keys(logic)[0] as JsonLogicReservedOperations;
     // @ts-expect-error `key in logic === true`, but TS doesn't know that
     const keyValue = logic[key];
     // Rule groups
