@@ -354,7 +354,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               const processedRuleGroup = processRuleGroup(rule);
               if (processedRuleGroup) {
                 hasChildRules = true;
-                return `{${processedRuleGroup}}`;
+                // Don't wrap in curly braces if the result already is.
+                return /^\{.+\}$/.test(processedRuleGroup)
+                  ? processedRuleGroup
+                  : `{${processedRuleGroup}}`;
               }
               return '';
             }
@@ -378,7 +381,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       };
 
       const rgStandard = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
-      return `{${processRuleGroup(rgStandard, true)}}`;
+      const processedQuery = processRuleGroup(rgStandard, true);
+      return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
     } else if (format === 'cel') {
       const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
         if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {

@@ -636,9 +636,9 @@ const params_named = {
   email_3: '%fr',
 };
 const mongoQueryString =
-  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"firstName":{"$gte":"Test","$lte":"This"}},{"firstName":{"$gte":"Test","$lte":"This"}},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"age":{"$gte":12,"$lte":14}},{"age":"26"},{"isMusician":true},{"email":{"$regex":"@"}},{"email":{"$regex":"^ab"}},{"email":{"$regex":"com$"}},{"hello":{"$not":{"$regex":"com"}}},{"job":{"$not":{"$regex":"^Man"}}},{"job":{"$not":{"$regex":"ger$"}}},{{"job":"Sales Executive"}}]}';
+  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"firstName":{"$in":["Test","This"]}},{"lastName":{"$nin":["Test","This"]}},{"firstName":{"$gte":"Test","$lte":"This"}},{"firstName":{"$gte":"Test","$lte":"This"}},{"$or":[{"lastName":{"$lt":"Test"}},{"lastName":{"$gt":"This"}}]},{"age":{"$gte":12,"$lte":14}},{"age":"26"},{"isMusician":true},{"email":{"$regex":"@"}},{"email":{"$regex":"^ab"}},{"email":{"$regex":"com$"}},{"hello":{"$not":{"$regex":"com"}}},{"job":{"$not":{"$regex":"^Man"}}},{"job":{"$not":{"$regex":"ger$"}}},{"job":"Sales Executive"}]}';
 const mongoQueryStringForValueSourceField =
-  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"$where":"[this.middleName,this.lastName].includes(this.firstName)"},{"$where":"![this.middleName,this.lastName].includes(this.lastName)"},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$or":[{"$expr":{"$lt":["$lastName","$middleName"]}},{"$expr":{"$gt":["$lastName","$lastName"]}}]},{"$expr":{"$eq":["$age","$iq"]}},{"$expr":{"$eq":["$isMusician","$isCreative"]}},{"$where":"this.email.includes(this.atSign)"},{"$where":"this.email.startsWith(this.name)"},{"$where":"this.email.endsWith(this.dotCom)"},{"$where":"!this.hello.includes(this.dotCom)"},{"$where":"!this.job.startsWith(this.noJob)"},{"$where":"!this.job.endsWith(this.noJob)"},{{"$expr":{"$eq":["$job","$executiveJobName"]}}}]}';
+  '{"$and":[{"firstName":null},{"lastName":{"$ne":null}},{"$where":"[this.middleName,this.lastName].includes(this.firstName)"},{"$where":"![this.middleName,this.lastName].includes(this.lastName)"},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$and":[{"$expr":{"$gte":["$firstName","$middleName"]}},{"$expr":{"$lte":["$firstName","$lastName"]}}]},{"$or":[{"$expr":{"$lt":["$lastName","$middleName"]}},{"$expr":{"$gt":["$lastName","$lastName"]}}]},{"$expr":{"$eq":["$age","$iq"]}},{"$expr":{"$eq":["$isMusician","$isCreative"]}},{"$where":"this.email.includes(this.atSign)"},{"$where":"this.email.startsWith(this.name)"},{"$where":"this.email.endsWith(this.dotCom)"},{"$where":"!this.hello.includes(this.dotCom)"},{"$where":"!this.job.startsWith(this.noJob)"},{"$where":"!this.job.endsWith(this.noJob)"},{"$expr":{"$eq":["$job","$executiveJobName"]}}]}';
 const celString =
   'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
 const celStringForValueSourceField =
@@ -771,6 +771,10 @@ it('formats parameterized named SQL correctly', () => {
 });
 
 it('formats to mongo query correctly', () => {
+  // First we check if the expected strings are JSON.parse-able
+  expect(() => JSON.parse(mongoQueryString)).not.toThrow();
+  expect(() => JSON.parse(mongoQueryStringForValueSourceField)).not.toThrow();
+  // ...then we check the actual logic
   expect(formatQuery(mongoQuery, 'mongodb')).toBe(mongoQueryString);
   expect(formatQuery(mongoQueryWithValueSourceField, 'mongodb')).toBe(
     mongoQueryStringForValueSourceField
@@ -1000,7 +1004,7 @@ describe('escapes quotes when appropriate', () => {
   };
 
   it.each([
-    { fmt: 'mongodb', result: `{{"f1":"Te\\"st"}}` },
+    { fmt: 'mongodb', result: `{"f1":"Te\\"st"}` },
     { fmt: 'cel', result: `f1 == "Te\\"st"` },
   ])('escapes double quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
     expect(formatQuery(testQueryDQ, fmt as 'cel' | 'mongodb')).toEqual(result);
@@ -1249,7 +1253,7 @@ describe('validation', () => {
             fields: [{ name: 'field', validator: () => false }],
           }
         )
-      ).toBe('{{"otherfield":""}}');
+      ).toBe('{"otherfield":""}');
     });
 
     it('should invalidate mongodb even if fields are valid', () => {
