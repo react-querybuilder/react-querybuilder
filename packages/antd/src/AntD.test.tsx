@@ -1,4 +1,4 @@
-import type { NotToggleProps, ValueEditorProps } from '@react-querybuilder/ts';
+import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/lib/select';
@@ -8,6 +8,7 @@ import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
   defaultValueEditorProps,
+  defaultValueSelectorProps,
   findInput,
   hasOrInheritsClass,
   testActionElement,
@@ -244,6 +245,18 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
     await user.click(container.querySelector('.ant-picker-clear')!);
     expect(onChange).toHaveBeenCalledWith('');
+  });
+});
+
+describe('extra AntDValueSelector tests', () => {
+  it('handles an empty string value in multiselect mode', () => {
+    const props: ValueSelectorProps = {
+      ...defaultValueSelectorProps,
+      multiple: true,
+      value: '',
+    };
+    const { container } = render(<AntDValueSelector {...props} />);
+    expect(container.querySelectorAll('.ant-select-selection-item')).toHaveLength(0);
   });
 });
 

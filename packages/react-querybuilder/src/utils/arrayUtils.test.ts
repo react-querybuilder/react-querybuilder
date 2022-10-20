@@ -17,6 +17,8 @@ it('joins with a character', () => {
   expect(joinWith(commaArray)).toBe(commaString);
   expect(joinWith(commaArray, ',')).toBe(commaString);
   expect(joinWith(plusArray, '+')).toBe(plusString);
+  expect(joinWith([null])).toBe('');
+  expect(joinWith([undefined])).toBe('');
 });
 
 it('converts stuff to an array', () => {
