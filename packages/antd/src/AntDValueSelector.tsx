@@ -44,11 +44,17 @@ export const AntDValueSelector = ({
     [handleOnChange, listsAsArrays, multiple]
   );
 
-  const val = multiple
-    ? Array.isArray(value)
-      ? /* istanbul ignore next */ value
-      : splitBy(value, ',')
-    : value;
+  const val = useMemo(() => {
+    if (multiple) {
+      if (Array.isArray(value)) {
+        return value;
+      } else if (value === '') {
+        return [];
+      }
+      return splitBy(value, ',');
+    }
+    return value;
+  }, [multiple, value]);
 
   const modeObj = multiple ? { mode: 'multiple' as const } : {};
 
@@ -58,7 +64,7 @@ export const AntDValueSelector = ({
         {...modeObj}
         dropdownMatchSelectWidth={false}
         disabled={disabled}
-        // @ts-expect-error value prop cannot be string[]
+        // @ts-expect-error value prop cannot be string[] if multiple is false
         value={val}
         onChange={onChange}
         {...extraProps}>

@@ -38,8 +38,8 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
  * // would return
  * 'this\\,\\,that,,the other,,,\\,'
  */
-export const joinWith = (strArr: string[], joinChar = defaultJoinChar) =>
-  strArr.map(str => str.replaceAll(joinChar, `\\${joinChar}`)).join(joinChar);
+export const joinWith = (strArr: (string | undefined | null)[], joinChar = defaultJoinChar) =>
+  strArr.map(str => (str ?? '').replaceAll(joinChar, `\\${joinChar}`)).join(joinChar);
 
 /**
  * Trims the value if it is a string. Otherwise returns value as-is.
