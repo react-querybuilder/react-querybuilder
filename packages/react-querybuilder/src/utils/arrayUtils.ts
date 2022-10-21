@@ -13,9 +13,8 @@ import { defaultJoinChar } from '../defaults';
  * ['this,,that', '', 'the other', '', '', ',']
  */
 export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
-  typeof str === 'undefined'
-    ? []
-    : str
+  typeof str === 'string'
+    ? str
         .split(`\\${splitChar}`)
         .map(c => c.split(splitChar))
         .reduce((prev, curr, idx) => {
@@ -26,7 +25,8 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
             `${prev[prev.length - 1]}${splitChar}${curr[0]}`,
             ...curr.slice(1),
           ];
-        }, []);
+        }, [])
+    : [];
 
 /**
  * Joins an array of strings using the given character (default ','). When the given
