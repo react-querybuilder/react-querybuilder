@@ -5,4 +5,4 @@
 3. Run `yarn lerna version [major|minor|patch|prerelease] --no-push` (this automatically runs the `version` script in [`./package.json`](package.json) before committing and tagging)
 4. Check that all the `dependencies` have the new version number
 5. Run `yarn lerna publish from-git` (with `--dist-tag next` if version is `prerelease`)
-6. Run `git push --tags`
+6. Run `git push && git push --tags`
