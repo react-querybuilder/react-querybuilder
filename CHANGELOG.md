@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### ESM only
 
 All packages published from this repository are now built as [ES modules only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). You may continue to use `react-querybuilder` and any of the compatibility packages in a CommonJS or UMD environment by using the latest v4 release.
-
 -->
 
 - Internet Explorer is no longer supported.
@@ -41,6 +40,7 @@ All packages published from this repository are now built as [ES modules only](h
 
 - [#324](https://github.com/react-querybuilder/react-querybuilder/pull/324) The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
 - `parseCEL` now handles strings correctly (including multi-line strings).
+- [#389](https://github.com/react-querybuilder/react-querybuilder/pull/389) AntDValueSelector properly handles empty string values in multiselect mode.
 
 ### Added
 
@@ -58,6 +58,10 @@ All packages published from this repository are now built as [ES modules only](h
 - The `controlElements` prop has a new option: `inlineCombinator`. By default, this is a small wrapper around the `combinatorSelector` component that is used when either `showCombinatorsBetweenRules` or `independentCombinators` is `true`. (The `inlineCombinator` option was only added to support `@react-querybuilder/dnd`, so there is almost certainly no reason to use it directly.)
 
 </details>
+
+## [v5.0.0-alpha.9] - 2022-10-21
+
+See [Unreleased](#unreleased).
 
 ## [v5.0.0-alpha.8] - 2022-10-07
 
@@ -1004,7 +1008,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.8...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.9...HEAD
+[v5.0.0-alpha.9]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.8...v5.0.0-alpha.9
 [v5.0.0-alpha.8]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.7...v5.0.0-alpha.8
 [v5.0.0-alpha.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.6...v5.0.0-alpha.7
 [v5.0.0-alpha.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.5...v5.0.0-alpha.6
