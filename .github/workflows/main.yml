@@ -42,7 +42,7 @@ jobs:
       - run: yarn build
       - run: yarn test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
 
   # test-types:
   #   name: Test Types with TypeScript ${{ matrix.ts }}
