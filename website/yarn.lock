@@ -3035,9 +3035,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-react@npm:^1.14.2":
-  version: 1.14.2
-  resolution: "@codesandbox/sandpack-react@npm:1.14.2"
+"@codesandbox/sandpack-react@npm:^1.15.2":
+  version: 1.15.2
+  resolution: "@codesandbox/sandpack-react@npm:1.15.2"
   dependencies:
     "@code-hike/classer": ^0.0.0-aa6efee
     "@codemirror/closebrackets": ^0.19.0
@@ -3065,7 +3065,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 95493f25333f9d088d516378c95e8da7a12a1e093240b06e0ebaa91e6966e07699732d71fe1e1399ccfc3b042b7a2b8f20db2a6e15382c05a15fcf439391b14e
+  checksum: 61ce96d4e27c3f72b4abaa7d9d348ed1e42f17aec3f63c81705bef58ce8a435a6e29a8a0e5cb13dd433476d55d3ef6692f6e0eec50d5b98b634b4a5f76bfa32e
   languageName: node
   linkType: hard
 
@@ -4054,9 +4054,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/base@npm:5.0.0-alpha.101":
-  version: 5.0.0-alpha.101
-  resolution: "@mui/base@npm:5.0.0-alpha.101"
+"@mui/base@npm:5.0.0-alpha.102":
+  version: 5.0.0-alpha.102
+  resolution: "@mui/base@npm:5.0.0-alpha.102"
   dependencies:
     "@babel/runtime": ^7.19.0
     "@emotion/is-prop-valid": ^1.2.0
@@ -4073,14 +4073,14 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: a3102fec37a9c96fb26377ec15e01cc31cd208403388b36167f7d423538106891fe2de56d6f3806306056baa60b28c8317aef7c8d40aaffe051426ccf1e83837
+  checksum: 226fff05a8edf868c2f626ce666cbd73e3c5399a934735ea57a3fa56cab1ecef6b4298a60dae93f3825b19a4c40fa1e879300a9bf816fea9a82866ac8fc16674
   languageName: node
   linkType: hard
 
-"@mui/core-downloads-tracker@npm:^5.10.9":
-  version: 5.10.9
-  resolution: "@mui/core-downloads-tracker@npm:5.10.9"
-  checksum: ebf1fb061a56d1fcb84a20f22096f092c207a87c715202e2b149b5decf3342167f456e6063ca0ff06cf48936a72153eab7eafd13f3195a74e615cf5352a932c4
+"@mui/core-downloads-tracker@npm:^5.10.10":
+  version: 5.10.10
+  resolution: "@mui/core-downloads-tracker@npm:5.10.10"
+  checksum: 534c066edf4d8b656e31000ac2eab8ed211cad4a0d35841eaf77751b38b76fe76114b94a18360292aa39753fe4e99ab0ab37466908991f96fc7c2ceeffc2c80b
   languageName: node
   linkType: hard
 
@@ -4100,14 +4100,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/material@npm:^5.10.9":
-  version: 5.10.9
-  resolution: "@mui/material@npm:5.10.9"
+"@mui/material@npm:^5.10.10":
+  version: 5.10.10
+  resolution: "@mui/material@npm:5.10.10"
   dependencies:
     "@babel/runtime": ^7.19.0
-    "@mui/base": 5.0.0-alpha.101
-    "@mui/core-downloads-tracker": ^5.10.9
-    "@mui/system": ^5.10.9
+    "@mui/base": 5.0.0-alpha.102
+    "@mui/core-downloads-tracker": ^5.10.10
+    "@mui/system": ^5.10.10
     "@mui/types": ^7.2.0
     "@mui/utils": ^5.10.9
     "@types/react-transition-group": ^4.4.5
@@ -4129,7 +4129,7 @@ __metadata:
       optional: true
     "@types/react":
       optional: true
-  checksum: 87585fd9a2934cc523dd16a10cfa191793cf519e53f06d4779331acb1456d5c4e8718797d2a30abe3485882fc64ad1380b86823034538d07ccb8fa907a27d8b0
+  checksum: 3bd9a1dd71ec6d7012266633e078e52ecd653c4a6fc286d24b04edae3e85f569a7ba9840443dca0212744f87afe2758599367dcff96bc23c0db79ddcc5ca5177
   languageName: node
   linkType: hard
 
@@ -4171,9 +4171,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/system@npm:^5.10.9":
-  version: 5.10.9
-  resolution: "@mui/system@npm:5.10.9"
+"@mui/system@npm:^5.10.10":
+  version: 5.10.10
+  resolution: "@mui/system@npm:5.10.10"
   dependencies:
     "@babel/runtime": ^7.19.0
     "@mui/private-theming": ^5.10.9
@@ -4195,7 +4195,7 @@ __metadata:
       optional: true
     "@types/react":
       optional: true
-  checksum: 9df8b7cdff5a611feced03b749e9bbf526ca2e8b03742231b50dc7c91cb7e1d81b486f7f8494845c0fe356dcfa6ce13834fbec391270cb8584d8284149054984
+  checksum: a2cb5bcc8e3a07038672f955d8352d3fa7a6239665efac3c7b4adf59fa64dc258b844f2decb0db3dd378b9fc0e0ca856ec5172e077702ff94e3a635b6ca8c462
   languageName: node
   linkType: hard
 
@@ -5610,9 +5610,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^4.23.5":
-  version: 4.23.5
-  resolution: "antd@npm:4.23.5"
+"antd@npm:^4.23.6":
+  version: 4.23.6
+  resolution: "antd@npm:4.23.6"
   dependencies:
     "@ant-design/colors": ^6.0.0
     "@ant-design/icons": ^4.7.0
@@ -5639,7 +5639,7 @@ __metadata:
     rc-motion: ^2.6.1
     rc-notification: ~4.6.0
     rc-pagination: ~3.1.17
-    rc-picker: ~2.6.10
+    rc-picker: ~2.6.11
     rc-progress: ~3.3.2
     rc-rate: ~2.9.0
     rc-resize-observer: ^1.2.0
@@ -5649,8 +5649,8 @@ __metadata:
     rc-steps: ~4.1.0
     rc-switch: ~3.2.0
     rc-table: ~7.26.0
-    rc-tabs: ~12.1.0-alpha.1
-    rc-textarea: ~0.4.3
+    rc-tabs: ~12.2.0
+    rc-textarea: ~0.4.5
     rc-tooltip: ~5.2.0
     rc-tree: ~5.7.0
     rc-tree-select: ~5.5.0
@@ -5661,7 +5661,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 07ce3e12bb4e7da9a0e859702d80d511adee59c87d4f4bd83fc9f0832e0831f26dedf3ce6b9776353079df77032c18df09f20838d2b6f3609b5d1f6d78398300
+  checksum: 8139cadcb51a0ca8aa56b4c2eb75fe6879f0a4f1253151fef545da19aa10e0afb1b8c2caeae328b690519f355f353d05d19f726d0a3266c80e0e0f348b3d9b67
   languageName: node
   linkType: hard
 
@@ -11704,9 +11704,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-picker@npm:~2.6.10":
-  version: 2.6.10
-  resolution: "rc-picker@npm:2.6.10"
+"rc-picker@npm:~2.6.11":
+  version: 2.6.11
+  resolution: "rc-picker@npm:2.6.11"
   dependencies:
     "@babel/runtime": ^7.10.1
     classnames: ^2.2.1
@@ -11719,7 +11719,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 4a94b64ce57d6bbd9dab3b496c652ccfb05f4a621e1cfbd71071a81fc184dc81dc3a4a6095765c34b20f547774adbc8615125179ca89b0795c38c966a5cce135
+  checksum: 85a50c1a26764602bf5072c63be9c8a3141696ec4d6db7bb5252e574d9e63ab0abc33c85ad2f6337f455c858e0257c20ea188d792546b70d293a42e25348fc05
   languageName: node
   linkType: hard
 
@@ -11858,9 +11858,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-tabs@npm:~12.1.0-alpha.1":
-  version: 12.1.0-alpha.1
-  resolution: "rc-tabs@npm:12.1.0-alpha.1"
+"rc-tabs@npm:~12.2.0":
+  version: 12.2.1
+  resolution: "rc-tabs@npm:12.2.1"
   dependencies:
     "@babel/runtime": ^7.11.2
     classnames: 2.x
@@ -11872,11 +11872,11 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 5f5d642ee7b88d793f107c5c7a12a8a7aae95baefbe95edde10513343ded71326e3a12c5bec645cd4f62eff809e1f939d2a1d981315a0a1d9241aa231703634b
+  checksum: f2ed5b66a4c1ea077b23221d84fef5aa9b01cd45984870d59f66db82f1c8a36c63a74e24fe94b7c7695bb10574d5d1004ddf6939e3ae9f844aa4701ff3807db6
   languageName: node
   linkType: hard
 
-"rc-textarea@npm:^0.4.0, rc-textarea@npm:~0.4.3":
+"rc-textarea@npm:^0.4.0, rc-textarea@npm:~0.4.5":
   version: 0.4.5
   resolution: "rc-textarea@npm:0.4.5"
   dependencies:
@@ -12225,9 +12225,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-modal@npm:^3.15.1":
-  version: 3.15.1
-  resolution: "react-modal@npm:3.15.1"
+"react-modal@npm:^3.16.1":
+  version: 3.16.1
+  resolution: "react-modal@npm:3.16.1"
   dependencies:
     exenv: ^1.2.0
     prop-types: ^15.7.2
@@ -12236,7 +12236,7 @@ __metadata:
   peerDependencies:
     react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
     react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
-  checksum: ee99ca312c35bcec9ef0868babf970ce03c52801731e29be336bb6bdc867a1ecf00a73e1fb5bc3b1b1ef66ceb0c9b4a0199fadb85b1b9829f731409951b018f0
+  checksum: 978936e9320fad839c039b9ee4de55d40888156cb40e093615d6fbc2ff07139d5db06f14782cb7767f780bd5fb57956778669426c535ebc0068a7a03882c7e75
   languageName: node
   linkType: hard
 
@@ -12781,7 +12781,7 @@ __metadata:
     "@chakra-ui/icons": ">=1.0.0"
     "@chakra-ui/react": ">=1.6.0"
     "@chakra-ui/system": ">=1.8.0"
-    "@codesandbox/sandpack-react": ^1.14.2
+    "@codesandbox/sandpack-react": ^1.15.2
     "@docusaurus/core": ^2.1.0
     "@docusaurus/module-type-aliases": ^2.1.0
     "@docusaurus/plugin-client-redirects": ^2.1.0
@@ -12791,7 +12791,7 @@ __metadata:
     "@emotion/styled": ^11
     "@mdx-js/react": ^1.6.22
     "@mui/icons-material": ^5.10.9
-    "@mui/material": ^5.10.9
+    "@mui/material": ^5.10.10
     "@react-querybuilder/antd": next
     "@react-querybuilder/bootstrap": next
     "@react-querybuilder/bulma": next
@@ -12804,7 +12804,7 @@ __metadata:
     "@tsconfig/docusaurus": ^1.0.6
     "@types/pako": ^2.0.0
     "@types/react-modal": ^3.13.1
-    antd: ^4.23.5
+    antd: ^4.23.6
     bootstrap: ^5.2.2
     bootstrap-icons: ^1.9.1
     buffer: ^6.0.3
@@ -12823,7 +12823,7 @@ __metadata:
     react-dnd: ^16.0.1
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
-    react-modal: ^3.15.1
+    react-modal: ^3.16.1
     react-querybuilder: next
     react-querybuilder-v4: "npm:react-querybuilder@^4.5.3"
     remark-typescript-tools: ^1.0.11
