@@ -28,7 +28,7 @@
   "devDependencies": {
     "@react-querybuilder/ts": "^5.0.0-alpha.8",
     "@testing-library/react": "^13.4.0",
-    "@types/node": "^18.11.0",
+    "@types/node": "^18.11.3",
     "@types/react": "^18.0.21",
     "@vitejs/plugin-react": "^2.1.0",
     "react": "^18.2.0",
