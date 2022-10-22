@@ -11,7 +11,7 @@ beforeEach(() => {
   jest.resetModules();
 });
 
-it('works', async () => {
+it('returns the react-dnd exports', async () => {
   let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD());

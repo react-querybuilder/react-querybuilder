@@ -29,7 +29,7 @@ Object.entries(componentMocks).forEach(([cn, mockImpl]) => {
   if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
 });
 
-it('works', async () => {
+it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {
     hookResult = renderHook(() => useMuiComponents());
