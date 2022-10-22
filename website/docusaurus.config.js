@@ -53,8 +53,11 @@ const config = {
             4: {
               label: 'v4.x',
             },
+            5: {
+              label: 'v5.x',
+            },
             current: {
-              label: 'Next (v5)',
+              label: 'Next',
             },
           },
           // Re-enable this when we get it working properly
