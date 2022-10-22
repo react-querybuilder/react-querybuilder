@@ -19,12 +19,6 @@ All packages published from this repository are now built as [ES modules only](h
 
 ### Changed
 
-<!--
-#### ESM only
-
-All packages published from this repository are now built as [ES modules only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). You may continue to use `react-querybuilder` and any of the compatibility packages in a CommonJS or UMD environment by using the latest v4 release.
--->
-
 - Internet Explorer is no longer supported.
 - The minimum TypeScript version is now 4.5.
 - When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback parameter. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
