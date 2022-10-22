@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+<!--
 ## [Unreleased]
+
+### Changed
+
+#### ESM only
+
+All packages published from this repository are now built as [ES modules only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). You may continue to use `react-querybuilder` and any of the compatibility packages in a CommonJS or UMD environment by using the latest v4 release.
+-->
+
+## [v5.0.0] - 2022-10-22
 
 ### Changed
 
@@ -40,64 +50,24 @@ All packages published from this repository are now built as [ES modules only](h
 
 - [#324](https://github.com/react-querybuilder/react-querybuilder/pull/324) The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
 - `parseCEL` now handles strings correctly (including multi-line strings).
-- [#389](https://github.com/react-querybuilder/react-querybuilder/pull/389) AntDValueSelector properly handles empty string values in multiselect mode.
+- [#389](https://github.com/react-querybuilder/react-querybuilder/pull/389) `AntDValueSelector` properly handles empty string values in multiselect mode.
 
 ### Added
 
 - Each [compatibility package](https://react-querybuilder.js.org/docs/compat) now exports its own context provider that injects the appropriate `controlElements` and `controlClassnames` properties into any descendant `QueryBuilder` components (composition FTW!). This is now the recommended usage for all compatibility packages.
 - The [`onAddRule`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddrule) and [`onAddGroup`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddgroup) callback props now receive an optional "context" parameter as the fourth argument. This parameter can be provided by a custom `addRuleAction`/`addGroupAction` component to its `handleOnClick` prop. This allows users to alter or replace the default rule based on arbitrary data. For example, the `addRuleAction` component could render two "add rule" buttons which add different rules depending on which one was clicked, as long as they provided a different `context` parameter.
 - When drag-and-drop is enabled, rules will be copied instead of moved if the user has a modifier key (`Alt` on Windows/Linux, `Option ⌥` on Mac) pressed when the drop occurs.
-- `formatQuery` has a new `ruleProcessor` configuration option applicable to non-SQL query language formats. When provided, the entire rule output will be determined by the function. For the relevant formats, `valueProcessor` already behaved this way; the default "value" processors have been renamed to `defaultRuleProcessor[Format]` to clarify the behavior. The default processors' original "value" names are deprecated, but still available for now.
+- `formatQuery` has a new `ruleProcessor` configuration option applicable to non-SQL query language formats. When provided, the entire rule output will be determined by the function. For the relevant formats, `valueProcessor` already behaved this way; the default "value" processors have been renamed to `defaultRuleProcessor[Format]` to clarify the behavior. The default processors' original "value" names are deprecated but still available (with no immediate plans to remove them).
 - `parseSQL` will now ignore a leading `WHERE` keyword, e.g. `parseSQL("WHERE firstName = 'Steve'")` will not fail to produce a query rule like in v4.
 
 <details>
 
 <summary>Miscellaneous</summary>
 
-- The [documentation site](https://react-querybuilder.js.org/) now has documentation for past versions.
-- The `controlElements` prop has a new option: `inlineCombinator`. By default, this is a small wrapper around the `combinatorSelector` component that is used when either `showCombinatorsBetweenRules` or `independentCombinators` is `true`. (The `inlineCombinator` option was only added to support `@react-querybuilder/dnd`, so there is almost certainly no reason to use it directly.)
+- The [documentation site](https://react-querybuilder.js.org/) now has separate documentation for past versions.
+- The `controlElements` prop has a new option: `inlineCombinator`. By default, this is a small wrapper around the `combinatorSelector` component that is used when either `showCombinatorsBetweenRules` or `independentCombinators` is `true`. The `inlineCombinator` option was only added to support `@react-querybuilder/dnd`, so there is almost certainly no reason to use it directly.
 
 </details>
-
-## [v5.0.0-alpha.9] - 2022-10-21
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.8] - 2022-10-07
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.7] - 2022-10-05
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.6] - 2022-09-12
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.5] - 2022-09-08
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.4] - 2022-09-08
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.3] - 2022-08-30
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.2] - 2022-08-28
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.1] - 2022-08-28
-
-See [Unreleased](#unreleased).
-
-## [v5.0.0-alpha.0] - 2022-08-27
-
-[Documentation](https://react-querybuilder.js.org/docs/next/intro) (in particular, see [`enableDragAndDrop`](https://react-querybuilder.js.org/docs/next/api/querybuilder#enabledraganddrop) and [compatibility packages](https://react-querybuilder.js.org/docs/next/compat))
 
 ## [v4.5.3] - 2022-09-28
 
@@ -1008,17 +978,9 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.9...HEAD
-[v5.0.0-alpha.9]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.8...v5.0.0-alpha.9
-[v5.0.0-alpha.8]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.7...v5.0.0-alpha.8
-[v5.0.0-alpha.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.6...v5.0.0-alpha.7
-[v5.0.0-alpha.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.5...v5.0.0-alpha.6
-[v5.0.0-alpha.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.4...v5.0.0-alpha.5
-[v5.0.0-alpha.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.3...v5.0.0-alpha.4
-[v5.0.0-alpha.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.2...v5.0.0-alpha.3
-[v5.0.0-alpha.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.1...v5.0.0-alpha.2
-[v5.0.0-alpha.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0-alpha.0...v5.0.0-alpha.1
-[v5.0.0-alpha.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.3...v5.0.0-alpha.0
+<!-- [unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0...HEAD -->
+
+[v5.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.3...v5.0.0
 [v4.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.2...v4.5.3
 [v4.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.1...v4.5.2
 [v4.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.0...v4.5.1

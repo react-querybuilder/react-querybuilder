@@ -1,0 +1,110 @@
+---
+title: Migrating to newer versions
+---
+
+## From v4 to v5
+
+The transition from v4 to v5 should be fairly seemless. Core functionality has not been affected much since v4, other than a few bug fixes (see [changelog](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md)). Significant code changes will only be necessary if you set the [`enableDragAndDrop` prop to `true`](#drag-and-drop) and/or you use one of the [compatibility packages](#compatibility-packages).
+
+### Drag-and-drop
+
+To enable drag-and-drop in v5, you'll need to make two changes.
+
+First, install [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) explicitly, along with the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
+
+```shell
+npm install react-dnd react-dnd-html5-backend @react-querybuilder/dnd --save
+# OR
+yarn add react-dnd react-dnd-html5-backend @react-querybuilder/dnd
+```
+
+Second, instead of setting the `enableDragAndDrop` prop explicitly, wrap your `<QueryBuilder />` element in `<QueryBuilderDnD />` from `@react-querybuilder/dnd`. This will automatically set `enableDragAndDrop={true}` on `<QueryBuilder />`.
+
+```diff
+ export function App() {
+   return (
+-    <QueryBuilder enableDragAndDrop />
++    <QueryBuilderDnD>
++      <QueryBuilder />
++    </QueryBuilderDnD>
+   );
+ }
+```
+
+We also _strongly_ recommended passing all the exports from `react-dnd` and `react-dnd-html5-backend` in to `<QueryBuilderDnD />` through its `dnd` prop. Otherwise the query builder will initially be rendered with drag-and-drop disabled.
+
+```tsx
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+// highlight-start
+import * as ReactDnD from 'react-dnd';
+import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+// highlight-end
+import { QueryBuilder } from 'react-querybuilder';
+
+export function App() {
+  return (
+    {/* highlight-start */}
+    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+      {/* highlight-end */}
+      <QueryBuilder />
+    </QueryBuilderDnD>
+  );
+};
+```
+
+More information is available in the [full API documentation](./api/querybuilder#enabledraganddrop).
+
+### Compatibility packages
+
+The recommended implementation of [compatibility packages](./compat) has been simplified in v5. Instead of explicitly passing the replacement components in to the `controlElements` prop, you can wrap the `<QueryBuilder />` element in the appropriate `<QueryBuilder* />` context provider that will automatically apply the correct `controlElements`, `controlClassnames`, and any other relevant props (now or in the future!). The example below uses the [Bootstrap-compatible package](https://www.npmjs.com/package/@react-querybuilder/bootstrap).
+
+```diff
+-import {
+-  bootstrapControlClassnames,
+-  bootstrapControlElements
+-} from '@react-querybuilder/bootstrap';
++import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
+ import 'bootstrap-icons/font/bootstrap-icons.scss';
+ import 'bootstrap/scss/bootstrap.scss';
+ import { QueryBuilder } from 'react-querybuilder';
+
+ export function App() {
+   return (
+-    <QueryBuilder
+-      controlClassnames={bootstrapControlClassnames}
+-      controlElements={bootstrapControlElements}
+-    />
++    <QueryBuilderBootstrap>
++      <QueryBuilder />
++    </QueryBuilderBootstrap>
+   );
+ };
+```
+
+:::info
+
+See the [compatibility package documentation](./compat) for more information about specific packages, particularly `@react-querybuilder/material`.
+
+:::
+
+## From v3 to v4
+
+React Query Builder v4 was mainly a feature release, but changes to the structure of the rendered HTML necessitated a major version bump.
+
+A new drag handle `<span />` element will always be rendered at the front of every rule and rule group header element, regardless of whether you enable the drag-and-drop feature. If drag-and-drop is disabled (the default setting), you should hide the drag handle by either 1) using the default stylesheet which hides it automatically when drag-and-drop is disabled, or 2) hiding it with a style rule like `.queryBuilder-dragHandle { display: none; }`.
+
+:::tip
+
+The default stylesheet can be loaded as CSS or SCSS:
+
+```ts
+import 'react-querybuilder/dist/query-builder.css';
+// OR
+import 'react-querybuilder/dist/query-builder.scss';
+```
+
+:::
+
+If using TypeScript, custom `operatorSelector` components will need to accommodate `OptionGroup<NameLabelPair>[]` in addition to the normal `NameLabelPair[]`.
+
+Internal methods for immutably updating queries have been moved from the `schema` prop to the new `actions` prop on both `RuleProps` and `RuleGroupProps`. Custom `<Rule />` and `<RuleGroup />` components will need to adjust their prop declarations.
