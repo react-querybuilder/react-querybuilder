@@ -5475,7 +5475,7 @@ __metadata:
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
   dependencies:
     "@ant-design/icons": ^4.7.0
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.21
     "@vitejs/plugin-react": ^2.1.0
@@ -5484,7 +5484,7 @@ __metadata:
     rc-select: ^14.1.13
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.9
+    react-querybuilder: ^5.0.0
     typescript: ^4.8.4
     vite: ^3.1.8
   peerDependencies:
@@ -5498,7 +5498,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.21
     "@vitejs/plugin-react": ^2.1.0
@@ -5506,7 +5506,7 @@ __metadata:
     bootstrap-icons: ^1.9.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.9
+    react-querybuilder: ^5.0.0
     typescript: ^4.8.4
     vite: ^3.1.8
   peerDependencies:
@@ -5520,14 +5520,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.21
     "@vitejs/plugin-react": ^2.1.0
     bulma: ^0.9.4
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.9
+    react-querybuilder: ^5.0.0
     typescript: ^4.8.4
     vite: ^3.1.8
   peerDependencies:
@@ -5545,14 +5545,14 @@ __metadata:
     "@chakra-ui/system": ^2.3.0
     "@emotion/react": ^11.10.4
     "@emotion/styled": ^11.10.4
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.21
     "@vitejs/plugin-react": ^2.1.0
     framer-motion: ^6.5.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.9
+    react-querybuilder: ^5.0.0
     typescript: ^4.8.4
     vite: ^3.1.8
   peerDependencies:
@@ -5566,11 +5566,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/ctx@^5.0.0-alpha.9, @react-querybuilder/ctx@workspace:packages/ctx":
+"@react-querybuilder/ctx@^5.0.0, @react-querybuilder/ctx@workspace:packages/ctx":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ctx@workspace:packages/ctx"
   dependencies:
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/node": ^18.11.3
     "@types/react": ^18.0.21
@@ -5588,7 +5588,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/node": ^18.11.3
     "@types/react": ^18.0.21
@@ -5599,7 +5599,7 @@ __metadata:
     react-dnd-test-backend: ^16.0.1
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.9
+    react-querybuilder: ^5.0.0
     typescript: ^4.8.4
     vite: ^3.1.8
   peerDependencies:
@@ -5617,13 +5617,13 @@ __metadata:
     "@emotion/styled": ^11.10.4
     "@mui/icons-material": ^5.10.9
     "@mui/material": ^5.10.10
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.21
     "@vitejs/plugin-react": ^2.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^5.0.0-alpha.9
+    react-querybuilder: ^5.0.0
     regenerator-runtime: ^0.13.10
     typescript: ^4.8.4
     vite: ^3.1.8
@@ -5636,7 +5636,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/ts@^5.0.0-alpha.9, @react-querybuilder/ts@workspace:packages/ts":
+"@react-querybuilder/ts@^5.0.0, @react-querybuilder/ts@workspace:packages/ts":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ts@workspace:packages/ts"
   dependencies:
@@ -13800,7 +13800,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@^5.0.0-alpha.9, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@^5.0.0, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
@@ -13808,8 +13808,8 @@ __metadata:
     "@babel/preset-env": ^7.19.4
     "@babel/preset-react": ^7.18.6
     "@babel/preset-typescript": ^7.18.6
-    "@react-querybuilder/ctx": ^5.0.0-alpha.9
-    "@react-querybuilder/ts": ^5.0.0-alpha.9
+    "@react-querybuilder/ctx": ^5.0.0
+    "@react-querybuilder/ts": ^5.0.0
     "@testing-library/dom": ^8.19.0
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
