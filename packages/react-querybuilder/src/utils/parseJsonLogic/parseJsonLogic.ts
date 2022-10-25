@@ -15,6 +15,7 @@ import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
 import { uniqByName } from '../../internal/uniq';
 import { isRuleGroupType } from '../isRuleGroup';
 import { isOptionGroupArray } from '../optGroupUtils';
+import { isPojo } from '../parserUtils';
 import {
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
@@ -194,10 +195,10 @@ export const parseJsonLogic = (
       isRQBJsonLogicEndsWith(logic)
     ) {
       const [first, second] = keyValue;
-      if (isRQBJsonLogicVar(first) && typeof second !== 'object') {
+      if (isRQBJsonLogicVar(first) && !isPojo(second)) {
         field = first.var;
         value = second;
-      } else if (typeof first !== 'object' && isRQBJsonLogicVar(second)) {
+      } else if (!isPojo(first) && isRQBJsonLogicVar(second)) {
         field = second.var;
         value = first;
       } else if (isRQBJsonLogicVar(first) && isRQBJsonLogicVar(second)) {
@@ -210,9 +211,17 @@ export const parseJsonLogic = (
 
       // Translate operator if necessary
       if (isJsonLogicEqual(logic) || isJsonLogicStrictEqual(logic)) {
-        operator = '=';
+        if (value === null) {
+          operator = 'null';
+        } else {
+          operator = '=';
+        }
       } else if (isJsonLogicNotEqual(logic) || isJsonLogicStrictNotEqual(logic)) {
-        operator = '!=';
+        if (value === null) {
+          operator = 'notNull';
+        } else {
+          operator = '!=';
+        }
       } else if (isJsonLogicInString(logic)) {
         operator = 'contains';
       } else if (isRQBJsonLogicStartsWith(logic)) {

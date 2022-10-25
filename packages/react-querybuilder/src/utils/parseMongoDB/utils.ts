@@ -6,9 +6,6 @@ export const getRegExStr = (re: string | RegExp) => (typeof re === 'string' ? re
 export const isPrimitive = (v: any): v is string | number | boolean =>
   typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean';
 
-export const isPojo = (obj: any): obj is Record<string, any> =>
-  obj === null || typeof obj !== 'object' ? false : Object.getPrototypeOf(obj) === Object.prototype;
-
 export const mongoDbToRqbOperatorMap: { [o in MongoDbSupportedOperators]?: DefaultOperatorName } = {
   $eq: '=',
   $ne: '!=',
