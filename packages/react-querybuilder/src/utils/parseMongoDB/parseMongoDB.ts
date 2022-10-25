@@ -171,6 +171,7 @@ export const parseMongoDB = (
   ): DefaultRuleType | DefaultRuleGroupType | false {
     let field = '';
 
+    // istanbul ignore else
     if (key === '$and') {
       if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(isPojo)) {
         return false;
@@ -186,18 +187,22 @@ export const parseMongoDB = (
           objectKeys(rule1[ruleKey1]).length === 1 &&
           isPojo(rule2[ruleKey2]) &&
           objectKeys(rule2[ruleKey2]).length === 1 &&
-          (('$gte' in rule1[ruleKey1] && '$lte' in rule2[ruleKey2]) ||
-            ('$lte' in rule1[ruleKey1] && '$gte' in rule2[ruleKey2]))
+          (('$gte' in rule1[ruleKey1] &&
+            '$lte' in rule2[ruleKey2] &&
+            rule2[ruleKey2].$lte >= rule1[ruleKey1].$gte) ||
+            ('$lte' in rule1[ruleKey1] &&
+              '$gte' in rule2[ruleKey2] &&
+              rule1[ruleKey1].$lte >= rule2[ruleKey2].$gte))
         ) {
           const [val1, val2] = [
             rule1[ruleKey1].$gte ?? rule1[ruleKey1].$lte,
-            rule2[ruleKey2].$gte ?? rule2[ruleKey2].$lte,
+            rule2[ruleKey2].$lte ?? rule2[ruleKey2].$gte,
           ];
-          return {
-            field: ruleKey1,
-            operator: 'between',
-            value: listsAsArrays ? [val1, val2] : `${val1},${val2}`,
-          };
+          let value = listsAsArrays ? [val1, val2] : `${val1},${val2}`;
+          if (val1 > val2) {
+            value = listsAsArrays ? [val2, val1] : `${val2},${val1}`;
+          }
+          return { field: ruleKey1, operator: 'between', value };
         }
       }
 
@@ -222,18 +227,22 @@ export const parseMongoDB = (
           objectKeys(rule1[ruleKey1]).length === 1 &&
           isPojo(rule2[ruleKey2]) &&
           objectKeys(rule2[ruleKey2]).length === 1 &&
-          (('$gt' in (rule1[ruleKey1] as any) && '$lt' in (rule2[ruleKey2] as any)) ||
-            ('$lt' in (rule1[ruleKey1] as any) && '$gt' in (rule2[ruleKey2] as any)))
+          (('$gt' in rule1[ruleKey1] &&
+            '$lt' in rule2[ruleKey2] &&
+            rule1[ruleKey1].$gt >= rule2[ruleKey2].$lt) ||
+            ('$lt' in rule1[ruleKey1] &&
+              '$gt' in rule2[ruleKey2] &&
+              rule2[ruleKey2].$gt >= rule1[ruleKey1].$lt))
         ) {
           const [val1, val2] = [
             rule1[ruleKey1].$gt ?? rule1[ruleKey1].$lt,
-            rule2[ruleKey2].$gt ?? rule2[ruleKey2].$lt,
+            rule2[ruleKey2].$lt ?? rule2[ruleKey2].$gt,
           ];
-          return {
-            field: ruleKey1,
-            operator: 'notBetween',
-            value: listsAsArrays ? [val1, val2] : `${val1},${val2}`,
-          };
+          let value = listsAsArrays ? [val1, val2] : `${val1},${val2}`;
+          if (val1 > val2) {
+            value = listsAsArrays ? [val2, val1] : `${val2},${val1}`;
+          }
+          return { field: ruleKey1, operator: 'notBetween', value };
         }
       }
 
@@ -261,7 +270,7 @@ export const parseMongoDB = (
       return false;
     } else if (key === '$expr') {
       const op = objectKeys(keyValue)[0] as MongoDbSupportedOperators;
-      if (/^\$(eq|gte?|lte?)$/.test(op)) {
+      if (/^\$(eq|gte?|lte?|n?in)$/.test(op)) {
         if (
           Array.isArray(keyValue[op]) &&
           keyValue[op].length === 2 &&

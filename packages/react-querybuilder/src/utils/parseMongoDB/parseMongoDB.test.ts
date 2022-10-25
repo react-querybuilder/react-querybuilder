@@ -18,6 +18,7 @@ describe('valueSource: "value"', () => {
           { $not: { f1: 'Test' } },
           { $not: { f1: { $eq: 'Test' } } },
           { f1: 'Test' },
+          { f1: 'Test', f2: 'Test2' },
           { f1: { $eq: 'Test' } },
           { f1: { $ne: 'Test' } },
           { f1: { $gt: 1214 } },
@@ -31,6 +32,7 @@ describe('valueSource: "value"', () => {
           { f1: { $gte: 12, $lte: 14 } },
           { f1: { $gte: true, $lte: false } },
           { f1: { $gte: 12, $lt: 14 } },
+          { $expr: { $eq: ['$f1', 'Test'] } },
         ],
       })
     ).toEqual({
@@ -49,6 +51,13 @@ describe('valueSource: "value"', () => {
           not: true,
         },
         { field: 'f1', operator: '=', value: 'Test' },
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'f1', operator: '=', value: 'Test' },
+            { field: 'f2', operator: '=', value: 'Test2' },
+          ],
+        },
         { field: 'f1', operator: '=', value: 'Test' },
         { field: 'f1', operator: '!=', value: 'Test' },
         { field: 'f1', operator: '>', value: 1214 },
@@ -86,6 +95,7 @@ describe('valueSource: "value"', () => {
             { field: 'f1', operator: '<', value: 14 },
           ],
         },
+        { field: 'f1', operator: '=', value: 'Test' },
       ],
     });
   });
@@ -127,16 +137,20 @@ describe('valueSource: "value"', () => {
         $or: [
           { $and: [{ f1: { $gte: 'Test' } }, { f1: { $lte: 'Test2' } }] },
           { $and: [{ f1: { $gte: 12 } }, { f1: { $lte: 14 } }] },
-          { $and: [{ f1: { $gte: true } }, { f1: { $lte: false } }] },
+          { $and: [{ f1: { $lte: 14 } }, { f1: { $gte: 12 } }] },
+          { $and: [{ f1: { $gte: false } }, { f1: { $lte: true } }] },
+          { $and: [{ f1: { $gte: 14 } }, { f1: { $lte: 12 } }] },
           { f1: { $gte: 'Test', $lte: 'Test2' } },
           { f1: { $gte: 12, $lte: 14 } },
-          { f1: { $gte: true, $lte: false } },
+          { f1: { $gte: false, $lte: true } },
           { $or: [{ f1: { $lt: 'Test' } }, { f1: { $gt: 'Test2' } }] },
           { $or: [{ f1: { $lt: 12 } }, { f1: { $gt: 14 } }] },
-          { $or: [{ f1: { $lt: true } }, { f1: { $gt: false } }] },
+          { $or: [{ f1: { $gt: 14 } }, { f1: { $lt: 12 } }] },
+          { $or: [{ f1: { $lt: false } }, { f1: { $gt: true } }] },
+          { $or: [{ f1: { $lt: 14 } }, { f1: { $gt: 12 } }] },
           { $not: { f1: { $gte: 'Test', $lte: 'Test2' } } },
           { $not: { f1: { $gte: 12, $lte: 14 } } },
-          { $not: { f1: { $gte: true, $lte: false } } },
+          { $not: { f1: { $gte: false, $lte: true } } },
           { f1: { $in: ['Test', 'Test2'] } },
           { f1: { $in: [12, 14] } },
           { f1: { $in: [true, false] } },
@@ -150,16 +164,32 @@ describe('valueSource: "value"', () => {
       rules: [
         { field: 'f1', operator: 'between', value: 'Test,Test2' },
         { field: 'f1', operator: 'between', value: '12,14' },
-        { field: 'f1', operator: 'between', value: 'true,false' },
+        { field: 'f1', operator: 'between', value: '12,14' },
+        { field: 'f1', operator: 'between', value: 'false,true' },
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'f1', operator: '>=', value: 14 },
+            { field: 'f1', operator: '<=', value: 12 },
+          ],
+        },
         { field: 'f1', operator: 'between', value: 'Test,Test2' },
         { field: 'f1', operator: 'between', value: '12,14' },
-        { field: 'f1', operator: 'between', value: 'true,false' },
+        { field: 'f1', operator: 'between', value: 'false,true' },
         { field: 'f1', operator: 'notBetween', value: 'Test,Test2' },
         { field: 'f1', operator: 'notBetween', value: '12,14' },
-        { field: 'f1', operator: 'notBetween', value: 'true,false' },
+        { field: 'f1', operator: 'notBetween', value: '12,14' },
+        { field: 'f1', operator: 'notBetween', value: 'false,true' },
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'f1', operator: '<', value: 14 },
+            { field: 'f1', operator: '>', value: 12 },
+          ],
+        },
         { field: 'f1', operator: 'notBetween', value: 'Test,Test2' },
         { field: 'f1', operator: 'notBetween', value: '12,14' },
-        { field: 'f1', operator: 'notBetween', value: 'true,false' },
+        { field: 'f1', operator: 'notBetween', value: 'false,true' },
         { field: 'f1', operator: 'in', value: 'Test,Test2' },
         { field: 'f1', operator: 'in', value: '12,14' },
         { field: 'f1', operator: 'in', value: 'true,false' },
@@ -199,6 +229,17 @@ describe('valueSource: "field"', () => {
         { field: 'f1', operator: '<', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: '<=', value: 'f2', valueSource: 'field' },
       ],
+    });
+  });
+
+  it('handles "in" operations', () => {
+    expect(
+      parseMongoDB({
+        $or: [{ $expr: { $in: ['$f1', ['$f2', '$f3']] } }],
+      })
+    ).toEqual({
+      combinator: 'or',
+      rules: [{ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' }],
     });
   });
 });
@@ -274,7 +315,15 @@ it('validates fields', () => {
 
 it('ignores invalid stuff', () => {
   expect(parseMongoDB('Test')).toEqual(emptyRuleGroup);
+  expect(parseMongoDB('"Test"')).toEqual(emptyRuleGroup);
+  expect(parseMongoDB('0')).toEqual(emptyRuleGroup);
+  expect(parseMongoDB({ f1: {} })).toEqual(emptyRuleGroup);
   expect(parseMongoDB({ $and: ['Test'] })).toEqual(emptyRuleGroup);
+  expect(parseMongoDB({ $and: [{}, {}] })).toEqual(emptyRuleGroup);
+  expect(parseMongoDB({ $or: ['Test'] })).toEqual(emptyRuleGroup);
+  expect(parseMongoDB({ $or: [{}, {}] })).toEqual(emptyRuleGroup);
+  expect(parseMongoDB({ $not: {} })).toEqual(emptyRuleGroup);
+  expect(parseMongoDB({ $expr: { $eq: 'invalid' } })).toEqual(emptyRuleGroup);
 });
 
 it('translates lists as arrays', () => {
@@ -285,6 +334,10 @@ it('translates lists as arrays', () => {
           { f1: { $gte: 12, $lte: 14 } },
           { f1: { $in: [12, 14] } },
           { f1: { $nin: [12, 14] } },
+          { $and: [{ f1: { $gte: 12 } }, { f1: { $lte: 14 } }] },
+          { $and: [{ f1: { $lte: 14 } }, { f1: { $gte: 12 } }] },
+          { $or: [{ f1: { $gt: 14 } }, { f1: { $lt: 12 } }] },
+          { $or: [{ f1: { $lt: 12 } }, { f1: { $gt: 14 } }] },
         ],
       },
       { listsAsArrays: true }
@@ -295,6 +348,10 @@ it('translates lists as arrays', () => {
       { field: 'f1', operator: 'between', value: [12, 14] },
       { field: 'f1', operator: 'in', value: [12, 14] },
       { field: 'f1', operator: 'notIn', value: [12, 14] },
+      { field: 'f1', operator: 'between', value: [12, 14] },
+      { field: 'f1', operator: 'between', value: [12, 14] },
+      { field: 'f1', operator: 'notBetween', value: [12, 14] },
+      { field: 'f1', operator: 'notBetween', value: [12, 14] },
     ],
   });
 });
