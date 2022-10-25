@@ -12,6 +12,7 @@ export * from './objectKeys';
 export * from './optGroupUtils';
 export * from './parseCEL';
 export * from './parseJsonLogic';
+export * from './parseMongoDB';
 export * from './parseSQL';
 export * from './pathUtils';
 export * from './prepareQueryObjects';

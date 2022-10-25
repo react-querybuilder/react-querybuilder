@@ -89,7 +89,7 @@ console.log(sqlWhere);
 
 ## Import
 
-To [import queries](https://react-querybuilder.js.org/docs/api/import) use `parseSQL`, `parseCEL`, or `parseJsonLogic` depending on the source.
+To [import queries](https://react-querybuilder.js.org/docs/api/import) use `parseSQL`, `parseCEL`, `parseJsonLogic`, or `parseMongoDB` depending on the source.
 
 **Tip:** `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself. Trailing semicolon is optional.
 
@@ -123,5 +123,6 @@ Note: `formatQuery` and the `parse*` functions can be used without importing Rea
 import { formatQuery } from 'react-querybuilder/dist/formatQuery';
 import { parseCEL } from 'react-querybuilder/dist/parseCEL';
 import { parseJsonLogic } from 'react-querybuilder/dist/parseJsonLogic';
+import { parseMongoDB } from 'react-querybuilder/dist/parseMongoDB';
 import { parseSQL } from 'react-querybuilder/dist/parseSQL';
 ```
