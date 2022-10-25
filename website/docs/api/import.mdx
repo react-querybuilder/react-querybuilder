@@ -76,6 +76,18 @@ const App = () => {
 
 :::
 
+## MongoDB
+
+`parseMongoDB` takes a MongoDB query as a JSON object or `JSON.parse`-able string and converts it to `RuleGroupType`.
+
+Click the "Import from MongoDB" button in [the demo](/demo) to try it out.
+
+:::tip
+
+MongoDB query strings may not strictly conform to the JSON spec. To cover the extended format, you may want to pre-parse query strings with a library like [mongodb-query-parser](https://www.npmjs.com/package/mongodb-query-parser) before passing them to `parseMongoDB`.
+
+:::
+
 ## Common Expression Language (CEL)
 
 `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`.

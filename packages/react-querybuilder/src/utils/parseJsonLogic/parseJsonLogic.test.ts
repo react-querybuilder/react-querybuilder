@@ -9,7 +9,7 @@ import { parseJsonLogic } from './parseJsonLogic';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
-it('ignors invalid logic', () => {
+it('ignores invalid logic', () => {
   expect(
     parseJsonLogic({
       and: [{ '===': [{ var: 'f1' }, { '+': [1, 1] }] }, { '!': false }, { '!!': false }],

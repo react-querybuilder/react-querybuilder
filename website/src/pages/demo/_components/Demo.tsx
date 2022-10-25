@@ -11,6 +11,8 @@ import {
   formatQuery,
   parseCEL,
   parseJsonLogic,
+  // TODO: uncomment this once 5.1 is released
+  // parseMongoDB,
   parseSQL,
   QueryBuilder,
   version as rqbVersion,
@@ -46,6 +48,7 @@ const initialQuery = initialStateFromHash.query ?? defaultInitialQuery;
 const initialQueryIC = initialStateFromHash.queryIC ?? defaultInitialQueryIC;
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
+const initialMongoDB = JSON.stringify({ firstName: { $regex: '^Stev' }, age: { $gt: 28 } });
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
@@ -63,6 +66,7 @@ const notesSQL = (
     itself. Trailing semicolon is optional.
   </em>
 );
+const notesMongoDB = '';
 const notesCEL = '';
 const notesJsonLogic = (
   <em>
@@ -89,6 +93,9 @@ export default function Demo({
   const [isSQLInputVisible, setIsSQLInputVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
+  const [isMongoDbInputVisible, setIsMongoDbInputVisible] = useState(false);
+  const [mongoDB, setMongoDB] = useState(initialMongoDB);
+  const [mongoDbParseError, setMongoDbParseError] = useState('');
   const [isCELInputVisible, setIsCELInputVisible] = useState(false);
   const [cel, setCEL] = useState(initialCEL);
   const [celParseError, setCELParseError] = useState('');
@@ -160,6 +167,20 @@ export default function Demo({
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setSQLParseError((err as Error).message);
+    }
+  };
+  const loadFromMongoDB = () => {
+    try {
+      // TODO: uncomment these once 5.1 is released
+      // const q = parseMongoDB(mongoDB);
+      // const qIC = parseMongoDB(mongoDB, { independentCombinators: true });
+      // setQuery(q);
+      // setQueryIC(qIC);
+      setIsMongoDbInputVisible(false);
+      setMongoDbParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setMongoDbParseError((err as Error).message);
     }
   };
   const loadFromCEL = () => {
@@ -335,6 +356,11 @@ export default function Demo({
           <button type="button" onClick={() => setIsSQLInputVisible(true)}>
             Import SQL
           </button>
+          {/* TODO: uncomment this once 5.1 is released
+          <button type="button" onClick={() => setIsMongoDbInputVisible(true)}>
+            Import MongoDB
+          </button>
+          */}
           <button type="button" onClick={() => setIsCELInputVisible(true)}>
             Import CEL
           </button>
@@ -389,6 +415,16 @@ export default function Demo({
         error={sqlParseError}
         loadQueryFromCode={loadFromSQL}
         notes={notesSQL}
+      />
+      <ImportModal
+        heading="Import MongoDB"
+        isOpen={isMongoDbInputVisible}
+        setIsOpen={setIsMongoDbInputVisible}
+        code={mongoDB}
+        setCode={setMongoDB}
+        error={mongoDbParseError}
+        loadQueryFromCode={loadFromMongoDB}
+        notes={notesMongoDB}
       />
       <ImportModal
         heading="Import CEL"
