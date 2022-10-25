@@ -6,12 +6,9 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Field,
   ParseSQLOptions,
 } from '@react-querybuilder/ts/src/index.noReact';
-import { uniqByName } from '../../internal/uniq';
-import { isOptionGroupArray } from '../optGroupUtils';
-import { fieldIsValidUtil } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { sqlParser } from './sqlParser';
 import type { MixedAndXorOrList, SQLExpression, SQLIdentifier } from './types';
 import {
@@ -42,50 +39,35 @@ function parseSQL(
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;
-function parseSQL(sql: string, options?: ParseSQLOptions): DefaultRuleGroupTypeAny {
+function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupTypeAny {
+  const { params, paramPrefix, independentCombinators, fields, getValueSources } = options;
   let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql)
     ? sql
     : /^[ \t\n\r\s]*WHERE\b/i.test(sql)
     ? `SELECT * FROM t ${sql}`
     : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
-  let fieldsFlat: Field[] = [];
-  const getValueSources = options?.getValueSources;
+  const fieldsFlat = getFieldsArray(fields);
 
-  if (options) {
-    const { params, paramPrefix, independentCombinators, fields } = options;
-    ic = !!independentCombinators;
-    /* istanbul ignore else */
-    if (params) {
-      if (Array.isArray(params)) {
-        let i = 0;
-        sqlString = sqlString.replace(/\?/g, () => {
-          const paramString = getParamString(params[i]);
-          i++;
-          return paramString;
-        });
-      } else {
-        const keys = Object.keys(params);
-        const prefix = paramPrefix ?? ':';
-        keys.forEach(p => {
-          sqlString = sqlString.replace(
-            new RegExp(`\\${prefix}${p}\\b`, 'ig'),
-            getParamString(params[p])
-          );
-        });
-      }
-    }
-    if (fields) {
-      const fieldsArray = Array.isArray(fields)
-        ? fields
-        : Object.keys(fields)
-            .map(fld => ({ ...fields[fld], name: fld }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-      if (isOptionGroupArray(fieldsArray)) {
-        fieldsFlat = uniqByName(fieldsFlat.concat(...fieldsArray.map(opt => opt.options)));
-      } else {
-        fieldsFlat = uniqByName(fieldsArray);
-      }
+  ic = !!independentCombinators;
+  /* istanbul ignore else */
+  if (params) {
+    if (Array.isArray(params)) {
+      let i = 0;
+      sqlString = sqlString.replace(/\?/g, () => {
+        const paramString = getParamString(params[i]);
+        i++;
+        return paramString;
+      });
+    } else {
+      const keys = Object.keys(params);
+      const prefix = paramPrefix ?? ':';
+      keys.forEach(p => {
+        sqlString = sqlString.replace(
+          new RegExp(`\\${prefix}${p}\\b`, 'ig'),
+          getParamString(params[p])
+        );
+      });
     }
   }
 
