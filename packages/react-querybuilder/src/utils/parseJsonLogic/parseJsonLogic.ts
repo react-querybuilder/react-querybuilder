@@ -10,7 +10,7 @@ import type {
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultOperatorNegationMap } from '../../defaults';
 import { isRuleGroupType } from '../isRuleGroup';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
 import {
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
@@ -141,10 +141,10 @@ export const parseJsonLogic = (
       isRQBJsonLogicEndsWith(logic)
     ) {
       const [first, second] = keyValue;
-      if (isRQBJsonLogicVar(first) && typeof second !== 'object') {
+      if (isRQBJsonLogicVar(first) && !isPojo(second)) {
         field = first.var;
         value = second;
-      } else if (typeof first !== 'object' && isRQBJsonLogicVar(second)) {
+      } else if (!isPojo(first) && isRQBJsonLogicVar(second)) {
         field = second.var;
         value = first;
       } else if (isRQBJsonLogicVar(first) && isRQBJsonLogicVar(second)) {
@@ -157,9 +157,9 @@ export const parseJsonLogic = (
 
       // Translate operator if necessary
       if (isJsonLogicEqual(logic) || isJsonLogicStrictEqual(logic)) {
-        operator = '=';
+        operator = value === null ? 'null' : '=';
       } else if (isJsonLogicNotEqual(logic) || isJsonLogicStrictNotEqual(logic)) {
-        operator = '!=';
+        operator = value === null ? 'notNull' : '!=';
       } else if (isJsonLogicInString(logic)) {
         operator = 'contains';
       } else if (isRQBJsonLogicStartsWith(logic)) {

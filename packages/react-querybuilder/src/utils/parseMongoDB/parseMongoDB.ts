@@ -7,9 +7,9 @@ import type {
 import { defaultOperatorNegationMap } from '../../defaults';
 import { isRuleGroupType } from '../isRuleGroup';
 import { objectKeys } from '../objectKeys';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
 import type { MongoDbSupportedOperators } from './types';
-import { getRegExStr, isPojo, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
+import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
