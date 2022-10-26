@@ -11,8 +11,7 @@ import {
   formatQuery,
   parseCEL,
   parseJsonLogic,
-  // TODO: uncomment this once 5.1 is released
-  // parseMongoDB,
+  parseMongoDB,
   parseSQL,
   QueryBuilder,
   version as rqbVersion,
@@ -48,7 +47,11 @@ const initialQuery = initialStateFromHash.query ?? defaultInitialQuery;
 const initialQueryIC = initialStateFromHash.queryIC ?? defaultInitialQueryIC;
 
 const initialSQL = `SELECT *\n  FROM my_table\n WHERE ${formatQuery(initialQuery, 'sql')};`;
-const initialMongoDB = JSON.stringify({ firstName: { $regex: '^Stev' }, age: { $gt: 28 } });
+const initialMongoDB = JSON.stringify(
+  { firstName: { $regex: '^Stev' }, age: { $gt: 28 } },
+  null,
+  2
+);
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
@@ -66,7 +69,17 @@ const notesSQL = (
     itself. Trailing semicolon is optional.
   </em>
 );
-const notesMongoDB = '';
+const notesMongoDB = (
+  <em>
+    Input must conform to the <a href="https://www.json.org/">JSON specification</a>. MongoDB
+    queries support an extended JSON format, so you may need to pre-parse query strings with a
+    library like{' '}
+    <a href="https://www.npmjs.com/package/mongodb-query-parser">
+      <code>mongodb-query-parser</code>
+    </a>
+    before submitting them here or passing them to <code>parseMongoDB</code>.
+  </em>
+);
 const notesCEL = '';
 const notesJsonLogic = (
   <em>
@@ -171,11 +184,10 @@ export default function Demo({
   };
   const loadFromMongoDB = () => {
     try {
-      // TODO: uncomment these once 5.1 is released
-      // const q = parseMongoDB(mongoDB);
-      // const qIC = parseMongoDB(mongoDB, { independentCombinators: true });
-      // setQuery(q);
-      // setQueryIC(qIC);
+      const q = parseMongoDB(mongoDB);
+      const qIC = convertToIC(q);
+      setQuery(q);
+      setQueryIC(qIC);
       setIsMongoDbInputVisible(false);
       setMongoDbParseError('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -356,11 +368,9 @@ export default function Demo({
           <button type="button" onClick={() => setIsSQLInputVisible(true)}>
             Import SQL
           </button>
-          {/* TODO: uncomment this once 5.1 is released
           <button type="button" onClick={() => setIsMongoDbInputVisible(true)}>
             Import MongoDB
           </button>
-          */}
           <button type="button" onClick={() => setIsCELInputVisible(true)}>
             Import CEL
           </button>

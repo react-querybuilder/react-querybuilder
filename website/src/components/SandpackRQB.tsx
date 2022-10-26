@@ -104,8 +104,8 @@ h1, h2, h3, h4, h5, h6 {
     rqbVersion === 4
       ? { 'react-querybuilder': '^4.5.3' }
       : {
-          '@react-querybuilder/dnd': '^5.0.0',
-          'react-querybuilder': '^5.0.0',
+          '@react-querybuilder/dnd': '^5.1.0',
+          'react-querybuilder': '^5.1.0',
         };
 
   const setup = {

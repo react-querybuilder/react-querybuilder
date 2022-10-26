@@ -19,6 +19,8 @@ function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 
 The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables within the SQL string.
 
+Click the "Import SQL" button in [the demo](/demo) to try it out.
+
 ### Basic usage
 
 Running any of the following statements will produce the same result (see below):
@@ -64,13 +66,13 @@ Output (`RuleGroupType`):
 
 `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`.
 
-Click the "Import from CEL" button in [the demo](/demo) to try it out.
+Click the "Import CEL" button in [the demo](/demo) to try it out.
 
 ## JsonLogic
 
 `parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
 
-Click the "Import from JsonLogic" button in [the demo](/demo) to try it out.
+Click the "Import JsonLogic" button in [the demo](/demo) to try it out.
 
 ## Configuration
 
