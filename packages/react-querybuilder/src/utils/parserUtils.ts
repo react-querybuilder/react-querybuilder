@@ -9,6 +9,9 @@ import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { uniqByName } from '../internal/uniq';
 import { isOptionGroupArray } from './optGroupUtils';
 
+export const isPojo = (obj: any): obj is Record<string, any> =>
+  obj === null || typeof obj !== 'object' ? false : Object.getPrototypeOf(obj) === Object.prototype;
+
 export const getFieldsArray = (fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>) => {
   let fieldsFlat: Field[] = [];
   const fieldsArray = !fields
