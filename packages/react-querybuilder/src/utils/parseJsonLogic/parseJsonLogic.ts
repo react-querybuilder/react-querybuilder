@@ -2,7 +2,6 @@ import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleType,
-  Field,
   JsonLogicReservedOperations,
   ParseJsonLogicOptions,
   RQBJsonLogic,
@@ -10,12 +9,8 @@ import type {
   ValueSource,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultOperatorNegationMap } from '../../defaults';
-import { filterFieldsByComparator } from '../../internal/filterFieldsByComparator';
-import { getValueSourcesUtil } from '../../internal/getValueSourcesUtil';
-import { uniqByName } from '../../internal/uniq';
 import { isRuleGroupType } from '../isRuleGroup';
-import { isOptionGroupArray } from '../optGroupUtils';
-import { isPojo } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
 import {
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
@@ -46,73 +41,24 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
  */
 export const parseJsonLogic = (
   rqbJsonLogic: RQBJsonLogic,
-  options?: ParseJsonLogicOptions
+  options: ParseJsonLogicOptions = {}
 ): DefaultRuleGroupType => {
-  const listsAsArrays = !!options?.listsAsArrays;
-  let fieldsFlat: Field[] = [];
-  const getValueSources = options?.getValueSources;
+  const listsAsArrays = !!options.listsAsArrays;
+  const fieldsFlat = getFieldsArray(options.fields);
+  const getValueSources = options.getValueSources;
 
-  if (options) {
-    const { fields } = options;
-    if (fields) {
-      const fieldsArray = Array.isArray(fields)
-        ? fields
-        : Object.keys(fields)
-            .map(fld => ({ ...fields[fld], name: fld }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-      if (isOptionGroupArray(fieldsArray)) {
-        fieldsFlat = uniqByName(fieldsFlat.concat(...fieldsArray.map(opt => opt.options)));
-      } else {
-        fieldsFlat = uniqByName(fieldsArray);
-      }
-    }
-  }
-
-  function fieldIsValid(
+  const fieldIsValid = (
     fieldName: string,
     operator: DefaultOperatorName,
     subordinateFieldName?: string
-  ) {
-    // If fields option was an empty array or undefined, then all identifiers
-    // are considered valid.
-    if (fieldsFlat.length === 0) return true;
-
-    let valid = false;
-
-    const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
-    if (primaryField) {
-      if (
-        !subordinateFieldName &&
-        operator !== 'notNull' &&
-        operator !== 'null' &&
-        !getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'value')
-      ) {
-        valid = false;
-      } else {
-        valid = true;
-      }
-
-      if (valid && !!subordinateFieldName) {
-        if (
-          getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'field') &&
-          fieldName !== subordinateFieldName
-        ) {
-          const validSubordinateFields = filterFieldsByComparator(
-            primaryField,
-            fieldsFlat,
-            operator
-          ) as Field[];
-          if (!validSubordinateFields.find(vsf => vsf.name === subordinateFieldName)) {
-            valid = false;
-          }
-        } else {
-          valid = false;
-        }
-      }
-    }
-
-    return valid;
-  }
+  ) =>
+    fieldIsValidUtil({
+      fieldName,
+      fieldsFlat,
+      operator,
+      subordinateFieldName,
+      getValueSources,
+    });
 
   // Overload 1: Always return a rule group or false for the outermost logic object
   function processLogic(logic: RQBJsonLogic, outermost: true): DefaultRuleGroupType | false;
@@ -211,17 +157,9 @@ export const parseJsonLogic = (
 
       // Translate operator if necessary
       if (isJsonLogicEqual(logic) || isJsonLogicStrictEqual(logic)) {
-        if (value === null) {
-          operator = 'null';
-        } else {
-          operator = '=';
-        }
+        operator = value === null ? 'null' : '=';
       } else if (isJsonLogicNotEqual(logic) || isJsonLogicStrictNotEqual(logic)) {
-        if (value === null) {
-          operator = 'notNull';
-        } else {
-          operator = '!=';
-        }
+        operator = value === null ? 'notNull' : '!=';
       } else if (isJsonLogicInString(logic)) {
         operator = 'contains';
       } else if (isRQBJsonLogicStartsWith(logic)) {
