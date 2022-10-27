@@ -4,9 +4,10 @@ import type {
   RuleValidator,
   ValidationResult,
 } from '@react-querybuilder/ts/src/index.noReact';
+import { isPojo } from './parserUtils';
 
 export const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
-  typeof vr === 'object' && vr !== null && typeof vr.valid === 'boolean';
+  isPojo(vr) && typeof vr.valid === 'boolean';
 
 export const isRuleOrGroupValid = (
   rg: RuleType | RuleGroupTypeAny,

@@ -1,10 +1,13 @@
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
+  DefaultRuleGroupTypeAny,
+  DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ParseMongoDbOptions,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultOperatorNegationMap } from '../../defaults';
+import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
 import { objectKeys } from '../objectKeys';
 import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
@@ -17,10 +20,23 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
  * Converts a MongoDB query object or parseable string into a query suitable for
  * the QueryBuilder component's `query` or `defaultQuery` props.
  */
-export const parseMongoDB = (
-  mongoDbRules: string | object,
+function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGroupType;
+function parseMongoDB(
+  mongoDbRules: string | Record<string, any>,
+  options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
+    independentCombinators?: false;
+  }
+): DefaultRuleGroupType;
+function parseMongoDB(
+  mongoDbRules: string | Record<string, any>,
+  options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
+    independentCombinators: true;
+  }
+): DefaultRuleGroupTypeIC;
+function parseMongoDB(
+  mongoDbRules: string | Record<string, any>,
   options: ParseMongoDbOptions = {}
-): DefaultRuleGroupType => {
+): DefaultRuleGroupTypeAny {
   const listsAsArrays = !!options.listsAsArrays;
   const fieldsFlat = getFieldsArray(options.fields);
   const getValueSources = options.getValueSources;
@@ -328,9 +344,14 @@ export const parseMongoDB = (
   }
 
   const result = processMongoDbQueryObject(mongoDbPOJO as Record<string, any>);
-  return result
+  const finalQuery: DefaultRuleGroupType = result
     ? isRuleGroupType(result)
       ? result
       : { combinator: 'and', rules: [result] }
     : emptyRuleGroup;
-};
+  return options.independentCombinators
+    ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery)
+    : finalQuery;
+}
+
+export { parseMongoDB };

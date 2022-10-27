@@ -67,17 +67,21 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
   return { ...rg, rules: returnArray };
 };
 
-export const convertFromIC = (rg: RuleGroupTypeIC): RuleGroupType => {
+export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
+  rg: RuleGroupTypeIC
+): RG => {
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
   const rulesAsMixedList = processedRG.rules.map(r =>
     typeof r === 'string' || !('rules' in r) ? r : convertFromIC(r)
   );
   const combinator = rulesAsMixedList.length < 2 ? 'and' : (rulesAsMixedList[1] as string);
   const rules = rulesAsMixedList.filter(r => typeof r !== 'string') as RuleGroupArray;
-  return { ...processedRG, combinator, rules };
+  return { ...processedRG, combinator, rules } as RG;
 };
 
-export const convertToIC = (rg: RuleGroupType): RuleGroupTypeIC => {
+export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
+  rg: RuleGroupType
+): RGIC => {
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
   rg.rules.forEach((r, idx, arr) => {
@@ -90,7 +94,7 @@ export const convertToIC = (rg: RuleGroupType): RuleGroupTypeIC => {
       rules.push(combinator);
     }
   });
-  return { ...queryWithoutCombinator, rules: rules as RuleGroupICArray };
+  return { ...queryWithoutCombinator, rules } as RGIC;
 };
 
 function convertQuery(query: RuleGroupType): RuleGroupTypeIC;

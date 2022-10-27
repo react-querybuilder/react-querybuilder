@@ -1,4 +1,5 @@
 import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/ts/src/index.noReact';
+import { isPojo } from './parserUtils';
 
 type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 
@@ -46,7 +47,7 @@ export const pathIsDisabled = (path: number[], query: RuleGroupTypeAny) => {
   let level = 0;
   while (level < path.length && !disabled && 'rules' in target) {
     const t: RuleGroupTypeAny | RuleType | string = target.rules[path[level]];
-    if (typeof t === 'object' && ('rules' in t || 'field' in t)) {
+    if (isPojo(t) && ('rules' in t || 'field' in t)) {
       disabled = !!t.disabled;
       target = t;
     }

@@ -1,6 +1,8 @@
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
+  DefaultRuleGroupTypeAny,
+  DefaultRuleGroupTypeIC,
   DefaultRuleType,
   JsonLogicReservedOperations,
   ParseJsonLogicOptions,
@@ -9,6 +11,7 @@ import type {
   ValueSource,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultOperatorNegationMap } from '../../defaults';
+import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
 import {
@@ -39,10 +42,23 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
  * Converts a JsonLogic object into a query suitable for
  * the QueryBuilder component's `query` or `defaultQuery` props.
  */
-export const parseJsonLogic = (
-  rqbJsonLogic: RQBJsonLogic,
+function parseJsonLogic(rqbJsonLogic: string | RQBJsonLogic): DefaultRuleGroupType;
+function parseJsonLogic(
+  rqbJsonLogic: string | RQBJsonLogic,
+  options: Omit<ParseJsonLogicOptions, 'independentCombinators'> & {
+    independentCombinators?: false;
+  }
+): DefaultRuleGroupType;
+function parseJsonLogic(
+  rqbJsonLogic: string | RQBJsonLogic,
+  options: Omit<ParseJsonLogicOptions, 'independentCombinators'> & {
+    independentCombinators: true;
+  }
+): DefaultRuleGroupTypeIC;
+function parseJsonLogic(
+  rqbJsonLogic: string | RQBJsonLogic,
   options: ParseJsonLogicOptions = {}
-): DefaultRuleGroupType => {
+): DefaultRuleGroupTypeAny {
   const listsAsArrays = !!options.listsAsArrays;
   const fieldsFlat = getFieldsArray(options.fields);
   const getValueSources = options.getValueSources;
@@ -251,5 +267,10 @@ export const parseJsonLogic = (
   }
 
   const result = processLogic(logicRoot, true);
-  return !result ? emptyRuleGroup : result;
-};
+  const finalQuery: DefaultRuleGroupType = !result ? emptyRuleGroup : result;
+  return options.independentCombinators
+    ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery)
+    : finalQuery;
+}
+
+export { parseJsonLogic };

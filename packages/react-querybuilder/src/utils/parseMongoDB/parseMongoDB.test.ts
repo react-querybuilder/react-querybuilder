@@ -356,6 +356,16 @@ it('translates lists as arrays', () => {
   });
 });
 
+it('generates query with independent combinators', () => {
+  expect(parseMongoDB({ f1: 'Test', f2: 'Test' }, { independentCombinators: true })).toEqual({
+    rules: [
+      { field: 'f1', operator: '=', value: 'Test' },
+      'and',
+      { field: 'f2', operator: '=', value: 'Test' },
+    ],
+  });
+});
+
 it('handles empty options object', () => {
   expect(parseMongoDB({ f1: 1 }, {})).toEqual({
     combinator: 'and',

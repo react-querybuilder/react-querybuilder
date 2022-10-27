@@ -378,6 +378,23 @@ it('translates lists as arrays', () => {
   });
 });
 
+it('generates query with independent combinators', () => {
+  expect(
+    parseJsonLogic(
+      {
+        and: [{ '==': [{ var: 'f1' }, 'Test'] }, { '==': ['Test', { var: 'f1' }] }],
+      },
+      { independentCombinators: true }
+    )
+  ).toEqual({
+    rules: [
+      { field: 'f1', operator: '=', value: 'Test' },
+      'and',
+      { field: 'f1', operator: '=', value: 'Test' },
+    ],
+  });
+});
+
 it('handles empty options object', () => {
   expect(parseJsonLogic({ '===': [{ var: 'f1' }, 1] }, {})).toEqual({
     combinator: 'and',
