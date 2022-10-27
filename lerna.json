@@ -3,11 +3,5 @@
   "version": "5.1.0",
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "noPush": true,
-  "forcePublish": true,
-  "command": {
-    "version": {
-      "noPush": true
-    }
-  }
+  "forcePublish": true
 }
