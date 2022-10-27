@@ -7,15 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Added
+- N/A
 
-- `parseMongoDB` and `parseJsonLogic` now accept `independentCombinators` option
+## [v5.1.1] - 2022-10-27
+
+### Fixed
+
+- `parseMongoDB` and `parseJsonLogic` now respect `independentCombinators` option.
+- Narrowed rule group types, like `DefaultRuleGroupType` and `DefaultRuleGroupTypeIC`, are respected by `convertFromIC` and `convertToIC`.
 
 <details>
 
 <summary>Miscellaneous</summary>
 
-- v3 documentation was migrated to website
+- v3 documentation was migrated from dedicated README to website versioned docs
 
 </details>
 
@@ -986,7 +991,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.1...HEAD
+[v5.1.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.0...v5.1.1
 [v5.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0...v5.1.0
 [v5.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.3...v5.0.0
 [v4.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.2...v4.5.3
