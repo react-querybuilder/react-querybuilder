@@ -1,8 +1,6 @@
-# Archived v3.12.1 documentation
-
-THIS DOCUMENTATION IS FOR v3.12.1.
-
-PLEASE VISIT https://react-querybuilder.js.org/ FOR THE LATEST DOCUMENTATION (v4+).
+---
+title: v3 Documentation
+---
 
 ## Usage
 
@@ -31,17 +29,17 @@ export const App = () => {
 };
 ```
 
-## API
+## Props
 
 The default export of this library is the `QueryBuilder` React component, which supports the following props.
 
-#### `query` _(Optional)_
+### `query`
 
 `{ id?: string; combinator: string; rules: ({ field: string; operator: string; value: any; } | { combinator: string; rules: ...[]; })[]; }`
 
 The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional.
 
-#### `fields` _(Required)_
+### `fields`
 
 The array of fields that should be used. Each field should be an object with the following signature:
 
@@ -63,13 +61,13 @@ interface Field {
 
 Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements-optional)).
 
-#### `context` _(Optional)_
+### `context`
 
 `any`
 
 A "bucket" for passing arbitrary props down to custom components. The `context` prop is passed to each and every component, so it's accessible anywhere in the `QueryBuilder` component tree.
 
-#### `operators` _(Optional)_
+### `operators`
 
 `{ name: string; label: string; }[]`
 
@@ -98,7 +96,7 @@ The array of operators that should be used. The default operators include:
 ];
 ```
 
-#### `combinators` _(Optional)_
+### `combinators`
 
 `{ name: string, label: string; }[]`
 
@@ -111,7 +109,7 @@ The array of combinators that should be used for RuleGroups. The default set inc
 ];
 ```
 
-#### `controlElements` _(Optional)_
+### `controlElements`
 
 ```ts
 interface Controls {
@@ -365,61 +363,61 @@ interface Schema {
 }
 ```
 
-#### `getOperators` _(Optional)_
+### `getOperators`
 
 `(field: string) => { name: string; label: string; }[] | null`
 
 This is a callback function invoked to get the list of allowed operators for the given field. If `null` is returned, the default operators are used.
 
-#### `getValueEditorType` _(Optional)_
+### `getValueEditorType`
 
 `(field: string, operator: string) => 'text' | 'select' | 'checkbox' | 'radio' | null`
 
 This is a callback function invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
 
-#### `getInputType` _(Optional)_
+### `getInputType`
 
 `(field: string, operator: string) => string`
 
 This is a callback function invoked to get the `type` of `<input />` for the given field and operator (only applicable when `getValueEditorType` returns `"text"` or a falsy value). If no function is provided, `"text"` is used as the default.
 
-#### `getValues` _(Optional)_
+### `getValues`
 
 `(field: string, operator: string) => { name: string; label: string; }[]`
 
 This is a callback function invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 
-#### `getDefaultField` _(Optional)_
+### `getDefaultField`
 
 `string | ((fieldsData: Field[]) => string)`
 
 The default field for new rules. This can be a string identifying the default field, or a function that returns a field name.
 
-#### `getDefaultOperator` _(Optional)_
+### `getDefaultOperator`
 
 `string | ((field: string) => string)`
 
 The default operator for new rules. This can be a string identifying the default operator, or a function that returns an operator name.
 
-#### `getDefaultValue` _(Optional)_
+### `getDefaultValue`
 
 `(rule: RuleType) => any`
 
 This function returns the default value for new rules.
 
-#### `onAddRule` _(Optional)_
+### `onAddRule`
 
 `(rule: RuleType, parentPath: number[], query: RuleGroupType) => RuleType | false`
 
 This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. _(To completely prevent the addition of new rules, pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.
 
-#### `onAddGroup` _(Optional)_
+### `onAddGroup`
 
 `(ruleGroup: RuleGroupType, parentPath: number[], query: RuleGroupType) => RuleGroupType | false`
 
 This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. _(To completely prevent the addition of new groups, pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.
 
-#### `onQueryChange` _(Optional)_
+### `onQueryChange`
 
 `(query: RuleGroupType) => void`
 
@@ -454,7 +452,7 @@ This is a notification that is invoked anytime the query configuration changes. 
 }
 ```
 
-#### `controlClassnames` _(Optional)_
+### `controlClassnames`
 
 This can be used to assign specific `CSS` classes to various controls that are created by the `<QueryBuilder />`. This is an object with the following signature:
 
@@ -479,7 +477,7 @@ interface Classnames {
 }
 ```
 
-#### `translations` _(Optional)_
+### `translations`
 
 This can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />`. This is an object with the following properties:
 
@@ -528,61 +526,61 @@ This can be used to override translatable texts applied to various controls that
 }
 ```
 
-#### `showCombinatorsBetweenRules` _(Optional)_
+### `showCombinatorsBetweenRules`
 
 `boolean`
 
 Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
 
-#### `showNotToggle` _(Optional)_
+### `showNotToggle`
 
 `boolean`
 
 Pass `true` to show the "Not" toggle switch for each rule group.
 
-#### `showCloneButtons` _(Optional)_
+### `showCloneButtons`
 
 `boolean`
 
 Pass `true` to show the "Clone rule" and "Clone group" buttons.
 
-#### `resetOnFieldChange` _(Optional)_
+### `resetOnFieldChange`
 
 `boolean`
 
 Pass `false` not to reset operator and value for field change.
 
-#### `resetOnOperatorChange` _(Optional)_
+### `resetOnOperatorChange`
 
 `boolean`
 
 Pass `true` to reset value on operator change.
 
-#### `enableMountQueryChange` _(Optional)_
+### `enableMountQueryChange`
 
 `boolean`
 
 Pass `false` to disable the `onQueryChange` on mount of component which will set default value.
 
-#### `autoSelectField` _(Optional)_
+### `autoSelectField`
 
 `boolean`
 
 Pass `false` to add an empty option (`"------"`) to the `fields` array as the first element (which is selected by default for new rules). When the empty field option is selected, the operator and value components will not display for that rule.
 
-#### `addRuleToNewGroups` _(Optional)_
+### `addRuleToNewGroups`
 
 `boolean`
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-#### `independentCombinators` _(Optional)_
+### `independentCombinators`
 
 `boolean`
 
 Pass `true` to insert an independent combinator (and/or) selector between each rule/group in a rule group. (The combinator selector at the group level will not be available.) This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules-optional) option, except that each combinator selector is independent. You may find that users take to this configuration more naturally, as it allows them to express queries more like they would in their own language.
 
-#### `validator` _(Optional)_
+### `validator`
 
 `(query: RuleGroupType) => boolean | { [id: string]: boolean | { valid: boolean; reasons?: any[] } }`
 
@@ -590,7 +588,7 @@ This is a callback function that is executed each time `QueryBuilder` renders. T
 
 ## Other exports
 
-#### `defaultValidator`
+### `defaultValidator`
 
 ```ts
 function defaultValidator(query: RuleGroupType): {
@@ -600,7 +598,7 @@ function defaultValidator(query: RuleGroupType): {
 
 Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](#demo) -- empty groups will have bold text on the "+Rule" button.
 
-#### `findPath`
+### `findPath`
 
 ```ts
 function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
@@ -608,7 +606,7 @@ function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupTyp
 
 `findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
 
-#### `formatQuery`
+### `formatQuery`
 
 ```ts
 function formatQuery(
@@ -759,7 +757,7 @@ A basic form of validation will be used by `formatQuery` for the "in", "notIn", 
 - Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
 - Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array of length two (`value.length === 2`) nor a string with exactly one comma that isn't the first or last character (`value.split(',').length === 2` and neither element is an empty string).
 
-#### `parseSQL`
+### `parseSQL`
 
 ```ts
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupType;

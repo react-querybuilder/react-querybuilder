@@ -118,19 +118,17 @@ export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsW
 
 interface ParserCommonOptions {
   fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
-  listsAsArrays?: boolean;
   getValueSources?: (field: string, operator: string) => ValueSources;
-}
-
-export interface ParseCELOptions extends ParserCommonOptions {
+  listsAsArrays?: boolean;
   independentCombinators?: boolean;
 }
 
 export interface ParseSQLOptions extends ParserCommonOptions {
-  independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | Record<string, any>;
 }
+
+export type ParseCELOptions = ParserCommonOptions;
 
 export type ParseJsonLogicOptions = ParserCommonOptions;
 

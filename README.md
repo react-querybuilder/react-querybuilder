@@ -36,8 +36,6 @@ To enable drag-and-drop functionality, see the [`@react-querybuilder/dnd` packag
 
 _For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
 
-_For documentation on `react-querybuilder` v3.12.1, [click here](README.v3.12.1.md)._
-
 ## Compatibility packages
 
 [![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign)](https://www.npmjs.com/package/@react-querybuilder/antd)

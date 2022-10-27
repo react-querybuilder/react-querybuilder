@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
-
 <!--
 ### Changed
 
@@ -16,6 +14,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 All packages published from this repository are now built as [ES modules only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). You may continue to use `react-querybuilder` and any of the compatibility packages in a CommonJS or UMD environment by using the latest v4 release.
 -->
+
+### Added
+
+- `parseMongoDB` and `parseJsonLogic` now accept `independentCombinators` option
+
+<details>
+
+<summary>Miscellaneous</summary>
+
+- v3 documentation was migrated to website
+
+</details>
 
 ## [v5.1.0] - 2022-10-26
 
