@@ -10,7 +10,7 @@
 [![Docs](https://img.shields.io/badge/docs-blue)](https://react-querybuilder.js.org/)
 [![Demo](https://img.shields.io/badge/demo-blue)](https://react-querybuilder.js.org/demo)
 [![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
-[![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=master)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=master)
+[![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=main)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
 [![All Contributors][badge-all-contributors]](#contributors-)
 
 **Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**.
