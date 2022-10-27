@@ -50,6 +50,9 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
           versions: {
+            3: {
+              label: 'v3.x',
+            },
             4: {
               label: 'v4.x',
             },
