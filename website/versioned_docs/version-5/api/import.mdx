@@ -7,23 +7,30 @@ import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
-## SQL
+Import/parser functions take a string or object representing a query in a specific language and translate it to a query suitable for the `query` or `defaultQuery` props in a `<QueryBuilder />` component.
 
-Use the `parseSQL` function to convert SQL `SELECT` statements into a format suitable for the `<QueryBuilder />` component's `query` prop. The function signature is:
+The optional second parameter is an options object to configure the parsing behavior or query generation (see [Configuration](#configuration)).
+
+## SQL
 
 ```ts
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 ```
 
-`parseSQL` takes a SQL `SELECT` statement (either the full statement or the `WHERE` clause by itself). Try it out in the [demo](/demo) by clicking the "Load from SQL" button.
-
-The optional second parameter to `parseSQL` is an options object that configures how the function handles named or anonymous bind variables within the SQL string.
+`parseSQL` accepts a SQL `SELECT` statement (either the full statement or the `WHERE` clause by itself).
 
 Click the "Import SQL" button in [the demo](/demo) to try it out.
 
-### Basic usage
+### Options
 
-Running any of the following statements will produce the same result (see below):
+In addition to the standard [configuration](#configuration) options, `parseSQL` accepts two options that configure the handling of named or anonymous bind variables within the SQL string.
+
+- `params` (`any[] | Record<string, any>`): An array of parameter values or a parameter-to-value mapping object.
+- `paramPrefix` (`string`): Ignores this string at the beginning of parameter identifiers when matching to parameter names in the `params` object.
+
+### Usage
+
+Running any of the following statements will produce the same result (see output below).
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`);
@@ -69,10 +76,17 @@ Since v5.0, `parseSQL` can detect `XOR` operators and convert the expressions in
 ```ts
 import { defaultCombinatorsExtended, parseSQL, QueryBuilder } from 'react-querybuilder';
 
-const query = parseSQL(sql);
+const query = parseSQL(`SELECT * FROM tbl WHERE a = 'b' XOR c = 'd';`);
 
 const App = () => {
-  return <QueryBuilder query={query} combinators={defaultCombinatorsExtended} />;
+  return (
+    <QueryBuilder
+      query={query}
+      // highlight-start
+      combinators={defaultCombinatorsExtended}
+      // highlight-end
+    />
+  );
 };
 ```
 
@@ -80,33 +94,137 @@ const App = () => {
 
 ## MongoDB
 
-`parseMongoDB` takes a MongoDB query as a JSON object or `JSON.parse`-able string and converts it to `RuleGroupType`.
+```ts
+function parseMongoDB(
+  mongoDbQuery: string | Record<string, any>,
+  options?: ParseMongoDbOptions
+): RuleGroupTypeAny;
+```
+
+`parseMongoDB` takes a MongoDB query as a JSON object or `JSON.parse`-able string.
 
 Click the "Import MongoDB" button in [the demo](/demo) to try it out.
 
+### Usage
+
+```ts
+parseMongoDB(`{ "firstName": "Steve", "lastName": { $eq: "Vai" } }`);
+// OR
+parseMongoDB({ firstName: 'Steve', lastName: { $eq: 'Vai' } });
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
+}
+```
+
 :::tip
 
-MongoDB query strings may not strictly conform to the JSON spec. To cover the extended format, you may want to pre-parse query strings with a library like [mongodb-query-parser](https://www.npmjs.com/package/mongodb-query-parser) before passing them to `parseMongoDB`.
+Valid MongoDB query strings may not strictly conform to the JSON specification. To cover the extended format, you may want to pre-parse query strings with a library like [mongodb-query-parser](https://www.npmjs.com/package/mongodb-query-parser) before passing them to `parseMongoDB`.
 
 :::
 
 ## Common Expression Language (CEL)
 
-`parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`.
+```ts
+function parseCEL(celQuery: string, options?: ParseCELOptions): RuleGroupTypeAny;
+```
+
+`parseCEL` takes a [CEL](https://github.com/google/cel-spec) string.
 
 Click the "Import CEL" button in [the demo](/demo) to try it out.
 
+### Usage
+
+```ts
+parseCEL(`firstName == "Steve" && lastName == "Vai"`);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
+}
+```
+
 ## JsonLogic
 
-`parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
+```ts
+function parseJsonLogic(
+  jsonLogic: string | JsonLogic,
+  options?: ParseJsonLogicOptions
+): RuleGroupTypeAny;
+```
+
+`parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object or `JSON.parse`-able string.
 
 Click the "Import JsonLogic" button in [the demo](/demo) to try it out.
+
+### Usage
+
+```ts
+parseJsonLogic(
+  `{ "and": [{ "===": [{ "var": "firstName" }, "Steve"] }, { "===": [{ "var": "lastName" }, "Vai"] }] }`
+);
+// OR
+parseJsonLogic({
+  and: [{ '===': [{ var: 'firstName' }, 'Steve'] }, { '===': [{ var: 'lastName' }, 'Vai'] }],
+});
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
+}
+```
 
 ## Configuration
 
 ### Lists as arrays
 
-To generate actual arrays instead of comma-separated strings for lists of values following `IN` and `BETWEEN` operators, use the `listsAsArrays` option.
+To generate arrays instead of comma-separated strings for lists of values following "in"- and "between"-type operators, use the `listsAsArrays` option.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE lastName IN ('Vai', 'Vaughan') AND age BETWEEN 20 AND 100`, {
@@ -123,12 +241,16 @@ Output:
     {
       "field": "lastName",
       "operator": "in",
+      // highlight-start
       "value": ["Vai", "Vaughan"]
+      // highlight-end
     },
     {
       "field": "age",
       "operator": "between",
+      // highlight-start
       "value": [20, 100]
+      // highlight-end
     }
   ]
 }
@@ -136,7 +258,7 @@ Output:
 
 ### Independent combinators
 
-When the `independentCombinators` option is `true`, `parse*` functions will output a query with combinator identifiers between sibling rules/groups.
+When the `independentCombinators` option is `true`, `parse*` functions will output a query with combinator identifiers between sibling rules/groups instead of the group level. (For these queries to be valid for the `<QueryBuilder />` `query` prop, the `independentCombinators` prop must also be `true`.)
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`, {
@@ -154,7 +276,9 @@ Output (`RuleGroupTypeIC`):
       "operator": "=",
       "value": "Steve"
     },
+    // highlight-start
     "and",
+    // highlight-end
     {
       "field": "lastName",
       "operator": "=",
@@ -168,13 +292,13 @@ Output (`RuleGroupTypeIC`):
 
 When the `fields` option (which accepts the same types as the [`fields` prop](./querybuilder#fields)) is provided, and _only_ if it is provided, then `parse*` functions will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function (with the same signature as the [prop of the same name](./querybuilder#getvaluesources)) can also be provided to help validate rules.
 
-In order for such a rule to be considered valid, one of the following must be an array that includes the string "field": 1) the `getValueSources` return value, 2) the field's `valueSources` property return value, or 3) the field's `valueSources` property itself.
+In order for such a rule to be considered valid, one of the following must be an array that includes the string "field": 1) the `getValueSources` return value, 2) the field's `valueSources` function return value, or 3) the field's `valueSources` property itself. The code below demonstrates all three methods.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = lastName`, {
   fields: [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
+    { name: 'firstName', label: 'First Name', valueSources: ['value', 'field'] },
+    { name: 'lastName', label: 'Last Name', valueSources: () => ['value', 'field'] },
   ],
   getValueSources: () => ['value', 'field'],
 });
@@ -190,7 +314,9 @@ Output:
       "field": "firstName",
       "operator": "=",
       "value": "lastName",
+      // highlight-start
       "valueSource": "field"
+      // highlight-end
     }
   ]
 }
@@ -198,6 +324,28 @@ Output:
 
 :::note
 
-`parse*` functions will only validate clauses where "field" is the _only_ value source. Operators that take multiple values, like "between" and "in", must only have field names to the right of the operator, not a mix of field names and primitive values.
+`parse*` functions will only validate clauses where "field" is the _only_ detected value source. Operators like "between" and "in" that take multiple values must only have field names or only scalar values to the right of the operator, not a mix of field names and scalar values. See examples below.
+
+#### Clauses that will be deemed invalid
+
+```ts
+// 1 is a scalar value and `iq` is a field name
+parseSQL(`SELECT * FROM tbl WHERE age between 1 and iq`);
+// List contains a mix of scalar values and field names
+parseSQL(`SELECT * FROM tbl WHERE firstName IN (lastName, 'Steve', 'Stevie')`);
+```
+
+#### Clauses that will (probably) be deemed valid
+
+```ts
+// Both are field names
+parseSQL(`SELECT * FROM tbl WHERE age between numChildren and iq`);
+// Both are scalar values
+parseSQL(`SELECT * FROM tbl WHERE age between 26 and 52`);
+// All items are field names
+parseSQL(`SELECT * FROM tbl WHERE firstName IN (lastName, middleName)`);
+// All items are scalar values
+parseSQL(`SELECT * FROM tbl WHERE firstName IN ('Steve', 'Stevie')`);
+```
 
 :::
