@@ -34,7 +34,7 @@
     "@react-querybuilder/dnd": "^5.1.0",
     "@react-querybuilder/material": "^5.1.0",
     "@svgr/webpack": "^6.5.0",
-    "antd": "5.0.0-alpha.2",
+    "antd": "5.0.0-beta.0",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
     "buffer": "^6.0.3",
