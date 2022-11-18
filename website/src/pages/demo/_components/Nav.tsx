@@ -19,7 +19,7 @@ export default function Nav({ variant, compressedState, dnd }: NavProps) {
     () => [
       'react-querybuilder',
       ...(variant === 'default' ? [] : [`@react-querybuilder/${variant}`]),
-      ...(dnd ? ['react-querybuilder/dnd'] : []),
+      ...(dnd ? ['@react-querybuilder/dnd'] : []),
     ],
     [dnd, variant]
   );
