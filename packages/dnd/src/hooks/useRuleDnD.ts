@@ -1,14 +1,13 @@
-import type { QueryActions } from '@react-querybuilder/ts';
-import type { Ref } from 'react';
-import { useRef } from 'react';
-import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 import type {
   DndDropTargetType,
   DraggedItem,
   DropCollection,
-  DropEffect,
   DropResult,
-} from '../types';
+  QueryActions,
+  UseRuleDnD,
+} from '@react-querybuilder/ts';
+import { useRef } from 'react';
+import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 import { useDragCommon } from './useDragCommon';
 
 interface UseRuleDndParams {
@@ -20,16 +19,6 @@ interface UseRuleDndParams {
   useDrag: typeof import('react-dnd')['useDrag'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop: typeof import('react-dnd')['useDrop'];
-}
-
-interface UseRuleDnD {
-  isDragging: boolean;
-  dragMonitorId: string | symbol;
-  isOver: boolean;
-  dropMonitorId: string | symbol;
-  dragRef: Ref<HTMLSpanElement>;
-  dndRef: Ref<HTMLDivElement>;
-  dropEffect?: DropEffect;
 }
 
 export const useRuleDnD = ({

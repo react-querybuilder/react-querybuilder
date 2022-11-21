@@ -25,6 +25,8 @@ export const Rule = ({
   dropMonitorId = '',
   dndRef = null,
   dragRef = null,
+  isDragging = false,
+  isOver = false,
 }: RuleProps) => {
   const {
     classNames,
@@ -145,7 +147,11 @@ export const Rule = ({
   const outerClassName = clsx(
     standardClassnames.rule,
     classNames.rule,
-    disabled ? standardClassnames.disabled : '',
+    {
+      [standardClassnames.disabled]: disabled,
+      [standardClassnames.dndDragging]: isDragging,
+      [standardClassnames.dndOver]: isOver,
+    },
     validationClassName
   );
 

@@ -14,6 +14,7 @@ import type {
   ValueSource,
   ValueSources,
 } from './basic';
+import type { DropEffect } from './dnd';
 import type {
   Classnames,
   CombinatorSelectorProps,
@@ -118,7 +119,18 @@ interface CommonRuleAndGroupProps {
   context?: any;
 }
 
-export interface RuleGroupProps extends CommonRuleAndGroupProps {
+export interface UseRuleGroupDnD {
+  isDragging: boolean;
+  dragMonitorId: string | symbol;
+  isOver: boolean;
+  dropMonitorId: string | symbol;
+  previewRef: Ref<HTMLDivElement>;
+  dragRef: Ref<HTMLSpanElement>;
+  dropRef: Ref<HTMLDivElement>;
+  dropEffect?: DropEffect;
+}
+
+export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRuleGroupDnD> {
   ruleGroup: RuleGroupTypeAny;
   /**
    * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
@@ -132,14 +144,19 @@ export interface RuleGroupProps extends CommonRuleAndGroupProps {
    * @deprecated Use the `not` property of the `ruleGroup` prop instead
    */
   not?: boolean;
-  dragMonitorId?: string | symbol;
-  dropMonitorId?: string | symbol;
-  previewRef?: Ref<HTMLDivElement>;
-  dragRef?: Ref<HTMLSpanElement>;
-  dropRef?: Ref<HTMLDivElement>;
 }
 
-export interface RuleProps extends CommonRuleAndGroupProps {
+export interface UseRuleDnD {
+  isDragging: boolean;
+  dragMonitorId: string | symbol;
+  isOver: boolean;
+  dropMonitorId: string | symbol;
+  dragRef: Ref<HTMLSpanElement>;
+  dndRef: Ref<HTMLDivElement>;
+  dropEffect?: DropEffect;
+}
+
+export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> {
   rule: RuleType;
   /**
    * @deprecated Use the `field` property of the `rule` prop instead
@@ -157,10 +174,6 @@ export interface RuleProps extends CommonRuleAndGroupProps {
    * @deprecated Use the `valueSource` property of the `rule` prop instead
    */
   valueSource?: ValueSource;
-  dragMonitorId?: string | symbol;
-  dropMonitorId?: string | symbol;
-  dndRef?: Ref<HTMLDivElement>;
-  dragRef?: Ref<HTMLSpanElement>;
 }
 
 export interface QueryBuilderContextProps {

@@ -7,8 +7,14 @@ import type {
 import { act, render, screen } from '@testing-library/react';
 import * as reactDnD from 'react-dnd';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
-import { simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import { formatQuery, getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
+import { simulateDragDrop, simulateDragHover, wrapWithTestBackend } from 'react-dnd-test-utils';
+import {
+  formatQuery,
+  getCompatContextProvider,
+  QueryBuilder,
+  standardClassnames,
+  TestID,
+} from 'react-querybuilder';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
@@ -427,6 +433,57 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
     });
   }
 );
+
+it('does not pass dnd classes down to nested rules and groups', async () => {
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupType | RuleGroupTypeIC>) => (
+      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QueryBuilder {...props} />
+      </QueryBuilderDnD>
+    )
+  );
+  render(
+    <QueryBuilderWrapped
+      fields={[{ name: 'field1', label: 'Field 1' }]}
+      enableDragAndDrop
+      query={{
+        combinator: 'and',
+        rules: [
+          { field: 'field1', operator: '=', value: '1' },
+          { field: 'field1', operator: '=', value: '1' },
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'field1', operator: '=', value: '1' },
+              {
+                combinator: 'and',
+                rules: [
+                  { field: 'field1', operator: '=', value: '1' },
+                  { field: 'field1', operator: '=', value: '1' },
+                ],
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  );
+  const dragRule = screen.getAllByTestId(TestID.rule)[4];
+  const dropGroup = screen.getAllByTestId(TestID.ruleGroup)[0];
+  simulateDragHover(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropGroup, 'drop'),
+    getDndBackend()!
+  );
+  for (let ruleIdx = 0; ruleIdx < 4; ruleIdx++) {
+    expect(screen.getAllByTestId(TestID.rule)[ruleIdx]).not.toHaveClass(standardClassnames.dndOver);
+  }
+  for (let ruleGroupIdx = 1; ruleGroupIdx < 2; ruleGroupIdx++) {
+    expect(screen.getAllByTestId(TestID.rule)[ruleGroupIdx]).not.toHaveClass(
+      standardClassnames.dndOver
+    );
+  }
+});
 
 it('prevents changes when disabled', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
