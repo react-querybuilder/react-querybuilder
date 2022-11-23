@@ -25,21 +25,21 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@chakra-ui/icons": "^2.0.11",
-    "@chakra-ui/react": "^2.3.6",
-    "@chakra-ui/system": "^2.3.0",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
+    "@chakra-ui/icons": "^2.0.12",
+    "@chakra-ui/react": "^2.4.1",
+    "@chakra-ui/system": "^2.3.3",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@react-querybuilder/ts": "^5.1.1",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.21",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@types/react": "^18.0.25",
+    "@vitejs/plugin-react": "^2.2.0",
     "framer-motion": "^6.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.1.1",
-    "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "typescript": "^4.9.3",
+    "vite": "^3.2.4"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

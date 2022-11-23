@@ -1,5 +1,5 @@
 import { useLocation } from '@docusaurus/router';
-import React, { useMemo } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { styleNameArray, styleNameMap } from '../_constants';
 import type { StyleName } from '../_constants/types';
 import CodeSandBoxLogo from './Logo-CodeSandbox';
@@ -49,17 +49,16 @@ export default function Nav({ variant, compressedState, dnd }: NavProps) {
         </a>
         <span>
           {packageNames.map((packageName, idx) => (
-            <>
+            <Fragment key={packageName}>
               {idx > 0 ? ', ' : null}
               <a
-                key={packageName}
                 href={`https://www.npmjs.com/package/${packageName}`}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.demoNavPackageLink}>
                 {packageName}
               </a>
-            </>
+            </Fragment>
           ))}
         </span>
       </div>

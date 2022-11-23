@@ -5,4 +5,5 @@ export default {
   globals: { __RQB_DEV__: true },
   setupFilesAfterEnv: ['../../jestSetup.ts'],
   testEnvironment: 'jsdom',
+  transformIgnorePatterns: ['/node_modules/(?!antd|@ant-design|rc-.+?|@babel/runtime).+(js|jsx)$'],
 };

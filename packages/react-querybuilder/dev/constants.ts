@@ -271,10 +271,17 @@ export const initialQuery: RuleGroupType = {
       ],
     },
     {
+      id: generateID(),
       field: 'groupedField1',
       operator: '=',
       value: 'groupedField4',
       valueSource: 'field',
+    },
+    {
+      id: generateID(),
+      field: 'birthdate',
+      operator: '=',
+      value: '1969-01-01',
     },
   ],
 };

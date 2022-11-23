@@ -25,20 +25,20 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/material": "^5.10.10",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.15",
+    "@mui/material": "^5.10.15",
     "@react-querybuilder/ts": "^5.1.1",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.21",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@types/react": "^18.0.25",
+    "@vitejs/plugin-react": "^2.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.1.1",
-    "regenerator-runtime": "^0.13.10",
-    "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "regenerator-runtime": "^0.13.11",
+    "typescript": "^4.9.3",
+    "vite": "^3.2.4"
   },
   "peerDependencies": {
     "@emotion/react": "^11",
