@@ -26,6 +26,8 @@ export const RuleGroup = ({
   previewRef = null,
   dragRef = null,
   dropRef = null,
+  isDragging = false,
+  isOver = false,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -69,7 +71,9 @@ export const RuleGroup = ({
 
   const classNamesMemo = useMemo(
     () => ({
-      header: clsx(standardClassnames.header, classNames.header),
+      header: clsx(standardClassnames.header, classNames.header, {
+        [standardClassnames.dndOver]: isOver,
+      }),
       dragHandle: clsx(standardClassnames.dragHandle, classNames.dragHandle),
       combinators: clsx(standardClassnames.combinators, classNames.combinators),
       notToggle: clsx(standardClassnames.notToggle, classNames.notToggle),
@@ -80,7 +84,19 @@ export const RuleGroup = ({
       removeGroup: clsx(standardClassnames.removeGroup, classNames.removeGroup),
       body: clsx(standardClassnames.body, classNames.body),
     }),
-    [classNames]
+    [
+      classNames.addGroup,
+      classNames.addRule,
+      classNames.body,
+      classNames.cloneGroup,
+      classNames.combinators,
+      classNames.dragHandle,
+      classNames.header,
+      classNames.lockGroup,
+      classNames.notToggle,
+      classNames.removeGroup,
+      isOver,
+    ]
   );
 
   useReactDndWarning(
@@ -159,7 +175,10 @@ export const RuleGroup = ({
   const outerClassName = clsx(
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
-    { [standardClassnames.disabled]: disabled },
+    {
+      [standardClassnames.disabled]: disabled,
+      [standardClassnames.dndDragging]: isDragging,
+    },
     validationClassName
   );
 

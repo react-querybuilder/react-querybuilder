@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bulma",
   "description": "Custom Bulma components for react-querybuilder",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "publishConfig": {
     "access": "public"
   },
@@ -25,14 +25,14 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@react-querybuilder/ts": "^5.1.1",
+    "@react-querybuilder/ts": "^5.1.2",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.25",
     "@vitejs/plugin-react": "^2.2.0",
     "bulma": "^0.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^5.1.1",
+    "react-querybuilder": "^5.1.2",
     "typescript": "^4.9.3",
     "vite": "^3.2.4"
   },

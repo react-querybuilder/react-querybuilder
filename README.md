@@ -1,16 +1,12 @@
 # React Query Builder
 
-<!-- prettier-ignore-start -->
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-27-orange.svg
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-<!-- prettier-ignore-end -->
+[![npm][badge-npm]](https://www.npmjs.com/package/react-querybuilder)
+[![Demo][badge-demo]](https://react-querybuilder.js.org/demo)
+[![Docs][badge-docs]](https://react-querybuilder.js.org/)
+[![Learn from the maintainer][badge-training]](https://www.newline.co/courses/building-advanced-admin-reporting-in-react)
 
-[![npm](https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=86400)](https://www.npmjs.com/package/react-querybuilder)
-[![Docs](https://img.shields.io/badge/docs-blue)](https://react-querybuilder.js.org/)
-[![Demo](https://img.shields.io/badge/demo-blue)](https://react-querybuilder.js.org/demo)
-[![Continuous Integration](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg)](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
-[![codecov.io](https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=main)](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
+[![Continuous Integration][badge-ci]](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
+[![codecov.io][badge-codecov]](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
 [![All Contributors][badge-all-contributors]](#contributors-)
 
 **Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**.
@@ -113,3 +109,16 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+<!-- prettier-ignore-start -->
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-27-orange.svg
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+<!-- prettier-ignore-end -->
+
+[badge-demo]: https://img.shields.io/badge/demo-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAHSAAAB0gGhKG2eAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA/VJREFUWIW1l21MW1UYx//P7aWUbQU6shleBtncYApxRNHETGb0yxaiiGZD2AdDNMaE+MG4LL4sWZaQaJZsM3NgFjVGo9EwMzWylddQWFllyV6kjrYrw6lQoZSEvr/ee48fdKb3Figt7fPt/s95nt//nnuec++lc2bv3wQUI4sRDAbRffGnQCgcVsXr2yvKZvhsggFAEARc6h+AP+DfKB+hm8/s26fnsm1g9KoJTueCUp4TVcILGk1eLKsGbtz6FRarTSmHmcQ13T33ziwAUKfZ0wFwBZmG3560VowYjc8zMIqTWW1NzddP1T95/d9LqqNls9cZlW+e2k0SxgHIbkytUZ954/W2D+5f5wQEgc6YWF5ugUuVUCXNMPaZdDen7w4TsDNeJw4/6w47Wgq3CNJ9LTRbJPLqTf4xJmoezQRckiS4wiEolzWvKILdrfcaVWoxKDNV7u/J6Ca8MmbCrMMh03iNiJ1Nf0GlFpfNyZgB8+1J/GaxyDTiGB5snEFuQXTFvIwYcMzNwfjLeIJe8ewctGWBVXN5AF+AoT9d+PyCs7BH39smiWJevF64w39jyyNLhtVyJUaT62rDqldPaqFRmQDUxOsMGCzZ6m8YOXFCSFaDuiZ8B0FSbqpwSRLpm+6L77o9nup4XaPRLLS+1HRWm68NJS3CMM8zYp8BVJiqgavXrsPt8Shl3+aN+Y06zQYbosvv+viIqlVH0nobWu1TuDVhVsoiI2oxdLxyzdCxtjqdZp+QchfMO50wjF5JHCD2tr3riD7VeimtQCAYgL5/CKIoX14GfGnvOvpxqnAAoE/M7sckRkmNuN2e3O4ffjwfjcUeitfzN2lnWpsPfpWTwyd/6Eo4KLDGNmRU1X76OwAvKwb+FCT2xPT5owlfHGs20TnhfZ/Atq02adAwUme1T9XJEjkWqWhwnCqq8jhWyksKZ/QHD7BDjKh2pUnTv9+DbWpKmYkdDY5cXaXnGFi6eACMXVq1C1yLixgYNoApIKV7XdBVJpwBacWKBkKhEC73DUAQ5KepbpcXxY8vZgQOADyIYgBkFEkUoR8YUvn8ftkm3bA1jO0HZgFaz7rLY9kuqGo//TnAXpOJnOTa9vRCc/EetzNTcIngS+j/mrc+ei8WFeVwokhJSWnbiw+32xDLFB4gUYjwXWbvSUbYDAAWq61seNS4XzGP7amu/ra+fm+5JLHyzOEBAlfLM+AwGMqW3G6MmcbBFFueMXx4of3AsQuZJP8XnWbfcQ4AIuEIenr7EIkmfLv12hfLj2eB/X9wjEnQDw7B4/HKBohgEVXqFnzfnPIZn0pQ09ket/XOHdkfDM/nhBuf2/9pyQPFS1mFc1T6D+rMjhBdvrClAAAAAElFTkSuQmCC
+[badge-docs]: https://img.shields.io/badge/📖_documentation-blue.svg
+[badge-npm]: https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=3600&logo=npm
+[badge-training]: https://img.shields.io/badge/training-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAACXBIWXMAAAEIAAABCAFpWn9CAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAgdJREFUKJGNkb9rE2EYxz/33l0uubTXwYSLwWroIgoWIUqoBUF0KS4HQkAKkqndtDi5mLb/h4sGIUOwQkDIkoAiblo0ASXEwSKVYEtKk+Zi877nYmNLsfjdngc+3+/zQ3NdN+q67rNYLHZFKSX4t/bbPzbrkc9f7kx63j7T09Olfr8f/I/KL1+ou5nJp57nIeLxeDocDjMYDAiC4IRAuH7jpiZCodsAQgihA8zOzlIul08EhRBEjeDU2qU3V0c7LS4uks/nR6mdTodms0m9XqfRaBwxUEK7PwJzuRzdbpdSqQRApVIhk8mwsLBAOp1mZ2fnLxmQHYGmaZLP51lZWUFKiWmaJBIJarUag8GAdrv9h0EBIRFCjx7A8/PzKKUoFosYhoFSCsuyjozZhy6AMJH6QVPXdZaXl1ldXcW2bZLJJABTU1OYpgmAFR3awFCgadphx2w2i23bbGxsUK1WAWi1WqRSKQA0HYOo/GQEUh47eaFQIBKJHHtHr9cjainU2X5KP+84ufFEIhZ3XXzfx/d9HMfBtu1R7fs+nU6HpUcP1L3L68Mzroxor+bmnMb2dqspZUwGBD/luZ6hRcaGmhx+C4ekJgxLiq1dJjfHQ9cmeJL6+PrCcGtc8zyPNdO8uC/le8DqBae/fvi1lATC6xNj76oxZwZg79bjt9L5PhNXe7Xnu5WHvwH2M+1kJKUCQwAAAABJRU5ErkJggg==
+[badge-ci]: https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg
+[badge-codecov]: https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=main

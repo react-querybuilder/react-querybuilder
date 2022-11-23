@@ -1,6 +1,11 @@
-import type { QueryActions } from '@react-querybuilder/ts';
+import type {
+  DndDropTargetType,
+  DragCollection,
+  DraggedItem,
+  DropResult,
+  QueryActions,
+} from '@react-querybuilder/ts';
 import { getParentPath } from 'react-querybuilder';
-import type { DndDropTargetType, DragCollection, DraggedItem, DropResult } from '../types';
 
 type UseDragCommonProps = {
   path: number[];

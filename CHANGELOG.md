@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v5.1.2] - 2022-11-21
+
+### Fixed
+
+- [#399](https://github.com/react-querybuilder/react-querybuilder/issues/399)/[#401](https://github.com/react-querybuilder/react-querybuilder/issues/401) When dragging a rule or group over a group header, the `dndOver` class is no longer applied to child group headers.
+
 ## [v5.1.1] - 2022-10-27
 
 ### Fixed
@@ -991,7 +997,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.2...HEAD
+[v5.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.1...v5.1.2
 [v5.1.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.0...v5.1.1
 [v5.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.0.0...v5.1.0
 [v5.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v4.5.3...v5.0.0

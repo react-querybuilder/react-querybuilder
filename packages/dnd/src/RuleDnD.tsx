@@ -1,6 +1,5 @@
 import type { RuleProps } from '@react-querybuilder/ts';
-import { useContext, useMemo } from 'react';
-import { standardClassnames } from 'react-querybuilder';
+import { useContext } from 'react';
 import { useRuleDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
@@ -27,26 +26,11 @@ export const RuleDnD = (props: RuleProps) => {
     useDrop: useDrop!,
   });
 
-  const rule = useMemo(
-    () =>
-      `${props.schema.classNames.rule}${dndRefs.isOver ? ` ${standardClassnames.dndOver}` : ''}${
-        dndRefs.isDragging ? ` ${standardClassnames.dndDragging}` : ''
-      }`,
-    [dndRefs.isDragging, dndRefs.isOver, props.schema.classNames.rule]
-  );
-
   const { rule: BaseRuleComponent } = rqbDndContext.baseControls;
 
   return (
     <QueryBuilderDndContext.Provider value={rqbDndContext}>
-      <BaseRuleComponent
-        {...props}
-        schema={{
-          ...props.schema,
-          classNames: { ...props.schema.classNames, rule },
-        }}
-        {...dndRefs}
-      />
+      <BaseRuleComponent {...props} {...dndRefs} />
     </QueryBuilderDndContext.Provider>
   );
 };
