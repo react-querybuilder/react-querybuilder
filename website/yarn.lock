@@ -4932,14 +4932,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/antd@file:../packages/antd::locator=root-workspace-0b6124%40workspace%3A.":
+"@react-querybuilder/antd@npm:^5.1.2":
   version: 5.1.2
-  resolution: "@react-querybuilder/antd@file:../packages/antd#../packages/antd::hash=09beb4&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@react-querybuilder/antd@npm:5.1.2"
   peerDependencies:
     "@ant-design/icons": ">=4.7.0"
     antd: ">=4.10.0"
     react: ">=16.8.0"
-  checksum: 4ffb2d937ffef2cb5e147111630c88199e94bd1d444201807f7c2f8230de3c2b4822702bc1aef1939e1c5f5c5902366d7d6573015123b1d54c26cec505bde262
+  checksum: e3650c9f0e0f57461307704d6a0d3126c81349cc5edbc2afffcb14c4246f332338d7a2e29434df9651adf4b1ff64b23812157a677fa9f4414dbed9281d4fc441
   languageName: node
   linkType: hard
 
@@ -13336,7 +13336,7 @@ __metadata:
     "@mdx-js/react": ^1.6.22
     "@mui/icons-material": ^5.10.15
     "@mui/material": ^5.10.15
-    "@react-querybuilder/antd": "file:../packages/antd"
+    "@react-querybuilder/antd": ^5.1.2
     "@react-querybuilder/bootstrap": ^5.1.2
     "@react-querybuilder/bulma": ^5.1.2
     "@react-querybuilder/chakra": ^5.1.2
