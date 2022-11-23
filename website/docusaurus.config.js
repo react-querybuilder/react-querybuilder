@@ -25,7 +25,6 @@ const config = {
   deploymentBranch: 'gh-pages',
 
   plugins: [
-    ['docusaurus-plugin-less', { lessOptions: { javascriptEnabled: true } }],
     'docusaurus-plugin-sass',
     [
       '@docusaurus/plugin-client-redirects',
@@ -138,7 +137,7 @@ const config = {
             className: 'header-github-link',
           },
           {
-            href: 'discord',
+            href: '/discord',
             'aria-label': 'Discord server',
             position: 'right',
             className: 'header-discord-link',

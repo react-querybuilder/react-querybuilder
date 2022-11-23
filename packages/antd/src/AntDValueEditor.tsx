@@ -1,5 +1,8 @@
-import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
-import moment from 'moment';
+import { Checkbox, Input, Radio, Switch, TimePicker } from 'antd';
+import generatePicker from 'antd/es/date-picker/generatePicker';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import {
   joinWith,
   splitBy,
@@ -9,6 +12,8 @@ import {
   type ValueEditorProps,
 } from 'react-querybuilder';
 import { AntDValueSelector } from './AntDValueSelector';
+
+const DatePicker = generatePicker(dayjsGenerateConfig);
 
 export const AntDValueEditor = ({
   fieldData,
@@ -151,7 +156,7 @@ export const AntDValueEditor = ({
         <DatePicker.RangePicker
           value={
             typeof value === 'string' && /^[^,]+,[^,]+$/.test(value)
-              ? (splitBy(value, ',').map(v => moment(v)) as [moment.Moment, moment.Moment])
+              ? (splitBy(value, ',').map(v => dayjs(v)) as [Dayjs, Dayjs])
               : undefined
           }
           showTime={inputTypeCoerced === 'datetime-local'}
@@ -162,12 +167,12 @@ export const AntDValueEditor = ({
           // "should render a date range picker" test in ./AntD.test.tsx)
           onChange={
             /* istanbul ignore next */
-            dates => handleOnChange(dates?.map(d => d?.format(moment.HTML5_FMT.DATE)).join(','))
+            dates => handleOnChange(dates?.map(d => d?.format('YYYY-MM-DD')).join(','))
           }
         />
       ) : (
         <DatePicker
-          value={value ? moment(value) : null}
+          value={value ? dayjs(value) : null}
           showTime={inputTypeCoerced === 'datetime-local'}
           className={className}
           disabled={disabled}
@@ -179,7 +184,7 @@ export const AntDValueEditor = ({
     case 'time':
       return (
         <TimePicker
-          value={value ? moment(value, 'HH:mm:ss') : null}
+          value={value ? dayjs(value, 'HH:mm:ss') : null}
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}

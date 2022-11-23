@@ -1,8 +1,8 @@
 import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
-import type { OptionProps } from 'antd/lib/select';
-import moment from 'moment';
+import type { OptionProps } from 'antd/es/select';
+import dayjs from 'dayjs';
 import type { OptionGroupFC } from 'rc-select/lib/OptGroup';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
@@ -140,9 +140,9 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     ...defaultValueEditorProps,
     title: valueEditorTitle,
   };
-  const today = moment().format(moment.HTML5_FMT.DATE);
-  const tomorrow = moment().add(1, 'day').format(moment.HTML5_FMT.DATE);
-  // const rightNow = moment().format('HH:mm');
+  const today = dayjs().format('YYYY-MM-DD');
+  const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
+  // const rightNow = dayjs().format('HH:mm');
 
   it('should render a date picker', async () => {
     const onChange = jest.fn();
