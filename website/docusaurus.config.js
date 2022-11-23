@@ -137,7 +137,7 @@ const config = {
             className: 'header-github-link',
           },
           {
-            href: 'discord',
+            href: '/discord',
             'aria-label': 'Discord server',
             position: 'right',
             className: 'header-discord-link',
