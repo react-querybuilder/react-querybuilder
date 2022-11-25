@@ -58,7 +58,7 @@ export const Rule = ({
   const { moveRule, onPropChange, onRuleRemove } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
 
-  const { field, operator, value, valueSource } = rule
+  const ruleObject = rule
     ? rule
     : {
         field: fieldProp,
@@ -66,6 +66,7 @@ export const Rule = ({
         value: valueProp,
         valueSource: valueSourceProp,
       };
+  const { field, operator, value, valueSource } = ruleObject;
 
   useDeprecatedProps('rule', !!rule);
 
@@ -263,6 +264,7 @@ export const Rule = ({
           disabled={disabled}
           context={context}
           validation={validationResult}
+          ruleOrGroup={ruleObject}
         />
       )}
       {showLockButtons && (
@@ -278,6 +280,7 @@ export const Rule = ({
           disabledTranslation={parentDisabled ? undefined : translations.lockRuleDisabled}
           context={context}
           validation={validationResult}
+          ruleOrGroup={ruleObject}
         />
       )}
       <RemoveRuleActionControlElement
@@ -291,6 +294,7 @@ export const Rule = ({
         disabled={disabled}
         context={context}
         validation={validationResult}
+        ruleOrGroup={ruleObject}
       />
     </div>
   );

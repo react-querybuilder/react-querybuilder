@@ -869,6 +869,32 @@ describe('onAddGroup prop', () => {
   });
 });
 
+describe('onRemove prop', () => {
+  it('cancels the removal', async () => {
+    const onQueryChange = jest.fn();
+    render(
+      <QueryBuilder
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            {
+              combinator: 'and',
+              rules: [{ field: 'field1', operator: '=', value: 'value1' }],
+            },
+          ],
+        }}
+        onRemove={() => false}
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+      />
+    );
+
+    await user.click(screen.getByTestId(TestID.removeGroup));
+    await user.click(screen.getByTestId(TestID.removeRule));
+    expect(onQueryChange).not.toHaveBeenCalled();
+  });
+});
+
 describe('defaultValue property in field', () => {
   it('sets the default value', async () => {
     const fields: Field[] = [

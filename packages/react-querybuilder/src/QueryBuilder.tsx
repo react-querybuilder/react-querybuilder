@@ -29,6 +29,7 @@ import {
 import { useControlledOrUncontrolled } from './internal/hooks';
 import {
   add,
+  findPath,
   getFirstOption,
   isOptionGroupArray,
   joinWith,
@@ -63,6 +64,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   getValues,
   onAddRule = r => r,
   onAddGroup = rg => rg,
+  onRemove = () => true,
   onQueryChange = noop,
   showCombinatorsBetweenRules = false,
   showNotToggle = false,
@@ -510,7 +512,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     dispatch(newQuery);
   };
 
-  const onRuleOrGroupRemove = (path: number[]) => {
+  const onRuleOrGroupRemove = (path: number[], context?: any) => {
     if (pathIsDisabled(path, query) || queryDisabled) {
       // istanbul ignore else
       if (debugMode) {
@@ -518,8 +520,11 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       }
       return;
     }
-    const newQuery = remove(query, path);
-    dispatch(newQuery);
+    const ruleOrGroup = findPath(path, query);
+    if (ruleOrGroup && onRemove(ruleOrGroup as RG | RuleType, path, query, context)) {
+      const newQuery = remove(query, path);
+      dispatch(newQuery);
+    }
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {

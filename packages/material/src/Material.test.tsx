@@ -137,7 +137,12 @@ describe('action element', () => {
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
-        <MaterialActionElement handleOnClick={() => {}} path={[]} level={0} />
+        <MaterialActionElement
+          handleOnClick={() => {}}
+          path={[]}
+          level={0}
+          ruleOrGroup={{ combinator: 'and', rules: [] }}
+        />
       </div>
     );
     expect(screen.getByTestId('test').querySelector('button')).toBeInTheDocument();

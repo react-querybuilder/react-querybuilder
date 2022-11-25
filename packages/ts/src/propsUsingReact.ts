@@ -37,6 +37,7 @@ export interface ActionProps extends CommonSubComponentProps {
   label?: string;
   handleOnClick(e: ReactMouseEvent): void;
   disabledTranslation?: TranslationWithLabel;
+  ruleOrGroup: RuleGroupTypeAny | RuleType;
 }
 
 export interface ActionWithRulesProps extends ActionProps {
@@ -325,6 +326,11 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * the group and return it, or return `false` to cancel the addition of the group.
      */
     onAddGroup?(ruleGroup: RG, parentPath: number[], query: RG, context?: any): RG | false;
+    /**
+     * This callback is invoked before a rule or group is removed. The function should return
+     * `true` if the rule or group should be removed or `false` if it should not be removed.
+     */
+    onRemove?(ruleOrGroup: RuleType | RG, path: number[], query: RG, context?: any): boolean;
     /**
      * This is a callback function that is invoked anytime the query configuration changes.
      */

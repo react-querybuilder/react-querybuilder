@@ -1,5 +1,5 @@
-import { act, render, screen } from '@testing-library/react';
 import type { ActionWithRulesProps } from '@react-querybuilder/ts';
+import { act, render, screen } from '@testing-library/react';
 import { userEventSetup } from './utils';
 
 export const defaultActionElementProps: ActionWithRulesProps = {
@@ -7,6 +7,7 @@ export const defaultActionElementProps: ActionWithRulesProps = {
   className: '',
   level: 0,
   path: [],
+  ruleOrGroup: { combinator: 'and', rules: [] },
 };
 
 export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {
