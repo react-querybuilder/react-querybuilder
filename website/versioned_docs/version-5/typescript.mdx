@@ -4,12 +4,6 @@ title: TypeScript reference
 
 These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript (you really should! 😊), you can use the information below to understand the required shape of the props and function parameters. To see the full type definitions for the `react-querybuilder` library, [click here](https://github.com/react-querybuilder/react-querybuilder/tree/main/packages/ts/src).
 
-:::tip
-
-The minimum TypeScript version for this library is 4.1, but if you use TypeScript 4.5 or greater then the type `RuleGroupTypeIC` (the type used for the `query` prop when `independentCombinators` is `true`) will be more accurate and helpful. See the note in the [Rules and groups](#rules-and-groups) section below.
-
-:::
-
 ## Fields
 
 ```ts
@@ -75,8 +69,6 @@ type RuleOrGroupArray = RuleGroupType['rules'] | RuleGroupTypeIC['rules'];
 - All odd indexes in the `rules` array must be of type `string`
 - The first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC` (therefore the array length, unless it is zero, must be an odd number)
 
-> That is, unless you're using a TypeScript version lower than 4.5, in which case what you see above is the actual type definition. I.e., the `rules` array can be of any length, with elements of `RuleType`, `RuleGroupTypeIC`, or `string` in any order, and TypeScript will not complain. However, invalid query objects can lead to unexpected behavior from the `<QueryBuilder />` component, so TypeScript 4.5 or greater is strongly recommended if the [`independentCombinators`](./api/querybuilder#independentcombinators) option will be used. In any case, make sure query objects meet the conditions listed above.
-
 For example, the following would be invalid because the first element in the `rules` array (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string`, and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also, the length (2) is an even number.
 
 ```ts
@@ -115,13 +107,16 @@ type ExportFormat =
   | 'parameterized'
   | 'parameterized_named'
   | 'mongodb'
-  | 'cel';
+  | 'cel'
+  | 'jsonlogic'
+  | 'spel';
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
 
 interface FormatQueryOptions {
   format?: ExportFormat;
   valueProcessor?: ValueProcessor;
+  ruleProcessor?: RuleProcessor;
   quoteFieldNamesWith?: string;
   validator?: QueryValidator;
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
@@ -146,14 +141,23 @@ interface ParameterizedNamedSQL {
 ## Import
 
 ```ts
-interface ParseSQLOptions {
-  independentCombinators?: boolean;
-  paramPrefix?: string;
-  params?: any[] | { [p: string]: any };
-  listsAsArrays?: boolean;
+interface ParserCommonOptions {
   fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
   getValueSources?: (field: string, operator: string) => ValueSources;
+  listsAsArrays?: boolean;
+  independentCombinators?: boolean;
 }
+
+interface ParseSQLOptions extends ParserCommonOptions {
+  paramPrefix?: string;
+  params?: any[] | Record<string, any>;
+}
+
+type ParseCELOptions = ParserCommonOptions;
+
+type ParseJsonLogicOptions = ParserCommonOptions;
+
+type ParseMongoDbOptions = ParserCommonOptions;
 ```
 
 ## Validation
