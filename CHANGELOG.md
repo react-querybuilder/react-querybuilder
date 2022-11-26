@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v5.2.0] - 2022-11-26
+
+### Added
+
+- [#403](https://github.com/react-querybuilder/react-querybuilder/issues/403) Add `onRemove` prop and pass rule/group to all `ActionElement`s (buttons).
+
 ## [v5.1.3] - 2022-11-23
 
 ### Fixed
@@ -1003,7 +1009,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.2.0...HEAD
+[v5.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.3...v5.2.0
 [v5.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.2...v5.1.3
 [v5.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.1...v5.1.2
 [v5.1.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.0...v5.1.1

@@ -18,6 +18,7 @@ export const AntDActionElement = ({
   path: _path,
   context: _context,
   validation: _validation,
+  ruleOrGroup: _ruleOrGroup,
   ...extraProps
 }: AntDActionProps) => (
   <Button

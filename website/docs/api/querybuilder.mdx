@@ -572,6 +572,12 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 
 :::
 
+### `onRemove`
+
+`<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: number[], query: RG, context?: any) => boolean`
+
+This callback is invoked before a rule or group is removed. The function should return `true` if the removal should proceed as normal, or `false` if the removal should be aborted.
+
 ### `controlClassnames`
 
 This prop can be used to assign specific CSS classes to various controls that are rendered by the `<QueryBuilder />` component. This is an object with the following signature. Each attribute is a `Classname` which can be a `string`, `string[]`, or `Record<string, any>` (see documentation for [`clsx`](https://www.npmjs.com/package/clsx)):

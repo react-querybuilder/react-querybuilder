@@ -23,6 +23,7 @@ export const MaterialActionElement = ({
   rules,
   context,
   validation,
+  ruleOrGroup,
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialActionProps) => {
@@ -45,6 +46,7 @@ export const MaterialActionElement = ({
         rules={rules}
         context={context}
         validation={validation}
+        ruleOrGroup={ruleOrGroup}
       />
     );
   }

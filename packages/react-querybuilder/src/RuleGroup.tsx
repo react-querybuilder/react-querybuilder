@@ -1,4 +1,4 @@
-import type { RuleGroupProps } from '@react-querybuilder/ts';
+import type { RuleGroupProps, RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/ts';
 import { clsx } from 'clsx';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { Fragment, useMemo } from 'react';
@@ -59,12 +59,18 @@ export const RuleGroup = ({
   const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
 
-  const { rules, not } = ruleGroup ? ruleGroup : { rules: rulesProp, not: notProp };
+  const ruleGroupObject = ruleGroup
+    ? { ...ruleGroup }
+    : ({ rules: rulesProp, not: notProp } as RuleGroupTypeAny);
+  const { rules, not } = ruleGroupObject;
   let combinator: string = defaultCombinators[0].name;
   if (ruleGroup && 'combinator' in ruleGroup) {
     combinator = ruleGroup.combinator;
   } else if (!ruleGroup) {
     combinator = combinatorProp ?? combinator;
+  }
+  if (!independentCombinators) {
+    (ruleGroupObject as RuleGroupType).combinator = combinator;
   }
 
   useDeprecatedProps('ruleGroup', !!ruleGroup);
@@ -250,6 +256,7 @@ export const RuleGroup = ({
           disabled={disabled}
           context={context}
           validation={validationResult}
+          ruleOrGroup={ruleGroupObject}
         />
         <AddGroupActionControlElement
           testID={TestID.addGroup}
@@ -263,6 +270,7 @@ export const RuleGroup = ({
           disabled={disabled}
           context={context}
           validation={validationResult}
+          ruleOrGroup={ruleGroupObject}
         />
         {showCloneButtons && path.length >= 1 && (
           <CloneGroupActionControlElement
@@ -277,6 +285,7 @@ export const RuleGroup = ({
             disabled={disabled}
             context={context}
             validation={validationResult}
+            ruleOrGroup={ruleGroupObject}
           />
         )}
         {showLockButtons && (
@@ -293,6 +302,7 @@ export const RuleGroup = ({
             disabledTranslation={parentDisabled ? undefined : translations.lockGroupDisabled}
             context={context}
             validation={validationResult}
+            ruleOrGroup={ruleGroupObject}
           />
         )}
         {path.length >= 1 && (
@@ -308,6 +318,7 @@ export const RuleGroup = ({
             disabled={disabled}
             context={context}
             validation={validationResult}
+            ruleOrGroup={ruleGroupObject}
           />
         )}
       </div>
