@@ -229,4 +229,5 @@ export const LogType = {
   queryUpdate: 'query updated',
   onAddRuleFalse: 'onAddRule callback returned false',
   onAddGroupFalse: 'onAddGroup callback returned false',
+  onRemoveFalse: 'onRemove callback returned false',
 } as const;

@@ -18,6 +18,7 @@ import {
   defaultPlaceholderFieldName,
   defaultPlaceholderOperatorName,
   defaultTranslations as t,
+  LogType,
   standardClassnames as sc,
   TestID,
 } from './defaults';
@@ -1803,14 +1804,14 @@ describe('nested object immutability', () => {
 });
 
 describe('debug mode', () => {
-  it('logs info', () => {
+  it('logs info', async () => {
     const onLog = jest.fn();
     const defaultQuery: RuleGroupType = {
       not: false,
       combinator: 'and',
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
-    render(<QueryBuilder debugMode query={defaultQuery} onLog={onLog} />);
+    render(<QueryBuilder debugMode query={defaultQuery} onLog={onLog} onRemove={() => false} />);
     const { query, queryState, schema } = onLog.mock.calls[0][0];
     const [processedRoot, processedQueryState] = [query, queryState].map(q =>
       JSON.parse(formatQuery(q, 'json_without_ids'))
@@ -1818,6 +1819,9 @@ describe('debug mode', () => {
     expect(processedRoot).toEqual(defaultQuery);
     expect(processedQueryState).toEqual({ ...defaultQuery, rules: [] });
     expect(schema).toBeDefined();
+    const removeRule = await screen.findByTestId(TestID.removeRule);
+    await user.click(removeRule);
+    expect(onLog.mock.calls[1][0].type).toBe(LogType.onRemoveFalse);
   });
 
   it('logs failed query updates due to disabled prop', async () => {

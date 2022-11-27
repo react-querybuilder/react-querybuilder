@@ -521,9 +521,16 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
       return;
     }
     const ruleOrGroup = findPath(path, query);
-    if (ruleOrGroup && onRemove(ruleOrGroup as RG | RuleType, path, query, context)) {
-      const newQuery = remove(query, path);
-      dispatch(newQuery);
+    // istanbul ignore else
+    if (ruleOrGroup) {
+      if (onRemove(ruleOrGroup as RG | RuleType, path, query, context)) {
+        const newQuery = remove(query, path);
+        dispatch(newQuery);
+      } else {
+        if (debugMode) {
+          onLog({ type: LogType.onRemoveFalse, ruleOrGroup, path, query });
+        }
+      }
     }
   };
 
