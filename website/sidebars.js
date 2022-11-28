@@ -31,6 +31,7 @@ const sidebars = {
         description: 'Miscellaneous advice and advanced configurations.',
       },
       items: [
+        'tips/managing-operators',
         'tips/limit-groups',
         'tips/custom-with-fallback',
         'tips/custom-bind-variables',
