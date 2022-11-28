@@ -27,8 +27,8 @@
   "devDependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.10.15",
-    "@mui/material": "^5.10.15",
+    "@mui/icons-material": "^5.10.16",
+    "@mui/material": "^5.10.16",
     "@react-querybuilder/ts": "^5.2.0",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.25",
