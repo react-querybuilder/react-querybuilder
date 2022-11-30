@@ -18,138 +18,141 @@ The following standard classnames are not labeled below, but for most of them th
 - `.dndDragging` (applied to "preview" element while dragging)
 - `.dndOver` (applied to "hovered over" element while dragging)
 
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 import { standardClassnames as sc } from 'react-querybuilder';
 
-<QueryBuilderEmbed
-  showNotToggle
-  showCloneButtons
-  showLockButtons
-  enableDragAndDrop
-  fields={[
-    {
-      name: 'f1',
-      label: `.${sc.fields}`,
-      defaultValue: 'This rule is valid',
-      validator: () => true,
-    },
-    {
-      name: 'f2',
-      label: `.${sc.fields}`,
-      defaultValue: 'This rule is invalid',
-      validator: () => false,
-    },
-    {
-      name: 'f3',
-      label: `.${sc.valueSource}`,
-      valueSources: ['value', 'field'],
-    },
-    {
-      name: 'fb1',
-      label: `Value list`,
-      operators: [{ name: 'between', label: 'between' }],
-      valueSources: ['field', 'value'],
-      comparator: f => f.name === 'fb2',
-    },
-    {
-      name: 'fb2',
-      label: `.${sc.valueListItem}`,
-    },
-  ]}
-  combinators={[{ name: 'and', label: `.${sc.combinators}` }]}
-  getOperators={() => [{ name: '=', label: `.${sc.operators}` }]}
-  controlClassnames={{
-    queryBuilder: 'rqb-structure',
-  }}
-  translations={{
-    fields: {
-      title: `.${sc.fields}`,
-    },
-    operators: {
-      title: `.${sc.operators}`,
-    },
-    value: {
-      title: `.${sc.value}`,
-    },
-    removeRule: {
-      label: `.${sc.removeRule}`,
-      title: `.${sc.removeRule}`,
-    },
-    removeGroup: {
-      label: `.${sc.removeGroup}`,
-      title: `.${sc.removeGroup}`,
-    },
-    addRule: {
-      label: `.${sc.addRule}`,
-      title: `.${sc.addRule}`,
-    },
-    addGroup: {
-      label: `.${sc.addGroup}`,
-      title: `.${sc.addGroup}`,
-    },
-    combinators: {
-      title: `.${sc.combinators}`,
-    },
-    notToggle: {
-      label: `.${sc.notToggle}`,
-      title: `.${sc.notToggle}`,
-    },
-    cloneRule: {
-      label: `.${sc.cloneRule}`,
-      title: `.${sc.cloneRule}`,
-    },
-    cloneRuleGroup: {
-      label: `.${sc.cloneGroup}`,
-      title: `.${sc.cloneGroup}`,
-    },
-    dragHandle: {
-      label: `.${sc.dragHandle}`,
-      title: `.${sc.dragHandle}`,
-    },
-    lockRule: {
-      label: `.${sc.lockRule}`,
-      title: `.${sc.lockRule}`,
-    },
-    lockGroup: {
-      label: `.${sc.lockGroup}`,
-      title: `.${sc.lockGroup}`,
-    },
-    lockRuleDisabled: {
-      label: `.${sc.lockRuleDisabled}`,
-      title: `.${sc.lockRuleDisabled}`,
-    },
-    lockGroupDisabled: {
-      label: `.${sc.lockGroupDisabled}`,
-      title: `.${sc.lockGroupDisabled}`,
-    },
-    valueSourceSelector: {
-      title: `.${sc.valueSource}`,
-    },
-  }}
-  defaultQuery={{
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: '=', value: `.${sc.value}` },
+<QueryBuilderDnD>
+  <QueryBuilderEmbed
+    showNotToggle
+    showCloneButtons
+    showLockButtons
+    enableDragAndDrop
+    fields={[
       {
-        combinator: 'and',
-        rules: [
-          { field: 'f1', operator: '=', value: 'This rule is valid' },
-          { field: 'f2', operator: '=', value: 'This rule is invalid' },
-          {
-            disabled: true,
-            combinator: 'and',
-            rules: [
-              {
-                field: 'f1',
-                operator: '=',
-                value: `This rule's group is disabled, therefore this rule is also disabled`,
-              },
-            ],
-          },
-        ],
+        name: 'f1',
+        label: `.${sc.fields}`,
+        defaultValue: 'This rule is valid',
+        validator: () => true,
       },
-      { field: 'f3', operator: '=', value: 'f1' },
-      { field: 'fb1', operator: 'between', value: 'fb2,fb2', valueSource: 'field' },
-    ],
-  }}
-/>
+      {
+        name: 'f2',
+        label: `.${sc.fields}`,
+        defaultValue: 'This rule is invalid',
+        validator: () => false,
+      },
+      {
+        name: 'f3',
+        label: `.${sc.valueSource}`,
+        valueSources: ['value', 'field'],
+      },
+      {
+        name: 'fb1',
+        label: `Value list`,
+        operators: [{ name: 'between', label: 'between' }],
+        valueSources: ['field', 'value'],
+        comparator: f => f.name === 'fb2',
+      },
+      {
+        name: 'fb2',
+        label: `.${sc.valueListItem}`,
+      },
+    ]}
+    combinators={[{ name: 'and', label: `.${sc.combinators}` }]}
+    getOperators={() => [{ name: '=', label: `.${sc.operators}` }]}
+    controlClassnames={{
+      queryBuilder: 'rqb-structure',
+    }}
+    translations={{
+      fields: {
+        title: `.${sc.fields}`,
+      },
+      operators: {
+        title: `.${sc.operators}`,
+      },
+      value: {
+        title: `.${sc.value}`,
+      },
+      removeRule: {
+        label: `.${sc.removeRule}`,
+        title: `.${sc.removeRule}`,
+      },
+      removeGroup: {
+        label: `.${sc.removeGroup}`,
+        title: `.${sc.removeGroup}`,
+      },
+      addRule: {
+        label: `.${sc.addRule}`,
+        title: `.${sc.addRule}`,
+      },
+      addGroup: {
+        label: `.${sc.addGroup}`,
+        title: `.${sc.addGroup}`,
+      },
+      combinators: {
+        title: `.${sc.combinators}`,
+      },
+      notToggle: {
+        label: `.${sc.notToggle}`,
+        title: `.${sc.notToggle}`,
+      },
+      cloneRule: {
+        label: `.${sc.cloneRule}`,
+        title: `.${sc.cloneRule}`,
+      },
+      cloneRuleGroup: {
+        label: `.${sc.cloneGroup}`,
+        title: `.${sc.cloneGroup}`,
+      },
+      dragHandle: {
+        label: `.${sc.dragHandle}`,
+        title: `.${sc.dragHandle}`,
+      },
+      lockRule: {
+        label: `.${sc.lockRule}`,
+        title: `.${sc.lockRule}`,
+      },
+      lockGroup: {
+        label: `.${sc.lockGroup}`,
+        title: `.${sc.lockGroup}`,
+      },
+      lockRuleDisabled: {
+        label: `.${sc.lockRuleDisabled}`,
+        title: `.${sc.lockRuleDisabled}`,
+      },
+      lockGroupDisabled: {
+        label: `.${sc.lockGroupDisabled}`,
+        title: `.${sc.lockGroupDisabled}`,
+      },
+      valueSourceSelector: {
+        title: `.${sc.valueSource}`,
+      },
+    }}
+    defaultQuery={{
+      combinator: 'and',
+      rules: [
+        { field: 'f1', operator: '=', value: `.${sc.value}` },
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'f1', operator: '=', value: 'This rule is valid' },
+            { field: 'f2', operator: '=', value: 'This rule is invalid' },
+            {
+              disabled: true,
+              combinator: 'and',
+              rules: [
+                {
+                  field: 'f1',
+                  operator: '=',
+                  value: `This rule's group is disabled, therefore this rule is also disabled`,
+                },
+              ],
+            },
+          ],
+        },
+        { field: 'f3', operator: '=', value: 'f1' },
+        { field: 'fb1', operator: 'between', value: 'fb2,fb2', valueSource: 'field' },
+      ],
+    }}
+  />
+</QueryBuilderDnD>
