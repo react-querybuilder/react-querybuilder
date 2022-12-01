@@ -27,7 +27,7 @@
   "devDependencies": {
     "@react-querybuilder/ts": "^5.2.0",
     "@testing-library/react": "^13.4.0",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.10",
     "@types/react": "^18.0.25",
     "@vitejs/plugin-react": "^2.2.0",
     "react": "^18.2.0",
