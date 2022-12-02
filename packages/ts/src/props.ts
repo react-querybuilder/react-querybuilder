@@ -87,12 +87,12 @@ export type VersatileSelectorProps = ValueSelectorProps &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 
-export interface ValueEditorProps extends SelectorOrEditorProps {
-  field: string;
-  operator: string;
+export interface ValueEditorProps<F extends Field = Field> extends SelectorOrEditorProps {
+  field: F['name'];
+  operator: F['operators'] extends Array<Exclude<F['operators'], undefined>> ? F['operators'][number] : undefined;
   value?: any;
   valueSource: ValueSource;
-  fieldData: Field;
+  fieldData: F;
   type?: ValueEditorType;
   inputType?: string | null;
   values?: any[];
