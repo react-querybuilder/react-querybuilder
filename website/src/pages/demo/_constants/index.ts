@@ -280,6 +280,11 @@ export const initialQuery: RuleGroupType = {
       value: 'groupedField4',
       valueSource: 'field',
     },
+    {
+      field: 'birthdate',
+      value: '1969-06-01',
+      operator: '<',
+    },
   ],
 };
 
