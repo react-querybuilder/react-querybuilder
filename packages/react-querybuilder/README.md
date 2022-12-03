@@ -2,6 +2,8 @@
 
 _The Query Builder component for React_
 
+**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](#import), and [exporting to](#export), various query languages like SQL, MongoDB, and more.
+
 ![Screenshot](../../_assets/screenshot.png)
 
 ## Documentation
@@ -32,10 +34,10 @@ yarn add react-querybuilder
 
 ```tsx
 import { useState } from 'react';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
-const fields = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
   { name: 'age', label: 'Age', inputType: 'number' },
@@ -91,7 +93,7 @@ console.log(sqlWhere);
 
 To [import queries](https://react-querybuilder.js.org/docs/api/import) use `parseSQL`, `parseCEL`, `parseJsonLogic`, or `parseMongoDB` depending on the source.
 
-**Tip:** `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself. Trailing semicolon is optional.
+**Tip:** `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself (everything but the expressions in the `WHERE` clause will be ignored). Trailing semicolon is optional.
 
 ```ts
 const query = parseSQL(

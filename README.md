@@ -9,7 +9,9 @@
 [![codecov.io][badge-codecov]](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
 [![All Contributors][badge-all-contributors]](#contributors-)
 
-**Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**.
+**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/api/import), and [exporting to](https://react-querybuilder.js.org/docs/api/export), various query languages like SQL, MongoDB, and more. Demo is [here](https://react-querybuilder.js.org/demo).
+
+_**Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**._
 
 ![Screenshot](_assets/screenshot.png)
 
