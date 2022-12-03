@@ -89,7 +89,7 @@ export type VersatileSelectorProps = ValueSelectorProps &
 
 export interface ValueEditorProps<F extends Field = Field> extends SelectorOrEditorProps {
   field: F['name'];
-  operator: F['operators'] extends Array<Exclude<F['operators'], undefined>> ? F['operators'][number] : undefined;
+  operator: NonNullable<F['operators']>[number] extends NameLabelPair ? NonNullable<F['operators']>[number]['name'] : NonNullable<F['operators']>[number] extends OptionGroup ? NonNullable<F['operators']>[number]['options'][number]['name'] : string;
   value?: any;
   valueSource: ValueSource;
   fieldData: F;
