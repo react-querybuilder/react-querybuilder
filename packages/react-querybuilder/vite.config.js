@@ -1,5 +1,6 @@
 import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 export default defineConfig(({ command }) => ({
@@ -14,10 +15,11 @@ export default defineConfig(({ command }) => ({
       name: 'ReactQueryBuilder',
     },
     rollupOptions: {
-      external: ['@react-querybuilder/ctx', 'immer', 'react'],
+      external: ['@react-querybuilder/ctx', 'clsx', 'immer', 'react'],
       output: {
         globals: {
           '@react-querybuilder/ctx': 'ReactQueryBuilderContext',
+          clsx: 'clsx',
           immer: 'immer',
           react: 'React',
         },
@@ -26,7 +28,10 @@ export default defineConfig(({ command }) => ({
     },
     sourcemap: true,
   },
-  plugins: [vitePluginReact()],
+  plugins: [
+    vitePluginReact(),
+    visualizer({ filename: 'build-stats.html', gzipSize: true, title: 'Build stats' }),
+  ],
   server: {
     port: 3100,
   },

@@ -5657,6 +5657,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -5680,6 +5681,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -5701,6 +5703,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -5726,6 +5729,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -5750,6 +5754,7 @@ __metadata:
     "@vitejs/plugin-react": ^2.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -5773,6 +5778,7 @@ __metadata:
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
     react-querybuilder: ^5.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -5798,6 +5804,7 @@ __metadata:
     react-dom: ^18.2.0
     react-querybuilder: ^5.2.0
     regenerator-runtime: ^0.13.11
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.3
     vite: ^3.2.4
   peerDependencies:
@@ -7562,6 +7569,17 @@ __metadata:
     strip-ansi: ^6.0.0
     wrap-ansi: ^7.0.0
   checksum: ce2e8f578a4813806788ac399b9e866297740eecd4ad1823c27fd344d78b22c5f8597d548adbcc46f0573e43e21e751f39446c5a5e804a12aace402b7a315d7f
+  languageName: node
+  linkType: hard
+
+"cliui@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cliui@npm:8.0.1"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.1
+    wrap-ansi: ^7.0.0
+  checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
   languageName: node
   linkType: hard
 
@@ -14167,6 +14185,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     regenerator-runtime: ^0.13.11
+    rollup-plugin-visualizer: ^5.8.3
     sass: ^1.56.1
     typescript: ^4.9.3
     vite: ^3.2.4
@@ -14701,6 +14720,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-visualizer@npm:^5.8.3":
+  version: 5.8.3
+  resolution: "rollup-plugin-visualizer@npm:5.8.3"
+  dependencies:
+    open: ^8.4.0
+    source-map: ^0.7.4
+    yargs: ^17.5.1
+  peerDependencies:
+    rollup: 2.x || 3.x
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  bin:
+    rollup-plugin-visualizer: dist/bin/cli.js
+  checksum: 0ed4b4b49be8c38fa4820190286daf6f94446a05190a6f1932f2718cb8d7e2a1afacc9f94bf75934087ec856a634a5c9355c078d77482a5796465d15deb988c9
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^2.79.1":
   version: 2.79.1
   resolution: "rollup@npm:2.79.1"
@@ -15041,6 +15078,13 @@ __metadata:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 59ce8640cf3f3124f64ac289012c2b8bd377c238e316fb323ea22fbfe83da07d81e000071d7242cad7a23cd91c7de98e4df8830ec3f133cb6133a5f6e9f67bc2
+  languageName: node
+  linkType: hard
+
+"source-map@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "source-map@npm:0.7.4"
+  checksum: 01cc5a74b1f0e1d626a58d36ad6898ea820567e87f18dfc9d24a9843a351aaa2ec09b87422589906d6ff1deed29693e176194dc88bcae7c9a852dc74b311dbf5
   languageName: node
   linkType: hard
 
@@ -16360,6 +16404,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yargs-parser@npm:^21.1.1":
+  version: 21.1.1
+  resolution: "yargs-parser@npm:21.1.1"
+  checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
+  languageName: node
+  linkType: hard
+
 "yargs@npm:^15.0.1":
   version: 15.4.1
   resolution: "yargs@npm:15.4.1"
@@ -16406,6 +16457,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 00d58a2c052937fa044834313f07910fd0a115dec5ee35919e857eeee3736b21a4eafa8264535800ba8bac312991ce785ecb8a51f4d2cc8c4676d865af1cfbde
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.5.1":
+  version: 17.6.2
+  resolution: "yargs@npm:17.6.2"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 47da1b0d854fa16d45a3ded57b716b013b2179022352a5f7467409da5a04a1eef5b3b3d97a2dfc13e8bbe5f2ffc0afe3bc6a4a72f8254e60f5a4bd7947138643
   languageName: node
   linkType: hard
 

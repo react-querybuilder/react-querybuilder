@@ -1,5 +1,6 @@
 import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 export default defineConfig(({ command }) => ({
@@ -26,7 +27,10 @@ export default defineConfig(({ command }) => ({
     },
     sourcemap: true,
   },
-  plugins: [vitePluginReact()],
+  plugins: [
+    vitePluginReact(),
+    visualizer({ filename: 'build-stats.html', gzipSize: true, title: 'Build stats' }),
+  ],
   server: {
     port: 3107,
   },
