@@ -14,13 +14,26 @@ import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from '.
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 
 interface AddOptions {
-  combinators: NameLabelPair[] | OptionGroup[];
+  /**
+   * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
+   * `independentCombinators`), then the first combinator in this list will be
+   * inserted before the new rule/group.
+   */
+  combinators?: NameLabelPair[] | OptionGroup[];
 }
+/**
+ * Adds a rule or group to a query.
+ * @param query The query to update
+ * @param ruleOrGroup The rule or group to add
+ * @param parentPath Path of the group to add to
+ * @param options
+ * @returns The full query with the new rule or group added
+ */
 export const add = <RG extends RuleGroupTypeAny>(
   query: RG,
   ruleOrGroup: RG | RuleType,
   parentPath: number[],
-  { combinators = defaultCombinators }: Partial<AddOptions> = {}
+  { combinators = defaultCombinators }: AddOptions = {}
 ) =>
   produce(query, draft => {
     const parent = findPath(parentPath, draft) as RG;
@@ -33,8 +46,8 @@ export const add = <RG extends RuleGroupTypeAny>(
       // are no combinators defined in the query yet.
       parent.rules.push(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore This is technically a type violation until the next push, but
-        // that happens immediately and unconditionally so there's no actual risk
+        // @ts-ignore This is technically a type violation until the next `.push()`,
+        // but that happens immediately and unconditionally so there's no actual risk.
         typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators)
       );
     }
@@ -42,12 +55,38 @@ export const add = <RG extends RuleGroupTypeAny>(
   });
 
 interface UpdateOptions {
-  resetOnFieldChange: boolean;
-  resetOnOperatorChange: boolean;
-  getRuleDefaultOperator: (field: string) => string;
-  getValueSources: (field: string, operator: string) => ValueSources;
-  getRuleDefaultValue: (rule: RuleType) => any;
+  /**
+   * When updating the `field` of a rule, the rule's `operator`, `value`, and `valueSource`
+   * will be reset to their respective defaults. Defaults to `true`.
+   */
+  resetOnFieldChange?: boolean;
+  /**
+   * When updating the `operator` of a rule, the rule's `value` and `valueSource`
+   * will be reset to their respective defaults. Defaults to `false`.
+   */
+  resetOnOperatorChange?: boolean;
+  /**
+   * Determines the default operator name for a given field.
+   */
+  getRuleDefaultOperator?: (field: string) => string;
+  /**
+   * Determines the valid value sources for a given field and operator.
+   */
+  getValueSources?: (field: string, operator: string) => ValueSources;
+  /**
+   * Gets the default value for a given rule, in case the value needs to be reset.
+   */
+  getRuleDefaultValue?: (rule: RuleType) => any;
 }
+/**
+ * Updates a property of a rule or group within a query.
+ * @param query The query to update
+ * @param prop The name of the property to update
+ * @param value The new value of the property
+ * @param path The path of the rule or group to update
+ * @param options
+ * @returns The updated query
+ */
 export const update = <RG extends RuleGroupTypeAny>(
   query: RG,
   prop: UpdateableProperties,
@@ -59,7 +98,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     getRuleDefaultOperator = () => '=',
     getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
-  }: Partial<UpdateOptions> = {}
+  }: UpdateOptions = {}
 ) =>
   produce(query, draft => {
     if (prop === 'combinator' && !('combinator' in draft)) {
@@ -123,6 +162,12 @@ export const update = <RG extends RuleGroupTypeAny>(
     }
   });
 
+/**
+ * Removes a rule or group from a query.
+ * @param query The query to update
+ * @param path Path of the rule or group to remove
+ * @returns The updated query
+ */
 export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) => {
   if (path.length === 0 || (!('combinator' in query) && !findPath(path, query))) {
     return query;
@@ -140,14 +185,31 @@ export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) =
 };
 
 interface MoveOptions {
-  clone: boolean;
-  combinators: NameLabelPair[] | OptionGroup[];
+  /**
+   * When `true`, the source rule/group will not be removed from its original path.
+   */
+  clone?: boolean;
+  /**
+   * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
+   * `independentCombinators`), then the first combinator in this list will be
+   * inserted before the rule/group if necessary.
+   */
+  combinators?: NameLabelPair[] | OptionGroup[];
 }
+/**
+ * Moves a rule or group from one path to another. In the options parameter, pass
+ * `{ clone: true }` to copy instead of move.
+ * @param query The query to update
+ * @param oldPath Original path of the rule or group to move
+ * @param newPath Path to move the rule or group to
+ * @param options
+ * @returns The updated query
+ */
 export const move = <RG extends RuleGroupTypeAny>(
   query: RG,
   oldPath: number[],
   newPath: number[],
-  { clone = false, combinators = defaultCombinators }: Partial<MoveOptions> = {}
+  { clone = false, combinators = defaultCombinators }: MoveOptions = {}
 ) => {
   if (pathsAreEqual(oldPath, newPath)) {
     return query;
