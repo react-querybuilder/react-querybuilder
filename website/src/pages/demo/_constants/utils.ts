@@ -194,10 +194,10 @@ ${
   options.enableDragAndDrop
     ? `import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import * as ReactDnD from 'react-dnd';
-import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';`
+import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+`
     : ''
-}
-import type { ${queryType} } from 'react-querybuilder';
+}import type { ${queryType} } from 'react-querybuilder';
 import {${
     options.validateQuery ? 'defaultValidator, ' : ''
   } QueryBuilder } from 'react-querybuilder';

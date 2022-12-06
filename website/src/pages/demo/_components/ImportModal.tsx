@@ -4,6 +4,8 @@ import React from 'react';
 import Modal from 'react-modal';
 import { getReactModalStyles } from '../_styles/getReactModalStyles';
 
+const bodyElement = document.body;
+
 interface ImportModalProps {
   heading: string;
   isOpen: boolean;
@@ -28,6 +30,7 @@ export default function ImportModal({
   const { colorMode } = useColorMode();
   return (
     <Modal
+      appElement={bodyElement}
       contentLabel={heading}
       isOpen={isOpen}
       onRequestClose={() => setIsOpen(false)}
@@ -41,9 +44,8 @@ export default function ImportModal({
       <textarea
         style={{ height: 160, minWidth: 690, width: '100%' }}
         spellCheck={false}
-        onChange={e => setCode(e.target.value)}>
-        {code}
-      </textarea>
+        value={code}
+        onChange={e => setCode(e.target.value)}></textarea>
       {notes && <p style={{ fontSize: 'smaller', margin: 'unset' }}>{notes}</p>}
       <div
         style={{

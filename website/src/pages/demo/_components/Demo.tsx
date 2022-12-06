@@ -429,12 +429,29 @@ export default function Demo({
         </div>
         <Tabs groupId="export-or-code">
           <TabItem value="export" label="Export">
-            <CodeBlock
-              language={getExportDisplayLanguage(format)}
-              title={`formatQuery(query, { format: '${format}'${
+            {/*
+            <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
+              <select value={format} onChange={e => setFormat(e.target.value as ExportFormat)}>
+                {formatMap.map(([fmt, lbl]) => (
+                  <option key={fmt} value={fmt}>
+                    {lbl}
+                  </option>
+                ))}
+              </select>
+              <Link
+                href={formatMap.find(([fmt]) => fmt === format)[2]}
+                title={`formatQuery(query, "${format}") (click for information)`}
+                style={{ textDecoration: 'none' }}>
+                {infoChar}
+              </Link>
+            </div>
+            */}
+            <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
+              <code>{`formatQuery(query, { format: '${format}'${
                 options.parseNumbers ? ', parseNumbers: true' : ''
-              } })`}
-              className={styles.wsPreWrap}>
+              } })`}</code>
+            </div>
+            <CodeBlock language={getExportDisplayLanguage(format)} className={styles.wsPreWrap}>
               {formatString}
             </CodeBlock>
           </TabItem>
