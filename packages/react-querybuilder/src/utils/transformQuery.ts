@@ -19,40 +19,53 @@ interface QueryTransformerOptions {
   /**
    * When a rule is encountered in the hierarchy, it will be replaced
    * with the result of this function.
+   *
+   * @default r => r
    */
   ruleProcessor?: (rule: RuleType) => any;
   /**
    * When a group is encountered in the hierarchy, it will be replaced
-   * with the result of this function.
+   * with the result of this function. Note that the `rules` property from
+   * the original group will be processed as normal and reapplied to the
+   * new group object.
+   *
+   * @default rg => rg
    */
-  ruleGroupProcessor?: (ruleGroup: RuleGroupTypeAny) => any;
+  ruleGroupProcessor?: (ruleGroup: RuleGroupTypeAny) => Record<string, any>;
   /**
-   * For each rule and group in the hierarchy, any properties matching a key
-   * in this object will be copied to a property with the corresponding value
-   * as its name.
+   * For each rule and group in the query, any properties matching a key
+   * in this object will be renamed to the corresponding value. To retain both
+   * the new _and_ the original properties, set `deleteRemappedProperties`
+   * to `false`.
+   *
+   * @default {}
    *
    * @example
    *   transformQuery(
-   *     { rules: [] },
-   *     { propertyMap: { rules: 'newRules' } }
+   *     { combinator: 'and', rules: [] },
+   *     { propertyMap: { combinator: 'AndOr' } }
    *   )
-   *   // Returns: { rules: [], newRules: [] }
+   *   // Returns: { AndOr: 'and', rules: [] }
    */
   propertyMap?: Record<string, string>;
   /**
    * Any combinator values (including independent combinators) will be translated
    * from the key in this object to the value.
    *
+   * @default {}
+   *
    * @example
    *   transformQuery(
    *     { combinator: 'and', rules: [] },
-   *     { combinatorMap: { and: 'AND' } }
+   *     { combinatorMap: { and: '&&', or: '||' } }
    *   )
-   *   // Returns: { combinator: 'AND', rules: [] }
+   *   // Returns: { combinator: '&&', rules: [] }
    */
   combinatorMap?: Record<string, string>;
   /**
    * Any operator values will be translated from the key in this object to the value.
+   *
+   * @default {}
    *
    * @example
    *   transformQuery(
@@ -69,18 +82,20 @@ interface QueryTransformerOptions {
   /**
    * Original properties remapped according to the `propertyMap` option will be removed.
    *
+   * @default true
+   *
    * @example
    *   transformQuery(
-   *     { rules: [] },
-   *     { propertyMap: { rules: 'newRules' }, deleteRemappedProperties: true }
+   *     { combinator: 'and', rules: [] },
+   *     { propertyMap: { combinator: 'AndOr' }, deleteRemappedProperties: false }
    *   )
-   *   // Returns: { newRules: [] }
+   *   // Returns: { combinator: 'and', AndOr: 'and', rules: [] }
    */
   deleteRemappedProperties?: boolean;
 }
 
 /**
- * A versatile utility function to recursively process a query heirarchy.
+ * Recursively process a query heirarchy with this versatile utility function.
  *
  * Documentation: https://react-querybuilder.js.org/docs/api/misc#transformquery
  *
