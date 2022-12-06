@@ -12,6 +12,23 @@ A non-comprehensive list of exports from `react-querybuilder`.
 
 ## Utilities
 
+### `transformQuery`
+
+```ts
+function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOptions): any;
+```
+
+This function recursively steps through a query object (`RuleGroupType` or `RuleGroupTypeIC`), passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
+
+- `ruleProcessor`: Custom processing for each rule.
+- `ruleGroupProcessor`: Custom processing for each rule group. (The `rules` property will be retained.)
+- `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
+- `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
+- `operatorMap`: Convert operators that match the keys in this object to the corresponding values, e.g. `{"=": "=="}`.
+- `deleteRemappedProperties`: Defaults to `true`; pass `false` to leave the remapped properties _and_ the original properties in the resulting object.
+
+See the [test suite](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/transformQuery.test.ts) for example usage.
+
 ### `defaultValidator`
 
 ```ts
@@ -44,26 +61,9 @@ function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 
 `convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in the directions indicated by their respective names.
 
-### `transformQuery`
-
-```ts
-function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOptions): any;
-```
-
-This function recursively steps through nested `rules` arrays in a `RuleGroupType` or `RuleGroupTypeIC`, passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
-
-- `ruleProcessor`: Custom processing for each rule.
-- `ruleGroupProcessor`: Custom processing for each rule group. (The `rules` property will be overwritten.)
-- `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
-- `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
-- `operatorMap`: Convert operators that match the keys in this object to the corresponding values, e.g. `{"=": "=="}`.
-- `deleteRemappedProperties`: Defaults to `true`; pass `false` to leave the remapped properties _and_ the original properties in the resulting object.
-
-See the [test suite](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/transformQuery.test.ts) for example usage.
-
 ## Query tools
 
-Several methods are available to assist with manipulation of query objects outside the context of the `<QueryBuilder />` component:
+Several methods are available to assist with manipulation of query objects outside the context of the `<QueryBuilder />` component. Each of these methods returns the modified query.
 
 - `add` - adds a rule or group (and an independent combinator if necessary to keep the query valid)
 - `remove` - removes a rule or group (and the previous independent combinator if one exists)
