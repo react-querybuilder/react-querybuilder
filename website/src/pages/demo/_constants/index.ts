@@ -227,5 +227,3 @@ export const styleNameMap: Record<StyleName, string> = {
 const { default: _d, ...compatStyles } = styleNameMap;
 
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
-
-export { fields, fieldsTsString } from './fields';

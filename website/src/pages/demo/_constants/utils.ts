@@ -1,3 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
 import { Buffer } from 'buffer';
 import pako from 'pako';
 import parserPostCSS from 'prettier/esm/parser-postcss.mjs';
@@ -258,3 +264,15 @@ export const getExtraStyles = (justifiedLayout?: boolean) => {
         { filepath: 'styles.scss', plugins: [parserPostCSS] }
       );
 };
+
+export const fieldsTsString = prettier.format(fieldsCode, {
+  filepath: 'fields.ts',
+  plugins: [parserTypeScript],
+  singleQuote: true,
+});
+
+export const musicalInstrumentsTsString = prettier.format(musicalInstrumentsCode, {
+  filepath: 'musicalInstrumentsCode.ts',
+  plugins: [parserTypeScript],
+  singleQuote: true,
+});

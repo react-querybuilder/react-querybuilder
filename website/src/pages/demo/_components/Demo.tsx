@@ -2,6 +2,7 @@ import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
+import Details from '@theme/Details';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 import { clsx } from 'clsx';
@@ -21,22 +22,23 @@ import {
 } from 'react-querybuilder';
 import {
   defaultOptions,
-  fields,
-  fieldsTsString,
   formatMap,
   initialQuery as defaultInitialQuery,
   initialQueryIC as defaultInitialQueryIC,
   optionOrderByLabel,
   optionsMetadata,
 } from '../_constants';
+import { fields } from '../_constants/fields';
 import type { CommonRQBProps, StyleName } from '../_constants/types';
 import {
+  fieldsTsString,
   getCodeString,
   getExportDisplayLanguage,
   getExtraStyles,
   getFormatQueryString,
   getHashFromState,
   getStateFromHash,
+  musicalInstrumentsTsString,
   optionsReducer,
 } from '../_constants/utils';
 import styles from './Demo.module.css';
@@ -464,9 +466,14 @@ export default function Demo({
                 {extraStylesString}
               </CodeBlock>
             )}
-            <CodeBlock language="ts" title="fields.ts">
-              {fieldsTsString}
-            </CodeBlock>
+            <Details summary={<summary>Other files</summary>}>
+              <CodeBlock language="ts" title="fields.ts">
+                {fieldsTsString}
+              </CodeBlock>
+              <CodeBlock language="ts" title="musicalInstruments.ts">
+                {musicalInstrumentsTsString}
+              </CodeBlock>
+            </Details>
           </TabItem>
         </Tabs>
       </div>

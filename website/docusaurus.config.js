@@ -39,6 +39,13 @@ const config = {
         ],
       },
     ],
+    () => ({
+      // This is not actually used, only here just in case
+      name: 'rqb-wp5-raw-loader',
+      configureWebpack: () => ({
+        module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
+      }),
+    }),
   ],
   presets: [
     [
