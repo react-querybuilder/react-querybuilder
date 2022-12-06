@@ -1,9 +1,6 @@
-import type { ExportFormat, Field, RuleGroupType, RuleType } from 'react-querybuilder';
-import { convertToIC, defaultOperators, objectKeys } from 'react-querybuilder';
-import { musicalInstruments } from './musicalInstruments';
+import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
+import { convertToIC, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
-
-export const validator = (r: RuleType) => !!r.value;
 
 export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,
@@ -145,91 +142,6 @@ export const optionOrderByLabel = optionOrder.sort((a, b) =>
   optionsMetadata[a].label.localeCompare(optionsMetadata[b].label)
 );
 
-export const fields: Field[] = [
-  {
-    name: 'firstName',
-    label: 'First Name',
-    placeholder: 'Enter first name',
-    validator,
-  },
-  {
-    name: 'lastName',
-    label: 'Last Name',
-    placeholder: 'Enter last name',
-    defaultOperator: 'beginsWith',
-    validator,
-  },
-  { name: 'age', label: 'Age', inputType: 'number', validator },
-  {
-    name: 'isMusician',
-    label: 'Is a musician',
-    valueEditorType: 'checkbox',
-    operators: defaultOperators.filter(op => op.name === '='),
-    defaultValue: false,
-  },
-  {
-    name: 'instrument',
-    label: 'Primary instrument',
-    valueEditorType: 'select',
-    values: musicalInstruments,
-    defaultValue: 'Piano',
-    operators: defaultOperators.filter(op => op.name === '=' || op.name === 'in'),
-  },
-  {
-    name: 'alsoPlaysInstruments',
-    label: 'Also plays instruments',
-    valueEditorType: 'multiselect',
-    values: musicalInstruments,
-    defaultValue: 'Guitar',
-    operators: defaultOperators.filter(op => op.name === 'in'),
-  },
-  {
-    name: 'gender',
-    label: 'Gender',
-    operators: defaultOperators.filter(op => op.name === '='),
-    valueEditorType: 'radio',
-    values: [
-      { name: 'M', label: 'Male' },
-      { name: 'F', label: 'Female' },
-      { name: 'O', label: 'Other' },
-    ],
-  },
-  { name: 'height', label: 'Height', validator },
-  { name: 'job', label: 'Job', validator },
-  { name: 'description', label: 'Description', valueEditorType: 'textarea' },
-  { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
-  { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
-  { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
-  {
-    name: 'groupedField1',
-    label: 'Grouped Field 1',
-    comparator: 'group',
-    group: 'group1',
-    valueSources: ['field', 'value'],
-  },
-  {
-    name: 'groupedField2',
-    label: 'Grouped Field 2',
-    comparator: 'group',
-    group: 'group1',
-    valueSources: ['field', 'value'],
-  },
-  {
-    name: 'groupedField3',
-    label: 'Grouped Field 3',
-    comparator: 'group',
-    group: 'group1',
-    valueSources: ['field', 'value'],
-  },
-  {
-    name: 'groupedField4',
-    label: 'Grouped Field 4',
-    comparator: 'group',
-    group: 'group1',
-    valueSources: ['field', 'value'],
-  },
-];
-
 export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
 export const emptyQueryIC = convertToIC(emptyQuery);
 
@@ -315,3 +227,5 @@ export const styleNameMap: Record<StyleName, string> = {
 const { default: _d, ...compatStyles } = styleNameMap;
 
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
+
+export { fields, fieldsTsString } from './fields';

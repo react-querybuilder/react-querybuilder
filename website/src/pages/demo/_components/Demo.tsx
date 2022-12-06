@@ -1,6 +1,9 @@
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -19,6 +22,7 @@ import {
 import {
   defaultOptions,
   fields,
+  fieldsTsString,
   formatMap,
   initialQuery as defaultInitialQuery,
   initialQueryIC as defaultInitialQueryIC,
@@ -27,6 +31,9 @@ import {
 } from '../_constants';
 import type { CommonRQBProps, StyleName } from '../_constants/types';
 import {
+  getCodeString,
+  getExportDisplayLanguage,
+  getExtraStyles,
   getFormatQueryString,
   getHashFromState,
   getStateFromHash,
@@ -168,6 +175,12 @@ export default function Demo({
   );
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
+
+  const codeString = useMemo(() => getCodeString(options, variant), [options, variant]);
+  const extraStylesString = useMemo(
+    () => getExtraStyles(options.justifiedLayout),
+    [options.justifiedLayout]
+  );
 
   const loadFromSQL = () => {
     try {
@@ -414,7 +427,31 @@ export default function Demo({
             </QueryBuilderDnD>
           </QueryWrapper>
         </div>
-        <pre style={{ whiteSpace: 'pre-wrap' }}>{formatString}</pre>
+        <Tabs groupId="export-or-code">
+          <TabItem value="export" label="Export">
+            <CodeBlock
+              language={getExportDisplayLanguage(format)}
+              title={`formatQuery(query, { format: '${format}'${
+                options.parseNumbers ? ', parseNumbers: true' : ''
+              } })`}
+              className={styles.wsPreWrap}>
+              {formatString}
+            </CodeBlock>
+          </TabItem>
+          <TabItem value="code" label="Code">
+            <CodeBlock language="tsx" title="App.tsx">
+              {codeString}
+            </CodeBlock>
+            {extraStylesString && (
+              <CodeBlock language="scss" title="styles.scss">
+                {extraStylesString}
+              </CodeBlock>
+            )}
+            <CodeBlock language="ts" title="fields.ts">
+              {fieldsTsString}
+            </CodeBlock>
+          </TabItem>
+        </Tabs>
       </div>
       <ImportModal
         heading="Import SQL"

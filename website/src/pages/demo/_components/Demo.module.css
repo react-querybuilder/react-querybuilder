@@ -28,3 +28,7 @@
   flex-direction: column;
   gap: var(--ifm-global-spacing);
 }
+
+.wsPreWrap code {
+  white-space: pre-wrap;
+}
