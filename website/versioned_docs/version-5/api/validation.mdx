@@ -3,6 +3,7 @@ title: Validation
 description: Query validation methods and configuration
 ---
 
+import { DemoLink } from '@site/src/components/DemoLink';
 import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
@@ -111,7 +112,7 @@ If you provide a query- or field-level validator function then the wrapper `<div
 
 :::tip See it in action
 
-In the [demo](/demo#validateQuery=true), check the "Use validation" option and create an empty group or a text input without a value. Empty groups will show a message where the rules usually appear (using the `:after` pseudo-selector), and text fields without values will have a [purple](https://meyerweb.com/eric/thoughts/2014/06/19/rebeccapurple/) background.
+In the <DemoLink option="validateQuery" text="demo" />, check the "Use validation" option and create an empty group or a text input without a value. Empty groups will show a message where the rules usually appear (using the `:after` pseudo-selector), and text fields without values will have a [purple](https://meyerweb.com/eric/thoughts/2014/06/19/rebeccapurple/) background.
 
 :::
 
