@@ -29,6 +29,12 @@
   gap: var(--ifm-global-spacing);
 }
 
+.exportOptions {
+  display: flex;
+  gap: var(--ifm-global-spacing);
+  margin-bottom: var(--ifm-heading-margin-bottom);
+}
+
 .wsPreWrap code {
   white-space: pre-wrap;
 }

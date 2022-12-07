@@ -7,6 +7,7 @@ import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
+import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
@@ -99,6 +100,43 @@ const notesJsonLogic = (
 
 const defaultQueryWrapper = (props: { children: React.ReactNode }) => <>{props.children}</>;
 
+const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
+  const formatInfo = formatMap.find(([fmt]) => fmt === format);
+  return (
+    <>
+      <Link href={`/docs/api/export#${formatInfo[3]}`}>Documentation</Link>
+      <Link href={formatInfo[2]}>Format info</Link>
+    </>
+  );
+};
+
+const { label: pnlabel, link: pnlink, title: pntitle } = optionsMetadata.parseNumbers;
+const ParseNumbersOption = ({
+  checked,
+  setter,
+}: {
+  checked: boolean;
+  setter: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  return (
+    <>
+      <span>&nbsp;</span>
+      <div className={styles.demoOption}>
+        <label title={pntitle}>
+          <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
+          {` ${pnlabel} `}
+          <Link
+            href={`${pnlink}`}
+            title="Click for documentation"
+            style={{ textDecoration: 'none' }}>
+            {infoChar}
+          </Link>
+        </label>
+      </div>
+    </>
+  );
+};
+
 export default function Demo({
   variant = 'default',
   queryWrapper: QueryWrapper = defaultQueryWrapper,
@@ -156,6 +194,7 @@ export default function Demo({
     () =>
       optionOrderByLabel.map(opt => ({
         ...optionsMetadata[opt],
+        name: opt,
         default: defaultOptions[opt],
         checked: options[opt],
         setter: (v: boolean) =>
@@ -182,6 +221,52 @@ export default function Demo({
   const extraStylesString = useMemo(
     () => getExtraStyles(options.justifiedLayout),
     [options.justifiedLayout]
+  );
+
+  const getExportTabAttributes = useCallback(
+    (fmt: ExportFormat, others: ExportFormat[] = []) => {
+      let func = () => setFormat(fmt);
+      if (others.length > 0) {
+        func = () => {
+          if (format === fmt || others.includes(format)) {
+            return;
+          }
+          setFormat(fmt);
+        };
+      }
+      return {
+        onMouseUp: func,
+        onKeyUp: (e: KeyboardEvent<HTMLLIElement>) => {
+          if (e.key === 'Enter') {
+            func();
+          }
+        },
+      };
+    },
+    [format]
+  );
+
+  const exportPresentation = useMemo(
+    () => (
+      <>
+        <h4>Call</h4>
+        <CodeBlock>
+          {`formatQuery(query, ${
+            options.parseNumbers ? `{ format: '${format}', parseNumbers: true }` : `'${format}'`
+          })`}
+        </CodeBlock>
+        <h4>Return</h4>
+        <CodeBlock language={getExportDisplayLanguage(format)} className={styles.wsPreWrap}>
+          {formatString}
+        </CodeBlock>
+      </>
+    ),
+    [format, formatString, options.parseNumbers]
+  );
+
+  const { setter: pnSetter } = useMemo(
+    () => optionsInfo.find(opt => opt.name === 'parseNumbers'),
+    [optionsInfo]
   );
 
   const loadFromSQL = () => {
@@ -295,26 +380,32 @@ export default function Demo({
           </Link>
         </h3>
         <div>
-          {optionsInfo.map(({ checked, label, link, setter, title }) => (
-            <div key={label} className={styles.demoOption}>
-              <label>
-                <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
-                {label}
-              </label>
-              {link ? (
-                <Link
-                  href={`${link}`}
-                  title={`${title} (click for documentation)`}
-                  style={{ textDecoration: 'none' }}>
-                  {infoChar}
-                </Link>
-              ) : (
-                <span title={title} style={{ cursor: 'pointer' }}>
-                  {infoChar}
-                </span>
-              )}
-            </div>
-          ))}
+          {optionsInfo
+            .filter(opt => opt.name !== 'parseNumbers')
+            .map(({ checked, label, link, setter, title }) => (
+              <div key={label} className={styles.demoOption}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={e => setter(e.target.checked)}
+                  />
+                  {` ${label}`}
+                </label>
+                {link ? (
+                  <Link
+                    href={`${link}`}
+                    title={`${title} (click for documentation)`}
+                    style={{ textDecoration: 'none' }}>
+                    {infoChar}
+                  </Link>
+                ) : (
+                  <span title={title} style={{ cursor: 'pointer' }}>
+                    {infoChar}
+                  </span>
+                )}
+              </div>
+            ))}
         </div>
         <div className={styles.demoOptionCommands}>
           <div title="Reset the options above to their default values">
@@ -336,37 +427,6 @@ export default function Demo({
               {copyPermalinkText}
             </button>
           </div>
-        </div>
-        <h3>
-          <Link
-            href={'/docs/api/export'}
-            title={'The export format of the formatQuery function (click for documentation)'}
-            className={styles.demoSidebarHeader}>
-            <span>Export</span>
-            <span>{infoChar}</span>
-          </Link>
-        </h3>
-        <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
-          {formatMap.map(([fmt, lbl, lnk]) => (
-            <div
-              key={fmt}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-              }}>
-              <label>
-                <input type="radio" checked={format === fmt} onChange={() => setFormat(fmt)} />
-                {lbl}
-              </label>
-              <Link
-                href={lnk}
-                title={`formatQuery(query, "${fmt}") (click for information)`}
-                style={{ textDecoration: 'none' }}>
-                {infoChar}
-              </Link>
-            </div>
-          ))}
         </div>
         <h3>
           <Link
@@ -429,34 +489,29 @@ export default function Demo({
             </QueryBuilderDnD>
           </QueryWrapper>
         </div>
-        <Tabs groupId="export-or-code">
-          <TabItem value="export" label="Export">
-            {/*
-            <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
-              <select value={format} onChange={e => setFormat(e.target.value as ExportFormat)}>
-                {formatMap.map(([fmt, lbl]) => (
-                  <option key={fmt} value={fmt}>
-                    {lbl}
-                  </option>
-                ))}
-              </select>
-              <Link
-                href={formatMap.find(([fmt]) => fmt === format)[2]}
-                title={`formatQuery(query, "${format}") (click for information)`}
-                style={{ textDecoration: 'none' }}>
-                {infoChar}
-              </Link>
-            </div>
-            */}
-            <div style={{ marginBottom: 'var(--ifm-heading-margin-bottom)' }}>
-              <code>{`formatQuery(query, { format: '${format}'${
-                options.parseNumbers ? ', parseNumbers: true' : ''
-              } })`}</code>
-            </div>
-            <CodeBlock language={getExportDisplayLanguage(format)} className={styles.wsPreWrap}>
-              {formatString}
-            </CodeBlock>
-          </TabItem>
+        <Tabs
+          defaultValue="code"
+          values={[
+            { value: 'code', label: 'Code' },
+            {
+              value: 'sql',
+              label: 'SQL',
+              attributes: getExportTabAttributes('sql', ['parameterized', 'parameterized_named']),
+            },
+            {
+              value: 'json',
+              label: 'JSON',
+              attributes: getExportTabAttributes('json_without_ids', ['json']),
+            },
+            { value: 'mongodb', label: 'MongoDB', attributes: getExportTabAttributes('mongodb') },
+            { value: 'cel', label: 'CEL', attributes: getExportTabAttributes('cel') },
+            { value: 'spel', label: 'SpEL', attributes: getExportTabAttributes('spel') },
+            {
+              value: 'jsonlogic',
+              label: 'JsonLogic',
+              attributes: getExportTabAttributes('jsonlogic'),
+            },
+          ]}>
           <TabItem value="code" label="Code">
             <CodeBlock language="tsx" title="App.tsx">
               {codeString}
@@ -474,6 +529,86 @@ export default function Demo({
                 {musicalInstrumentsTsString}
               </CodeBlock>
             </Details>
+          </TabItem>
+          <TabItem value="json">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="json" />
+              <span>&nbsp;</span>
+              <label key={'json_without_ids'}>
+                <input
+                  type="radio"
+                  checked={'json_without_ids' === format}
+                  onChange={() => setFormat('json_without_ids')}
+                />{' '}
+                Essential properties only
+              </label>
+              <label key={'json'}>
+                <input
+                  type="radio"
+                  checked={format === 'json'}
+                  onChange={() => setFormat('json')}
+                />{' '}
+                Full query object
+              </label>
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="sql">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="sql" />
+              <span>&nbsp;</span>
+              <label key={'sql'}>
+                <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />{' '}
+                Inline
+              </label>
+              <label key={'parameterized'}>
+                <input
+                  type="radio"
+                  checked={'parameterized' === format}
+                  onChange={() => setFormat('parameterized')}
+                />{' '}
+                Parameterized
+              </label>
+              <label key={'parameterized_named'}>
+                <input
+                  type="radio"
+                  checked={'parameterized_named' === format}
+                  onChange={() => setFormat('parameterized_named')}
+                />{' '}
+                Named parameters
+              </label>
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="mongodb">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="mongodb" />
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="cel">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="cel" />
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="spel">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="spel" />
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="jsonlogic">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="jsonlogic" />
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
           </TabItem>
         </Tabs>
       </div>

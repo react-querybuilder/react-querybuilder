@@ -180,7 +180,6 @@ export const getCodeString = (options: DemoOptions, style?: StyleName) => {
     getPropText('autoSelectOperator'),
     getPropText('debugMode'),
     getPropText('disabled'),
-    getPropText('enableDragAndDrop'),
     getPropText('independentCombinators'),
     getPropText('listsAsArrays'),
     getPropText('resetOnFieldChange'),

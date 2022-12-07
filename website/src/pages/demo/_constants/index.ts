@@ -127,7 +127,7 @@ export const optionsMetadata: Record<
     title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
   parseNumbers: {
-    link: '/docs/api/export#parsing-numbers',
+    link: '/docs/api/export#parse-numbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values',
   },
@@ -203,16 +203,16 @@ export const initialQuery: RuleGroupType = {
 export const initialQueryIC = convertToIC(initialQuery);
 
 // prettier-ignore
-export const formatMap: [ExportFormat, string, HttpsURL][] = [
-  ['sql', 'SQL', 'https://en.wikipedia.org/wiki/SQL'],
-  ['parameterized', 'SQL (parameterized)', 'https://en.wikipedia.org/wiki/SQL'],
-  ['parameterized_named', 'SQL (named parameters)', 'https://en.wikipedia.org/wiki/SQL'],
-  ['json_without_ids', 'JSON (no identifiers)', 'https://en.wikipedia.org/wiki/JSON'],
-  ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON'],
-  ['mongodb', 'MongoDB', 'https://www.mongodb.com/'],
-  ['cel', 'CEL', 'https://github.com/google/cel-spec'],
-  ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref'],
-  ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
+export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
+  ['sql', 'SQL', 'https://en.wikipedia.org/wiki/SQL', 'sql'],
+  ['parameterized', 'SQL (parameterized)', 'https://en.wikipedia.org/wiki/SQL', 'parameterized-sql'],
+  ['parameterized_named', 'SQL (named parameters)', 'https://en.wikipedia.org/wiki/SQL', 'named-parameters'],
+  ['json_without_ids', 'JSON (no identifiers)', 'https://en.wikipedia.org/wiki/JSON', 'json-without-identifiers'],
+  ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON', 'json'],
+  ['mongodb', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
+  ['cel', 'CEL', 'https://github.com/google/cel-spec', 'common-expression-language'],
+  ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref', 'spring-expression-language'],
+  ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
 ];
 
 export const styleNameMap: Record<StyleName, string> = {

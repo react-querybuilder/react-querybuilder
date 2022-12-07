@@ -135,7 +135,7 @@ export const optionsMetadata: Record<
     title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
   parseNumbers: {
-    link: '/docs/api/export#parsing-numbers',
+    link: '/docs/api/export#parse-numbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values',
   },

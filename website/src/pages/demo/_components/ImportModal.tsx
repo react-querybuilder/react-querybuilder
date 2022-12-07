@@ -1,7 +1,8 @@
 import { useColorMode } from '@docusaurus/theme-common';
 import type { ReactNode } from 'react';
-import React from 'react';
+import React, { Fragment } from 'react';
 import Modal from 'react-modal';
+import { fields } from '../_constants/fields';
 import { getReactModalStyles } from '../_styles/getReactModalStyles';
 
 const bodyElement = document.body;
@@ -16,6 +17,17 @@ interface ImportModalProps {
   loadQueryFromCode: () => void;
   notes: ReactNode;
 }
+
+const fieldList = (
+  <div>
+    {fields.map((f, i) => (
+      <Fragment key={i}>
+        {i > 0 ? ', ' : ''}
+        <code key={f.name}>{f.name}</code>
+      </Fragment>
+    ))}
+  </div>
+);
 
 export default function ImportModal({
   heading,
@@ -61,6 +73,10 @@ export default function ImportModal({
         </button>
       </div>
       {!!error && <pre>{error}</pre>}
+      <details>
+        <summary style={{ cursor: 'pointer' }}>Available fields</summary>
+        {fieldList}
+      </details>
     </Modal>
   );
 }
