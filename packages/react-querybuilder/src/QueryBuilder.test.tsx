@@ -1891,7 +1891,7 @@ describe('debug mode', () => {
 describe('controlled/uncontrolled warnings', () => {
   it('tracks changes from controlled to uncontrolled and vice versa', () => {
     const getQuery = (): RuleGroupType => ({
-      combinator: `${Math.random()}`,
+      combinator: crypto.randomUUID(),
       rules: [],
     });
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);

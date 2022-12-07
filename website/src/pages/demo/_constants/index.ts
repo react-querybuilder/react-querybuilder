@@ -146,40 +146,40 @@ export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
 export const emptyQueryIC = convertToIC(emptyQuery);
 
 export const initialQuery: RuleGroupType = {
-  id: `${Math.random()}`,
+  id: crypto.randomUUID(),
   combinator: 'and',
   not: false,
   rules: [
     {
-      id: `${Math.random()}`,
+      id: crypto.randomUUID(),
       field: 'firstName',
       value: 'Stev',
       operator: 'beginsWith',
     },
     {
-      id: `${Math.random()}`,
+      id: crypto.randomUUID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
       operator: 'in',
     },
     {
-      id: `${Math.random()}`,
+      id: crypto.randomUUID(),
       field: 'age',
       operator: '>',
       value: '28',
     },
     {
-      id: `${Math.random()}`,
+      id: crypto.randomUUID(),
       combinator: 'or',
       rules: [
         {
-          id: `${Math.random()}`,
+          id: crypto.randomUUID(),
           field: 'isMusician',
           operator: '=',
           value: true,
         },
         {
-          id: `${Math.random()}`,
+          id: crypto.randomUUID(),
           field: 'instrument',
           operator: '=',
           value: 'Guitar',

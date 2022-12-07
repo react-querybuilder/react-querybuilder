@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import type { NotToggleProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef } from 'react';
-import { useRef } from 'react';
+import { useId } from 'react';
 
 type ChakraNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
 
@@ -19,7 +19,7 @@ export const ChakraNotToggle = ({
   testID: _testID,
   ...extraProps
 }: ChakraNotToggleProps) => {
-  const id = useRef(`notToggle-${Math.random()}`);
+  const id = useId();
 
   return (
     <div style={{ display: 'inline-block' }}>
@@ -30,7 +30,7 @@ export const ChakraNotToggle = ({
         title={title}
         isDisabled={disabled}>
         <Switch
-          id={id.current}
+          id={id}
           size="sm"
           colorScheme="red"
           isChecked={checked}
@@ -38,7 +38,7 @@ export const ChakraNotToggle = ({
           onChange={e => handleOnChange(e.target.checked)}
           {...extraProps}
         />
-        <FormLabel htmlFor={id.current}>{label}</FormLabel>
+        <FormLabel htmlFor={id}>{label}</FormLabel>
       </FormControl>
     </div>
   );

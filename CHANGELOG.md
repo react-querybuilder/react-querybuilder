@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+- `generateID` now calls `crypto.randomUUID()` instead of `Math.random().toString()`.
 
 ## [v5.2.0] - 2022-11-26
 
