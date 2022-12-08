@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- `generateID` now calls `crypto.randomUUID()` instead of `Math.random().toString()`.
+### Changed
+
+- `id`'s are now generated using `crypto.randomUUID()` instead of `Math.random().toString()`.
+
+### Fixed
+
+- [#411](https://github.com/react-querybuilder/react-querybuilder/issues/411) When `showCombinatorsBetweenRules` is enabled, a combinator selector immediately above a locked rule/group will no longer be locked unless the group it belongs to is locked.
 
 ## [v5.2.0] - 2022-11-26
 

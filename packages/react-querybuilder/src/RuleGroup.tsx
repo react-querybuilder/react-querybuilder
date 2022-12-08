@@ -345,7 +345,7 @@ export const RuleGroup = ({
                   validation={validationResult}
                   component={CombinatorSelectorControlElement}
                   path={thisPath}
-                  disabled={thisPathDisabled}
+                  disabled={disabled}
                   independentCombinators={independentCombinators}
                 />
               )}
