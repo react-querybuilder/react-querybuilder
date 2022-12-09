@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [#411](https://github.com/react-querybuilder/react-querybuilder/issues/411) When `showCombinatorsBetweenRules` is enabled, a combinator selector immediately above a locked rule/group will no longer be locked unless the group it belongs to is locked.
 
+### Added
+
+- [#408](https://github.com/react-querybuilder/react-querybuilder/issues/408) The interfaces `NameLabelPair`, `Field`, and `ValueEditorProps` now accept generics for `name` and other properties.
+
 ## [v5.2.0] - 2022-11-26
 
 ### Added
