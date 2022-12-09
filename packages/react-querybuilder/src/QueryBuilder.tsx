@@ -535,7 +535,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   };
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    if (pathIsDisabled(oldPath, query) || pathIsDisabled(newPath, query) || queryDisabled) {
+    if (pathIsDisabled(oldPath, query) || queryDisabled) {
       // istanbul ignore else
       if (debugMode) {
         onLog({ type: LogType.pathDisabled, oldPath, newPath, query });

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [#407](https://github.com/react-querybuilder/react-querybuilder/issues/407) Drag-and-drop will now allow drops on locked rules (which places the dragged rule/group below the drop target) and above locked rules/groups.
 - [#411](https://github.com/react-querybuilder/react-querybuilder/issues/411) When `showCombinatorsBetweenRules` is enabled, a combinator selector immediately above a locked rule/group will no longer be locked unless the group it belongs to is locked.
 
 ### Added

@@ -49,7 +49,6 @@ export const useRuleDnD = ({
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: item => {
-        if (disabled) return false;
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
         const hoverIndex = path[path.length - 1];
