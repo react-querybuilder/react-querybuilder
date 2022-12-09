@@ -139,7 +139,7 @@ describe('enableDragAndDrop', () => {
     expect(moveRule).not.toHaveBeenCalled();
   });
 
-  it('should not try to update query if disabled', () => {
+  it('should allow drops even if disabled', () => {
     const moveRule = jest.fn();
     render(
       <div>
@@ -153,23 +153,6 @@ describe('enableDragAndDrop', () => {
       getHandlerId(rules[1], 'drop'),
       getDndBackend()
     );
-    expect(moveRule).not.toHaveBeenCalled();
-  });
-
-  it('prevents drops when locked', () => {
-    const moveRule = jest.fn();
-    render(
-      <div>
-        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} disabled />
-        <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[1]} />
-      </div>
-    );
-    const rules = screen.getAllByTestId(TestID.rule);
-    simulateDragDrop(
-      getHandlerId(rules[1], 'drag'),
-      getHandlerId(rules[0], 'drop'),
-      getDndBackend()
-    );
-    expect(moveRule).not.toHaveBeenCalled();
+    expect(moveRule).toHaveBeenCalledWith([0], [2], false);
   });
 });
