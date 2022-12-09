@@ -28,8 +28,8 @@ export type OptionGroup<Opt extends NameLabelPair = NameLabelPair> = {
 export interface Field<
   FieldName extends string = string,
   OperatorName extends string = string,
-  OperatorObj extends NameLabelPair = NameLabelPair<OperatorName>,
   ValueName extends string = string,
+  OperatorObj extends NameLabelPair = NameLabelPair<OperatorName>,
   ValueObj extends NameLabelPair = NameLabelPair<ValueName>
   > extends NameLabelPair<FieldName> {
   id?: string;
