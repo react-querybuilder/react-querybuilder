@@ -24,10 +24,10 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Tips & Tricks',
+      label: 'Tips & tricks',
       link: {
         type: 'generated-index',
-        title: 'Tips & Tricks',
+        title: 'Tips & tricks',
         description: 'Miscellaneous advice and advanced configurations.',
       },
       items: [
