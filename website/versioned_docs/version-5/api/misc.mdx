@@ -64,14 +64,79 @@ function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 
 ## Query tools
 
-Several methods are available to assist with manipulation of query objects outside the context of the `<QueryBuilder />` component. Each of these methods returns the modified query.
+Several methods are available to assist with programmatic manipulation of query objects. These methods are used by the `<QueryBuilder />` component itself, so they are guaranteed to achieve the same result as a corresponding UI-based update. Each of these methods returns the modified query.
 
-- `add` - adds a rule or group (and an independent combinator if necessary to keep the query valid)
-- `remove` - removes a rule or group (and the previous independent combinator if one exists)
-- `update` - updates a property of a rule or group, or updates an independent combinator
-- `move` - moves (or clones, with new `id` and `path`) a rule or group to a new location in the query tree
+Check out the ["External controls" Tips & Tricks page](../tips/external-controls) to see these methods used outside the context of the `<QueryBuilder />` component.
 
-These methods are used by the `<QueryBuilder />` component itself, so they are guaranteed to achieve the same result as a corresponding UI-based update.
+### `add`
+
+`(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, path: number[], options: AddOptions) => RuleGroupTypeAny`
+
+Adds a rule or group (and an independent combinator if necessary, to keep the query valid).
+
+<details>
+  <summary><code>AddOptions</code></summary>
+
+```ts
+interface AddOptions {
+  /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
+  combinators?: NameLabelPair[] | OptionGroup[];
+}
+```
+
+</details>
+
+### `remove`
+
+`(query: RuleGroupTypeAny, path: number[]) => RuleGroupTypeAny`
+
+Removes a rule or group (and the preceding independent combinator, if one exists).
+
+### `update`
+
+`(query: RuleGroupTypeAny, prop: string, value: any, path: number[], options: UpdateOptions) => RuleGroupTypeAny`
+
+Updates a property of a rule or group, or updates an independent combinator.
+
+<details>
+  <summary><code>UpdateOptions</code></summary>
+
+```ts
+interface UpdateOptions {
+  /** Resets `operator` and `value` when `field` changes. Default is `true`. */
+  resetOnFieldChange?: boolean;
+  /** Resets `value` when `operator` changes. Default is `false`. */
+  resetOnOperatorChange?: boolean;
+  /** Determines the default operator name for a given field. */
+  getRuleDefaultOperator?: (field: string) => string;
+  /** Determines the valid value sources for a given field and operator. */
+  getValueSources?: (field: string, operator: string) => ValueSources;
+  /** Used when the `value` property is reset (see `resetOn*Change` options). */
+  getRuleDefaultValue?: (rule: RuleType) => any;
+}
+```
+
+</details>
+
+### `move`
+
+`(query: RuleGroupTypeAny, oldPath: number[], newPath: number[], options: MoveOptions) => RuleGroupTypeAny`
+
+Moves (or clones, with a new `id`) a rule or group to a new location in the query tree.
+
+<details>
+  <summary><code>MoveOptions</code></summary>
+
+```ts
+interface MoveOptions {
+  /** Copy the source rule/group instead of move. Default is `false`. */
+  clone?: boolean;
+  /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
+  combinators?: NameLabelPair[] | OptionGroup[];
+}
+```
+
+</details>
 
 ## Defaults
 

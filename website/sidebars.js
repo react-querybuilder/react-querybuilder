@@ -34,6 +34,7 @@ const sidebars = {
         'tips/managing-operators',
         'tips/limit-groups',
         'tips/custom-with-fallback',
+        'tips/external-controls',
         'tips/custom-bind-variables',
         'tips/adding-removing-query-properties',
         'tips/common-mistakes',
