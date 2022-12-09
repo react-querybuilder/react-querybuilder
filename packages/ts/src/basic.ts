@@ -14,8 +14,8 @@ export type ValueEditorType =
 
 export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
-export interface NameLabelPair {
-  name: string;
+export interface NameLabelPair<N extends string = string> {
+  name: N;
   label: string;
   [x: string]: any;
 }
@@ -25,13 +25,19 @@ export type OptionGroup<Opt extends NameLabelPair = NameLabelPair> = {
   options: Opt[];
 };
 
-export interface Field extends NameLabelPair {
+export interface Field<
+  FieldName extends string = string,
+  OperatorName extends string = string,
+  ValueName extends string = string,
+  OperatorObj extends NameLabelPair = NameLabelPair<OperatorName>,
+  ValueObj extends NameLabelPair = NameLabelPair<ValueName>
+  > extends NameLabelPair<FieldName> {
   id?: string;
-  operators?: NameLabelPair[] | OptionGroup[];
+  operators?: OperatorObj[] | OptionGroup<OperatorObj>[];
   valueEditorType?: ValueEditorType | ((operator: string) => ValueEditorType);
   valueSources?: ValueSources | ((operator: string) => ValueSources);
   inputType?: string | null;
-  values?: NameLabelPair[] | OptionGroup[];
+  values?: ValueObj[] | OptionGroup<ValueObj>[];
   defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
