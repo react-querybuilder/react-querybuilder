@@ -26,20 +26,20 @@
   },
   "devDependencies": {
     "@chakra-ui/icons": "^2.0.13",
-    "@chakra-ui/react": "^2.4.2",
+    "@chakra-ui/react": "^2.4.3",
     "@chakra-ui/system": "^2.3.4",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@react-querybuilder/ts": "^5.2.0",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.25",
-    "@vitejs/plugin-react": "^2.2.0",
-    "framer-motion": "^7.6.15",
+    "@types/react": "^18.0.26",
+    "@vitejs/plugin-react": "^3.0.0",
+    "framer-motion": "^7.6.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.2.0",
-    "typescript": "^4.9.3",
-    "vite": "^3.2.4"
+    "typescript": "^4.9.4",
+    "vite": "^4.0.0"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

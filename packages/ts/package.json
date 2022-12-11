@@ -16,11 +16,11 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@types/node": "^18.11.10",
-    "@types/react": "^18.0.25",
+    "@types/node": "^18.11.13",
+    "@types/react": "^18.0.26",
     "react": "^18.2.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.4"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
