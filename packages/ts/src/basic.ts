@@ -31,7 +31,7 @@ export interface Field<
   ValueName extends string = string,
   OperatorObj extends NameLabelPair = NameLabelPair<OperatorName>,
   ValueObj extends NameLabelPair = NameLabelPair<ValueName>
-  > extends NameLabelPair<FieldName> {
+> extends NameLabelPair<FieldName> {
   id?: string;
   operators?: OperatorObj[] | OptionGroup<OperatorObj>[];
   valueEditorType?: ValueEditorType | ((operator: string) => ValueEditorType);

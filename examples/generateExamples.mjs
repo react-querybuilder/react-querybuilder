@@ -173,12 +173,6 @@ for (const exampleID in configs) {
     };
     if (!prettier.check(fileContents, prettierOptions)) {
       let prettified = prettier.format(fileContents, prettierOptions);
-      if (exampleConfig.compileToJS) {
-        prettified = prettified.replace(
-          /^import +(\{(.*?)\} +from +['"]react['"])/g,
-          'import React, $1'
-        );
-      }
       await writeFile(filepath, prettified);
     }
   }
