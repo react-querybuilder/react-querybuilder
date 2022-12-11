@@ -34,6 +34,7 @@ export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 export * from './formatQuery';
+export { jsonLogicAdditionalOperators } from './utils';
 export { defaultValueProcessorByRule };
 export { defaultRuleProcessorCEL };
 export { defaultRuleProcessorMongoDB };
