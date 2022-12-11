@@ -191,6 +191,10 @@ interface OptionGroup {
   options: NameLabelPair[];
 }
 
+interface Operator extends NameLabelPair {
+  arity?: number | 'unary' | 'binary' | 'ternary';
+}
+
 type ValueEditorType =
   | 'text'
   | 'select'

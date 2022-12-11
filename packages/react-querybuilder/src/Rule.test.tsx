@@ -350,3 +350,29 @@ describe('dnd warnings', () => {
     expect(consoleError).toHaveBeenCalledWith(errorEnabledDndWithoutReactDnD);
   });
 });
+
+describe('arity property', () => {
+  it('does not render value editor when arity is "unary"', () => {
+    render(
+      <Rule
+        {...getProps({
+          getOperators: () => [{ name: 'unary_op', label: 'Unary Operator', arity: 'unary' }],
+        })}
+        rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}
+      />
+    );
+    expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
+  });
+
+  it('does not render value editor when arity < 2', () => {
+    render(
+      <Rule
+        {...getProps({
+          getOperators: () => [{ name: 'unary_op', label: 'Unary Operator', arity: 1 }],
+        })}
+        rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}
+      />
+    );
+    expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
+  });
+});

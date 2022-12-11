@@ -3,6 +3,12 @@ import type { Field, NameLabelPair, OptionGroup } from '@react-querybuilder/ts/s
 export const isOptionGroupArray = (arr: Field['values']): arr is OptionGroup[] =>
   Array.isArray(arr) && arr.length > 0 && 'options' in arr[0];
 
+export const getOption = <OptType extends NameLabelPair = NameLabelPair>(
+  arr: OptType[] | OptionGroup<OptType>[],
+  name: string
+): OptType | undefined =>
+  (isOptionGroupArray(arr) ? arr.flatMap(og => og.options) : arr).find(op => op.name === name);
+
 export const getFirstOption = (arr?: NameLabelPair[] | OptionGroup[]) =>
   !Array.isArray(arr) || arr.length === 0
     ? null

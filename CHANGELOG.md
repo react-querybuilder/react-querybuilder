@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Optional `arity` property for operators. When `arity` is either "unary" or a number less than 2, the value editor will not render when that operator is selected (similar to the standard "null"/"notNull" operators).
 - [#408](https://github.com/react-querybuilder/react-querybuilder/issues/408) The interfaces `NameLabelPair`, `Field`, and `ValueEditorProps` now accept generics for `name` and other properties.
 
 ## [v5.2.0] - 2022-11-26
