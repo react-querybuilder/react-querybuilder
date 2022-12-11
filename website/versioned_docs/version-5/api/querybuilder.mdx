@@ -478,6 +478,7 @@ interface RuleGroupProps {
   ruleGroup: RuleGroupTypeAny; // The rule group object
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` on the TypeScript page
+  actions: QueryActions; // Query update functions
   context: any; // Container for custom props that are passed to all components
   disabled?: boolean; // Whether the rule itself is disabled
   parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
@@ -495,6 +496,7 @@ interface RuleProps {
   rule: RuleType; // The rule object
   translations: Translations; // The full translations object
   schema: Schema; // See `Schema` on the TypeScript page
+  actions: QueryActions; // Query update functions
   context: any; // Container for custom props that are passed to all components
   disabled?: boolean; // Whether the rule itself is disabled
   parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
