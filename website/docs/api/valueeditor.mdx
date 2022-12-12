@@ -25,101 +25,108 @@ The [compatibility packages](../compat) also implement these options using appro
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 import { ValueEditor } from 'react-querybuilder';
 
+export const fieldSelector = ({ value, options }) => (
+  <select value={value} disabled>
+    {options.map(o => (
+      <option key={o.name} value={o.name}>
+        {o.valueSources?.includes('field')
+          ? `valueSource: "field"`
+          : 'inputType' in o
+          ? `inputType: "${o.label}"`
+          : `valueEditorType: "${o.label}"`}
+      </option>
+    ))}
+  </select>
+);
+export const operatorSelector = ({ value, options }) => (
+  <select value={value} disabled>
+    {options.map(o => (
+      <option key={o.name} value={o.name}>
+        {o.label}
+      </option>
+    ))}
+  </select>
+);
+export const valueEditor = props => (
+  <div style={{ display: 'flex' }}>
+    <ValueEditor {...props} />
+    {'\u00a0'}
+    <span
+      style={{
+        fontSize: 'x-small',
+        opacity: 0.5,
+      }}>{`(stored value: ${
+      typeof props.value === 'boolean' ? props.value : JSON.stringify(props.value)
+    })`}</span>
+  </div>
+);
+export const fields = [
+  { name: 'text', label: 'text', inputType: 'text' },
+  {
+    name: 'select',
+    label: 'select',
+    valueEditorType: 'select',
+    values: [
+      { name: 'option1', label: 'Option 1' },
+      { name: 'option2', label: 'Option 2' },
+    ],
+  },
+  { name: 'checkbox', label: 'checkbox', valueEditorType: 'checkbox' },
+  {
+    name: 'radio',
+    label: 'radio',
+    valueEditorType: 'radio',
+    values: [
+      { name: 'option1', label: 'Option 1' },
+      { name: 'option2', label: 'Option 2' },
+    ],
+  },
+  { name: 'textarea', label: 'textarea', valueEditorType: 'textarea' },
+  {
+    name: 'multiselect',
+    label: 'multiselect',
+    valueEditorType: 'multiselect',
+    values: [
+      { name: 'option1', label: 'Option 1' },
+      { name: 'option2', label: 'Option 2' },
+    ],
+  },
+  { name: 'date', label: 'date', inputType: 'date' },
+  { name: 'datetime-local', label: 'datetime-local', inputType: 'datetime-local' },
+  { name: 'time', label: 'time', inputType: 'time' },
+  { name: 'field', label: 'field', valueSources: ['field', 'value'] },
+];
+export const defaultQuery = {
+  combinator: 'and',
+  rules: [
+    { field: 'text', operator: '=', value: '' },
+    { field: 'select', operator: '=', value: 'option2' },
+    { field: 'checkbox', operator: '=', value: true },
+    { field: 'radio', operator: '=', value: 'option2' },
+    { field: 'textarea', operator: '=', value: '' },
+    { field: 'multiselect', operator: '=', value: 'option1,option2' },
+    { field: 'date', operator: '=', value: '' },
+    { field: 'datetime-local', operator: '=', value: '' },
+    { field: 'time', operator: '=', value: '' },
+    { field: 'field', operator: '=', value: 'text', valueSource: 'field' },
+  ],
+};
+export const NullComponent = () => null;
+
 <QueryBuilderEmbed
   getOperators={() => [{ name: '=', label: '=' }]}
   controlElements={{
-    fieldSelector: ({ value, options }) => (
-      <select value={value} disabled>
-        {options.map(o => (
-          <option key={o.name} value={o.name}>
-            {o.valueSources?.includes('field')
-              ? `valueSource: "field"`
-              : 'inputType' in o
-              ? `inputType: "${o.label}"`
-              : `valueEditorType: "${o.label}"`}
-          </option>
-        ))}
-      </select>
-    ),
-    operatorSelector: ({ value, options }) => (
-      <select value={value} disabled>
-        {options.map(o => (
-          <option key={o.name} value={o.name}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    ),
-    combinatorSelector: () => null,
-    addRuleAction: () => null,
-    addGroupAction: () => null,
-    removeRuleAction: () => null,
-    removeGroupAction: () => null,
-    valueEditor: props => (
-      <div style={{ display: 'flex' }}>
-        <ValueEditor {...props} />
-        {'\u00a0'}
-        <span
-          style={{
-            fontSize: 'x-small',
-            opacity: 0.5,
-          }}>{`(stored value: ${
-          typeof props.value === 'boolean' ? props.value : JSON.stringify(props.value)
-        })`}</span>
-      </div>
-    ),
+    fieldSelector: fieldSelector,
+    operatorSelector: operatorSelector,
+    combinatorSelector: NullComponent,
+    addRuleAction: NullComponent,
+    addGroupAction: NullComponent,
+    removeRuleAction: NullComponent,
+    removeGroupAction: NullComponent,
+    valueEditor: valueEditor,
   }}
-  fields={[
-    { name: 'text', label: 'text', inputType: 'text' },
-    {
-      name: 'select',
-      label: 'select',
-      valueEditorType: 'select',
-      values: [
-        { name: 'option1', label: 'Option 1' },
-        { name: 'option2', label: 'Option 2' },
-      ],
-    },
-    { name: 'checkbox', label: 'checkbox', valueEditorType: 'checkbox' },
-    {
-      name: 'radio',
-      label: 'radio',
-      valueEditorType: 'radio',
-      values: [
-        { name: 'option1', label: 'Option 1' },
-        { name: 'option2', label: 'Option 2' },
-      ],
-    },
-    { name: 'textarea', label: 'textarea', valueEditorType: 'textarea' },
-    {
-      name: 'multiselect',
-      label: 'multiselect',
-      valueEditorType: 'multiselect',
-      values: [
-        { name: 'option1', label: 'Option 1' },
-        { name: 'option2', label: 'Option 2' },
-      ],
-    },
-    { name: 'date', label: 'date', inputType: 'date' },
-    { name: 'datetime-local', label: 'datetime-local', inputType: 'datetime-local' },
-    { name: 'time', label: 'time', inputType: 'time' },
-    { name: 'field', label: 'field', valueSources: ['field', 'value'] },
-  ]}
-  defaultQuery={{
-    combinator: 'and',
-    rules: [
-      { field: 'text', operator: '=', value: '' },
-      { field: 'select', operator: '=', value: 'option2' },
-      { field: 'checkbox', operator: '=', value: true },
-      { field: 'radio', operator: '=', value: 'option2' },
-      { field: 'textarea', operator: '=', value: '' },
-      { field: 'multiselect', operator: '=', value: 'option1,option2' },
-      { field: 'date', operator: '=', value: '' },
-      { field: 'datetime-local', operator: '=', value: '' },
-      { field: 'time', operator: '=', value: '' },
-      { field: 'field', operator: '=', value: 'text', valueSource: 'field' },
-    ],
-  }}
+  fields={fields}
+  defaultQuery={defaultQuery}
 />
 
 :::note
