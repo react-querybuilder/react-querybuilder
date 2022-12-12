@@ -1,7 +1,7 @@
 import type {
   DefaultOperatorName,
   Field,
-  OptionGroup,
+  OptionList,
   ValueSources,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { filterFieldsByComparator } from '../internal/filterFieldsByComparator';
@@ -12,7 +12,7 @@ import { isOptionGroupArray } from './optGroupUtils';
 export const isPojo = (obj: any): obj is Record<string, any> =>
   obj === null || typeof obj !== 'object' ? false : Object.getPrototypeOf(obj) === Object.prototype;
 
-export const getFieldsArray = (fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>) => {
+export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field>) => {
   let fieldsFlat: Field[] = [];
   const fieldsArray = !fields
     ? []

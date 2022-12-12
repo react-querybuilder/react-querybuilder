@@ -1,4 +1,4 @@
-import type { Field, Operator, Option, OptionGroup, ValueEditorType, ValueSource } from './basic';
+import type { Field, Operator, Option, OptionList, ValueEditorType, ValueSource } from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
@@ -44,7 +44,7 @@ interface SelectorOrEditorProps extends CommonSubComponentProps {
 }
 
 export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
-  options: OptType[] | OptionGroup<OptType>[];
+  options: OptionList<OptType>;
 }
 
 export interface ValueSelectorProps extends BaseSelectorProps {
@@ -63,7 +63,7 @@ export interface CombinatorSelectorProps extends BaseSelectorProps {
 }
 
 export interface FieldSelectorProps extends BaseSelectorProps {
-  options: Field[] | OptionGroup<Field>[];
+  options: OptionList<Field>;
   operator?: string;
 }
 
@@ -79,7 +79,7 @@ interface ValueSourceOption extends Option {
 export interface ValueSourceSelectorProps extends BaseSelectorProps {
   field: string;
   fieldData: Field;
-  options: ValueSourceOption[] | OptionGroup<ValueSourceOption>[];
+  options: OptionList<ValueSourceOption>;
 }
 
 export type VersatileSelectorProps = ValueSelectorProps &
