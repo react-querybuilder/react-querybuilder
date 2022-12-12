@@ -1,5 +1,5 @@
+import type { Option, ValueEditorProps, ValueSelectorProps } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
-import type { NameLabelPair, ValueEditorProps, ValueSelectorProps } from '@react-querybuilder/ts';
 import { findSelect, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
@@ -24,7 +24,7 @@ export const testSelect = (
   skip: ValueSelectorTestsToSkip = {}
 ) => {
   const user = userEventSetup();
-  const testValues: NameLabelPair[] = props.values ?? props.options;
+  const testValues: Option[] = props.values ?? props.options;
   const testVal = testValues[1];
 
   describe(title, () => {

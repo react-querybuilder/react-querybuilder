@@ -80,13 +80,7 @@ The example below takes advantage of the ability to add arbitrary properties to 
 <SandpackRQB rqbVersion={5} options={{ editorHeight: 444 }}>
 
 ```tsx
-import {
-  defaultOperators,
-  Field,
-  NameLabelPair,
-  QueryBuilder,
-  RuleGroupType,
-} from 'react-querybuilder';
+import { defaultOperators, Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.scss';
 
 const fields: Field[] = [
@@ -101,7 +95,7 @@ const fields: Field[] = [
   },
 ];
 
-const getOperators = (fieldName: string): NameLabelPair[] => {
+const getOperators = (fieldName: string) => {
   const field = fields.find(fld => fld.name === fieldName);
 
   switch (field.datatype) {

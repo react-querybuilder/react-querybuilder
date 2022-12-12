@@ -2,7 +2,7 @@ import type {
   Classnames,
   Controls,
   Field,
-  NameLabelPair,
+  Option,
   QueryActions,
   RuleGroupProps,
   RuleType,
@@ -109,7 +109,7 @@ export const ruleGroupControls: Partial<Controls> = {
       className={props.className}
       value={props.value}
       onChange={e => props.handleOnChange(e.target.value)}>
-      <option value={(props.options[0] as NameLabelPair).name}>{props.options[0].label}</option>
+      <option value={(props.options[0] as Option).name}>{props.options[0].label}</option>
     </select>
   ),
   valueEditor: props => (

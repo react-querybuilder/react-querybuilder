@@ -159,7 +159,7 @@ The default operators include:
 
 ### `combinators`
 
-`NameLabelPair[] | OptionGroup<NameLabelPair>[]`
+`OptionList`
 
 The array of combinators that should be used for RuleGroups. The default set includes:
 
@@ -336,7 +336,7 @@ By default a `<select />` is used. The following props are passed:
 
 ```ts
 interface CombinatorSelectorProps {
-  options: NameLabelPair[] | OptionGroup<NameLabelPair>[]; // Same as 'combinators' passed into QueryBuilder
+  options: OptionList; // Same as 'combinators' passed into QueryBuilder
   value: string; // Selected combinator from the existing query representation, if any
   className: string; // CSS classNames to be applied
   handleOnChange: (value: any) => void; // Updates the combinator
@@ -531,7 +531,7 @@ This function is invoked to get the `type` of `<input />` for the given field an
 
 ### `getValues`
 
-`(field: string, operator: string) => NameLabelPair[] | OptionGroup<NameLabelPair>[]`
+`(field: string, operator: string) => OptionList`
 
 This function is invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
 

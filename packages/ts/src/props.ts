@@ -1,11 +1,4 @@
-import type {
-  Field,
-  NameLabelPair,
-  Operator,
-  OptionGroup,
-  ValueEditorType,
-  ValueSource,
-} from './basic';
+import type { Field, Operator, Option, OptionGroup, ValueEditorType, ValueSource } from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
@@ -50,8 +43,7 @@ interface SelectorOrEditorProps extends CommonSubComponentProps {
   handleOnChange(value: any): void;
 }
 
-export interface BaseSelectorProps<OptType extends NameLabelPair = NameLabelPair>
-  extends SelectorOrEditorProps {
+export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
   options: OptType[] | OptionGroup<OptType>[];
 }
 
@@ -80,7 +72,7 @@ export interface OperatorSelectorProps extends BaseSelectorProps<Operator> {
   fieldData: Field;
 }
 
-interface ValueSourceOption extends NameLabelPair {
+interface ValueSourceOption extends Option {
   name: ValueSource;
 }
 

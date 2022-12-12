@@ -1,7 +1,7 @@
 import type {
   ActionWithRulesAndAddersProps,
   Field,
-  NameLabelPair,
+  Option,
   OptionGroup,
   QueryBuilderProps,
   RuleGroupProps,
@@ -292,7 +292,7 @@ describe('when fields are provided with optgroups', () => {
 });
 
 describe('when initial operators are provided', () => {
-  const operators: NameLabelPair[] = [
+  const operators: Option[] = [
     { name: 'null', label: 'Custom Is Null' },
     { name: 'notNull', label: 'Is Not Null' },
     { name: 'in', label: 'In' },

@@ -1,6 +1,5 @@
 import type {
-  NameLabelPair,
-  OptionGroup,
+  OptionList,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
@@ -19,7 +18,7 @@ interface AddOptions {
    * `independentCombinators`), then the first combinator in this list will be
    * inserted before the new rule/group.
    */
-  combinators?: NameLabelPair[] | OptionGroup[];
+  combinators?: OptionList;
 }
 /**
  * Adds a rule or group to a query.
@@ -194,7 +193,7 @@ interface MoveOptions {
    * `independentCombinators`), then the first combinator in this list will be
    * inserted before the rule/group if necessary.
    */
-  combinators?: NameLabelPair[] | OptionGroup[];
+  combinators?: OptionList;
 }
 /**
  * Moves a rule or group from one path to another. In the options parameter, pass

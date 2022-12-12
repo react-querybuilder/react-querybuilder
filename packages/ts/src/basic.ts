@@ -14,30 +14,37 @@ export type ValueEditorType =
 
 export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
-export interface NameLabelPair<N extends string = string> {
+export interface Option<N extends string = string> {
   name: N;
   label: string;
   [x: string]: any;
 }
 
-export type OptionGroup<Opt extends NameLabelPair = NameLabelPair> = {
+/**
+ * @deprecated Renamed to `Option`
+ */
+export type NameLabelPair<N extends string = string> = Option<N>;
+
+export type OptionGroup<Opt extends Option = Option> = {
   label: string;
   options: Opt[];
 };
+
+export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[];
 
 export interface Field<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
-  OperatorObj extends NameLabelPair = NameLabelPair<OperatorName>,
-  ValueObj extends NameLabelPair = NameLabelPair<ValueName>
-> extends NameLabelPair<FieldName> {
+  OperatorObj extends Option = Option<OperatorName>,
+  ValueObj extends Option = Option<ValueName>
+> extends Option<FieldName> {
   id?: string;
-  operators?: OperatorObj[] | OptionGroup<OperatorObj>[];
+  operators?: OptionList<OperatorObj>;
   valueEditorType?: ValueEditorType | ((operator: string) => ValueEditorType);
   valueSources?: ValueSources | ((operator: string) => ValueSources);
   inputType?: string | null;
-  values?: ValueObj[] | OptionGroup<ValueObj>[];
+  values?: OptionList<ValueObj>;
   defaultOperator?: string;
   defaultValue?: any;
   placeholder?: string;
@@ -49,6 +56,6 @@ export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 export type Arity = number | 'unary' | 'binary' | 'ternary';
 
-export interface Operator<N extends string = string> extends NameLabelPair<N> {
+export interface Operator<N extends string = string> extends Option<N> {
   arity?: Arity;
 }
