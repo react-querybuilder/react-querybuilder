@@ -1,4 +1,4 @@
-import type { NameLabelPair, OptionGroup } from '@react-querybuilder/ts/src/index.noReact';
+import type { Option, OptionGroup } from '@react-querybuilder/ts/src/index.noReact';
 
 export const uniqByName = <T extends { name: string }>(originalArray: T[]): T[] => {
   const names = new Set<string>();
@@ -12,7 +12,7 @@ export const uniqByName = <T extends { name: string }>(originalArray: T[]): T[] 
   return newArray;
 };
 
-export const uniqOptGroups = <T extends NameLabelPair>(originalArray: OptionGroup<T>[]) => {
+export const uniqOptGroups = <T extends Option>(originalArray: OptionGroup<T>[]) => {
   const labels = new Set<string>();
   const names = new Set<string>();
   const newArray: OptionGroup<T>[] = [];

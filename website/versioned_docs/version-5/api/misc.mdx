@@ -80,7 +80,7 @@ Adds a rule or group (and an independent combinator if necessary, to keep the qu
 ```ts
 interface AddOptions {
   /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
-  combinators?: NameLabelPair[] | OptionGroup[];
+  combinators?: OptionList;
 }
 ```
 
@@ -132,7 +132,7 @@ interface MoveOptions {
   /** Copy the source rule/group instead of move. Default is `false`. */
   clone?: boolean;
   /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
-  combinators?: NameLabelPair[] | OptionGroup[];
+  combinators?: OptionList;
 }
 ```
 

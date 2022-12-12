@@ -14,7 +14,7 @@ interface Field {
   operators?: Operator[] | OptionGroup<Operator>[]; // Array of operators (if not provided, then `getOperators()` will be used)
   valueEditorType?: ValueEditorType; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
   inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
-  values?: NameLabelPair[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
+  values?: OptionList; // Array of value options, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
   defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
@@ -180,7 +180,7 @@ type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
 ## Miscellaneous
 
 ```ts
-interface NameLabelPair {
+interface Option {
   name: string;
   label: string;
   [x: string]: any;
@@ -188,10 +188,12 @@ interface NameLabelPair {
 
 interface OptionGroup {
   label: string;
-  options: NameLabelPair[];
+  options: Option[];
 }
 
-interface Operator extends NameLabelPair {
+type OptionList = Option[] | OptionGroup[];
+
+interface Operator extends Option {
   arity?: number | 'unary' | 'binary' | 'ternary';
 }
 
@@ -215,7 +217,7 @@ interface Schema {
   fields: Field[] | OptionGroup<Field>[];
   fieldMap: { [k: string]: Field };
   classNames: Classnames;
-  combinators: NameLabelPair[] | OptionGroup[];
+  combinators: OptionList;
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
@@ -223,7 +225,7 @@ interface Schema {
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
-  getValues(field: string, operator: string): NameLabelPair[] | OptionGroup[];
+  getValues(field: string, operator: string): OptionList;
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
   updateIndependentCombinator(value: string, path: number[]): void;
   showCombinatorsBetweenRules: boolean;

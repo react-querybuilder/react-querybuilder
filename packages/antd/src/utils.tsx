@@ -1,4 +1,4 @@
-import type { NameLabelPair, OptionGroup } from '@react-querybuilder/ts';
+import type { OptionList } from '@react-querybuilder/ts';
 import { Select } from 'antd';
 import { isOptionGroupArray } from 'react-querybuilder';
 
@@ -6,7 +6,7 @@ const { OptGroup, Option } = Select;
 
 export { isOptionGroupArray };
 
-export const toOptions = (arr?: NameLabelPair[] | OptionGroup[]) =>
+export const toOptions = (arr?: OptionList) =>
   isOptionGroupArray(arr)
     ? arr.map(og => (
         <OptGroup key={og.label} label={og.label}>

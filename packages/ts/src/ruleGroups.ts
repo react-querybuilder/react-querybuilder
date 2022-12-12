@@ -1,4 +1,4 @@
-import type { NameLabelPair, ValueSource } from './basic';
+import type { Option, ValueSource } from './basic';
 
 interface CommonProperties {
   path?: number[];
@@ -67,14 +67,14 @@ export type DefaultOperatorName =
   | 'between'
   | 'notBetween';
 
-export interface DefaultCombinator extends NameLabelPair {
+export interface DefaultCombinator extends Option {
   name: DefaultCombinatorName;
 }
 
-export interface DefaultCombinatorExtended extends NameLabelPair {
+export interface DefaultCombinatorExtended extends Option {
   name: DefaultCombinatorNameExtended;
 }
 
-export interface DefaultOperator extends NameLabelPair {
+export interface DefaultOperator extends Option {
   name: DefaultOperatorName;
 }

@@ -1,4 +1,4 @@
-import type { Field, OptionGroup, ValueSource, ValueSources } from './basic';
+import type { Field, OptionList, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from './json-logic-js';
 import type { RuleType } from './ruleGroups';
 import type { QueryValidator } from './validation';
@@ -117,7 +117,7 @@ export type RQBJsonLogicVar = { var: string };
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
 
 interface ParserCommonOptions {
-  fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+  fields?: OptionList<Field> | Record<string, Field>;
   getValueSources?: (field: string, operator: string) => ValueSources;
   listsAsArrays?: boolean;
   independentCombinators?: boolean;

@@ -8,9 +8,8 @@ import type {
 } from 'react';
 import type {
   Field,
-  NameLabelPair,
   Operator,
-  OptionGroup,
+  OptionList,
   ValueEditorType,
   ValueSource,
   ValueSources,
@@ -84,18 +83,18 @@ export interface Controls {
 }
 
 export interface Schema {
-  fields: Field[] | OptionGroup<Field>[];
+  fields: OptionList<Field>;
   fieldMap: Record<string, Field>;
   classNames: Classnames;
-  combinators: NameLabelPair[] | OptionGroup[];
+  combinators: OptionList;
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
-  getOperators(field: string): Operator[] | OptionGroup<Operator>[];
+  getOperators(field: string): OptionList<Operator>;
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
-  getValues(field: string, operator: string): NameLabelPair[] | OptionGroup[];
+  getValues(field: string, operator: string): OptionList;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -236,7 +235,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * The array of fields that should be used. Each field should be an object
      * with {name: String, label: String}
      */
-    fields?: Field[] | OptionGroup<Field>[] | Record<string, Field>;
+    fields?: OptionList<Field> | Record<string, Field>;
     /**
      * The array of operators that should be used.
      * @default
@@ -261,7 +260,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *   { name: 'notBetween', label: 'not between' },
      * ]
      */
-    operators?: NameLabelPair[] | OptionGroup[];
+    operators?: OptionList;
     /**
      * The array of combinators that should be used for RuleGroups.
      * @default
@@ -270,12 +269,12 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *     {name: 'or', label: 'OR'},
      * ]
      */
-    combinators?: NameLabelPair[] | OptionGroup[];
+    combinators?: OptionList;
     /**
      * The default field for new rules. This can be a string identifying the
      * default field, or a function that returns a field name.
      */
-    getDefaultField?: string | ((fieldsData: Field[] | OptionGroup<Field>[]) => string);
+    getDefaultField?: string | ((fieldsData: OptionList<Field>) => string);
     /**
      * The default operator for new rules. This can be a string identifying the
      * default operator, or a function that returns an operator name.
@@ -290,7 +289,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * operators for the given field. If `null` is returned, the default
      * operators are used.
      */
-    getOperators?(field: string): Operator[] | OptionGroup<Operator>[] | null;
+    getOperators?(field: string): OptionList<Operator> | null;
     /**
      * This is a callback function invoked to get the type of `ValueEditor`
      * for the given field and operator.
@@ -316,7 +315,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * `getValueEditorType` returns `"select"` or `"radio"`). If no
      * function is provided, an empty array is used as the default.
      */
-    getValues?(field: string, operator: string): NameLabelPair[] | OptionGroup[];
+    getValues?(field: string, operator: string): OptionList;
     /**
      * This callback is invoked before a new rule is added. The function should either manipulate
      * the rule and return it, or return `false` to cancel the addition of the rule.

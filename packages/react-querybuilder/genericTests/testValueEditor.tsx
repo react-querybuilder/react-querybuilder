@@ -1,5 +1,5 @@
+import type { OptionList, ValueEditorProps } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
-import type { NameLabelPair, OptionGroup, ValueEditorProps } from '@react-querybuilder/ts';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { findInput, findTextarea, userEventSetup } from './utils';
 
@@ -14,7 +14,7 @@ type ValueEditorTestsToSkip = Partial<{
   betweenSelect: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
-  values: NameLabelPair[] | OptionGroup[];
+  values: OptionList;
   testID: string;
 }
 

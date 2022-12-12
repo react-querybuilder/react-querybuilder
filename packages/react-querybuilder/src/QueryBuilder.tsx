@@ -1,7 +1,7 @@
 import { QueryBuilderContext } from '@react-querybuilder/ctx';
 import type {
   Field,
-  NameLabelPair,
+  Option,
   QueryActions,
   QueryBuilderProps,
   RuleGroupType,
@@ -165,7 +165,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
 
   // #region Set up `operators`
   const defaultOperator = useMemo(
-    (): NameLabelPair => ({
+    (): Option => ({
       id: translations.operators.placeholderName,
       name: translations.operators.placeholderName,
       label: translations.operators.placeholderLabel,
