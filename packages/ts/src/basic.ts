@@ -46,3 +46,9 @@ export interface Field<
 }
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
+
+export type Arity = number | 'unary' | 'binary' | 'ternary';
+
+export interface Operator<N extends string = string> extends NameLabelPair<N> {
+  arity?: Arity;
+}

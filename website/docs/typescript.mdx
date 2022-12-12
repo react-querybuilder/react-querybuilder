@@ -11,7 +11,7 @@ interface Field {
   id?: string; // The field identifier (if not provided, then `name` will be used)
   name: string; // REQUIRED - the field name
   label: string; // REQUIRED - the field label
-  operators?: NameLabelPair[] | OptionGroup[]; // Array of operators (if not provided, then `getOperators()` will be used)
+  operators?: Operator[] | OptionGroup<Operator>[]; // Array of operators (if not provided, then `getOperators()` will be used)
   valueEditorType?: ValueEditorType; // Value editor type for this field (if not provided, then `getValueEditorType()` will be used)
   inputType?: string | null; // Input type for text box inputs, e.g. 'text', 'number', or 'date' (if not provided, then `getInputType()` will be used)
   values?: NameLabelPair[]; // Array of values, applicable when valueEditorType is 'select' or 'radio' (if not provided, then `getValues()` will be used)
@@ -191,6 +191,10 @@ interface OptionGroup {
   options: NameLabelPair[];
 }
 
+interface Operator extends NameLabelPair {
+  arity?: number | 'unary' | 'binary' | 'ternary';
+}
+
 type ValueEditorType =
   | 'text'
   | 'select'
@@ -208,18 +212,18 @@ type ValueSource = 'value' | 'field';
 type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
 interface Schema {
-  fields: Field[] | OptionGroup<NameLabelPair>[];
+  fields: Field[] | OptionGroup<Field>[];
   fieldMap: { [k: string]: Field };
   classNames: Classnames;
-  combinators: NameLabelPair[] | OptionGroup<NameLabelPair>[];
+  combinators: NameLabelPair[] | OptionGroup[];
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
-  getOperators(field: string): NameLabelPair[] | OptionGroup<NameLabelPair>[];
+  getOperators(field: string): Operator[] | OptionGroup<Operator>[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
-  getValues(field: string, operator: string): NameLabelPair[] | OptionGroup<NameLabelPair>[];
+  getValues(field: string, operator: string): NameLabelPair[] | OptionGroup[];
   isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
   updateIndependentCombinator(value: string, path: number[]): void;
   showCombinatorsBetweenRules: boolean;

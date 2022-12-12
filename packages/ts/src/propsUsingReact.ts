@@ -9,6 +9,7 @@ import type {
 import type {
   Field,
   NameLabelPair,
+  Operator,
   OptionGroup,
   ValueEditorType,
   ValueSource,
@@ -90,7 +91,7 @@ export interface Schema {
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
-  getOperators(field: string): NameLabelPair[] | OptionGroup[];
+  getOperators(field: string): Operator[] | OptionGroup<Operator>[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
@@ -289,7 +290,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * operators for the given field. If `null` is returned, the default
      * operators are used.
      */
-    getOperators?(field: string): NameLabelPair[] | OptionGroup[] | null;
+    getOperators?(field: string): Operator[] | OptionGroup<Operator>[] | null;
     /**
      * This is a callback function invoked to get the type of `ValueEditor`
      * for the given field and operator.

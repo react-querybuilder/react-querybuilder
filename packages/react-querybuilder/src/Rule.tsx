@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { standardClassnames, TestID } from './defaults';
 import { filterFieldsByComparator, getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { getParentPath } from './utils';
+import { getOption, getParentPath } from './utils';
 
 export const Rule = ({
   id,
@@ -122,6 +122,9 @@ export const Rule = ({
   const fieldData = fieldMap?.[field] ?? { name: field, label: field };
   const inputType = fieldData.inputType ?? getInputType(field, operator);
   const operators = getOperators(field);
+  const arity = getOption(operators, operator)?.arity;
+  const hideValueControls =
+    (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
   const valueSources =
     typeof fieldData.valueSources === 'function'
       ? fieldData.valueSources(operator)
@@ -209,47 +212,48 @@ export const Rule = ({
             context={context}
             validation={validationResult}
           />
-          {(autoSelectOperator || operator !== translations.operators.placeholderName) && (
-            <>
-              {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
-                <ValueSourceSelectorControlElement
-                  testID={TestID.valueSourceSelector}
+          {(autoSelectOperator || operator !== translations.operators.placeholderName) &&
+            !hideValueControls && (
+              <>
+                {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
+                  <ValueSourceSelectorControlElement
+                    testID={TestID.valueSourceSelector}
+                    field={field}
+                    fieldData={fieldData}
+                    title={translations.valueSourceSelector.title}
+                    options={vsOptions}
+                    value={valueSource ?? 'value'}
+                    className={classNamesMemo.valueSource}
+                    handleOnChange={generateOnChangeHandler('valueSource')}
+                    level={level}
+                    path={path}
+                    disabled={disabled}
+                    context={context}
+                    validation={validationResult}
+                  />
+                )}
+                <ValueEditorControlElement
+                  testID={TestID.valueEditor}
                   field={field}
                   fieldData={fieldData}
-                  title={translations.valueSourceSelector.title}
-                  options={vsOptions}
-                  value={valueSource ?? 'value'}
-                  className={classNamesMemo.valueSource}
-                  handleOnChange={generateOnChangeHandler('valueSource')}
+                  title={translations.value.title}
+                  operator={operator}
+                  value={value}
+                  valueSource={valueSource ?? 'value'}
+                  type={valueEditorType}
+                  inputType={inputType}
+                  values={values}
+                  listsAsArrays={listsAsArrays}
+                  className={classNamesMemo.value}
+                  handleOnChange={generateOnChangeHandler('value')}
                   level={level}
                   path={path}
                   disabled={disabled}
                   context={context}
                   validation={validationResult}
                 />
-              )}
-              <ValueEditorControlElement
-                testID={TestID.valueEditor}
-                field={field}
-                fieldData={fieldData}
-                title={translations.value.title}
-                operator={operator}
-                value={value}
-                valueSource={valueSource ?? 'value'}
-                type={valueEditorType}
-                inputType={inputType}
-                values={values}
-                listsAsArrays={listsAsArrays}
-                className={classNamesMemo.value}
-                handleOnChange={generateOnChangeHandler('value')}
-                level={level}
-                path={path}
-                disabled={disabled}
-                context={context}
-                validation={validationResult}
-              />
-            </>
-          )}
+              </>
+            )}
         </>
       )}
       {showCloneButtons && (

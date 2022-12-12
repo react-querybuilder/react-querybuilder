@@ -1,4 +1,11 @@
-import type { Field, NameLabelPair, OptionGroup, ValueEditorType, ValueSource } from './basic';
+import type {
+  Field,
+  NameLabelPair,
+  Operator,
+  OptionGroup,
+  ValueEditorType,
+  ValueSource,
+} from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
@@ -43,8 +50,9 @@ interface SelectorOrEditorProps extends CommonSubComponentProps {
   handleOnChange(value: any): void;
 }
 
-export interface BaseSelectorProps extends SelectorOrEditorProps {
-  options: NameLabelPair[] | OptionGroup[];
+export interface BaseSelectorProps<OptType extends NameLabelPair = NameLabelPair>
+  extends SelectorOrEditorProps {
+  options: OptType[] | OptionGroup<OptType>[];
 }
 
 export interface ValueSelectorProps extends BaseSelectorProps {
@@ -67,7 +75,7 @@ export interface FieldSelectorProps extends BaseSelectorProps {
   operator?: string;
 }
 
-export interface OperatorSelectorProps extends BaseSelectorProps {
+export interface OperatorSelectorProps extends BaseSelectorProps<Operator> {
   field: string;
   fieldData: Field;
 }

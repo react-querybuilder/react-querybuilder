@@ -128,9 +128,11 @@ A "bucket" for passing arbitrary props down to custom components (default compon
 
 ### `operators`
 
-`NameLabelPair[] | OptionGroup<NameLabelPair>[]`
+`Operator[] | OptionGroup<Operator>[]`
 
-The array of operators that should be used. The default operators include:
+The array of operators that should be used. Custom operators must define a `name` and `label` property. An `arity` property, which can be "unary", "binary", or a number, may also be defined for each operator. If `arity` is either "unary" or a number less than 2, the [value editor component](./valueeditor) will not be rendered when that operator is selected.
+
+The default operators include:
 
 ```ts
 [
@@ -399,7 +401,7 @@ By default a `<select />` is used. The following props are passed:
 interface OperatorSelectorProps {
   field: string; // Field name corresponding to this rule
   fieldData: Field; // The entire object from the fields array for this field
-  options: NameLabelPair[] | OptionGroup<NameLabelPair>[]; // Return value of getOperators(field)
+  options: Operator[] | OptionGroup<Operator>[]; // Return value of getOperators(field)
   value: string; // Selected operator from the existing query representation, if any
   title: string; // translations.operators.title, e.g. "Operators"
   className: string; // CSS classNames to be applied
@@ -505,9 +507,9 @@ interface RuleProps {
 
 ### `getOperators`
 
-`(field: string) => NameLabelPair[] | OptionGroup<NameLabelPair>[] | null`
+`(field: string) => Operator[] | OptionGroup<Operator>[] | null`
 
-This function is invoked to get the list of allowed operators for the given field. If `null` is returned, the [default operators](./misc#defaults) are used.
+This function is invoked to get the list of allowed operators for the given field. If `null` is returned, the [default operators](#operators) are used.
 
 ### `getValueEditorType`
 
