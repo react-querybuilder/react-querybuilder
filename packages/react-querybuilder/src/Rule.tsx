@@ -123,6 +123,8 @@ export const Rule = ({
   const inputType = fieldData.inputType ?? getInputType(field, operator);
   const operators = getOperators(field);
   const arity = getOption(operators, operator)?.arity;
+  const hideValueControls =
+    (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
   const valueSources =
     typeof fieldData.valueSources === 'function'
       ? fieldData.valueSources(operator)
@@ -210,27 +212,26 @@ export const Rule = ({
             context={context}
             validation={validationResult}
           />
-          {(autoSelectOperator || operator !== translations.operators.placeholderName) && (
-            <>
-              {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
-                <ValueSourceSelectorControlElement
-                  testID={TestID.valueSourceSelector}
-                  field={field}
-                  fieldData={fieldData}
-                  title={translations.valueSourceSelector.title}
-                  options={vsOptions}
-                  value={valueSource ?? 'value'}
-                  className={classNamesMemo.valueSource}
-                  handleOnChange={generateOnChangeHandler('valueSource')}
-                  level={level}
-                  path={path}
-                  disabled={disabled}
-                  context={context}
-                  validation={validationResult}
-                />
-              )}
-              {(typeof arity === 'string' && arity === 'unary') ||
-              (typeof arity === 'number' && arity < 2) ? null : (
+          {(autoSelectOperator || operator !== translations.operators.placeholderName) &&
+            !hideValueControls && (
+              <>
+                {!['null', 'notNull'].includes(operator) && valueSources.length > 1 && (
+                  <ValueSourceSelectorControlElement
+                    testID={TestID.valueSourceSelector}
+                    field={field}
+                    fieldData={fieldData}
+                    title={translations.valueSourceSelector.title}
+                    options={vsOptions}
+                    value={valueSource ?? 'value'}
+                    className={classNamesMemo.valueSource}
+                    handleOnChange={generateOnChangeHandler('valueSource')}
+                    level={level}
+                    path={path}
+                    disabled={disabled}
+                    context={context}
+                    validation={validationResult}
+                  />
+                )}
                 <ValueEditorControlElement
                   testID={TestID.valueEditor}
                   field={field}
@@ -251,9 +252,8 @@ export const Rule = ({
                   context={context}
                   validation={validationResult}
                 />
-              )}
-            </>
-          )}
+              </>
+            )}
         </>
       )}
       {showCloneButtons && (

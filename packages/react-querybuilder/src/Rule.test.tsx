@@ -352,7 +352,7 @@ describe('dnd warnings', () => {
 });
 
 describe('arity property', () => {
-  it('does not render value editor when arity is "unary"', () => {
+  it('does not render value controls when arity is "unary"', () => {
     render(
       <Rule
         {...getProps({
@@ -362,9 +362,10 @@ describe('arity property', () => {
       />
     );
     expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
+    expect(() => screen.getByTestId(TestID.valueSourceSelector)).toThrow();
   });
 
-  it('does not render value editor when arity < 2', () => {
+  it('does not render value controls when arity < 2', () => {
     render(
       <Rule
         {...getProps({
@@ -374,5 +375,6 @@ describe('arity property', () => {
       />
     );
     expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
+    expect(() => screen.getByTestId(TestID.valueSourceSelector)).toThrow();
   });
 });
