@@ -95,6 +95,16 @@ describe('add', () => {
         rules: [r1, or, r2, or, r3],
       }
     );
+    testQT(
+      'adds a rule with specified combinator, ignoring defaults',
+      add({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [], {
+        combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
+        combinatorPreceding: or,
+      }),
+      {
+        rules: [r1, and, r2, or, r3],
+      }
+    );
     testQT('adds a group', add(rgic1, rgic2, []), {
       rules: [rgic2],
     });
