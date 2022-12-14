@@ -29,6 +29,7 @@ export const defaultOptions: DemoOptions = {
   showLockButtons: false,
   showNotToggle: false,
   validateQuery: false,
+  showBranches: false,
 };
 
 export const optionOrder: DemoOption[] = [
@@ -47,6 +48,7 @@ export const optionOrder: DemoOption[] = [
   'showCombinatorsBetweenRules',
   'showLockButtons',
   'showNotToggle',
+  'showBranches',
   'validateQuery',
 ];
 
@@ -138,6 +140,11 @@ export const optionsMetadata: Record<
     link: '/docs/api/export#parse-numbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values',
+  },
+  showBranches: {
+    link: '/docs/api/classnames',
+    label: 'Debug mode',
+    title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
 };
 

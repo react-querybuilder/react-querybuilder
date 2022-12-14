@@ -20,6 +20,7 @@ export const defaultOptions: DemoOptions = {
   debugMode: false,
   parseNumbers: false,
   justifiedLayout: false,
+  showBranches: false,
 };
 
 export const optionOrder: DemoOption[] = [
@@ -40,6 +41,7 @@ export const optionOrder: DemoOption[] = [
   'debugMode',
   'parseNumbers',
   'justifiedLayout',
+  'showBranches',
 ];
 
 export const optionsMetadata: Record<
@@ -135,6 +137,11 @@ export const optionsMetadata: Record<
     link: '',
     label: 'Justified layout',
     title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
+  },
+  showBranches: {
+    link: '/docs/api/classnames',
+    label: 'Show branches',
+    title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
 };
 

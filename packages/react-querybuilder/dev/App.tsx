@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import queryString from 'query-string';
 import type { ComponentType } from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -7,7 +8,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
 } from '../src';
-import { defaultValidator, QueryBuilder } from '../src';
+import { defaultValidator, QueryBuilder, standardClassnames } from '../src';
 import {
   defaultOptions,
   emptyQuery,
@@ -67,7 +68,13 @@ export const App = ({
       fields,
       ...optVals,
       validator: optVals.validateQuery ? defaultValidator : undefined,
-      ...{ controlClassnames, controlElements },
+      controlClassnames: {
+        ...controlClassnames,
+        queryBuilder: clsx(controlClassnames?.queryBuilder, {
+          [standardClassnames.branches]: optVals.showBranches,
+        }),
+      },
+      controlElements,
     }),
     [controlClassnames, controlElements, optVals]
   );
