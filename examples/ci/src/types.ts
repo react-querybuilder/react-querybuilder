@@ -18,7 +18,8 @@ export type CIOption =
   | 'enableDragAndDrop'
   | 'disabled'
   | 'debugMode'
-  | 'parseNumbers';
+  | 'parseNumbers'
+  | 'showBranches';
 
 export type CIOptions = Record<CIOption, boolean>;
 
