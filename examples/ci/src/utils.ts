@@ -15,6 +15,7 @@ export const defaultOptions: CIOptions = {
   disabled: false,
   debugMode: false,
   parseNumbers: false,
+  showBranches: false,
 };
 
 export const optionsOrder: CIOption[] = [
@@ -32,6 +33,7 @@ export const optionsOrder: CIOption[] = [
   'disabled',
   'debugMode',
   'parseNumbers',
+  'showBranches',
 ];
 
 export const optionsReducer = (
