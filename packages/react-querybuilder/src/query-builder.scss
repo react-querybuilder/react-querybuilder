@@ -23,7 +23,7 @@ $rqb-branch-style: $rqb-border-style !default;
 .ruleGroup {
   display: flex;
   flex-direction: column;
-  row-gap: $rqb-spacing;
+  gap: $rqb-spacing;
   padding: $rqb-spacing;
   border-color: $rqb-border-color;
   border-style: $rqb-border-style;
@@ -34,7 +34,7 @@ $rqb-branch-style: $rqb-border-style !default;
   .ruleGroup-body {
     display: flex;
     flex-direction: column;
-    row-gap: $rqb-spacing;
+    gap: $rqb-spacing;
 
     &:empty {
       display: none;
@@ -44,7 +44,7 @@ $rqb-branch-style: $rqb-border-style !default;
   .ruleGroup-header,
   .rule {
     display: flex;
-    column-gap: $rqb-spacing;
+    gap: $rqb-spacing;
     align-items: center;
   }
 
