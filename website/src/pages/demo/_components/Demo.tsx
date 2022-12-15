@@ -362,9 +362,10 @@ export default function Demo({
     () =>
       clsx(
         { validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout },
-        variant === 'default' ? '' : `rqb-${variant}`
+        variant === 'default' ? '' : `rqb-${variant}`,
+        options.showBranches ? 'queryBuilder-branches' : ''
       ),
-    [options.justifiedLayout, options.validateQuery, variant]
+    [options.justifiedLayout, options.showBranches, options.validateQuery, variant]
   );
 
   return (

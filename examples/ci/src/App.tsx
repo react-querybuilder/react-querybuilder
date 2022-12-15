@@ -26,6 +26,7 @@ export const App = () => {
     useValidation,
     independentCombinators,
     parseNumbers,
+    showBranches,
     ...commonOptions
   } = options;
   const commonProps: QueryBuilderProps<DefaultRuleGroupType> = {
@@ -38,7 +39,10 @@ export const App = () => {
 
   return (
     <div>
-      <QueryBuilderDnD>
+      <QueryBuilderDnD
+        controlClassnames={{
+          queryBuilder: showBranches ? 'queryBuilder-branches' : '',
+        }}>
         {independentCombinators ? (
           <QueryBuilder
             key="rqb-ic"

@@ -171,6 +171,7 @@ export const standardClassnames = {
   lockGroup: 'ruleGroup-lock',
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
+  branches: 'queryBuilder-branches',
 } as const;
 
 export const defaultControlClassnames: Classnames = {
