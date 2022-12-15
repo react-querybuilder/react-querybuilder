@@ -16,9 +16,17 @@ interface AddOptions {
   /**
    * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
    * `independentCombinators`), then the first combinator in this list will be
-   * inserted before the new rule/group.
+   * inserted before the new rule/group if the parent group is not empty. This
+   * option is overridden by `combinatorPreceding`.
    */
   combinators?: OptionList;
+  /**
+   * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
+   * `independentCombinators`), then this combinator will be inserted before
+   * the new rule/group if the parent group is not empty. This option will
+   * override `combinators`.
+   */
+  combinatorPreceding?: string;
 }
 /**
  * Adds a rule or group to a query.
@@ -32,22 +40,17 @@ export const add = <RG extends RuleGroupTypeAny>(
   query: RG,
   ruleOrGroup: RG | RuleType,
   parentPath: number[],
-  { combinators = defaultCombinators }: AddOptions = {}
+  { combinators = defaultCombinators, combinatorPreceding }: AddOptions = {}
 ) =>
   produce(query, draft => {
     const parent = findPath(parentPath, draft) as RG;
     if (!('combinator' in parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
-      // TODO: Instead of just getting the first custom/default combinator,
-      // we could search the query for the first combinator we find and
-      // use that in case custom combinator names are being used. Would
-      // still need to fall back to custom/default combinators in case there
-      // are no combinators defined in the query yet.
       parent.rules.push(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore This is technically a type violation until the next `.push()`,
-        // but that happens immediately and unconditionally so there's no actual risk.
-        typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators)
+        // @ts-expect-error This is technically a type violation until the next `.push()`,
+        // but that happens immediately and unconditionally so there's no real risk.
+        combinatorPreceding ??
+          (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
       );
     }
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup) as RuleType);

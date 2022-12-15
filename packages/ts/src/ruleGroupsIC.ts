@@ -16,6 +16,10 @@ export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = st
   'combinator' | 'rules'
 > & {
   rules: RuleGroupICArray<RuleGroupTypeIC<R, C>, R, C>;
+  /**
+   * Only used when adding a rule to a query that uses independent combinators
+   */
+  combinatorPreceding?: C;
 };
 
 export type RuleGroupTypeAny = RuleGroupType | RuleGroupTypeIC;

@@ -9,12 +9,17 @@ interface CommonProperties {
 export type RuleType<
   F extends string = string,
   O extends string = string,
-  V = any
+  V = any,
+  C extends string = string
 > = CommonProperties & {
   field: F;
   operator: O;
   value: V;
   valueSource?: ValueSource;
+  /**
+   * Only used when adding a rule to a query that uses independent combinators
+   */
+  combinatorPreceding?: C;
 };
 
 export type RuleGroupType<

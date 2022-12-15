@@ -788,6 +788,29 @@ describe('onAddRule prop', () => {
     expect(onQueryChange.mock.calls[1][0].rules[0].value).toBe('modified');
   });
 
+  it('specifies the preceding combinator', async () => {
+    const onQueryChange = jest.fn();
+    const rule: RuleType = {
+      field: 'test',
+      operator: '=',
+      value: 'modified',
+      combinatorPreceding: 'or',
+    };
+    render(
+      <QueryBuilder
+        independentCombinators
+        onAddRule={() => rule}
+        onQueryChange={onQueryChange}
+        defaultQuery={{ rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
+      />
+    );
+
+    await user.click(screen.getByTestId(TestID.addRule));
+
+    expect((onQueryChange.mock.calls[1][0] as RuleGroupTypeIC).rules[1]).toBe('or');
+    expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
+  });
+
   it('passes handleOnClick context to onAddRule', async () => {
     const onQueryChange = jest.fn();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
@@ -842,6 +865,24 @@ describe('onAddGroup prop', () => {
     await user.click(screen.getByTestId(TestID.addGroup));
 
     expect(onQueryChange.mock.calls[1][0].rules[0].combinator).toBe('fake');
+  });
+
+  it('specifies the preceding combinator', async () => {
+    const onQueryChange = jest.fn();
+    const group: RuleGroupTypeIC = { rules: [], combinatorPreceding: 'or' };
+    render(
+      <QueryBuilder
+        independentCombinators
+        onAddGroup={() => group}
+        onQueryChange={onQueryChange}
+        defaultQuery={{ rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
+      />
+    );
+
+    await user.click(screen.getByTestId(TestID.addGroup));
+
+    expect((onQueryChange.mock.calls[1][0] as RuleGroupTypeIC).rules[1]).toBe('or');
+    expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
   });
 
   it('passes handleOnClick context to onAddGroup', async () => {
