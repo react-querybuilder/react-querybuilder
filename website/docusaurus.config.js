@@ -117,12 +117,6 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
-            position: 'right',
-            label: 'Quick Start',
-          },
-          {
-            type: 'doc',
             docId: 'api/querybuilder',
             position: 'right',
             label: 'Docs',
@@ -158,7 +152,7 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Quick Start',
+                label: 'Getting started',
                 to: '/docs/intro',
               },
               {

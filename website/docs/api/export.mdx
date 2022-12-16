@@ -37,14 +37,14 @@ const query: RuleGroupType = {
     {
       id: 'rule1',
       field: 'firstName',
-      value: 'Steve',
       operator: '=',
+      value: 'Steve',
     },
     {
       id: 'rule2',
       field: 'lastName',
-      value: 'Vai',
       operator: '=',
+      value: 'Vai',
     },
   ],
 };
@@ -52,7 +52,7 @@ const query: RuleGroupType = {
 
 :::tip
 
-_<abbr title="Too long; didn't read">TL;DR</abbr>: For best results, use the [default combinators and operators](./misc#defaults) or map custom combinators/operators to the defaults with [`transformQuery`](./misc#transformquery)._
+> **_<abbr title="Too long; didn't read">TL;DR</abbr>: For best results, use the [default combinators and operators](./misc#defaults) or map your custom combinators/operators to the defaults with [`transformQuery`](./misc#transformquery)._**
 
 While `formatQuery` technically accepts query objects of type `RuleGroupTypeAny` (i.e. `RuleGroupType` or `RuleGroupTypeIC`), it is not guaranteed to process a query correctly unless the query also conforms to the type `DefaultRuleGroupTypeAny` (i.e. `DefaultRuleGroupType` or `DefaultRuleGroupTypeIC`).
 
@@ -244,7 +244,7 @@ Output:
 
 ### JsonLogic
 
-The "jsonlogic" format produces an object that can be processed by the `jsonLogic.apply` function (see https://jsonlogic.com/).
+The "jsonlogic" format produces an object that can be processed by the JsonLogic `apply` function (see https://jsonlogic.com/).
 
 ```ts
 formatQuery(query, 'jsonlogic');
@@ -256,7 +256,7 @@ Output:
 { "and": [{ "==": [{ "var": "firstName" }, "Steve"] }, { "==": [{ "var": "lastName" }, "Vai"] }] }
 ```
 
-:::info
+:::tip
 
 Before using JsonLogic's `apply()` method to apply the result of `formatQuery(query, 'jsonlogic')`, register the additional operators `startsWith` and `endsWith` exported by `react-querybuilder`. These are not [standard JsonLogic operations](https://jsonlogic.com/operations.html), but they correspond to the "beginsWith" and "endsWith" operators, respectively, from `react-querybuilder`.
 
@@ -480,6 +480,7 @@ const p = formatQuery(query, {
   paramPrefix: '$',
 });
 // p.sql === "(firstName = $firstName_1 and lastName = $lastName_1)"
+//                         ^                           ^
 ```
 
 ### Fallback expression
