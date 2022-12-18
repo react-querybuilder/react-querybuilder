@@ -232,7 +232,8 @@ const LandingPage = () => {
               </p>
               <div className={styles.linkList}>
                 <Link href="/docs/api/classnames">Documentation</Link>
-                <Link href="/docs/tips/styling">Tips</Link>
+                {/*TODO: update below to <Link href="/docs/tips/styling">Tips</Link> */}
+                <Link href="/docs/category/tips--tricks">Tips</Link>
               </div>
             </div>
           </div>
