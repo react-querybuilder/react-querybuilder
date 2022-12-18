@@ -76,6 +76,7 @@ const ExtendedValueEditor_Select = (props: ValueEditorProps) => (
     options={selectOptions}
     styles={{
       container: base => ({ ...base, width: '100%' }),
+      menu: base => ({ ...base, zIndex: 99 }),
     }}
   />
 );
