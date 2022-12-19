@@ -1,6 +1,8 @@
 @use 'sass:color';
 
 @import './classname-diagram.scss';
+// TODO: remove next line (and file) once the `.queryBuilder-branches` rules are released.
+@import './temp.scss';
 
 /**
  * This is the effective color of a level 3 group when using
