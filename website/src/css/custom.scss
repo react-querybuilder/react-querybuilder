@@ -25,6 +25,7 @@ $primary-color-lightest: color.scale($primary-color-lighter, $lightness: 10%);
   --ifm-color-primary-lighter: #{$primary-color-lighter};
   --ifm-color-primary-lightest: #{$primary-color-lightest};
   --ifm-code-font-size: 95%;
+  --ifm-footer-background-color: #3c649f;
 }
 
 // Slightly alter the code block line highlight color
@@ -68,6 +69,37 @@ html[data-theme='dark'] .header-discord-link:before {
     no-repeat;
 }
 
+.footer.footer--dark {
+  --ifm-footer-background-color: #3c649f;
+}
+
 .admonition > .admonition-content > blockquote {
   font-style: italic;
+}
+
+.queryBuilder-branches.red-branch-lines {
+  .rule,
+  .ruleGroup {
+    &::before,
+    &::after {
+      border-color: red !important;
+    }
+  }
+}
+
+.queryBuilder-branches.green-branch-lines {
+  .rule,
+  .ruleGroup {
+    &::before,
+    &::after {
+      border-color: green !important;
+    }
+  }
+}
+
+.ruleGroup-body.inline-indycomb {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
 }

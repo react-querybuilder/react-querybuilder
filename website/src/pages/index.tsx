@@ -175,7 +175,8 @@ const LandingPage = () => {
             <div>
               <h2>Extensible</h2>
               <p>
-                Provide custom components for maximum flexibility, or use one of the official{' '}
+                Provide <Link href="/docs/tips/custom-with-fallback">custom components</Link> for
+                maximum flexibility, or use one of the official{' '}
                 <Link href="/docs/compat">compatibility packages</Link> for libraries like MUI,
                 Bootstrap, and others.
               </p>
@@ -213,13 +214,16 @@ const LandingPage = () => {
                 getOperators={() => defaultOperators.filter(op => op.name === 'between')}
               />
             </div>
-            <div className="queryBuilder-branches custom-styling">
+            <div className="custom-styling">
               <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
                 <QueryBuilder
                   query={query}
                   onQueryChange={q => setQuery(q)}
                   fields={fields}
                   translations={{ dragHandle: { label: '⇅' } }}
+                  controlClassnames={{
+                    queryBuilder: ['queryBuilder-branches', 'green-branch-lines'],
+                  }}
                 />
               </QueryBuilderDnD>
             </div>
