@@ -138,7 +138,7 @@ const config = {
             className: 'header-github-link',
           },
           {
-            href: '/discord',
+            to: '/discord',
             'aria-label': 'Discord server',
             position: 'right',
             className: 'header-discord-link',
@@ -156,39 +156,21 @@ const config = {
                 to: '/docs/intro',
               },
               {
-                label: 'API',
+                label: 'Component API',
                 to: '/docs/api/querybuilder',
               },
-            ],
-          },
-          {
-            title: 'Demos',
-            items: [
               {
-                label: 'Kitchen Sink',
+                label: 'Tips & Tricks',
+                to: '/docs/category/tips--tricks',
+              },
+              {
+                label: 'Showcase',
                 to: '/demo',
               },
             ],
           },
-          // {
-          //   title: 'Community',
-          //   items: [
-          //     {
-          //       label: 'Stack Overflow',
-          //       href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-          //     },
-          //     {
-          //       label: 'Discord',
-          //       href: 'https://discordapp.com/invite/docusaurus',
-          //     },
-          //     {
-          //       label: 'Twitter',
-          //       href: 'https://twitter.com/docusaurus',
-          //     },
-          //   ],
-          // },
           {
-            title: 'More',
+            title: 'External',
             items: [
               // {
               //   label: 'Blog',
@@ -197,6 +179,10 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/react-querybuilder/react-querybuilder',
+              },
+              {
+                label: 'Discord',
+                to: '/discord',
               },
               {
                 label: 'npm',
