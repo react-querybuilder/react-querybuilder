@@ -12,13 +12,10 @@ The following code will produce a SQL string with each bind variable placeholder
 
 ```ts
 let i = 0;
-const { sql, params } = formatQuery(query, 'parameterized');
-const numberedParams = {
-  params,
-  sql: sql.replaceAll('?', () => {
-    i++;
-    return `$${i}`;
-  }),
+const fq = formatQuery(query, 'parameterized');
+const fqWithNumberedParams = {
+  ...fq,
+  sql: fq.sql.replaceAll('?', () => `$${++i}`),
 };
 ```
 
@@ -31,7 +28,7 @@ For example, if `formatQuery(query, "parameterized")` produced the following obj
 }
 ```
 
-...then the code above would assign the following object to the `numberedParams` variable:
+...then the code above would assign the following object to the `fqWithNumberedParams` variable:
 
 ```json
 {
