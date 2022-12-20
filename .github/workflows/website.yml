@@ -46,4 +46,4 @@ jobs:
         run: |
           git config --global user.email "jakeboone02@gmail.com"
           git config --global user.name "Jake Boone"
-          yarn website:deploy
+          cd website && yarn deploy
