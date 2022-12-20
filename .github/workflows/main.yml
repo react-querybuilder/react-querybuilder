@@ -24,7 +24,7 @@ jobs:
         run: yarn pretty-print
       - name: Git diff
         if: ${{ failure() }}
-        run: git diff
+        run: git diff && exit 1
 
   build_and_test:
     name: Build and test
