@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - [#422](https://github.com/react-querybuilder/react-querybuilder/issues/422) Adding the class `queryBuilder-branches` displays "tree view" branch lines.
+- [#426](https://github.com/react-querybuilder/react-querybuilder/issues/426) Dynamic classnames based on the specific rule/group properties.
+  - New function props `getRuleClassname` and `getRuleGroupClassname` are passed the rule or group, and the return value will be added as a class to the surrounding `div`.
+  - `Field`, `Operator`, and new interface `Combinator` now have an optional `className` property that will be applied to rules or groups that specify the appropriate attribute.
 - [#417](https://github.com/react-querybuilder/react-querybuilder/issues/417) Optional `arity` property for operators. When `arity` is either "unary" or a number less than 2, the value editor will not render when that operator is selected (similar to the standard "null"/"notNull" operators).
 - [#408](https://github.com/react-querybuilder/react-querybuilder/issues/408) The interfaces `Option` (née `NameLabelPair`), `Field`, and `ValueEditorProps` now accept generics for `name` and other properties.
 - [#418](https://github.com/react-querybuilder/react-querybuilder/issues/418) A new `OptionList` type covers the `options` property for all standard selection lists (field, operator, combinator, etc.). Previously this was a union type: `NameLabelPair[] | OptionGroup<NameLabelPair>[]`. `OptionList` is equivalent to this type, but 1) doesn't require typing the base type twice, and 2) uses the new `Option` name instead of the deprecated `NameLabelPair`.

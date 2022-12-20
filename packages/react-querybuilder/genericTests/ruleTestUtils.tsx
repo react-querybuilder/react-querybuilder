@@ -104,6 +104,7 @@ const ruleSchema: Partial<Schema> = {
     { name: 'one', label: 'One' },
     { name: 'two', label: 'Two' },
   ],
+  getRuleClassname: () => '',
   showCloneButtons: false,
   validationMap: {},
 };

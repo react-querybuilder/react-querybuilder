@@ -1812,6 +1812,30 @@ describe('value source field', () => {
   });
 });
 
+describe('dynamic classNames', () => {
+  it('should have correct group-based classNames', () => {
+    render(
+      <QueryBuilder
+        fields={[{ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }]}
+        combinators={[{ name: 'or', label: 'OR', className: 'custom-combinatorBased-class' }]}
+        operators={[{ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }]}
+        getRuleClassname={() => 'custom-ruleBased-class'}
+        getRuleGroupClassname={() => 'custom-groupBased-class'}
+        query={{ combinator: 'or', rules: [{ field: 'f1', operator: 'op', value: 'v1' }] }}
+      />
+    );
+    expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(
+      'custom-groupBased-class',
+      'custom-combinatorBased-class'
+    );
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(
+      'custom-ruleBased-class',
+      'custom-fieldBased-class',
+      'custom-operatorBased-class'
+    );
+  });
+});
+
 describe('nested object immutability', () => {
   it('does not modify rules it does not have to modify', async () => {
     const onQueryChange = jest.fn();

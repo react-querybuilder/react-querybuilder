@@ -553,6 +553,18 @@ The default operator for new rules. This can be a string identifying the default
 
 This function returns the default value for new rules.
 
+### `getRuleClassname`
+
+`(rule: RuleType) => Classname`
+
+Adds custom classes to the outer `div` of the rule.
+
+### `getRuleGroupClassname`
+
+`(ruleGroup: RuleGroupTypeAny) => Classname`
+
+Adds custom classes to the outer `div` of the group.
+
 ### `onAddRule`
 
 `(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny, context?: any) => RuleType | false`

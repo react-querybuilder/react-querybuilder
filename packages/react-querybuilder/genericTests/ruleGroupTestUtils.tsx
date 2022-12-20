@@ -145,6 +145,8 @@ const ruleGroupSchema: Partial<Schema> = {
   getValueEditorType: () => 'text',
   getValueSources: () => ['value'],
   getValues: () => [],
+  getRuleClassname: () => '',
+  getRuleGroupClassname: () => '',
   createRule: () => createRule(0),
   createRuleGroup: () => ({
     id: 'rule_group_id_0',

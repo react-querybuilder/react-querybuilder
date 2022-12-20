@@ -7,6 +7,8 @@ import type {
   RefAttributes,
 } from 'react';
 import type {
+  Classname,
+  Combinator,
   Field,
   Operator,
   OptionList,
@@ -86,7 +88,7 @@ export interface Schema {
   fields: OptionList<Field>;
   fieldMap: Record<string, Field>;
   classNames: Classnames;
-  combinators: OptionList;
+  combinators: OptionList<Combinator>;
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
@@ -95,6 +97,8 @@ export interface Schema {
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): OptionList;
+  getRuleClassname(rule: RuleType): Classname;
+  getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
@@ -260,7 +264,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *   { name: 'notBetween', label: 'not between' },
      * ]
      */
-    operators?: OptionList;
+    operators?: OptionList<Operator>;
     /**
      * The array of combinators that should be used for RuleGroups.
      * @default
@@ -269,7 +273,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *     {name: 'or', label: 'OR'},
      * ]
      */
-    combinators?: OptionList;
+    combinators?: OptionList<Combinator>;
     /**
      * The default field for new rules. This can be a string identifying the
      * default field, or a function that returns a field name.
@@ -316,6 +320,14 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * function is provided, an empty array is used as the default.
      */
     getValues?(field: string, operator: string): OptionList;
+    /**
+     * The result of this function will be applied as a className on the given rule.
+     */
+    getRuleClassname?(rule: RuleType): Classname;
+    /**
+     * The result of this function will be applied as a className on the given group.
+     */
+    getRuleGroupClassname?(ruleGroup: RG): Classname;
     /**
      * This callback is invoked before a new rule is added. The function should either manipulate
      * the rule and return it, or return `false` to cancel the addition of the rule.

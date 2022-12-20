@@ -54,6 +54,7 @@ export const Rule = ({
     listsAsArrays,
     validationMap,
     enableDragAndDrop,
+    getRuleClassname,
   } = schema;
   const { moveRule, onPropChange, onRuleRemove } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
@@ -122,7 +123,8 @@ export const Rule = ({
   const fieldData = fieldMap?.[field] ?? { name: field, label: field };
   const inputType = fieldData.inputType ?? getInputType(field, operator);
   const operators = getOperators(field);
-  const arity = getOption(operators, operator)?.arity;
+  const operatorObject = getOption(operators, operator);
+  const arity = operatorObject?.arity;
   const hideValueControls =
     (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
   const valueSources =
@@ -148,7 +150,16 @@ export const Rule = ({
       ? fieldData.validator({ id, field, operator, value })
       : null);
   const validationClassName = getValidationClassNames(validationResult);
+  const fieldBasedClassName = useMemo(() => fieldData?.className ?? '', [fieldData?.className]);
+  const operatorBasedClassName = useMemo(
+    () => operatorObject?.className ?? '',
+    [operatorObject?.className]
+  );
+
   const outerClassName = clsx(
+    getRuleClassname(ruleObject),
+    fieldBasedClassName,
+    operatorBasedClassName,
     standardClassnames.rule,
     classNames.rule,
     {

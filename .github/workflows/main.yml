@@ -24,7 +24,7 @@ jobs:
         run: yarn pretty-print
       - name: Git diff
         if: ${{ failure() }}
-        run: git diff
+        run: git diff && exit 1
 
   build_and_test:
     name: Build and test
@@ -43,27 +43,3 @@ jobs:
       - run: yarn test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
-
-  # test-types:
-  #   name: Test Types with TypeScript ${{ matrix.ts }}
-
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       node: ['16.x']
-  #       ts: ['4.1', '4.5', 'latest']
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v2
-
-  #     - name: Use node ${{ matrix.node }}
-  #       uses: actions/setup-node@v2
-  #       with:
-  #         node-version: ${{ matrix.node }}
-  #         cache: 'yarn'
-
-  #     - name: Install Dependencies and Build with Latest TypeScript
-  #       run: |
-  #         yarn install
-  #         yarn build
