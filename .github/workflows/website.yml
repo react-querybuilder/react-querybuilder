@@ -15,14 +15,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '16.x'
-      - name: Install main dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
       - name: Install website dependencies
-        run: yarn website:install --immutable
+        run: yarn --immutable
+        working-directory: website
       - name: Build Website
-        run: yarn website:build
+        run: yarn build
+        working-directory: website
 
   gh-release:
     if: github.event_name != 'pull_request'
@@ -32,14 +30,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '16.x'
-      - name: Install main dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
       - name: Install website dependencies
-        run: yarn website:install --immutable
+        run: yarn --immutable
+        working-directory: website
       - name: Build Website
-        run: yarn website:build
+        run: yarn build
+        working-directory: website
       - uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_WEBSITE_DEPLOY }}
