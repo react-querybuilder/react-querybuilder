@@ -1,9 +1,19 @@
-import type { Field, Operator, Option, OptionList, ValueEditorType, ValueSource } from './basic';
+import type {
+  Classname,
+  Combinator,
+  Field,
+  Operator,
+  Option,
+  OptionList,
+  ValueEditorType,
+  ValueSource,
+} from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
 
 export interface CommonSubComponentProps {
+  // TODO: should this be `Classname` instead of `string`?
   /**
    * CSS classNames to be applied
    */
@@ -47,7 +57,8 @@ export interface BaseSelectorProps<OptType extends Option = Option> extends Sele
   options: OptionList<OptType>;
 }
 
-export interface ValueSelectorProps extends BaseSelectorProps {
+export interface ValueSelectorProps<OptType extends Option = Option>
+  extends BaseSelectorProps<OptType> {
   multiple?: boolean;
   listsAsArrays?: boolean;
 }
@@ -58,12 +69,11 @@ export interface NotToggleProps extends CommonSubComponentProps {
   label?: string;
 }
 
-export interface CombinatorSelectorProps extends BaseSelectorProps {
+export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
   rules?: RuleOrGroupArray;
 }
 
-export interface FieldSelectorProps extends BaseSelectorProps {
-  options: OptionList<Field>;
+export interface FieldSelectorProps extends BaseSelectorProps<Field> {
   operator?: string;
 }
 
@@ -72,14 +82,11 @@ export interface OperatorSelectorProps extends BaseSelectorProps<Operator> {
   fieldData: Field;
 }
 
-interface ValueSourceOption extends Option {
-  name: ValueSource;
-}
+type ValueSourceOption = Option<ValueSource>;
 
-export interface ValueSourceSelectorProps extends BaseSelectorProps {
+export interface ValueSourceSelectorProps extends BaseSelectorProps<ValueSourceOption> {
   field: string;
   fieldData: Field;
-  options: OptionList<ValueSourceOption>;
 }
 
 export type VersatileSelectorProps = ValueSelectorProps &
@@ -103,8 +110,6 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
 export interface DragHandleProps extends CommonSubComponentProps {
   label?: string;
 }
-
-export type Classname = string | string[] | Record<string, any>;
 
 export interface Classnames {
   /**

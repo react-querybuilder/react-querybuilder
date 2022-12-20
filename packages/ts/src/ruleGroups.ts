@@ -1,4 +1,4 @@
-import type { Option, ValueSource } from './basic';
+import type { Combinator, Operator, ValueSource } from './basic';
 
 interface CommonProperties {
   path?: number[];
@@ -72,14 +72,8 @@ export type DefaultOperatorName =
   | 'between'
   | 'notBetween';
 
-export interface DefaultCombinator extends Option {
-  name: DefaultCombinatorName;
-}
+export type DefaultCombinator = Combinator<DefaultCombinatorName>;
 
-export interface DefaultCombinatorExtended extends Option {
-  name: DefaultCombinatorNameExtended;
-}
+export type DefaultCombinatorExtended = Combinator<DefaultCombinatorNameExtended>;
 
-export interface DefaultOperator extends Option {
-  name: DefaultOperatorName;
-}
+export type DefaultOperator = Operator<DefaultOperatorName>;

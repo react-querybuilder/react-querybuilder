@@ -331,6 +331,28 @@ describe('valueSource', () => {
   });
 });
 
+describe('dynamic classNames', () => {
+  it('should have correct group-based classNames', () => {
+    render(
+      <Rule
+        {...getProps({
+          fieldMap: { f1: { name: 'f1', label: 'F1', className: 'custom-fieldBased-class' } },
+          getOperators: () => [
+            { name: 'op', label: 'Op', className: 'custom-operatorBased-class' },
+          ],
+          getRuleClassname: () => 'custom-ruleBased-class',
+        })}
+        rule={{ field: 'f1', operator: 'op', value: 'v1' }}
+      />
+    );
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(
+      'custom-ruleBased-class',
+      'custom-fieldBased-class',
+      'custom-operatorBased-class'
+    );
+  });
+});
+
 describe('deprecated props', () => {
   it('warns about deprecated props', () => {
     // @ts-expect-error rule prop is required

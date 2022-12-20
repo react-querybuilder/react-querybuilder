@@ -5,7 +5,7 @@ import { Fragment, useMemo } from 'react';
 import { defaultCombinators, standardClassnames, TestID } from './defaults';
 import { getValidationClassNames } from './internal';
 import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { getParentPath, pathsAreEqual } from './utils';
+import { getOption, getParentPath, pathsAreEqual } from './utils';
 
 export const RuleGroup = ({
   id,
@@ -55,6 +55,7 @@ export const RuleGroup = ({
     validationMap,
     disabledPaths,
     enableDragAndDrop,
+    getRuleGroupClassname,
   } = schema;
   const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
   const disabled = !!parentDisabled || !!disabledProp;
@@ -178,7 +179,14 @@ export const RuleGroup = ({
 
   const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
   const validationClassName = getValidationClassNames(validationResult);
+  const combinatorBasedClassName = useMemo(
+    () => (independentCombinators ? null : getOption(combinators, combinator)?.className ?? ''),
+    [combinator, combinators, independentCombinators]
+  );
+
   const outerClassName = clsx(
+    getRuleGroupClassname(ruleGroupObject),
+    combinatorBasedClassName,
     standardClassnames.ruleGroup,
     classNames.ruleGroup,
     {

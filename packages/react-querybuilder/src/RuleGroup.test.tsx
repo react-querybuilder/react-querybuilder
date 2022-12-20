@@ -419,6 +419,24 @@ describe('lock buttons', () => {
   });
 });
 
+describe('dynamic classNames', () => {
+  it('should have correct group-based classNames', () => {
+    render(
+      <RuleGroup
+        {...getRuleGroupProps({
+          combinators: [{ name: 'or', label: 'OR', className: 'custom-combinatorBased-class' }],
+          getRuleGroupClassname: () => 'custom-groupBased-class',
+        })}
+        ruleGroup={{ combinator: 'or', rules: [] }}
+      />
+    );
+    expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(
+      'custom-groupBased-class',
+      'custom-combinatorBased-class'
+    );
+  });
+});
+
 describe('deprecated props', () => {
   // TODO: We're invoking the useDeprecatedProps module twice (see two `it` calls below),
   // so we may need to use https://www.npmjs.com/package/babel-plugin-dynamic-import-node
