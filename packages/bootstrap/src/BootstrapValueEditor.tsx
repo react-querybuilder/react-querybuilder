@@ -59,15 +59,9 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
 
     return (
       <span data-testid={props.testID} className={standardClassnames.value} title={props.title}>
-        {!props.separator ? (
-          editors
-        ) : (
-          <>
-            {editors[0]}
-            {props.separator}
-            {editors[1]}
-          </>
-        )}
+        {editors[0]}
+        {props.separator}
+        {editors[1]}
       </span>
     );
   }

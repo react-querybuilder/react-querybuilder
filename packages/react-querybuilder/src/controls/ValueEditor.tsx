@@ -16,7 +16,7 @@ export const ValueEditor = ({
   parseNumbers,
   fieldData,
   disabled,
-  separator,
+  separator = null,
   skipHook = false,
   testID,
   ...props
@@ -74,15 +74,9 @@ export const ValueEditor = ({
 
     return (
       <span data-testid={testID} className={className} title={title}>
-        {!separator ? (
-          editors
-        ) : (
-          <>
-            {editors[0]}
-            {separator}
-            {editors[1]}
-          </>
-        )}
+        {editors[0]}
+        {separator}
+        {editors[1]}
       </span>
     );
   }
