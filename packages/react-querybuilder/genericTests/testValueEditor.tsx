@@ -81,8 +81,8 @@ export const testValueEditor = (
           expect(onChange).toHaveBeenCalledWith('foo');
         });
 
-        it('should make the inputType "text" if operator is "between" or "notBetween"', () => {
-          render(<ValueEditor {...props} inputType="number" operator="between" />);
+        it('should make the inputType "text" if operator is "in" or "notIn"', () => {
+          render(<ValueEditor {...props} inputType="number" operator="in" />);
           expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
         });
 
@@ -125,11 +125,11 @@ export const testValueEditor = (
               {...props}
               inputType="number"
               operator="="
-              value={['12', '14']}
+              value={['14', '12']}
               handleOnChange={handleOnChange}
             />
           );
-          expect(handleOnChange).toHaveBeenNthCalledWith(++callCount, '12');
+          expect(handleOnChange).toHaveBeenNthCalledWith(++callCount, '14');
           rerender(
             <ValueEditor
               {...props}

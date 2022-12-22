@@ -68,3 +68,5 @@ export interface Operator<N extends string = string> extends Option<N>, HasOptio
 }
 
 export interface Combinator<N extends string = string> extends Option<N>, HasOptionalClassName {}
+
+export type ParseNumbersMethod = boolean | 'strict' | 'native';

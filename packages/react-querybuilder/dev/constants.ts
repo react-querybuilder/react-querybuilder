@@ -280,8 +280,8 @@ export const initialQuery: RuleGroupType = {
     {
       id: generateID(),
       field: 'birthdate',
-      operator: '=',
-      value: '1969-01-01',
+      operator: 'between',
+      value: '1954-10-03,1960-06-06',
     },
   ],
 };

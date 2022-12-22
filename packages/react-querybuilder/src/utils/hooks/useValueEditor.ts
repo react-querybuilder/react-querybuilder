@@ -1,11 +1,18 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
-import { toArray } from '../arrayUtils';
+import { getFirstOption, joinWith, parseNumber, toArray } from '..';
 
 type useValueEditorParams = Pick<
   ValueEditorProps,
-  'handleOnChange' | 'inputType' | 'operator' | 'value'
->;
+  | 'handleOnChange'
+  | 'inputType'
+  | 'operator'
+  | 'value'
+  | 'listsAsArrays'
+  | 'type'
+  | 'values'
+  | 'parseNumbers'
+> & { skipHook?: boolean };
 
 /**
  * This Effect trims the value if all of the following are true:
@@ -25,8 +32,17 @@ export const useValueEditor = ({
   inputType,
   operator,
   value,
+  type,
+  listsAsArrays,
+  parseNumbers,
+  values,
+  skipHook,
 }: useValueEditorParams) => {
+  let valArray: any[] = [];
+  let betweenValueHandler: (v: string, i: number) => void = v => handleOnChange(v);
+
   useEffect(() => {
+    if (skipHook) return;
     if (
       inputType === 'number' &&
       !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
@@ -34,5 +50,22 @@ export const useValueEditor = ({
     ) {
       handleOnChange(toArray(value)[0] ?? '');
     }
-  }, [handleOnChange, inputType, operator, value]);
+  }, [handleOnChange, inputType, operator, skipHook, value]);
+
+  if (
+    (operator === 'between' || operator === 'notBetween') &&
+    (type === 'select' || type === 'text')
+  ) {
+    valArray = toArray(value);
+    betweenValueHandler = (v: string, i: number) => {
+      const vParsed = parseNumber(v, { parseNumbers });
+      const val =
+        i === 0
+          ? [vParsed, valArray[1] ?? getFirstOption(values), ...valArray.slice(2)]
+          : [valArray[0], vParsed, ...valArray.slice(2)];
+      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+    };
+  }
+
+  return { valArray, betweenValueHandler };
 };

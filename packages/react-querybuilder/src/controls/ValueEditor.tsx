@@ -1,6 +1,6 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { standardClassnames } from '../defaults';
-import { joinWith, toArray, useValueEditor } from '../utils';
+import { getFirstOption, parseNumber, useValueEditor } from '../utils';
 import { ValueSelector } from './ValueSelector';
 
 export const ValueEditor = ({
@@ -9,56 +9,80 @@ export const ValueEditor = ({
   handleOnChange,
   title,
   className,
-  type,
-  inputType,
+  type = 'text',
+  inputType = 'text',
   values = [],
   listsAsArrays,
+  parseNumbers,
   fieldData,
   disabled,
+  separator,
+  skipHook = false,
   testID,
   ...props
 }: ValueEditorProps) => {
-  useValueEditor({ handleOnChange, inputType, operator, value });
+  const { valArray, betweenValueHandler } = useValueEditor({
+    skipHook,
+    handleOnChange,
+    inputType,
+    operator,
+    value,
+    type,
+    listsAsArrays,
+    parseNumbers,
+    values,
+  });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
-    ? 'text'
-    : inputType || 'text';
+  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
-  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
-    const valArray = toArray(value);
-    const selector1handler = (v: string) => {
-      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
-    const selector2handler = (v: string) => {
-      const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
+  if (
+    (operator === 'between' || operator === 'notBetween') &&
+    (type === 'select' || type === 'text')
+  ) {
+    const editors = ['from', 'to'].map((key, i) => {
+      if (type === 'text') {
+        return (
+          <input
+            key={key}
+            type={inputType || 'text'}
+            placeholder={placeHolderText}
+            value={valArray[i] ?? ''}
+            className={standardClassnames.valueListItem}
+            disabled={disabled}
+            onChange={e => betweenValueHandler(e.target.value, i)}
+          />
+        );
+      }
+      return (
+        <ValueSelector
+          key={key}
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={v => betweenValueHandler(v, i)}
+          disabled={disabled}
+          value={valArray[i] ?? getFirstOption(values)}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      );
+    });
+
     return (
       <span data-testid={testID} className={className} title={title}>
-        <ValueSelector
-          {...props}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector1handler}
-          disabled={disabled}
-          value={valArray[0]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
-        <ValueSelector
-          {...props}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector2handler}
-          disabled={disabled}
-          value={valArray[1]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+        {!separator ? (
+          editors
+        ) : (
+          <>
+            {editors[0]}
+            {separator}
+            {editors[1]}
+          </>
+        )}
       </span>
     );
   }
@@ -136,7 +160,7 @@ export const ValueEditor = ({
       title={title}
       className={className}
       disabled={disabled}
-      onChange={e => handleOnChange(e.target.value)}
+      onChange={e => handleOnChange(parseNumber(e.target.value, { parseNumbers }))}
     />
   );
 };
