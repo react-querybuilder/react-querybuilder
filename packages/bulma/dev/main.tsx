@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from 'react-querybuilder/dev';
-import { bulmaControlElements } from '../src';
+import { QueryBuilderBulma } from '../src';
 import './styles.scss';
 
 createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
-    <App controlElements={bulmaControlElements} />
+    <App wrapper={QueryBuilderBulma} />
   </React.StrictMode>
 );
