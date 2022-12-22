@@ -2,7 +2,6 @@ import type {
   ComponentType,
   ForwardRefExoticComponent,
   MouseEvent as ReactMouseEvent,
-  ReactElement,
   ReactNode,
   Ref,
   RefAttributes,
@@ -77,7 +76,7 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
   values?: any[];
   listsAsArrays?: boolean;
   parseNumbers?: ParseNumbersMethod;
-  separator?: ReactElement | null;
+  separator?: ReactNode;
   /**
    * Only pass `true` if the `useValueEditor` hook has already run
    * in a wrapper component. See compatibility packages.
@@ -116,7 +115,7 @@ export interface Schema {
   createRuleGroup(): RuleGroupTypeAny;
   getOperators(field: string): OptionList<Operator>;
   getValueEditorType(field: string, operator: string): ValueEditorType;
-  getValueEditorSeparator(field: string, operator: string): ReactElement | null;
+  getValueEditorSeparator(field: string, operator: string): ReactNode;
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): OptionList;
@@ -330,7 +329,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * It will be placed in between value editors when multiple are rendered,
      * e.g. when the operator is "between".
      */
-    getValueEditorSeparator?(field: string, operator: string): ReactElement | null;
+    getValueEditorSeparator?(field: string, operator: string): ReactNode;
     /**
      * This function should return the list of valid
      * value sources for a given field and operator. The return value must
