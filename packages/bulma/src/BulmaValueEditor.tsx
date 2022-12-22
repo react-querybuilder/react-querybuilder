@@ -86,7 +86,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     case 'textarea':
       return (
         <div className={`${props.className} control`}>
-          <ValueEditor {...props} className="textarea" />
+          <ValueEditor skipHook {...props} className="textarea" />
         </div>
       );
 
@@ -94,7 +94,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     case 'checkbox':
       return (
         <label title={props.title} className={`${props.className} checkbox`}>
-          <ValueEditor {...props} title="" className="" />
+          <ValueEditor skipHook {...props} title="" className="" />
         </label>
       );
 
@@ -119,7 +119,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
 
   return (
     <div className={`${props.className} control`}>
-      <ValueEditor {...props} disabled={props.disabled} className="input" />
+      <ValueEditor skipHook {...props} disabled={props.disabled} className="input" />
     </div>
   );
 };
