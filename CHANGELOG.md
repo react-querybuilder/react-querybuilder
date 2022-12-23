@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v5.3.1] - 2022-12-23
+
+### Fixed
+
+- [#432](https://github.com/react-querybuilder/react-querybuilder/issues/432) The `crypto` package was used in a way that didn't work in some Node environments.
+
 ## [v5.3.0] - 2022-12-23
 
 ### Changed
@@ -1033,7 +1039,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.1...HEAD
+[v5.3.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.0...v5.3.1
 [v5.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.2.0...v5.3.0
 [v5.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.3...v5.2.0
 [v5.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.2...v5.1.3

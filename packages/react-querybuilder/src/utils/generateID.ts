@@ -2,7 +2,8 @@ let cryptoModule = globalThis.crypto;
 
 // istanbul ignore next
 if (!cryptoModule && typeof require === 'function') {
-  cryptoModule = require('node:crypto');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  cryptoModule = require('crypto').webcrypto;
 }
 
 /**
