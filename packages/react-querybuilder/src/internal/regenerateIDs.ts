@@ -5,7 +5,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/ts/src/index.noReact';
-import { generateID } from './generateID';
+import { generateID } from '../utils';
 
 export const regenerateID = (rule: RuleType): RuleType =>
   JSON.parse(JSON.stringify({ ...rule, id: `r-${generateID()}` }));

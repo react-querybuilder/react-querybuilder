@@ -21,7 +21,6 @@ import {
 } from './defaults';
 import {
   filterFieldsByComparator,
-  generateID,
   getValueSourcesUtil,
   uniqByName,
   uniqOptGroups,
@@ -30,6 +29,7 @@ import { useControlledOrUncontrolled } from './internal/hooks';
 import {
   add,
   findPath,
+  generateID,
   getFirstOption,
   isOptionGroupArray,
   joinWith,

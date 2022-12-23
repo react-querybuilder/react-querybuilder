@@ -3,6 +3,7 @@ export * from './c';
 export * from './convertQuery';
 export * from './defaultValidator';
 export * from './formatQuery';
+export * from './generateID';
 export * from './getCompatContextProvider';
 export * from './hooks';
 export * from './isRuleGroup';

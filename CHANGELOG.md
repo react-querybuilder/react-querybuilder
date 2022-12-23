@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- `id`'s are now generated using `crypto.randomUUID()` instead of `Math.random().toString()`.
+- New rule and group `id`s are now generated as valid v4 UUIDs using `crypto.getRandomValues()` instead of `Math.random()`. The `generateID` function used internally is exported.
 - [#418](https://github.com/react-querybuilder/react-querybuilder/issues/418) TypeScript interface `NameLabelPair` has been deprecated and is now an alias for the `Option` interface.
 
 ### Fixed
