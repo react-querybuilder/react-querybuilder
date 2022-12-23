@@ -27,8 +27,8 @@
   "devDependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.10.16",
-    "@mui/material": "^5.10.17",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.1",
     "@react-querybuilder/ts": "^5.2.0",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.26",
@@ -38,7 +38,7 @@
     "react-querybuilder": "^5.2.0",
     "regenerator-runtime": "^0.13.11",
     "typescript": "^4.9.4",
-    "vite": "^4.0.0"
+    "vite": "^4.0.3"
   },
   "peerDependencies": {
     "@emotion/react": "^11",

@@ -1,12 +1,5 @@
-import {
-  convertToIC,
-  defaultOperators,
-  type ExportFormat,
-  type Field,
-  type RuleGroupType,
-  type RuleType,
-} from '../src';
-import { generateID } from '../src/internal';
+import type { ExportFormat, Field, RuleGroupType, RuleType } from '../src';
+import { convertToIC, defaultOperators, generateID } from '../src';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
 

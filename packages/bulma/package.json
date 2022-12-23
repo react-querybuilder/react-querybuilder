@@ -34,7 +34,7 @@
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.2.0",
     "typescript": "^4.9.4",
-    "vite": "^4.0.0"
+    "vite": "^4.0.3"
   },
   "peerDependencies": {
     "bulma": "^0.9.3",
