@@ -28,7 +28,7 @@ import {
   errorUncontrolledToControlled,
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
-import { defaultValidator, findPath, formatQuery } from './utils';
+import { defaultValidator, findPath, formatQuery, generateID } from './utils';
 
 const user = userEvent.setup();
 
@@ -1956,7 +1956,7 @@ describe('debug mode', () => {
 describe('controlled/uncontrolled warnings', () => {
   it('tracks changes from controlled to uncontrolled and vice versa', () => {
     const getQuery = (): RuleGroupType => ({
-      combinator: crypto.randomUUID(),
+      combinator: generateID(),
       rules: [],
     });
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
