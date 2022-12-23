@@ -24,6 +24,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
   }
 
   const placeHolderText = props.fieldData?.placeholder ?? '';
+  const { values = [] } = props;
 
   if (
     (props.operator === 'between' || props.operator === 'notBetween') &&
@@ -50,8 +51,8 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
           className={standardClassnames.valueListItem}
           handleOnChange={v => betweenValueHandler(v, i)}
           disabled={props.disabled}
-          value={valArray[i] ?? getFirstOption(props.values)}
-          options={props.values ?? []}
+          value={valArray[i] ?? getFirstOption(values)}
+          options={values}
           listsAsArrays={props.listsAsArrays}
         />
       );
@@ -75,7 +76,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
           title={props.title}
           className={props.className}
           handleOnChange={props.handleOnChange}
-          options={props.values ?? []}
+          options={values}
           value={props.value}
           disabled={props.disabled}
           multiple={props.type === 'multiselect'}
@@ -101,7 +102,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     case 'radio':
       return (
         <div className={`${props.className} control`} title={props.title}>
-          {(props.values ?? []).map(v => (
+          {values.map(v => (
             <label key={v.name} className="radio">
               <input
                 type="radio"

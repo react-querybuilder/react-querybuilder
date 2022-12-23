@@ -49,7 +49,7 @@ export const ValueEditor = ({
         return (
           <input
             key={key}
-            type={inputType || 'text'}
+            type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valArray[i] ?? ''}
             className={standardClassnames.valueListItem}

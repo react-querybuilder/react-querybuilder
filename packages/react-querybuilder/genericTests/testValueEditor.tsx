@@ -11,7 +11,7 @@ type ValueEditorTestsToSkip = Partial<{
   radio: boolean;
   textarea: boolean;
   switch: boolean;
-  betweenSelect: boolean;
+  between: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: OptionList;
@@ -86,6 +86,11 @@ export const testValueEditor = (
           expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
         });
 
+        it('should make the inputType "text" if provided inputType is null', () => {
+          render(<ValueEditor {...props} inputType={null} operator="=" />);
+          expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
+        });
+
         it('should trim the value if operator is not "between"/"in", inputType is "number", and value contains a comma', () => {
           const handleOnChange = jest.fn();
           let callCount = 0;
@@ -102,7 +107,7 @@ export const testValueEditor = (
             <ValueEditor
               {...props}
               inputType="number"
-              operator="notBetween"
+              operator="in"
               value="12,14"
               handleOnChange={handleOnChange}
             />
@@ -225,7 +230,71 @@ export const testValueEditor = (
       });
     }
 
-    if (!skip.betweenSelect) {
+    if (!skip.between) {
+      describe('when rendering a "between" text input', () => {
+        const betweenTextProps: ValueEditorProps = {
+          ...props,
+          operator: 'between',
+          type: 'text',
+          value: 'test1,test2',
+        };
+
+        it('should render the "between" text input', () => {
+          render(<ValueEditor {...betweenTextProps} />);
+          const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs).toHaveLength(2);
+          expect(betweenInputs[0]).toHaveValue('test1');
+          expect(betweenInputs[1]).toHaveValue('test2');
+        });
+
+        it('should call the onChange handler', async () => {
+          const handleOnChange = jest.fn();
+          render(<ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} />);
+          const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs).toHaveLength(2);
+          await user.type(betweenInputs[0], '2');
+          await user.type(betweenInputs[1], '1');
+          expect(handleOnChange).toHaveBeenCalledWith('test12,test2');
+          expect(handleOnChange).toHaveBeenCalledWith('test1,test21');
+        });
+
+        it('should assume empty string as the second value if not provided', async () => {
+          const handleOnChange = jest.fn();
+          render(
+            <ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} value={['test1']} />
+          );
+          const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs).toHaveLength(2);
+          await user.type(betweenInputs[0], 'test2');
+          expect(handleOnChange).toHaveBeenCalledWith('test12,');
+        });
+
+        it('should call the onChange handler with lists as arrays', async () => {
+          const handleOnChange = jest.fn();
+          render(
+            <ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} listsAsArrays />
+          );
+          const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs).toHaveLength(2);
+          await user.type(betweenInputs[0], 'test2');
+          await user.type(betweenInputs[1], 'test1');
+          expect(handleOnChange).toHaveBeenCalledWith(['test12', 'test2']);
+          expect(handleOnChange).toHaveBeenCalledWith(['test1', 'test21']);
+        });
+
+        it('should be disabled by the disabled prop', async () => {
+          const handleOnChange = jest.fn();
+          render(<ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} disabled />);
+          const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs).toHaveLength(2);
+          for (const r of betweenInputs) {
+            expect(r).toBeDisabled();
+            await user.click(r);
+          }
+          expect(handleOnChange).not.toHaveBeenCalled();
+        });
+      });
+
       describe('when rendering a "between" select', () => {
         const betweenSelectProps: ValueEditorProps = {
           ...props,
@@ -244,6 +313,14 @@ export const testValueEditor = (
           expect(betweenSelects).toHaveLength(2);
           expect(betweenSelects[0]).toHaveValue('test1');
           expect(betweenSelects[1]).toHaveValue('test2');
+        });
+
+        it('should assume empty values array if not provided', () => {
+          render(<ValueEditor {...betweenSelectProps} values={undefined} />);
+          const betweenSelects = screen.getAllByRole('combobox');
+          expect(betweenSelects).toHaveLength(2);
+          expect(betweenSelects[0]).toBeEmptyDOMElement();
+          expect(betweenSelects[1]).toBeEmptyDOMElement();
         });
 
         it('should call the onChange handler', async () => {
