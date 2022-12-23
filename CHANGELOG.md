@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v5.3.0] - 2022-12-23
+
 ### Changed
 
 - New rule and group `id`s are now generated as valid v4 UUIDs using `crypto.getRandomValues()` instead of `Math.random()`. The `generateID` function used internally is exported.
@@ -1029,7 +1033,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.2.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.0...HEAD
+[v5.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.2.0...v5.3.0
 [v5.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.3...v5.2.0
 [v5.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.2...v5.1.3
 [v5.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.1.1...v5.1.2
