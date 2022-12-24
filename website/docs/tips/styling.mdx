@@ -1,0 +1,133 @@
+---
+title: Styling
+description: How to tweak or overhaul the default styles
+---
+
+import { BrowserWindow } from '@site/src/components/BrowserWindow';
+import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
+
+React Query Builder has a [flexible structure with specific classes assigned](../api/classnames) to each element in the component hierarchy, enabling a wide range of styling possibilities.
+
+The default stylesheet comes in CSS and SCSS flavors. Using SCSS allows you to override variables to tweak styles without having to replicate the entire rule set.
+
+```ts
+import 'react-querybuilder/dist/query-builder.scss'; // recommended
+// OR
+import 'react-querybuilder/dist/query-builder.css';
+```
+
+The default SCSS variables include:
+
+```scss
+$rqb-spacing: 0.5rem !default;
+$rqb-background-color: rgba(0, 75, 183, 0.2) !default;
+$rqb-border-color: #7f81a2 !default;
+$rqb-border-style: solid !default;
+$rqb-border-radius: 4px !default;
+$rqb-border-width: 1px !default;
+```
+
+## Branch lines
+
+To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class to the query builder using the [`controlClassnames` prop](../api/querybuilder#controlclassnames), or to any ancestor element.
+
+<!-- prettier-ignore -->
+```tsx
+export default () => (
+  <QueryBuilder
+    controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}
+    {...otherProps}
+  />
+);
+```
+
+export const fields = [
+  { name: 'firstName', label: 'First name' },
+  { name: 'lastName', label: 'Last name' },
+];
+
+<BrowserWindow>
+  <QueryBuilderEmbed
+    fields={fields}
+    controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}
+    defaultQuery={{
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            { field: 'lastName', operator: '=', value: 'Vaughan' },
+          ],
+        },
+      ],
+    }}
+  />
+</BrowserWindow>
+
+The branch lines are colored <span style={{ color: 'red' }}>red</span> in the example above to stand out, but by default the branch lines use the same color, width, and style as the group borders. The following SCSS variables can be overridden to customize the branch lines.
+
+```scss
+$rqb-branch-indent: $rqb-spacing !default;
+$rqb-branch-color: $rqb-border-color !default;
+$rqb-branch-width: $rqb-border-width !default;
+$rqb-branch-radius: $rqb-border-radius !default;
+$rqb-branch-style: $rqb-border-style !default;
+```
+
+## Drag-and-drop
+
+When [drag-and-drop is enabled](../api/querybuilder#enabledraganddrop), the following variables control the hover styles.
+
+```scss
+$rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
+$rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
+$rqb-dnd-hover-border-bottom-style: dashed !default;
+$rqb-dnd-hover-border-bottom-width: 2px !default;
+```
+
+You can also assign styles to the following classes.
+
+- `dndDragging`: Assigned to the clone of the dragged element (the "ghost" that follows the mouse cursor)
+- `dndOver`: Assigned to a drop target when the cursor hovers over it
+- `dndCopy`: Assigned to a drop target when the cursor hovers over it while the modifier key is pressed (`Alt` on Windows/Linux, `Option ⌥` on Mac)
+
+## Miscellaneous
+
+### Inline independent combinators
+
+Position each combinator to the right of the rule before it with this CSS:
+
+```css
+.ruleGroup-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+```
+
+<BrowserWindow>
+  <QueryBuilderEmbed
+    fields={fields}
+    independentCombinators
+    controlClassnames={{ body: 'inline-indycomb' }}
+    defaultQuery={{
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        'and',
+        {
+          rules: [
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            'or',
+            { field: 'lastName', operator: '=', value: 'Vaughan' },
+            'or',
+            { field: 'lastName', operator: '=', value: 'Martin' },
+          ],
+        },
+        'or',
+        { field: 'firstName', operator: 'null', value: null },
+      ],
+    }}
+  />
+</BrowserWindow>

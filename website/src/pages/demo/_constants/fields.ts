@@ -32,7 +32,7 @@ export const fields: Field[] = [
     valueEditorType: 'select',
     values: musicalInstruments,
     defaultValue: 'Piano',
-    operators: defaultOperators.filter(op => op.name === '=' || op.name === 'in'),
+    operators: defaultOperators.filter(op => op.name === '='),
   },
   {
     name: 'alsoPlaysInstruments',

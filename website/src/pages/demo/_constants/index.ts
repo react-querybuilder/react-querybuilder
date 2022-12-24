@@ -2,6 +2,8 @@ import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
 import { convertToIC, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
+export const generateID = () => `${Math.random()}`;
+
 export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
@@ -153,40 +155,40 @@ export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
 export const emptyQueryIC = convertToIC(emptyQuery);
 
 export const initialQuery: RuleGroupType = {
-  id: crypto.randomUUID(),
+  id: generateID(),
   combinator: 'and',
   not: false,
   rules: [
     {
-      id: crypto.randomUUID(),
+      id: generateID(),
       field: 'firstName',
       value: 'Stev',
       operator: 'beginsWith',
     },
     {
-      id: crypto.randomUUID(),
+      id: generateID(),
       field: 'lastName',
       value: 'Vai, Vaughan',
       operator: 'in',
     },
     {
-      id: crypto.randomUUID(),
+      id: generateID(),
       field: 'age',
       operator: '>',
       value: '28',
     },
     {
-      id: crypto.randomUUID(),
+      id: generateID(),
       combinator: 'or',
       rules: [
         {
-          id: crypto.randomUUID(),
+          id: generateID(),
           field: 'isMusician',
           operator: '=',
           value: true,
         },
         {
-          id: crypto.randomUUID(),
+          id: generateID(),
           field: 'instrument',
           operator: '=',
           value: 'Guitar',
@@ -194,12 +196,14 @@ export const initialQuery: RuleGroupType = {
       ],
     },
     {
+      id: generateID(),
       field: 'groupedField1',
       operator: '=',
       value: 'groupedField4',
       valueSource: 'field',
     },
     {
+      id: generateID(),
       field: 'birthdate',
       value: '1969-06-01',
       operator: '<',

@@ -40,6 +40,17 @@ const config = {
       },
     ],
     () => ({
+      name: 'rqb-crypto-fallback',
+      configureWebpack: () => ({
+        resolve: {
+          fallback: {
+            crypto: require.resolve('crypto-browserify'),
+            stream: require.resolve('stream-browserify'),
+          },
+        },
+      }),
+    }),
+    () => ({
       // This is not actually used, only here just in case
       name: 'rqb-wp5-raw-loader',
       configureWebpack: () => ({
@@ -117,12 +128,6 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
-            position: 'right',
-            label: 'Quick Start',
-          },
-          {
-            type: 'doc',
             docId: 'api/querybuilder',
             position: 'right',
             label: 'Docs',
@@ -144,7 +149,7 @@ const config = {
             className: 'header-github-link',
           },
           {
-            href: '/discord',
+            to: '/discord',
             'aria-label': 'Discord server',
             position: 'right',
             className: 'header-discord-link',
@@ -158,43 +163,25 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Quick Start',
+                label: 'Getting started',
                 to: '/docs/intro',
               },
               {
-                label: 'API',
+                label: 'Component API',
                 to: '/docs/api/querybuilder',
               },
-            ],
-          },
-          {
-            title: 'Demos',
-            items: [
               {
-                label: 'Kitchen Sink',
+                label: 'Tips & Tricks',
+                to: '/docs/category/tips--tricks',
+              },
+              {
+                label: 'Showcase',
                 to: '/demo',
               },
             ],
           },
-          // {
-          //   title: 'Community',
-          //   items: [
-          //     {
-          //       label: 'Stack Overflow',
-          //       href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-          //     },
-          //     {
-          //       label: 'Discord',
-          //       href: 'https://discordapp.com/invite/docusaurus',
-          //     },
-          //     {
-          //       label: 'Twitter',
-          //       href: 'https://twitter.com/docusaurus',
-          //     },
-          //   ],
-          // },
           {
-            title: 'More',
+            title: 'External',
             items: [
               // {
               //   label: 'Blog',
@@ -203,6 +190,10 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/react-querybuilder/react-querybuilder',
+              },
+              {
+                label: 'Discord',
+                to: '/discord',
               },
               {
                 label: 'npm',
