@@ -3,6 +3,8 @@ title: <ValueEditor />
 description: ValueEditor types
 ---
 
+import { useState } from 'react';
+import { update, toArray } from 'react-querybuilder';
 import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
@@ -13,6 +15,12 @@ This query builder has been specially configured in two ways:
 
 1. The value actually stored in the rule object within the query is displayed to the right of each value editor.
 2. To focus attention on the value editor components, all other components have been disabled or hidden.
+
+:::tip
+
+When the `operator` for a rule is **"between"** or **"notBetween"**, two inputs will be displayed. Each input will have the class "rule-value-list-item" (see [CSS classes](./classnames)). They will manage the rule's `value` as a comma-separated string (e.g. `"value1,value2"`) unless [`listsAsArrays`](./querybuilder#listsasarrays) is `true`, in which case the `value` will be an actual `Array` (e.g. `["value1", "value2"]`).
+
+:::
 
 :::tip
 
@@ -113,21 +121,48 @@ export const defaultQuery = {
 };
 export const NullComponent = () => null;
 
-<QueryBuilderEmbed
-  getOperators={() => [{ name: '=', label: '=' }]}
-  controlElements={{
-    fieldSelector: fieldSelector,
-    operatorSelector: operatorSelector,
-    combinatorSelector: NullComponent,
-    addRuleAction: NullComponent,
-    addGroupAction: NullComponent,
-    removeRuleAction: NullComponent,
-    removeGroupAction: NullComponent,
-    valueEditor: valueEditor,
-  }}
-  fields={fields}
-  defaultQuery={defaultQuery}
-/>
+export const Showcase = () => {
+  const [query, setQuery] = useState(defaultQuery);
+  const [listsAsArrays, setListsAsArrays] = useState(false);
+  return (
+    <>
+      <label>
+        <input
+          type="checkbox"
+          checked={listsAsArrays}
+          onChange={e => {
+            if (e.target.checked) {
+              setQuery(update(query, 'value', toArray(query.rules[5].value), [5]));
+            } else {
+              setQuery(update(query, 'value', query.rules[5].value.join(','), [5]));
+            }
+            setListsAsArrays(e.target.checked);
+          }}
+        />
+        <code>listsAsArrays</code>
+      </label>
+      <QueryBuilderEmbed
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        listsAsArrays={listsAsArrays}
+        getOperators={() => [{ name: '=', label: '=' }]}
+        controlElements={{
+          fieldSelector: fieldSelector,
+          operatorSelector: operatorSelector,
+          combinatorSelector: NullComponent,
+          addRuleAction: NullComponent,
+          addGroupAction: NullComponent,
+          removeRuleAction: NullComponent,
+          removeGroupAction: NullComponent,
+          valueEditor: valueEditor,
+        }}
+      />
+    </>
+  );
+};
+
+<Showcase />
 
 :::note
 
