@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Changed
+
+- [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators.
+  - When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`.
+  - New prop `getValueEditorSeparator` which takes a `field` name and an `operator` name and should return a `ReactNode` (string, element, etc.) that will be placed between the two editors when `operator` is "between" or "notBetween". E.g., `getValueEditorSeparator={() => "and"}`.
+  - New prop `parseNumbers`. When this is `true`, the default `ValueEditor` will update its rule with an actual number instead of the string representation whenever possible.
+  - `useValueEditor` hook updated to return an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
+  - New `ValueEditor` prop `skipHook` that, when `true`, prevents the `useValueEditor` hook call within the default `ValueEditor` component from making query updates.
+  - Bulma components no longer specify the `is-small` class, so they will be rendered at their default size.
+  - The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) changed from `4px` to `0.25rem`. Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers and `16 × 0.25 = 4`.
+  - Utility function `c` has been removed. Use a package like `clsx` instead.
 
 ## [v5.3.1] - 2022-12-23
 
@@ -21,7 +31,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - New rule and group `id`s are now generated as valid v4 UUIDs using `crypto.getRandomValues()` instead of `Math.random()`. The `generateID` function used internally is exported.
 - [#418](https://github.com/react-querybuilder/react-querybuilder/issues/418) TypeScript interface `NameLabelPair` has been deprecated and is now an alias for the `Option` interface.
-- The default border radius on rule groups and branch lines changed from `4px` to `0.25rem`. Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers and `16 × 0.25 = 4`.
 
 ### Fixed
 
