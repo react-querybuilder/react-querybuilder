@@ -40,6 +40,17 @@ const config = {
       },
     ],
     () => ({
+      name: 'rqb-crypto-fallback',
+      configureWebpack: () => ({
+        resolve: {
+          fallback: {
+            crypto: require.resolve('crypto-browserify'),
+            stream: require.resolve('stream-browserify'),
+          },
+        },
+      }),
+    }),
+    () => ({
       // This is not actually used, only here just in case
       name: 'rqb-wp5-raw-loader',
       configureWebpack: () => ({
