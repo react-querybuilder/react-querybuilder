@@ -1,6 +1,7 @@
 import type { Field, OptionList, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from './json-logic-js';
 import type { RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny } from './ruleGroupsIC';
 import type { QueryValidator } from './validation';
 
 export type ExportFormat =
@@ -130,6 +131,8 @@ export interface ParseSQLOptions extends ParserCommonOptions {
 
 export type ParseCELOptions = ParserCommonOptions;
 
-export type ParseJsonLogicOptions = ParserCommonOptions;
+export interface ParseJsonLogicOptions extends ParserCommonOptions {
+  jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny>;
+}
 
 export type ParseMongoDbOptions = ParserCommonOptions;

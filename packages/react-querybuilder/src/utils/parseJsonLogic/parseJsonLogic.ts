@@ -13,6 +13,7 @@ import type {
 import { defaultOperatorNegationMap } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
+import { objectKeys } from '../objectKeys';
 import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
 import {
   isJsonLogicAnd,
@@ -59,9 +60,8 @@ function parseJsonLogic(
   rqbJsonLogic: string | RQBJsonLogic,
   options: ParseJsonLogicOptions = {}
 ): DefaultRuleGroupTypeAny {
-  const listsAsArrays = !!options.listsAsArrays;
   const fieldsFlat = getFieldsArray(options.fields);
-  const getValueSources = options.getValueSources;
+  const { getValueSources, listsAsArrays, jsonLogicOperations } = options;
 
   const fieldIsValid = (
     fieldName: string,
@@ -93,7 +93,7 @@ function parseJsonLogic(
       return false;
     }
     const key = Object.keys(logic)[0] as JsonLogicReservedOperations;
-    // @ts-expect-error `key in logic === true`, but TS doesn't know that
+    // @ts-expect-error `key in logic` is always true, but TS doesn't know that
     const keyValue = logic[key];
     // Rule groups
     if (isJsonLogicAnd(logic)) {
@@ -133,6 +133,8 @@ function parseJsonLogic(
     } else if (isJsonLogicDoubleNegation(logic)) {
       const rule = processLogic(logic['!!']);
       return rule || false;
+    } else if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
+      return jsonLogicOperations[key](keyValue) as DefaultRuleType;
     }
 
     // All other keys represent rules
