@@ -350,17 +350,22 @@ it('invalidates primitives as root object', () => {
 });
 
 it('parses custom operations', () => {
+  const jsonLogicOperations = {
+    regex: (val: any) => ({ field: val[0].var, operator: 'contains', value: val[1].source }),
+    emptyGroup: () => ({ combinator: 'and', rules: [] }),
+  };
+  expect(
+    parseJsonLogic({ regex: [{ var: 'f1' }, /test/] } as any, { jsonLogicOperations })
+  ).toEqual({
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: 'contains', value: 'test' }],
+  });
   expect(
     parseJsonLogic(
       {
         and: [{ regex: [{ var: 'f1' }, /test/] } as any, { emptyGroup: null }],
       },
-      {
-        jsonLogicOperations: {
-          regex: val => ({ field: val[0].var, operator: 'contains', value: val[1].source }),
-          emptyGroup: () => ({ combinator: 'and', rules: [] }),
-        },
-      }
+      { jsonLogicOperations }
     )
   ).toEqual({
     combinator: 'and',

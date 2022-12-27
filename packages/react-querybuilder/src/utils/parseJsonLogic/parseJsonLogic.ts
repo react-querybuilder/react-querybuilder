@@ -133,8 +133,6 @@ function parseJsonLogic(
     } else if (isJsonLogicDoubleNegation(logic)) {
       const rule = processLogic(logic['!!']);
       return rule || false;
-    } else if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
-      return jsonLogicOperations[key](keyValue) as DefaultRuleType;
     }
 
     // All other keys represent rules
@@ -144,8 +142,11 @@ function parseJsonLogic(
     let value: any = '';
     let valueSource: ValueSource | undefined = undefined;
 
-    // Basic boolean operations
-    if (
+    if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
+      // Custom operations
+      rule = jsonLogicOperations[key](keyValue) as DefaultRuleType;
+    } else if (
+      // Basic boolean operations
       isJsonLogicEqual(logic) ||
       isJsonLogicStrictEqual(logic) ||
       isJsonLogicNotEqual(logic) ||
