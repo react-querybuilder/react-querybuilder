@@ -220,6 +220,46 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Custom operations
+
+By default, `parseJsonLogic` handles the standard JsonLogic operations that correspond to one of the default operators in React Query Builder. To handle custom operations, use the `jsonLogicOperations` option.
+
+`jsonLogicOperations` is `Record<string, (val: any) => RuleType | RuleGroupTypeAny`. The keys of the object should be the custom operations, and the corresponding values should be functions that return a rule or group.
+
+:::note
+
+Including any of the standard JsonLogic operations as keys in the `jsonLogicOperations` object will override the default `parseJsonLogic` behavior for those operations.
+
+:::
+
+The example below uses a custom "regex" operation to produce a rule with the "contains" operator, the `value` being the `source` of the regular expression in the JsonLogic rule.
+
+```ts
+parseJsonLogic(
+  { regex: [{ var: 'firstName' }, /^Stev/] },
+  {
+    jsonLogicOperations: {
+      regex: val => ({ field: val[0].var, operator: 'contains', value: val[1].source }),
+    },
+  }
+);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "contains",
+      "value": "^Stev"
+    }
+  ]
+}
+```
+
 ## Configuration
 
 ### Lists as arrays

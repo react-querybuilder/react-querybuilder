@@ -349,6 +349,28 @@ it('invalidates primitives as root object', () => {
   expect(parseJsonLogic('Test')).toEqual(emptyRuleGroup);
 });
 
+it('parses custom operations', () => {
+  expect(
+    parseJsonLogic(
+      {
+        and: [{ regex: [{ var: 'f1' }, /test/] } as any, { emptyGroup: null }],
+      },
+      {
+        jsonLogicOperations: {
+          regex: val => ({ field: val[0].var, operator: 'contains', value: val[1].source }),
+          emptyGroup: () => ({ combinator: 'and', rules: [] }),
+        },
+      }
+    )
+  ).toEqual({
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'contains', value: 'test' },
+      { combinator: 'and', rules: [] },
+    ],
+  });
+});
+
 it('translates lists as arrays', () => {
   expect(
     parseJsonLogic(
