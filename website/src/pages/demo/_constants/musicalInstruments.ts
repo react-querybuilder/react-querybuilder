@@ -11,6 +11,7 @@ export const musicalInstruments: OptionGroup[] = [
       'Gong',
       'Maraca',
       'Marimba',
+      'More cowbell',
       'Spoon',
       'Steelpan',
       'Tambourine',
