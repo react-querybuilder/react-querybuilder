@@ -24,6 +24,7 @@ const config = {
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
 
+  scripts: [{ src: '/js/console.js', async: false }],
   plugins: [
     'docusaurus-plugin-sass',
     [
