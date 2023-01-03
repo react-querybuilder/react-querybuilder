@@ -24,7 +24,14 @@ const config = {
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
 
-  scripts: [{ src: '/js/console.js', async: false }],
+  scripts: [
+    { src: '/js/console.js', async: false },
+    // Uncomment these lines to expose the `ReactQueryBuilder` object in the console
+    // { src: 'https://unpkg.com/react@18/umd/react.development.js', async: true },
+    // { src: 'https://unpkg.com/immer@9/dist/immer.umd.development.js', async: true },
+    // { src: 'https://unpkg.com/@react-querybuilder/ctx@5/dist/index.umd.js', async: true },
+    // { src: 'https://unpkg.com/react-querybuilder@5/dist/index.umd.js', async: true },
+  ],
   plugins: [
     'docusaurus-plugin-sass',
     [
