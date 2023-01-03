@@ -1,4 +1,5 @@
 import Link from '@docusaurus/Link';
+import { useColorMode } from '@docusaurus/theme-common';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
@@ -68,18 +69,48 @@ const initialSelectQuery: RuleGroupType = {
     },
   ],
 };
-const ExtendedValueEditor_Select = (props: ValueEditorProps) => (
-  <Select
-    value={props.value}
-    isMulti
-    onChange={v => props.handleOnChange(v)}
-    options={selectOptions}
-    styles={{
-      container: base => ({ ...base, width: '100%' }),
-      menu: base => ({ ...base, zIndex: 99 }),
-    }}
-  />
-);
+const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
+  const isDarkTheme = useColorMode().colorMode === 'dark';
+  return (
+    <Select
+      value={props.value}
+      isMulti
+      onChange={v => props.handleOnChange(v)}
+      options={selectOptions}
+      styles={{
+        container: base => ({ ...base, width: '100%' }),
+        menu: base => ({ ...base, zIndex: 99 }),
+      }}
+      theme={theme =>
+        !isDarkTheme
+          ? theme
+          : {
+              ...theme,
+              colors: {
+                ...theme.colors,
+                // primary: theme.colors.primary, // "#2684FF",
+                // primary75: theme.colors.primary75, // "#4C9AFF",
+                // primary50: theme.colors.primary50, // "#B2D4FF",
+                primary25: '#768cad', // "#DEEBFF",
+                danger: theme.colors.dangerLight, // "#DE350B",
+                dangerLight: theme.colors.danger, // "#FFBDAD",
+                neutral0: '#222222', // "hsl(0, 0%, 100%)",
+                // neutral5: theme.colors.neutral5, // "hsl(0, 0%, 95%)",
+                neutral10: '#525252', // "hsl(0, 0%, 90%)",
+                // neutral20: theme.colors.neutral20, // "hsl(0, 0%, 80%)",
+                // neutral30: theme.colors.neutral30, // "hsl(0, 0%, 70%)",
+                // neutral40: theme.colors.neutral40, // "hsl(0, 0%, 60%)",
+                // neutral50: theme.colors.neutral50, // "hsl(0, 0%, 50%)",
+                // neutral60: theme.colors.neutral60, // "hsl(0, 0%, 40%)",
+                // neutral70: theme.colors.neutral70, // "hsl(0, 0%, 30%)",
+                neutral80: '#ffffff', // "hsl(0, 0%, 20%)",
+                // neutral90: theme.colors.neutral90, // "hsl(0, 0%, 10%)",
+              },
+            }
+      }
+    />
+  );
+};
 
 const sliderFields = fields.filter(f => f.name === 'age');
 const initialSliderQuery: RuleGroupType = {
