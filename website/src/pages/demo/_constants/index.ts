@@ -2,7 +2,11 @@ import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
 import { convertToIC, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
-export const generateID = () => `${Math.random()}`;
+// https://stackoverflow.com/a/68141099/217579
+export const generateID = () =>
+  '00-0-4-1-000'.replace(/[^-]/g, (s: any) =>
+    (((Math.random() + ~~s) * 0x10000) >> s).toString(16).padStart(4, '0')
+  );
 
 export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,
