@@ -93,6 +93,7 @@ const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
       onChange={v => props.handleOnChange(v)}
       options={selectOptions}
       styles={{
+        control: base => ({ ...base, borderColor: '#8081a2' }),
         container: base => ({ ...base, width: '100%' }),
         menu: base => ({ ...base, zIndex: 99 }),
       }}

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+- The default border color has changed from `#7f81a2` to `#8081a2`. This difference will almost certainly be imperceptible.
 
 ## [v5.3.3] - 2022-12-27
 
