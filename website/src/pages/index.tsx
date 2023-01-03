@@ -73,6 +73,7 @@ const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
   return (
     <Select
+      key={`${isDarkTheme}`}
       value={props.value}
       isMulti
       onChange={v => props.handleOnChange(v)}
