@@ -166,7 +166,11 @@ const LandingPage = () => {
             </div>
             <div>
               <h2>Export/import</h2>
-              <p>Convert to and from SQL, MongoDB, and several other query formats.</p>
+              <p>
+                Convert to and from SQL, MongoDB, and several other query formats. The code block{' '}
+                <span className={styles.leftOrBelow}></span> reflects the query above converted to
+                the selected format.
+              </p>
               <div className={styles.linkList}>
                 <Link href="/docs/api/export">Export documentation</Link>
                 <Link href="/docs/api/import">Import documentation</Link>
