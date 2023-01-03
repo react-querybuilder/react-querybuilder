@@ -128,10 +128,14 @@ input[type='checkbox'] {
 
   .rule {
     row-gap: 0;
+    .queryBuilder-dragHandle {
+      margin-left: auto;
+    }
   }
 
   .queryBuilder-dragHandle {
     color: #3366ff99;
     text-shadow: 2px 2px 3px #33333333;
+    order: 99;
   }
 }
