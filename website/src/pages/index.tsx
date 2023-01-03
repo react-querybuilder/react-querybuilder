@@ -5,7 +5,7 @@ import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
-import React, { forwardRef, StrictMode, useMemo, useState } from 'react';
+import React, { forwardRef, StrictMode, useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as ReactDnD from 'react-dnd';
@@ -71,9 +71,23 @@ const initialSelectQuery: RuleGroupType = {
 };
 const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
+  const [state, setState] = useState(false);
+  const isFirstRender = useRef(true);
+
+  // For some reason simply setting the `key` on the `Select` component
+  // doesn't trigger the dark mode styles on initial render if the user
+  // already has dark mode selected, so this Effect refreshes the component
+  // after a short delay.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      setTimeout(() => setState(true), 1000);
+      isFirstRender.current = false;
+    }
+  }, []);
+
   return (
     <Select
-      key={`${isDarkTheme}`}
+      key={`${isDarkTheme}-${state}`}
       value={props.value}
       isMulti
       onChange={v => props.handleOnChange(v)}
