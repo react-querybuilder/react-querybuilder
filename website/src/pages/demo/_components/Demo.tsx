@@ -14,6 +14,7 @@ import {
   convertToIC,
   defaultValidator,
   formatQuery,
+  objectKeys,
   parseCEL,
   parseJsonLogic,
   parseMongoDB,
@@ -28,6 +29,7 @@ import {
   initialQueryIC as defaultInitialQueryIC,
   optionOrderByLabel,
   optionsMetadata,
+  peerDependencies,
 } from '../_constants';
 import { fields } from '../_constants/fields';
 import type { CommonRQBProps, StyleName } from '../_constants/types';
@@ -269,6 +271,25 @@ export default function Demo({
     [optionsInfo]
   );
 
+  const packageNames = useMemo(
+    () => [
+      'react-querybuilder',
+      ...(options.enableDragAndDrop
+        ? [
+            '@react-querybuilder/dnd',
+            ...objectKeys(peerDependencies.dnd).filter(pd => pd !== 'react'),
+          ]
+        : []),
+      ...(variant === 'default'
+        ? []
+        : [
+            `@react-querybuilder/${variant}`,
+            ...objectKeys(peerDependencies[variant]).filter(pd => pd !== 'react'),
+          ]),
+    ],
+    [options.enableDragAndDrop, variant]
+  );
+
   const loadFromSQL = () => {
     try {
       const q = parseSQL(sql);
@@ -462,11 +483,7 @@ export default function Demo({
       </div>
       <div
         style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
-        <Nav
-          variant={variant}
-          dnd={options.enableDragAndDrop}
-          compressedState={getCompressedState()}
-        />
+        <Nav variant={variant} compressedState={getCompressedState()} />
         <div id={qbWrapperId} className={qbWrapperClassName}>
           <QueryWrapper>
             <QueryBuilderDnD>
@@ -514,6 +531,27 @@ export default function Demo({
             },
           ]}>
           <TabItem value="code" label="Code">
+            <Details summary={<summary>Dependencies</summary>}>
+              <p>
+                The selected options require the following package{packageNames.length > 1 && 's'}:
+              </p>
+              <CodeBlock language="shell">{packageNames.join(' ')}</CodeBlock>
+              <p>
+                Registry link{packageNames.length > 1 && 's'}:{' '}
+                {packageNames.map(packageName => (
+                  <span key={packageName}>
+                    {' '}
+                    <a
+                      href={`https://www.npmjs.com/package/${packageName}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.demoNavPackageLink}>
+                      {packageName}
+                    </a>
+                  </span>
+                ))}
+              </p>
+            </Details>
             <CodeBlock language="tsx" title="App.tsx">
               {codeString}
             </CodeBlock>

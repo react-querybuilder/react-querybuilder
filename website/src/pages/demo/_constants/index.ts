@@ -1,3 +1,9 @@
+import packageJSON_rqb_antd from '@react-querybuilder/antd/package.json';
+import packageJSON_rqb_bootstrap from '@react-querybuilder/bootstrap/package.json';
+import packageJSON_rqb_bulma from '@react-querybuilder/bulma/package.json';
+import packageJSON_rqb_chakra from '@react-querybuilder/chakra/package.json';
+import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
+import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
 import { convertToIC, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
@@ -242,3 +248,13 @@ export const styleNameMap: Record<StyleName, string> = {
 const { default: _d, ...compatStyles } = styleNameMap;
 
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
+
+export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>> = {
+  default: {},
+  dnd: packageJSON_rqb_dnd.peerDependencies,
+  antd: packageJSON_rqb_antd.peerDependencies,
+  bootstrap: packageJSON_rqb_bootstrap.peerDependencies,
+  bulma: packageJSON_rqb_bulma.peerDependencies,
+  chakra: packageJSON_rqb_chakra.peerDependencies,
+  material: packageJSON_rqb_material.peerDependencies,
+};
