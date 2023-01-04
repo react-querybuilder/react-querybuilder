@@ -51,7 +51,7 @@ const ExtendedValueEditor_DatePicker = (props: ValueEditorProps) => (
   />
 );
 
-const selectFields = fields.filter(f => f.name === 'alsoPlaysInstruments');
+const selectFields = fields.filter(f => f.name === 'alsoPlays');
 const selectOptions = musicalInstruments.map(og => ({
   ...og,
   options: og.options.map(op => ({ ...op, value: op.name })),
@@ -60,11 +60,11 @@ const initialSelectQuery: RuleGroupType = {
   combinator: 'and',
   rules: [
     {
-      field: 'alsoPlaysInstruments',
+      field: 'alsoPlays',
       operator: 'in',
       value: [
-        { value: 'Piano', label: 'Piano' },
-        { value: 'Drum', label: 'Drum' },
+        { value: 'Cowbell', label: 'Cowbell' },
+        { value: 'More cowbell', label: 'More cowbell' },
       ],
     },
   ],
