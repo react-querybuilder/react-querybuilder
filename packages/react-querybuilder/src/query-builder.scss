@@ -52,6 +52,7 @@ $rqb-branch-style: $rqb-border-style !default;
     .rule-value:has(.rule-value-list-item) {
       display: flex;
       gap: $rqb-spacing;
+      align-items: baseline;
     }
   }
 }
