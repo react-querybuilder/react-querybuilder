@@ -50,6 +50,11 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
+  /**
+   * Indicates the location to which a rule/group will be moved if dropped,
+   * instead of moving the rule/group while dragging
+   */
+  waitForDrop?: boolean;
 };
 
 export type QueryBuilderDndContextProps = {
@@ -58,4 +63,5 @@ export type QueryBuilderDndContextProps = {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop?: typeof import('react-dnd')['useDrop'];
   baseControls: Pick<Controls, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
+  waitForDrop?: boolean;
 };

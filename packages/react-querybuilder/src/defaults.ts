@@ -231,4 +231,8 @@ export const LogType = {
   onAddRuleFalse: 'onAddRule callback returned false',
   onAddGroupFalse: 'onAddGroup callback returned false',
   onRemoveFalse: 'onRemove callback returned false',
+  add: 'rule or group added',
+  remove: 'rule or group removed',
+  update: 'rule or group updated',
+  move: 'rule or group moved',
 } as const;
