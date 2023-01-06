@@ -3,11 +3,13 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  RuleType,
   ValueSources,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultCombinators } from '../defaults';
 import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { formatQuery } from './formatQuery';
+import { numericRegex } from './formatQuery/utils';
 import { add, move, remove, update } from './queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);
@@ -15,6 +17,8 @@ const [value, field] = ['value', 'field'] as ValueSources;
 
 const stripIDs = (query: DefaultRuleGroupTypeAny) =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
+
+const idGenerator = () => `${Math.random()}`;
 
 const [r1, r2, r3, r4, r5] = (['=', '<', '>', '<=', '>='] as const).map<DefaultRuleType>(
   (operator, i) => ({
@@ -67,6 +71,9 @@ describe('add', () => {
     testQT('adds a group', add(rg1, rg2, []), {
       combinator: and,
       rules: [rg2],
+    });
+    it('adds a rule with custom idGenerator', () => {
+      expect((add(rg1, r1, [], { idGenerator }).rules[0] as RuleType).id).toMatch(numericRegex);
     });
   });
 
@@ -396,6 +403,11 @@ describe('move', () => {
       rg3,
       true
     );
+    it('adds a rule with custom idGenerator', () => {
+      expect((move(rg3, [1], [0], { clone: true, idGenerator }).rules[0] as RuleType).id).toMatch(
+        numericRegex
+      );
+    });
   });
 
   describe('independent combinators', () => {

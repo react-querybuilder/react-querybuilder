@@ -7,22 +7,33 @@ import type {
 } from '@react-querybuilder/ts/src/index.noReact';
 import { generateID } from '../utils';
 
-export const regenerateID = (rule: RuleType): RuleType =>
-  JSON.parse(JSON.stringify({ ...rule, id: `r-${generateID()}` }));
+interface RegenerateIdOptions {
+  idGenerator?: () => string;
+}
+
+export const regenerateID = (
+  rule: RuleType,
+  { idGenerator = generateID }: RegenerateIdOptions = {}
+): RuleType => JSON.parse(JSON.stringify({ ...rule, id: idGenerator() }));
 
 export const regenerateIDs = (
-  ruleGroup: RuleGroupType | RuleGroupTypeIC
+  ruleGroup: RuleGroupType | RuleGroupTypeIC,
+  { idGenerator = generateID }: RegenerateIdOptions = {}
 ): RuleGroupType | RuleGroupTypeIC => {
   if ('combinator' in ruleGroup) {
     const { combinator, not } = ruleGroup;
     const rules = ruleGroup.rules.map(r =>
-      'rules' in r ? regenerateIDs(r) : regenerateID(r)
+      'rules' in r ? regenerateIDs(r, { idGenerator }) : regenerateID(r, { idGenerator })
     ) as RuleGroupArray;
-    return { id: `g-${generateID()}`, combinator, rules, not };
+    return { id: idGenerator(), combinator, rules, not };
   }
   const { not } = ruleGroup;
   const rules = ruleGroup.rules.map(r =>
-    typeof r === 'string' ? r : 'rules' in r ? regenerateIDs(r) : regenerateID(r)
+    typeof r === 'string'
+      ? r
+      : 'rules' in r
+      ? regenerateIDs(r, { idGenerator })
+      : regenerateID(r, { idGenerator })
   ) as RuleGroupICArray;
-  return { id: `g-${generateID()}`, rules, not };
+  return { id: idGenerator(), rules, not };
 };

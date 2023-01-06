@@ -8,6 +8,7 @@ import type {
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';
+import { generateID } from './generateID';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -27,6 +28,10 @@ interface AddOptions {
    * override `combinators`.
    */
   combinatorPreceding?: string;
+  /**
+   * ID generator.
+   */
+  idGenerator?: () => string;
 }
 /**
  * Adds a rule or group to a query.
@@ -40,7 +45,11 @@ export const add = <RG extends RuleGroupTypeAny>(
   query: RG,
   ruleOrGroup: RG | RuleType,
   parentPath: number[],
-  { combinators = defaultCombinators, combinatorPreceding }: AddOptions = {}
+  {
+    combinators = defaultCombinators,
+    combinatorPreceding,
+    idGenerator = generateID,
+  }: AddOptions = {}
 ) =>
   produce(query, draft => {
     const parent = findPath(parentPath, draft) as RG;
@@ -53,7 +62,7 @@ export const add = <RG extends RuleGroupTypeAny>(
           (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
       );
     }
-    parent.rules.push(prepareRuleOrGroup(ruleOrGroup) as RuleType);
+    parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
   });
 
 interface UpdateOptions {
@@ -197,6 +206,10 @@ interface MoveOptions {
    * inserted before the rule/group if necessary.
    */
   combinators?: OptionList;
+  /**
+   * ID generator.
+   */
+  idGenerator?: () => string;
 }
 /**
  * Moves a rule or group from one path to another. In the options parameter, pass
@@ -211,7 +224,7 @@ export const move = <RG extends RuleGroupTypeAny>(
   query: RG,
   oldPath: number[],
   newPath: number[],
-  { clone = false, combinators = defaultCombinators }: MoveOptions = {}
+  { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
   if (pathsAreEqual(oldPath, newPath)) {
     return query;
@@ -222,8 +235,8 @@ export const move = <RG extends RuleGroupTypeAny>(
   }
   const ruleOrGroup = clone
     ? 'rules' in ruleOrGroupOriginal
-      ? regenerateIDs(ruleOrGroupOriginal)
-      : regenerateID(ruleOrGroupOriginal)
+      ? regenerateIDs(ruleOrGroupOriginal, { idGenerator })
+      : regenerateID(ruleOrGroupOriginal, { idGenerator })
     : ruleOrGroupOriginal;
 
   return produce(query, draft => {

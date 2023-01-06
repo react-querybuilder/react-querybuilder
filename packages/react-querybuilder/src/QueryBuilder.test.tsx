@@ -8,6 +8,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
+  RuleProps,
   RuleType,
   ValidationMap,
 } from '@react-querybuilder/ts';
@@ -29,6 +30,7 @@ import {
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
 import { defaultValidator, findPath, formatQuery, generateID } from './utils';
+import { numericRegex } from './utils/formatQuery/utils';
 
 const user = userEvent.setup();
 
@@ -1324,6 +1326,34 @@ describe('showCloneButtons', () => {
         ],
       });
     });
+  });
+});
+
+describe('idGenerator', () => {
+  it('uses custom id generator', async () => {
+    const onQueryChange = jest.fn();
+    const rule = (props: RuleProps) => (
+      <div>
+        <button type="button" onClick={() => props.actions.moveRule(props.path, [0], true)}>
+          clone
+        </button>
+      </div>
+    );
+    render(
+      <QueryBuilder
+        idGenerator={() => `${Math.random()}`}
+        onQueryChange={onQueryChange}
+        controlElements={{ rule }}
+      />
+    );
+    let n = 0;
+    expect(onQueryChange.mock.calls[n++][0].id).toMatch(numericRegex);
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onQueryChange.mock.calls[n++][0].rules[0].id).toMatch(numericRegex);
+    await user.click(screen.getByTestId(TestID.addGroup));
+    expect(onQueryChange.mock.calls[n++][0].rules[1].id).toMatch(numericRegex);
+    await user.click(screen.getByText('clone'));
+    expect(onQueryChange.mock.calls[n++][0].rules[0].id).toMatch(numericRegex);
   });
 });
 

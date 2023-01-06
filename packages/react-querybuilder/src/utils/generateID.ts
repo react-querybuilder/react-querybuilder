@@ -1,11 +1,5 @@
 const cryptoModule = globalThis.crypto;
 
-// // istanbul ignore next
-// if (!cryptoModule && typeof require === 'function') {
-//   // eslint-disable-next-line @typescript-eslint/no-var-requires
-//   cryptoModule = require('crypto').webcrypto;
-// }
-
 /**
  * Generates a valid v4 UUID, i.e. matching this regex:
  *
@@ -19,7 +13,7 @@ export let generateID = () =>
     (((Math.random() + ~~s) * 0x10000) >> s).toString(16).padStart(4, '0')
   );
 
-// ...final implementations are here:
+// Improve on the default implementation by using the crypto package if it's available
 if (cryptoModule) {
   // istanbul ignore else
   if (typeof cryptoModule.randomUUID === 'function') {

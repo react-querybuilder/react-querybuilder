@@ -402,6 +402,12 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      */
     validator?: QueryValidator;
     /**
+     * ID generator function.
+     *
+     * @default () => crypto.randomUUID()
+     */
+    idGenerator?: () => string;
+    /**
      * Container for custom props that are passed to all components
      */
     context?: any;

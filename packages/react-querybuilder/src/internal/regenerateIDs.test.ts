@@ -1,5 +1,10 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/src/index.noReact';
-import { regenerateIDs } from './regenerateIDs';
+import type {
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+} from '@react-querybuilder/ts/src/index.noReact';
+import { uuidV4regex } from '../utils/generateIDtests';
+import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {
   id: 'root',
@@ -43,6 +48,11 @@ const ruleGroupIC: RuleGroupTypeIC = {
     },
   ],
 };
+
+it('should generate different IDs for rules', () => {
+  const newRule = regenerateID((ruleGroup.rules[0] as RuleGroupType).rules[0] as RuleType);
+  expect(newRule.id).toMatch(uuidV4regex);
+});
 
 it('should generate different IDs for standard queries', () => {
   const newRuleGroup = regenerateIDs(ruleGroup);
