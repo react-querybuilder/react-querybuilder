@@ -85,6 +85,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   context,
   debugMode: debugModeProp = false,
   onLog = console.log,
+  idGenerator = generateID,
 }: QueryBuilderProps<RG>) => {
   const rqbContext = useMergedContext({
     controlClassnames: controlClassnamesProp,
@@ -359,7 +360,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     const valueSource = getValueSourcesMain(field, operator)[0] ?? 'value';
 
     const newRule: RuleType = {
-      id: `r-${generateID()}`,
+      id: idGenerator(),
       field,
       operator,
       valueSource,
@@ -369,33 +370,40 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
     const value = getRuleDefaultValue(newRule);
 
     return { ...newRule, value };
-  }, [fields, getDefaultField, getRuleDefaultOperator, getRuleDefaultValue, getValueSourcesMain]);
+  }, [
+    fields,
+    getDefaultField,
+    getRuleDefaultOperator,
+    getRuleDefaultValue,
+    getValueSourcesMain,
+    idGenerator,
+  ]);
 
   const createRuleGroup = useCallback((): RG => {
     // TODO: figure out how to avoid `@ts-expect-error` here
     if (independentCombinators) {
       // @ts-expect-error TS can't tell that RG means RuleGroupTypeIC
       return {
-        id: `g-${generateID()}`,
+        id: idGenerator(),
         rules: addRuleToNewGroups ? [createRule()] : [],
         not: false,
       };
     }
     // @ts-expect-error TS can't tell that RG means RuleGroupType
     return {
-      id: `g-${generateID()}`,
+      id: idGenerator(),
       rules: addRuleToNewGroups ? [createRule()] : [],
       combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
       not: false,
     };
-  }, [addRuleToNewGroups, combinators, createRule, independentCombinators]);
+  }, [addRuleToNewGroups, combinators, createRule, idGenerator, independentCombinators]);
   // #endregion
 
   // #region Handle controlled mode vs uncontrolled mode
   const isFirstRender = useRef(true);
   // This state variable is only used when the component is uncontrolled
   const [queryState, setQueryState] = useState(
-    defaultQuery ? prepareRuleGroup(defaultQuery) : createRuleGroup()
+    defaultQuery ? prepareRuleGroup(defaultQuery, { idGenerator }) : createRuleGroup()
   );
   // We assume here that if `queryProp` is passed in, and it's not the first render,
   // that `queryProp` has already been prepared, i.e. the user is just passing back
@@ -403,7 +411,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>({
   // performance impact.
   const query: RG = queryProp
     ? isFirstRender.current
-      ? prepareRuleGroup(queryProp)
+      ? prepareRuleGroup(queryProp, { idGenerator })
       : queryProp
     : queryState;
 

@@ -865,6 +865,12 @@ Pass `true` to log debugging information to the console (or the [`onLog` functio
 
 Captures log messages when `debugMode` is `true`.
 
+### `idGenerator`
+
+`() => string` (default `generateID`)
+
+Override the default `id` generator, which generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) (using the `crypto` package if available; a `Math.random()`-based method is the fallback).
+
 ### `validator`
 
 `QueryValidator` _<DemoLink option="validateQuery" />_

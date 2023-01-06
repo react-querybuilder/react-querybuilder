@@ -5,14 +5,8 @@ import packageJSON_rqb_chakra from '@react-querybuilder/chakra/package.json';
 import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
-import { convertToIC, objectKeys } from 'react-querybuilder';
+import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
-
-// https://stackoverflow.com/a/68141099/217579
-export const generateID = () =>
-  '00-0-4-1-000'.replace(/[^-]/g, (s: any) =>
-    (((Math.random() + ~~s) * 0x10000) >> s).toString(16).padStart(4, '0')
-  );
 
 export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,

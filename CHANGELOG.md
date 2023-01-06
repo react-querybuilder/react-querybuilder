@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- [#443](https://github.com/react-querybuilder/react-querybuilder/issues/443) Automatically generated `id`s are no longer prefixed with `"g-"` or `"r-"`.
 - The default border color has changed from `#7f81a2` to `#8081a2`. This difference will almost certainly be imperceptible.
+
+### Fixed
+
+- [#443](https://github.com/react-querybuilder/react-querybuilder/issues/443) `generateID` no longer tries to `require('crypto')` which should allow its use in more environments and build targets.
+
+### Added
+
+- [#443](https://github.com/react-querybuilder/react-querybuilder/issues/443) New prop `idGenerator` can be used to override the default `generateID` function.
 
 ## [v5.3.3] - 2022-12-27
 

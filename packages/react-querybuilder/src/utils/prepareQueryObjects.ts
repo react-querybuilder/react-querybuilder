@@ -7,31 +7,44 @@ import type {
 import { produce } from 'immer';
 import { generateID } from '../utils';
 
+interface PrepareOptions {
+  idGenerator?: () => string;
+}
+
 /**
  * Generates a valid rule
  */
-export const prepareRule = (rule: RuleType) =>
+export const prepareRule = (rule: RuleType, { idGenerator = generateID }: PrepareOptions = {}) =>
   produce(rule, draft => {
     if (!draft.id) {
-      draft.id = `r-${generateID()}`;
+      draft.id = idGenerator();
     }
   });
 
 /**
  * Generates a valid rule group
  */
-export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(queryObject: RG): RG =>
+export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
+  queryObject: RG,
+  { idGenerator = generateID }: PrepareOptions = {}
+): RG =>
   produce(queryObject, draft => {
     if (!draft.id) {
-      draft.id = `g-${generateID()}`;
+      draft.id = idGenerator();
     }
     draft.rules = draft.rules.map(r =>
-      typeof r === 'string' ? r : 'rules' in r ? prepareRuleGroup(r) : prepareRule(r)
+      typeof r === 'string'
+        ? r
+        : 'rules' in r
+        ? prepareRuleGroup(r, { idGenerator })
+        : prepareRule(r, { idGenerator })
     ) as RuleGroupArray | RuleGroupICArray;
   });
 
 /**
  * Generates a valid rule or group
  */
-export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(rg: RG | RuleType) =>
-  'rules' in rg ? prepareRuleGroup(rg) : prepareRule(rg);
+export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(
+  rg: RG | RuleType,
+  { idGenerator = generateID }: PrepareOptions = {}
+) => ('rules' in rg ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator }));

@@ -1,5 +1,6 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/src/index.noReact';
-import { prepareRule, prepareRuleGroup } from './prepareQueryObjects';
+import { uuidV4regex } from './generateIDtests';
+import { prepareRule, prepareRuleGroup, prepareRuleOrGroup } from './prepareQueryObjects';
 
 describe('prepareRule', () => {
   it('should not generate new ID if rule provides it', () => {
@@ -18,8 +19,8 @@ describe('prepareRule', () => {
         field: 'firstName',
         value: 'Test without ID',
         operator: '=',
-      })
-    ).toHaveProperty('id');
+      }).id
+    ).toMatch(uuidV4regex);
   });
 });
 
@@ -74,16 +75,38 @@ describe('when initial query, without ID, is provided', () => {
   it('should generate IDs if missing in query', () => {
     expect(queryWithoutID).not.toHaveProperty('id');
     const validQuery = prepareRuleGroup(queryWithoutID);
-    expect(validQuery).toHaveProperty('id');
-    expect(validQuery.rules[0]).toHaveProperty('id');
+    expect(validQuery.id).toMatch(uuidV4regex);
+    expect(validQuery.rules[0].id).toMatch(uuidV4regex);
   });
 
   it('should generate IDs only for valid query objects', () => {
     expect(queryICWithoutID).not.toHaveProperty('id');
     const validQuery = prepareRuleGroup(queryICWithoutID);
-    expect(validQuery).toHaveProperty('id');
-    expect(validQuery.rules[0]).toHaveProperty('id');
+    expect(validQuery.id).toMatch(uuidV4regex);
+    expect(validQuery.rules[0].id).toMatch(uuidV4regex);
     expect(validQuery.rules[1]).toBe('and');
-    expect(validQuery.rules[2]).toHaveProperty('id');
+    expect(validQuery.rules[2]?.id).toMatch(uuidV4regex);
+  });
+});
+
+describe('prepareRuleOrGroup', () => {
+  it('should not generate new ID if rule provides it', () => {
+    expect(
+      prepareRuleOrGroup({
+        id: 'r-12345',
+        field: 'firstName',
+        value: 'Test with ID',
+        operator: '=',
+      }).id
+    ).toBe('r-12345');
+  });
+  it('should generate new ID if missing in rule', () => {
+    expect(
+      prepareRuleOrGroup({
+        field: 'firstName',
+        value: 'Test without ID',
+        operator: '=',
+      }).id
+    ).toMatch(uuidV4regex);
   });
 });
