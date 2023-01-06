@@ -28,6 +28,7 @@ export const RuleGroup = ({
   dropRef = null,
   isDragging = false,
   isOver = false,
+  dropEffect,
 }: RuleGroupProps) => {
   const {
     classNames,
@@ -80,6 +81,7 @@ export const RuleGroup = ({
     () => ({
       header: clsx(standardClassnames.header, classNames.header, {
         [standardClassnames.dndOver]: isOver,
+        [standardClassnames.dndCopy]: dropEffect === 'copy',
       }),
       dragHandle: clsx(standardClassnames.dragHandle, classNames.dragHandle),
       combinators: clsx(standardClassnames.combinators, classNames.combinators),
@@ -102,6 +104,7 @@ export const RuleGroup = ({
       classNames.lockGroup,
       classNames.notToggle,
       classNames.removeGroup,
+      dropEffect,
       isOver,
     ]
   );

@@ -7,7 +7,12 @@ import type {
   UseRuleDnD,
 } from '@react-querybuilder/ts';
 import { useRef } from 'react';
-import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import {
+  getCommonAncestorPath,
+  getParentPath,
+  isAncestor,
+  pathsAreEqual,
+} from 'react-querybuilder';
 import { useDragCommon } from './useDragCommon';
 
 interface UseRuleDndParams {
@@ -75,7 +80,9 @@ export const useRuleDnD = ({
       collect: monitor => ({
         isOver: waitForDrop && monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
+        dropEffect: monitor.getDropResult()?.dropEffect,
+        // TODO: remove?
+        // item: monitor.getItem(),
       }),
       // `dropEffect` gets added automatically to the object returned from `drop`:
       drop: () => ({ type: 'rule', path }),
@@ -99,12 +106,29 @@ export const useRuleDnD = ({
               } else {
                 moveRule(item.path, path);
               }
-              item.path = path;
+
+              const newPath = [...path];
+              const commonAncestorPath = getCommonAncestorPath(item.path, path);
+              if (
+                item.path.length === commonAncestorPath.length + 1 &&
+                path.length > item.path.length &&
+                path[commonAncestorPath.length] > item.path[commonAncestorPath.length]
+              ) {
+                // Getting here means there will be a shift of paths upward at the common
+                // ancestor level because the object at `item.path` will be spliced out. The
+                // real new path should therefore be one or two higher than `path`.
+                newPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
+              }
+
+              item.path = newPath;
             }
           },
     }),
     [disabled, independentCombinators, moveRule, path, waitForDrop]
   );
+
+  // TODO: remove
+  // useEffect(() => console.log(JSON.stringify(item?.path)), [item?.path]);
 
   drag(dragRef);
   preview(drop(dndRef));

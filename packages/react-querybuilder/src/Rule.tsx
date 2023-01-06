@@ -27,6 +27,7 @@ export const Rule = ({
   dragRef = null,
   isDragging = false,
   isOver = false,
+  dropEffect,
 }: RuleProps) => {
   const {
     classNames,
@@ -166,6 +167,7 @@ export const Rule = ({
       [standardClassnames.disabled]: disabled,
       [standardClassnames.dndDragging]: isDragging,
       [standardClassnames.dndOver]: isOver,
+      [standardClassnames.dndCopy]: dropEffect === 'copy',
     },
     validationClassName
   );
