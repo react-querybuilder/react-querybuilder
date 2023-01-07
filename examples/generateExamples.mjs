@@ -143,6 +143,10 @@ for (const exampleID in configs) {
   await copyFile(pathJoin(templatePath, '.prettierrc'), pathJoin(examplePath, '.prettierrc'));
   // #endregion
 
+  // #region .eslintrc.json
+  await writeFile(pathJoin(examplePath, '.eslintrc.json'), '{}\n');
+  // #endregion
+
   // #region README.md
   const exampleREADMEmd =
     `## ${exampleTitle}` +
