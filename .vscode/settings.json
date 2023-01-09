@@ -12,5 +12,24 @@
     "vite.config.js": "vite.config.*.js",
     "vite.config.ts": "vite.config.*.ts"
   },
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#82a7dd",
+    "activityBar.activeBorder": "#f2ccde",
+    "activityBar.background": "#82a7dd",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#f2ccde",
+    "activityBarBadge.foreground": "#15202b",
+    "sash.hoverBorder": "#82a7dd",
+    "statusBar.background": "#3c649f",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#82a7dd",
+    "statusBarItem.remoteBackground": "#3c649f",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#3c649f",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#3c649f99",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  }
 }
