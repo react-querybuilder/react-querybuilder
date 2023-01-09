@@ -1,4 +1,9 @@
-import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/ts/src/index.noReact';
+import type {
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleType,
+} from '@react-querybuilder/ts/src/index.noReact';
 import produce from 'immer';
 
 const remapProperties = (
@@ -15,7 +20,7 @@ const remapProperties = (
     }
   });
 
-interface QueryTransformerOptions {
+interface QueryTransformerOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
   /**
    * When a rule is encountered in the hierarchy, it will be replaced
    * with the result of this function.
@@ -31,7 +36,7 @@ interface QueryTransformerOptions {
    *
    * @default rg => rg
    */
-  ruleGroupProcessor?: (ruleGroup: RuleGroupTypeAny) => Record<string, any>;
+  ruleGroupProcessor?: (ruleGroup: RG) => Record<string, any>;
   /**
    * For each rule and group in the query, any properties matching a key
    * in this object will be renamed to the corresponding value. To retain both
@@ -103,7 +108,18 @@ interface QueryTransformerOptions {
  * @param options
  * @returns The transformed query
  */
-export const transformQuery = (query: RuleGroupTypeAny, options: QueryTransformerOptions = {}) => {
+export function transformQuery(
+  query: RuleGroupType,
+  options?: QueryTransformerOptions<RuleGroupType>
+): any;
+export function transformQuery(
+  query: RuleGroupTypeIC,
+  options?: QueryTransformerOptions<RuleGroupTypeIC>
+): any;
+export function transformQuery<RG extends RuleGroupTypeAny>(
+  query: RG,
+  options: QueryTransformerOptions<RG> = {}
+) {
   const {
     ruleProcessor = r => r,
     ruleGroupProcessor = rg => rg,
@@ -124,7 +140,7 @@ export const transformQuery = (query: RuleGroupTypeAny, options: QueryTransforme
         },
         propertyMap,
         deleteRemappedProperties
-      ) as RuleGroupTypeAny
+      ) as RG
     ),
     rules: rg.rules.map((r: any, idx) => {
       if (typeof r === 'string') {
@@ -149,4 +165,4 @@ export const transformQuery = (query: RuleGroupTypeAny, options: QueryTransforme
   });
 
   return processGroup({ ...query, path: [] });
-};
+}

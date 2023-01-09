@@ -111,4 +111,10 @@ it('handles independent combinators and nested groups', () => {
     path: [],
     rules: [{ rules: ['Rule!', '||', 'Rule!'], path: [0] }],
   });
+  // This next test is really just to check that ruleGroupProcessor inherits
+  // the type RuleGroupTypeIC from the first parameter.
+  expect(transformQuery(queryIC, { ruleGroupProcessor: rg => rg })).toEqual({
+    path: [],
+    rules: [{ rules: [], path: [0] }, queryIC.rules[1], { rules: [], path: [2] }],
+  });
 });
