@@ -10,5 +10,8 @@ export default defineConfig({
       fileName: () => 'transformQuery.js',
       formats: ['cjs'],
     },
+    rollupOptions: {
+      external: ['immer'],
+    },
   },
 });
