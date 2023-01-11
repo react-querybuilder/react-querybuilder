@@ -1,4 +1,10 @@
 // @ts-check
+
+/**
+ * @typedef {_ESLint.ConfigData & { extends: string[] }} ESLintExtendsIsArray
+ */
+
+import { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import glob from 'glob';
 import { createRequire } from 'module';
@@ -14,6 +20,8 @@ console.log('Generating examples');
 const require = createRequire(import.meta.url);
 /** @type {{ version: string; }} */
 const { version } = require('../lerna.json');
+/** @type {ESLintExtendsIsArray} */
+const eslintrc = require('../.eslintrc.json');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootPrettierConfig = await prettier.resolveConfig(__filename);
@@ -27,6 +35,8 @@ const compileToJS = async (code, fileName) =>
       jsx: 'preserve',
     })
   ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1');
+
+const noTypeScriptESLint = (/** @type {string} */ s) => !/@typescript-eslint/.test(s);
 
 const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
@@ -114,9 +124,10 @@ for (const exampleID in configs) {
       templatePkgJSON.dependencies['react-querybuilder'];
   }
   if (exampleConfig.compileToJS) {
+    delete examplePkgJSON.devDependencies['sass'];
     delete examplePkgJSON.devDependencies['typescript'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
-      if (devDep.match(/^@types\//)) {
+      if (devDep.match(/^@types(?:cript-eslint)?\//)) {
         delete examplePkgJSON.devDependencies[devDep];
       }
     }
@@ -144,7 +155,24 @@ for (const exampleID in configs) {
   // #endregion
 
   // #region .eslintrc.json
-  await writeFile(pathJoin(examplePath, '.eslintrc.json'), '{}\n');
+  /** @type {typeof eslintrc} */
+  const exampleESLintRC = JSON.parse(JSON.stringify(eslintrc));
+  delete exampleESLintRC.env?.node;
+  delete exampleESLintRC.ignorePatterns;
+  if (exampleConfig.compileToJS) {
+    exampleESLintRC.extends = exampleESLintRC.extends.filter(noTypeScriptESLint);
+    exampleESLintRC.plugins = exampleESLintRC.plugins?.filter(noTypeScriptESLint);
+    delete exampleESLintRC.parser;
+    for (const rule of Object.keys(exampleESLintRC.rules ?? {})) {
+      if (rule.match(/^@types(?:cript-eslint)?\//)) {
+        delete exampleESLintRC.rules?.[rule];
+      }
+    }
+  }
+  await writeFile(
+    pathJoin(examplePath, '.eslintrc.json'),
+    prettier.format(stableStringify(exampleESLintRC), { filepath: 'f.json' })
+  );
   // #endregion
 
   // #region README.md

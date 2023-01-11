@@ -24,7 +24,7 @@
     "build:material": "yarn workspace @react-querybuilder/material build",
     "build:rqb": "yarn workspace react-querybuilder build",
     "build:ts": "yarn workspace @react-querybuilder/ts build",
-    "lint": "eslint packages/*/src/**/*.{ts,tsx} packages/*/src/*.{ts,tsx}",
+    "lint": "eslint packages/*/src/**/*.{ts,tsx} packages/*/src/*.{ts,tsx} examples/**/*.{js,ts,tsx}",
     "test": "jest",
     "test:watch": "jest --watch",
     "typecheck": "concurrently --timings --max-processes 10 --names antd,bootstrap,bulma,chakra,ctx,dnd,material,rqb,ts,examples yarn:typecheck:antd yarn:typecheck:bootstrap yarn:typecheck:bulma yarn:typecheck:chakra yarn:typecheck:ctx yarn:typecheck:dnd yarn:typecheck:material yarn:typecheck:rqb yarn:typecheck:ts yarn:typecheck:examples",
