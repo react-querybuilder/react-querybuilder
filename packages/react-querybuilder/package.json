@@ -83,9 +83,9 @@
     "typecheck:watch": "yarn typecheck --watch",
     "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
     "generate-sqlparser-base": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate-sqlparser-codemod": "npx jscodeshift -t src/internal/langParser.codemod.js src/utils/parseSQL/sqlParser.js",
+    "generate-sqlparser-codemod": "jscodeshift -t src/internal/langParser.codemod.js src/utils/parseSQL/sqlParser.js",
     "generate-celparser": "yarn generate-celparser-base && yarn generate-celparser-codemod",
     "generate-celparser-base": "npx jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate-celparser-codemod": "npx jscodeshift -t src/internal/langParser.codemod.js src/utils/parseCEL/celParser.js"
+    "generate-celparser-codemod": "jscodeshift -t src/internal/langParser.codemod.js src/utils/parseCEL/celParser.js"
   }
 }
