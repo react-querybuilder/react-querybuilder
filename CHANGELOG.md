@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators.
   - When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`.
   - Bulma components no longer specify the `is-small` class, so they will be rendered at their default size.
-  - The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) changed from `4px` to `0.25rem`. Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers and `16 × 0.25 = 4`.
+  - The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) changed from `4px` to `0.25rem`. Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers, and $16 \times 0.25 = 4$.
   - Utility function `c` has been removed. Use a package like `clsx` instead.
 
 ### Added
