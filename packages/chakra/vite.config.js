@@ -11,7 +11,7 @@ export default defineConfig(({ command }) => ({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       fileName: format => `index.${format}.js`,
-      formats: ['es', 'cjs'],
+      formats: ['cjs', 'es'],
     },
     rollupOptions: {
       external: ['react', 'react-querybuilder', '@chakra-ui/react', '@chakra-ui/icons'],

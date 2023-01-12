@@ -13,7 +13,6 @@ export default defineConfig({
   resolve: {
     alias: {
       'react-querybuilder': resolve(__dirname, '../react-querybuilder'),
-      // 'react-querybuilder/dev': resolve(__dirname, '../react-querybuilder/dev'),
     },
   },
 });
