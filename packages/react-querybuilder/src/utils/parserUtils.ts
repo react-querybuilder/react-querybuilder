@@ -4,10 +4,10 @@ import type {
   OptionList,
   ValueSources,
 } from '@react-querybuilder/ts/src/index.noReact';
-import { filterFieldsByComparator } from '../internal/filterFieldsByComparator';
-import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
-import { uniqByName } from '../internal/uniq';
+import { filterFieldsByComparator } from './filterFieldsByComparator';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isOptionGroupArray } from './optGroupUtils';
+import { uniqByName } from './uniq';
 
 export const isPojo = (obj: any): obj is Record<string, any> =>
   obj === null || typeof obj !== 'object' ? false : Object.getPrototypeOf(obj) === Object.prototype;

@@ -7,9 +7,9 @@ import type {
   ValueSources,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultCombinators } from '../defaults';
-import { numericRegex } from '../internal';
-import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { formatQuery } from './formatQuery';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { numericRegex } from './misc';
 import { add, move, remove, update } from './queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);

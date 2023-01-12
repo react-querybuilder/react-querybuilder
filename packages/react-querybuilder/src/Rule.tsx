@@ -3,9 +3,14 @@ import { clsx } from 'clsx';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
 import { standardClassnames, TestID } from './defaults';
-import { filterFieldsByComparator, getValidationClassNames } from './internal';
-import { useDeprecatedProps, useReactDndWarning } from './internal/hooks';
-import { getOption, getParentPath } from './utils';
+import {
+  filterFieldsByComparator,
+  getOption,
+  getParentPath,
+  getValidationClassNames,
+  useDeprecatedProps,
+  useReactDndWarning,
+} from './utils';
 
 export const Rule = ({
   id,

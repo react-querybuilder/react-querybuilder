@@ -7,11 +7,11 @@ import type {
 } from '@react-querybuilder/ts/src/index.noReact';
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
-import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';
 import { generateID } from './generateID';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
+import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 interface AddOptions {
   /**

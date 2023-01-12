@@ -20,17 +20,12 @@ import {
   standardClassnames,
 } from './defaults';
 import {
-  filterFieldsByComparator,
-  getValueSourcesUtil,
-  uniqByName,
-  uniqOptGroups,
-} from './internal';
-import { useControlledOrUncontrolled } from './internal/hooks';
-import {
   add,
+  filterFieldsByComparator,
   findPath,
   generateID,
   getFirstOption,
+  getValueSourcesUtil,
   isOptionGroupArray,
   joinWith,
   move,
@@ -38,7 +33,10 @@ import {
   pathIsDisabled,
   prepareRuleGroup,
   remove,
+  uniqByName,
+  uniqOptGroups,
   update,
+  useControlledOrUncontrolled,
   useMergedContext,
 } from './utils';
 

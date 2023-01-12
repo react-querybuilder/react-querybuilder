@@ -1,5 +1,5 @@
 import type { ParseNumbersMethod } from '@react-querybuilder/ts/src/index.noReact';
-import { numericRegex } from '../internal';
+import { numericRegex } from './misc';
 
 interface ParseNumberOptions {
   parseNumbers?: ParseNumbersMethod;

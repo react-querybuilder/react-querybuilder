@@ -5,7 +5,7 @@ import type {
   RuleType,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { produce } from 'immer';
-import { generateID } from '../utils';
+import { generateID } from './generateID';
 
 interface PrepareOptions {
   idGenerator?: () => string;

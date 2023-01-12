@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/ts/src/index.noReact';
-import { uuidV4regex } from '../utils/generateIDtests';
+import { uuidV4regex } from './generateIDtests';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {

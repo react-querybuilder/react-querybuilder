@@ -4,7 +4,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '@react-querybuilder/ts/src/index.noReact';
-import { numericRegex } from '../../internal';
+import { numericRegex } from '../misc';
 
 export const mapSQLOperator = (op: string) => {
   switch (op.toLowerCase()) {

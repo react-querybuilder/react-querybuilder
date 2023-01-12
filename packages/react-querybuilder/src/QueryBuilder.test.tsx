@@ -23,14 +23,13 @@ import {
   standardClassnames as sc,
   TestID,
 } from './defaults';
-import { numericRegex } from './internal';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
-import { defaultValidator, findPath, formatQuery, generateID } from './utils';
+import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from './utils';
 
 const user = userEvent.setup();
 

@@ -5,7 +5,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/ts/src/index.noReact';
-import { generateID } from '../utils';
+import { generateID } from './generateID';
 
 interface RegenerateIdOptions {
   idGenerator?: () => string;

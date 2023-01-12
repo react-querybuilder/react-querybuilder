@@ -15,10 +15,10 @@ import type {
   ValidationResult,
 } from '@react-querybuilder/ts/src/index.noReact';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
-import { uniqByName } from '../../internal/uniq';
 import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { uniqByName } from '../uniq';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
