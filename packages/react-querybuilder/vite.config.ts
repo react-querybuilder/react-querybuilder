@@ -30,7 +30,11 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     vitePluginReact(),
-    visualizer({ filename: 'build-stats.html', gzipSize: true, title: 'Build stats' }),
+    visualizer(opts => ({
+      filename: `build-stats.${opts.format}.html`,
+      gzipSize: true,
+      title: 'Build stats',
+    })),
   ],
   server: {
     port: 3100,

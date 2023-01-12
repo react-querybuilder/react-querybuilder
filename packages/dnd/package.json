@@ -20,7 +20,7 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "dev": "vite dev --config vite.config.dev.js",
+    "dev": "vite dev --config vite.config.dev.ts",
     "build": "vite build && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
