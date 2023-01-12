@@ -38,6 +38,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.4.0",
+    "rollup-plugin-visualizer": "^5.8.3",
     "typescript": "^4.9.4",
     "vite": "^4.0.4"
   },

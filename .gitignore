@@ -8,6 +8,7 @@ dist
 /types
 .parcel-cache
 .env
+build-stats.*
 
 .pnp.*
 .yarn/*

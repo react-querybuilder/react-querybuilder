@@ -5874,6 +5874,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.4.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -5897,6 +5898,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.4.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -5918,6 +5920,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.4.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -5943,6 +5946,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^5.4.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -5967,6 +5971,7 @@ __metadata:
     "@vitejs/plugin-react": ^3.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -5990,6 +5995,7 @@ __metadata:
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
     react-querybuilder: ^5.4.0
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -6015,6 +6021,7 @@ __metadata:
     react-dom: ^18.2.0
     react-querybuilder: ^5.4.0
     regenerator-runtime: ^0.13.11
+    rollup-plugin-visualizer: ^5.8.3
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
@@ -14352,6 +14359,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     regenerator-runtime: ^0.13.11
+    rollup-plugin-visualizer: ^5.8.3
     sass: ^1.57.1
     typescript: ^4.9.4
     vite: ^4.0.4
@@ -14879,6 +14887,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-visualizer@npm:^5.8.3":
+  version: 5.8.3
+  resolution: "rollup-plugin-visualizer@npm:5.8.3"
+  dependencies:
+    open: ^8.4.0
+    source-map: ^0.7.4
+    yargs: ^17.5.1
+  peerDependencies:
+    rollup: 2.x || 3.x
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  bin:
+    rollup-plugin-visualizer: dist/bin/cli.js
+  checksum: 0ed4b4b49be8c38fa4820190286daf6f94446a05190a6f1932f2718cb8d7e2a1afacc9f94bf75934087ec856a634a5c9355c078d77482a5796465d15deb988c9
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^3.7.0":
   version: 3.7.2
   resolution: "rollup@npm:3.7.2"
@@ -15219,6 +15245,13 @@ __metadata:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 59ce8640cf3f3124f64ac289012c2b8bd377c238e316fb323ea22fbfe83da07d81e000071d7242cad7a23cd91c7de98e4df8830ec3f133cb6133a5f6e9f67bc2
+  languageName: node
+  linkType: hard
+
+"source-map@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "source-map@npm:0.7.4"
+  checksum: 01cc5a74b1f0e1d626a58d36ad6898ea820567e87f18dfc9d24a9843a351aaa2ec09b87422589906d6ff1deed29693e176194dc88bcae7c9a852dc74b311dbf5
   languageName: node
   linkType: hard
 
@@ -16595,7 +16628,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.6.2":
+"yargs@npm:^17.5.1, yargs@npm:^17.6.2":
   version: 17.6.2
   resolution: "yargs@npm:17.6.2"
   dependencies:
