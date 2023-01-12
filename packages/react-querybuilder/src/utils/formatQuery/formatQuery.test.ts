@@ -5,20 +5,20 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '@react-querybuilder/ts/src/index.noReact';
-import {
-  defaultCELValueProcessor,
-  defaultMongoDBValueProcessor,
-  defaultRuleProcessorCEL,
-  defaultRuleProcessorMongoDB,
-  defaultRuleProcessorSpEL,
-  defaultSpELValueProcessor,
-  defaultValueProcessor,
-} from '.';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
+import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { formatQuery } from './formatQuery';
+import {
+  defaultCELValueProcessor,
+  defaultMongoDBValueProcessor,
+  defaultSpELValueProcessor,
+  defaultValueProcessor,
+} from './index';
 import { jsonLogicAdditionalOperators } from './utils';
 
 const query: RuleGroupType = {

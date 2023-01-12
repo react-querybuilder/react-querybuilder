@@ -1,5 +1,5 @@
 import { act, render } from '@testing-library/react';
-import { QueryBuilderMaterial } from '.';
+import { QueryBuilderMaterial } from './index';
 import { errorMaterialWithoutMUI } from './messages';
 import type { MuiComponentName } from './types';
 

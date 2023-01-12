@@ -36,14 +36,12 @@ import {
   testValueSelector,
 } from 'react-querybuilder/genericTests';
 import 'regenerator-runtime/runtime';
-import {
-  MaterialActionElement,
-  MaterialDragHandle,
-  MaterialNotToggle,
-  MaterialValueEditor,
-  MaterialValueSelector,
-  QueryBuilderMaterial,
-} from '.';
+import { QueryBuilderMaterial } from './index';
+import { MaterialActionElement } from './MaterialActionElement';
+import { MaterialDragHandle } from './MaterialDragHandle';
+import { MaterialNotToggle } from './MaterialNotToggle';
+import { MaterialValueEditor } from './MaterialValueEditor';
+import { MaterialValueSelector } from './MaterialValueSelector';
 import type { RQBMaterialComponents } from './types';
 
 declare global {

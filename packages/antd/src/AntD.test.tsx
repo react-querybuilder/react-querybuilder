@@ -17,14 +17,12 @@ import {
   testValueSelector,
   userEventSetup,
 } from 'react-querybuilder/genericTests';
-import {
-  AntDActionElement,
-  AntDDragHandle,
-  AntDNotToggle,
-  AntDValueEditor,
-  AntDValueSelector,
-  QueryBuilderAntD,
-} from '.';
+import { AntDActionElement } from './AntDActionElement';
+import { AntDDragHandle } from './AntDDragHandle';
+import { AntDNotToggle } from './AntDNotToggle';
+import { AntDValueEditor } from './AntDValueEditor';
+import { AntDValueSelector } from './AntDValueSelector';
+import { QueryBuilderAntD } from './index';
 
 declare global {
   // eslint-disable-next-line no-var
