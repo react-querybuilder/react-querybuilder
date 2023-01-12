@@ -1,5 +1,4 @@
 export * from './arrayUtils';
-export * from './c';
 export * from './convertQuery';
 export * from './defaultValidator';
 export * from './formatQuery';
@@ -14,6 +13,7 @@ export * from './optGroupUtils';
 export * from './parseCEL';
 export * from './parseJsonLogic';
 export * from './parseMongoDB';
+export * from './parseNumber';
 export * from './parseSQL';
 export * from './pathUtils';
 export * from './prepareQueryObjects';

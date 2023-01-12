@@ -32,6 +32,7 @@ export const App = () => {
   const commonProps: QueryBuilderProps<DefaultRuleGroupType> = {
     fields,
     ...commonOptions,
+    parseNumbers,
     validator: useValidation ? defaultValidator : undefined,
   };
 

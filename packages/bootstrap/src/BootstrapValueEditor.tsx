@@ -1,140 +1,112 @@
+import type { ValueEditorProps } from 'react-querybuilder';
 import {
-  joinWith,
-  standardClassnames as sc,
-  toArray,
+  getFirstOption,
+  standardClassnames,
   useValueEditor,
+  ValueEditor,
   ValueSelector,
-  type ValueEditorProps,
 } from 'react-querybuilder';
 
-export const BootstrapValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  disabled,
-  testID,
-  ...props
-}: ValueEditorProps) => {
-  useValueEditor({ handleOnChange, inputType, operator, value });
+export const BootstrapValueEditor = (props: ValueEditorProps) => {
+  const { valArray, betweenValueHandler } = useValueEditor({
+    handleOnChange: props.handleOnChange,
+    inputType: props.inputType,
+    operator: props.operator,
+    value: props.value,
+    type: props.type,
+    listsAsArrays: props.listsAsArrays,
+    parseNumbers: props.parseNumbers,
+    values: props.values,
+  });
 
-  if (operator === 'null' || operator === 'notNull') {
+  if (props.operator === 'null' || props.operator === 'notNull') {
     return null;
   }
 
-  const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
-    ? 'text'
-    : inputType || 'text';
+  const placeHolderText = props.fieldData?.placeholder ?? '';
 
-  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
-    const valArray = toArray(value);
-    const selector1handler = (v: string) => {
-      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
-    const selector2handler = (v: string) => {
-      const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
+  if (
+    (props.operator === 'between' || props.operator === 'notBetween') &&
+    (props.type === 'select' || props.type === 'text')
+  ) {
+    const editors = ['from', 'to'].map((key, i) => {
+      if (props.type === 'text') {
+        return (
+          <input
+            key={key}
+            type={props.inputType || 'text'}
+            placeholder={placeHolderText}
+            value={valArray[i] ?? ''}
+            className={`${standardClassnames.valueListItem} form-control form-control-sm`}
+            disabled={props.disabled}
+            onChange={e => betweenValueHandler(e.target.value, i)}
+          />
+        );
+      }
+      return (
+        <ValueSelector
+          key={key}
+          {...props}
+          className={`${standardClassnames.valueListItem} form-select form-select-sm`}
+          handleOnChange={v => betweenValueHandler(v, i)}
+          disabled={props.disabled}
+          value={valArray[i] ?? getFirstOption(props.values)}
+          options={props.values ?? []}
+          listsAsArrays={props.listsAsArrays}
+        />
+      );
+    });
+
     return (
-      <span data-testid={testID} className={className} title={title}>
-        <ValueSelector
-          {...props}
-          className={`${sc.valueListItem} ${className?.replaceAll(sc.value, '')}`}
-          handleOnChange={selector1handler}
-          disabled={disabled}
-          value={valArray[0]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
-        <ValueSelector
-          {...props}
-          className={`${sc.valueListItem} ${className?.replaceAll(sc.value, '')}`}
-          handleOnChange={selector2handler}
-          disabled={disabled}
-          value={valArray[1]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+      <span data-testid={props.testID} className={standardClassnames.value} title={props.title}>
+        {editors[0]}
+        {props.separator}
+        {editors[1]}
       </span>
     );
   }
 
-  switch (type) {
+  switch (props.type) {
     case 'select':
     case 'multiselect':
       return (
-        <ValueSelector
+        <ValueEditor
+          skipHook
           {...props}
-          className={`${className} form-select form-select-sm`}
-          title={title}
-          handleOnChange={handleOnChange}
-          value={value}
-          disabled={disabled}
-          multiple={type === 'multiselect'}
-          listsAsArrays={listsAsArrays}
-          options={values}
-        />
-      );
-
-    case 'textarea':
-      return (
-        <textarea
-          value={value}
-          title={title}
-          className={className}
-          disabled={disabled}
-          placeholder={placeHolderText}
-          onChange={e => handleOnChange(e.target.value)}
+          className={`${props.className} form-select form-select-sm`}
         />
       );
 
     case 'switch':
       return (
-        <span className={`custom-control custom-switch ${className}`}>
+        <span className={`custom-control custom-switch ${props.className}`}>
           <input
             type="checkbox"
-            className={`form-check-input custom-control-input`}
-            title={title}
-            disabled={disabled}
-            onChange={e => handleOnChange(e.target.checked)}
-            checked={!!value}
+            className="form-check-input custom-control-input"
+            title={props.title}
+            disabled={props.disabled}
+            onChange={e => props.handleOnChange(e.target.checked)}
+            checked={!!props.value}
           />
         </span>
       );
 
     case 'checkbox':
-      return (
-        <input
-          type="checkbox"
-          className={`form-check-input ${className}`}
-          title={title}
-          disabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
-          checked={!!value}
-        />
-      );
+      return <ValueEditor skipHook {...props} className={`form-check-input ${props.className}`} />;
 
     case 'radio':
       return (
-        <span title={title}>
-          {values.map(v => (
+        <span title={props.title} className={standardClassnames.value}>
+          {props.values?.map(v => (
             <div key={v.name} className="form-check form-check-inline">
               <input
                 className="form-check-input"
                 type="radio"
                 id={v.name}
                 value={v.name}
-                checked={value === v.name}
-                disabled={disabled}
-                onChange={e => handleOnChange(e.target.value)}
+                checked={props.value === v.name}
+                disabled={props.disabled}
+                onChange={e => props.handleOnChange(e.target.value)}
               />
               <label className="form-check-label" htmlFor={v.name}>
                 {v.label}
@@ -145,17 +117,7 @@ export const BootstrapValueEditor = ({
       );
   }
 
-  return (
-    <input
-      type={inputTypeCoerced}
-      value={value}
-      title={title}
-      className={className}
-      disabled={disabled}
-      placeholder={placeHolderText}
-      onChange={e => handleOnChange(e.target.value)}
-    />
-  );
+  return <ValueEditor skipHook {...props} />;
 };
 
 BootstrapValueEditor.displayName = 'BootstrapValueEditor';

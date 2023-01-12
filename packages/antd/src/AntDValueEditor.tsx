@@ -4,8 +4,7 @@ import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import {
-  joinWith,
-  splitBy,
+  getFirstOption,
   standardClassnames,
   toArray,
   useValueEditor,
@@ -26,56 +25,82 @@ export const AntDValueEditor = ({
   inputType,
   values = [],
   listsAsArrays,
+  parseNumbers,
+  separator,
   valueSource: _vs,
   disabled,
   testID,
   ...props
 }: ValueEditorProps) => {
-  useValueEditor({ handleOnChange, inputType, operator, value });
+  const { valArray, betweenValueHandler } = useValueEditor({
+    handleOnChange,
+    inputType,
+    operator,
+    value,
+    type,
+    listsAsArrays,
+    parseNumbers,
+    values,
+  });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced =
-    ['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-    // This next line is not in the default ValueEditor -- we can use
-    // antd's RangePicker to handle "between" and "notBetween".
-    !['date', 'datetime-local'].includes(`${inputType}`)
-      ? 'text'
-      : inputType || 'text';
+  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
-  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
-    const valArray = toArray(value);
-    const selector1handler = (v: string) => {
-      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
-    const selector2handler = (v: string) => {
-      const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
+  if (
+    (operator === 'between' || operator === 'notBetween') &&
+    (type === 'select' || type === 'text') &&
+    // Date ranges are handled differently in AntD--see below
+    inputTypeCoerced !== 'date' &&
+    inputTypeCoerced !== 'datetime-local'
+  ) {
+    const editors = ['from', 'to'].map((key, i) => {
+      if (type === 'text') {
+        if (inputTypeCoerced === 'time') {
+          return (
+            <TimePicker
+              key={key}
+              value={valArray[i] ? dayjs(valArray[i], 'HH:mm:ss') : null}
+              className={standardClassnames.valueListItem}
+              disabled={disabled}
+              placeholder={placeHolderText}
+              onChange={d => betweenValueHandler(d?.format('HH:mm:ss') ?? '', i)}
+            />
+          );
+        }
+        return (
+          <Input
+            key={key}
+            type={inputTypeCoerced}
+            value={valArray[i] ?? ''}
+            className={standardClassnames.valueListItem}
+            disabled={disabled}
+            placeholder={placeHolderText}
+            onChange={e => betweenValueHandler(e.target.value, i)}
+          />
+        );
+      }
+      return (
+        <AntDValueSelector
+          key={key}
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={v => betweenValueHandler(v, i)}
+          disabled={disabled}
+          value={valArray[i] ?? getFirstOption(values)}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      );
+    });
     return (
       <span data-testid={testID} className={className} title={title}>
-        <AntDValueSelector
-          {...props}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector1handler}
-          disabled={disabled}
-          value={valArray[0]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
-        <AntDValueSelector
-          {...props}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector2handler}
-          disabled={disabled}
-          value={valArray[1]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+        {editors[0]}
+        {separator}
+        {editors[1]}
       </span>
     );
   }
@@ -155,8 +180,8 @@ export const AntDValueEditor = ({
       return operator === 'between' || operator === 'notBetween' ? (
         <DatePicker.RangePicker
           value={
-            typeof value === 'string' && /^[^,]+,[^,]+$/.test(value)
-              ? (splitBy(value, ',').map(v => dayjs(v)) as [Dayjs, Dayjs])
+            toArray(value)?.length >= 2
+              ? (toArray(value).map(v => dayjs(v)) as [Dayjs, Dayjs])
               : undefined
           }
           showTime={inputTypeCoerced === 'datetime-local'}
@@ -167,7 +192,15 @@ export const AntDValueEditor = ({
           // "should render a date range picker" test in ./AntD.test.tsx)
           onChange={
             /* istanbul ignore next */
-            dates => handleOnChange(dates?.map(d => d?.format('YYYY-MM-DD')).join(','))
+            dates => {
+              const format = `YYYY-MM-DD${
+                inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : ''
+              }`;
+              const dateArray = dates?.map(d => d?.format(format));
+              return handleOnChange(
+                dateArray ? (listsAsArrays ? dateArray : dateArray.join(',')) : dates
+              );
+            }
           }
         />
       ) : (

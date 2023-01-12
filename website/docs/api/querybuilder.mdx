@@ -523,6 +523,12 @@ This function is invoked to get the type of `ValueEditor` for the given field an
 
 This function is invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in either order). If the prop is undefined, `() => ["value"]` is used. The first element in the array will be the default.
 
+### `getValueEditorSeparator`
+
+`(field: string, operator: string) => ReactNode`;
+
+This function should return the separator element for a given `field` and `operator`. The element can be any valid React element, including a bare string (e.g. "and" or "to") or an HTML element like `<span />`. It will be placed in between value editors when multiple are rendered, e.g. when the operator is "between".
+
 ### `getInputType`
 
 `(field: string, operator: string) => string`
@@ -790,6 +796,12 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
   "valueSource": "field"
 }
 ```
+
+### `parseNumbers`
+
+`boolean | "strict" | "native"` (default `false`) _<DemoLink option="parseNumbers" />_
+
+Pass `true`, `"strict"`, or `"native"` to store `value` as an actual number when possible instead of a string. Passing `"native"` will use `parseFloat` to determine if a value is a number, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the note about the corresponding `formatQuery` option in the [Export documentation](./export#parse-numbers).
 
 ### `independentCombinators`
 

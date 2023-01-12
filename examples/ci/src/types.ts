@@ -19,6 +19,7 @@ export type CIOption =
   | 'disabled'
   | 'debugMode'
   | 'parseNumbers'
+  | 'listsAsArrays'
   | 'showBranches';
 
 export type CIOptions = Record<CIOption, boolean>;

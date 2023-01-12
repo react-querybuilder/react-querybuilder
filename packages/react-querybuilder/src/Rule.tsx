@@ -45,6 +45,7 @@ export const Rule = ({
     getInputType,
     getOperators,
     getValueEditorType,
+    getValueEditorSeparator,
     getValueSources,
     getValues,
     autoSelectField,
@@ -52,6 +53,7 @@ export const Rule = ({
     showCloneButtons,
     showLockButtons,
     listsAsArrays,
+    parseNumbers,
     validationMap,
     enableDragAndDrop,
     getRuleClassname,
@@ -137,6 +139,7 @@ export const Rule = ({
       : (typeof fieldData.valueEditorType === 'function'
           ? fieldData.valueEditorType(operator)
           : fieldData.valueEditorType) ?? getValueEditorType(field, operator);
+  const valueEditorSeparator = getValueEditorSeparator(field, operator);
   const values =
     valueSource === 'field'
       ? filterFieldsByComparator(fieldData, fields, operator)
@@ -255,6 +258,8 @@ export const Rule = ({
                   inputType={inputType}
                   values={values}
                   listsAsArrays={listsAsArrays}
+                  parseNumbers={parseNumbers}
+                  separator={valueEditorSeparator}
                   className={classNamesMemo.value}
                   handleOnChange={generateOnChangeHandler('value')}
                   level={level}

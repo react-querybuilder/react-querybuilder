@@ -39,7 +39,7 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
  * 'this\\,\\,that,,the other,,,\\,'
  */
 export const joinWith = (strArr: (string | undefined | null)[], joinChar = defaultJoinChar) =>
-  strArr.map(str => (str ?? '').replaceAll(joinChar, `\\${joinChar}`)).join(joinChar);
+  strArr.map(str => `${str ?? ''}`.replaceAll(joinChar, `\\${joinChar}`)).join(joinChar);
 
 /**
  * Trims the value if it is a string. Otherwise returns value as-is.
@@ -54,6 +54,8 @@ export const toArray = (v: any) =>
     ? v
     : typeof v === 'string'
     ? splitBy(v, defaultJoinChar).filter(s => !/^\s*$/.test(s))
+    : typeof v === 'number'
+    ? [v]
     : []
   ).map(trimIfString);
 

@@ -246,6 +246,58 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     await user.click(container.querySelector('.ant-picker-clear')!);
     expect(onChange).toHaveBeenCalledWith('');
   });
+
+  it('should render empty "between" time pickers', async () => {
+    const handleOnChange = jest.fn();
+    const { rerender } = render(
+      <AntDValueEditor
+        {...props}
+        operator="between"
+        type="text"
+        inputType="time"
+        handleOnChange={handleOnChange}
+        value=""
+      />
+    );
+    const betweenInputs = screen.getAllByRole('textbox');
+    expect(betweenInputs).toHaveLength(2);
+    rerender(
+      <AntDValueEditor
+        {...props}
+        operator="between"
+        type="text"
+        inputType="time"
+        handleOnChange={handleOnChange}
+        value="12:14:26,12:14:26"
+      />
+    );
+    await user.click(screen.getAllByRole('button')[0]);
+    expect(handleOnChange).toHaveBeenCalledWith(',12:14:26');
+  });
+
+  it('should call the onChange handler for "between" time pickers', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <AntDValueEditor
+        {...props}
+        operator="between"
+        type="text"
+        inputType="time"
+        handleOnChange={handleOnChange}
+        value="12:14:26,12:14:26"
+      />
+    );
+    const betweenInputs = screen.getAllByRole('textbox');
+    expect(betweenInputs).toHaveLength(2);
+    await user.click(betweenInputs[0]);
+    await user.click(screen.getAllByText(/^59$/i)[0]);
+    await user.click(screen.getAllByText(/^ok$/i)[0]);
+    await user.click(betweenInputs[1]);
+    await user.click(screen.getAllByText(/^59$/i)[2]);
+    await user.click(screen.getAllByText(/^ok$/i)[1]);
+    expect(handleOnChange).toHaveBeenCalledWith('12:59:26,12:14:26');
+    expect(handleOnChange).toHaveBeenCalledWith('12:14:26,12:59:26');
+  });
 });
 
 describe('extra AntDValueSelector tests', () => {

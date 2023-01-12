@@ -1,9 +1,8 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { useContext } from 'react';
 import {
-  joinWith,
+  getFirstOption,
   standardClassnames,
-  toArray,
   useValueEditor,
   ValueEditor,
 } from 'react-querybuilder';
@@ -15,52 +14,44 @@ type MaterialValueEditorProps = ValueEditorProps & {
   muiComponents?: RQBMaterialComponents;
 };
 
-export const MaterialValueEditor = ({
-  field,
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  path,
-  level,
-  inputType,
-  values = [],
-  listsAsArrays,
-  valueSource,
-  disabled,
-  testID,
-  muiComponents: muiComponentsProp,
-  ...props
-}: MaterialValueEditorProps) => {
+export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
+  const { muiComponents: muiComponentsProp, ...propsForValueEditor } = props;
+  const {
+    field: _f,
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    path,
+    level,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    disabled,
+    testID,
+    ...propsForValueSelector
+  } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
-  useValueEditor({ handleOnChange, inputType, operator, value });
+  const { valArray, betweenValueHandler } = useValueEditor({
+    handleOnChange,
+    inputType,
+    operator,
+    value,
+    type,
+    listsAsArrays,
+    parseNumbers,
+    values,
+  });
 
-  const key = muiComponents ? 'mui' : 'no-mui';
+  const masterKey = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
-    return (
-      <ValueEditor
-        key={key}
-        field={field}
-        fieldData={fieldData}
-        operator={operator}
-        value={value}
-        handleOnChange={handleOnChange}
-        title={title}
-        className={className}
-        type={type}
-        path={path}
-        level={level}
-        inputType={inputType}
-        values={values}
-        listsAsArrays={listsAsArrays}
-        valueSource={valueSource}
-        disabled={disabled}
-        testID={testID}
-      />
-    );
+    return <ValueEditor skipHook key={masterKey} {...propsForValueEditor} />;
   }
 
   const {
@@ -79,46 +70,47 @@ export const MaterialValueEditor = ({
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
-    ? 'text'
-    : inputType || 'text';
+  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
-  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
-    const valArray = toArray(value);
-    const selector1handler = (v: string) => {
-      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
-    const selector2handler = (v: string) => {
-      const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
+  if (
+    (operator === 'between' || operator === 'notBetween') &&
+    (type === 'select' || type === 'text')
+  ) {
+    const editors = ['from', 'to'].map((key, i) => {
+      if (type === 'text') {
+        return (
+          <Input
+            key={key}
+            type={inputTypeCoerced}
+            className={standardClassnames.valueListItem}
+            value={valArray[i] ?? ''}
+            disabled={disabled}
+            placeholder={placeHolderText}
+            onChange={e => betweenValueHandler(e.target.value, i)}
+          />
+        );
+      }
+      return (
+        <MaterialValueSelector
+          key={key}
+          {...propsForValueSelector}
+          path={path}
+          level={level}
+          className={standardClassnames.valueListItem}
+          handleOnChange={v => betweenValueHandler(v, i)}
+          muiComponents={muiComponents}
+          disabled={disabled}
+          value={valArray[i] ?? getFirstOption(values)}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      );
+    });
     return (
-      <span key={key} data-testid={testID} className={className} title={title}>
-        <MaterialValueSelector
-          {...props}
-          muiComponents={muiComponents}
-          path={path}
-          level={level}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector1handler}
-          disabled={disabled}
-          value={valArray[0]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
-        <MaterialValueSelector
-          {...props}
-          muiComponents={muiComponents}
-          path={path}
-          level={level}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector2handler}
-          disabled={disabled}
-          value={valArray[1] ?? ''}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+      <span key={masterKey} data-testid={testID} className={className} title={title}>
+        {editors[0]}
+        {separator}
+        {editors[1]}
       </span>
     );
   }
@@ -128,9 +120,9 @@ export const MaterialValueEditor = ({
     case 'multiselect':
       return (
         <MaterialValueSelector
-          {...props}
+          {...propsForValueSelector}
           muiComponents={muiComponents}
-          key={key}
+          key={masterKey}
           path={path}
           level={level}
           className={className}
@@ -147,7 +139,7 @@ export const MaterialValueEditor = ({
     case 'textarea':
       return (
         <TextareaAutosize
-          key={key}
+          key={masterKey}
           value={value}
           title={title}
           disabled={disabled}
@@ -160,7 +152,7 @@ export const MaterialValueEditor = ({
     case 'switch':
       return (
         <Switch
-          key={key}
+          key={masterKey}
           checked={!!value}
           title={title}
           disabled={disabled}
@@ -172,7 +164,7 @@ export const MaterialValueEditor = ({
     case 'checkbox':
       return (
         <Checkbox
-          key={key}
+          key={masterKey}
           className={className}
           title={title}
           onChange={e => handleOnChange(e.target.checked)}
@@ -184,7 +176,7 @@ export const MaterialValueEditor = ({
     case 'radio':
       return (
         <FormControl
-          key={key}
+          key={masterKey}
           className={className}
           title={title}
           component="fieldset"
@@ -220,7 +212,7 @@ export const MaterialValueEditor = ({
 
   return (
     <Input
-      key={key}
+      key={masterKey}
       type={inputTypeCoerced}
       value={value}
       title={title}

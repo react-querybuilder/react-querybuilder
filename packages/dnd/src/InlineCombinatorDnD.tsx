@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import type { InlineCombinatorProps } from 'react-querybuilder';
-import { c, standardClassnames, TestID } from 'react-querybuilder';
+import { standardClassnames, TestID } from 'react-querybuilder';
 import { useInlineCombinatorDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
@@ -19,7 +19,7 @@ export const InlineCombinatorDnD = ({
   });
 
   const dndOver = isOver ? standardClassnames.dndOver : '';
-  const wrapperClassName = c(dndOver, standardClassnames.betweenRules);
+  const wrapperClassName = `${standardClassnames.betweenRules}${dndOver ? ` ${dndOver}` : ''}`;
 
   return (
     <div
