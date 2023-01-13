@@ -1,8 +1,6 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
-import { joinWith, toArray } from '../arrayUtils';
-import { getFirstOption } from '../optGroupUtils';
-import { parseNumber } from '../parseNumber';
+import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 
 type useValueEditorParams = Pick<
   ValueEditorProps,

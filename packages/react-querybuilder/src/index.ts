@@ -3,6 +3,7 @@ export * from '@react-querybuilder/ts';
 export { version } from '../package.json';
 export * from './controls/';
 export * from './defaults';
+export * from './hooks';
 export * from './InlineCombinator';
 export * as messages from './messages';
 export * from './Rule';

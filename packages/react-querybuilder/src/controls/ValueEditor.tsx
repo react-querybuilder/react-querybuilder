@@ -1,6 +1,7 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { standardClassnames } from '../defaults';
-import { getFirstOption, parseNumber, useValueEditor } from '../utils';
+import { useValueEditor } from '../hooks';
+import { getFirstOption, parseNumber } from '../utils';
 import { ValueSelector } from './ValueSelector';
 
 export const ValueEditor = ({
