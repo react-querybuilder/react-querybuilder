@@ -167,7 +167,7 @@ export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRule
   /**
    * @deprecated Use the `rules` property of the `ruleGroup` prop instead
    */
-  rules: RuleOrGroupArray;
+  rules?: RuleOrGroupArray;
   /**
    * @deprecated Use the `not` property of the `ruleGroup` prop instead
    */
@@ -189,15 +189,15 @@ export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> 
   /**
    * @deprecated Use the `field` property of the `rule` prop instead
    */
-  field: string;
+  field?: string;
   /**
    * @deprecated Use the `operator` property of the `rule` prop instead
    */
-  operator: string;
+  operator?: string;
   /**
    * @deprecated Use the `value` property of the `rule` prop instead
    */
-  value: any;
+  value?: any;
   /**
    * @deprecated Use the `valueSource` property of the `rule` prop instead
    */

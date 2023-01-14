@@ -53,8 +53,8 @@ export const useRule = (props: RuleProps) => {
   const rule = ruleProp
     ? ruleProp
     : {
-        field: fieldProp,
-        operator: operatorProp,
+        field: fieldProp!,
+        operator: operatorProp!,
         value: valueProp,
         valueSource: valueSourceProp,
       };
