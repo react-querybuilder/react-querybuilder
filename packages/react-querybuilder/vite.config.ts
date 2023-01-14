@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(({ command }) => ({
   define: {
-    __RQB_DEV__: command === 'build' ? 'process.env.NODE_ENV !== "production"' : 'true',
+    __RQB_DEV__: command === 'build' ? 'process?.env?.NODE_ENV !== "production"' : 'true',
   },
   build: {
     lib: {
