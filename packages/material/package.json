@@ -28,7 +28,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.3",
+    "@mui/material": "^5.11.4",
     "@react-querybuilder/ts": "^5.4.0",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.26",
@@ -37,7 +37,7 @@
     "react-dom": "^18.2.0",
     "react-querybuilder": "^5.4.0",
     "regenerator-runtime": "^0.13.11",
-    "rollup-plugin-visualizer": "^5.8.3",
+    "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.4",
     "vite": "^4.0.4"
   },

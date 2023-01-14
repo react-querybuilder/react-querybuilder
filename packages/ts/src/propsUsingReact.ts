@@ -91,7 +91,7 @@ export interface Controls {
   cloneRuleAction: ComponentType<ActionProps>;
   combinatorSelector: ComponentType<CombinatorSelectorProps>;
   inlineCombinator: ComponentType<InlineCombinatorProps>;
-  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLSpanElement>>;
+  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<any>>;
   fieldSelector: ComponentType<FieldSelectorProps>;
   notToggle: ComponentType<NotToggleProps>;
   operatorSelector: ComponentType<OperatorSelectorProps>;

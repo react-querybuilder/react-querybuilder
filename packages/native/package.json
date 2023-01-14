@@ -1,50 +1,45 @@
 {
-  "name": "@react-querybuilder/dnd",
-  "description": "Drag-and-drop-enabled version of react-querybuilder",
+  "name": "@react-querybuilder/native",
+  "description": "React Native components for react-querybuilder",
   "version": "5.4.0",
+  "private": true,
   "publishConfig": {
     "access": "public"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
-  "types": "dist/types/src/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",
-    "directory": "packages/dnd"
+    "directory": "packages/native"
   },
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "dev": "vite dev --config vite.config.dev.ts",
     "build": "vite build && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
+    "@react-native-picker/picker": "^2.4.8",
     "@react-querybuilder/ts": "^5.4.0",
     "@testing-library/react": "^13.4.0",
-    "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "@vitejs/plugin-react": "^3.0.1",
     "react": "^18.2.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "react-dnd-test-backend": "^16.0.1",
-    "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-native": "~0.71.0",
     "react-querybuilder": "^5.4.0",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.4",
     "vite": "^4.0.4"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dnd": ">=14.0.0",
-    "react-dnd-html5-backend": ">=14.0.0"
+    "react": ">=16.8.0"
   }
 }

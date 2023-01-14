@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
 import type { DragHandleProps } from '@react-querybuilder/ts';
+import { render, screen } from '@testing-library/react';
 
 export const defaultDragHandleProps: DragHandleProps = {
   level: 1,
@@ -7,9 +7,7 @@ export const defaultDragHandleProps: DragHandleProps = {
 };
 
 export const testDragHandle = (
-  DragHandle: React.ForwardRefExoticComponent<
-    DragHandleProps & React.RefAttributes<HTMLSpanElement>
-  >
+  DragHandle: React.ForwardRefExoticComponent<DragHandleProps & React.RefAttributes<any>>
 ) => {
   const title = DragHandle.displayName ?? 'DragHandle';
   const props = { ...defaultDragHandleProps, title };
