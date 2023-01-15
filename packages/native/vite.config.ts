@@ -24,6 +24,6 @@ export default defineConfig(({ command }) => ({
     visualizer({ filename: 'build-stats.html', gzipSize: true, title: 'Build stats' }),
   ],
   server: {
-    port: 3103,
+    port: 3108,
   },
 }));

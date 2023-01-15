@@ -24,7 +24,7 @@ export const RuleGroup = (props: RuleGroupProps) => {
         rule: RuleControlElement,
       },
     },
-  } = props;
+  } = rg;
 
   const addRule = (event: ReactMouseEvent, context?: any) => {
     event.preventDefault();

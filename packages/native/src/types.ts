@@ -1,5 +1,6 @@
 import type {
   QueryBuilderProps,
+  RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleProps,
@@ -23,6 +24,21 @@ export type RuleStyleSheets = WrapInStyleProp<RuleStyles>;
 
 export type RuleNativeProps = RuleProps & {
   styles?: RuleStyles;
+};
+
+export interface RuleGroupStyles {
+  ruleGroup?: ViewStyle;
+  ruleGroupHeader?: ViewStyle;
+  ruleGroupBody?: ViewStyle;
+  combinatorSelector?: TextStyle;
+  combinatorOption?: TextStyle;
+  inlineCombinator?: TextStyle;
+}
+
+export type RuleGroupStyleSheets = WrapInStyleProp<RuleGroupStyles>;
+
+export type RuleGroupNativeProps = RuleGroupProps & {
+  styles?: RuleGroupStyles;
 };
 
 export type QueryBuilderNativeProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =

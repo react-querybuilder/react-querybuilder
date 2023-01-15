@@ -5,7 +5,10 @@ import { StyleSheet } from 'react-native';
 import { joinWith, splitBy } from 'react-querybuilder';
 
 const styles = StyleSheet.create({
-  selector: {},
+  selector: {
+    height: 30,
+    width: 100,
+  },
   option: {},
 });
 
