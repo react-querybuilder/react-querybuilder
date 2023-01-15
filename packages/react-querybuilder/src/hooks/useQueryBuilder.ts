@@ -482,6 +482,9 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       combinators,
       combinatorPreceding: newRule.combinatorPreceding ?? undefined,
     });
+    if (debugMode) {
+      onLog({ type: LogType.add, query, newQuery, newRule, parentPath });
+    }
     dispatch(newQuery);
   };
 
@@ -510,6 +513,9 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       combinators,
       combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
     });
+    if (debugMode) {
+      onLog({ type: LogType.add, query, newQuery, newGroup, parentPath });
+    }
     dispatch(newQuery);
   };
 
@@ -527,6 +533,9 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       getValueSources: getValueSourcesMain,
       getRuleDefaultValue,
     });
+    if (debugMode) {
+      onLog({ type: LogType.update, query, newQuery, prop, value, path });
+    }
     dispatch(newQuery);
   };
 
@@ -543,6 +552,9 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     if (ruleOrGroup) {
       if (onRemove(ruleOrGroup as RG | RuleType, path, query, context)) {
         const newQuery = remove(query, path);
+        if (debugMode) {
+          onLog({ type: LogType.remove, query, newQuery, path, ruleOrGroup });
+        }
         dispatch(newQuery);
       } else {
         if (debugMode) {
@@ -561,6 +573,9 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       return;
     }
     const newQuery = move(query, oldPath, newPath, { clone, combinators });
+    if (debugMode) {
+      onLog({ type: LogType.move, query, newQuery, oldPath, newPath, clone });
+    }
     dispatch(newQuery);
   };
   // #endregion
@@ -652,12 +667,6 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       }),
     [controlClassnames.queryBuilder, queryDisabled, query.disabled, validationResult]
   );
-
-  useEffect(() => {
-    if (debugMode) {
-      onLog({ type: LogType.queryUpdate, query, queryState, schema });
-    }
-  }, [debugMode, onLog, queryState, query, schema]);
 
   return {
     actions,

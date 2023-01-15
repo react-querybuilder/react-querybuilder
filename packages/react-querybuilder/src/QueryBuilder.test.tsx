@@ -14,6 +14,7 @@ import type {
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { defaultControlElements } from './controls';
 import {
   defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,
@@ -773,7 +774,7 @@ describe('onAddRule prop', () => {
 
     expect(onAddRule).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    const { rule, parentPath, query } = onLog.mock.calls[1][0];
+    const { rule, parentPath, query } = onLog.mock.calls[0][0];
     expect(rule).toBeDefined();
     expect(parentPath).toBeDefined();
     expect(query).toBeDefined();
@@ -852,7 +853,7 @@ describe('onAddGroup prop', () => {
 
     expect(onAddGroup).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    const { ruleGroup, parentPath, query } = onLog.mock.calls[1][0];
+    const { ruleGroup, parentPath, query } = onLog.mock.calls[0][0];
     expect(ruleGroup).toBeDefined();
     expect(parentPath).toBeDefined();
     expect(query).toBeDefined();
@@ -1529,6 +1530,13 @@ describe('disabled', () => {
     expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
   });
 
+  it('should have the correct classname when root group is disabled', () => {
+    const { container } = render(
+      <QueryBuilder query={{ disabled: true, combinator: 'and', rules: [] }} />
+    );
+    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
+  });
+
   it('prevents changes when disabled', async () => {
     const onQueryChange = jest.fn();
     render(
@@ -1898,29 +1906,78 @@ describe('nested object immutability', () => {
 });
 
 describe('debug mode', () => {
-  it('logs info', async () => {
+  it('logs updates', async () => {
     const onLog = jest.fn();
+    const fields: Field[] = [
+      { name: 'f1', label: 'Field 1' },
+      { name: 'f2', label: 'Field 2' },
+    ];
+    const defaultQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    const RuleGroupOG = defaultControlElements.ruleGroup;
+    render(
+      <QueryBuilder
+        debugMode
+        fields={fields}
+        defaultQuery={defaultQuery}
+        onLog={onLog}
+        controlElements={{
+          ruleGroup: props => (
+            <div>
+              <button onClick={() => props.actions.moveRule([1], [0])}>moveRule</button>
+              <RuleGroupOG {...props} />
+            </div>
+          ),
+        }}
+      />
+    );
+    let n = 0;
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.add);
+    await user.selectOptions(screen.getByTestId(TestID.operators), '>');
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.update);
+
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.add);
+    await user.click(screen.getByText('moveRule'));
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.move);
+    await user.click(screen.getAllByTestId(TestID.removeRule)[0]);
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.remove);
+
+    await user.click(screen.getByTestId(TestID.addGroup));
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.add);
+    await user.click(screen.getByTestId(TestID.removeGroup));
+    expect(onLog.mock.calls[n++][0].type).toBe(LogType.remove);
+  });
+
+  it('logs failed additions and removals due to onAdd/Remove handlers', async () => {
+    const onLog = jest.fn();
+    const f = () => false as const;
     const defaultQuery: RuleGroupType = {
-      not: false,
       combinator: 'and',
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
-    render(<QueryBuilder debugMode query={defaultQuery} onLog={onLog} onRemove={() => false} />);
-    const { query, queryState, schema } = onLog.mock.calls[0][0];
-    const [processedRoot, processedQueryState] = [query, queryState].map(q =>
-      JSON.parse(formatQuery(q, 'json_without_ids'))
+    render(
+      <QueryBuilder
+        debugMode
+        query={defaultQuery}
+        onLog={onLog}
+        onRemove={f}
+        onAddGroup={f}
+        onAddRule={f}
+      />
     );
-    expect(processedRoot).toEqual(defaultQuery);
-    expect(processedQueryState).toEqual({ ...defaultQuery, rules: [] });
-    expect(schema).toBeDefined();
-    const removeRule = await screen.findByTestId(TestID.removeRule);
-    await user.click(removeRule);
-    expect(onLog.mock.calls[1][0].type).toBe(LogType.onRemoveFalse);
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onLog.mock.calls[0][0].type).toBe(LogType.onAddRuleFalse);
+    await user.click(screen.getByTestId(TestID.addGroup));
+    expect(onLog.mock.calls[1][0].type).toBe(LogType.onAddGroupFalse);
+    await user.click(screen.getByTestId(TestID.removeRule));
+    expect(onLog.mock.calls[2][0].type).toBe(LogType.onRemoveFalse);
   });
 
   it('logs failed query updates due to disabled prop', async () => {
     const onLog = jest.fn();
     const defaultQuery: RuleGroupType = {
+      disabled: true,
       combinator: 'and',
       rules: [],
     };
@@ -1944,7 +2001,6 @@ describe('debug mode', () => {
         enableMountQueryChange={false}
         query={defaultQuery}
         onLog={onLog}
-        disabled
         controlElements={{ ruleGroup }}
       />
     );
