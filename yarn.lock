@@ -6667,7 +6667,7 @@ __metadata:
   dependencies:
     "@react-native-picker/picker": ^2.4.8
     "@react-querybuilder/ts": ^5.4.0
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react-native": ^11.5.0
     "@types/react": ^18.0.26
     "@vitejs/plugin-react": ^3.0.1
     react: ^18.2.0
@@ -6678,6 +6678,7 @@ __metadata:
     typescript: ^4.9.4
     vite: ^4.0.4
   peerDependencies:
+    "@react-native-picker/picker": ">=2"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
@@ -6796,6 +6797,23 @@ __metadata:
     lodash: ^4.17.15
     redent: ^3.0.0
   checksum: 94911f901a8031f3e489d04ac057cb5373621230f5d92bed80e514e24b069fb58a3166d1dd86963e55f078a1bd999da595e2ab96ed95f452d477e272937d792a
+  languageName: node
+  linkType: hard
+
+"@testing-library/react-native@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "@testing-library/react-native@npm:11.5.0"
+  dependencies:
+    pretty-format: ^29.0.0
+  peerDependencies:
+    jest: ">=28.0.0"
+    react: ">=16.0.0"
+    react-native: ">=0.59"
+    react-test-renderer: ">=16.0.0"
+  peerDependenciesMeta:
+    jest:
+      optional: true
+  checksum: 841c769c2734d7fb7d9a4054fad0582505e49c4c2d99ddcf742ef11f6dd6ee3bcf040400e27dbb55d7fda48b305ae92f40dc8c507e93dffb96d768ff3aba7bad
   languageName: node
   linkType: hard
 

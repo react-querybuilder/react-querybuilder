@@ -1,8 +1,10 @@
-/** @type {import('@jest/types').Config} */
+import testingLibraryReactNativeJestPreset from '@testing-library/react-native/jest-preset/index.js';
+
+/** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
+  preset: '@testing-library/react-native',
+  coveragePathIgnorePatterns: [],
   displayName: 'native',
   globals: { __RQB_DEV__: true },
-  setupFilesAfterEnv: ['../../jestSetup.ts'],
-  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: testingLibraryReactNativeJestPreset.setupFiles,
 };

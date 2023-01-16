@@ -1,4 +1,4 @@
-/** @type {import('@jest/types').Config} */
+/** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',
@@ -10,6 +10,14 @@ export default {
       statements: 100,
     },
   },
-  projects: ['packages/*'],
+  projects: [
+    'packages/antd',
+    'packages/bootstrap',
+    'packages/bulma',
+    'packages/chakra',
+    'packages/dnd',
+    'packages/material',
+    'packages/react-querybuilder',
+  ],
   watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
 };

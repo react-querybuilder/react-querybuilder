@@ -28,7 +28,7 @@
   "devDependencies": {
     "@react-native-picker/picker": "^2.4.8",
     "@react-querybuilder/ts": "^5.4.0",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react-native": "^11.5.0",
     "@types/react": "^18.0.26",
     "@vitejs/plugin-react": "^3.0.1",
     "react": "^18.2.0",
@@ -40,6 +40,7 @@
     "vite": "^4.0.4"
   },
   "peerDependencies": {
+    "@react-native-picker/picker": ">=2",
     "react": ">=16.8.0"
   }
 }

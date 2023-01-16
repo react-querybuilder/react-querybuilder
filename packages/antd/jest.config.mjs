@@ -1,4 +1,4 @@
-/** @type {import('@jest/types').Config} */
+/** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
   displayName: 'antd',
