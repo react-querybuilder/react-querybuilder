@@ -1,10 +1,10 @@
-import type { ValueEditorProps } from '@react-querybuilder/ts';
+import { useMemo } from 'react';
 import type { KeyboardType } from 'react-native';
 import { StyleSheet, Switch, TextInput, View } from 'react-native';
 import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
+import { defaultStyles } from '../defaults';
+import type { ValueEditorNativeProps } from '../types';
 import { NativeValueSelector } from './NativeValueSelector';
-
-const styles = StyleSheet.create({ valueList: { flexDirection: 'row' } });
 
 export const NativeValueEditor = ({
   operator,
@@ -23,7 +23,23 @@ export const NativeValueEditor = ({
   skipHook = false,
   testID,
   ...props
-}: ValueEditorProps) => {
+}: ValueEditorNativeProps) => {
+  const styles = useMemo(
+    () => ({
+      value: StyleSheet.flatten([defaultStyles.value, props.schema.styles?.value]),
+      valueEditorSwitch: StyleSheet.flatten([
+        defaultStyles.valueEditorSwitch,
+        props.schema.styles?.valueEditorSwitch,
+      ]),
+      valueList: StyleSheet.flatten([defaultStyles.valueList, props.schema.styles?.valueList]),
+    }),
+    [
+      props.schema.styles?.value,
+      props.schema.styles?.valueEditorSwitch,
+      props.schema.styles?.valueList,
+    ]
+  );
+
   const { valArray, betweenValueHandler } = useValueEditor({
     skipHook,
     handleOnChange,
@@ -54,6 +70,7 @@ export const NativeValueEditor = ({
         return (
           <TextInput
             key={key}
+            style={styles.value}
             keyboardType={keyboardType}
             placeholder={placeHolderText}
             value={valArray[i] ?? ''}
@@ -107,6 +124,7 @@ export const NativeValueEditor = ({
       return (
         <TextInput
           data-testid={testID}
+          style={styles.value}
           placeholder={placeHolderText}
           value={value}
           onChangeText={v => handleOnChange(v)}
@@ -115,7 +133,14 @@ export const NativeValueEditor = ({
 
     case 'switch':
     case 'checkbox':
-      return <Switch disabled={disabled} value={!!value} onValueChange={v => handleOnChange(v)} />;
+      return (
+        <Switch
+          style={styles.valueEditorSwitch}
+          disabled={disabled}
+          value={!!value}
+          onValueChange={v => handleOnChange(v)}
+        />
+      );
 
     // TODO: set up "radio" case
     // case 'radio':
@@ -140,6 +165,7 @@ export const NativeValueEditor = ({
   return (
     <TextInput
       data-testid={testID}
+      style={styles.value}
       keyboardType={keyboardType}
       placeholder={placeHolderText}
       value={value}

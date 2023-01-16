@@ -1,47 +1,74 @@
 import type {
+  ActionProps,
+  InlineCombinatorProps,
+  NotToggleProps,
   QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleProps,
+  Schema,
+  ValueEditorProps,
+  ValueSelectorProps,
 } from '@react-querybuilder/ts';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
-export type WrapInStyleProp<K> = { [P in keyof K]?: StyleProp<Required<K>[P]> };
+export type WrapEachPropertyInStyleProp<K> = { [P in keyof K]?: StyleProp<Required<K>[P]> };
 
-export interface RuleStyles {
-  rule?: ViewStyle;
-  fieldSelector?: TextStyle;
-  fieldOption?: TextStyle;
-  operatorSelector?: TextStyle;
-  operatorOption?: TextStyle;
-  valueSourceSelector?: TextStyle;
-  valueSourceOption?: TextStyle;
-  value?: TextStyle;
+interface WithOptionalStyles {
+  styles?: Partial<QueryBuilderNativeStyles>;
 }
 
-export type RuleStyleSheets = WrapInStyleProp<RuleStyles>;
-
-export type RuleNativeProps = RuleProps & {
-  styles?: RuleStyles;
-};
-
-export interface RuleGroupStyles {
-  ruleGroup?: ViewStyle;
-  ruleGroupHeader?: ViewStyle;
-  ruleGroupBody?: ViewStyle;
-  combinatorSelector?: TextStyle;
-  combinatorOption?: TextStyle;
-  inlineCombinator?: TextStyle;
+interface WithOptionalStyleSheets {
+  styles?: QueryBuilderNativeStyleSheets;
 }
 
-export type RuleGroupStyleSheets = WrapInStyleProp<RuleGroupStyles>;
+export interface SchemaNative extends Schema, WithOptionalStyleSheets {}
 
-export type RuleGroupNativeProps = RuleGroupProps & {
-  styles?: RuleGroupStyles;
-};
+export interface WithSchemaNative {
+  schema: SchemaNative;
+}
+
+export interface QueryBuilderNativeStyles {
+  combinatorOption: TextStyle;
+  combinatorSelector: TextStyle;
+  dragHandle: ViewStyle;
+  fieldOption: TextStyle;
+  fieldSelector: TextStyle;
+  inlineCombinator: TextStyle;
+  notToggle: ViewStyle;
+  notToggleLabel: TextStyle;
+  notToggleSwitch: ViewStyle;
+  operatorOption: TextStyle;
+  operatorSelector: TextStyle;
+  rule: ViewStyle;
+  ruleGroup: ViewStyle;
+  ruleGroupBody: ViewStyle;
+  ruleGroupHeader: ViewStyle;
+  value: TextStyle;
+  valueEditorOption: TextStyle;
+  valueEditorSelector: TextStyle;
+  valueEditorSwitch: ViewStyle;
+  valueList: ViewStyle;
+  valueSourceOption: TextStyle;
+  valueSourceSelector: TextStyle;
+}
+
+export type QueryBuilderNativeStyleSheets = WrapEachPropertyInStyleProp<QueryBuilderNativeStyles>;
+
+export type RuleGroupNativeProps = RuleGroupProps & WithSchemaNative;
+
+export type RuleNativeProps = RuleProps & WithSchemaNative;
+
+export type NotToggleNativeProps = NotToggleProps & WithSchemaNative;
+
+export type InlineCombinatorNativeProps = InlineCombinatorProps & WithSchemaNative;
+
+export type ActionNativeProps = ActionProps & WithSchemaNative;
+
+export type ValueSelectorNativeProps = ValueSelectorProps & WithSchemaNative;
+
+export type ValueEditorNativeProps = ValueEditorProps & WithSchemaNative;
 
 export type QueryBuilderNativeProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
-  QueryBuilderProps<RG> & {
-    styles?: Partial<Record<'thisthing' | 'that', StyleProp<ViewStyle>>>;
-  };
+  QueryBuilderProps<RG> & WithOptionalStyles;

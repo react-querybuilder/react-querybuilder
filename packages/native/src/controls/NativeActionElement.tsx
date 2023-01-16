@@ -1,12 +1,12 @@
-import type { ActionProps } from '@react-querybuilder/ts';
 import { Button } from 'react-native';
+import type { ActionNativeProps } from '../types';
 
 export const NativeActionElement = ({
   handleOnClick,
   label,
   disabled,
   disabledTranslation,
-}: ActionProps) => (
+}: ActionNativeProps) => (
   <Button
     disabled={disabled && !disabledTranslation}
     title={disabledTranslation && disabled ? disabledTranslation.label ?? '' : label ?? ''}

@@ -1,17 +1,41 @@
-import type { NotToggleProps } from '@react-querybuilder/ts';
+import { useMemo } from 'react';
 import { StyleSheet, Switch, Text, View } from 'react-native';
+import { defaultStyles } from '../defaults';
+import type { NotToggleNativeProps } from '../types';
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flexDirection: 'row',
-  },
-});
+export const NativeNotToggle = ({
+  handleOnChange,
+  label,
+  checked,
+  disabled,
+  schema,
+}: NotToggleNativeProps) => {
+  const styles = useMemo(
+    () => ({
+      notToggle: StyleSheet.flatten([defaultStyles.notToggle, schema.styles?.notToggle]),
+      notToggleLabel: StyleSheet.flatten([
+        defaultStyles.notToggleLabel,
+        schema.styles?.notToggleLabel,
+      ]),
+      notToggleSwitch: StyleSheet.flatten([
+        defaultStyles.notToggleSwitch,
+        schema.styles?.notToggleSwitch,
+      ]),
+    }),
+    [schema.styles?.notToggle, schema.styles?.notToggleLabel, schema.styles?.notToggleSwitch]
+  );
 
-export const NativeNotToggle = ({ handleOnChange, label, checked, disabled }: NotToggleProps) => (
-  <View style={styles.wrapper}>
-    <Text>{label}</Text>
-    <Switch disabled={disabled} value={checked} onValueChange={v => handleOnChange(v)} />
-  </View>
-);
+  return (
+    <View style={styles.notToggle}>
+      <Text style={styles.notToggleLabel}>{label}</Text>
+      <Switch
+        style={styles.notToggleSwitch}
+        disabled={disabled}
+        value={checked}
+        onValueChange={v => handleOnChange(v)}
+      />
+    </View>
+  );
+};
 
 NativeNotToggle.displayName = 'NativeNotToggle';

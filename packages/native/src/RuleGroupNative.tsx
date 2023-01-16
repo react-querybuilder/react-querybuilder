@@ -5,55 +5,29 @@ import {
   RuleGroupHeaderComponents,
   useRuleGroup,
 } from 'react-querybuilder';
-import type { RuleGroupNativeProps, RuleGroupStyles, RuleGroupStyleSheets } from './types';
-
-const baseStyles: RuleGroupStyles = {
-  ruleGroup: {
-    borderWidth: 1,
-    marginBottom: 10,
-  },
-  ruleGroupHeader: {
-    flexDirection: 'row',
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-  },
-  ruleGroupBody: {
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-  },
-  combinatorSelector: {
-    height: 30,
-    width: 50,
-  },
-};
+import { defaultStyles } from './defaults';
+import type { RuleGroupNativeProps } from './types';
 
 export const RuleGroupNative = (props: RuleGroupNativeProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
 
   const styles = useMemo(
-    (): RuleGroupStyleSheets => ({
-      ruleGroup: StyleSheet.flatten([baseStyles.ruleGroup, props.styles?.ruleGroup]),
+    () => ({
+      ruleGroup: StyleSheet.flatten([defaultStyles.ruleGroup, rg.schema.styles?.ruleGroup]),
       ruleGroupHeader: StyleSheet.flatten([
-        baseStyles.ruleGroupHeader,
-        props.styles?.ruleGroupHeader,
+        defaultStyles.ruleGroupHeader,
+        rg.schema.styles?.ruleGroupHeader,
       ]),
-      ruleGroupBody: StyleSheet.flatten([baseStyles.ruleGroupBody, props.styles?.ruleGroupBody]),
-      combinatorSelector: StyleSheet.flatten([
-        baseStyles.combinatorSelector,
-        props.styles?.combinatorSelector,
-      ]),
-      combinatorOption: StyleSheet.flatten([
-        baseStyles.combinatorOption,
-        props.styles?.combinatorOption,
-      ]),
-      inlineCombinator: StyleSheet.flatten([
-        baseStyles.inlineCombinator,
-        props.styles?.inlineCombinator,
+      ruleGroupBody: StyleSheet.flatten([
+        defaultStyles.ruleGroupBody,
+        rg.schema.styles?.ruleGroupBody,
       ]),
     }),
-    [props.styles]
+    [
+      rg.schema.styles?.ruleGroup,
+      rg.schema.styles?.ruleGroupBody,
+      rg.schema.styles?.ruleGroupHeader,
+    ]
   );
 
   return (

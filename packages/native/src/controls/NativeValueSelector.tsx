@@ -1,25 +1,84 @@
 import { Picker } from '@react-native-picker/picker';
-import type { Option, ValueSelectorProps } from '@react-querybuilder/ts';
-import { useCallback } from 'react';
+import type { Option } from '@react-querybuilder/ts';
+import { useCallback, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import { joinWith, splitBy } from 'react-querybuilder';
-
-const styles = StyleSheet.create({
-  selector: {
-    height: 30,
-    width: 100,
-  },
-  option: {},
-});
+import { joinWith, splitBy, standardClassnames } from 'react-querybuilder';
+import { defaultStyles } from '../defaults';
+import type { ValueSelectorNativeProps } from '../types';
 
 export const NativeValueSelector = ({
   handleOnChange,
+  className,
   options,
   value,
   disabled,
   multiple,
   listsAsArrays,
-}: ValueSelectorProps) => {
+  schema,
+}: ValueSelectorNativeProps) => {
+  const styles = useMemo(() => {
+    if (className?.match(`\\b${standardClassnames.combinators}\\b`)) {
+      return {
+        selector: StyleSheet.flatten([
+          defaultStyles.combinatorSelector,
+          schema.styles?.combinatorSelector,
+        ]),
+        option: StyleSheet.flatten([
+          defaultStyles.combinatorOption,
+          schema.styles?.combinatorOption,
+        ]),
+      };
+    } else if (className?.match(`\\b${standardClassnames.fields}\\b`)) {
+      return {
+        selector: StyleSheet.flatten([defaultStyles.fieldSelector, schema.styles?.fieldSelector]),
+        option: StyleSheet.flatten([defaultStyles.fieldOption, schema.styles?.fieldOption]),
+      };
+    } else if (className?.match(`\\b${standardClassnames.operators}\\b`)) {
+      return {
+        selector: StyleSheet.flatten([
+          defaultStyles.operatorSelector,
+          schema.styles?.operatorSelector,
+        ]),
+        option: StyleSheet.flatten([defaultStyles.operatorOption, schema.styles?.operatorOption]),
+      };
+    } else if (className?.match(`\\b${standardClassnames.valueSource}\\b`)) {
+      return {
+        selector: StyleSheet.flatten([
+          defaultStyles.valueSourceSelector,
+          schema.styles?.valueSourceSelector,
+        ]),
+        option: StyleSheet.flatten([
+          defaultStyles.valueSourceOption,
+          schema.styles?.valueSourceOption,
+        ]),
+      };
+    } else if (className?.match(`\\b${standardClassnames.value}\\b`)) {
+      return {
+        selector: StyleSheet.flatten([
+          defaultStyles.valueEditorSelector,
+          schema.styles?.valueEditorSelector,
+        ]),
+        option: StyleSheet.flatten([
+          defaultStyles.valueEditorOption,
+          schema.styles?.valueEditorOption,
+        ]),
+      };
+    }
+    return StyleSheet.create({ selector: {}, option: {} });
+  }, [
+    className,
+    schema.styles?.combinatorOption,
+    schema.styles?.combinatorSelector,
+    schema.styles?.fieldOption,
+    schema.styles?.fieldSelector,
+    schema.styles?.operatorOption,
+    schema.styles?.operatorSelector,
+    schema.styles?.valueEditorOption,
+    schema.styles?.valueEditorSelector,
+    schema.styles?.valueSourceOption,
+    schema.styles?.valueSourceSelector,
+  ]);
+
   const onChange = useCallback(
     (v: string | string[]) => {
       if (multiple) {
