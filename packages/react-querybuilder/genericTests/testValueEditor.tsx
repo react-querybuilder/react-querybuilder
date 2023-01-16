@@ -1,4 +1,4 @@
-import type { OptionList, ValueEditorProps } from '@react-querybuilder/ts';
+import type { OptionList, Schema, ValueEditorProps } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { findInput, findTextarea, userEventSetup } from './utils';
@@ -26,6 +26,7 @@ export const defaultValueEditorProps: ValueEditorProps = {
   level: 0,
   path: [],
   valueSource: 'value',
+  schema: {} as Schema,
 };
 
 export const testValueEditor = (

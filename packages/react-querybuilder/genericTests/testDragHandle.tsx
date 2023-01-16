@@ -1,9 +1,10 @@
-import type { DragHandleProps } from '@react-querybuilder/ts';
+import type { DragHandleProps, Schema } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 
 export const defaultDragHandleProps: DragHandleProps = {
   level: 1,
   path: [0],
+  schema: {} as Schema,
 };
 
 export const testDragHandle = (

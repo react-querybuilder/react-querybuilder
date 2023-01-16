@@ -19,7 +19,7 @@ import Select from '@mui/material/Select';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
-import type { DragHandleProps } from '@react-querybuilder/ts';
+import type { DragHandleProps, Schema } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import {
@@ -140,6 +140,7 @@ describe('action element', () => {
           path={[]}
           level={0}
           ruleOrGroup={{ combinator: 'and', rules: [] }}
+          schema={{} as Schema}
         />
       </div>
     );
@@ -153,7 +154,7 @@ describe('drag handle', () => {
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
-        <WrapperDH path={[]} level={0} muiComponents={null} />
+        <WrapperDH path={[]} level={0} muiComponents={null} schema={{} as Schema} />
       </div>
     );
     expect(screen.getByTestId('test').querySelector('span')).toBeInTheDocument();
@@ -166,7 +167,7 @@ describe('not toggle', () => {
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
-        <MaterialNotToggle handleOnChange={() => {}} path={[]} level={0} />
+        <MaterialNotToggle handleOnChange={() => {}} path={[]} level={0} schema={{} as Schema} />
       </div>
     );
     expect(screen.getByTestId('test').querySelector('input[type=checkbox]')).toBeInTheDocument();
@@ -187,6 +188,7 @@ describe('value editor', () => {
           field="f1"
           operator="="
           fieldData={{ name: 'f1', label: 'Field 1' }}
+          schema={{} as Schema}
         />
       </div>
     );
@@ -205,6 +207,7 @@ describe('value selector', () => {
           path={[]}
           level={0}
           options={[{ name: 'opt1', label: 'Option 1' }]}
+          schema={{} as Schema}
         />
       </div>
     );
