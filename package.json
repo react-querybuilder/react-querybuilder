@@ -43,6 +43,7 @@
     "typecheck:examples": "tsc -p examples",
     "pretty-print": "prettier --write \"*.{mj,t}s\" \"examples/**/*\" \"packages/*/src/**\" \"packages/*/dev/**\" \"website/*.js\" \"website/{docs,src,versioned_docs,versioned_sidebars}/**\"",
     "generate-examples": "node ./examples/generateExamples.mjs",
+    "generate-parsers": "concurrently --timings --names sql,cel \"yarn workspace react-querybuilder generate-sqlparser\" \"yarn workspace react-querybuilder generate-celparser\"",
     "outdated": "yarn upgrade-interactive",
     "version": "yarn && concurrently --timings --names examples,packages yarn:generate-examples yarn:build && concurrently \"git add examples yarn.lock\"",
     "website:install": "cd website && yarn install",

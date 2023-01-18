@@ -24,3 +24,5 @@ interface ExampleConfig {
 }
 
 export type ExampleConfigs = Record<string, ExampleConfig>;
+
+export const configs: ExampleConfigs;

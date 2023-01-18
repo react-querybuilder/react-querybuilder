@@ -4,6 +4,33 @@
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.umd.js"
+    },
+    "./dev": "./dev/index.ts",
+    "./genericTests": "./genericTests/index.ts",
+    "./formatQuery": "./dist/formatQuery.js",
+    "./dist/formatQuery.js": "./dist/formatQuery.js",
+    "./parseCEL": "./dist/parseCEL.js",
+    "./dist/parseCEL.js": "./dist/parseCEL.js",
+    "./parseJsonLogic": "./dist/parseJsonLogic.js",
+    "./dist/parseJsonLogic.js": "./dist/parseJsonLogic.js",
+    "./parseMongoDB": "./dist/parseMongoDB.js",
+    "./dist/parseMongoDB.js": "./dist/parseMongoDB.js",
+    "./parseSQL": "./dist/parseSQL.js",
+    "./dist/parseSQL.js": "./dist/parseSQL.js",
+    "./transformQuery": "./dist/transformQuery.js",
+    "./dist/transformQuery.js": "./dist/transformQuery.js",
+    "./css": "./dist/query-builder.css",
+    "./dist/query-builder.css": "./dist/query-builder.css",
+    "./scss": "./dist/query-builder.scss",
+    "./dist/query-builder.scss": "./dist/query-builder.scss"
+  },
   "types": "dist/types/src/index.d.ts",
   "files": [
     "dist"
@@ -83,9 +110,9 @@
     "typecheck:watch": "yarn typecheck --watch",
     "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
     "generate-sqlparser-base": "npx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate-sqlparser-codemod": "jscodeshift -t src/internal/langParser.codemod.js src/utils/parseSQL/sqlParser.js",
+    "generate-sqlparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseSQL/sqlParser.js",
     "generate-celparser": "yarn generate-celparser-base && yarn generate-celparser-codemod",
     "generate-celparser-base": "npx jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate-celparser-codemod": "jscodeshift -t src/internal/langParser.codemod.js src/utils/parseCEL/celParser.js"
+    "generate-celparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseCEL/celParser.js"
   }
 }
