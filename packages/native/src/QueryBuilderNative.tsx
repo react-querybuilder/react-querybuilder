@@ -10,7 +10,10 @@ import type { QueryBuilderNativeProps, WithSchemaNative } from './types';
 export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
   props: QueryBuilderNativeProps<RG>
 ) => {
-  const controlElements = { ...defaultNativeControlElements, ...props.controlElements };
+  const controlElements = useMemo(
+    () => ({ ...defaultNativeControlElements, ...props.controlElements }),
+    [props.controlElements]
+  );
   const qb = useQueryBuilder({ ...props, controlElements }) as ReturnType<typeof useQueryBuilder> &
     WithSchemaNative;
 
@@ -28,3 +31,5 @@ export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC = 
     </QueryBuilderContext.Provider>
   );
 };
+
+QueryBuilderNative.displayName = 'QueryBuilderNative';

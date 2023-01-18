@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { StyleSheet, Switch, Text, View } from 'react-native';
-import { defaultStyles } from '../defaults';
+import { defaultStyles } from '../styles';
 import type { NotToggleNativeProps } from '../types';
 
 export const NativeNotToggle = ({

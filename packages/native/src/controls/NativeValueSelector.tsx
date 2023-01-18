@@ -3,7 +3,7 @@ import type { Option } from '@react-querybuilder/ts';
 import { useCallback, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { joinWith, splitBy, standardClassnames } from 'react-querybuilder';
-import { defaultStyles } from '../defaults';
+import { defaultStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 
 export const NativeValueSelector = ({

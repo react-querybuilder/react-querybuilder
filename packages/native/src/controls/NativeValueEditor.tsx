@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { KeyboardType } from 'react-native';
 import { StyleSheet, Switch, TextInput, View } from 'react-native';
 import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
-import { defaultStyles } from '../defaults';
+import { defaultStyles } from '../styles';
 import type { ValueEditorNativeProps } from '../types';
 import { NativeValueSelector } from './NativeValueSelector';
 

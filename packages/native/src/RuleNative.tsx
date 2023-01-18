@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RuleComponents, useRule } from 'react-querybuilder';
-import { defaultStyles } from './defaults';
+import { defaultStyles } from './styles';
 import type { RuleNativeProps } from './types';
 
 export const RuleNative = (props: RuleNativeProps) => {
@@ -18,3 +18,5 @@ export const RuleNative = (props: RuleNativeProps) => {
     </View>
   );
 };
+
+RuleNative.displayName = 'RuleNative';

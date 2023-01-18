@@ -5,7 +5,7 @@ import {
   RuleGroupHeaderComponents,
   useRuleGroup,
 } from 'react-querybuilder';
-import { defaultStyles } from './defaults';
+import { defaultStyles } from './styles';
 import type { RuleGroupNativeProps } from './types';
 
 export const RuleGroupNative = (props: RuleGroupNativeProps) => {
@@ -41,3 +41,5 @@ export const RuleGroupNative = (props: RuleGroupNativeProps) => {
     </View>
   );
 };
+
+RuleGroupNative.displayName = 'RuleGroupNative';

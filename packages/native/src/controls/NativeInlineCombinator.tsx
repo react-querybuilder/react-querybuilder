@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TestID } from 'react-querybuilder';
-import { defaultStyles } from '../defaults';
+import { defaultStyles } from '../styles';
 import type { InlineCombinatorNativeProps } from '../types';
 
 export const NativeInlineCombinator = ({
