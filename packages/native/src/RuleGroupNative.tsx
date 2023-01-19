@@ -5,7 +5,7 @@ import {
   RuleGroupHeaderComponents,
   useRuleGroup,
 } from 'react-querybuilder';
-import { defaultStyles } from './styles';
+import { defaultNativeStyles } from './styles';
 import type { RuleGroupNativeProps } from './types';
 
 export const RuleGroupNative = (props: RuleGroupNativeProps) => {
@@ -13,13 +13,13 @@ export const RuleGroupNative = (props: RuleGroupNativeProps) => {
 
   const styles = useMemo(
     () => ({
-      ruleGroup: StyleSheet.flatten([defaultStyles.ruleGroup, rg.schema.styles?.ruleGroup]),
+      ruleGroup: StyleSheet.flatten([defaultNativeStyles.ruleGroup, rg.schema.styles?.ruleGroup]),
       ruleGroupHeader: StyleSheet.flatten([
-        defaultStyles.ruleGroupHeader,
+        defaultNativeStyles.ruleGroupHeader,
         rg.schema.styles?.ruleGroupHeader,
       ]),
       ruleGroupBody: StyleSheet.flatten([
-        defaultStyles.ruleGroupBody,
+        defaultNativeStyles.ruleGroupBody,
         rg.schema.styles?.ruleGroupBody,
       ]),
     }),

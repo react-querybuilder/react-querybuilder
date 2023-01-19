@@ -3,7 +3,7 @@ import type { Option } from '@react-querybuilder/ts';
 import { useCallback, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { joinWith, splitBy, standardClassnames } from 'react-querybuilder';
-import { defaultStyles } from '../styles';
+import { defaultNativeStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 
 export const NativeValueSelector = ({
@@ -20,46 +20,52 @@ export const NativeValueSelector = ({
     if (className?.match(`\\b${standardClassnames.combinators}\\b`)) {
       return {
         selector: StyleSheet.flatten([
-          defaultStyles.combinatorSelector,
+          defaultNativeStyles.combinatorSelector,
           schema.styles?.combinatorSelector,
         ]),
         option: StyleSheet.flatten([
-          defaultStyles.combinatorOption,
+          defaultNativeStyles.combinatorOption,
           schema.styles?.combinatorOption,
         ]),
       };
     } else if (className?.match(`\\b${standardClassnames.fields}\\b`)) {
       return {
-        selector: StyleSheet.flatten([defaultStyles.fieldSelector, schema.styles?.fieldSelector]),
-        option: StyleSheet.flatten([defaultStyles.fieldOption, schema.styles?.fieldOption]),
+        selector: StyleSheet.flatten([
+          defaultNativeStyles.fieldSelector,
+          schema.styles?.fieldSelector,
+        ]),
+        option: StyleSheet.flatten([defaultNativeStyles.fieldOption, schema.styles?.fieldOption]),
       };
     } else if (className?.match(`\\b${standardClassnames.operators}\\b`)) {
       return {
         selector: StyleSheet.flatten([
-          defaultStyles.operatorSelector,
+          defaultNativeStyles.operatorSelector,
           schema.styles?.operatorSelector,
         ]),
-        option: StyleSheet.flatten([defaultStyles.operatorOption, schema.styles?.operatorOption]),
+        option: StyleSheet.flatten([
+          defaultNativeStyles.operatorOption,
+          schema.styles?.operatorOption,
+        ]),
       };
     } else if (className?.match(`\\b${standardClassnames.valueSource}\\b`)) {
       return {
         selector: StyleSheet.flatten([
-          defaultStyles.valueSourceSelector,
+          defaultNativeStyles.valueSourceSelector,
           schema.styles?.valueSourceSelector,
         ]),
         option: StyleSheet.flatten([
-          defaultStyles.valueSourceOption,
+          defaultNativeStyles.valueSourceOption,
           schema.styles?.valueSourceOption,
         ]),
       };
     } else if (className?.match(`\\b${standardClassnames.value}\\b`)) {
       return {
         selector: StyleSheet.flatten([
-          defaultStyles.valueEditorSelector,
+          defaultNativeStyles.valueEditorSelector,
           schema.styles?.valueEditorSelector,
         ]),
         option: StyleSheet.flatten([
-          defaultStyles.valueEditorOption,
+          defaultNativeStyles.valueEditorOption,
           schema.styles?.valueEditorOption,
         ]),
       };

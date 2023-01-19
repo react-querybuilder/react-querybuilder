@@ -1,9 +1,10 @@
+import type { NotToggleNativeProps } from '@react-querybuilder/native';
+import { defaultNativeStyles } from '@react-querybuilder/native';
+import { Switch, Text, View } from 'native-base';
 import { useMemo } from 'react';
-import { StyleSheet, Switch, Text, View } from 'react-native';
-import { defaultNativeStyles } from '../styles';
-import type { NotToggleNativeProps } from '../types';
+import { StyleSheet } from 'react-native';
 
-export const NativeNotToggle = ({
+export const NativeBaseNotToggle = ({
   handleOnChange,
   label,
   checked,
@@ -12,7 +13,10 @@ export const NativeNotToggle = ({
 }: NotToggleNativeProps) => {
   const styles = useMemo(
     () => ({
-      notToggle: StyleSheet.flatten([defaultNativeStyles.notToggle, schema.styles?.notToggle]),
+      notToggle: StyleSheet.flatten([
+        defaultNativeStyles.notToggle,
+        schema.styles?.notToggle,
+      ]),
       notToggleLabel: StyleSheet.flatten([
         defaultNativeStyles.notToggleLabel,
         schema.styles?.notToggleLabel,
@@ -22,7 +26,11 @@ export const NativeNotToggle = ({
         schema.styles?.notToggleSwitch,
       ]),
     }),
-    [schema.styles?.notToggle, schema.styles?.notToggleLabel, schema.styles?.notToggleSwitch]
+    [
+      schema.styles?.notToggle,
+      schema.styles?.notToggleLabel,
+      schema.styles?.notToggleSwitch,
+    ]
   );
 
   return (
@@ -38,4 +46,4 @@ export const NativeNotToggle = ({
   );
 };
 
-NativeNotToggle.displayName = 'NativeNotToggle';
+NativeBaseNotToggle.displayName = 'NativeBaseNotToggle';

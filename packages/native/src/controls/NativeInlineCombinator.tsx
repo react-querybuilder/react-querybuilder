@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TestID } from 'react-querybuilder';
-import { defaultStyles } from '../styles';
+import { defaultNativeStyles } from '../styles';
 import type { InlineCombinatorNativeProps } from '../types';
 
 export const NativeInlineCombinator = ({
@@ -13,7 +13,7 @@ export const NativeInlineCombinator = ({
   const styles = useMemo(
     () => ({
       inlineCombinator: StyleSheet.flatten([
-        defaultStyles.inlineCombinator,
+        defaultNativeStyles.inlineCombinator,
         props.schema.styles?.inlineCombinator,
       ]),
     }),

@@ -1,12 +1,17 @@
+import type { ValueEditorNativeProps } from '@react-querybuilder/native';
+import { defaultNativeStyles } from '@react-querybuilder/native';
+import { Input, Radio, Switch, TextArea } from 'native-base';
 import { useMemo } from 'react';
 import type { KeyboardType } from 'react-native';
-import { StyleSheet, Switch, TextInput, View } from 'react-native';
-import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
-import { defaultNativeStyles } from '../styles';
-import type { ValueEditorNativeProps } from '../types';
-import { NativeValueSelector } from './NativeValueSelector';
+import { StyleSheet, View } from 'react-native';
+import {
+  getFirstOption,
+  parseNumber,
+  useValueEditor,
+} from 'react-querybuilder';
+import { NativeBaseValueSelector } from './NativeBaseValueSelector';
 
-export const NativeValueEditor = ({
+export const NativeBaseValueEditor = ({
   operator,
   value,
   handleOnChange,
@@ -26,7 +31,10 @@ export const NativeValueEditor = ({
 }: ValueEditorNativeProps) => {
   const styles = useMemo(
     () => ({
-      value: StyleSheet.flatten([defaultNativeStyles.value, props.schema.styles?.value]),
+      value: StyleSheet.flatten([
+        defaultNativeStyles.value,
+        props.schema.styles?.value,
+      ]),
       valueEditorSwitch: StyleSheet.flatten([
         defaultNativeStyles.valueEditorSwitch,
         props.schema.styles?.valueEditorSwitch,
@@ -71,7 +79,7 @@ export const NativeValueEditor = ({
     const editors = ['from', 'to'].map((key, i) => {
       if (type === 'text') {
         return (
-          <TextInput
+          <Input
             key={key}
             style={styles.value}
             keyboardType={keyboardType}
@@ -83,7 +91,7 @@ export const NativeValueEditor = ({
         );
       }
       return (
-        <NativeValueSelector
+        <NativeBaseValueSelector
           key={key}
           {...props}
           handleOnChange={v => betweenValueHandler(v, i)}
@@ -109,7 +117,7 @@ export const NativeValueEditor = ({
     case 'select':
     case 'multiselect':
       return (
-        <NativeValueSelector
+        <NativeBaseValueSelector
           {...props}
           testID={testID}
           className={className}
@@ -125,12 +133,14 @@ export const NativeValueEditor = ({
 
     case 'textarea':
       return (
-        <TextInput
+        <TextArea
           data-testid={testID}
           style={styles.value}
           placeholder={placeHolderText}
           value={value}
           onChangeText={v => handleOnChange(v)}
+          onChange={e => handleOnChange((e.currentTarget as any).value)}
+          autoCompleteType=""
         />
       );
 
@@ -140,33 +150,30 @@ export const NativeValueEditor = ({
         <Switch
           style={styles.valueEditorSwitch}
           disabled={disabled}
-          value={!!value}
+          isChecked={!!value}
           onValueChange={v => handleOnChange(v)}
         />
       );
 
-    // TODO: set up "radio" case
-    // case 'radio':
-    //   return (
-    //     <span data-testid={testID} className={className} title={title}>
-    //       {values.map(v => (
-    //         <label key={v.name}>
-    //           <input
-    //             type="radio"
-    //             value={v.name}
-    //             disabled={disabled}
-    //             checked={value === v.name}
-    //             onChange={e => handleOnChange(e.target.value)}
-    //           />
-    //           {v.label}
-    //         </label>
-    //       ))}
-    //     </span>
-    //   );
+    case 'radio':
+      return (
+        <Radio.Group data-testid={testID} name={title ?? ''}>
+          {values.map(v => (
+            <Radio
+              key={v.name}
+              value={v.name}
+              // For some reason `onChange` isn't a prop of this component
+              // according to TypeScript...
+              {...{ onChange: (v: string) => handleOnChange(v) }}>
+              {v.label}
+            </Radio>
+          ))}
+        </Radio.Group>
+      );
   }
 
   return (
-    <TextInput
+    <Input
       data-testid={testID}
       style={styles.value}
       keyboardType={keyboardType}
@@ -177,4 +184,4 @@ export const NativeValueEditor = ({
   );
 };
 
-NativeValueEditor.displayName = 'NativeValueEditor';
+NativeBaseValueEditor.displayName = 'NativeBaseValueEditor';

@@ -32,4 +32,4 @@ const defaultStylesObject: QueryBuilderNativeStyles = {
   valueSourceSelector: { height: 30, width: 100 },
 };
 
-export const defaultStyles = StyleSheet.create(defaultStylesObject);
+export const defaultNativeStyles = StyleSheet.create(defaultStylesObject);
