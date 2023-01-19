@@ -2,7 +2,6 @@
   "name": "@react-querybuilder/native",
   "description": "React Native components for react-querybuilder",
   "version": "5.4.0",
-  "private": true,
   "publishConfig": {
     "access": "public"
   },
