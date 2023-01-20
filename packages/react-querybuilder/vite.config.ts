@@ -15,11 +15,10 @@ export default defineConfig(({ command }) => ({
       name: 'ReactQueryBuilder',
     },
     rollupOptions: {
-      external: ['@react-querybuilder/ctx', 'clsx', 'immer', 'react'],
+      external: ['@react-querybuilder/ctx', 'immer', 'react'],
       output: {
         globals: {
           '@react-querybuilder/ctx': 'ReactQueryBuilderContext',
-          clsx: 'clsx',
           immer: 'immer',
           react: 'React',
         },
