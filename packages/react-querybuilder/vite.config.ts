@@ -2,6 +2,7 @@ import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
+import { name } from './package.json';
 
 export default defineConfig(({ command }) => ({
   define: {
@@ -32,7 +33,7 @@ export default defineConfig(({ command }) => ({
     visualizer(opts => ({
       filename: `build-stats.${opts.format}.html`,
       gzipSize: true,
-      title: 'Build stats',
+      title: `Build stats (${name})`,
     })),
   ],
   server: {
