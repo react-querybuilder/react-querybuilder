@@ -6,6 +6,12 @@ import { joinWith, splitBy, standardClassnames } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 
+const regexpSC_combinators = RegExp(`\\b${standardClassnames.combinators}\\b`);
+const regexpSC_fields = RegExp(`\\b${standardClassnames.fields}\\b`);
+const regexpSC_operators = RegExp(`\\b${standardClassnames.operators}\\b`);
+const regexpSC_valueSource = RegExp(`\\b${standardClassnames.valueSource}\\b`);
+const regexpSC_value = RegExp(`\\b${standardClassnames.value}\\b`);
+
 export const NativeValueSelector = ({
   handleOnChange,
   className,
@@ -17,7 +23,7 @@ export const NativeValueSelector = ({
   schema,
 }: ValueSelectorNativeProps) => {
   const styles = useMemo(() => {
-    if (className?.match(`\\b${standardClassnames.combinators}\\b`)) {
+    if (regexpSC_combinators.test(className!)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.combinatorSelector,
@@ -28,7 +34,7 @@ export const NativeValueSelector = ({
           schema.styles?.combinatorOption,
         ]),
       };
-    } else if (className?.match(`\\b${standardClassnames.fields}\\b`)) {
+    } else if (regexpSC_fields.test(className!)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.fieldSelector,
@@ -36,7 +42,7 @@ export const NativeValueSelector = ({
         ]),
         option: StyleSheet.flatten([defaultNativeStyles.fieldOption, schema.styles?.fieldOption]),
       };
-    } else if (className?.match(`\\b${standardClassnames.operators}\\b`)) {
+    } else if (regexpSC_operators.test(className!)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.operatorSelector,
@@ -47,7 +53,7 @@ export const NativeValueSelector = ({
           schema.styles?.operatorOption,
         ]),
       };
-    } else if (className?.match(`\\b${standardClassnames.valueSource}\\b`)) {
+    } else if (regexpSC_valueSource.test(className!)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.valueSourceSelector,
@@ -58,7 +64,7 @@ export const NativeValueSelector = ({
           schema.styles?.valueSourceOption,
         ]),
       };
-    } else if (className?.match(`\\b${standardClassnames.value}\\b`)) {
+    } else if (regexpSC_value.test(className!)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.valueEditorSelector,
