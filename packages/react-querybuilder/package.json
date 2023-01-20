@@ -9,9 +9,9 @@
     ".": {
       "types": "./dist/types/src/index.d.ts",
       "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js",
-      "default": "./dist/index.umd.js"
+      "require": "./dist/index.cjs.js"
     },
+    "./umd": "./dist/index.umd.js",
     "./dev": "./dev/index.ts",
     "./genericTests": "./genericTests/index.ts",
     "./formatQuery": "./dist/formatQuery.js",
@@ -31,6 +31,7 @@
     "./scss": "./dist/query-builder.scss",
     "./dist/query-builder.scss": "./dist/query-builder.scss"
   },
+  "unpkg": "./dist/index.umd.js",
   "types": "dist/types/src/index.d.ts",
   "files": [
     "dist"
