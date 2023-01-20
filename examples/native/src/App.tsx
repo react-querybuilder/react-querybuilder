@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import './styles.css';
 
 const styles = StyleSheet.create({
   code: {
