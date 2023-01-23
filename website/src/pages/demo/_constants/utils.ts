@@ -189,6 +189,7 @@ export const getCodeString = (options: DemoOptions, style?: StyleName) => {
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
+    options.showBranches ? `controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}` : '',
   ]
     .filter(Boolean)
     .map(opt => `\n      ${dndIndent}${styleIndent}${opt}`)
