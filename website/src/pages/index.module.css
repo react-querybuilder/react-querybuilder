@@ -33,6 +33,11 @@
   white-space: pre-wrap;
 }
 
+.scrollVert200 {
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
 .featureContainer {
   display: flex;
   flex-direction: column;
