@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 import type { RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import { useQueryBuilder } from 'react-querybuilder';
 import { defaultNativeControlElements } from './defaults';
-import { RuleGroupNative } from './RuleGroupNative';
 import type { QueryBuilderNativeProps, WithSchemaNative } from './types';
 
 export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
@@ -19,9 +18,11 @@ export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC = 
 
   qb.schema.styles = useMemo(() => StyleSheet.create(props.styles ?? {}), [props.styles]);
 
+  const { ruleGroup: RuleGroupComponent } = controlElements;
+
   return (
     <QueryBuilderContext.Provider value={qb.rqbContext}>
-      <RuleGroupNative
+      <RuleGroupComponent
         ruleGroup={qb.query}
         path={[]}
         translations={qb.translations}
