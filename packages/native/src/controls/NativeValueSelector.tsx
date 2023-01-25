@@ -3,7 +3,7 @@ import type { Option } from '@react-querybuilder/ts';
 import { useCallback, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { joinWith, splitBy, standardClassnames } from 'react-querybuilder';
-import { defaultNativeStyles } from '../styles';
+import { defaultNativeSelectStyles, defaultNativeStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 
 const regexpSC_combinators = RegExp(`\\b${standardClassnames.combinators}\\b`);
@@ -14,7 +14,7 @@ const regexpSC_value = RegExp(`\\b${standardClassnames.value}\\b`);
 
 export const NativeValueSelector = ({
   handleOnChange,
-  className,
+  className = '',
   options,
   value,
   disabled,
@@ -23,7 +23,7 @@ export const NativeValueSelector = ({
   schema,
 }: ValueSelectorNativeProps) => {
   const styles = useMemo(() => {
-    if (regexpSC_combinators.test(className!)) {
+    if (regexpSC_combinators.test(className)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.combinatorSelector,
@@ -34,7 +34,7 @@ export const NativeValueSelector = ({
           schema.styles?.combinatorOption,
         ]),
       };
-    } else if (regexpSC_fields.test(className!)) {
+    } else if (regexpSC_fields.test(className)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.fieldSelector,
@@ -42,7 +42,7 @@ export const NativeValueSelector = ({
         ]),
         option: StyleSheet.flatten([defaultNativeStyles.fieldOption, schema.styles?.fieldOption]),
       };
-    } else if (regexpSC_operators.test(className!)) {
+    } else if (regexpSC_operators.test(className)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.operatorSelector,
@@ -53,7 +53,7 @@ export const NativeValueSelector = ({
           schema.styles?.operatorOption,
         ]),
       };
-    } else if (regexpSC_valueSource.test(className!)) {
+    } else if (regexpSC_valueSource.test(className)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.valueSourceSelector,
@@ -64,7 +64,7 @@ export const NativeValueSelector = ({
           schema.styles?.valueSourceOption,
         ]),
       };
-    } else if (regexpSC_value.test(className!)) {
+    } else if (regexpSC_value.test(className)) {
       return {
         selector: StyleSheet.flatten([
           defaultNativeStyles.valueEditorSelector,
@@ -76,7 +76,7 @@ export const NativeValueSelector = ({
         ]),
       };
     }
-    return StyleSheet.create({ selector: {}, option: {} });
+    return StyleSheet.create(defaultNativeSelectStyles);
   }, [
     className,
     schema.styles?.combinatorOption,
