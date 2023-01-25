@@ -22,6 +22,11 @@ export default defineConfig(({ command }) => ({
     sourcemap: true,
     target: 'es2020',
   },
+  resolve: {
+    alias: {
+      'react-native': 'react-native-web',
+    },
+  },
   plugins: [
     vitePluginReact(),
     visualizer({

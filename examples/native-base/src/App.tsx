@@ -13,7 +13,7 @@ import {
   VStack,
 } from 'native-base';
 import { useState } from 'react';
-import type { RuleGroupType } from 'react-querybuilder';
+import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { controlElements } from './components';
 
@@ -23,6 +23,19 @@ const theme = extendTheme({
     initialColorMode: 'dark',
   },
 });
+
+const fields: Field[] = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+];
+
+const defaultQuery: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+    { field: 'lastName', operator: 'in', value: 'Vai, Vaughan' },
+  ],
+};
 
 const ToggleDarkMode = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -43,10 +56,7 @@ const ToggleDarkMode = () => {
 
 export const Example = () => {
   const { colorMode } = useColorMode();
-  const [query, setQuery] = useState<RuleGroupType>({
-    combinator: 'and',
-    rules: [],
-  });
+  const [query, setQuery] = useState(defaultQuery);
 
   return (
     <Box
@@ -63,6 +73,7 @@ export const Example = () => {
         </Link>
         <ToggleDarkMode />
         <QueryBuilderNative
+          fields={fields}
           query={query}
           onQueryChange={q => setQuery(q)}
           controlElements={controlElements}
