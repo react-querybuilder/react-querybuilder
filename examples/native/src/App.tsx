@@ -1,4 +1,7 @@
-import { QueryBuilderNative } from '@react-querybuilder/native';
+import {
+  defaultNativeWebControlElements,
+  QueryBuilderNative,
+} from '@react-querybuilder/native';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { RuleGroupType } from 'react-querybuilder';
@@ -19,7 +22,11 @@ export const App = () => {
   return (
     <View>
       <Text>React Query Builder Native Example</Text>
-      <QueryBuilderNative query={query} onQueryChange={q => setQuery(q)} />
+      <QueryBuilderNative
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        controlElements={defaultNativeWebControlElements}
+      />
       <Text style={styles.code}>{formatQuery(query, 'sql')}</Text>
     </View>
   );

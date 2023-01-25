@@ -24,14 +24,6 @@ const theme = extendTheme({
   },
 });
 
-type ITheme = typeof theme;
-
-// Making the custom theme typing available
-declare module 'native-base' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface ICustomTheme extends ITheme {}
-}
-
 const ToggleDarkMode = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   return (

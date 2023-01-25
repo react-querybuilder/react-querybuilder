@@ -22,6 +22,7 @@ export const NativeValueEditor = ({
   separator = null,
   skipHook = false,
   testID,
+  selectorComponent: SelectorComponent = NativeValueSelector,
   ...props
 }: ValueEditorNativeProps) => {
   const styles = useMemo(
@@ -83,7 +84,7 @@ export const NativeValueEditor = ({
         );
       }
       return (
-        <NativeValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           handleOnChange={v => betweenValueHandler(v, i)}
@@ -109,7 +110,7 @@ export const NativeValueEditor = ({
     case 'select':
     case 'multiselect':
       return (
-        <NativeValueSelector
+        <SelectorComponent
           {...props}
           testID={testID}
           className={className}

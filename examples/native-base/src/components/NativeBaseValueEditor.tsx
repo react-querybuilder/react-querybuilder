@@ -27,6 +27,7 @@ export const NativeBaseValueEditor = ({
   separator = null,
   skipHook = false,
   testID,
+  selectorComponent: SelectorComponent = NativeBaseValueSelector,
   ...props
 }: ValueEditorNativeProps) => {
   const styles = useMemo(
@@ -91,7 +92,7 @@ export const NativeBaseValueEditor = ({
         );
       }
       return (
-        <NativeBaseValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           handleOnChange={v => betweenValueHandler(v, i)}
@@ -117,7 +118,7 @@ export const NativeBaseValueEditor = ({
     case 'select':
     case 'multiselect':
       return (
-        <NativeBaseValueSelector
+        <SelectorComponent
           {...props}
           testID={testID}
           className={className}
@@ -157,14 +158,12 @@ export const NativeBaseValueEditor = ({
 
     case 'radio':
       return (
-        <Radio.Group data-testid={testID} name={title ?? ''}>
+        <Radio.Group
+          data-testid={testID}
+          name={title ?? ''}
+          onChange={v => handleOnChange(v)}>
           {values.map(v => (
-            <Radio
-              key={v.name}
-              value={v.name}
-              // For some reason `onChange` isn't a prop of this component
-              // according to TypeScript...
-              {...{ onChange: (v: string) => handleOnChange(v) }}>
+            <Radio key={v.name} value={v.name}>
               {v.label}
             </Radio>
           ))}

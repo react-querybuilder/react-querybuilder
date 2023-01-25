@@ -5,7 +5,9 @@ import {
   NativeInlineCombinator,
   NativeNotToggle,
   NativeValueEditor,
+  NativeValueEditorWeb,
   NativeValueSelector,
+  NativeValueSelectorWeb,
 } from './controls';
 import { RuleGroupNative } from './RuleGroupNative';
 import { RuleNative } from './RuleNative';
@@ -30,4 +32,13 @@ export const defaultNativeControlElements: Controls = {
   ruleGroup: RuleGroupNative,
   valueEditor: NativeValueEditor,
   valueSourceSelector: NativeValueSelector,
+};
+
+export const defaultNativeWebControlElements: Controls = {
+  ...defaultNativeControlElements,
+  combinatorSelector: NativeValueSelectorWeb,
+  fieldSelector: NativeValueSelectorWeb,
+  operatorSelector: NativeValueSelectorWeb,
+  valueEditor: NativeValueEditorWeb,
+  valueSourceSelector: NativeValueSelectorWeb,
 };

@@ -11,6 +11,7 @@ import type {
   ValueEditorProps,
   ValueSelectorProps,
 } from '@react-querybuilder/ts';
+import type { ComponentType } from 'react';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type WrapEachPropertyInStyleProp<K> = { [P in keyof K]?: StyleProp<Required<K>[P]> };
@@ -68,7 +69,10 @@ export type ActionNativeProps = ActionProps & WithSchemaNative;
 
 export type ValueSelectorNativeProps = ValueSelectorProps & WithSchemaNative;
 
-export type ValueEditorNativeProps = ValueEditorProps & WithSchemaNative;
+export type ValueEditorNativeProps = ValueEditorProps &
+  WithSchemaNative & {
+    selectorComponent?: ComponentType<ValueSelectorNativeProps>;
+  };
 
 export type QueryBuilderNativeProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
   QueryBuilderProps<RG> & WithOptionalStyles;
