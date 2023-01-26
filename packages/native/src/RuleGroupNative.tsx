@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import {
   RuleGroupBodyComponents,
   RuleGroupHeaderComponents,
+  TestID,
   useRuleGroup,
 } from 'react-querybuilder';
 import { defaultNativeStyles } from './styles';
@@ -31,7 +32,7 @@ export const RuleGroupNative = (props: RuleGroupNativeProps) => {
   );
 
   return (
-    <View style={styles.ruleGroup}>
+    <View style={styles.ruleGroup} testID={TestID.ruleGroup}>
       <View style={styles.ruleGroupHeader}>
         <RuleGroupHeaderComponents {...rg} />
       </View>

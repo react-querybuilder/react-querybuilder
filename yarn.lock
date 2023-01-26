@@ -2293,7 +2293,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-flow@npm:^7.13.13":
+"@babel/preset-flow@npm:^7.13.13, @babel/preset-flow@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/preset-flow@npm:7.18.6"
   dependencies:
@@ -7285,16 +7285,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/native@workspace:packages/native"
   dependencies:
+    "@babel/preset-flow": ^7.18.6
     "@react-native-picker/picker": ^2.4.8
     "@react-querybuilder/ts": ^5.4.0
+    "@testing-library/jest-native": ^5.4.1
     "@testing-library/react-native": ^11.5.0
     "@types/react": ^18.0.26
+    "@types/react-test-renderer": ^18
     "@vitejs/plugin-react": ^3.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: ~0.71.0
     react-native-web: ^0.18.11
     react-querybuilder: ^5.4.0
+    react-test-renderer: ^18.2.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.4
     vite: ^4.0.4
@@ -7981,6 +7985,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/jest-native@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "@testing-library/jest-native@npm:5.4.1"
+  dependencies:
+    chalk: ^4.1.2
+    jest-diff: ^29.0.1
+    jest-matcher-utils: ^29.0.1
+    pretty-format: ^29.0.3
+    redent: ^3.0.0
+  peerDependencies:
+    react: ">=16.0.0"
+    react-native: ">=0.59"
+    react-test-renderer: ">=16.0.0"
+  checksum: 54a523993d7bf61921ad4dca5eaea19b78aedab88b25673a1c79b162c25bc41353afcb753a9369db5f0cb4c5e35f554b3f12390b4d6242e16538ebb59c369eaf
+  languageName: node
+  linkType: hard
+
 "@testing-library/react-native@npm:^11.5.0":
   version: 11.5.0
   resolution: "@testing-library/react-native@npm:11.5.0"
@@ -8295,6 +8316,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 6abb7c47d54f012272650df8a962a28bd82f219291e5ef8b4dfa7fe0bb98ae243b060bf9fbe8ceff6213141794855a006db194b490b00ffd15842ae19d0ce1f0
+  languageName: node
+  linkType: hard
+
+"@types/react-test-renderer@npm:^18":
+  version: 18.0.0
+  resolution: "@types/react-test-renderer@npm:18.0.0"
+  dependencies:
+    "@types/react": "*"
+  checksum: 6afc938a1d7618d88ab8793e251f0bd5981bf3f08c1b600f74df3f8800b92589ea534dc6dcb7c8d683893fcc740bf8d7843a42bf2dae59785cfe88f004bd7b0b
   languageName: node
   linkType: hard
 
@@ -18402,6 +18432,19 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 7ee8ef3aab74c7ae1d70ff34a27643d11ba1a8d62d072c767827d9ff9a520905223e567002e0bf6c772929d8ea1c781a3ba0cc4a563e92b1e3dc2eaa817ecbe8
+  languageName: node
+  linkType: hard
+
+"react-test-renderer@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react-test-renderer@npm:18.2.0"
+  dependencies:
+    react-is: ^18.2.0
+    react-shallow-renderer: ^16.15.0
+    scheduler: ^0.23.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 6b6980ced93fa2b72662d5e4ab3b4896833586940047ce52ca9aca801e5432adf05fcbe28289b0af3ce6a2a7c590974e25dcc8aa43d0de658bfe8bbcd686f958
   languageName: node
   linkType: hard
 

@@ -10,14 +10,6 @@ export default {
       statements: 100,
     },
   },
-  projects: [
-    'packages/antd',
-    'packages/bootstrap',
-    'packages/bulma',
-    'packages/chakra',
-    'packages/dnd',
-    'packages/material',
-    'packages/react-querybuilder',
-  ],
+  projects: ['packages/*'],
   watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
 };

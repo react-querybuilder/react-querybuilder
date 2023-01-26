@@ -3,8 +3,11 @@ import testingLibraryReactNativeJestPreset from '@testing-library/react-native/j
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   preset: '@testing-library/react-native',
-  coveragePathIgnorePatterns: [],
+  coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
   displayName: 'native',
   globals: { __RQB_DEV__: true },
-  setupFilesAfterEnv: testingLibraryReactNativeJestPreset.setupFiles,
+  setupFilesAfterEnv: [...testingLibraryReactNativeJestPreset.setupFiles, './jestSetup.ts'],
+  transformIgnorePatterns: [
+    'node_modules/(?!((jest-)?react-native|@react-native(-community|-picker)?)/)',
+  ],
 };

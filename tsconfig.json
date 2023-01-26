@@ -7,9 +7,6 @@
     "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "node",
-    "paths": {
-      "ruleGroupsIC": ["packages/ts/src/ruleGroupsIC.ts"]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,

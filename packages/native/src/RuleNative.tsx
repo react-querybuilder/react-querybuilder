@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { RuleComponents, useRule } from 'react-querybuilder';
+import { RuleComponents, TestID, useRule } from 'react-querybuilder';
 import { defaultNativeStyles } from './styles';
 import type { RuleNativeProps } from './types';
 
@@ -13,7 +13,7 @@ export const RuleNative = (props: RuleNativeProps) => {
   );
 
   return (
-    <View style={styles.rule}>
+    <View style={styles.rule} testID={TestID.rule}>
       <RuleComponents {...r} />
     </View>
   );
