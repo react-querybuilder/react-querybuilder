@@ -35,6 +35,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     valueSource: _vs,
     disabled,
     testID,
+    selectorComponent: SelectorComponent = MaterialValueSelector,
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
@@ -91,7 +92,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
         );
       }
       return (
-        <MaterialValueSelector
+        <SelectorComponent
           key={key}
           {...propsForValueSelector}
           path={path}
@@ -119,7 +120,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     case 'select':
     case 'multiselect':
       return (
-        <MaterialValueSelector
+        <SelectorComponent
           {...propsForValueSelector}
           muiComponents={muiComponents}
           key={masterKey}

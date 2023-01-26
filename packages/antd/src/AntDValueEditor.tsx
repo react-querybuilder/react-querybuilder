@@ -30,6 +30,7 @@ export const AntDValueEditor = ({
   valueSource: _vs,
   disabled,
   testID,
+  selectorComponent: SelectorComponent = AntDValueSelector,
   ...props
 }: ValueEditorProps) => {
   const { valArray, betweenValueHandler } = useValueEditor({
@@ -84,7 +85,7 @@ export const AntDValueEditor = ({
         );
       }
       return (
-        <AntDValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
@@ -109,7 +110,7 @@ export const AntDValueEditor = ({
     case 'select':
     case 'multiselect':
       return (
-        <AntDValueSelector
+        <SelectorComponent
           {...props}
           className={className}
           handleOnChange={handleOnChange}

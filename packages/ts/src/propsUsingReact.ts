@@ -30,6 +30,7 @@ import type {
   SelectorOrEditorProps,
   Translations,
   TranslationWithLabel,
+  ValueSelectorProps,
   ValueSourceSelectorProps,
 } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -77,6 +78,7 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
   listsAsArrays?: boolean;
   parseNumbers?: ParseNumbersMethod;
   separator?: ReactNode;
+  selectorComponent?: ComponentType<ValueSelectorProps>;
   /**
    * Only pass `true` if the `useValueEditor` hook has already run
    * in a wrapper component. See compatibility packages.

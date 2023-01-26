@@ -19,6 +19,8 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
     values: props.values,
   });
 
+  const { selectorComponent: SelectorComponent = ValueSelector } = props;
+
   if (props.operator === 'null' || props.operator === 'notNull') {
     return null;
   }
@@ -44,7 +46,7 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
         );
       }
       return (
-        <ValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           className={`${standardClassnames.valueListItem} form-select form-select-sm`}

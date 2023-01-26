@@ -20,6 +20,7 @@ export const ValueEditor = ({
   separator = null,
   skipHook = false,
   testID,
+  selectorComponent: SelectorComponent = ValueSelector,
   ...props
 }: ValueEditorProps) => {
   const { valArray, betweenValueHandler } = useValueEditor({
@@ -60,7 +61,7 @@ export const ValueEditor = ({
         );
       }
       return (
-        <ValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
@@ -86,7 +87,7 @@ export const ValueEditor = ({
     case 'select':
     case 'multiselect':
       return (
-        <ValueSelector
+        <SelectorComponent
           {...props}
           testID={testID}
           className={className}

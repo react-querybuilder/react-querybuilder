@@ -19,6 +19,8 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     values: props.values,
   });
 
+  const { selectorComponent: SelectorComponent = BulmaValueSelector } = props;
+
   if (props.operator === 'null' || props.operator === 'notNull') {
     return null;
   }
@@ -45,7 +47,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
         );
       }
       return (
-        <BulmaValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
@@ -71,7 +73,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     case 'select':
     case 'multiselect':
       return (
-        <BulmaValueSelector
+        <SelectorComponent
           {...props}
           title={props.title}
           className={props.className}

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New `ValueEditor` prop `selectorComponent` (optional) enables the replacement of only the selector component in the value editor without recreating the logic in the default value editor. E.g., `const MyValueEditor = (props: ValueEditorProps) => (<ValueEditor {...props} selectorComponent={MyValueSelector} />)` will use the default value editor logic and presentation _except_ when it would normally display the default `ValueSelector`.
 - [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New [React Native](https://reactnative.dev/)-compatible package: `@react-querybuilder/native`. [Basic example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native); [`native-base` example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native-base).
 - [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New exports:
   - `useQueryBuilder`: All logic and configuration formerly internal to the `QueryBuilder` component has been extracted into a custom Hook, making it easy to implement one's own presentation layer without reproducing or copy-pasting the official component code.
