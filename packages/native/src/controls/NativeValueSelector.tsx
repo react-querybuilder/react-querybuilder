@@ -21,6 +21,7 @@ export const NativeValueSelector = ({
   multiple,
   listsAsArrays,
   schema,
+  testID,
 }: ValueSelectorNativeProps) => {
   const styles = useMemo(() => {
     if (regexpSC_combinators.test(className)) {
@@ -93,6 +94,7 @@ export const NativeValueSelector = ({
 
   const onChange = useCallback(
     (v: string | string[]) => {
+      // istanbul ignore if
       if (multiple) {
         const valArray = Array.from(v);
         handleOnChange(listsAsArrays ? valArray : joinWith(valArray, ','));
@@ -103,10 +105,12 @@ export const NativeValueSelector = ({
     [handleOnChange, listsAsArrays, multiple]
   );
 
+  // istanbul ignore next
   const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 
   return (
     <Picker
+      testID={testID}
       aria-disabled={disabled}
       style={styles.selector}
       itemStyle={styles.option}

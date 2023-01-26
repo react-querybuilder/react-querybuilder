@@ -21,7 +21,7 @@ export const NativeInlineCombinator = ({
   );
 
   return (
-    <View style={styles.inlineCombinator} key="no-dnd" data-testid={TestID.inlineCombinator}>
+    <View style={styles.inlineCombinator} key="no-dnd" testID={TestID.inlineCombinator}>
       <CombinatorSelectorComponent {...props} path={path} testID={TestID.combinators} />
     </View>
   );

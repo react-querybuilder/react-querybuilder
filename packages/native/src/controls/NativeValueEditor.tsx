@@ -127,7 +127,7 @@ export const NativeValueEditor = ({
     case 'textarea':
       return (
         <TextInput
-          data-testid={testID}
+          testID={testID}
           style={styles.value}
           placeholder={placeHolderText}
           value={value}
@@ -149,7 +149,7 @@ export const NativeValueEditor = ({
     // TODO: set up "radio" case
     // case 'radio':
     //   return (
-    //     <span data-testid={testID} className={className} title={title}>
+    //     <span testID={testID} className={className} title={title}>
     //       {values.map(v => (
     //         <label key={v.name}>
     //           <input
@@ -168,7 +168,7 @@ export const NativeValueEditor = ({
 
   return (
     <TextInput
-      data-testid={testID}
+      testID={testID}
       style={styles.value}
       keyboardType={keyboardType}
       placeholder={placeHolderText}

@@ -9,6 +9,7 @@ export const NativeNotToggle = ({
   checked,
   disabled,
   schema,
+  testID,
 }: NotToggleNativeProps) => {
   const styles = useMemo(
     () => ({
@@ -26,7 +27,7 @@ export const NativeNotToggle = ({
   );
 
   return (
-    <View style={styles.notToggle}>
+    <View style={styles.notToggle} testID={testID}>
       <Text style={styles.notToggleLabel}>{label}</Text>
       <Switch
         style={styles.notToggleSwitch}

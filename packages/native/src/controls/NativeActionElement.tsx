@@ -6,8 +6,10 @@ export const NativeActionElement = ({
   label,
   disabled,
   disabledTranslation,
+  testID,
 }: ActionNativeProps) => (
   <Button
+    testID={testID}
     disabled={disabled && !disabledTranslation}
     title={disabledTranslation && disabled ? disabledTranslation.label ?? '' : label ?? ''}
     onPress={e => handleOnClick(e as any)}
