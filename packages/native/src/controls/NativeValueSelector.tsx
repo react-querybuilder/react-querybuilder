@@ -22,6 +22,7 @@ export const NativeValueSelector = ({
   listsAsArrays,
   schema,
   testID,
+  pickerComponent: PickerComponent = Picker,
 }: ValueSelectorNativeProps) => {
   const styles = useMemo(() => {
     if (regexpSC_combinators.test(className)) {
@@ -109,7 +110,7 @@ export const NativeValueSelector = ({
   const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 
   return (
-    <Picker
+    <PickerComponent
       testID={testID}
       aria-disabled={disabled}
       style={styles.selector}
@@ -117,9 +118,9 @@ export const NativeValueSelector = ({
       selectedValue={val}
       onValueChange={onChange}>
       {(options as Option[]).map(c => (
-        <Picker.Item key={c.name} label={c.label} value={c.name} />
+        <PickerComponent.Item key={c.name} label={c.label} value={c.name} />
       ))}
-    </Picker>
+    </PickerComponent>
   );
 };
 

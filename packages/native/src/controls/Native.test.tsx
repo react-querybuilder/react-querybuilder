@@ -1,6 +1,6 @@
 import type { ActionWithRulesProps, Schema } from '@react-querybuilder/ts';
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { StyleSheet, Switch } from 'react-native';
+import { Platform, StyleSheet, Switch } from 'react-native';
 import type { RuleGroupType } from 'react-querybuilder';
 import { convertToIC, standardClassnames, TestID } from 'react-querybuilder';
 import { QueryBuilderNative } from '../QueryBuilderNative';
@@ -13,6 +13,7 @@ import type {
 import { NativeActionElement } from './NativeActionElement';
 import { NativeNotToggle } from './NativeNotToggle';
 import { NativeValueSelector } from './NativeValueSelector';
+import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 
 const query: RuleGroupType = {
   combinator: 'and',
@@ -22,6 +23,10 @@ const query: RuleGroupType = {
   ],
 };
 const queryIC = convertToIC(query);
+
+beforeEach(() => {
+  Platform.OS = 'ios';
+});
 
 describe('QueryBuilderNative', () => {
   it('renders with rules', () => {
@@ -135,22 +140,23 @@ describe('NativeNotToggle', () => {
 describe('NativeValueSelector', () => {
   const handleOnChange = jest.fn();
   const styles = StyleSheet.create({
-    combinatorSelector: { height: 0 },
-    combinatorOption: { height: 1 },
-    fieldSelector: { height: 2 },
-    fieldOption: { height: 3 },
-    operatorSelector: { height: 4 },
-    operatorOption: { height: 5 },
-    valueSourceSelector: { height: 6 },
-    valueSourceOption: { height: 7 },
-    valueEditorSelector: { height: 8 },
-    valueEditorOption: { height: 9 },
+    combinatorSelector: { height: 100 },
+    combinatorOption: { height: 101 },
+    fieldSelector: { height: 102 },
+    fieldOption: { height: 103 },
+    operatorSelector: { height: 104 },
+    operatorOption: { height: 105 },
+    valueSourceSelector: { height: 106 },
+    valueSourceOption: { height: 107 },
+    valueEditorSelector: { height: 108 },
+    valueEditorOption: { height: 109 },
   });
   const props: ValueSelectorNativeProps = {
     options: [
       { name: 'opt1', label: 'Option 1' },
       { name: 'opt2', label: 'Option 2' },
     ],
+    value: 'opt1',
     handleOnChange,
     level: 0,
     path: [],
@@ -191,17 +197,45 @@ describe('NativeValueSelector', () => {
     ],
   ] as const;
 
-  for (const [className, testID, _selHeight, optHeight] of variants) {
-    it(`gets the correct styles (${className})`, () => {
-      render(<NativeValueSelector {...props} testID={testID} className={className || undefined} />);
-      // TODO: Test with web/other platform? iOS hides the selector and only shows the first option?
-      // expect(screen.getByTestId(testID)).toHaveStyle({ padding: _selHeight });
-      // expect(screen.getByTestId(testID).findAllByType(Picker.Item)[0]).toHaveStyle({
-      //   padding: optPadding,
-      // });
-      expect(screen.getAllByTestId(testID)[0]).toHaveStyle({ height: optHeight });
-      // expect(screen.getAllByTestId(testID)[1]).toHaveStyle({ padding: optPadding });
-      fireEvent(screen.getByTestId(testID), 'valueChange', 'opt2');
-    });
-  }
+  describe('ios', () => {
+    for (const [className, testID, _selHeight, optHeight] of variants) {
+      it(`gets the correct styles (${className})`, () => {
+        render(
+          <NativeValueSelector {...props} testID={testID} className={className || undefined} />
+        );
+        // TODO: Test with web/other platform? iOS hides the selector and only shows the first option?
+        // expect(screen.getByTestId(testID)).toHaveStyle({ padding: _selHeight });
+        // expect(screen.getByTestId(testID).findAllByType(Picker.Item)[0]).toHaveStyle({
+        //   padding: optHeight,
+        // });
+        expect(screen.getAllByTestId(testID)[0]).toHaveStyle({ height: optHeight });
+        // expect(screen.getAllByTestId(testID)[1]).toHaveStyle({ padding: optHeight });
+        fireEvent(screen.getByTestId(testID), 'valueChange', 'opt2');
+      });
+    }
+  });
+
+  describe('web', () => {
+    Platform.OS = 'web';
+    for (const [className, testID, selHeight, _optHeight] of variants) {
+      it(`gets the correct styles (${className})`, () => {
+        render(
+          <NativeValueSelectorWeb {...props} testID={testID} className={className || undefined} />
+        );
+        expect(screen.UNSAFE_getByProps({ 'data-testid': testID })).toHaveStyle({
+          height: `${selHeight}px`,
+        });
+        // TODO: figure out why option styles aren't detected/applied
+        // expect(
+        //   screen.UNSAFE_getByProps({ 'data-testid': testID }).findAllByType('option')[0]
+        // ).toHaveStyle({
+        //   height: `${_optHeight}px`,
+        // });
+        expect(
+          screen.UNSAFE_getByProps({ 'data-testid': testID }).findAllByType('option')[1]
+        ).toBeOnTheScreen();
+        fireEvent(screen.UNSAFE_getByProps({ 'data-testid': testID }), 'valueChange', 'opt2');
+      });
+    }
+  });
 });

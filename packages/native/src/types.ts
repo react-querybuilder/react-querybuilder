@@ -67,7 +67,11 @@ export type InlineCombinatorNativeProps = InlineCombinatorProps & WithSchemaNati
 
 export type ActionNativeProps = ActionProps & WithSchemaNative;
 
-export type ValueSelectorNativeProps = ValueSelectorProps & WithSchemaNative;
+export type ValueSelectorNativeProps = ValueSelectorProps &
+  WithSchemaNative & {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+    pickerComponent?: typeof import('@react-native-picker/picker').Picker;
+  };
 
 export type ValueEditorNativeProps = ValueEditorProps &
   WithSchemaNative & {
