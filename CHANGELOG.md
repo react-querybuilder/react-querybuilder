@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) All packages now use `"exports"` field for better ESM compatibility.
 - [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators.
   - When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`.
   - Bulma components no longer specify the `is-small` class, so they will be rendered at their default size.
@@ -17,11 +18,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) New props to support `ValueEditor`s new behavior for "between"/"notBetween" operators.
-  - New prop `getValueEditorSeparator` which takes a `field` name and an `operator` name and should return a `ReactNode` (string, element, etc.) that will be placed between the two editors when `operator` is "between" or "notBetween". E.g., `getValueEditorSeparator={() => "and"}`.
-  - New prop `parseNumbers`. When this is `true`, the default `ValueEditor` will update its rule with an actual number instead of the string representation whenever possible.
-  - `useValueEditor` hook updated to return an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
-  - New `ValueEditor` prop `skipHook` that, when `true`, prevents the `useValueEditor` hook call within the default `ValueEditor` component from making query updates.
+- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New [React Native](https://reactnative.dev/)-compatible package: `@react-querybuilder/native`. [Basic example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native); [`native-base` example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native-base).
+- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New exports:
+  - `useQueryBuilder`: All logic and configuration formerly internal to the `QueryBuilder` component has been extracted into a custom Hook, making it easy to implement one's own presentation layer without reproducing or copy-pasting the official component code.
+  - `useRuleGroup`: As `useQueryBuilder` is to the `QueryBuilder` component, the `useRuleGroup` Hook is to the `RuleGroup` component.
+  - `useRule`: As `useRuleGroup` is to the `RuleGroup` component, the `useRule` Hook is to the `Rule` component.
+  - `RuleGroupHeaderComponents`/`RuleGroupBodyComponents`: These JSX fragments have been extracted from the `RuleGroup` component and exposed as named exports, enabling the creation of a custom `RuleGroup` wrapper without recreating the "innards" of the default `RuleGroup`. (For example, the new `@react-querybuilder/native` package wraps these fragments in `View` elements from `react-native`).
+- [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) New props and Hook returns to support `ValueEditor`s new behavior for "between"/"notBetween" operators.
+  - New `QueryBuilder` prop `getValueEditorSeparator`: Takes a `field` name and an `operator` name and should return a `ReactNode` (string, element, etc.) that will be placed between the two editors when `operator` is "between" or "notBetween". E.g., `getValueEditorSeparator={() => "and"}`.
+  - New `QueryBuilder` prop `parseNumbers`: When `true`, the default `ValueEditor` will update its rule with an actual number instead of the string representation whenever possible.
+  - New `ValueEditor` prop `skipHook`: When `true`, the `useValueEditor` hook call within the default `ValueEditor` component will not make query updates. Enables safer rendering of the default `ValueEditor` as a fallback to a custom value editor.
+  - The `useValueEditor` hook has been updated to return an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
 
 ## [v5.4.0] - 2023-01-06
 
