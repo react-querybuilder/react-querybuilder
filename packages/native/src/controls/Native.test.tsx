@@ -1,3 +1,4 @@
+import { Picker } from '@react-native-picker/picker';
 import type { ActionWithRulesProps, Option, Schema } from '@react-querybuilder/ts';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Platform, StyleSheet, Switch } from 'react-native';
@@ -14,6 +15,7 @@ import type {
 import { NativeActionElement } from './NativeActionElement';
 import { NativeNotToggle } from './NativeNotToggle';
 import { NativeValueEditor } from './NativeValueEditor';
+import { NativeValueEditorWeb } from './NativeValueEditorWeb';
 import { NativeValueSelector } from './NativeValueSelector';
 import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 
@@ -258,8 +260,7 @@ describe('NativeValueEditor', () => {
     field: 'f1',
     operator: '=',
     valueSource: 'value',
-    values,
-    fieldData: { name: 'f1', label: 'f1' },
+    fieldData: { name: 'f1', label: 'f1', placeholder: TestID.valueEditor },
     handleOnChange,
     path: [],
     level: 0,
@@ -286,7 +287,7 @@ describe('NativeValueEditor', () => {
 
   for (const t of ['select', 'multiselect'] as const) {
     it(`changes the value of ${t} input type`, () => {
-      render(<NativeValueEditor {...props} type={t} />);
+      render(<NativeValueEditor {...props} type={t} values={values} />);
       fireEvent(screen.getByTestId(TestID.valueEditor), 'valueChange', 'opt2');
       // TODO: .........................................is this really correct?
       expect(handleOnChange).toHaveBeenNthCalledWith(1, t === 'multiselect' ? 'o,p,t,2' : 'opt2');
@@ -300,4 +301,56 @@ describe('NativeValueEditor', () => {
       expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
     });
   }
+
+  it('changes the value of each text input', () => {
+    render(<NativeValueEditor {...props} operator="between" type="text" />);
+    fireEvent.changeText(screen.getAllByPlaceholderText(TestID.valueEditor)[0], 'val');
+    fireEvent.changeText(screen.getAllByPlaceholderText(TestID.valueEditor)[1], 'val');
+    expect(handleOnChange).toHaveBeenNthCalledWith(1, 'val,');
+    expect(handleOnChange).toHaveBeenNthCalledWith(2, ',val');
+  });
+
+  it('renders the first option when none is provided for "between"', () => {
+    render(
+      <NativeValueEditor
+        {...props}
+        operator="between"
+        type="select"
+        values={values}
+        value={[null, null]}
+      />
+    );
+    [0, 1].forEach(i => {
+      expect(screen.getByTestId(TestID.valueEditor).findAllByType(Picker)[i].props).toHaveProperty(
+        'selectedValue',
+        'opt1'
+      );
+    });
+  });
+
+  it('changes the value of each select', () => {
+    render(
+      <NativeValueEditor
+        {...props}
+        operator="between"
+        type="select"
+        values={values}
+        value={'opt1,opt1'}
+      />
+    );
+    [0, 1].forEach(i => {
+      fireEvent(
+        screen.getByTestId(TestID.valueEditor).findAllByType(Picker)[i],
+        'valueChange',
+        'opt2'
+      );
+    });
+    expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2,opt1');
+    expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt1,opt2');
+  });
+
+  it('renders on web platform', () => {
+    render(<NativeValueEditorWeb {...props} />);
+    expect(screen.getByTestId(TestID.valueEditor)).toBeOnTheScreen();
+  });
 });
