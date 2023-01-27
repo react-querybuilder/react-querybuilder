@@ -14,6 +14,7 @@ import type {
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { consoleMocks } from '../genericTests';
 import { defaultControlElements } from './controls';
 import {
   defaultPlaceholderFieldLabel,
@@ -37,12 +38,7 @@ const user = userEvent.setup();
 export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
-const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-afterEach(() => {
-  consoleError.mockReset();
-  consoleWarn.mockReset();
-});
+const { consoleError } = consoleMocks();
 
 describe('when rendered', () => {
   it('should have the correct className', () => {

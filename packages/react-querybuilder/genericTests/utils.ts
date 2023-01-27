@@ -55,17 +55,60 @@ export const userEventSetup = () => {
   const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
   // TODO: figure out a way to avoid these wrapper functions.
   // See http://kcd.im/react-act
-  const click: typeof userEvent['click'] = async el =>
+  const click: (typeof userEvent)['click'] = async el =>
     act(async () => {
       await user.click(el);
     });
-  const type: typeof userEvent['type'] = async (el, txt) =>
+  const type: (typeof userEvent)['type'] = async (el, txt) =>
     act(async () => {
       await user.type(el, txt);
     });
-  const selectOptions: typeof userEvent['selectOptions'] = async (el, opts) =>
+  const selectOptions: (typeof userEvent)['selectOptions'] = async (el, opts) =>
     act(async () => {
       await user.selectOptions(el, opts);
     });
   return { ...user, click, selectOptions, type };
+};
+
+export const consoleMocks = () => {
+  const consoleErrorActual = console.error;
+  const consoleInfoActual = console.info;
+  const consoleLogActual = console.log;
+  const consoleWarnActual = console.warn;
+  const consoleLog = jest.fn();
+  const consoleError = jest.fn();
+  const consoleInfo = jest.fn();
+  const consoleWarn = jest.fn();
+
+  beforeAll(() => {
+    console.error = consoleError;
+    console.info = consoleInfo;
+    console.log = consoleLog;
+    console.warn = consoleWarn;
+  });
+
+  beforeEach(() => {
+    consoleError.mockReset();
+    consoleInfo.mockReset();
+    consoleLog.mockReset();
+    consoleWarn.mockReset();
+  });
+
+  afterAll(() => {
+    console.error = consoleErrorActual;
+    console.info = consoleInfoActual;
+    console.log = consoleLogActual;
+    console.warn = consoleWarnActual;
+  });
+
+  return {
+    consoleError,
+    consoleErrorActual,
+    consoleInfo,
+    consoleInfoActual,
+    consoleLog,
+    consoleLogActual,
+    consoleWarn,
+    consoleWarnActual,
+  };
 };

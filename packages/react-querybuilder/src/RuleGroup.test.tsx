@@ -6,7 +6,7 @@ import type {
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createRule, getRuleGroupProps, ruleGroupClassnames } from '../genericTests';
+import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '../genericTests';
 import {
   defaultCombinators,
   defaultTranslations as t,
@@ -19,12 +19,7 @@ import { add } from './utils';
 
 const user = userEvent.setup();
 
-const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-afterEach(() => {
-  consoleError.mockReset();
-  consoleWarn.mockReset();
-});
+const { consoleError } = consoleMocks();
 
 it('should have correct classNames', () => {
   render(<RuleGroup {...getRuleGroupProps()} />);
