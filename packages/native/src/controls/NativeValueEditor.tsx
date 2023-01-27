@@ -98,7 +98,7 @@ export const NativeValueEditor = ({
     });
 
     return (
-      <View style={styles.valueList}>
+      <View testID={testID} style={styles.valueList}>
         {editors[0]}
         {separator}
         {editors[1]}
@@ -139,6 +139,7 @@ export const NativeValueEditor = ({
     case 'checkbox':
       return (
         <Switch
+          testID={testID}
           style={styles.valueEditorSwitch}
           disabled={disabled}
           value={!!value}

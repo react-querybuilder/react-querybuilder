@@ -1,4 +1,4 @@
-import type { ActionWithRulesProps, Schema } from '@react-querybuilder/ts';
+import type { ActionWithRulesProps, Option, Schema } from '@react-querybuilder/ts';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Platform, StyleSheet, Switch } from 'react-native';
 import type { RuleGroupType } from 'react-querybuilder';
@@ -8,10 +8,12 @@ import type {
   ActionNativeProps,
   NotToggleNativeProps,
   SchemaNative,
+  ValueEditorNativeProps,
   ValueSelectorNativeProps,
 } from '../types';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeNotToggle } from './NativeNotToggle';
+import { NativeValueEditor } from './NativeValueEditor';
 import { NativeValueSelector } from './NativeValueSelector';
 import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 
@@ -197,9 +199,13 @@ describe('NativeValueSelector', () => {
     ],
   ] as const;
 
+  beforeEach(() => {
+    handleOnChange.mockClear();
+  });
+
   describe('ios', () => {
     for (const [className, testID, _selHeight, optHeight] of variants) {
-      it(`gets the correct styles (${className})`, () => {
+      it(`works for className ${className}`, () => {
         render(
           <NativeValueSelector {...props} testID={testID} className={className || undefined} />
         );
@@ -211,6 +217,7 @@ describe('NativeValueSelector', () => {
         expect(screen.getAllByTestId(testID)[0]).toHaveStyle({ height: optHeight });
         // expect(screen.getAllByTestId(testID)[1]).toHaveStyle({ padding: optHeight });
         fireEvent(screen.getByTestId(testID), 'valueChange', 'opt2');
+        expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
       });
     }
   });
@@ -218,7 +225,7 @@ describe('NativeValueSelector', () => {
   describe('web', () => {
     Platform.OS = 'web';
     for (const [className, testID, selHeight, _optHeight] of variants) {
-      it(`gets the correct styles (${className})`, () => {
+      it(`works for className ${className}`, () => {
         render(
           <NativeValueSelectorWeb {...props} testID={testID} className={className || undefined} />
         );
@@ -235,7 +242,62 @@ describe('NativeValueSelector', () => {
           screen.UNSAFE_getByProps({ 'data-testid': testID }).findAllByType('option')[1]
         ).toBeOnTheScreen();
         fireEvent(screen.UNSAFE_getByProps({ 'data-testid': testID }), 'valueChange', 'opt2');
+        expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
       });
     }
   });
+});
+
+describe('NativeValueEditor', () => {
+  const handleOnChange = jest.fn();
+  const values: Option[] = [
+    { name: 'opt1', label: 'Option 1' },
+    { name: 'opt2', label: 'Option 2' },
+  ];
+  const props: ValueEditorNativeProps = {
+    field: 'f1',
+    operator: '=',
+    valueSource: 'value',
+    values,
+    fieldData: { name: 'f1', label: 'f1' },
+    handleOnChange,
+    path: [],
+    level: 0,
+    schema: {} as SchemaNative,
+    testID: TestID.valueEditor,
+  };
+
+  beforeEach(() => {
+    handleOnChange.mockClear();
+  });
+
+  it('displays nothing for "null"/"notNull" operator', () => {
+    render(<NativeValueEditor {...props} operator="null" />);
+    expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
+  });
+
+  for (const t of [undefined, 'text', 'textarea'] as const) {
+    it(`changes the value of ${t} input type`, () => {
+      render(<NativeValueEditor {...props} type={t} />);
+      fireEvent.changeText(screen.getByTestId(TestID.valueEditor), 'val');
+      expect(handleOnChange).toHaveBeenNthCalledWith(1, 'val');
+    });
+  }
+
+  for (const t of ['select', 'multiselect'] as const) {
+    it(`changes the value of ${t} input type`, () => {
+      render(<NativeValueEditor {...props} type={t} />);
+      fireEvent(screen.getByTestId(TestID.valueEditor), 'valueChange', 'opt2');
+      // TODO: .........................................is this really correct?
+      expect(handleOnChange).toHaveBeenNthCalledWith(1, t === 'multiselect' ? 'o,p,t,2' : 'opt2');
+    });
+  }
+
+  for (const t of ['switch', 'checkbox'] as const) {
+    it(`changes the value of ${t}`, () => {
+      render(<NativeValueEditor {...props} type={t} value={false} />);
+      fireEvent(screen.getByTestId(TestID.valueEditor), 'valueChange', true);
+      expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
+    });
+  }
 });
