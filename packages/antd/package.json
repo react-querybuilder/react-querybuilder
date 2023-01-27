@@ -32,12 +32,12 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.0.0",
+    "@ant-design/icons": "^5.0.1",
     "@react-querybuilder/ts": "^5.4.0",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.26",
+    "@types/react": "^18.0.27",
     "@vitejs/plugin-react": "^3.0.1",
-    "antd": "^5.1.4",
+    "antd": "^5.1.6",
     "dayjs": "^1.11.7",
     "rc-picker": "^3.1.4",
     "rc-select": "^14.2.0",
