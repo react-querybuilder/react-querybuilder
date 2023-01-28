@@ -14,7 +14,10 @@ import type {
   RuleGroupType,
 } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { kittenControlElements, nativeBaseControlElements } from './components';
+import {
+  kittenControlElements,
+  nativeBaseControlElements,
+} from './src/components';
 // import { Provider as PaperProvider } from 'react-native-paper';
 
 const fields: Field[] = [
@@ -99,7 +102,7 @@ const Example = () => {
   );
 };
 
-export const App = () => (
+const App = () => (
   <NativeBaseProvider theme={nativeBaseTheme}>
     {/* <PaperProvider> */}
     <Example />
@@ -115,3 +118,5 @@ const styles = StyleSheet.create({
     fontFamily: 'sans-serif',
   },
 });
+
+export default App;

@@ -1,14 +1,23 @@
-node_modules
+node_modules/
 .idea
 *.log
 .tmp
-coverage
+coverage/
 .DS_Store
-dist
+dist/
 /types
 .parcel-cache
 .env
 build-stats.*
+.expo/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
 
 .pnp.*
 .yarn/*
