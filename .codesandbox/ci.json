@@ -8,8 +8,7 @@
     "/examples/bulma",
     "/examples/chakra",
     "/examples/material",
-    "/examples/native",
-    "/examples/native-base"
+    "/examples/native"
   ],
   "node": "16"
 }
