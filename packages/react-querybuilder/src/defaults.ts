@@ -5,7 +5,7 @@ import type {
   DefaultOperator,
   DefaultOperatorName,
   TranslationsFull,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 
 const placeholderName = '~';
 const placeholderLabel = '------';

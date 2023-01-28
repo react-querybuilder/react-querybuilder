@@ -5,7 +5,7 @@ import type {
   DefaultRuleType,
   RuleType,
   ValueSources,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { defaultCombinators } from '../defaults';
 import { formatQuery } from './formatQuery';
 import { getValueSourcesUtil } from './getValueSourcesUtil';

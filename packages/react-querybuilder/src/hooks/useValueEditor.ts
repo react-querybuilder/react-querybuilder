@@ -2,7 +2,7 @@ import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 
-type useValueEditorParams = Pick<
+export type UseValueEditorParams = Pick<
   ValueEditorProps,
   | 'handleOnChange'
   | 'inputType'
@@ -37,7 +37,7 @@ export const useValueEditor = ({
   parseNumbers,
   values,
   skipHook,
-}: useValueEditorParams) => {
+}: UseValueEditorParams) => {
   let valArray: any[] = [];
   let betweenValueHandler: (v: string, i: number) => void = v => handleOnChange(v);
 

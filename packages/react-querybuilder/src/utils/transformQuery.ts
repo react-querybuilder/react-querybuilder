@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import produce from 'immer';
 
 const remapProperties = (
@@ -20,12 +20,12 @@ const remapProperties = (
     }
   });
 
-interface QueryTransformerOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
+export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
   /**
    * When a rule is encountered in the hierarchy, it will be replaced
    * with the result of this function.
    *
-   * @default r => r
+   * @defaultValue `r => r`
    */
   ruleProcessor?: (rule: RuleType) => any;
   /**
@@ -34,7 +34,7 @@ interface QueryTransformerOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
    * the original group will be processed as normal and reapplied to the
    * new group object.
    *
-   * @default rg => rg
+   * @defaultValue `rg => rg`
    */
   ruleGroupProcessor?: (ruleGroup: RG) => Record<string, any>;
   /**
@@ -43,36 +43,41 @@ interface QueryTransformerOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
    * the new _and_ the original properties, set `deleteRemappedProperties`
    * to `false`.
    *
-   * @default {}
+   * @defaultValue `{}`
    *
    * @example
+   * ```
    *   transformQuery(
    *     { combinator: 'and', rules: [] },
    *     { propertyMap: { combinator: 'AndOr' } }
    *   )
    *   // Returns: { AndOr: 'and', rules: [] }
+   * ```
    */
   propertyMap?: Record<string, string>;
   /**
    * Any combinator values (including independent combinators) will be translated
    * from the key in this object to the value.
    *
-   * @default {}
+   * @defaultValue `{}`
    *
    * @example
+   * ```
    *   transformQuery(
    *     { combinator: 'and', rules: [] },
    *     { combinatorMap: { and: '&&', or: '||' } }
    *   )
    *   // Returns: { combinator: '&&', rules: [] }
+   * ```
    */
   combinatorMap?: Record<string, string>;
   /**
    * Any operator values will be translated from the key in this object to the value.
    *
-   * @default {}
+   * @defaultValue `{}`
    *
    * @example
+   * ```
    *   transformQuery(
    *     { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'Steve Vai' }] },
    *     { operatorMap: { '=': 'is' } }
@@ -82,19 +87,22 @@ interface QueryTransformerOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
    *   //   combinator: 'and',
    *   //   rules: [{ field: 'name', operator: 'is', value: 'Steve Vai' }]
    *   // }
+   * ```
    */
   operatorMap?: Record<string, string>;
   /**
    * Original properties remapped according to the `propertyMap` option will be removed.
    *
-   * @default true
+   * @defaultValue `true`
    *
    * @example
+   * ```
    *   transformQuery(
    *     { combinator: 'and', rules: [] },
    *     { propertyMap: { combinator: 'AndOr' }, deleteRemappedProperties: false }
    *   )
    *   // Returns: { combinator: 'and', AndOr: 'and', rules: [] }
+   * ```
    */
   deleteRemappedProperties?: boolean;
 }
@@ -104,21 +112,21 @@ interface QueryTransformerOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
  *
  * Documentation: https://react-querybuilder.js.org/docs/api/misc#transformquery
  *
- * @param query The query to transform
- * @param options
+ * @param query - The query to transform
+ * @param options - Options
  * @returns The transformed query
  */
 export function transformQuery(
   query: RuleGroupType,
-  options?: QueryTransformerOptions<RuleGroupType>
+  options?: TransformQueryOptions<RuleGroupType>
 ): any;
 export function transformQuery(
   query: RuleGroupTypeIC,
-  options?: QueryTransformerOptions<RuleGroupTypeIC>
+  options?: TransformQueryOptions<RuleGroupTypeIC>
 ): any;
 export function transformQuery<RG extends RuleGroupTypeAny>(
   query: RG,
-  options: QueryTransformerOptions<RG> = {}
+  options: TransformQueryOptions<RG> = {}
 ) {
   const {
     ruleProcessor = r => r,

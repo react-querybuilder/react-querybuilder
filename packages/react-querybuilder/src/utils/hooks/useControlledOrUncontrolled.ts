@@ -9,7 +9,7 @@ import {
 } from '../../messages';
 import { usePrevious } from './usePrevious';
 
-interface UseControlledOrUncontrolledParams {
+export interface UseControlledOrUncontrolledParams {
   defaultQuery?: RuleGroupTypeAny;
   queryProp?: RuleGroupTypeAny;
   isFirstRender: boolean;

@@ -1,4 +1,4 @@
-import type { Field } from '@react-querybuilder/ts/src/index.noReact';
+import type { Field } from '@react-querybuilder/ts/dist/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 
 const f: Field = { name: 'f', label: 'F' };

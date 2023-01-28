@@ -1,4 +1,4 @@
-import type { Field, OptionGroup } from '@react-querybuilder/ts/src/index.noReact';
+import type { Field, OptionGroup } from '@react-querybuilder/ts/dist/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 
 const fields: Field[] = [

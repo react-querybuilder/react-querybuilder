@@ -12,7 +12,7 @@ import { mergeClassnames } from '../mergeClassnames';
 import { objectKeys } from '../objectKeys';
 import { usePreferProp } from './usePreferProp';
 
-type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;
+export type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;
 
 export const useMergedContext = (props: UseMergedContextProps) => {
   // Inherit context, but props take precedence

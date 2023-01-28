@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react-jsx",

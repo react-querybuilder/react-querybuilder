@@ -4,7 +4,7 @@ import type {
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';

@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeAny,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { numericRegex } from '../misc';
 
 export const mapSQLOperator = (op: string) => {
@@ -50,10 +50,12 @@ export const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
  * result of formatQuery(query, 'jsonlogic').
  *
  * @example
+ * ```
  * for (const [op, func] of Object.entries(jsonLogicAdditionalOperators)) {
  *   jsonLogic.add_operation(op, func);
  * }
  * jsonLogic.apply({ "startsWith": [{ "var": "firstName" }, "Stev"] }, data);
+ * ```
  */
 export const jsonLogicAdditionalOperators: Record<
   'startsWith' | 'endsWith',

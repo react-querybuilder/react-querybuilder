@@ -4,10 +4,10 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { generateID } from './generateID';
 
-interface RegenerateIdOptions {
+export interface RegenerateIdOptions {
   idGenerator?: () => string;
 }
 

@@ -7,7 +7,7 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/types/src/index.d.ts",
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/index.es.js",
       "require": "./dist/index.cjs.js"
     },
@@ -25,7 +25,7 @@
     "./scss": "./dist/query-builder.scss"
   },
   "unpkg": "./dist/index.umd.js",
-  "types": "dist/types/src/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],

@@ -1,7 +1,7 @@
 import type {
   DefaultCombinatorNameExtended,
   DefaultOperatorName,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import type {
   AndOperator,
   ComparisonOperator,

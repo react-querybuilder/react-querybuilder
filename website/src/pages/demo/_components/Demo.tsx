@@ -20,8 +20,8 @@ import {
   parseMongoDB,
   parseSQL,
   QueryBuilder,
-  version as rqbVersion,
 } from 'react-querybuilder';
+import { version as rqbVersion } from 'react-querybuilder/package.json';
 import {
   defaultOptions,
   formatMap,

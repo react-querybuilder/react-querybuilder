@@ -2,7 +2,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { uuidV4regex } from './generateIDtests';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
