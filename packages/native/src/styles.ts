@@ -21,7 +21,13 @@ const defaultStylesObject: QueryBuilderNativeStyles = {
   operatorOption: defaultNativeSelectStyles.option,
   operatorSelector: defaultNativeSelectStyles.selector,
   rule: { flexDirection: 'row', paddingBottom: 10 },
-  ruleGroup: { borderWidth: 1, marginBottom: 10 },
+  ruleGroup: {
+    backgroundColor: 'rgba(0, 75, 183, 0.2)',
+    borderColor: '#8081a2',
+    borderRadius: 4,
+    borderWidth: 1,
+    marginBottom: 10,
+  },
   ruleGroupBody: { paddingTop: 10, paddingRight: 10, paddingLeft: 10 },
   ruleGroupHeader: {
     flexDirection: 'row',

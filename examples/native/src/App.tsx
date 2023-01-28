@@ -32,23 +32,23 @@ const defaultQuery: RuleGroupType = {
 type UILib =
   | 'default'
   | 'native-base'
-  | 'fluentui'
-  | 'kitten'
   | 'paper'
+  | 'kitten'
+  | 'fluentui'
   | 'tamagui';
 
 const uiLibs: OptionList<Option<UILib>> = [
-  { name: 'default', label: 'Default' },
-  { name: 'paper', label: 'React Native Paper' },
+  { name: 'default', label: 'Default components' },
   { name: 'native-base', label: 'NativeBase' },
-  { name: 'fluentui', label: 'Fluent UI' },
+  { name: 'paper', label: 'React Native Paper' },
   { name: 'kitten', label: 'Kitten' },
+  { name: 'fluentui', label: 'Fluent UI' },
   { name: 'tamagui', label: 'Tamagui' },
 ];
 
 const nativeBaseTheme = extendTheme({
   config: {
-    initialColorMode: 'dark',
+    // initialColorMode: 'dark',
   },
 });
 
@@ -84,10 +84,7 @@ export const App = () => {
         <Text style={styles.outer}>
           React Query Builder React Native Example
         </Text>
-        <View>
-          <Text>UI library</Text>
-          <LibSelector libSetter={setUIlib} />
-        </View>
+        <LibSelector libSetter={setUIlib} />
         <QueryBuilderNative
           fields={fields}
           query={query}
