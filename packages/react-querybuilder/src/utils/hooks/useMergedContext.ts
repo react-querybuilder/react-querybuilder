@@ -14,8 +14,10 @@ import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;
 
+/**
+ * Inherit context, but props take precedence
+ */
 export const useMergedContext = (props: UseMergedContextProps) => {
-  // Inherit context, but props take precedence
   const rqbContext = useContext(QueryBuilderContext);
 
   const enableMountQueryChange = usePreferProp(

@@ -2,9 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [React Native](https://reactnative.dev/).
 
-<!--
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/native) or [load the example in Expo](TODO: url here).
--->
+To see them in action, [load the example in Expo Snack](TODO: url here).
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 
@@ -18,4 +16,4 @@ yarn add react-querybuilder @react-querybuilder/native
 
 ## Usage
 
-_Coming soon_
+To render a React Native-compatible query builder, use `<QueryBuilderNative />` which accepts the same props `<QueryBuilder />`.
