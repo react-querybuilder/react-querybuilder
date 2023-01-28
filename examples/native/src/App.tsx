@@ -7,7 +7,6 @@ import {
 import { extendTheme, NativeBaseProvider } from 'native-base';
 import { useMemo, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import { Provider as PaperProvider } from 'react-native-paper';
 import type {
   Field,
   Option,
@@ -15,7 +14,8 @@ import type {
   RuleGroupType,
 } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { nativeBaseControlElements, paperControlElements } from './components';
+import { kittenControlElements, nativeBaseControlElements } from './components';
+// import { Provider as PaperProvider } from 'react-native-paper';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -75,8 +75,10 @@ const Example = () => {
     switch (uiLib) {
       case 'native-base':
         return nativeBaseControlElements;
-      case 'paper':
-        return paperControlElements;
+      // case 'paper':
+      //   return paperControlElements;
+      case 'kitten':
+        return kittenControlElements;
       default:
         return defaultNativeWebControlElements;
     }
@@ -99,9 +101,9 @@ const Example = () => {
 
 export const App = () => (
   <NativeBaseProvider theme={nativeBaseTheme}>
-    <PaperProvider>
-      <Example />
-    </PaperProvider>
+    {/* <PaperProvider> */}
+    <Example />
+    {/* </PaperProvider> */}
   </NativeBaseProvider>
 );
 

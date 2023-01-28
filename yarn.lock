@@ -4165,6 +4165,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eva-design/dss@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "@eva-design/dss@npm:2.1.1"
+  checksum: cd7ea1524c6c845000884a29def5b6d9f276b9f68f266da665f5f69ad6f9946c5685e15c18169879ff74b83fbc0d823f02b258445222859d0743a13c7896fa36
+  languageName: node
+  linkType: hard
+
+"@eva-design/processor@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "@eva-design/processor@npm:2.1.1"
+  checksum: 02dea68a0b74ae05188a2f892b130b40e1ab492ce34c12101061b1f99cdf63238b2ebb6e86046f94e2b3993a343b04db78dcac6103694bd8fb4d58b63c50623f
+  languageName: node
+  linkType: hard
+
 "@formatjs/ecma402-abstract@npm:1.14.3":
   version: 1.14.3
   resolution: "@formatjs/ecma402-abstract@npm:1.14.3"
@@ -8617,6 +8631,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ui-kitten/components@npm:^5.1.2":
+  version: 5.2.0
+  resolution: "@ui-kitten/components@npm:5.2.0"
+  dependencies:
+    "@eva-design/dss": ^2.0.0
+    "@eva-design/processor": ^2.0.0
+    fecha: 3.0.3
+    hoist-non-react-statics: ^3.2.1
+    lodash.merge: ^4.6.1
+  peerDependencies:
+    react-native-svg: "*"
+  checksum: e31392e07f93d0b5cf032a8b8551236020786ebd1e6399b22815608081b338bc8bdeaf8788b23e542f3b6546706b0ab06d11569956ff359d42e611272ce4cc2b
+  languageName: node
+  linkType: hard
+
 "@vitejs/plugin-react@npm:^3.0.1":
   version: 3.0.1
   resolution: "@vitejs/plugin-react@npm:3.0.1"
@@ -11886,6 +11915,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fecha@npm:3.0.3":
+  version: 3.0.3
+  resolution: "fecha@npm:3.0.3"
+  checksum: a258640f0ca1b2907c4c09be5ad39ad83d23e0d9654776ca0f3003e34f2bc14ceac31e03c4cb3f7394b2c81b12129b05052ac4bd67b17ebfb59edf0cc6be31a8
+  languageName: node
+  linkType: hard
+
 "figures@npm:3.2.0, figures@npm:^3.0.0":
   version: 3.2.0
   resolution: "figures@npm:3.2.0"
@@ -12693,7 +12729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.2.1, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -14928,7 +14964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.merge@npm:^4.6.2":
+"lodash.merge@npm:^4.6.1, lodash.merge@npm:^4.6.2":
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
@@ -18384,6 +18420,7 @@ __metadata:
     "@types/react-dom": ^18.0.10
     "@typescript-eslint/eslint-plugin": ^5.49.0
     "@typescript-eslint/parser": ^5.49.0
+    "@ui-kitten/components": ^5.1.2
     all-contributors-cli: ^6.24.0
     concurrently: ^7.6.0
     eslint: ^8.32.0
