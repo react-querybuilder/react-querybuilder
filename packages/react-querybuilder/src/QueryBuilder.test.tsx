@@ -8,11 +8,13 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
+  RuleProps,
   RuleType,
   ValidationMap,
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { consoleMocks } from '../genericTests';
 import { defaultControlElements } from './controls';
 import {
   defaultPlaceholderFieldLabel,
@@ -29,19 +31,14 @@ import {
   errorUncontrolledToControlled,
 } from './messages';
 import { QueryBuilder } from './QueryBuilder';
-import { defaultValidator, findPath, formatQuery, generateID } from './utils';
+import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from './utils';
 
 const user = userEvent.setup();
 
 export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
-const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-afterEach(() => {
-  consoleError.mockReset();
-  consoleWarn.mockReset();
-});
+const { consoleError } = consoleMocks();
 
 describe('when rendered', () => {
   it('should have the correct className', () => {
@@ -1325,6 +1322,34 @@ describe('showCloneButtons', () => {
         ],
       });
     });
+  });
+});
+
+describe('idGenerator', () => {
+  it('uses custom id generator', async () => {
+    const onQueryChange = jest.fn();
+    const rule = (props: RuleProps) => (
+      <div>
+        <button type="button" onClick={() => props.actions.moveRule(props.path, [0], true)}>
+          clone
+        </button>
+      </div>
+    );
+    render(
+      <QueryBuilder
+        idGenerator={() => `${Math.random()}`}
+        onQueryChange={onQueryChange}
+        controlElements={{ rule }}
+      />
+    );
+    let n = 0;
+    expect(onQueryChange.mock.calls[n++][0].id).toMatch(numericRegex);
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onQueryChange.mock.calls[n++][0].rules[0].id).toMatch(numericRegex);
+    await user.click(screen.getByTestId(TestID.addGroup));
+    expect(onQueryChange.mock.calls[n++][0].rules[1].id).toMatch(numericRegex);
+    await user.click(screen.getByText('clone'));
+    expect(onQueryChange.mock.calls[n++][0].rules[0].id).toMatch(numericRegex);
   });
 });
 
