@@ -215,20 +215,23 @@ for (const exampleID in configs) {
 
 console.log('Finished generating examples');
 
-// #region CI package.json
-console.log('Updating CI');
-const ciPkgJSON = require('./ci/package.json');
-for (const dep of Object.keys(ciPkgJSON.dependencies)) {
-  if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
-    ciPkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+// #region Other examples' package.json
+const otherExamples = ['ci', 'native'];
+for (const otherExampleName of otherExamples) {
+  console.log(`Updating package.json for "${otherExampleName}" example`);
+  const otherExamplePkgJSON = require(`./${otherExampleName}/package.json`);
+  for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
+    if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
+      otherExamplePkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+    }
   }
+  const otherExamplePkgJsonPath = pathJoin(__dirname, `${otherExampleName}/package.json`);
+  const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
+  const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
+    ...otherExamplePrettierOptions,
+    filepath: otherExamplePkgJsonPath,
+  });
+  await writeFile(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
+  console.log(`Finished updating package.json for "${otherExampleName}" example`);
 }
-const ciPkgJsonPath = pathJoin(__dirname, 'ci/package.json');
-const prettierOptions = await prettier.resolveConfig(ciPkgJsonPath);
-const fileContents = prettier.format(stableStringify(ciPkgJSON), {
-  ...prettierOptions,
-  filepath: ciPkgJsonPath,
-});
-await writeFile(ciPkgJsonPath, fileContents);
-console.log('Finished updating CI');
 // #endregion
