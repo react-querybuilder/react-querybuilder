@@ -2,6 +2,9 @@ import vitePluginReact from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
+import { name } from './package.json';
+
+const packageAbbr = name.replace('@react-querybuilder/', '');
 
 export default defineConfig(({ command }) => ({
   define: {
@@ -29,7 +32,11 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     vitePluginReact(),
-    visualizer({ filename: 'build-stats.html', gzipSize: true, title: 'Build stats' }),
+    visualizer({
+      filename: 'build-stats.html',
+      gzipSize: true,
+      title: `Build stats (${packageAbbr})`,
+    }),
   ],
   server: {
     port: 3101,

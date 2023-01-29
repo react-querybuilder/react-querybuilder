@@ -145,7 +145,7 @@ export const optionsMetadata: Record<
     title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
-    link: '/docs/api/classnames',
+    link: '/docs/tips/styling#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },

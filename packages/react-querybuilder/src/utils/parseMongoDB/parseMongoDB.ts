@@ -5,7 +5,7 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ParseMongoDbOptions,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { defaultOperatorNegationMap } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';

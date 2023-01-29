@@ -7,6 +7,7 @@ import type {
   OptionList,
   ValueSource,
 } from './basic';
+import type { Schema } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
@@ -48,6 +49,10 @@ export interface CommonSubComponentProps {
    * Test ID for this component
    */
   testID?: string;
+  /**
+   * All subcomponents receive the schema as a prop
+   */
+  schema: Schema;
 }
 
 export interface SelectorOrEditorProps extends CommonSubComponentProps {

@@ -1,14 +1,6 @@
-// Type definitions for json-logic-js 2.0
-// Project: https://github.com/jwadhams/json-logic-js#readme
-// Definitions by: Trevan <https://github.com/Trevan>
-//                 Jake Boone <https://github.com/jakeboone02>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// Minimum TypeScript Version: 4.5
-
-export as namespace jsonFactory;
-
-// Disable auto-export
-export {};
+// This file is adapted from the `json-logic-js` type definitions in the DefinitelyTyped
+// repository. Function declarations and declaration-specific lines have been removed.
+// See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/f8e745a63ae4890edbc871f2adf8c292f313c7cf/types/json-logic-js/index.d.ts.
 
 type RenameToIn<T> = {
   [K in keyof T as K extends `in${Uppercase<string>}${Lowercase<string>}` ? `in` : K]: T[K];
@@ -300,16 +292,3 @@ export type RulesLogic<AddOps extends AdditionalOperation = never> =
 
   // Adding Operations (https://jsonlogic.com/add_operation.html)
   | AddOps;
-
-export function add_operation(name: string, code: (...args: any[]) => any): void;
-export function apply(logic: RulesLogic<AdditionalOperation>, data?: unknown): any;
-export function rm_operation(name: string): void;
-
-// These functions are undocumented, but are exported by the real package
-// so they're typed here for completeness.
-export function is_logic(logic: any): boolean;
-export function truthy(value: any): boolean;
-export function get_operator(logic: Record<string, any>): string;
-export function get_values(logic: Record<string, any>): any;
-export function uses_data(logic: Record<string, any>): any[];
-export function rule_like(rule: any, pattern: any): boolean;

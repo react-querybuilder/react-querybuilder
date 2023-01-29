@@ -6,21 +6,6 @@ import { useRule } from './hooks';
 export const Rule = (props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
-  const {
-    schema: {
-      controls: {
-        dragHandle: DragHandleControlElement,
-        fieldSelector: FieldSelectorControlElement,
-        operatorSelector: OperatorSelectorControlElement,
-        valueSourceSelector: ValueSourceSelectorControlElement,
-        valueEditor: ValueEditorControlElement,
-        cloneRuleAction: CloneRuleActionControlElement,
-        lockRuleAction: LockRuleActionControlElement,
-        removeRuleAction: RemoveRuleActionControlElement,
-      },
-    },
-  } = r;
-
   const cloneRule = (event: ReactMouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -52,6 +37,31 @@ export const Rule = (props: RuleProps) => {
       data-rule-id={r.id}
       data-level={r.path.length}
       data-path={JSON.stringify(r.path)}>
+      <RuleComponents {...r} {...{ cloneRule, toggleLockRule, removeRule }} />
+    </div>
+  );
+};
+
+Rule.displayName = 'Rule';
+
+export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
+  const {
+    schema: {
+      controls: {
+        dragHandle: DragHandleControlElement,
+        fieldSelector: FieldSelectorControlElement,
+        operatorSelector: OperatorSelectorControlElement,
+        valueSourceSelector: ValueSourceSelectorControlElement,
+        valueEditor: ValueEditorControlElement,
+        cloneRuleAction: CloneRuleActionControlElement,
+        lockRuleAction: LockRuleActionControlElement,
+        removeRuleAction: RemoveRuleActionControlElement,
+      },
+    },
+  } = r;
+
+  return (
+    <>
       <DragHandleControlElement
         testID={TestID.dragHandle}
         ref={r.dragRef}
@@ -63,6 +73,7 @@ export const Rule = (props: RuleProps) => {
         disabled={r.disabled}
         context={r.context}
         validation={r.validationResult}
+        schema={r.schema}
       />
       <FieldSelectorControlElement
         testID={TestID.fields}
@@ -77,6 +88,7 @@ export const Rule = (props: RuleProps) => {
         disabled={r.disabled}
         context={r.context}
         validation={r.validationResult}
+        schema={r.schema}
       />
       {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
         <>
@@ -94,6 +106,7 @@ export const Rule = (props: RuleProps) => {
             disabled={r.disabled}
             context={r.context}
             validation={r.validationResult}
+            schema={r.schema}
           />
           {(r.schema.autoSelectOperator ||
             r.rule.operator !== r.translations.operators.placeholderName) &&
@@ -114,6 +127,7 @@ export const Rule = (props: RuleProps) => {
                     disabled={r.disabled}
                     context={r.context}
                     validation={r.validationResult}
+                    schema={r.schema}
                   />
                 )}
                 <ValueEditorControlElement
@@ -137,6 +151,7 @@ export const Rule = (props: RuleProps) => {
                   disabled={r.disabled}
                   context={r.context}
                   validation={r.validationResult}
+                  schema={r.schema}
                 />
               </>
             )}
@@ -148,13 +163,14 @@ export const Rule = (props: RuleProps) => {
           label={r.translations.cloneRule.label}
           title={r.translations.cloneRule.title}
           className={r.classNames.cloneRule}
-          handleOnClick={cloneRule}
+          handleOnClick={r.cloneRule}
           level={r.path.length}
           path={r.path}
           disabled={r.disabled}
           context={r.context}
           validation={r.validationResult}
           ruleOrGroup={r.rule}
+          schema={r.schema}
         />
       )}
       {r.schema.showLockButtons && (
@@ -163,7 +179,7 @@ export const Rule = (props: RuleProps) => {
           label={r.translations.lockRule.label}
           title={r.translations.lockRule.title}
           className={r.classNames.lockRule}
-          handleOnClick={toggleLockRule}
+          handleOnClick={r.toggleLockRule}
           level={r.path.length}
           path={r.path}
           disabled={r.disabled}
@@ -171,6 +187,7 @@ export const Rule = (props: RuleProps) => {
           context={r.context}
           validation={r.validationResult}
           ruleOrGroup={r.rule}
+          schema={r.schema}
         />
       )}
       <RemoveRuleActionControlElement
@@ -178,16 +195,15 @@ export const Rule = (props: RuleProps) => {
         label={r.translations.removeRule.label}
         title={r.translations.removeRule.title}
         className={r.classNames.removeRule}
-        handleOnClick={removeRule}
+        handleOnClick={r.removeRule}
         level={r.path.length}
         path={r.path}
         disabled={r.disabled}
         context={r.context}
         validation={r.validationResult}
         ruleOrGroup={r.rule}
+        schema={r.schema}
       />
-    </div>
+    </>
   );
 };
-
-Rule.displayName = 'Rule';

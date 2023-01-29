@@ -2,9 +2,9 @@ const cryptoModule = globalThis.crypto;
 
 /**
  * Generates a valid v4 UUID, i.e. matching this regex:
- *
- *     /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
- *
+ * ```
+ * /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+ * ```
  * @returns Valid v4 UUID
  */
 // Default implementation adapted from https://stackoverflow.com/a/68141099/217579
@@ -24,15 +24,16 @@ if (cryptoModule) {
     // `generateID` doesn't need to be cryptographically secure, it only needs a
     // low chance of collisions. We can fall back to the always-available
     // `getRandomValues` to build a v4 UUID when `randomUUID` is not available.
+    /** `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` */
     const template = [
-      `${''.padEnd(8, 'x')}`,
-      `${''.padEnd(4, 'x')}`,
+      ''.padEnd(8, 'x'),
+      ''.padEnd(4, 'x'),
       // third section starts with the UUID version
-      `${'4'.padEnd(4, 'x')}`,
+      '4'.padEnd(4, 'x'),
       // First character of fourth section is limited to four specific characters
-      `${'y'.padEnd(4, 'x')}`,
-      `${''.padEnd(12, 'x')}`,
-    ].join('-'); // this ends up being "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+      'y'.padEnd(4, 'x'),
+      ''.padEnd(12, 'x'),
+    ].join('-');
     const position19vals = ['8', '9', 'a', 'b'];
     const re = /[xy]/g;
     const container = new Uint32Array(32);

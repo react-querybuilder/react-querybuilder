@@ -24,6 +24,7 @@ export const ChakraValueEditor = ({
   valueSource: _vs,
   testID,
   disabled,
+  selectorComponent: SelectorComponent = ChakraValueSelector,
   ...props
 }: ValueEditorProps) => {
   const { valArray, betweenValueHandler } = useValueEditor({
@@ -65,7 +66,7 @@ export const ChakraValueEditor = ({
         );
       }
       return (
-        <ChakraValueSelector
+        <SelectorComponent
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
@@ -89,7 +90,7 @@ export const ChakraValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <ChakraValueSelector
+        <SelectorComponent
           {...props}
           className={className}
           title={title}

@@ -1,4 +1,4 @@
-import type { ActionWithRulesProps } from '@react-querybuilder/ts';
+import type { ActionWithRulesProps, Schema } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import { userEventSetup } from './utils';
 
@@ -8,6 +8,7 @@ export const defaultActionElementProps: ActionWithRulesProps = {
   level: 0,
   path: [],
   ruleOrGroup: { combinator: 'and', rules: [] },
+  schema: {} as Schema,
 };
 
 export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {

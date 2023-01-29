@@ -24,6 +24,7 @@ export const MaterialActionElement = ({
   context,
   validation,
   ruleOrGroup,
+  schema,
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialActionProps) => {
@@ -47,6 +48,7 @@ export const MaterialActionElement = ({
         context={context}
         validation={validation}
         ruleOrGroup={ruleOrGroup}
+        schema={schema}
       />
     );
   }

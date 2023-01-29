@@ -1,4 +1,4 @@
-/** @type {import('@jest/types').Config} */
+/** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   coveragePathIgnorePatterns: ['genericTests', '(cel|sql)Parser.js'],
   displayName: 'rqb',

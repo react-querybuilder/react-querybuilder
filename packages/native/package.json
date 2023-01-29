@@ -1,0 +1,58 @@
+{
+  "name": "@react-querybuilder/native",
+  "description": "React Native components for react-querybuilder",
+  "version": "5.4.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/native"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "yarn typecheck --watch"
+  },
+  "devDependencies": {
+    "@babel/preset-flow": "^7.18.6",
+    "@react-native-picker/picker": "^2.4.8",
+    "@react-querybuilder/ts": "^5.4.0",
+    "@testing-library/jest-native": "^5.4.1",
+    "@testing-library/react-native": "^11.5.1",
+    "@types/react": "^18.0.27",
+    "@types/react-test-renderer": "^18.0.0",
+    "@vitejs/plugin-react": "^3.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "~0.71.1",
+    "react-native-web": "^0.18.12",
+    "react-querybuilder": "^5.4.0",
+    "react-test-renderer": "^18.2.0",
+    "rollup-plugin-visualizer": "^5.9.0",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4"
+  },
+  "peerDependencies": {
+    "@react-native-picker/picker": ">=2",
+    "react": ">=16.8.0",
+    "react-native-web": ">=0.18.11"
+  }
+}

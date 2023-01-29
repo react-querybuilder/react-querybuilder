@@ -1,4 +1,4 @@
-/** @type {import('@jest/types').Config} */
+/** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',

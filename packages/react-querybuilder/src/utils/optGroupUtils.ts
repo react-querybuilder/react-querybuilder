@@ -3,7 +3,7 @@ import type {
   Option,
   OptionGroup,
   OptionList,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 
 export const isOptionGroupArray = (arr: Field['values']): arr is OptionGroup[] =>
   Array.isArray(arr) && arr.length > 0 && 'options' in arr[0];

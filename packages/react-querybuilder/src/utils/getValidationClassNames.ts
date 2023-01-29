@@ -1,4 +1,4 @@
-import type { ValidationResult } from '@react-querybuilder/ts/src/index.noReact';
+import type { ValidationResult } from '@react-querybuilder/ts/dist/index.noReact';
 import { standardClassnames } from '../defaults';
 
 export const getValidationClassNames = (validationResult: boolean | ValidationResult) => {

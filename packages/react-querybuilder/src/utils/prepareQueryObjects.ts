@@ -3,18 +3,18 @@ import type {
   RuleGroupICArray,
   RuleGroupTypeAny,
   RuleType,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { produce } from 'immer';
 import { generateID } from './generateID';
 
-interface PrepareOptions {
+export interface PreparerOptions {
   idGenerator?: () => string;
 }
 
 /**
  * Generates a valid rule
  */
-export const prepareRule = (rule: RuleType, { idGenerator = generateID }: PrepareOptions = {}) =>
+export const prepareRule = (rule: RuleType, { idGenerator = generateID }: PreparerOptions = {}) =>
   produce(rule, draft => {
     if (!draft.id) {
       draft.id = idGenerator();
@@ -26,7 +26,7 @@ export const prepareRule = (rule: RuleType, { idGenerator = generateID }: Prepar
  */
 export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
   queryObject: RG,
-  { idGenerator = generateID }: PrepareOptions = {}
+  { idGenerator = generateID }: PreparerOptions = {}
 ): RG =>
   produce(queryObject, draft => {
     if (!draft.id) {
@@ -46,5 +46,5 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
  */
 export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(
   rg: RG | RuleType,
-  { idGenerator = generateID }: PrepareOptions = {}
+  { idGenerator = generateID }: PreparerOptions = {}
 ) => ('rules' in rg ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator }));

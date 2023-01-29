@@ -7,19 +7,19 @@ import type {
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { clsx } from 'clsx';
-import { getFieldMapFromArray, getRuleProps as getProps, ruleClassnames } from '../genericTests';
+import {
+  consoleMocks,
+  getFieldMapFromArray,
+  getRuleProps as getProps,
+  ruleClassnames,
+} from '../genericTests';
 import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from './messages';
 import { Rule } from './Rule';
 
 const user = userEvent.setup();
 
-const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-afterEach(() => {
-  consoleError.mockReset();
-  consoleWarn.mockReset();
-});
+const { consoleError } = consoleMocks();
 
 it('should have correct classNames', () => {
   render(<Rule {...getProps()} />);

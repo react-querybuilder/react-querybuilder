@@ -1,10 +1,10 @@
-node_modules
+node_modules/
 .idea
 *.log
 .tmp
-coverage
+coverage/
 .DS_Store
-dist
+dist/
 /types
 .parcel-cache
 .env

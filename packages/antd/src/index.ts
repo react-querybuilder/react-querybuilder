@@ -5,7 +5,6 @@ import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
 import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
-export { version } from '../package.json';
 export { AntDActionElement, AntDDragHandle, AntDNotToggle, AntDValueEditor, AntDValueSelector };
 
 export const antdControlElements: Partial<Controls> = {

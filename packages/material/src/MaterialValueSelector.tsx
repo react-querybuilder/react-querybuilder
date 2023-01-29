@@ -30,6 +30,7 @@ export const MaterialValueSelector = ({
   operator,
   field,
   fieldData,
+  schema,
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialValueSelectorProps) => {
@@ -73,6 +74,7 @@ export const MaterialValueSelector = ({
         operator={operator}
         field={field}
         fieldData={fieldData}
+        schema={schema}
       />
     );
   }

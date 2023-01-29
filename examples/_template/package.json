@@ -2,6 +2,7 @@
   "name": "react-querybuilder-template-example",
   "description": "React Query Builder Template Example",
   "private": true,
+  "type": "module",
   "main": "src/index.tsx",
   "dependencies": {
     "react": "^18.2.0",
