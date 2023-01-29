@@ -15,6 +15,7 @@ export const defaultOptions: CIOptions = {
   disabled: false,
   debugMode: false,
   parseNumbers: false,
+  listsAsArrays: false,
   showBranches: false,
 };
 
@@ -32,6 +33,7 @@ export const optionsOrder: CIOption[] = [
   'enableDragAndDrop',
   'disabled',
   'debugMode',
+  'listsAsArrays',
   'parseNumbers',
   'showBranches',
 ];

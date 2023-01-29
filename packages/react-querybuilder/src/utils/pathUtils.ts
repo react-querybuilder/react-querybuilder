@@ -1,7 +1,7 @@
-import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/ts/src/index.noReact';
+import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/ts/dist/index.noReact';
 import { isPojo } from './parserUtils';
 
-type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
+export type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 
 export const findPath = (path: number[], query: RuleGroupTypeAny): FindPathReturnType => {
   let target: FindPathReturnType = query;

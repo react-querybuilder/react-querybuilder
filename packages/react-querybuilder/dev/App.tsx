@@ -8,7 +8,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
 } from '../src';
-import { defaultValidator, QueryBuilder, standardClassnames } from '../src';
+import * as RQB from '../src';
 import {
   defaultOptions,
   emptyQuery,
@@ -22,6 +22,10 @@ import {
 import './styles.scss';
 import type { CommonRQBProps, DemoOptions, DemoOptionsHash } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
+
+const { defaultValidator, QueryBuilder, standardClassnames } = RQB;
+
+Object.defineProperty(globalThis, 'RQB', { value: RQB });
 
 const getOptionsFromHash = (hash: DemoOptionsHash): Partial<DemoOptions> =>
   Object.fromEntries(Object.entries(hash).map(([opt, val]) => [opt, val === 'true']));

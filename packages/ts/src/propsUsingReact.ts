@@ -12,6 +12,7 @@ import type {
   Field,
   Operator,
   OptionList,
+  ParseNumbersMethod,
   ValueEditorType,
   ValueSource,
   ValueSources,
@@ -26,9 +27,10 @@ import type {
   NotToggleProps,
   OperatorSelectorProps,
   QueryActions,
+  SelectorOrEditorProps,
   Translations,
   TranslationWithLabel,
-  ValueEditorProps,
+  ValueSelectorProps,
   ValueSourceSelectorProps,
 } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -63,6 +65,27 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
   independentCombinators?: boolean;
 }
 
+export interface ValueEditorProps<F extends Field = Field, O extends string = string>
+  extends SelectorOrEditorProps {
+  field: F['name'];
+  operator: O;
+  value?: any;
+  valueSource: ValueSource;
+  fieldData: F;
+  type?: ValueEditorType;
+  inputType?: string | null;
+  values?: any[];
+  listsAsArrays?: boolean;
+  parseNumbers?: ParseNumbersMethod;
+  separator?: ReactNode;
+  selectorComponent?: ComponentType<ValueSelectorProps>;
+  /**
+   * Only pass `true` if the `useValueEditor` hook has already run
+   * in a wrapper component. See compatibility packages.
+   */
+  skipHook?: boolean;
+}
+
 export interface Controls {
   addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
   addRuleAction: ComponentType<ActionWithRulesAndAddersProps>;
@@ -70,7 +93,7 @@ export interface Controls {
   cloneRuleAction: ComponentType<ActionProps>;
   combinatorSelector: ComponentType<CombinatorSelectorProps>;
   inlineCombinator: ComponentType<InlineCombinatorProps>;
-  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLSpanElement>>;
+  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<any>>;
   fieldSelector: ComponentType<FieldSelectorProps>;
   notToggle: ComponentType<NotToggleProps>;
   operatorSelector: ComponentType<OperatorSelectorProps>;
@@ -94,6 +117,7 @@ export interface Schema {
   createRuleGroup(): RuleGroupTypeAny;
   getOperators(field: string): OptionList<Operator>;
   getValueEditorType(field: string, operator: string): ValueEditorType;
+  getValueEditorSeparator(field: string, operator: string): ReactNode;
   getValueSources(field: string, operator: string): ValueSources;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): OptionList;
@@ -110,6 +134,7 @@ export interface Schema {
   validationMap: ValidationMap;
   independentCombinators: boolean;
   listsAsArrays: boolean;
+  parseNumbers: ParseNumbersMethod;
   disabledPaths: number[][];
 }
 
@@ -144,7 +169,7 @@ export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRule
   /**
    * @deprecated Use the `rules` property of the `ruleGroup` prop instead
    */
-  rules: RuleOrGroupArray;
+  rules?: RuleOrGroupArray;
   /**
    * @deprecated Use the `not` property of the `ruleGroup` prop instead
    */
@@ -166,15 +191,15 @@ export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> 
   /**
    * @deprecated Use the `field` property of the `rule` prop instead
    */
-  field: string;
+  field?: string;
   /**
    * @deprecated Use the `operator` property of the `rule` prop instead
    */
-  operator: string;
+  operator?: string;
   /**
    * @deprecated Use the `value` property of the `rule` prop instead
    */
-  value: any;
+  value?: any;
   /**
    * @deprecated Use the `valueSource` property of the `rule` prop instead
    */
@@ -280,8 +305,8 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      */
     getDefaultField?: string | ((fieldsData: OptionList<Field>) => string);
     /**
-     * The default operator for new rules. This can be a string identifying the
-     * default operator, or a function that returns an operator name.
+     * The default operator for new rules. This can be a string matching
+     * an operator name or a function that returns an operator name.
      */
     getDefaultOperator?: string | ((field: string) => string);
     /**
@@ -289,32 +314,40 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      */
     getDefaultValue?(rule: RuleType): any;
     /**
-     * This is a callback function invoked to get the list of allowed
+     * This function should return the list of allowed
      * operators for the given field. If `null` is returned, the default
      * operators are used.
      */
     getOperators?(field: string): OptionList<Operator> | null;
     /**
-     * This is a callback function invoked to get the type of `ValueEditor`
+     * This function should return the type of `ValueEditor`
      * for the given field and operator.
      */
     getValueEditorType?(field: string, operator: string): ValueEditorType;
     /**
-     * This is a callback function invoked to get the list of valid
+     * This function should return the separator element for a given field
+     * and operator. The element can be any valid React element, including
+     * a bare string (e.g. "and" or "to") or an HTML element like `<span />`.
+     * It will be placed in between value editors when multiple are rendered,
+     * e.g. when the operator is "between".
+     */
+    getValueEditorSeparator?(field: string, operator: string): ReactNode;
+    /**
+     * This function should return the list of valid
      * value sources for a given field and operator. The return value must
      * be an array that includes at least one of the valid value source:
      * "value", "field", or both.
      */
     getValueSources?: (field: string, operator: string) => ValueSources;
     /**
-     * This is a callback function invoked to get the `type` of `<input />`
+     * This function should return the `type` of `<input />`
      * for the given field and operator (only applicable when
      * `getValueEditorType` returns `"text"` or a falsy value). If no
      * function is provided, `"text"` is used as the default.
      */
     getInputType?(field: string, operator: string): string | null;
     /**
-     * This is a callback function invoked to get the list of allowed
+     * This function should return the list of allowed
      * values for the given field and operator (only applicable when
      * `getValueEditorType` returns `"select"` or `"radio"`). If no
      * function is provided, an empty array is used as the default.
@@ -388,6 +421,10 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      */
     listsAsArrays?: boolean;
     /**
+     * Store values as numbers if possible.
+     */
+    parseNumbers?: ParseNumbersMethod;
+    /**
      * Disables the entire query builder if true, or the rules and groups at
      * the specified paths (as well as all child rules/groups and subcomponents)
      * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
@@ -401,6 +438,12 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * Query validation function
      */
     validator?: QueryValidator;
+    /**
+     * ID generator function.
+     *
+     * @default () => crypto.randomUUID()
+     */
+    idGenerator?: () => string;
     /**
      * Container for custom props that are passed to all components
      */

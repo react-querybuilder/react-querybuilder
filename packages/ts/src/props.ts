@@ -5,17 +5,20 @@ import type {
   Operator,
   Option,
   OptionList,
-  ValueEditorType,
   ValueSource,
 } from './basic';
+import type { Schema } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
 
 export interface CommonSubComponentProps {
-  // TODO: should this be `Classname` instead of `string`?
   /**
    * CSS classNames to be applied
+   *
+   * This is `string` and not `Classname` because the Rule and RuleGroup
+   * components run clsx() to produce the className that gets passed to
+   * each subcomponent.
    */
   className?: string;
   /**
@@ -46,9 +49,13 @@ export interface CommonSubComponentProps {
    * Test ID for this component
    */
   testID?: string;
+  /**
+   * All subcomponents receive the schema as a prop
+   */
+  schema: Schema;
 }
 
-interface SelectorOrEditorProps extends CommonSubComponentProps {
+export interface SelectorOrEditorProps extends CommonSubComponentProps {
   value?: string;
   handleOnChange(value: any): void;
 }
@@ -93,19 +100,6 @@ export type VersatileSelectorProps = ValueSelectorProps &
   Partial<FieldSelectorProps> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
-
-export interface ValueEditorProps<F extends Field = Field, O extends string = string>
-  extends SelectorOrEditorProps {
-  field: F['name'];
-  operator: O;
-  value?: any;
-  valueSource: ValueSource;
-  fieldData: F;
-  type?: ValueEditorType;
-  inputType?: string | null;
-  values?: any[];
-  listsAsArrays?: boolean;
-}
 
 export interface DragHandleProps extends CommonSubComponentProps {
   label?: string;

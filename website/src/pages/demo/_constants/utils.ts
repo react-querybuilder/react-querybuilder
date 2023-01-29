@@ -11,7 +11,7 @@ import parserTypeScript from 'prettier/esm/parser-typescript.mjs';
 import prettier from 'prettier/esm/standalone.mjs';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { defaultOptions, optionOrder } from '.';
+import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
 type OptionsAction =
@@ -189,6 +189,7 @@ export const getCodeString = (options: DemoOptions, style?: StyleName) => {
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
+    options.showBranches ? `controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}` : '',
   ]
     .filter(Boolean)
     .map(opt => `\n      ${dndIndent}${styleIndent}${opt}`)

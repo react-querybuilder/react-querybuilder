@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/src/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/dist/index.noReact';
 import { transformQuery } from './transformQuery';
 
 const query: RuleGroupType = {
@@ -110,5 +110,11 @@ it('handles independent combinators and nested groups', () => {
   ).toEqual({
     path: [],
     rules: [{ rules: ['Rule!', '||', 'Rule!'], path: [0] }],
+  });
+  // This next test is really just to check that ruleGroupProcessor inherits
+  // the type RuleGroupTypeIC from the first parameter.
+  expect(transformQuery(queryIC, { ruleGroupProcessor: rg => rg })).toEqual({
+    path: [],
+    rules: [{ rules: [], path: [0] }, queryIC.rules[1], { rules: [], path: [2] }],
   });
 });

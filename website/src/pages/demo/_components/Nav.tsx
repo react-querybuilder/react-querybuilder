@@ -1,5 +1,5 @@
 import { useLocation } from '@docusaurus/router';
-import React, { Fragment, useMemo } from 'react';
+import React from 'react';
 import { styleNameArray, styleNameMap } from '../_constants';
 import type { StyleName } from '../_constants/types';
 import CodeSandBoxLogo from './Logo-CodeSandbox';
@@ -9,20 +9,10 @@ import styles from './Nav.module.css';
 interface NavProps {
   variant: StyleName;
   compressedState?: string;
-  dnd?: boolean;
 }
 
-export default function Nav({ variant, compressedState, dnd }: NavProps) {
+export default function Nav({ variant, compressedState }: NavProps) {
   const siteLocation = useLocation();
-
-  const packageNames = useMemo(
-    () => [
-      'react-querybuilder',
-      ...(variant === 'default' ? [] : [`@react-querybuilder/${variant}`]),
-      ...(dnd ? ['@react-querybuilder/dnd'] : []),
-    ],
-    [dnd, variant]
-  );
 
   return (
     <div className={styles.demoNav}>
@@ -47,20 +37,6 @@ export default function Nav({ variant, compressedState, dnd }: NavProps) {
           style={{ minWidth: '1rem' }}>
           <StackBlitzLogo />
         </a>
-        <span>
-          {packageNames.map((packageName, idx) => (
-            <Fragment key={packageName}>
-              {idx > 0 ? ', ' : null}
-              <a
-                href={`https://www.npmjs.com/package/${packageName}`}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.demoNavPackageLink}>
-                {packageName}
-              </a>
-            </Fragment>
-          ))}
-        </span>
       </div>
       <div className={styles.demoNavStyleLinks}>
         {styleNameArray.map(s => {

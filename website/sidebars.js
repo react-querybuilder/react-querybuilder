@@ -18,6 +18,7 @@ const sidebars = {
         'api/classnames',
         'api/export',
         'api/import',
+        'api/hooks',
         'api/validation',
         'api/misc',
       ],

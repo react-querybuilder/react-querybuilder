@@ -3,7 +3,7 @@ import type {
   RQBJsonLogic,
   RuleProcessor,
   RuleType,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { toArray } from '../arrayUtils';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 

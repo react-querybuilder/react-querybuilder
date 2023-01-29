@@ -15,6 +15,7 @@ import {
   standardClassnames,
   TestID,
 } from 'react-querybuilder';
+import { consoleMocks } from 'react-querybuilder/genericTests';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
@@ -23,12 +24,7 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
 export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
-const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-afterEach(() => {
-  consoleError.mockReset();
-  consoleWarn.mockReset();
-});
+consoleMocks();
 
 it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
   await act(async () => {

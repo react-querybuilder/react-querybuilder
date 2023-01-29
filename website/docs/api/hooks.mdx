@@ -1,0 +1,41 @@
+---
+title: Hooks
+description: Reuse logic from React Query Builder in your own components
+---
+
+import { DemoLink } from '@site/src/components/DemoLink';
+import TypeScriptAdmonition from './_ts_admonition.md';
+
+<TypeScriptAdmonition />
+
+## Component logic
+
+The core logic of each component is encapsulated in a custom Hook. Each main component is itself little more than a call to its respective Hook and the derived JSX. This enables creation of one's own presentation layer without copying the logic from the default `QueryBuilder`.
+
+:::tip
+
+The `@react-querybuilder/native` package is a good example of this concept. It calls the Hooks from its own query builder, rule group, and rule components, but nests the sub-components within React Native `View` elements instead of HTML `div` elements like the standard components.
+
+:::
+
+- `useQueryBuilder`: Accepts an object of type `QueryBuilderProps`, generates `id`s for the query hierarchy if necessary, and returns everything needed to render a wrapper element and the root `RuleGroup` element.
+- `useRuleGroup`: Accepts an object of type `RuleGroupProps` and returns everything needed to render a `RuleGroup` element.
+- `useRule`: Accepts an object of type `RuleProps` and returns everything needed to render a `Rule` element.
+- `useValueEditor`: Accepts an object with a subset of `ValueEditorProps` properties, empties the `value` if necessary, and returns the value array and a value handler if the `operator` is "between" or "notBetween".
+
+## Utilities
+
+- `useMergedContext`: Merges the values inherited from the nearest ancestor `QueryBuilderContext` provider with the current component's props.
+- `usePreferProp`: Given a default value, a prop value, and a context value (all `boolean` or `undefined`), returns the prop value if it's defined, then falls back to the context value if it's defined, otherwise falls back to the default value.
+- `usePrevious`: Returns the value of a prop or state variable from the previous render.
+
+## Internal
+
+These Hooks log error messages to the console in certain situations (in development mode only). They are not intended to be used in custom components.
+
+- `useControlledOrUncontrolled`: Logs an error to the console if any of the following are true:
+  - Both `query` and `defaultQuery` props are defined.
+  - The `query` prop is defined during the first render and undefined in a subsequent render.
+  - The `query` prop is undefined during the first render and defined in a subsequent render.
+- `useDeprecatedProps`: Logs an error to the console if a `RuleGroup` component is rendered with `combinator` or `rules` props, or if a `Rule` component is rendered with `field`, `operator`, or `value` props. These props are deprecated in favor of `ruleGroup` and `rule`, respectively.
+- `useReactDndWarning`: Logs an error to the console if the `enableDragAndDrop` prop is `true` but the `react-dnd` and `react-dnd-html5-backend` dependencies are not loaded.

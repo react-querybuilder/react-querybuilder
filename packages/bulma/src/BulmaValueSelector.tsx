@@ -28,7 +28,7 @@ export const BulmaValueSelector = ({
   const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
 
   return (
-    <div title={title} className={`${className} select is-small`}>
+    <div title={title} className={`${className} select`}>
       <select value={val} multiple={!!multiple} disabled={disabled} onChange={onChange}>
         {toOptions(options)}
       </select>

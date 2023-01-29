@@ -1,12 +1,12 @@
+import packageJSON_rqb_antd from '@react-querybuilder/antd/package.json';
+import packageJSON_rqb_bootstrap from '@react-querybuilder/bootstrap/package.json';
+import packageJSON_rqb_bulma from '@react-querybuilder/bulma/package.json';
+import packageJSON_rqb_chakra from '@react-querybuilder/chakra/package.json';
+import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
+import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
-import { convertToIC, objectKeys } from 'react-querybuilder';
+import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
-
-// https://stackoverflow.com/a/68141099/217579
-export const generateID = () =>
-  '00-0-4-1-000'.replace(/[^-]/g, (s: any) =>
-    (((Math.random() + ~~s) * 0x10000) >> s).toString(16).padStart(4, '0')
-  );
 
 export const defaultOptions: DemoOptions = {
   showCombinatorsBetweenRules: false,
@@ -145,7 +145,7 @@ export const optionsMetadata: Record<
     title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
-    link: '/docs/api/classnames',
+    link: '/docs/tips/styling#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
@@ -209,8 +209,8 @@ export const initialQuery: RuleGroupType = {
     {
       id: generateID(),
       field: 'birthdate',
-      value: '1969-06-01',
-      operator: '<',
+      operator: 'between',
+      value: '1954-10-03,1960-06-06',
     },
   ],
 };
@@ -242,3 +242,13 @@ export const styleNameMap: Record<StyleName, string> = {
 const { default: _d, ...compatStyles } = styleNameMap;
 
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
+
+export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>> = {
+  default: {},
+  dnd: packageJSON_rqb_dnd.peerDependencies,
+  antd: packageJSON_rqb_antd.peerDependencies,
+  bootstrap: packageJSON_rqb_bootstrap.peerDependencies,
+  bulma: packageJSON_rqb_bulma.peerDependencies,
+  chakra: packageJSON_rqb_chakra.peerDependencies,
+  material: packageJSON_rqb_material.peerDependencies,
+};

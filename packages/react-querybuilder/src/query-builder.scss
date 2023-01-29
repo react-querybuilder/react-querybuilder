@@ -3,7 +3,7 @@ $rqb-spacing: 0.5rem !default;
 $rqb-background-color: rgba(0, 75, 183, 0.2) !default;
 $rqb-border-color: #8081a2 !default;
 $rqb-border-style: solid !default;
-$rqb-border-radius: 4px !default;
+$rqb-border-radius: 0.25rem !default;
 $rqb-border-width: 1px !default;
 
 // Drag-and-drop
@@ -49,10 +49,10 @@ $rqb-branch-style: $rqb-border-style !default;
   }
 
   .rule {
-    .rule-value {
-      .rule-value-list-item:not(:first-of-type) {
-        margin-left: $rqb-spacing;
-      }
+    .rule-value:has(.rule-value-list-item) {
+      display: flex;
+      gap: $rqb-spacing;
+      align-items: baseline;
     }
   }
 }

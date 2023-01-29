@@ -143,6 +143,7 @@ const ruleGroupSchema: Partial<Schema> = {
   getInputType: () => 'text',
   getOperators: () => [{ name: 'operator1', label: 'Operator 1' }],
   getValueEditorType: () => 'text',
+  getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
   getValues: () => [],
   getRuleClassname: () => '',

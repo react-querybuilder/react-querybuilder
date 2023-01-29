@@ -207,7 +207,7 @@ const LandingPage = () => {
                   ))}
                 </select>
               </div>
-              <CodeBlock className={styles.wsPreWrap}>
+              <CodeBlock className={`${styles.wsPreWrap} ${styles.scrollVert200}`}>
                 {getFormatQueryString(query, { format: exportFormat, valueProcessor })}
               </CodeBlock>
             </div>

@@ -515,13 +515,19 @@ This function is invoked to get the list of allowed operators for the given fiel
 
 `(field: string, operator: string) => ValueEditorType`
 
-This function is invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
+This function is invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"multiselect"`, `"checkbox"`, `"radio"`, and `"textarea"`.
 
 ### `getValueSources`
 
 `(field: string, operator: string) => ValueSources`;
 
 This function is invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in either order). If the prop is undefined, `() => ["value"]` is used. The first element in the array will be the default.
+
+### `getValueEditorSeparator`
+
+`(field: string, operator: string) => ReactNode`;
+
+This function should return the separator element for a given `field` and `operator`. The element can be any valid React element, including a bare string (e.g. "and" or "to") or an HTML element like `<span />`. It will be placed in between value editors when multiple are rendered, e.g. when the operator is "between".
 
 ### `getInputType`
 
@@ -533,7 +539,7 @@ This function is invoked to get the `type` of `<input />` for the given field an
 
 `(field: string, operator: string) => OptionList`
 
-This function is invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
+This function is invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"`, `"multiselect"`, or `"radio"`). If no function is provided, an empty array is used as the default.
 
 ### `getDefaultField`
 
@@ -791,6 +797,12 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 }
 ```
 
+### `parseNumbers`
+
+`boolean | "strict" | "native"` (default `false`) _<DemoLink option="parseNumbers" />_
+
+Pass `true`, `"strict"`, or `"native"` to store `value` as an actual number when possible instead of a string. Passing `"native"` will use `parseFloat` to determine if a value is a number, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the note about the corresponding `formatQuery` option in the [Export documentation](./export#parse-numbers).
+
 ### `independentCombinators`
 
 `boolean` (default `false`) _<DemoLink option="independentCombinators" />_
@@ -864,6 +876,12 @@ Pass `true` to log debugging information to the console (or the [`onLog` functio
 `(message: any) => void` (default `console.log`)
 
 Captures log messages when `debugMode` is `true`.
+
+### `idGenerator`
+
+`() => string` (default `generateID`)
+
+Overrides the default `id` generator, which generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) (using the `crypto` package if available; a `Math.random()`-based method is the fallback).
 
 ### `validator`
 

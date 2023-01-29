@@ -1,4 +1,10 @@
 // @ts-check
+
+/**
+ * @typedef {_ESLint.ConfigData & { extends: string[] }} ESLintExtendsIsArray
+ */
+
+import { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import glob from 'glob';
 import { createRequire } from 'module';
@@ -9,11 +15,13 @@ import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
 
-console.log('Generating examples');
+console.log('Generating/updating examples');
 
 const require = createRequire(import.meta.url);
 /** @type {{ version: string; }} */
 const { version } = require('../lerna.json');
+/** @type {ESLintExtendsIsArray} */
+const eslintrc = require('../.eslintrc.json');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootPrettierConfig = await prettier.resolveConfig(__filename);
@@ -27,6 +35,8 @@ const compileToJS = async (code, fileName) =>
       jsx: 'preserve',
     })
   ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1');
+
+const noTypeScriptESLint = (/** @type {string} */ s) => !/@typescript-eslint/.test(s);
 
 const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
@@ -46,7 +56,8 @@ const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.j
 await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON = require('./_template/package.json');
 
-for (const exampleID in configs) {
+/** @type {(id: string) => () => Promise<void>} */
+const generateCommonExample = exampleID => async () => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
   const examplePublic = pathJoin(examplePath, 'public');
@@ -114,9 +125,10 @@ for (const exampleID in configs) {
       templatePkgJSON.dependencies['react-querybuilder'];
   }
   if (exampleConfig.compileToJS) {
+    delete examplePkgJSON.devDependencies['sass'];
     delete examplePkgJSON.devDependencies['typescript'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
-      if (devDep.match(/^@types\//)) {
+      if (devDep.match(/^@types(?:cript-eslint)?\//)) {
         delete examplePkgJSON.devDependencies[devDep];
       }
     }
@@ -141,6 +153,27 @@ for (const exampleID in configs) {
 
   // #region .prettierrc
   await copyFile(pathJoin(templatePath, '.prettierrc'), pathJoin(examplePath, '.prettierrc'));
+  // #endregion
+
+  // #region .eslintrc.json
+  /** @type {typeof eslintrc} */
+  const exampleESLintRC = JSON.parse(JSON.stringify(eslintrc));
+  delete exampleESLintRC.env?.node;
+  delete exampleESLintRC.ignorePatterns;
+  if (exampleConfig.compileToJS) {
+    exampleESLintRC.extends = exampleESLintRC.extends.filter(noTypeScriptESLint);
+    exampleESLintRC.plugins = exampleESLintRC.plugins?.filter(noTypeScriptESLint);
+    delete exampleESLintRC.parser;
+    for (const rule of Object.keys(exampleESLintRC.rules ?? {})) {
+      if (rule.match(/^@types(?:cript-eslint)?\//)) {
+        delete exampleESLintRC.rules?.[rule];
+      }
+    }
+  }
+  await writeFile(
+    pathJoin(examplePath, '.eslintrc.json'),
+    prettier.format(stableStringify(exampleESLintRC), { filepath: 'f.json' })
+  );
   // #endregion
 
   // #region README.md
@@ -179,24 +212,33 @@ for (const exampleID in configs) {
   // #endregion
 
   console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
-}
+};
 
-console.log('Finished generating examples');
+// #region Other examples' package.json
+const otherExamples = ['ci', 'native'];
 
-// #region CI package.json
-console.log('Updating CI');
-const ciPkgJSON = require('./ci/package.json');
-for (const dep of Object.keys(ciPkgJSON.dependencies)) {
-  if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
-    ciPkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+/** @type {(id: string) => () => Promise<void>} */
+const updateOtherExample = otherExampleName => async () => {
+  const otherExamplePkgJSON = require(`./${otherExampleName}/package.json`);
+  for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
+    if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
+      otherExamplePkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+    }
   }
-}
-const ciPkgJsonPath = pathJoin(__dirname, 'ci/package.json');
-const prettierOptions = await prettier.resolveConfig(ciPkgJsonPath);
-const fileContents = prettier.format(stableStringify(ciPkgJSON), {
-  ...prettierOptions,
-  filepath: ciPkgJsonPath,
-});
-await writeFile(ciPkgJsonPath, fileContents);
-console.log('Finished updating CI');
+  const otherExamplePkgJsonPath = pathJoin(__dirname, `${otherExampleName}/package.json`);
+  const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
+  const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
+    ...otherExamplePrettierOptions,
+    filepath: otherExamplePkgJsonPath,
+  });
+  await writeFile(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
+  console.log(`Updated package.json for "${otherExampleName}" example`);
+};
+
+await Promise.all([
+  ...Object.keys(configs).map(ex => new Promise(r => generateCommonExample(ex)().then(r))),
+  ...otherExamples.map(ex => new Promise(r => updateOtherExample(ex)().then(r))),
+]);
+
+console.log('Finished generating/updating examples');
 // #endregion

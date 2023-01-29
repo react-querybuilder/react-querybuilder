@@ -98,6 +98,7 @@ const ruleSchema: Partial<Schema> = {
     { name: '!=', label: 'is not' },
   ],
   getValueEditorType: () => 'text',
+  getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
   getInputType: () => 'text',
   getValues: () => [

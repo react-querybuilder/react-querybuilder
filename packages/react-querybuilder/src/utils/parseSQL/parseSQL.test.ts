@@ -5,8 +5,8 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/src/index.noReact';
-import { parseSQL } from '.';
+} from '@react-querybuilder/ts/dist/index.noReact';
+import { parseSQL } from './parseSQL';
 import { isWildcardsOnly } from './utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({

@@ -11,14 +11,12 @@ import {
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
-import {
-  ChakraActionElement,
-  ChakraDragHandle,
-  ChakraNotToggle,
-  ChakraValueEditor,
-  ChakraValueSelector,
-  QueryBuilderChakra,
-} from '.';
+import { ChakraActionElement } from './ChakraActionElement';
+import { ChakraDragHandle } from './ChakraDragHandle';
+import { ChakraNotToggle } from './ChakraNotToggle';
+import { ChakraValueEditor } from './ChakraValueEditor';
+import { ChakraValueSelector } from './ChakraValueSelector';
+import { QueryBuilderChakra } from './index';
 
 declare global {
   // eslint-disable-next-line no-var

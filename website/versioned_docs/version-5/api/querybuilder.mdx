@@ -515,7 +515,7 @@ This function is invoked to get the list of allowed operators for the given fiel
 
 `(field: string, operator: string) => ValueEditorType`
 
-This function is invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"checkbox"`, and `"radio"`.
+This function is invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"multiselect"`, `"checkbox"`, `"radio"`, and `"textarea"`.
 
 ### `getValueSources`
 
@@ -533,7 +533,7 @@ This function is invoked to get the `type` of `<input />` for the given field an
 
 `(field: string, operator: string) => OptionList`
 
-This function is invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"` or `"radio"`). If no function is provided, an empty array is used as the default.
+This function is invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"`, `"multiselect"`, or `"radio"`). If no function is provided, an empty array is used as the default.
 
 ### `getDefaultField`
 
@@ -864,6 +864,12 @@ Pass `true` to log debugging information to the console (or the [`onLog` functio
 `(message: any) => void` (default `console.log`)
 
 Captures log messages when `debugMode` is `true`.
+
+### `idGenerator`
+
+`() => string` (default `generateID`)
+
+Overrides the default `id` generator, which generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) (using the `crypto` package if available; a `Math.random()`-based method is the fallback).
 
 ### `validator`
 

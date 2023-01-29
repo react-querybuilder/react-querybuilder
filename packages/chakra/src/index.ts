@@ -5,7 +5,6 @@ import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
-export { version } from '../package.json';
 export {
   ChakraActionElement,
   ChakraDragHandle,
