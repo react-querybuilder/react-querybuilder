@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "5.4.0",
+  "version": "6.0.0-alpha.0",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -79,8 +79,8 @@
     "vite": "^4.0.4"
   },
   "dependencies": {
-    "@react-querybuilder/ctx": "^5.4.0",
-    "@react-querybuilder/ts": "^5.4.0",
+    "@react-querybuilder/ctx": "^6.0.0-alpha.0",
+    "@react-querybuilder/ts": "^6.0.0-alpha.0",
     "clsx": "^1.2.1",
     "immer": "^9.0.19"
   },
