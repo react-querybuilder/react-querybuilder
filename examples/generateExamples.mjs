@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
 
-console.log('Generating examples');
+console.log('Generating/updating examples');
 
 const require = createRequire(import.meta.url);
 /** @type {{ version: string; }} */
@@ -56,7 +56,8 @@ const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.j
 await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON = require('./_template/package.json');
 
-for (const exampleID in configs) {
+/** @type {(id: string) => () => Promise<void>} */
+const generateCommonExample = exampleID => async () => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
   const examplePublic = pathJoin(examplePath, 'public');
@@ -211,14 +212,13 @@ for (const exampleID in configs) {
   // #endregion
 
   console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
-}
-
-console.log('Finished generating examples');
+};
 
 // #region Other examples' package.json
 const otherExamples = ['ci', 'native'];
-for (const otherExampleName of otherExamples) {
-  console.log(`Updating package.json for "${otherExampleName}" example`);
+
+/** @type {(id: string) => () => Promise<void>} */
+const updateOtherExample = otherExampleName => async () => {
   const otherExamplePkgJSON = require(`./${otherExampleName}/package.json`);
   for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
     if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
@@ -232,6 +232,13 @@ for (const otherExampleName of otherExamples) {
     filepath: otherExamplePkgJsonPath,
   });
   await writeFile(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
-  console.log(`Finished updating package.json for "${otherExampleName}" example`);
-}
+  console.log(`Updated package.json for "${otherExampleName}" example`);
+};
+
+await Promise.all([
+  ...Object.keys(configs).map(ex => new Promise(r => generateCommonExample(ex)().then(r))),
+  ...otherExamples.map(ex => new Promise(r => updateOtherExample(ex)().then(r))),
+]);
+
+console.log('Finished generating/updating examples');
 // #endregion
