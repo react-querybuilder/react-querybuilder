@@ -14,11 +14,7 @@ import type {
   RuleGroupType,
 } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import {
-  kittenControlElements,
-  nativeBaseControlElements,
-} from './src/components';
-// import { Provider as PaperProvider } from 'react-native-paper';
+import { nativeBaseControlElements } from './components';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -44,10 +40,11 @@ type UILib =
 const uiLibs: OptionList<Option<UILib>> = [
   { name: 'default', label: 'Default components' },
   { name: 'native-base', label: 'NativeBase' },
-  { name: 'paper', label: 'React Native Paper' },
-  { name: 'kitten', label: 'Kitten' },
-  { name: 'fluentui', label: 'Fluent UI' },
-  { name: 'tamagui', label: 'Tamagui' },
+  // TODO: add examples these UI libraries
+  // { name: 'paper', label: 'React Native Paper' },
+  // { name: 'kitten', label: 'Kitten' },
+  // { name: 'fluentui', label: 'Fluent UI' },
+  // { name: 'tamagui', label: 'Tamagui' },
 ];
 
 const nativeBaseTheme = extendTheme({
@@ -70,45 +67,35 @@ const LibSelector = ({ libSetter }: { libSetter: (lib: UILib) => void }) => {
   );
 };
 
-const Example = () => {
+export const App = () => {
   const [uiLib, setUIlib] = useState<UILib>('default');
   const [query, setQuery] = useState(defaultQuery);
-
   const controlElements = useMemo(() => {
     switch (uiLib) {
       case 'native-base':
         return nativeBaseControlElements;
-      // case 'paper':
-      //   return paperControlElements;
-      case 'kitten':
-        return kittenControlElements;
-      default:
-        return defaultNativeWebControlElements;
     }
+    return defaultNativeWebControlElements;
   }, [uiLib]);
 
   return (
-    <View style={styles.outer}>
-      <Text style={styles.outer}>React Query Builder React Native Example</Text>
-      <LibSelector libSetter={setUIlib} />
-      <QueryBuilderNative
-        fields={fields}
-        query={query}
-        onQueryChange={q => setQuery(q)}
-        controlElements={controlElements}
-      />
-      <Text style={styles.code}>{formatQuery(query, 'sql')}</Text>
-    </View>
+    <NativeBaseProvider theme={nativeBaseTheme}>
+      <View style={styles.outer}>
+        <Text style={styles.outer}>
+          React Query Builder React Native Example
+        </Text>
+        <LibSelector libSetter={setUIlib} />
+        <QueryBuilderNative
+          fields={fields}
+          query={query}
+          onQueryChange={q => setQuery(q)}
+          controlElements={controlElements}
+        />
+        <Text style={styles.code}>{formatQuery(query, 'sql')}</Text>
+      </View>
+    </NativeBaseProvider>
   );
 };
-
-const App = () => (
-  <NativeBaseProvider theme={nativeBaseTheme}>
-    {/* <PaperProvider> */}
-    <Example />
-    {/* </PaperProvider> */}
-  </NativeBaseProvider>
-);
 
 const styles = StyleSheet.create({
   outer: {
@@ -118,5 +105,3 @@ const styles = StyleSheet.create({
     fontFamily: 'sans-serif',
   },
 });
-
-export default App;

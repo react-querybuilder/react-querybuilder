@@ -9,15 +9,6 @@ dist/
 .parcel-cache
 .env
 build-stats.*
-.expo/
-npm-debug.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
 
 .pnp.*
 .yarn/*
