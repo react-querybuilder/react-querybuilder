@@ -114,6 +114,29 @@ describe('valueSource: "value"', () => {
     });
   });
 
+  it('handles negated operations as the only rules', () => {
+    expect(parseJsonLogic({ '!': { '<=': [12, { var: 'f1' }, 14] } })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'notBetween', value: '12,14' }],
+    });
+    expect(parseJsonLogic({ '!': { in: [{ var: 'f1' }, [12, 14]] } })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'notIn', value: '12,14' }],
+    });
+    expect(parseJsonLogic({ '!': { startsWith: [{ var: 'f1' }, 'Test'] } })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' }],
+    });
+    expect(parseJsonLogic({ '!': { endsWith: [{ var: 'f1' }, 'Test'] } })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'doesNotEndWith', value: 'Test' }],
+    });
+    expect(parseJsonLogic({ '!': { in: [{ var: 'f1' }, 'Test'] } })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'doesNotContain', value: 'Test' }],
+    });
+  });
+
   it('handles "between" and "in" operations', () => {
     expect(
       parseJsonLogic({

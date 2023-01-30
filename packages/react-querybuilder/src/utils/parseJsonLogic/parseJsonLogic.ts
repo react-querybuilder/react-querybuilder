@@ -88,8 +88,8 @@ function parseJsonLogic(
     logic: RQBJsonLogic,
     outermost?: boolean
   ): DefaultRuleGroupType | DefaultRuleType | false {
-    // Bail if the outermost logic is not an object
-    if (outermost && typeof logic !== 'object') {
+    // Bail if the outermost logic is not a plain object
+    if (outermost && !isPojo(logic)) {
       return false;
     }
     const key = Object.keys(logic)[0] as JsonLogicReservedOperations;
@@ -123,7 +123,11 @@ function parseJsonLogic(
             rule.operator === 'beginsWith' ||
             rule.operator === 'endsWith')
         ) {
-          return { ...rule, operator: defaultOperatorNegationMap[rule.operator] };
+          const newRule = { ...rule, operator: defaultOperatorNegationMap[rule.operator] };
+          if (outermost) {
+            return { combinator: 'and', rules: [newRule] };
+          }
+          return newRule;
         } else if (isJsonLogicBetweenExclusive(logic['!']) && isRuleGroupType(rule)) {
           return { ...rule, not: true };
         }

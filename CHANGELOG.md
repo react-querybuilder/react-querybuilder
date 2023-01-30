@@ -31,6 +31,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - New `ValueEditor` prop `skipHook`: When `true`, the `useValueEditor` hook call within the default `ValueEditor` component will not make query updates. Enables safer rendering of the default `ValueEditor` as a fallback to a custom value editor.
   - The `useValueEditor` hook has been updated to return an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
 
+## [v5.4.1] - 2023-01-30
+
+### Fixed
+
+- [#458](https://github.com/react-querybuilder/react-querybuilder/issues/458) Fixed `parseJsonLogic` output when a negated "between", "in", "contains", "beginsWith", or "endsWith" rule is the only operation.
+
 ## [v5.4.0] - 2023-01-06
 
 ### Changed
@@ -1088,7 +1094,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...HEAD
+[v5.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.0...v5.4.1
 [v5.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.3...v5.4.0
 [v5.3.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.2...v5.3.3
 [v5.3.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.1...v5.3.2
