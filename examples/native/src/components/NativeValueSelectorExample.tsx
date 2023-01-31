@@ -1,12 +1,17 @@
+import { Picker } from '@react-native-picker/picker';
+import type { ValueSelectorNativeProps } from '@react-querybuilder/native';
+import {
+  defaultNativeSelectStyles,
+  defaultNativeStyles,
+} from '@react-querybuilder/native';
 import { useMemo } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet } from 'react-native';
+import type { Option } from 'react-querybuilder';
 import { joinWith, TestID, useValueSelector } from 'react-querybuilder';
-import { defaultNativeSelectStyles, defaultNativeStyles } from '../styles';
-import type { ValueSelectorNativeProps } from '../types';
 
-export const NativeValueSelector = ({
+export const NativeValueSelectorExample = ({
   handleOnChange,
-  options: _options,
+  options,
   value,
   disabled,
   multiple,
@@ -32,7 +37,10 @@ export const NativeValueSelector = ({
           defaultNativeStyles.fieldSelector,
           schema.styles?.fieldSelector,
         ]),
-        option: StyleSheet.flatten([defaultNativeStyles.fieldOption, schema.styles?.fieldOption]),
+        option: StyleSheet.flatten([
+          defaultNativeStyles.fieldOption,
+          schema.styles?.fieldOption,
+        ]),
       };
     } else if (testID === TestID.operators) {
       return {
@@ -83,20 +91,31 @@ export const NativeValueSelector = ({
     testID,
   ]);
 
-  const { onChange } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
+  const { onChange } = useValueSelector({
+    handleOnChange,
+    listsAsArrays,
+    multiple,
+    value,
+  });
 
   // istanbul ignore next
-  const val = multiple ? (Array.isArray(value) ? joinWith(value, ',') : value) : value;
+  const val = multiple
+    ? Array.isArray(value)
+      ? joinWith(value, ',')
+      : value
+    : value;
 
   return (
-    <TextInput
+    <Picker
       testID={testID}
       aria-disabled={disabled}
       style={styles.selector}
-      value={val}
-      onChangeText={onChange}
-    />
+      itemStyle={styles.option}
+      selectedValue={val}
+      onValueChange={onChange}>
+      {(options as Option[]).map(c => (
+        <Picker.Item key={c.name} label={c.label} value={c.name} />
+      ))}
+    </Picker>
   );
 };
-
-NativeValueSelector.displayName = 'NativeValueSelector';

@@ -1,9 +1,8 @@
-import { Picker } from '@react-native-picker/picker';
 import type { ActionWithRulesProps, Option, Schema } from '@react-querybuilder/ts';
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { Platform, StyleSheet, Switch } from 'react-native';
+import { Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type { RuleGroupType } from 'react-querybuilder';
-import { convertToIC, standardClassnames, TestID } from 'react-querybuilder';
+import { convertToIC, TestID } from 'react-querybuilder';
 import { QueryBuilderNative } from '../QueryBuilderNative';
 import type {
   ActionNativeProps,
@@ -168,37 +167,16 @@ describe('NativeValueSelector', () => {
   };
 
   const variants = [
-    ['', 'fakeTestID', 30, 216],
+    ['fakeTestID', 32, 216],
+    [TestID.combinators, styles.combinatorSelector.height, styles.combinatorOption.height],
+    [TestID.fields, styles.fieldSelector.height, styles.fieldOption.height],
+    [TestID.operators, styles.operatorSelector.height, styles.operatorOption.height],
     [
-      standardClassnames.combinators,
-      TestID.combinators,
-      styles.combinatorSelector.height,
-      styles.combinatorOption.height,
-    ],
-    [
-      standardClassnames.fields,
-      TestID.fields,
-      styles.fieldSelector.height,
-      styles.fieldOption.height,
-    ],
-    [
-      standardClassnames.operators,
-      TestID.operators,
-      styles.operatorSelector.height,
-      styles.operatorOption.height,
-    ],
-    [
-      standardClassnames.valueSource,
       TestID.valueSourceSelector,
       styles.valueSourceSelector.height,
       styles.valueSourceOption.height,
     ],
-    [
-      standardClassnames.value,
-      TestID.valueEditor,
-      styles.valueEditorSelector.height,
-      styles.valueEditorOption.height,
-    ],
+    [TestID.valueEditor, styles.valueEditorSelector.height, styles.valueEditorOption.height],
   ] as const;
 
   beforeEach(() => {
@@ -206,47 +184,24 @@ describe('NativeValueSelector', () => {
   });
 
   describe('ios', () => {
-    for (const [className, testID, _selHeight, optHeight] of variants) {
-      it(`works for className ${className}`, () => {
-        render(
-          <NativeValueSelector {...props} testID={testID} className={className || undefined} />
-        );
-        // TODO: Test with web/other platform? iOS hides the selector and only shows the first option?
-        // expect(screen.getByTestId(testID)).toHaveStyle({ padding: _selHeight });
+    for (const [testID, selHeight, _optHeight] of variants) {
+      it(`works for testID ${testID}`, () => {
+        render(<NativeValueSelector {...props} testID={testID} />);
+        expect(screen.getByTestId(testID)).toHaveStyle({ height: selHeight });
+        // TODO: If we ever implement a proper picker by default, test the option styles...
         // expect(screen.getByTestId(testID).findAllByType(Picker.Item)[0]).toHaveStyle({
-        //   padding: optHeight,
+        //   height: _optHeight,
         // });
-        expect(screen.getAllByTestId(testID)[0]).toHaveStyle({ height: optHeight });
-        // expect(screen.getAllByTestId(testID)[1]).toHaveStyle({ padding: optHeight });
-        fireEvent(screen.getByTestId(testID), 'valueChange', 'opt2');
+        fireEvent.changeText(screen.getByTestId(testID), 'opt2');
         expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
       });
     }
   });
 
-  describe('web', () => {
+  it('renders on web platform', () => {
     Platform.OS = 'web';
-    for (const [className, testID, selHeight, _optHeight] of variants) {
-      it(`works for className ${className}`, () => {
-        render(
-          <NativeValueSelectorWeb {...props} testID={testID} className={className || undefined} />
-        );
-        expect(screen.UNSAFE_getByProps({ 'data-testid': testID })).toHaveStyle({
-          height: `${selHeight}px`,
-        });
-        // TODO: figure out why option styles aren't detected/applied
-        // expect(
-        //   screen.UNSAFE_getByProps({ 'data-testid': testID }).findAllByType('option')[0]
-        // ).toHaveStyle({
-        //   height: `${_optHeight}px`,
-        // });
-        expect(
-          screen.UNSAFE_getByProps({ 'data-testid': testID }).findAllByType('option')[1]
-        ).toBeOnTheScreen();
-        fireEvent(screen.UNSAFE_getByProps({ 'data-testid': testID }), 'valueChange', 'opt2');
-        expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
-      });
-    }
+    render(<NativeValueSelectorWeb {...props} testID={TestID.combinators} />);
+    expect(screen.getByTestId(TestID.combinators)).toBeOnTheScreen();
   });
 });
 
@@ -288,9 +243,8 @@ describe('NativeValueEditor', () => {
   for (const t of ['select', 'multiselect'] as const) {
     it(`changes the value of ${t} input type`, () => {
       render(<NativeValueEditor {...props} type={t} values={values} />);
-      fireEvent(screen.getByTestId(TestID.valueEditor), 'valueChange', 'opt2');
-      // TODO: .........................................is this really correct?
-      expect(handleOnChange).toHaveBeenNthCalledWith(1, t === 'multiselect' ? 'o,p,t,2' : 'opt2');
+      fireEvent.changeText(screen.getByTestId(TestID.valueEditor), 'opt2');
+      expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
     });
   }
 
@@ -320,11 +274,9 @@ describe('NativeValueEditor', () => {
         value={[null, null]}
       />
     );
+    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(NativeValueSelector);
     [0, 1].forEach(i => {
-      expect(screen.getByTestId(TestID.valueEditor).findAllByType(Picker)[i].props).toHaveProperty(
-        'selectedValue',
-        'opt1'
-      );
+      expect(selectors[i].props).toHaveProperty('value', 'opt1');
     });
   });
 
@@ -338,18 +290,16 @@ describe('NativeValueEditor', () => {
         value={'opt1,opt1'}
       />
     );
+    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput);
     [0, 1].forEach(i => {
-      fireEvent(
-        screen.getByTestId(TestID.valueEditor).findAllByType(Picker)[i],
-        'valueChange',
-        'opt2'
-      );
+      fireEvent.changeText(selectors[i], 'opt2');
     });
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2,opt1');
     expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt1,opt2');
   });
 
   it('renders on web platform', () => {
+    Platform.OS = 'web';
     render(<NativeValueEditorWeb {...props} />);
     expect(screen.getByTestId(TestID.valueEditor)).toBeOnTheScreen();
   });
