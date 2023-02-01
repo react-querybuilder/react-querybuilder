@@ -19,7 +19,7 @@ import type {
   RQBJsonLogicStartsWith,
   RQBJsonLogicVar,
 } from '@react-querybuilder/ts/dist/index.noReact';
-import { isPojo } from '../parserUtils';
+import { isPojo } from '../misc';
 import type { JsonLogicBetweenExclusive, JsonLogicBetweenInclusive } from './types';
 
 // Standard JsonLogic operations

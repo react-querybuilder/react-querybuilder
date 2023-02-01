@@ -1,5 +1,5 @@
 import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/ts/dist/index.noReact';
-import { isPojo } from './parserUtils';
+import { isPojo } from './misc';
 
 export type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 

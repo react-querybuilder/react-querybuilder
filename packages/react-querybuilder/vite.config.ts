@@ -30,8 +30,9 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     vitePluginReact(),
-    visualizer(opts => ({
-      filename: `build-stats.${opts.format}.html`,
+    visualizer(_opts => ({
+      // filename: `build-stats.${_opts.format}.html`,
+      filename: `build-stats.html`,
       gzipSize: true,
       title: `Build stats (${name})`,
     })),
