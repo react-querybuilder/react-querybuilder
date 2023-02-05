@@ -2,14 +2,14 @@
   "name": "react-querybuilder",
   "version": "6.0.0-alpha.0",
   "description": "The React <QueryBuilder /> component for constructing queries",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./umd": "./dist/index.umd.js",
     "./dev": "./dev/index.ts",

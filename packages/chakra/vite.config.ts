@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => ({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      fileName: format => `index.${format}.js`,
+      fileName: format => `index.${format === 'es' ? 'm' : 'c'}js`,
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
