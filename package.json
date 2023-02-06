@@ -10,7 +10,7 @@
     "start:bootstrap": "yarn workspace @react-querybuilder/bootstrap start",
     "start:bulma": "yarn workspace @react-querybuilder/bulma start",
     "start:chakra": "yarn workspace @react-querybuilder/chakra start",
-    "start:dnd": "yarn workspace @react-querybuilder/dnd start",
+    "start:dnd": "yarn workspace @react-querybuilder/dnd dev",
     "start:material": "yarn workspace @react-querybuilder/material start",
     "start:native": "yarn workspace @react-querybuilder/native start",
     "demo": "yarn website:start",

@@ -37,7 +37,7 @@
     "@react-querybuilder/ts": "^6.0.0-alpha.0",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.27",
-    "@vitejs/plugin-react": "^3.0.1",
+    "@vitejs/plugin-react-swc": "^3.1.0",
     "antd": "^5.1.6",
     "dayjs": "^1.11.7",
     "rc-picker": "^3.1.4",

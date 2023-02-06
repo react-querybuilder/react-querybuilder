@@ -37,7 +37,7 @@
     "@react-querybuilder/ts": "^6.0.0-alpha.0",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.27",
-    "@vitejs/plugin-react": "^3.0.1",
+    "@vitejs/plugin-react-swc": "^3.1.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
     "react": "^18.2.0",
