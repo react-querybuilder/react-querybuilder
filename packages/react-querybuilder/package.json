@@ -27,7 +27,7 @@
     "./parseSQL": "./dist/parseSQL.js",
     "./transformQuery": "./dist/transformQuery.js",
     "./query-builder.css": "./dist/query-builder.css",
-    "./query-builder.sscss": "./dist/query-builder.scss"
+    "./query-builder.scss": "./dist/query-builder.scss"
   },
   "unpkg": "./dist/index.umd.js",
   "types": "dist/types/index.d.ts",
