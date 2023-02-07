@@ -31,7 +31,7 @@ export const useControlledOrUncontrolled = ({
   const prevQueryPresent = usePrevious(!!queryProp);
 
   useEffect(() => {
-    // istanbul ignore else
+    // c8 ignore else
     if (__RQB_DEV__) {
       if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
         console.error(errorBothQueryDefaultQuery);

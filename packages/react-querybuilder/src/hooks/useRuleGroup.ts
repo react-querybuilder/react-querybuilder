@@ -147,7 +147,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     }
   };
 
-  const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
+  const validationResult = validationMap[id ?? /* c8 ignore next */ ''];
   const validationClassName = getValidationClassNames(validationResult);
   const combinatorBasedClassName = useMemo(
     () => (independentCombinators ? null : getOption(combinators, combinator)?.className ?? ''),

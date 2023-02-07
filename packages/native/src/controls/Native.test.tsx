@@ -74,7 +74,7 @@ describe('NativeActionElement', () => {
     ...additionalProps
   }: Partial<ActionWithRulesProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
-      const handleOnPress = jest.fn();
+      const handleOnPress = vi.fn();
       render(<NativeActionElement {...props} handleOnClick={handleOnPress} {...additionalProps} />);
       const btn = screen.getByTestId(testID);
       expect(btn).toBeEnabled();
@@ -109,7 +109,7 @@ describe('NativeActionElement', () => {
   });
 
   it('should be disabled by disabled prop', () => {
-    const handleOnPress = jest.fn();
+    const handleOnPress = vi.fn();
     render(<NativeActionElement {...props} handleOnClick={handleOnPress} disabled />);
     const btn = screen.getByTestId(testID);
     expect(btn).toBeDisabled();
@@ -130,7 +130,7 @@ describe('NativeNotToggle', () => {
   };
 
   it('works', () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
     const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch);
     fireEvent(switchEl, 'valueChange', true);
@@ -141,7 +141,7 @@ describe('NativeNotToggle', () => {
 });
 
 describe('NativeValueSelector', () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const styles = StyleSheet.create({
     combinatorSelector: { height: 100 },
     combinatorOption: { height: 101 },
@@ -206,7 +206,7 @@ describe('NativeValueSelector', () => {
 });
 
 describe('NativeValueEditor', () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const values: Option[] = [
     { name: 'opt1', label: 'Option 1' },
     { name: 'opt2', label: 'Option 2' },

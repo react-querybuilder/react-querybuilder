@@ -144,7 +144,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       ]);
     }
   } else {
-    // istanbul ignore else
+    // c8 ignore else
     if (typeof validator === 'function') {
       const validationResult = validator(ruleGroup);
       if (typeof validationResult === 'boolean') {
@@ -167,7 +167,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     const validatorMap: Record<string, RuleValidator> = {};
     const uniqueFields = uniqByName(fields);
     uniqueFields.forEach(f => {
-      // istanbul ignore else
+      // c8 ignore else
       if (typeof f.validator === 'function') {
         validatorMap[f.name] = f.validator;
       }
@@ -183,7 +183,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         const fieldArr = fields.filter(f => f.name === rule.field);
         if (fieldArr.length) {
           const field = fieldArr[0];
-          // istanbul ignore else
+          // c8 ignore else
           if (typeof field.validator === 'function') {
             fieldValidator = field.validator;
           }
@@ -280,7 +280,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               // a `valueProcessor`, as opposed to `rule.value` which has not
               paramValue = /^'.*'$/g.test(value)
                 ? value.replace(/(^'|'$)/g, '')
-                : /* istanbul ignore next */ value;
+                : /* c8 ignore next */ value;
             }
           }
           let paramName = '';
@@ -309,7 +309,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       };
 
       const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
-        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* c8 ignore next */ ''])) {
           return outermost ? fallbackExpression : '';
         }
 
@@ -341,7 +341,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
     } else if (format === 'mongodb') {
       const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* c8 ignore next */ ''])) {
           return outermost ? fallbackExpression : '';
         }
 
@@ -385,7 +385,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
     } else if (format === 'cel') {
       const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
-        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* c8 ignore next */ ''])) {
           return outermost ? fallbackExpression : '';
         }
 
@@ -425,7 +425,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return processRuleGroup(ruleGroup, true);
     } else if (format === 'spel') {
       const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
-        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* c8 ignore next */ ''])) {
           return outermost ? fallbackExpression : '';
         }
 
@@ -463,7 +463,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       const query = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
 
       const processRuleGroup = (rg: RuleGroupType): RQBJsonLogic => {
-        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* c8 ignore next */ ''])) {
           return false;
         }
 

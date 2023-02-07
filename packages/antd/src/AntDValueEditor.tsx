@@ -192,7 +192,7 @@ export const AntDValueEditor = ({
           // TODO: the function below is currently untested (see the
           // "should render a date range picker" test in ./AntD.test.tsx)
           onChange={
-            /* istanbul ignore next */
+            /* c8 ignore next */
             dates => {
               const format = `YYYY-MM-DD${
                 inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : ''

@@ -15,7 +15,7 @@ export let generateID = () =>
 
 // Improve on the default implementation by using the crypto package if it's available
 if (cryptoModule) {
-  // istanbul ignore else
+  // c8 ignore else
   if (typeof cryptoModule.randomUUID === 'function') {
     generateID = () => cryptoModule.randomUUID();
   } else if (typeof cryptoModule.getRandomValues === 'function') {

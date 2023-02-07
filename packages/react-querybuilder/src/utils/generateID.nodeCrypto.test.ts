@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import crypto from 'node:crypto';
 import { testGenerateID } from './generateIDtests';
@@ -18,7 +18,7 @@ globalThis.crypto = crypto as Crypto;
 
 // Delay the loading of generateID until after crypto has been defined
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { generateID } = require('./generateID');
+const { generateID } = await import('./generateID');
 
 testGenerateID(generateID);
 

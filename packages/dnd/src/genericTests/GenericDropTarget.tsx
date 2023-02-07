@@ -22,7 +22,7 @@ export const GenericDropTarget = ({ useDrop, path, type, dropEffect }: GenericDr
 
   return (
     <div
-      data-testid={type === 'rule' ? 'rule' : /* istanbul ignore next */ 'rule-group'}
+      data-testid={type === 'rule' ? 'rule' : /* c8 ignore next */ 'rule-group'}
       data-dropmonitorid={dropMonitorId}>
       DnD
     </div>

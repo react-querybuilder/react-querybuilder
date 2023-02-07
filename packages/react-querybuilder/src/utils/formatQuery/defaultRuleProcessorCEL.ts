@@ -6,7 +6,7 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 export const defaultRuleProcessorCEL: RuleProcessor = (
   { field, operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const escapeDoubleQuotes = (v: any) =>

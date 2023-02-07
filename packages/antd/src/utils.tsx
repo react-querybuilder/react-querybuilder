@@ -23,4 +23,4 @@ export const toOptions = (arr?: OptionList) =>
           {opt.label}
         </Option>
       ))
-    : /* istanbul ignore next */ null;
+    : /* c8 ignore next */ null;

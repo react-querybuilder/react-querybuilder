@@ -233,10 +233,8 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
         }
       }
 
-      const ops = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-      return ops.length
-        ? getFirstOption(ops) ?? /* istanbul ignore next */ ''
-        : /* istanbul ignore next */ '';
+      const ops = getOperatorsMain(field) ?? /* c8 ignore next */ [];
+      return ops.length ? getFirstOption(ops) ?? /* c8 ignore next */ '' : /* c8 ignore next */ '';
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
@@ -266,7 +264,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       const fieldData = fieldMap[field];
       // Ignore this in tests because Rule already checks for
       // the presence of the values property in fieldData.
-      /* istanbul ignore if */
+      /* c8 ignore if */
       if (fieldData?.values) {
         return fieldData.values;
       }
@@ -300,7 +298,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
           return listsAsArrays
             ? valArray
             : joinWith(
-                valArray.map(v => v ?? /* istanbul ignore next */ ''),
+                valArray.map(v => v ?? /* c8 ignore next */ ''),
                 ','
               );
         } else {
@@ -345,9 +343,9 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   // #region Rule/group creators
   const createRule = useCallback((): RuleType => {
     let field = '';
-    /* istanbul ignore else */
+    /* c8 ignore else */
     if (fields?.length > 0 && fields[0]) {
-      field = getFirstOption(fields) ?? /* istanbul ignore next */ '';
+      field = getFirstOption(fields) ?? /* c8 ignore next */ '';
     }
     if (getDefaultField) {
       if (typeof getDefaultField === 'function') {
@@ -395,7 +393,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     return {
       id: idGenerator(),
       rules: addRuleToNewGroups ? [createRule()] : [],
-      combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
+      combinator: getFirstOption(combinators) ?? /* c8 ignore next */ '',
       not: false,
     };
   }, [addRuleToNewGroups, combinators, createRule, idGenerator, independentCombinators]);
@@ -464,7 +462,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onRuleAdd = (rule: RuleType, parentPath: number[], context?: any) => {
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
-      // istanbul ignore else
+      // c8 ignore else
       if (debugMode) {
         onLog({ type: LogType.parentPathDisabled, rule, parentPath, query });
       }
@@ -472,7 +470,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     }
     const newRule = onAddRule(rule, parentPath, query, context);
     if (!newRule) {
-      // istanbul ignore else
+      // c8 ignore else
       if (debugMode) {
         onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query });
       }
@@ -490,7 +488,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onGroupAdd = (ruleGroup: RG, parentPath: number[], context?: any) => {
     if (pathIsDisabled(parentPath, query) || queryDisabled) {
-      // istanbul ignore else
+      // c8 ignore else
       if (debugMode) {
         onLog({
           type: LogType.parentPathDisabled,
@@ -503,7 +501,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     }
     const newGroup = onAddGroup(ruleGroup, parentPath, query, context);
     if (!newGroup) {
-      // istanbul ignore else
+      // c8 ignore else
       if (debugMode) {
         onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query });
       }
@@ -541,14 +539,14 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onRuleOrGroupRemove = (path: number[], context?: any) => {
     if (pathIsDisabled(path, query) || queryDisabled) {
-      // istanbul ignore else
+      // c8 ignore else
       if (debugMode) {
         onLog({ type: LogType.pathDisabled, path, query });
       }
       return;
     }
     const ruleOrGroup = findPath(path, query);
-    // istanbul ignore else
+    // c8 ignore else
     if (ruleOrGroup) {
       if (onRemove(ruleOrGroup as RG | RuleType, path, query, context)) {
         const newQuery = remove(query, path);
@@ -566,7 +564,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
     if (pathIsDisabled(oldPath, query) || queryDisabled) {
-      // istanbul ignore else
+      // c8 ignore else
       if (debugMode) {
         onLog({ type: LogType.pathDisabled, oldPath, newPath, query });
       }
