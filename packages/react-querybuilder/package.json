@@ -7,9 +7,14 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./umd": "./dist/index.umd.js",
     "./dev": "./dev/index.ts",
@@ -21,13 +26,14 @@
     "./parseMongoDB": "./dist/parseMongoDB.js",
     "./parseSQL": "./dist/parseSQL.js",
     "./transformQuery": "./dist/transformQuery.js",
-    "./css": "./dist/query-builder.css",
-    "./scss": "./dist/query-builder.scss"
+    "./query-builder.css": "./dist/query-builder.css",
+    "./query-builder.sscss": "./dist/query-builder.scss"
   },
   "unpkg": "./dist/index.umd.js",
   "types": "dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "index.d.mts"
   ],
   "repository": {
     "type": "git",
