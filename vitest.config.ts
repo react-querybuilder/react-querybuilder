@@ -9,6 +9,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
     coverage: {
+      '100': true,
       clean: true,
       exclude: [
         ...(configDefaults.coverage.exclude ?? []),
