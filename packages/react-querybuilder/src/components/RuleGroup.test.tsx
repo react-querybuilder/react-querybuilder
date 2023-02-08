@@ -6,9 +6,14 @@ import type {
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '../genericTests';
-import { defaultTranslations as t, standardClassnames as sc, TestID } from './defaults';
-import { errorEnabledDndWithoutReactDnD } from './messages';
+import {
+  consoleMocks,
+  createRule,
+  getRuleGroupProps,
+  ruleGroupClassnames,
+} from '../../genericTests';
+import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
+import { errorEnabledDndWithoutReactDnD } from '../messages';
 import { RuleGroup } from './RuleGroup';
 
 const user = userEvent.setup();

@@ -1,10 +1,10 @@
 import type { Controls } from '@react-querybuilder/ts';
-import { InlineCombinator } from '../InlineCombinator';
-import { Rule } from '../Rule';
-import { RuleGroup } from '../RuleGroup';
 import { ActionElement } from './ActionElement';
 import { DragHandle } from './DragHandle';
+import { InlineCombinator } from './InlineCombinator';
 import { NotToggle } from './NotToggle';
+import { Rule } from './Rule';
+import { RuleGroup } from './RuleGroup';
 import { ValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
 

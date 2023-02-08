@@ -14,8 +14,7 @@ import type {
 } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { consoleMocks } from '../genericTests';
-import { defaultControlElements } from './components';
+import { consoleMocks } from '../../genericTests';
 import {
   defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,
@@ -24,14 +23,15 @@ import {
   LogType,
   standardClassnames as sc,
   TestID,
-} from './defaults';
+} from '../defaults';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
-} from './messages';
+} from '../messages';
+import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from '../utils';
+import { defaultControlElements } from './defaults';
 import { QueryBuilder } from './QueryBuilder';
-import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from './utils';
 
 const user = userEvent.setup();
 

@@ -1,5 +1,5 @@
 import type { InlineCombinatorProps } from '@react-querybuilder/ts';
-import { standardClassnames, TestID } from './defaults';
+import { standardClassnames, TestID } from '../defaults';
 
 export const InlineCombinator = ({
   component: CombinatorSelectorComponent,
