@@ -8,7 +8,7 @@ import {
   NativeValueEditorWeb,
   NativeValueSelector,
   NativeValueSelectorWeb,
-} from './controls';
+} from './components';
 import { RuleGroupNative } from './RuleGroupNative';
 import { RuleNative } from './RuleNative';
 

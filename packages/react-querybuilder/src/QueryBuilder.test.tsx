@@ -15,7 +15,7 @@ import type {
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { consoleMocks } from '../genericTests';
-import { defaultControlElements } from './controls';
+import { defaultControlElements } from './components';
 import {
   defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,

@@ -1,4 +1,4 @@
-export * from './controls';
+export * from './components';
 export * from './defaults';
 export * from './QueryBuilderNative';
 export * from './RuleGroupNative';
