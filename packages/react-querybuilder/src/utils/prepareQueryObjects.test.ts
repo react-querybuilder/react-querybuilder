@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/dist/index.noReact';
-import { uuidV4regex } from './generateIDtests';
+import { uuidV4regex } from '../../genericTests/generateIDtests';
 import { prepareRule, prepareRuleGroup, prepareRuleOrGroup } from './prepareQueryObjects';
 
 describe('prepareRule', () => {

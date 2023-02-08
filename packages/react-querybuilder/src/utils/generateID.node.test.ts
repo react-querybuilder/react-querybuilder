@@ -1,8 +1,8 @@
 /**
  * @jest-environment node
  */
+import { testGenerateID } from '../../genericTests/generateIDtests';
 import { generateID } from './generateID';
-import { testGenerateID } from './generateIDtests';
 
 // These tests are run in the default node environment, so crypto is not available.
 

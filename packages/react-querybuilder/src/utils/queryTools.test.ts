@@ -20,6 +20,8 @@ const stripIDs = (query: DefaultRuleGroupTypeAny) =>
 
 const idGenerator = () => `${Math.random()}`;
 
+const badPath = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
 const [r1, r2, r3, r4, r5] = (['=', '<', '>', '<=', '>='] as const).map<DefaultRuleType>(
   (operator, i) => ({
     field: `f${i + 1}`,
@@ -116,6 +118,8 @@ describe('add', () => {
       rules: [rgic2],
     });
   });
+
+  testQT('bails out on bad path', add(rg1, rg2, badPath), rg1);
 });
 
 describe('remove', () => {
@@ -159,6 +163,8 @@ describe('remove', () => {
     testQT('does not remove the root group', remove(rgic1, []), rgic1, true);
     testQT('does not remove independent combinators', remove(rgic2, [1]), rgic2, true);
   });
+
+  testQT('bails out on bad path', remove(rg1, badPath), rg1);
 });
 
 describe('update', () => {
@@ -309,6 +315,8 @@ describe('update', () => {
       rgvsv
     );
   });
+
+  testQT('bails out on bad path', update(rg1, 'value', 'test', badPath), rg1);
 });
 
 describe('move', () => {
@@ -476,4 +484,6 @@ describe('move', () => {
       true
     );
   });
+
+  testQT('bails out on bad path', move(rg1, [1], badPath), rg1);
 });
