@@ -1,8 +1,7 @@
+import common from '../../jest.common.mjs';
+
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
+  ...common,
   displayName: 'material',
-  globals: { __RQB_DEV__: true },
-  setupFilesAfterEnv: ['../../jestSetup.ts'],
-  testEnvironment: 'jsdom',
 };

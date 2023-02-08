@@ -1,11 +1,14 @@
 import testingLibraryReactNativeJestPreset from '@testing-library/react-native/jest-preset/index.js';
+import common from '../../jest.common.mjs';
+
+const { coveragePathIgnorePatterns, globals } = common;
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   preset: '@testing-library/react-native',
-  coveragePathIgnorePatterns: ['genericTests', 'dist', '(cel|sql)Parser.js'],
+  coveragePathIgnorePatterns,
   displayName: 'native',
-  globals: { __RQB_DEV__: true },
+  globals,
   setupFilesAfterEnv: [...testingLibraryReactNativeJestPreset.setupFiles, './jestSetup.ts'],
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native(-community|-picker)?)/)',
