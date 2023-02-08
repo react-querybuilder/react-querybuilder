@@ -3,7 +3,6 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type { RuleGroupType } from 'react-querybuilder';
 import { convertToIC, TestID } from 'react-querybuilder';
-import { QueryBuilderNative } from '../QueryBuilderNative';
 import type {
   ActionNativeProps,
   NotToggleNativeProps,
@@ -17,6 +16,7 @@ import { NativeValueEditor } from './NativeValueEditor';
 import { NativeValueEditorWeb } from './NativeValueEditorWeb';
 import { NativeValueSelector } from './NativeValueSelector';
 import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
+import { QueryBuilderNative } from './QueryBuilderNative';
 
 const query: RuleGroupType = {
   combinator: 'and',

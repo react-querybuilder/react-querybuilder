@@ -1,14 +1,12 @@
 import type { Controls } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
-import {
-  NativeActionElement,
-  NativeInlineCombinator,
-  NativeNotToggle,
-  NativeValueEditor,
-  NativeValueEditorWeb,
-  NativeValueSelector,
-  NativeValueSelectorWeb,
-} from './components';
+import { NativeActionElement } from './NativeActionElement';
+import { NativeInlineCombinator } from './NativeInlineCombinator';
+import { NativeNotToggle } from './NativeNotToggle';
+import { NativeValueEditor } from './NativeValueEditor';
+import { NativeValueEditorWeb } from './NativeValueEditorWeb';
+import { NativeValueSelector } from './NativeValueSelector';
+import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 import { RuleGroupNative } from './RuleGroupNative';
 import { RuleNative } from './RuleNative';
 

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RuleComponents, TestID, useRule } from 'react-querybuilder';
-import { defaultNativeStyles } from './styles';
-import type { RuleNativeProps } from './types';
+import { defaultNativeStyles } from '../styles';
+import type { RuleNativeProps } from '../types';
 
 export const RuleNative = (props: RuleNativeProps) => {
   const r = { ...props, ...useRule(props) };

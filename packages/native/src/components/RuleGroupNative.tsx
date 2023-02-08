@@ -6,8 +6,8 @@ import {
   TestID,
   useRuleGroup,
 } from 'react-querybuilder';
-import { defaultNativeStyles } from './styles';
-import type { RuleGroupNativeProps } from './types';
+import { defaultNativeStyles } from '../styles';
+import type { RuleGroupNativeProps } from '../types';
 
 export const RuleGroupNative = (props: RuleGroupNativeProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
