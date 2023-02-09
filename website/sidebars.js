@@ -44,7 +44,7 @@ const sidebars = {
     },
     'compat',
     'typescript',
-    'umd',
+    'buildless',
     'migrate',
   ],
 };

@@ -49,6 +49,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "~0.71.1",
+    "react-native-web": "~0.18.12",
     "react-querybuilder": "^6.0.0-alpha.3",
     "react-test-renderer": "^18.2.0",
     "rollup-plugin-visualizer": "^5.9.0",

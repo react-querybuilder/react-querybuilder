@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { QueryBuilderNativeStyles } from './types';
 
 export const defaultNativeSelectStyles = {
-  selector: { height: 32, width: 100 } as TextStyle,
+  selector: { borderWidth: 1, height: 32, width: 100 } as TextStyle,
   option: {} as TextStyle,
 } as const;
 
@@ -35,7 +35,7 @@ const defaultStylesObject: QueryBuilderNativeStyles = {
     paddingRight: 10,
     paddingLeft: 10,
   },
-  value: { borderWidth: 1 },
+  value: { borderWidth: 1, height: 32, width: 150 },
   valueEditorOption: defaultNativeSelectStyles.option,
   valueEditorSelector: defaultNativeSelectStyles.selector,
   valueEditorSwitch: {},

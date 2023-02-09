@@ -11,8 +11,8 @@ export default defineConfig(({ command }) => ({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      fileName: format => `index.${format === 'es' ? 'm' : format === 'cjs' ? 'c' : 'umd.'}js`,
-      formats: ['umd', 'cjs', 'es'],
+      fileName: format => `index.${format === 'es' ? 'm' : 'c'}js`,
+      formats: ['cjs', 'es'],
       name: 'ReactQueryBuilder',
     },
     rollupOptions: {

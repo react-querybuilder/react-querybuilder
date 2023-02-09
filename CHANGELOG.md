@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#452] All packages now use `"exports"` field for better ESM compatibility.
-- [#431] Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators.
-  - When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`.
-  - Bulma components no longer specify the `is-small` class, so they will be rendered at their default size.
-  - The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) changed from `4px` to `0.25rem`. Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers, and $16 \times 0.25 = 4$.
-  - Utility function `c` has been removed. Use a package like [`clsx`](https://www.npmjs.com/package/clsx) instead.
+- [#452] All packages now use the `"exports"` field in their `package.json` for better ESM compatibility.
+- [#455] A UMD build is no longer provided. See [new instructions for buildless environments using ESM](https://react-querybuilder.js.org/docs/buildless)).
+- [#431] Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators. When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`, in which case a proper array will be used.
+- [#431] The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) is now `0.25rem` (previously `4px`). Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers, and $16 \times 0.25 = 4$.
+- [#431] Utility function `c` has been removed. Use a package like [`clsx`](https://www.npmjs.com/package/clsx) (what RQB uses internally) instead.
+- [#431] Bulma compatibility components no longer specify the `is-small` class, so they will be rendered at their default size.
 
 ### Added
 
@@ -29,9 +29,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - New `QueryBuilder` prop `getValueEditorSeparator`: Takes a `field` name and an `operator` name and should return a `ReactNode` (string, element, etc.) that will be placed between the two editors when `operator` is "between" or "notBetween". E.g., `getValueEditorSeparator={() => "and"}`.
   - New `QueryBuilder` prop `parseNumbers`: When `true`, the default `ValueEditor` will update its rule with an actual number instead of the string representation whenever possible.
   - New `ValueEditor` prop `skipHook`: When `true`, the `useValueEditor` hook call within the default `ValueEditor` component will not make query updates. Enables safer rendering of the default `ValueEditor` as a fallback to a custom value editor.
-  - The `useValueEditor` hook has been updated to return an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
+  - The `useValueEditor` hook now returns an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
 - [#455] `regenerateIDs` works for any object, not just rule groups.
-- [#455] Query tools (`add`, `remove`, `update`, and `move`) will fail gracefully, returning the original query, if the `path`/`parentPath` points to an invalid location in the query hierarchy.
+- [#455] Query tools (`add`, `remove`, `update`, and `move`) will fail gracefully and return the original query if the provided `path` or `parentPath` points to an invalid location in the query hierarchy.
 
 ## [v5.4.1] - 2023-01-30
 
@@ -1213,7 +1213,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#434]: https://github.com/react-querybuilder/react-querybuilder/issues/434
 [#443]: https://github.com/react-querybuilder/react-querybuilder/issues/443
 [#452]: https://github.com/react-querybuilder/react-querybuilder/pull/452
-[#455]: https://github.com/react-querybuilder/react-querybuilder/issues/455
+[#455]: https://github.com/react-querybuilder/react-querybuilder/pull/455
 [#458]: https://github.com/react-querybuilder/react-querybuilder/issues/458
 
 <!-- Release comparison links -->
