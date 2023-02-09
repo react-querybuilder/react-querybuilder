@@ -27,6 +27,7 @@ export default defineConfig(({ command }) => ({
       },
     },
     sourcemap: true,
+    target: 'es2020',
   },
   plugins: [
     vitePluginReact(),

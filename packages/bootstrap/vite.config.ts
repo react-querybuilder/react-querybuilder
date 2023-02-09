@@ -20,6 +20,7 @@ export default defineConfig(({ command }) => ({
       external: ['react', 'react/jsx-runtime', 'react-querybuilder'],
     },
     sourcemap: true,
+    target: 'es2020',
   },
   plugins: [
     vitePluginReact(),
