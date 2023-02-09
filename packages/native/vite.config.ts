@@ -17,7 +17,13 @@ export default defineConfig(({ command }) => ({
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['react', 'react-native', 'react-native-web', 'react-querybuilder'],
+      external: [
+        'react',
+        'react-native',
+        'react-native-web',
+        'react-querybuilder',
+        'react/jsx-runtime',
+      ],
     },
     sourcemap: true,
     target: 'es2020',

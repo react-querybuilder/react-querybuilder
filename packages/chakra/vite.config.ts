@@ -17,7 +17,13 @@ export default defineConfig(({ command }) => ({
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['react', 'react-querybuilder', '@chakra-ui/react', '@chakra-ui/icons'],
+      external: [
+        'react',
+        'react/jsx-runtime',
+        'react-querybuilder',
+        '@chakra-ui/react',
+        '@chakra-ui/icons',
+      ],
     },
     sourcemap: true,
   },

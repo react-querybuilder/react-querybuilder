@@ -17,7 +17,7 @@ export default defineConfig(({ command }) => ({
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['react', 'react-querybuilder'],
+      external: ['react', 'react/jsx-runtime', 'react-querybuilder'],
     },
     sourcemap: true,
   },

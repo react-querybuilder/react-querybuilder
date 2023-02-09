@@ -24,6 +24,7 @@ export default defineConfig(({ command }) => ({
         'dayjs',
         'moment',
         'react',
+        'react/jsx-runtime',
         'react-dom',
         'react-querybuilder',
       ],

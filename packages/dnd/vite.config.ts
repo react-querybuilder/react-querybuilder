@@ -22,6 +22,7 @@ export default defineConfig(({ command }) => ({
         '@react-querybuilder/ctx',
         'immer',
         'react',
+        'react/jsx-runtime',
         'react-dnd',
         'react-dnd-html5-backend',
         'react-querybuilder',
