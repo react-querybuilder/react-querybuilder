@@ -35,6 +35,7 @@ export default defineConfig(({ command }) => ({
       // filename: `build-stats.${_opts.format}.html`,
       filename: `build-stats.html`,
       gzipSize: true,
+      brotliSize: true,
       title: `Build stats (${name})`,
     })),
   ],

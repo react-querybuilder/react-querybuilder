@@ -47,6 +47,7 @@ export default defineConfig(({ command }) => ({
     visualizer({
       filename: 'build-stats.html',
       gzipSize: true,
+      brotliSize: true,
       title: `Build stats (${packageAbbr})`,
     }),
   ],
