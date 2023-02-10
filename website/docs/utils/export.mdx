@@ -3,7 +3,7 @@ title: Export
 description: Convert query builder objects to SQL, etc.
 ---
 
-import TypeScriptAdmonition from './_ts_admonition.md';
+import TypeScriptAdmonition from '../_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
@@ -525,7 +525,7 @@ Output:
 
 ### Placeholder values
 
-Any rule where the `field` or `operator` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName` and/or `placeholderOperatorName` options. These correspond to the `fields.placeholderName` and `operators.placeholderName` properties on the main component's [`translations` prop](./querybuilder#translations) object.
+Any rule where the `field` or `operator` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName` and/or `placeholderOperatorName` options. These correspond to the `fields.placeholderName` and `operators.placeholderName` properties on the main component's [`translations` prop](../components/querybuilder#translations) object.
 
 ## Validation
 

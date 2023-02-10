@@ -3,7 +3,7 @@ title: Import
 description: Convert SQL and other formats to query builder objects
 ---
 
-import TypeScriptAdmonition from './_ts_admonition.md';
+import TypeScriptAdmonition from '../_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
@@ -330,7 +330,7 @@ Output (`RuleGroupTypeIC`):
 
 ### Fields as value source
 
-When the `fields` option (which accepts the same types as the [`fields` prop](./querybuilder#fields)) is provided, and _only_ if it is provided, then `parse*` functions will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function (with the same signature as the [prop of the same name](./querybuilder#getvaluesources)) can also be provided to help validate rules.
+When the `fields` option (which accepts the same types as the [`fields` prop](../components/querybuilder#fields)) is provided, and _only_ if it is provided, then `parse*` functions will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function (with the same signature as the [prop of the same name](../components/querybuilder#getvaluesources)) can also be provided to help validate rules.
 
 In order for such a rule to be considered valid, one of the following must be an array that includes the string "field": 1) the `getValueSources` return value, 2) the field's `valueSources` function return value, or 3) the field's `valueSources` property itself. The code below demonstrates all three methods.
 

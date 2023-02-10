@@ -1,10 +1,10 @@
 ---
-title: <QueryBuilder />
+title: QueryBuilder
 description: Props and other configuration for the main component
 ---
 
 import { DemoLink } from '@site/src/components/DemoLink';
-import TypeScriptAdmonition from './_ts_admonition.md';
+import TypeScriptAdmonition from '../_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
@@ -575,7 +575,7 @@ Adds custom classes to the outer `div` of the group.
 
 `(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny, context?: any) => RuleType | false`
 
-This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
 
 If [`independentCombinators`](#independentcombinators) is enabled, you can specify the combinator inserted immediately before the new rule (if the parent group is not empty) by adding a `combinatorPreceding` property with value "and" or "or" to the rule before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
 
@@ -589,7 +589,7 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 `<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG, context?: any) => RG | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](./misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
+This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
 
 If [`independentCombinators`](#independentcombinators) is enabled, you can specify the combinator inserted immediately before the new group (if the parent group is not empty) by adding a `combinatorPreceding` property with value "and" or "or" to the group before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
 
@@ -801,7 +801,7 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 `boolean | "strict" | "native"` (default `false`) _<DemoLink option="parseNumbers" />_
 
-Pass `true`, `"strict"`, or `"native"` to store `value` as an actual number when possible instead of a string. Passing `"native"` will use `parseFloat` to determine if a value is a number, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the note about the corresponding `formatQuery` option in the [Export documentation](./export#parse-numbers).
+Pass `true`, `"strict"`, or `"native"` to store `value` as an actual number when possible instead of a string. Passing `"native"` will use `parseFloat` to determine if a value is a number, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the note about the corresponding `formatQuery` option in the [Export documentation](../utils/export#parse-numbers).
 
 ### `independentCombinators`
 
@@ -887,4 +887,4 @@ Overrides the default `id` generator, which generates valid v4 UUIDs per [RFC 41
 
 `QueryValidator` _<DemoLink option="validateQuery" />_
 
-This function is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](./validation) documentation for more information.
+This function is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](../utils/validation) documentation for more information.

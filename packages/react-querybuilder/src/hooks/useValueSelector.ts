@@ -7,6 +7,10 @@ export type UseValueSelectorParams = Pick<
   'handleOnChange' | 'listsAsArrays' | 'multiple' | 'value'
 >;
 
+/**
+ * Transforms a value into an array when appropriate and provides
+ * a memoized change handler.
+ */
 export const useValueSelector = ({
   handleOnChange,
   listsAsArrays = false,
@@ -27,5 +31,14 @@ export const useValueSelector = ({
 
   const val = useMemo(() => (multiple ? toArray(value) : value), [multiple, value]);
 
-  return { onChange, val };
+  return {
+    /**
+     * Memoized change handler for value selectors
+     */
+    onChange,
+    /**
+     * The value as provided or, if appropriate, as an array
+     */
+    val,
+  };
 };

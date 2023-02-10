@@ -5,7 +5,7 @@ description: Assorted utilities and other exports
 ---
 
 import { DemoLink } from '@site/src/components/DemoLink';
-import TypeScriptAdmonition from './_ts_admonition.md';
+import TypeScriptAdmonition from '../_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
@@ -48,7 +48,7 @@ You can see an example of the default validator in action in the [demo](/demo) i
 function findPath(path: number[], query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny;
 ```
 
-`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](./querybuilder#onaddrule) and [`onAddGroup`](./querybuilder#onaddgroup) functions.
+`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](../components/querybuilder#onaddrule) and [`onAddGroup`](../components/querybuilder#onaddgroup) functions.
 
 ### `convertQuery`
 
@@ -58,7 +58,7 @@ function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
 function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 ```
 
-`convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](./querybuilder#independentcombinators)).
+`convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](../components/querybuilder#independentcombinators)).
 
 `convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in the directions indicated by their respective names.
 
@@ -142,12 +142,12 @@ interface MoveOptions {
 
 The following default configuration objects are exported for convenience.
 
-- `defaultCombinators` (see [`combinators` prop](./querybuilder#combinators))
-- `defaultOperators` (see [`operators` prop](./querybuilder#operators))
-- `defaultTranslations` (see [`translations` prop](./querybuilder#translations))
+- `defaultCombinators` (see [`combinators` prop](../components/querybuilder#combinators))
+- `defaultOperators` (see [`operators` prop](../components/querybuilder#operators))
+- `defaultTranslations` (see [`translations` prop](../components/querybuilder#translations))
 - `defaultValueProcessor` and variants for non-SQL formats (see [Export](./export) > [Value processor](./export#value-processor))
-- `defaultFields` (see [`fields` prop](./querybuilder#fields))
-- `standardClassnames` (see [CSS classes](./classnames))
+- `defaultFields` (see [`fields` prop](../components/querybuilder#fields))
+- `standardClassnames` (see [CSS classes](../styling/classnames))
 
 The default components are also exported:
 

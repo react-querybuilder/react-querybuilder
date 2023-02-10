@@ -1,12 +1,12 @@
 ---
-title: Styling
+title: Styling overview
 description: How to tweak or overhaul the default styles
 ---
 
 import { BrowserWindow } from '@site/src/components/BrowserWindow';
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 
-React Query Builder has a [flexible structure with specific classes assigned](../api/classnames) to each element in the component hierarchy, enabling a wide range of styling possibilities.
+React Query Builder has a [flexible structure with specific classes assigned](./classnames) to each element in the component hierarchy, enabling a wide range of styling possibilities.
 
 The default stylesheet comes in CSS and SCSS flavors. Using SCSS allows you to override variables to tweak styles without having to replicate the entire rule set.
 
@@ -29,7 +29,7 @@ $rqb-border-width: 1px !default;
 
 ## Branch lines
 
-To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class to the query builder using the [`controlClassnames` prop](../api/querybuilder#controlclassnames), or to any ancestor element.
+To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class to the query builder using the [`controlClassnames` prop](../components/querybuilder#controlclassnames), or to any ancestor element.
 
 <!-- prettier-ignore -->
 ```tsx
@@ -49,7 +49,7 @@ export const fields = [
 <BrowserWindow>
   <QueryBuilderEmbed
     fields={fields}
-    controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}
+    controlClassnames={{ queryBuilder: ['queryBuilder-branches', 'red-branch-lines'] }}
     defaultQuery={{
       combinator: 'and',
       rules: [
@@ -78,7 +78,7 @@ $rqb-branch-style: $rqb-border-style !default;
 
 ## Drag-and-drop
 
-When [drag-and-drop is enabled](../api/querybuilder#enabledraganddrop), the following variables control the hover styles.
+When [drag-and-drop is enabled](../components/querybuilder#enabledraganddrop), the following variables control the hover styles.
 
 ```scss
 $rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
@@ -93,7 +93,7 @@ You can also assign styles to the following classes.
 - `dndOver`: Assigned to a drop target when the cursor hovers over it
 - `dndCopy`: Assigned to a drop target when the cursor hovers over it while the modifier key is pressed (`Alt` on Windows/Linux, `Option ⌥` on Mac)
 
-## Miscellaneous
+## Miscellaneous tips
 
 ### Inline independent combinators
 

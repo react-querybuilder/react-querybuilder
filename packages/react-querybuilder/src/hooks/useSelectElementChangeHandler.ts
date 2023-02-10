@@ -6,6 +6,9 @@ interface UseSelectElementChangeHandlerParams {
   multiple?: boolean;
 }
 
+/**
+ * Returns a memoized change handler for HTML select elements.
+ */
 export const useSelectElementChangeHandler = ({
   multiple,
   onChange,
@@ -19,5 +22,5 @@ export const useSelectElementChangeHandler = ({
     [multiple, onChange]
   );
 
-  return { selectElementChangeHandler };
+  return selectElementChangeHandler;
 };

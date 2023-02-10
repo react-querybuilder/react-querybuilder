@@ -2,7 +2,7 @@
 title: Compatibility packages
 ---
 
-The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./api/querybuilder#controlclassnames)). However, some style libraries require different HTML structure to style their form controls correctly.
+The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./components/querybuilder#controlclassnames)). However, some style libraries require different HTML structure to style their form controls correctly.
 
 ## Packages
 
@@ -82,7 +82,7 @@ export function App() {
 
 ## Other exports
 
-Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./api/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./api/querybuilder#controlclassnames). Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
+Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./components/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./components/querybuilder#controlclassnames). Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
 
 This example uses the Bootstrap library:
 

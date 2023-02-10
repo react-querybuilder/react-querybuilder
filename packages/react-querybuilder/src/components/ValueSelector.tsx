@@ -15,7 +15,7 @@ export const ValueSelector = ({
 }: ValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const { selectElementChangeHandler } = useSelectElementChangeHandler({ multiple, onChange });
+  const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });
 
   return (
     <select

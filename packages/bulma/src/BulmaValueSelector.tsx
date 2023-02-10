@@ -14,7 +14,7 @@ export const BulmaValueSelector = ({
 }: ValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const { selectElementChangeHandler } = useSelectElementChangeHandler({ multiple, onChange });
+  const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });
 
   return (
     <div title={title} className={`${className} select`}>
