@@ -1,33 +1,42 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
+import {
+  ChakraProvider,
+  ColorModeProvider,
+  ColorModeScript,
+  extendTheme,
+  useColorMode as useChakraColorMode,
+} from '@chakra-ui/react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
+import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
 
+const chakraTheme = extendTheme({
+  config: { initialColorMode: 'light', useSystemColorMode: false },
+});
+
 function ReactQueryBuilderDemo_ChakraBrowser() {
   const { colorMode } = useColorMode();
-  const { ChakraProvider, extendTheme } = useMemo(
-    () => require('@chakra-ui/react') as typeof import('@chakra-ui/react'),
-    []
-  );
-  const { QueryBuilderChakra } = useMemo(
-    () => require('@react-querybuilder/chakra') as typeof import('@react-querybuilder/chakra'),
-    []
-  );
+  const { colorMode: chakraColorMode, setColorMode } = useChakraColorMode();
+  const firstRender = useRef(true);
+
+  useEffect(() => {
+    const doReload = !firstRender.current && colorMode !== chakraColorMode;
+    setColorMode(colorMode);
+    if (doReload)
+      setTimeout(() => {
+        window.location.reload();
+      });
+    firstRender.current = false;
+  }, [chakraColorMode, colorMode, setColorMode]);
+
   const Demo = useMemo(
     () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
     []
-  );
-
-  const chakraTheme = useMemo(
-    () =>
-      extendTheme({
-        config: { initialColorMode: colorMode, useSystemColorMode: false },
-      }),
-    [colorMode, extendTheme]
   );
 
   return (
@@ -42,8 +51,13 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
 export default function ReactQueryBuilderDemo_Chakra() {
   return (
     <Layout description="React Query Builder Demo">
+      <ColorModeScript />
       <BrowserOnly fallback={<div>Loading...</div>}>
-        {() => <ReactQueryBuilderDemo_ChakraBrowser />}
+        {() => (
+          <ColorModeProvider>
+            <ReactQueryBuilderDemo_ChakraBrowser />
+          </ColorModeProvider>
+        )}
       </BrowserOnly>
     </Layout>
   );
