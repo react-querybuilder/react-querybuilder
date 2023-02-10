@@ -42,7 +42,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.6",
+    "@mui/material": "^5.11.8",
     "@react-querybuilder/ts": "^6.0.0-alpha.3",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.27",
@@ -52,8 +52,8 @@
     "react-querybuilder": "^6.0.0-alpha.3",
     "regenerator-runtime": "^0.13.11",
     "rollup-plugin-visualizer": "^5.9.0",
-    "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "typescript": "^4.9.5",
+    "vite": "^4.1.1"
   },
   "peerDependencies": {
     "@emotion/react": "^11",
