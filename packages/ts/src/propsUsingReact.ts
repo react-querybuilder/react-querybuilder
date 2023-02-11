@@ -61,7 +61,6 @@ export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
 
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
-  path: number[];
   independentCombinators?: boolean;
 }
 
