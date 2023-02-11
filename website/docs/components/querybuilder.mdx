@@ -1,6 +1,6 @@
 ---
 title: QueryBuilder
-description: Props and other configuration for the main component
+description: The root component, context provider and wrapper div
 ---
 
 import { DemoLink } from '@site/src/components/DemoLink';
@@ -10,6 +10,18 @@ import TypeScriptAdmonition from '../_ts_admonition.md';
 
 The default export of `react-querybuilder` is the `<QueryBuilder />` React component (also available as a named export).
 
+`QueryBuilder` calls the [`useQueryBuilder`](../utils/hooks#usequerybuilder) hook to prepare the query, schema, update methods, etc., that get passed down to the subcomponents.
+
+## Subcomponents
+
+`QueryBuilder` renders a [`RuleGroup`](./rulegroup) representing the root of the query.
+
+That `RuleGroup` is nested within a `<div>` that has the standard class, any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators ([`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) or [`independentCombinators`](#independentcombinators)) are enabled.
+
+Finally, everything is wrapped in `<QueryBuilderContext.Provider>` which inherits and propogates any values from ancestor context providers.
+
+## Props
+
 All props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
 
 :::note
@@ -17,8 +29,6 @@ All props are optional, but as stated in the [getting started guide](../intro), 
 When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. However, if the type is `RuleGroupTypeIC`, then the [`independentCombinators` prop](#independentcombinators) must be set to `true`. Likewise, if the type is `RuleGroupType` then `independentCombinators` must be `false` or `undefined`.
 
 :::
-
-## Props
 
 ### `fields`
 
@@ -172,6 +182,8 @@ The array of combinators that should be used for RuleGroups. The default set inc
 
 ### `controlElements`
 
+This is a custom controls object that allows you to override the default control elements. The following control overrides are supported:
+
 ```ts
 interface Controls {
   addGroupAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
@@ -179,11 +191,13 @@ interface Controls {
   cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
   cloneRuleAction?: React.ComponentType<ActionProps>;
   combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
-  inlineCombinator: ComponentType<InlineCombinatorProps>;
   dragHandle?: React.ForwardRefExoticComponent<
     DragHandleProps & React.RefAttributes<HTMLSpanElement>
   >;
   fieldSelector?: React.ComponentType<FieldSelectorProps>;
+  inlineCombinator?: React.ComponentType<InlineCombinatorProps>;
+  lockGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  lockRuleAction?: React.ComponentType<ActionProps>;
   notToggle?: React.ComponentType<NotToggleProps>;
   operatorSelector?: React.ComponentType<OperatorSelectorProps>;
   removeGroupAction?: React.ComponentType<ActionWithRulesProps>;
@@ -195,11 +209,9 @@ interface Controls {
 }
 ```
 
-This is a custom controls object that allows you to override the default control elements. The following control overrides are supported:
-
 #### `addGroupAction`
 
-By default a `<button />` is used. The following props are passed:
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
 
 ```ts
 interface ActionWithRulesAndAddersProps {
@@ -211,63 +223,16 @@ interface ActionWithRulesAndAddersProps {
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
-}
-```
-
-#### `cloneGroupAction`
-
-By default a `<button />` is used. The following props are passed:
-
-```ts
-interface ActionWithRulesProps {
-  label: string; // translations.addGroup.label, e.g. "+Group"
-  title: string; // translations.addGroup.title, e.g. "Add group"
-  className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Clones the group
-  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
-  level: number; // The level of the current group
-  context: any; // Container for custom props that are passed to all components
-  validation: boolean | ValidationResult; // validation result of this group
-}
-```
-
-#### `removeGroupAction`
-
-By default a `<button />` is used. The following props are passed:
-
-```ts
-interface ActionWithRulesProps {
-  label: string; // translations.removeGroup.label, e.g. "x"
-  title: string; // translations.removeGroup.title, e.g. "Remove group"
-  className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Removes the group
-  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
-  level: number; // The level of the current group
-  context: any; // Container for custom props that are passed to all components
-  validation: boolean | ValidationResult; // validation result of this group
-}
-```
-
-#### `lockGroupAction`
-
-By default a `<button />` is used. The following props are passed:
-
-```ts
-interface ActionWithRulesProps {
-  label: string; // translations.lockGroup.label, e.g. "🔓" when unlocked and "🔒" when locked
-  title: string; // translations.lockGroup.title, e.g. "Lock group" or "Unlock group"
-  className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Locks the group
-  rules: (RuleGroupType | RuleType)[]; // The rules present for this group
-  level: number; // The level of the current group
-  context: any; // Container for custom props that are passed to all components
-  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
 #### `addRuleAction`
 
-By default a `<button />` is used. The following props are passed:
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
 
 ```ts
 interface ActionWithRulesAndAddersProps {
@@ -279,12 +244,37 @@ interface ActionWithRulesAndAddersProps {
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `cloneGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.addGroup.label, e.g. "+Group"
+  title: string; // translations.addGroup.title, e.g. "Add group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Clones the group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
 #### `cloneRuleAction`
 
-By default a `<button />` is used. The following props are passed:
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
 
 ```ts
 interface ActionProps {
@@ -295,44 +285,16 @@ interface ActionProps {
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
-}
-```
-
-#### `removeRuleAction`
-
-By default a `<button />` is used. The following props are passed:
-
-```ts
-interface ActionProps {
-  label: string; // translations.removeRule.label, e.g. "x"
-  title: string; // translations.removeRule.title, e.g. "Remove rule"
-  className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Removes the rule
-  level: number; // The level of the current group
-  context: any; // Container for custom props that are passed to all components
-  validation: boolean | ValidationResult; // validation result of this rule
-}
-```
-
-#### `lockRuleAction`
-
-By default a `<button />` is used. The following props are passed:
-
-```ts
-interface ActionProps {
-  label: string; // translations.lockRule.label, e.g. "🔓" when unlocked and "🔒" when locked
-  title: string; // translations.lockRule.title, e.g. "Lock rule" or "Unlock rule"
-  className: string; // CSS classNames to be applied
-  handleOnClick: (e: React.MouseEvent) => void; // Locks the rule
-  level: number; // The level of the current rule
-  context: any; // Container for custom props that are passed to all components
-  validation: boolean | ValidationResult; // validation result of this rule
+  ruleOrGroup: RuleType; // This rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
 #### `combinatorSelector`
 
-By default a `<select />` is used. The following props are passed:
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
 
 ```ts
 interface CombinatorSelectorProps {
@@ -341,28 +303,19 @@ interface CombinatorSelectorProps {
   className: string; // CSS classNames to be applied
   handleOnChange: (value: any) => void; // Updates the combinator
   rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  title: string; // translations.combinators.title, e.g. "Combinators"
   level: number; // The level of the current group
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
-}
-```
-
-#### `inlineCombinator`
-
-A small wrapper around the `combinatorSelector` component. The following props are passed:
-
-```ts
-interface InlineCombinatorProps extends CombinatorSelectorProps {
-  component: Schema['controls']['combinatorSelector'];
+  disabled: boolean; // Whether this group is disabled
   path: number[];
-  moveRule: QueryActions['moveRule'];
-  independentCombinators?: boolean;
+  schema: Schema;
 }
 ```
 
 #### `dragHandle`
 
-By default a `<span />` is used. Note that this component must be based on `React.forwardRef`, and must always render an element (never return `null`). The following props are passed:
+Defaults to [`DragHandle`](./draghandle). Note that this component must be based on `React.forwardRef`, and must always render an element (never return `null`). Aside from the forwarded `ref`, the following props are passed:
 
 ```ts
 interface DragHandleProps {
@@ -372,12 +325,15 @@ interface DragHandleProps {
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this group
   label: string; // translations.dragHandle.label, e.g. "⁞⁞"
+  disabled: boolean; // Whether this rule/group is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
 #### `fieldSelector`
 
-By default a `<select />` is used. The following props are passed:
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
 
 ```ts
 interface FieldSelectorProps {
@@ -390,12 +346,89 @@ interface FieldSelectorProps {
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `inlineCombinator`
+
+A small wrapper around the [`combinatorSelector`](#combinatorselector) component. The following props are passed:
+
+```ts
+interface InlineCombinatorProps extends CombinatorSelectorProps {
+  component: Schema['controls']['combinatorSelector'];
+  independentCombinators?: boolean;
+}
+```
+
+#### `lockGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.lockGroup.label, e.g. "🔓" when unlocked and "🔒" when locked
+  title: string; // translations.lockGroup.title, e.g. "Lock group" or "Unlock group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Locks the group
+  rules: (RuleGroupType | RuleType)[]; // The rules present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  disabledTranslation: string; // translations.lockGroupDisabled, if parent group is not disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `lockRuleAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.lockRule.label, e.g. "🔓" when unlocked and "🔒" when locked
+  title: string; // translations.lockRule.title, e.g. "Lock rule" or "Unlock rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Locks the rule
+  level: number; // The level of the current rule
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  ruleOrGroup: RuleType; // This rule
+  disabled: boolean; // Whether this rule is disabled
+  disabledTranslation: string; // translations.lockRuleDisabled, if parent group is not disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `notToggle`
+
+Defaults to [`NotToggle`](./nottoggle). The following props are passed:
+
+```ts
+interface NotToggleProps {
+  checked: boolean; // Whether the input should be checked or not
+  handleOnChange: (checked: boolean) => void; // Updates the group's `not` property
+  label: string; // translations.notToggle.label, e.g. "Not"
+  title: string; // translations.notToggle.title, e.g. "Invert this group"
+  level: number; // The level of the group
+  className: string; // CSS classNames to be applied
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
 #### `operatorSelector`
 
-By default a `<select />` is used. The following props are passed:
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
 
 ```ts
 interface OperatorSelectorProps {
@@ -409,12 +442,104 @@ interface OperatorSelectorProps {
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
+#### `removeGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.removeGroup.label, e.g. "x"
+  title: string; // translations.removeGroup.title, e.g. "Remove group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Removes the group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `removeRuleAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionProps {
+  label: string; // translations.removeRule.label, e.g. "x"
+  title: string; // translations.removeRule.title, e.g. "Remove rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Removes the rule
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  ruleOrGroup: RuleType; // This rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `rule`
+
+Defaults to [`Rule`](./rule). The following props are passed:
+
+```ts
+interface RuleProps {
+  id?: string; // Unique identifier for this rule
+  path: number[]; // path of indexes through a rule group hierarchy
+  rule: RuleType; // The rule object
+  translations: Translations; // The full translations object
+  schema: Schema; // See `Schema` on the TypeScript page
+  actions: QueryActions; // Query update functions
+  context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
+}
+```
+
+:::tip
+
+If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
+
+:::
+
+#### `ruleGroup`
+
+Defaults to [`RuleGroup`](./rulegroup). The following props are passed:
+
+```ts
+interface RuleGroupProps {
+  id?: string; // Unique identifier for this rule group
+  path: number[]; // path of indexes through a rule group hierarchy
+  ruleGroup: RuleGroupTypeAny; // The rule group object
+  translations: Translations; // The full translations object
+  schema: Schema; // See `Schema` on the TypeScript page
+  actions: QueryActions; // Query update functions
+  context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
+}
+```
+
+:::tip
+
+If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `RuleGroup` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
+
+:::
+
 #### `valueEditor`
 
-By default an `<input type="text" />` is used. The following props are passed:
+Defaults to [`ValueEditor`](./valueeditor). The following props are passed:
 
 ```ts
 interface ValueEditorProps {
@@ -431,12 +556,19 @@ interface ValueEditorProps {
   className: string; // CSS classNames to be applied
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
+  valueSource: 'field' | 'value'; // Value source for this rule
+  listsAsArrays: boolean; // Whether to manage value lists (e.g. "between"/"in") as arrays
+  parseNumbers: boolean; // Whether to parse real numbers from string values
+  separator: ReactNode; // Separator element for series of editors (e.g. "between")
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 
 #### `valueSourceSelector`
 
-By default a `<select />` is used. The following props are passed:
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
 
 ```ts
 interface ValueSourceSelectorProps {
@@ -450,58 +582,9 @@ interface ValueSourceSelectorProps {
   level: number; // The level the group this rule belongs to
   context: any; // Container for custom props that are passed to all components
   validation: boolean | ValidationResult; // validation result of this rule
-}
-```
-
-#### `notToggle`
-
-By default, `<label><input type="checkbox" />Not</label>` is used. The following props are passed:
-
-```ts
-interface NotToggleProps {
-  checked: boolean; // Whether the input should be checked or not
-  handleOnChange: (checked: boolean) => void; // Updates the group's "not" property
-  title: string; // translations.notToggle.title, e.g. "Invert this group"
-  level: number; // The level of the group
-  className: string; // CSS classNames to be applied
-  context: any; // Container for custom props that are passed to all components
-  validation: boolean | ValidationResult; // validation result of this group
-}
-```
-
-#### `ruleGroup`
-
-By default, `<RuleGroup />` is used. The following props are passed:
-
-```ts
-interface RuleGroupProps {
-  id?: string; // Unique identifier for this rule group
-  path: number[]; // path of indexes through a rule group hierarchy
-  ruleGroup: RuleGroupTypeAny; // The rule group object
-  translations: Translations; // The full translations object
-  schema: Schema; // See `Schema` on the TypeScript page
-  actions: QueryActions; // Query update functions
-  context: any; // Container for custom props that are passed to all components
-  disabled?: boolean; // Whether the rule itself is disabled
-  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
-}
-```
-
-#### `rule`
-
-By default, `<Rule />` is used. The following props are passed:
-
-```ts
-interface RuleProps {
-  id?: string; // Unique identifier for this rule
-  path: number[]; // path of indexes through a rule group hierarchy
-  rule: RuleType; // The rule object
-  translations: Translations; // The full translations object
-  schema: Schema; // See `Schema` on the TypeScript page
-  actions: QueryActions; // Query update functions
-  context: any; // Container for custom props that are passed to all components
-  disabled?: boolean; // Whether the rule itself is disabled
-  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
 }
 ```
 

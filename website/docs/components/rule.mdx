@@ -1,5 +1,26 @@
 ---
 title: Rule
+description: Layout and config component for rules
 ---
 
-Placeholder
+The `Rule` component represents query conditions. `Rule` calls the [`useRule`](../utils/hooks#userule) hook to retrieve the props it passes down to the subcomponents.
+
+## Subcomponents
+
+`Rule` renders elements in this order:
+
+- Drag handle[^1]
+- Field selector
+- Operator selector[^2]
+- Value source selector[^3] [^4]
+- Value editor[^4]
+- Clone rule button[^5]
+- Lock rule button[^6]
+- Remove rule button
+
+[^1]: The [default styles](../styling/overview) hide this element if [`enableDragAndDrop`](./querybuilder#enabledraganddrop) is `false`, but it is _always_ rendered.
+[^2]: Only rendered if [`autoSelectField`](./querybuilder#autoselectfield) is `true` or the rule's `field` doesn't match `translations.fields.placeholderName`.
+[^3]: Only rendered if the rule's `operator` is neither `"null"` nor `"notNull"` and the derived `valueSources` array has more than one element.
+[^4]: Only rendered when (1) the `arity` property of the rule's `operator` is not `"unary"` or `< 2`, and (2) [`autoSelectOperator`](./querybuilder#autoselectoperator) is `true` _or_ the rule's `operator` doesn't match `translations.operators.placeholderName`.
+[^5]: Only rendered if [`showCloneButtons`](./querybuilder#showclonebuttons) is `true`.
+[^6]: Only rendered if [`showLockButtons`](./querybuilder#showlockbuttons) is `true`.
