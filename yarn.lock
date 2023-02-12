@@ -7519,9 +7519,10 @@ __metadata:
     typescript: ^4.9.5
     vite: ^4.1.1
   peerDependencies:
-    "@mantine/core": ^5.10.3
-    "@mantine/dates": ^5.10.3
-    "@mantine/hooks": ^5.10.3
+    "@mantine/core": ">=5"
+    "@mantine/dates": ">=5"
+    "@mantine/hooks": ">=5"
+    dayjs: ">=1"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
