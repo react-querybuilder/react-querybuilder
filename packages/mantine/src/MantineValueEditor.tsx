@@ -1,43 +1,65 @@
 import { Checkbox, Radio, Switch, Textarea, TextInput } from '@mantine/core';
+import { DatePicker, DateRangePicker, TimeInput, TimeRangeInput } from '@mantine/dates';
+import dayjs from 'dayjs';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { MantineValueSelector } from './MantineValueSelector';
 
-export const MantineValueEditor = (props: ValueEditorProps) => {
+export const MantineValueEditor = ({
+  fieldData,
+  operator,
+  value,
+  handleOnChange,
+  title,
+  className,
+  type,
+  inputType,
+  values = [],
+  listsAsArrays,
+  parseNumbers,
+  separator,
+  valueSource: _vs,
+  disabled,
+  testID,
+  selectorComponent: SelectorComponent = MantineValueSelector,
+  ...props
+}: ValueEditorProps) => {
   const { valArray, betweenValueHandler } = useValueEditor({
-    handleOnChange: props.handleOnChange,
-    inputType: props.inputType,
-    operator: props.operator,
-    value: props.value,
-    type: props.type,
-    listsAsArrays: props.listsAsArrays,
-    parseNumbers: props.parseNumbers,
-    values: props.values,
+    handleOnChange,
+    inputType,
+    operator,
+    value,
+    type,
+    listsAsArrays,
+    parseNumbers,
+    values,
   });
 
-  const { selectorComponent: SelectorComponent = MantineValueSelector } = props;
-
-  if (props.operator === 'null' || props.operator === 'notNull') {
+  if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
-  const placeHolderText = props.fieldData?.placeholder ?? '';
-  const { values = [] } = props;
+  const placeHolderText = fieldData?.placeholder ?? '';
+  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
   if (
-    (props.operator === 'between' || props.operator === 'notBetween') &&
-    (props.type === 'select' || props.type === 'text')
+    (operator === 'between' || operator === 'notBetween') &&
+    (type === 'select' || type === 'text') &&
+    // Date and time ranges are handled differently in Mantine--see below
+    inputTypeCoerced !== 'date' &&
+    inputTypeCoerced !== 'datetime-local' &&
+    inputTypeCoerced !== 'time'
   ) {
     const editors = ['from', 'to'].map((key, i) => {
-      if (props.type === 'text') {
+      if (type === 'text') {
         return (
           <TextInput
             key={key}
-            type={props.inputType || 'text'}
+            type={inputType || 'text'}
             placeholder={placeHolderText}
             value={valArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} input`}
-            disabled={props.disabled}
+            disabled={disabled}
             onChange={e => betweenValueHandler(e.target.value, i)}
           />
         );
@@ -48,98 +70,171 @@ export const MantineValueEditor = (props: ValueEditorProps) => {
           {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => betweenValueHandler(v, i)}
-          disabled={props.disabled}
+          disabled={disabled}
           value={valArray[i] ?? getFirstOption(values)}
           options={values}
-          listsAsArrays={props.listsAsArrays}
+          listsAsArrays={listsAsArrays}
         />
       );
     });
 
     return (
-      <span data-testid={props.testID} className={props.className} title={props.title}>
+      <span data-testid={testID} className={className} title={title}>
         {editors[0]}
-        {props.separator}
+        {separator}
         {editors[1]}
       </span>
     );
   }
 
-  switch (props.type) {
+  switch (type) {
     case 'select':
     case 'multiselect':
       return (
         <SelectorComponent
           {...props}
-          title={props.title}
-          className={props.className}
-          handleOnChange={props.handleOnChange}
+          title={title}
+          className={className}
+          handleOnChange={handleOnChange}
           options={values}
-          value={props.value}
-          disabled={props.disabled}
-          multiple={props.type === 'multiselect'}
-          listsAsArrays={props.listsAsArrays}
+          value={value}
+          disabled={disabled}
+          multiple={type === 'multiselect'}
+          listsAsArrays={listsAsArrays}
         />
       );
 
     case 'textarea':
       return (
         <Textarea
-          className={props.className}
-          value={props.value}
-          title={props.title}
+          className={className}
+          value={value}
+          title={title}
           placeholder={placeHolderText}
-          disabled={props.disabled}
-          onChange={e => props.handleOnChange(e.target.value)}
+          disabled={disabled}
+          onChange={e => handleOnChange(e.target.value)}
         />
       );
 
     case 'switch':
       return (
         <Switch
-          className={props.className}
-          title={props.title}
-          checked={props.value}
-          disabled={props.disabled}
-          onChange={e => props.handleOnChange(e.target.checked)}
+          className={className}
+          title={title}
+          checked={value}
+          disabled={disabled}
+          onChange={e => handleOnChange(e.target.checked)}
         />
       );
 
     case 'checkbox':
       return (
         <Checkbox
-          className={props.className}
-          title={props.title}
-          checked={props.value}
-          disabled={props.disabled}
-          onChange={e => props.handleOnChange(e.target.checked)}
+          className={className}
+          title={title}
+          checked={value}
+          disabled={disabled}
+          onChange={e => handleOnChange(e.target.checked)}
         />
       );
 
     case 'radio':
       return (
-        <Radio.Group
-          className={props.className}
-          title={props.title}
-          value={props.value}
-          onChange={props.handleOnChange}>
+        <Radio.Group className={className} title={title} value={value} onChange={handleOnChange}>
           {values.map(v => (
-            <Radio key={v.name} value={v.name} label={v.label} disabled={props.disabled} />
+            <Radio key={v.name} value={v.name} label={v.label} disabled={disabled} />
           ))}
         </Radio.Group>
       );
   }
 
+  if (
+    inputTypeCoerced === 'date' ||
+    inputTypeCoerced === 'datetime-local' ||
+    inputTypeCoerced === 'time'
+  ) {
+    const dateFormat = `YYYY-MM-DD${inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : ''}`;
+
+    if (operator === 'between' || operator === 'notBetween') {
+      const twoDateArray = [null, null].map((_d, i) => {
+        const date = dayjs(valArray[i]);
+        return date.isValid() ? date.toDate() : null;
+      }) as [Date | null, Date | null];
+
+      switch (inputTypeCoerced) {
+        case 'date':
+        case 'datetime-local':
+          return (
+            <DateRangePicker
+              value={twoDateArray}
+              className={className}
+              disabled={disabled}
+              placeholder={placeHolderText}
+              onChange={dates => {
+                const dateArray = dates
+                  .map(d => dayjs(d))
+                  .map(d => (d.isValid() ? d.format(dateFormat) : null));
+                handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
+              }}
+            />
+          );
+
+        case 'time':
+          return (
+            <TimeRangeInput
+              value={twoDateArray}
+              className={className}
+              disabled={disabled}
+              placeholder={placeHolderText}
+              onChange={dates => {
+                const dateArray = dates
+                  .map(d => dayjs(d))
+                  .map(d => (d.isValid() ? d.format(dateFormat) : null));
+                handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
+              }}
+            />
+          );
+      }
+    }
+
+    switch (inputTypeCoerced) {
+      case 'date':
+      case 'datetime-local':
+        return (
+          <DatePicker
+            value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
+            className={className}
+            disabled={disabled}
+            placeholder={placeHolderText}
+            onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d) : '')}
+          />
+        );
+
+      case 'time':
+        return (
+          <TimeInput
+            value={
+              value && dayjs(value, 'HH:mm:ss').isValid() ? dayjs(value, 'HH:mm:ss').toDate() : null
+            }
+            className={className}
+            disabled={disabled}
+            placeholder={placeHolderText}
+            onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d).format('HH:mm:ss') : '')}
+          />
+        );
+    }
+  }
+
   return (
     <TextInput
-      data-testid={props.testID}
-      title={props.title}
-      className={props.className}
+      data-testid={testID}
+      title={title}
+      className={className}
       placeholder={placeHolderText}
-      type={props.inputType || 'text'}
-      disabled={props.disabled}
-      value={props.value}
-      onChange={e => props.handleOnChange(e.target.value)}
+      type={inputType || 'text'}
+      disabled={disabled}
+      value={value}
+      onChange={e => handleOnChange(e.target.value)}
     />
   );
 };

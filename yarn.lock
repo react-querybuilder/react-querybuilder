@@ -5647,6 +5647,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mantine/dates@npm:^5.10.3":
+  version: 5.10.3
+  resolution: "@mantine/dates@npm:5.10.3"
+  dependencies:
+    "@mantine/utils": 5.10.3
+  peerDependencies:
+    "@mantine/core": 5.10.3
+    "@mantine/hooks": 5.10.3
+    dayjs: ">=1.0.0"
+    react: ">=16.8.0"
+  checksum: 80e22b0eb2235a373f0d35979bea7aeea671515962f4d119811145da7086f2258663ceb2d19a6ad23a02b6f08e1c53047778ec37cf559d8e81c9061d9f83a159
+  languageName: node
+  linkType: hard
+
 "@mantine/hooks@npm:^5.10.3":
   version: 5.10.3
   resolution: "@mantine/hooks@npm:5.10.3"
@@ -7491,11 +7505,13 @@ __metadata:
   resolution: "@react-querybuilder/mantine@workspace:packages/mantine"
   dependencies:
     "@mantine/core": ^5.10.3
+    "@mantine/dates": ^5.10.3
     "@mantine/hooks": ^5.10.3
     "@react-querybuilder/ts": ^6.0.0-alpha.3
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.27
     "@vitejs/plugin-react-swc": ^3.1.0
+    dayjs: ^1.11.7
     react: ^18.2.0
     react-dom: ^18.2.0
     react-querybuilder: ^6.0.0-alpha.3
@@ -7504,6 +7520,7 @@ __metadata:
     vite: ^4.1.1
   peerDependencies:
     "@mantine/core": ^5.10.3
+    "@mantine/dates": ^5.10.3
     "@mantine/hooks": ^5.10.3
     react: ">=16.8.0"
   languageName: unknown
