@@ -1,8 +1,6 @@
 import type { Option, OptionList } from 'react-querybuilder';
 import { isOptionGroupArray, uniqByName } from 'react-querybuilder';
 
-export { isOptionGroupArray, toOptions } from 'react-querybuilder';
-
 export const optionListMapNameToValue = (list: OptionList) => {
   let listFlat: Option[] = [];
 

@@ -231,7 +231,7 @@ export const MantineValueEditor = ({
       title={title}
       className={className}
       placeholder={placeHolderText}
-      type={inputType || 'text'}
+      type={inputTypeCoerced}
       disabled={disabled}
       value={value}
       onChange={e => handleOnChange(e.target.value)}

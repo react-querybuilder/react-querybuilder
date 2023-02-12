@@ -12,6 +12,7 @@ export const MantineValueSelector = ({
   disabled,
   multiple,
   listsAsArrays,
+  testID,
 }: ValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
@@ -21,6 +22,7 @@ export const MantineValueSelector = ({
 
   return multiple ? (
     <MultiSelect
+      data-testid={testID}
       title={title}
       className={className}
       data={[]}
@@ -30,6 +32,7 @@ export const MantineValueSelector = ({
     />
   ) : (
     <Select
+      data-testid={testID}
       title={title}
       className={className}
       value={val as string}

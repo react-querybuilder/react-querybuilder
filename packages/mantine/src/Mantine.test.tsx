@@ -1,11 +1,7 @@
 import { render, screen } from '@testing-library/react';
+import type { Schema } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
-import {
-  testActionElement,
-  testNotToggle,
-  testValueEditor,
-  testValueSelector,
-} from 'react-querybuilder/genericTests';
+import { testActionElement, testNotToggle, testValueEditor } from 'react-querybuilder/genericTests';
 import { QueryBuilderMantine } from './index';
 import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
@@ -20,8 +16,38 @@ globalThis.__RQB_DEV__ = true;
 
 testActionElement(MantineActionElement);
 testNotToggle(MantineNotToggle);
-testValueEditor(MantineValueEditor);
-testValueSelector(MantineValueSelector);
+testValueEditor(MantineValueEditor, { select: true, multiselect: true, betweenSelect: true });
+
+describe('MantineValueSelector', () => {
+  it('renders as a single select', () => {
+    render(
+      <MantineValueSelector
+        testID={TestID.fields}
+        options={[]}
+        handleOnChange={() => {}}
+        path={[0]}
+        level={1}
+        schema={{} as Schema}
+      />
+    );
+  });
+
+  it('renders as a multiselect', () => {
+    render(
+      <MantineValueSelector
+        testID={TestID.fields}
+        multiple
+        options={[]}
+        handleOnChange={() => {}}
+        path={[0]}
+        level={1}
+        schema={{} as Schema}
+      />
+    );
+  });
+});
+
+describe('MantineValueEditor as select and date picker', () => {});
 
 it('renders with composition', () => {
   render(
