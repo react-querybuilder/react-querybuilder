@@ -40,7 +40,6 @@ export const MantineValueSelector = ({
       disabled={disabled}
       value={val as any[]}
       onChange={changeHandler}
-      clearable
     />
   ) : (
     <Select
@@ -52,7 +51,6 @@ export const MantineValueSelector = ({
       data={data}
       disabled={disabled}
       onChange={changeHandler}
-      clearable
     />
   );
 };

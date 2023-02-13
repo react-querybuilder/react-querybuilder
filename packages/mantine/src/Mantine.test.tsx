@@ -61,6 +61,7 @@ describe('MantineValueSelector', () => {
         handleOnChange={handleOnChange}
         value={'opt2'}
         listsAsArrays
+        clearable
       />
     );
     await user.click(screen.getByRole('combobox').querySelector('button')!);
@@ -82,6 +83,7 @@ describe('MantineValueSelector', () => {
         handleOnChange={handleOnChange}
         value={'opt2'}
         listsAsArrays
+        clearable
       />
     );
     await user.click(screen.getByRole('combobox').querySelector('button')!);
