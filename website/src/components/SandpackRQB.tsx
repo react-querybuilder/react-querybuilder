@@ -109,8 +109,8 @@ h1, h2, h3, h4, h5, h6 {
           'react-querybuilder': '^5.3.3',
         }
       : {
-          '@react-querybuilder/dnd': '6.0.0-alpha.4',
-          'react-querybuilder': '6.0.0-alpha.4',
+          '@react-querybuilder/dnd': '6.0.0-alpha.5',
+          'react-querybuilder': '6.0.0-alpha.5',
         };
 
   const setup = {

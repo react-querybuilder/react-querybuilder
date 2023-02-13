@@ -7,19 +7,21 @@ import React from 'react';
 import './_styles/demo.scss';
 import './_styles/rqb-mantine.scss';
 
+function ReactQueryBuilderDemo_MantineBrowser() {
+  const Demo: typeof import('./_components/Demo').default = require('./_components/Demo').default;
+
+  return (
+    <QueryBuilderMantine>
+      <Demo variant="mantine" />
+    </QueryBuilderMantine>
+  );
+}
+
 export default function ReactQueryBuilderDemo_Mantine() {
   return (
     <Layout description="React Query Builder Mantine Demo">
       <BrowserOnly fallback={<div>Loading...</div>}>
-        {() => {
-          const Demo: typeof import('./_components/Demo').default =
-            require('./_components/Demo').default;
-          return (
-            <QueryBuilderMantine>
-              <Demo variant="mantine" />
-            </QueryBuilderMantine>
-          );
-        }}
+        {() => <ReactQueryBuilderDemo_MantineBrowser />}
       </BrowserOnly>
     </Layout>
   );
