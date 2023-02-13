@@ -1,7 +1,10 @@
+import type { MultiSelectProps, SelectProps } from '@mantine/core';
 import { MultiSelect, Select } from '@mantine/core';
-import type { ValueSelectorProps } from '@react-querybuilder/ts';
+import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import { useValueSelector } from 'react-querybuilder';
 import { optionListMapNameToValue } from './utils';
+
+type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
 
 export const MantineValueSelector = ({
   className,
@@ -13,7 +16,14 @@ export const MantineValueSelector = ({
   multiple,
   listsAsArrays,
   testID,
-}: ValueSelectorProps) => {
+  fieldData: _fieldData,
+  path: _path,
+  level: _level,
+  context: _context,
+  validation: _validation,
+  schema: _schema,
+  ...otherProps
+}: MantineValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const data = optionListMapNameToValue(options);
@@ -22,16 +32,19 @@ export const MantineValueSelector = ({
 
   return multiple ? (
     <MultiSelect
+      {...(otherProps as MultiSelectProps)}
       data-testid={testID}
       title={title}
       className={className}
-      data={[]}
+      data={data}
       disabled={disabled}
       value={val as any[]}
       onChange={changeHandler}
+      clearable
     />
   ) : (
     <Select
+      {...otherProps}
       data-testid={testID}
       title={title}
       className={className}
@@ -39,6 +52,7 @@ export const MantineValueSelector = ({
       data={data}
       disabled={disabled}
       onChange={changeHandler}
+      clearable
     />
   );
 };
