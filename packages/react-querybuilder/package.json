@@ -17,15 +17,7 @@
       }
     },
     "./dev": "./dev/index.ts",
-    "./dist/*.js": "./dist/*.js",
-    "./dist/*.js.map": "./dist/*.js.map",
-    "./dist/*.cjs": "./dist/*.cjs",
-    "./dist/*.cjs.map": "./dist/*.cjs.map",
-    "./dist/*.mjs": "./dist/*.mjs",
-    "./dist/*.mjs.map": "./dist/*.mjs.map",
-    "./dist/*.css": "./dist/*.css",
-    "./dist/*.css.map": "./dist/*.css.map",
-    "./dist/*.scss": "./dist/*.scss",
+    "./dist/*": "./dist/*",
     "./genericTests": "./genericTests/index.ts",
     "./formatQuery": "./dist/formatQuery.js",
     "./parseCEL": "./dist/parseCEL.js",
@@ -33,8 +25,8 @@
     "./parseMongoDB": "./dist/parseMongoDB.js",
     "./parseSQL": "./dist/parseSQL.js",
     "./transformQuery": "./dist/transformQuery.js",
-    "./css": "./dist/query-builder.css",
-    "./scss": "./dist/query-builder.scss"
+    "./query-builder.css": "./dist/query-builder.css",
+    "./query-builder.scss": "./dist/query-builder.scss"
   },
   "types": "dist/types/index.d.ts",
   "files": [
