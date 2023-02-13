@@ -42,7 +42,14 @@ export type CommonRQBProps = Pick<
 
 export type HttpsURL = `${'https'}://${string}`;
 
-export type StyleName = 'default' | 'antd' | 'bootstrap' | 'bulma' | 'chakra' | 'material';
+export type StyleName =
+  | 'default'
+  | 'antd'
+  | 'bootstrap'
+  | 'bulma'
+  | 'chakra'
+  | 'mantine'
+  | 'material';
 
 export interface DemoState {
   options: Partial<DemoOptions>;
