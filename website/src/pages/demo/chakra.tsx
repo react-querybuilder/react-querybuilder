@@ -12,6 +12,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
 import React, { useEffect, useMemo, useRef } from 'react';
+import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
 
@@ -52,7 +53,7 @@ export default function ReactQueryBuilderDemo_Chakra() {
   return (
     <Layout description="React Query Builder Demo">
       <ColorModeScript />
-      <BrowserOnly fallback={<div>Loading...</div>}>
+      <BrowserOnly fallback={<Loading />}>
         {() => (
           <ColorModeProvider>
             <ReactQueryBuilderDemo_ChakraBrowser />

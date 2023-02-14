@@ -4,6 +4,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import Layout from '@theme/Layout';
 import React from 'react';
+import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-bulma-dark.scss';
 import './_styles/rqb-bulma.scss';
@@ -11,7 +12,7 @@ import './_styles/rqb-bulma.scss';
 export default function ReactQueryBuilderDemo_Bulma() {
   return (
     <Layout description="React Query Builder Bulma Demo">
-      <BrowserOnly fallback={<div>Loading...</div>}>
+      <BrowserOnly fallback={<Loading />}>
         {() => {
           const Demo: typeof import('./_components/Demo').default =
             require('./_components/Demo').default;

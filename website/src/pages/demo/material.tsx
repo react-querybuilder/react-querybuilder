@@ -23,6 +23,7 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 
 import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
+import { Loading } from '../_utils';
 
 const muiComponents = {
   DragIndicator,
@@ -62,7 +63,7 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
 export default function ReactQueryBuilderDemo_Material() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<div>Loading...</div>}>
+      <BrowserOnly fallback={<Loading />}>
         {() => <ReactQueryBuilderDemo_MaterialBrowser />}
       </BrowserOnly>
     </Layout>

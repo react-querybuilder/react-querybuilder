@@ -5,6 +5,7 @@ import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
 import React, { useMemo } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
+import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-antd.scss';
 
@@ -33,7 +34,7 @@ function ReactQueryBuilderDemo_AntdBrowser() {
 export default function ReactQueryBuilderDemo_AntD() {
   return (
     <Layout description="React Query Builder Ant Design Demo">
-      <BrowserOnly fallback={<div>Loading...</div>}>
+      <BrowserOnly fallback={<Loading />}>
         {() => <ReactQueryBuilderDemo_AntdBrowser />}
       </BrowserOnly>
     </Layout>
