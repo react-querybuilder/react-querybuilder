@@ -22,6 +22,7 @@ export const MantineValueEditor = ({
   disabled,
   testID,
   selectorComponent: SelectorComponent = MantineValueSelector,
+  validation: _validation,
   ...props
 }: ValueEditorProps) => {
   const { valArray, betweenValueHandler } = useValueEditor({
@@ -157,7 +158,11 @@ export const MantineValueEditor = ({
 
     if (operator === 'between' || operator === 'notBetween') {
       const twoDateArray = [null, null].map((_d, i) => {
-        const date = dayjs(valArray[i]);
+        if (!valArray[i]) return null;
+        let date = dayjs(valArray[i]);
+        if (!date.isValid()) {
+          date = dayjs(`${dayjs().format('YYYY-MM-DD')}T${valArray[i]}`);
+        }
         return date.isValid() ? date.toDate() : null;
       }) as [Date | null, Date | null];
 
@@ -190,8 +195,8 @@ export const MantineValueEditor = ({
               placeholder={placeHolderText}
               onChange={dates => {
                 const dateArray = dates
-                  .map(d => dayjs(d))
-                  .map(d => (d.isValid() ? d.format(dateFormat) : null));
+                  .map(d => (d ? dayjs(d) : null))
+                  .map(d => (d && d.isValid() ? d.format('HH:mm:ss') : null));
                 handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
               }}
             />
@@ -218,12 +223,18 @@ export const MantineValueEditor = ({
           <TimeInput
             data-testid={testID}
             value={
-              value && dayjs(value, 'HH:mm:ss').isValid() ? dayjs(value, 'HH:mm:ss').toDate() : null
+              value
+                ? dayjs(`${dayjs().format('YYYY-MM-DD')}T${value}`).isValid()
+                  ? dayjs(`${dayjs().format('YYYY-MM-DD')}T${value}`).toDate()
+                  : dayjs(value).isValid()
+                  ? dayjs(value).toDate()
+                  : null
+                : null
             }
             className={className}
             disabled={disabled}
             placeholder={placeHolderText}
-            onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d).format('HH:mm:ss') : '')}
+            onChange={d => handleOnChange(dayjs(d).format('HH:mm:ss'))}
           />
         );
     }
