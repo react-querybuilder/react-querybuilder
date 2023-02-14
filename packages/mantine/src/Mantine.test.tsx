@@ -1,5 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import type { Option, OptionGroup, Schema, VersatileSelectorProps } from 'react-querybuilder';
+import type {
+  Option,
+  OptionGroup,
+  Schema,
+  ValueEditorProps,
+  VersatileSelectorProps,
+} from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,
@@ -32,12 +38,13 @@ testValueEditor(MantineValueEditor, { select: true, multiselect: true, betweenSe
 
 const user = userEventSetup();
 
+const options: Option[] = [
+  { name: 'opt1', label: 'Option 1' },
+  { name: 'opt2', label: 'Option 2' },
+];
+
 describe('MantineValueSelector', () => {
   (window as any).ResizeObserver = ResizeObserver;
-  const options: Option[] = [
-    { name: 'opt1', label: 'Option 1' },
-    { name: 'opt2', label: 'Option 2' },
-  ];
   const props: VersatileSelectorProps = {
     testID: TestID.fields,
     options,
@@ -107,7 +114,45 @@ describe('MantineValueSelector', () => {
   });
 });
 
-describe('MantineValueEditor as select and date picker', () => {});
+describe('MantineValueEditor as select and date picker', () => {
+  const props: ValueEditorProps = {
+    testID: TestID.fields,
+    values: options,
+    path: [0],
+    level: 1,
+    schema: {} as Schema,
+    handleOnChange: () => {},
+    field: 'f1',
+    operator: '=',
+    valueSource: 'value',
+    fieldData: { name: 'f1', label: 'Field 1' },
+    value: 'opt1',
+  };
+
+  it('renders value editor as select', () => {
+    render(<MantineValueEditor {...props} type="select" />);
+  });
+
+  it('renders value editor as multiselect', () => {
+    render(<MantineValueEditor {...props} type="multiselect" />);
+  });
+
+  it('handles "between" select', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <MantineValueEditor
+        {...props}
+        type="select"
+        operator="between"
+        handleOnChange={handleOnChange}
+        value={'opt1,opt2'}
+      />
+    );
+    await user.click(screen.getByDisplayValue('Option 1'));
+    await user.click(screen.getByText('Option 2'));
+    expect(handleOnChange).toHaveBeenCalledWith('opt2,opt2');
+  });
+});
 
 it('renders with composition', () => {
   render(
