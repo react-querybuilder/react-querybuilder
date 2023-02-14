@@ -43,6 +43,11 @@ const options: Option[] = [
   { name: 'opt2', label: 'Option 2' },
 ];
 
+const now = new Date();
+const year = now.getFullYear();
+const month = `${now.getMonth() + 1}`.padStart(2, '0');
+const dateStub = `${year}-${month}-`;
+
 describe('MantineValueSelector', () => {
   (window as any).ResizeObserver = ResizeObserver;
   const props: VersatileSelectorProps = {
@@ -116,7 +121,7 @@ describe('MantineValueSelector', () => {
 
 describe('MantineValueEditor as select and date picker', () => {
   const props: ValueEditorProps = {
-    testID: TestID.fields,
+    testID: TestID.valueEditor,
     values: options,
     path: [0],
     level: 1,
@@ -151,6 +156,46 @@ describe('MantineValueEditor as select and date picker', () => {
     await user.click(screen.getByDisplayValue('Option 1'));
     await user.click(screen.getByText('Option 2'));
     expect(handleOnChange).toHaveBeenCalledWith('opt2,opt2');
+  });
+
+  it('renders value editor as date editor', async () => {
+    const handleOnChange = jest.fn();
+    render(<MantineValueEditor {...props} inputType="date" handleOnChange={handleOnChange} />);
+    await user.click(screen.getByTestId(TestID.valueEditor));
+    await user.click(screen.getByText('10'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10`);
+  });
+
+  it('renders value editor as date range editor', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <MantineValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+      />
+    );
+    await user.click(screen.getByTestId(TestID.valueEditor));
+    await user.click(screen.getByText('10'));
+    await user.click(screen.getByText('20'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
+  });
+
+  it('renders value editor as datetime-local editor', () => {
+    render(<MantineValueEditor {...props} inputType="datetime-local" />);
+  });
+
+  it('renders value editor as datetime-local range editor', () => {
+    render(<MantineValueEditor {...props} inputType="datetime-local" operator="between" />);
+  });
+
+  it('renders value editor as time editor', () => {
+    render(<MantineValueEditor {...props} inputType="time" />);
+  });
+
+  it('renders value editor as time range editor', () => {
+    render(<MantineValueEditor {...props} inputType="time" operator="between" />);
   });
 });
 

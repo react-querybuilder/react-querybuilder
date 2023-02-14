@@ -166,6 +166,7 @@ export const MantineValueEditor = ({
         case 'datetime-local':
           return (
             <DateRangePicker
+              data-testid={testID}
               value={twoDateArray}
               className={className}
               disabled={disabled}
@@ -182,6 +183,7 @@ export const MantineValueEditor = ({
         case 'time':
           return (
             <TimeRangeInput
+              data-testid={testID}
               value={twoDateArray}
               className={className}
               disabled={disabled}
@@ -202,17 +204,19 @@ export const MantineValueEditor = ({
       case 'datetime-local':
         return (
           <DatePicker
+            data-testid={testID}
             value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
             className={className}
             disabled={disabled}
             placeholder={placeHolderText}
-            onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d) : '')}
+            onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateFormat) : '')}
           />
         );
 
       case 'time':
         return (
           <TimeInput
+            data-testid={testID}
             value={
               value && dayjs(value, 'HH:mm:ss').isValid() ? dayjs(value, 'HH:mm:ss').toDate() : null
             }
