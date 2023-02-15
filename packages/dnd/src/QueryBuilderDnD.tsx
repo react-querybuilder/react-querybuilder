@@ -18,7 +18,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
     translations,
   } = props;
 
-  const waitForDrop = usePreferProp(true, props.waitForDrop);
+  const moveWhileDragging = usePreferProp(false, props.moveWhileDragging);
 
   const rqbContext = useMergedContext({
     controlClassnames,
@@ -50,7 +50,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
       <QueryBuilderContext.Provider
         key={key}
         value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
-        <QueryBuilderDndWithoutProvider dnd={dnd} waitForDrop={waitForDrop}>
+        <QueryBuilderDndWithoutProvider dnd={dnd} moveWhileDragging={moveWhileDragging}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -70,7 +70,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
     props.enableDragAndDrop,
     rqbContext.enableDragAndDrop
   );
-  const waitForDrop = usePreferProp(true, props.waitForDrop);
+  const moveWhileDragging = usePreferProp(false, props.moveWhileDragging);
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
   if (!enableDragAndDrop || !dnd) {
@@ -114,7 +114,8 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
     <DndContext.Consumer key={key}>
       {() => (
         <QueryBuilderContext.Provider key={key} value={newContext}>
-          <QueryBuilderDndContext.Provider value={{ useDrag, useDrop, baseControls, waitForDrop }}>
+          <QueryBuilderDndContext.Provider
+            value={{ useDrag, useDrop, baseControls, moveWhileDragging }}>
             {props.children}
           </QueryBuilderDndContext.Provider>
         </QueryBuilderContext.Provider>

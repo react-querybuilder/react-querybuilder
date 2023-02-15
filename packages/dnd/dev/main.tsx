@@ -4,17 +4,17 @@ import { App } from 'react-querybuilder/dev';
 import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
 
 const DndApp = () => {
-  const [waitForDrop, setWaitForDrop] = React.useState(true);
+  const [moveWhileDragging, setMoveWhileDragging] = React.useState(true);
 
   return (
-    <QueryBuilderDnD waitForDrop={waitForDrop}>
+    <QueryBuilderDnD moveWhileDragging={moveWhileDragging}>
       <label>
         <input
           type="checkbox"
-          checked={waitForDrop}
-          onChange={e => setWaitForDrop(e.target.checked)}
+          checked={moveWhileDragging}
+          onChange={e => setMoveWhileDragging(e.target.checked)}
         />
-        <code>waitForDrop</code>
+        <code>moveWhileDragging</code>
       </label>
       <div id="app">
         <App enableDragAndDrop />

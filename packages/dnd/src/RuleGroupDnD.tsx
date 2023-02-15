@@ -6,7 +6,7 @@ import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 export const RuleGroupDnD = (props: RuleGroupProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
-  const { useDrag, useDrop, waitForDrop = true } = rqbDndContext;
+  const { useDrag, useDrop, moveWhileDragging } = rqbDndContext;
   const {
     path,
     disabled: disabledProp,
@@ -21,7 +21,7 @@ export const RuleGroupDnD = (props: RuleGroupProps) => {
     path,
     disabled,
     independentCombinators,
-    waitForDrop,
+    moveWhileDragging,
     moveRule,
     useDrag: useDrag!,
     useDrop: useDrop!,

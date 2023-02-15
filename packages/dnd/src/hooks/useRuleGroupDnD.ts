@@ -19,7 +19,7 @@ interface UseRuleGroupDndParams {
   path: number[];
   disabled?: boolean;
   independentCombinators?: boolean;
-  waitForDrop?: boolean;
+  moveWhileDragging?: boolean;
   moveRule: QueryActions['moveRule'];
   /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
   useDrag: typeof import('react-dnd')['useDrag'];
@@ -31,7 +31,7 @@ export const useRuleGroupDnD = ({
   disabled,
   path,
   independentCombinators,
-  waitForDrop = true,
+  moveWhileDragging,
   moveRule,
   useDrag,
   useDrop,
@@ -45,7 +45,7 @@ export const useRuleGroupDnD = ({
     path,
     disabled,
     independentCombinators,
-    waitForDrop,
+    moveWhileDragging,
     moveRule,
     useDrag,
   });
@@ -71,13 +71,13 @@ export const useRuleGroupDnD = ({
         );
       },
       collect: monitor => ({
-        isOver: waitForDrop && monitor.canDrop() && monitor.isOver(),
+        isOver: !moveWhileDragging && monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: monitor.getDropResult()?.dropEffect,
       }),
       // `dropEffect` gets added automatically to the object returned from `drop`:
       drop: (_item, monitor) => monitor.getDropResult() ?? { type: 'ruleGroup', path },
-      hover: waitForDrop
+      hover: !moveWhileDragging
         ? undefined
         : (item, monitor) => {
             if (monitor.canDrop()) {

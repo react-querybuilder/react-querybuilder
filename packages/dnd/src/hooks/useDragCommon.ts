@@ -12,7 +12,7 @@ type UseDragCommonProps = {
   type: DndDropTargetType;
   disabled?: boolean;
   independentCombinators?: boolean;
-  waitForDrop?: boolean;
+  moveWhileDragging?: boolean;
   moveRule: QueryActions['moveRule'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrag: typeof import('react-dnd')['useDrag'];
@@ -22,7 +22,7 @@ export const useDragCommon = ({
   type,
   path,
   disabled,
-  waitForDrop = true,
+  moveWhileDragging,
   moveRule,
   // Unused for now
   // independentCombinators,
@@ -37,7 +37,7 @@ export const useDragCommon = ({
         isDragging: !disabled && monitor.isDragging(),
         dragMonitorId: monitor.getHandlerId() ?? '',
       }),
-      end: !waitForDrop
+      end: moveWhileDragging
         ? undefined
         : (item, monitor) => {
             const dropResult = monitor.getDropResult();
@@ -56,5 +56,5 @@ export const useDragCommon = ({
             moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
           },
     }),
-    [disabled, path, waitForDrop]
+    [disabled, path, moveWhileDragging]
   );

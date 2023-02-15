@@ -19,7 +19,7 @@ interface UseRuleDndParams {
   path: number[];
   disabled?: boolean;
   independentCombinators?: boolean;
-  waitForDrop?: boolean;
+  moveWhileDragging?: boolean;
   moveRule: QueryActions['moveRule'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrag: typeof import('react-dnd')['useDrag'];
@@ -31,7 +31,7 @@ export const useRuleDnD = ({
   path,
   disabled,
   independentCombinators,
-  waitForDrop = true,
+  moveWhileDragging,
   moveRule,
   useDrag,
   useDrop,
@@ -44,7 +44,7 @@ export const useRuleDnD = ({
     path,
     disabled,
     independentCombinators,
-    waitForDrop,
+    moveWhileDragging,
     moveRule,
     useDrag,
   });
@@ -57,7 +57,7 @@ export const useRuleDnD = ({
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: item => {
-        if (waitForDrop) {
+        if (!moveWhileDragging) {
           const parentHoverPath = getParentPath(path);
           const parentItemPath = getParentPath(item.path);
           const hoverIndex = path[path.length - 1];
@@ -78,7 +78,7 @@ export const useRuleDnD = ({
         return !(isAncestor(item.path, path) || pathsAreEqual(path, item.path));
       },
       collect: monitor => ({
-        isOver: waitForDrop && monitor.canDrop() && monitor.isOver(),
+        isOver: !moveWhileDragging && monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: monitor.getDropResult()?.dropEffect,
         // TODO: remove?
@@ -86,7 +86,7 @@ export const useRuleDnD = ({
       }),
       // `dropEffect` gets added automatically to the object returned from `drop`:
       drop: () => ({ type: 'rule', path }),
-      hover: waitForDrop
+      hover: !moveWhileDragging
         ? undefined
         : (item, monitor) => {
             const hoverBoundingRect = dndRef.current!.getBoundingClientRect();
@@ -124,7 +124,7 @@ export const useRuleDnD = ({
             }
           },
     }),
-    [disabled, independentCombinators, moveRule, path, waitForDrop]
+    [disabled, independentCombinators, moveRule, path, moveWhileDragging]
   );
 
   // TODO: remove
