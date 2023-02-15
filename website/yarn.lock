@@ -4530,17 +4530,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/dates@npm:^5.10.3":
-  version: 5.10.3
-  resolution: "@mantine/dates@npm:5.10.3"
+"@mantine/dates@npm:^5.10.4":
+  version: 5.10.4
+  resolution: "@mantine/dates@npm:5.10.4"
   dependencies:
-    "@mantine/utils": 5.10.3
+    "@mantine/utils": 5.10.4
   peerDependencies:
-    "@mantine/core": 5.10.3
-    "@mantine/hooks": 5.10.3
+    "@mantine/core": 5.10.4
+    "@mantine/hooks": 5.10.4
     dayjs: ">=1.0.0"
     react: ">=16.8.0"
-  checksum: 80e22b0eb2235a373f0d35979bea7aeea671515962f4d119811145da7086f2258663ceb2d19a6ad23a02b6f08e1c53047778ec37cf559d8e81c9061d9f83a159
+  checksum: 14a32aa4c16e030266629dfc5171e930d271682de742541b2298d448df11c9fab40e1d8003eabccfd5449a65ef14681993af6426197da4dcad1f509fb9fff932
   languageName: node
   linkType: hard
 
@@ -4564,15 +4564,6 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 54af835dca68a457be758570c82eab2d602da19a24da599b2f2c02f451be136a400b2f8efbbdc7d1a677188b57515d3ace23df0b8aa8e37c4ddf3a2fdbce1630
-  languageName: node
-  linkType: hard
-
-"@mantine/utils@npm:5.10.3":
-  version: 5.10.3
-  resolution: "@mantine/utils@npm:5.10.3"
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: 063237e49f3c52e3bbcd99e7a8383ac881718d9e1e039d32249231370a463a19e070cea7f90c3c0fea2933c3c162f5509a0f2add015db2aeb90f7945cd954a12
   languageName: node
   linkType: hard
 
@@ -14184,7 +14175,7 @@ __metadata:
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@mantine/core": ^5.10.4
-    "@mantine/dates": ^5.10.3
+    "@mantine/dates": ^5.10.4
     "@mantine/hooks": ^5.10.4
     "@mdx-js/react": ^1.6.22
     "@mui/icons-material": ^5.11.9
