@@ -1,31 +1,16 @@
-name: Continuous Integration
+name: CI
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'packages/**'
 
 jobs:
-  prettier:
-    name: Prettier
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
-      - name: Prettify code
-        run: yarn pretty-print
-      - name: Git diff
-        if: ${{ failure() }}
-        run: git diff && exit 1
-
   build_and_test:
     name: Build and test
     runs-on: ubuntu-latest

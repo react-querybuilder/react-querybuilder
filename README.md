@@ -5,7 +5,7 @@
 [![Docs][badge-docs]](https://react-querybuilder.js.org/)
 [![Learn from the maintainer][badge-training]](https://www.newline.co/courses/building-advanced-admin-reporting-in-react)
 
-[![Continuous Integration][badge-ci]](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
+[![CI][badge-ci]](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io][badge-codecov]](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
 [![All Contributors][badge-all-contributors]](#contributors-)
 
