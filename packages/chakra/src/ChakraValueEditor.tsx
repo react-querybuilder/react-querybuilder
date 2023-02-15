@@ -1,8 +1,7 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import {
-  joinWith,
+  getFirstOption,
   standardClassnames,
-  toArray,
   useValueEditor,
   ValueSelector,
   type ValueEditorProps,
@@ -20,52 +19,70 @@ export const ChakraValueEditor = ({
   inputType,
   values = [],
   listsAsArrays,
+  parseNumbers,
+  separator,
   valueSource: _vs,
   testID,
   disabled,
+  selectorComponent: SelectorComponent = ChakraValueSelector,
   ...props
 }: ValueEditorProps) => {
-  useValueEditor({ handleOnChange, inputType, operator, value });
+  const { valArray, betweenValueHandler } = useValueEditor({
+    handleOnChange,
+    inputType,
+    operator,
+    value,
+    type,
+    listsAsArrays,
+    parseNumbers,
+    values,
+  });
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['between', 'notBetween', 'in', 'notIn'].includes(operator)
-    ? 'text'
-    : inputType || 'text';
+  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
-  if ((operator === 'between' || operator === 'notBetween') && type === 'select') {
-    const valArray = toArray(value);
-    const selector1handler = (v: string) => {
-      const val = [v, valArray[1] ?? values[0]?.name, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
-    const selector2handler = (v: string) => {
-      const val = [valArray[0], v, ...valArray.slice(2)];
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
+  if (
+    (operator === 'between' || operator === 'notBetween') &&
+    (type === 'select' || type === 'text')
+  ) {
+    const editors = ['from', 'to'].map((key, i) => {
+      if (type === 'text') {
+        return (
+          <Input
+            key={key}
+            type={inputTypeCoerced}
+            value={valArray[i] ?? ''}
+            size="xs"
+            variant="filled"
+            isDisabled={disabled}
+            className={standardClassnames.valueListItem}
+            placeholder={placeHolderText}
+            onChange={e => betweenValueHandler(e.target.value, i)}
+          />
+        );
+      }
+      return (
+        <SelectorComponent
+          key={key}
+          {...props}
+          className={standardClassnames.valueListItem}
+          handleOnChange={v => betweenValueHandler(v, i)}
+          disabled={disabled}
+          value={valArray[i] ?? getFirstOption(values)}
+          options={values}
+          listsAsArrays={listsAsArrays}
+        />
+      );
+    });
     return (
       <span data-testid={testID} className={className} title={title}>
-        <ChakraValueSelector
-          {...props}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector1handler}
-          disabled={disabled}
-          value={valArray[0]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
-        <ChakraValueSelector
-          {...props}
-          className={standardClassnames.valueListItem}
-          handleOnChange={selector2handler}
-          disabled={disabled}
-          value={valArray[1]}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+        {editors[0]}
+        {separator}
+        {editors[1]}
       </span>
     );
   }
@@ -73,7 +90,7 @@ export const ChakraValueEditor = ({
   switch (type) {
     case 'select':
       return (
-        <ChakraValueSelector
+        <SelectorComponent
           {...props}
           className={className}
           title={title}

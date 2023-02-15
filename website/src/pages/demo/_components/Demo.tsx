@@ -20,8 +20,8 @@ import {
   parseMongoDB,
   parseSQL,
   QueryBuilder,
-  version as rqbVersion,
 } from 'react-querybuilder';
+import rqbPkgJson from 'react-querybuilder/package.json';
 import {
   defaultOptions,
   formatMap,
@@ -47,6 +47,8 @@ import {
 import styles from './Demo.module.css';
 import ImportModal from './ImportModal';
 import Nav from './Nav';
+
+const { version: rqbVersion } = rqbPkgJson;
 
 const infoChar = 'ⓘ';
 

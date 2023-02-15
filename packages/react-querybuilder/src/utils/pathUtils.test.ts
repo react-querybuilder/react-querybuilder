@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/src/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/dist/index.noReact';
 import {
   findPath,
   getCommonAncestorPath,

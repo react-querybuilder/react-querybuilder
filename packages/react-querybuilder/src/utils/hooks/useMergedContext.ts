@@ -6,16 +6,18 @@ import type {
   WithRequired,
 } from '@react-querybuilder/ts';
 import { useContext, useMemo } from 'react';
-import { defaultControlElements } from '../../controls';
+import { defaultControlElements } from '../../components';
 import { defaultControlClassnames, defaultTranslations } from '../../defaults';
 import { mergeClassnames } from '../mergeClassnames';
 import { objectKeys } from '../objectKeys';
 import { usePreferProp } from './usePreferProp';
 
-type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;
+export type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;
 
+/**
+ * Inherit context, but props take precedence
+ */
 export const useMergedContext = (props: UseMergedContextProps) => {
-  // Inherit context, but props take precedence
   const rqbContext = useContext(QueryBuilderContext);
 
   const enableMountQueryChange = usePreferProp(

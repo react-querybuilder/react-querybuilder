@@ -9,7 +9,7 @@ import type {
   Schema,
 } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
+import { defaultControlElements } from '../src/components';
 import {
   defaultCombinators,
   defaultControlClassnames,
@@ -143,6 +143,7 @@ const ruleGroupSchema: Partial<Schema> = {
   getInputType: () => 'text',
   getOperators: () => [{ name: 'operator1', label: 'Operator 1' }],
   getValueEditorType: () => 'text',
+  getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
   getValues: () => [],
   getRuleClassname: () => '',

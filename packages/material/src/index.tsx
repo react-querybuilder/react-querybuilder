@@ -9,7 +9,6 @@ import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
-export { version } from '../package.json';
 export {
   MaterialActionElement,
   MaterialDragHandle,

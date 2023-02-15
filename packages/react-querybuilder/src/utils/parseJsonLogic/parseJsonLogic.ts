@@ -9,12 +9,13 @@ import type {
   RQBJsonLogic,
   RQBJsonLogicVar,
   ValueSource,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { defaultOperatorNegationMap } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
+import { isPojo } from '../misc';
 import { objectKeys } from '../objectKeys';
-import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import {
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,

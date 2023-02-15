@@ -5,11 +5,11 @@ import type {
   DefaultRuleType,
   RuleType,
   ValueSources,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { defaultCombinators } from '../defaults';
-import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
 import { formatQuery } from './formatQuery';
-import { numericRegex } from './formatQuery/utils';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { numericRegex } from './misc';
 import { add, move, remove, update } from './queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);
@@ -19,6 +19,8 @@ const stripIDs = (query: DefaultRuleGroupTypeAny) =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
 const idGenerator = () => `${Math.random()}`;
+
+const badPath = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
 const [r1, r2, r3, r4, r5] = (['=', '<', '>', '<=', '>='] as const).map<DefaultRuleType>(
   (operator, i) => ({
@@ -116,6 +118,8 @@ describe('add', () => {
       rules: [rgic2],
     });
   });
+
+  testQT('bails out on bad path', add(rg1, rg2, badPath), rg1);
 });
 
 describe('remove', () => {
@@ -159,6 +163,8 @@ describe('remove', () => {
     testQT('does not remove the root group', remove(rgic1, []), rgic1, true);
     testQT('does not remove independent combinators', remove(rgic2, [1]), rgic2, true);
   });
+
+  testQT('bails out on bad path', remove(rg1, badPath), rg1);
 });
 
 describe('update', () => {
@@ -309,6 +315,8 @@ describe('update', () => {
       rgvsv
     );
   });
+
+  testQT('bails out on bad path', update(rg1, 'value', 'test', badPath), rg1);
 });
 
 describe('move', () => {
@@ -476,4 +484,6 @@ describe('move', () => {
       true
     );
   });
+
+  testQT('bails out on bad path', move(rg1, [1], badPath), rg1);
 });

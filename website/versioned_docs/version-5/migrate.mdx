@@ -1,8 +1,7 @@
 ---
-title: Migrating to newer versions
+title: Migrating to v5
+hide_table_of_contents: true
 ---
-
-## From v4 to v5
 
 The transition from v4 to v5 should be fairly seemless. Core functionality has not been affected much since v4, other than a few bug fixes (see [changelog](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md)). Significant code changes will only be necessary if you set the [`enableDragAndDrop` prop to `true`](#drag-and-drop) and/or you use one of the [compatibility packages](#compatibility-packages).
 
@@ -87,24 +86,4 @@ See the [compatibility package documentation](./compat) for more information abo
 
 :::
 
-## From v3 to v4
-
-React Query Builder v4 was mainly a feature release, but changes to the structure of the rendered HTML necessitated a major version bump.
-
-A new drag handle `<span />` element will always be rendered at the front of every rule and rule group header element, regardless of whether you enable the drag-and-drop feature. If drag-and-drop is disabled (the default setting), you should hide the drag handle by either 1) using the default stylesheet which hides it automatically when drag-and-drop is disabled, or 2) hiding it with a style rule like `.queryBuilder-dragHandle { display: none; }`.
-
-:::tip
-
-The default stylesheet can be loaded as CSS or SCSS:
-
-```ts
-import 'react-querybuilder/dist/query-builder.css';
-// OR
-import 'react-querybuilder/dist/query-builder.scss';
-```
-
-:::
-
-If using TypeScript, custom `operatorSelector` components will need to accommodate `OptionGroup<NameLabelPair>[]` in addition to the normal `NameLabelPair[]`.
-
-Internal methods for immutably updating queries have been moved from the `schema` prop to the new `actions` prop on both `RuleProps` and `RuleGroupProps`. Custom `<Rule />` and `<RuleGroup />` components will need to adjust their prop declarations.
+Instructions on migrating from v3 to v4 are [here](/docs/4/migrate).

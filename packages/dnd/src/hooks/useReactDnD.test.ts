@@ -1,11 +1,12 @@
 import type { RenderHookResult } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react';
+import { consoleMocks } from 'react-querybuilder/genericTests';
 import type { UseReactDnD } from '../types';
 import { useReactDnD } from './useReactDnD';
 
 const timeoutWait = 500;
 
-jest.spyOn(console, 'error').mockImplementation(() => {});
+consoleMocks();
 
 beforeEach(() => {
   jest.resetModules();

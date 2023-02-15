@@ -26,7 +26,7 @@ it('converts stuff to an array', () => {
   expect(toArray({})).toEqual([]);
   expect(toArray(true)).toEqual([]);
   expect(toArray(false)).toEqual([]);
-  expect(toArray(1214)).toEqual([]);
+  expect(toArray(1214)).toEqual([1214]);
   expect(toArray('test')).toEqual(['test']);
   expect(toArray('test,  ,,,this')).toEqual(['test', 'this']);
   expect(toArray([null, 'test', 1214, '  '])).toEqual([null, 'test', 1214, '']);

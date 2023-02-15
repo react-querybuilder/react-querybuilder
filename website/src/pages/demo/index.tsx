@@ -2,12 +2,13 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import React from 'react';
+import { Loading } from '../_utils';
 import './_styles/demo.scss';
 
 export default function ReactQueryBuilderDemo() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<div>Loading...</div>}>
+      <BrowserOnly fallback={<Loading />}>
         {() => {
           const Demo = require('./_components/Demo').default;
           return <Demo />;

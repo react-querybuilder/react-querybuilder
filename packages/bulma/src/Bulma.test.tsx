@@ -6,13 +6,11 @@ import {
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
-import {
-  BulmaActionElement,
-  BulmaNotToggle,
-  BulmaValueEditor,
-  BulmaValueSelector,
-  QueryBuilderBulma,
-} from '.';
+import { BulmaActionElement } from './BulmaActionElement';
+import { BulmaNotToggle } from './BulmaNotToggle';
+import { BulmaValueEditor } from './BulmaValueEditor';
+import { BulmaValueSelector } from './BulmaValueSelector';
+import { QueryBuilderBulma } from './index';
 
 declare global {
   // eslint-disable-next-line no-var

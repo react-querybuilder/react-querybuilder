@@ -199,29 +199,29 @@ export const fields: Field[] = [
   {
     name: 'groupedField1',
     label: 'Grouped Field 1',
-    comparator: 'group',
-    group: 'group1',
+    comparator: 'groupNumber',
+    groupNumber: 'group1',
     valueSources: ['field', 'value'],
   },
   {
     name: 'groupedField2',
     label: 'Grouped Field 2',
-    comparator: 'group',
-    group: 'group1',
+    comparator: 'groupNumber',
+    groupNumber: 'group1',
     valueSources: ['field', 'value'],
   },
   {
     name: 'groupedField3',
     label: 'Grouped Field 3',
-    comparator: 'group',
-    group: 'group1',
+    comparator: 'groupNumber',
+    groupNumber: 'group1',
     valueSources: ['field', 'value'],
   },
   {
     name: 'groupedField4',
     label: 'Grouped Field 4',
-    comparator: 'group',
-    group: 'group1',
+    comparator: 'groupNumber',
+    groupNumber: 'group1',
     valueSources: ['field', 'value'],
   },
 ];
@@ -280,8 +280,8 @@ export const initialQuery: RuleGroupType = {
     {
       id: generateID(),
       field: 'birthdate',
-      operator: '=',
-      value: '1969-01-01',
+      operator: 'between',
+      value: '1954-10-03,1960-06-06',
     },
   ],
 };

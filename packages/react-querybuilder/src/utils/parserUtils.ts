@@ -3,14 +3,11 @@ import type {
   Field,
   OptionList,
   ValueSources,
-} from '@react-querybuilder/ts/src/index.noReact';
-import { filterFieldsByComparator } from '../internal/filterFieldsByComparator';
-import { getValueSourcesUtil } from '../internal/getValueSourcesUtil';
-import { uniqByName } from '../internal/uniq';
+} from '@react-querybuilder/ts/dist/index.noReact';
+import { filterFieldsByComparator } from './filterFieldsByComparator';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isOptionGroupArray } from './optGroupUtils';
-
-export const isPojo = (obj: any): obj is Record<string, any> =>
-  obj === null || typeof obj !== 'object' ? false : Object.getPrototypeOf(obj) === Object.prototype;
+import { uniqByName } from './uniq';
 
 export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field>) => {
   let fieldsFlat: Field[] = [];

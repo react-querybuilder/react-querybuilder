@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
 
-console.log('Generating examples');
+console.log('Generating/updating examples');
 
 const require = createRequire(import.meta.url);
 /** @type {{ version: string; }} */
@@ -56,7 +56,8 @@ const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.j
 await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON = require('./_template/package.json');
 
-for (const exampleID in configs) {
+/** @type {(id: string) => () => Promise<void>} */
+const generateCommonExample = exampleID => async () => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
   const examplePublic = pathJoin(examplePath, 'public');
@@ -211,24 +212,33 @@ for (const exampleID in configs) {
   // #endregion
 
   console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
-}
+};
 
-console.log('Finished generating examples');
+// #region Other examples' package.json
+const otherExamples = ['ci', 'native'];
 
-// #region CI package.json
-console.log('Updating CI');
-const ciPkgJSON = require('./ci/package.json');
-for (const dep of Object.keys(ciPkgJSON.dependencies)) {
-  if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
-    ciPkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+/** @type {(id: string) => () => Promise<void>} */
+const updateOtherExample = otherExampleName => async () => {
+  const otherExamplePkgJSON = require(`./${otherExampleName}/package.json`);
+  for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
+    if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
+      otherExamplePkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
+    }
   }
-}
-const ciPkgJsonPath = pathJoin(__dirname, 'ci/package.json');
-const prettierOptions = await prettier.resolveConfig(ciPkgJsonPath);
-const fileContents = prettier.format(stableStringify(ciPkgJSON), {
-  ...prettierOptions,
-  filepath: ciPkgJsonPath,
-});
-await writeFile(ciPkgJsonPath, fileContents);
-console.log('Finished updating CI');
+  const otherExamplePkgJsonPath = pathJoin(__dirname, `${otherExampleName}/package.json`);
+  const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
+  const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
+    ...otherExamplePrettierOptions,
+    filepath: otherExamplePkgJsonPath,
+  });
+  await writeFile(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
+  console.log(`Updated package.json for "${otherExampleName}" example`);
+};
+
+await Promise.all([
+  ...Object.keys(configs).map(ex => new Promise(r => generateCommonExample(ex)().then(r))),
+  ...otherExamples.map(ex => new Promise(r => updateOtherExample(ex)().then(r))),
+]);
+
+console.log('Finished generating/updating examples');
 // #endregion

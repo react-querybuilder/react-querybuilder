@@ -4,16 +4,16 @@ import type {
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
-import { regenerateID, regenerateIDs } from '../internal/regenerateIDs';
 import { generateID } from './generateID';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
+import { regenerateID, regenerateIDs } from './regenerateIDs';
 
-interface AddOptions {
+export interface AddOptions {
   /**
    * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
    * `independentCombinators`), then the first combinator in this list will be
@@ -35,10 +35,10 @@ interface AddOptions {
 }
 /**
  * Adds a rule or group to a query.
- * @param query The query to update
- * @param ruleOrGroup The rule or group to add
- * @param parentPath Path of the group to add to
- * @param options
+ * @param query - The query to update
+ * @param ruleOrGroup - The rule or group to add
+ * @param parentPath - Path of the group to add to
+ * @param options -
  * @returns The full query with the new rule or group added
  */
 export const add = <RG extends RuleGroupTypeAny>(
@@ -52,20 +52,25 @@ export const add = <RG extends RuleGroupTypeAny>(
   }: AddOptions = {}
 ) =>
   produce(query, draft => {
-    const parent = findPath(parentPath, draft) as RG;
+    const parent = findPath(parentPath, draft);
+
+    if (!parent || !('rules' in parent)) return;
+
     if (!('combinator' in parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
-        // @ts-expect-error This is technically a type violation until the next `.push()`,
-        // but that happens immediately and unconditionally so there's no real risk.
+        // @ts-expect-error This is technically a type violation until the next push
+        // to the rules array, but that happens immediately and unconditionally so
+        // there's no significant risk.
         combinatorPreceding ??
           (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
       );
     }
+    // The "as RuleType" here just avoids the ambiguity with RuleGroupTypeAny
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
   });
 
-interface UpdateOptions {
+export interface UpdateOptions {
   /**
    * When updating the `field` of a rule, the rule's `operator`, `value`, and `valueSource`
    * will be reset to their respective defaults. Defaults to `true`.
@@ -91,11 +96,11 @@ interface UpdateOptions {
 }
 /**
  * Updates a property of a rule or group within a query.
- * @param query The query to update
- * @param prop The name of the property to update
- * @param value The new value of the property
- * @param path The path of the rule or group to update
- * @param options
+ * @param query - The query to update
+ * @param prop - The name of the property to update
+ * @param value - The new value of the property
+ * @param path - The path of the rule or group to update
+ * @param options -
  * @returns The updated query
  */
 export const update = <RG extends RuleGroupTypeAny>(
@@ -120,82 +125,96 @@ export const update = <RG extends RuleGroupTypeAny>(
         parentRules[path[path.length - 1]] = value;
       }
       return;
-    } else {
-      const ruleOrGroup = findPath(path, draft)!;
-      const isGroup = 'rules' in ruleOrGroup;
-      // Only update if there is actually a change
+    }
+
+    const ruleOrGroup = findPath(path, draft);
+
+    // Ignore invalid paths
+    if (!ruleOrGroup) return;
+
+    const isGroup = 'rules' in ruleOrGroup;
+
+    // Only update if there is actually a change
+    // @ts-expect-error prop can refer to rule or group properties
+    if (ruleOrGroup[prop] === value) return;
+
+    // Handle valueSource updates later
+    if (prop !== 'valueSource') {
       // @ts-expect-error prop can refer to rule or group properties
-      if (ruleOrGroup[prop] !== value) {
-        // Handle valueSource updates later
-        if (prop !== 'valueSource') {
-          // @ts-expect-error prop can refer to rule or group properties
-          ruleOrGroup[prop] = value;
-        }
-        if (!isGroup) {
-          let resetValueSource = false;
-          let resetValue = false;
+      ruleOrGroup[prop] = value;
+    }
 
-          // Set default operator, valueSource, and value for field change
-          if (resetOnFieldChange && prop === 'field') {
-            ruleOrGroup.operator = getRuleDefaultOperator(value);
-            resetValueSource = true;
-            resetValue = true;
-          }
+    // If this is a group, there's no more to do
+    if (isGroup) return;
 
-          // Set default valueSource and value for operator change
-          if (resetOnOperatorChange && prop === 'operator') {
-            resetValueSource = true;
-            resetValue = true;
-          }
+    let resetValueSource = false;
+    let resetValue = false;
 
-          const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
-          if (
-            (resetValueSource &&
-              ruleOrGroup.valueSource &&
-              defaultValueSource !== ruleOrGroup.valueSource) ||
-            (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
-          ) {
-            // Only reset the value if we're changing the valueSource either
-            // 1) from `undefined` to something that is _not_ the default, or
-            // 2) from the current (defined) value to something else
-            resetValue =
-              !!ruleOrGroup.valueSource ||
-              (!ruleOrGroup.valueSource && value !== defaultValueSource);
-            ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
-          }
+    // Set default operator, valueSource, and value for field change
+    if (resetOnFieldChange && prop === 'field') {
+      ruleOrGroup.operator = getRuleDefaultOperator(value);
+      resetValueSource = true;
+      resetValue = true;
+    }
 
-          if (resetValue) {
-            // The default value should be a valid field name if defaultValueSource is 'field'
-            ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
-          }
-        }
-      }
+    // Set default valueSource and value for operator change
+    if (resetOnOperatorChange && prop === 'operator') {
+      resetValueSource = true;
+      resetValue = true;
+    }
+
+    const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
+    if (
+      (resetValueSource &&
+        ruleOrGroup.valueSource &&
+        defaultValueSource !== ruleOrGroup.valueSource) ||
+      (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
+    ) {
+      // Only reset the value if we're changing the valueSource either
+      // 1) from `undefined` to something that is _not_ the default, or
+      // 2) from the current (defined) value to something else
+      resetValue =
+        !!ruleOrGroup.valueSource || (!ruleOrGroup.valueSource && value !== defaultValueSource);
+      ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
+    }
+
+    if (resetValue) {
+      // The default value should be a valid field name if defaultValueSource is 'field'
+      ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
     }
   });
 
 /**
  * Removes a rule or group from a query.
- * @param query The query to update
- * @param path Path of the rule or group to remove
+ * @param query - The query to update
+ * @param path - Path of the rule or group to remove
  * @returns The updated query
  */
 export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) => {
-  if (path.length === 0 || (!('combinator' in query) && !findPath(path, query))) {
+  if (
+    // Can't remove the root group
+    path.length === 0 ||
+    // Can't independently remove independent combinators
+    (!('combinator' in query) && !findPath(path, query))
+  ) {
     return query;
   }
+
   return produce(query, draft => {
     const index = path[path.length - 1];
-    const parent = findPath(getParentPath(path), draft) as RG;
-    if (!('combinator' in parent) && parent.rules.length > 1) {
-      const idxStartDelete = index === 0 ? 0 : index - 1;
-      parent.rules.splice(idxStartDelete, 2);
-    } else {
-      parent.rules.splice(index, 1);
+    const parent = findPath(getParentPath(path), draft);
+    if (parent && 'rules' in parent) {
+      if (!('combinator' in parent) && parent.rules.length > 1) {
+        const idxStartDelete = index === 0 ? 0 : index - 1;
+        parent.rules.splice(idxStartDelete, 2);
+      } else {
+        parent.rules.splice(index, 1);
+      }
     }
   });
 };
 
-interface MoveOptions {
+export interface MoveOptions {
   /**
    * When `true`, the source rule/group will not be removed from its original path.
    */
@@ -214,10 +233,10 @@ interface MoveOptions {
 /**
  * Moves a rule or group from one path to another. In the options parameter, pass
  * `{ clone: true }` to copy instead of move.
- * @param query The query to update
- * @param oldPath Original path of the rule or group to move
- * @param newPath Path to move the rule or group to
- * @param options
+ * @param query - The query to update
+ * @param oldPath - Original path of the rule or group to move
+ * @param newPath - Path to move the rule or group to
+ * @param options -
  * @returns The updated query
  */
 export const move = <RG extends RuleGroupTypeAny>(
@@ -226,9 +245,11 @@ export const move = <RG extends RuleGroupTypeAny>(
   newPath: number[],
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
-  if (pathsAreEqual(oldPath, newPath)) {
+  // Don't move to the same location or a path that doesn't exist yet
+  if (pathsAreEqual(oldPath, newPath) || !findPath(getParentPath(newPath), query)) {
     return query;
   }
+
   const ruleOrGroupOriginal = findPath(oldPath, query);
   if (!ruleOrGroupOriginal) {
     return query;

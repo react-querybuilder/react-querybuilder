@@ -1,5 +1,6 @@
 import { act, render } from '@testing-library/react';
-import { QueryBuilderMaterial } from '.';
+import { consoleMocks } from 'react-querybuilder/genericTests';
+import { QueryBuilderMaterial } from './index';
 import { errorMaterialWithoutMUI } from './messages';
 import type { MuiComponentName } from './types';
 
@@ -21,14 +22,14 @@ const componentNames: MuiComponentName[] = [
   'TextareaAutosize',
 ];
 
+const { consoleError } = consoleMocks();
+
 afterEach(() => {
   jest.resetModules();
   jest.restoreAllMocks();
 });
 
 it('renders default components when @mui load fails', async () => {
-  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-
   componentNames.forEach(mockCompName => {
     if (mockCompName)
       jest.mock(

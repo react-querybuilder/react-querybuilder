@@ -1,7 +1,7 @@
 import type {
   DefaultCombinatorNameExtended,
   DefaultOperatorName,
-} from '@react-querybuilder/ts/src/index.noReact';
+} from '@react-querybuilder/ts/dist/index.noReact';
 import type {
   AndOperator,
   ComparisonOperator,
@@ -38,7 +38,7 @@ export const getParamString = (param: any) => {
 };
 
 export const getFieldName = (f: string | SQLIdentifier) =>
-  (typeof f === 'string' ? f : f.value).replace(/(^`|`$)/g, '');
+  (typeof f === 'string' ? f : f.value).replace(/(^`|`$)/g, '').replace(/(^"|"$)/g, '');
 
 const normalizeCombinator = (c: AndOperator | OrOperator | XorOperator) =>
   c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorNameExtended;

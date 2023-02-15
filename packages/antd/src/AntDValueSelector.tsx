@@ -1,8 +1,7 @@
 import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import { Select } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
-import { useMemo } from 'react';
-import { joinWith, splitBy } from 'react-querybuilder';
+import { useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 type AntDValueSelectorProps = VersatileSelectorProps &
@@ -29,32 +28,7 @@ export const AntDValueSelector = ({
   fieldData: _fieldData,
   ...extraProps
 }: AntDValueSelectorProps) => {
-  const onChange = useMemo(
-    () =>
-      multiple
-        ? (v: string | string[]) =>
-            handleOnChange(
-              Array.isArray(v)
-                ? listsAsArrays
-                  ? v
-                  : joinWith(v, ',')
-                : /* istanbul ignore next */ v
-            )
-        : (v: string) => handleOnChange(v),
-    [handleOnChange, listsAsArrays, multiple]
-  );
-
-  const val = useMemo(() => {
-    if (multiple) {
-      if (Array.isArray(value)) {
-        return value;
-      } else if (value === '') {
-        return [];
-      }
-      return splitBy(value, ',');
-    }
-    return value;
-  }, [multiple, value]);
+  const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const modeObj = multiple ? { mode: 'multiple' as const } : {};
 
@@ -64,7 +38,6 @@ export const AntDValueSelector = ({
         {...modeObj}
         dropdownMatchSelectWidth={false}
         disabled={disabled}
-        // @ts-expect-error value prop cannot be string[] if multiple is false
         value={val}
         onChange={onChange}
         {...extraProps}>

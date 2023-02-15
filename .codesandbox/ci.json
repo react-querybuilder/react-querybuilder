@@ -7,7 +7,9 @@
     "/examples/bootstrap",
     "/examples/bulma",
     "/examples/chakra",
-    "/examples/material"
+    "/examples/mantine",
+    "/examples/material",
+    "/examples/native"
   ],
   "node": "16"
 }

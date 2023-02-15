@@ -1,13 +1,11 @@
+import { QueryBuilder } from './components';
+import * as messages from './messages';
+
 export * from '@react-querybuilder/ctx';
 export * from '@react-querybuilder/ts';
-export { version } from '../package.json';
-export * from './controls/';
+export * from './components';
 export * from './defaults';
-export * from './InlineCombinator';
-export * as messages from './messages';
-export * from './Rule';
-export * from './RuleGroup';
+export * from './hooks';
 export * from './utils';
-export { QueryBuilder };
-import { QueryBuilder } from './QueryBuilder';
+export { messages };
 export default QueryBuilder;

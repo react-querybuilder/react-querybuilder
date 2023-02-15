@@ -3,8 +3,8 @@ import type {
   RuleType,
   RuleValidator,
   ValidationResult,
-} from '@react-querybuilder/ts/src/index.noReact';
-import { isPojo } from './parserUtils';
+} from '@react-querybuilder/ts/dist/index.noReact';
+import { isPojo } from './misc';
 
 export const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>
   isPojo(vr) && typeof vr.valid === 'boolean';

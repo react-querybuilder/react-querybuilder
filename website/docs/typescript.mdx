@@ -22,10 +22,11 @@ interface Field {
   valueSources?: ValueSources | ((operator: string) => ValueSources); // List of allowed value sources (must contain "value", "field", or both)
   comparator?: string | ((f: Field, operator: string) => boolean); // Determines which (other) fields to include in the list when valueSource is "field"
   className?: Classname; // Assigned to rules where this field is selected
+  separator?: ReactNode; // Rendered between multiple value editors, e.g. when the operator is "between" or "notBetween"
 }
 ```
 
-[Click here](./api/valueeditor) for documentation on the available options for `valueEditorType`.
+[Click here](./components/valueeditor) for documentation on the available options for `valueEditorType`.
 
 ## Rules and groups
 

@@ -11,7 +11,7 @@ import type {
   ValueEditorProps,
 } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
+import { defaultControlElements } from '../src/components';
 import {
   defaultControlClassnames,
   defaultTranslations as translations,
@@ -98,6 +98,7 @@ const ruleSchema: Partial<Schema> = {
     { name: '!=', label: 'is not' },
   ],
   getValueEditorType: () => 'text',
+  getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
   getInputType: () => 'text',
   getValues: () => [

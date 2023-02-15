@@ -5,8 +5,8 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/src/index.noReact';
-import { parseSQL } from '.';
+} from '@react-querybuilder/ts/dist/index.noReact';
+import { parseSQL } from './parseSQL';
 import { isWildcardsOnly } from './utils';
 
 const wrapRule = (rule?: DefaultRuleType): DefaultRuleGroupType => ({
@@ -108,6 +108,9 @@ describe('boolean operators', () => {
   it('quoted field names', () => {
     expect(parseSQL('`isMusician` = TRUE')).toEqual(
       wrapRule({ field: 'isMusician', operator: '=', value: true })
+    );
+    expect(parseSQL('"Is a Musician" = TRUE')).toEqual(
+      wrapRule({ field: 'Is a Musician', operator: '=', value: true })
     );
   });
 
