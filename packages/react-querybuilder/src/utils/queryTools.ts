@@ -25,7 +25,7 @@ export interface AddOptions {
    * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
    * `independentCombinators`), then this combinator will be inserted before
    * the new rule/group if the parent group is not empty. This option will
-   * override `combinators`.
+   * supersede `combinators`.
    */
   combinatorPreceding?: string;
   /**
