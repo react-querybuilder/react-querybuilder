@@ -3,7 +3,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
@@ -14,10 +14,28 @@ const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
 );
 
 function ReactQueryBuilderDemo_AntdBrowser() {
-  const Demo = useMemo(
-    () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
-    []
-  );
+  const [{ Demo }, setComponents] = useState<{
+    Demo?: typeof import('./_components/Demo').default;
+  }>({});
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      const comps = await Promise.all([(await import('./_components/Demo')).default]);
+      if (active && !Demo) {
+        const [ImportedDemo] = comps;
+        setComponents({ Demo: ImportedDemo });
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [Demo]);
+
+  if (!Demo) return <Loading />;
+
   return (
     <QueryBuilderAntD
       controlElements={{

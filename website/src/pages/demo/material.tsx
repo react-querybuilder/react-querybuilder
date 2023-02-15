@@ -3,7 +3,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './_styles/demo.scss';
 import './_styles/rqb-material.scss';
 
@@ -43,13 +43,31 @@ const muiComponents = {
 
 function ReactQueryBuilderDemo_MaterialBrowser() {
   const { colorMode } = useColorMode();
+  const [{ Demo }, setComponents] = useState<{
+    Demo?: typeof import('./_components/Demo').default;
+  }>({});
+
+  useEffect(() => {
+    let active = true;
+
+    const getComps = async () => {
+      const comps = await Promise.all([(await import('./_components/Demo')).default]);
+      const [Demo] = comps;
+
+      if (active) {
+        setComponents(() => ({ Demo }));
+      }
+    };
+    getComps();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const muiTheme = useMemo(() => createTheme({ palette: { mode: colorMode } }), [colorMode]);
 
-  const Demo = useMemo(
-    () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
-    []
-  );
+  if (!Demo) return <Loading />;
 
   return (
     <ThemeProvider theme={muiTheme}>

@@ -17,7 +17,7 @@ function ReactQueryBuilderDemo_MantineBrowser() {
   useEffect(() => {
     let active = true;
 
-    const getComps = async () => {
+    (async () => {
       const comps = await Promise.all([
         (await import('./_components/Demo')).default,
         (await import('@mantine/core')).MantineProvider,
@@ -32,8 +32,7 @@ function ReactQueryBuilderDemo_MantineBrowser() {
           QueryBuilderMantine,
         }));
       }
-    };
-    getComps();
+    })();
 
     return () => {
       active = false;

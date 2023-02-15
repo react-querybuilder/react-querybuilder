@@ -11,7 +11,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
@@ -24,6 +24,25 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
   const { colorMode } = useColorMode();
   const { colorMode: chakraColorMode, setColorMode } = useChakraColorMode();
   const firstRender = useRef(true);
+  const [{ Demo }, setComponents] = useState<{
+    Demo?: typeof import('./_components/Demo').default;
+  }>({});
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      const comps = await Promise.all([(await import('./_components/Demo')).default]);
+      if (active && !Demo) {
+        const [ImportedDemo] = comps;
+        setComponents({ Demo: ImportedDemo });
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [Demo]);
 
   useEffect(() => {
     const doReload = !firstRender.current && colorMode !== chakraColorMode;
@@ -35,10 +54,7 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
     firstRender.current = false;
   }, [chakraColorMode, colorMode, setColorMode]);
 
-  const Demo = useMemo(
-    () => (require('./_components/Demo') as typeof import('./_components/Demo')).default,
-    []
-  );
+  if (!Demo) return <Loading />;
 
   return (
     <ChakraProvider theme={chakraTheme} resetCSS={false}>
