@@ -6,26 +6,13 @@ import { useRule } from '../hooks';
 export const Rule = (props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
-  const cloneRule = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    r.cloneRule();
-  };
-
-  const toggleLockRule = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    r.toggleLockRule();
-  };
-
-  const removeRule = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    r.removeRule();
-  };
+  const [cloneRule, toggleLockRule, removeRule] = [r.cloneRule, r.toggleLockRule, r.removeRule].map(
+    f => (event: ReactMouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      f();
+    }
+  );
 
   return (
     <div

@@ -8,40 +8,19 @@ import { pathsAreEqual } from '../utils';
 export const RuleGroup = (props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
 
-  const addRule = (event: ReactMouseEvent, context?: any) => {
+  const [addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup] = [
+    rg.addRule,
+    rg.addGroup,
+    rg.cloneGroup,
+    rg.toggleLockGroup,
+    rg.removeGroup,
+  ].map(f => (event: ReactMouseEvent, context?: any) => {
     event.preventDefault();
     event.stopPropagation();
+    f(event, context);
+  });
 
-    rg.addRule(event, context);
-  };
-
-  const addGroup = (event: ReactMouseEvent, context?: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    rg.addGroup(event, context);
-  };
-
-  const cloneGroup = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    rg.cloneGroup(event);
-  };
-
-  const toggleLockGroup = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    rg.toggleLockGroup(event);
-  };
-
-  const removeGroup = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    rg.removeGroup(event);
-  };
+  const subComponentProps = { ...rg, addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup };
 
   return (
     <div
@@ -54,16 +33,10 @@ export const RuleGroup = (props: RuleGroupProps) => {
       data-level={rg.path.length}
       data-path={JSON.stringify(rg.path)}>
       <div ref={rg.dropRef} className={rg.classNames.header}>
-        <RuleGroupHeaderComponents
-          {...rg}
-          {...{ addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup }}
-        />
+        <RuleGroupHeaderComponents {...subComponentProps} />
       </div>
       <div className={rg.classNames.body}>
-        <RuleGroupBodyComponents
-          {...rg}
-          {...{ addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup }}
-        />
+        <RuleGroupBodyComponents {...subComponentProps} />
       </div>
     </div>
   );
