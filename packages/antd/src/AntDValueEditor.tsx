@@ -198,9 +198,7 @@ export const AntDValueEditor = ({
                 inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : ''
               }`;
               const dateArray = dates?.map(d => d?.format(format));
-              return handleOnChange(
-                dateArray ? (listsAsArrays ? dateArray : dateArray.join(',')) : dates
-              );
+              handleOnChange(dateArray ? (listsAsArrays ? dateArray : dateArray.join(',')) : dates);
             }
           }
         />

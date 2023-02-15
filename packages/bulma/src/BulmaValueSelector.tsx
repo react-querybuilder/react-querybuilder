@@ -1,7 +1,5 @@
 import type { ValueSelectorProps } from '@react-querybuilder/ts';
-import type { ChangeEvent } from 'react';
-import { useMemo } from 'react';
-import { joinWith, splitBy } from 'react-querybuilder';
+import { useSelectElementChangeHandler, useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 export const BulmaValueSelector = ({
@@ -14,22 +12,17 @@ export const BulmaValueSelector = ({
   multiple,
   listsAsArrays,
 }: ValueSelectorProps) => {
-  const onChange = useMemo(
-    () =>
-      multiple
-        ? (e: ChangeEvent<HTMLSelectElement>) => {
-            const valArray = Array.from(e.target.selectedOptions).map(o => o.value);
-            handleOnChange(listsAsArrays ? valArray : joinWith(valArray, ','));
-          }
-        : (e: ChangeEvent<HTMLSelectElement>) => handleOnChange(e.target.value),
-    [handleOnChange, listsAsArrays, multiple]
-  );
+  const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const val = multiple ? (Array.isArray(value) ? value : splitBy(value, ',')) : value;
+  const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });
 
   return (
     <div title={title} className={`${className} select`}>
-      <select value={val} multiple={!!multiple} disabled={disabled} onChange={onChange}>
+      <select
+        value={val}
+        multiple={multiple}
+        disabled={disabled}
+        onChange={selectElementChangeHandler}>
         {toOptions(options)}
       </select>
     </div>

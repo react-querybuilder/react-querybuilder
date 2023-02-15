@@ -1,4 +1,4 @@
-import vitePluginReact from '@vitejs/plugin-react';
+import vitePluginReact from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
@@ -13,11 +13,17 @@ export default defineConfig(({ command }) => ({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      fileName: format => `index.${format}.js`,
+      fileName: format => `index.${format === 'es' ? 'm' : 'c'}js`,
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['react', 'react-native', 'react-native-web', 'react-querybuilder'],
+      external: [
+        'react',
+        'react-native',
+        'react-native-web',
+        'react-querybuilder',
+        'react/jsx-runtime',
+      ],
     },
     sourcemap: true,
     target: 'es2020',
@@ -32,6 +38,7 @@ export default defineConfig(({ command }) => ({
     visualizer({
       filename: 'build-stats.html',
       gzipSize: true,
+      brotliSize: true,
       title: `Build stats (${packageAbbr})`,
     }),
   ],

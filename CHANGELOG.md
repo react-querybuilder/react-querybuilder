@@ -9,48 +9,53 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) All packages now use `"exports"` field for better ESM compatibility.
-- [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators.
-  - When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`.
-  - Bulma components no longer specify the `is-small` class, so they will be rendered at their default size.
-  - The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) changed from `4px` to `0.25rem`. Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers, and $16 \times 0.25 = 4$.
-  - Utility function `c` has been removed. Use a package like [`clsx`](https://www.npmjs.com/package/clsx) instead.
+- [#455] A UMD build is no longer provided. See [new instructions for buildless environments using ESM](https://react-querybuilder.js.org/docs/buildless)).
+- [#431] Major `ValueEditor` update--including the `ValueEditor`s in the compatibility packages--for "between"/"notBetween" operators. When the `operator` for a rule is "between" or "notBetween", two inputs will be displayed. Each will have the class "rule-value-list-item". They will manage the `value` as a comma-separated list unless `listsAsArrays` is `true`, in which case a proper array will be used.
+- [#431] The default border radius on rule groups and branch lines (SCSS variable `$rqb-border-radius`) is now `0.25rem` (previously `4px`). Visually, this should be the same for most users since `16px` is the default `font-size` on most browsers, and $16 \times 0.25 = 4$.
+- [#431] Utility function `c` has been removed. Use a package like [`clsx`](https://www.npmjs.com/package/clsx) (what RQB uses internally) instead.
+- [#431] Bulma compatibility components no longer specify the `is-small` class, so they will be rendered at their default size.
+
+### Fixed
+
+- [#452] All packages now use the `"exports"` field in their `package.json` for better ESM compatibility.
 
 ### Added
 
-- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New `ValueEditor` prop `selectorComponent` (optional) enables the replacement of only the selector component in the value editor without recreating the logic in the default value editor. E.g., `const MyValueEditor = (props: ValueEditorProps) => (<ValueEditor {...props} selectorComponent={MyValueSelector} />)` will use the default value editor logic and presentation _except_ when it would normally display the default `ValueSelector`.
-- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New [React Native](https://reactnative.dev/)-compatible package `@react-querybuilder/native` and associated [example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native) showcasing multiple UI libraries.
-- [#452](https://github.com/react-querybuilder/react-querybuilder/pull/452) New exports:
+- [#452] New `ValueEditor` prop `selectorComponent` (optional) enables the replacement of only the selector component in the value editor without recreating the logic in the default value editor. E.g., `const MyValueEditor = (props: ValueEditorProps) => (<ValueEditor {...props} selectorComponent={MyValueSelector} />)` will use the default value editor logic and presentation _except_ when it would normally display the default `ValueSelector`.
+- [#452] New [React Native](https://reactnative.dev/)-compatible package `@react-querybuilder/native` and associated [example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native) showcasing multiple UI libraries.
+- [#452] New exports:
   - `useQueryBuilder`: All logic and configuration formerly internal to the `QueryBuilder` component has been extracted into a custom Hook, making it easy to implement one's own presentation layer without reproducing or copy-pasting the official component code.
   - `useRuleGroup`: As `useQueryBuilder` is to the `QueryBuilder` component, the `useRuleGroup` Hook is to the `RuleGroup` component.
   - `useRule`: As `useRuleGroup` is to the `RuleGroup` component, the `useRule` Hook is to the `Rule` component.
   - `RuleGroupHeaderComponents`/`RuleGroupBodyComponents`: These JSX fragments have been extracted from the `RuleGroup` component and exposed as named exports, enabling the creation of a custom `RuleGroup` wrapper without recreating the "innards" of the default `RuleGroup`. (For example, the new `@react-querybuilder/native` package wraps these fragments in `View` elements from `react-native`).
-- [#431](https://github.com/react-querybuilder/react-querybuilder/issues/431) New props and Hook returns to support `ValueEditor`s new behavior for "between"/"notBetween" operators.
+- [#431] New props and Hook returns to support `ValueEditor`s new behavior for "between"/"notBetween" operators.
   - New `QueryBuilder` prop `getValueEditorSeparator`: Takes a `field` name and an `operator` name and should return a `ReactNode` (string, element, etc.) that will be placed between the two editors when `operator` is "between" or "notBetween". E.g., `getValueEditorSeparator={() => "and"}`.
   - New `QueryBuilder` prop `parseNumbers`: When `true`, the default `ValueEditor` will update its rule with an actual number instead of the string representation whenever possible.
   - New `ValueEditor` prop `skipHook`: When `true`, the `useValueEditor` hook call within the default `ValueEditor` component will not make query updates. Enables safer rendering of the default `ValueEditor` as a fallback to a custom value editor.
-  - The `useValueEditor` hook has been updated to return an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
+  - The `useValueEditor` hook now returns an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
+- [#455] `regenerateIDs` works for any object, not just rule groups.
+- [#455] Query tools (`add`, `remove`, `update`, and `move`) will fail gracefully and return the original query if the provided `path` or `parentPath` points to an invalid location in the query hierarchy.
 
 ## [v5.4.1] - 2023-01-30
 
 ### Fixed
 
-- [#458](https://github.com/react-querybuilder/react-querybuilder/issues/458) Fixed `parseJsonLogic` output when a negated "between", "in", "contains", "beginsWith", or "endsWith" rule is the only operation.
+- [#458] Fixed `parseJsonLogic` output when a negated "between", "in", "contains", "beginsWith", or "endsWith" rule is the only operation.
 
 ## [v5.4.0] - 2023-01-06
 
 ### Changed
 
-- [#443](https://github.com/react-querybuilder/react-querybuilder/issues/443) Automatically generated `id`s are no longer prefixed with `"g-"` or `"r-"`.
+- [#443] Automatically generated `id`s are no longer prefixed with `"g-"` or `"r-"`.
 - The default border color has changed from `#7f81a2` to `#8081a2`. This difference will almost certainly be imperceptible.
 
 ### Fixed
 
-- [#443](https://github.com/react-querybuilder/react-querybuilder/issues/443) `generateID` no longer tries to `require('crypto')` which should allow its use in more environments and build targets.
+- [#443] `generateID` no longer tries to `require('crypto')` which should allow its use in more environments and build targets.
 
 ### Added
 
-- [#443](https://github.com/react-querybuilder/react-querybuilder/issues/443) New prop `idGenerator` can be used to override the default `generateID` function.
+- [#443] New prop `idGenerator` can be used to override the default `generateID` function.
 
 ## [v5.3.3] - 2022-12-27
 
@@ -62,55 +67,55 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- [#434](https://github.com/react-querybuilder/react-querybuilder/issues/434) Added `jsonLogicOperations` option to `parseJsonLogic` to enable parsing of custom operations.
+- [#434] Added `jsonLogicOperations` option to `parseJsonLogic` to enable parsing of custom operations.
 
 ## [v5.3.1] - 2022-12-23
 
 ### Fixed
 
-- [#432](https://github.com/react-querybuilder/react-querybuilder/issues/432) The `crypto` package was used in a way that didn't work in some Node environments.
+- [#432] The `crypto` package was used in a way that didn't work in some Node environments.
 
 ## [v5.3.0] - 2022-12-23
 
 ### Changed
 
 - New rule and group `id`s are now generated as valid v4 UUIDs using `crypto.getRandomValues()` instead of `Math.random()`. The `generateID` function used internally is exported.
-- [#418](https://github.com/react-querybuilder/react-querybuilder/issues/418) TypeScript interface `NameLabelPair` has been deprecated and is now an alias for the `Option` interface.
+- [#418] TypeScript interface `NameLabelPair` has been deprecated and is now an alias for the `Option` interface.
 
 ### Fixed
 
-- [#407](https://github.com/react-querybuilder/react-querybuilder/issues/407) Drag-and-drop will now allow drops on locked rules (which places the dragged rule/group below the drop target) and above locked rules/groups.
-- [#411](https://github.com/react-querybuilder/react-querybuilder/issues/411) When `showCombinatorsBetweenRules` is enabled, a combinator selector immediately above a locked rule/group will no longer be locked unless the group it belongs to is locked.
+- [#407] Drag-and-drop will now allow drops on locked rules (which places the dragged rule/group below the drop target) and above locked rules/groups.
+- [#411] When `showCombinatorsBetweenRules` is enabled, a combinator selector immediately above a locked rule/group will no longer be locked unless the group it belongs to is locked.
 - `jsonLogicAdditionalOperators` is exported again ([documentation](https://react-querybuilder.js.org/docs/api/export#jsonlogic)).
 
 ### Added
 
-- [#422](https://github.com/react-querybuilder/react-querybuilder/issues/422) Adding the class `queryBuilder-branches` displays "tree view" branch lines.
-- [#426](https://github.com/react-querybuilder/react-querybuilder/issues/426) Dynamic classnames based on the specific rule/group properties.
+- [#422] Adding the class `queryBuilder-branches` displays "tree view" branch lines.
+- [#426] Dynamic classnames based on the specific rule/group properties.
   - New function props `getRuleClassname` and `getRuleGroupClassname` are passed the rule or group, and the return value will be added as a class to the surrounding `div`.
   - `Field`, `Operator`, and new interface `Combinator` now have an optional `className` property that will be applied to rules or groups that specify the appropriate attribute.
-- [#417](https://github.com/react-querybuilder/react-querybuilder/issues/417) Optional `arity` property for operators. When `arity` is either "unary" or a number less than 2, the value editor will not render when that operator is selected (similar to the standard "null"/"notNull" operators).
-- [#408](https://github.com/react-querybuilder/react-querybuilder/issues/408) The interfaces `Option` (née `NameLabelPair`), `Field`, and `ValueEditorProps` now accept generics for `name` and other properties.
-- [#418](https://github.com/react-querybuilder/react-querybuilder/issues/418) A new `OptionList` type covers the `options` property for all standard selection lists (field, operator, combinator, etc.). Previously this was a union type: `NameLabelPair[] | OptionGroup<NameLabelPair>[]`. `OptionList` is equivalent to this type, but 1) doesn't require typing the base type twice, and 2) uses the new `Option` name instead of the deprecated `NameLabelPair`.
-- [#421](https://github.com/react-querybuilder/react-querybuilder/issues/421) When `independentCombinators` is enabled, custom `onAddRule` and `onAddGroup` callbacks can add a `combinatorPreceding` property to the rule/group which will end up being the combinator inserted above the new rule/group (if the parent group is not empty).
+- [#417] Optional `arity` property for operators. When `arity` is either "unary" or a number less than 2, the value editor will not render when that operator is selected (similar to the standard "null"/"notNull" operators).
+- [#408] The interfaces `Option` (née `NameLabelPair`), `Field`, and `ValueEditorProps` now accept generics for `name` and other properties.
+- [#418] A new `OptionList` type covers the `options` property for all standard selection lists (field, operator, combinator, etc.). Previously this was a union type: `NameLabelPair[] | OptionGroup<NameLabelPair>[]`. `OptionList` is equivalent to this type, but 1) doesn't require typing the base type twice, and 2) uses the new `Option` name instead of the deprecated `NameLabelPair`.
+- [#421] When `independentCombinators` is enabled, custom `onAddRule` and `onAddGroup` callbacks can add a `combinatorPreceding` property to the rule/group which will end up being the combinator inserted above the new rule/group (if the parent group is not empty).
 
 ## [v5.2.0] - 2022-11-26
 
 ### Added
 
-- [#403](https://github.com/react-querybuilder/react-querybuilder/issues/403) Add `onRemove` prop and pass rule/group to all `ActionElement`s (buttons).
+- [#403] Add `onRemove` prop and pass rule/group to all `ActionElement`s (buttons).
 
 ## [v5.1.3] - 2022-11-23
 
 ### Fixed
 
-- [#387](https://github.com/react-querybuilder/react-querybuilder/issues/387) Support `antd` version 5.
+- [#387] Support `antd` version 5.
 
 ## [v5.1.2] - 2022-11-21
 
 ### Fixed
 
-- [#399](https://github.com/react-querybuilder/react-querybuilder/issues/399)/[#401](https://github.com/react-querybuilder/react-querybuilder/issues/401) When dragging a rule or group over a group header, the `dndOver` class is no longer applied to child group headers.
+- [#399]/[#401] When dragging a rule or group over a group header, the `dndOver` class is no longer applied to child group headers.
 
 ## [v5.1.1] - 2022-10-27
 
@@ -131,11 +136,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [#394](https://github.com/react-querybuilder/react-querybuilder/issues/394) `parseJsonLogic` now handles `null` values correctly.
+- [#394] `parseJsonLogic` now handles `null` values correctly.
 
 ### Added
 
-- [#392](https://github.com/react-querybuilder/react-querybuilder/issues/392) `parseMongoDB` utility for importing queries from [MongoDB](https://www.mongodb.com/).
+- [#392] `parseMongoDB` utility for importing queries from [MongoDB](https://www.mongodb.com/).
 
 ## [v5.0.0] - 2022-10-22
 
@@ -145,8 +150,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The minimum TypeScript version is now 4.5.
 - When `defaultQuery` is defined, an `id` property will be added to each rule and group in the query hierarchy. This will be reflected in the `onQueryChange` callback parameter. In previous versions `defaultQuery` was not modified by the component itself, but `id` is now added because it is a required attribute internally.
 - Related to the previous bullet, the `prepareRuleGroup` utility function will no longer coerce the `not` property of groups to be a `boolean` type (or even defined at all).
-- [#385](https://github.com/react-querybuilder/react-querybuilder/issues/385) MongoDB output has been simplified: The `$eq` and `$and` operators are only used when necessary.
-- [#343](https://github.com/react-querybuilder/react-querybuilder/pull/343) Drag-and-drop functionality migrated
+- [#385] MongoDB output has been simplified: The `$eq` and `$and` operators are only used when necessary.
+- [#343] Drag-and-drop functionality migrated
   - In order to make the `react-dnd` dependency completely optional when the `enableDragAndDrop` prop was not set to `true`, drag-and-drop functionality was extracted from `react-querybuilder` into a new package called [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
   - The new package has `peerDependencies` of `react-dnd` and `react-dnd-html5-backend` (each of which can be any version >= 14, as long as they match), but no hard `dependencies`. The only external dependencies in the main package now are `immer` and `clsx`.
   - **Upgrade path:** To enable drag-and-drop functionality in v5, nest `<QueryBuilder />` within a `<QueryBuilderDnD />` element. The `enableDragAndDrop` prop is implicitly `true` when using `QueryBuilderDnD`, so you no longer need to set it explicitly unless it should be `false` (which can be set on `QueryBuilderDnD` _or_ `QueryBuilder`).
@@ -164,9 +169,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [#324](https://github.com/react-querybuilder/react-querybuilder/pull/324) The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
+- [#324] The `@react-querybuilder/material` package now properly inherits the theme configuration from ancestor `ThemeProvider`s. Note: the `@mui/material` components are now loaded asynchronously by default, so the query builder will initially be rendered with the default components. See the [documentation](https://react-querybuilder.js.org/docs/compat#preload-mui-components) or the [README](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/material/README.md) to find out how to render the MUI components immediately.
 - `parseCEL` now handles strings correctly (including multi-line strings).
-- [#389](https://github.com/react-querybuilder/react-querybuilder/pull/389) `AntDValueSelector` properly handles empty string values in multiselect mode.
+- [#389] `AntDValueSelector` properly handles empty string values in multiselect mode.
 
 ### Added
 
@@ -189,8 +194,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [#364](https://github.com/react-querybuilder/react-querybuilder/issues/364) The array passed to the `fields` prop was being mutated if it contained duplicates, whether they were duplicate field `name`s or option group `label`s. The `fields` prop is now treated as immutable.
-- [#374](https://github.com/react-querybuilder/react-querybuilder/issues/374) `RuleGroup` was using unstable keys to render elements in the `rules` array. Keys are now stable based on `id` properties, which are auto-generated if not provided in the `query`/`defaultQuery` prop.
+- [#364] The array passed to the `fields` prop was being mutated if it contained duplicates, whether they were duplicate field `name`s or option group `label`s. The `fields` prop is now treated as immutable.
+- [#374] `RuleGroup` was using unstable keys to render elements in the `rules` array. Keys are now stable based on `id` properties, which are auto-generated if not provided in the `query`/`defaultQuery` prop.
 
 ## [v4.5.2] - 2022-08-19
 
@@ -198,12 +203,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Backslashes are now properly escaped when `formatQuery` generates `JSON.parse`-able strings ("mongodb" and "json_without_ids" formats).
 - The `parse*` import methods properly handle backslashes.
-- [#353](https://github.com/react-querybuilder/react-querybuilder/pull/353) The `moment` package is no longer included in the build for `@react-querybuilder/antd`.
+- [#353] The `moment` package is no longer included in the build for `@react-querybuilder/antd`.
 
 ### Added
 
-- [#333](https://github.com/react-querybuilder/react-querybuilder/pull/333) When a rule has an `operator` of "between"/"notBetween" and either `valueSource: "field"` or `valueEditorType: "select"`, the default `ValueEditor` will display two drop-down lists. The values of the drop-down lists will be joined with a comma when the rule's `value` property is updated.
-- [#337](https://github.com/react-querybuilder/react-querybuilder/pull/337) In conjunction with the "between"-related enhancements above, a new Boolean prop has been added to `<QueryBuilder />` called `listsAsArrays`. This prop works in a similar manner to the [`parse*` option of the same name](https://react-querybuilder.js.org/docs/api/import#lists-as-arrays). When the prop is `true`, `ValueEditor` (and `ValueSelector` for `multiple: true`) will store lists of values, including "between" value pairs, as proper arrays instead of comma-separated strings.
+- [#333] When a rule has an `operator` of "between"/"notBetween" and either `valueSource: "field"` or `valueEditorType: "select"`, the default `ValueEditor` will display two drop-down lists. The values of the drop-down lists will be joined with a comma when the rule's `value` property is updated.
+- [#337] In conjunction with the "between"-related enhancements above, a new Boolean prop has been added to `<QueryBuilder />` called `listsAsArrays`. This prop works in a similar manner to the [`parse*` option of the same name](https://react-querybuilder.js.org/docs/api/import#lists-as-arrays). When the prop is `true`, `ValueEditor` (and `ValueSelector` for `multiple: true`) will store lists of values, including "between" value pairs, as proper arrays instead of comma-separated strings.
   - Existing, default format:
     - `{ field: "f1", operator: "between", value: "f2,f3", valueSource: "field" }`
   - `listsAsArrays` format:
@@ -224,7 +229,7 @@ _TL;DR: These are probably not breaking changes._
 <details>
 <summary>While a breaking change in a minor release technically violates <a href="https://semver.org/">semver</a>, the change in question is only "breaking" in a very rare--possibly non-existent--case. The <em>only</em> case where this change will break anything is if you use <code>formatQuery</code> with a custom <code>valueProcessor</code> that accepts fewer than three (3) arguments. Click for details...</summary>
 
-- [#319](https://github.com/react-querybuilder/react-querybuilder/pull/319): `formatQuery` will now invoke custom `valueProcessor` functions with different arguments based on the function's `.length` property, which is the number of arguments a function accepts excluding those with default values:
+- [#319] `formatQuery` will now invoke custom `valueProcessor` functions with different arguments based on the function's `.length` property, which is the number of arguments a function accepts excluding those with default values:
   - If the `valueProcessor` function accepts fewer than three (3) arguments, it will be called like this:
   ```ts
   valueProcessor(rule, { parseNumbers });
@@ -241,23 +246,23 @@ _TL;DR: These are probably not breaking changes._
 
 ### Added
 
-- [#319](https://github.com/react-querybuilder/react-querybuilder/pull/319): Invoking `valueProcessor` with the full `RuleType` object provides access to much more information about specific rules. Standard properties that were previously unavailable include `path`, `id`, and `disabled`, but any custom properties will also be accessible.
+- [#319] Invoking `valueProcessor` with the full `RuleType` object provides access to much more information about specific rules. Standard properties that were previously unavailable include `path`, `id`, and `disabled`, but any custom properties will also be accessible.
   - The default value processors for "sql", "parameterized", "parameterized_named", "mongodb", "cel", and "spel" formats have not changed, but alternate functions using the new `fn(rule, options)` signature are now available:
     - `defaultValueProcessorByRule`
     - `defaultValueProcessorCELByRule`
     - `defaultValueProcessorMongoDBByRule`
     - `defaultValueProcessorSpELByRule`
-- [#320](https://github.com/react-querybuilder/react-querybuilder/pull/320), [#323](https://github.com/react-querybuilder/react-querybuilder/pull/323): New parser functions (also available as standalone builds in the `dist` folder). Click the respective "Import from [format]" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try them out.
+- [#320]/[#323] New parser functions (also available as standalone builds in the `dist` folder). Click the respective "Import from [format]" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try them out.
   - `parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
   - `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`. Click the "Import from CEL" button in [the demo](https://react-querybuilder.js.org/react-querybuilder).
-- [#328](https://github.com/react-querybuilder/react-querybuilder/pull/328) New utility function `transformQuery` recursively processes rule groups and rules with the provided `ruleProcessor`, `ruleGroupProcessor`, and other options ([documentation](https://react-querybuilder.js.org/docs/api/misc#transformquery)).
+- [#328] New utility function `transformQuery` recursively processes rule groups and rules with the provided `ruleProcessor`, `ruleGroupProcessor`, and other options ([documentation](https://react-querybuilder.js.org/docs/api/misc#transformquery)).
 
 ### Fixed
 
-- [#323](https://github.com/react-querybuilder/react-querybuilder/pull/323): `formatQuery` outputs will now escape quotation marks when appropriate:
+- [#323] `formatQuery` outputs will now escape quotation marks when appropriate:
   - For SQL ("sql", "parameterized", "parameterized_named"), single quotes will be doubled up, e.g. `(firstName = 'Ra''s')`
   - For other formats, double or single quotes will be escaped with a backslash if necessary (`firstName == 'Ra\'s'` or `firstName == "Ra\"s"`).
-- [#323](https://github.com/react-querybuilder/react-querybuilder/pull/323): The standalone builds of `formatQuery` and `parseSQL` no longer include React and are not minified.
+- [#323] The standalone builds of `formatQuery` and `parseSQL` no longer include React and are not minified.
 
 ## [v4.4.1] - 2022-06-03
 
@@ -302,11 +307,11 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 ### Added
 
-- [#304](https://github.com/react-querybuilder/react-querybuilder/pull/304) Many compatibility components now accept the props of the rendered library component in addition to the standard props ([see documentation](https://react-querybuilder.js.org/docs/compat#customization)), allowing customization specific to the style library.
-- [#306](https://github.com/react-querybuilder/react-querybuilder/pull/306) New prop `autoSelectOperator` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield) but for the operator selector.
+- [#304] Many compatibility components now accept the props of the rendered library component in addition to the standard props ([see documentation](https://react-querybuilder.js.org/docs/compat#customization)), allowing customization specific to the style library.
+- [#306] New prop `autoSelectOperator` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield) but for the operator selector.
   - The `fields` and `operators` properties of the `translations` prop object now accept `placeholderName`, `placeholderLabel`, and `placeholderGroupLabel` properties ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#translations)). These translatable strings set the default field and operator values and labels when `autoSelectField` and/or `autoSelectOperator` are set to `false`.
   - Corresponding options were also added to [`formatQuery`](https://react-querybuilder.js.org/docs/api/export#placeholder-values), which will now ignore rules where the `field` or `operator` match the placeholder values for most export formats.
-- [#303](https://github.com/react-querybuilder/react-querybuilder/pull/303) Added support for wildcards concatenated to field names in `parseSQL`. Examples:
+- [#303] Added support for wildcards concatenated to field names in `parseSQL`. Examples:
 
 <table>
 <tr>
@@ -363,8 +368,8 @@ Generated `RuleType` object
 
 ### Fixed
 
-- [#301](https://github.com/react-querybuilder/react-querybuilder/pull/301) `react-querybuilder` and the compatibility packages are all built with React v18 now (the `peerDependencies` version is still `">=16.8.0"`). Previous 4.x versions were usable within React 18 applications, but now the build and tests explicitly use it.
-- [#308](https://github.com/react-querybuilder/react-querybuilder/pull/308) The CodeSandbox CI template is now located [within the repository](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/ci), and several other CodeSandbox-compatible examples have been added as well (see [examples folder](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples)).
+- [#301] `react-querybuilder` and the compatibility packages are all built with React v18 now (the `peerDependencies` version is still `">=16.8.0"`). Previous 4.x versions were usable within React 18 applications, but now the build and tests explicitly use it.
+- [#308] The CodeSandbox CI template is now located [within the repository](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/ci), and several other CodeSandbox-compatible examples have been added as well (see [examples folder](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples)).
 
 ## [v4.2.5] - 2022-05-12
 
@@ -406,7 +411,7 @@ Generated `RuleType` object
 
 ### Fixed
 
-- [#276](https://github.com/react-querybuilder/react-querybuilder/pull/276): When using `react-querybuilder` v4 within an application that already implemented `react-dnd`, an error would appear: "Cannot have two HTML5 backends at the same time." This can now be resolved by using the `<QueryBuilderWithoutDndProvider />` component instead of `<QueryBuilder />`. They are functionally the same, but the former allows (in fact, _relies on_) a `react-dnd` backend (e.g. `react-dnd-html5-backend`) to be implemented higher up in the component tree.
+- [#276] When using `react-querybuilder` v4 within an application that already implemented `react-dnd`, an error would appear: "Cannot have two HTML5 backends at the same time." This can now be resolved by using the `<QueryBuilderWithoutDndProvider />` component instead of `<QueryBuilder />`. They are functionally the same, but the former allows (in fact, _relies on_) a `react-dnd` backend (e.g. `react-dnd-html5-backend`) to be implemented higher up in the component tree.
 - Previously, the `parseSQL` method would accept boolean comparison clauses with an identifier (field name) on the left or right of the operator, but not on both sides (at least one side had to be a primitive string, numeric, or boolean). If the identifier was on the right, `parseSQL` would flip the clause so that the field name was on the left and the value on the right, but it wouldn't flip the operator (`<` should become `>`, etc.). The operator will now be flipped when appropriate.
 
 ### Added
@@ -489,7 +494,7 @@ Generated `RuleType` object
 ### Fixed
 
 - The default `ValueEditor` component was calling the `useEffect` hook conditionally, which is _way_ against the [Rules of Hooks](https://reactjs.org/docs/hooks-rules.html). It is now called unconditionally.
-- [#258](https://github.com/react-querybuilder/react-querybuilder/pull/258) When the `formatQuery` export format is "mongodb", the resulting string can be parsed by `JSON.parse` ([@mylawacad](https://github.com/mylawacad))
+- [#258] When the `formatQuery` export format is "mongodb", the resulting string can be parsed by `JSON.parse` ([@mylawacad](https://github.com/mylawacad))
 
 ### Added
 
@@ -508,20 +513,20 @@ Generated `RuleType` object
 
 ### Fixed
 
-- [#255](https://github.com/react-querybuilder/react-querybuilder/pull/255) Fix a couple of issues with the "mongodb" `formatQuery` export type ([@mylawacad](https://github.com/mylawacad))
+- [#255] Fix a couple of issues with the "mongodb" `formatQuery` export type ([@mylawacad](https://github.com/mylawacad))
 
 ### Added
 
-- [#261](https://github.com/react-querybuilder/react-querybuilder/pull/261) `valueProcessor` for "mongodb" export format
-- [#252](https://github.com/react-querybuilder/react-querybuilder/pull/252) Export `RuleGroup` component ([@ZigZagT](https://github.com/ZigZagT))
-- [#250](https://github.com/react-querybuilder/react-querybuilder/pull/250) Bulma compatibility package and demo
-- [#248](https://github.com/react-querybuilder/react-querybuilder/pull/248) `disabled` prop
+- [#261] `valueProcessor` for "mongodb" export format
+- [#252] Export `RuleGroup` component ([@ZigZagT](https://github.com/ZigZagT))
+- [#250] Bulma compatibility package and demo
+- [#248] `disabled` prop
 
 ## [v4.0.0-beta.7] - 2021-12-13
 
 ### Fixed
 
-- [#247](https://github.com/react-querybuilder/react-querybuilder/pull/247) Fix drag-and-drop for `independentCombinators`
+- [#247] Fix drag-and-drop for `independentCombinators`
 
 ## [v4.0.0-beta.6] - 2021-11-27
 
@@ -553,7 +558,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#235](https://github.com/react-querybuilder/react-querybuilder/pull/235) Drag-and-drop! Pass the `enableDragAndDrop` prop to display a drag handle on each rule and group header. Users will be able to reorder rules and groups with the click (and drag) of a mouse.
+- [#235] Drag-and-drop! Pass the `enableDragAndDrop` prop to display a drag handle on each rule and group header. Users will be able to reorder rules and groups with the click (and drag) of a mouse.
 - New IE11-compatible demo page.
 
 ## [v4.0.0-beta.4] - 2021-11-03
@@ -570,19 +575,19 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#231](https://github.com/react-querybuilder/react-querybuilder/pull/231) `inlineCombinators` prop. When `true`, `<QueryBuilder />` will insert an independent combinator (and/or) selector between each pair of sibling rules/groups. This new feature shouldn't introduce any breaking changes, i.e. if `inlineCombinators` is undefined or `false`, then the `<QueryBuilder />` should behave the same as it did in v4.0.0-beta.2. However, the TypeScript types are _significantly_ more complex in this release so we're going to leave this beta out for a while before releasing v4.0.0 properly.
+- [#231] `inlineCombinators` prop. When `true`, `<QueryBuilder />` will insert an independent combinator (and/or) selector between each pair of sibling rules/groups. This new feature shouldn't introduce any breaking changes, i.e. if `inlineCombinators` is undefined or `false`, then the `<QueryBuilder />` should behave the same as it did in v4.0.0-beta.2. However, the TypeScript types are _significantly_ more complex in this release so we're going to leave this beta out for a while before releasing v4.0.0 properly.
 
 ## [v4.0.0-beta.2] - 2021-10-29
 
 ### Added
 
-- [#230](https://github.com/react-querybuilder/react-querybuilder/pull/230) `parseSQL` method to import queries from SQL (try the [demo](https://react-querybuilder.js.org/react-querybuilder/)).
+- [#230] `parseSQL` method to import queries from SQL (try the [demo](https://react-querybuilder.js.org/react-querybuilder/)).
 
 ## [v4.0.0-beta.1] - 2021-10-23
 
 ### Changed
 
-- [#229](https://github.com/react-querybuilder/react-querybuilder/pull/229) Path-based query management
+- [#229] Path-based query management
   - `Rule` and `RuleGroup` props now include `path: number[]`, and `id` may be undefined.
   - `getLevel` has been removed from the `schema` prop.
   - The following functions that are part of the `schema` prop have been refactored to use `path` or `parentPath` instead of `id` or `parentId`: `onGroupAdd`, `onGroupRemove`, `onPropChange`, `onRuleAdd`, `onRuleRemove`.
@@ -594,7 +599,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 ### Added
 
 - `formatQuery` accepts a new `format` type: `"parameterized_named"`. This new format is similar to `"parameterized"`, but instead of anonymous `?`-style bind variables, each parameter is given a unique name based on the field name and the order in the query. A corresponding option `paramPrefix` is available in order to use a different character than the default ":" within the `sql` string.
-- [#228](https://github.com/react-querybuilder/react-querybuilder/pull/228) CodeSandbox CI
+- [#228] CodeSandbox CI
 
 ## [v3.12.1] - 2021-10-06
 
@@ -621,13 +626,13 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#225](https://github.com/react-querybuilder/react-querybuilder/pull/225) [Validation](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#validator-optional): pass a `validator` prop to validate the entire query, or include a `validator` attribute on each field in the `fields` array to validate each rule based on the selected field.
+- [#225] [Validation](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#validator-optional): pass a `validator` prop to validate the entire query, or include a `validator` attribute on each field in the `fields` array to validate each rule based on the selected field.
   - CSS classes will be added (`"queryBuilder-valid"` or `"queryBuilder-invalid"`) to validated rules and groups, and all sub-components will receive the validation result as a prop.
   - The `formatQuery` function has two new validation-related options: 1) `validator` (same signature as the prop mentioned earlier) and 2) `fields` (same shape as the `fields` prop). Rules and groups deemed invalid will be ignored if the output format is "sql", "parameterized", or "mongodb".
-- [#223](https://github.com/react-querybuilder/react-querybuilder/pull/223) [Rule/group cloning](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#showclonebuttons-optional): pass the `showCloneButtons` prop to enable duplication of rules and groups. Associated `controlElements` properties are also available for custom clone button components.
-- [#224](https://github.com/react-querybuilder/react-querybuilder/pull/224) [Add rule to new groups](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#addruletonewgroups-optional): pass the `addRuleToNewGroups` prop to add the default rule to all new groups automatically.
-- [#224](https://github.com/react-querybuilder/react-querybuilder/pull/224) [Default operator](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#getdefaultoperator-optional): pass a `getDefaultOperator` function prop to determine which operator is set for new rules (or include a `defaultOperator` attribute on objects in the `fields` array to set the default operator for specific fields).
-- [#224](https://github.com/react-querybuilder/react-querybuilder/pull/224) [Cancel or modify a new rule](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddrule-optional)/[group](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddgroup-optional): use the `onAddRule` and `onAddGroup` callbacks to return a new rule/group that will be added instead of the default, or return `false` to cancel the addition of the new rule/group. _(Note: to completely prevent the addition of new groups, you can also pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_
+- [#223] [Rule/group cloning](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#showclonebuttons-optional): pass the `showCloneButtons` prop to enable duplication of rules and groups. Associated `controlElements` properties are also available for custom clone button components.
+- [#224] [Add rule to new groups](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#addruletonewgroups-optional): pass the `addRuleToNewGroups` prop to add the default rule to all new groups automatically.
+- [#224] [Default operator](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#getdefaultoperator-optional): pass a `getDefaultOperator` function prop to determine which operator is set for new rules (or include a `defaultOperator` attribute on objects in the `fields` array to set the default operator for specific fields).
+- [#224] [Cancel or modify a new rule](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddrule-optional)/[group](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#onaddgroup-optional): use the `onAddRule` and `onAddGroup` callbacks to return a new rule/group that will be added instead of the default, or return `false` to cancel the addition of the new rule/group. _(Note: to completely prevent the addition of new groups, you can also pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_
 - [New "between" and "not between" default operators](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#operators-optional): the [`formatQuantity`](https://github.com/react-querybuilder/react-querybuilder/README.v3.12.1.md#formatquantity) function has also been updated to handle the new operators properly.
 - The [demo](https://react-querybuilder.js.org/react-querybuilder/) has been updated with all the new features, and now includes tooltips on options and links to relevant documentation.
 
@@ -642,20 +647,20 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#218](https://github.com/react-querybuilder/react-querybuilder/pull/218) `autoSelectField` prop. When set to `false`, prevents automatic selection of the first field in new rules by adding an "empty" choice as the first option. When the "empty" option is selected, the operator and value components for that rule will not be displayed.
+- [#218] `autoSelectField` prop. When set to `false`, prevents automatic selection of the first field in new rules by adding an "empty" choice as the first option. When the "empty" option is selected, the operator and value components for that rule will not be displayed.
 
 ## [v3.10.1] - 2021-08-19
 
 ### Added
 
-- [#214](https://github.com/react-querybuilder/react-querybuilder/pull/214) `"mongodb"` query export format ([@CodMonk](https://github.com/CodMonk))
+- [#214] `"mongodb"` query export format ([@CodMonk](https://github.com/CodMonk))
 
 ## [v3.10.0] - 2021-07-27
 
 ### Added
 
 - New item in the `translations` prop object: `notToggle.label`
-- [#210](https://github.com/react-querybuilder/react-querybuilder/pull/210) Customizable label for "not" toggle component ([@jakeboone02](https://github.com/jakeboone02))
+- [#210] Customizable label for "not" toggle component ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.9.9] - 2021-03-05
 
@@ -667,13 +672,13 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#190](https://github.com/react-querybuilder/react-querybuilder/pull/190) Export default components `ActionElement`, `NotToggle`, `ValueEditor`, and `ValueSelector` ([@jakeboone02](https://github.com/jakeboone02))
+- [#190] Export default components `ActionElement`, `NotToggle`, `ValueEditor`, and `ValueSelector` ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.9.7] - 2021-02-18
 
 ### Fixed
 
-- [#188](https://github.com/react-querybuilder/react-querybuilder/pull/188) Any extra attributes in the `query` prop will be persisted ([@jakeboone02](https://github.com/jakeboone02))
+- [#188] Any extra attributes in the `query` prop will be persisted ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.9.6] - 2021-02-15
 
@@ -697,13 +702,13 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#179](https://github.com/react-querybuilder/react-querybuilder/pull/179) Added `enableMountQueryChange` prop to allow disabling initial `onQueryChange` call ([@saurabhnemade](https://github.com/saurabhnemade))
+- [#179] Added `enableMountQueryChange` prop to allow disabling initial `onQueryChange` call ([@saurabhnemade](https://github.com/saurabhnemade))
 
 ## [v3.9.2] - 2021-01-24
 
 ### Added
 
-- [#178](https://github.com/react-querybuilder/react-querybuilder/pull/178) Export several default configuration options ([@jakeboone02](https://github.com/jakeboone02))
+- [#178] Export several default configuration options ([@jakeboone02](https://github.com/jakeboone02))
   - `defaultCombinators`
   - `defaultOperators`
   - `defaultTranslations`
@@ -713,7 +718,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Changed
 
-- [#175](https://github.com/react-querybuilder/react-querybuilder/pull/175) Replaced `nanoid` with `Math.random()` ([@jakeboone02](https://github.com/jakeboone02))
+- [#175] Replaced `nanoid` with `Math.random()` ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Fixed
 
@@ -723,13 +728,13 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#171](https://github.com/react-querybuilder/react-querybuilder/pull/171) Add `context` prop to pass arbitrary data to custom components ([@jakeboone02](https://github.com/jakeboone02))
+- [#171] Add `context` prop to pass arbitrary data to custom components ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.8.4] - 2020-11-16
 
 ### Added
 
-- [#167](https://github.com/react-querybuilder/react-querybuilder/pull/167) `placeholder` support for text fields ([@eddie-xavi](https://github.com/eddie-xavi))
+- [#167] `placeholder` support for text fields ([@eddie-xavi](https://github.com/eddie-xavi))
 
 ## [v3.8.3] - 2020-11-04
 
@@ -741,7 +746,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Fixed
 
-- [#164](https://github.com/react-querybuilder/react-querybuilder/pull/164) Fixed setting of default values ([@jakeboone02](https://github.com/jakeboone02))
+- [#164] Fixed setting of default values ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.8.1] - 2020-10-23
 
@@ -763,19 +768,19 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
   - Input type: use the `inputType` property on a field instead of the `getInputType` prop
   - Values: if the value editor type is `select` or `radio`, use the `values` property on a field instead of the `getValues` prop
   - Default value: use the `defaultValue` property on a field instead of the `getDefaultValue` prop
-- [#160](https://github.com/react-querybuilder/react-querybuilder/pull/160) Added field-level configuration options ([@jakeboone02](https://github.com/jakeboone02))
+- [#160] Added field-level configuration options ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.7.1] - 2020-10-07
 
 ### Fixed
 
-- [#158](https://github.com/react-querybuilder/react-querybuilder/pull/158) `createRule` was setting `name` to `undefined` when fields are empty ([@saurabhnemade](https://github.com/saurabhnemade))
+- [#158] `createRule` was setting `name` to `undefined` when fields are empty ([@saurabhnemade](https://github.com/saurabhnemade))
 
 ## [v3.7.0] - 2020-10-04
 
 ### Added
 
-- [#157](https://github.com/react-querybuilder/react-querybuilder/pull/157) `getDefaultField` and `getDefaultValue` props ([@jakeboone02](https://github.com/jakeboone02))
+- [#157] `getDefaultField` and `getDefaultValue` props ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Fixed
 
@@ -785,7 +790,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Changed
 
-- [#155](https://github.com/react-querybuilder/react-querybuilder/pull/155) Refactored `formatQuery` options ([@jakeboone02](https://github.com/jakeboone02))
+- [#155] Refactored `formatQuery` options ([@jakeboone02](https://github.com/jakeboone02))
   - `valueProcessor` is no longer the third argument of `formatQuery`. To use a custom `valueProcessor`, pass an options object as the second parameter and include `valueProcessor` as a key in that object.
   - When the `formatQuery` format is set to `sql` (either by `formatQuery(query, 'sql')` or `formatQuery(query, { format: 'sql' })`), the values will be quoted with single quotes instead of double quotes, e.g. `(name = 'Peter Parker')`.
 
@@ -799,25 +804,25 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Changed
 
-- [#145](https://github.com/react-querybuilder/react-querybuilder/pull/145) Convert source to TypeScript ([@jakeboone02](https://github.com/jakeboone02))
-- [#135](https://github.com/react-querybuilder/react-querybuilder/pull/135) Reset `value` on `operator` change ([@artenator](https://github.com/artenator))
+- [#145] Convert source to TypeScript ([@jakeboone02](https://github.com/jakeboone02))
+- [#135] Reset `value` on `operator` change ([@artenator](https://github.com/artenator))
 
 ### Added
 
 - Option to reset rule on operator change
-- [#144](https://github.com/react-querybuilder/react-querybuilder/pull/144) IE11 support ([@jakeboone02](https://github.com/jakeboone02))
+- [#144] IE11 support ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.4.0] - 2020-06-15
 
 ### Added
 
-- [#142](https://github.com/react-querybuilder/react-querybuilder/pull/142) Customizable `Rule` component ([@jakeboone02](https://github.com/jakeboone02))
+- [#142] Customizable `Rule` component ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.3.0] - 2020-06-12
 
 ### Added
 
-- [#141](https://github.com/react-querybuilder/react-querybuilder/pull/141) `RuleGroup` can now be replaced with a custom component ([@rbalaine](https://github.com/rbalaine))
+- [#141] `RuleGroup` can now be replaced with a custom component ([@rbalaine](https://github.com/rbalaine))
 
 ### Changed
 
@@ -827,7 +832,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#139](https://github.com/react-querybuilder/react-querybuilder/pull/139) `"parameterized"` option for `formatQuery` ([@jakeboone02](https://github.com/jakeboone02))
+- [#139] `"parameterized"` option for `formatQuery` ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v3.1.2] - 2020-03-19
 
@@ -845,7 +850,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#122](https://github.com/react-querybuilder/react-querybuilder/pull/122) `resetOnFieldChange` prop to control `value` and `operator` reset functionality on `field` change ([@lakk1](https://github.com/lakk1))
+- [#122] `resetOnFieldChange` prop to control `value` and `operator` reset functionality on `field` change ([@lakk1](https://github.com/lakk1))
 
 ## [v3.0.2] - 2019-12-09
 
@@ -857,20 +862,20 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Fixed
 
-- [#117](https://github.com/react-querybuilder/react-querybuilder/pull/117) Rule default value on add/change ([@xxsnakerxx](https://github.com/xxsnakerxx))
+- [#117] Rule default value on add/change ([@xxsnakerxx](https://github.com/xxsnakerxx))
 
 ## [v3.0.0] - 2019-11-29
 
 ### Added
 
-- [#115](https://github.com/react-querybuilder/react-querybuilder/pull/115) Add `div.ruleGroup-header` ([@jakeboone02](https://github.com/jakeboone02))
+- [#115] Add `div.ruleGroup-header` ([@jakeboone02](https://github.com/jakeboone02))
   - A `div` with class `ruleGroup-header` now wraps around the rule group header elements to assist with styling those elements as a group. This may affect some custom CSS rules that depend on the particular HTML arrangement in versions earlier than 3.0.0.
 
 ## [v2.5.1] - 2019-11-11
 
 ### Fixed
 
-- [#113](https://github.com/react-querybuilder/react-querybuilder/pull/113) Passing `not` property to rule groups below root ([@RomanLamsal1337](https://github.com/RomanLamsal1337))
+- [#113] Passing `not` property to rule groups below root ([@RomanLamsal1337](https://github.com/RomanLamsal1337))
 
 ## [v2.5.0] - 2019-11-10
 
@@ -880,24 +885,24 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Fixed
 
-- [#111](https://github.com/react-querybuilder/react-querybuilder/pull/111), [#112](https://github.com/react-querybuilder/react-querybuilder/pull/112) `formatQuery` handle more operators ([@oumar-sh](https://github.com/oumar-sh))
+- [#111], [#112] `formatQuery` handle more operators ([@oumar-sh](https://github.com/oumar-sh))
 
 ## [v2.4.0] - 2019-09-23
 
 ### Added
 
-- [#107](https://github.com/react-querybuilder/react-querybuilder/pull/107) `fieldData` prop for custom `OperatorSelector` and `ValueEditor` components ([@jakeboone02](https://github.com/jakeboone02))
+- [#107] `fieldData` prop for custom `OperatorSelector` and `ValueEditor` components ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v2.3.0] - 2019-09-16
 
 ### Added
 
-- [#104](https://github.com/react-querybuilder/react-querybuilder/pull/104) Inversion (`"not"`) toggle switch for rule groups ([@jakeboone02](https://github.com/jakeboone02))
-- [#103](https://github.com/react-querybuilder/react-querybuilder/pull/103) Added `level` and rule `id` to DOM elements ([@srinivasdamam](https://github.com/srinivasdamam))
+- [#104] Inversion (`"not"`) toggle switch for rule groups ([@jakeboone02](https://github.com/jakeboone02))
+- [#103] Added `level` and rule `id` to DOM elements ([@srinivasdamam](https://github.com/srinivasdamam))
 
 ### Changed
 
-- [#102](https://github.com/react-querybuilder/react-querybuilder/pull/102) Replace `uuid` with `nanoid` ([@srinivasdamam](https://github.com/srinivasdamam))
+- [#102] Replace `uuid` with `nanoid` ([@srinivasdamam](https://github.com/srinivasdamam))
 
 ## [v2.2.1] - 2019-08-29
 
@@ -909,8 +914,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- [#96](https://github.com/react-querybuilder/react-querybuilder/pull/96) `showCombinatorsBetweenRules` prop
-- [#95](https://github.com/react-querybuilder/react-querybuilder/pull/95) `formatQuery` function
+- [#96] `showCombinatorsBetweenRules` prop
+- [#95] `formatQuery` function
 
 ### Fixed
 
@@ -921,104 +926,104 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 ### Added
 
-- Enhanced default `ValueEditor` to handle multiple input types ([#94](https://github.com/react-querybuilder/react-querybuilder/pull/94))
+- Enhanced default `ValueEditor` to handle multiple input types ([#94])
 
 ## [v2.0.1] - 2019-08-27
 
 ### Added
 
-- [#93](https://github.com/react-querybuilder/react-querybuilder/pull/93) Pass in new root to `_notifyQueryChange` ([@pumbor](https://github.com/pumbor))
-- [#84](https://github.com/react-querybuilder/react-querybuilder/pull/84) Add `className` prop to `ValueEditor`, pass it on to `input` element ([@kkkrist](https://github.com/kkkrist))
+- [#93] Pass in new root to `_notifyQueryChange` ([@pumbor](https://github.com/pumbor))
+- [#84] Add `className` prop to `ValueEditor`, pass it on to `input` element ([@kkkrist](https://github.com/kkkrist))
 
 ## [v2.0.0] - 2019-08-18
 
 ### Changed
 
-- [#87](https://github.com/react-querybuilder/react-querybuilder/pull/87) Hooks rewrite and increased test coverage ([@jakeboone02](https://github.com/jakeboone02))
+- [#87] Hooks rewrite and increased test coverage ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Fixed
 
-- [#82](https://github.com/react-querybuilder/react-querybuilder/pull/82) Removed type restrictions on rule `value`s ([@jakeboone02](https://github.com/jakeboone02))
+- [#82] Removed type restrictions on rule `value`s ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v1.4.3] - 2018-04-08
 
 ### Fixed
 
-- [#60](https://github.com/react-querybuilder/react-querybuilder/pull/60) Fixed TypeScript function parameter definitions ([@jakeboone02](https://github.com/jakeboone02))
+- [#60] Fixed TypeScript function parameter definitions ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v1.4.2] - 2018-03-02
 
 ### Added
 
-- [#55](https://github.com/react-querybuilder/react-querybuilder/pull/55) Add optional `id` information in README ([@CharlyJazz](https://github.com/CharlyJazz))
+- [#55] Add optional `id` information in README ([@CharlyJazz](https://github.com/CharlyJazz))
 
 ## [v1.4.1] - 2018-03-02
 
 ### Added
 
-- [#53](https://github.com/react-querybuilder/react-querybuilder/pull/53) Add optional `id` property to `fields` ([@CharlyJazz](https://github.com/CharlyJazz))
+- [#53] Add optional `id` property to `fields` ([@CharlyJazz](https://github.com/CharlyJazz))
 
 ## [v1.4.0] - 2017-12-11
 
 ### Fixed
 
-- [#46](https://github.com/react-querybuilder/react-querybuilder/pull/46) Types: Added `id` attribute to `RuleGroup` ([@jakeboone02](https://github.com/jakeboone02))
+- [#46] Types: Added `id` attribute to `RuleGroup` ([@jakeboone02](https://github.com/jakeboone02))
 
 ### Added
 
-- [#47](https://github.com/react-querybuilder/react-querybuilder/pull/47) Add `translations` prop to be able to set translatable texts ([@bubenkoff](https://github.com/bubenkoff))
-- [#44](https://github.com/react-querybuilder/react-querybuilder/pull/44) Add TypeScript typings ([@jakeboone02](https://github.com/jakeboone02))
-- [#42](https://github.com/react-querybuilder/react-querybuilder/pull/42) Converted `Rule` subcomponents to SFCs ([@jakeboone02](https://github.com/jakeboone02))
+- [#47] Add `translations` prop to be able to set translatable texts ([@bubenkoff](https://github.com/bubenkoff))
+- [#44] Add TypeScript typings ([@jakeboone02](https://github.com/jakeboone02))
+- [#42] Converted `Rule` subcomponents to SFCs ([@jakeboone02](https://github.com/jakeboone02))
 
 ## [v1.3.8] - 2017-07-14
 
 ### Fixed
 
-- [#37](https://github.com/react-querybuilder/react-querybuilder/pull/37) package updates and making it compatible with codesandbox.io ([@pavanpodila](https://github.com/pavanpodila))
+- [#37] package updates and making it compatible with codesandbox.io ([@pavanpodila](https://github.com/pavanpodila))
 
 ## [v1.3.6] - 2017-03-13
 
 ### Added
 
-- [#28](https://github.com/react-querybuilder/react-querybuilder/pull/28) Add `field` to operator selector control element ([@SamLoy](https://github.com/SamLoy))
-- [#27](https://github.com/react-querybuilder/react-querybuilder/pull/27) Added more context information to `controlElements` ([@SamLoy](https://github.com/SamLoy))
+- [#28] Add `field` to operator selector control element ([@SamLoy](https://github.com/SamLoy))
+- [#27] Added more context information to `controlElements` ([@SamLoy](https://github.com/SamLoy))
 
 ## [v1.3.5] - 2017-02-06
 
 ### Fixed
 
-- [#24](https://github.com/react-querybuilder/react-querybuilder/pull/24) README: Update live demo link to use v1.3.4 and React 15 ([@mreishus](https://github.com/mreishus))
-- [#23](https://github.com/react-querybuilder/react-querybuilder/pull/23) README.md Usage - destructuring removed from import ([@mreishus](https://github.com/mreishus))
+- [#24] README: Update live demo link to use v1.3.4 and React 15 ([@mreishus](https://github.com/mreishus))
+- [#23] README.md Usage - destructuring removed from import ([@mreishus](https://github.com/mreishus))
 
 ## [v1.3.4] - 2017-01-23
 
 ### Added
 
-- [#18](https://github.com/react-querybuilder/react-querybuilder/pull/18) Add code coverage & TravisCI ([@maniax89](https://github.com/maniax89))
-- [#17](https://github.com/react-querybuilder/react-querybuilder/pull/17) Add npm-based changelog generator ([@maniax89](https://github.com/maniax89))
+- [#18] Add code coverage & TravisCI ([@maniax89](https://github.com/maniax89))
+- [#17] Add npm-based changelog generator ([@maniax89](https://github.com/maniax89))
 
 ## [v1.3.0] - 2016-10-12
 
 ### Fixed
 
-- [#15](https://github.com/react-querybuilder/react-querybuilder/pull/15) Fix test setup ([@maniax89](https://github.com/maniax89))
-- [#11](https://github.com/react-querybuilder/react-querybuilder/pull/11) Move 'this' binding to `componentWillMount` ([@maniax89](https://github.com/maniax89))
-- [#9](https://github.com/react-querybuilder/react-querybuilder/pull/9) Remove unnecessary imports ([@maniax89](https://github.com/maniax89))
+- [#15] Fix test setup ([@maniax89](https://github.com/maniax89))
+- [#11] Move 'this' binding to `componentWillMount` ([@maniax89](https://github.com/maniax89))
+- [#9] Remove unnecessary imports ([@maniax89](https://github.com/maniax89))
 
 ### Added
 
-- [#13](https://github.com/react-querybuilder/react-querybuilder/pull/13) Rule group tests ([@maniax89](https://github.com/maniax89))
-- [#12](https://github.com/react-querybuilder/react-querybuilder/pull/12) Add `ActionElement` tests to `<Rule />` ([@maniax89](https://github.com/maniax89))
-- [#10](https://github.com/react-querybuilder/react-querybuilder/pull/10) WIP: Add `<Rule />` Tests ([@maniax89](https://github.com/maniax89))
-- [#8](https://github.com/react-querybuilder/react-querybuilder/pull/8) WIP: Added CHANGELOG.md ([@maniax89](https://github.com/maniax89))
-- [#7](https://github.com/react-querybuilder/react-querybuilder/pull/7) Add in `ActionElement` for custom `<button />` elements ([@maniax89](https://github.com/maniax89))
-- [#6](https://github.com/react-querybuilder/react-querybuilder/pull/6) Custom rule controls ([@maniax89](https://github.com/maniax89))
+- [#13] Rule group tests ([@maniax89](https://github.com/maniax89))
+- [#12] Add `ActionElement` tests to `<Rule />` ([@maniax89](https://github.com/maniax89))
+- [#10] WIP: Add `<Rule />` Tests ([@maniax89](https://github.com/maniax89))
+- [#8] WIP: Added CHANGELOG.md ([@maniax89](https://github.com/maniax89))
+- [#7] Add in `ActionElement` for custom `<button />` elements ([@maniax89](https://github.com/maniax89))
+- [#6] Custom rule controls ([@maniax89](https://github.com/maniax89))
 
 ## [v1.2.0] - 2016-07-11
 
 ### Fixed
 
-- [#1](https://github.com/react-querybuilder/react-querybuilder/pull/1) fix missing field ([@vitorhsb](https://github.com/vitorhsb))
+- [#1] fix missing field ([@vitorhsb](https://github.com/vitorhsb))
 
 ## [v1.1.0] - 2016-06-27
 
@@ -1093,6 +1098,128 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 ### Added
 
 - Initial publish
+
+<!-- Issue and Pull Request links -->
+
+[#1]: https://github.com/react-querybuilder/react-querybuilder/pull/1
+[#6]: https://github.com/react-querybuilder/react-querybuilder/pull/6
+[#7]: https://github.com/react-querybuilder/react-querybuilder/pull/7
+[#8]: https://github.com/react-querybuilder/react-querybuilder/pull/8
+[#9]: https://github.com/react-querybuilder/react-querybuilder/pull/9
+[#10]: https://github.com/react-querybuilder/react-querybuilder/pull/10
+[#11]: https://github.com/react-querybuilder/react-querybuilder/pull/11
+[#12]: https://github.com/react-querybuilder/react-querybuilder/pull/12
+[#13]: https://github.com/react-querybuilder/react-querybuilder/pull/13
+[#15]: https://github.com/react-querybuilder/react-querybuilder/pull/15
+[#17]: https://github.com/react-querybuilder/react-querybuilder/pull/17
+[#18]: https://github.com/react-querybuilder/react-querybuilder/pull/18
+[#23]: https://github.com/react-querybuilder/react-querybuilder/pull/23
+[#24]: https://github.com/react-querybuilder/react-querybuilder/pull/24
+[#27]: https://github.com/react-querybuilder/react-querybuilder/pull/27
+[#28]: https://github.com/react-querybuilder/react-querybuilder/pull/28
+[#37]: https://github.com/react-querybuilder/react-querybuilder/pull/37
+[#42]: https://github.com/react-querybuilder/react-querybuilder/pull/42
+[#44]: https://github.com/react-querybuilder/react-querybuilder/pull/44
+[#46]: https://github.com/react-querybuilder/react-querybuilder/pull/46
+[#47]: https://github.com/react-querybuilder/react-querybuilder/pull/47
+[#53]: https://github.com/react-querybuilder/react-querybuilder/pull/53
+[#55]: https://github.com/react-querybuilder/react-querybuilder/pull/55
+[#60]: https://github.com/react-querybuilder/react-querybuilder/pull/60
+[#82]: https://github.com/react-querybuilder/react-querybuilder/pull/82
+[#84]: https://github.com/react-querybuilder/react-querybuilder/pull/84
+[#87]: https://github.com/react-querybuilder/react-querybuilder/pull/87
+[#93]: https://github.com/react-querybuilder/react-querybuilder/pull/93
+[#94]: https://github.com/react-querybuilder/react-querybuilder/pull/94
+[#95]: https://github.com/react-querybuilder/react-querybuilder/pull/95
+[#96]: https://github.com/react-querybuilder/react-querybuilder/pull/96
+[#102]: https://github.com/react-querybuilder/react-querybuilder/pull/102
+[#103]: https://github.com/react-querybuilder/react-querybuilder/pull/103
+[#104]: https://github.com/react-querybuilder/react-querybuilder/pull/104
+[#107]: https://github.com/react-querybuilder/react-querybuilder/pull/107
+[#111]: https://github.com/react-querybuilder/react-querybuilder/pull/111
+[#112]: https://github.com/react-querybuilder/react-querybuilder/pull/112
+[#113]: https://github.com/react-querybuilder/react-querybuilder/pull/113
+[#115]: https://github.com/react-querybuilder/react-querybuilder/pull/115
+[#117]: https://github.com/react-querybuilder/react-querybuilder/pull/117
+[#122]: https://github.com/react-querybuilder/react-querybuilder/pull/122
+[#135]: https://github.com/react-querybuilder/react-querybuilder/pull/135
+[#139]: https://github.com/react-querybuilder/react-querybuilder/pull/139
+[#141]: https://github.com/react-querybuilder/react-querybuilder/pull/141
+[#142]: https://github.com/react-querybuilder/react-querybuilder/pull/142
+[#144]: https://github.com/react-querybuilder/react-querybuilder/pull/144
+[#145]: https://github.com/react-querybuilder/react-querybuilder/pull/145
+[#155]: https://github.com/react-querybuilder/react-querybuilder/pull/155
+[#157]: https://github.com/react-querybuilder/react-querybuilder/pull/157
+[#158]: https://github.com/react-querybuilder/react-querybuilder/pull/158
+[#160]: https://github.com/react-querybuilder/react-querybuilder/pull/160
+[#164]: https://github.com/react-querybuilder/react-querybuilder/pull/164
+[#167]: https://github.com/react-querybuilder/react-querybuilder/pull/167
+[#171]: https://github.com/react-querybuilder/react-querybuilder/pull/171
+[#175]: https://github.com/react-querybuilder/react-querybuilder/pull/175
+[#178]: https://github.com/react-querybuilder/react-querybuilder/pull/178
+[#179]: https://github.com/react-querybuilder/react-querybuilder/pull/179
+[#188]: https://github.com/react-querybuilder/react-querybuilder/pull/188
+[#190]: https://github.com/react-querybuilder/react-querybuilder/pull/190
+[#210]: https://github.com/react-querybuilder/react-querybuilder/pull/210
+[#214]: https://github.com/react-querybuilder/react-querybuilder/pull/214
+[#218]: https://github.com/react-querybuilder/react-querybuilder/pull/218
+[#223]: https://github.com/react-querybuilder/react-querybuilder/pull/223
+[#224]: https://github.com/react-querybuilder/react-querybuilder/pull/224
+[#225]: https://github.com/react-querybuilder/react-querybuilder/pull/225
+[#228]: https://github.com/react-querybuilder/react-querybuilder/pull/228
+[#229]: https://github.com/react-querybuilder/react-querybuilder/pull/229
+[#230]: https://github.com/react-querybuilder/react-querybuilder/pull/230
+[#231]: https://github.com/react-querybuilder/react-querybuilder/pull/231
+[#235]: https://github.com/react-querybuilder/react-querybuilder/pull/235
+[#247]: https://github.com/react-querybuilder/react-querybuilder/pull/247
+[#248]: https://github.com/react-querybuilder/react-querybuilder/pull/248
+[#250]: https://github.com/react-querybuilder/react-querybuilder/pull/250
+[#252]: https://github.com/react-querybuilder/react-querybuilder/pull/252
+[#255]: https://github.com/react-querybuilder/react-querybuilder/pull/255
+[#258]: https://github.com/react-querybuilder/react-querybuilder/pull/258
+[#261]: https://github.com/react-querybuilder/react-querybuilder/pull/261
+[#276]: https://github.com/react-querybuilder/react-querybuilder/pull/276
+[#301]: https://github.com/react-querybuilder/react-querybuilder/pull/301
+[#303]: https://github.com/react-querybuilder/react-querybuilder/pull/303
+[#304]: https://github.com/react-querybuilder/react-querybuilder/pull/304
+[#306]: https://github.com/react-querybuilder/react-querybuilder/pull/306
+[#308]: https://github.com/react-querybuilder/react-querybuilder/pull/308
+[#319]: https://github.com/react-querybuilder/react-querybuilder/pull/319
+[#320]: https://github.com/react-querybuilder/react-querybuilder/pull/320
+[#323]: https://github.com/react-querybuilder/react-querybuilder/pull/323
+[#324]: https://github.com/react-querybuilder/react-querybuilder/pull/324
+[#328]: https://github.com/react-querybuilder/react-querybuilder/pull/328
+[#333]: https://github.com/react-querybuilder/react-querybuilder/pull/333
+[#337]: https://github.com/react-querybuilder/react-querybuilder/pull/337
+[#343]: https://github.com/react-querybuilder/react-querybuilder/pull/343
+[#353]: https://github.com/react-querybuilder/react-querybuilder/pull/353
+[#364]: https://github.com/react-querybuilder/react-querybuilder/issues/364
+[#374]: https://github.com/react-querybuilder/react-querybuilder/issues/374
+[#385]: https://github.com/react-querybuilder/react-querybuilder/issues/385
+[#387]: https://github.com/react-querybuilder/react-querybuilder/issues/387
+[#389]: https://github.com/react-querybuilder/react-querybuilder/pull/389
+[#392]: https://github.com/react-querybuilder/react-querybuilder/issues/392
+[#394]: https://github.com/react-querybuilder/react-querybuilder/issues/394
+[#399]: https://github.com/react-querybuilder/react-querybuilder/issues/399
+[#401]: https://github.com/react-querybuilder/react-querybuilder/issues/401
+[#403]: https://github.com/react-querybuilder/react-querybuilder/issues/403
+[#407]: https://github.com/react-querybuilder/react-querybuilder/issues/407
+[#408]: https://github.com/react-querybuilder/react-querybuilder/issues/408
+[#411]: https://github.com/react-querybuilder/react-querybuilder/issues/411
+[#417]: https://github.com/react-querybuilder/react-querybuilder/issues/417
+[#418]: https://github.com/react-querybuilder/react-querybuilder/issues/418
+[#421]: https://github.com/react-querybuilder/react-querybuilder/issues/421
+[#422]: https://github.com/react-querybuilder/react-querybuilder/issues/422
+[#426]: https://github.com/react-querybuilder/react-querybuilder/issues/426
+[#431]: https://github.com/react-querybuilder/react-querybuilder/issues/431
+[#432]: https://github.com/react-querybuilder/react-querybuilder/issues/432
+[#434]: https://github.com/react-querybuilder/react-querybuilder/issues/434
+[#443]: https://github.com/react-querybuilder/react-querybuilder/issues/443
+[#452]: https://github.com/react-querybuilder/react-querybuilder/pull/452
+[#455]: https://github.com/react-querybuilder/react-querybuilder/pull/455
+[#458]: https://github.com/react-querybuilder/react-querybuilder/issues/458
+
+<!-- Release comparison links -->
 
 [unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...HEAD
 [v5.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.0...v5.4.1

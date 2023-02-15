@@ -9,7 +9,7 @@ import type {
   Schema,
 } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
+import { defaultControlElements } from '../src/components';
 import {
   defaultCombinators,
   defaultControlClassnames,

@@ -9,8 +9,9 @@ import type {
 import { defaultOperatorNegationMap } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
+import { isPojo } from '../misc';
 import { objectKeys } from '../objectKeys';
-import { fieldIsValidUtil, getFieldsArray, isPojo } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import type { MongoDbSupportedOperators } from './types';
 import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
 

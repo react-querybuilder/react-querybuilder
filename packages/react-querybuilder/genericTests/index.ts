@@ -1,3 +1,5 @@
+// Don't include generateIDtests in the index exports. It breaks crypto tests.
+// export * from './generateIDtests';
 export * from './ruleGroupTestUtils';
 export * from './ruleTestUtils';
 export * from './testActionElement';

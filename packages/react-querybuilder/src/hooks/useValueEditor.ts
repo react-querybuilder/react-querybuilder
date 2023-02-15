@@ -12,7 +12,8 @@ export type UseValueEditorParams = Pick<
   | 'type'
   | 'values'
   | 'parseNumbers'
-> & { skipHook?: boolean };
+  | 'skipHook'
+>;
 
 /**
  * This Effect trims the value if all of the following are true:
@@ -26,6 +27,8 @@ export type UseValueEditorParams = Pick<
  *
  * If its operator changes to "=", the value will be reset to "12" since
  * the "number" input type can't handle arrays or strings with commas.
+ *
+ * Returns a value array and a common change handler for series of editors.
  */
 export const useValueEditor = ({
   handleOnChange,
@@ -39,7 +42,7 @@ export const useValueEditor = ({
   skipHook,
 }: UseValueEditorParams) => {
   let valArray: any[] = [];
-  let betweenValueHandler: (v: string, i: number) => void = v => handleOnChange(v);
+  let betweenValueHandler: (val: string, idx: number) => void = v => handleOnChange(v);
 
   useEffect(() => {
     if (skipHook) return;
@@ -67,5 +70,17 @@ export const useValueEditor = ({
     };
   }
 
-  return { valArray, betweenValueHandler };
+  return {
+    /**
+     * Array of values for when the main value represents a list, e.g. when operator
+     * is "between" or "in".
+     */
+    valArray,
+    /**
+     * A common handler for a series of editors, e.g. when operator is "between".
+     * @param {string} val The new value for the editor
+     * @param {number} idx The index of the editor
+     */
+    betweenValueHandler,
+  };
 };

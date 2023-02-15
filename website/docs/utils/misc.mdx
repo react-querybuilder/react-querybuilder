@@ -1,0 +1,161 @@
+---
+title: Miscellaneous
+hide_table_of_contents: true
+description: Assorted utilities and other exports
+---
+
+import { DemoLink } from '@site/src/components/DemoLink';
+import TypeScriptAdmonition from '../_ts_admonition.md';
+
+<TypeScriptAdmonition />
+
+A non-comprehensive list of exports from `react-querybuilder`.
+
+## Utilities
+
+### `transformQuery`
+
+```ts
+function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOptions): any;
+```
+
+This function recursively steps through a query object (`RuleGroupType` or `RuleGroupTypeIC`), passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
+
+- `ruleProcessor`: Custom processing for each rule.
+- `ruleGroupProcessor`: Custom processing for each rule group. (The `rules` property will be retained.)
+- `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
+- `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
+- `operatorMap`: Convert operators that match the keys in this object to the corresponding values, e.g. `{"=": "=="}`.
+- `deleteRemappedProperties`: Defaults to `true`; pass `false` to leave the remapped properties _and_ the original properties in the resulting object.
+
+See the [test suite](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/transformQuery.test.ts) for example usage.
+
+### `defaultValidator`
+
+```ts
+function defaultValidator(query: RuleGroupTypeAny): {
+  [id: string]: { valid: boolean; reasons?: string[] };
+};
+```
+
+Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`query.rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`).
+
+You can see an example of the default validator in action in the [demo](/demo) if you check the <DemoLink option="validateQuery" text="'Use validation' option" />. Empty groups will have bold text on their "+Rule" button and a description of the situation where the rules normally appear.
+
+### `findPath`
+
+```ts
+function findPath(path: number[], query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny;
+```
+
+`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](../components/querybuilder#onaddrule) and [`onAddGroup`](../components/querybuilder#onaddgroup) functions.
+
+### `convertQuery`
+
+```ts
+function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
+// OR
+function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
+```
+
+`convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](../components/querybuilder#independentcombinators)).
+
+`convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in the directions indicated by their respective names.
+
+## Query tools
+
+Several methods are available to assist with programmatic manipulation of query objects. These methods are used by the `<QueryBuilder />` component itself, so they are guaranteed to achieve the same result as a corresponding UI-based update. Each of these methods returns the modified query.
+
+Check out the ["External controls" Tips & Tricks page](../tips/external-controls) to see these methods used outside the context of the `<QueryBuilder />` component.
+
+### `add`
+
+`(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, path: number[], options: AddOptions) => RuleGroupTypeAny`
+
+Adds a rule or group (and an independent combinator if necessary, to keep the query valid).
+
+<details>
+  <summary><code>AddOptions</code></summary>
+
+```ts
+interface AddOptions {
+  /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
+  combinators?: OptionList;
+}
+```
+
+</details>
+
+### `remove`
+
+`(query: RuleGroupTypeAny, path: number[]) => RuleGroupTypeAny`
+
+Removes a rule or group (and the preceding independent combinator, if one exists).
+
+### `update`
+
+`(query: RuleGroupTypeAny, prop: string, value: any, path: number[], options: UpdateOptions) => RuleGroupTypeAny`
+
+Updates a property of a rule or group, or updates an independent combinator.
+
+<details>
+  <summary><code>UpdateOptions</code></summary>
+
+```ts
+interface UpdateOptions {
+  /** Resets `operator` and `value` when `field` changes. Default is `true`. */
+  resetOnFieldChange?: boolean;
+  /** Resets `value` when `operator` changes. Default is `false`. */
+  resetOnOperatorChange?: boolean;
+  /** Determines the default operator name for a given field. */
+  getRuleDefaultOperator?: (field: string) => string;
+  /** Determines the valid value sources for a given field and operator. */
+  getValueSources?: (field: string, operator: string) => ValueSources;
+  /** Used when the `value` property is reset (see `resetOn*Change` options). */
+  getRuleDefaultValue?: (rule: RuleType) => any;
+}
+```
+
+</details>
+
+### `move`
+
+`(query: RuleGroupTypeAny, oldPath: number[], newPath: number[], options: MoveOptions) => RuleGroupTypeAny`
+
+Moves (or clones, with a new `id`) a rule or group to a new location in the query tree.
+
+<details>
+  <summary><code>MoveOptions</code></summary>
+
+```ts
+interface MoveOptions {
+  /** Copy the source rule/group instead of move. Default is `false`. */
+  clone?: boolean;
+  /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
+  combinators?: OptionList;
+}
+```
+
+</details>
+
+## Defaults
+
+The following default configuration objects are exported for convenience.
+
+- `defaultCombinators` (see [`combinators` prop](../components/querybuilder#combinators))
+- `defaultOperators` (see [`operators` prop](../components/querybuilder#operators))
+- `defaultTranslations` (see [`translations` prop](../components/querybuilder#translations))
+- `defaultValueProcessor` and variants for non-SQL formats (see [Export](./export) > [Value processor](./export#value-processor))
+- `defaultFields` (see [`fields` prop](../components/querybuilder#fields))
+- `standardClassnames` (see [CSS classes](../styling/classnames))
+
+The default components are also exported:
+
+- `ActionElement` - used for action buttons (to add rules, remove groups, etc.)
+- `DragHandle` - used for the drag handle on rules and group headers
+- `InlineCombinator` - used when either `showCombinatorsBetweenRules` or `independentCombinators` are `true`
+- `NotToggle` - used for the "Invert this group" toggle switch
+- `Rule` - the default rule component
+- `RuleGroup` - the default rule group component
+- `ValueEditor` - the default `valueEditor` component
+- `ValueSelector` - used for drop-down lists (combinator, field, and operator selectors)

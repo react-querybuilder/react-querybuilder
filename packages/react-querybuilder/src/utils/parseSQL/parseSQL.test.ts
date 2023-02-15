@@ -109,6 +109,9 @@ describe('boolean operators', () => {
     expect(parseSQL('`isMusician` = TRUE')).toEqual(
       wrapRule({ field: 'isMusician', operator: '=', value: true })
     );
+    expect(parseSQL('"Is a Musician" = TRUE')).toEqual(
+      wrapRule({ field: 'Is a Musician', operator: '=', value: true })
+    );
   });
 
   it('null/notNull', () => {

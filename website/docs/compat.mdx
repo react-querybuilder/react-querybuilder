@@ -2,7 +2,7 @@
 title: Compatibility packages
 ---
 
-The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./api/querybuilder#controlclassnames)). However, some style libraries require different HTML structure to style their form controls correctly.
+The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./components/querybuilder#controlclassnames)). However, some style libraries require different HTML structure to style their form controls correctly.
 
 ## Packages
 
@@ -16,6 +16,7 @@ You can see each alternate component package in action by clicking the correspon
 | [Bootstrap](https://getbootstrap.com/)   | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](/demo/bootstrap) | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap?file=/src/App.tsx) | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap?file=src/App.tsx) |
 | [Bulma](https://bulma.io/)               | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](/demo/bulma)     | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma?file=/src/App.tsx)     | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma?file=src/App.tsx)     |
 | [Chakra UI](https://chakra-ui.com/)      | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](/demo/chakra)    | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra?file=src/App.tsx)    |
+| [Mantine](https://mantine.dev/)          | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [Demo](/demo/mantine)   | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine?file=/src/App.tsx)   | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine?file=src/App.tsx)   |
 | [MUI](https://mui.com/)                  | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](/demo/material)  | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material?file=/src/App.tsx)  | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/material?file=src/App.tsx)  |
 | [React Native](https://reactnative.dev/) | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       | _Coming soon!_          | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/native?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/native?file=src/App.tsx)    |
 
@@ -82,7 +83,7 @@ export function App() {
 
 ## Other exports
 
-Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./api/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./api/querybuilder#controlclassnames). Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
+Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./components/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./components/querybuilder#controlclassnames). Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
 
 This example uses the Bootstrap library:
 
@@ -154,6 +155,9 @@ This list shows which library components' props will be accepted by the compatib
 | `ChakraDragHandle`      | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
 | `ChakraNotToggle`       | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
 | `ChakraValueSelector`   | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
+| `MantineActionElement`  | `ActionWithRulesProps`   | `import Button from '@mui/material/Button'`                     |
+| `MantineNotToggle`      | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |
+| `MantineValueSelector`  | `VersatileSelectorProps` | `import Select from '@mui/material/Select'`                     |
 | `MaterialActionElement` | `ActionWithRulesProps`   | `import Button from '@mui/material/Button'`                     |
 | `MaterialDragHandle`    | `DragHandleProps`        | `import DragIndicator from '@mui/icons-material/DragIndicator'` |
 | `MaterialNotToggle`     | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |

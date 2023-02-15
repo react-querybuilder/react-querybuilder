@@ -1,4 +1,4 @@
-import vitePluginReact from '@vitejs/plugin-react';
+import vitePluginReact from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
@@ -11,12 +11,12 @@ export default defineConfig(({ command }) => ({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      fileName: format => `index.${format}.js`,
-      formats: ['umd', 'cjs', 'es'],
+      fileName: format => `index.${format === 'es' ? 'm' : 'c'}js`,
+      formats: ['cjs', 'es'],
       name: 'ReactQueryBuilder',
     },
     rollupOptions: {
-      external: ['@react-querybuilder/ctx', 'immer', 'react'],
+      external: ['@react-querybuilder/ctx', 'immer', 'react', 'react/jsx-runtime'],
       output: {
         globals: {
           '@react-querybuilder/ctx': 'ReactQueryBuilderContext',
@@ -27,12 +27,15 @@ export default defineConfig(({ command }) => ({
       },
     },
     sourcemap: true,
+    target: 'es2020',
   },
   plugins: [
     vitePluginReact(),
-    visualizer(opts => ({
-      filename: `build-stats.${opts.format}.html`,
+    visualizer(_opts => ({
+      // filename: `build-stats.${_opts.format}.html`,
+      filename: `build-stats.html`,
       gzipSize: true,
+      brotliSize: true,
       title: `Build stats (${name})`,
     })),
   ],

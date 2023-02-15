@@ -1,12 +1,10 @@
 import {
   defaultNativeWebControlElements,
-  NativeValueSelector,
-  NativeValueSelectorWeb,
   QueryBuilderNative,
 } from '@react-querybuilder/native';
 import { extendTheme, NativeBaseProvider } from 'native-base';
 import { useMemo, useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import type {
   Field,
   Option,
@@ -15,6 +13,7 @@ import type {
 } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { nativeBaseControlElements } from './components';
+import { NativeValueSelectorExample } from './components/NativeValueSelectorExample';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -54,10 +53,8 @@ const nativeBaseTheme = extendTheme({
 });
 
 const LibSelector = ({ libSetter }: { libSetter: (lib: UILib) => void }) => {
-  const ValueSelectorComponent =
-    Platform.OS === 'web' ? NativeValueSelectorWeb : NativeValueSelector;
   return (
-    <ValueSelectorComponent
+    <NativeValueSelectorExample
       options={uiLibs}
       handleOnChange={v => libSetter(v)}
       path={[]}
@@ -75,7 +72,13 @@ export const App = () => {
       case 'native-base':
         return nativeBaseControlElements;
     }
-    return defaultNativeWebControlElements;
+    return {
+      ...defaultNativeWebControlElements,
+      combinatorSelector: NativeValueSelectorExample,
+      fieldSelector: NativeValueSelectorExample,
+      operatorSelector: NativeValueSelectorExample,
+      valueSourceSelector: NativeValueSelectorExample,
+    };
   }, [uiLib]);
 
   return (

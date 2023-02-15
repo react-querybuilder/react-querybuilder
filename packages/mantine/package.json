@@ -1,0 +1,64 @@
+{
+  "name": "@react-querybuilder/mantine",
+  "description": "Custom Mantine components for react-querybuilder",
+  "version": "6.0.0-alpha.5",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "index.d.mts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/mantine"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "yarn typecheck --watch"
+  },
+  "devDependencies": {
+    "@mantine/core": "^5.10.3",
+    "@mantine/dates": "^5.10.3",
+    "@mantine/hooks": "^5.10.3",
+    "@react-querybuilder/ts": "^6.0.0-alpha.5",
+    "@testing-library/react": "^13.4.0",
+    "@types/react": "^18.0.27",
+    "@vitejs/plugin-react-swc": "^3.1.0",
+    "dayjs": "^1.11.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-querybuilder": "^6.0.0-alpha.5",
+    "rollup-plugin-visualizer": "^5.9.0",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.1"
+  },
+  "peerDependencies": {
+    "@mantine/core": ">=5",
+    "@mantine/dates": ">=5",
+    "@mantine/hooks": ">=5",
+    "dayjs": ">=1",
+    "react": ">=16.8.0"
+  }
+}

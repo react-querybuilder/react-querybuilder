@@ -35,7 +35,7 @@ console.log(formatQuery(query, 'json_without_ids'));
 
 ## Adding properties
 
-To produce a query object with additional properties, you can loop through the `rules` array recursively. The [`transformQuery`](../api/misc#transformquery) function is provided for use cases such as this.
+To produce a query object with additional properties, you can loop through the `rules` array recursively. The [`transformQuery`](../utils/misc#transformquery) function is provided for use cases such as this.
 
 In the example below (inspired by [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)), the `inputType` from the `fields` array is added to each rule.
 

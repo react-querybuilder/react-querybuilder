@@ -1,0 +1,973 @@
+---
+title: QueryBuilder
+description: The root component, context provider and wrapper div
+---
+
+import { DemoLink } from '@site/src/components/DemoLink';
+import TypeScriptAdmonition from '../_ts_admonition.md';
+
+<TypeScriptAdmonition />
+
+The default export of `react-querybuilder` is the `<QueryBuilder />` React component (also available as a named export).
+
+`QueryBuilder` calls the [`useQueryBuilder`](../utils/hooks#usequerybuilder) hook to prepare the query, schema, update methods, etc., that get passed down to the subcomponents.
+
+## Subcomponents
+
+`QueryBuilder` renders a [`RuleGroup`](./rulegroup) representing the root of the query.
+
+That `RuleGroup` is nested within a `<div>` that has the standard class, any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators ([`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) or [`independentCombinators`](#independentcombinators)) are enabled.
+
+Finally, everything is wrapped in `<QueryBuilderContext.Provider>` which inherits and propogates any values from ancestor context providers.
+
+## Props
+
+All props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
+
+:::note
+
+When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. However, if the type is `RuleGroupTypeIC`, then the [`independentCombinators` prop](#independentcombinators) must be set to `true`. Likewise, if the type is `RuleGroupType` then `independentCombinators` must be `false` or `undefined`.
+
+:::
+
+### `fields`
+
+`Field[] | OptionGroup<Field>[] | Record<string, Field>`
+
+The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](#fieldselector) will be sorted alphabetically by the `label` property.)
+
+:::tip
+
+Field objects can also contain custom properties. Each field object will be passed in its entirety to the appropriate `OperatorSelector` and `ValueEditor` components as the `fieldData` prop (see the section on [`controlElements`](#controlelements)).
+
+:::
+
+### `onQueryChange`
+
+`(query: RuleGroupTypeAny) => void`
+
+This function is invoked whenever the query is updated from within the component. The `query` is provided as an object of type `RuleGroupType` by default. For example:
+
+```json
+{
+  "combinator": "and",
+  "not": false,
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    },
+    {
+      "combinator": "and",
+      "rules": [
+        {
+          "field": "age",
+          "operator": ">",
+          "value": "30"
+        }
+      ]
+    }
+  ]
+}
+```
+
+If the `independentCombinators` prop is provided, then the `query` argument will be of type `RuleGroupTypeIC`. The "IC" version of the example above would look like this:
+
+```json
+{
+  "not": false,
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    "and",
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    },
+    "and",
+    {
+      "rules": [
+        {
+          "field": "age",
+          "operator": ">",
+          "value": "30"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### `query`
+
+`RuleGroupTypeAny`
+
+The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentcombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a [controlled component](https://reactjs.org/docs/forms.html#controlled-components).
+
+The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [examples](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
+
+### `defaultQuery`
+
+`RuleGroupTypeAny`
+
+The initial query when `<QueryBuilder />` is uncontrolled.
+
+:::caution
+
+Do not provide both `query` and `defaultQuery` props. To use `<QueryBuilder />` as a controlled component, provide and manage the `query` prop in combination with the `onQueryChange` callback. Use `defaultQuery` (or neither query prop) to render an uncontrolled component.
+
+If both props are defined, TypeScript will throw an error during compilation and an error will be logged to the console during runtime (in "development" mode only). Errors will also be logged to the console if the `query` prop is defined during one render and undefined in the next, or vice versa.
+
+:::
+
+### `context`
+
+`any`
+
+A "bucket" for passing arbitrary props down to custom components (default components will ignore this prop). The `context` prop is passed to each and every component, so it's accessible anywhere in the `QueryBuilder` component tree.
+
+### `operators`
+
+`Operator[] | OptionGroup<Operator>[]`
+
+The array of operators that should be used. Custom operators must define a `name` and `label` property. An `arity` property, which can be "unary", "binary", or a number, may also be defined for each operator. If `arity` is either "unary" or a number less than 2, the [value editor component](./valueeditor) will not be rendered when that operator is selected.
+
+The default operators include:
+
+```ts
+[
+  { name: '=', label: '=' },
+  { name: '!=', label: '!=' },
+  { name: '<', label: '<' },
+  { name: '>', label: '>' },
+  { name: '<=', label: '<=' },
+  { name: '>=', label: '>=' },
+  { name: 'contains', label: 'contains' },
+  { name: 'beginsWith', label: 'begins with' },
+  { name: 'endsWith', label: 'ends with' },
+  { name: 'doesNotContain', label: 'does not contain' },
+  { name: 'doesNotBeginWith', label: 'does not begin with' },
+  { name: 'doesNotEndWith', label: 'does not end with' },
+  { name: 'null', label: 'is null' },
+  { name: 'notNull', label: 'is not null' },
+  { name: 'in', label: 'in' },
+  { name: 'notIn', label: 'not in' },
+  { name: 'between', label: 'between' },
+  { name: 'notBetween', label: 'not between' },
+];
+```
+
+### `combinators`
+
+`OptionList`
+
+The array of combinators that should be used for RuleGroups. The default set includes:
+
+```ts
+[
+  { name: 'and', label: 'AND' },
+  { name: 'or', label: 'OR' },
+];
+```
+
+### `controlElements`
+
+This is a custom controls object that allows you to override the default control elements. The following control overrides are supported:
+
+```ts
+interface Controls {
+  addGroupAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
+  addRuleAction?: React.ComponentType<ActionWithRulesAndAddersProps>;
+  cloneGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  cloneRuleAction?: React.ComponentType<ActionProps>;
+  combinatorSelector?: React.ComponentType<CombinatorSelectorProps>;
+  dragHandle?: React.ForwardRefExoticComponent<
+    DragHandleProps & React.RefAttributes<HTMLSpanElement>
+  >;
+  fieldSelector?: React.ComponentType<FieldSelectorProps>;
+  inlineCombinator?: React.ComponentType<InlineCombinatorProps>;
+  lockGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  lockRuleAction?: React.ComponentType<ActionProps>;
+  notToggle?: React.ComponentType<NotToggleProps>;
+  operatorSelector?: React.ComponentType<OperatorSelectorProps>;
+  removeGroupAction?: React.ComponentType<ActionWithRulesProps>;
+  removeRuleAction?: React.ComponentType<ActionProps>;
+  rule?: React.ComponentType<RuleProps>;
+  ruleGroup?: React.ComponentType<RuleGroupProps>;
+  valueEditor?: React.ComponentType<ValueEditorProps>;
+  valueSourceSelector?: React.ComponentType<ValueSourceSelectorProps>;
+}
+```
+
+#### `addGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesAndAddersProps {
+  label: string; // translations.addGroup.label, e.g. "+Group"
+  title: string; // translations.addGroup.title, e.g. "Add group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent, context?: any) => void; // Adds a new group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `addRuleAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesAndAddersProps {
+  label: string; // translations.addGroup.label, e.g. "+Rule"
+  title: string; // translations.addGroup.title, e.g. "Add rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent, context?: any) => void; // Adds a new rule
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `cloneGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.addGroup.label, e.g. "+Group"
+  title: string; // translations.addGroup.title, e.g. "Add group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Clones the group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `cloneRuleAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionProps {
+  label: string; // translations.addGroup.label, e.g. "+Rule"
+  title: string; // translations.addGroup.title, e.g. "Add rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Clones the rule
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  ruleOrGroup: RuleType; // This rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `combinatorSelector`
+
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
+
+```ts
+interface CombinatorSelectorProps {
+  options: OptionList; // Same as 'combinators' passed into QueryBuilder
+  value: string; // Selected combinator from the existing query representation, if any
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Updates the combinator
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  title: string; // translations.combinators.title, e.g. "Combinators"
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `dragHandle`
+
+Defaults to [`DragHandle`](./draghandle). Note that this component must be based on `React.forwardRef`, and must always render an element (never return `null`). Aside from the forwarded `ref`, the following props are passed:
+
+```ts
+interface DragHandleProps {
+  title: string; // translations.dragHandle.title, e.g. "Drag handle"
+  className: string; // CSS classNames to be applied
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  label: string; // translations.dragHandle.label, e.g. "⁞⁞"
+  disabled: boolean; // Whether this rule/group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `fieldSelector`
+
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
+
+```ts
+interface FieldSelectorProps {
+  options: Field[]; // Same as 'fields' passed into QueryBuilder
+  value: string; // Selected field from the existing query representation, if any
+  title: string; // translations.fields.title, e.g. "Fields"
+  operator: string; // Selected operator from the existing query representation, if any
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Updates the rule's field
+  level: number; // The level the group this rule belongs to
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `inlineCombinator`
+
+A small wrapper around the [`combinatorSelector`](#combinatorselector) component. The following props are passed:
+
+```ts
+interface InlineCombinatorProps extends CombinatorSelectorProps {
+  component: Schema['controls']['combinatorSelector'];
+  independentCombinators?: boolean;
+}
+```
+
+#### `lockGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.lockGroup.label, e.g. "🔓" when unlocked and "🔒" when locked
+  title: string; // translations.lockGroup.title, e.g. "Lock group" or "Unlock group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Locks the group
+  rules: (RuleGroupType | RuleType)[]; // The rules present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  disabledTranslation: string; // translations.lockGroupDisabled, if parent group is not disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `lockRuleAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.lockRule.label, e.g. "🔓" when unlocked and "🔒" when locked
+  title: string; // translations.lockRule.title, e.g. "Lock rule" or "Unlock rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Locks the rule
+  level: number; // The level of the current rule
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  ruleOrGroup: RuleType; // This rule
+  disabled: boolean; // Whether this rule is disabled
+  disabledTranslation: string; // translations.lockRuleDisabled, if parent group is not disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `notToggle`
+
+Defaults to [`NotToggle`](./nottoggle). The following props are passed:
+
+```ts
+interface NotToggleProps {
+  checked: boolean; // Whether the input should be checked or not
+  handleOnChange: (checked: boolean) => void; // Updates the group's `not` property
+  label: string; // translations.notToggle.label, e.g. "Not"
+  title: string; // translations.notToggle.title, e.g. "Invert this group"
+  level: number; // The level of the group
+  className: string; // CSS classNames to be applied
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `operatorSelector`
+
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
+
+```ts
+interface OperatorSelectorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  options: Operator[] | OptionGroup<Operator>[]; // Return value of getOperators(field)
+  value: string; // Selected operator from the existing query representation, if any
+  title: string; // translations.operators.title, e.g. "Operators"
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Updates the rule's operator
+  level: number; // The level the group this rule belongs to
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `removeGroupAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionWithRulesProps {
+  label: string; // translations.removeGroup.label, e.g. "x"
+  title: string; // translations.removeGroup.title, e.g. "Remove group"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Removes the group
+  rules: (RuleGroupType | RuleType)[]; // Provides the number of rules already present for this group
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this group
+  ruleOrGroup: RuleGroupTypeAny; // This group
+  disabled: boolean; // Whether this group is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `removeRuleAction`
+
+Defaults to [`ActionElement`](./actionelement). The following props are passed:
+
+```ts
+interface ActionProps {
+  label: string; // translations.removeRule.label, e.g. "x"
+  title: string; // translations.removeRule.title, e.g. "Remove rule"
+  className: string; // CSS classNames to be applied
+  handleOnClick: (e: React.MouseEvent) => void; // Removes the rule
+  level: number; // The level of the current group
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  ruleOrGroup: RuleType; // This rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `rule`
+
+Defaults to [`Rule`](./rule). The following props are passed:
+
+```ts
+interface RuleProps {
+  id?: string; // Unique identifier for this rule
+  path: number[]; // path of indexes through a rule group hierarchy
+  rule: RuleType; // The rule object
+  translations: Translations; // The full translations object
+  schema: Schema; // See `Schema` on the TypeScript page
+  actions: QueryActions; // Query update functions
+  context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
+}
+```
+
+:::tip
+
+If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
+
+:::
+
+#### `ruleGroup`
+
+Defaults to [`RuleGroup`](./rulegroup). The following props are passed:
+
+```ts
+interface RuleGroupProps {
+  id?: string; // Unique identifier for this rule group
+  path: number[]; // path of indexes through a rule group hierarchy
+  ruleGroup: RuleGroupTypeAny; // The rule group object
+  translations: Translations; // The full translations object
+  schema: Schema; // See `Schema` on the TypeScript page
+  actions: QueryActions; // Query update functions
+  context: any; // Container for custom props that are passed to all components
+  disabled?: boolean; // Whether the rule itself is disabled
+  parentDisabled?: boolean; // Whether an ancestor of this rule is disabled
+}
+```
+
+:::tip
+
+If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `RuleGroup` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
+
+:::
+
+#### `valueEditor`
+
+Defaults to [`ValueEditor`](./valueeditor). The following props are passed:
+
+```ts
+interface ValueEditorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  operator: string; // Operator name corresponding to this rule
+  value: string; // Value from the existing query representation, if any
+  title: string; // translations.value.title, e.g. "Value"
+  handleOnChange: (value: any) => void; // Updates the rule's value
+  type: ValueEditorType; // Type of editor to be displayed
+  inputType: string; // @type of <input> if `type` is "text"
+  values: any[]; // List of available values for this rule
+  level: number; // The level the group this rule belongs to
+  className: string; // CSS classNames to be applied
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  valueSource: 'field' | 'value'; // Value source for this rule
+  listsAsArrays: boolean; // Whether to manage value lists (e.g. "between"/"in") as arrays
+  parseNumbers: boolean; // Whether to parse real numbers from string values
+  separator: ReactNode; // Separator element for series of editors (e.g. "between")
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+#### `valueSourceSelector`
+
+Defaults to [`ValueSelector`](./valueselector). The following props are passed:
+
+```ts
+interface ValueSourceSelectorProps {
+  field: string; // Field name corresponding to this rule
+  fieldData: Field; // The entire object from the fields array for this field
+  options: ValueSourceOption[] | OptionGroup<ValueSourceOption>[]; // Return value of getValueSources(field, operator)
+  value: ValueSource; // Selected value source from the existing query representation, if any
+  title: string; // translations.valueSourceSelector.title, e.g. "Value source"
+  className: string; // CSS classNames to be applied
+  handleOnChange: (value: any) => void; // Updates the rule's value source
+  level: number; // The level the group this rule belongs to
+  context: any; // Container for custom props that are passed to all components
+  validation: boolean | ValidationResult; // validation result of this rule
+  disabled: boolean; // Whether this rule is disabled
+  path: number[];
+  schema: Schema;
+}
+```
+
+### `getOperators`
+
+`(field: string) => Operator[] | OptionGroup<Operator>[] | null`
+
+This function is invoked to get the list of allowed operators for the given field. If `null` is returned, the [default operators](#operators) are used.
+
+### `getValueEditorType`
+
+`(field: string, operator: string) => ValueEditorType`
+
+This function is invoked to get the type of `ValueEditor` for the given field and operator. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"multiselect"`, `"checkbox"`, `"radio"`, and `"textarea"`.
+
+### `getValueSources`
+
+`(field: string, operator: string) => ValueSources`;
+
+This function is invoked to get the list of allowed value sources for a given field and operator. The return value must be an array including at least "value" or "field", but may also contain both (in either order). If the prop is undefined, `() => ["value"]` is used. The first element in the array will be the default.
+
+### `getValueEditorSeparator`
+
+`(field: string, operator: string) => ReactNode`;
+
+This function should return the separator element for a given `field` and `operator`. The element can be any valid React element, including a bare string (e.g. "and" or "to") or an HTML element like `<span />`. It will be placed in between value editors when multiple are rendered, e.g. when the operator is "between".
+
+### `getInputType`
+
+`(field: string, operator: string) => string`
+
+This function is invoked to get the `type` of `<input />` for the given field and operator (only applicable when `getValueEditorType` returns `"text"` or a falsy value). If no function is provided, `"text"` is used as the default.
+
+### `getValues`
+
+`(field: string, operator: string) => OptionList`
+
+This function is invoked to get the list of allowed values for the given field and operator (only applicable when `getValueEditorType` returns `"select"`, `"multiselect"`, or `"radio"`). If no function is provided, an empty array is used as the default.
+
+### `getDefaultField`
+
+`string | ((fieldsData: Field[]) => string)`
+
+The default field for new rules. This can be a string identifying the default field, or a function that returns a field name.
+
+### `getDefaultOperator`
+
+`string | ((field: string) => string)`
+
+The default operator for new rules. This can be a string identifying the default operator, or a function that returns an operator name.
+
+### `getDefaultValue`
+
+`(rule: RuleType) => any`
+
+This function returns the default value for new rules.
+
+### `getRuleClassname`
+
+`(rule: RuleType) => Classname`
+
+Adds custom classes to the outer `div` of the rule.
+
+### `getRuleGroupClassname`
+
+`(ruleGroup: RuleGroupTypeAny) => Classname`
+
+Adds custom classes to the outer `div` of the group.
+
+### `onAddRule`
+
+`(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny, context?: any) => RuleType | false`
+
+This callback is invoked before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType`, or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
+
+If [`independentCombinators`](#independentcombinators) is enabled, you can specify the combinator inserted immediately before the new rule (if the parent group is not empty) by adding a `combinatorPreceding` property with value "and" or "or" to the rule before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
+
+:::tip
+
+To completely [prevent the addition of new rules](../tips/limit-groups), pass `controlElements={{ addRuleAction: () => null }}` which will prevent the "+Rule" button from rendering.
+
+:::
+
+### `onAddGroup`
+
+`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG, context?: any) => RG | false`
+
+This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
+
+If [`independentCombinators`](#independentcombinators) is enabled, you can specify the combinator inserted immediately before the new group (if the parent group is not empty) by adding a `combinatorPreceding` property with value "and" or "or" to the group before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
+
+:::tip
+
+To completely [prevent the addition of new groups](../tips/limit-groups), pass `controlElements={{ addGroupAction: () => null }}` which will prevent the "+Group" button from rendering.
+
+:::
+
+### `onRemove`
+
+`<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: number[], query: RG, context?: any) => boolean`
+
+This callback is invoked before a rule or group is removed. The function should return `true` if the removal should proceed as normal, or `false` if the removal should be aborted.
+
+### `controlClassnames`
+
+This prop can be used to assign custom CSS classes to the various controls rendered by the `<QueryBuilder />` component. This is an object with the following signature. Each attribute is a `Classname` which can be a `string`, `string[]`, or `Record<string, any>` (see documentation for [`clsx`](https://www.npmjs.com/package/clsx)):
+
+```ts
+interface Classnames {
+  queryBuilder?: Classname; // Root <div> element
+  ruleGroup?: Classname; // <div> containing a RuleGroup
+  header?: Classname; // <div> containing the RuleGroup header controls
+  body?: Classname; // <div> containing the RuleGroup child rules/groups
+  combinators?: Classname; // <select> control for combinators
+  addRule?: Classname; // <button> to add a Rule
+  addGroup?: Classname; // <button> to add a RuleGroup
+  cloneRule?: Classname; // <button> to clone a Rule
+  cloneGroup?: Classname; // <button> to clone a RuleGroup
+  removeGroup?: Classname; // <button> to remove a RuleGroup
+  lockRule?: Classname; // <button> to lock/disable a Rule
+  lockGroup?: Classname; // <button> to lock/disable a RuleGroup
+  notToggle?: Classname; // <label> on the "not" toggle
+  rule?: Classname; // <div> containing the Rule
+  fields?: Classname; // <select> control for fields
+  operators?: Classname; // <select> control for operators
+  value?: Classname; // <input> for the field value
+  removeRule?: Classname; // <button> to remove a Rule
+  dragHandle?: Classname; // <span> as drag-and-drop handle
+  valueSource?: Classname; // <select> control for value source
+}
+```
+
+### `translations`
+
+This prop can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />` component. All keys in the object and all properties within each key are optional. Missing translations will default to the corresponding values below.
+
+```json
+{
+  "fields": {
+    "title": "Fields",
+    "placeholderName": "~",
+    "placeholderLabel": "------",
+    "placeholderGroupLabel": "------"
+  },
+  "operators": {
+    "title": "Operators",
+    "placeholderName": "~",
+    "placeholderLabel": "------",
+    "placeholderGroupLabel": "------"
+  },
+  "value": {
+    "title": "Value"
+  },
+  "removeRule": {
+    "label": "x",
+    "title": "Remove rule"
+  },
+  "removeGroup": {
+    "label": "x",
+    "title": "Remove group"
+  },
+  "addRule": {
+    "label": "+Rule",
+    "title": "Add rule"
+  },
+  "addGroup": {
+    "label": "+Group",
+    "title": "Add group"
+  },
+  "combinators": {
+    "title": "Combinators"
+  },
+  "notToggle": {
+    "label": "Not",
+    "title": "Invert this group"
+  },
+  "cloneRule": {
+    "label": "⧉",
+    "title": "Clone rule"
+  },
+  "cloneRuleGroup": {
+    "label": "⧉",
+    "title": "Clone group"
+  },
+  "dragHandle": {
+    "label": "⁞⁞",
+    "title": "Drag handle"
+  },
+  "lockRule": {
+    "label": "🔓",
+    "title": "Lock rule"
+  },
+  "lockGroup": {
+    "label": "🔓",
+    "title": "Lock group"
+  },
+  "lockRuleDisabled": {
+    "label": "🔒",
+    "title": "Unlock rule"
+  },
+  "lockGroupDisabled": {
+    "label": "🔒",
+    "title": "Unlock group"
+  }
+}
+```
+
+### `showCombinatorsBetweenRules`
+
+`boolean` (default `false`) _<DemoLink option="showCombinatorsBetweenRules" />_
+
+Pass `true` to show the combinators (and/or) between rules and rule groups instead of at the top of rule groups. This can make some queries easier to understand as it encourages a more natural style of reading.
+
+### `showNotToggle`
+
+`boolean` (default `false`) _<DemoLink option="showNotToggle" />_
+
+Pass `true` to show the "Not" (aka inversion) toggle switch for each rule group.
+
+### `showCloneButtons`
+
+`boolean` (default `false`) _<DemoLink option="showCloneButtons" />_
+
+Pass `true` to show a "clone" button on each rule and group. Clicking a "clone" button will create an exact duplicate (with new `id`s) of the rule or group, positioned immediately below the original.
+
+### `showLockButtons`
+
+`boolean` (default `false`) _<DemoLink option="showLockButtons" />_
+
+Pass `true` to show the "Lock rule" and "Lock group" buttons. When a rule is locked, all elements within the rule will be disabled (except for the lock button, so the user can unlock it). When a group is locked, all elements within the group header (except the lock button), as well as all child rule/group elements, will be disabled.
+
+### `resetOnFieldChange`
+
+`boolean` (default `true`) _<DemoLink option="resetOnFieldChange" disabled />_
+
+Pass `false` to avoid resetting the operator and value when the field changes.
+
+### `resetOnOperatorChange`
+
+`boolean` (default `false`) _<DemoLink option="resetOnOperatorChange" />_
+
+Pass `true` to reset the value when the operator changes.
+
+### `enableMountQueryChange`
+
+`boolean` (default `true`)
+
+Pass `false` to disable the `onQueryChange` call on mount of the component which will set the default value.
+
+### `autoSelectField`
+
+`boolean` (default `true`) _<DemoLink option="autoSelectField" disabled />_
+
+Pass `false` to automatically add an "empty" option with value `"~"` and label `"------"` (see [`translations.fields.placeholder*` to customize](#translations)) to the `fields` array as the first element. The empty option will be the initial selection for all new rules. When the empty field option is selected, the operator and value editor components will not display for that rule.
+
+### `autoSelectOperator`
+
+`boolean` (default `true`) _<DemoLink option="autoSelectOperator" disabled />_
+
+Pass `false` to automatically add an "empty" option with value `"~"` and label `"------"` (see [`translations.operators.placeholder*` to customize](#translations)) to the `operators` array as the first element. The empty option will be the initial selection for all new rules. When the empty operator option is selected, the value editor component will not display for that rule.
+
+### `addRuleToNewGroups`
+
+`boolean` (default `false`) _<DemoLink option="addRuleToNewGroups" />_
+
+Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
+
+### `listsAsArrays`
+
+`boolean` (default `false`) _<DemoLink option="listsAsArrays" />_
+
+Pass `true` to update rule values that represent lists with proper arrays instead of comma-separated strings. Applies when `valueEditorType` is "multiselect" and when a rule's `operator` is "between", "notBetween", "in", or "notIn".
+
+For example, the default behavior for the "between" operator might produce this rule:
+
+```json {4}
+{
+  "field": "f1",
+  "operator": "between",
+  "value": "f2,f3",
+  "valueSource": "field"
+}
+```
+
+When `listsAsArrays` is true, the rule's `value` will be an array:
+
+```json {4}
+{
+  "field": "f1",
+  "operator": "between",
+  "value": ["f2", "f3"],
+  "valueSource": "field"
+}
+```
+
+### `parseNumbers`
+
+`boolean | "strict" | "native"` (default `false`) _<DemoLink option="parseNumbers" />_
+
+Pass `true`, `"strict"`, or `"native"` to store `value` as an actual number when possible instead of a string. Passing `"native"` will use `parseFloat` to determine if a value is a number, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the note about the corresponding `formatQuery` option in the [Export documentation](../utils/export#parse-numbers).
+
+### `independentCombinators`
+
+`boolean` (default `false`) _<DemoLink option="independentCombinators" />_
+
+Pass `true` to insert an independent combinator selector between each rule/group in a rule group. The combinator selector at the group level will not be rendered.
+
+Visually, this option has a similar effect as the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+
+:::caution
+
+When the `independentCombinators` option is enabled, the `query` (or `defaultQuery`) prop _must_ be of type `RuleGroupTypeIC` instead of the default `RuleGroupType`. See [`onQueryChange`](#onquerychange) above, or the [Rules and groups section](../typescript#rules-and-groups) of the TypeScript documentation for more information.
+
+:::
+
+### `enableDragAndDrop`
+
+`boolean` (default `false`) _<DemoLink option="enableDragAndDrop" />_
+
+:::caution
+
+This prop does not need to be set directly. If used directly, it has no effect unless the following conditions are met:
+
+1. A `QueryBuilderDnD` context provider from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd) is rendered higher up in the component tree.
+2. [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) are also installed.
+
+If those conditions are met, and `enableDragAndDrop` is not explicitly set to `false` on the `<QueryBuilder />` element, then `enableDragAndDrop` is implicitly set to `true`.
+
+:::
+
+When `true` (under the conditions detailed above), a drag handle is displayed on the left-hand side of each group header and each rule. Clicking and dragging the handle element allows users to visually reorder the rules and groups.
+
+#### Recommended usage
+
+```bash
+yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+```
+
+```tsx
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import * as ReactDnD from 'react-dnd';
+import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import { QueryBuilder } from 'react-querybuilder';
+
+const App = () => (
+  <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+    <QueryBuilder />
+  </QueryBuilderDnD>
+);
+```
+
+:::tip
+
+If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former relies on your pre-existing `<DndProvider />` (as long as it is higher up in the component tree). The latter renders its own provider which will clash with an ancestor `DndProvider`. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time.")
+
+:::
+
+### `disabled`
+
+`boolean | number[][]` (default `false`) _<DemoLink option="disabled" />_
+
+Pass `true` to disable all subcomponents and prevent changes to the query. Pass an array of paths to disable specific rules and/or groups, e.g. `disabled={[[0]]}` will disable the first rule and its subcomponents but nothing else.
+
+### `debugMode`
+
+`boolean` (default `false`) _<DemoLink option="debugMode" />_
+
+Pass `true` to log debugging information to the console (or the [`onLog` function](#onlog) if provided).
+
+### `onLog`
+
+`(message: any) => void` (default `console.log`)
+
+Captures log messages when `debugMode` is `true`.
+
+### `idGenerator`
+
+`() => string` (default `generateID`)
+
+Overrides the default `id` generator, which generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) (using the `crypto` package if available; a `Math.random()`-based method is the fallback).
+
+### `validator`
+
+`QueryValidator` _<DemoLink option="validateQuery" />_
+
+This function is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`. See the [Validation](../utils/validation) documentation for more information.

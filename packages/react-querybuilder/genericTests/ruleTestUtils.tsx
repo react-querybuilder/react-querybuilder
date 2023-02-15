@@ -11,7 +11,7 @@ import type {
   ValueEditorProps,
 } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/controls';
+import { defaultControlElements } from '../src/components';
 import {
   defaultControlClassnames,
   defaultTranslations as translations,

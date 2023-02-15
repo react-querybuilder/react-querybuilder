@@ -52,16 +52,21 @@ export const add = <RG extends RuleGroupTypeAny>(
   }: AddOptions = {}
 ) =>
   produce(query, draft => {
-    const parent = findPath(parentPath, draft) as RG;
+    const parent = findPath(parentPath, draft);
+
+    if (!parent || !('rules' in parent)) return;
+
     if (!('combinator' in parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
-        // @ts-expect-error This is technically a type violation until the next `.push()`,
-        // but that happens immediately and unconditionally so there's no real risk.
+        // @ts-expect-error This is technically a type violation until the next push
+        // to the rules array, but that happens immediately and unconditionally so
+        // there's no significant risk.
         combinatorPreceding ??
           (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
       );
     }
+    // The "as RuleType" here just avoids the ambiguity with RuleGroupTypeAny
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
   });
 
@@ -120,56 +125,62 @@ export const update = <RG extends RuleGroupTypeAny>(
         parentRules[path[path.length - 1]] = value;
       }
       return;
-    } else {
-      const ruleOrGroup = findPath(path, draft)!;
-      const isGroup = 'rules' in ruleOrGroup;
-      // Only update if there is actually a change
+    }
+
+    const ruleOrGroup = findPath(path, draft);
+
+    // Ignore invalid paths
+    if (!ruleOrGroup) return;
+
+    const isGroup = 'rules' in ruleOrGroup;
+
+    // Only update if there is actually a change
+    // @ts-expect-error prop can refer to rule or group properties
+    if (ruleOrGroup[prop] === value) return;
+
+    // Handle valueSource updates later
+    if (prop !== 'valueSource') {
       // @ts-expect-error prop can refer to rule or group properties
-      if (ruleOrGroup[prop] !== value) {
-        // Handle valueSource updates later
-        if (prop !== 'valueSource') {
-          // @ts-expect-error prop can refer to rule or group properties
-          ruleOrGroup[prop] = value;
-        }
-        if (!isGroup) {
-          let resetValueSource = false;
-          let resetValue = false;
+      ruleOrGroup[prop] = value;
+    }
 
-          // Set default operator, valueSource, and value for field change
-          if (resetOnFieldChange && prop === 'field') {
-            ruleOrGroup.operator = getRuleDefaultOperator(value);
-            resetValueSource = true;
-            resetValue = true;
-          }
+    // If this is a group, there's no more to do
+    if (isGroup) return;
 
-          // Set default valueSource and value for operator change
-          if (resetOnOperatorChange && prop === 'operator') {
-            resetValueSource = true;
-            resetValue = true;
-          }
+    let resetValueSource = false;
+    let resetValue = false;
 
-          const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
-          if (
-            (resetValueSource &&
-              ruleOrGroup.valueSource &&
-              defaultValueSource !== ruleOrGroup.valueSource) ||
-            (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
-          ) {
-            // Only reset the value if we're changing the valueSource either
-            // 1) from `undefined` to something that is _not_ the default, or
-            // 2) from the current (defined) value to something else
-            resetValue =
-              !!ruleOrGroup.valueSource ||
-              (!ruleOrGroup.valueSource && value !== defaultValueSource);
-            ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
-          }
+    // Set default operator, valueSource, and value for field change
+    if (resetOnFieldChange && prop === 'field') {
+      ruleOrGroup.operator = getRuleDefaultOperator(value);
+      resetValueSource = true;
+      resetValue = true;
+    }
 
-          if (resetValue) {
-            // The default value should be a valid field name if defaultValueSource is 'field'
-            ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
-          }
-        }
-      }
+    // Set default valueSource and value for operator change
+    if (resetOnOperatorChange && prop === 'operator') {
+      resetValueSource = true;
+      resetValue = true;
+    }
+
+    const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
+    if (
+      (resetValueSource &&
+        ruleOrGroup.valueSource &&
+        defaultValueSource !== ruleOrGroup.valueSource) ||
+      (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
+    ) {
+      // Only reset the value if we're changing the valueSource either
+      // 1) from `undefined` to something that is _not_ the default, or
+      // 2) from the current (defined) value to something else
+      resetValue =
+        !!ruleOrGroup.valueSource || (!ruleOrGroup.valueSource && value !== defaultValueSource);
+      ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
+    }
+
+    if (resetValue) {
+      // The default value should be a valid field name if defaultValueSource is 'field'
+      ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
     }
   });
 
@@ -180,17 +191,25 @@ export const update = <RG extends RuleGroupTypeAny>(
  * @returns The updated query
  */
 export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) => {
-  if (path.length === 0 || (!('combinator' in query) && !findPath(path, query))) {
+  if (
+    // Can't remove the root group
+    path.length === 0 ||
+    // Can't independently remove independent combinators
+    (!('combinator' in query) && !findPath(path, query))
+  ) {
     return query;
   }
+
   return produce(query, draft => {
     const index = path[path.length - 1];
-    const parent = findPath(getParentPath(path), draft) as RG;
-    if (!('combinator' in parent) && parent.rules.length > 1) {
-      const idxStartDelete = index === 0 ? 0 : index - 1;
-      parent.rules.splice(idxStartDelete, 2);
-    } else {
-      parent.rules.splice(index, 1);
+    const parent = findPath(getParentPath(path), draft);
+    if (parent && 'rules' in parent) {
+      if (!('combinator' in parent) && parent.rules.length > 1) {
+        const idxStartDelete = index === 0 ? 0 : index - 1;
+        parent.rules.splice(idxStartDelete, 2);
+      } else {
+        parent.rules.splice(index, 1);
+      }
     }
   });
 };
@@ -226,9 +245,11 @@ export const move = <RG extends RuleGroupTypeAny>(
   newPath: number[],
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
-  if (pathsAreEqual(oldPath, newPath)) {
+  // Don't move to the same location or a path that doesn't exist yet
+  if (pathsAreEqual(oldPath, newPath) || !findPath(getParentPath(newPath), query)) {
     return query;
   }
+
   const ruleOrGroupOriginal = findPath(oldPath, query);
   if (!ruleOrGroupOriginal) {
     return query;

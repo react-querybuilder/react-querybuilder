@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/ts/dist/index.noReact';
-import { uuidV4regex } from './generateIDtests';
+import { uuidV4regex } from '../../genericTests/generateIDtests';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {
@@ -75,4 +75,15 @@ it('should generate different IDs for independent combinators', () => {
   expect(((newRuleGroupIC.rules[0] as RuleGroupTypeIC).rules[2] as RuleGroupTypeIC).id).not.toBe(
     ((ruleGroupIC.rules[0] as RuleGroupTypeIC).rules[2] as RuleGroupTypeIC).id
   );
+});
+
+it('should generate different IDs for any POJO', () => {
+  const newObject = regenerateIDs({ test: 'this' } as any);
+  expect(newObject.id).toMatch(uuidV4regex);
+  expect(newObject).toHaveProperty('test', 'this');
+});
+
+it('should return the first param if not POJO', () => {
+  const newObject = regenerateIDs('test' as any);
+  expect(newObject).toBe('test');
 });

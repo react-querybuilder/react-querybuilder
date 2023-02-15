@@ -6,7 +6,7 @@ hide_table_of_contents: true
 
 import { SandpackRQB } from '@site/src/components/SandpackRQB';
 
-React Query Builder exports the same [query tools](../api/misc#query-tools) it uses internally to manage query updates. These functions can be used outside the context of the `<QueryBuilder />` component, giving developers greater flexibility in UI design while enabling the same query management features.
+React Query Builder exports the same [query tools](../utils/misc#query-tools) it uses internally to manage query updates. These functions can be used outside the context of the `<QueryBuilder />` component, giving developers greater flexibility in UI design while enabling the same query management features.
 
 In the example below, the default add/remove buttons have been hidden. The internal query methods (`add`, `remove`, `update`, and `move`) are used within the event handlers assigned to the controls above the query builder. The function return values are assigned to the same state variable that the query builder uses, so the updates are synchronized.
 
