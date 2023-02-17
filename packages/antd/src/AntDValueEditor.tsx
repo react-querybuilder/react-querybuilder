@@ -33,7 +33,7 @@ export const AntDValueEditor = ({
   selectorComponent: SelectorComponent = AntDValueSelector,
   ...props
 }: ValueEditorProps) => {
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,
     operator,
@@ -64,11 +64,11 @@ export const AntDValueEditor = ({
           return (
             <TimePicker
               key={key}
-              value={valArray[i] ? dayjs(valArray[i], 'HH:mm:ss') : null}
+              value={valueAsArray[i] ? dayjs(valueAsArray[i], 'HH:mm:ss') : null}
               className={standardClassnames.valueListItem}
               disabled={disabled}
               placeholder={placeHolderText}
-              onChange={d => betweenValueHandler(d?.format('HH:mm:ss') ?? '', i)}
+              onChange={d => multiValueHandler(d?.format('HH:mm:ss') ?? '', i)}
             />
           );
         }
@@ -76,11 +76,11 @@ export const AntDValueEditor = ({
           <Input
             key={key}
             type={inputTypeCoerced}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             className={standardClassnames.valueListItem}
             disabled={disabled}
             placeholder={placeHolderText}
-            onChange={e => betweenValueHandler(e.target.value, i)}
+            onChange={e => multiValueHandler(e.target.value, i)}
           />
         );
       }
@@ -89,9 +89,9 @@ export const AntDValueEditor = ({
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
-          value={valArray[i] ?? getFirstOption(values)}
+          value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
           listsAsArrays={listsAsArrays}
         />

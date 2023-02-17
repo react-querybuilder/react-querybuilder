@@ -296,11 +296,11 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       const getFirstOptionsFrom = (opts: any[]) => {
         const firstOption = getFirstOption(opts);
         if (rule.operator === 'between' || rule.operator === 'notBetween') {
-          const valArray = [firstOption, firstOption];
+          const valueAsArray = [firstOption, firstOption];
           return listsAsArrays
-            ? valArray
+            ? valueAsArray
             : joinWith(
-                valArray.map(v => v ?? /* istanbul ignore next */ ''),
+                valueAsArray.map(v => v ?? /* istanbul ignore next */ ''),
                 ','
               );
         } else {

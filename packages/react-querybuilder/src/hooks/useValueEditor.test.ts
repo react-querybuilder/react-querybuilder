@@ -6,10 +6,19 @@ it('calls handleOnChange when inputType is number, operator is not "between"/"in
   renderHook(() =>
     useValueEditor({ handleOnChange, operator: '=', inputType: 'number', value: [12, 14] })
   );
-  expect(handleOnChange).toHaveBeenCalled();
+  expect(handleOnChange).toHaveBeenCalledWith(12);
 });
 
-it('sets valArray when operator is "between"', async () => {
+it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is a string with a comma', async () => {
+  const handleOnChange = jest.fn();
+  const hr = renderHook(() =>
+    useValueEditor({ handleOnChange, operator: '=', inputType: 'number', value: '12, 14' })
+  );
+  expect(handleOnChange).toHaveBeenCalledWith('12');
+  expect(hr.result.current.valueAsArray).toEqual(['12', '14']);
+});
+
+it('sets valueAsArray when operator is "between"', async () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
     useValueEditor({
@@ -20,7 +29,7 @@ it('sets valArray when operator is "between"', async () => {
       type: 'text',
     })
   );
-  expect(hr.result.current.valArray).toEqual([12, 14]);
+  expect(hr.result.current.valueAsArray).toEqual([12, 14]);
 });
 
 it('does not call handleOnChange when skipHook is true', async () => {
@@ -35,7 +44,7 @@ it('does not call handleOnChange when skipHook is true', async () => {
     })
   );
   expect(handleOnChange).not.toHaveBeenCalled();
-  hr.result.current.betweenValueHandler('12', 0);
-  expect(hr.result.current.valArray).toEqual([]);
-  expect(handleOnChange).toHaveBeenCalledWith('12');
+  expect(hr.result.current.valueAsArray).toEqual([12, 14]);
+  hr.result.current.multiValueHandler('2', 0);
+  expect(handleOnChange).toHaveBeenCalledWith('2,14');
 });

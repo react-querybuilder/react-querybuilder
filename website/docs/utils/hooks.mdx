@@ -74,10 +74,19 @@ function useValueEditor(
     | 'parseNumbers'
     | 'skipHook'
   >
-): { valArray: any[]; betweenValueHandler: (val: string, idx: number) => void };
+): { valueAsArray: any[]; multiValueHandler: (val: string, idx: number) => void };
 ```
 
-Used by the [`ValueEditor`](../components/valueeditor) component. Accepts an object with a subset of `ValueEditorProps` properties, empties the `value` if necessary, and returns the value array and a value handler if the `operator` is "between" or "notBetween".
+Used by the [`ValueEditor`](../components/valueeditor) component. Accepts an object with a subset of `ValueEditorProps` and returns the value as an array and a multi-value handler.
+
+This Hook updates the `value` as a side effect if the following conditions are true:
+
+- `skipHook` is `false` (used by the value editors in the [compatibility packages](../compat) to avoid infinite loops)
+- `inputType` is `"number"`
+- `operator` is _not_ `"between"`, `"notBetween"`, `"in"`, or `"notIn"`
+- `value` is an array or a string containing a comma (`,`).
+
+If all of those conditions are met, `handleOnChange` will be called with the first element of the array or, if `value` is a string, all characters before the first comma.
 
 ### `useValueSelector`
 

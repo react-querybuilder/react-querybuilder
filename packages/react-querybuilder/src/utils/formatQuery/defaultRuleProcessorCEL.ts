@@ -50,9 +50,9 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
     return `${field} != null`;
   } else if (operatorTL === 'in' || operatorTL === 'notIn') {
     const negate = shouldNegate(operatorTL);
-    const valArray = toArray(value);
-    if (valArray.length > 0) {
-      return `${negate ? '!(' : ''}${field} in [${valArray
+    const valueAsArray = toArray(value);
+    if (valueAsArray.length > 0) {
+      return `${negate ? '!(' : ''}${field} in [${valueAsArray
         .map(val =>
           valueIsField || shouldRenderAsNumber(val, parseNumbers)
             ? `${trimIfString(val)}`
@@ -63,9 +63,9 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
       return '';
     }
   } else if (operatorTL === 'between' || operatorTL === 'notBetween') {
-    const valArray = toArray(value);
-    if (valArray.length >= 2 && !!valArray[0] && !!valArray[1]) {
-      const [first, second] = valArray;
+    const valueAsArray = toArray(value);
+    if (valueAsArray.length >= 2 && !!valueAsArray[0] && !!valueAsArray[1]) {
+      const [first, second] = valueAsArray;
       const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
       const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
       let firstValue = isNaN(firstNum)

@@ -8,7 +8,7 @@ import {
 import { BulmaValueSelector } from './BulmaValueSelector';
 
 export const BulmaValueEditor = (props: ValueEditorProps) => {
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange: props.handleOnChange,
     inputType: props.inputType,
     operator: props.operator,
@@ -39,10 +39,10 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
             key={key}
             type={props.inputType || 'text'}
             placeholder={placeHolderText}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} input`}
             disabled={props.disabled}
-            onChange={e => betweenValueHandler(e.target.value, i)}
+            onChange={e => multiValueHandler(e.target.value, i)}
           />
         );
       }
@@ -51,9 +51,9 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}
-          value={valArray[i] ?? getFirstOption(values)}
+          value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
           listsAsArrays={props.listsAsArrays}
         />

@@ -8,7 +8,7 @@ import {
 } from 'react-querybuilder';
 
 export const BootstrapValueEditor = (props: ValueEditorProps) => {
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange: props.handleOnChange,
     inputType: props.inputType,
     operator: props.operator,
@@ -38,10 +38,10 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
             key={key}
             type={props.inputType || 'text'}
             placeholder={placeHolderText}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} form-control form-control-sm`}
             disabled={props.disabled}
-            onChange={e => betweenValueHandler(e.target.value, i)}
+            onChange={e => multiValueHandler(e.target.value, i)}
           />
         );
       }
@@ -50,9 +50,9 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
           key={key}
           {...props}
           className={`${standardClassnames.valueListItem} form-select form-select-sm`}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}
-          value={valArray[i] ?? getFirstOption(props.values)}
+          value={valueAsArray[i] ?? getFirstOption(props.values)}
           options={props.values ?? []}
           listsAsArrays={props.listsAsArrays}
         />

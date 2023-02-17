@@ -1,5 +1,6 @@
 import type { ValueEditorProps } from '@react-querybuilder/ts';
-import { useEffect } from 'react';
+import { produce } from 'immer';
+import { useCallback, useEffect, useMemo } from 'react';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 
 export type UseValueEditorParams = Pick<
@@ -18,8 +19,8 @@ export type UseValueEditorParams = Pick<
 /**
  * This Effect trims the value if all of the following are true:
  *  - `inputType` is "number"
- *  - `operator` is not one of ("between", "notBetween", "in", "notIn")
- *  - `value` is an array OR the value is a string containing a comma
+ *  - `operator` is _not_ one of ("between", "notBetween", "in", "notIn")
+ *  - `value` is an array _or_ the value is a string containing a comma
  *
  * For example, consider the following rule:
  *
@@ -28,22 +29,18 @@ export type UseValueEditorParams = Pick<
  * If its operator changes to "=", the value will be reset to "12" since
  * the "number" input type can't handle arrays or strings with commas.
  *
- * Returns a value array and a common change handler for series of editors.
+ * Returns the value as an array and a change handler for series of editors.
  */
 export const useValueEditor = ({
   handleOnChange,
   inputType,
   operator,
   value,
-  type,
   listsAsArrays,
   parseNumbers,
   values,
   skipHook,
 }: UseValueEditorParams) => {
-  let valArray: any[] = [];
-  let betweenValueHandler: (val: string, idx: number) => void = v => handleOnChange(v);
-
   useEffect(() => {
     if (skipHook) return;
     if (
@@ -55,32 +52,33 @@ export const useValueEditor = ({
     }
   }, [handleOnChange, inputType, operator, skipHook, value]);
 
-  if (
-    (operator === 'between' || operator === 'notBetween') &&
-    (type === 'select' || type === 'text')
-  ) {
-    valArray = toArray(value);
-    betweenValueHandler = (v: string, i: number) => {
-      const vParsed = parseNumber(v, { parseNumbers });
-      const val =
-        i === 0
-          ? [vParsed, valArray[1] ?? getFirstOption(values), ...valArray.slice(2)]
-          : [valArray[0], vParsed, ...valArray.slice(2)];
+  const valueAsArray = useMemo(() => toArray(value), [value]);
+
+  const multiValueHandler = useCallback(
+    (v: string, i: number) => {
+      const val = produce(valueAsArray, va => {
+        va[i] = parseNumber(v, { parseNumbers });
+        // Enforce an array length of (at least) two for "between"/"notBetween"
+        if (i === 0 && (operator === 'between' || operator === 'notBetween') && !va[1]) {
+          va[1] = getFirstOption(values);
+        }
+      });
       handleOnChange(listsAsArrays ? val : joinWith(val, ','));
-    };
-  }
+    },
+    [handleOnChange, listsAsArrays, operator, parseNumbers, valueAsArray, values]
+  );
 
   return {
     /**
      * Array of values for when the main value represents a list, e.g. when operator
      * is "between" or "in".
      */
-    valArray,
+    valueAsArray,
     /**
-     * A common handler for a series of editors, e.g. when operator is "between".
+     * A handler for a series of editors, e.g. when operator is "between".
      * @param {string} val The new value for the editor
      * @param {number} idx The index of the editor
      */
-    betweenValueHandler,
+    multiValueHandler,
   };
 };

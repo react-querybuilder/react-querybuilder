@@ -3,7 +3,7 @@ title: RuleGroup
 description: Recursive layout and config component for groups
 ---
 
-The `RuleGroup` component allows React Query Builder to visually represent its recursive, hierarchical query structure. `RuleGroup` calls the [`useRuleGroup`](../utils/hooks#userulegroup) hook to retrieve the props it passes down to the subcomponents.
+The `RuleGroup` component allows React Query Builder to visually represent its recursive, hierarchical query structure. `RuleGroup` calls the [`useRuleGroup`](../utils/hooks#userulegroup) hook to prepare the subcomponent props.
 
 ## Subcomponents
 
@@ -11,7 +11,7 @@ The `RuleGroup` component allows React Query Builder to visually represent its r
 
 :::tip
 
-The two layout components themselves don't rely on HTML elements like `<div>`. Providing them separately allows `@react-querybuilder/native`, for example, to re-use the layout components and wrap them in a React Native `<View>`. Feel free to use them in the same way.
+The header and body layout components themselves don't rely on HTML elements like `<div>`. This allows `@react-querybuilder/native`, for example, to render the same layout components within React Native `<View>` elements. Feel free to use them in the same way.
 
 :::
 
@@ -32,7 +32,7 @@ This component renders the following elements in this order:
 
 This component loops through a group's `rules` array and renders a child `RuleGroup` element for each group and a [`Rule`](./rule) element for each rule.
 
-If [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is `true`, an inline combinator[^7] (whose `value` is the group's `combinator`) is rendered ahead of the rule or group.
+If [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is `true`, an inline combinator[^7] (whose `value` is the group's `combinator`) is rendered ahead of each rule or group except the first.
 
 When [`independentCombinators`](./querybuilder#independentcombinators) is `true`, each odd-numbered index in the `rules` array is a `string` representing a combinator. For those elements, an independent, inline combinator is rendered.
 

@@ -27,7 +27,7 @@ export const ChakraValueEditor = ({
   selectorComponent: SelectorComponent = ChakraValueSelector,
   ...props
 }: ValueEditorProps) => {
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,
     operator,
@@ -55,13 +55,13 @@ export const ChakraValueEditor = ({
           <Input
             key={key}
             type={inputTypeCoerced}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             size="xs"
             variant="filled"
             isDisabled={disabled}
             className={standardClassnames.valueListItem}
             placeholder={placeHolderText}
-            onChange={e => betweenValueHandler(e.target.value, i)}
+            onChange={e => multiValueHandler(e.target.value, i)}
           />
         );
       }
@@ -70,9 +70,9 @@ export const ChakraValueEditor = ({
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
-          value={valArray[i] ?? getFirstOption(values)}
+          value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
           listsAsArrays={listsAsArrays}
         />

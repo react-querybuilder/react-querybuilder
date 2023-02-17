@@ -39,7 +39,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,
     operator,
@@ -84,10 +84,10 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
             key={key}
             type={inputTypeCoerced}
             className={standardClassnames.valueListItem}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             disabled={disabled}
             placeholder={placeHolderText}
-            onChange={e => betweenValueHandler(e.target.value, i)}
+            onChange={e => multiValueHandler(e.target.value, i)}
           />
         );
       }
@@ -98,10 +98,10 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
           path={path}
           level={level}
           className={standardClassnames.valueListItem}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           muiComponents={muiComponents}
           disabled={disabled}
-          value={valArray[i] ?? getFirstOption(values)}
+          value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
           listsAsArrays={listsAsArrays}
         />

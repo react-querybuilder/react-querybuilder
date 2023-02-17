@@ -4,47 +4,53 @@ description: Dynamic editor component
 ---
 
 import { useState } from 'react';
-import { update, toArray } from 'react-querybuilder';
+import { joinWith, update, toArray } from 'react-querybuilder';
 import TypeScriptAdmonition from '../_ts_admonition.md';
 
 <TypeScriptAdmonition />
 
-`<ValueEditor />` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it's quite capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields). The last rule demonstrates the `ValueEditor`'s default behavior when a field's `valueSources` property is set to `["field", "value"]`.
+`ValueEditor` renders an `<input>` by default, or a `<select>` (by way of [`ValueSelector`](./valueselector)) if the value should be selected from a list. The [`useValueEditor`](../utils/hooks#usevalueeditor) Hook is called to massage the `value` if necessary and retrieve utilities for managing list values.
 
-This query builder has been specially configured in two ways:
+:::note
 
-1. The value actually stored in the rule object within the query is displayed to the right of each value editor.
-2. To focus attention on the value editor components, all other components have been disabled or hidden.
-
-:::tip
-
-When the `operator` for a rule is **"between"** or **"notBetween"**, two inputs will be displayed. Each input will have the class "rule-value-list-item" (see [CSS classes](../styling/classnames)). They will manage the rule's `value` as a comma-separated string (e.g. `"value1,value2"`) unless [`listsAsArrays`](./querybuilder#listsasarrays) is `true`, in which case the `value` will be an actual `Array` (e.g. `["value1", "value2"]`).
-
-:::
-
-:::tip
-
-The [compatibility packages](../compat) also implement these options using appropriate components from the associated style library ([see the demo](/demo)).
+While React Query Builder does not restrict the rule `value` property to JavaScript primitives, every effort is made to keep the query object serializable. This means that editors that generate non-serializable values (like some date pickers) will store the value as a string, parsing it back into the required non-primitive type during the render process. Editors that allow or require multiple values (when `operator` is "between" or "in", for example) will typically store values as comma-separated strings.
 
 :::
 
 ## Showcase
 
+`ValueEditor` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
+
+Rules 10 and 11 demonstrate the behavior when the `operator` is "between". Rule 12 demonstrates the behavior when a field's `valueSources` property is set to `["field", "value"]`.
+
+:::note
+
+This query builder has been specially configured in the following ways:
+
+1. The index (plus one) of the rule in the `rules` array is displayed to the left of the field selector.
+2. The value actually stored in the rule object within the query is displayed to the right of each value editor.
+3. To focus attention on the value editor components, all other components have been disabled or hidden.
+
+:::
+
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 import { ValueEditor } from 'react-querybuilder';
 
-export const fieldSelector = ({ value, options }) => (
-  <select value={value} disabled>
-    {options.map(o => (
-      <option key={o.name} value={o.name}>
-        {o.valueSources?.includes('field')
-          ? `valueSource: "field"`
-          : 'inputType' in o
-          ? `inputType: "${o.label}"`
-          : `valueEditorType: "${o.label}"`}
-      </option>
-    ))}
-  </select>
+export const fieldSelector = ({ value, options, path }) => (
+  <span>
+    {`${path[0] + 1}. `}
+    <select value={value} disabled>
+      {options.map(o => (
+        <option key={o.name} value={o.name}>
+          {o.valueSources?.includes('field')
+            ? `valueSource: "field"`
+            : 'inputType' in o
+            ? `inputType: "${o.label}"`
+            : `valueEditorType: "${o.label}"`}
+        </option>
+      ))}
+    </select>
+  </span>
 );
 export const operatorSelector = ({ value, options }) => (
   <select value={value} disabled>
@@ -61,48 +67,49 @@ export const valueEditor = props => (
     {'\u00a0'}
     <span
       style={{
-        fontSize: 'x-small',
+        fontSize: 'small',
         opacity: 0.5,
       }}>{`(stored value: ${
       typeof props.value === 'boolean' ? props.value : JSON.stringify(props.value)
     })`}</span>
   </div>
 );
+export const values = [
+  { name: 'option1', label: 'Option 1' },
+  { name: 'option2', label: 'Option 2' },
+  { name: 'option3', label: 'Option 3' },
+  { name: 'option4', label: 'Option 4' },
+];
 export const fields = [
   { name: 'text', label: 'text', inputType: 'text' },
   {
     name: 'select',
     label: 'select',
     valueEditorType: 'select',
-    values: [
-      { name: 'option1', label: 'Option 1' },
-      { name: 'option2', label: 'Option 2' },
-    ],
+    values,
   },
   { name: 'checkbox', label: 'checkbox', valueEditorType: 'checkbox' },
   {
     name: 'radio',
     label: 'radio',
     valueEditorType: 'radio',
-    values: [
-      { name: 'option1', label: 'Option 1' },
-      { name: 'option2', label: 'Option 2' },
-    ],
+    values,
   },
   { name: 'textarea', label: 'textarea', valueEditorType: 'textarea' },
   {
     name: 'multiselect',
     label: 'multiselect',
     valueEditorType: 'multiselect',
-    values: [
-      { name: 'option1', label: 'Option 1' },
-      { name: 'option2', label: 'Option 2' },
-    ],
+    values,
   },
   { name: 'date', label: 'date', inputType: 'date' },
   { name: 'datetime-local', label: 'datetime-local', inputType: 'datetime-local' },
   { name: 'time', label: 'time', inputType: 'time' },
   { name: 'field', label: 'field', valueSources: ['field', 'value'] },
+];
+export const operators = [
+  { name: '=', label: '=' },
+  { name: 'between', label: 'between' },
 ];
 export const defaultQuery = {
   combinator: 'and',
@@ -116,6 +123,8 @@ export const defaultQuery = {
     { field: 'date', operator: '=', value: '' },
     { field: 'datetime-local', operator: '=', value: '' },
     { field: 'time', operator: '=', value: '' },
+    { field: 'text', operator: 'between', value: 'A,Z' },
+    { field: 'select', operator: 'between', value: 'option2,option4' },
     { field: 'field', operator: '=', value: 'text', valueSource: 'field' },
   ],
 };
@@ -126,27 +135,33 @@ export const Showcase = () => {
   const [listsAsArrays, setListsAsArrays] = useState(false);
   return (
     <>
-      <label>
-        <input
-          type="checkbox"
-          checked={listsAsArrays}
-          onChange={e => {
-            if (e.target.checked) {
-              setQuery(update(query, 'value', toArray(query.rules[5].value), [5]));
-            } else {
-              setQuery(update(query, 'value', query.rules[5].value.join(','), [5]));
-            }
-            setListsAsArrays(e.target.checked);
-          }}
-        />
-        <code>listsAsArrays</code>
-      </label>
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            checked={listsAsArrays}
+            onChange={e => {
+              if (e.target.checked) {
+                const q1 = update(query, 'value', toArray(query.rules[5].value), [5]);
+                const q2 = update(q1, 'value', toArray(q1.rules[10].value), [10]);
+                setQuery(update(q2, 'value', toArray(q2.rules[11].value), [11]));
+              } else {
+                const q1 = update(query, 'value', joinWith(query.rules[5].value, ','), [5]);
+                const q2 = update(q1, 'value', joinWith(q1.rules[10].value, ','), [10]);
+                setQuery(update(q2, 'value', joinWith(q2.rules[11].value), [11]));
+              }
+              setListsAsArrays(e.target.checked);
+            }}
+          />
+          <code>listsAsArrays</code>
+        </label>
+      </p>
       <QueryBuilderEmbed
         fields={fields}
         query={query}
         onQueryChange={q => setQuery(q)}
         listsAsArrays={listsAsArrays}
-        getOperators={() => [{ name: '=', label: '=' }]}
+        operators={operators}
         controlElements={{
           fieldSelector: fieldSelector,
           operatorSelector: operatorSelector,
@@ -164,9 +179,9 @@ export const Showcase = () => {
 
 <Showcase />
 
-:::note
+:::tip
 
-While React Query Builder does not restrict the rule `value` property to JavaScript primitives, every effort is made to keep the query object serializable. This means that editors that generate non-serializable values (like some date pickers) will store the value as a string, parsing it back into the required non-primitive type during the render process. Editors that allow or require multiple values (when `operator` is "between" or "in", for example) will typically store values as comma-separated strings.
+The [compatibility packages](../compat) also implement these options using appropriate components from their respective style libraries ([see the demo](/demo)).
 
 :::
 

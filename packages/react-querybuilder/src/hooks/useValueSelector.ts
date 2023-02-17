@@ -20,8 +20,8 @@ export const useValueSelector = ({
   const onChange = useCallback(
     (v: string | string[]) => {
       if (multiple) {
-        const valArray = toArray(v);
-        handleOnChange(listsAsArrays ? valArray : joinWith(valArray, ','));
+        const valueAsArray = toArray(v);
+        handleOnChange(listsAsArrays ? valueAsArray : joinWith(valueAsArray, ','));
       } else {
         handleOnChange(v);
       }

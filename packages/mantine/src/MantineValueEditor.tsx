@@ -25,7 +25,7 @@ export const MantineValueEditor = ({
   validation: _validation,
   ...props
 }: ValueEditorProps) => {
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,
     operator,
@@ -58,10 +58,10 @@ export const MantineValueEditor = ({
             key={key}
             type={inputType || 'text'}
             placeholder={placeHolderText}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} input`}
             disabled={disabled}
-            onChange={e => betweenValueHandler(e.target.value, i)}
+            onChange={e => multiValueHandler(e.target.value, i)}
           />
         );
       }
@@ -70,9 +70,9 @@ export const MantineValueEditor = ({
           key={key}
           {...props}
           className={standardClassnames.valueListItem}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
-          value={valArray[i] ?? getFirstOption(values)}
+          value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
           listsAsArrays={listsAsArrays}
         />
@@ -158,10 +158,10 @@ export const MantineValueEditor = ({
 
     if (operator === 'between' || operator === 'notBetween') {
       const twoDateArray = [null, null].map((_d, i) => {
-        if (!valArray[i]) return null;
-        let date = dayjs(valArray[i]);
+        if (!valueAsArray[i]) return null;
+        let date = dayjs(valueAsArray[i]);
         if (!date.isValid()) {
-          date = dayjs(`${dayjs().format('YYYY-MM-DD')}T${valArray[i]}`);
+          date = dayjs(`${dayjs().format('YYYY-MM-DD')}T${valueAsArray[i]}`);
         }
         return date.isValid() ? date.toDate() : null;
       }) as [Date | null, Date | null];

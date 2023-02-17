@@ -253,8 +253,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             operator.toLowerCase() === 'not between'
           ) {
             if (value) {
-              const valArray = toArray(rule.value);
-              const [first, second] = valArray
+              const valueAsArray = toArray(rule.value);
+              const [first, second] = valueAsArray
                 .slice(0, 2)
                 .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v));
               if (parameterized) {

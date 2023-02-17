@@ -52,7 +52,7 @@ export const NativeBaseValueEditor = ({
     ]
   );
 
-  const { valArray, betweenValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler } = useValueEditor({
     skipHook,
     handleOnChange,
     inputType,
@@ -85,9 +85,9 @@ export const NativeBaseValueEditor = ({
             style={styles.value}
             keyboardType={keyboardType}
             placeholder={placeHolderText}
-            value={valArray[i] ?? ''}
+            value={valueAsArray[i] ?? ''}
             // TODO: disabled={disabled}
-            onChangeText={v => betweenValueHandler(v, i)}
+            onChangeText={v => multiValueHandler(v, i)}
           />
         );
       }
@@ -95,10 +95,10 @@ export const NativeBaseValueEditor = ({
         <SelectorComponent
           key={key}
           {...props}
-          handleOnChange={v => betweenValueHandler(v, i)}
+          handleOnChange={v => multiValueHandler(v, i)}
           className={className}
           disabled={disabled}
-          value={valArray[i] ?? getFirstOption(values)}
+          value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
           listsAsArrays={listsAsArrays}
         />

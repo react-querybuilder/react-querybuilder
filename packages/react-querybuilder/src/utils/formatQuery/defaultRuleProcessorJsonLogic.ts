@@ -42,16 +42,20 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
     } as RQBJsonLogic;
   } else if (operator === 'in' || operator === 'notIn') {
     // TODO: extract this map function
-    const valArray = toArray(value).map(fieldOrNumberRenderer);
-    if (valArray.length > 0) {
-      const jsonRule: RQBJsonLogic = { in: [fieldObject, valArray] };
+    const valueAsArray = toArray(value).map(fieldOrNumberRenderer);
+    if (valueAsArray.length > 0) {
+      const jsonRule: RQBJsonLogic = { in: [fieldObject, valueAsArray] };
       return negateIfNotOp(operator, jsonRule);
     }
     return false;
   } else if (operator === 'between' || operator === 'notBetween') {
-    const valArray = toArray(value);
-    if (valArray.length >= 2 && isValidValue(valArray[0]) && isValidValue(valArray[1])) {
-      let [first, second] = valArray;
+    const valueAsArray = toArray(value);
+    if (
+      valueAsArray.length >= 2 &&
+      isValidValue(valueAsArray[0]) &&
+      isValidValue(valueAsArray[1])
+    ) {
+      let [first, second] = valueAsArray;
       if (
         !valueIsField &&
         shouldRenderAsNumber(first, true) &&

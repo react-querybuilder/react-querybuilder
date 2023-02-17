@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - New `QueryBuilder` prop `getValueEditorSeparator`: Takes a `field` name and an `operator` name and should return a `ReactNode` (string, element, etc.) that will be placed between the two editors when `operator` is "between" or "notBetween". E.g., `getValueEditorSeparator={() => "and"}`.
   - New `QueryBuilder` prop `parseNumbers`: When `true`, the default `ValueEditor` will update its rule with an actual number instead of the string representation whenever possible.
   - New `ValueEditor` prop `skipHook`: When `true`, the `useValueEditor` hook call within the default `ValueEditor` component will not make query updates. Enables safer rendering of the default `ValueEditor` as a fallback to a custom value editor.
-  - The `useValueEditor` hook now returns an object with `valArray` and `betweenValueHandler` properties. See `ValueEditor` code for usage.
+  - The `useValueEditor` hook now returns an object with `valueAsArray` and `multiValueHandler` properties. See `ValueEditor` code for usage.
 - [#455] `regenerateIDs` works for any object, not just rule groups.
 - [#455] Query tools (`add`, `remove`, `update`, and `move`) will fail gracefully and return the original query if the provided `path` or `parentPath` points to an invalid location in the query hierarchy.
 

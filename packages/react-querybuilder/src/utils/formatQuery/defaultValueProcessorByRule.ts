@@ -14,9 +14,9 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   if (operatorLowerCase === 'null' || operatorLowerCase === 'notnull') {
     return '';
   } else if (operatorLowerCase === 'in' || operatorLowerCase === 'notin') {
-    const valArray = toArray(value);
-    if (valArray.length > 0) {
-      return `(${valArray
+    const valueAsArray = toArray(value);
+    if (valueAsArray.length > 0) {
+      return `(${valueAsArray
         .map(v =>
           valueIsField || shouldRenderAsNumber(v, parseNumbers)
             ? `${trimIfString(v)}`
@@ -26,9 +26,13 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     }
     return '';
   } else if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
-    const valArray = toArray(value);
-    if (valArray.length >= 2 && isValidValue(valArray[0]) && isValidValue(valArray[1])) {
-      const [first, second] = valArray;
+    const valueAsArray = toArray(value);
+    if (
+      valueAsArray.length >= 2 &&
+      isValidValue(valueAsArray[0]) &&
+      isValidValue(valueAsArray[1])
+    ) {
+      const [first, second] = valueAsArray;
       return valueIsField ||
         (shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers))
         ? `${trimIfString(first)} and ${trimIfString(second)}`

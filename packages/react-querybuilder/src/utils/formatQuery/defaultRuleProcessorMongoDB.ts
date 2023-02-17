@@ -60,13 +60,13 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
   } else if (operator === 'notNull') {
     return `{"${field}":{"$ne":null}}`;
   } else if (operator === 'in' || operator === 'notIn') {
-    const valArray = toArray(value);
-    if (valArray.length > 0) {
+    const valueAsArray = toArray(value);
+    if (valueAsArray.length > 0) {
       return valueIsField
-        ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valArray
+        ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valueAsArray
             .map(val => `this.${val}`)
             .join(',')}].includes(this.${field})"}`
-        : `{"${field}":{"${mongoOperators[operator]}":[${valArray
+        : `{"${field}":{"${mongoOperators[operator]}":[${valueAsArray
             .map(val =>
               shouldRenderAsNumber(val, parseNumbers)
                 ? `${trimIfString(val)}`
@@ -77,9 +77,13 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
       return '';
     }
   } else if (operator === 'between' || operator === 'notBetween') {
-    const valArray = toArray(value);
-    if (valArray.length >= 2 && isValidValue(valArray[0]) && isValidValue(valArray[1])) {
-      const [first, second] = valArray;
+    const valueAsArray = toArray(value);
+    if (
+      valueAsArray.length >= 2 &&
+      isValidValue(valueAsArray[0]) &&
+      isValidValue(valueAsArray[1])
+    ) {
+      const [first, second] = valueAsArray;
       const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
       const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
       const firstValue =
