@@ -2,3 +2,4 @@
 *.jison
 *.png
 .yarnrc.yml
+.gitignore

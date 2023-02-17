@@ -40,6 +40,7 @@ const noTypeScriptESLint = (/** @type {string} */ s) => !/@typescript-eslint/.te
 
 const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
+const templateDotCS = pathJoin(templatePath, '.codesandbox');
 const templateSrc = pathJoin(templatePath, 'src');
 const templateIndexHTML = (await readFile(pathJoin(templatePath, 'index.html'))).toString('utf-8');
 const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
@@ -57,10 +58,11 @@ const templatePkgJSON = require('./_template/package.json');
 const generateCommonExample = exampleID => async () => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
+  const exampleDotCS = pathJoin(examplePath, '.codesandbox');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
   await rm(examplePath, { recursive: true, force: true });
-  await Promise.all([await mkdir(examplePath), await mkdir(exampleSrc)]);
+  await mkdir(examplePath), await Promise.all([await mkdir(exampleDotCS), await mkdir(exampleSrc)]);
 
   // #region /index.html
   const exampleIndexHTML = templateIndexHTML.replace('__TITLE__', exampleTitle);
@@ -157,6 +159,10 @@ const generateCommonExample = exampleID => async () => {
 
   // #region Straight copies
   await Promise.all([
+    await copyFile(
+      pathJoin(templateDotCS, 'workspace.json'),
+      pathJoin(exampleDotCS, 'workspace.json')
+    ),
     await copyFile(pathJoin(templatePath, '.prettierrc'), pathJoin(examplePath, '.prettierrc')),
     await copyFile(pathJoin(templatePath, '.gitignore'), pathJoin(examplePath, '.gitignore')),
     await copyFile(
