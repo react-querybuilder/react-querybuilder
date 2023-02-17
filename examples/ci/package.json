@@ -21,8 +21,8 @@
   "name": "react-querybuilder-ci",
   "private": true,
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
+    "dev": "vite",
     "preview": "vite preview"
   },
   "type": "module"
