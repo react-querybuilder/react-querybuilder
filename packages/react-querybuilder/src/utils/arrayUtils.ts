@@ -18,8 +18,9 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
         .split(`\\${splitChar}`)
         .map(c => c.split(splitChar))
         .reduce((prev, curr, idx) => {
-          if (idx === 0) return curr;
-          // prev[prev.length - 1] = `${prev[prev.length - 1]},${curr[0]}`;
+          if (idx === 0) {
+            return curr;
+          }
           return [
             ...prev.slice(0, prev.length - 1),
             `${prev[prev.length - 1]}${splitChar}${curr[0]}`,
@@ -47,16 +48,18 @@ export const joinWith = (strArr: (string | undefined | null)[], joinChar = defau
 export const trimIfString = (val: any) => (typeof val === 'string' ? val.trim() : val);
 
 /**
- * Splits strings by comma and trims each element; returns arrays as-is.
+ * Splits strings by comma and trims each element. Arrays are returned as-is but
+ * any string elements are trimmed.
  */
 export const toArray = (v: any) =>
-  (Array.isArray(v)
-    ? v
+  Array.isArray(v)
+    ? v.map(trimIfString)
     : typeof v === 'string'
-    ? splitBy(v, defaultJoinChar).filter(s => !/^\s*$/.test(s))
+    ? splitBy(v, defaultJoinChar)
+        .filter(s => !/^\s*$/.test(s))
+        .map(s => s.trim())
     : typeof v === 'number'
     ? [v]
-    : []
-  ).map(trimIfString);
+    : [];
 
 export const nullFreeArray = <T>(arr: T[]): arr is Exclude<T, null>[] => arr.every(Boolean);
