@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/ctx",
   "description": "React Query Builder context",
-  "version": "6.0.0-rc.0",
+  "version": "6.0.0",
   "publishConfig": {
     "access": "public"
   },
@@ -39,7 +39,7 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@react-querybuilder/ts": "^6.0.0-rc.0",
+    "@react-querybuilder/ts": "^6.0.0",
     "@testing-library/react": "^13.4.0",
     "@types/node": "^18.13.0",
     "@types/react": "^18.0.28",

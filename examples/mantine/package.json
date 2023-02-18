@@ -3,11 +3,11 @@
     "@mantine/core": ">=5",
     "@mantine/dates": ">=5",
     "@mantine/hooks": ">=5",
-    "@react-querybuilder/mantine": "^6.0.0-rc.0",
+    "@react-querybuilder/mantine": "^6.0.0",
     "dayjs": ">=1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.0.0-rc.0"
+    "react-querybuilder": "^6.0.0"
   },
   "description": "React Query Builder Mantine Example",
   "devDependencies": {

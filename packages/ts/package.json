@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/ts",
-  "version": "6.0.0-rc.0",
+  "version": "6.0.0",
   "description": "TypeScript types for react-querybuilder",
   "type": "module",
   "main": "./src/index.ts",
