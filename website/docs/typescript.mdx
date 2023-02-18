@@ -121,7 +121,7 @@ interface FormatQueryOptions {
   format?: ExportFormat;
   valueProcessor?: ValueProcessor;
   ruleProcessor?: RuleProcessor;
-  quoteFieldNamesWith?: string;
+  quoteFieldNamesWith?: string | [string, string];
   validator?: QueryValidator;
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
   fallbackExpression?: string;

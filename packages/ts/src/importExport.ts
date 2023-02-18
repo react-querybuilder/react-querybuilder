@@ -34,10 +34,18 @@ export interface FormatQueryOptions {
   ruleProcessor?: RuleProcessor;
   /**
    * In the "sql"/"parameterized"/"parameterized_named" export formats,
-   * field names will be bracketed by this string. Defaults to the empty
-   * string (''). A common value for this option is the backtick ('`').
+   * field names will be bracketed by this string. If an array of strings
+   * is passed, field names will be preceded by the first element and
+   * succeeded by the second element. A common value for this option is
+   * the backtick ('`').
+   *
+   * @default '' // the empty string
+   *
+   * @example
+   * formatQuery(query, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })
+   * // `[First name] = 'Steve'`
    */
-  quoteFieldNamesWith?: string;
+  quoteFieldNamesWith?: string | [string, string];
   /**
    * Validator function for the entire query. Can be the same function passed
    * as `validator` prop to `<QueryBuilder />`.

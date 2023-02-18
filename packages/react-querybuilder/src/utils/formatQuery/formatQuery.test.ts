@@ -981,6 +981,10 @@ it('handles quoteFieldNamesWith correctly', () => {
   expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
     "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai')"
   );
+
+  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })).toBe(
+    "([instrument] in ('Guitar', 'Vocals') and [lastName] = 'Vai')"
+  );
 });
 
 it('handles custom fallbackExpression correctly', () => {

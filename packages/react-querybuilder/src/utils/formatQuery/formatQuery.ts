@@ -68,7 +68,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let format: ExportFormat = 'json';
   let valueProcessorInternal = defaultValueProcessorByRule;
   let ruleProcessorInternal: RuleProcessor | null = null;
-  let quoteFieldNamesWith = '';
+  let quoteFieldNamesWith: [string, string] = ['', ''];
   let validator: QueryValidator = () => true;
   let fields: Required<FormatQueryOptions>['fields'] = [];
   let validationMap: ValidationMap = {};
@@ -110,7 +110,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         : format === 'jsonlogic'
         ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
         : defaultValueProcessorByRule;
-    quoteFieldNamesWith = options.quoteFieldNamesWith ?? '';
+    if (Array.isArray(options.quoteFieldNamesWith)) {
+      quoteFieldNamesWith = options.quoteFieldNamesWith;
+    } else if (typeof options.quoteFieldNamesWith === 'string') {
+      quoteFieldNamesWith = [options.quoteFieldNamesWith, options.quoteFieldNamesWith];
+    }
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
     fallbackExpression = options.fallbackExpression ?? '';
@@ -222,7 +226,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         if ((parameterized || parameterized_named) && (rule.valueSource ?? 'value') === 'value') {
           if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
-            return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator}`;
+            return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator}`;
           } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
             if (value) {
               const splitValue = toArray(rule.value);
@@ -230,9 +234,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                 splitValue.forEach(v =>
                   params.push(shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v)
                 );
-                return `${quoteFieldNamesWith}${
-                  rule.field
-                }${quoteFieldNamesWith} ${operator} (${splitValue.map(() => '?').join(', ')})`;
+                return `${quoteFieldNamesWith[0]}${rule.field}${
+                  quoteFieldNamesWith[1]
+                } ${operator} (${splitValue.map(() => '?').join(', ')})`;
               }
               const inParams: string[] = [];
               splitValue.forEach(v => {
@@ -242,9 +246,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                   ? parseFloat(v)
                   : v;
               });
-              return `${quoteFieldNamesWith}${
-                rule.field
-              }${quoteFieldNamesWith} ${operator} (${inParams.join(', ')})`;
+              return `${quoteFieldNamesWith[0]}${rule.field}${
+                quoteFieldNamesWith[1]
+              } ${operator} (${inParams.join(', ')})`;
             } else {
               return '';
             }
@@ -260,13 +264,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               if (parameterized) {
                 params.push(first);
                 params.push(second);
-                return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ? and ?`;
+                return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ? and ?`;
               }
               const firstParamName = getNextNamedParam(rule.field);
               const secondParamName = getNextNamedParam(rule.field);
               params_named[firstParamName] = first;
               params_named[secondParamName] = second;
-              return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
+              return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
             } else {
               return '';
             }
@@ -290,7 +294,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             paramName = getNextNamedParam(rule.field);
             params_named[paramName] = paramValue;
           }
-          return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${
+          return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${
             parameterized ? '?' : `${paramPrefix}${paramName}`
           }`.trim();
         } else {
@@ -305,7 +309,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
         }
-        return `${quoteFieldNamesWith}${rule.field}${quoteFieldNamesWith} ${operator} ${value}`.trim();
+        return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${value}`.trim();
       };
 
       const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
