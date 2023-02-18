@@ -1,0 +1,280 @@
+---
+title: ValueEditor
+description: Dynamic editor component
+---
+
+import { useState } from 'react';
+import { joinWith, update, toArray } from 'react-querybuilder';
+import TypeScriptAdmonition from '../_ts_admonition.md';
+
+<TypeScriptAdmonition />
+
+`ValueEditor` renders an `<input>` by default, or a `<select>` (by way of [`ValueSelector`](./valueselector)) if the value should be selected from a list. The [`useValueEditor`](../utils/hooks#usevalueeditor) Hook is called to massage the `value` if necessary and retrieve utilities for managing list values.
+
+:::note
+
+While React Query Builder does not restrict the rule `value` property to JavaScript primitives, every effort is made to keep the query object serializable. This means that editors that generate non-serializable values (like some date pickers) will store the value as a string, parsing it back into the required non-primitive type during the render process. Editors that allow or require multiple values (when `operator` is "between" or "in", for example) will typically store values as comma-separated strings.
+
+:::
+
+## Showcase
+
+`ValueEditor` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
+
+Rules 10 and 11 demonstrate the behavior when the `operator` is "between". Rule 12 demonstrates the behavior when a field's `valueSources` property is set to `["field", "value"]`.
+
+:::note
+
+This query builder has been specially configured in the following ways:
+
+1. The index (plus one) of the rule in the `rules` array is displayed to the left of the field selector.
+2. The value actually stored in the rule object within the query is displayed to the right of each value editor.
+3. To focus attention on the value editor components, all other components have been disabled or hidden.
+
+:::
+
+import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
+import { ValueEditor } from 'react-querybuilder';
+
+export const fieldSelector = ({ value, options, path }) => (
+  <span>
+    {`${path[0] + 1}. `}
+    <select value={value} disabled>
+      {options.map(o => (
+        <option key={o.name} value={o.name}>
+          {o.valueSources?.includes('field')
+            ? `valueSource: "field"`
+            : 'inputType' in o
+            ? `inputType: "${o.label}"`
+            : `valueEditorType: "${o.label}"`}
+        </option>
+      ))}
+    </select>
+  </span>
+);
+export const operatorSelector = ({ value, options }) => (
+  <select value={value} disabled>
+    {options.map(o => (
+      <option key={o.name} value={o.name}>
+        {o.label}
+      </option>
+    ))}
+  </select>
+);
+export const valueEditor = props => (
+  <div style={{ display: 'flex' }}>
+    <ValueEditor {...props} />
+    {'\u00a0'}
+    <span
+      style={{
+        fontSize: 'small',
+        opacity: 0.5,
+      }}>{`(stored value: ${
+      typeof props.value === 'boolean' ? props.value : JSON.stringify(props.value)
+    })`}</span>
+  </div>
+);
+export const values = [
+  { name: 'option1', label: 'Option 1' },
+  { name: 'option2', label: 'Option 2' },
+  { name: 'option3', label: 'Option 3' },
+  { name: 'option4', label: 'Option 4' },
+];
+export const fields = [
+  { name: 'text', label: 'text', inputType: 'text' },
+  {
+    name: 'select',
+    label: 'select',
+    valueEditorType: 'select',
+    values,
+  },
+  { name: 'checkbox', label: 'checkbox', valueEditorType: 'checkbox' },
+  {
+    name: 'radio',
+    label: 'radio',
+    valueEditorType: 'radio',
+    values,
+  },
+  { name: 'textarea', label: 'textarea', valueEditorType: 'textarea' },
+  {
+    name: 'multiselect',
+    label: 'multiselect',
+    valueEditorType: 'multiselect',
+    values,
+  },
+  { name: 'date', label: 'date', inputType: 'date' },
+  { name: 'datetime-local', label: 'datetime-local', inputType: 'datetime-local' },
+  { name: 'time', label: 'time', inputType: 'time' },
+  { name: 'field', label: 'field', valueSources: ['field', 'value'] },
+];
+export const operators = [
+  { name: '=', label: '=' },
+  { name: 'between', label: 'between' },
+];
+export const defaultQuery = {
+  combinator: 'and',
+  rules: [
+    { field: 'text', operator: '=', value: '' },
+    { field: 'select', operator: '=', value: 'option2' },
+    { field: 'checkbox', operator: '=', value: true },
+    { field: 'radio', operator: '=', value: 'option2' },
+    { field: 'textarea', operator: '=', value: '' },
+    { field: 'multiselect', operator: '=', value: 'option1,option2' },
+    { field: 'date', operator: '=', value: '' },
+    { field: 'datetime-local', operator: '=', value: '' },
+    { field: 'time', operator: '=', value: '' },
+    { field: 'text', operator: 'between', value: 'A,Z' },
+    { field: 'select', operator: 'between', value: 'option2,option4' },
+    { field: 'field', operator: '=', value: 'text', valueSource: 'field' },
+  ],
+};
+export const NullComponent = () => null;
+
+export const Showcase = () => {
+  const [query, setQuery] = useState(defaultQuery);
+  const [listsAsArrays, setListsAsArrays] = useState(false);
+  return (
+    <>
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            checked={listsAsArrays}
+            onChange={e => {
+              if (e.target.checked) {
+                const q1 = update(query, 'value', toArray(query.rules[5].value), [5]);
+                const q2 = update(q1, 'value', toArray(q1.rules[10].value), [10]);
+                setQuery(update(q2, 'value', toArray(q2.rules[11].value), [11]));
+              } else {
+                const q1 = update(query, 'value', joinWith(query.rules[5].value, ','), [5]);
+                const q2 = update(q1, 'value', joinWith(q1.rules[10].value, ','), [10]);
+                setQuery(update(q2, 'value', joinWith(q2.rules[11].value), [11]));
+              }
+              setListsAsArrays(e.target.checked);
+            }}
+          />
+          <code>listsAsArrays</code>
+        </label>
+      </p>
+      <QueryBuilderEmbed
+        fields={fields}
+        query={query}
+        onQueryChange={q => setQuery(q)}
+        listsAsArrays={listsAsArrays}
+        operators={operators}
+        controlElements={{
+          fieldSelector: fieldSelector,
+          operatorSelector: operatorSelector,
+          combinatorSelector: NullComponent,
+          addRuleAction: NullComponent,
+          addGroupAction: NullComponent,
+          removeRuleAction: NullComponent,
+          removeGroupAction: NullComponent,
+          valueEditor: valueEditor,
+        }}
+      />
+    </>
+  );
+};
+
+<Showcase />
+
+:::tip
+
+The [compatibility packages](../compat) also implement these options using appropriate components from their respective style libraries ([see the demo](/demo)).
+
+:::
+
+## Value sources
+
+By default, React Query Builder facilitates the comparison of fields (typically corresponding to database column names) to _values_ (strings, numbers, etc.). But some situations call for comparisons between two fields. Consider this SQL statement:
+
+```sql
+SELECT *
+  FROM users
+ WHERE lastName LIKE firstName || '%';
+```
+
+That would return records where the user's last name began with the same letters as their first name and ended with any number of other characters (including zero). "Kris Kristofferson" would meet this criteria.
+
+To represent that `WHERE` clause in React Query Builder, we can use the [`getValueSources` prop](./querybuilder#getvaluesources) or the `valueSources` property of the `lastName` field in the `fields` prop. When either of those evaluates to an array containing "field", and the `valueSource` property of the rule is set to "field", the `<ValueEditor />` component will display a drop-down list of fields instead of values.
+
+### Example
+
+In the query builder above, the definition for the field used in the last rule is:
+
+```json
+{
+  "name": "field",
+  "label": "field",
+  "valueSources": ["field", "value"]
+}
+```
+
+And the `defaultQuery` prop looks like this:
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    // ...other rules...
+    { "field": "field", "operator": "=", "value": "text", "valueSource": "field" }
+  ]
+}
+```
+
+Since the field's `valueSources` property is an array with length > 1, a ["value source selector" component](./querybuilder#valuesourceselector) is displayed to the left of the `<ValueEditor />`.
+
+:::tip
+
+To reorder the rule components, for example to move the value source selector to the right of the value editor, you can use the CSS Flexbox `order` property).
+
+:::
+
+:::note
+
+The `Field#valueSources` property can also be a function that takes an operator name as its only parameter and returns the required array.
+
+:::
+
+### Filtering the field list
+
+Not all fields will be compatible with each other, so each field may provide a `comparator` property specifying which fields show up in the value editor list. If `comparator` is a string, then only fields which have the same value as the current field in the property matching the `comparator` string will be listed.
+
+That's a mouthful, so let's look at an example. In the following field list, fields `f1`, `f2`, and `f3` share a common property `datatype: "number"`. `f1` identifies the `datatype` property as its `comparator`. Therefore, when a rule specifies the field `f1`, only `f2` and `f3` will be in the drop-down list because their `datatype` property matches `f1`'s. `f4` and `f5` will be excluded because their `datatype` property does not match `f1`'s, and `f1` will be excluded because a rule's selected field cannot be compared with itself.
+
+```tsx
+const fields: Field[] = {
+  {
+    name: 'f1',
+    label: 'f1',
+    // highlight-start
+    valueSources: ["field"],
+    comparator: 'datatype',
+    datatype: 'number'
+    // highlight-end
+  },
+  { name: 'f2', label: 'f2', datatype: 'number' },
+  { name: 'f3', label: 'f3', datatype: 'number' },
+  { name: 'f4', label: 'f4', datatype: 'string' },
+  { name: 'f5', label: 'f5', datatype: 'string' },
+}
+```
+
+The `comparator` property can also be a function that takes a `Field` object as its only parameter. Each field in the `fields` prop will be evaluated by this function. It should return `true` if the field should be included in the list, and `false` otherwise. The equivalent configuration of the field list above, using a function for `comparator`, would be this:
+
+```tsx
+const fields: Field[] = {
+  { name: 'f1',
+    label: 'f1',
+    // highlight-start
+    valueSources: ["field"],
+    comparator: f => f.datatype === 'number'
+    // highlight-end
+  },
+  { name: 'f2', label: 'f2', datatype: 'number' },
+  { name: 'f3', label: 'f3', datatype: 'number' },
+  { name: 'f4', label: 'f4', datatype: 'string' },
+  { name: 'f5', label: 'f5', datatype: 'string' },
+}
+```

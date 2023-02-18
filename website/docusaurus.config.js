@@ -100,6 +100,9 @@ const config = {
             5: {
               label: 'v5.x',
             },
+            6: {
+              label: 'v6.x',
+            },
             current: {
               label: 'Next',
             },
@@ -152,7 +155,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'api/querybuilder',
+            docId: 'components/querybuilder',
             position: 'right',
             label: 'Docs',
           },
@@ -191,8 +194,8 @@ const config = {
                 to: '/docs/intro',
               },
               {
-                label: 'Component API',
-                to: '/docs/api/querybuilder',
+                label: 'Components',
+                to: '/docs/components/querybuilder',
               },
               {
                 label: 'Tips & Tricks',

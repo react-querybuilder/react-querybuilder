@@ -1,0 +1,51 @@
+---
+title: RuleGroup
+description: Recursive layout and config component for groups
+---
+
+The `RuleGroup` component allows React Query Builder to visually represent its recursive, hierarchical query structure. `RuleGroup` calls the [`useRuleGroup`](../utils/hooks#userulegroup) hook to prepare the subcomponent props.
+
+## Subcomponents
+
+`RuleGroup` renders an outer `<div>` and two inner `<div>`s, the first containing [header elements](#rulegroupheadercomponents) (derived from the group properties) and the second containing [body elements](#rulegroupbodycomponents) (derived primarily from a map of the group's `rules` array).
+
+:::tip
+
+The header and body layout components themselves don't rely on HTML elements like `<div>`. This allows `@react-querybuilder/native`, for example, to render the same layout components within React Native `<View>` elements. Feel free to use them in the same way.
+
+:::
+
+### `RuleGroupHeaderComponents`
+
+This component renders the following elements in this order:
+
+- Drag handle[^1]
+- Combinator selector[^2]
+- "Not" toggle[^3]
+- Add rule button
+- Add group button
+- Clone group button[^4]
+- Lock group button[^5]
+- Remove group button[^6]
+
+### `RuleGroupBodyComponents`
+
+This component loops through a group's `rules` array and renders a child `RuleGroup` element for each group and a [`Rule`](./rule) element for each rule.
+
+If [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is `true`, an inline combinator[^7] (whose `value` is the group's `combinator`) is rendered ahead of each rule or group except the first.
+
+When [`independentCombinators`](./querybuilder#independentcombinators) is `true`, each odd-numbered index in the `rules` array is a `string` representing a combinator. For those elements, an independent, inline combinator is rendered.
+
+:::note
+
+The `independentCombinators` prop supersedes `showCombinatorsBetweenRules`.
+
+:::
+
+[^1]: The default styles hide this element if [`enableDragAndDrop`](./querybuilder#enabledraganddrop) is `false`, but it is _always_ rendered.
+[^2]: Only rendered if neither [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) nor [`independentCombinators`](./querybuilder#independentcombinators) are `true`.
+[^3]: Only rendered if [`showNotToggle`](./querybuilder#shownottoggle) is `true`.
+[^4]: Only rendered if [`showCloneButtons`](./querybuilder#showclonebuttons) is `true`.
+[^5]: Only rendered if [`showLockButtons`](./querybuilder#showlockbuttons) is `true`.
+[^6]: Only rendered if the group is not the query root.
+[^7]: The [`inlineCombinator`](./querybuilder#inlinecombinator) component in turn renders the configured [`combinatorSelector`](./querybuilder#combinatorselector).

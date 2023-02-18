@@ -1,0 +1,161 @@
+---
+title: Hooks
+description: Reuse React Query Builder's logic in your own components
+---
+
+import { DemoLink } from '@site/src/components/DemoLink';
+import TypeScriptAdmonition from '../_ts_admonition.md';
+
+<TypeScriptAdmonition />
+
+These Hooks are used internally by React Query Builder.
+
+## Component logic
+
+The core logic of each component is encapsulated in a reusable Hook. Each main component is itself little more than a call to its respective Hook and the JSX that utilizes the properties in the returned object. This enables the creation of one's own presentation layer without having to copy any code from the default components.
+
+:::tip
+
+The `@react-querybuilder/native` package is a good example of this concept. It calls the Hooks from its own query builder, rule group, and rule components, but nests the sub-components within React Native `View` elements instead of HTML `div` elements like the standard components.
+
+:::
+
+### `useQueryBuilder`
+
+```ts
+function useQueryBuilder(props: QueryBuilderProps): {
+  actions: QueryActions;
+  query: RuleGroupTypeAny;
+  queryDisabled: boolean;
+  rqbContext: ReturnType<typeof useMergedContext>;
+  schema: Schema;
+  translations: TranslationsFull;
+  wrapperClassName: string;
+};
+```
+
+Used by the [`QueryBuilder`](../components/querybuilder) component. Returns everything needed to render a wrapper element (e.g. `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props. Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
+
+### `useRuleGroup`
+
+```ts
+function useRuleGroup(props: RuleGroupProps): {
+  // See source code for returned properties:
+  // /packages/react-querybuilder/src/hooks/useRuleGroup.ts
+};
+```
+
+Used by the [`RuleGroup`](../components/rulegroup) component.
+
+### `useRule`
+
+```ts
+function useRule(props: RuleProps): {
+  // See source code for returned properties:
+  // /packages/react-querybuilder/src/hooks/useRule.ts
+};
+```
+
+Used by the [`Rule`](../components/rule) component.
+
+### `useValueEditor`
+
+```ts
+function useValueEditor(
+  props: Pick<
+    ValueEditorProps,
+    | 'handleOnChange'
+    | 'inputType'
+    | 'operator'
+    | 'value'
+    | 'listsAsArrays'
+    | 'type'
+    | 'values'
+    | 'parseNumbers'
+    | 'skipHook'
+  >
+): { valueAsArray: any[]; multiValueHandler: (val: string, idx: number) => void };
+```
+
+Used by the [`ValueEditor`](../components/valueeditor) component. Accepts an object with a subset of `ValueEditorProps` and returns the value as an array and a multi-value handler.
+
+This Hook updates the `value` as a side effect if the following conditions are true:
+
+- `skipHook` is `false` (the value editors in the [compatibility packages](../compat) set this to `true` to avoid infinite loops)
+- `inputType` is `"number"`
+- `operator` is something other than `"between"`, `"notBetween"`, `"in"`, or `"notIn"`
+- `value` is an array or a string containing a comma (`,`).
+
+If all of those conditions are met, `handleOnChange` will be called with the first element of the array or, if `value` is a string, any characters before the first comma.
+
+### `useValueSelector`
+
+```ts
+function useValueSelector(
+  props: Pick<ValueSelectorProps, 'handleOnChange' | 'listsAsArrays' | 'multiple' | 'value'>
+): {
+  onChange: (v: string | string[]) => void;
+  val?: string | any[];
+};
+```
+
+Used by the [`ValueSelector`](../components/valueselector) component. Transforms the given value into an array when appropriate and provides a memoized change handler.
+
+### `useSelectElementChangeHandler`
+
+```ts
+function useSelectElementChangeHandler(props: {
+  multiple?: boolean;
+  onChange: (v: string | string[]) => void;
+}): (e: ChangeEvent<HTMLSelectElement>) => void;
+```
+
+Used by the [`ValueSelector`](../components/valueselector) component. Returns a memoized change handler specifically for HTML `<select />` elements.
+
+## Utilities
+
+### `useMergedContext`
+
+```ts
+function useMergedContext(
+  props: QueryBuilderContextProps & { translations: Translations }
+): QueryBuilderContextProps;
+```
+
+Merges the values inherited from the nearest ancestor `QueryBuilderContext` provider with the current component's props.
+
+### `usePreferProp`
+
+```ts
+function usePreferProp(default: boolean, prop?: boolean, context?: boolean): boolean;
+```
+
+Given a default value, a prop value, and a context value (all `boolean` or `undefined`), returns the first one that is not `undefined` in the order of (1) prop, (2) context, (3) default.
+
+### `usePrevious`
+
+```ts
+function usePrevious<T>(prop: T): T | null;
+```
+
+Returns the value of a prop or state variable from the previous render.
+
+## Internal
+
+These Hooks log error messages to the console in certain situations (in development mode only). They encourage correct usage of React Query Builder and are not intended to be used in custom components.
+
+### `useControlledOrUncontrolled`
+
+Logs an error to the console if any of the following are true:
+
+- Both `query` and `defaultQuery` props are defined.
+- The `query` prop is defined during the first render and undefined in a subsequent render.
+- The `query` prop is undefined during the first render and defined in a subsequent render.
+
+### `useDeprecatedProps`
+
+Logs an error to the console if a `RuleGroup` component is rendered with `combinator` or `rules` props, or if a `Rule` component is rendered with `field`, `operator`, or `value` props. These props are deprecated in favor of `ruleGroup` and `rule`, respectively.
+
+### `useReactDndWarning`
+
+Logs an error to the console if the `enableDragAndDrop` prop is `true` but the `react-dnd` and `react-dnd-html5-backend` dependencies are not loaded.

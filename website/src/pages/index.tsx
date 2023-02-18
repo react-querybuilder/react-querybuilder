@@ -219,8 +219,8 @@ const LandingPage = () => {
                 the selected format.
               </p>
               <div className={styles.linkList}>
-                <Link href="/docs/api/export">Export documentation</Link>
-                <Link href="/docs/api/import">Import documentation</Link>
+                <Link href="/docs/utils/export">Export documentation</Link>
+                <Link href="/docs/utils/import">Import documentation</Link>
               </div>
             </div>
             <div>
@@ -232,7 +232,7 @@ const LandingPage = () => {
                 Bootstrap, and others.
               </p>
               <div className={styles.linkList}>
-                <Link href="/docs/api/querybuilder#controlelements">Documentation</Link>
+                <Link href="/docs/components/querybuilder#controlelements">Documentation</Link>
                 <Link href="/docs/tips/custom-with-fallback">Tips</Link>
               </div>
             </div>
@@ -287,8 +287,8 @@ const LandingPage = () => {
                 classes assigned by the component.
               </p>
               <div className={styles.linkList}>
-                <Link href="/docs/api/classnames">Documentation</Link>
-                <Link href="/docs/tips/styling">Tips</Link>
+                <Link href="/docs/styling/classnames">Documentation</Link>
+                <Link href="/docs/styling/overview">Tips</Link>
               </div>
             </div>
           </div>
