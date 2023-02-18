@@ -6,7 +6,7 @@ import './SandpackRQB.scss';
 
 interface SandpackRQBProps extends SandpackProps {
   children: React.ReactNode;
-  rqbVersion?: 4 | 5;
+  rqbVersion?: 4 | 5 | 6;
 }
 
 export const SandpackRQB = ({
