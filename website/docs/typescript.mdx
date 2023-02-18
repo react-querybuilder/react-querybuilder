@@ -115,6 +115,8 @@ type ExportFormat =
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
 
+type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
+
 interface FormatQueryOptions {
   format?: ExportFormat;
   valueProcessor?: ValueProcessor;

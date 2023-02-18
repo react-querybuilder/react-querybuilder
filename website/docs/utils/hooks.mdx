@@ -34,7 +34,7 @@ function useQueryBuilder(props: QueryBuilderProps): {
 };
 ```
 
-Used by the [`QueryBuilder`](../components/querybuilder) component. Returns everything needed to render a wrapper element (e.g. `<div>`) and the root `RuleGroup` element based on the provided props. Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
+Used by the [`QueryBuilder`](../components/querybuilder) component. Returns everything needed to render a wrapper element (e.g. `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props. Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
 
 ### `useRuleGroup`
 
@@ -81,12 +81,12 @@ Used by the [`ValueEditor`](../components/valueeditor) component. Accepts an obj
 
 This Hook updates the `value` as a side effect if the following conditions are true:
 
-- `skipHook` is `false` (used by the value editors in the [compatibility packages](../compat) to avoid infinite loops)
+- `skipHook` is `false` (the value editors in the [compatibility packages](../compat) set this to `true` to avoid infinite loops)
 - `inputType` is `"number"`
-- `operator` is _not_ `"between"`, `"notBetween"`, `"in"`, or `"notIn"`
+- `operator` is something other than `"between"`, `"notBetween"`, `"in"`, or `"notIn"`
 - `value` is an array or a string containing a comma (`,`).
 
-If all of those conditions are met, `handleOnChange` will be called with the first element of the array or, if `value` is a string, all characters before the first comma.
+If all of those conditions are met, `handleOnChange` will be called with the first element of the array or, if `value` is a string, any characters before the first comma.
 
 ### `useValueSelector`
 

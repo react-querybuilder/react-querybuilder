@@ -22,7 +22,7 @@ function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOption
 This function recursively steps through a query object (`RuleGroupType` or `RuleGroupTypeIC`), passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
 
 - `ruleProcessor`: Custom processing for each rule.
-- `ruleGroupProcessor`: Custom processing for each rule group. (The `rules` property will be retained.)
+- `ruleGroupProcessor`: Custom processing for each rule group. Each group's `rules` property will be retained and recursively processed regardless of any other mutations.
 - `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
 - `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
 - `operatorMap`: Convert operators that match the keys in this object to the corresponding values, e.g. `{"=": "=="}`.
@@ -38,7 +38,10 @@ function defaultValidator(query: RuleGroupTypeAny): {
 };
 ```
 
-Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`query.rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`).
+Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either of the following are true:
+
+1. The group has no child rules or groups (`query.rules.length === 0`)
+2. The group has a missing/invalid `combinator` property and more than one child rule or group (`rules.length >= 2`).
 
 You can see an example of the default validator in action in the [demo](/demo) if you check the <DemoLink option="validateQuery" text="'Use validation' option" />. Empty groups will have bold text on their "+Rule" button and a description of the situation where the rules normally appear.
 
@@ -151,11 +154,11 @@ The following default configuration objects are exported for convenience.
 
 The default components are also exported:
 
-- `ActionElement` - used for action buttons (to add rules, remove groups, etc.)
-- `DragHandle` - used for the drag handle on rules and group headers
-- `InlineCombinator` - used when either `showCombinatorsBetweenRules` or `independentCombinators` are `true`
-- `NotToggle` - used for the "Invert this group" toggle switch
-- `Rule` - the default rule component
-- `RuleGroup` - the default rule group component
-- `ValueEditor` - the default `valueEditor` component
-- `ValueSelector` - used for drop-down lists (combinator, field, and operator selectors)
+- [`ActionElement`](../components/actionelement) - used for action buttons (to add rules, remove groups, etc.)
+- [`DragHandle`](../components/draghandle) - used for the drag handle on rules and group headers
+- [`InlineCombinator`](../components/rulegroup) - used when either [`showCombinatorsBetweenRules`](../components/querybuilder#showcombinatorsbetweenrules) or [`independentCombinators`](../components/querybuilder#independentcombinators) are `true`
+- [`NotToggle`](../components/nottoggle) - used for the "Invert this group" toggle switch
+- [`Rule`](../components/rule) - the default rule component
+- [`RuleGroup`](../components/rulegroup) - the default rule group component
+- [`ValueEditor`](../components/valueeditor) - the default `valueEditor` component
+- [`ValueSelector`](../components/valueselector) - used for drop-down lists (combinator, field, and operator selectors)

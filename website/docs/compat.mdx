@@ -52,6 +52,7 @@ Each compatibility package exports its own context provider.
 | `@react-querybuilder/bootstrap` | `QueryBuilderBootstrap` |
 | `@react-querybuilder/bulma`     | `QueryBuilderBulma`     |
 | `@react-querybuilder/chakra`    | `QueryBuilderChakra`    |
+| `@react-querybuilder/mantine`   | `QueryBuilderMantine`   |
 | `@react-querybuilder/material`  | `QueryBuilderMaterial`  |
 
 :::tip
@@ -108,11 +109,20 @@ export function App() {
 }
 ```
 
+| Compatibility package           | `controlElements` object   |
+| ------------------------------- | -------------------------- |
+| `@react-querybuilder/antd`      | `antdControlElements`      |
+| `@react-querybuilder/bootstrap` | `bootstrapControlElements` |
+| `@react-querybuilder/bulma`     | `bulmaControlElements`     |
+| `@react-querybuilder/chakra`    | `chakraControlElements`    |
+| `@react-querybuilder/mantine`   | `mantineControlElements`   |
+| `@react-querybuilder/material`  | `materialControlElements`  |
+
 ## Customization
 
-Many of the compatibility components accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving the query builder integration up to the compatibility layer.
+All of the compatibility components except the `*ValueEditor`s accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving the query builder integration up to the compatibility layer.
 
-For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders the `Button` component from `antd`, so it can accept properties of the `ActionWithRulesProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
+For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders a `Button` component from `antd`, so it can accept properties of the `ActionWithRulesProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
 
 In the example below, the `size` prop is accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface), even though it's not included in the `ActionWithRulesProps` interface.
 
