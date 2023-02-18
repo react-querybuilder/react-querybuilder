@@ -463,11 +463,14 @@ If you use TypeScript, these conditions will be enforced automatically.
 
 ### Quote field names
 
-Some database engines wrap field names in backticks (`` ` ``). This can be configured with the `quoteFieldNamesWith` option.
+Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option.
 
 ```ts
 formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' });
 // Returns: "(`firstName` = 'Steve' and `lastName` = 'Vai')"
+
+formatQuery(query, { format: 'sql', quoteFieldNamesWith: ['[', ']'] });
+// Returns: "([firstName] = 'Steve' and [lastName] = 'Vai')"
 ```
 
 ### Parameter prefix
