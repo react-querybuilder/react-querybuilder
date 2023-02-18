@@ -40,11 +40,9 @@ const noTypeScriptESLint = (/** @type {string} */ s) => !/@typescript-eslint/.te
 
 const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
-const templatePublic = pathJoin(templatePath, 'public');
+const templateDotCS = pathJoin(templatePath, '.codesandbox');
 const templateSrc = pathJoin(templatePath, 'src');
-const templateIndexHTML = (await readFile(pathJoin(templatePublic, 'index.html'))).toString(
-  'utf-8'
-);
+const templateIndexHTML = (await readFile(pathJoin(templatePath, 'index.html'))).toString('utf-8');
 const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
 const templateAppTSX = (await readFile(pathJoin(templateSrc, 'App.tsx'))).toString('utf-8');
 const templateStylesSCSS = (await readFile(pathJoin(templateSrc, 'styles.scss'))).toString('utf-8');
@@ -60,17 +58,15 @@ const templatePkgJSON = require('./_template/package.json');
 const generateCommonExample = exampleID => async () => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
-  const examplePublic = pathJoin(examplePath, 'public');
+  const exampleDotCS = pathJoin(examplePath, '.codesandbox');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
   await rm(examplePath, { recursive: true, force: true });
-  await mkdir(examplePath);
-  await mkdir(examplePublic);
-  await mkdir(exampleSrc);
+  await mkdir(examplePath), await Promise.all([await mkdir(exampleDotCS), await mkdir(exampleSrc)]);
 
-  // #region public/index.html
+  // #region /index.html
   const exampleIndexHTML = templateIndexHTML.replace('__TITLE__', exampleTitle);
-  await writeFile(pathJoin(examplePublic, 'index.html'), exampleIndexHTML);
+  await writeFile(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
   // #endregion
 
   // #region src/index.scss
@@ -147,12 +143,33 @@ const generateCommonExample = exampleID => async () => {
 
   // #region tsconfig.json
   if (!exampleConfig.compileToJS) {
-    await copyFile(pathJoin(templatePath, 'tsconfig.json'), pathJoin(examplePath, 'tsconfig.json'));
+    await Promise.all([
+      await copyFile(pathJoin(templateSrc, 'vite-env.d.ts'), pathJoin(exampleSrc, 'vite-env.d.ts')),
+      await copyFile(
+        pathJoin(templatePath, 'tsconfig.json'),
+        pathJoin(examplePath, 'tsconfig.json')
+      ),
+      await copyFile(
+        pathJoin(templatePath, 'tsconfig.node.json'),
+        pathJoin(examplePath, 'tsconfig.node.json')
+      ),
+    ]);
   }
   // #endregion
 
-  // #region .prettierrc
-  await copyFile(pathJoin(templatePath, '.prettierrc'), pathJoin(examplePath, '.prettierrc'));
+  // #region Straight copies
+  await Promise.all([
+    await copyFile(
+      pathJoin(templateDotCS, 'workspace.json'),
+      pathJoin(exampleDotCS, 'workspace.json')
+    ),
+    await copyFile(pathJoin(templatePath, '.prettierrc'), pathJoin(examplePath, '.prettierrc')),
+    await copyFile(pathJoin(templatePath, '.gitignore'), pathJoin(examplePath, '.gitignore')),
+    await copyFile(
+      pathJoin(templatePath, 'vite.config.ts'),
+      pathJoin(examplePath, 'vite.config.ts')
+    ),
+  ]);
   // #endregion
 
   // #region .eslintrc.json
@@ -236,8 +253,8 @@ const updateOtherExample = otherExampleName => async () => {
 };
 
 await Promise.all([
-  ...Object.keys(configs).map(ex => new Promise(r => generateCommonExample(ex)().then(r))),
-  ...otherExamples.map(ex => new Promise(r => updateOtherExample(ex)().then(r))),
+  ...Object.keys(configs).map(async ex => generateCommonExample(ex)()),
+  ...otherExamples.map(async ex => updateOtherExample(ex)()),
 ]);
 
 console.log('Finished generating/updating examples');
