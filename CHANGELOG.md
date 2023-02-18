@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - The `useValueEditor` hook now returns an object with `valueAsArray` and `multiValueHandler` properties. See `ValueEditor` code for usage.
 - [#455] `regenerateIDs` works for any object, not just rule groups.
 - [#455] Query tools (`add`, `remove`, `update`, and `move`) will fail gracefully and return the original query if the provided `path` or `parentPath` points to an invalid location in the query hierarchy.
+- [#463] The `formatQuery` option `quoteFieldNamesWith` now accepts an array of strings with two elements. The first element will precede each field name and the second will succeed each field name. E.g., `['[', ']']` would result in `` `[Field name] ...` ``.
 
 ## [v5.4.1] - 2023-01-30
 
@@ -1218,6 +1219,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#452]: https://github.com/react-querybuilder/react-querybuilder/pull/452
 [#455]: https://github.com/react-querybuilder/react-querybuilder/pull/455
 [#458]: https://github.com/react-querybuilder/react-querybuilder/issues/458
+[#463]: https://github.com/react-querybuilder/react-querybuilder/pull/463
 
 <!-- Release comparison links -->
 
