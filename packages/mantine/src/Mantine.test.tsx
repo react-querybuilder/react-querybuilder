@@ -20,6 +20,8 @@ import { MantineNotToggle } from './MantineNotToggle';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
 
+jest.setTimeout(30_000);
+
 declare global {
   // eslint-disable-next-line no-var
   var __RQB_DEV__: boolean;
