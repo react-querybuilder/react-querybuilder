@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.0.0]
+
 ### Changed
 
 - [#455] A UMD build is no longer provided. See [new instructions for buildless environments using ESM](https://react-querybuilder.js.org/docs/buildless)).
@@ -1223,7 +1227,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.0...HEAD
+[v5.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...v6.0.0
 [v5.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.0...v5.4.1
 [v5.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.3...v5.4.0
 [v5.3.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.2...v5.3.3
