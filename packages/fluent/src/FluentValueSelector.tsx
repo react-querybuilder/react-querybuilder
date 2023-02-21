@@ -1,9 +1,10 @@
-import type { SelectProps } from '@fluentui/react-components';
-import { Select } from '@fluentui/react-components';
+import type { DropdownProps, SelectProps } from '@fluentui/react-components';
+import { Dropdown, Select } from '@fluentui/react-components';
 import type { VersatileSelectorProps } from '@react-querybuilder/ts';
-import { toOptions, useSelectElementChangeHandler, useValueSelector } from 'react-querybuilder';
+import { toArray, toOptions, useValueSelector } from 'react-querybuilder';
+import { toDropdownOptions } from './utils';
 
-type FluentValueSelectorProps = VersatileSelectorProps & SelectProps;
+type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
 
 export const FluentValueSelector = ({
   className,
@@ -15,6 +16,7 @@ export const FluentValueSelector = ({
   multiple,
   listsAsArrays,
   testID,
+  placeholder,
   fieldData: _fieldData,
   path: _path,
   level: _level,
@@ -25,9 +27,20 @@ export const FluentValueSelector = ({
 }: FluentValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });
-
-  return (
+  return multiple ? (
+    <Dropdown
+      data-testid={testID}
+      title={title}
+      className={className}
+      disabled={disabled}
+      multiselect
+      value={toArray(val).join(', ')}
+      placeholder={placeholder}
+      selectedOptions={toArray(val)}
+      onOptionSelect={(_e, data) => onChange(data.selectedOptions)}>
+      {toDropdownOptions(options)}
+    </Dropdown>
+  ) : (
     <Select
       {...otherProps}
       data-testid={testID}
@@ -36,7 +49,7 @@ export const FluentValueSelector = ({
       value={val}
       disabled={disabled}
       multiple={!!multiple}
-      onChange={selectElementChangeHandler}>
+      onChange={(_e, data) => onChange(data.value)}>
       {toOptions(options)}
     </Select>
   );
