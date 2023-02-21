@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Added
+
+- [Fluent UI](https://github.com/microsoft/fluentui) [compatibility package](https://www.npmjs.com/package/@react-querybuilder/fluent)
 
 ## [v6.0.0] - 2023-02-18
 
