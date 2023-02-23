@@ -4,11 +4,12 @@
  * @typedef {_ESLint.ConfigData & { extends: string[] }} ESLintExtendsIsArray
  */
 
+import Bun from 'bun';
 import { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import glob from 'glob';
 import { createRequire } from 'module';
-import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, rm } from 'node:fs/promises';
 import { dirname, join as pathJoin } from 'node:path';
 import prettier from 'prettier';
 import { fileURLToPath } from 'url';
@@ -42,16 +43,16 @@ const packagesPath = pathJoin(__dirname, '../packages');
 const templatePath = pathJoin(__dirname, '_template');
 const templateDotCS = pathJoin(templatePath, '.codesandbox');
 const templateSrc = pathJoin(templatePath, 'src');
-const templateIndexHTML = (await readFile(pathJoin(templatePath, 'index.html'))).toString('utf-8');
-const templateIndexTSX = (await readFile(pathJoin(templateSrc, 'index.tsx'))).toString('utf-8');
-const templateAppTSX = (await readFile(pathJoin(templateSrc, 'App.tsx'))).toString('utf-8');
-const templateStylesSCSS = (await readFile(pathJoin(templateSrc, 'styles.scss'))).toString('utf-8');
-const templateREADMEmd = (await readFile(pathJoin(templatePath, 'README.md'))).toString('utf-8');
+const templateIndexHTML = await Bun.file(pathJoin(templatePath, 'index.html')).text();
+const templateIndexTSX = await Bun.file(pathJoin(templateSrc, 'index.tsx')).text();
+const templateAppTSX = await Bun.file(pathJoin(templateSrc, 'App.tsx')).text();
+const templateStylesSCSS = await Bun.file(pathJoin(templateSrc, 'styles.scss')).text();
+const templateREADMEmd = await Bun.file(pathJoin(templatePath, 'README.md')).text();
 
-const templatePkgJsonNewText = (await readFile(pathJoin(templatePath, 'package.json')))
-  .toString('utf-8')
-  .replace(/("@?react-querybuilder(?:\/\w+)?": ").*?"/g, `$1^${version}"`);
-await writeFile(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
+const templatePkgJsonNewText = (
+  await Bun.file(pathJoin(templatePath, 'package.json')).text()
+).replace(/("@?react-querybuilder(?:\/\w+)?": ").*?"/g, `$1^${version}"`);
+await Bun.write(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON = require('./_template/package.json');
 
 /** @type {(id: string) => () => Promise<void>} */
@@ -68,7 +69,7 @@ const generateCommonExample = exampleID => async () => {
   const exampleIndexHTML = templateIndexHTML
     .replace('__TITLE__', exampleTitle)
     .replace('index.tsx', exampleConfig.compileToJS ? 'index.jsx' : 'index.tsx');
-  await writeFile(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
+  await Bun.write(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
   // #endregion
 
   // #region src/index.scss
@@ -76,7 +77,7 @@ const generateCommonExample = exampleID => async () => {
     .replace('// __SCSS_PRE__', exampleConfig.scssPre.join('\n'))
     .replace('// __SCSS_POST__', exampleConfig.scssPost.join('\n'))
     .replace(/((query-builder\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
-  await writeFile(
+  await Bun.write(
     pathJoin(exampleSrc, `styles.${exampleConfig.compileToJS ? '' : 's'}css`),
     processedTemplateSCSS
   );
@@ -90,7 +91,7 @@ const generateCommonExample = exampleID => async () => {
   const exampleIndexSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
     : processedTemplateIndexTSX;
-  await writeFile(
+  await Bun.write(
     pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     exampleIndexSourceCode
   );
@@ -107,7 +108,7 @@ const generateCommonExample = exampleID => async () => {
   const exampleAppSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateAppTSX, 'App.tsx')
     : processedTemplateAppTSX;
-  await writeFile(
+  await Bun.write(
     pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     exampleAppSourceCode
   );
@@ -140,20 +141,23 @@ const generateCommonExample = exampleID => async () => {
       examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
     }
   }
-  await writeFile(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON));
+  await Bun.write(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON));
   // #endregion
 
   // #region tsconfig.json
   if (!exampleConfig.compileToJS) {
     await Promise.all([
-      await copyFile(pathJoin(templateSrc, 'vite-env.d.ts'), pathJoin(exampleSrc, 'vite-env.d.ts')),
-      await copyFile(
-        pathJoin(templatePath, 'tsconfig.json'),
-        pathJoin(examplePath, 'tsconfig.json')
+      await Bun.write(
+        pathJoin(exampleSrc, 'vite-env.d.ts'),
+        Bun.file(pathJoin(templateSrc, 'vite-env.d.ts'))
       ),
-      await copyFile(
-        pathJoin(templatePath, 'tsconfig.node.json'),
-        pathJoin(examplePath, 'tsconfig.node.json')
+      await Bun.write(
+        pathJoin(examplePath, 'tsconfig.json'),
+        Bun.file(pathJoin(templatePath, 'tsconfig.json'))
+      ),
+      await Bun.write(
+        pathJoin(examplePath, 'tsconfig.node.json'),
+        Bun.file(pathJoin(templatePath, 'tsconfig.node.json'))
       ),
     ]);
   }
@@ -161,15 +165,21 @@ const generateCommonExample = exampleID => async () => {
 
   // #region Straight copies
   await Promise.all([
-    await copyFile(
-      pathJoin(templateDotCS, 'workspace.json'),
-      pathJoin(exampleDotCS, 'workspace.json')
+    await Bun.write(
+      pathJoin(exampleDotCS, 'workspace.json'),
+      Bun.file(pathJoin(templateDotCS, 'workspace.json'))
     ),
-    await copyFile(pathJoin(templatePath, '.prettierrc'), pathJoin(examplePath, '.prettierrc')),
-    await copyFile(pathJoin(templatePath, '.gitignore'), pathJoin(examplePath, '.gitignore')),
-    await copyFile(
-      pathJoin(templatePath, 'vite.config.ts'),
-      pathJoin(examplePath, 'vite.config.ts')
+    await Bun.write(
+      pathJoin(examplePath, '.prettierrc'),
+      Bun.file(pathJoin(templatePath, '.prettierrc'))
+    ),
+    await Bun.write(
+      pathJoin(examplePath, '.gitignore'),
+      Bun.file(pathJoin(templatePath, '.gitignore'))
+    ),
+    await Bun.write(
+      pathJoin(examplePath, 'vite.config.ts'),
+      Bun.file(pathJoin(templatePath, 'vite.config.ts'))
     ),
   ]);
   // #endregion
@@ -189,7 +199,7 @@ const generateCommonExample = exampleID => async () => {
       }
     }
   }
-  await writeFile(
+  await Bun.write(
     pathJoin(examplePath, '.eslintrc.json'),
     prettier.format(stableStringify(exampleESLintRC), { filepath: 'f.json' })
   );
@@ -206,13 +216,13 @@ const generateCommonExample = exampleID => async () => {
     '> _Development note: Do not modify the files in this folder directly. Edit corresponding ' +
     'files in the [_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), ' +
     'then run `yarn generate-examples` from the repository root directory._';
-  await writeFile(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
+  await Bun.write(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
   // #region Prettify this example
   const fileList = glob.sync(`examples/${exampleID}/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}`);
   for (const filepath of fileList) {
-    const fileContents = (await readFile(filepath)).toString('utf-8');
+    const fileContents = await Bun.file(filepath).text();
     const printWidth = filepath.endsWith('css')
       ? rootPrettierConfig?.printWidth
       : (await prettier.resolveConfig(filepath))?.printWidth;
@@ -225,7 +235,7 @@ const generateCommonExample = exampleID => async () => {
     };
     if (!prettier.check(fileContents, prettierOptions)) {
       let prettified = prettier.format(fileContents, prettierOptions);
-      await writeFile(filepath, prettified);
+      await Bun.write(filepath, prettified);
     }
   }
   // #endregion
@@ -250,7 +260,7 @@ const updateOtherExample = otherExampleName => async () => {
     ...otherExamplePrettierOptions,
     filepath: otherExamplePkgJsonPath,
   });
-  await writeFile(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
+  await Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
   console.log(`Updated package.json for "${otherExampleName}" example`);
 };
 
