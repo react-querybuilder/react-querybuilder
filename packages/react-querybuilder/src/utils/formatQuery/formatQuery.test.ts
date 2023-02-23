@@ -5,6 +5,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '@react-querybuilder/ts/dist/index.noReact';
+import { describe, expect, it } from 'bun:test';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
@@ -1039,17 +1040,19 @@ describe('escapes quotes when appropriate', () => {
     rules: [{ field: 'f1', operator: '=', value: `Te'st` }],
   };
 
-  it.each([
-    { fmt: 'sql', result: `(f1 = 'Te''st')` },
-    { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
-    {
-      fmt: 'parameterized_named',
-      result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } },
-    },
-    { fmt: 'spel', result: `f1 == 'Te\\'st'` },
-  ])('escapes single quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
-    // @ts-expect-error Conflicting formatQuery overloads
-    expect(formatQuery(testQuerySQ, fmt)).toEqual(result);
+  it('escapes single quotes (if appropriate)', () => {
+    for (const { fmt, result } of [
+      { fmt: 'sql', result: `(f1 = 'Te''st')` },
+      { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
+      {
+        fmt: 'parameterized_named',
+        result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } },
+      },
+      { fmt: 'spel', result: `f1 == 'Te\\'st'` },
+    ]) {
+      // @ts-expect-error Conflicting formatQuery overloads
+      expect(formatQuery(testQuerySQ, fmt)).toEqual(result);
+    }
   });
 
   const testQueryDQ: RuleGroupType = {
@@ -1057,11 +1060,13 @@ describe('escapes quotes when appropriate', () => {
     rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
   };
 
-  it.each([
-    { fmt: 'mongodb', result: `{"f1":"Te\\"st"}` },
-    { fmt: 'cel', result: `f1 == "Te\\"st"` },
-  ])('escapes double quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
-    expect(formatQuery(testQueryDQ, fmt as 'cel' | 'mongodb')).toEqual(result);
+  it('escapes double quotes (if appropriate)', () => {
+    for (const { fmt, result } of [
+      { fmt: 'mongodb', result: `{"f1":"Te\\"st"}` },
+      { fmt: 'cel', result: `f1 == "Te\\"st"` },
+    ]) {
+      expect(formatQuery(testQueryDQ, fmt as 'cel' | 'mongodb')).toEqual(result);
+    }
   });
 });
 

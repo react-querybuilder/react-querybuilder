@@ -2,7 +2,18 @@
   "name": "react-querybuilder-monorepo",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/antd",
+    "packages/bootstrap",
+    "packages/bulma",
+    "packages/chakra",
+    "packages/ctx",
+    "packages/dnd",
+    "packages/fluent",
+    "packages/mantine",
+    "packages/material",
+    "packages/native",
+    "packages/react-querybuilder",
+    "packages/ts"
   ],
   "scripts": {
     "start": "yarn workspace react-querybuilder start",
