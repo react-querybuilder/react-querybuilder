@@ -1,34 +1,30 @@
-// @ts-check
-
 /**
  * @typedef {_ESLint.ConfigData & { extends: string[] }} ESLintExtendsIsArray
  */
+type ESLintExtendsIsArray = _ESLint.ConfigData & { extends: string[] };
 
 import Bun from 'bun';
-import { ESLint as _ESLint } from 'eslint';
+import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
-import glob from 'glob';
-import { createRequire } from 'module';
-import { mkdir, rm } from 'node:fs/promises';
-import { dirname, join as pathJoin } from 'node:path';
+import { mkdir, rm } from 'fs/promises';
+// import glob from 'glob';
+import { dirname, join as pathJoin } from 'path';
 import prettier from 'prettier';
-import { fileURLToPath } from 'url';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
 
 console.log('Generating/updating examples');
 
-const require = createRequire(import.meta.url);
-/** @type {{ version: string; }} */
-const { version } = require('../lerna.json');
-/** @type {ESLintExtendsIsArray} */
-const eslintrc = require('../.eslintrc.json');
-const __filename = fileURLToPath(import.meta.url);
+const __filename = Bun.fileURLToPath(new URL(import.meta.url));
 const __dirname = dirname(__filename);
-const rootPrettierConfig = await prettier.resolveConfig(__filename);
+// const rootPrettierConfig = await prettier.resolveConfig(__filename);
+const lernaJson = Bun.file(pathJoin(__dirname, '../lerna.json'));
+const { version } = await lernaJson.json();
+const eslintrc: ESLintExtendsIsArray = await Bun.file(
+  pathJoin(__dirname, '../.eslintrc.json')
+).json();
 
-/** @type {(code: string, fileName: string) => Promise<string>} */
-const compileToJS = async (code, fileName) =>
+const compileToJS = async (code: string, fileName: string) =>
   (
     await transformWithEsbuild(code, fileName, {
       minify: false,
@@ -53,10 +49,9 @@ const templatePkgJsonNewText = (
   await Bun.file(pathJoin(templatePath, 'package.json')).text()
 ).replace(/("@?react-querybuilder(?:\/\w+)?": ").*?"/g, `$1^${version}"`);
 await Bun.write(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
-const templatePkgJSON = require('./_template/package.json');
+const templatePkgJSON = await Bun.file(pathJoin(templatePath, 'package.json')).json();
 
-/** @type {(id: string) => () => Promise<void>} */
-const generateCommonExample = exampleID => async () => {
+const generateCommonExample = (exampleID: string) => async () => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(__dirname, exampleID);
   const exampleDotCS = pathJoin(examplePath, '.codesandbox');
@@ -115,7 +110,6 @@ const generateCommonExample = exampleID => async () => {
   // #endregion
 
   // #region package.json
-  /** @type {import('./exampleConfigs').PackageJSON} */
   const examplePkgJSON = JSON.parse(JSON.stringify(templatePkgJSON));
   examplePkgJSON.name = `react-querybuilder-${exampleID}-example`;
   examplePkgJSON.description = exampleTitle;
@@ -133,8 +127,9 @@ const generateCommonExample = exampleID => async () => {
     }
   }
   for (const depKey of exampleConfig.dependencyKeys) {
-    /** @type {import('./exampleConfigs').PackageJSON} */
-    const compatPkgJson = require(pathJoin(packagesPath, `${exampleID}/package.json`));
+    const compatPkgJson = await Bun.file(
+      pathJoin(packagesPath, `${exampleID}/package.json`)
+    ).json();
     if (Array.isArray(depKey)) {
       examplePkgJSON.dependencies[depKey[0]] = depKey[1];
     } else {
@@ -185,8 +180,7 @@ const generateCommonExample = exampleID => async () => {
   // #endregion
 
   // #region .eslintrc.json
-  /** @type {typeof eslintrc} */
-  const exampleESLintRC = JSON.parse(JSON.stringify(eslintrc));
+  const exampleESLintRC: typeof eslintrc = JSON.parse(JSON.stringify(eslintrc));
   delete exampleESLintRC.env?.node;
   delete exampleESLintRC.ignorePatterns;
   if (exampleConfig.compileToJS) {
@@ -219,26 +213,27 @@ const generateCommonExample = exampleID => async () => {
   await Bun.write(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
-  // #region Prettify this example
-  const fileList = glob.sync(`examples/${exampleID}/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}`);
-  for (const filepath of fileList) {
-    const fileContents = await Bun.file(filepath).text();
-    const printWidth = filepath.endsWith('css')
-      ? rootPrettierConfig?.printWidth
-      : (await prettier.resolveConfig(filepath))?.printWidth;
-    /** @type {import('prettier').Options} */
-    const prettierOptions = {
-      ...rootPrettierConfig,
-      printWidth,
-      filepath,
-      plugins: ['prettier-plugin-organize-imports'],
-    };
-    if (!prettier.check(fileContents, prettierOptions)) {
-      let prettified = prettier.format(fileContents, prettierOptions);
-      await Bun.write(filepath, prettified);
-    }
-  }
-  // #endregion
+  // // #region Prettify this example
+  // const fileList = glob.sync(`examples/${exampleID}/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}`);
+  // for (const filepath of fileList) {
+  //   const fileContents = await Bun.file(filepath).text();
+  //   const printWidth = filepath.endsWith('css')
+  //     ? rootPrettierConfig?.printWidth
+  //     : (await prettier.resolveConfig(filepath))?.printWidth;
+  //   const { plugins: _p, ...rpc } = rootPrettierConfig ?? {};
+  //   const prettierOptions: prettier.Options = {
+  //     ...rpc,
+  //     printWidth,
+  //     filepath,
+  //     // plugins: ['prettier-plugin-organize-imports'],
+  //   };
+  //   const alreadyPretty = prettier.check(fileContents, prettierOptions);
+  //   if (!alreadyPretty) {
+  //     const prettified = prettier.format(fileContents, prettierOptions);
+  //     await Bun.write(filepath, prettified);
+  //   }
+  // }
+  // // #endregion
 
   console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
 };
@@ -246,9 +241,10 @@ const generateCommonExample = exampleID => async () => {
 // #region Other examples' package.json
 const otherExamples = ['ci', 'native'];
 
-/** @type {(id: string) => () => Promise<void>} */
-const updateOtherExample = otherExampleName => async () => {
-  const otherExamplePkgJSON = require(`./${otherExampleName}/package.json`);
+const updateOtherExample = (otherExampleName: string) => async () => {
+  const otherExamplePkgJSON = await Bun.file(
+    pathJoin(__dirname, `${otherExampleName}/package.json`)
+  ).json();
   for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
     if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
       otherExamplePkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
