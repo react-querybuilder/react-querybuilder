@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.0.1] - 2023-02-22
+
 ### Added
 
 - [Fluent UI](https://github.com/microsoft/fluentui) [compatibility package](https://www.npmjs.com/package/@react-querybuilder/fluent)
@@ -1229,8 +1233,9 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.0...HEAD
-[v5.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...v6.0.0
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.1...HEAD
+[v6.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.0...v6.0.1
+[v6.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...v6.0.0
 [v5.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.0...v5.4.1
 [v5.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.3...v5.4.0
 [v5.3.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.3.2...v5.3.3
