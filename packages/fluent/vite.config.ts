@@ -17,7 +17,13 @@ export default defineConfig(({ command }) => ({
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'react-dom', 'react-querybuilder'],
+      external: [
+        'react',
+        'react/jsx-runtime',
+        'react-dom',
+        'react-querybuilder',
+        '@fluentui/react-components',
+      ],
     },
     sourcemap: true,
     target: 'es2020',
