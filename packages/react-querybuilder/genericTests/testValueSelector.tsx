@@ -4,6 +4,7 @@ import { findSelect, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
   multi: boolean;
+  classOnParent: boolean;
 }>;
 
 export const defaultValueSelectorProps: ValueSelectorProps = {
@@ -115,7 +116,11 @@ export const testSelect = (
 
     it('should have the className passed into the <select />', () => {
       render(<Component {...props} className="foo" />);
-      expect(screen.getByTitle(title)).toHaveClass('foo');
+      if (skip.classOnParent) {
+        expect(screen.getByTitle(title).parentElement).toHaveClass('foo');
+      } else {
+        expect(screen.getByTitle(title)).toHaveClass('foo');
+      }
     });
 
     it('should call the onChange method passed in', async () => {

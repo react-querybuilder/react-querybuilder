@@ -48,6 +48,7 @@ export type StyleName =
   | 'bootstrap'
   | 'bulma'
   | 'chakra'
+  | 'fluent'
   | 'mantine'
   | 'material';
 

@@ -3,6 +3,7 @@ import packageJSON_rqb_bootstrap from '@react-querybuilder/bootstrap/package.jso
 import packageJSON_rqb_bulma from '@react-querybuilder/bulma/package.json';
 import packageJSON_rqb_chakra from '@react-querybuilder/chakra/package.json';
 import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
+import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
@@ -236,6 +237,7 @@ export const styleNameMap: Record<StyleName, string> = {
   bootstrap: 'Bootstrap',
   material: 'MUI/Material',
   mantine: 'Mantine',
+  fluent: 'Fluent UI',
   antd: 'Ant Design',
   chakra: 'Chakra UI',
   bulma: 'Bulma',
@@ -252,6 +254,7 @@ export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>>
   bootstrap: packageJSON_rqb_bootstrap.peerDependencies,
   bulma: packageJSON_rqb_bulma.peerDependencies,
   chakra: packageJSON_rqb_chakra.peerDependencies,
+  fluent: packageJSON_rqb_fluent.peerDependencies,
   mantine: packageJSON_rqb_mantine.peerDependencies,
   material: packageJSON_rqb_material.peerDependencies,
 };

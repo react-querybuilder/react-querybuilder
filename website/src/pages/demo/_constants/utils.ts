@@ -114,6 +114,13 @@ const chakraTheme = extendTheme();`,
         '<ChakraProvider theme={chakraTheme}>\n<QueryBuilderChakra>',
         '</QueryBuilderChakra>\n</ChakraProvider>',
       ];
+    case 'fluent':
+      return [
+        `import { QueryBuilderFluent } from '@react-querybuilder/fluent';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';`,
+        '<FluentProvider theme={webLightTheme}>\n<QueryBuilderFluent>',
+        '</QueryBuilderFluent>\n</FluentProvider>',
+      ];
     case 'material':
       return [
         `import { createTheme, ThemeProvider } from '@mui/material/styles';

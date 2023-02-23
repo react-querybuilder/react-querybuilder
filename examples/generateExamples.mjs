@@ -65,7 +65,9 @@ const generateCommonExample = exampleID => async () => {
   await mkdir(examplePath), await Promise.all([await mkdir(exampleDotCS), await mkdir(exampleSrc)]);
 
   // #region /index.html
-  const exampleIndexHTML = templateIndexHTML.replace('__TITLE__', exampleTitle);
+  const exampleIndexHTML = templateIndexHTML
+    .replace('__TITLE__', exampleTitle)
+    .replace('index.tsx', exampleConfig.compileToJS ? 'index.jsx' : 'index.tsx');
   await writeFile(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
   // #endregion
 
@@ -89,7 +91,7 @@ const generateCommonExample = exampleID => async () => {
     ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
     : processedTemplateIndexTSX;
   await writeFile(
-    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     exampleIndexSourceCode
   );
   // #endregion
@@ -106,7 +108,7 @@ const generateCommonExample = exampleID => async () => {
     ? await compileToJS(processedTemplateAppTSX, 'App.tsx')
     : processedTemplateAppTSX;
   await writeFile(
-    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'js' : 'tsx'}`),
+    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
     exampleAppSourceCode
   );
   // #endregion
@@ -199,7 +201,7 @@ const generateCommonExample = exampleID => async () => {
     '\n\n' +
     templateREADMEmd
       .replace(/\/examples\/_template/g, `/examples/${exampleID}`)
-      .replace(/App.tsx/g, exampleConfig.compileToJS ? 'App.js' : '$&') +
+      .replace(/App.tsx/g, exampleConfig.compileToJS ? 'App.jsx' : '$&') +
     '\n\n' +
     '> _Development note: Do not modify the files in this folder directly. Edit corresponding ' +
     'files in the [_template](../_template) folder and/or [exampleConfigs.mjs](../exampleConfigs.mjs), ' +

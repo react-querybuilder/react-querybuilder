@@ -13,6 +13,7 @@ type ValueEditorTestsToSkip = Partial<{
   switch: boolean;
   between: boolean;
   betweenSelect: boolean;
+  selectorClassOnParent: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: OptionList;
@@ -160,7 +161,9 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps, {
+        classOnParent: skip.selectorClassOnParent,
+      });
     }
 
     if (!skip.multiselect) {
@@ -172,7 +175,9 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps, {
+        classOnParent: skip.selectorClassOnParent,
+      });
     }
 
     if (!skip.checkbox) {

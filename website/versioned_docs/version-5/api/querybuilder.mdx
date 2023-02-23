@@ -22,7 +22,7 @@ When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](
 
 ### `fields`
 
-`Field[] | OptionGroup<Field>[] | Record<string, Field>`
+`OptionList<Field> | Record<string, Field>`
 
 The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](#fieldselector) will be sorted alphabetically by the `label` property.)
 
@@ -381,7 +381,7 @@ By default a `<select />` is used. The following props are passed:
 
 ```ts
 interface FieldSelectorProps {
-  options: Field[]; // Same as 'fields' passed into QueryBuilder
+  options: OptionList<Field>; // Same as 'fields' passed into QueryBuilder
   value: string; // Selected field from the existing query representation, if any
   title: string; // translations.fields.title, e.g. "Fields"
   operator: string; // Selected operator from the existing query representation, if any

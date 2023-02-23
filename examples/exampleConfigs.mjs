@@ -118,6 +118,25 @@ export const configs = {
     isCompatPackage: true,
     enableDnD: false,
   },
+  fluent: {
+    name: 'Fluent UI',
+    dependencyKeys: ['@fluentui/react-components'],
+    scssPre: [],
+    scssPost: [],
+    tsxImports: [
+      `import { FluentProvider, webLightTheme } from '@fluentui/react-components';`,
+      `import { QueryBuilderFluent } from '@react-querybuilder/fluent';`,
+    ],
+    additionalDeclarations: [],
+    wrapper: [
+      '<FluentProvider theme={webLightTheme}><QueryBuilderFluent>',
+      '</QueryBuilderFluent></FluentProvider>',
+    ],
+    props: [],
+    compileToJS: false,
+    isCompatPackage: true,
+    enableDnD: false,
+  },
   mantine: {
     name: 'Mantine',
     dependencyKeys: ['@mantine/core', '@mantine/dates', '@mantine/hooks', 'dayjs'],
