@@ -5,7 +5,6 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '@react-querybuilder/ts/dist/index.noReact';
-import { describe, expect, it } from 'bun:test';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';

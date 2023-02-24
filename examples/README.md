@@ -9,4 +9,4 @@ You will be forwarded to [codesandbox.io](https://codesandbox.io) with the examp
 
 ## Development
 
-To update and regenerate the examples (except for [ci](./ci/) and [native](./native/)), modify the [`_template` folder](./_template/) and run `bun run generate-examples` from the repo root directory.
+To update and regenerate the examples (except for [ci](./ci/) and [native](./native/)), modify the [`_template` folder](./_template/) and run `bun generate-examples` from the repo root directory (requires [Bun](https://bun.sh)).

@@ -1,8 +1,3 @@
-/**
- * @typedef {_ESLint.ConfigData & { extends: string[] }} ESLintExtendsIsArray
- */
-type ESLintExtendsIsArray = _ESLint.ConfigData & { extends: string[] };
-
 import Bun from 'bun';
 import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
@@ -12,6 +7,8 @@ import { dirname, join as pathJoin } from 'path';
 import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.mjs';
+
+type ESLintExtendsIsArray = _ESLint.ConfigData & { extends: string[] };
 
 console.log('Generating/updating examples');
 
@@ -213,6 +210,7 @@ const generateCommonExample = (exampleID: string) => async () => {
   await Bun.write(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
+  // This section is commented out until Bun doesn't segfault when a prettier plugin is used
   // // #region Prettify this example
   // const fileList = glob.sync(`examples/${exampleID}/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}`);
   // for (const filepath of fileList) {
