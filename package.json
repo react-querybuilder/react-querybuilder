@@ -88,7 +88,7 @@
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
     "all-contributors-cli": "^6.24.0",
-    "bun-types": "^0.5.6",
+    "bun-types": "^0.5.7",
     "concurrently": "^7.6.0",
     "eslint": "^8.34.0",
     "eslint-plugin-react": "^7.32.2",
