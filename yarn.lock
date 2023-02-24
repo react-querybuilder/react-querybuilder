@@ -10343,6 +10343,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bun-types@npm:^0.5.7":
+  version: 0.5.7
+  resolution: "bun-types@npm:0.5.7"
+  checksum: 8ad951623ca439c0ce792b67936d92a3c09b5ff8b61901b0a112c300a434edd3a8657ce751a3b5155104f099b42ba92098da67b21729dac606dee5744c14eda0
+  languageName: node
+  linkType: hard
+
 "byte-size@npm:7.0.0":
   version: 7.0.0
   resolution: "byte-size@npm:7.0.0"
@@ -19119,6 +19126,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.52.0
     "@typescript-eslint/parser": ^5.52.0
     all-contributors-cli: ^6.24.0
+    bun-types: ^0.5.7
     concurrently: ^7.6.0
     eslint: ^8.34.0
     eslint-plugin-react: ^7.32.2

@@ -1,6 +1,18 @@
-// @ts-check
-/** @type {import('./exampleConfigs').ExampleConfigs} */
-export const configs = {
+interface ExampleConfig {
+  name: string;
+  dependencyKeys: (string | [string, string])[];
+  scssPre: string[];
+  scssPost: string[];
+  tsxImports: string[];
+  additionalDeclarations: string[];
+  wrapper: [string, string] | null;
+  props: string[];
+  compileToJS: boolean;
+  isCompatPackage: boolean;
+  enableDnD: boolean;
+}
+
+export const configs: Record<string, ExampleConfig> = {
   basic: {
     name: 'Basic',
     dependencyKeys: [],
