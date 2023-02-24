@@ -54,12 +54,24 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
   return op;
 };
 
-export const evalSQLLiteralValue = (valueObj: SQLLiteralValue) =>
-  valueObj.type === 'String'
-    ? valueObj.value.replace(/^(['"]?)(.+?)\1$/, '$2')
-    : valueObj.type === 'Boolean'
-    ? valueObj.value.toLowerCase() === 'true'
-    : parseFloat(valueObj.value);
+export const evalSQLLiteralValue = (valueObj: SQLLiteralValue) => {
+  if (valueObj.type === 'String') {
+    const valueString: string = valueObj.value;
+    if (
+      (valueString.startsWith(`'`) && valueString.endsWith(`'`)) ||
+      (valueString.startsWith(`"`) && valueString.endsWith(`"`))
+    ) {
+      const innerString = valueString.substring(1, valueString.length - 1);
+      return innerString.replaceAll(/''/gm, "'");
+    }
+    // Theoretically we should never get here since all strings will be wrapped in
+    // single or double quotes, but if we do get here we return the string as is.
+    return valueString;
+  } else if (valueObj.type === 'Boolean') {
+    return valueObj.value.toLowerCase() === 'true';
+  }
+  return parseFloat(valueObj.value);
+};
 
 export const generateFlatAndOrList = (
   expr: SQLAndExpression | SQLOrExpression | SQLXorExpression

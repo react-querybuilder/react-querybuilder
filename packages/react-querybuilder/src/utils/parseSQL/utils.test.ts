@@ -1,5 +1,11 @@
-import type { MixedAndXorOrList, SQLExpression } from './types';
-import { generateMixedAndXorOrList } from './utils';
+import type {
+  MixedAndXorOrList,
+  SQLBooleanValue,
+  SQLExpression,
+  SQLNumberValue,
+  SQLStringValue,
+} from './types';
+import { evalSQLLiteralValue, generateMixedAndXorOrList } from './utils';
 
 const isNullExpr: SQLExpression = {
   type: 'IsNullBooleanPrimary',
@@ -21,6 +27,22 @@ const isNotNullExpr2: SQLExpression = {
   value: { type: 'Identifier', value: 'f2' },
   hasNot: 'NOT',
 };
+
+it('evalSQLLiteralValue', () => {
+  const value: any = 'Test';
+  const sqlStringValue: SQLStringValue = { type: 'String', value };
+  const sqlStringValueSQ: SQLStringValue = { type: 'String', value: `'${value}'` };
+  const sqlStringValueDQ: SQLStringValue = { type: 'String', value: `"${value}"` };
+  expect(evalSQLLiteralValue(sqlStringValue)).toBe(value);
+  expect(evalSQLLiteralValue(sqlStringValueSQ)).toBe(value);
+  expect(evalSQLLiteralValue(sqlStringValueDQ)).toBe(value);
+
+  const sqlBooleanValue: SQLBooleanValue = { type: 'Boolean', value: 'TRUE' };
+  expect(evalSQLLiteralValue(sqlBooleanValue)).toBe(true);
+
+  const sqlNumberValue: SQLNumberValue = { type: 'Number', value: '1214' };
+  expect(evalSQLLiteralValue(sqlNumberValue)).toBe(1214);
+});
 
 it('simple AND operator', () => {
   const expectation: MixedAndXorOrList = {
