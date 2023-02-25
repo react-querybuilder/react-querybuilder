@@ -73,6 +73,22 @@ describe('boolean operators', () => {
     expect(parseSQL(`firstName = 'Steve'`)).toEqual(
       wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
     );
+    // Empty strings
+    expect(parseSQL(`middleName = ''`)).toEqual(
+      wrapRule({ field: 'middleName', operator: '=', value: '' })
+    );
+    // Only escaped single quotes
+    expect(parseSQL(`singleQuotes = ''''''`)).toEqual(
+      wrapRule({ field: 'singleQuotes', operator: '=', value: `''` })
+    );
+    // Multi-line strings with escaped single quotes
+    expect(parseSQL(`firstName = 'Batman thinks\nRa''s al Ghul\nis a ''''bad'''' guy!'`)).toEqual(
+      wrapRule({
+        field: 'firstName',
+        operator: '=',
+        value: `Batman thinks\nRa's al Ghul\nis a ''bad'' guy!`,
+      })
+    );
     expect(parseSQL(`firstName != 'Steve'`)).toEqual(
       wrapRule({ field: 'firstName', operator: '!=', value: 'Steve' })
     );

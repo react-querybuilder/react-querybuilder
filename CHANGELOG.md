@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Fixed
+
+- [#470] `parseSQL` now handles escaped single quotes within strings
 
 ## [v6.0.1] - 2023-02-22
 
@@ -1230,6 +1232,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#455]: https://github.com/react-querybuilder/react-querybuilder/pull/455
 [#458]: https://github.com/react-querybuilder/react-querybuilder/issues/458
 [#463]: https://github.com/react-querybuilder/react-querybuilder/pull/463
+[#470]: https://github.com/react-querybuilder/react-querybuilder/pull/470
 
 <!-- Release comparison links -->
 

@@ -122,14 +122,14 @@ UNION                                                             return 'UNION'
 ";"                                                               return ';'
 
 ['](\%+)[']                                                       return 'WILDCARD'
-['](\\.|[^'])*[']                                                 return 'STRING'
+(['](\\.|[^'])*['])+                                              return 'STRING'
 [0][x][0-9a-fA-F]+                                                return 'HEX_NUMERIC'
 [-]?[0-9]+(\.[0-9]+)?                                             return 'NUMERIC'
 [-]?[0-9]+(\.[0-9]+)?[eE][-][0-9]+(\.[0-9]+)?                     return 'EXPONENT_NUMERIC'
 
 [a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*                  return 'IDENTIFIER'
 \.                                                                return 'DOT'
-['][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*[']            return 'STRING'
+(['][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*['])+         return 'STRING'
 ([`])(?:(?=(\\?))\2.)*?\1                                         return 'IDENTIFIER'
 
 <<EOF>>                                                           return 'EOF'
