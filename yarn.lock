@@ -17995,6 +17995,7 @@ __metadata:
     "@react-native-picker/picker": ^2.4.8
     "@testing-library/dom": ^8.20.0
     "@testing-library/jest-dom": ^5.16.5
+    "@testing-library/jest-native": ^5.4.2
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
     "@types/glob": ^8.1.0
