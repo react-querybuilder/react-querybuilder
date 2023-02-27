@@ -4,7 +4,7 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
 export const defaultRuleProcessorMongoDB: RuleProcessor = (
   { field, operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { parseNumbers } = {}
 ) => {
   const escapeDoubleQuotes = (v: any) =>

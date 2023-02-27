@@ -4,7 +4,7 @@ import { isValidValue, shouldRenderAsNumber } from './utils';
 
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const escapeSingleQuotes = (v: any) =>

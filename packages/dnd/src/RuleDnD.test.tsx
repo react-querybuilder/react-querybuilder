@@ -92,7 +92,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should handle a dropped rule', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -111,7 +111,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should copy a dropped rule', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -130,7 +130,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should abort move if dropped on itself', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(<RuleWithDndWrapper {...getProps({}, { moveRule })} />);
     const rule = screen.getByTestId(TestID.rule);
     simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
@@ -140,7 +140,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should allow drops even if disabled', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />

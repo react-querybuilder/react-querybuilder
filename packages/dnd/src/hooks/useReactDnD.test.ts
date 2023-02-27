@@ -1,24 +1,21 @@
 import type { RenderHookResult } from '@testing-library/react';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { consoleMocks } from 'react-querybuilder/genericTests';
 import type { UseReactDnD } from '../types';
 import { useReactDnD } from './useReactDnD';
 
-const timeoutWait = 500;
-
 consoleMocks();
 
 beforeEach(() => {
-  jest.resetModules();
+  vi.resetModules();
 });
 
 it('returns the react-dnd exports', async () => {
   let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD());
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitFor(() => hookResult?.result.current);
     hookResult.rerender();
-    await new Promise(r => setTimeout(r, timeoutWait));
   });
   expect(hookResult!.result.current).toHaveProperty('useDrag');
   expect(hookResult!.result.current).toHaveProperty('useDrop');
@@ -34,27 +31,25 @@ it('returns the provided DnD', async () => {
   let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD(existingDnD));
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitFor(() => hookResult?.result.current);
     hookResult.rerender();
-    await new Promise(r => setTimeout(r, timeoutWait));
   });
   expect(hookResult!.result.current).toBe(existingDnD);
 });
 
 it('fails gracefully', async () => {
-  jest.doMock('react-dnd', () => {
+  vi.doMock('react-dnd', () => {
     throw new Error('react-dnd');
   });
-  jest.doMock('react-dnd-html5-backend', () => {
+  vi.doMock('react-dnd-html5-backend', () => {
     throw new Error('react-dnd-html5-backend');
   });
 
   let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD());
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitFor(() => hookResult?.result.current);
     hookResult.rerender();
-    await new Promise(r => setTimeout(r, timeoutWait));
   });
   expect(hookResult!.result.current).toBeNull();
 });

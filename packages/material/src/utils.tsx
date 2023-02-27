@@ -21,7 +21,7 @@ export const toOptions = (arr: OptionList, { ListSubheader, MenuItem }: ToOption
     }
     return optArray;
   }
-  /* istanbul ignore else */
+  /* c8 ignore else */
   if (Array.isArray(arr)) {
     return arr.map(opt => (
       <MenuItem key={opt.name} value={opt.name}>
@@ -29,6 +29,6 @@ export const toOptions = (arr: OptionList, { ListSubheader, MenuItem }: ToOption
       </MenuItem>
     ));
   }
-  /* istanbul ignore next */
+  /* c8 ignore next */
   return null;
 };

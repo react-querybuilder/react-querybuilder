@@ -18,12 +18,12 @@ export const useReactDnD = (dndParam?: UseReactDnD) => {
         import('react-dnd-html5-backend').catch(() => null),
       ]);
 
-      // istanbul ignore else
+      // c8 ignore else
       if (!didCancel) {
         if (reactDnD && reactDnDHTML5Be) {
           setDnd(() => ({ ...reactDnD, ...reactDnDHTML5Be }));
         } else {
-          // istanbul ignore else
+          // c8 ignore else
           if (__RQB_DEV__ && !didWarnEnabledDndWithoutReactDnD) {
             console.error(messages.errorEnabledDndWithoutReactDnD);
             didWarnEnabledDndWithoutReactDnD = true;

@@ -29,7 +29,7 @@ it('should have correct classNames', () => {
 describe('onElementChanged methods', () => {
   describe('onFieldChanged', () => {
     it('should call onPropChange with the rule path', async () => {
-      const onPropChange = jest.fn();
+      const onPropChange = vi.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
       await user.selectOptions(
@@ -42,7 +42,7 @@ describe('onElementChanged methods', () => {
 
   describe('onOperatorChanged', () => {
     it('should call onPropChange with the rule path', async () => {
-      const onPropChange = jest.fn();
+      const onPropChange = vi.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
       await user.selectOptions(
@@ -55,7 +55,7 @@ describe('onElementChanged methods', () => {
 
   describe('onValueChanged', () => {
     it('should call onPropChange with the rule path', async () => {
-      const onPropChange = jest.fn();
+      const onPropChange = vi.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
       await user.type(
@@ -90,7 +90,7 @@ describe('valueEditorType as function', () => {
 
 describe('cloneRule', () => {
   it('should call moveRule with the right paths', async () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(<Rule {...getProps({ showCloneButtons: true }, { moveRule })} />);
     await user.click(screen.getByText(t.cloneRule.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
@@ -99,7 +99,7 @@ describe('cloneRule', () => {
 
 describe('removeRule', () => {
   it('should call onRuleRemove with the rule and path', async () => {
-    const onRuleRemove = jest.fn();
+    const onRuleRemove = vi.fn();
     render(<Rule {...getProps({}, { onRuleRemove })} />);
     await user.click(screen.getByText(t.removeRule.label));
     expect(onRuleRemove).toHaveBeenCalledWith([0]);
@@ -114,7 +114,7 @@ describe('validation', () => {
   });
 
   it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
-    const validator = jest.fn(() => true);
+    const validator = vi.fn(() => true);
     const fieldMap = {
       field1: { name: 'field1', label: 'Field 1', validator },
     };
@@ -133,7 +133,7 @@ describe('validation', () => {
   });
 
   it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
-    const validator = jest.fn(() => true);
+    const validator = vi.fn(() => true);
     const fieldMap = {
       field1: { name: 'field1', label: 'Field 1', validator },
     };
@@ -166,9 +166,9 @@ describe('disabled', () => {
   });
 
   it('does not try to update the query', async () => {
-    const onRuleRemove = jest.fn();
-    const onPropChange = jest.fn();
-    const moveRule = jest.fn();
+    const onRuleRemove = vi.fn();
+    const onPropChange = vi.fn();
+    const moveRule = vi.fn();
     render(
       <Rule
         {...getProps(
@@ -202,7 +202,7 @@ describe('locked rule', () => {
   });
 
   it('disables the lock button if the parent group is disabled even if the current rule is not', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} parentDisabled />);
     expect(screen.getByTestId(TestID.lockRule)).toBeDisabled();
     await user.click(screen.getByTestId(TestID.lockRule));
@@ -210,14 +210,14 @@ describe('locked rule', () => {
   });
 
   it('sets the disabled property', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} />);
     await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
 
   it('unsets the disabled property', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
     await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);

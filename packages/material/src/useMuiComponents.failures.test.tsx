@@ -4,8 +4,6 @@ import { QueryBuilderMaterial } from './index';
 import { errorMaterialWithoutMUI } from './messages';
 import type { MuiComponentName } from './types';
 
-jest.setTimeout(60_000);
-
 const componentNames: MuiComponentName[] = [
   'Button',
   'Checkbox',
@@ -25,18 +23,20 @@ const componentNames: MuiComponentName[] = [
 const { consoleError } = consoleMocks();
 
 afterEach(() => {
-  jest.resetModules();
-  jest.restoreAllMocks();
+  vi.resetModules();
+  vi.restoreAllMocks();
 });
 
 it('renders default components when @mui load fails', async () => {
   componentNames.forEach(mockCompName => {
     if (mockCompName)
-      jest.mock(
+      vi.mock(
         `@mui/${mockCompName === 'DragIndicator' ? 'icons-' : ''}material/${mockCompName}`,
-        () => {
-          throw new Error(mockCompName);
-        }
+        () => ({
+          default: () => {
+            throw new Error(mockCompName);
+          },
+        })
       );
   });
 
@@ -49,4 +49,4 @@ it('renders default components when @mui load fails', async () => {
   });
 
   expect(consoleError).toHaveBeenCalledWith(errorMaterialWithoutMUI);
-});
+}, 60_000);

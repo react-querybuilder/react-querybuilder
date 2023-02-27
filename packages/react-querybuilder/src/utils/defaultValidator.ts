@@ -52,7 +52,7 @@ export const defaultValidator: QueryValidator = query => {
     ) {
       reasons.push(groupInvalidReasons.invalidCombinator);
     }
-    /* istanbul ignore else */
+    /* c8 ignore else */
     if (rg.id) {
       if (reasons.length) {
         result[rg.id] = { valid: false, reasons };

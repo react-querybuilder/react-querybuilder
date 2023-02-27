@@ -98,7 +98,7 @@ export const NativeValueSelectorExample = ({
     value,
   });
 
-  // istanbul ignore next
+  // c8 ignore next
   const val = multiple
     ? Array.isArray(value)
       ? joinWith(value, ',')

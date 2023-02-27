@@ -85,7 +85,7 @@ export const NativeValueSelector = ({
 
   const { onChange } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  // istanbul ignore next
+  // c8 ignore next
   const val = multiple ? (Array.isArray(value) ? joinWith(value, ',') : value) : value;
 
   return (

@@ -9,7 +9,7 @@ const wrapInNegation = (clause: string, negate: boolean) =>
 
 export const defaultRuleProcessorSpEL: RuleProcessor = (
   { field, operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const escapeSingleQuotes = (v: any) =>

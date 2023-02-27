@@ -20,8 +20,6 @@ import { MantineNotToggle } from './MantineNotToggle';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
 
-jest.setTimeout(30_000);
-
 declare global {
   // eslint-disable-next-line no-var
   var __RQB_DEV__: boolean;
@@ -62,7 +60,7 @@ describe('MantineValueSelector', () => {
   };
 
   it('handles single select', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueSelector {...props} handleOnChange={handleOnChange} />
     );
@@ -80,10 +78,10 @@ describe('MantineValueSelector', () => {
     );
     await user.click(screen.getByRole('combobox').querySelector('button')!);
     expect(handleOnChange).toHaveBeenNthCalledWith(2, '');
-  });
+  }, 30_000);
 
   it('handles multiselect', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueSelector {...props} multiple handleOnChange={handleOnChange} listsAsArrays />
     );
@@ -102,11 +100,11 @@ describe('MantineValueSelector', () => {
     );
     await user.click(screen.getByRole('combobox').querySelector('button')!);
     expect(handleOnChange).toHaveBeenNthCalledWith(2, []);
-  });
+  }, 30_000);
 
   it('handles optgroups', async () => {
     const optGroup: OptionGroup[] = [{ label: 'Test Group', options }];
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <MantineValueSelector
         {...props}
@@ -118,7 +116,7 @@ describe('MantineValueSelector', () => {
     await user.click(screen.getByTestId(TestID.fields));
     await user.click(screen.getByText('Option 2'));
     expect(handleOnChange).toHaveBeenCalledWith('opt2');
-  });
+  }, 30_000);
 });
 
 describe('MantineValueEditor as select and date picker', () => {
@@ -140,14 +138,14 @@ describe('MantineValueEditor as select and date picker', () => {
 
   it('renders value editor as select', () => {
     render(<MantineValueEditor {...props} type="select" />);
-  });
+  }, 30_000);
 
   it('renders value editor as multiselect', () => {
     render(<MantineValueEditor {...props} type="multiselect" />);
-  });
+  }, 30_000);
 
   it('handles "between" select', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -170,18 +168,18 @@ describe('MantineValueEditor as select and date picker', () => {
       />
     );
     expect(screen.getAllByDisplayValue('Option 1')).toHaveLength(2);
-  });
+  }, 30_000);
 
   it('renders value editor as date editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<MantineValueEditor {...props} inputType="date" handleOnChange={handleOnChange} />);
     await user.click(screen.getByTestId(TestID.valueEditor));
     await user.click(screen.getByText('10'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10`);
-  });
+  }, 30_000);
 
   it('handles preloaded dates and clearing value as date editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const dateString = '2002-12-14';
     render(
       <MantineValueEditor
@@ -194,10 +192,10 @@ describe('MantineValueEditor as select and date picker', () => {
     expect(screen.getByDisplayValue(dayjs(dateString).format('MMMM D, YYYY'))).toBeInTheDocument();
     await user.click(screen.getByRole('button'));
     expect(handleOnChange).toHaveBeenCalledWith('');
-  });
+  }, 30_000);
 
   it('renders value editor as date range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -223,10 +221,10 @@ describe('MantineValueEditor as select and date picker', () => {
     await user.click(screen.getByText('12'));
     await user.click(screen.getByText('14'));
     expect(handleOnChange).toHaveBeenCalledWith([`${dateStub}12`, `${dateStub}14`]);
-  });
+  }, 30_000);
 
   it('handles preloaded values as date range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <MantineValueEditor
         {...props}
@@ -240,17 +238,17 @@ describe('MantineValueEditor as select and date picker', () => {
     await user.click(screen.getByText('10'));
     await user.click(screen.getByText('20'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
-  });
+  }, 30_000);
 
   it('renders value editor as time editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<MantineValueEditor {...props} inputType="time" handleOnChange={handleOnChange} />);
     await user.tab();
     await act(async () => {
       await user.keyboard('2');
     });
     expect(handleOnChange).toHaveBeenCalledWith('02:00:00');
-  });
+  }, 30_000);
 
   it('handles preloaded dates as time editor', async () => {
     const { rerender } = render(
@@ -261,10 +259,10 @@ describe('MantineValueEditor as select and date picker', () => {
     expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[0]).toHaveValue('14');
     rerender(<MantineValueEditor {...props} inputType="time" value="" />);
     expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[0]).toHaveValue('');
-  });
+  }, 30_000);
 
   it('renders value editor as time range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -297,11 +295,11 @@ describe('MantineValueEditor as select and date picker', () => {
       await user.keyboard('6');
     });
     expect(handleOnChange).toHaveBeenCalledWith(['02:00:00', '06:00:00']);
-  });
+  }, 30_000);
 
   it('renders value editor as datetime-local editor', () => {
     render(<MantineValueEditor {...props} inputType="datetime-local" />);
-  });
+  }, 30_000);
 });
 
 it('renders with composition', () => {
@@ -311,4 +309,4 @@ it('renders with composition', () => {
     </QueryBuilderMantine>
   );
   expect(screen.getByTestId(TestID.addRule)).toHaveClass('mantine-Button-root');
-});
+}, 30_000);

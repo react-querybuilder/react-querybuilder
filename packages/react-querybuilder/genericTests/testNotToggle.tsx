@@ -27,14 +27,14 @@ export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) =>
     });
 
     it('should call the onChange method passed in', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<NotToggle {...props} handleOnChange={onChange} />);
       await user.click(screen.getByLabelText(label));
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
     it('should be disabled by disabled prop', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<NotToggle {...props} handleOnChange={onChange} disabled />);
       const notToggle = screen.getByLabelText(label);
       expect(notToggle).toBeDisabled();
