@@ -4,6 +4,7 @@
 [![Demo][badge-demo]](https://react-querybuilder.js.org/demo)
 [![Docs][badge-docs]](https://react-querybuilder.js.org/)
 [![Learn from the maintainer][badge-training]](https://www.newline.co/courses/building-advanced-admin-reporting-in-react)
+[![Chat][badge-discord]](https://react-querybuilder.js.org/discord)
 
 [![CI][badge-ci]](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io][badge-codecov]](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
@@ -128,3 +129,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 [badge-training]: https://img.shields.io/badge/training-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAACXBIWXMAAAEIAAABCAFpWn9CAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAgdJREFUKJGNkb9rE2EYxz/33l0uubTXwYSLwWroIgoWIUqoBUF0KS4HQkAKkqndtDi5mLb/h4sGIUOwQkDIkoAiblo0ASXEwSKVYEtKk+Zi877nYmNLsfjdngc+3+/zQ3NdN+q67rNYLHZFKSX4t/bbPzbrkc9f7kx63j7T09Olfr8f/I/KL1+ou5nJp57nIeLxeDocDjMYDAiC4IRAuH7jpiZCodsAQgihA8zOzlIul08EhRBEjeDU2qU3V0c7LS4uks/nR6mdTodms0m9XqfRaBwxUEK7PwJzuRzdbpdSqQRApVIhk8mwsLBAOp1mZ2fnLxmQHYGmaZLP51lZWUFKiWmaJBIJarUag8GAdrv9h0EBIRFCjx7A8/PzKKUoFosYhoFSCsuyjozZhy6AMJH6QVPXdZaXl1ldXcW2bZLJJABTU1OYpgmAFR3awFCgadphx2w2i23bbGxsUK1WAWi1WqRSKQA0HYOo/GQEUh47eaFQIBKJHHtHr9cjainU2X5KP+84ufFEIhZ3XXzfx/d9HMfBtu1R7fs+nU6HpUcP1L3L68Mzroxor+bmnMb2dqspZUwGBD/luZ6hRcaGmhx+C4ekJgxLiq1dJjfHQ9cmeJL6+PrCcGtc8zyPNdO8uC/le8DqBae/fvi1lATC6xNj76oxZwZg79bjt9L5PhNXe7Xnu5WHvwH2M+1kJKUCQwAAAABJRU5ErkJggg==
 [badge-ci]: https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg
 [badge-codecov]: https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=main
+[badge-discord]: https://img.shields.io/badge/discord-blue.svg?logo=discord&logoColor=white
