@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.0.3] - 2023-03-02
+
+## Fixed
+
+- [#472] All development-mode console error messages have been (temporarily) removed to avoid the `process is not defined` issue.
 - `BulmaValueSelector` now adds the `"is-multiple"` class to the wrapper `div` when the `multiple` prop is `true`.
 
 ## [v6.0.2] - 2023-02-25
@@ -1237,10 +1244,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#458]: https://github.com/react-querybuilder/react-querybuilder/issues/458
 [#463]: https://github.com/react-querybuilder/react-querybuilder/pull/463
 [#470]: https://github.com/react-querybuilder/react-querybuilder/pull/470
+[#472]: https://github.com/react-querybuilder/react-querybuilder/issues/472
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...HEAD
+[v6.0.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.2...v6.0.3
 [v6.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.1...v6.0.2
 [v6.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v5.4.1...v6.0.0
