@@ -25,7 +25,7 @@ jobs:
         with:
           bun-version: latest
       - name: Prettify code
-        run: bun pretty-print
+        run: bun run pretty-print
       - name: Git diff
         if: ${{ failure() }}
         run: git diff && exit 1

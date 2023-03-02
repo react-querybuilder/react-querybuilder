@@ -47,7 +47,7 @@
     "typecheck:rqb": "yarn workspace react-querybuilder typecheck",
     "typecheck:ts": "yarn workspace @react-querybuilder/ts typecheck",
     "typecheck:examples": "tsc -p examples",
-    "pretty-print": "bunx prettier --write *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**",
+    "pretty-print": "prettier --write *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**",
     "generate-examples": "bun ./examples/generateExamples.ts && bunx prettier --write examples/**/*",
     "generate-parsers": "concurrently --timings --names sql,cel \"yarn workspace react-querybuilder generate-sqlparser\" \"yarn workspace react-querybuilder generate-celparser\"",
     "outdated": "yarn upgrade-interactive",
