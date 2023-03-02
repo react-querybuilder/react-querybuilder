@@ -4,14 +4,17 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import { name } from './package.json';
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(({ command, mode }) => ({
   define: {
-    __RQB_DEV__: command === 'build' ? 'process?.env?.NODE_ENV !== "production"' : 'true',
+    __RQB_DEV__: command === 'build' && mode === 'production' ? 'false' : 'true',
   },
   build: {
+    emptyOutDir: mode === 'production',
+    minify: mode === 'production',
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      fileName: format => `index.${format === 'es' ? 'm' : 'c'}js`,
+      fileName: format =>
+        `index${mode === 'production' ? '' : '.development'}.${format === 'es' ? 'm' : 'c'}js`,
       formats: ['cjs', 'es'],
       name: 'ReactQueryBuilder',
     },

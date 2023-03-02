@@ -94,8 +94,9 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "yarn build:main && concurrently --timings --max-processes 10 --names css,formatQuery,parseCEL,parseJsonLogic,parseMongoDB,parseSQL,transformQuery,types yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseMongoDB yarn:build:parseSQL yarn:build:transformQuery yarn:build:types",
+    "build": "yarn build:main && concurrently --timings --max-processes 10 --names dev,css,formatQuery,parseCEL,parseJsonLogic,parseMongoDB,parseSQL,transformQuery,types yarn:build:dev yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseMongoDB yarn:build:parseSQL yarn:build:transformQuery yarn:build:types",
     "build:main": "vite build",
+    "build:dev": "vite build --mode development",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
     "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly",
     "build:formatQuery": "vite build --config vite.config.formatQuery.ts",

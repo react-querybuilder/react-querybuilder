@@ -34,8 +34,9 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "dev": "vite dev --config vite.config.dev.ts",
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "vite build && concurrently --timings --names dev,types yarn:build:dev yarn:build:types",
+    "build:dev": "vite build --mode development",
+    "build:types": "tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch"
   },
@@ -45,6 +46,7 @@
     "@types/node": "^18.14.2",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react-swc": "^3.2.0",
+    "concurrently": "^7.6.0",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",

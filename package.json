@@ -10,7 +10,7 @@
     "start:bootstrap": "yarn workspace @react-querybuilder/bootstrap start",
     "start:bulma": "yarn workspace @react-querybuilder/bulma start",
     "start:chakra": "yarn workspace @react-querybuilder/chakra start",
-    "start:dnd": "yarn workspace @react-querybuilder/dnd dev",
+    "start:dnd": "yarn workspace @react-querybuilder/dnd start",
     "start:fluent": "yarn workspace @react-querybuilder/fluent start",
     "start:mantine": "yarn workspace @react-querybuilder/mantine start",
     "start:material": "yarn workspace @react-querybuilder/material start",

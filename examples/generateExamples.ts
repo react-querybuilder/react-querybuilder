@@ -5,10 +5,17 @@ import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
 // import glob from 'glob';
-import { dirname, join as pathJoin } from 'path';
+import { join as pathJoin } from 'path';
 import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
+
+// Seems like this should be unnecessary...
+declare module 'bun' {
+  interface FileBlob {
+    json(): Promise<any>;
+  }
+}
 
 type ESLintExtendsIsArray = _ESLint.ConfigData & { extends: string[] };
 
@@ -22,13 +29,11 @@ interface PackageJSON {
 
 console.log('Generating/updating examples');
 
-const __filename = Bun.fileURLToPath(new URL(import.meta.url));
-const __dirname = dirname(__filename);
 // const rootPrettierConfig = await prettier.resolveConfig(__filename);
-const lernaJson = Bun.file(pathJoin(__dirname, '../lerna.json'));
+const lernaJson = Bun.file(pathJoin(import.meta.dir, '../lerna.json'));
 const { version } = await lernaJson.json();
 const eslintrc: ESLintExtendsIsArray = await Bun.file(
-  pathJoin(__dirname, '../.eslintrc.json')
+  pathJoin(import.meta.dir, '../.eslintrc.json')
 ).json();
 
 const compileToJS = async (code: string, fileName: string) =>
@@ -42,8 +47,8 @@ const compileToJS = async (code: string, fileName: string) =>
 
 const noTypeScriptESLint = (/** @type {string} */ s) => !/@typescript-eslint/.test(s);
 
-const packagesPath = pathJoin(__dirname, '../packages');
-const templatePath = pathJoin(__dirname, '_template');
+const packagesPath = pathJoin(import.meta.dir, '../packages');
+const templatePath = pathJoin(import.meta.dir, '_template');
 const templateDotCS = pathJoin(templatePath, '.codesandbox');
 const templateSrc = pathJoin(templatePath, 'src');
 const templateIndexHTML = await Bun.file(pathJoin(templatePath, 'index.html')).text();
@@ -60,7 +65,7 @@ const templatePkgJSON: PackageJSON = await Bun.file(pathJoin(templatePath, 'pack
 
 const generateCommonExample = (exampleID: string) => async () => {
   const exampleConfig = configs[exampleID];
-  const examplePath = pathJoin(__dirname, exampleID);
+  const examplePath = pathJoin(import.meta.dir, exampleID);
   const exampleDotCS = pathJoin(examplePath, '.codesandbox');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
@@ -251,14 +256,14 @@ const otherExamples = ['ci', 'native'];
 
 const updateOtherExample = (otherExampleName: string) => async () => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(
-    pathJoin(__dirname, `${otherExampleName}/package.json`)
+    pathJoin(import.meta.dir, `${otherExampleName}/package.json`)
   ).json();
   for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
     if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
       otherExamplePkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
     }
   }
-  const otherExamplePkgJsonPath = pathJoin(__dirname, `${otherExampleName}/package.json`);
+  const otherExamplePkgJsonPath = pathJoin(import.meta.dir, `${otherExampleName}/package.json`);
   const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
   const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
     ...otherExamplePrettierOptions,
