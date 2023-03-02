@@ -28,10 +28,7 @@
         "title": "Styling",
         "description": "Managing the look and feel of React Query Builder."
       },
-      "items": [
-        "styling/overview",
-        "styling/classnames"
-      ]
+      "items": ["styling/overview", "styling/classnames"]
     },
     {
       "type": "category",
@@ -41,13 +38,7 @@
         "title": "Utilities",
         "description": "Hooks, tools for managing queries, importing from/exporting to different query languages, etc."
       },
-      "items": [
-        "utils/export",
-        "utils/import",
-        "utils/hooks",
-        "utils/validation",
-        "utils/misc"
-      ]
+      "items": ["utils/export", "utils/import", "utils/hooks", "utils/validation", "utils/misc"]
     },
     {
       "type": "category",
