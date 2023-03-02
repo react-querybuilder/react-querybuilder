@@ -17,7 +17,7 @@ export const BulmaValueSelector = ({
   const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });
 
   return (
-    <div title={title} className={`${className} select`}>
+    <div title={title} className={`${className} select${multiple ? ' is-multiple' : ''}`}>
       <select
         value={val}
         multiple={multiple}
