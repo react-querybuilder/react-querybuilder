@@ -4,10 +4,10 @@
     "@emotion/styled": "^11",
     "@mui/icons-material": ">=5.0.0",
     "@mui/material": ">=5.0.0",
-    "@react-querybuilder/material": "^6.0.3-alpha.0",
+    "@react-querybuilder/material": "^6.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.0.3-alpha.0"
+    "react-querybuilder": "^6.0.3"
   },
   "description": "React Query Builder MUI/Material Example",
   "devDependencies": {
