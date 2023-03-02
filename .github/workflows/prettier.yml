@@ -20,8 +20,12 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --immutable
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
       - name: Prettify code
-        run: yarn pretty-print
+        run: bun pretty-print
       - name: Git diff
         if: ${{ failure() }}
         run: git diff && exit 1
