@@ -55,7 +55,7 @@ export const useValueEditor = ({
   const valueAsArray = useMemo(() => toArray(value), [value]);
 
   const multiValueHandler = useCallback(
-    (v: string, i: number) => {
+    (v: any, i: number) => {
       const val = produce(valueAsArray, va => {
         va[i] = parseNumber(v, { parseNumbers });
         // Enforce an array length of (at least) two for "between"/"notBetween"

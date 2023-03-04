@@ -1,9 +1,12 @@
-import { Checkbox, Radio, Switch, Textarea, TextInput } from '@mantine/core';
-import { DatePicker, DateRangePicker, TimeInput, TimeRangeInput } from '@mantine/dates';
+import { Checkbox, NumberInput, Radio, Switch, Textarea, TextInput } from '@mantine/core';
+import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { MantineValueSelector } from './MantineValueSelector';
+
+const dateFormat = 'YYYY-MM-DD';
+const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
 export const MantineValueEditor = ({
   fieldData,
@@ -47,19 +50,52 @@ export const MantineValueEditor = ({
     (operator === 'between' || operator === 'notBetween') &&
     (type === 'select' || type === 'text') &&
     // Date and time ranges are handled differently in Mantine--see below
-    inputTypeCoerced !== 'date' &&
-    inputTypeCoerced !== 'datetime-local' &&
-    inputTypeCoerced !== 'time'
+    inputTypeCoerced !== 'date'
   ) {
     const editors = ['from', 'to'].map((key, i) => {
+      if (inputTypeCoerced === 'number') {
+        return (
+          <NumberInput
+            key={key}
+            type={inputTypeCoerced || 'text'}
+            placeholder={placeHolderText}
+            value={valueAsArray[i] ?? ''}
+            className={`${standardClassnames.valueListItem} input`}
+            data-disabled={disabled}
+            disabled={disabled}
+            onChange={v => multiValueHandler(v, i)}
+          />
+        );
+      }
+      if (inputTypeCoerced === 'datetime-local') {
+        return (
+          <DateTimePicker
+            key={key}
+            value={
+              valueAsArray[i] && dayjs(valueAsArray[i]).isValid()
+                ? dayjs(valueAsArray[i]).toDate()
+                : null
+            }
+            className={standardClassnames.valueListItem}
+            data-disabled={disabled}
+            disabled={disabled}
+            placeholder={placeHolderText}
+            onChange={d =>
+              handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateTimeLocalFormat) : '')
+            }
+          />
+          //   onChange={v => multiValueHandler(v, i)}
+        );
+      }
       if (type === 'text') {
         return (
           <TextInput
             key={key}
-            type={inputType || 'text'}
+            type={inputTypeCoerced || 'text'}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} input`}
+            data-disabled={disabled}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
           />
@@ -112,6 +148,7 @@ export const MantineValueEditor = ({
           value={value}
           title={title}
           placeholder={placeHolderText}
+          data-disabled={disabled}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.value)}
         />
@@ -123,6 +160,7 @@ export const MantineValueEditor = ({
           className={className}
           title={title}
           checked={value}
+          data-disabled={disabled}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />
@@ -134,6 +172,7 @@ export const MantineValueEditor = ({
           className={className}
           title={title}
           checked={value}
+          data-disabled={disabled}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />
@@ -143,19 +182,19 @@ export const MantineValueEditor = ({
       return (
         <Radio.Group className={className} title={title} value={value} onChange={handleOnChange}>
           {values.map(v => (
-            <Radio key={v.name} value={v.name} label={v.label} disabled={disabled} />
+            <Radio
+              key={v.name}
+              value={v.name}
+              label={v.label}
+              data-disabled={disabled}
+              disabled={disabled}
+            />
           ))}
         </Radio.Group>
       );
   }
 
-  if (
-    inputTypeCoerced === 'date' ||
-    inputTypeCoerced === 'datetime-local' ||
-    inputTypeCoerced === 'time'
-  ) {
-    const dateFormat = `YYYY-MM-DD${inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : ''}`;
-
+  if (inputTypeCoerced === 'date' || inputTypeCoerced === 'datetime-local') {
     if (operator === 'between' || operator === 'notBetween') {
       const twoDateArray = [null, null].map((_d, i) => {
         if (!valueAsArray[i]) return null;
@@ -166,78 +205,75 @@ export const MantineValueEditor = ({
         return date.isValid() ? date.toDate() : null;
       }) as [Date | null, Date | null];
 
-      switch (inputTypeCoerced) {
-        case 'date':
-        case 'datetime-local':
-          return (
-            <DateRangePicker
-              data-testid={testID}
-              value={twoDateArray}
-              className={className}
-              disabled={disabled}
-              placeholder={placeHolderText}
-              onChange={dates => {
-                const dateArray = dates
-                  .map(d => dayjs(d))
-                  .map(d => (d.isValid() ? d.format(dateFormat) : null));
-                handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
-              }}
-            />
-          );
-
-        case 'time':
-          return (
-            <TimeRangeInput
-              data-testid={testID}
-              value={twoDateArray}
-              className={className}
-              disabled={disabled}
-              placeholder={placeHolderText}
-              onChange={dates => {
-                const dateArray = dates
-                  .map(d => (d ? dayjs(d) : null))
-                  .map(d => (d && d.isValid() ? d.format('HH:mm:ss') : null));
-                handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
-              }}
-            />
-          );
-      }
-    }
-
-    switch (inputTypeCoerced) {
-      case 'date':
-      case 'datetime-local':
-        return (
-          <DatePicker
-            data-testid={testID}
-            value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
-            className={className}
-            disabled={disabled}
-            placeholder={placeHolderText}
-            onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateFormat) : '')}
-          />
-        );
-
-      case 'time':
-        return (
-          <TimeInput
-            data-testid={testID}
-            value={
-              value
-                ? dayjs(`${dayjs().format('YYYY-MM-DD')}T${value}`).isValid()
-                  ? dayjs(`${dayjs().format('YYYY-MM-DD')}T${value}`).toDate()
-                  : dayjs(value).isValid()
-                  ? dayjs(value).toDate()
+      return (
+        <DatePickerInput
+          data-testid={testID}
+          type="range"
+          value={twoDateArray}
+          className={className}
+          data-disabled={disabled}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={dates => {
+            const dateArray = dates
+              .map(d => dayjs(d))
+              .map(d =>
+                d.isValid()
+                  ? d.format(
+                      inputTypeCoerced === 'datetime-local' ? dateTimeLocalFormat : dateFormat
+                    )
                   : null
-                : null
-            }
-            className={className}
-            disabled={disabled}
-            placeholder={placeHolderText}
-            onChange={d => handleOnChange(dayjs(d).format('HH:mm:ss'))}
-          />
-        );
+              );
+            handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
+          }}
+        />
+      );
     }
+
+    if (inputTypeCoerced === 'datetime-local') {
+      return (
+        <DateTimePicker
+          data-testid={testID}
+          value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
+          className={className}
+          data-disabled={disabled}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={d =>
+            handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateTimeLocalFormat) : '')
+          }
+        />
+      );
+    }
+
+    return (
+      <DatePickerInput
+        data-testid={testID}
+        type="default"
+        value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
+        className={className}
+        data-disabled={disabled}
+        disabled={disabled}
+        placeholder={placeHolderText}
+        onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateFormat) : '')}
+      />
+    );
+  }
+
+  if (inputTypeCoerced === 'number') {
+    return (
+      <NumberInput
+        data-testid={testID}
+        title={title}
+        className={className}
+        placeholder={placeHolderText}
+        type={inputTypeCoerced}
+        data-disabled={disabled}
+        disabled={disabled}
+        value={value}
+        onChange={v => handleOnChange(v)}
+      />
+    );
   }
 
   return (
@@ -247,6 +283,7 @@ export const MantineValueEditor = ({
       className={className}
       placeholder={placeHolderText}
       type={inputTypeCoerced}
+      data-disabled={disabled}
       disabled={disabled}
       value={value}
       onChange={e => handleOnChange(e.target.value)}
