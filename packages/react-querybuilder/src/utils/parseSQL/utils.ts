@@ -37,8 +37,19 @@ export const getParamString = (param: any) => {
   }
 };
 
-export const getFieldName = (f: string | SQLIdentifier) =>
-  (typeof f === 'string' ? f : f.value).replace(/(^`|`$)/g, '').replace(/(^"|"$)/g, '');
+export const getFieldName = (f: string | SQLIdentifier) => {
+  const fieldName = typeof f === 'string' ? f : f.value;
+
+  if (fieldName.startsWith('`') && fieldName.endsWith('`')) {
+    return fieldName.replaceAll(/(^`|`$)/g, '');
+  } else if (fieldName.startsWith('"') && fieldName.endsWith('"')) {
+    return fieldName.replaceAll(/(^"|"$)/g, '');
+  } else if (fieldName.startsWith('[') && fieldName.endsWith(']')) {
+    return fieldName.replaceAll(/(^\[|\]$)/g, '');
+  }
+
+  return fieldName;
+};
 
 const normalizeCombinator = (c: AndOperator | OrOperator | XorOperator) =>
   c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorNameExtended;

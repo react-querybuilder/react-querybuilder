@@ -121,11 +121,17 @@ describe('boolean operators', () => {
     );
   });
 
-  it('quoted field names', () => {
+  it('wrapped/quoted field names', () => {
     expect(parseSQL('`isMusician` = TRUE')).toEqual(
       wrapRule({ field: 'isMusician', operator: '=', value: true })
     );
     expect(parseSQL('"Is a Musician" = TRUE')).toEqual(
+      wrapRule({ field: 'Is a Musician', operator: '=', value: true })
+    );
+    expect(parseSQL('[isMusician] = TRUE')).toEqual(
+      wrapRule({ field: 'isMusician', operator: '=', value: true })
+    );
+    expect(parseSQL('[Is a Musician] = TRUE')).toEqual(
       wrapRule({ field: 'Is a Musician', operator: '=', value: true })
     );
   });
