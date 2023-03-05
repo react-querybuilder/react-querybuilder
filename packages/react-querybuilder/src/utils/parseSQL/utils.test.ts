@@ -5,7 +5,7 @@ import type {
   SQLNumberValue,
   SQLStringValue,
 } from './types';
-import { evalSQLLiteralValue, generateMixedAndXorOrList } from './utils';
+import { evalSQLLiteralValue, generateMixedAndXorOrList, getFieldName } from './utils';
 
 const isNullExpr: SQLExpression = {
   type: 'IsNullBooleanPrimary',
@@ -27,6 +27,18 @@ const isNotNullExpr2: SQLExpression = {
   value: { type: 'Identifier', value: 'f2' },
   hasNot: 'NOT',
 };
+
+it('getFieldName', () => {
+  expect(getFieldName({ type: 'Identifier', value: 'test' })).toBe('test');
+  expect(getFieldName('test')).toBe('test');
+  expect(getFieldName('`test`')).toBe('test');
+  expect(getFieldName('"test"')).toBe('test');
+  expect(getFieldName('[test]')).toBe('test');
+  // Check for double- or triple-unwrapping
+  expect(getFieldName('`[test]`')).toBe('[test]');
+  expect(getFieldName('[`test`]')).toBe('`test`');
+  expect(getFieldName('[`"test"`]')).toBe('`"test"`');
+});
 
 it('evalSQLLiteralValue', () => {
   const value: any = 'Test';

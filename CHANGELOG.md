@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.0.4] - 2023-03-05
+
+## Fixed
+
+- [#478] `parseSQL` now recognizes field names wrapped in square brackets, like `[field name]`. (The corresponding update to `formatQuery` was made in [#463] as part of v6.0.0).
+
 ## [v6.0.3] - 2023-03-02
 
 ## Fixed
@@ -1245,10 +1251,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#463]: https://github.com/react-querybuilder/react-querybuilder/pull/463
 [#470]: https://github.com/react-querybuilder/react-querybuilder/pull/470
 [#472]: https://github.com/react-querybuilder/react-querybuilder/issues/472
+[#478]: https://github.com/react-querybuilder/react-querybuilder/pull/478
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...HEAD
+[v6.0.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...v6.0.4
 [v6.0.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.2...v6.0.3
 [v6.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.1...v6.0.2
 [v6.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.0...v6.0.1
