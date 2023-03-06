@@ -923,242 +923,236 @@ case 6:return 50
 break;
 case 7:return 50
 break;
-case 8:return 50
+case 8:return 18
 break;
-case 9:return 50
+case 9:return 29
 break;
-case 10:return 18
+case 10:return 121
 break;
-case 11:return 29
+case 11:return 30
 break;
-case 12:return 121
+case 12:return 31
 break;
-case 13:return 30
+case 13:return 32
 break;
-case 14:return 31
+case 14:return 33
 break;
-case 15:return 32
+case 15:return 36
 break;
-case 16:return 33
+case 16:return 37
 break;
-case 17:return 36
+case 17:return 38
 break;
-case 18:return 37
+case 18:return 39
 break;
-case 19:return 38
+case 19:return 40
 break;
-case 20:return 39
+case 20:return 41
 break;
-case 21:return 40
+case 21:return 42
 break;
-case 22:return 41
+case 22:return 46
 break;
-case 23:return 42
+case 23:return 49
 break;
-case 24:return 46
+case 24:return 57
 break;
-case 25:return 49
+case 25:return 58
 break;
-case 26:return 57
+case 26:return 60
 break;
-case 27:return 58
+case 27:return 'COLLATE'
 break;
-case 28:return 60
+case 28:return 84
 break;
-case 29:return 'COLLATE'
+case 29:return 86
 break;
-case 30:return 84
+case 30:return 87
 break;
-case 31:return 86
+case 31:return 76
 break;
-case 32:return 87
+case 32:return 71
 break;
-case 33:return 76
+case 33:return 72
 break;
-case 34:return 71
+case 34:return 74
 break;
-case 35:return 72
+case 35:return 77
 break;
-case 36:return 74
+case 36:return 98
 break;
-case 37:return 77
+case 37:return 99
 break;
-case 38:return 98
+case 38:return 103
 break;
-case 39:return 99
+case 39:return 108
 break;
-case 40:return 103
+case 40:return 107
 break;
-case 41:return 108
+case 41:return 110
 break;
-case 42:return 107
+case 42:return 111
 break;
-case 43:return 110
+case 43:return 105
 break;
-case 44:return 111
+case 44:return 112
 break;
-case 45:return 105
+case 45:return 123
 break;
-case 46:return 112
+case 46:return 125
 break;
-case 47:return 123
+case 47:return 109
 break;
-case 48:return 125
+case 48:return 126
 break;
-case 49:return 109
+case 49:return 127
 break;
-case 50:return 126
+case 50:return 157
 break;
-case 51:return 127
+case 51:return 182
 break;
-case 52:return 157
+case 52:return 192
 break;
-case 53:return 182
+case 53:return 185
 break;
-case 54:return 192
+case 54:return 186
 break;
-case 55:return 185
+case 55:return 152
 break;
-case 56:return 186
+case 56:return 173
 break;
-case 57:return 152
+case 57:return 138
 break;
-case 58:return 173
+case 58:return 135
 break;
-case 59:return 138
+case 59:return 193
 break;
-case 60:return 135
+case 60:return 194
 break;
-case 61:return 193
+case 61:return 164
 break;
-case 62:return 194
+case 62:return 165
 break;
-case 63:return 164
+case 63:return 179
 break;
-case 64:return 165
+case 64:return 180
 break;
-case 65:return 179
+case 65:return 167
 break;
-case 66:return 180
+case 66:return 168
 break;
-case 67:return 167
+case 67:return 170
 break;
-case 68:return 168
+case 68:return 177
 break;
-case 69:return 170
+case 69:return 129
 break;
-case 70:return 177
+case 70:return 141
 break;
-case 71:return 129
+case 71:return 142
 break;
-case 72:return 141
+case 72:return 133
 break;
-case 73:return 142
+case 73:return 134
 break;
-case 74:return 133
+case 74:return 144
 break;
-case 75:return 134
+case 75:return 147
 break;
-case 76:return 144
+case 76:return 150
 break;
-case 77:return 147
+case 77:return 153
 break;
-case 78:return 150
+case 78:return 154
 break;
-case 79:return 153
+case 79:return 155
 break;
-case 80:return 154
+case 80:return 156
 break;
-case 81:return 155
+case 81:return 162
 break;
-case 82:return 156
+case 82:return 146
 break;
-case 83:return 162
+case 83:return 14
 break;
-case 84:return 146
+case 84:return 43
 break;
-case 85:return 14
+case 85:return 34
 break;
-case 86:return 43
+case 86:return 16
 break;
-case 87:return 34
+case 87:return 17
 break;
-case 88:return 16
+case 88:return 82
 break;
-case 89:return 17
+case 89:return 119
 break;
-case 90:return 82
+case 90:return 83
 break;
-case 91:return 119
+case 91:return 90
 break;
-case 92:return 83
+case 92:return 93
 break;
-case 93:return 90
+case 93:return 94
 break;
-case 94:return 93
+case 94:return 79
 break;
-case 95:return 94
+case 95:return 81
 break;
-case 96:return 79
+case 96:return 45
 break;
-case 97:return 81
+case 97:return 97
 break;
-case 98:return 45
+case 98:return 100
 break;
-case 99:return 97
+case 99:return 101
 break;
-case 100:return 100
+case 100:return 96
 break;
-case 101:return 101
+case 101:return 114
 break;
-case 102:return 96
+case 102:return 115
 break;
-case 103:return 114
+case 103:return 95
 break;
-case 104:return 115
+case 104:return '<=>'
 break;
-case 105:return 95
+case 105:return 116
 break;
-case 106:return '<=>'
+case 106:return 118
 break;
-case 107:return 116
+case 107:return 117
 break;
-case 108:return 118
+case 108:return 88
 break;
-case 109:return 117
+case 109:return 89
 break;
-case 110:return 88
+case 110:return 8
 break;
-case 111:return 89
+case 111:return 91
 break;
-case 112:return 8
+case 112:return 51
 break;
-case 113:return 91
+case 113:return 55
 break;
-case 114:return 51
+case 114:return 35
 break;
-case 115:return 55
+case 115:return 54
 break;
-case 116:return 35
+case 116:return 50
 break;
-case 117:return 54
+case 117:return 67
 break;
 case 118:return 50
 break;
-case 119:return 67
+case 119:return 6
 break;
-case 120:return 51
-break;
-case 121:return 50
-break;
-case 122:return 6
-break;
-case 123:return 'INVALID'
+case 120:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:[/][*](.|\n)*?[*][/])/i,/^(?:[-][-]\s.*\n)/i,/^(?:[#]\s.*\n)/i,/^(?:\s+)/i,/^(?:[$][{](.*?)[}])/i,/^(?:[`][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]*[`])/i,/^(?:["][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]*["])/i,/^(?:[\[][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]*[\]])/i,/^(?:[\w]+[\u4e00-\u9fa5]+[0-9a-zA-Z_\u4e00-\u9fa5]*)/i,/^(?:[\u4e00-\u9fa5][0-9a-zA-Z_\u4e00-\u9fa5]*)/i,/^(?:SELECT\b)/i,/^(?:ALL\b)/i,/^(?:ANY\b)/i,/^(?:DISTINCT\b)/i,/^(?:DISTINCTROW\b)/i,/^(?:HIGH_PRIORITY\b)/i,/^(?:MAX_STATEMENT_TIME\b)/i,/^(?:STRAIGHT_JOIN\b)/i,/^(?:SQL_SMALL_RESULT\b)/i,/^(?:SQL_BIG_RESULT\b)/i,/^(?:SQL_BUFFER_RESULT\b)/i,/^(?:SQL_CACHE\b)/i,/^(?:SQL_NO_CACHE\b)/i,/^(?:SQL_CALC_FOUND_ROWS\b)/i,/^(?:([a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*\.){1,2}\*)/i,/^(?:AS\b)/i,/^(?:TRUE\b)/i,/^(?:FALSE\b)/i,/^(?:NULL\b)/i,/^(?:COLLATE\b)/i,/^(?:BINARY\b)/i,/^(?:ROW\b)/i,/^(?:EXISTS\b)/i,/^(?:CASE\b)/i,/^(?:WHEN\b)/i,/^(?:THEN\b)/i,/^(?:ELSE\b)/i,/^(?:END\b)/i,/^(?:DIV\b)/i,/^(?:MOD\b)/i,/^(?:NOT\b)/i,/^(?:BETWEEN\b)/i,/^(?:IN\b)/i,/^(?:SOUNDS\b)/i,/^(?:LIKE\b)/i,/^(?:ESCAPE\b)/i,/^(?:REGEXP\b)/i,/^(?:IS\b)/i,/^(?:UNKNOWN\b)/i,/^(?:AND\b)/i,/^(?:OR\b)/i,/^(?:XOR\b)/i,/^(?:FROM\b)/i,/^(?:PARTITION\b)/i,/^(?:USE\b)/i,/^(?:INDEX\b)/i,/^(?:KEY\b)/i,/^(?:FOR\b)/i,/^(?:JOIN\b)/i,/^(?:ORDER\s+BY\b)/i,/^(?:GROUP\s+BY\b)/i,/^(?:IGNORE\b)/i,/^(?:FORCE\b)/i,/^(?:INNER\b)/i,/^(?:CROSS\b)/i,/^(?:ON\b)/i,/^(?:USING\b)/i,/^(?:LEFT\b)/i,/^(?:RIGHT\b)/i,/^(?:OUTER\b)/i,/^(?:NATURAL\b)/i,/^(?:WHERE\b)/i,/^(?:ASC\b)/i,/^(?:DESC\b)/i,/^(?:WITH\b)/i,/^(?:ROLLUP\b)/i,/^(?:HAVING\b)/i,/^(?:OFFSET\b)/i,/^(?:PROCEDURE\b)/i,/^(?:UPDATE\b)/i,/^(?:LOCK\b)/i,/^(?:SHARE\b)/i,/^(?:MODE\b)/i,/^(?:OJ\b)/i,/^(?:LIMIT\b)/i,/^(?:UNION\b)/i,/^(?:,)/i,/^(?:=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:~)/i,/^(?:!=)/i,/^(?:!)/i,/^(?:\|\|)/i,/^(?:\|)/i,/^(?:&)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:\^)/i,/^(?:>>)/i,/^(?:>=)/i,/^(?:>)/i,/^(?:<<)/i,/^(?:<=>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:;)/i,/^(?:['](%+)['])/i,/^(?:(['](\\.|[^'])*['])+)/i,/^(?:[0][x][0-9a-fA-F]+)/i,/^(?:[-]?[0-9]+(\.[0-9]+)?)/i,/^(?:[-]?[0-9]+(\.[0-9]+)?[eE][-][0-9]+(\.[0-9]+)?)/i,/^(?:[a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*)/i,/^(?:\.)/i,/^(?:(['][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*['])+)/i,/^(?:([`])(?:(?=(\\?))\2.)*?\1)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123],"inclusive":true}}
+rules: [/^(?:[/][*](.|\n)*?[*][/])/i,/^(?:[-][-]\s.*\n)/i,/^(?:[#]\s.*\n)/i,/^(?:\s+)/i,/^(?:[$][{](.*?)[}])/i,/^(?:([`][\u0001-\ufffe]+[`])+)/i,/^(?:(["][\u0001-\ufffe]+["])+)/i,/^(?:[\[]([\u0001-\ufffe]|\]\])+[\]])/i,/^(?:SELECT\b)/i,/^(?:ALL\b)/i,/^(?:ANY\b)/i,/^(?:DISTINCT\b)/i,/^(?:DISTINCTROW\b)/i,/^(?:HIGH_PRIORITY\b)/i,/^(?:MAX_STATEMENT_TIME\b)/i,/^(?:STRAIGHT_JOIN\b)/i,/^(?:SQL_SMALL_RESULT\b)/i,/^(?:SQL_BIG_RESULT\b)/i,/^(?:SQL_BUFFER_RESULT\b)/i,/^(?:SQL_CACHE\b)/i,/^(?:SQL_NO_CACHE\b)/i,/^(?:SQL_CALC_FOUND_ROWS\b)/i,/^(?:([a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*\.){1,2}\*)/i,/^(?:AS\b)/i,/^(?:TRUE\b)/i,/^(?:FALSE\b)/i,/^(?:NULL\b)/i,/^(?:COLLATE\b)/i,/^(?:BINARY\b)/i,/^(?:ROW\b)/i,/^(?:EXISTS\b)/i,/^(?:CASE\b)/i,/^(?:WHEN\b)/i,/^(?:THEN\b)/i,/^(?:ELSE\b)/i,/^(?:END\b)/i,/^(?:DIV\b)/i,/^(?:MOD\b)/i,/^(?:NOT\b)/i,/^(?:BETWEEN\b)/i,/^(?:IN\b)/i,/^(?:SOUNDS\b)/i,/^(?:LIKE\b)/i,/^(?:ESCAPE\b)/i,/^(?:REGEXP\b)/i,/^(?:IS\b)/i,/^(?:UNKNOWN\b)/i,/^(?:AND\b)/i,/^(?:OR\b)/i,/^(?:XOR\b)/i,/^(?:FROM\b)/i,/^(?:PARTITION\b)/i,/^(?:USE\b)/i,/^(?:INDEX\b)/i,/^(?:KEY\b)/i,/^(?:FOR\b)/i,/^(?:JOIN\b)/i,/^(?:ORDER\s+BY\b)/i,/^(?:GROUP\s+BY\b)/i,/^(?:IGNORE\b)/i,/^(?:FORCE\b)/i,/^(?:INNER\b)/i,/^(?:CROSS\b)/i,/^(?:ON\b)/i,/^(?:USING\b)/i,/^(?:LEFT\b)/i,/^(?:RIGHT\b)/i,/^(?:OUTER\b)/i,/^(?:NATURAL\b)/i,/^(?:WHERE\b)/i,/^(?:ASC\b)/i,/^(?:DESC\b)/i,/^(?:WITH\b)/i,/^(?:ROLLUP\b)/i,/^(?:HAVING\b)/i,/^(?:OFFSET\b)/i,/^(?:PROCEDURE\b)/i,/^(?:UPDATE\b)/i,/^(?:LOCK\b)/i,/^(?:SHARE\b)/i,/^(?:MODE\b)/i,/^(?:OJ\b)/i,/^(?:LIMIT\b)/i,/^(?:UNION\b)/i,/^(?:,)/i,/^(?:=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:~)/i,/^(?:!=)/i,/^(?:!)/i,/^(?:\|\|)/i,/^(?:\|)/i,/^(?:&)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:\^)/i,/^(?:>>)/i,/^(?:>=)/i,/^(?:>)/i,/^(?:<<)/i,/^(?:<=>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:;)/i,/^(?:['](%)+['])/i,/^(?:(['][^']*['])+)/i,/^(?:[0][x][0-9a-fA-F]+)/i,/^(?:[-]?[0-9]+(\.[0-9]+)?)/i,/^(?:[-]?[0-9]+(\.[0-9]+)?[eE][-+]?[0-9]+(\.[0-9]+)?)/i,/^(?:[a-zA-Z_@#\uff3f\u4e00-\u9fa5][a-zA-Z0-9_$@#\uff3f\u4e00-\u9fa5]*)/i,/^(?:\.)/i,/^(?:([`])(?:(?=(\\?))\2.)*?\1)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120],"inclusive":true}}
 });
 return lexer;
 })();

@@ -87,7 +87,7 @@ export interface SQLWhereObjectAny extends SQLWhereObject {
 }
 export interface SQLStringValue extends SQLWhereObject {
   type: 'String';
-  value: `'${string}'` | `"${string}"`;
+  value: string;
 }
 export interface SQLNumberValue extends SQLWhereObject {
   type: 'Number';
