@@ -63,6 +63,10 @@ describe('leading keywords/whitespace', () => {
     expect(parseSQL(`SELECT * FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
   });
 
+  it('handles dots and asterisks in SELECT list', () => {
+    expect(parseSQL(`SELECT t.col.sub, s.t.* FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
+  });
+
   it('handles SQL strings beginning with SELECT keyword and leading whitespace', () => {
     expect(parseSQL(` \t \r\n  SELECT * FROM t WHERE firstName = 'Steve'`)).toEqual(expected);
   });

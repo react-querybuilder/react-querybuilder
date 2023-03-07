@@ -29,9 +29,6 @@ SQL_BUFFER_RESULT                                                 return 'SQL_BU
 SQL_CACHE                                                         return 'SQL_CACHE'
 SQL_NO_CACHE                                                      return 'SQL_NO_CACHE'
 SQL_CALC_FOUND_ROWS                                               return 'SQL_CALC_FOUND_ROWS'
-/* TODO: Move the logic of the line below to the "main"           */
-/* section as       | IDENTIFIER DOT '*'                          */
-([a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*\.){1,2}\*       return 'SELECT_EXPR_STAR'
 AS                                                                return 'AS'
 TRUE                                                              return 'TRUE'
 FALSE                                                             return 'FALSE'
@@ -276,8 +273,11 @@ selectExprList
   ;
 selectExpr
   : '*' -> { type: 'Identifier', value: $1 }
-  | SELECT_EXPR_STAR -> { type: 'Identifier', value: $1 }
+  | selectExprStar -> $1
   | expr selectExprAliasOpt -> $1; $$.alias = $2.alias; $$.hasAs = $2.hasAs;
+  ;
+selectExprStar
+  : identifier DOT '*' -> $1; $1.value += '.' + $3
   ;
 selectExprAliasOpt
   : -> {alias: null, hasAs: null}
@@ -318,7 +318,7 @@ function_call_param_list
 function_call_param
   : -> null
   | '*' -> $1
-  | SELECT_EXPR_STAR -> $1
+  | selectExprStar -> $1
   | DISTINCT expr -> { type: 'FunctionCallParam', distinctOpt: $1, value: $2 }
   | expr -> $1
   ;
