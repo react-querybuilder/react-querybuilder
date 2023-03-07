@@ -42,7 +42,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
-    "@mui/material": "^5.11.11",
+    "@mui/material": "^5.11.12",
     "@react-querybuilder/ts": "^6.0.6",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.28",
