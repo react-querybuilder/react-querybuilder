@@ -13,7 +13,7 @@ export const SandpackRQB = ({
   children,
   customSetup,
   options,
-  rqbVersion = 5,
+  rqbVersion = 6,
 }: SandpackRQBProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
   const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
@@ -83,7 +83,7 @@ pre {
   padding: 1rem;
   background-color: white;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   white-space: pre-wrap;
 }
 ${
@@ -123,7 +123,7 @@ h1, h2, h3, h4, h5, h6 {
       <Sandpack
         files={files}
         theme={isDarkTheme ? 'dark' : undefined}
-        template="react-ts"
+        template="vite-react-ts"
         customSetup={setup}
         options={options}
       />

@@ -6,17 +6,17 @@ import { QueryBuilder as QueryBuilder_v5 } from 'react-querybuilder-v5';
 import 'react-querybuilder/query-builder.scss';
 import './QueryBuilderEmbed.scss';
 
-type QueryBuilderEmbedProps<V extends 4 | 5 = 5> = QueryBuilderProps<any> & {
+type QueryBuilderEmbedProps<V extends 4 | 5 | 6 = 6> = QueryBuilderProps<any> & {
   version?: V;
 };
 
-export const QueryBuilderEmbed = <V extends 4 | 5>({
+export const QueryBuilderEmbed = <V extends 4 | 5 | 6>({
   version,
   ...props
 }: QueryBuilderEmbedProps<V>) => {
   const QB: any = version === 4 ? QueryBuilder_v4 : version === 5 ? QueryBuilder_v5 : QueryBuilder;
   return (
-    <div key={`v${version ?? 5}`} className="queryBuilderEmbed">
+    <div key={`v${version ?? 6}`} className="queryBuilderEmbed">
       <QB {...props} />
     </div>
   );
