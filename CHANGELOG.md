@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.0.6] - 2023-03-07
+
+## Fixed
+
+- [#483] The regular expression behind `parseSQL` in the previous version was capturing too many characters when field names were wrapped in delimiters.
+
 ## [v6.0.5] - 2023-03-06
 
 ## Fixed
@@ -1259,10 +1265,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#472]: https://github.com/react-querybuilder/react-querybuilder/issues/472
 [#478]: https://github.com/react-querybuilder/react-querybuilder/pull/478
 [#479]: https://github.com/react-querybuilder/react-querybuilder/pull/479
+[#483]: https://github.com/react-querybuilder/react-querybuilder/pull/483
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.5...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.6...HEAD
+[v6.0.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.5...v6.0.6
 [v6.0.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...v6.0.5
 [v6.0.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...v6.0.4
 [v6.0.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.2...v6.0.3

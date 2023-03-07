@@ -12,9 +12,9 @@
 \s+                                                               /* skip whitespace */
 
 [$][{](.*?)[}]                                                    return 'PLACE_HOLDER'
-([`][\u0001-\ufffe]+[`])+                                         return 'IDENTIFIER'
-(["][\u0001-\ufffe]+["])+                                         return 'IDENTIFIER'
-[\[]([\u0001-\ufffe]|\]\])+[\]]                                   return 'IDENTIFIER'
+([`][^`]+[`])+                                                    return 'IDENTIFIER'
+(["][^"]+["])+                                                    return 'IDENTIFIER'
+[\[]([^\]]|\]\])+[\]]                                             return 'IDENTIFIER'
 SELECT                                                            return 'SELECT'
 ALL                                                               return 'ALL'
 ANY                                                               return 'ANY'

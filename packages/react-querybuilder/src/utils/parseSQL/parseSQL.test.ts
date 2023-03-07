@@ -132,15 +132,27 @@ is a ''bad'' guy!`,
   });
 
   it('wrapped/quoted field names', () => {
-    expect(parseSQL('`Is a Musician` = TRUE')).toEqual(
-      wrapRule({ field: 'Is a Musician', operator: '=', value: true })
-    );
-    expect(parseSQL('"Is a Musician" = TRUE')).toEqual(
-      wrapRule({ field: 'Is a Musician', operator: '=', value: true })
-    );
-    expect(parseSQL('[Is a Musician] = TRUE')).toEqual(
-      wrapRule({ field: 'Is a Musician', operator: '=', value: true })
-    );
+    expect(parseSQL('`Is a Musician` = TRUE AND `Is a Pianist` = FALSE')).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'Is a Musician', operator: '=', value: true },
+        { field: 'Is a Pianist', operator: '=', value: false },
+      ],
+    });
+    expect(parseSQL('"Is a Musician" = TRUE AND "Is a Pianist" = FALSE')).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'Is a Musician', operator: '=', value: true },
+        { field: 'Is a Pianist', operator: '=', value: false },
+      ],
+    });
+    expect(parseSQL('[Is a Musician] = TRUE AND [Is a Pianist] = FALSE')).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'Is a Musician', operator: '=', value: true },
+        { field: 'Is a Pianist', operator: '=', value: false },
+      ],
+    });
     expect(parseSQL('[🚀 - ]] - 🌕] = TRUE')).toEqual(
       wrapRule({ field: '🚀 - ] - 🌕', operator: '=', value: true })
     );
