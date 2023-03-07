@@ -1,0 +1,55 @@
+---
+title: Path concepts
+description: Explanation of the "path" property of rules and groups
+---
+
+While the `id` property can uniquely identify a rule or group, an `id` won't naturally indicate anything about the _position_ of the object within the query hierarchy. For that reason, React Query Builder uses the concept of a "path" to each object to locate and update query properties.
+
+A query is essentially a recursive array of rules. Nested arrays are called groups. The outermost array, the query itself, is also a group.
+
+`path` is an array of integers specific to each rule and group within a query. The query object itself, aka the root group, has a `path` of `[]`. All other rules and groups within the query have a `path` that corresponds to their position within the `rules` array(s) of their ancestor group(s).
+
+The `path` of any object (rule or group) within a query is equivalent to the `path` of its parent group concatenated with the index of the object within its parent's `rules` array. You might think of it like this: `path = [...parentPath, index]`.
+
+Consider the following query. The respective `path` for each rule and group is commented above it, along with a short explanation.
+
+```ts
+// [] (the root group)
+const query = {
+  combinator: 'and',
+  rules: [
+    // [0] (the first, aka zeroth, element in the root rules array)
+    { field: 'f1', operator: '=', value: 'v1' },
+    // [1] (the second element in the root rules array is a sub-group)
+    {
+      combinator: 'or',
+      rules: [
+        // [1, 0] (the first element within the rules array
+        //         of the group occupying the second position
+        //         in the root rules array)
+        { field: 'f2', operator: '=', value: 'v2' },
+        // [1, 1] (the second element within the rules array
+        //         of the group occupying the second position
+        //         in the root rules array)
+        { field: 'f3', operator: '=', value: 'v3' },
+      ],
+    },
+  ],
+};
+```
+
+The `path` of the top-most rule in the query is `[0]`, `0` being the index of that rule within the root group's `rules` array. The `path` of the first sub-group in the query is `[1]`, again according to its index within the outermost `rules` array. Each child rule of _that_ group has a path that begins with `1` (the `path` of its parent), followed by its own index.
+
+## Finding a `path`
+
+Use the [`findPath`](../utils/misc#findpath) function to locate a specific rule or group for examination or update. Given the query above:
+
+```ts
+findPath([1, 0], query);
+```
+
+would return this object:
+
+```ts
+{ field: "f2", operator: "=", value: "v2" }
+```
