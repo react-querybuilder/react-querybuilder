@@ -3509,19 +3509,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-client@npm:^1.20.9":
-  version: 1.20.9
-  resolution: "@codesandbox/sandpack-client@npm:1.20.9"
+"@codesandbox/nodebox@npm:0.1.4":
+  version: 0.1.4
+  resolution: "@codesandbox/nodebox@npm:0.1.4"
   dependencies:
-    codesandbox-import-utils: ^1.2.3
-    lodash.isequal: ^4.5.0
-  checksum: ff6811f03499cb2da6acf603e1a5eb7a6267b3e6bb9ab41ff31926d814696723a7ea312c1bde281585c4d5a251899658cd8edf439f26267358058fb9d7cce257
+    outvariant: ^1.3.0
+    strict-event-emitter: ^0.4.3
+  checksum: b0b57aa9f767c7265dd680139d64017c01eb3058b0f75b7fd36dfd8fe5898e911f187ce70d5bee43660efdb5cd794cc9e3d4f172f16cfb9635b2b0916bab50df
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-react@npm:^1.20.9":
-  version: 1.20.9
-  resolution: "@codesandbox/sandpack-react@npm:1.20.9"
+"@codesandbox/sandpack-client@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@codesandbox/sandpack-client@npm:2.1.0"
+  dependencies:
+    "@codesandbox/nodebox": 0.1.4
+    buffer: ^6.0.3
+    dequal: ^2.0.2
+    outvariant: 1.3.0
+  checksum: e6e04a6a449541539945c2fc562693dc895269b43ee3d764890d3a8ea15aff00d894eff03a999a1c3f86ba1ece27aa8b68855c595ec88fd19cb312b9e32dd51e
+  languageName: node
+  linkType: hard
+
+"@codesandbox/sandpack-react@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@codesandbox/sandpack-react@npm:2.1.2"
   dependencies:
     "@code-hike/classer": ^0.0.0-aa6efee
     "@codemirror/autocomplete": ^6.4.0
@@ -3532,20 +3544,21 @@ __metadata:
     "@codemirror/language": ^6.3.2
     "@codemirror/state": ^6.2.0
     "@codemirror/view": ^6.7.1
-    "@codesandbox/sandpack-client": ^1.20.9
+    "@codesandbox/sandpack-client": ^2.1.0
     "@lezer/highlight": ^1.1.3
     "@react-hook/intersection-observer": ^3.1.1
     "@stitches/core": ^1.2.6
+    ansi-to-react: 6.1.6
     clean-set: ^1.1.2
     codesandbox-import-util-types: ^2.2.3
-    lodash.isequal: ^4.5.0
+    dequal: ^2.0.2
     lz-string: ^1.4.4
     react-devtools-inline: 4.4.0
     react-is: ^17.0.2
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: d07a56291ee5758bc7cbd3dbe26a05d99da9458259c8ec65fc5e901eaf7784b85ebf1837d6cf686a6ca47b151401988c8900afd6ceceddecb8f3098f7d703246
+  checksum: fffcc09a281ff198f6c8bb967c91b47a72d205bfeeb7ad7a35cf051f239dd11ec5c55526e7f4a748d0dcebf9bc5589644c5d50bb9ff5d2870dd7d82fe6929f3a
   languageName: node
   linkType: hard
 
@@ -7445,6 +7458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"anser@npm:^1.4.1":
+  version: 1.4.10
+  resolution: "anser@npm:1.4.10"
+  checksum: 3823c64f8930d3d97f36e56cdf646fa6351f1227e25eee70c3a17697447cae4238fc3a309bb3bc2003cf930687fa72aed71426dbcf3c0a15565e120a7fee5507
+  languageName: node
+  linkType: hard
+
 "ansi-align@npm:^3.0.0, ansi-align@npm:^3.0.1":
   version: 3.0.1
   resolution: "ansi-align@npm:3.0.1"
@@ -7499,6 +7519,19 @@ __metadata:
   version: 6.1.0
   resolution: "ansi-styles@npm:6.1.0"
   checksum: 7a7f8528c07a9d20c3a92bccd2b6bc3bb4d26e5cb775c02826921477377bd495d615d61f710d56216344b6238d1d11ef2b0348e146c5b128715578bfb3217229
+  languageName: node
+  linkType: hard
+
+"ansi-to-react@npm:6.1.6":
+  version: 6.1.6
+  resolution: "ansi-to-react@npm:6.1.6"
+  dependencies:
+    anser: ^1.4.1
+    escape-carriage: ^1.3.0
+  peerDependencies:
+    react: ^16.3.2 || ^17.0.0
+    react-dom: ^16.3.2 || ^17.0.0
+  checksum: c626cd36d4f53e98c2305f5d6c1ac6b32f59a9286a11458a64e05ff93e8248ca5b5785401b6ee4c6cd0af1a4a0bc94315c37696480c1906fb905e14a043f4652
   languageName: node
   linkType: hard
 
@@ -7888,13 +7921,6 @@ __metadata:
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
   checksum: ccd267956c58d2315f5d3ea6757cf09863c5fc703e50fbeb13a7dc849b812ef76e3cf9ca8f35a0c48498776a7478d7b4a0418e1e2b8cb9cb9731f2922aaad7f8
-  languageName: node
-  linkType: hard
-
-"binaryextensions@npm:2":
-  version: 2.3.0
-  resolution: "binaryextensions@npm:2.3.0"
-  checksum: e64e4658a611a753e0320b047a0045a063c6f2dd92d7a7fc06c25f7e72fb3700dabcf328e319c79f1038e6d0ea46edb0644686603d5f36bff3350d0e7eb198a9
   languageName: node
   linkType: hard
 
@@ -8491,28 +8517,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codesandbox-import-util-types@npm:^1.3.7":
-  version: 1.3.7
-  resolution: "codesandbox-import-util-types@npm:1.3.7"
-  checksum: f0a347105b26d21203be4bd83ec86585c5adc6a1bdd73ef5bcb1728237fc5cff4f01b578f79a2e9e8449e8af43abd82be08e636ad810db0319f566269f1c83d2
-  languageName: node
-  linkType: hard
-
 "codesandbox-import-util-types@npm:^2.2.3":
   version: 2.2.3
   resolution: "codesandbox-import-util-types@npm:2.2.3"
   checksum: 6b4ac83f5ca56153e30819abe29b562c3bf39bfd8b5e9b0785268016400cd320f8214d0e154555cde36ff611585544bb7530e0f0c12d86deab2e0c539b148a62
-  languageName: node
-  linkType: hard
-
-"codesandbox-import-utils@npm:^1.2.3":
-  version: 1.3.8
-  resolution: "codesandbox-import-utils@npm:1.3.8"
-  dependencies:
-    codesandbox-import-util-types: ^1.3.7
-    istextorbinary: 2.2.1
-    lz-string: ^1.4.4
-  checksum: 8b760b8270c202a93e555f1ca516e6af3c2e898be6162da316470740a45b43fa933697519377955a90b598eb9963eb5e5ee59b43bec8ef4d0733f1ee9558137c
   languageName: node
   linkType: hard
 
@@ -9329,6 +9337,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dequal@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "dequal@npm:2.0.3"
+  checksum: 8679b850e1a3d0ebbc46ee780d5df7b478c23f335887464023a631d1b9af051ad4a6595a44220f9ff8ff95a8ddccf019b5ad778a976fd7bbf77383d36f412f90
+  languageName: node
+  linkType: hard
+
 "des.js@npm:^1.0.0":
   version: 1.0.1
   resolution: "des.js@npm:1.0.1"
@@ -9589,13 +9604,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"editions@npm:^1.3.3":
-  version: 1.3.4
-  resolution: "editions@npm:1.3.4"
-  checksum: 8c2041459816db2cacac53598a9bca7928a7de2c5eb0dae532c2273a60ef83acbd807ce33ff1cd5cf7aa547737c55f7f4b52436752df0f13f5936efa329c13f7
-  languageName: node
-  linkType: hard
-
 "ee-first@npm:1.1.1":
   version: 1.1.1
   resolution: "ee-first@npm:1.1.1"
@@ -9782,6 +9790,13 @@ __metadata:
   version: 3.1.1
   resolution: "escalade@npm:3.1.1"
   checksum: a3e2a99f07acb74b3ad4989c48ca0c3140f69f923e56d0cba0526240ee470b91010f9d39001f2a4a313841d237ede70a729e92125191ba5d21e74b106800b133
+  languageName: node
+  linkType: hard
+
+"escape-carriage@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "escape-carriage@npm:1.3.0"
+  checksum: ced9a6cfc4cca4ea51882809a182ce135c7869c43dfffc7a8edd7f1eb0d22904a6cce08b61cad6c645a9eb73e895db564e05fe020e1d9b83a92bcfd5adf14436
   languageName: node
   linkType: hard
 
@@ -10267,9 +10282,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^9.1.7":
-  version: 9.1.7
-  resolution: "framer-motion@npm:9.1.7"
+"framer-motion@npm:^10.2.3":
+  version: 10.2.3
+  resolution: "framer-motion@npm:10.2.3"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -10279,7 +10294,12 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  checksum: 8ab21a2c15eb2494644b09c91c91aec3c01575e2148ff17621df4fca44bc64a8c03bc1cf6a5261ec0cebb7504fea8d75480e93b1799e8842337f8b1863af8c14
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 7c4178227bfded58e7d992b81b41eacbefd420ed3850fad867d6b00e6feed4b480bcf5938c1a30b977bd9a213037ded162faee490205b12d20cd168629c4fe9e
   languageName: node
   linkType: hard
 
@@ -11506,17 +11526,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istextorbinary@npm:2.2.1":
-  version: 2.2.1
-  resolution: "istextorbinary@npm:2.2.1"
-  dependencies:
-    binaryextensions: 2
-    editions: ^1.3.3
-    textextensions: 2
-  checksum: 2fff548636a7837679aebfe3846a39a6e39683f345f38f1f222414108b58e3782211bb650dee1c9d31957fa94b3522d5bd9aba862442d52c6e3d059a8983d33f
-  languageName: node
-  linkType: hard
-
 "jest-worker@npm:^27.4.5, jest-worker@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-worker@npm:27.5.1"
@@ -11786,13 +11795,6 @@ __metadata:
   version: 3.5.0
   resolution: "lodash.flow@npm:3.5.0"
   checksum: a9a62ad344e3c5a1f42bc121da20f64dd855aaafecee24b1db640f29b88bd165d81c37ff7e380a7191de6f70b26f5918abcebbee8396624f78f3618a0b18634c
-  languageName: node
-  linkType: hard
-
-"lodash.isequal@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "lodash.isequal@npm:4.5.0"
-  checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
   languageName: node
   linkType: hard
 
@@ -12579,6 +12581,13 @@ __metadata:
   bin:
     opener: bin/opener-bin.js
   checksum: 33b620c0d53d5b883f2abc6687dd1c5fd394d270dbe33a6356f2d71e0a2ec85b100d5bac94694198ccf5c30d592da863b2292c5539009c715a9c80c697b4f6cc
+  languageName: node
+  linkType: hard
+
+"outvariant@npm:1.3.0, outvariant@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "outvariant@npm:1.3.0"
+  checksum: ac76ca375c1c642989e1c74f0e9ebac84c05bc9fdc8f28be949c16fae1658e9f1f2fb1133fe3cc1e98afabef78fe4298fe9360b5734baf8e6ad440c182680848
   languageName: node
   linkType: hard
 
@@ -15190,7 +15199,7 @@ __metadata:
     "@chakra-ui/icons": ^2.0.17
     "@chakra-ui/react": ^2.5.1
     "@chakra-ui/system": ^2.5.1
-    "@codesandbox/sandpack-react": ^1.20.9
+    "@codesandbox/sandpack-react": ^2.1.2
     "@docusaurus/core": ^2.3.1
     "@docusaurus/module-type-aliases": ^2.3.1
     "@docusaurus/plugin-client-redirects": ^2.3.1
@@ -15229,7 +15238,7 @@ __metadata:
     dayjs: ^1.11.7
     docusaurus-plugin-sass: ^0.2.3
     file-loader: ^6.2.0
-    framer-motion: ^9.1.7
+    framer-motion: ^10.2.3
     moment: ^2.29.4
     pako: ^2.1.0
     prettier: 2.8.4
@@ -15914,6 +15923,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"strict-event-emitter@npm:^0.4.3":
+  version: 0.4.6
+  resolution: "strict-event-emitter@npm:0.4.6"
+  checksum: 4f4f2909613e7811de789991c06bfb770d6d6987e2ec5c66fa7485d0f07cc4e7e32eba0dcf26cee6d86af6c92946d7f4acdfaff57d0c4114df2cfa1bf0e3c091
+  languageName: node
+  linkType: hard
+
 "string-convert@npm:^0.2.0":
   version: 0.2.1
   resolution: "string-convert@npm:0.2.1"
@@ -16210,13 +16226,6 @@ __metadata:
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
   checksum: b6937a38c80c7f84d9c11dd75e49d5c44f71d95e810a3250bd1f1797fc7117c57698204adf676b71497acc205d769d65c16ae8fa10afad832ae1322630aef10a
-  languageName: node
-  linkType: hard
-
-"textextensions@npm:2":
-  version: 2.6.0
-  resolution: "textextensions@npm:2.6.0"
-  checksum: e28781f092d0172b78974fd22d5c007cc43ac50be666b36bbf10125d961775faf309a70b51697a2debc074c8f23cc923f1386b1e4661e11b128cee292060034c
   languageName: node
   linkType: hard
 

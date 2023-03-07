@@ -12,11 +12,11 @@ A common requirement of React Query Builder implementations is to limit or alter
 
 The first way to address this requirement is with the field `operators` property. The `operators` property of a field determines which operators are displayed once the user selects that field in the field selector. The downside of this method is that the operators list must be fully defined for each field, potentially duplicating lists across fields with equivalent data types.
 
-<SandpackRQB rqbVersion={5} options={{ editorHeight: 444 }}>
+<SandpackRQB rqbVersion={6} options={{ editorHeight: 444 }}>
 
 ```tsx
 import { defaultOperators, Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
   {
@@ -77,11 +77,11 @@ The `operators` field property is useful when individual fields deviate from the
 
 The example below takes advantage of the ability to add arbitrary properties to field definitions. A non-standard `datatype` property on each field is used to determine which operators are displayed and how they are labeled. The `defaultOperators` export is utilized where appropriate. It also shows how, if present, a field's `operators` property will take precedence over the result of the `getOperators` function (see the fourth rule, where the field selection of "Favorite Movie" limits the operator list to "is" even though its `datatype` is "text").
 
-<SandpackRQB rqbVersion={5} options={{ editorHeight: 444 }}>
+<SandpackRQB rqbVersion={6} options={{ editorHeight: 444 }}>
 
 ```tsx
 import { defaultOperators, Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
   { name: 'name', label: 'Name', datatype: 'text' },

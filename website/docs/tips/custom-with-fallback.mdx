@@ -94,7 +94,6 @@ Finally, we can configure the main `QueryBuilder` component to use our custom va
 ```tsx
 // App.tsx
 import { useState } from 'react';
-import 'react-querybuilder/dist/query-builder.scss';
 import { CustomValueEditor } from './CustomValueEditor';
 import { fields } from './fields';
 
@@ -115,7 +114,7 @@ export default function App() {
 
 An interactive demo is below. Note how the "Name" field uses a text input, the "Date of Birth" field uses a standard date picker, and the "Date Range" field uses the date range picker.
 
-<SandpackRQB rqbVersion={5} customSetup={{ dependencies: { 'date-fns': 'latest', 'react-datepicker': 'latest' } }} options={{ editorHeight: 690 }}>
+<SandpackRQB rqbVersion={6} customSetup={{ dependencies: { 'date-fns': 'latest', 'react-datepicker': 'latest' } }} options={{ editorHeight: 690 }}>
 
 ```tsx
 import { useState } from 'react';
