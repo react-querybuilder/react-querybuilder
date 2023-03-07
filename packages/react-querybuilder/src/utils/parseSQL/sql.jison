@@ -12,11 +12,9 @@
 \s+                                                               /* skip whitespace */
 
 [$][{](.*?)[}]                                                    return 'PLACE_HOLDER'
-[`][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]*[`]           return 'IDENTIFIER'
-["][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]*["]           return 'IDENTIFIER'
-[\[][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]*[\]]         return 'IDENTIFIER'
-[\w]+[\u4e00-\u9fa5]+[0-9a-zA-Z_\u4e00-\u9fa5]*                   return 'IDENTIFIER'
-[\u4e00-\u9fa5][0-9a-zA-Z_\u4e00-\u9fa5]*                         return 'IDENTIFIER'
+([`][\u0001-\ufffe]+[`])+                                         return 'IDENTIFIER'
+(["][\u0001-\ufffe]+["])+                                         return 'IDENTIFIER'
+[\[]([\u0001-\ufffe]|\]\])+[\]]                                   return 'IDENTIFIER'
 SELECT                                                            return 'SELECT'
 ALL                                                               return 'ALL'
 ANY                                                               return 'ANY'
@@ -31,6 +29,8 @@ SQL_BUFFER_RESULT                                                 return 'SQL_BU
 SQL_CACHE                                                         return 'SQL_CACHE'
 SQL_NO_CACHE                                                      return 'SQL_NO_CACHE'
 SQL_CALC_FOUND_ROWS                                               return 'SQL_CALC_FOUND_ROWS'
+/* TODO: Move the logic of the line below to the "main"           */
+/* section as       | IDENTIFIER DOT '*'                          */
 ([a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*\.){1,2}\*       return 'SELECT_EXPR_STAR'
 AS                                                                return 'AS'
 TRUE                                                              return 'TRUE'
@@ -122,15 +122,14 @@ UNION                                                             return 'UNION'
 "}"                                                               return '}'
 ";"                                                               return ';'
 
-['](\%+)[']                                                       return 'WILDCARD'
-(['](\\.|[^'])*['])+                                              return 'STRING'
+['](\%)+[']                                                       return 'WILDCARD'
+(['][^']*['])+                                                    return 'STRING'
 [0][x][0-9a-fA-F]+                                                return 'HEX_NUMERIC'
 [-]?[0-9]+(\.[0-9]+)?                                             return 'NUMERIC'
-[-]?[0-9]+(\.[0-9]+)?[eE][-][0-9]+(\.[0-9]+)?                     return 'EXPONENT_NUMERIC'
+[-]?[0-9]+(\.[0-9]+)?[eE][-+]?[0-9]+(\.[0-9]+)?                   return 'EXPONENT_NUMERIC'
 
-[a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*                  return 'IDENTIFIER'
+[a-zA-Z_@#\uff3f\u4e00-\u9fa5][a-zA-Z0-9_$@#\uff3f\u4e00-\u9fa5]* return 'IDENTIFIER'
 \.                                                                return 'DOT'
-(['][a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*['])+         return 'STRING'
 ([`])(?:(?=(\\?))\2.)*?\1                                         return 'IDENTIFIER'
 
 <<EOF>>                                                           return 'EOF'

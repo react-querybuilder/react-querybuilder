@@ -41,11 +41,11 @@ export const getFieldName = (f: string | SQLIdentifier) => {
   const fieldName = typeof f === 'string' ? f : f.value;
 
   if (fieldName.startsWith('`') && fieldName.endsWith('`')) {
-    return fieldName.replaceAll(/(^`|`$)/g, '');
+    return fieldName.replaceAll(/(^`|`$)/g, '').replaceAll('``', '`');
   } else if (fieldName.startsWith('"') && fieldName.endsWith('"')) {
-    return fieldName.replaceAll(/(^"|"$)/g, '');
+    return fieldName.replaceAll(/(^"|"$)/g, '').replaceAll('""', '"');
   } else if (fieldName.startsWith('[') && fieldName.endsWith(']')) {
-    return fieldName.replaceAll(/(^\[|\]$)/g, '');
+    return fieldName.replaceAll(/(^\[|\]$)/g, '').replaceAll(']]', ']');
   }
 
   return fieldName;
