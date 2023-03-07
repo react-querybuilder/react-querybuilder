@@ -6179,41 +6179,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/antd@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/antd@npm:6.0.5"
+"@react-querybuilder/antd@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/antd@npm:6.0.6"
   peerDependencies:
     "@ant-design/icons": ">=4.7.0"
     antd: ">=4.10.0"
     react: ">=16.8.0"
-  checksum: 6f171fff362982d3171b60b00ab5ad4ce4f946bd5696b01d312471c7fba0d33dcab84be3ef6b5c0d01995a8cb1ba6d37242f5395cd5d9ed54ea0b6cc721ba8af
+  checksum: 0030ad36cdd1f9a4293c5a627253dbe8375664426ebe40f6350311c9b04e3368c5f190aed6498d9713ab53e6ce2d0addcdd11bfe93c3eef417b5e40af0d7a11f
   languageName: node
   linkType: hard
 
-"@react-querybuilder/bootstrap@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/bootstrap@npm:6.0.5"
+"@react-querybuilder/bootstrap@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/bootstrap@npm:6.0.6"
   peerDependencies:
     bootstrap: ">=5"
     bootstrap-icons: ">=1.7.0"
     react: ">=16.8.0"
-  checksum: 3426438221ca7f460d38ff38c7ca829ba96850253d3c96674af2c9824df48a56c101f45318787c851a6e93633c0ea35fdae6ac40c2da2079b29c34c0ad81aee2
+  checksum: febf934aa31a833e0bdfb639aecff4e35c88b2d5efa1de54e3df235821633c2aee81954a588af8104988ea9426f33b2db8c3322b8ce907e18f7eba1f6ecbb312
   languageName: node
   linkType: hard
 
-"@react-querybuilder/bulma@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/bulma@npm:6.0.5"
+"@react-querybuilder/bulma@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/bulma@npm:6.0.6"
   peerDependencies:
     bulma: ^0.9.3
     react: ">=16.8.0"
-  checksum: 5c4aa6b4d95b747b4780f4c7a96d6d72f380fd3211dc5b9de0ef55d1404ad76e1e12e6b660ce1a3e7d35ce8228dbae949a887e1ecacf3ddd90dcf33b05682586
+  checksum: 7d3602c5d086be1dbc6df65b09bfbcef4b6d942a39c4127147c8e2368bfe6b40db814954cbe0a6034145bf47d6980c61c6c3a8714e3045336ac1592dba4e8416
   languageName: node
   linkType: hard
 
-"@react-querybuilder/chakra@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/chakra@npm:6.0.5"
+"@react-querybuilder/chakra@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/chakra@npm:6.0.6"
   peerDependencies:
     "@chakra-ui/icons": ">=1.0.0"
     "@chakra-ui/react": ">=1.6.0"
@@ -6222,7 +6222,7 @@ __metadata:
     "@emotion/styled": ^11
     framer-motion: ^6.3.3
     react: ">=16.8.0"
-  checksum: 3cd3aac063ccaf6b29c70edfd7f3d7903f73fea1563b1564f2a80353bdf69d06f6549acdad8dae3d3bfcf61a91a2d50931b44475c7391f5e0b5ea52f0647a790
+  checksum: 3c8f795312a1ba620d4c45e9ef9b92435f269dd2054476626b6a57e1283d648e528fca8d1d6f3207509358634f59d7afa98e9c81d39024ddd04bcb843e231e0a
   languageName: node
   linkType: hard
 
@@ -6235,60 +6235,60 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/ctx@npm:^6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/ctx@npm:6.0.5"
+"@react-querybuilder/ctx@npm:^6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/ctx@npm:6.0.6"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 0094edce5c5472fc54612f99c9e7ec6ab072c898343fb9cb158024c8698faae15a3c0d705b23d6f9692047ca5ec1fddb81f5329c1533b85ea521785e75917858
+  checksum: 2d2e216f7327748f90d89e2dbb770e378fe08d68270b8a13b3aeede3712a22e521e2d0003ff53f1b2fe232dfe32a6e137bcb9af5172e64ea240ca832ed5bbeae
   languageName: node
   linkType: hard
 
-"@react-querybuilder/dnd@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/dnd@npm:6.0.5"
+"@react-querybuilder/dnd@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/dnd@npm:6.0.6"
   peerDependencies:
     react: ">=16.8.0"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-  checksum: 727535b689c7a74154c93ee5192b864afcd6609adb0091493859ee9775a0cd8fa744dc7acb88d842b825c601137debed0c5c50afe434e469f4af0078d9617e93
+  checksum: 7e80a40034dfb33c6e097f617569662c42df77b485ff0ce0c1356d0b833f9f856550ebbc3512277b5de410e402fdf7903019380258bdfaec0ca6547442c1a870
   languageName: node
   linkType: hard
 
-"@react-querybuilder/fluent@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/fluent@npm:6.0.5"
+"@react-querybuilder/fluent@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/fluent@npm:6.0.6"
   peerDependencies:
     "@fluentui/react-components": ^9
     dayjs: ">=1"
     react: ">=16.8.0"
-  checksum: dab6596b3404060fd0158580425087e7e1aed33b4f7e431c5c8d420f067ae726ba028c61f781ab546ba42ac5fbc5f2a5977ec43919236d6956b1d7313772809d
+  checksum: 7d2f82c98441bbc66e58f473d3f33be9c42715450836591c98603fec3a7212f330359d3bec10e7552c3ce5764c34408ac9ea9dd1d3cc1d090464192c6f8867e0
   languageName: node
   linkType: hard
 
-"@react-querybuilder/mantine@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/mantine@npm:6.0.5"
+"@react-querybuilder/mantine@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/mantine@npm:6.0.6"
   peerDependencies:
     "@mantine/core": ">=5"
     "@mantine/dates": ">=5"
     "@mantine/hooks": ">=5"
     dayjs: ">=1"
     react: ">=16.8.0"
-  checksum: baabb20f8d453032f06de0dc124e65c6db536bbec6b4328ffbc6e9002efbe82264cd9acba5afde83d195e56c800854bfbb19efdfafff5647d7a95ce733e20f4d
+  checksum: 975ac2cf07df082b499de96969be677e2f5f35f01f1742204141ff421842fcc37cd489b3bc49cb12817da8f234555eb29ab18820e80301b8ef1616a728336b7f
   languageName: node
   linkType: hard
 
-"@react-querybuilder/material@npm:6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/material@npm:6.0.5"
+"@react-querybuilder/material@npm:6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/material@npm:6.0.6"
   peerDependencies:
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@mui/icons-material": ">=5.0.0"
     "@mui/material": ">=5.0.0"
     react: ">=16.8.0"
-  checksum: 2ca2f1aca998cc3330aa85e0a52fdcf982ca9aa470d5e9a7a0fb7502e0bb0b03b12528c557ac1e196216185e012c21790ab8a84d84969069e37ede66a6c62c2f
+  checksum: 6f231be1ee60a8b5a1aa5d1eadb9e7cf3023893751d32f4a90500779621874b8a8d151491f9a1c7af269c3e5d1dbde5a4a2cc5121e3c5d62360e97c39b69b2d9
   languageName: node
   linkType: hard
 
@@ -6301,12 +6301,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/ts@npm:^6.0.5":
-  version: 6.0.5
-  resolution: "@react-querybuilder/ts@npm:6.0.5"
+"@react-querybuilder/ts@npm:^6.0.6":
+  version: 6.0.6
+  resolution: "@react-querybuilder/ts@npm:6.0.6"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 3c445b36e0e8abbc7f8719cba5fad67e65c6b66bf2d79cb0e32a9e0e1997e5d7f2f010b898ca63c065658969c3de3c36fa0202d91188afffedb63f8181e043fc
+  checksum: 186f6233c8d5c2e801626602186177effb2ea9962c6950c8f0a716972c9d126ea3882fe81dd09214352434bccb3a0680009516a646a90bd7bc8ca116f0ccffd0
   languageName: node
   linkType: hard
 
@@ -14614,17 +14614,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-querybuilder@npm:6.0.5":
-  version: 6.0.5
-  resolution: "react-querybuilder@npm:6.0.5"
+"react-querybuilder@npm:6.0.6":
+  version: 6.0.6
+  resolution: "react-querybuilder@npm:6.0.6"
   dependencies:
-    "@react-querybuilder/ctx": ^6.0.5
-    "@react-querybuilder/ts": ^6.0.5
+    "@react-querybuilder/ctx": ^6.0.6
+    "@react-querybuilder/ts": ^6.0.6
     clsx: ^1.2.1
     immer: ^9.0.19
   peerDependencies:
     react: ">=16.8.0"
-  checksum: a2ca31a7ca7583c2b2bbca770506f562a8802447e585027a3cd9b3417fdcc91115408c2aa5f031fc200659f4e4013b6234be28794aa74215359bbd6fb8ab5fed
+  checksum: 6df000a3c3de16ea9180f25c8b99b135a74a55a2c6af442e314b90bc7d2adadd71154d17aba4cbb00a5f0055239b6da9103fa1a5edf6f736e62e3acea4c65649
   languageName: node
   linkType: hard
 
@@ -15205,14 +15205,14 @@ __metadata:
     "@mdx-js/react": ^1.6.22
     "@mui/icons-material": ^5.11.11
     "@mui/material": ^5.11.12
-    "@react-querybuilder/antd": 6.0.5
-    "@react-querybuilder/bootstrap": 6.0.5
-    "@react-querybuilder/bulma": 6.0.5
-    "@react-querybuilder/chakra": 6.0.5
-    "@react-querybuilder/dnd": 6.0.5
-    "@react-querybuilder/fluent": 6.0.5
-    "@react-querybuilder/mantine": 6.0.5
-    "@react-querybuilder/material": 6.0.5
+    "@react-querybuilder/antd": 6.0.6
+    "@react-querybuilder/bootstrap": 6.0.6
+    "@react-querybuilder/bulma": 6.0.6
+    "@react-querybuilder/chakra": 6.0.6
+    "@react-querybuilder/dnd": 6.0.6
+    "@react-querybuilder/fluent": 6.0.6
+    "@react-querybuilder/mantine": 6.0.6
+    "@react-querybuilder/material": 6.0.6
     "@svgr/webpack": ^6.5.1
     "@tsconfig/docusaurus": ^1.0.6
     "@types/pako": ^2.0.0
@@ -15242,7 +15242,7 @@ __metadata:
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
     react-modal: ^3.16.1
-    react-querybuilder: 6.0.5
+    react-querybuilder: 6.0.6
     react-querybuilder-v4: "npm:react-querybuilder@^4.5.3"
     react-querybuilder-v5: "npm:react-querybuilder@^5.4.1"
     react-select: ^5.7.0
