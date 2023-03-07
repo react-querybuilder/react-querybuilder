@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/dnd",
   "description": "Drag-and-drop-enabled version of react-querybuilder",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "publishConfig": {
     "access": "public"
   },
@@ -41,7 +41,7 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@react-querybuilder/ts": "^6.0.4",
+    "@react-querybuilder/ts": "^6.0.5",
     "@testing-library/react": "^13.4.0",
     "@types/node": "^18.14.2",
     "@types/react": "^18.0.28",
@@ -53,7 +53,7 @@
     "react-dnd-test-backend": "^16.0.1",
     "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.0.4",
+    "react-querybuilder": "^6.0.5",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
     "vite": "^4.1.4"
