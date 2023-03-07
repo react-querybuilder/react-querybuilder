@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.0.5] - 2023-03-06
+
+## Fixed
+
+- [#479] `parseSQL` is now _much_ more permissive of valid characters within strings and identifiers (whether they are delimited or plain). ([#478] only added recognition of spaces within delimited identifiers.)
+
 ## [v6.0.4] - 2023-03-05
 
 ## Fixed
@@ -1252,10 +1258,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#470]: https://github.com/react-querybuilder/react-querybuilder/pull/470
 [#472]: https://github.com/react-querybuilder/react-querybuilder/issues/472
 [#478]: https://github.com/react-querybuilder/react-querybuilder/pull/478
+[#479]: https://github.com/react-querybuilder/react-querybuilder/pull/479
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.5...HEAD
+[v6.0.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...v6.0.5
 [v6.0.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...v6.0.4
 [v6.0.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.2...v6.0.3
 [v6.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.1...v6.0.2
