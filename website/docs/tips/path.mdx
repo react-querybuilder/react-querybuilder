@@ -1,21 +1,22 @@
 ---
 title: Path concepts
 description: Explanation of the "path" property of rules and groups
+hide_table_of_contents: true
 ---
 
-While the `id` property can uniquely identify a rule or group, an `id` won't naturally indicate anything about the _position_ of the object within the query hierarchy. For that reason, React Query Builder uses the concept of a "path" to each object to locate and update query properties.
+import { SandpackRQB } from '@site/src/components/SandpackRQB';
 
-A query is essentially a recursive array of rules. Nested arrays are called groups. The outermost array, the query itself, is also a group.
+While the `id` property can uniquely identify a rule or group, an `id` won't naturally indicate anything about the _position_ of the object within the query hierarchy. For that reason, React Query Builder uses the concept of a "path" to locate and update query objects.
 
-`path` is an array of integers specific to each rule and group within a query. The query object itself, aka the root group, has a `path` of `[]`. All other rules and groups within the query have a `path` that corresponds to their position within the `rules` array(s) of their ancestor group(s).
+The `path` property is an array of integers unique to each rule and group within a query. The query object itself, aka the root group, has a `path` of `[]`. All other rules and groups within the query have a `path` that corresponds to their position within the `rules` array(s) of their ancestor group(s).
 
-The `path` of any object (rule or group) within a query is equivalent to the `path` of its parent group concatenated with the index of the object within its parent's `rules` array. You might think of it like this: `path = [...parentPath, index]`.
+The `path` of any object (rule or group) is equivalent to the `path` of its parent group plus another array element which is the index of the object within its parent's `rules` array. You can think of it like this: `path = [...parentPath, index]`.
 
 Consider the following query. The respective `path` for each rule and group is commented above it, along with a short explanation.
 
 ```ts
 // [] (the root group)
-const query = {
+const query: RuleGroupType = {
   combinator: 'and',
   rules: [
     // [0] (the first, aka zeroth, element in the root rules array)
@@ -50,6 +51,117 @@ findPath([1, 0], query);
 
 would return this object:
 
-```ts
-{ field: "f2", operator: "=", value: "v2" }
+```json
+{ "field": "f2", "operator": "=", "value": "v2" }
 ```
+
+## Example
+
+In most scenarios you won't need to interact with the `path` attribute, but it can come in handy in certain situations. One such situation is if you need to access other parts of the query from within a custom component.
+
+:::tip
+
+By default, custom components only receive props relevant to the rule or group they act on, but you can augment these default props with other data or information by using the [`context` prop](../components/querybuilder#context).
+
+:::
+
+Say you have a custom value editor that needs to know the `value` of each of its sibling rules. We would recommend passing the entire query down through the `context` prop and retrieving the sibling rules with a combination of `getParentPath` and `findPath`.
+
+<SandpackRQB rqbVersion={6} options={{ editorHeight: 444, activeFile: "/CustomValueEditor.tsx" }}>
+
+```tsx CustomValueEditor.tsx
+import {
+  findPath,
+  getParentPath,
+  RuleGroupType,
+  RuleType,
+  ValueEditor,
+  ValueEditorProps,
+} from 'react-querybuilder';
+
+export const CustomValueEditor = (props: ValueEditorProps) => {
+  // Get the path of this rule's parent group
+  const parentPath = getParentPath(props.path);
+  // Find the parent group object in the query
+  const parentGroup = findPath(parentPath, props.context.query) as RuleGroupType;
+  const id = findPath(props.path, props.context.query)!.id;
+  // Get a comma-separated list of all sibling rule values
+  const siblingValues = (
+    parentGroup.rules.filter(
+      r =>
+        // filter out groups
+        !('rules' in r) &&
+        // filter out self
+        r.id !== id
+    ) as RuleType[]
+  )
+    // map the `value` property
+    .map(r => r.value)
+    // join with comma
+    .join(', ');
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <ValueEditor {...props} />
+      <span>Others: {siblingValues}</span>
+    </div>
+  );
+};
+```
+
+```tsx
+import { useState } from 'react';
+import { QueryBuilder } from 'react-querybuilder';
+import { defaultQuery, fields, operators } from './constants';
+import { CustomValueEditor } from './CustomValueEditor';
+
+export default function App() {
+  const [query, setQuery] = useState(defaultQuery);
+
+  return (
+    <QueryBuilder
+      fields={fields}
+      operators={operators}
+      query={query}
+      onQueryChange={q => setQuery(q)}
+      controlElements={{ valueEditor: CustomValueEditor }}
+      context={{ query }}
+    />
+  );
+}
+```
+
+```ts constants.ts
+import { defaultOperators, Field, RuleGroupType } from 'react-querybuilder';
+
+export const operators = defaultOperators.filter(op => op.name === '=');
+
+export const fields: Field[] = [
+  { name: 'field1', label: 'Field 1' },
+  { name: 'field2', label: 'Field 2' },
+  { name: 'field3', label: 'Field 3' },
+  { name: 'field4', label: 'Field 4' },
+];
+
+export const defaultQuery: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'field1', operator: '=', value: '1' },
+    { field: 'field2', operator: '=', value: '2' },
+    { field: 'field3', operator: '=', value: '3' },
+    { field: 'field4', operator: '=', value: '4' },
+  ],
+};
+```
+
+```css
+.queryBuilder .rule {
+  align-items: flex-start;
+}
+
+span {
+  color: gray;
+}
+```
+
+</SandpackRQB>
