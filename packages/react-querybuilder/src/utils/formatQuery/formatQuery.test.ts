@@ -942,13 +942,13 @@ it('handles custom valueProcessors correctly', () => {
 
   const queryForNewValueProcessor: RuleGroupType = {
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: 'v1', valueSource: 'value' }],
+    rules: [{ field: 'f1', operator: '=', value: `v'1`, valueSource: 'value' }],
   };
 
   const valueProcessor: ValueProcessorByRule = (
     { field, operator, value, valueSource },
-    { parseNumbers } = {}
-  ) => `${field}-${operator}-${value}-${valueSource}-${!!parseNumbers}`;
+    opts = {}
+  ) => `${field}-${operator}-${value}-${valueSource}-${!!opts.parseNumbers}-${!!opts.escapeQuotes}`;
 
   expect(
     formatQuery(queryForNewValueProcessor, {
@@ -956,7 +956,25 @@ it('handles custom valueProcessors correctly', () => {
       parseNumbers: true,
       valueProcessor,
     })
-  ).toBe('(f1 = f1-=-v1-value-true)');
+  ).toBe(`(f1 = f1-=-v'1-value-true-true)`);
+
+  const valueProcessorAsPassThrough: ValueProcessorByRule = (r, opts) =>
+    defaultValueProcessorByRule(r, opts);
+
+  // handles escapeQuotes correctly
+  expect(
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      valueProcessor: valueProcessorAsPassThrough,
+    })
+  ).toBe(`(f1 = 'v''1')`);
+  // handles escapeQuotes exactly the same as defaultValueProcessorByRule
+  expect(
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      valueProcessor: valueProcessorAsPassThrough,
+    })
+  ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
 });
 
 it('handles quoteFieldNamesWith correctly', () => {
