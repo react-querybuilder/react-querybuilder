@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.0.7] - 2023-03-09
+
+## Fixed
+
+- [#486] Custom, non-legacy `valueProcessor` functions called from `formatQuery` will now receive all relevant options, not only `parseNumbers`.
+
 ## [v6.0.6] - 2023-03-07
 
 ## Fixed
@@ -1266,10 +1272,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#478]: https://github.com/react-querybuilder/react-querybuilder/pull/478
 [#479]: https://github.com/react-querybuilder/react-querybuilder/pull/479
 [#483]: https://github.com/react-querybuilder/react-querybuilder/pull/483
+[#486]: https://github.com/react-querybuilder/react-querybuilder/pull/486
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.6...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.7...HEAD
+[v6.0.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.6...v6.0.7
 [v6.0.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.5...v6.0.6
 [v6.0.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...v6.0.5
 [v6.0.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...v6.0.4
