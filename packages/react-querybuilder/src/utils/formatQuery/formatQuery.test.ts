@@ -18,6 +18,7 @@ import {
   defaultMongoDBValueProcessor,
   defaultSpELValueProcessor,
   defaultValueProcessor,
+  defaultValueProcessorByRule,
 } from './index';
 import { jsonLogicAdditionalOperators } from './utils';
 
