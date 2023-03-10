@@ -97,10 +97,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     }
     valueProcessorInternal =
       typeof valueProcessor === 'function'
-        ? r =>
+        ? (r, opts) =>
             isValueProcessorLegacy(valueProcessor)
               ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
-              : valueProcessor(r, { parseNumbers })
+              : valueProcessor(r, opts)
         : format === 'mongodb'
         ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
         : format === 'cel'
