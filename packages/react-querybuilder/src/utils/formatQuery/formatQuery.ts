@@ -98,9 +98,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     valueProcessorInternal =
       typeof valueProcessor === 'function'
         ? (r, opts) =>
-          isValueProcessorLegacy(valueProcessor)
-            ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
-            : valueProcessor(r, opts)
+            isValueProcessorLegacy(valueProcessor)
+              ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
+              : valueProcessor(r, opts)
         : format === 'mongodb'
         ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
         : format === 'cel'
