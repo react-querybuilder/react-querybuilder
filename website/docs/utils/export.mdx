@@ -339,9 +339,31 @@ formatQuery(
 
 ### Rule processor
 
-To customize how rules are formatted, use the `ruleProcessor` configuration option. Rules must pass validation before being passed to the provided function.
+To customize the format of exported rules, use the `ruleProcessor` configuration option. Rules will only be passed to the provided processor function if they first pass [validation](#validation). The function will be called like this:
 
-The default rule processor for each non-SQL <abbr title="All formats except 'json' and 'json_without_ids'">query language format</abbr> is available as a named export from `react-querybuilder`, for use as a fallback in case your custom rule processor is not applicable.
+```ts
+ruleProcessor(rule, { parseNumbers, escapeQuotes });
+```
+
+The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`. `parseNumbers` is copied directly from the `formatQuery` options (defaulting to `false`), and `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise, as when values represent field names).
+
+The default rule processors for each <abbr title="All formats except 'json' and 'json_without_ids'">query language format</abbr> are available as exports from `react-querybuilder`:
+
+- `defaultValueProcessorByRule` for all SQL-based formats (no, "Value" is not a typo here)
+- `defaultRuleProcessorCEL`
+- `defaultRuleProcessorJsonLogic`
+- `defaultRuleProcessorMongoDB`
+- `defaultRuleProcessorSpEL`
+
+:::info
+
+For <abbr title="'sql', 'parameterized', and 'parameterized_named'">SQL-based formats</abbr>, `ruleProcessor` only replaces the "value" portion of the output (to the right of the operator). For other formats, the entire string or object representing the rule will be replaced by the return value of `ruleProcessor`.
+
+`formatQuery` doesn't currently offer a way to customize the text of the entire rule for SQL-based formats.
+
+:::
+
+You can use the default rule processor as a fallback so your custom rule processor doesn't have to cover all cases, as shown below.
 
 ```ts
 const query: RuleGroupType = {
@@ -362,11 +384,11 @@ const query: RuleGroupType = {
 };
 
 const customRuleProcessor = (rule, options) => {
+  // The "has" operator is not handled by the default processor
   if (operator === 'has') {
-    // "has" operator not handled by default "jsonlogic" rule processor
     return { in: [rule.value, { var: rule.field }] };
   }
-  // Fall back to the default rule processor for all other operators
+  // Defer to the default processor for all other operators
   return defaultRuleProcessorJsonLogic(rule, options);
 };
 
@@ -382,7 +404,23 @@ formatQuery(query, { format: 'jsonlogic', ruleProcessor: customRuleProcessor });
 
 ### Value processor
 
-If you only need to control the way the _value_ portion of the output is processed, you can specify a custom `valueProcessor` applicable for query language formats.
+:::caution
+
+This option exists for backwards compatibility, but we recommend avoiding it for a few reasons. It has the same interface and behavior as `ruleProcessor` when accepting fewer than three arguments anyway, and using the legacy behavior (accepting three or more arguments) makes it more difficult to correctly fall back to a default processor since the options are not passed in.
+
+:::
+
+`valueProcessor` can be used in exactly the same way as `ruleProcessor`, as long as the function accepts fewer than three arguments. `ruleProcessor` was introduced in version 5 to clarify the behavior and provide a consistent function signature.
+
+#### Legacy `valueProcessor` behavior
+
+If the function assigned to `valueProcessor` accepts three or more arguments (not including those with default values), it will be called like this:
+
+```ts
+valueProcessor(field, operator, value, valueSource);
+```
+
+Notice that no options or additional properties of the rule are passed. Among other problems, this prevents `formatQuery` from setting the `escapeQuotes` option. This legacy behavior is documented here for completeness but, as stated above, is not recommended.
 
 ```ts
 const query: RuleGroupType = {
@@ -405,65 +443,32 @@ const query: RuleGroupType = {
 const customValueProcessor = (field, operator, value) => {
   if (operator === 'in') {
     // Assuming `value` is an array, such as from a multi-select
-    return `(${value.map(v => `"${v.trim()}"`).join(', ')})`;
+    return `(${value.map(v => `"${v.trim()}"`).join(',')})`;
   }
   // Fall back to the default value processor for other operators
   return defaultValueProcessor(field, operator, value);
 };
 
 formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
-// Returns: "(instrument in ('Guitar', 'Vocals') and lastName = 'Vai')"
+// Returns: "(instrument in ('Guitar','Vocals') and lastName = 'Vai')"
 ```
 
-:::caution
+Versions of the default value processors using the newer `fn(rule, options)` signature as well as the legacy signature are available for all query language formats except "jsonlogic".
 
-When producing non-SQL query language formats—including "mongodb", "cel", "spel", and "jsonlogic"—`valueProcessor` functions must produce the entire rule object (for MongoDB/JsonLogic) or rule string (for CEL/SpEL), not just the expression on the right-hand side of the operator like with SQL-based formats.
-
-This situation exists for backwards-compatibility reasons, but to increase the clarity of your own code we recommend using the `ruleProcessor` option which has the same interface and effect as `valueProcessor` for all non-SQL query language formats.
-
-:::
-
-#### Enhanced `valueProcessor` behavior
-
-`formatQuery` will invoke custom `valueProcessor` functions with different arguments based on the function's `length` property, which is the number of arguments a function accepts excluding those with default values.
-
-If the `valueProcessor` function accepts fewer than three (3) arguments, it will be called like this:
-
-```ts
-valueProcessor(rule, { parseNumbers });
-```
-
-The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`, which is equivalent to `Pick<FormatQueryOptions, "parseNumbers">`).
-
-Invoking `valueProcessor` with the full `RuleType` object provides access to much more information about each rule. Standard properties that were previously unavailable include `path`, `id`, and `disabled`. Perhaps more importantly, any custom properties will also be accessible.
-
-The default value processors have not changed from the legacy function signature, but alternate functions using the new `fn(rule, options)` signature are now available:
-
-- `defaultValueProcessorByRule` (for SQL-based formats)
-- `defaultValueProcessorCELByRule`
-- `defaultValueProcessorMongoDBByRule`
-- `defaultValueProcessorSpELByRule`
-
-:::info
-
-While these enhanced CEL, SpEL, and MongoDB value processors are available, we recommend using the `ruleProcessor` option instead—if for no other reason than clarity of your own code. As mentioned above, they ultimately do the same thing anyway.
-
-:::
-
-To maintain the legacy signature (`valueProcessor(field, operator, value, valueSource)`), make sure your custom `valueProcessor` function accepts at least three arguments _with no default values_ (do not use `=` for the first three arguments). For example, the following code will log `length: 1` and the function would be called with the `(rule, options)` arguments:
-
-```ts
-const valueProcessor = (field: string, operator = '=', value = '') => '...';
-console.log(`length: ${valueProcessor.length}`);
-```
-
-Removing `= ...` from the `operator` and `value` argument declarations would increase the function's `length` to 3.
-
-If you use TypeScript, these conditions will be enforced automatically.
+- Current signature:
+  - `defaultValueProcessorByRule` (for all SQL-based formats)
+  - `defaultValueProcessorCELByRule`
+  - `defaultValueProcessorMongoDBByRule`
+  - `defaultValueProcessorSpELByRule`
+- Legacy signature:
+  - `defaultValueProcessor` (for all SQL-based formats)
+  - `defaultMongoDBValueProcessor`
+  - `defaultCELValueProcessor`
+  - `defaultSpELValueProcessor`
 
 ### Quote field names
 
-Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option.
+Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option which can be assigned a string or an array of two strings.
 
 ```ts
 formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' });

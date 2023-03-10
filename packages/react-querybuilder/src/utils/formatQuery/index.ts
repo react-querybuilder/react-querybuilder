@@ -18,6 +18,7 @@ const generateValueProcessor =
       { field, operator, value, valueSource },
       { parseNumbers: false }
     );
+// TODO: deprecate this
 export const defaultValueProcessor = generateValueProcessor('default');
 /**
  * @deprecated Prefer `defaultRuleProcessorMongoDB`.
