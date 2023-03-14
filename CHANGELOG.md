@@ -7,35 +7,37 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Added
+
+- [#488] The `formatQuery` option `ruleProcessor` now applies to the "sql" format (though notably _not_ the other SQL-based formats, "parameterized" and "parameterized_named"), allowing complete control over each rule's translation to SQL. The default rule processor for "sql" is exported as `defaultRuleProcessorSQL`.
 
 ## [v6.0.7] - 2023-03-10
 
-## Fixed
+### Fixed
 
 - [#486] Custom, non-legacy `valueProcessor` functions called from `formatQuery` will now receive all relevant options, not only `parseNumbers`.
 
 ## [v6.0.6] - 2023-03-07
 
-## Fixed
+### Fixed
 
 - [#483] The regular expression behind `parseSQL` in the previous version was capturing too many characters when field names were wrapped in delimiters.
 
 ## [v6.0.5] - 2023-03-06
 
-## Fixed
+### Fixed
 
 - [#479] `parseSQL` is now _much_ more permissive of valid characters within strings and identifiers (whether they are delimited or plain). ([#478] only added recognition of spaces within delimited identifiers.)
 
 ## [v6.0.4] - 2023-03-05
 
-## Fixed
+### Fixed
 
 - [#478] `parseSQL` now recognizes field names wrapped in square brackets, like `[field name]`. (The corresponding update to `formatQuery` was made in [#463] as part of v6.0.0).
 
 ## [v6.0.3] - 2023-03-02
 
-## Fixed
+### Fixed
 
 - [#472] All development-mode console error messages have been (temporarily) removed to avoid the `process is not defined` issue.
 - `BulmaValueSelector` now adds the `"is-multiple"` class to the wrapper `div` when the `multiple` prop is `true`.
@@ -1273,6 +1275,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#479]: https://github.com/react-querybuilder/react-querybuilder/pull/479
 [#483]: https://github.com/react-querybuilder/react-querybuilder/pull/483
 [#486]: https://github.com/react-querybuilder/react-querybuilder/pull/486
+[#488]: https://github.com/react-querybuilder/react-querybuilder/pull/488
 
 <!-- Release comparison links -->
 
