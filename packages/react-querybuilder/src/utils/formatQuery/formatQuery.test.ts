@@ -12,12 +12,14 @@ import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
+import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { formatQuery } from './formatQuery';
 import {
   defaultCELValueProcessor,
   defaultMongoDBValueProcessor,
   defaultSpELValueProcessor,
   defaultValueProcessor,
+  defaultValueProcessorByRule,
 } from './index';
 import { jsonLogicAdditionalOperators } from './utils';
 
@@ -942,13 +944,13 @@ it('handles custom valueProcessors correctly', () => {
 
   const queryForNewValueProcessor: RuleGroupType = {
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: 'v1', valueSource: 'value' }],
+    rules: [{ field: 'f1', operator: '=', value: `v'1`, valueSource: 'value' }],
   };
 
   const valueProcessor: ValueProcessorByRule = (
     { field, operator, value, valueSource },
-    { parseNumbers } = {}
-  ) => `${field}-${operator}-${value}-${valueSource}-${!!parseNumbers}`;
+    opts = {}
+  ) => `${field}-${operator}-${value}-${valueSource}-${!!opts.parseNumbers}-${!!opts.escapeQuotes}`;
 
   expect(
     formatQuery(queryForNewValueProcessor, {
@@ -956,7 +958,25 @@ it('handles custom valueProcessors correctly', () => {
       parseNumbers: true,
       valueProcessor,
     })
-  ).toBe('(f1 = f1-=-v1-value-true)');
+  ).toBe(`(f1 = f1-=-v'1-value-true-true)`);
+
+  const valueProcessorAsPassThrough: ValueProcessorByRule = (r, opts) =>
+    defaultValueProcessorByRule(r, opts);
+
+  // handles escapeQuotes correctly
+  expect(
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      valueProcessor: valueProcessorAsPassThrough,
+    })
+  ).toBe(`(f1 = 'v''1')`);
+  // handles escapeQuotes exactly the same as defaultValueProcessorByRule
+  expect(
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      valueProcessor: valueProcessorAsPassThrough,
+    })
+  ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
 });
 
 it('handles quoteFieldNamesWith correctly', () => {
@@ -1079,6 +1099,20 @@ describe('independent combinators', () => {
     expect(formatQuery(queryIC, 'sql')).toBe(
       `(firstName = 'Test' and middleName = 'Test' or lastName = 'Test')`
     );
+  });
+
+  it('handles independent combinators for parameterized', () => {
+    expect(formatQuery(queryIC, 'parameterized')).toEqual({
+      sql: `(firstName = ? and middleName = ? or lastName = ?)`,
+      params: ['Test', 'Test', 'Test'],
+    });
+  });
+
+  it('handles independent combinators for parameterized_named', () => {
+    expect(formatQuery(queryIC, 'parameterized_named')).toEqual({
+      sql: `(firstName = :firstName_1 and middleName = :middleName_1 or lastName = :lastName_1)`,
+      params: { firstName_1: 'Test', middleName_1: 'Test', lastName_1: 'Test' },
+    });
   });
 
   it('handles independent combinators for cel', () => {
@@ -1238,8 +1272,8 @@ describe('validation', () => {
         id: 'root',
         combinator: 'and',
         rules: [
-          { field: 'field', operator: '=', value: '' },
-          { field: 'field2', operator: '=', value: '' },
+          { id: 'r1', field: 'field', operator: '=', value: '' },
+          { id: 'r2', field: 'field2', operator: '=', value: '' },
         ],
       };
       const fields = [{ name: 'field', validator: () => false }];
@@ -1263,10 +1297,38 @@ describe('validation', () => {
         combinator: 'and',
         rules: [],
       };
+      expect(formatQuery(queryToTest, { format: 'parameterized' })).toEqual({
+        sql: '(1 = 1)',
+        params: [],
+      });
+      expect(
+        formatQuery(
+          {
+            ...queryToTest,
+            rules: [
+              { field: 'f1', operator: '=', value: 'v1' },
+              { ...queryToTest, id: 'not_root' },
+            ],
+          },
+          { format: 'parameterized', validator: () => ({ not_root: false }) }
+        )
+      ).toEqual({
+        sql: '(f1 = ?)',
+        params: ['v1'],
+      });
       expect(
         formatQuery(queryToTest, {
           format: 'parameterized',
           validator: () => false,
+        })
+      ).toEqual({
+        sql: '(1 = 1)',
+        params: [],
+      });
+      expect(
+        formatQuery(queryToTest, {
+          format: 'parameterized',
+          validator: () => ({ root: false }),
         })
       ).toEqual({
         sql: '(1 = 1)',
@@ -1603,6 +1665,14 @@ describe('ruleProcessor', () => {
       { field: 'f2', operator: '=', value: 'v2' },
     ],
   };
+
+  it('handles custom SQL rule processor', () => {
+    const ruleProcessor: RuleProcessor = r =>
+      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSQL(r);
+    expect(formatQuery(queryForRuleProcessor, { format: 'sql', ruleProcessor })).toBe(
+      "(custom_operator and f2 = 'v2')"
+    );
+  });
 
   it('handles custom MongoDB rule processor', () => {
     const ruleProcessor: RuleProcessor = r =>

@@ -34,6 +34,7 @@ export const defaultCELValueProcessor = generateValueProcessor('cel');
 export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export { jsonLogicAdditionalOperators } from './utils';
 export { defaultValueProcessorByRule };
