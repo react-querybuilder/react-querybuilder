@@ -88,7 +88,10 @@ export interface FormatQueryOptions {
   placeholderOperatorName?: string;
 }
 
-export type ValueProcessorOptions = Pick<FormatQueryOptions, 'parseNumbers'> & {
+export type ValueProcessorOptions = Pick<
+  FormatQueryOptions,
+  'parseNumbers' | 'quoteFieldNamesWith'
+> & {
   escapeQuotes?: boolean;
 };
 

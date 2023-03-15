@@ -30,6 +30,7 @@ import {
   isValueProcessorLegacy,
   mapSQLOperator,
   numerifyValues,
+  quoteFieldNamesWithArray,
   shouldRenderAsNumber,
 } from './utils';
 
@@ -111,11 +112,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         : format === 'jsonlogic'
         ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
         : defaultValueProcessorByRule;
-    if (Array.isArray(options.quoteFieldNamesWith)) {
-      quoteFieldNamesWith = options.quoteFieldNamesWith;
-    } else if (typeof options.quoteFieldNamesWith === 'string') {
-      quoteFieldNamesWith = [options.quoteFieldNamesWith, options.quoteFieldNamesWith];
-    }
+    quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
     validator = options.validator ?? (() => true);
     fields = options.fields ?? [];
     fallbackExpression = options.fallbackExpression ?? '';
@@ -234,7 +231,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         // Use custom rule processor if provided...
         if (typeof ruleProcessorInternal === 'function') {
-          return ruleProcessorInternal(rule, { parseNumbers, escapeQuotes });
+          return ruleProcessorInternal(rule, { parseNumbers, escapeQuotes, quoteFieldNamesWith });
         }
         // ...otherwise use default rule processor and pass in the value
         // processor (which may be custom)
@@ -282,7 +279,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return '';
       }
 
-      const value = valueProcessorInternal(rule, { parseNumbers });
+      const value = valueProcessorInternal(rule, { parseNumbers, quoteFieldNamesWith });
       const operator = mapSQLOperator(rule.operator);
 
       if ((rule.valueSource ?? 'value') === 'value') {

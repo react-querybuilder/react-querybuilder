@@ -1,6 +1,10 @@
-import type { RuleType, ValueProcessorByRule, ValueProcessorOptions } from '@react-querybuilder/ts';
+import type {
+  RuleType,
+  ValueProcessorByRule,
+  ValueProcessorOptions,
+} from '@react-querybuilder/ts/dist/index.noReact';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { mapSQLOperator } from './utils';
+import { mapSQLOperator, quoteFieldNamesWithArray } from './utils';
 
 type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
   valueProcessor?: ValueProcessorByRule;
@@ -16,7 +20,7 @@ export const defaultRuleProcessorSQL = (
     valueProcessor = defaultValueProcessorByRule,
   }: DefaultRuleProcessorSqlParams = {}
 ) => {
-  const value = valueProcessor(rule, { parseNumbers, escapeQuotes });
+  const value = valueProcessor(rule, { parseNumbers, escapeQuotes, quoteFieldNamesWith });
   const operator = mapSQLOperator(rule.operator);
 
   const operatorLowerCase = operator.toLowerCase();
@@ -30,13 +34,7 @@ export const defaultRuleProcessorSQL = (
     return '';
   }
 
-  // Ignore this in tests because formatQuery only ever sends an array
-  // istanbul ignore next
-  const [qFNWpre, qFNWpost] = Array.isArray(quoteFieldNamesWith)
-    ? quoteFieldNamesWith
-    : typeof quoteFieldNamesWith === 'string'
-    ? [quoteFieldNamesWith, quoteFieldNamesWith]
-    : quoteFieldNamesWith;
+  const [qFNWpre, qFNWpost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
 
   return `${qFNWpre}${rule.field}${qFNWpost} ${operator} ${value}`.trim();
 };

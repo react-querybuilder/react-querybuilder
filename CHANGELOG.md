@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- [#488] The `formatQuery` option `quoteFieldNamesWith` now applies to values that represent field names (i.e. `valueSource: 'field'`) when exporting to a SQL-based format.
+
 ### Added
 
 - [#488] The `formatQuery` option `ruleProcessor` now applies to the "sql" format (though notably _not_ the other SQL-based formats, "parameterized" and "parameterized_named"), allowing complete control over each rule's translation to SQL. The default rule processor for "sql" is exported as `defaultRuleProcessorSQL`.

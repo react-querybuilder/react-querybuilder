@@ -103,3 +103,12 @@ export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
 export const isValueProcessorLegacy = (
   vp: ValueProcessorLegacy | ValueProcessorByRule
 ): vp is ValueProcessorLegacy => vp.length >= 3;
+
+export const quoteFieldNamesWithArray = (
+  quoteFieldNamesWith: null | string | [string, string] = ['', '']
+): [string, string] =>
+  Array.isArray(quoteFieldNamesWith)
+    ? quoteFieldNamesWith
+    : typeof quoteFieldNamesWith === 'string'
+    ? [quoteFieldNamesWith, quoteFieldNamesWith]
+    : quoteFieldNamesWith ?? ['', ''];
