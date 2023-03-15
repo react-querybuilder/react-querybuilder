@@ -43,7 +43,7 @@
   "devDependencies": {
     "@react-querybuilder/ts": "^6.0.7",
     "@testing-library/react": "^13.4.0",
-    "@types/node": "^18.14.6",
+    "@types/node": "^18.15.3",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react-swc": "^3.2.0",
     "concurrently": "^7.6.0",
