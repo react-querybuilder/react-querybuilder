@@ -3,7 +3,7 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
 
 const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `''`);
+  escapeQuotes && typeof v === 'string' ? v.replaceAll(`'`, `''`) : v;
 
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
@@ -13,6 +13,8 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const valueIsField = valueSource === 'field';
   const [qfnwPre, qfnwPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
   const operatorLowerCase = operator.toLowerCase();
+
+  const wrapFieldName = (f: any) => `${qfnwPre}${f}${qfnwPost}`;
 
   switch (operatorLowerCase) {
     case 'null':
@@ -27,7 +29,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
         return `(${valueAsArray
           .map(v =>
             valueIsField
-              ? `${qfnwPre}${v}${qfnwPost}`
+              ? wrapFieldName(v)
               : shouldRenderAsNumber(v, parseNumbers)
               ? `${trimIfString(v)}`
               : `'${escapeSingleQuotes(v, escapeQuotes)}'`
@@ -47,7 +49,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
       ) {
         const [first, second] = valueAsArray;
         return valueIsField
-          ? `${qfnwPre}${first}${qfnwPost} and ${qfnwPre}${second}${qfnwPost}`
+          ? `${wrapFieldName(first)} and ${wrapFieldName(second)}`
           : shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers)
           ? `${trimIfString(first)} and ${trimIfString(second)}`
           : `'${escapeSingleQuotes(first, escapeQuotes)}' and '${escapeSingleQuotes(
@@ -61,19 +63,19 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     case 'contains':
     case 'doesnotcontain':
       return valueIsField
-        ? `'%' || ${qfnwPre}${value}${qfnwPost} || '%'`
+        ? `'%' || ${wrapFieldName(value)} || '%'`
         : `'%${escapeSingleQuotes(value, escapeQuotes)}%'`;
 
     case 'beginswith':
     case 'doesnotbeginwith':
       return valueIsField
-        ? `${qfnwPre}${value}${qfnwPost} || '%'`
+        ? `${wrapFieldName(value)} || '%'`
         : `'${escapeSingleQuotes(value, escapeQuotes)}%'`;
 
     case 'endswith':
     case 'doesnotendwith':
       return valueIsField
-        ? `'%' || ${qfnwPre}${value}${qfnwPost}`
+        ? `'%' || ${wrapFieldName(value)}`
         : `'%${escapeSingleQuotes(value, escapeQuotes)}'`;
   }
 
@@ -82,7 +84,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   }
 
   return valueIsField
-    ? `${qfnwPre}${value}${qfnwPost}`
+    ? wrapFieldName(value)
     : shouldRenderAsNumber(value, parseNumbers)
     ? `${trimIfString(value)}`
     : `'${escapeSingleQuotes(value, escapeQuotes)}'`;

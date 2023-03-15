@@ -5,6 +5,7 @@ import type {
   ValueProcessorLegacy,
 } from '@react-querybuilder/ts/dist/index.noReact';
 import { numericRegex } from '../misc';
+import { parseNumber } from '../parseNumber';
 
 export const mapSQLOperator = (op: string) => {
   switch (op.toLowerCase()) {
@@ -68,23 +69,21 @@ export const jsonLogicAdditionalOperators: Record<
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error TS can't keep track of odd/even indexes here
+  // @ts-expect-error TS doesn't keep track of odd/even indexes here
   rules: rg.rules.map(r => {
     if (typeof r === 'string') {
       return r;
-    } else if ('rules' in r) {
+    }
+
+    if ('rules' in r) {
       return numerifyValues(r);
     }
+
     let { value } = r;
-    if (typeof value === 'string' && numericRegex.test(value)) {
-      value = parseFloat(value);
+    if (typeof value === 'string') {
+      value = parseNumber(value, { parseNumbers: true });
     }
-    // if (toArray(value).length > 1) {
-    //   return { ...r, value };
-    // }
-    // if (typeof value === 'number' && !isNaN(value)) {
-    //   return { ...r, value };
-    // }
+
     return { ...r, value };
   }),
 });
@@ -95,7 +94,7 @@ export const isValidValue = (v: any) =>
   (typeof v !== 'string' && typeof v !== 'number');
 
 export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
-  !!parseNumbers &&
+  parseNumbers &&
   (typeof v === 'number' ||
     typeof v === 'bigint' ||
     (typeof v === 'string' && numericRegex.test(v)));
