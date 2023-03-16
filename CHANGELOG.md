@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.1.0] - 2023-03-16
+
 ### Fixed
 
 - [#488] The `formatQuery` option `quoteFieldNamesWith` now applies to values that represent field names (i.e. `valueSource: 'field'`) when exporting to a SQL-based format.
@@ -1283,7 +1287,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.7...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.0...HEAD
+[v6.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.7...v6.1.0
 [v6.0.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.6...v6.0.7
 [v6.0.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.5...v6.0.6
 [v6.0.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...v6.0.5
