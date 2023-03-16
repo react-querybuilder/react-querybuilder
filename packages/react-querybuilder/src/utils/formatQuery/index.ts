@@ -18,6 +18,7 @@ const generateValueProcessor =
       { field, operator, value, valueSource },
       { parseNumbers: false }
     );
+// TODO: deprecate this
 export const defaultValueProcessor = generateValueProcessor('default');
 /**
  * @deprecated Prefer `defaultRuleProcessorMongoDB`.
@@ -33,6 +34,7 @@ export const defaultCELValueProcessor = generateValueProcessor('cel');
 export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export { jsonLogicAdditionalOperators } from './utils';
 export { defaultValueProcessorByRule };

@@ -48,7 +48,7 @@
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react-swc": "^3.2.0",
-    "framer-motion": "^10.2.3",
+    "framer-motion": "^10.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.0.7",

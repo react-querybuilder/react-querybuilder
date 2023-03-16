@@ -53,6 +53,7 @@ Each compatibility package exports its own context provider.
 | `@react-querybuilder/bootstrap` | `QueryBuilderBootstrap` |
 | `@react-querybuilder/bulma`     | `QueryBuilderBulma`     |
 | `@react-querybuilder/chakra`    | `QueryBuilderChakra`    |
+| `@react-querybuilder/fluent`    | `QueryBuilderFluent`    |
 | `@react-querybuilder/mantine`   | `QueryBuilderMantine`   |
 | `@react-querybuilder/material`  | `QueryBuilderMaterial`  |
 
@@ -116,6 +117,7 @@ export function App() {
 | `@react-querybuilder/bootstrap` | `bootstrapControlElements` |
 | `@react-querybuilder/bulma`     | `bulmaControlElements`     |
 | `@react-querybuilder/chakra`    | `chakraControlElements`    |
+| `@react-querybuilder/fluent`    | `fluentControlElements`    |
 | `@react-querybuilder/mantine`   | `mantineControlElements`   |
 | `@react-querybuilder/material`  | `materialControlElements`  |
 
@@ -166,9 +168,13 @@ This list shows which library components' props will be accepted by the compatib
 | `ChakraDragHandle`      | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
 | `ChakraNotToggle`       | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
 | `ChakraValueSelector`   | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
-| `MantineActionElement`  | `ActionWithRulesProps`   | `import Button from '@mui/material/Button'`                     |
-| `MantineNotToggle`      | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |
-| `MantineValueSelector`  | `VersatileSelectorProps` | `import Select from '@mui/material/Select'`                     |
+| `FluentActionElement`   | `ActionWithRulesProps`   | `import { Button } from '@fluentui/react-components'`           |
+| `FluentDragHandle`      | `DragHandleProps`        | `import { Text } from '@fluentui/react-components'`             |
+| `FluentNotToggle`       | `NotToggleProps`         | `import { Switch } from '@fluentui/react-components'`           |
+| `FluentValueSelector`   | `VersatileSelectorProps` | `import { Dropdown, Select } from '@fluentui/react-components'` |
+| `MantineActionElement`  | `ActionWithRulesProps`   | `import { Button } from '@mantine/core'`                        |
+| `MantineNotToggle`      | `NotToggleProps`         | `import { Switch } from '@mantine/core'`                        |
+| `MantineValueSelector`  | `VersatileSelectorProps` | `import { Select } from '@mantine/core'`                        |
 | `MaterialActionElement` | `ActionWithRulesProps`   | `import Button from '@mui/material/Button'`                     |
 | `MaterialDragHandle`    | `DragHandleProps`        | `import DragIndicator from '@mui/icons-material/DragIndicator'` |
 | `MaterialNotToggle`     | `NotToggleProps`         | `import Switch from '@mui/material/Switch'`                     |

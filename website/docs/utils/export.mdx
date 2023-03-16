@@ -145,7 +145,7 @@ Output:
 
 ### SQL
 
-`formatQuery` can export SQL compatible with most RDBMS engines. To export a SQL `WHERE` clause, use the "sql" format.
+To export a SQL `WHERE` clause, use the "sql" format. The output should be compatible with almost all major RDBMS engines, but may require [configuration](#configuration) in some cases.
 
 ```ts
 formatQuery(query, 'sql');
@@ -157,9 +157,9 @@ Output:
 `(firstName = 'Steve' and lastName = 'Vai')`;
 ```
 
-### Parameterized SQL
+#### Parameterized SQL
 
-To export a SQL `WHERE` clause with bind variables instead of explicit values, use the "parameterized" format. The output is an object with `sql` and `params` attributes.
+To export a SQL `WHERE` clause with bind variables instead of inline values, use the "parameterized" format. The output is an object with `sql` and `params` attributes.
 
 ```ts
 formatQuery(query, 'parameterized');
@@ -174,9 +174,9 @@ Output:
 }
 ```
 
-### Named parameters
+#### Named parameters
 
-If anonymous parameters (aka bind variables) are not acceptable, `formatQuery` can output named parameters based on the field names. Use the "parameterized_named" format. The output object is similar to the "parameterized" format, but the `params` attribute is an object instead of an array.
+If anonymous parameters (aka bind variables) are not acceptable, `formatQuery` can name each parameter based on the field name when the "parameterized_named" format is used. The output object is similar to the "parameterized" format, but the `params` attribute is an object instead of an array.
 
 ```ts
 formatQuery(query, 'parameterized_named');
@@ -193,6 +193,8 @@ Output:
   }
 }
 ```
+
+See also: [`paramPrefix`](#parameter-prefix).
 
 ### MongoDB
 
@@ -279,6 +281,12 @@ apply({ startsWith: [{ var: 'firstName' }, 'Stev'] }, data);
 
 An object can be passed as the second argument instead of a string to have more fine-grained control over the output.
 
+:::info
+
+`parseNumbers` is the only configuration option that applies to the "json" and "json_without_ids" formats.
+
+:::
+
 ### Parse numbers
 
 Since HTML `<input>` controls store values as strings (even when `type="number"`), exporting a query to various formats may produce a string representation of a value when a true numeric value is required or more appropriate. Set the `parseNumbers` option to `true` and `formatQuery` will attempt to convert all values to numbers, falling back to the original value if `parseFloat(value)` returns `NaN` (not a number).
@@ -319,29 +327,52 @@ formatQuery(query, { format: 'sql', parseNumbers: true });
 
 To avoid information loss, this option is more strict about what qualifies as "numeric" than [the standard `parseFloat` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat). To oversimplify a bit, `parseFloat` works with any string that _starts_ with a numeric sequence, ignoring the rest of the string beginning with the first non-numeric character. In contrast, when `parseNumbers` is `true`, `formatQuery` will only convert a `value` to a `number` if it appears to be numeric _in its entirety_ (after trimming whitespace).
 
-The following expressions all evaluate to `true`:
+Each of the following expressions evaluates to `true`:
 
 ```ts
-parseFloat('000111abcdef') === 111; // everything from the 'a' on is ignored by `parseFloat`
+// Everything after the '3' is ignored by `parseFloat`
+parseFloat('000123abcdef') === 123;
 
+// `value` contains non-numeric characters, so remains as-is
 formatQuery(
-  { rules: [{ field: 'f', operator: '=', value: '000111abcdef' }] },
+  { rules: [{ field: 'f', operator: '=', value: '000123abcdef' }] },
   { format: 'sql', parseNumbers: true }
-) === "(f = '000111abcdef')"; // `value` contains non-numeric characters, so remains as-is
+) === "(f = '000123abcdef')";
 
+// `value` is wholly numeric (after trimming whitespace) so it gets converted to a number
 formatQuery(
-  { rules: [{ field: 'f', operator: '=', value: '  000111  ' }] },
+  { rules: [{ field: 'f', operator: '=', value: '  000123  ' }] },
   { format: 'sql', parseNumbers: true }
-) === '(f = 111)'; // after trimming whitespace, `value` is wholly numeric
+) === '(f = 123)';
 ```
 
 :::
 
 ### Rule processor
 
-To customize how rules are formatted, use the `ruleProcessor` configuration option. Rules must pass validation before being passed to the provided function.
+To customize the format of exported rules, use the `ruleProcessor` configuration option. Rules will only be passed to the provided processor function if they first pass [validation](#validation). The function will be called like this:
 
-The default rule processor for each non-SQL <abbr title="All formats except 'json' and 'json_without_ids'">query language format</abbr> is available as a named export from `react-querybuilder`, for use as a fallback in case your custom rule processor is not applicable.
+```ts
+ruleProcessor(rule, { parseNumbers, escapeQuotes });
+```
+
+The first argument is the `RuleType` object from the query. The second argument is a `ValueProcessorOptions` object. `parseNumbers` is copied directly from the `formatQuery` options (default `false`), and `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise, as when values represent field names).
+
+The default rule processors for each format are available as exports from `react-querybuilder`:
+
+- `defaultRuleProcessorCEL`
+- `defaultRuleProcessorJsonLogic`
+- `defaultRuleProcessorMongoDB`
+- `defaultRuleProcessorSpEL`
+- `defaultRuleProcessorSQL`
+
+:::info
+
+`ruleProcessor` does not apply to the "parameterized" or "parameterized_named" formats (yet), but `valueProcessor` is available.
+
+:::
+
+You can use the appropriate default rule processor as a fallback so your custom rule processor doesn't have to cover all cases, as shown below.
 
 ```ts
 const query: RuleGroupType = {
@@ -361,12 +392,13 @@ const query: RuleGroupType = {
   ],
 };
 
-const customRuleProcessor = (rule, options) => {
-  if (operator === 'has') {
-    // "has" operator not handled by default "jsonlogic" rule processor
+const customRuleProcessor: RuleProcessor = (rule, options) => {
+  // The "has" operator is not handled by the default processor
+  if (rule.operator === 'has') {
     return { in: [rule.value, { var: rule.field }] };
   }
-  // Fall back to the default rule processor for all other operators
+
+  // Defer to the default processor for all other operators
   return defaultRuleProcessorJsonLogic(rule, options);
 };
 
@@ -380,9 +412,67 @@ formatQuery(query, { format: 'jsonlogic', ruleProcessor: customRuleProcessor });
 // }
 ```
 
+This SQL example (using Oracle syntax) demonstrates the generation of a case-insensitive condition:
+
+```ts
+// `query` is the same as in the previous example
+
+const customRuleProcessor: RuleProcessor = (rule, options) => {
+  if (rule.operator === 'has') {
+    return `UPPER(${rule.field}) LIKE UPPER('%${rule.value}%')`;
+  }
+
+  return defaultRuleProcessorByRule(rule, options);
+};
+
+formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
+// Returns: "(UPPER(firstName) LIKE UPPER('%S%') and lastName = 'Vai')"
+//            ^------------custom--------------^ ^------default-----^
+```
+
 ### Value processor
 
-If you only need to control the way the _value_ portion of the output is processed, you can specify a custom `valueProcessor` applicable for query language formats.
+`valueProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "value" portion of the output (to the right of the operator) for the "sql" format. If both options are provided, `ruleProcessor` takes precedence.
+
+:::tip
+
+For all formats except "sql", `valueProcessor` is merely a synonym for `ruleProcessor`. We recommend using `ruleProcessor` unless you are exporting SQL and only need to customize the value.
+
+:::
+
+```ts
+// `query` is the same as in the previous example
+
+const customValueProcessor: ValueProcessorByRule = (rule, options) => {
+  if (rule.operator === 'has') {
+    return `'%${rule.value}%'`;
+  }
+
+  return defaultValueProcessorByRule(rule, options);
+};
+
+formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
+// Returns: "(firstName like '%S%' and lastName = 'Vai')"
+//    default-^------------^ ^---^-custom  ^----------^-default
+```
+
+#### Legacy `valueProcessor` behavior
+
+:::caution
+
+The legacy `valueProcessor` signature exists for backwards compatibility, but we recommend avoiding it. For one reason, the options are not passed in so it becomes more difficult to correctly call a default processor.
+
+:::
+
+If the function assigned to `valueProcessor` accepts three or more arguments (not including those with default values), it will be called like this:
+
+```ts
+valueProcessor(field, operator, value, valueSource);
+```
+
+Notice that no options or additional properties of the rule are passed as arguments. Among other problems, this prevents `formatQuery` from setting the `escapeQuotes` option.
+
+This legacy behavior is documented here for completeness but, as stated above, is not recommended.
 
 ```ts
 const query: RuleGroupType = {
@@ -405,65 +495,32 @@ const query: RuleGroupType = {
 const customValueProcessor = (field, operator, value) => {
   if (operator === 'in') {
     // Assuming `value` is an array, such as from a multi-select
-    return `(${value.map(v => `"${v.trim()}"`).join(', ')})`;
+    return `(${value.map(v => `'${v.trim()}'`).join(',')})`;
   }
-  // Fall back to the default value processor for other operators
+
   return defaultValueProcessor(field, operator, value);
 };
 
 formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
-// Returns: "(instrument in ('Guitar', 'Vocals') and lastName = 'Vai')"
+// Returns: "(instrument in ('Guitar','Vocals') and lastName = 'Vai')"
 ```
 
-:::caution
+Versions of the default value processors using the newer `fn(rule, options)` signature as well as the legacy signature are available for all query language formats except "jsonlogic" ([use `ruleProcessor` instead](#ruleprocessor)).
 
-When producing non-SQL query language formats—including "mongodb", "cel", "spel", and "jsonlogic"—`valueProcessor` functions must produce the entire rule object (for MongoDB/JsonLogic) or rule string (for CEL/SpEL), not just the expression on the right-hand side of the operator like with SQL-based formats.
-
-This situation exists for backwards-compatibility reasons, but to increase the clarity of your own code we recommend using the `ruleProcessor` option which has the same interface and effect as `valueProcessor` for all non-SQL query language formats.
-
-:::
-
-#### Enhanced `valueProcessor` behavior
-
-`formatQuery` will invoke custom `valueProcessor` functions with different arguments based on the function's `length` property, which is the number of arguments a function accepts excluding those with default values.
-
-If the `valueProcessor` function accepts fewer than three (3) arguments, it will be called like this:
-
-```ts
-valueProcessor(rule, { parseNumbers });
-```
-
-The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`, which is equivalent to `Pick<FormatQueryOptions, "parseNumbers">`).
-
-Invoking `valueProcessor` with the full `RuleType` object provides access to much more information about each rule. Standard properties that were previously unavailable include `path`, `id`, and `disabled`. Perhaps more importantly, any custom properties will also be accessible.
-
-The default value processors have not changed from the legacy function signature, but alternate functions using the new `fn(rule, options)` signature are now available:
-
-- `defaultValueProcessorByRule` (for SQL-based formats)
-- `defaultValueProcessorCELByRule`
-- `defaultValueProcessorMongoDBByRule`
-- `defaultValueProcessorSpELByRule`
-
-:::info
-
-While these enhanced CEL, SpEL, and MongoDB value processors are available, we recommend using the `ruleProcessor` option instead—if for no other reason than clarity of your own code. As mentioned above, they ultimately do the same thing anyway.
-
-:::
-
-To maintain the legacy signature (`valueProcessor(field, operator, value, valueSource)`), make sure your custom `valueProcessor` function accepts at least three arguments _with no default values_ (do not use `=` for the first three arguments). For example, the following code will log `length: 1` and the function would be called with the `(rule, options)` arguments:
-
-```ts
-const valueProcessor = (field: string, operator = '=', value = '') => '...';
-console.log(`length: ${valueProcessor.length}`);
-```
-
-Removing `= ...` from the `operator` and `value` argument declarations would increase the function's `length` to 3.
-
-If you use TypeScript, these conditions will be enforced automatically.
+- Current signature (recommended):
+  - `defaultValueProcessorByRule` (for all SQL-based formats)
+  - `defaultValueProcessorCELByRule`
+  - `defaultValueProcessorMongoDBByRule`
+  - `defaultValueProcessorSpELByRule`
+- Legacy signature:
+  - `defaultValueProcessor` (for all SQL-based formats)
+  - `defaultMongoDBValueProcessor`
+  - `defaultCELValueProcessor`
+  - `defaultSpELValueProcessor`
 
 ### Quote field names
 
-Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option.
+Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option which can be assigned a string or an array of two strings.
 
 ```ts
 formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' });
@@ -557,6 +614,7 @@ const query: RuleGroupType = {
   not: false,
 };
 
+// Example 1
 // Query is invalid based on the validator function
 formatQuery(query, {
   format: 'sql',
@@ -564,6 +622,7 @@ formatQuery(query, {
 });
 // Returns: "(1 = 1)" <-- see `fallbackExpression` option
 
+// Example 2
 // Rule "r1" is invalid based on the validation map
 formatQuery(query, {
   format: 'sql',
@@ -571,6 +630,7 @@ formatQuery(query, {
 });
 // Returns: "(lastName = 'Vai')" <-- skipped `firstName` rule with `id === 'r1'`
 
+// Example 3
 // Rule "r1" is invalid based on the field validator for `firstName`
 formatQuery(query, {
   format: 'sql',
@@ -581,8 +641,8 @@ formatQuery(query, {
 
 ### Automatic validation
 
-A basic form of validation will be used by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators when the output format is not "json" or "json_without_ids". This validation is used regardless of the presence of any `validator` options at either the query level or field level:
+To minimize the chance of invalid syntax, some basic validation will be performed by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators for all formats except "json" and "json_without_ids", even if no validator function or field validators are specified.
 
 - Rules that specify an "in" or "notIn" `operator` will be deemed invalid if the rule's `value` is neither an array with at least one element (i.e. `value.length > 0`) nor a non-empty string.
 - Rules that specify a "between" or "notBetween" `operator` will be deemed invalid if the rule's `value` is neither an array with length of at least two (`value.length >= 2`) nor a string with at least one comma that isn't the first or last character (i.e. `value.split(',').length >= 2`, and neither element is an empty string).
-- Rules where either the `field` or `operator` match their respective placeholder will be deemed invalid (`field === placeholderFieldName || operator === placeholderOperatorName`).
+- Rules where either the `field` or `operator` match their respective placeholder will be deemed invalid (i.e. `field === placeholderFieldName || operator === placeholderOperatorName`).

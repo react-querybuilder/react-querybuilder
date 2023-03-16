@@ -54,6 +54,7 @@ const sidebars = {
       },
       items: [
         'tips/managing-operators',
+        'tips/path',
         'tips/limit-groups',
         'tips/custom-with-fallback',
         'tips/external-controls',

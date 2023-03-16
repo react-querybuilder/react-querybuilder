@@ -47,22 +47,6 @@ const config = {
         ],
       },
     ],
-    // () => ({
-    //   // Needed for Sandpack 2.0
-    //   name: 'rqb-esm-resolver',
-    //   configureWebpack: () => ({
-    //     module: {
-    //       rules: [
-    //         {
-    //           test: /\.m?js$/,
-    //           resolve: {
-    //             fullySpecified: false,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   }),
-    // }),
     () => ({
       name: 'rqb-crypto-fallback',
       configureWebpack: () => ({
@@ -107,7 +91,7 @@ const config = {
               label: 'Next',
             },
           },
-          // Re-enable this when we get it working properly
+          // Re-enable this if/when we get it working properly
           // remarkPlugins: [
           //   [
           //     transpileCodeblocks,

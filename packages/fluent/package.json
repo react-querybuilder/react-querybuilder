@@ -39,7 +39,7 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.15.6",
+    "@fluentui/react-components": "^9.18.1",
     "@react-querybuilder/ts": "^6.0.7",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.28",
