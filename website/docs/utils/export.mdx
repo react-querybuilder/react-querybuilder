@@ -432,7 +432,13 @@ formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
 
 ### Value processor
 
-`valueProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "value" portion of the output (to the right of the operator). If both are provided, `ruleProcessor` takes precedence.
+`valueProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "value" portion of the output (to the right of the operator) for the "sql" format. If both options are provided, `ruleProcessor` takes precedence.
+
+:::tip
+
+For all formats except "sql", `valueProcessor` is merely a synonym for `ruleProcessor`. We recommend using `ruleProcessor` unless you are exporting SQL and only need to customize the value.
+
+:::
 
 ```ts
 // `query` is the same as in the previous example
