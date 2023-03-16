@@ -7960,7 +7960,7 @@ __metadata:
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
   dependencies:
     "@ant-design/icons": ^5.0.1
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
@@ -7970,7 +7970,7 @@ __metadata:
     rc-select: ^14.3.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -7986,7 +7986,7 @@ __metadata:
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
     "@popperjs/core": ^2.11.6
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
@@ -7994,7 +7994,7 @@ __metadata:
     bootstrap-icons: ^1.10.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -8009,14 +8009,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     bulma: ^0.9.4
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -8035,14 +8035,14 @@ __metadata:
     "@chakra-ui/system": ^2.5.1
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     framer-motion: ^10.3.2
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -8057,11 +8057,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/ctx@^6.0.7, @react-querybuilder/ctx@workspace:packages/ctx":
+"@react-querybuilder/ctx@^6.1.0, @react-querybuilder/ctx@workspace:packages/ctx":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ctx@workspace:packages/ctx"
   dependencies:
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/node": ^18.15.3
     "@types/react": ^18.0.28
@@ -8080,7 +8080,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/node": ^18.15.3
     "@types/react": ^18.0.28
@@ -8092,7 +8092,7 @@ __metadata:
     react-dnd-test-backend: ^16.0.1
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -8108,13 +8108,13 @@ __metadata:
   resolution: "@react-querybuilder/fluent@workspace:packages/fluent"
   dependencies:
     "@fluentui/react-components": ^9.18.1
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -8132,14 +8132,14 @@ __metadata:
     "@mantine/core": ^5.10.5
     "@mantine/dates": ^5.10.5
     "@mantine/hooks": ^5.10.5
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     dayjs: ^1.11.7
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -8160,13 +8160,13 @@ __metadata:
     "@emotion/styled": ^11.10.6
     "@mui/icons-material": ^5.11.11
     "@mui/material": ^5.11.13
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     regenerator-runtime: ^0.13.11
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
@@ -8185,7 +8185,7 @@ __metadata:
   resolution: "@react-querybuilder/native@workspace:packages/native"
   dependencies:
     "@babel/preset-flow": ^7.18.6
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/jest-native": ^5.4.2
     "@testing-library/react-native": ^12.0.0
     "@types/react": ^18.0.28
@@ -8195,7 +8195,7 @@ __metadata:
     react-dom: ^18.2.0
     react-native: ~0.71.4
     react-native-web: ~0.18.12
-    react-querybuilder: ^6.0.7
+    react-querybuilder: ^6.1.0
     react-test-renderer: ^18.2.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
@@ -8205,7 +8205,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/ts@^6.0.7, @react-querybuilder/ts@workspace:packages/ts":
+"@react-querybuilder/ts@^6.1.0, @react-querybuilder/ts@workspace:packages/ts":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ts@workspace:packages/ts"
   dependencies:
@@ -19490,7 +19490,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@^6.0.7, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@^6.1.0, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
@@ -19498,8 +19498,8 @@ __metadata:
     "@babel/preset-env": ^7.20.2
     "@babel/preset-react": ^7.18.6
     "@babel/preset-typescript": ^7.21.0
-    "@react-querybuilder/ctx": ^6.0.7
-    "@react-querybuilder/ts": ^6.0.7
+    "@react-querybuilder/ctx": ^6.1.0
+    "@react-querybuilder/ts": ^6.1.0
     "@testing-library/dom": ^9.0.0
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
