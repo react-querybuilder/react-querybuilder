@@ -41,6 +41,8 @@ const testParseCELic = (
 
 it('works for basic relations', () => {
   testParseCEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
+  testParseCEL('f1.f2.f3 == "Test"', wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' }));
   testParseCEL('(f1 == "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   testParseCEL('f1 != "Test"', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
   testParseCEL('f1 > 1', wrapRule({ field: 'f1', operator: '>', value: 1 }));
@@ -58,6 +60,8 @@ it('works for basic relations', () => {
   testParseCEL('f1 == false', wrapRule({ field: 'f1', operator: '=', value: false }));
   // flips operators
   testParseCEL('"Test" == f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL('"Test" == f1.f2', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
+  testParseCEL('"Test" == f1.f2.f3', wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' }));
   testParseCEL('1214 > f1', wrapRule({ field: 'f1', operator: '<', value: 1214 }));
   testParseCEL('1214 >= f1', wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
   testParseCEL('1214 < f1', wrapRule({ field: 'f1', operator: '>', value: 1214 }));
@@ -83,6 +87,10 @@ it('handles "like" comparisons', () => {
   testParseCEL(
     'f1.contains("Test")',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
+  testParseCEL(
+    'f1.f2.f3.contains("Test")',
+    wrapRule({ field: 'f1.f2.f3', operator: 'contains', value: 'Test' })
   );
   testParseCEL(
     'f1.startsWith("Test")',

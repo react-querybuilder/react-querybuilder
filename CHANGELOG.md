@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Fixed
+
+- `parseCEL` now recognizes dot-separated identifiers correctly.
 
 ## [v6.1.0] - 2023-03-16
 
