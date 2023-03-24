@@ -709,7 +709,9 @@ This callback is invoked before a rule or group is removed. The function should 
 
 `Partial<Translations>`
 
-This prop can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />` component. All keys in the object and all properties within each key are optional. Missing translations will default to the corresponding values below.
+This prop provides basic internationalization (i18n) support. It can be used to override translatable texts applied to the various controls created by the `<QueryBuilder />` component for a specific locale.
+
+All keys in the object and all properties within each key are optional. The `translations` prop object will be deep-merged with the default object below.
 
 ```json
 {

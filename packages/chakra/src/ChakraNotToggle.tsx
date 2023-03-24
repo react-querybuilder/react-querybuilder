@@ -17,6 +17,7 @@ export const ChakraNotToggle = ({
   context: _context,
   validation: _validation,
   testID: _testID,
+  schema: _schema,
   ...extraProps
 }: ChakraNotToggleProps) => {
   const id = useId();
@@ -31,14 +32,14 @@ export const ChakraNotToggle = ({
         isDisabled={disabled}>
         <Switch
           id={id}
-          size="sm"
-          colorScheme="red"
           isChecked={checked}
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
           {...extraProps}
         />
-        <FormLabel htmlFor={id}>{label}</FormLabel>
+        <FormLabel htmlFor={id} marginBottom={0}>
+          {label}
+        </FormLabel>
       </FormControl>
     </div>
   );

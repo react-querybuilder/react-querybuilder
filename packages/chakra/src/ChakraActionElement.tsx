@@ -19,15 +19,13 @@ export const ChakraActionElement = ({
   context: _context,
   validation: _validation,
   ruleOrGroup: _ruleOrGroup,
+  schema: _schema,
   ...extraProps
 }: ChakraActionProps) => (
   <Button
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
-    colorScheme="gray"
-    variant="solid"
     onClick={e => handleOnClick(e)}
-    size="xs"
     isDisabled={disabled && !disabledTranslation}
     {...extraProps}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}
