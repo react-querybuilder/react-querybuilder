@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.1.3] - 2023-03-24
+
 ### Fixed
 
-- Chakra UI components no longer have hardcoded style-related props like `size`, `variant`, and `colorScheme`.
-- The `schema` prop will no longer be passed down to Ant Design and Chakra UI components.
+- [#491] Chakra UI components no longer have hardcoded style-related props like `size`, `variant`, and `colorScheme`.
+- [#491] The `schema` prop will no longer be passed down to Ant Design and Chakra UI components.
 
 ## [v6.1.2] - 2023-03-21
 
@@ -1293,10 +1297,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#483]: https://github.com/react-querybuilder/react-querybuilder/pull/483
 [#486]: https://github.com/react-querybuilder/react-querybuilder/pull/486
 [#488]: https://github.com/react-querybuilder/react-querybuilder/pull/488
+[#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.3...HEAD
+[v6.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.2...v6.1.3
 [v6.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.0...v6.1.2
 [v6.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.7...v6.1.0
 [v6.0.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.6...v6.0.7
