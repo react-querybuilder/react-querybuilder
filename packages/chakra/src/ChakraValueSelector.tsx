@@ -31,8 +31,6 @@ export const ChakraValueSelector = ({
     className={className}
     title={title}
     value={value}
-    size="xs"
-    variant="filled"
     disabled={disabled}
     onChange={e => handleOnChange(e.target.value)}
     {...extraProps}>

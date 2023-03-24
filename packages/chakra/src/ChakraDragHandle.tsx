@@ -31,7 +31,6 @@ export const ChakraDragHandle = forwardRef<HTMLSpanElement, ChakraDragHandleProp
     <span ref={dragRef} className={className} title={title}>
       <IconButton
         isDisabled={disabled}
-        size="xs"
         icon={<DragHandleIcon />}
         aria-label={title ?? /* istanbul ignore next */ ''}
         {...extraProps}
