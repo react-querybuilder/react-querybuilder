@@ -26,6 +26,7 @@ export const AntDValueSelector = ({
   operator: _operator,
   field: _field,
   fieldData: _fieldData,
+  schema: _schema,
   ...extraProps
 }: AntDValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });

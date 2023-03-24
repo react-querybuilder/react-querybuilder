@@ -24,6 +24,7 @@ export const ChakraValueSelector = ({
   fieldData: _fieldData,
   multiple: _multiple,
   listsAsArrays: _listsAsArrays,
+  schema: _schema,
   ...extraProps
 }: ChakraValueSelectorProps) => (
   <Select

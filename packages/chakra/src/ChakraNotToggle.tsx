@@ -17,6 +17,7 @@ export const ChakraNotToggle = ({
   context: _context,
   validation: _validation,
   testID: _testID,
+  schema: _schema,
   ...extraProps
 }: ChakraNotToggleProps) => {
   const id = useId();

@@ -18,6 +18,7 @@ export const AntDDragHandle = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
       disabled: _disabled,
       context: _context,
       validation: _validation,
+      schema: _schema,
       ...extraProps
     },
     dragRef

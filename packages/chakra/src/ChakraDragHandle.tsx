@@ -23,6 +23,7 @@ export const ChakraDragHandle = forwardRef<HTMLSpanElement, ChakraDragHandleProp
       label: _label,
       context: _context,
       validation: _validation,
+      schema: _schema,
       ...extraProps
     },
     dragRef

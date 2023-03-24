@@ -19,6 +19,7 @@ export const ChakraActionElement = ({
   context: _context,
   validation: _validation,
   ruleOrGroup: _ruleOrGroup,
+  schema: _schema,
   ...extraProps
 }: ChakraActionProps) => (
   <Button

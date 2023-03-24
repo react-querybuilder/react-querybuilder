@@ -16,6 +16,7 @@ export const AntDNotToggle = ({
   context: _context,
   validation: _validation,
   testID: _testID,
+  schema: _schema,
   ...extraProps
 }: AntDNotToggleProps) => (
   <Switch
