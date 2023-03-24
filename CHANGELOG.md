@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Chakra UI components no longer have hardcoded style-related props like `size`, `variant`, and `colorScheme`.
 - The `schema` prop will no longer be passed down to Ant Design and Chakra UI components.
 
 ## [v6.1.2] - 2023-03-21
