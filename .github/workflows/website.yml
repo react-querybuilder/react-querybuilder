@@ -18,8 +18,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '18'
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn --immutable
+      - name: Build packages
+        run: yarn build
       - name: Build website
         run: yarn website:build
 
@@ -31,8 +34,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '18'
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn --immutable
+      - name: Build packages
+        run: yarn build
       - name: Build website
         run: yarn website:build
       - uses: webfactory/ssh-agent@v0.5.0
