@@ -19,14 +19,30 @@
     "./dev": "./dev/index.ts",
     "./dist/*": "./dist/*",
     "./genericTests": "./genericTests/index.ts",
-    "./formatQuery": "./dist/formatQuery.js",
-    "./parseCEL": "./dist/parseCEL.js",
-    "./parseJsonLogic": "./dist/parseJsonLogic.js",
-    "./parseMongoDB": "./dist/parseMongoDB.js",
-    "./parseSQL": "./dist/parseSQL.js",
-    "./transformQuery": "./dist/transformQuery.js",
-    "./query-builder.css": "./dist/query-builder.css",
-    "./query-builder.scss": "./dist/query-builder.scss"
+    "./formatQuery": {
+      "types": "./dist/types/utils/formatQuery/formatQuery.d.ts",
+      "default": "./dist/formatQuery.js"
+    },
+    "./parseCEL": {
+      "types": "./dist/types/utils/parseCEL/parseCEL.d.ts",
+      "default": "./dist/parseCEL.js"
+    },
+    "./parseJsonLogic": {
+      "types": "./dist/types/utils/parseJsonLogic/parseJsonLogic.d.ts",
+      "default": "./dist/parseJsonLogic.js"
+    },
+    "./parseMongoDB": {
+      "types": "./dist/types/utils/parseMongoDB/parseMongoDB.d.ts",
+      "default": "./dist/parseMongoDB.js"
+    },
+    "./parseSQL": {
+      "types": "./dist/types/utils/parseSQL/parseSQL.d.ts",
+      "default": "./dist/parseSQL.js"
+    },
+    "./transformQuery": {
+      "types": "./dist/types/utils/transformQuery.d.ts",
+      "default": "./dist/transformQuery.js"
+    }
   },
   "types": "dist/types/index.d.ts",
   "files": [
