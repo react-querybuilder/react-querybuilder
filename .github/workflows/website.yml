@@ -18,12 +18,13 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '18'
-      - name: Install website dependencies
+          cache: 'yarn'
+      - name: Install dependencies
         run: yarn --immutable
-        working-directory: website
-      - name: Build website
+      - name: Build packages
         run: yarn build
-        working-directory: website
+      - name: Build website
+        run: yarn website:build
 
   publish:
     if: github.event_name != 'pull_request'
@@ -33,12 +34,13 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '18'
-      - name: Install website dependencies
+          cache: 'yarn'
+      - name: Install dependencies
         run: yarn --immutable
-        working-directory: website
-      - name: Build website
+      - name: Build packages
         run: yarn build
-        working-directory: website
+      - name: Build website
+        run: yarn website:build
       - uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_WEBSITE_DEPLOY }}
@@ -49,4 +51,4 @@ jobs:
         run: |
           git config --global user.email ${{ secrets.GH_PAGES_WEBSITE_PUBLISHER_EMAIL }}
           git config --global user.name ${{ secrets.GH_PAGES_WEBSITE_PUBLISHER_NAME }}
-          cd website && yarn deploy
+          yarn website:deploy

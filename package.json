@@ -2,7 +2,8 @@
   "name": "react-querybuilder-monorepo",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "scripts": {
     "start": "yarn workspace react-querybuilder start",
@@ -52,13 +53,11 @@
     "generate-parsers": "concurrently --timings --names sql,cel \"yarn workspace react-querybuilder generate-sqlparser\" \"yarn workspace react-querybuilder generate-celparser\"",
     "outdated": "yarn upgrade-interactive",
     "version": "yarn && concurrently --timings --names examples,packages yarn:generate-examples yarn:build && concurrently \"git add examples yarn.lock\"",
-    "website:install": "cd website && yarn install",
-    "website:outdated": "cd website && yarn upgrade-interactive",
-    "website:start": "cd website && yarn start",
-    "website:build": "cd website && yarn build",
-    "website:serve": "cd website && yarn serve",
-    "website:deploy": "cd website && yarn deploy",
-    "website:typecheck": "cd website && yarn typecheck"
+    "website:start": "yarn workspace website run start",
+    "website:build": "yarn workspace website run build",
+    "website:serve": "yarn workspace website run serve",
+    "website:deploy": "yarn workspace website run deploy",
+    "website:typecheck": "yarn workspace website run typecheck"
   },
   "devDependencies": {
     "@babel/core": "^7.21.3",

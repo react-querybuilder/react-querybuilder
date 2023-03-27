@@ -63,6 +63,6 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "framer-motion": "^6.3.3",
-    "react": ">=16.8.0"
+    "react": ">=18.1.0"
   }
 }
