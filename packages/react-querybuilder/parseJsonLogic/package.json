@@ -1,0 +1,4 @@
+{
+  "main": "../dist/parseJsonLogic.js",
+  "types": "../dist/types/utils/parseJsonLogic/index.d.ts"
+}

@@ -20,23 +20,23 @@
     "./dist/*": "./dist/*",
     "./genericTests": "./genericTests/index.ts",
     "./formatQuery": {
-      "types": "./dist/types/utils/formatQuery/formatQuery.d.ts",
+      "types": "./dist/types/utils/formatQuery/index.d.ts",
       "default": "./dist/formatQuery.js"
     },
     "./parseCEL": {
-      "types": "./dist/types/utils/parseCEL/parseCEL.d.ts",
+      "types": "./dist/types/utils/parseCEL/index.d.ts",
       "default": "./dist/parseCEL.js"
     },
     "./parseJsonLogic": {
-      "types": "./dist/types/utils/parseJsonLogic/parseJsonLogic.d.ts",
+      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
       "default": "./dist/parseJsonLogic.js"
     },
     "./parseMongoDB": {
-      "types": "./dist/types/utils/parseMongoDB/parseMongoDB.d.ts",
+      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
       "default": "./dist/parseMongoDB.js"
     },
     "./parseSQL": {
-      "types": "./dist/types/utils/parseSQL/parseSQL.d.ts",
+      "types": "./dist/types/utils/parseSQL/index.d.ts",
       "default": "./dist/parseSQL.js"
     },
     "./transformQuery": {
@@ -47,7 +47,13 @@
   "types": "dist/types/index.d.ts",
   "files": [
     "dist",
-    "index.d.mts"
+    "index.d.mts",
+    "formatQuery",
+    "parseCEL",
+    "parseJsonLogic",
+    "parseMongoDB",
+    "parseSQL",
+    "transformQuery"
   ],
   "repository": {
     "type": "git",
