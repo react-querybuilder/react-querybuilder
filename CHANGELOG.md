@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.1.4] - 2023-03-27
+
+### Fixed
+
+- Subpath exports for utility functions (`formatQuery`, `transformQuery`, and the `parse*` functions) now map to their TypeScript types and work for all module resolution strategies.
+
 ## [v6.1.3] - 2023-03-24
 
 ### Fixed
@@ -1301,7 +1307,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.4...HEAD
+[v6.1.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.3...v6.1.4
 [v6.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.2...v6.1.3
 [v6.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.0...v6.1.2
 [v6.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.7...v6.1.0
