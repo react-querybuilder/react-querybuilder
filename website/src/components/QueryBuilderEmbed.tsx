@@ -3,7 +3,7 @@ import type { QueryBuilderProps } from 'react-querybuilder';
 import { QueryBuilder } from 'react-querybuilder';
 import { QueryBuilder as QueryBuilder_v4 } from 'react-querybuilder-v4';
 import { QueryBuilder as QueryBuilder_v5 } from 'react-querybuilder-v5';
-import 'react-querybuilder/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.scss';
 import './QueryBuilderEmbed.scss';
 
 type QueryBuilderEmbedProps<V extends 4 | 5 | 6 = 6> = QueryBuilderProps<any> & {
