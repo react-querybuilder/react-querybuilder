@@ -9143,12 +9143,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/antd@6.1.3, @react-querybuilder/antd@workspace:packages/antd":
+"@react-querybuilder/antd@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/antd@npm:6.1.3"
+  peerDependencies:
+    "@ant-design/icons": ">=4.7.0"
+    antd: ">=4.10.0"
+    react: ">=16.8.0"
+  checksum: 66a080f52e386e4fed776aef64e7574963a2212a1d9be08bbcc96ed61ac03bc2b4424487d2db0fb5882dbf5d0fba0441716b3aa7117a08b7a1cedd1082ae79d0
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/antd@workspace:packages/antd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
   dependencies:
     "@ant-design/icons": ^5.0.1
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
@@ -9158,7 +9169,7 @@ __metadata:
     rc-select: ^14.3.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9169,12 +9180,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bootstrap@6.1.3, @react-querybuilder/bootstrap@workspace:packages/bootstrap":
+"@react-querybuilder/bootstrap@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/bootstrap@npm:6.1.3"
+  peerDependencies:
+    bootstrap: ">=5"
+    bootstrap-icons: ">=1.7.0"
+    react: ">=16.8.0"
+  checksum: d1abcedef377d80e359dca2658ef5ac6d2a94578c715fcd2bce40b4a88e940b783e0e7eed09684cffe35c75a7d0ef2b918d0e70622cf931a691ad6ce169eaba3
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/bootstrap@workspace:packages/bootstrap":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
     "@popperjs/core": ^2.11.6
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
@@ -9182,7 +9204,7 @@ __metadata:
     bootstrap-icons: ^1.10.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9193,18 +9215,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bulma@6.1.3, @react-querybuilder/bulma@workspace:packages/bulma":
+"@react-querybuilder/bulma@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/bulma@npm:6.1.3"
+  peerDependencies:
+    bulma: ^0.9.3
+    react: ">=16.8.0"
+  checksum: aa841194fdc87ecddaf0959a8f04245564cfc24c648a31336424708430813d0f0380699ff8406bfb8166f42fd4dce52523f8d293e24ae6f084c909d1efe3d602
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/bulma@workspace:packages/bulma":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     bulma: ^0.9.4
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9214,7 +9246,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/chakra@6.1.3, @react-querybuilder/chakra@workspace:packages/chakra":
+"@react-querybuilder/chakra@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/chakra@npm:6.1.3"
+  peerDependencies:
+    "@chakra-ui/icons": ">=1.0.0"
+    "@chakra-ui/react": ">=1.6.0"
+    "@chakra-ui/system": ">=1.8.0"
+    "@emotion/react": ^11
+    "@emotion/styled": ^11
+    framer-motion: ^6.3.3
+    react: ">=16.8.0"
+  checksum: 53a91d7115e476097b0855b4ed2dd3588c5e01d7fd748d7a9c786ad06cf019c1e7b35344141ae1ab0d3a3d5f5174a8f8c080c8e9645294d4e5dafc7285c6f35e
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/chakra@workspace:packages/chakra":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/chakra@workspace:packages/chakra"
   dependencies:
@@ -9223,14 +9270,14 @@ __metadata:
     "@chakra-ui/system": ^2.5.1
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     framer-motion: ^10.3.2
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9245,11 +9292,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/ctx@^6.1.3, @react-querybuilder/ctx@workspace:packages/ctx":
+"@react-querybuilder/ctx@^6.1.3, @react-querybuilder/ctx@^6.1.4, @react-querybuilder/ctx@workspace:packages/ctx":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ctx@workspace:packages/ctx"
   dependencies:
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/node": ^18.15.3
     "@types/react": ^18.0.28
@@ -9273,11 +9320,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/dnd@6.1.3, @react-querybuilder/dnd@workspace:packages/dnd":
+"@react-querybuilder/dnd@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/dnd@npm:6.1.3"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dnd: ">=14.0.0"
+    react-dnd-html5-backend: ">=14.0.0"
+  checksum: d3e35b6a581a86ecdc7e996a4f252bb3d4519308e88769961704d12ce1e713b3e97809c1eb7ee3817ecc56f80150874cdb7b7b71b66e382fd0bbb9404e4301ec
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/dnd@workspace:packages/dnd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/node": ^18.15.3
     "@types/react": ^18.0.28
@@ -9289,7 +9347,7 @@ __metadata:
     react-dnd-test-backend: ^16.0.1
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9300,18 +9358,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/fluent@6.1.3, @react-querybuilder/fluent@workspace:packages/fluent":
+"@react-querybuilder/fluent@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/fluent@npm:6.1.3"
+  peerDependencies:
+    "@fluentui/react-components": ^9
+    dayjs: ">=1"
+    react: ">=16.8.0"
+  checksum: d4aef05a91ac7324edfd16fe0337eaafac43d6a9368bcdfc3ad52a8d98d6e59e1191cc8381ec785ede476dadaf3377b6f1b3f249788b597c19a5e6f8018df92a
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/fluent@workspace:packages/fluent":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/fluent@workspace:packages/fluent"
   dependencies:
     "@fluentui/react-components": ^9.18.1
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9322,21 +9391,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/mantine@6.1.3, @react-querybuilder/mantine@workspace:packages/mantine":
+"@react-querybuilder/mantine@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/mantine@npm:6.1.3"
+  peerDependencies:
+    "@mantine/core": ">=5"
+    "@mantine/dates": ">=5"
+    "@mantine/hooks": ">=5"
+    dayjs: ">=1"
+    react: ">=16.8.0"
+  checksum: 195232d54761eda48a9ebed347dc6926db2bd044e73eab17fe03f5e8b4bb87d7b2fbc83ae28bed952088fec36a746f9afd2b1f5910f52347dd9c3723142454ed
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/mantine@workspace:packages/mantine":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/mantine@workspace:packages/mantine"
   dependencies:
     "@mantine/core": ^5.10.5
     "@mantine/dates": ^5.10.5
     "@mantine/hooks": ^5.10.5
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     dayjs: ^1.11.7
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
     vite: ^4.1.4
@@ -9349,7 +9431,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/material@6.1.3, @react-querybuilder/material@workspace:packages/material":
+"@react-querybuilder/material@npm:6.1.3":
+  version: 6.1.3
+  resolution: "@react-querybuilder/material@npm:6.1.3"
+  peerDependencies:
+    "@emotion/react": ^11
+    "@emotion/styled": ^11
+    "@mui/icons-material": ">=5.0.0"
+    "@mui/material": ">=5.0.0"
+    react: ">=16.8.0"
+  checksum: af9aee3a74d50c4f14f2924d2b16f55d1ec3b06397658eb3f5a2e2db7099e4375ee3a2ee89274c5be9790a237c99c000f73813faf644238ec41e238fea15acd0
+  languageName: node
+  linkType: hard
+
+"@react-querybuilder/material@workspace:packages/material":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/material@workspace:packages/material"
   dependencies:
@@ -9357,13 +9452,13 @@ __metadata:
     "@emotion/styled": ^11.10.6
     "@mui/icons-material": ^5.11.11
     "@mui/material": ^5.11.13
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^13.4.0
     "@types/react": ^18.0.28
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     regenerator-runtime: ^0.13.11
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
@@ -9382,7 +9477,7 @@ __metadata:
   resolution: "@react-querybuilder/native@workspace:packages/native"
   dependencies:
     "@babel/preset-flow": ^7.18.6
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/jest-native": ^5.4.2
     "@testing-library/react-native": ^12.0.0
     "@types/react": ^18.0.28
@@ -9392,7 +9487,7 @@ __metadata:
     react-dom: ^18.2.0
     react-native: ~0.71.4
     react-native-web: ~0.18.12
-    react-querybuilder: ^6.1.3
+    react-querybuilder: ^6.1.4
     react-test-renderer: ^18.2.0
     rollup-plugin-visualizer: ^5.9.0
     typescript: ^4.9.5
@@ -9402,7 +9497,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/ts@^6.1.3, @react-querybuilder/ts@workspace:packages/ts":
+"@react-querybuilder/ts@^6.1.3, @react-querybuilder/ts@^6.1.4, @react-querybuilder/ts@workspace:packages/ts":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/ts@workspace:packages/ts"
   dependencies:
@@ -25189,7 +25284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-querybuilder@6.1.3, react-querybuilder@^6.1.3, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@^6.1.4, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
@@ -25197,8 +25292,8 @@ __metadata:
     "@babel/preset-env": ^7.20.2
     "@babel/preset-react": ^7.18.6
     "@babel/preset-typescript": ^7.21.0
-    "@react-querybuilder/ctx": ^6.1.3
-    "@react-querybuilder/ts": ^6.1.3
+    "@react-querybuilder/ctx": ^6.1.4
+    "@react-querybuilder/ts": ^6.1.4
     "@testing-library/dom": ^9.0.0
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
@@ -25226,6 +25321,20 @@ __metadata:
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
+
+"react-querybuilder@npm:6.1.3":
+  version: 6.1.3
+  resolution: "react-querybuilder@npm:6.1.3"
+  dependencies:
+    "@react-querybuilder/ctx": ^6.1.3
+    "@react-querybuilder/ts": ^6.1.3
+    clsx: ^1.2.1
+    immer: ^9.0.19
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: dd738cfcc3ee310406546919d5be80bff1662c78b7bd70557574354fd7cdb51314fd85bbff0996d0e4a9e232363bb1f91b8466d1c11502db4bb87f1ab9643000
+  languageName: node
+  linkType: hard
 
 "react-refresh@npm:^0.4.0":
   version: 0.4.3
