@@ -1,7 +1,7 @@
 import type {
-  Classnames,
   DefaultCombinator,
   DefaultCombinatorExtended,
+  Classnames,
   DefaultOperator,
   DefaultOperatorName,
   TranslationsFull,
