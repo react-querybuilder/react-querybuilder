@@ -23,4 +23,6 @@ jobs:
         run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2
       - name: Check prettification
         # This must always match the `pretty-print` script in /package.json
-        run: bunx prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ || git diff
+        # Commented out because bunx is not available - https://github.com/oven-sh/setup-bun/issues/9
+        # run: bunx prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ || (git diff && exit 1)
+        run: bun run pretty-check --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ || (git diff && exit 1)
