@@ -24,5 +24,8 @@ jobs:
       - name: Check prettification
         # This must always match the `pretty-print` script in /package.json
         # Commented out because bunx is not available - https://github.com/oven-sh/setup-bun/issues/9
-        # run: bunx prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ || git --no-pager diff && exit 1
-        run: bun run pretty-check --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ || git --no-pager diff && exit 1
+        # run: bunx prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
+        run: bun run pretty-check --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
+      - name: Diff
+        if: ${{ failure() }}
+        run: bun run pretty-print --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ && git --no-pager diff
