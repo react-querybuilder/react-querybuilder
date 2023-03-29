@@ -19,6 +19,7 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           dry: true
+          prettier_version: '2.8.4'
           # This must always match the `pretty-print` script in /package.json
           prettier_options: --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
           prettier_plugins: 'prettier-plugin-organize-imports'
@@ -27,6 +28,7 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           dry: true
+          prettier_version: '2.8.4'
           # This must always match the `pretty-print` script in /package.json
           prettier_options: --write *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
           prettier_plugins: 'prettier-plugin-organize-imports'
