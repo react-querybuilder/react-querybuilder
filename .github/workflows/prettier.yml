@@ -19,8 +19,11 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: Config Bun
-        run: 'echo "[install]\nglobalDir = \"~/.bun/install/global\"\n" > bunfig.toml'
+      - name: Config Bun global installs
+        run: |
+          echo "[install]" > bunfig.toml
+          echo "globalDir = \"~/.bun/install/global\"" >> bunfig.toml
+          echo "" >> bunfig.toml
       - name: Install Prettier and plugin(s)
         run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2 typescript@4.9.5
       - name: Check prettification
