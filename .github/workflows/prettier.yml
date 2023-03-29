@@ -16,7 +16,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Prettify code
-        uses: creyD/prettier_action@v4
+        uses: creyD/prettier_action@v4.3
         with:
           dry: true
           # This must always match the `pretty-print` script in /package.json
