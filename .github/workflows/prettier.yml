@@ -20,7 +20,7 @@ jobs:
         with:
           dry: true
           # This must always match the `pretty-print` script in /package.json
-          prettier_options: --check "*.{mj,t}s" "examples/**/*" "packages/*/src/**" "packages/*/dev/**" "packages/react-querybuilder/genericTests/**" "website/*.js" "website/{docs,src,versioned_docs,versioned_sidebars}/**"
+          prettier_options: --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
           prettier_plugins: 'prettier-plugin-organize-imports'
       - name: Git diff
         if: ${{ failure() }}
