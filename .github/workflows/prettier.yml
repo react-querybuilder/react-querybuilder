@@ -25,4 +25,4 @@ jobs:
         run: bun run pretty-check
       - name: Diff
         if: ${{ failure() }}
-        run: bun run pretty-print && git --no-pager diff
+        run: bun run pretty-print --loglevel=silent && git --no-pager diff
