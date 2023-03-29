@@ -1,6 +1,6 @@
+import { QueryBuilder, formatQuery } from 'react-querybuilder';
+import type { RuleGroupType, Field } from 'react-querybuilder';
 import { useState } from 'react';
-import type { Field, RuleGroupType } from 'react-querybuilder';
-import { formatQuery, QueryBuilder } from 'react-querybuilder';
 import './styles.scss';
 
 const fields: Field[] = [
