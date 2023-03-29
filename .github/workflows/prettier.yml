@@ -20,13 +20,15 @@ jobs:
         with:
           bun-version: latest
       - name: Install Prettier and plugin(s)
-        run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2
+        run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2 typescript@4.9.5
       - name: Check prettification
         # Patterns below must match the `pretty-print` script in /package.json
         # Next line commented out because `bunx` is not available - https://github.com/oven-sh/setup-bun/issues/9
         # run: bunx prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
         # ...but `bun x` _is_ available!
-        run: bun x prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
+        run: |
+          echo ~
+          bun x prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
         # run: bun run pretty-check --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
       - name: Diff
         if: ${{ failure() }}
