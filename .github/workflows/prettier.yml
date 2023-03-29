@@ -20,7 +20,7 @@ jobs:
         with:
           bun-version: latest
       - name: Install Prettier and plugin(s)
-        run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2
+        run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2 typescript@latest
       - name: Check prettification
         # This must always match the `pretty-print` script in /package.json
         # Commented out because bunx is not available - https://github.com/oven-sh/setup-bun/issues/9
@@ -28,4 +28,4 @@ jobs:
         run: bun run pretty-check --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
       - name: Diff
         if: ${{ failure() }}
-        run: bun run pretty-print --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ && git --no-pager diff
+        run: bun run pretty-print --loglevel=silent --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ && git --no-pager diff
