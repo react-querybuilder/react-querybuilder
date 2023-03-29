@@ -32,6 +32,3 @@ jobs:
           # This must always match the `pretty-print` script in /package.json
           prettier_options: --write *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
           prettier_plugins: 'prettier-plugin-organize-imports'
-      - name: Git diff
-        if: ${{ failure() }}
-        run: git diff
