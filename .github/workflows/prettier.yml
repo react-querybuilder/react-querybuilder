@@ -11,20 +11,23 @@ jobs:
     name: Prettier
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        # with:
+        #   ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Check code with prettier
-        uses: creyD/prettier_action@v4.3
-        with:
-          dry: true
-          prettier_version: '2.8.7'
-          # This must always match the `pretty-print` script in /package.json
-          prettier_options: --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
-          prettier_plugins: 'prettier-plugin-organize-imports'
+          node-version: '18'
+          cache: 'npm'
+      # - name: Check code with prettier
+      #   uses: creyD/prettier_action@v4.3
+      #   with:
+      #     dry: true
+      #     prettier_version: '2.8.7'
+      #     # This must always match the `pretty-print` script in /package.json
+      #     prettier_options: --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**
+      #     prettier_plugins: 'prettier-plugin-organize-imports'
       - name: Prettify code
-        if: ${{ failure() }}
+        # if: ${{ failure() }}
         uses: creyD/prettier_action@v4.3
         with:
           dry: true
