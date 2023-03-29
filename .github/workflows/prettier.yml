@@ -19,6 +19,8 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      - name: Config Bun
+        run: echo '[install]\nglobalDir = "~/.bun/install/global"\n' > bunfig.toml
       - name: Install Prettier and plugin(s)
         run: bun add --global prettier@2.8.7 prettier-plugin-organize-imports@3.2.2 typescript@4.9.5
       - name: Check prettification
@@ -29,7 +31,8 @@ jobs:
         run: |
           echo ~
           bun x prettier --check *.{mj,t}s examples/**/* packages/*/src/** packages/*/dev/** packages/react-querybuilder/genericTests/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/** --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
+        # Shorter, single-source-of-truth version:
         # run: bun run pretty-check --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/
       - name: Diff
         if: ${{ failure() }}
-        run: bun run pretty-print --loglevel=silent --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ && git --no-pager diff
+        run: bun run pretty-print --loglevel=debug --plugin-search-dir=$(echo ~)/.bun/install/global/node_modules/ && git --no-pager diff
