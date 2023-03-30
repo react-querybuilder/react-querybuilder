@@ -30,7 +30,7 @@
     "@mantine/dates": "^5.10.5",
     "@mantine/hooks": "^5.10.5",
     "@mui/icons-material": "^5.11.11",
-    "@mui/material": "^5.11.13",
+    "@mui/material": "^5.11.15",
     "@react-querybuilder/antd": "workspace:packages/antd",
     "@react-querybuilder/bootstrap": "workspace:packages/bootstrap",
     "@react-querybuilder/bulma": "workspace:packages/bulma",
