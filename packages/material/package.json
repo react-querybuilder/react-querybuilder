@@ -44,7 +44,7 @@
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.15",
     "@react-querybuilder/ts": "^6.1.4",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.31",
     "@vitejs/plugin-react-swc": "^3.2.0",
     "react": "^18.2.0",

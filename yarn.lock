@@ -9453,7 +9453,7 @@ __metadata:
   dependencies:
     "@ant-design/icons": ^5.0.1
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     antd: ^5.3.3
@@ -9479,7 +9479,7 @@ __metadata:
   dependencies:
     "@popperjs/core": ^2.11.7
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     bootstrap: ^5.2.3
@@ -9502,7 +9502,7 @@ __metadata:
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     bulma: ^0.9.4
@@ -9528,7 +9528,7 @@ __metadata:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     framer-motion: ^10.10.0
@@ -9554,7 +9554,7 @@ __metadata:
   resolution: "@react-querybuilder/ctx@workspace:packages/ctx"
   dependencies:
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/node": ^18.15.11
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
@@ -9582,7 +9582,7 @@ __metadata:
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/node": ^18.15.11
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
@@ -9610,7 +9610,7 @@ __metadata:
   dependencies:
     "@fluentui/react-components": ^9.18.6
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
@@ -9634,7 +9634,7 @@ __metadata:
     "@mantine/dates": ^5.10.5
     "@mantine/hooks": ^5.10.5
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     dayjs: ^1.11.7
@@ -9662,7 +9662,7 @@ __metadata:
     "@mui/icons-material": ^5.11.11
     "@mui/material": ^5.11.15
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@types/react": ^18.0.31
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
@@ -10808,22 +10808,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.20.0, @testing-library/dom@npm:^8.5.0":
-  version: 8.20.0
-  resolution: "@testing-library/dom@npm:8.20.0"
-  dependencies:
-    "@babel/code-frame": ^7.10.4
-    "@babel/runtime": ^7.12.5
-    "@types/aria-query": ^5.0.1
-    aria-query: ^5.0.0
-    chalk: ^4.1.0
-    dom-accessibility-api: ^0.5.9
-    lz-string: ^1.4.4
-    pretty-format: ^27.0.2
-  checksum: 1e599129a2fe91959ce80900a0a4897232b89e2a8e22c1f5950c36d39c97629ea86b4986b60b173b5525a05de33fde1e35836ea597b03de78cc51b122835c6f0
-  languageName: node
-  linkType: hard
-
 "@testing-library/dom@npm:^9.0.0":
   version: 9.0.0
   resolution: "@testing-library/dom@npm:9.0.0"
@@ -10837,6 +10821,22 @@ __metadata:
     lz-string: ^1.4.4
     pretty-format: ^27.0.2
   checksum: 5381bf9438f0ee35f795e7f9b203564aa455e7cd838b6677084c82dd56396779c38cc49ddffed4e57a8bcc3c62b4bc96ea684bb4b24d13655152db745327b2cd
+  languageName: node
+  linkType: hard
+
+"@testing-library/dom@npm:^9.2.0":
+  version: 9.2.0
+  resolution: "@testing-library/dom@npm:9.2.0"
+  dependencies:
+    "@babel/code-frame": ^7.10.4
+    "@babel/runtime": ^7.12.5
+    "@types/aria-query": ^5.0.1
+    aria-query: ^5.0.0
+    chalk: ^4.1.0
+    dom-accessibility-api: ^0.5.9
+    lz-string: ^1.5.0
+    pretty-format: ^27.0.2
+  checksum: b145f43cd06ff083012cf2503aff6ccba97ff80715fcb106fe64af690f5536557bf24d37b97e8d685bbe3803d7f71d685ce71426cb1b9e250c3611e4372dcfa9
   languageName: node
   linkType: hard
 
@@ -10891,17 +10891,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.4.0":
-  version: 13.4.0
-  resolution: "@testing-library/react@npm:13.4.0"
+"@testing-library/react@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "@testing-library/react@npm:14.0.0"
   dependencies:
     "@babel/runtime": ^7.12.5
-    "@testing-library/dom": ^8.5.0
+    "@testing-library/dom": ^9.0.0
     "@types/react-dom": ^18.0.0
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 51ec548c1fdb1271089a5c63e0908f0166f2c7fcd9cacd3108ebbe0ce64cb4351812d885892020dc37608418cfb15698514856502b3cab0e5cc58d6cc1bd4a3e
+  checksum: 4a54c8f56cc4a39b50803205f84f06280bb76521d6d5d4b3b36651d760c7c7752ef142d857d52aaf4fad4848ed7a8be49afc793a5dda105955d2f8bef24901ac
   languageName: node
   linkType: hard
 
@@ -21053,6 +21053,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lz-string@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "lz-string@npm:1.5.0"
+  bin:
+    lz-string: bin/bin.js
+  checksum: 1ee98b4580246fd90dd54da6e346fb1caefcf05f677c686d9af237a157fdea3fd7c83a4bc58f858cd5b10a34d27afe0fdcbd0505a47e0590726a873dc8b8f65d
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:3.1.0, make-dir@npm:^3.0.0, make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
@@ -25871,9 +25880,9 @@ __metadata:
     "@babel/preset-react": ^7.18.6
     "@babel/preset-typescript": ^7.21.0
     "@react-native-picker/picker": ^2.4.9
-    "@testing-library/dom": ^8.20.0
+    "@testing-library/dom": ^9.2.0
     "@testing-library/jest-dom": ^5.16.5
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@types/glob": ^8.1.0
     "@types/jest": ^29.5.0
@@ -25946,8 +25955,7 @@ __metadata:
     "@babel/preset-typescript": ^7.21.0
     "@react-querybuilder/ctx": ^6.1.4
     "@react-querybuilder/ts": ^6.1.4
-    "@testing-library/dom": ^9.0.0
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@types/hoist-non-react-statics": ^3.3.1
     "@types/jscodeshift": ^0.11.6
