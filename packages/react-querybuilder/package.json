@@ -82,17 +82,16 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.21.0",
-    "@testing-library/dom": "^9.0.0",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jscodeshift": "^0.11.6",
-    "@types/node": "^18.15.3",
-    "@types/react": "^18.0.28",
+    "@types/node": "^18.15.11",
+    "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.2.0",
     "babel-plugin-istanbul": "^6.1.1",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.0.1",
     "copyfiles": "^2.4.1",
     "jscodeshift": "^0.14.0",
     "query-string": "^8.1.0",
@@ -100,15 +99,15 @@
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.13.11",
     "rollup-plugin-visualizer": "^5.9.0",
-    "sass": "^1.59.3",
+    "sass": "^1.60.0",
     "typescript": "^4.9.5",
-    "vite": "^4.1.4"
+    "vite": "^4.2.1"
   },
   "dependencies": {
     "@react-querybuilder/ctx": "^6.1.4",
     "@react-querybuilder/ts": "^6.1.4",
     "clsx": "^1.2.1",
-    "immer": "^9.0.19"
+    "immer": "^9.0.21"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
@@ -129,11 +128,11 @@
     "build:transformQuery": "vite build --config vite.config.transformQuery.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch",
-    "generate-sqlparser": "yarn generate-sqlparser-base && yarn generate-sqlparser-codemod",
-    "generate-sqlparser-base": "bunx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate-sqlparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseSQL/sqlParser.js",
-    "generate-celparser": "yarn generate-celparser-base && yarn generate-celparser-codemod",
-    "generate-celparser-base": "bunx jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate-celparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseCEL/celParser.js"
+    "generate:sqlparser": "bun run generate:sqlparser-base && yarn generate:sqlparser-codemod",
+    "generate:sqlparser-base": "bunx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
+    "generate:sqlparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseSQL/sqlParser.js",
+    "generate:celparser": "bun run generate:celparser-base && yarn generate:celparser-codemod",
+    "generate:celparser-base": "bunx jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
+    "generate:celparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseCEL/celParser.js"
   }
 }

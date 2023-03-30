@@ -39,10 +39,10 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@popperjs/core": "^2.11.6",
+    "@popperjs/core": "^2.11.7",
     "@react-querybuilder/ts": "^6.1.4",
-    "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.28",
+    "@testing-library/react": "^14.0.0",
+    "@types/react": "^18.0.31",
     "@vitejs/plugin-react-swc": "^3.2.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
@@ -51,7 +51,7 @@
     "react-querybuilder": "^6.1.4",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
-    "vite": "^4.1.4"
+    "vite": "^4.2.1"
   },
   "peerDependencies": {
     "bootstrap": ">=5",
