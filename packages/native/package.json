@@ -39,7 +39,7 @@
     "typecheck:watch": "yarn typecheck --watch"
   },
   "devDependencies": {
-    "@babel/preset-flow": "^7.18.6",
+    "@babel/preset-flow": "^7.21.4",
     "@react-querybuilder/ts": "^6.1.4",
     "@testing-library/jest-native": "^5.4.2",
     "@testing-library/react-native": "^12.0.1",
