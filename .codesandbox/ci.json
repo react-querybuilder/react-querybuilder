@@ -12,5 +12,5 @@
     "/examples/material",
     "/examples/native"
   ],
-  "node": "16"
+  "node": "18"
 }

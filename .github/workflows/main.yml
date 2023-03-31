@@ -11,8 +11,8 @@ on:
       - 'packages/**'
 
 jobs:
-  build_and_test:
-    name: Build and test
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,12 +20,31 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --immutable
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn test
+
+  lint:
+    name: Lint
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - run: bun run lint
+
+  build_and_test:
+    name: Build and test
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build base packages
+        # Only the base packages need to be built before testing
+        run: bun run build:base
+      - name: Test all packages
+        run: bun run test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

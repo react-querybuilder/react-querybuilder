@@ -43,5 +43,6 @@
     "titleBar.activeForeground": "#ffffff",
     "titleBar.inactiveBackground": "#3c649f99",
     "titleBar.inactiveForeground": "#ffffff99"
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
