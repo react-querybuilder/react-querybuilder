@@ -1,6 +1,5 @@
 {
-  "installCommand": "codesandbox-ci-install",
-  "buildCommand": "codesandbox-ci-build",
+  "buildCommand": "codesandbox-ci",
   "packages": ["packages/*"],
   "sandboxes": [
     "/examples/ci",
