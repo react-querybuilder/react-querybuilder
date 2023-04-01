@@ -31,7 +31,7 @@
     "build:native": "cd packages/native && bun run build",
     "build:rqb": "cd packages/react-querybuilder && bun run build",
     "build:ts": "cd packages/ts && bun run build",
-    "codesandbox-ci-install": "curl -fsSL https://bun.sh/install | bash && npm ci",
+    "codesandbox-ci-install": "yarn install && curl -fsSL https://bun.sh/install | bash",
     "codesandbox-ci-build": "bun run build",
     "lint": "eslint 'packages/*/src/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
     "test": "jest",
