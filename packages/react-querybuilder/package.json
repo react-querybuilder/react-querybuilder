@@ -128,9 +128,9 @@
     "build:transformQuery": "vite build --config vite.config.transformQuery.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch",
-    "generate:parsers": "concurrently --timings --names sqlParser,celParser bun:generate:sqlparser bun:generate:celparser && yarn generate:parsers-codemod",
-    "generate:sqlparser": "bunx --bun jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate:celparser": "bunx --bun jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
+    "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",
+    "generate:sqlparser": "bun x jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
+    "generate:celparser": "bun x jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
     "generate:parsers-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
   }
 }

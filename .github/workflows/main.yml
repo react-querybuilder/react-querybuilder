@@ -11,8 +11,8 @@ on:
       - 'packages/**'
 
 jobs:
-  setup:
-    name: Setup
+  build_and_test:
+    name: Build and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,21 +28,10 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --immutable
-
-  lint:
-    name: Lint
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - run: bun run lint
-
-  build_and_test:
-    name: Build and test
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
+      - name: Lint
+        run: bun run lint
       - name: Build base packages
-        # Only the base packages need to be built before testing
+        # Only ts, ctx, and rqb need to be built before testing everything
         run: bun run build:base
       - name: Test all packages
         run: bun run test
