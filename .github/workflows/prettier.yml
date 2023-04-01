@@ -22,7 +22,8 @@ jobs:
       - name: Install dependencies
         run: bun install
       - name: Check prettification
-        run: bun run pretty-check
-      - name: Diff
-        if: ${{ failure() }}
-        run: bun run pretty-print --loglevel=silent && git --no-pager diff
+        run: |
+          bun run pretty-check || \
+          (bun run pretty-print --loglevel=silent \
+          && git --no-pager diff \
+          && exit 1)

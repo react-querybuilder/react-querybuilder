@@ -78,10 +78,10 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.21.0",
+    "@babel/preset-typescript": "^7.21.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/hoist-non-react-statics": "^3.3.1",
@@ -115,7 +115,7 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "yarn build:main && concurrently --timings --max-processes 10 --names dev,css,formatQuery,parseCEL,parseJsonLogic,parseMongoDB,parseSQL,transformQuery,types yarn:build:dev yarn:build:css yarn:build:formatQuery yarn:build:parseCEL yarn:build:parseJsonLogic yarn:build:parseMongoDB yarn:build:parseSQL yarn:build:transformQuery yarn:build:types",
+    "build": "bun run build:main && concurrently --timings --max-processes 10 --names dev,css,formatQuery,parseCEL,parseJsonLogic,parseMongoDB,parseSQL,transformQuery,types bun:build:dev bun:build:css bun:build:formatQuery bun:build:parseCEL bun:build:parseJsonLogic bun:build:parseMongoDB bun:build:parseSQL bun:build:transformQuery bun:build:types",
     "build:main": "vite build",
     "build:dev": "vite build --mode development",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
@@ -128,11 +128,9 @@
     "build:transformQuery": "vite build --config vite.config.transformQuery.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch",
-    "generate:sqlparser": "bun run generate:sqlparser-base && yarn generate:sqlparser-codemod",
-    "generate:sqlparser-base": "bunx jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate:sqlparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseSQL/sqlParser.js",
-    "generate:celparser": "bun run generate:celparser-base && yarn generate:celparser-codemod",
-    "generate:celparser-base": "bunx jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:celparser-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parseCEL/celParser.js"
+    "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",
+    "generate:sqlparser": "bun x jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
+    "generate:celparser": "bun x jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
+    "generate:parsers-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
   }
 }

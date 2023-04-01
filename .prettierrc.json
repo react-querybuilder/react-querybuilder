@@ -1,7 +1,8 @@
 {
-  "tabWidth": 2,
-  "semi": true,
   "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
   "singleQuote": true,
   "trailingComma": "es5",
   "bracketSpacing": true,
@@ -9,7 +10,7 @@
   "arrowParens": "avoid",
   "overrides": [
     {
-      "files": "examples/*/**",
+      "files": "examples/*/**/*.!(css|scss)*",
       "options": {
         "printWidth": 80
       }

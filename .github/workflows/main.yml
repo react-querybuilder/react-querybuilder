@@ -20,12 +20,20 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --immutable
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn test
+      - name: Lint
+        run: bun run lint
+      - name: Build base packages
+        # Only ts, ctx, and rqb need to be built before testing everything
+        run: bun run build:base
+      - name: Test all packages
+        run: bun run test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

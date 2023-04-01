@@ -34,11 +34,11 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "build": "vite build && concurrently --timings --names dev,types yarn:build:dev yarn:build:types",
+    "build": "vite build && concurrently --timings --names dev,types bun:build:dev bun:build:types",
     "build:dev": "vite build --mode development",
     "build:types": "tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "yarn typecheck --watch"
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@react-querybuilder/ts": "^6.1.4",
