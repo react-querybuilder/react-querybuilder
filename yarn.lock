@@ -4813,22 +4813,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-client@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@codesandbox/sandpack-client@npm:2.2.0"
+"@codesandbox/sandpack-client@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "@codesandbox/sandpack-client@npm:2.2.4"
   dependencies:
     "@codesandbox/nodebox": 0.1.4
     buffer: ^6.0.3
     dequal: ^2.0.2
     outvariant: 1.3.0
     static-browser-server: 1.0.3
-  checksum: b9775ee62bc856b11339e57c4e1c2d73b8a2f9fe372d6d8892c26174cff8fa478ce18398f79fec480a415b729e264e94bacd6274566acc87fe6099055fb5a447
+  checksum: 9fff63c7665ad8be94914d83206ea4ff150a1b7e970dbbe91c6c61aee2709f7b7ff3b1d62718b497f178dcf13c08fa6906c7c19962a624d4ac834ca4179d4df8
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-react@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@codesandbox/sandpack-react@npm:2.2.0"
+"@codesandbox/sandpack-react@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "@codesandbox/sandpack-react@npm:2.2.4"
   dependencies:
     "@code-hike/classer": ^0.0.0-aa6efee
     "@codemirror/autocomplete": ^6.4.0
@@ -4839,7 +4839,7 @@ __metadata:
     "@codemirror/language": ^6.3.2
     "@codemirror/state": ^6.2.0
     "@codemirror/view": ^6.7.1
-    "@codesandbox/sandpack-client": ^2.2.0
+    "@codesandbox/sandpack-client": ^2.2.4
     "@lezer/highlight": ^1.1.3
     "@react-hook/intersection-observer": ^3.1.1
     "@stitches/core": ^1.2.6
@@ -4853,7 +4853,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 35b7a8c60e183f644a3009c0337141213572bb988dab95ee37287679577527b2919a19155897dcbf4ce3a0b459469e785ad5f08163685c584c562f6b1550f15c
+  checksum: 23adb166a8f09ecac4887e1b3da3a3dbfb59dc794666aa694db1039b46c932bed59feb9da0a2d3d3e022d9af75a4f0e0a4047aa3bc7b66638044b18361877cfb
   languageName: node
   linkType: hard
 
@@ -9884,7 +9884,7 @@ __metadata:
     "@ant-design/icons": ^5.0.1
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     antd: ^5.3.3
     dayjs: ^1.11.7
@@ -9910,7 +9910,7 @@ __metadata:
     "@popperjs/core": ^2.11.7
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     bootstrap: ^5.2.3
     bootstrap-icons: ^1.10.3
@@ -9933,7 +9933,7 @@ __metadata:
   dependencies:
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     bulma: ^0.9.4
     react: ^18.2.0
@@ -9959,7 +9959,7 @@ __metadata:
     "@emotion/styled": ^11.10.6
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     framer-motion: ^10.10.0
     react: ^18.2.0
@@ -9986,7 +9986,7 @@ __metadata:
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
     "@types/node": ^18.15.11
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -10014,7 +10014,7 @@ __metadata:
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
     "@types/node": ^18.15.11
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     concurrently: ^8.0.1
     react: ^18.2.0
@@ -10041,7 +10041,7 @@ __metadata:
     "@fluentui/react-components": ^9.18.6
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -10065,7 +10065,7 @@ __metadata:
     "@mantine/hooks": ^5.10.5
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     dayjs: ^1.11.7
     react: ^18.2.0
@@ -10093,7 +10093,7 @@ __metadata:
     "@mui/material": ^5.11.15
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -10119,7 +10119,7 @@ __metadata:
     "@react-querybuilder/ts": ^6.1.4
     "@testing-library/jest-native": ^5.4.2
     "@testing-library/react-native": ^12.0.1
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@types/react-test-renderer": ^18.0.0
     "@vitejs/plugin-react-swc": ^3.2.0
     react: ^18.2.0
@@ -10141,7 +10141,7 @@ __metadata:
   resolution: "@react-querybuilder/ts@workspace:packages/ts"
   dependencies:
     "@types/node": ^18.15.11
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     react: ^18.2.0
     typescript: ^4.9.5
   peerDependencies:
@@ -11908,14 +11908,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.0.31":
-  version: 18.0.31
-  resolution: "@types/react@npm:18.0.31"
+"@types/react@npm:^18.0.32":
+  version: 18.0.32
+  resolution: "@types/react@npm:18.0.32"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 6befbd5587e266905b50fd6bbd7c1cacd557bddf99e6a9862ca2f1d06df3dca71b9d485a37d010479730f021aab93b852d417c714de5efc2f41be0ff4c09b4db
+  checksum: c8dbce83c455e520e75f3649988f46100e3a3c0bf7241281ea5bd9067a0368290f0d7c6102e12e6ec9d649134b29a3ef4c421f376ec5aa06ed78cbdd8c144b4c
   languageName: node
   linkType: hard
 
@@ -17776,7 +17776,7 @@ __metadata:
 
 "fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: latest
   conditions: os=darwin
@@ -18106,7 +18106,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^9.2.0, glob@npm:^9.3.1, glob@npm:^9.3.2":
+"glob@npm:^9.2.0, glob@npm:^9.3.1":
   version: 9.3.2
   resolution: "glob@npm:9.3.2"
   dependencies:
@@ -18127,6 +18127,18 @@ __metadata:
     minipass: ^4.2.4
     path-scurry: ^1.6.1
   checksum: 9beb4f1cdc9585412efd991a9786c1ee6816dfd0537494fd552c333fa3d4b041fce5681bce21d14651e41479f60866e10a35a2ce2571fd40b7cf73842ea12192
+  languageName: node
+  linkType: hard
+
+"glob@npm:^9.3.4":
+  version: 9.3.4
+  resolution: "glob@npm:9.3.4"
+  dependencies:
+    fs.realpath: ^1.0.0
+    minimatch: ^8.0.2
+    minipass: ^4.2.4
+    path-scurry: ^1.6.1
+  checksum: bcf49eaf475dc4ce8d4e98f896408a9f6507a2cb7d24a207c012cb318b969e04a02bcde2ff2920eadd5055ccae444a007b769e418147a56268fab2cda8694cde
   languageName: node
   linkType: hard
 
@@ -22312,6 +22324,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "minimatch@npm:8.0.2"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: ceb50867205c716a1d027e6de3bd5976a940cec266acf05ff41c29bff9967290a867b381f6317fcebddfb056f0eedff88484d121e4449c3bb16c552a51b7a745
+  languageName: node
+  linkType: hard
+
 "minimist-options@npm:4.1.0":
   version: 4.1.0
   resolution: "minimist-options@npm:4.1.0"
@@ -26317,7 +26338,7 @@ __metadata:
     "@types/glob": ^8.1.0
     "@types/jest": ^29.5.0
     "@types/node": ^18.15.11
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@types/react-dom": ^18.0.11
     "@typescript-eslint/eslint-plugin": ^5.57.0
     "@typescript-eslint/parser": ^5.57.0
@@ -26328,7 +26349,7 @@ __metadata:
     eslint-plugin-react: ^7.32.2
     eslint-plugin-react-hooks: ^4.6.0
     fast-json-stable-stringify: ^2.1.0
-    glob: ^9.3.2
+    glob: ^9.3.4
     jest: ^29.5.0
     jest-environment-jsdom: ^29.5.0
     jest-watch-typeahead: ^2.2.2
@@ -26390,7 +26411,7 @@ __metadata:
     "@types/hoist-non-react-statics": ^3.3.1
     "@types/jscodeshift": ^0.11.6
     "@types/node": ^18.15.11
-    "@types/react": ^18.0.31
+    "@types/react": ^18.0.32
     "@types/react-dom": ^18.0.11
     "@vitejs/plugin-react-swc": ^3.2.0
     babel-plugin-istanbul: ^6.1.1
@@ -27292,7 +27313,7 @@ __metadata:
 
 "resolve@patch:resolve@^1.1.6#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#~builtin<compat/resolve>":
   version: 1.22.1
-  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=c3c19d"
   dependencies:
     is-core-module: ^2.9.0
     path-parse: ^1.0.7
@@ -27305,7 +27326,7 @@ __metadata:
 
 "resolve@patch:resolve@^2.0.0-next.4#~builtin<compat/resolve>":
   version: 2.0.0-next.4
-  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.4#~builtin<compat/resolve>::version=2.0.0-next.4&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.4#~builtin<compat/resolve>::version=2.0.0-next.4&hash=c3c19d"
   dependencies:
     is-core-module: ^2.9.0
     path-parse: ^1.0.7
@@ -29473,21 +29494,21 @@ __metadata:
 
 "typescript@patch:typescript@^3 || ^4#~builtin<compat/typescript>":
   version: 4.8.3
-  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=3b564f"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 0404a09c625df01934ef774b45ce1ca57ccae41cd625fcdbb82056715320d9329e70d9d75c2c732ec6ef947444ca978c189a332b71fa21f5c1437d5a83e24906
+  checksum: dfe2ee3b9da1d74b9e06784ae90c20c435db9ad6ab23172911f6cdbfd7ab7213ae3611c4254c5a2c6dc2e89f05a658b95493890bf62d218267033b3d8a2e4dd6
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
   version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2eee5c37cad4390385db5db5a8e81470e42e8f1401b0358d7390095d6f681b410f2c4a0c496c6ff9ebd775423c7785cdace7bcdad76c7bee283df3d9718c0f20
+  checksum: ab417a2f398380c90a6cf5a5f74badd17866adf57f1165617d6a551f059c3ba0a3e4da0d147b3ac5681db9ac76a303c5876394b13b3de75fdd5b1eaa06181c9d
   languageName: node
   linkType: hard
 
@@ -30430,7 +30451,7 @@ __metadata:
     "@chakra-ui/icons": ^2.0.18
     "@chakra-ui/react": ^2.5.5
     "@chakra-ui/system": ^2.5.5
-    "@codesandbox/sandpack-react": ^2.2.0
+    "@codesandbox/sandpack-react": ^2.2.4
     "@docusaurus/core": ^2.4.0
     "@docusaurus/module-type-aliases": ^2.4.0
     "@docusaurus/plugin-client-redirects": ^2.4.0

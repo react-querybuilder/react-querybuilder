@@ -74,7 +74,7 @@
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.11",
-    "@types/react": "^18.0.31",
+    "@types/react": "^18.0.32",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
@@ -85,7 +85,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "fast-json-stable-stringify": "^2.1.0",
-    "glob": "^9.3.2",
+    "glob": "^9.3.4",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-watch-typeahead": "^2.2.2",
@@ -102,5 +102,5 @@
     "typescript": "^4.9.5",
     "vite": "^4.2.1"
   },
-  "packageManager": "yarn@3.2.2"
+  "packageManager": "yarn@3.5.0"
 }

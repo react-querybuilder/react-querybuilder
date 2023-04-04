@@ -18,7 +18,7 @@
     "@chakra-ui/icons": "^2.0.18",
     "@chakra-ui/react": "^2.5.5",
     "@chakra-ui/system": "^2.5.5",
-    "@codesandbox/sandpack-react": "^2.2.0",
+    "@codesandbox/sandpack-react": "^2.2.4",
     "@docusaurus/core": "^2.4.0",
     "@docusaurus/plugin-client-redirects": "^2.4.0",
     "@docusaurus/preset-classic": "^2.4.0",
