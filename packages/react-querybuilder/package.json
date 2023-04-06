@@ -127,7 +127,7 @@
     "build:parseSQL": "vite build --config vite.config.parseSQL.ts",
     "build:transformQuery": "vite build --config vite.config.transformQuery.ts",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "yarn typecheck --watch",
+    "typecheck:watch": "tsc --noEmit --watch",
     "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",
     "generate:sqlparser": "bun x jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
     "generate:celparser": "bun x jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",

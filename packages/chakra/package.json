@@ -36,7 +36,7 @@
     "start": "vite",
     "build": "vite build && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "yarn typecheck --watch"
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@chakra-ui/icons": "^2.0.18",

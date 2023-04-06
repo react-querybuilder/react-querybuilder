@@ -18,20 +18,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
+        run: bun install
       - name: Build packages
         run: bun run build
       - name: Build website
-        # Can't use Bun here until it supports workspace: dependencies
-        run: yarn website:build
+        run: bun run website:build
 
   publish:
     if: github.event_name != 'pull_request'
