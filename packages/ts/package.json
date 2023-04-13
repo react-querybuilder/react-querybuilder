@@ -34,6 +34,6 @@
   "scripts": {
     "build": "tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "yarn typecheck --watch"
+    "typecheck:watch": "tsc --noEmit --watch"
   }
 }

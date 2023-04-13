@@ -19,12 +19,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
       - name: Install dependencies
+        # Can't use bun install until it respects yarn.lock package versions
+        # run: bun install
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --immutable
