@@ -200,7 +200,7 @@ function parseJsonLogic(
     } else if (isJsonLogicBetweenExclusive(logic) && isRQBJsonLogicVar(logic['<'][1])) {
       field = logic['<'][1].var;
       const values = [logic['<'][0], logic['<'][2]];
-      // istanbul ignore else
+      // c8 ignore else
       if (
         values.every(isRQBJsonLogicVar) ||
         values.every(el => typeof el === 'string') ||
@@ -210,7 +210,7 @@ function parseJsonLogic(
         return (
           processLogic({
             and: [{ '>': [{ var: field }, values[0]] }, { '<': [{ var: field }, values[1]] }],
-          }) || /* istanbul ignore next */ false
+          }) || /* c8 ignore next */ false
         );
       }
     } else if (isJsonLogicBetweenInclusive(logic) && isRQBJsonLogicVar(logic['<='][1])) {
@@ -223,7 +223,7 @@ function parseJsonLogic(
         const fieldList = vars.map(el => el.var).filter(sf => fieldIsValid(field, operator, sf));
         value = listsAsArrays ? fieldList : fieldList.join(',');
       } else {
-        // istanbul ignore else
+        // c8 ignore else
         if (
           values.every(el => typeof el === 'string') ||
           values.every(el => typeof el === 'number') ||
@@ -246,7 +246,7 @@ function parseJsonLogic(
           .filter(sf => fieldIsValid(field, operator, sf));
         value = listsAsArrays ? fieldList : fieldList.join(',');
       } else {
-        // istanbul ignore else
+        // c8 ignore else
         if (
           logic.in[1].every(el => typeof el === 'string') ||
           logic.in[1].every(el => typeof el === 'number') ||
@@ -256,7 +256,7 @@ function parseJsonLogic(
         }
       }
 
-      // istanbul ignore else
+      // c8 ignore else
       if (value.length > 0) {
         rule = { field, operator, value, valueSource };
       }

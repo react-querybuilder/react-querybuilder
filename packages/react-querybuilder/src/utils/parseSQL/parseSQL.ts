@@ -50,7 +50,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
   const fieldsFlat = getFieldsArray(fields);
 
   ic = !!independentCombinators;
-  /* istanbul ignore else */
+  /* c8 ignore else */
   if (params) {
     if (Array.isArray(params)) {
       let i = 0;
@@ -161,12 +161,12 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           return processSQLExpression(obj) as DefaultRuleType | DefaultRuleGroupType | null;
         })
         .filter(Boolean) as DefaultRuleGroupArray;
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (rules.length > 0) {
         return { combinator, rules };
       }
     } else if (expr.type === 'IsNullBooleanPrimary') {
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (isSQLIdentifier(expr.value)) {
         const f = getFieldName(expr.value);
         const operator = expr.hasNot ? 'notNull' : 'null';
@@ -179,7 +179,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         }
       }
     } else if (expr.type === 'ComparisonBooleanPrimary') {
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (
         (isSQLIdentifier(expr.left) && !isSQLIdentifier(expr.right)) ||
         (!isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right))
@@ -215,7 +215,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         }
       }
     } else if (expr.type === 'InExpressionListPredicate') {
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (isSQLIdentifier(expr.left)) {
         const f = getFieldName(expr.left);
         const valueArray = expr.right.value.filter(isSQLLiteralValue).map(evalSQLLiteralValue);
@@ -238,7 +238,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         }
       }
     } else if (expr.type === 'BetweenPredicate') {
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (
         isSQLIdentifier(expr.left) &&
         isSQLLiteralValue(expr.right.left) &&
@@ -262,12 +262,12 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         }
       }
     } else if (expr.type === 'LikePredicate') {
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
         const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
         const valueWithoutWildcards = valueWithWildcards.replace(/(^%)|(%$)/g, '');
         let operator: DefaultOperatorName = '=';
-        /* istanbul ignore else */
+        /* c8 ignore else */
         if (/^%.*%$/.test(valueWithWildcards) || valueWithWildcards === '%') {
           operator = expr.hasNot ? 'doesNotContain' : 'contains';
         } else if (/%$/.test(valueWithWildcards)) {
@@ -276,7 +276,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
         }
         const f = getFieldName(expr.left);
-        /* istanbul ignore else */
+        /* c8 ignore else */
         if (fieldIsValid(f, operator)) {
           return { field: f, operator, value: valueWithoutWildcards };
         }

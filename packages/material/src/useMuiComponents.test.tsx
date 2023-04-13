@@ -5,8 +5,6 @@ import { RQBMaterialContext } from './RQBMaterialContext';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
-jest.setTimeout(60_000);
-
 const componentMocks: Record<MuiComponentName, any> = {
   Button: () => <>Button</>,
   Checkbox: () => <>Checkbox</>,
@@ -26,7 +24,11 @@ const componentMocks: Record<MuiComponentName, any> = {
 // We don't *actually* need to load the components, just test that
 // an attempt to load them can be successful.
 Object.entries(componentMocks).forEach(([cn, mockImpl]) => {
-  if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
+  if (cn) {
+    vi.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => ({
+      default: mockImpl,
+    }));
+  }
 });
 
 it('returns the MUI components', async () => {
@@ -41,7 +43,7 @@ it('returns the MUI components', async () => {
   Object.keys(componentMocks).forEach(name =>
     expect(hookResult!.result.current).toHaveProperty(name)
   );
-});
+}, 60_000);
 
 it('renders with preloaded components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
@@ -51,7 +53,7 @@ it('renders with preloaded components', async () => {
   Object.keys(componentMocks).forEach(name =>
     expect(hookResult!.result.current).toHaveProperty(name)
   );
-});
+}, 60_000);
 
 it('renders with context components', async () => {
   await act(async () => {
@@ -63,7 +65,7 @@ it('renders with context components', async () => {
       </RQBMaterialContext.Provider>
     );
   });
-});
+}, 60_000);
 
 it('renders with context AND preloaded components', async () => {
   await act(async () => {
@@ -75,4 +77,4 @@ it('renders with context AND preloaded components', async () => {
       </RQBMaterialContext.Provider>
     );
   });
-});
+}, 60_000);

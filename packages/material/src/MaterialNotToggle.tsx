@@ -65,7 +65,7 @@ export const MaterialNotToggle = ({
           {...otherProps}
         />
       }
-      label={label ?? /* istanbul ignore next */ ''}
+      label={label ?? /* c8 ignore next */ ''}
     />
   );
 };

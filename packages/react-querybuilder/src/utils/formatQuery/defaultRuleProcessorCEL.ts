@@ -9,7 +9,7 @@ const escapeDoubleQuotes = (v: any, escapeQuotes?: boolean) =>
 
 export const defaultRuleProcessorCEL: RuleProcessor = (
   { field, operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';

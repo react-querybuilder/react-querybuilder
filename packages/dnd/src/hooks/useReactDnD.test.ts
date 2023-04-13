@@ -9,7 +9,7 @@ const timeoutWait = 500;
 consoleMocks();
 
 beforeEach(() => {
-  jest.resetModules();
+  vi.resetModules();
 });
 
 it('returns the react-dnd exports', async () => {
@@ -42,10 +42,10 @@ it('returns the provided DnD', async () => {
 });
 
 it('fails gracefully', async () => {
-  jest.doMock('react-dnd', () => {
+  vi.doMock('react-dnd', () => {
     throw new Error('react-dnd');
   });
-  jest.doMock('react-dnd-html5-backend', () => {
+  vi.doMock('react-dnd-html5-backend', () => {
     throw new Error('react-dnd-html5-backend');
   });
 

@@ -71,44 +71,22 @@ export const userEventSetup = () => {
 };
 
 export const consoleMocks = () => {
-  const consoleErrorActual = console.error;
-  const consoleInfoActual = console.info;
-  const consoleLogActual = console.log;
-  const consoleWarnActual = console.warn;
-  const consoleLog = jest.fn();
-  const consoleError = jest.fn();
-  const consoleInfo = jest.fn();
-  const consoleWarn = jest.fn();
+  const consoleLog = vi.spyOn(console, 'log');
+  const consoleError = vi.spyOn(console, 'error');
+  const consoleInfo = vi.spyOn(console, 'info');
+  const consoleWarn = vi.spyOn(console, 'warn');
 
-  beforeAll(() => {
-    console.error = consoleError;
-    console.info = consoleInfo;
-    console.log = consoleLog;
-    console.warn = consoleWarn;
-  });
-
-  beforeEach(() => {
+  afterEach(() => {
     consoleError.mockReset();
     consoleInfo.mockReset();
     consoleLog.mockReset();
     consoleWarn.mockReset();
   });
 
-  afterAll(() => {
-    console.error = consoleErrorActual;
-    console.info = consoleInfoActual;
-    console.log = consoleLogActual;
-    console.warn = consoleWarnActual;
-  });
-
   return {
     consoleError,
-    consoleErrorActual,
     consoleInfo,
-    consoleInfoActual,
     consoleLog,
-    consoleLogActual,
     consoleWarn,
-    consoleWarnActual,
   };
 };

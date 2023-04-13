@@ -74,7 +74,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should handle a dropped rule group', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -93,7 +93,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should abort move if dropped on itself', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(<RuleGroupWithDndWrapper {...getProps({}, { moveRule })} />);
     const ruleGroup = screen.getByTestId(TestID.ruleGroup);
     simulateDragDrop(
@@ -107,7 +107,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should abort move if source item is first child of this group', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <RuleGroupWithDndWrapper
         {...getProps({}, { moveRule })}
@@ -127,7 +127,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should handle drops on combinator between rules', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleGroupWithDndWrapper
@@ -161,7 +161,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should handle rule group drops on independent combinators', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleGroupWithDndWrapper
@@ -194,7 +194,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('should handle rule drops on independent combinators', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <RuleGroupWithDndWrapper
         {...getProps({ independentCombinators: true }, { moveRule })}
@@ -221,7 +221,7 @@ describe('enableDragAndDrop', () => {
   });
 
   it('prevents drops when locked', () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <div>
         <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} disabled />

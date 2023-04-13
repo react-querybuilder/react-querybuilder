@@ -33,7 +33,7 @@ const importMuiComponents = async () => {
       ['Switch', (await import('@mui/material/Switch')).default],
       ['TextareaAutosize', (await import('@mui/material/TextareaAutosize')).default],
     ] as [MuiComponentName, ComponentType<any>][]);
-    // istanbul ignore next
+    // c8 ignore next
     componentPromise.catch(reason => console.error(reason));
     const componentImports = await componentPromise;
     componentCacheStatus = 'loaded';
@@ -80,13 +80,13 @@ export const useMuiComponents = (
     const getComponents = async () => {
       const componentImports = await importMuiComponents();
 
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (!didCancel) {
         if (componentImports) {
           componentCache = componentImports;
           setMuiComponents(componentImports);
         } else {
-          /* istanbul ignore else */
+          /* c8 ignore else */
           if (__RQB_DEV__ && !didWarnMaterialWithoutMUI) {
             console.error(errorMaterialWithoutMUI);
             didWarnMaterialWithoutMUI = true;

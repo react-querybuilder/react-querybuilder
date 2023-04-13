@@ -7,7 +7,7 @@ const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
 
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { escapeQuotes, parseNumbers, quoteFieldNamesWith } = {}
 ) => {
   const valueIsField = valueSource === 'field';

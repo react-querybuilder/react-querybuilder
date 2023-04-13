@@ -7,7 +7,7 @@ const escapeDoubleQuotes = (v: any) =>
 
 export const defaultRuleProcessorMongoDB: RuleProcessor = (
   { field, operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';

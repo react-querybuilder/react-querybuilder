@@ -84,7 +84,7 @@ export const MaterialValueSelector = ({
         onChange={muiSelectChangeHandler}
         multiple={multiple}
         {...otherProps}>
-        {toOptions(options ?? /* istanbul ignore next */ [], {
+        {toOptions(options ?? /* c8 ignore next */ [], {
           ListSubheader,
           MenuItem,
         })}

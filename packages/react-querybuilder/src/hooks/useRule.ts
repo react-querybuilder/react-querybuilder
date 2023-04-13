@@ -136,7 +136,7 @@ export const useRule = (props: RuleProps) => {
   const valueSourceOptions = valueSources.map(vs => ({ name: vs, label: vs }));
 
   const validationResult =
-    validationMap[id ?? /* istanbul ignore next */ ''] ??
+    validationMap[id ?? /* c8 ignore next */ ''] ??
     (typeof fieldData.validator === 'function'
       ? fieldData.validator({ id, field, operator, value })
       : null);

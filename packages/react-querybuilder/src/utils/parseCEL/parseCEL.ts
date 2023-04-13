@@ -80,7 +80,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
     } = {}
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
     const { forwardNegation: forwardedNegation, groupOnlyIfNecessary } = processOpts;
-    /* istanbul ignore if */
+    /* c8 ignore if */
     if (isCELNegation(expr)) {
       const negate = expr.negations % 2 === 1;
       // TODO?: forwardNegation when isCELRelation(expr.value.value), in addition
@@ -160,7 +160,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           return processCELExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
         .filter(r => !!r) as DefaultRuleGroupArray;
-      /* istanbul ignore else */
+      /* c8 ignore else */
       if (rules.length > 0) {
         return { combinator, rules };
       }
@@ -195,7 +195,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           value = evalCELLiteralValue(right);
         }
       } else {
-        /* istanbul ignore else */
+        /* c8 ignore else */
         if (isCELIdentifierOrChain(right) && isCELLiteral(left) && expr.operator !== 'in') {
           flip = true;
           field = getIdentifierFromChain(right);

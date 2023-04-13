@@ -19,5 +19,5 @@ export const toDropdownOptions = (list: OptionList) =>
           {opt.label}
         </Option>
       ))
-    : // istanbul ignore next
+    : // c8 ignore next
       null;

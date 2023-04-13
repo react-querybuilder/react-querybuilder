@@ -11,7 +11,7 @@ const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
 
 export const defaultRuleProcessorSpEL: RuleProcessor = (
   { field, operator, value, valueSource },
-  // istanbul ignore next
+  // c8 ignore next
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
