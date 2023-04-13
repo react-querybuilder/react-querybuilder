@@ -20,6 +20,9 @@ globalThis.crypto = crypto as Crypto;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateID } = require('./generateID');
 
+// TODO: When our test runner supports ESM, we can do this instead:
+// const { generateID } = await import('./generateID');
+
 testGenerateID(generateID);
 
 globalThis.crypto = ogCrypto;

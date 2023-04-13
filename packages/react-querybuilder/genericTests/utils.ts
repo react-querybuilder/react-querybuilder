@@ -71,6 +71,28 @@ export const userEventSetup = () => {
 };
 
 export const consoleMocks = () => {
+  // TODO: This version works for Vitest. Not sure about bun:test yet.
+  /*
+  const consoleLog = jest.spyOn(console, 'log');
+  const consoleError = jest.spyOn(console, 'error');
+  const consoleInfo = jest.spyOn(console, 'info');
+  const consoleWarn = jest.spyOn(console, 'warn');
+
+  afterEach(() => {
+    consoleError.mockReset();
+    consoleInfo.mockReset();
+    consoleLog.mockReset();
+    consoleWarn.mockReset();
+  });
+
+  return {
+    consoleError,
+    consoleInfo,
+    consoleLog,
+    consoleWarn,
+  };
+  */
+
   const consoleErrorActual = console.error;
   const consoleInfoActual = console.info;
   const consoleLogActual = console.log;
