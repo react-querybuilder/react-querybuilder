@@ -1,4 +1,4 @@
 {
   "main": "../dist/formatQuery.js",
-  "types": "../dist/types/utils/formatQuery/index.d.ts"
+  "types": "../dist/formatQuery.d.ts"
 }

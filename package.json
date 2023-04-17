@@ -99,6 +99,7 @@
     "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.13.11",
+    "tsup": "^6.7.0",
     "typescript": "^4.9.5",
     "vite": "^4.2.1"
   },

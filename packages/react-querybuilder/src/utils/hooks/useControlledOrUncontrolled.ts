@@ -1,5 +1,3 @@
-declare const __RQB_DEV__: boolean;
-
 import type { RuleGroupTypeAny } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
 import {
@@ -32,7 +30,7 @@ export const useControlledOrUncontrolled = ({
 
   useEffect(() => {
     // istanbul ignore else
-    if (__RQB_DEV__) {
+    if (process.env.NODE_ENV !== 'production') {
       if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
         console.error(errorBothQueryDefaultQuery);
         didWarnBothQueryDefaultQuery = true;

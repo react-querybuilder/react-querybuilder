@@ -1,4 +1,4 @@
 {
   "main": "../dist/parseCEL.js",
-  "types": "../dist/types/utils/parseCEL/index.d.ts"
+  "types": "../dist/parseCEL.d.ts"
 }

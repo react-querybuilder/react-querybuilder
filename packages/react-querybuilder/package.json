@@ -2,52 +2,47 @@
   "name": "react-querybuilder",
   "version": "6.1.4",
   "description": "The React <QueryBuilder /> component for constructing queries",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder.legacy-esm.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "types": "./index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/react-querybuilder.d.ts",
+      "import": "./dist/react-querybuilder.mjs",
+      "require": "./dist/cjs/index.js"
     },
     "./dev": "./dev/index.ts",
     "./dist/*": "./dist/*",
     "./genericTests": "./genericTests/index.ts",
     "./formatQuery": {
-      "types": "./dist/types/utils/formatQuery/index.d.ts",
+      "types": "./dist/formatQuery.d.ts",
       "default": "./dist/formatQuery.js"
     },
     "./parseCEL": {
-      "types": "./dist/types/utils/parseCEL/index.d.ts",
+      "types": "./dist/parseCEL.d.ts",
       "default": "./dist/parseCEL.js"
     },
     "./parseJsonLogic": {
-      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
+      "types": "./dist/parseJsonLogic.d.ts",
       "default": "./dist/parseJsonLogic.js"
     },
     "./parseMongoDB": {
-      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
+      "types": "./dist/parseMongoDB.d.ts",
       "default": "./dist/parseMongoDB.js"
     },
     "./parseSQL": {
-      "types": "./dist/types/utils/parseSQL/index.d.ts",
+      "types": "./dist/parseSQL.d.ts",
       "default": "./dist/parseSQL.js"
     },
     "./transformQuery": {
-      "types": "./dist/types/utils/transformQuery.d.ts",
+      "types": "./dist/transformQuery.d.ts",
       "default": "./dist/transformQuery.js"
     }
   },
-  "types": "dist/types/index.d.ts",
+  "react-native": "dist/react-querybuilder.mjs",
+  "types": "./dist/react-querybuilder.d.ts",
   "files": [
     "dist",
-    "index.d.mts",
     "formatQuery",
     "parseCEL",
     "parseJsonLogic",
@@ -115,17 +110,18 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "bun run build:main && concurrently --timings --max-processes 10 --names dev,css,formatQuery,parseCEL,parseJsonLogic,parseMongoDB,parseSQL,transformQuery,types bun:build:dev bun:build:css bun:build:formatQuery bun:build:parseCEL bun:build:parseJsonLogic bun:build:parseMongoDB bun:build:parseSQL bun:build:transformQuery bun:build:types",
-    "build:main": "vite build",
-    "build:dev": "vite build --mode development",
+    "build": "tsup && bun build:css",
+    "old:build": "bun run build:main && concurrently --timings --max-processes 10 --names dev,css,formatQuery,parseCEL,parseJsonLogic,parseMongoDB,parseSQL,transformQuery,types bun:build:dev bun:build:css bun:build:formatQuery bun:build:parseCEL bun:build:parseJsonLogic bun:build:parseMongoDB bun:build:parseSQL bun:build:transformQuery bun:build:types",
+    "old:build:main": "vite build",
+    "old:build:dev": "vite build --mode development",
     "build:css": "sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
-    "build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly",
-    "build:formatQuery": "vite build --config vite.config.formatQuery.ts",
-    "build:parseCEL": "vite build --config vite.config.parseCEL.ts",
-    "build:parseJsonLogic": "vite build --config vite.config.parseJsonLogic.ts",
-    "build:parseMongoDB": "vite build --config vite.config.parseMongoDB.ts",
-    "build:parseSQL": "vite build --config vite.config.parseSQL.ts",
-    "build:transformQuery": "vite build --config vite.config.transformQuery.ts",
+    "old:build:types": "tsc --project ./tsconfig.build.json --emitDeclarationOnly",
+    "old:build:formatQuery": "vite build --config vite.config.formatQuery.ts",
+    "old:build:parseCEL": "vite build --config vite.config.parseCEL.ts",
+    "old:build:parseJsonLogic": "vite build --config vite.config.parseJsonLogic.ts",
+    "old:build:parseMongoDB": "vite build --config vite.config.parseMongoDB.ts",
+    "old:build:parseSQL": "vite build --config vite.config.parseSQL.ts",
+    "old:build:transformQuery": "vite build --config vite.config.transformQuery.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",

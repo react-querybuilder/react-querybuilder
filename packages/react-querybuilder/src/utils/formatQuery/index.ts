@@ -42,11 +42,11 @@ export { defaultRuleProcessorCEL };
 export { defaultRuleProcessorMongoDB };
 export { defaultRuleProcessorSpEL };
 /**
- * @deprecated Renamed to "defaultRuleProcessorMongoDB".
+ * @deprecated Renamed to "defaultRuleProcessorCEL".
  */
 export const defaultValueProcessorCELByRule = defaultRuleProcessorCEL;
 /**
- * @deprecated Renamed to "defaultRuleProcessorCEL".
+ * @deprecated Renamed to "defaultRuleProcessorMongoDB".
  */
 export const defaultValueProcessorMongoDBByRule = defaultRuleProcessorMongoDB;
 /**
