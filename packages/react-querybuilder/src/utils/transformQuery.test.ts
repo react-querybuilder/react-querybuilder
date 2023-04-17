@@ -81,7 +81,12 @@ it('respects the deleteRemappedProperties option', () => {
   expect(
     transformQuery(query, {
       deleteRemappedProperties: false,
-      propertyMap: { combinator: 'AndOr', value: 'val' },
+      propertyMap: {
+        combinator: 'AndOr',
+        value: 'val',
+        operator: 'operator',
+        unknownProperty: 'unknown',
+      },
     })
   ).toEqual({
     combinator: 'and',
