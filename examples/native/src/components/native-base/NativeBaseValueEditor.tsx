@@ -93,8 +93,8 @@ export const NativeBaseValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           handleOnChange={v => multiValueHandler(v, i)}
           className={className}
           disabled={disabled}

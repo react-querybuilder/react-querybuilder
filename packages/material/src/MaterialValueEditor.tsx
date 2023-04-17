@@ -93,8 +93,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          key={key}
           {...propsForValueSelector}
+          key={key}
           path={path}
           level={level}
           className={standardClassnames.valueListItem}

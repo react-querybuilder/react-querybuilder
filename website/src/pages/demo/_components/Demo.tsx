@@ -575,7 +575,7 @@ export default function Demo({
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="json" />
               <span>&nbsp;</span>
-              <label key={'json_without_ids'}>
+              <label key="json_without_ids">
                 <input
                   type="radio"
                   checked={'json_without_ids' === format}
@@ -583,7 +583,7 @@ export default function Demo({
                 />{' '}
                 Essential properties only
               </label>
-              <label key={'json'}>
+              <label key="json">
                 <input
                   type="radio"
                   checked={format === 'json'}
@@ -599,11 +599,11 @@ export default function Demo({
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="sql" />
               <span>&nbsp;</span>
-              <label key={'sql'}>
+              <label key="sql">
                 <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />{' '}
                 Inline
               </label>
-              <label key={'parameterized'}>
+              <label key="parameterized">
                 <input
                   type="radio"
                   checked={'parameterized' === format}
@@ -611,7 +611,7 @@ export default function Demo({
                 />{' '}
                 Parameterized
               </label>
-              <label key={'parameterized_named'}>
+              <label key="parameterized_named">
                 <input
                   type="radio"
                   checked={'parameterized_named' === format}

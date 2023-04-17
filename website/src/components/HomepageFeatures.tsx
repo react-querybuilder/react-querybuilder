@@ -44,7 +44,7 @@ export default function HomepageFeatures() {
       <div className="container">
         <div className="row">
           {featureList.map(props => (
-            <Feature key={props.title} {...props} />
+            <Feature {...props} key={props.title} />
           ))}
         </div>
       </div>

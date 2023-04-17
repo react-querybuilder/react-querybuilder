@@ -67,8 +67,8 @@ export const MantineValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

@@ -149,16 +149,16 @@ export const App = ({
         <Wrapper>
           {!optVals.independentCombinators ? (
             <QueryBuilder
-              key="query"
               {...commonRQBProps}
+              key="query"
               independentCombinators={false}
               query={query}
               onQueryChange={onQueryChange}
             />
           ) : (
             <QueryBuilder
-              key="queryIC"
               {...commonRQBProps}
+              key="queryIC"
               independentCombinators
               query={queryIC}
               onQueryChange={onQueryChangeIC}
