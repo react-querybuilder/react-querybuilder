@@ -87,9 +87,9 @@
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jscodeshift": "^0.11.6",
     "@types/node": "^18.15.11",
-    "@types/react": "^18.0.32",
+    "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
-    "@vitejs/plugin-react-swc": "^3.2.0",
+    "@vitejs/plugin-react-swc": "^3.3.0",
     "babel-plugin-istanbul": "^6.1.1",
     "concurrently": "^8.0.1",
     "copyfiles": "^2.4.1",
@@ -99,7 +99,7 @@
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.13.11",
     "rollup-plugin-visualizer": "^5.9.0",
-    "sass": "^1.60.0",
+    "sass": "^1.62.0",
     "typescript": "^4.9.5",
     "vite": "^4.2.1"
   },
@@ -107,7 +107,7 @@
     "@react-querybuilder/ctx": "^6.1.4",
     "@react-querybuilder/ts": "^6.1.4",
     "clsx": "^1.2.1",
-    "immer": "^9.0.21"
+    "immer": "^10.0.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

@@ -39,11 +39,11 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.18.6",
+    "@fluentui/react-components": "^9.19.0",
     "@react-querybuilder/ts": "^6.1.4",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.0.32",
-    "@vitejs/plugin-react-swc": "^3.2.0",
+    "@types/react": "^18.0.37",
+    "@vitejs/plugin-react-swc": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.1.4",

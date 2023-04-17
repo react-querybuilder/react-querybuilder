@@ -41,8 +41,8 @@
   "devDependencies": {
     "@react-querybuilder/ts": "^6.1.4",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.0.32",
-    "@vitejs/plugin-react-swc": "^3.2.0",
+    "@types/react": "^18.0.37",
+    "@vitejs/plugin-react-swc": "^3.3.0",
     "bulma": "^0.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
