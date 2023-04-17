@@ -2,7 +2,14 @@ import type { ActionWithRulesProps } from '@react-querybuilder/ts';
 import { Button } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
 
-type AntDActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;
+// TODO: This may be unnecessary. Find out if there's a way to allow
+// `data-${string}` index keys without breaking other type contraints.
+type RemoveDataIndexKeys<T> = {
+  [K in keyof T as `data-${string}` extends K ? never : K]: T[K];
+};
+
+type AntDActionProps = ActionWithRulesProps &
+  RemoveDataIndexKeys<ComponentPropsWithoutRef<typeof Button>>;
 
 export const AntDActionElement = ({
   className,
