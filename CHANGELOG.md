@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+- `transformQuery` with the `deleteRemappedProperties` option set to `true` (which is the default) will not attempt to `delete` properties that do not exist on the object (per `Object.hasOwn()`).
 
 ## [v6.1.4] - 2023-03-27
 
