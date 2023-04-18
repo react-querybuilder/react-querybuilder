@@ -1,7 +1,7 @@
 import vitePluginReact from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import type { AliasOptions } from 'vite';
+import type { AliasOptions, PluginOption } from 'vite';
 import { defineConfig } from 'vite';
 import { name } from './package.json';
 
@@ -59,7 +59,7 @@ export default defineConfig(({ command, mode }) => {
         gzipSize: true,
         brotliSize: true,
         title: `Build stats (${packageAbbr})`,
-      }),
+      }) as PluginOption,
     ],
     server: {
       port: 3106,

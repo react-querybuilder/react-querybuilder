@@ -24,7 +24,7 @@ export const useReactDnD = (dndParam?: UseReactDnD) => {
           setDnd(() => ({ ...reactDnD, ...reactDnDHTML5Be }));
         } else {
           // istanbul ignore else
-          if (__RQB_DEV__ && !didWarnEnabledDndWithoutReactDnD) {
+          if (process.env.NODE_ENV !== 'production' && !didWarnEnabledDndWithoutReactDnD) {
             console.error(messages.errorEnabledDndWithoutReactDnD);
             didWarnEnabledDndWithoutReactDnD = true;
           }

@@ -5,9 +5,10 @@ import { defineConfig } from 'tsup';
 export default defineConfig(options => {
   const commonOptions: Options = {
     entry: {
-      'react-querybuilder': 'src/index.ts',
+      'react-querybuilder_dnd': 'src/index.ts',
     },
     sourcemap: true,
+    external: ['react-dnd', 'react-dnd-html5-backend', 'react-querybuilder'],
     ...options,
   };
 
@@ -31,7 +32,7 @@ export default defineConfig(options => {
     {
       ...commonOptions,
       entry: {
-        'react-querybuilder.legacy-esm': 'src/index.ts',
+        'react-querybuilder_dnd.legacy-esm': 'src/index.ts',
       },
       // ESBuild outputs `'.mjs'` by default for the 'esm' format. Force '.js'
       outExtension: () => ({ js: '.js' }),
@@ -44,7 +45,7 @@ export default defineConfig(options => {
       ...commonOptions,
       ...productionOptions,
       entry: {
-        'react-querybuilder.production': 'src/index.ts',
+        'react-querybuilder_dnd.production': 'src/index.ts',
       },
       format: ['esm'],
       outExtension: () => ({ js: '.mjs' }),
@@ -53,7 +54,7 @@ export default defineConfig(options => {
     {
       ...commonOptions,
       entry: {
-        'react-querybuilder.cjs.development': 'src/index.ts',
+        'react-querybuilder_dnd.cjs.development': 'src/index.ts',
       },
       format: 'cjs',
       outDir: './dist/cjs/',
@@ -63,7 +64,7 @@ export default defineConfig(options => {
       ...commonOptions,
       ...productionOptions,
       entry: {
-        'react-querybuilder.cjs.production': 'src/index.ts',
+        'react-querybuilder_dnd.cjs.production': 'src/index.ts',
       },
       format: 'cjs',
       outDir: './dist/cjs/',
@@ -73,27 +74,13 @@ export default defineConfig(options => {
           'dist/cjs/index.js',
           `'use strict';
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./react-querybuilder.cjs.production.js');
+  module.exports = require('./react-querybuilder_dnd.cjs.production.js');
 } else {
-  module.exports = require('./react-querybuilder.cjs.development.js');
+  module.exports = require('./react-querybuilder_dnd.cjs.development.js');
 }
 `
         );
       },
-    },
-    // CJS modules without React dependency
-    {
-      ...commonOptions,
-      dts: true,
-      entry: {
-        formatQuery: 'src/utils/formatQuery/index.ts',
-        parseCEL: 'src/utils/parseCEL/index.ts',
-        parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
-        parseMongoDB: 'src/utils/parseMongoDB/index.ts',
-        parseSQL: 'src/utils/parseSQL/index.ts',
-        transformQuery: 'src/utils/transformQuery.ts',
-      },
-      format: 'cjs',
     },
   ];
 
