@@ -102,7 +102,7 @@
     "@react-querybuilder/ctx": "^6.1.4",
     "@react-querybuilder/ts": "^6.1.4",
     "clsx": "^1.2.1",
-    "immer": "^10.0.0"
+    "immer": "^10.0.1"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

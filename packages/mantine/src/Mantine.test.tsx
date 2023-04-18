@@ -22,12 +22,6 @@ import { MantineValueSelector } from './MantineValueSelector';
 
 jest.setTimeout(30_000);
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
-
 class ResizeObserver {
   observe() {}
   unobserve() {}

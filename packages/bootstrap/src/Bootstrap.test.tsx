@@ -6,12 +6,6 @@ import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
 import { QueryBuilderBootstrap } from './index';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
-
 testDragHandle(BootstrapDragHandle);
 testNotToggle(BootstrapNotToggle);
 testValueEditor(BootstrapValueEditor);

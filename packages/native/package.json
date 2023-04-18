@@ -5,25 +5,19 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_native.legacy-esm.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "types": "./index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/react-querybuilder_native.d.ts",
+      "import": "./dist/react-querybuilder_native.mjs",
+      "require": "./dist/cjs/index.js"
     }
   },
-  "types": "dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder_native.d.ts",
   "files": [
-    "dist",
-    "index.d.mts"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -34,7 +28,7 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },

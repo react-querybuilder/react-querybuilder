@@ -44,12 +44,6 @@ import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import type { RQBMaterialComponents } from './types';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
-
 jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
   <optgroup label={children as string} />
 ));

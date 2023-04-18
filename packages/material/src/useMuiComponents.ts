@@ -1,5 +1,3 @@
-declare const __RQB_DEV__: boolean;
-
 import type { ComponentType } from 'react';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { errorMaterialWithoutMUI } from './messages';
@@ -19,27 +17,28 @@ const importMuiComponents = async () => {
   componentCacheStatus = 'loading';
   try {
     const componentPromise = Promise.all([
-      ['Button', (await import('@mui/material/Button')).default],
-      ['Checkbox', (await import('@mui/material/Checkbox')).default],
-      ['DragIndicator', (await import('@mui/icons-material/DragIndicator')).default],
-      ['FormControl', (await import('@mui/material/FormControl')).default],
-      ['FormControlLabel', (await import('@mui/material/FormControlLabel')).default],
-      ['Input', (await import('@mui/material/Input')).default],
-      ['ListSubheader', (await import('@mui/material/ListSubheader')).default],
-      ['MenuItem', (await import('@mui/material/MenuItem')).default],
-      ['Radio', (await import('@mui/material/Radio')).default],
-      ['RadioGroup', (await import('@mui/material/RadioGroup')).default],
-      ['Select', (await import('@mui/material/Select')).default],
-      ['Switch', (await import('@mui/material/Switch')).default],
-      ['TextareaAutosize', (await import('@mui/material/TextareaAutosize')).default],
+      ['Button', (await import('@mui/material/Button/index.js')).default],
+      ['Checkbox', (await import('@mui/material/Checkbox/index.js')).default],
+      ['DragIndicator', (await import('@mui/icons-material/DragIndicator.js')).default],
+      ['FormControl', (await import('@mui/material/FormControl/index.js')).default],
+      ['FormControlLabel', (await import('@mui/material/FormControlLabel/index.js')).default],
+      ['Input', (await import('@mui/material/Input/index.js')).default],
+      ['ListSubheader', (await import('@mui/material/ListSubheader/index.js')).default],
+      ['MenuItem', (await import('@mui/material/MenuItem/index.js')).default],
+      ['Radio', (await import('@mui/material/Radio/index.js')).default],
+      ['RadioGroup', (await import('@mui/material/RadioGroup/index.js')).default],
+      ['Select', (await import('@mui/material/Select/index.js')).default],
+      ['Switch', (await import('@mui/material/Switch/index.js')).default],
+      ['TextareaAutosize', (await import('@mui/material/TextareaAutosize/index.js')).default],
     ] as [MuiComponentName, ComponentType<any>][]);
     // istanbul ignore next
+    // TODO: should we console.error only when NODE_ENV !== 'production'?
     componentPromise.catch(reason => console.error(reason));
     const componentImports = await componentPromise;
     componentCacheStatus = 'loaded';
     return Object.fromEntries(componentImports) as RQBMaterialComponents;
   } catch (err) {
-    // TODO: should we only console.error in __RQB_DEV__ mode?
+    // TODO: should we console.error only when NODE_ENV !== 'production'?
     console.error(err);
     componentCacheStatus = 'failed';
   }
@@ -65,7 +64,7 @@ export const useMuiComponents = (
         : muiComponentsFromContext
         ? { ...componentCache, ...muiComponentsFromContext }
         : /* TODO: why does this next line cause the app to crash? */
-          /* componentCache && !__RQB_DEV__ ? componentCache : */
+          /* componentCache && process.env.NODE_ENV === 'production' ? componentCache : */
           componentCache,
     [muiComponentsFromContext, preloadedComponents]
   );
@@ -87,7 +86,7 @@ export const useMuiComponents = (
           setMuiComponents(componentImports);
         } else {
           /* istanbul ignore else */
-          if (__RQB_DEV__ && !didWarnMaterialWithoutMUI) {
+          if (process.env.NODE_ENV !== 'production' && !didWarnMaterialWithoutMUI) {
             console.error(errorMaterialWithoutMUI);
             didWarnMaterialWithoutMUI = true;
           }

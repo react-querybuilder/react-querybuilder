@@ -19025,10 +19025,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "immer@npm:10.0.0"
-  checksum: 221279bdb8cd14dcecff4202b7d25c1cb635f6d856245a7314185af0d15a8b49516af1e6ad5c3858e08c8b3fad97d531acab77e92b9681d4eddb26313c118dfa
+"immer@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "immer@npm:10.0.1"
+  checksum: 24ab640e9d928385047f6f31bc77966117087236faf1a1f52b6b9a0159f78d543f648fecbf04d5e8c782a6f6cddd6eeb9e09c3b616a104632e701c7a22735654
   languageName: node
   linkType: hard
 
@@ -26539,7 +26539,7 @@ __metadata:
     clsx: ^1.2.1
     concurrently: ^8.0.1
     copyfiles: ^2.4.1
-    immer: ^10.0.0
+    immer: ^10.0.1
     jscodeshift: ^0.14.0
     query-string: ^8.1.0
     react: ^18.2.0

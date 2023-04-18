@@ -24,12 +24,6 @@ import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
 import { QueryBuilderAntD } from './index';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
-
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.
   const AntD = jest.requireActual('antd');

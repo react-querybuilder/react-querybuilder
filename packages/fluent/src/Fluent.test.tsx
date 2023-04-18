@@ -18,12 +18,6 @@ import { QueryBuilderFluent } from './index';
 
 const user = userEventSetup();
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
-
 testActionElement(FluentActionElement);
 testDragHandle(FluentDragHandle);
 testNotToggle(FluentNotToggle);

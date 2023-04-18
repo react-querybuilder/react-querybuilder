@@ -5,10 +5,7 @@ import type { PluginOption } from 'vite';
 import { defineConfig } from 'vite';
 import { name } from './package.json';
 
-export default defineConfig(({ command, mode }) => ({
-  define: {
-    __RQB_DEV__: command === 'build' && mode === 'production' ? 'false' : 'true',
-  },
+export default defineConfig(({ mode }) => ({
   build: {
     emptyOutDir: mode === 'production',
     minify: mode === 'production',

@@ -14,9 +14,6 @@ export default defineConfig(({ command, mode }) => {
       : { 'react-querybuilder': path.resolve(__dirname, '../react-querybuilder') };
 
   return {
-    define: {
-      __RQB_DEV__: command === 'build' && mode === 'production' ? 'false' : 'true',
-    },
     build: {
       emptyOutDir: mode === 'production',
       minify: mode === 'production',
