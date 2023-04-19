@@ -5,9 +5,13 @@ import type {
   RuleGroupTypeIC,
 } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
-import * as reactDnD from 'react-dnd';
-import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
-import { simulateDragDrop, simulateDragHover, wrapWithTestBackend } from 'react-dnd-test-utils';
+import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
+import {
+  simulateDragDrop,
+  simulateDragHover,
+  wrapWithTestBackend,
+} from 'react-dnd-test-utils/dist/index.js';
+import * as reactDnD from 'react-dnd/dist/index.js';
 import {
   formatQuery,
   getCompatContextProvider,
