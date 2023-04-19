@@ -18,7 +18,7 @@
     "start:native": "cd packages/native && bun run start",
     "demo": "bun run website:start",
     "build": "bun run build:base && concurrently --timings --max-processes 10 --names antd,bootstrap,bulma,chakra,dnd,fluent,mantine,material,native bun:build:antd bun:build:bootstrap bun:build:bulma bun:build:chakra bun:build:dnd bun:build:fluent bun:build:mantine bun:build:material bun:build:native",
-    "build:base": "concurrently --timings --names ts bun:build:ts && concurrently --timings --names ctx bun:build:ctx && concurrently --timings --names rqb bun:build:rqb",
+    "build:base": "bun run build:ts && bun run build:ctx && bun run build:rqb",
     "build:antd": "cd packages/antd && bun run build",
     "build:bootstrap": "cd packages/bootstrap && bun run build",
     "build:bulma": "cd packages/bulma && bun run build",
