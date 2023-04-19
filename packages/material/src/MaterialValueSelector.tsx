@@ -1,4 +1,4 @@
-import type { SelectChangeEvent } from '@mui/material/Select';
+import type { SelectChangeEvent } from '@mui/material';
 import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import { useContext } from 'react';
