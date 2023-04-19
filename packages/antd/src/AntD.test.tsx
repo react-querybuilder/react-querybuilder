@@ -3,7 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/es/select';
 import dayjs from 'dayjs';
-import type { OptionGroupFC } from 'rc-select/lib/OptGroup';
+import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
