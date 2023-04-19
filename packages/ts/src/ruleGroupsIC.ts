@@ -15,6 +15,8 @@ export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = st
   RuleGroupType<R, C>,
   'combinator' | 'rules'
 > & {
+  // TODO: prohibit combinator property in IC groups
+  // combinator?: never;
   rules: RuleGroupICArray<RuleGroupTypeIC<R, C>, R, C>;
   /**
    * Only used when adding a rule to a query that uses independent combinators
