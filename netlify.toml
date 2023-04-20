@@ -1,4 +1,4 @@
 [build]
 
-command = "yarn run build && yarn run website:build"
+command = "npm i -g bun && bun run build && bun run website:build"
 publish = "website/build"
