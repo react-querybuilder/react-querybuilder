@@ -42,13 +42,13 @@
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.37",
     "@vitejs/plugin-react-swc": "^3.3.0",
-    "framer-motion": "^10.12.2",
+    "framer-motion": "^10.12.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.1.4",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
-    "vite": "^4.2.1"
+    "vite": "^4.3.1"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

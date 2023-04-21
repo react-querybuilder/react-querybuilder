@@ -38,7 +38,7 @@
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.37",
     "@vitejs/plugin-react-swc": "^3.3.0",
-    "antd": "^5.4.2",
+    "antd": "^5.4.4",
     "dayjs": "^1.11.7",
     "rc-picker": "^3.6.2",
     "rc-select": "^14.4.3",
@@ -47,7 +47,7 @@
     "react-querybuilder": "^6.1.4",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
-    "vite": "^4.2.1"
+    "vite": "^4.3.1"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=4.7.0",
