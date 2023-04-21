@@ -1,4 +1,5 @@
 [build]
-
+NODE_OPTIONS = "--max-old-space-size=4096"
+NODE_VERSION = "18.16.0"
 command = "npm i -g bun && bun run build && bun run website:build"
 publish = "website/build"
