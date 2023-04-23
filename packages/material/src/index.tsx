@@ -45,12 +45,8 @@ export const QueryBuilderMaterial: QueryBuilderContextProvider<{
 }> = ({ muiComponents: muiComponentsProp, ...props }) => {
   const muiComponents = useMuiComponents(muiComponentsProp);
 
-  // istanbul ignore next
   const ctxValue = useMemo(
-    () =>
-      muiComponents && muiComponentsProp
-        ? { ...muiComponents, ...muiComponentsProp }
-        : muiComponents ?? muiComponentsProp ?? null,
+    () => ({ ...muiComponents, ...muiComponentsProp }),
     [muiComponents, muiComponentsProp]
   );
 

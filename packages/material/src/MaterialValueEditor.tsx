@@ -38,7 +38,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     selectorComponent: SelectorComponent = MaterialValueSelector,
     ...propsForValueSelector
   } = propsForValueEditor;
-  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+  const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,

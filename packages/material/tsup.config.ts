@@ -8,7 +8,7 @@ export default defineConfig(options => {
       'react-querybuilder_material': 'src/index.tsx',
     },
     sourcemap: true,
-    external: ['react-querybuilder'],
+    // external: ['react-querybuilder'],
     ...options,
   };
 

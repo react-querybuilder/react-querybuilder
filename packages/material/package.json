@@ -54,6 +54,7 @@
     "@emotion/styled": "^11",
     "@mui/icons-material": ">=5.0.0",
     "@mui/material": ">=5.0.0",
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-querybuilder": "^6.1.4"
   }
 }
