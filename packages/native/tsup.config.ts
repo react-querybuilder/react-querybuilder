@@ -8,7 +8,7 @@ export default defineConfig(options => {
       'react-querybuilder_native': 'src/index.ts',
     },
     sourcemap: true,
-    external: ['react-native', 'react-querybuilder'],
+    external: ['react-native'],
     ...options,
   };
 

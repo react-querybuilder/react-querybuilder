@@ -48,6 +48,7 @@
   "peerDependencies": {
     "@fluentui/react-components": "^9",
     "dayjs": ">=1",
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-querybuilder": "^6.1.4"
   }
 }

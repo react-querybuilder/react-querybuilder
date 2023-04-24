@@ -50,6 +50,7 @@
   "peerDependencies": {
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-querybuilder": "^6.1.4"
   }
 }

@@ -8,7 +8,6 @@ export default defineConfig(options => {
       'react-querybuilder_mantine': 'src/index.ts',
     },
     sourcemap: true,
-    external: ['react-querybuilder'],
     ...options,
   };
 

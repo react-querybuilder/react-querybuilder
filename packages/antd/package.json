@@ -52,6 +52,7 @@
   "peerDependencies": {
     "@ant-design/icons": ">=4.7.0",
     "antd": ">=4.10.0",
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-querybuilder": "^6.1.4"
   }
 }

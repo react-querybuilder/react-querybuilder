@@ -47,6 +47,7 @@
   },
   "peerDependencies": {
     "bulma": "^0.9.3",
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-querybuilder": "^6.1.4"
   }
 }

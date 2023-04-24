@@ -53,6 +53,7 @@
     "@mantine/dates": ">=5",
     "@mantine/hooks": ">=5",
     "dayjs": ">=1",
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-querybuilder": "^6.1.4"
   }
 }

@@ -8,7 +8,6 @@ export default defineConfig(options => {
       'react-querybuilder_dnd': 'src/index.ts',
     },
     sourcemap: true,
-    external: ['react-dnd', 'react-dnd-html5-backend', 'react-querybuilder'],
     ...options,
   };
 
