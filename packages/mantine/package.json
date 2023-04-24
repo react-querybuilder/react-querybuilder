@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/mantine",
   "description": "Custom Mantine components for react-querybuilder",
-  "version": "6.2.0-alpha.0",
+  "version": "6.2.0-alpha.1",
   "publishConfig": {
     "access": "public"
   },
@@ -36,14 +36,14 @@
     "@mantine/core": "^5.10.5",
     "@mantine/dates": "^5.10.5",
     "@mantine/hooks": "^5.10.5",
-    "@react-querybuilder/ts": "^6.2.0-alpha.0",
+    "@react-querybuilder/ts": "^6.2.0-alpha.1",
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.37",
     "@vitejs/plugin-react-swc": "^3.3.0",
     "dayjs": "^1.11.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.2.0-alpha.0",
+    "react-querybuilder": "^6.2.0-alpha.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
     "vite": "^4.3.1"
