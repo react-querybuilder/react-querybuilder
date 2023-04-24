@@ -9850,6 +9850,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-querybuilder/antd@link:../packages/antd::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/antd@link:../packages/antd::locator=website%40workspace%3Awebsite"
+  languageName: node
+  linkType: soft
+
 "@react-querybuilder/antd@workspace:packages/antd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
@@ -9876,6 +9882,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-querybuilder/bootstrap@link:../packages/bootstrap::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/bootstrap@link:../packages/bootstrap::locator=website%40workspace%3Awebsite"
+  languageName: node
+  linkType: soft
+
 "@react-querybuilder/bootstrap@workspace:packages/bootstrap":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
@@ -9900,6 +9912,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-querybuilder/bulma@link:../packages/bulma::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/bulma@link:../packages/bulma::locator=website%40workspace%3Awebsite"
+  languageName: node
+  linkType: soft
+
 "@react-querybuilder/bulma@workspace:packages/bulma":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
@@ -9919,6 +9937,12 @@ __metadata:
     bulma: ^0.9.3
     react: ">=16.8.0"
   languageName: unknown
+  linkType: soft
+
+"@react-querybuilder/chakra@link:../packages/chakra::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/chakra@link:../packages/chakra::locator=website%40workspace%3Awebsite"
+  languageName: node
   linkType: soft
 
 "@react-querybuilder/chakra@workspace:packages/chakra":
@@ -9971,6 +9995,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-querybuilder/dnd@link:../packages/dnd::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/dnd@link:../packages/dnd::locator=website%40workspace%3Awebsite"
+  languageName: node
+  linkType: soft
+
 "@react-querybuilder/dnd@workspace:packages/dnd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
@@ -9998,6 +10028,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-querybuilder/fluent@link:../packages/fluent::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/fluent@link:../packages/fluent::locator=website%40workspace%3Awebsite"
+  languageName: node
+  linkType: soft
+
 "@react-querybuilder/fluent@workspace:packages/fluent":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/fluent@workspace:packages/fluent"
@@ -10018,6 +10054,12 @@ __metadata:
     dayjs: ">=1"
     react: ">=16.8.0"
   languageName: unknown
+  linkType: soft
+
+"@react-querybuilder/mantine@link:../packages/mantine::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/mantine@link:../packages/mantine::locator=website%40workspace%3Awebsite"
+  languageName: node
   linkType: soft
 
 "@react-querybuilder/mantine@workspace:packages/mantine":
@@ -10045,6 +10087,12 @@ __metadata:
     dayjs: ">=1"
     react: ">=16.8.0"
   languageName: unknown
+  linkType: soft
+
+"@react-querybuilder/material@link:../packages/material::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "@react-querybuilder/material@link:../packages/material::locator=website%40workspace%3Awebsite"
+  languageName: node
   linkType: soft
 
 "@react-querybuilder/material@workspace:packages/material":
@@ -26540,6 +26588,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"react-querybuilder@link:../packages/react-querybuilder::locator=website%40workspace%3Awebsite":
+  version: 0.0.0-use.local
+  resolution: "react-querybuilder@link:../packages/react-querybuilder::locator=website%40workspace%3Awebsite"
+  languageName: node
+  linkType: soft
+
 "react-refresh@npm:^0.4.0":
   version: 0.4.3
   resolution: "react-refresh@npm:0.4.3"
@@ -30697,14 +30751,14 @@ __metadata:
     "@mdx-js/react": ^1.6.22
     "@mui/icons-material": ^5.11.16
     "@mui/material": ^5.12.1
-    "@react-querybuilder/antd": "workspace:packages/antd"
-    "@react-querybuilder/bootstrap": "workspace:packages/bootstrap"
-    "@react-querybuilder/bulma": "workspace:packages/bulma"
-    "@react-querybuilder/chakra": "workspace:packages/chakra"
-    "@react-querybuilder/dnd": "workspace:packages/dnd"
-    "@react-querybuilder/fluent": "workspace:packages/fluent"
-    "@react-querybuilder/mantine": "workspace:packages/mantine"
-    "@react-querybuilder/material": "workspace:packages/material"
+    "@react-querybuilder/antd": "link:../packages/antd"
+    "@react-querybuilder/bootstrap": "link:../packages/bootstrap"
+    "@react-querybuilder/bulma": "link:../packages/bulma"
+    "@react-querybuilder/chakra": "link:../packages/chakra"
+    "@react-querybuilder/dnd": "link:../packages/dnd"
+    "@react-querybuilder/fluent": "link:../packages/fluent"
+    "@react-querybuilder/mantine": "link:../packages/mantine"
+    "@react-querybuilder/material": "link:../packages/material"
     "@svgr/webpack": ^7.0.0
     "@tsconfig/docusaurus": ^1.0.7
     "@types/pako": ^2.0.0
@@ -30732,7 +30786,7 @@ __metadata:
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
     react-modal: ^3.16.1
-    react-querybuilder: "workspace:packages/react-querybuilder"
+    react-querybuilder: "link:../packages/react-querybuilder"
     react-select: ^5.7.2
     react-slider: ^2.0.4
     sass: ^1.62.0
