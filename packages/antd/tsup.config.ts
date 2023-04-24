@@ -8,7 +8,7 @@ export default defineConfig(options => {
       'react-querybuilder_antd': 'src/index.ts',
     },
     sourcemap: true,
-    external: ['dayjs', 'rc-picker', 'rc-select'],
+    external: ['dayjs', 'rc-select'],
     ...options,
   };
 
