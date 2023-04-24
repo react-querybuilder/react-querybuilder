@@ -8,11 +8,10 @@ export default defineConfig(options => {
       'react-querybuilder_antd': 'src/index.ts',
     },
     sourcemap: true,
-    external: ['dayjs', 'rc-select'],
     ...options,
   };
 
-  const productionOptions = {
+  const productionOptions: Options = {
     minify: true,
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),

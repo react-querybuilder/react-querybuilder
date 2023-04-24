@@ -11,7 +11,7 @@ export default defineConfig(options => {
     ...options,
   };
 
-  const productionOptions = {
+  const productionOptions: Options = {
     minify: true,
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),
