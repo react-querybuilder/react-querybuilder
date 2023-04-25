@@ -182,7 +182,13 @@ This list shows which library components' props will be accepted by the compatib
 
 ## Preload MUI components
 
-By default, the `@react-querybuilder/material` compatibility package loads components from `@mui/material` asynchronously in order to properly inherit the theme context ([issue](https://github.com/react-querybuilder/react-querybuilder/issues/321)/[PR](https://github.com/react-querybuilder/react-querybuilder/pull/324)). This means that the query builder will initially be rendered with the default components, and then—very quickly, if all goes well—the MUI components will replace them.
+:::tip
+
+As of v6.2.0, MUI components will be loaded synchronously. Preloading the components is no longer necessary and there will be no flash of unstyled content.
+
+:::
+
+Prior to v6.2.0, the `@react-querybuilder/material` compatibility package would load components from `@mui/material` asynchronously in order to properly inherit the theme context ([issue](https://github.com/react-querybuilder/react-querybuilder/issues/321)/[PR](https://github.com/react-querybuilder/react-querybuilder/pull/324)). This meant that the query builder would initially be rendered with the default components, and then—very quickly, if all went well—the MUI components would replace them.
 
 To avoid rendering the default components and render the MUI components immediately instead, import the MUI components in your application code and assign them as properties of the `muiComponents` prop on the `QueryBuilderMaterial` context provider. (Each individual compatibility component also accepts an optional `muiComponents` prop.)
 
