@@ -1,4 +1,4 @@
-import DragIndicator from '@mui/icons-material/DragIndicator';
+import { DragIndicator } from '@mui/icons-material';
 import type {
   FormControlProps,
   ListSubheaderProps,
@@ -6,19 +6,21 @@ import type {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from '@mui/material/Input';
-import ListSubheader from '@mui/material/ListSubheader';
-import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Select from '@mui/material/Select';
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  Input,
+  ListSubheader,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Switch,
+  TextareaAutosize,
+} from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
 import type { DragHandleProps, Schema } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
@@ -36,19 +38,13 @@ import {
   testValueSelector,
 } from 'react-querybuilder/genericTests';
 import 'regenerator-runtime/runtime';
-import { QueryBuilderMaterial } from './index';
+import { QueryBuilderMaterial } from '.';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
 import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import type { RQBMaterialComponents } from './types';
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
 
 jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
   <optgroup label={children as string} />

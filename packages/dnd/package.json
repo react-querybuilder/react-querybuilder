@@ -1,29 +1,23 @@
 {
   "name": "@react-querybuilder/dnd",
   "description": "Drag-and-drop-enabled version of react-querybuilder",
-  "version": "6.1.4",
+  "version": "6.2.0-alpha.3",
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_dnd.legacy-esm.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "types": "./index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/react-querybuilder_dnd.d.ts",
+      "import": "./dist/react-querybuilder_dnd.mjs",
+      "require": "./dist/cjs/index.js"
     }
   },
-  "types": "dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder_dnd.d.ts",
   "files": [
-    "dist",
-    "index.d.mts"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -34,16 +28,14 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "vite",
-    "build": "vite build && concurrently --timings --names dev,types bun:build:dev bun:build:types",
-    "build:dev": "vite build --mode development",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@react-querybuilder/ts": "^6.1.4",
+    "@react-querybuilder/ts": "^6.2.0-alpha.3",
     "@testing-library/react": "^14.0.0",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.15.13",
     "@types/react": "^18.0.37",
     "@vitejs/plugin-react-swc": "^3.3.0",
     "concurrently": "^8.0.1",
@@ -53,14 +45,15 @@
     "react-dnd-test-backend": "^16.0.1",
     "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.1.4",
+    "react-querybuilder": "^6.2.0-alpha.3",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
-    "vite": "^4.2.1"
+    "vite": "^4.3.1"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dnd": ">=14.0.0",
-    "react-dnd-html5-backend": ">=14.0.0"
+    "react-dnd-html5-backend": ">=14.0.0",
+    "react-querybuilder": "^6.1.4"
   }
 }

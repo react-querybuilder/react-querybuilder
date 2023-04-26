@@ -1,13 +1,11 @@
 import vitePluginReact from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import type { PluginOption } from 'vite';
 import { defineConfig } from 'vite';
 import { name } from './package.json';
 
-export default defineConfig(({ command, mode }) => ({
-  define: {
-    __RQB_DEV__: command === 'build' && mode === 'production' ? 'false' : 'true',
-  },
+export default defineConfig(({ mode }) => ({
   build: {
     emptyOutDir: mode === 'production',
     minify: mode === 'production',
@@ -40,7 +38,7 @@ export default defineConfig(({ command, mode }) => ({
       gzipSize: true,
       brotliSize: true,
       title: `Build stats (${name})`,
-    })),
+    })) as PluginOption,
   ],
   server: {
     port: 3100,

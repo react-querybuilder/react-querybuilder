@@ -3,7 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/es/select';
 import dayjs from 'dayjs';
-import type { OptionGroupFC } from 'rc-select/lib/OptGroup';
+import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
@@ -23,12 +23,6 @@ import { AntDNotToggle } from './AntDNotToggle';
 import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
 import { QueryBuilderAntD } from './index';
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
 
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.

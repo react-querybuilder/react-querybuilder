@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/ts",
-  "version": "6.1.4",
+  "version": "6.2.0-alpha.3",
   "description": "TypeScript types for react-querybuilder",
   "type": "module",
   "main": "./src/index.ts",
@@ -23,7 +23,7 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.15.13",
     "@types/react": "^18.0.37",
     "react": "^18.2.0",
     "typescript": "^4.9.5"

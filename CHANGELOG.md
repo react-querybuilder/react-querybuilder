@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- [#499] `@react-querybuilder/material` no longer loads MUI components asynchronously. Therefore, the components no longer need to be preloaded to avoid a flash of unstyled content.
+
+### Fixed
+
 - `transformQuery` with the `deleteRemappedProperties` option set to `true` (which is the default) will not attempt to `delete` properties that do not exist on the object (per `Object.hasOwn()`).
 
 ## [v6.1.4] - 2023-03-27
@@ -1304,6 +1310,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#486]: https://github.com/react-querybuilder/react-querybuilder/pull/486
 [#488]: https://github.com/react-querybuilder/react-querybuilder/pull/488
 [#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
+[#499]: https://github.com/react-querybuilder/react-querybuilder/pull/499
 
 <!-- Release comparison links -->
 

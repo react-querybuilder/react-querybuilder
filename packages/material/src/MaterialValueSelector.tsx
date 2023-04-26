@@ -1,14 +1,14 @@
-import type { SelectChangeEvent } from '@mui/material/Select';
+import type { Select, SelectChangeEvent } from '@mui/material';
 import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import { useContext } from 'react';
 import { useValueSelector, ValueSelector } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents, SelectType } from './types';
+import type { RQBMaterialComponents } from './types';
 import { toOptions } from './utils';
 
 type MaterialValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<SelectType> & {
+  ComponentPropsWithoutRef<typeof Select> & {
     muiComponents?: RQBMaterialComponents;
   };
 
@@ -34,7 +34,7 @@ export const MaterialValueSelector = ({
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialValueSelectorProps) => {
-  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+  const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
 
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 

@@ -25,6 +25,7 @@
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
     "react/display-name": "off",
+    "react/no-unstable-nested-components": "error",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off"
   },

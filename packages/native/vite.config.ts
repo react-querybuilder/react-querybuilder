@@ -6,10 +6,7 @@ import { name } from './package.json';
 
 const packageAbbr = name.replace('@react-querybuilder/', '');
 
-export default defineConfig(({ command }) => ({
-  define: {
-    __RQB_DEV__: command === 'build' ? 'false' : 'true',
-  },
+export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
@@ -45,4 +42,4 @@ export default defineConfig(({ command }) => ({
   server: {
     port: 3108,
   },
-}));
+});

@@ -13,6 +13,23 @@ import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from '.
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
+// TODO: eventually refactor the RuleGroup/IC types to be either/or in ALL cases.
+// Example for `add`:
+/*
+export function add<RG extends RuleGroupType>(
+  query: RG,
+  ruleOrGroup: RG | RuleType,
+  parentPath: number[],
+  options?: Omit<AddOptions, 'combinatorPreceding'>
+): RG;
+export function add<RGIC extends RuleGroupTypeIC>(
+  query: RGIC,
+  ruleOrGroup: RGIC | RuleType,
+  parentPath: number[],
+  options?: AddOptions
+): RGIC;
+*/
+
 export interface AddOptions {
   /**
    * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used

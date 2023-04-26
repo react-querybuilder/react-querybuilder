@@ -1,4 +1,4 @@
 {
   "main": "../dist/transformQuery.js",
-  "types": "../dist/types/utils/transformQuery.d.ts"
+  "types": "../dist/transformQuery.d.ts"
 }

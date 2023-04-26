@@ -1,4 +1,19 @@
 [build]
-
 command = "npm i -g bun && bun run build && bun run website:build"
 publish = "website/build"
+
+[context.production.environment]
+NODE_OPTIONS = "--max-old-space-size=4096"
+NODE_VERSION = "18.16.0"
+
+[context.deploy-preview.environment]
+NODE_OPTIONS = "--max-old-space-size=4096"
+NODE_VERSION = "18.16.0"
+
+[context.branch-deploy.environment]
+NODE_OPTIONS = "--max-old-space-size=4096"
+NODE_VERSION = "18.16.0"
+
+[context.dev.environment]
+NODE_OPTIONS = "--max-old-space-size=4096"
+NODE_VERSION = "18.16.0"

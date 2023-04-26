@@ -1,7 +1,7 @@
 import vitePluginReact from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import type { AliasOptions } from 'vite';
+import type { AliasOptions, PluginOption } from 'vite';
 import { defineConfig } from 'vite';
 import { name } from './package.json';
 
@@ -14,9 +14,6 @@ export default defineConfig(({ command, mode }) => {
       : { 'react-querybuilder': path.resolve(__dirname, '../react-querybuilder') };
 
   return {
-    define: {
-      __RQB_DEV__: command === 'build' && mode === 'production' ? 'false' : 'true',
-    },
     build: {
       emptyOutDir: mode === 'production',
       minify: mode === 'production',
@@ -59,7 +56,7 @@ export default defineConfig(({ command, mode }) => {
         gzipSize: true,
         brotliSize: true,
         title: `Build stats (${packageAbbr})`,
-      }),
+      }) as PluginOption,
     ],
     server: {
       port: 3106,
