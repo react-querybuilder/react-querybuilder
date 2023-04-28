@@ -57,8 +57,6 @@ jobs:
           install-command: yarn --immutable
       - name: Build packages
         run: bun run build
-      - name: Build website
-        run: bun run website:build
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.0
         with:
