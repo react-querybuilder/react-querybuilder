@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.2.0] - 2023-04-28
+
 ### Changed
 
 - [#499] `@react-querybuilder/material` no longer loads MUI components asynchronously. Therefore, the components no longer need to be preloaded to avoid a flash of unstyled content.
@@ -1314,7 +1318,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.2.0...HEAD
+[v6.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.4...v6.2.0
 [v6.1.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.3...v6.1.4
 [v6.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.2...v6.1.3
 [v6.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.0...v6.1.2
