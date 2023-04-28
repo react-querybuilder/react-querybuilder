@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bootstrap",
   "description": "Custom Bootstrap components for react-querybuilder",
-  "version": "6.2.0-alpha.3",
+  "version": "6.2.0",
   "publishConfig": {
     "access": "public"
   },
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@popperjs/core": "^2.11.7",
-    "@react-querybuilder/ts": "^6.2.0-alpha.3",
+    "@react-querybuilder/ts": "^6.2.0",
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.37",
     "@vitejs/plugin-react-swc": "^3.3.0",
@@ -42,7 +42,7 @@
     "bootstrap-icons": "^1.10.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.2.0-alpha.3",
+    "react-querybuilder": "^6.2.0",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
     "vite": "^4.3.1"
@@ -51,6 +51,6 @@
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
     "react": ">=16.8.0",
-    "react-querybuilder": "^6.1.4"
+    "react-querybuilder": "^6.2.0"
   }
 }
