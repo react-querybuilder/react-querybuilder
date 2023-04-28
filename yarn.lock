@@ -9879,7 +9879,7 @@ __metadata:
     "@ant-design/icons": ">=4.7.0"
     antd: ">=4.10.0"
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -9910,7 +9910,7 @@ __metadata:
     bootstrap: ">=5"
     bootstrap-icons: ">=1.7.0"
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -9938,7 +9938,7 @@ __metadata:
   peerDependencies:
     bulma: ^0.9.3
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -9976,7 +9976,7 @@ __metadata:
     "@emotion/styled": ^11
     framer-motion: ^6.3.3
     react: ">=18.1.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -10029,7 +10029,7 @@ __metadata:
     react: ">=16.8.0"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -10058,7 +10058,7 @@ __metadata:
     "@fluentui/react-components": ^9
     dayjs: ">=1"
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -10092,7 +10092,7 @@ __metadata:
     "@mantine/hooks": ">=5"
     dayjs: ">=1"
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -10127,7 +10127,7 @@ __metadata:
     "@mui/icons-material": ">=5.0.0"
     "@mui/material": ">=5.0.0"
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
@@ -10153,7 +10153,7 @@ __metadata:
     vite: ^4.3.1
   peerDependencies:
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
+    react-querybuilder: ^6.2.0
   languageName: unknown
   linkType: soft
 
