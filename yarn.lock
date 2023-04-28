@@ -9996,7 +9996,6 @@ __metadata:
     vite: ^4.3.1
   peerDependencies:
     react: ">=16.8.0"
-    react-querybuilder: ^6.1.4
   languageName: unknown
   linkType: soft
 

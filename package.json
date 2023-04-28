@@ -54,7 +54,7 @@
     "generate-examples": "bun ./examples/generateExamples.ts && bun --bun x prettier --write examples/** --loglevel=silent",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
     "outdated": "yarn upgrade-interactive",
-    "version": "yarn && concurrently --timings --names examples,packages bun:generate-examples bun:build && concurrently \"git add examples yarn.lock\"",
+    "version": "yarn && bun ./version.ts && concurrently --timings --names examples,packages bun:generate-examples bun:build && concurrently \"git add examples packages yarn.lock\"",
     "website:start": "cd website && bun run start",
     "website:build": "cd website && bun run build",
     "website:serve": "cd website && bun run serve",
