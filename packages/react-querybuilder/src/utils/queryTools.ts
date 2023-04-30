@@ -311,8 +311,7 @@ export const move = <RG extends RuleGroupTypeAny>(
       // real new path should therefore be one or two higher than `newPath`.
       newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
     }
-    const newNewParentPath = getParentPath(newNewPath);
-    const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
+    const parentToInsertInto = findPath(getParentPath(newNewPath), draft) as RG;
     const newIndex = newNewPath[newNewPath.length - 1];
 
     /**

@@ -50,6 +50,11 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
+  /**
+   * Dragged rules/groups will be moved immediately to the location over which
+   * they are hovered instead of waiting to be dropped.
+   */
+  moveWhileDragging?: boolean;
 };
 
 export type QueryBuilderDndContextProps = {
@@ -58,4 +63,5 @@ export type QueryBuilderDndContextProps = {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop?: typeof import('react-dnd')['useDrop'];
   baseControls: Pick<Controls, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
+  moveWhileDragging?: boolean;
 };
