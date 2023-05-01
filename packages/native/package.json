@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@babel/preset-flow": "^7.21.4",
-    "@react-querybuilder/ts": "^6.2.0",
     "@testing-library/jest-native": "^5.4.2",
     "@testing-library/react-native": "^12.0.1",
     "@types/react": "^18.0.37",

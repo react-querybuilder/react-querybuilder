@@ -1,6 +1,6 @@
 import type { MultiSelectProps, SelectProps } from '@mantine/core';
 import { MultiSelect, Select } from '@mantine/core';
-import type { VersatileSelectorProps } from '@react-querybuilder/ts';
+import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { optionListMapNameToValue } from './utils';
 

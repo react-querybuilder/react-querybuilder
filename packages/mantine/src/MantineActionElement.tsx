@@ -1,6 +1,6 @@
 import type { ButtonProps } from '@mantine/core';
 import { Button } from '@mantine/core';
-import type { ActionProps } from '@react-querybuilder/ts';
+import type { ActionProps } from 'react-querybuilder';
 
 type MantineActionProps = ActionProps & Partial<ButtonProps>;
 

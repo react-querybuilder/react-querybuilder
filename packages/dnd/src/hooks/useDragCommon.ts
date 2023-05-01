@@ -4,7 +4,7 @@ import type {
   DraggedItem,
   DropResult,
   QueryActions,
-} from '@react-querybuilder/ts';
+} from 'react-querybuilder';
 import { getParentPath } from 'react-querybuilder';
 
 type UseDragCommonProps = {

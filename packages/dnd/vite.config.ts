@@ -26,7 +26,6 @@ export default defineConfig(({ command, mode }) => {
       },
       rollupOptions: {
         external: [
-          '@react-querybuilder/ctx',
           'immer',
           'react',
           'react/jsx-runtime',
@@ -36,7 +35,6 @@ export default defineConfig(({ command, mode }) => {
         ],
         output: {
           globals: {
-            '@react-querybuilder/ctx': 'ReactQueryBuilderContext',
             immer: 'immer',
             react: 'React',
             'react-dnd': 'ReactDnD',

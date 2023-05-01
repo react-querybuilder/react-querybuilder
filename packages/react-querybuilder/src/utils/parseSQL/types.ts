@@ -1,4 +1,4 @@
-import type { DefaultCombinatorNameExtended } from '@react-querybuilder/ts';
+import type { DefaultCombinatorNameExtended } from '../../types';
 
 type AnyCase<T extends string> = string extends T
   ? string

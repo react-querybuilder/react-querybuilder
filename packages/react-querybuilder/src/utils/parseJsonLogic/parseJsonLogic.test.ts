@@ -4,7 +4,7 @@ import type {
   OptionGroup,
   RQBJsonLogic,
   ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { parseJsonLogic } from './parseJsonLogic';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };

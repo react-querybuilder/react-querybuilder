@@ -1,12 +1,12 @@
+import type { Ref } from 'react';
+import { useRef } from 'react';
 import type {
   DndDropTargetType,
   DraggedItem,
   DropCollection,
   DropEffect,
   DropResult,
-} from '@react-querybuilder/ts';
-import type { Ref } from 'react';
-import { useRef } from 'react';
+} from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 
 interface UseInlineCombinatorDndParams {

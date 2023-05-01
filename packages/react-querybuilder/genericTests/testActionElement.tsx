@@ -1,5 +1,5 @@
-import type { ActionWithRulesProps, Schema } from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
+import type { ActionWithRulesProps, Schema } from '../src/types/';
 import { userEventSetup } from './utils';
 
 export const defaultActionElementProps: ActionWithRulesProps = {

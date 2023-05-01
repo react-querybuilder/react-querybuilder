@@ -1,11 +1,11 @@
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+} from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';

@@ -1,4 +1,4 @@
-import type { DndDropTargetType, DropEffect } from '@react-querybuilder/ts';
+import type { DndDropTargetType, DropEffect } from 'react-querybuilder';
 
 export type GenericDropTargetProps = {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports

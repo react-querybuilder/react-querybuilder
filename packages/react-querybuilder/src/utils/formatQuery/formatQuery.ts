@@ -1,3 +1,4 @@
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   DefaultCombinatorName,
   ExportFormat,
@@ -13,8 +14,7 @@ import type {
   RuleValidator,
   ValidationMap,
   ValidationResult,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+} from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';

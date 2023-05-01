@@ -33,7 +33,6 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@react-querybuilder/ts": "^6.2.0",
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.37",
     "@vitejs/plugin-react-swc": "^3.3.0",

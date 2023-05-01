@@ -1,4 +1,4 @@
-import type { ActionProps } from '@react-querybuilder/ts';
+import type { ActionProps } from '../types';
 
 export const ActionElement = ({
   className,

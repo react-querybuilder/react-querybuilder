@@ -11,7 +11,7 @@ import type {
   RuleProps,
   RuleType,
   ValidationMap,
-} from '@react-querybuilder/ts';
+} from '../types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { consoleMocks } from '../../genericTests';

@@ -1,9 +1,5 @@
-import type {
-  RuleGroupType,
-  RuleGroupTypeIC,
-  RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
 import { uuidV4regex } from '../../genericTests/generateIDtests';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types/index.noReact';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {

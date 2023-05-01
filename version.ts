@@ -7,7 +7,7 @@ const { version } = import.meta.require('./lerna.json');
 const packagesDir = `${import.meta.dir}/packages`;
 
 const packages = (await readdir(packagesDir, { withFileTypes: true })).filter(
-  p => p.isDirectory() && !['ctx', 'react-querybuilder', 'ts'].includes(p.name)
+  p => p.isDirectory() && p.name !== 'react-querybuilder'
 );
 
 for (const pkg of packages) {

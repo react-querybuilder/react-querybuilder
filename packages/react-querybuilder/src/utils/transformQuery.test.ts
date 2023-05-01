@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/dist/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
 import { transformQuery } from './transformQuery';
 
 const query: RuleGroupType = {

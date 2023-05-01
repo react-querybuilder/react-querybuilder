@@ -1,4 +1,4 @@
-import type { Option, OptionGroup } from '@react-querybuilder/ts/dist/index.noReact';
+import type { Option, OptionGroup } from '../types/index.noReact';
 
 export const uniqByName = <T extends { name: string }>(originalArray: T[]): T[] => {
   const names = new Set<string>();

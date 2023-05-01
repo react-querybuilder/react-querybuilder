@@ -1,7 +1,7 @@
 import type { TextProps } from '@fluentui/react-components';
 import { Text } from '@fluentui/react-components';
-import type { DragHandleProps } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 
 export const FluentDragHandle = forwardRef<HTMLSpanElement, DragHandleProps & TextProps>(
   ({ className, title, label, testID, schema: _schema, ...otherProps }, dragRef) => (

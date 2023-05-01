@@ -1,5 +1,5 @@
-import type { ValueSelectorProps } from '@react-querybuilder/ts';
 import { useSelectElementChangeHandler, useValueSelector } from '../hooks';
+import type { ValueSelectorProps } from '../types';
 import { toOptions } from '../utils';
 
 export const ValueSelector = ({

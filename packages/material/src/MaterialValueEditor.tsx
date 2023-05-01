@@ -1,5 +1,5 @@
-import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { useContext } from 'react';
+import type { ValueEditorProps } from 'react-querybuilder';
 import {
   getFirstOption,
   standardClassnames,

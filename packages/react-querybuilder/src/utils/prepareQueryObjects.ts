@@ -1,10 +1,10 @@
+import { produce } from 'immer';
 import type {
   RuleGroupArray,
   RuleGroupICArray,
   RuleGroupTypeAny,
   RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { produce } from 'immer';
+} from '../types/index.noReact';
 import { generateID } from './generateID';
 
 export interface PreparerOptions {

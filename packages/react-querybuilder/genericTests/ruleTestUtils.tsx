@@ -1,3 +1,10 @@
+import { forwardRef } from 'react';
+import { defaultControlElements } from '../src/components';
+import {
+  defaultControlClassnames,
+  defaultTranslations as translations,
+  TestID,
+} from '../src/defaults';
 import type {
   ActionProps,
   Classnames,
@@ -9,14 +16,7 @@ import type {
   RuleProps,
   Schema,
   ValueEditorProps,
-} from '@react-querybuilder/ts';
-import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/components';
-import {
-  defaultControlClassnames,
-  defaultTranslations as translations,
-  TestID,
-} from '../src/defaults';
+} from '../src/types/';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: Field[]) =>

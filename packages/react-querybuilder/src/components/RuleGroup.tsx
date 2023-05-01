@@ -1,8 +1,8 @@
-import type { RuleGroupProps } from '@react-querybuilder/ts';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { Fragment } from 'react';
 import { TestID } from '../defaults';
 import { useRuleGroup } from '../hooks';
+import type { RuleGroupProps } from '../types';
 import { pathsAreEqual } from '../utils';
 
 export const RuleGroup = (props: RuleGroupProps) => {

@@ -1,6 +1,6 @@
 import type { SwitchProps } from '@fluentui/react-components';
 import { Switch } from '@fluentui/react-components';
-import type { NotToggleProps } from '@react-querybuilder/ts';
+import type { NotToggleProps } from 'react-querybuilder';
 
 type FluentNotToggleProps = NotToggleProps & Partial<SwitchProps>;
 

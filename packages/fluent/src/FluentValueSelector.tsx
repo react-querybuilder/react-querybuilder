@@ -1,6 +1,6 @@
 import type { DropdownProps, SelectProps } from '@fluentui/react-components';
 import { Dropdown, Select } from '@fluentui/react-components';
-import type { VersatileSelectorProps } from '@react-querybuilder/ts';
+import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toArray, toOptions, useValueSelector } from 'react-querybuilder';
 import { toDropdownOptions } from './utils';
 

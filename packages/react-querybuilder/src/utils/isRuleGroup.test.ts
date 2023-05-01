@@ -1,8 +1,4 @@
-import type {
-  RuleGroupType,
-  RuleGroupTypeIC,
-  RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types/index.noReact';
 import { isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 
 const rule: RuleType = {

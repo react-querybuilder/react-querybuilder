@@ -1,4 +1,4 @@
-import type { DefaultOperatorName } from '@react-querybuilder/ts';
+import type { DefaultOperatorName } from '../../types';
 import type { MongoDbSupportedOperators } from './types';
 
 export const getRegExStr = (re: string | RegExp) => (typeof re === 'string' ? re : re.source);

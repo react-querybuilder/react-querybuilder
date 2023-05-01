@@ -1,9 +1,3 @@
-import type {
-  Field,
-  ValidationResult,
-  ValueSelectorProps,
-  ValueSources,
-} from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { clsx } from 'clsx';
@@ -15,6 +9,7 @@ import {
 } from '../../genericTests';
 import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../messages';
+import type { Field, ValidationResult, ValueSelectorProps, ValueSources } from '../types';
 import { Rule } from './Rule';
 
 const user = userEvent.setup();

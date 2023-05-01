@@ -1,5 +1,5 @@
-import type { NotToggleProps } from '@react-querybuilder/ts';
 import { useId } from 'react';
+import type { NotToggleProps } from 'react-querybuilder';
 
 export const BootstrapNotToggle = ({
   className,

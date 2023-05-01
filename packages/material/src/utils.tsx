@@ -1,4 +1,4 @@
-import type { OptionList } from '@react-querybuilder/ts';
+import type { OptionList } from 'react-querybuilder';
 import { isOptionGroupArray } from 'react-querybuilder';
 import type { RQBMaterialComponents } from './types';
 

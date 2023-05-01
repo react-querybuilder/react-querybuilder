@@ -1,5 +1,5 @@
-import type { ValueSelectorProps } from '@react-querybuilder/ts';
 import { useCallback, useMemo } from 'react';
+import type { ValueSelectorProps } from '../types';
 import { joinWith, toArray } from '../utils';
 
 export type UseValueSelectorParams = Pick<

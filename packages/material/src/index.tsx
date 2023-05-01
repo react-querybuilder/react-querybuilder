@@ -1,5 +1,5 @@
-import type { Controls, QueryBuilderContextProvider } from '@react-querybuilder/ts';
 import { useMemo } from 'react';
+import type { Controls, QueryBuilderContextProvider } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';

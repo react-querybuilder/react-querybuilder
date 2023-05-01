@@ -1,4 +1,4 @@
-import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from '@react-querybuilder/ts';
+import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/es/select';

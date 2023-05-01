@@ -2,7 +2,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   ValidationMap,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../types/index.noReact';
 import { groupInvalidReasons } from '../defaults';
 import { defaultValidator } from './defaultValidator';
 

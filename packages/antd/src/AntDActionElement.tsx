@@ -1,6 +1,6 @@
-import type { ActionWithRulesProps } from '@react-querybuilder/ts';
 import { Button } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 
 // TODO: This may be unnecessary. Find out if there's a way to allow
 // `data-${string}` index keys without breaking other type contraints.

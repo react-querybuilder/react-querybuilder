@@ -1,13 +1,12 @@
-import { QueryBuilderContext } from '@react-querybuilder/ctx';
+import { useContext, useMemo } from 'react';
+import { defaultControlElements, QueryBuilderContext } from '../../components';
+import { defaultControlClassnames, defaultTranslations } from '../../defaults';
 import type {
   Controls,
   QueryBuilderContextProps,
   TranslationsFull,
   WithRequired,
-} from '@react-querybuilder/ts';
-import { useContext, useMemo } from 'react';
-import { defaultControlElements } from '../../components';
-import { defaultControlClassnames, defaultTranslations } from '../../defaults';
+} from '../../types';
 import { mergeClassnames } from '../mergeClassnames';
 import { objectKeys } from '../objectKeys';
 import { usePreferProp } from './usePreferProp';

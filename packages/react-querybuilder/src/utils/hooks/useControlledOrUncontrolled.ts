@@ -1,10 +1,10 @@
-import type { RuleGroupTypeAny } from '@react-querybuilder/ts';
 import { useEffect } from 'react';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
 } from '../../messages';
+import type { RuleGroupTypeAny } from '../../types';
 import { usePrevious } from './usePrevious';
 
 export interface UseControlledOrUncontrolledParams {

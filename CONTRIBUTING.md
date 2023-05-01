@@ -4,7 +4,7 @@ Contributions to `react-querybuilder` and other associated packages are more tha
 
 - If adding a new feature, be sure to add corresponding tests since we maintain 100% coverage.
 - If changing behavior or adding a feature, make sure the documentation is updated. You may need to update both the [current (aka "next") docs](./website/docs/) and the latest [versioned docs](./website/versioned_docs/).
-- If applicable, update the TypeScript definitions in the [`@react-querybuilder/ts` package](./packages/ts/).
+- If applicable, update the TypeScript definitions in the [`packages/react-querybuilder/src/types`](./packages/react-querybuilder/src/types).
 - If your editor doesn't automatically format code with [Prettier](https://prettier.io/) when saving changes, run `bun pretty-print` (requires [Bun](https://bun.sh/)) before committing.
 - When addressing a bug, please provide a reproducible example (we typically use [CodeSandbox](https://codesandbox.io), but any interactive demo or example repo is fine). Feel free to use our [CI base](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/ci), the [basic example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/basic-ts) ([JS version](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/basic)), or any of the other [examples](./examples/) as a template.
 

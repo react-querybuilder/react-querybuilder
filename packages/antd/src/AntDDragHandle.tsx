@@ -1,7 +1,7 @@
 import { HolderOutlined } from '@ant-design/icons';
-import type { DragHandleProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithRef } from 'react';
 import { forwardRef } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 
 type AntDDragHandleProps = DragHandleProps & ComponentPropsWithRef<typeof HolderOutlined>;
 
