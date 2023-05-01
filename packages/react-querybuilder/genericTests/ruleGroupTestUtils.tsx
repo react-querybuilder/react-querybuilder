@@ -15,7 +15,7 @@ import type {
   RuleGroupProps,
   RuleType,
   Schema,
-} from '../src/types/'
+} from '../src/types/';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => {
