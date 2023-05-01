@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Changed
+
+- [#503] Merged `@react-querybuilder/ctx` and `@react-querybuilder/ts` back into the main `react-querybuilder` package.
+
+### Fixed
+
+- [#503] Resolved dependency issues in some environments.
 
 ## [v6.2.0] - 2023-04-28
 
@@ -1315,6 +1321,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#488]: https://github.com/react-querybuilder/react-querybuilder/pull/488
 [#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
 [#499]: https://github.com/react-querybuilder/react-querybuilder/pull/499
+[#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
 
 <!-- Release comparison links -->
 
