@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useContext } from 'react';
 import type { QueryBuilderContextProps } from 'react-querybuilder';
 import { QueryBuilderContext, useMergedContext, usePreferProp } from 'react-querybuilder';

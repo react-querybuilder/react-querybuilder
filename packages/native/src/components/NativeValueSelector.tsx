@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 import { joinWith, TestID, useValueSelector } from 'react-querybuilder';

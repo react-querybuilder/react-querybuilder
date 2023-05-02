@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 
 // TODO: This may be unnecessary. Find out if there's a way to allow

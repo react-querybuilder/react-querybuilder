@@ -1,4 +1,5 @@
 import type { MouseEvent as ReactMouseEvent } from 'react';
+import * as React from 'react';
 import { Fragment } from 'react';
 import { TestID } from '../defaults';
 import { useRuleGroup } from '../hooks';

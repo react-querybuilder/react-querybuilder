@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import type { NotToggleProps, Schema } from '../src/types/';
 import { findInput, hasOrInheritsClass, isOrInheritsChecked, userEventSetup } from './utils';
 

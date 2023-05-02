@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { OptionList } from '../types/index.noReact';
 import { isOptionGroupArray } from './optGroupUtils';
 

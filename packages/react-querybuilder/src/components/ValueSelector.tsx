@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useSelectElementChangeHandler, useValueSelector } from '../hooks';
 import type { ValueSelectorProps } from '../types';
 import { toOptions } from '../utils';

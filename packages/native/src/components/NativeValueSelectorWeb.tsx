@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { ValueSelectorNativeProps } from '../types';
 import { NativeValueSelector } from './NativeValueSelector';
 

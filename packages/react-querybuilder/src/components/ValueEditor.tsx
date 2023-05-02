@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { standardClassnames } from '../defaults';
 import { useValueEditor } from '../hooks';
 import type { ValueEditorProps } from '../types';

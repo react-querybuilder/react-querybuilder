@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useQueryBuilder } from '../hooks';
 import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from '../types';
 import { QueryBuilderContext } from './QueryBuilderContext';

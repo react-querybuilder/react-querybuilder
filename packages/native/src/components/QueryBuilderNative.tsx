@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import type { RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';

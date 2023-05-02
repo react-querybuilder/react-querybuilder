@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
+import * as React from 'react';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
 import {
   simulateDragDrop,

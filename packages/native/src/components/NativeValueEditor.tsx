@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import type { KeyboardType } from 'react-native';
 import { StyleSheet, Switch, TextInput, View } from 'react-native';

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { DndDropTargetType, DropEffect } from 'react-querybuilder';
 
 export type GenericDropTargetProps = {

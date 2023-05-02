@@ -1,5 +1,6 @@
 import type { Select, SelectChangeEvent } from '@mui/material';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
+import * as React from 'react';
 import { useContext } from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector, ValueSelector } from 'react-querybuilder';

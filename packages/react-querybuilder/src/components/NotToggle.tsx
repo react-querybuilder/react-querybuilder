@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { NotToggleProps } from '../types';
 
 export const NotToggle = ({

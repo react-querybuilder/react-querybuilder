@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import {
   getFirstOption,

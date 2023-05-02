@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import type { Option, Schema, ValueEditorProps, ValueSelectorProps } from '../src/types/';
 import { findSelect, userEventSetup } from './utils';
 

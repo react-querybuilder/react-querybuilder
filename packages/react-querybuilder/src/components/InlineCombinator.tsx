@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { standardClassnames, TestID } from '../defaults';
 import type { InlineCombinatorProps } from '../types';
 

@@ -1,5 +1,6 @@
 import type { SwitchProps } from '@mantine/core';
 import { Switch } from '@mantine/core';
+import * as React from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
 type MantineNotToggleProps = NotToggleProps & Partial<SwitchProps>;

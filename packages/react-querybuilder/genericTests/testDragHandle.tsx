@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import type { DragHandleProps, Schema } from '../src/types/';
 
 export const defaultDragHandleProps: DragHandleProps = {

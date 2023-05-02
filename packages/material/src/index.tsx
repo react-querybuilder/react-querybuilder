@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import type { Controls, QueryBuilderContextProvider } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';

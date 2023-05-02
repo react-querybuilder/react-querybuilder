@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
+import * as React from 'react';
 import type { ActionWithRulesProps, Schema } from '../src/types/';
 import { userEventSetup } from './utils';
 

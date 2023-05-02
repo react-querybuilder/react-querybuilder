@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import queryString from 'query-string';
 import type { ComponentType } from 'react';
+import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type {
   FormatQueryOptions,

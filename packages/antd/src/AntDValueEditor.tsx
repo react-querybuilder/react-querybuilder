@@ -3,6 +3,7 @@ import generatePicker from 'antd/es/date-picker/generatePicker/index.js';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
+import * as React from 'react';
 import {
   getFirstOption,
   standardClassnames,

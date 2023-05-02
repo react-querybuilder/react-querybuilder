@@ -1,9 +1,10 @@
-import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
 import type { OptionProps } from 'antd/es/select';
 import dayjs from 'dayjs';
 import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
+import * as React from 'react';
+import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,

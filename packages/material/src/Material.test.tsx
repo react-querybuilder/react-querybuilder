@@ -23,6 +23,7 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { act, render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
+import * as React from 'react';
 import {
   cloneElement as mockCloneElement,
   forwardRef,

@@ -1,19 +1,6 @@
-import type {
-  ActionWithRulesAndAddersProps,
-  Field,
-  Option,
-  OptionGroup,
-  QueryBuilderProps,
-  RuleGroupProps,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-  RuleProps,
-  RuleType,
-  ValidationMap,
-} from '../types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as React from 'react';
 import { consoleMocks } from '../../genericTests';
 import {
   defaultPlaceholderFieldLabel,
@@ -29,6 +16,20 @@ import {
   errorControlledToUncontrolled,
   errorUncontrolledToControlled,
 } from '../messages';
+import type {
+  ActionWithRulesAndAddersProps,
+  Field,
+  Option,
+  OptionGroup,
+  QueryBuilderProps,
+  RuleGroupProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleProps,
+  RuleType,
+  ValidationMap,
+} from '../types';
 import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from '../utils';
 import { defaultControlElements } from './defaults';
 import { QueryBuilder } from './QueryBuilder';

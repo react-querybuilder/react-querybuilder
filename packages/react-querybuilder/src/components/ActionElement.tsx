@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { ActionProps } from '../types';
 
 export const ActionElement = ({

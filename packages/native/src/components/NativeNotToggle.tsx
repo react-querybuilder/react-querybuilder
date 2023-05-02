@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, Switch, Text, View } from 'react-native';
 import { defaultNativeStyles } from '../styles';

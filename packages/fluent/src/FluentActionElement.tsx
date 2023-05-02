@@ -1,5 +1,6 @@
 import type { ButtonProps } from '@fluentui/react-components';
 import { Button } from '@fluentui/react-components';
+import * as React from 'react';
 import type { ActionProps } from 'react-querybuilder';
 
 type FluentActionProps = ActionProps & ButtonProps;

@@ -1,5 +1,6 @@
 import type { TextProps } from '@fluentui/react-components';
 import { Text } from '@fluentui/react-components';
+import * as React from 'react';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 

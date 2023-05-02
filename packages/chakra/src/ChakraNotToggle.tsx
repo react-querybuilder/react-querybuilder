@@ -1,5 +1,6 @@
 import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
 import { useId } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 

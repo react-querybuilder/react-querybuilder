@@ -1,4 +1,5 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
+import * as React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import {
   simulateDrag,
