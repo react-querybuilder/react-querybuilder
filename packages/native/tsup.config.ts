@@ -24,7 +24,6 @@ export default defineConfig(options => {
       format: ['esm'],
       dts: true,
       clean: true,
-      sourcemap: true,
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {
@@ -36,7 +35,6 @@ export default defineConfig(options => {
       outExtension: () => ({ js: '.js' }),
       target: 'es2017',
       format: ['esm'],
-      sourcemap: true,
     },
     // ESM for use in browsers. Minified, with `process` compiled away
     {
