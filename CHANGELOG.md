@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [#503] Resolved dependency issues in some environments.
+- [#503] Corrected `query-builder.css.map` "sources" path.
 
 ## [v6.2.0] - 2023-04-28
 
