@@ -109,7 +109,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsup && bun run build:css",
-    "build:css": "bun x sass src/query-builder.scss dist/query-builder.css && copyfiles -f src/query-builder.scss dist",
+    "build:css": "copyfiles -f src/query-builder.scss dist && bun x sass dist/query-builder.scss dist/query-builder.css",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",
