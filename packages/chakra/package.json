@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/chakra",
   "description": "Custom Chakra UI components for react-querybuilder",
-  "version": "6.3.0-alpha.0",
+  "version": "6.3.0-alpha.1",
   "publishConfig": {
     "access": "public"
   },
@@ -44,7 +44,7 @@
     "framer-motion": "^10.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.3.0-alpha.0",
+    "react-querybuilder": "^6.3.0-alpha.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
     "vite": "^4.3.4"
@@ -57,6 +57,6 @@
     "@emotion/styled": "^11",
     "framer-motion": "^6.3.3",
     "react": ">=18.1.0",
-    "react-querybuilder": "^6.3.0-alpha.0"
+    "react-querybuilder": "^6.3.0-alpha.1"
   }
 }
