@@ -1,6 +1,6 @@
 {
   "packages": ["packages/*"],
-  "version": "6.3.0-alpha.1",
+  "version": "6.3.0",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "forcePublish": true
