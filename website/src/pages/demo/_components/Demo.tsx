@@ -279,14 +279,18 @@ export default function Demo({
       ...(options.enableDragAndDrop
         ? [
             '@react-querybuilder/dnd',
-            ...objectKeys(peerDependencies.dnd).filter(pd => pd !== 'react'),
+            ...objectKeys(peerDependencies.dnd).filter(
+              pd => pd !== 'react' && pd !== 'react-querybuilder'
+            ),
           ]
         : []),
       ...(variant === 'default'
         ? []
         : [
             `@react-querybuilder/${variant}`,
-            ...objectKeys(peerDependencies[variant]).filter(pd => pd !== 'react'),
+            ...objectKeys(peerDependencies[variant]).filter(
+              pd => pd !== 'react' && pd !== 'react-querybuilder'
+            ),
           ]),
     ],
     [options.enableDragAndDrop, variant]

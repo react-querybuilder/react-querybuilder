@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,

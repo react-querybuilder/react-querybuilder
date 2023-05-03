@@ -1,4 +1,4 @@
-import type { Controls } from '@react-querybuilder/ts';
+import type { Controls } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';

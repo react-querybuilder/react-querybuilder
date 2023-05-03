@@ -1,7 +1,7 @@
-import type { RuleGroupProps, RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/ts';
 import { clsx } from 'clsx';
 import { useMemo } from 'react';
 import { standardClassnames } from '../defaults';
+import type { RuleGroupProps, RuleGroupType, RuleGroupTypeAny } from '../types';
 import {
   getFirstOption,
   getOption,

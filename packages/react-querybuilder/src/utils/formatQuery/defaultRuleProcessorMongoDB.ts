@@ -1,4 +1,4 @@
-import type { RuleProcessor } from '@react-querybuilder/ts/dist/index.noReact';
+import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 

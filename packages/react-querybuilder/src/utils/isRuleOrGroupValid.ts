@@ -3,7 +3,7 @@ import type {
   RuleType,
   RuleValidator,
   ValidationResult,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../types/index.noReact';
 import { isPojo } from './misc';
 
 export const isValidationResult = (vr?: ValidationResult): vr is ValidationResult =>

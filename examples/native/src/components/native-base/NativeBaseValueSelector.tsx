@@ -1,6 +1,6 @@
 import type { ValueSelectorNativeProps } from '@react-querybuilder/native';
-import type { Option } from '@react-querybuilder/ts';
 import { Select } from 'native-base';
+import type { Option } from 'react-querybuilder';
 
 export const NativeBaseValueSelector = ({
   handleOnChange,

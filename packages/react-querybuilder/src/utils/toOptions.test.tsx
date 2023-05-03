@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import { toOptions } from './toOptions';
 
 it('builds an empty option list', () => {

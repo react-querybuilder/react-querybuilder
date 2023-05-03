@@ -2,7 +2,7 @@ import type {
   RuleType,
   ValueProcessorByRule,
   ValueProcessorOptions,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { mapSQLOperator, quoteFieldNamesWithArray } from './utils';
 

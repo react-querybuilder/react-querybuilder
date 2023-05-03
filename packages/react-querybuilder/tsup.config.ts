@@ -8,14 +8,18 @@ export default defineConfig(options => {
       'react-querybuilder': 'src/index.ts',
     },
     sourcemap: true,
+    // TODO: "use client" only for the React components
+    // esbuildOptions: options => {
+    //   options.banner = {
+    //     js: '"use client";',
+    //   };
+    // },
     ...options,
   };
 
   const productionOptions: Options = {
     minify: true,
-    define: {
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    },
+    replaceNodeEnv: true,
   };
 
   const opts: Options[] = [
@@ -25,7 +29,6 @@ export default defineConfig(options => {
       format: ['esm'],
       dts: true,
       clean: true,
-      sourcemap: true,
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {
@@ -37,7 +40,6 @@ export default defineConfig(options => {
       outExtension: () => ({ js: '.js' }),
       target: 'es2017',
       format: ['esm'],
-      sourcemap: true,
     },
     // ESM for use in browsers. Minified, with `process` compiled away
     {
@@ -85,6 +87,8 @@ if (process.env.NODE_ENV === 'production') {
     {
       ...commonOptions,
       dts: true,
+      // TODO: don't "use client" here
+      // esbuildOptions() {},
       entry: {
         formatQuery: 'src/utils/formatQuery/index.ts',
         parseCEL: 'src/utils/parseCEL/index.ts',

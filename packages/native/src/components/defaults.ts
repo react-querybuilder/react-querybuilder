@@ -1,5 +1,5 @@
-import type { Controls } from '@react-querybuilder/ts';
 import { forwardRef } from 'react';
+import type { Controls } from 'react-querybuilder';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeInlineCombinator } from './NativeInlineCombinator';
 import { NativeNotToggle } from './NativeNotToggle';

@@ -1,7 +1,8 @@
 import type { DragIndicator } from '@mui/icons-material';
-import type { DragHandleProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithRef } from 'react';
+import * as React from 'react';
 import { forwardRef, useContext } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';

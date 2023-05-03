@@ -1,12 +1,12 @@
+import { produce } from 'immer';
+import { defaultCombinators } from '../defaults';
 import type {
   OptionList,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { produce } from 'immer';
-import { defaultCombinators } from '../defaults';
+} from '../types/index.noReact';
 import { generateID } from './generateID';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';

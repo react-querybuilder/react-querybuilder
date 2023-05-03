@@ -1,6 +1,7 @@
 import { Checkbox, Radio, Switch, Textarea, TextInput } from '@mantine/core';
 import { DatePicker, DateRangePicker, TimeInput, TimeRangeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
+import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { MantineValueSelector } from './MantineValueSelector';

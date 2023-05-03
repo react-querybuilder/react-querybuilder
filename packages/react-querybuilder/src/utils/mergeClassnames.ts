@@ -1,5 +1,5 @@
-import type { Classnames } from '@react-querybuilder/ts';
 import clsx from 'clsx';
+import type { Classnames } from '../types';
 
 export const mergeClassnames = (...args: (Partial<Classnames> | undefined)[]): Classnames => {
   const joinClassnamesByName = (name: keyof Classnames) =>

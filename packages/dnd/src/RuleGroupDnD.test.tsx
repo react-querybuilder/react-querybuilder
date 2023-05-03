@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
+import * as React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import type { QueryActions, RuleGroupProps, Schema } from 'react-querybuilder';

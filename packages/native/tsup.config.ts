@@ -14,9 +14,7 @@ export default defineConfig(options => {
 
   const productionOptions: Options = {
     minify: true,
-    define: {
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    },
+    replaceNodeEnv: true,
   };
 
   const opts: Options[] = [
@@ -26,7 +24,6 @@ export default defineConfig(options => {
       format: ['esm'],
       dts: true,
       clean: true,
-      sourcemap: true,
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {
@@ -38,7 +35,6 @@ export default defineConfig(options => {
       outExtension: () => ({ js: '.js' }),
       target: 'es2017',
       format: ['esm'],
-      sourcemap: true,
     },
     // ESM for use in browsers. Minified, with `process` compiled away
     {

@@ -1,4 +1,4 @@
-import type { Controls } from '@react-querybuilder/ts';
+import type { Controls } from '../types';
 import { ActionElement } from './ActionElement';
 import { DragHandle } from './DragHandle';
 import { InlineCombinator } from './InlineCombinator';

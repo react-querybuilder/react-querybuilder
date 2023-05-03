@@ -32,8 +32,8 @@ jobs:
       - name: Lint
         run: bun run lint
       - name: Build base packages
-        # Only ts, ctx, and rqb need to be built before testing everything
-        run: bun run build:base
+        # Only rqb needs to be built before testing everything
+        run: bun run build:rqb
       - name: Test all packages
         run: bun run test
       - name: Upload coverage to Codecov

@@ -1,10 +1,10 @@
+import { produce } from 'immer';
 import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { produce } from 'immer';
+} from '../types/index.noReact';
 
 const remapProperties = (
   obj: Record<string, any>,

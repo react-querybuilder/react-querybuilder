@@ -125,36 +125,10 @@ import { FluentProvider, webLightTheme } from '@fluentui/react-components';`,
       return [
         `import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
-import Checkbox from '@mui/material/Checkbox';
-import DragIndicator from '@mui/material/DragIndicator';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from '@mui/material/Input';
-import ListSubheader from '@mui/material/ListSubheader';
-import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Select from '@mui/material/Select';
-import Switch from '@mui/material/Switch';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
 
 const muiTheme = createTheme();
-
-const muiComponents = {
-  Checkbox,
-  DragIndicator,
-  FormControl,
-  FormControlLabel,
-  Input,
-  ListSubheader,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Switch,
-  TextareaAutosize,
-};`,
-        '<ThemeProvider theme={muiTheme}>\n<QueryBuilderMaterial muiComponents={muiComponents}>',
+`,
+        '<ThemeProvider theme={muiTheme}>\n<QueryBuilderMaterial>',
         '</QueryBuilderMaterial>\n</ThemeProvider>',
       ];
   }

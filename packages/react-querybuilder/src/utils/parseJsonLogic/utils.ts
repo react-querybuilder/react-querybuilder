@@ -18,7 +18,7 @@ import type {
   RQBJsonLogicEndsWith,
   RQBJsonLogicStartsWith,
   RQBJsonLogicVar,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { isPojo } from '../misc';
 import type { JsonLogicBetweenExclusive, JsonLogicBetweenInclusive } from './types';
 
@@ -113,7 +113,7 @@ export const isRQBJsonLogicEndsWith = (logic: RQBJsonLogic): logic is RQBJsonLog
 //   JsonLogicSome,
 //   JsonLogicSubstr,
 //   JsonLogicSum,
-// } from '@react-querybuilder/ts/dist/index.noReact';
+// } from '../../types/index.noReact';
 //
 // export const isJsonLogicMissing = (
 //   logic: RQBJsonLogic

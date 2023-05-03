@@ -1,4 +1,4 @@
-import type { ValueProcessorLegacy } from '@react-querybuilder/ts/dist/index.noReact';
+import type { ValueProcessorLegacy } from '../../types/index.noReact';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';

@@ -1,6 +1,7 @@
-import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import { Select } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
+import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 

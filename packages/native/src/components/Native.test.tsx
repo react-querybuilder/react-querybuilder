@@ -1,7 +1,7 @@
-import type { ActionWithRulesProps, Option, Schema } from '@react-querybuilder/ts';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import * as React from 'react';
 import { Platform, StyleSheet, Switch, TextInput } from 'react-native';
-import type { RuleGroupType } from 'react-querybuilder';
+import type { ActionWithRulesProps, Option, RuleGroupType, Schema } from 'react-querybuilder';
 import { convertToIC, TestID } from 'react-querybuilder';
 import type {
   ActionNativeProps,

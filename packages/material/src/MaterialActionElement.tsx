@@ -1,7 +1,8 @@
 import type { Button } from '@mui/material';
-import type { ActionWithRulesProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
+import * as React from 'react';
 import { useContext } from 'react';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 import { ActionElement } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';

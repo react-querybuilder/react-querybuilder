@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import dayjs from 'dayjs';
+import * as React from 'react';
 import type {
   Option,
   OptionGroup,

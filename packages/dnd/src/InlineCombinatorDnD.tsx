@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useContext } from 'react';
 import type { InlineCombinatorProps } from 'react-querybuilder';
 import { standardClassnames, TestID } from 'react-querybuilder';

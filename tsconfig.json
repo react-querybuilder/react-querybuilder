@@ -5,7 +5,7 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,

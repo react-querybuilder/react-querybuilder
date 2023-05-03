@@ -1,9 +1,5 @@
-import type {
-  RuleGroupType,
-  RuleGroupTypeIC,
-  ValidationMap,
-} from '@react-querybuilder/ts/dist/index.noReact';
 import { groupInvalidReasons } from '../defaults';
+import type { RuleGroupType, RuleGroupTypeIC, ValidationMap } from '../types/index.noReact';
 import { defaultValidator } from './defaultValidator';
 
 // standard rule groups

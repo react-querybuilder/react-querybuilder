@@ -1,8 +1,9 @@
 import { DragHandleIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
-import type { DragHandleProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithRef } from 'react';
+import * as React from 'react';
 import { forwardRef } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 
 type IBP = ComponentPropsWithRef<typeof IconButton>;
 

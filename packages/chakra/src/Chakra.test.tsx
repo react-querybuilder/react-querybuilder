@@ -1,8 +1,9 @@
 import { theme, ThemeProvider } from '@chakra-ui/react';
-import type { DragHandleProps } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
 import { forwardRef } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,

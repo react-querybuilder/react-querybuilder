@@ -1,6 +1,7 @@
-import { QueryBuilderContext } from '@react-querybuilder/ctx';
-import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts';
+import * as React from 'react';
 import { useQueryBuilder } from '../hooks';
+import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from '../types';
+import { QueryBuilderContext } from './QueryBuilderContext';
 
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>

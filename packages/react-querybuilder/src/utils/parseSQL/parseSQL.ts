@@ -7,7 +7,7 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ParseSQLOptions,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { sqlParser } from './sqlParser';
 import type { MixedAndXorOrList, SQLExpression, SQLIdentifier } from './types';

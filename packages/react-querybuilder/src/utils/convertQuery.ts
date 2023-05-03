@@ -4,7 +4,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../types/index.noReact';
 import { isRuleGroupTypeIC } from './isRuleGroup';
 
 const processRuleOrStringOrRuleGroupIC = (r: string | RuleType | RuleGroupTypeIC) =>

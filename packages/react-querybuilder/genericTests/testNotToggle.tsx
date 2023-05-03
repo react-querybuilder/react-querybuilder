@@ -1,5 +1,6 @@
-import type { NotToggleProps, Schema } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
+import type { NotToggleProps, Schema } from '../src/types/';
 import { findInput, hasOrInheritsClass, isOrInheritsChecked, userEventSetup } from './utils';
 
 export const defaultNotToggleProps: NotToggleProps = {

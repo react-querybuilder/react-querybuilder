@@ -3,7 +3,7 @@ import type {
   Field,
   OptionGroup,
   ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { parseMongoDB } from './parseMongoDB';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };

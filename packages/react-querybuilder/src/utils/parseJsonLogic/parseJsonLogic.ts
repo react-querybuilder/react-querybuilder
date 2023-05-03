@@ -1,3 +1,4 @@
+import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
@@ -9,8 +10,7 @@ import type {
   RQBJsonLogic,
   RQBJsonLogicVar,
   ValueSource,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { defaultOperatorNegationMap } from '../../defaults';
+} from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';

@@ -1,9 +1,4 @@
-import type {
-  DefaultOperatorName,
-  Field,
-  OptionList,
-  ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
+import type { DefaultOperatorName, Field, OptionList, ValueSources } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isOptionGroupArray } from './optGroupUtils';

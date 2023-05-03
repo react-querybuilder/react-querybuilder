@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RuleComponents, TestID, useRule } from 'react-querybuilder';

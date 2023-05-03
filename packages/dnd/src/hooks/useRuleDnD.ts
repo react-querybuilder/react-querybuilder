@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import type {
   DndDropTargetType,
   DraggedItem,
@@ -5,8 +6,7 @@ import type {
   DropResult,
   QueryActions,
   UseRuleDnD,
-} from '@react-querybuilder/ts';
-import { useRef } from 'react';
+} from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 import { useDragCommon } from './useDragCommon';
 

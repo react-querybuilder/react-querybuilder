@@ -9,7 +9,7 @@ import type {
   DefaultRuleType,
   ParseCELOptions,
   ValueSource,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLiteral } from './types';

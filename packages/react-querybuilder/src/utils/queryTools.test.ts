@@ -1,3 +1,5 @@
+import type { Equal, Expect, ExpectExtends } from '../../genericTests';
+import { defaultCombinators } from '../defaults';
 import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
@@ -5,9 +7,7 @@ import type {
   DefaultRuleType,
   RuleType,
   ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import type { Equal, Expect, ExpectExtends } from '../../genericTests';
-import { defaultCombinators } from '../defaults';
+} from '../types/index.noReact';
 import { formatQuery } from './formatQuery';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { numericRegex } from './misc';

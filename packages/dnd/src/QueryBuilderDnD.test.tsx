@@ -1,10 +1,5 @@
-import type {
-  QueryBuilderProps,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-} from '@react-querybuilder/ts';
 import { act, render, screen } from '@testing-library/react';
+import * as React from 'react';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
 import {
   simulateDragDrop,
@@ -12,6 +7,12 @@ import {
   wrapWithTestBackend,
 } from 'react-dnd-test-utils/dist/index.js';
 import * as reactDnD from 'react-dnd/dist/index.js';
+import type {
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+} from 'react-querybuilder';
 import {
   formatQuery,
   getCompatContextProvider,

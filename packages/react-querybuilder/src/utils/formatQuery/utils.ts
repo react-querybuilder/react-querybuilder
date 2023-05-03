@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeAny,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
 
