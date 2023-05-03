@@ -25,6 +25,7 @@
     "activityBarBadge.foreground": "#ffffff",
     "button.background": "#3c649f",
     "button.hoverBackground": "#3c649fcc",
+    "badge.background": "#3c649f",
     "focusBorder": "#82a7dd",
     "list.activeSelectionBackground": "#3c649f",
     "list.focusBackground": "#3c649f99",
