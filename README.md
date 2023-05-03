@@ -10,7 +10,7 @@
 [![codecov.io][badge-codecov]][codecov-link]
 [![All Contributors][badge-all-contributors]](#contributors-)
 
-**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/api/import), and [exporting to](https://react-querybuilder.js.org/docs/api/export), various query languages like SQL, MongoDB, and more. Demo is [here](https://react-querybuilder.js.org/demo).
+**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/utils/import), and [exporting to](https://react-querybuilder.js.org/docs/utils/export), various query languages like SQL, MongoDB, and more. Demo is [here](https://react-querybuilder.js.org/demo).
 
 _**Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**._
 
@@ -29,7 +29,7 @@ export const App = () => {
 };
 ```
 
-For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/api/querybuilder), or browse the [example projects](./examples/).
+For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/intro), or browse the [example projects](./examples/).
 
 To enable drag-and-drop functionality, see the [`@react-querybuilder/dnd` package README](packages/dnd/README.md).
 
