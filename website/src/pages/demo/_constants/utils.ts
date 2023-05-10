@@ -1,5 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import extraStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import extraStylesSCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.scss';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -135,7 +141,11 @@ const muiTheme = createTheme();
   return ['', '', ''];
 };
 
-export const getCodeString = (options: DemoOptions, style?: StyleName) => {
+export const getCodeString = (
+  options: DemoOptions,
+  style?: StyleName,
+  styleLanguage: 'css' | 'scss' = 'scss'
+) => {
   const queryType = `RuleGroupType${options.independentCombinators ? 'IC' : ''}`;
   const dndIndent = options.enableDragAndDrop ? '  ' : '';
   const styleIndent = style && style !== 'default' ? '  ' : '';
@@ -189,9 +199,8 @@ import {${
     options.validateQuery ? 'defaultValidator, ' : ''
   } QueryBuilder } from 'react-querybuilder';
 import { fields } from './fields';
-import 'react-querybuilder/dist/query-builder.scss';${
-    options.justifiedLayout ? `\nimport './styles.scss';` : ''
-  }${styleImport ? `\n${styleImport}` : ''}
+import 'react-querybuilder/dist/query-builder.${styleLanguage}';
+import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}
 
 const initialQuery: ${queryType} = {${
     options.independentCombinators ? '' : ` combinator: 'and',`
@@ -217,33 +226,17 @@ export const App = () => {
   });
 };
 
-export const getExtraStyles = (justifiedLayout?: boolean) => {
-  return !justifiedLayout
-    ? ''
-    : prettier.format(
-        `.queryBuilder {
-  // Push the clone, lock, and remove buttons to the right edge
-  .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
-  .ruleGroup-addGroup + button.ruleGroup-lock,
-  .ruleGroup-addGroup + button.ruleGroup-remove,
-  .rule-operators + button.rule-cloneRule,
-  .rule-operators + button.rule-lock,
-  .rule-operators + button.rule-remove,
-  .rule-value + button.rule-cloneRule,
-  .rule-value + button.rule-lock,
-  .rule-value + button.rule-remove,
-  .control + button.rule-cloneRule,
-  .control + button.rule-lock,
-  .control + button.rule-remove,
-  .chakra-select__wrapper + button.rule-cloneRule,
-  .chakra-select__wrapper + button.rule-lock,
-  .chakra-select__wrapper + button.rule-remove {
-    margin-left: auto;
-  }
-}
-`,
-        { filepath: 'styles.scss', plugins: [parserPostCSS] }
-      );
+export const extraStyles = {
+  css: prettier.format(extraStylesCSS, {
+    filepath: 'styles.css',
+    plugins: [parserPostCSS],
+    printWidth: 100,
+  }),
+  scss: prettier.format(extraStylesSCSS, {
+    filepath: 'styles.scss',
+    plugins: [parserPostCSS],
+    printWidth: 100,
+  }),
 };
 
 export const fieldsTsString = prettier.format(fieldsCode, {
