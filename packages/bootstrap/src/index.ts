@@ -1,4 +1,4 @@
-import type { Classnames, Controls } from '@react-querybuilder/ts';
+import type { Classnames, Controls } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';

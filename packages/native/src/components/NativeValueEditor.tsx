@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo } from 'react';
 import type { KeyboardType } from 'react-native';
 import { StyleSheet, Switch, TextInput, View } from 'react-native';
@@ -85,8 +86,8 @@ export const NativeValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           handleOnChange={v => multiValueHandler(v, i)}
           className={className}
           disabled={disabled}

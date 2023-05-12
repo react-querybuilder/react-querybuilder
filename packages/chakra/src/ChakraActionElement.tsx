@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react';
-import type { ActionWithRulesProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 
 type ChakraActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;
 
@@ -19,15 +20,13 @@ export const ChakraActionElement = ({
   context: _context,
   validation: _validation,
   ruleOrGroup: _ruleOrGroup,
+  schema: _schema,
   ...extraProps
 }: ChakraActionProps) => (
   <Button
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
-    colorScheme="gray"
-    variant="solid"
     onClick={e => handleOnClick(e)}
-    size="xs"
     isDisabled={disabled && !disabledTranslation}
     {...extraProps}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}

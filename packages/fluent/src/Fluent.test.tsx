@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import type { Option, Schema, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
@@ -17,12 +18,6 @@ import { FluentValueSelector } from './FluentValueSelector';
 import { QueryBuilderFluent } from './index';
 
 const user = userEventSetup();
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
 
 testActionElement(FluentActionElement);
 testDragHandle(FluentDragHandle);

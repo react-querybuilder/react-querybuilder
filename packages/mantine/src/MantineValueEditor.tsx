@@ -1,6 +1,7 @@
 import { Checkbox, NumberInput, Radio, Switch, Textarea, TextInput } from '@mantine/core';
 import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
+import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { MantineValueSelector } from './MantineValueSelector';
@@ -103,8 +104,8 @@ export const MantineValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import {
   getFirstOption,
@@ -47,8 +48,8 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={`${standardClassnames.valueListItem} form-select form-select-sm`}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}

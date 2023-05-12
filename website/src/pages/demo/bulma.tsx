@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import Layout from '@theme/Layout';

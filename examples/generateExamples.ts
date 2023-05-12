@@ -1,6 +1,5 @@
 /// <reference types="bun-types" />
 
-import Bun from 'bun';
 import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';

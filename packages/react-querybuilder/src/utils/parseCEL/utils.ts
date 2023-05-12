@@ -1,7 +1,4 @@
-import type {
-  DefaultCombinatorName,
-  DefaultOperatorName,
-} from '@react-querybuilder/ts/dist/index.noReact';
+import type { DefaultCombinatorName, DefaultOperatorName } from '../../types/index.noReact';
 import type {
   CELBooleanLiteral,
   CELBytesLiteral,
@@ -15,6 +12,7 @@ import type {
   CELLiteral,
   CELMap,
   CELMember,
+  CELMemberIdentifierChain,
   CELNegation,
   CELNullLiteral,
   CELNumericLiteral,
@@ -49,18 +47,38 @@ export const isCELIdentifier = (expr: CELExpression): expr is CELIdentifier =>
 export const isCELNegation = (expr: CELExpression): expr is CELNegation => expr.type === 'Negation';
 export const isCELMember = (expr: CELExpression): expr is CELMember => expr.type === 'Member';
 
+export const isCELIdentifierOrChain = (
+  expr: CELExpression
+): expr is CELMemberIdentifierChain | CELIdentifier =>
+  isCELIdentifier(expr) ||
+  (isCELMember(expr) &&
+    !!expr.left &&
+    !!expr.right &&
+    !expr.list &&
+    !expr.value &&
+    isCELIdentifierOrChain(expr.left) &&
+    isCELIdentifier(expr.right));
+
 export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpression =>
   isCELMember(expr) &&
   !!expr.left &&
   !!expr.right &&
   !!expr.list &&
-  isCELIdentifier(expr.left) &&
+  isCELIdentifierOrChain(expr.left) &&
   isCELIdentifier(expr.right) &&
   (expr.right.value === 'contains' ||
     expr.right.value === 'startsWith' ||
     expr.right.value === 'endsWith') &&
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
+
+export const getIdentifierFromChain = (expr: CELIdentifier | CELMemberIdentifierChain): string => {
+  if (isCELIdentifier(expr)) {
+    return expr.value;
+  }
+
+  return `${getIdentifierFromChain(expr.left)}.${expr.right.value}`;
+};
 
 function evalCELLiteralValue(literal: CELStringLiteral): string;
 function evalCELLiteralValue(literal: CELBooleanLiteral): boolean;

@@ -1,25 +1,27 @@
+import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+} from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
 import { add } from '../queryTools';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
+import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { formatQuery } from './formatQuery';
 import {
   defaultCELValueProcessor,
   defaultMongoDBValueProcessor,
   defaultSpELValueProcessor,
   defaultValueProcessor,
+  defaultValueProcessorByRule,
 } from './index';
-import { jsonLogicAdditionalOperators } from './utils';
+import { jsonLogicAdditionalOperators, quoteFieldNamesWithArray } from './utils';
 
 const query: RuleGroupType = {
   id: 'g-root',
@@ -108,6 +110,11 @@ const query: RuleGroupType = {
       field: 'isMusician',
       operator: '=',
       value: true,
+    },
+    {
+      field: 'isLucky',
+      operator: '=',
+      value: false,
     },
     {
       id: 'g-sub1',
@@ -254,6 +261,11 @@ const mongoQuery: RuleGroupType = {
     {
       field: 'isMusician',
       value: true,
+      operator: '=',
+    },
+    {
+      field: 'isLucky',
+      value: false,
       operator: '=',
     },
     {
@@ -580,13 +592,13 @@ const mongoQueryWithValueSourceField: RuleGroupType = {
 };
 
 const sqlString =
-  "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
+  "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and isLucky = FALSE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
 const sqlStringForValueSourceField =
   "(firstName is null and lastName is not null and firstName in (middleName, lastName) and lastName not in (middleName, lastName) and firstName between middleName and lastName and firstName between middleName and lastName and lastName not between middleName and lastName and age = iq and isMusician = isCreative and NOT (gender = someLetter or job != isBetweenJobs or email like '%' || atSign || '%') and (lastName not like '%' || firstName || '%' or job like jobPrefix || '%' or email like '%' || dotCom or job not like hasNoJob || '%' or email not like '%' || isInvalid))";
 const parameterizedSQLString =
-  '(firstName is null and lastName is not null and firstName in (?, ?) and lastName not in (?, ?) and firstName between ? and ? and firstName between ? and ? and lastName not between ? and ? and age between ? and ? and age = ? and isMusician = ? and NOT (gender = ? or job != ? or email like ?) and (lastName not like ? or job like ? or email like ? or job not like ? or email not like ?))';
+  '(firstName is null and lastName is not null and firstName in (?, ?) and lastName not in (?, ?) and firstName between ? and ? and firstName between ? and ? and lastName not between ? and ? and age between ? and ? and age = ? and isMusician = ? and isLucky = ? and NOT (gender = ? or job != ? or email like ?) and (lastName not like ? or job like ? or email like ? or job not like ? or email not like ?))';
 const parameterizedNamedSQLString =
-  '(firstName is null and lastName is not null and firstName in (:firstName_1, :firstName_2) and lastName not in (:lastName_1, :lastName_2) and firstName between :firstName_3 and :firstName_4 and firstName between :firstName_5 and :firstName_6 and lastName not between :lastName_3 and :lastName_4 and age between :age_1 and :age_2 and age = :age_3 and isMusician = :isMusician_1 and NOT (gender = :gender_1 or job != :job_1 or email like :email_1) and (lastName not like :lastName_5 or job like :job_2 or email like :email_2 or job not like :job_3 or email not like :email_3))';
+  '(firstName is null and lastName is not null and firstName in (:firstName_1, :firstName_2) and lastName not in (:lastName_1, :lastName_2) and firstName between :firstName_3 and :firstName_4 and firstName between :firstName_5 and :firstName_6 and lastName not between :lastName_3 and :lastName_4 and age between :age_1 and :age_2 and age = :age_3 and isMusician = :isMusician_1 and isLucky = :isLucky_1 and NOT (gender = :gender_1 or job != :job_1 or email like :email_1) and (lastName not like :lastName_5 or job like :job_2 or email like :email_2 or job not like :job_3 or email not like :email_3))';
 const params = [
   'Test',
   'This',
@@ -602,6 +614,7 @@ const params = [
   '14',
   '26',
   true,
+  false,
   'M',
   'Programmer',
   '%@%',
@@ -626,6 +639,7 @@ const params_named = {
   age_2: '14',
   age_3: '26',
   isMusician_1: true,
+  isLucky_1: false,
   gender_1: 'M',
   job_1: 'Programmer',
   email_1: '%@%',
@@ -647,6 +661,7 @@ const mongoQueryExpectation = {
     { age: { $gte: 12, $lte: 14 } },
     { age: '26' },
     { isMusician: true },
+    { isLucky: false },
     { email: { $regex: '@' } },
     { email: { $regex: '^ab' } },
     { email: { $regex: 'com$' } },
@@ -692,11 +707,11 @@ const mongoQueryExpectationForValueSourceField = {
   ],
 };
 const celString =
-  'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
+  'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && isLucky == false && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
 const celStringForValueSourceField =
   'firstName == null && lastName != null && firstName in [middleName, lastName] && !(lastName in [middleName, lastName]) && (firstName >= middleName && firstName <= lastName) && (firstName >= middleName && firstName <= lastName) && (lastName < middleName || lastName > lastName) && age == iq && isMusician == isCreative && !(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (!lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || !job.startsWith(hasNoJob) || !email.endsWith(isInvalid))';
 const spelString =
-  "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and !(gender == 'M' or job != 'Programmer' or email matches '@') and (!(lastName matches 'ab') or job matches '^Prog' or email matches 'com$' or !(job matches '^Man') or !(email matches 'fr$'))";
+  "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and isLucky == false and !(gender == 'M' or job != 'Programmer' or email matches '@') and (!(lastName matches 'ab') or job matches '^Prog' or email matches 'com$' or !(job matches '^Man') or !(email matches 'fr$'))";
 const spelStringForValueSourceField =
   "firstName == null and lastName != null and (firstName == middleName or firstName == lastName) and !(lastName == middleName or lastName == lastName) and (firstName >= middleName and firstName <= lastName) and (firstName >= middleName and firstName <= lastName) and (lastName < middleName or lastName > lastName) and age == iq and isMusician == isCreative and !(gender == someLetter or job != isBetweenJobs or email matches atSign) and (!(lastName matches firstName) or job matches '^'.concat(jobPrefix) or email matches dotCom.concat('$') or !(job matches '^'.concat(hasNoJob)) or !(email matches isInvalid.concat('$')))";
 const jsonLogicQueryObject = {
@@ -711,6 +726,7 @@ const jsonLogicQueryObject = {
     { '<=': [12, { var: 'age' }, 14] },
     { '==': [{ var: 'age' }, '26'] },
     { '==': [{ var: 'isMusician' }, true] },
+    { '==': [{ var: 'isLucky' }, false] },
     {
       '!': {
         or: [
@@ -942,13 +958,13 @@ it('handles custom valueProcessors correctly', () => {
 
   const queryForNewValueProcessor: RuleGroupType = {
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: 'v1', valueSource: 'value' }],
+    rules: [{ field: 'f1', operator: '=', value: `v'1`, valueSource: 'value' }],
   };
 
   const valueProcessor: ValueProcessorByRule = (
     { field, operator, value, valueSource },
-    { parseNumbers } = {}
-  ) => `${field}-${operator}-${value}-${valueSource}-${!!parseNumbers}`;
+    opts = {}
+  ) => `${field}-${operator}-${value}-${valueSource}-${!!opts.parseNumbers}-${!!opts.escapeQuotes}`;
 
   expect(
     formatQuery(queryForNewValueProcessor, {
@@ -956,7 +972,25 @@ it('handles custom valueProcessors correctly', () => {
       parseNumbers: true,
       valueProcessor,
     })
-  ).toBe('(f1 = f1-=-v1-value-true)');
+  ).toBe(`(f1 = f1-=-v'1-value-true-true)`);
+
+  const valueProcessorAsPassThrough: ValueProcessorByRule = (r, opts) =>
+    defaultValueProcessorByRule(r, opts);
+
+  // handles escapeQuotes correctly
+  expect(
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      valueProcessor: valueProcessorAsPassThrough,
+    })
+  ).toBe(`(f1 = 'v''1')`);
+  // handles escapeQuotes exactly the same as defaultValueProcessorByRule
+  expect(
+    formatQuery(queryForNewValueProcessor, {
+      format: 'sql',
+      valueProcessor: valueProcessorAsPassThrough,
+    })
+  ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
 });
 
 it('handles quoteFieldNamesWith correctly', () => {
@@ -974,16 +1008,22 @@ it('handles quoteFieldNamesWith correctly', () => {
         value: 'Vai',
         operator: '=',
       },
+      {
+        field: 'lastName',
+        value: 'firstName',
+        operator: '!=',
+        valueSource: 'field',
+      },
     ],
     not: false,
   };
 
   expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
-    "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai')"
+    "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai' and `lastName` != `firstName`)"
   );
 
   expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })).toBe(
-    "([instrument] in ('Guitar', 'Vocals') and [lastName] = 'Vai')"
+    "([instrument] in ('Guitar', 'Vocals') and [lastName] = 'Vai' and [lastName] != [firstName])"
   );
 });
 
@@ -1039,7 +1079,7 @@ describe('escapes quotes when appropriate', () => {
     rules: [{ field: 'f1', operator: '=', value: `Te'st` }],
   };
 
-  it.each([
+  for (const attempt of [
     { fmt: 'sql', result: `(f1 = 'Te''st')` },
     { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
     {
@@ -1047,22 +1087,26 @@ describe('escapes quotes when appropriate', () => {
       result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } },
     },
     { fmt: 'spel', result: `f1 == 'Te\\'st'` },
-  ])('escapes single quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
-    // @ts-expect-error Conflicting formatQuery overloads
-    expect(formatQuery(testQuerySQ, fmt)).toEqual(result);
-  });
+  ]) {
+    it(`escapes single quotes (if appropriate) for ${attempt.fmt} export`, () => {
+      // @ts-expect-error Conflicting formatQuery overloads
+      expect(formatQuery(testQuerySQ, attempt.fmt)).toEqual(attempt.result);
+    });
+  }
 
   const testQueryDQ: RuleGroupType = {
     combinator: 'and',
     rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
   };
 
-  it.each([
+  for (const attempt of [
     { fmt: 'mongodb', result: `{"f1":"Te\\"st"}` },
     { fmt: 'cel', result: `f1 == "Te\\"st"` },
-  ])('escapes double quotes (if appropriate) for $fmt export', ({ fmt, result }) => {
-    expect(formatQuery(testQueryDQ, fmt as 'cel' | 'mongodb')).toEqual(result);
-  });
+  ]) {
+    it(`escapes double quotes (if appropriate) for ${attempt.fmt} export`, () => {
+      expect(formatQuery(testQueryDQ, attempt.fmt as 'cel' | 'mongodb')).toEqual(attempt.result);
+    });
+  }
 });
 
 describe('independent combinators', () => {
@@ -1079,6 +1123,20 @@ describe('independent combinators', () => {
     expect(formatQuery(queryIC, 'sql')).toBe(
       `(firstName = 'Test' and middleName = 'Test' or lastName = 'Test')`
     );
+  });
+
+  it('handles independent combinators for parameterized', () => {
+    expect(formatQuery(queryIC, 'parameterized')).toEqual({
+      sql: `(firstName = ? and middleName = ? or lastName = ?)`,
+      params: ['Test', 'Test', 'Test'],
+    });
+  });
+
+  it('handles independent combinators for parameterized_named', () => {
+    expect(formatQuery(queryIC, 'parameterized_named')).toEqual({
+      sql: `(firstName = :firstName_1 and middleName = :middleName_1 or lastName = :lastName_1)`,
+      params: { firstName_1: 'Test', middleName_1: 'Test', lastName_1: 'Test' },
+    });
   });
 
   it('handles independent combinators for cel', () => {
@@ -1238,8 +1296,8 @@ describe('validation', () => {
         id: 'root',
         combinator: 'and',
         rules: [
-          { field: 'field', operator: '=', value: '' },
-          { field: 'field2', operator: '=', value: '' },
+          { id: 'r1', field: 'field', operator: '=', value: '' },
+          { id: 'r2', field: 'field2', operator: '=', value: '' },
         ],
       };
       const fields = [{ name: 'field', validator: () => false }];
@@ -1263,10 +1321,38 @@ describe('validation', () => {
         combinator: 'and',
         rules: [],
       };
+      expect(formatQuery(queryToTest, { format: 'parameterized' })).toEqual({
+        sql: '(1 = 1)',
+        params: [],
+      });
+      expect(
+        formatQuery(
+          {
+            ...queryToTest,
+            rules: [
+              { field: 'f1', operator: '=', value: 'v1' },
+              { ...queryToTest, id: 'not_root' },
+            ],
+          },
+          { format: 'parameterized', validator: () => ({ not_root: false }) }
+        )
+      ).toEqual({
+        sql: '(f1 = ?)',
+        params: ['v1'],
+      });
       expect(
         formatQuery(queryToTest, {
           format: 'parameterized',
           validator: () => false,
+        })
+      ).toEqual({
+        sql: '(1 = 1)',
+        params: [],
+      });
+      expect(
+        formatQuery(queryToTest, {
+          format: 'parameterized',
+          validator: () => ({ root: false }),
         })
       ).toEqual({
         sql: '(1 = 1)',
@@ -1603,6 +1689,14 @@ describe('ruleProcessor', () => {
       { field: 'f2', operator: '=', value: 'v2' },
     ],
   };
+
+  it('handles custom SQL rule processor', () => {
+    const ruleProcessor: RuleProcessor = r =>
+      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSQL(r);
+    expect(formatQuery(queryForRuleProcessor, { format: 'sql', ruleProcessor })).toBe(
+      "(custom_operator and f2 = 'v2')"
+    );
+  });
 
   it('handles custom MongoDB rule processor', () => {
     const ruleProcessor: RuleProcessor = r =>
@@ -2062,6 +2156,10 @@ describe('non-standard combinators', () => {
 });
 
 describe('misc', () => {
+  it('quoteFieldNamesWithArray handles null', () => {
+    expect(quoteFieldNamesWithArray(null)).toEqual(['', '']);
+  });
+
   it('runs the jsonLogic additional operators', () => {
     const { startsWith, endsWith } = jsonLogicAdditionalOperators;
     expect(startsWith('TestString', 'Test')).toBe(true);

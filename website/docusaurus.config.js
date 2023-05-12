@@ -1,14 +1,9 @@
 // @ts-check
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
-const { resolve } = require('path');
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
-const { transpileCodeblocks } = require('remark-typescript-tools');
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lightCodeTheme = require('prism-react-renderer/themes/github');
+const lightCodeTheme = require('prism-react-renderer').themes.github;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -47,22 +42,6 @@ const config = {
         ],
       },
     ],
-    // () => ({
-    //   // Needed for Sandpack 2.0
-    //   name: 'rqb-esm-resolver',
-    //   configureWebpack: () => ({
-    //     module: {
-    //       rules: [
-    //         {
-    //           test: /\.m?js$/,
-    //           resolve: {
-    //             fullySpecified: false,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   }),
-    // }),
     () => ({
       name: 'rqb-crypto-fallback',
       configureWebpack: () => ({
@@ -107,18 +86,6 @@ const config = {
               label: 'Next',
             },
           },
-          // Re-enable this when we get it working properly
-          // remarkPlugins: [
-          //   [
-          //     transpileCodeblocks,
-          //     {
-          //       compilerSettings: {
-          //         tsconfig: resolve(__dirname, '../docs/tsconfig.json'),
-          //         externalResolutions: {},
-          //       },
-          //     },
-          //   ],
-          // ],
         },
         // blog: {
         //   showReadingTime: true,
@@ -233,7 +200,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} React Query Builder authors. Built with Docusaurus.<br><br><a href="https://www.netlify.com"><img src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg" alt="Deploys by Netlify" /></a>`,
+        copyright: `Copyright © ${new Date().getFullYear()} React Query Builder authors. Built with Docusaurus.<br><br><a href="https://www.netlify.com"><img src="https://www.netlify.com/v3/img/components/netlify-dark.svg" alt="Deploys by Netlify" /></a>`,
       },
       prism: {
         theme: lightCodeTheme,

@@ -101,6 +101,13 @@ export interface CELMember extends CELExpression {
   right?: CELIdentifier;
   list?: CELExpressionList;
 }
+export interface CELMemberIdentifierChain extends CELMember {
+  type: 'Member';
+  value: never;
+  left: CELMemberIdentifierChain;
+  right: CELIdentifier;
+  list: never;
+}
 export interface CELDynamicPropertyAccessor extends CELExpression {
   type: 'DynamicPropertyAccessor';
   left: CELMember;
@@ -199,7 +206,7 @@ export interface CELMapInit extends CELExpression {
 // RQB-specific:
 export interface CELLikeExpression extends CELExpression {
   type: 'LikeExpression';
-  left: CELIdentifier;
+  left: CELIdentifier | CELMemberIdentifierChain;
   right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
   list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
 }

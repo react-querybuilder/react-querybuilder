@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type {
   ActionProps,
   InlineCombinatorProps,
@@ -10,9 +12,7 @@ import type {
   Schema,
   ValueEditorProps,
   ValueSelectorProps,
-} from '@react-querybuilder/ts';
-import type { ComponentType } from 'react';
-import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
+} from 'react-querybuilder';
 
 export type WrapEachPropertyInStyleProp<K> = { [P in keyof K]?: StyleProp<Required<K>[P]> };
 

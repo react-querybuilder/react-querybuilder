@@ -1,10 +1,10 @@
+import { produce } from 'immer';
 import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import produce from 'immer';
+} from '../types/index.noReact';
 
 const remapProperties = (
   obj: Record<string, any>,
@@ -13,9 +13,11 @@ const remapProperties = (
 ) =>
   produce(obj, draft => {
     for (const [k, v] of Object.entries(propertyMap)) {
-      draft[v] = draft[k];
-      if (deleteRemappedProperties) {
-        delete draft[k];
+      if (k !== v) {
+        draft[v] = draft[k];
+        if (deleteRemappedProperties && Object.hasOwn(draft, k)) {
+          delete draft[k];
+        }
       }
     }
   });

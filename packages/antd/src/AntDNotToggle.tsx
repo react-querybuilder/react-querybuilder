@@ -1,6 +1,7 @@
-import type { NotToggleProps } from '@react-querybuilder/ts';
 import { Switch } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
+import type { NotToggleProps } from 'react-querybuilder';
 
 type AntDNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
 
@@ -16,6 +17,7 @@ export const AntDNotToggle = ({
   context: _context,
   validation: _validation,
   testID: _testID,
+  schema: _schema,
   ...extraProps
 }: AntDNotToggleProps) => (
   <Switch

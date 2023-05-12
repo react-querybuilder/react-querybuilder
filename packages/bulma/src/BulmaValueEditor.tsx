@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   getFirstOption,
   standardClassnames,
@@ -48,8 +49,8 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}

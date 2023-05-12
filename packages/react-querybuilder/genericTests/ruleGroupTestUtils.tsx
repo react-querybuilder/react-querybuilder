@@ -1,3 +1,12 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+import { defaultControlElements } from '../src/components';
+import {
+  defaultCombinators,
+  defaultControlClassnames,
+  defaultTranslations as translations,
+  TestID,
+} from '../src/defaults';
 import type {
   Classnames,
   Controls,
@@ -7,15 +16,7 @@ import type {
   RuleGroupProps,
   RuleType,
   Schema,
-} from '@react-querybuilder/ts';
-import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/components';
-import {
-  defaultCombinators,
-  defaultControlClassnames,
-  defaultTranslations as translations,
-  TestID,
-} from '../src/defaults';
+} from '../src/types/';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => {

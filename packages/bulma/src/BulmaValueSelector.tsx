@@ -1,4 +1,5 @@
-import type { ValueSelectorProps } from '@react-querybuilder/ts';
+import * as React from 'react';
+import type { ValueSelectorProps } from 'react-querybuilder';
 import { useSelectElementChangeHandler, useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 

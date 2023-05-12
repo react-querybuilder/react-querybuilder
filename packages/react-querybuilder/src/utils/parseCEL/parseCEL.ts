@@ -9,7 +9,7 @@ import type {
   DefaultRuleType,
   ParseCELOptions,
   ValueSource,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLiteral } from './types';
@@ -17,10 +17,11 @@ import {
   evalCELLiteralValue,
   generateFlatAndOrList,
   generateMixedAndOrList,
+  getIdentifierFromChain,
   isCELConditionalAnd,
   isCELConditionalOr,
   isCELExpressionGroup,
-  isCELIdentifier,
+  isCELIdentifierOrChain,
   isCELLikeExpression,
   isCELList,
   isCELLiteral,
@@ -164,10 +165,8 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         return { combinator, rules };
       }
     } else if (isCELLikeExpression(expr)) {
-      const {
-        left: { value: field },
-        right: { value: func },
-      } = expr;
+      const field = getIdentifierFromChain(expr.left);
+      const func = expr.right.value;
       const operatorPre: DefaultOperatorName = func === 'startsWith' ? 'beginsWith' : func;
       const operator = forwardedNegation
         ? (`doesNot${operatorPre[0].toUpperCase()}${operatorPre
@@ -187,19 +186,19 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;
       const { left, right } = expr;
-      if (isCELIdentifier(left)) {
-        field = left.value;
-        if (isCELIdentifier(right)) {
-          value = right.value;
+      if (isCELIdentifierOrChain(left)) {
+        field = getIdentifierFromChain(left);
+        if (isCELIdentifierOrChain(right)) {
+          value = getIdentifierFromChain(right);
           valueSource = 'field';
         } else if (isCELLiteral(right)) {
           value = evalCELLiteralValue(right);
         }
       } else {
         /* istanbul ignore else */
-        if (isCELIdentifier(right) && isCELLiteral(left) && expr.operator !== 'in') {
+        if (isCELIdentifierOrChain(right) && isCELLiteral(left) && expr.operator !== 'in') {
           flip = true;
-          field = right.value;
+          field = getIdentifierFromChain(right);
           value = evalCELLiteralValue(left);
         }
       }
@@ -210,9 +209,9 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         if (right.value.value.every(isCELLiteral)) {
           value = right.value.value.map(evalCELLiteralValue);
         } else {
-          if (right.value.value.every(isCELIdentifier)) {
+          if (right.value.value.every(isCELIdentifierOrChain)) {
             valueSource = 'field';
-            value = right.value.value.map(id => id.value);
+            value = right.value.value.map(id => getIdentifierFromChain(id));
           }
         }
         if (value && !listsAsArrays) {
@@ -220,9 +219,9 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         }
       } else if (operator === 'in' && isCELMap(right)) {
         const keys = right.value.value.map(v => v.left);
-        if (keys.every(k => isCELLiteral(k) || isCELIdentifier(k))) {
+        if (keys.every(k => isCELLiteral(k) || isCELIdentifierOrChain(k))) {
           value = (keys as (CELLiteral | CELIdentifier)[]).map(k =>
-            isCELLiteral(k) ? evalCELLiteralValue(k) : k.value
+            isCELLiteral(k) ? evalCELLiteralValue(k) : getIdentifierFromChain(k)
           );
         }
         if (value && !listsAsArrays) {

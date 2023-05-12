@@ -34,10 +34,10 @@ import {
 import { fields } from '../_constants/fields';
 import type { CommonRQBProps, StyleName } from '../_constants/types';
 import {
+  extraStyles,
   fieldsTsString,
   getCodeString,
   getExportDisplayLanguage,
-  getExtraStyles,
   getFormatQueryString,
   getHashFromState,
   getStateFromHash,
@@ -167,6 +167,7 @@ export default function Demo({
   const [jsonLogic, setJsonLogic] = useState(initialJsonLogic);
   const [jsonLogicParseError, setJsonLogicParseError] = useState('');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
+  const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
   const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
 
@@ -221,10 +222,9 @@ export default function Demo({
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
 
-  const codeString = useMemo(() => getCodeString(options, variant), [options, variant]);
-  const extraStylesString = useMemo(
-    () => getExtraStyles(options.justifiedLayout),
-    [options.justifiedLayout]
+  const codeString = useMemo(
+    () => getCodeString(options, variant, styleLanguage),
+    [options, variant, styleLanguage]
   );
 
   const getExportTabAttributes = useCallback(
@@ -279,14 +279,18 @@ export default function Demo({
       ...(options.enableDragAndDrop
         ? [
             '@react-querybuilder/dnd',
-            ...objectKeys(peerDependencies.dnd).filter(pd => pd !== 'react'),
+            ...objectKeys(peerDependencies.dnd).filter(
+              pd => pd !== 'react' && pd !== 'react-querybuilder'
+            ),
           ]
         : []),
       ...(variant === 'default'
         ? []
         : [
             `@react-querybuilder/${variant}`,
-            ...objectKeys(peerDependencies[variant]).filter(pd => pd !== 'react'),
+            ...objectKeys(peerDependencies[variant]).filter(
+              pd => pd !== 'react' && pd !== 'react-querybuilder'
+            ),
           ]),
     ],
     [options.enableDragAndDrop, variant]
@@ -557,11 +561,29 @@ export default function Demo({
             <CodeBlock language="tsx" title="App.tsx">
               {codeString}
             </CodeBlock>
-            {extraStylesString && (
-              <CodeBlock language="scss" title="styles.scss">
-                {extraStylesString}
+            <Details summary={<summary>Styles</summary>}>
+              <div className={styles.exportOptions}>
+                <label key="scss">
+                  <input
+                    type="radio"
+                    checked={styleLanguage === 'scss'}
+                    onChange={() => setStyleLanguage('scss')}
+                  />{' '}
+                  SCSS
+                </label>
+                <label key="css">
+                  <input
+                    type="radio"
+                    checked={styleLanguage === 'css'}
+                    onChange={() => setStyleLanguage('css')}
+                  />{' '}
+                  CSS
+                </label>
+              </div>
+              <CodeBlock language={styleLanguage} title={`styles.${styleLanguage}`}>
+                {extraStyles[styleLanguage]}
               </CodeBlock>
-            )}
+            </Details>
             <Details summary={<summary>Other files</summary>}>
               <CodeBlock language="ts" title="fields.ts">
                 {fieldsTsString}
@@ -575,15 +597,15 @@ export default function Demo({
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="json" />
               <span>&nbsp;</span>
-              <label key={'json_without_ids'}>
+              <label key="json_without_ids">
                 <input
                   type="radio"
-                  checked={'json_without_ids' === format}
+                  checked={format === 'json_without_ids'}
                   onChange={() => setFormat('json_without_ids')}
                 />{' '}
                 Essential properties only
               </label>
-              <label key={'json'}>
+              <label key="json">
                 <input
                   type="radio"
                   checked={format === 'json'}
@@ -599,11 +621,11 @@ export default function Demo({
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="sql" />
               <span>&nbsp;</span>
-              <label key={'sql'}>
+              <label key="sql">
                 <input type="radio" checked={format === 'sql'} onChange={() => setFormat('sql')} />{' '}
                 Inline
               </label>
-              <label key={'parameterized'}>
+              <label key="parameterized">
                 <input
                   type="radio"
                   checked={'parameterized' === format}
@@ -611,7 +633,7 @@ export default function Demo({
                 />{' '}
                 Parameterized
               </label>
-              <label key={'parameterized_named'}>
+              <label key="parameterized_named">
                 <input
                   type="radio"
                   checked={'parameterized_named' === format}

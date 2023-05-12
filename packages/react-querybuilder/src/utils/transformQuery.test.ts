@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/ts/dist/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
 import { transformQuery } from './transformQuery';
 
 const query: RuleGroupType = {
@@ -81,7 +81,12 @@ it('respects the deleteRemappedProperties option', () => {
   expect(
     transformQuery(query, {
       deleteRemappedProperties: false,
-      propertyMap: { combinator: 'AndOr', value: 'val' },
+      propertyMap: {
+        combinator: 'AndOr',
+        value: 'val',
+        operator: 'operator',
+        unknownProperty: 'unknown',
+      },
     })
   ).toEqual({
     combinator: 'and',

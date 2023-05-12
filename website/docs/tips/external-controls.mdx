@@ -10,7 +10,7 @@ React Query Builder exports the same [query tools](../utils/misc#query-tools) it
 
 In the example below, the default add/remove buttons have been hidden. The internal query methods (`add`, `remove`, `update`, and `move`) are used within the event handlers assigned to the controls above the query builder. The function return values are assigned to the same state variable that the query builder uses, so the updates are synchronized.
 
-<SandpackRQB rqbVersion={5} options={{ editorHeight: 480 }}>
+<SandpackRQB rqbVersion={6} options={{ editorHeight: 480 }}>
 
 ```tsx
 import { useState } from 'react';
@@ -24,7 +24,7 @@ import {
   RuleGroupType,
   update,
 } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },

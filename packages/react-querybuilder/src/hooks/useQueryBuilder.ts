@@ -1,3 +1,12 @@
+import { clsx } from 'clsx';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  defaultCombinators,
+  defaultOperators,
+  defaultTranslations,
+  LogType,
+  standardClassnames,
+} from '../defaults';
 import type {
   Field,
   Option,
@@ -8,16 +17,7 @@ import type {
   RuleType,
   Schema,
   UpdateableProperties,
-} from '@react-querybuilder/ts';
-import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  defaultCombinators,
-  defaultOperators,
-  defaultTranslations,
-  LogType,
-  standardClassnames,
-} from '../defaults';
+} from '../types';
 import {
   add,
   filterFieldsByComparator,

@@ -7,10 +7,10 @@
 [![Chat][badge-discord]](https://react-querybuilder.js.org/discord)
 
 [![CI][badge-ci]](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
-[![codecov.io][badge-codecov]](https://codecov.io/github/react-querybuilder/react-querybuilder?branch=main)
+[![codecov.io][badge-codecov]][codecov-link]
 [![All Contributors][badge-all-contributors]](#contributors-)
 
-**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/api/import), and [exporting to](https://react-querybuilder.js.org/docs/api/export), various query languages like SQL, MongoDB, and more. Demo is [here](https://react-querybuilder.js.org/demo).
+**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/utils/import), and [exporting to](https://react-querybuilder.js.org/docs/utils/export), various query languages like SQL, MongoDB, and more. Demo is [here](https://react-querybuilder.js.org/demo).
 
 _**Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**._
 
@@ -29,7 +29,7 @@ export const App = () => {
 };
 ```
 
-For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/api/querybuilder), or browse the [example projects](./examples/).
+For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/intro), or browse the [example projects](./examples/).
 
 To enable drag-and-drop functionality, see the [`@react-querybuilder/dnd` package README](packages/dnd/README.md).
 
@@ -50,9 +50,11 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 ## Development
 
-To run a test page with a basic query builder using the default components, run `yarn start`.
+> Most scripts in this repository require [Bun](https://bun.sh/).
 
-To run the documentation website, run `yarn website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
+To run a test page with a basic query builder using the default components, run `bun run start`.
+
+To run the documentation website, run `bun run website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
 
 ## Credits
 
@@ -128,5 +130,6 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 [badge-npm]: https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=3600&logo=npm
 [badge-training]: https://img.shields.io/badge/training-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAACXBIWXMAAAEIAAABCAFpWn9CAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAgdJREFUKJGNkb9rE2EYxz/33l0uubTXwYSLwWroIgoWIUqoBUF0KS4HQkAKkqndtDi5mLb/h4sGIUOwQkDIkoAiblo0ASXEwSKVYEtKk+Zi877nYmNLsfjdngc+3+/zQ3NdN+q67rNYLHZFKSX4t/bbPzbrkc9f7kx63j7T09Olfr8f/I/KL1+ou5nJp57nIeLxeDocDjMYDAiC4IRAuH7jpiZCodsAQgihA8zOzlIul08EhRBEjeDU2qU3V0c7LS4uks/nR6mdTodms0m9XqfRaBwxUEK7PwJzuRzdbpdSqQRApVIhk8mwsLBAOp1mZ2fnLxmQHYGmaZLP51lZWUFKiWmaJBIJarUag8GAdrv9h0EBIRFCjx7A8/PzKKUoFosYhoFSCsuyjozZhy6AMJH6QVPXdZaXl1ldXcW2bZLJJABTU1OYpgmAFR3awFCgadphx2w2i23bbGxsUK1WAWi1WqRSKQA0HYOo/GQEUh47eaFQIBKJHHtHr9cjainU2X5KP+84ufFEIhZ3XXzfx/d9HMfBtu1R7fs+nU6HpUcP1L3L68Mzroxor+bmnMb2dqspZUwGBD/luZ6hRcaGmhx+C4ekJgxLiq1dJjfHQ9cmeJL6+PrCcGtc8zyPNdO8uC/le8DqBae/fvi1lATC6xNj76oxZwZg79bjt9L5PhNXe7Xnu5WHvwH2M+1kJKUCQwAAAABJRU5ErkJggg==
 [badge-ci]: https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml/badge.svg
-[badge-codecov]: https://codecov.io/github/react-querybuilder/react-querybuilder/coverage.svg?branch=main
+[badge-codecov]: https://codecov.io/gh/react-querybuilder/react-querybuilder/branch/main/graph/badge.svg?token=AeYWGCFJO0
+[codecov-link]: https://codecov.io/gh/react-querybuilder/react-querybuilder
 [badge-discord]: https://img.shields.io/badge/discord-blue.svg?logo=discord&logoColor=white

@@ -278,7 +278,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                          | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this group                              |
 | `disabled`      | `boolean`                                      | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                                     | [Path](../utils/misc#findpath) of this group                 |
+| `path`          | `number[]`                                     | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
 #### `addRuleAction`
@@ -297,7 +297,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                          | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this group                              |
 | `disabled`      | `boolean`                                      | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                                     | [Path](../utils/misc#findpath) of this group                 |
+| `path`          | `number[]`                                     | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
 #### `cloneGroupAction`
@@ -316,7 +316,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                               | [Path](../utils/misc#findpath) of this group                 |
+| `path`          | `number[]`                               | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `cloneRuleAction`
@@ -334,7 +334,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                               |
 | `disabled`      | `boolean`                                | Whether this rule is disabled/locked                         |
-| `path`          | `number[]`                               | [Path](../utils/misc#findpath) of this rule                  |
+| `path`          | `number[]`                               | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `combinatorSelector`
@@ -353,7 +353,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                    | Container for custom props that are passed to all components         |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this group                                      |
 | `disabled`       | `boolean`                                | Whether this group is disabled/locked                                |
-| `path`           | `number[]`                               | [Path](../utils/misc#findpath) of this group                         |
+| `path`           | `number[]`                               | [Path](../tips/path) of this group                                   |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                          |
 
 #### `dragHandle`
@@ -369,7 +369,7 @@ Default is [`DragHandle`](./draghandle). Note that this component must be based 
 | `context`    | `any`                                    | Container for custom props that are passed to all components |
 | `validation` | <code>boolean \| ValidationResult</code> | Validation result of this rule/group                         |
 | `disabled`   | `boolean`                                | Whether this rule/group is disabled/locked                   |
-| `path`       | `number[]`                               | [Path](../utils/misc#findpath) of this rule/group            |
+| `path`       | `number[]`                               | [Path](../tips/path) of this rule/group                      |
 | `schema`     | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `fieldSelector`
@@ -388,7 +388,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                    | Container for custom props that are passed to all components       |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                     |
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                               |
-| `path`           | `number[]`                               | [Path](../utils/misc#findpath) of this rule                        |
+| `path`           | `number[]`                               | [Path](../tips/path) of this rule                                  |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                        |
 
 #### `inlineCombinator`
@@ -417,7 +417,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this group                                                         |
 | `disabled`            | `boolean`                                | Whether this group is disabled/locked                                                   |
 | `disabledTranslation` | `string`                                 | `translations.lockGroupDisabled` if parent group is not disabled, otherwise `undefined` |
-| `path`                | `number[]`                               | [Path](../utils/misc#findpath) of this group                                            |
+| `path`                | `number[]`                               | [Path](../tips/path) of this group                                                      |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                             |
 
 #### `lockRuleAction`
@@ -436,7 +436,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this rule                                                         |
 | `disabled`            | `boolean`                                | Whether this rule is disabled/locked                                                   |
 | `disabledTranslation` | `string`                                 | `translations.lockRuleDisabled` if parent group is not disabled, otherwise `undefined` |
-| `path`                | `number[]`                               | [Path](../utils/misc#findpath) of this rule                                            |
+| `path`                | `number[]`                               | [Path](../tips/path) of this rule                                                      |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                            |
 
 #### `notToggle`
@@ -454,7 +454,7 @@ Default is [`NotToggle`](./nottoggle). Receives the following props per the `Not
 | `context`        | `any`                                    | Container for custom props that are passed to all components |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`       | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`           | `number[]`                               | [Path](../utils/misc#findpath) of this group                 |
+| `path`           | `number[]`                               | [Path](../tips/path) of this group                           |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `operatorSelector`
@@ -474,7 +474,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                    | Container for custom props that are passed to all components     |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                   |
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                             |
-| `path`           | `number[]`                               | [Path](../utils/misc#findpath) of this rule                      |
+| `path`           | `number[]`                               | [Path](../tips/path) of this rule                                |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                      |
 
 #### `removeGroupAction`
@@ -493,7 +493,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                               | [Path](../utils/misc#findpath) of this group                 |
+| `path`          | `number[]`                               | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `removeRuleAction`
@@ -511,7 +511,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                               |
 | `disabled`      | `boolean`                                | Whether this rule is disabled/locked                         |
-| `path`          | `number[]`                               | [Path](../utils/misc#findpath) of this rule                  |
+| `path`          | `number[]`                               | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `rule`
@@ -521,7 +521,7 @@ Default is [`Rule`](./rule). Receives the following props per the `RuleProps` in
 | Prop             | Type           | Description                                                  |
 | ---------------- | -------------- | ------------------------------------------------------------ |
 | `id`             | `string`       | Unique identifier for this rule                              |
-| `path`           | `number[]`     | [Path](../utils/misc#findpath) of this rule                  |
+| `path`           | `number[]`     | [Path](../tips/path) of this rule                            |
 | `rule`           | `RuleType`     | The rule object                                              |
 | `translations`   | `Translations` | The default translations merged with the `translations` prop |
 | `schema`         | `Schema`       | Query [schema](../typescript#miscellaneous)                  |
@@ -543,7 +543,7 @@ Default is [`RuleGroup`](./rulegroup). Receives the following props per the `Rul
 | Prop             | Type               | Description                                                  |
 | ---------------- | ------------------ | ------------------------------------------------------------ |
 | `id`             | `string`           | Unique identifier for this group                             |
-| `path`           | `number[]`         | [Path](../utils/misc#findpath) of this group                 |
+| `path`           | `number[]`         | [Path](../tips/path) of this group                           |
 | `ruleGroup`      | `RuleGroupTypeAny` | The group object                                             |
 | `translations`   | `Translations`     | The default translations merged with the `translations` prop |
 | `schema`         | `Schema`           | Query [schema](../typescript#miscellaneous)                  |
@@ -582,7 +582,7 @@ Default is [`ValueEditor`](./valueeditor). Receives the following props per the 
 | `context`        | `any`                                    | Container for custom props that are passed to all components            |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                          |
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                                    |
-| `path`           | `number[]`                               | [Path](../utils/misc#findpath) of this rule                             |
+| `path`           | `number[]`                               | [Path](../tips/path) of this rule                                       |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                             |
 
 #### `valueSourceSelector`
@@ -602,7 +602,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                            | Container for custom props that are passed to all components     |
 | `validation`     | <code>boolean \| ValidationResult</code>         | Validation result of this rule                                   |
 | `disabled`       | `boolean`                                        | Whether this rule is disabled/locked                             |
-| `path`           | `number[]`                                       | [Path](../utils/misc#findpath) of this rule                      |
+| `path`           | `number[]`                                       | [Path](../tips/path) of this rule                                |
 | `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                      |
 
 ### `getOperators`
@@ -709,7 +709,9 @@ This callback is invoked before a rule or group is removed. The function should 
 
 `Partial<Translations>`
 
-This prop can be used to override translatable texts applied to various controls that are created by the `<QueryBuilder />` component. All keys in the object and all properties within each key are optional. Missing translations will default to the corresponding values below.
+This prop provides basic internationalization (i18n) support. It can be used to override translatable texts applied to the various controls created by the `<QueryBuilder />` component for a specific locale.
+
+All keys in the object and all properties within each key are optional. The `translations` prop object will be deep-merged with the default object below.
 
 ```json
 {

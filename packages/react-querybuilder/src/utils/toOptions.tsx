@@ -1,4 +1,5 @@
-import type { OptionList } from '@react-querybuilder/ts/dist/index.noReact';
+import * as React from 'react';
+import type { OptionList } from '../types/index.noReact';
 import { isOptionGroupArray } from './optGroupUtils';
 
 export const toOptions = (arr?: OptionList) =>

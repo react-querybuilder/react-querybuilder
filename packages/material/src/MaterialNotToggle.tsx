@@ -1,12 +1,14 @@
-import type { NotToggleProps } from '@react-querybuilder/ts';
+import type { Switch } from '@mui/material';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
 import { useContext } from 'react';
+import type { NotToggleProps } from 'react-querybuilder';
 import { NotToggle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents, SwitchType } from './types';
+import type { RQBMaterialComponents } from './types';
 
 type MaterialNotToggleProps = NotToggleProps &
-  ComponentPropsWithoutRef<SwitchType> & {
+  ComponentPropsWithoutRef<typeof Switch> & {
     muiComponents?: RQBMaterialComponents;
   };
 
@@ -28,7 +30,7 @@ export const MaterialNotToggle = ({
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialNotToggleProps) => {
-  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+  const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
     return (

@@ -1,5 +1,6 @@
 import type { InputProps } from '@fluentui/react-components';
 import { Checkbox, Input, Radio, RadioGroup, Switch, Textarea } from '@fluentui/react-components';
+import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { FluentValueSelector } from './FluentValueSelector';
@@ -64,8 +65,8 @@ export const FluentValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

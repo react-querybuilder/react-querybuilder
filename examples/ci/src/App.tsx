@@ -46,16 +46,16 @@ export const App = () => {
         }}>
         {independentCombinators ? (
           <QueryBuilder
-            key="rqb-ic"
             {...(commonProps as unknown as DefaultQBPropsNoDefaultQueryIC)}
+            key="rqb-ic"
             independentCombinators
             query={queryIC}
             onQueryChange={qIC => setQueryIC(qIC)}
           />
         ) : (
           <QueryBuilder
-            key="rqb"
             {...(commonProps as DefaultQBPropsNoDefaultQuery)}
+            key="rqb"
             independentCombinators={false}
             query={query}
             onQueryChange={q => setQuery(q)}

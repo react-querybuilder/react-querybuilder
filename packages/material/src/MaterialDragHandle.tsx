@@ -1,12 +1,14 @@
-import type { DragHandleProps } from '@react-querybuilder/ts';
+import type { DragIndicator } from '@mui/icons-material';
 import type { ComponentPropsWithRef } from 'react';
+import * as React from 'react';
 import { forwardRef, useContext } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { DragIndicatorType, RQBMaterialComponents } from './types';
+import type { RQBMaterialComponents } from './types';
 
 type MaterialDragHandleProps = DragHandleProps &
-  Omit<ComponentPropsWithRef<DragIndicatorType>, 'path'> & {
+  Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> & {
     muiComponents?: RQBMaterialComponents;
   };
 
@@ -28,7 +30,7 @@ export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandle
     },
     dragRef
   ) => {
-    const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+    const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
     const key = muiComponents ? 'mui' : 'no-mui';
     if (!muiComponents) {
       return (

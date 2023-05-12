@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import dayjs from 'dayjs';
+import * as React from 'react';
 import type {
   Option,
   OptionGroup,
@@ -22,12 +23,6 @@ import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
 
 jest.setTimeout(30_000);
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
 
 class ResizeObserver {
   observe() {}

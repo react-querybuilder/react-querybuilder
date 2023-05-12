@@ -1,17 +1,34 @@
+import { produce } from 'immer';
+import { defaultCombinators } from '../defaults';
 import type {
   OptionList,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
   ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { produce } from 'immer';
-import { defaultCombinators } from '../defaults';
+} from '../types/index.noReact';
 import { generateID } from './generateID';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
+
+// TODO: eventually refactor the RuleGroup/IC types to be either/or in ALL cases.
+// Example for `add`:
+/*
+export function add<RG extends RuleGroupType>(
+  query: RG,
+  ruleOrGroup: RG | RuleType,
+  parentPath: number[],
+  options?: Omit<AddOptions, 'combinatorPreceding'>
+): RG;
+export function add<RGIC extends RuleGroupTypeIC>(
+  query: RGIC,
+  ruleOrGroup: RGIC | RuleType,
+  parentPath: number[],
+  options?: AddOptions
+): RGIC;
+*/
 
 export interface AddOptions {
   /**

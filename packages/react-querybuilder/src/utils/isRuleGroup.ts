@@ -3,7 +3,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../types/index.noReact';
 
 /**
  * Determines if this is either a RuleGroupType or RuleGroupTypeIC.

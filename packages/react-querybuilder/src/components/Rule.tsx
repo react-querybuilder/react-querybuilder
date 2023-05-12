@@ -1,7 +1,8 @@
-import type { RuleProps } from '@react-querybuilder/ts';
 import type { MouseEvent as ReactMouseEvent } from 'react';
+import * as React from 'react';
 import { TestID } from '../defaults';
 import { useRule } from '../hooks';
+import type { RuleProps } from '../types';
 
 export const Rule = (props: RuleProps) => {
   const r = { ...props, ...useRule(props) };

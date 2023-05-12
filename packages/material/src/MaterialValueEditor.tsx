@@ -1,5 +1,6 @@
-import type { ValueEditorProps } from '@react-querybuilder/ts';
+import * as React from 'react';
 import { useContext } from 'react';
+import type { ValueEditorProps } from 'react-querybuilder';
 import {
   getFirstOption,
   standardClassnames,
@@ -38,7 +39,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     selectorComponent: SelectorComponent = MaterialValueSelector,
     ...propsForValueSelector
   } = propsForValueEditor;
-  const muiComponents = useContext(RQBMaterialContext) || muiComponentsProp;
+  const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,
@@ -93,8 +94,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          key={key}
           {...propsForValueSelector}
+          key={key}
           path={path}
           level={level}
           className={standardClassnames.valueListItem}

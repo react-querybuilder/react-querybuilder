@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
 import {
   ChakraProvider,
   ColorModeProvider,
   ColorModeScript,
   extendTheme,
   useColorMode as useChakraColorMode,
+  withDefaultVariant,
 } from '@chakra-ui/react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
@@ -16,9 +16,10 @@ import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
 
-const chakraTheme = extendTheme({
-  config: { initialColorMode: 'light', useSystemColorMode: false },
-});
+const chakraTheme = extendTheme(
+  { config: { initialColorMode: 'light', useSystemColorMode: false } },
+  withDefaultVariant({ variant: 'solid' })
+);
 
 function ReactQueryBuilderDemo_ChakraBrowser() {
   const { colorMode } = useColorMode();

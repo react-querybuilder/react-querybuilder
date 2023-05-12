@@ -1,4 +1,5 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
+import * as React from 'react';
 import {
   getFirstOption,
   standardClassnames,
@@ -56,8 +57,6 @@ export const ChakraValueEditor = ({
             key={key}
             type={inputTypeCoerced}
             value={valueAsArray[i] ?? ''}
-            size="xs"
-            variant="filled"
             isDisabled={disabled}
             className={standardClassnames.valueListItem}
             placeholder={placeHolderText}
@@ -67,8 +66,8 @@ export const ChakraValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
@@ -121,8 +120,6 @@ export const ChakraValueEditor = ({
         <Textarea
           value={value}
           title={title}
-          size="xs"
-          variant="filled"
           isDisabled={disabled}
           className={className}
           placeholder={placeHolderText}
@@ -136,7 +133,6 @@ export const ChakraValueEditor = ({
           className={className}
           isChecked={!!value}
           title={title}
-          size="sm"
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />
@@ -147,7 +143,6 @@ export const ChakraValueEditor = ({
         <Checkbox
           className={className}
           title={title}
-          size="sm"
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
           isChecked={!!value}
@@ -164,7 +159,7 @@ export const ChakraValueEditor = ({
           isDisabled={disabled}>
           <Stack direction="row">
             {values.map(v => (
-              <Radio key={v.name} value={v.name} size="sm">
+              <Radio key={v.name} value={v.name}>
                 {v.label}
               </Radio>
             ))}
@@ -178,8 +173,6 @@ export const ChakraValueEditor = ({
       type={inputTypeCoerced}
       value={value}
       title={title}
-      size="xs"
-      variant="filled"
       isDisabled={disabled}
       className={className}
       placeholder={placeHolderText}

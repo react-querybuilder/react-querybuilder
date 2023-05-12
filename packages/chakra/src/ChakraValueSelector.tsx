@@ -1,6 +1,7 @@
 import { Select } from '@chakra-ui/react';
-import type { VersatileSelectorProps } from '@react-querybuilder/ts';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
+import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 
 type ChakraValueSelectorProps = VersatileSelectorProps & ComponentPropsWithoutRef<typeof Select>;
@@ -24,14 +25,13 @@ export const ChakraValueSelector = ({
   fieldData: _fieldData,
   multiple: _multiple,
   listsAsArrays: _listsAsArrays,
+  schema: _schema,
   ...extraProps
 }: ChakraValueSelectorProps) => (
   <Select
     className={className}
     title={title}
     value={value}
-    size="xs"
-    variant="filled"
     disabled={disabled}
     onChange={e => handleOnChange(e.target.value)}
     {...extraProps}>

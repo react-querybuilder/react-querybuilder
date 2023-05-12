@@ -1,7 +1,7 @@
-import type { RuleProps, RuleType } from '@react-querybuilder/ts';
 import { clsx } from 'clsx';
 import { useMemo } from 'react';
 import { standardClassnames } from '../defaults';
+import type { RuleProps, RuleType } from '../types';
 import {
   filterFieldsByComparator,
   getOption,

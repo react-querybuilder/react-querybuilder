@@ -1,3 +1,5 @@
+import type { Equal, Expect, ExpectExtends } from '../../genericTests';
+import { defaultCombinators } from '../defaults';
 import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
@@ -5,8 +7,7 @@ import type {
   DefaultRuleType,
   RuleType,
   ValueSources,
-} from '@react-querybuilder/ts/dist/index.noReact';
-import { defaultCombinators } from '../defaults';
+} from '../types/index.noReact';
 import { formatQuery } from './formatQuery';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { numericRegex } from './misc';
@@ -29,7 +30,7 @@ const [r1, r2, r3, r4, r5] = (['=', '<', '>', '<=', '>='] as const).map<DefaultR
     value: `v${i + 1}`,
   })
 );
-const [rg1, rg2] = [and, or].map(combinator => ({ combinator, rules: [] }));
+const [rg1, rg2] = [and, or].map<DefaultRuleGroupType>(combinator => ({ combinator, rules: [] }));
 const rg3: DefaultRuleGroupType = { combinator: and, rules: [r1, r2, r3] };
 const rgic1: DefaultRuleGroupTypeIC = { rules: [] };
 const rgic2: DefaultRuleGroupTypeIC = { rules: [r1, and, r2] };
@@ -120,6 +121,22 @@ describe('add', () => {
   });
 
   testQT('bails out on bad path', add(rg1, rg2, badPath), rg1);
+
+  it('should have the right types', () => {
+    const newQuery = add({ ...rg1 }, { ...rg2 }, []);
+    const newDefaultQuery = add(rg1, rg2, []);
+    const newICQuery = add({ ...rgic1 }, { ...rgic2 }, []);
+    const newDefaultICQuery = add(rgic1, rgic2, []);
+
+    type _Assertions = [
+      // TODO: RuleGroup/IC should be strict enough that this first line should error
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof newQuery>,
+      ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
+      Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>
+    ];
+  });
 });
 
 describe('remove', () => {
@@ -165,6 +182,22 @@ describe('remove', () => {
   });
 
   testQT('bails out on bad path', remove(rg1, badPath), rg1);
+
+  it('should have the right types', () => {
+    const newQuery = remove({ ...rg1 }, [0]);
+    const newDefaultQuery = remove(rg1, [0]);
+    const newICQuery = remove({ ...rgic1 }, [0]);
+    const newDefaultICQuery = remove(rgic1, [0]);
+
+    type _Assertions = [
+      // TODO: RuleGroup/IC should be strict enough that this first line should error
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof newQuery>,
+      ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
+      Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>
+    ];
+  });
 });
 
 describe('update', () => {

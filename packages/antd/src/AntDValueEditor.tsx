@@ -1,8 +1,9 @@
 import { Checkbox, Input, Radio, Switch, TimePicker } from 'antd';
-import generatePicker from 'antd/es/date-picker/generatePicker';
+import generatePicker from 'antd/es/date-picker/generatePicker/index.js';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
+import * as React from 'react';
 import {
   getFirstOption,
   standardClassnames,
@@ -86,8 +87,8 @@ export const AntDValueEditor = ({
       }
       return (
         <SelectorComponent
-          key={key}
           {...props}
+          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

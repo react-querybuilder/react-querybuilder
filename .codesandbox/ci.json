@@ -1,4 +1,5 @@
 {
+  "buildCommand": "codesandbox-ci",
   "packages": ["packages/*"],
   "sandboxes": [
     "/examples/ci",
@@ -12,5 +13,5 @@
     "/examples/material",
     "/examples/native"
   ],
-  "node": "16"
+  "node": "18"
 }

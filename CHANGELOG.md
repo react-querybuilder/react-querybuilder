@@ -9,9 +9,83 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.3.0] - 2023-05-03
+
+### Changed
+
+- [#503] Merged `@react-querybuilder/ctx` and `@react-querybuilder/ts` back into the main `react-querybuilder` package.
+
+### Fixed
+
+- [#503] Resolved dependency issues in some environments.
+- [#503] Corrected `query-builder.css.map` "sources" path.
+
+## [v6.2.0] - 2023-04-28
+
+### Changed
+
+- [#499] `@react-querybuilder/material` no longer loads MUI components asynchronously. Therefore, the components no longer need to be preloaded to avoid a flash of unstyled content.
+
+### Fixed
+
+- `transformQuery` with the `deleteRemappedProperties` option set to `true` (which is the default) will not attempt to `delete` properties that do not exist on the object (per `Object.hasOwn()`).
+
+## [v6.1.4] - 2023-03-27
+
+### Fixed
+
+- Subpath exports for utility functions (`formatQuery`, `transformQuery`, and the `parse*` functions) now map to their TypeScript types and work for all module resolution strategies.
+
+## [v6.1.3] - 2023-03-24
+
+### Fixed
+
+- [#491] Chakra UI components no longer have hardcoded style-related props like `size`, `variant`, and `colorScheme`.
+- [#491] The `schema` prop will no longer be passed down to Ant Design and Chakra UI components.
+
+## [v6.1.2] - 2023-03-21
+
+### Fixed
+
+- `parseCEL` now recognizes dot-separated identifiers correctly.
+
+## [v6.1.0] - 2023-03-16
+
+### Fixed
+
+- [#488] The `formatQuery` option `quoteFieldNamesWith` now applies to values that represent field names (i.e. `valueSource: 'field'`) when exporting to a SQL-based format.
+
+### Added
+
+- [#488] The `formatQuery` option `ruleProcessor` now applies to the "sql" format (though notably _not_ the other SQL-based formats, "parameterized" and "parameterized_named"), allowing complete control over each rule's translation to SQL. The default rule processor for "sql" is exported as `defaultRuleProcessorSQL`.
+
+## [v6.0.7] - 2023-03-10
+
+### Fixed
+
+- [#486] Custom, non-legacy `valueProcessor` functions called from `formatQuery` will now receive all relevant options, not only `parseNumbers`.
+
+## [v6.0.6] - 2023-03-07
+
+### Fixed
+
+- [#483] The regular expression behind `parseSQL` in the previous version was capturing too many characters when field names were wrapped in delimiters.
+
+## [v6.0.5] - 2023-03-06
+
+### Fixed
+
+- [#479] `parseSQL` is now _much_ more permissive of valid characters within strings and identifiers (whether they are delimited or plain). ([#478] only added recognition of spaces within delimited identifiers.)
+
+## [v6.0.4] - 2023-03-05
+
+### Fixed
+
+- [#478] `parseSQL` now recognizes field names wrapped in square brackets, like `[field name]`. (The corresponding update to `formatQuery` was made in [#463] as part of v6.0.0).
+
 ## [v6.0.3] - 2023-03-02
 
-## Fixed
+### Fixed
 
 - [#472] All development-mode console error messages have been (temporarily) removed to avoid the `process is not defined` issue.
 - `BulmaValueSelector` now adds the `"is-multiple"` class to the wrapper `div` when the `multiple` prop is `true`.
@@ -1245,10 +1319,28 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#463]: https://github.com/react-querybuilder/react-querybuilder/pull/463
 [#470]: https://github.com/react-querybuilder/react-querybuilder/pull/470
 [#472]: https://github.com/react-querybuilder/react-querybuilder/issues/472
+[#478]: https://github.com/react-querybuilder/react-querybuilder/pull/478
+[#479]: https://github.com/react-querybuilder/react-querybuilder/pull/479
+[#483]: https://github.com/react-querybuilder/react-querybuilder/pull/483
+[#486]: https://github.com/react-querybuilder/react-querybuilder/pull/486
+[#488]: https://github.com/react-querybuilder/react-querybuilder/pull/488
+[#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
+[#499]: https://github.com/react-querybuilder/react-querybuilder/pull/499
+[#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.3.0...HEAD
+[v6.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.2.0...v6.3.0
+[v6.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.4...v6.2.0
+[v6.1.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.3...v6.1.4
+[v6.1.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.2...v6.1.3
+[v6.1.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.0...v6.1.2
+[v6.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.7...v6.1.0
+[v6.0.7]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.6...v6.0.7
+[v6.0.6]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.5...v6.0.6
+[v6.0.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.4...v6.0.5
+[v6.0.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.3...v6.0.4
 [v6.0.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.2...v6.0.3
 [v6.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.1...v6.0.2
 [v6.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.0.0...v6.0.1

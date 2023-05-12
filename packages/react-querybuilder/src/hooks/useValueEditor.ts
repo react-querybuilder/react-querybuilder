@@ -1,6 +1,6 @@
-import type { ValueEditorProps } from '@react-querybuilder/ts';
 import { produce } from 'immer';
 import { useCallback, useEffect, useMemo } from 'react';
+import type { ValueEditorProps } from '../types';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 
 export type UseValueEditorParams = Pick<

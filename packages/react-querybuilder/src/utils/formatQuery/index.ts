@@ -1,4 +1,4 @@
-import type { ValueProcessorLegacy } from '@react-querybuilder/ts/dist/index.noReact';
+import type { ValueProcessorLegacy } from '../../types/index.noReact';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
@@ -18,6 +18,7 @@ const generateValueProcessor =
       { field, operator, value, valueSource },
       { parseNumbers: false }
     );
+// TODO: deprecate this
 export const defaultValueProcessor = generateValueProcessor('default');
 /**
  * @deprecated Prefer `defaultRuleProcessorMongoDB`.
@@ -33,6 +34,7 @@ export const defaultCELValueProcessor = generateValueProcessor('cel');
 export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export { jsonLogicAdditionalOperators } from './utils';
 export { defaultValueProcessorByRule };
@@ -40,11 +42,11 @@ export { defaultRuleProcessorCEL };
 export { defaultRuleProcessorMongoDB };
 export { defaultRuleProcessorSpEL };
 /**
- * @deprecated Renamed to "defaultRuleProcessorMongoDB".
+ * @deprecated Renamed to "defaultRuleProcessorCEL".
  */
 export const defaultValueProcessorCELByRule = defaultRuleProcessorCEL;
 /**
- * @deprecated Renamed to "defaultRuleProcessorCEL".
+ * @deprecated Renamed to "defaultRuleProcessorMongoDB".
  */
 export const defaultValueProcessorMongoDBByRule = defaultRuleProcessorMongoDB;
 /**

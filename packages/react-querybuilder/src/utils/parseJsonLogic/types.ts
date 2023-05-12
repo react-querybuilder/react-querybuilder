@@ -2,7 +2,7 @@ import type {
   JsonLogicLessThan,
   JsonLogicLessThanOrEqual,
   JsonLogicRulesLogic,
-} from '@react-querybuilder/ts/dist/index.noReact';
+} from '../../types/index.noReact';
 
 export interface JsonLogicBetweenExclusive extends JsonLogicLessThan {
   '<': [JsonLogicRulesLogic, JsonLogicRulesLogic, JsonLogicRulesLogic];

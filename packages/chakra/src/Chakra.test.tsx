@@ -1,8 +1,9 @@
 import { theme, ThemeProvider } from '@chakra-ui/react';
-import type { DragHandleProps } from '@react-querybuilder/ts';
 import { render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
 import { forwardRef } from 'react';
+import type { DragHandleProps } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,
@@ -17,12 +18,6 @@ import { ChakraNotToggle } from './ChakraNotToggle';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 import { QueryBuilderChakra } from './index';
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __RQB_DEV__: boolean;
-}
-globalThis.__RQB_DEV__ = true;
 
 const generateWrapper = (RQBComponent: any) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (

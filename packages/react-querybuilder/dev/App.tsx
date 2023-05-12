@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import queryString from 'query-string';
 import type { ComponentType } from 'react';
+import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type {
   FormatQueryOptions,
@@ -149,16 +150,16 @@ export const App = ({
         <Wrapper>
           {!optVals.independentCombinators ? (
             <QueryBuilder
-              key="query"
               {...commonRQBProps}
+              key="query"
               independentCombinators={false}
               query={query}
               onQueryChange={onQueryChange}
             />
           ) : (
             <QueryBuilder
-              key="queryIC"
               {...commonRQBProps}
+              key="queryIC"
               independentCombinators
               query={queryIC}
               onQueryChange={onQueryChangeIC}

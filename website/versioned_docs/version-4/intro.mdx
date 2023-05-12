@@ -29,7 +29,7 @@ The simplest way to create a query builder is to render the `QueryBuilder` compo
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 export default () => <QueryBuilder />;
 ```
@@ -44,7 +44,7 @@ In the query builder below, click the "+Rule" button and then the field selector
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -65,7 +65,7 @@ The state variable `query` will be passed to the `query` prop, and the setter me
 ```tsx
 import { useState } from 'react';
 import { Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -93,7 +93,7 @@ export default () => {
 ```jsx
 import { useState } from 'react';
 import { QueryBuilder } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -130,7 +130,7 @@ To convert a query object into other formats like [SQL](https://en.wikipedia.org
 ```tsx
 import { useState } from 'react';
 import { Field, formatQuery, QueryBuilder, RuleGroupType } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.scss';
+import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },

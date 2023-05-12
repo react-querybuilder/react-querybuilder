@@ -1,5 +1,6 @@
-import type { RuleGroupProps } from '@react-querybuilder/ts';
+import * as React from 'react';
 import { useContext } from 'react';
+import type { RuleGroupProps } from 'react-querybuilder';
 import { useRuleGroupDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 

@@ -13,7 +13,7 @@ export const SandpackRQB = ({
   children,
   customSetup,
   options,
-  rqbVersion = 5,
+  rqbVersion = 6,
 }: SandpackRQBProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
   const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
@@ -83,7 +83,7 @@ pre {
   padding: 1rem;
   background-color: white;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   white-space: pre-wrap;
 }
 ${
@@ -105,12 +105,12 @@ h1, h2, h3, h4, h5, h6 {
       ? { 'react-querybuilder': '^4.5.3' }
       : rqbVersion === 5
       ? {
-          '@react-querybuilder/dnd': '^5.3.3',
-          'react-querybuilder': '^5.3.3',
+          '@react-querybuilder/dnd': '^5.4.1',
+          'react-querybuilder': '^5.4.1',
         }
       : {
-          '@react-querybuilder/dnd': '6.0.1',
-          'react-querybuilder': '6.0.1',
+          '@react-querybuilder/dnd': '^6.0.7',
+          'react-querybuilder': '^6.0.7',
         };
 
   const setup = {
@@ -123,7 +123,7 @@ h1, h2, h3, h4, h5, h6 {
       <Sandpack
         files={files}
         theme={isDarkTheme ? 'dark' : undefined}
-        template="react-ts"
+        template="vite-react-ts"
         customSetup={setup}
         options={options}
       />

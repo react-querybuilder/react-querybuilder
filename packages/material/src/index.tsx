@@ -1,5 +1,6 @@
-import type { Controls, QueryBuilderContextProvider } from '@react-querybuilder/ts';
+import * as React from 'react';
 import { useMemo } from 'react';
+import type { Controls, QueryBuilderContextProvider } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
@@ -45,12 +46,8 @@ export const QueryBuilderMaterial: QueryBuilderContextProvider<{
 }> = ({ muiComponents: muiComponentsProp, ...props }) => {
   const muiComponents = useMuiComponents(muiComponentsProp);
 
-  // istanbul ignore next
   const ctxValue = useMemo(
-    () =>
-      muiComponents && muiComponentsProp
-        ? { ...muiComponents, ...muiComponentsProp }
-        : muiComponents ?? muiComponentsProp ?? null,
+    () => ({ ...muiComponents, ...muiComponentsProp }),
     [muiComponents, muiComponentsProp]
   );
 

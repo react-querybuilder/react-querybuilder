@@ -8,24 +8,24 @@ _The Query Builder component for React_
 
 ## Documentation
 
-Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org).
+Complete documentation is available at [https://react-querybuilder.js.org](https://react-querybuilder.js.org).
 
 ## Demo
 
 [Click here to see a live, interactive demo](https://react-querybuilder.js.org/demo).
 
-To use the official compatibility components as seen in the demo, take a look at the packages under the [`@react-querybuilder` org on npmjs.com](https://www.npmjs.com/org/react-querybuilder). We currently support:
+Custom components are not limited to the following libraries, but these have first-class support through their respective compatibility packages:
 
-| Library                                            | npm                                                                                          | Demo                                                     | Example                                                                                                       |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [Ant Design](https://ant.design/)                  | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [demo](https://react-querybuilder.js.org/demo/antd)      | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd)      |
-| [Bootstrap](https://getbootstrap.com/)             | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [demo](https://react-querybuilder.js.org/demo/bootstrap) | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap) |
-| [Bulma](https://bulma.io/)                         | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [demo](https://react-querybuilder.js.org/demo/bulma)     | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma)     |
-| [Chakra UI](https://chakra-ui.com/)                | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [demo](https://react-querybuilder.js.org/demo/chakra)    | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra)    |
-| [Fluent UI](https://github.com/microsoft/fluentui) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [demo](https://react-querybuilder.js.org/demo/fluent)    | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/fluent)    |
-| [Mantine](https://mantine.dev/)                    | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [demo](https://react-querybuilder.js.org/demo/mantine)   | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine)   |
-| [MUI](https://mui.com/)                            | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
-| [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       | [demo](https://react-querybuilder.js.org/demo/native)    | [example](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/native)    |
+| Library                                            | Compatibility package                                                                        | Demo                                                     | Example                                                                                                               |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| [Ant Design](https://ant.design/)                  | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [demo](https://react-querybuilder.js.org/demo/antd)      | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/antd)      |
+| [Bootstrap](https://getbootstrap.com/)             | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [demo](https://react-querybuilder.js.org/demo/bootstrap) | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap) |
+| [Bulma](https://bulma.io/)                         | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [demo](https://react-querybuilder.js.org/demo/bulma)     | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma)     |
+| [Chakra UI](https://chakra-ui.com/)                | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [demo](https://react-querybuilder.js.org/demo/chakra)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra)    |
+| [Fluent UI](https://github.com/microsoft/fluentui) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [demo](https://react-querybuilder.js.org/demo/fluent)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/fluent)    |
+| [Mantine](https://mantine.dev/)                    | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [demo](https://react-querybuilder.js.org/demo/mantine)   | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine)   |
+| [MUI](https://mui.com/)                            | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
+| [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       |                                                          |                                                                                                                       |
 
 ## Basic usage
 
@@ -63,11 +63,11 @@ export const App = () => {
 };
 ```
 
-To enable drag-and-drop functionality, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/) and nest `<QueryBuilder />` under `<QueryBuilderDnD />`.
+To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/) and nest `<QueryBuilder />` under `<QueryBuilderDnD />`.
 
 ## Export
 
-To [export queries](https://react-querybuilder.js.org/docs/api/export) as SQL, MongoDB, or one of several other formats, use the `formatQuery` function.
+To [export queries](https://react-querybuilder.js.org/docs/utils/export) as SQL, MongoDB, or one of several other formats, use the `formatQuery` function.
 
 ```ts
 const query = {
@@ -94,7 +94,7 @@ console.log(sqlWhere);
 
 ## Import
 
-To [import queries](https://react-querybuilder.js.org/docs/api/import) use `parseSQL`, `parseCEL`, `parseJsonLogic`, or `parseMongoDB` depending on the source.
+To [import queries](https://react-querybuilder.js.org/docs/utils/import) use `parseSQL`, `parseCEL`, `parseJsonLogic`, or `parseMongoDB` depending on the source.
 
 **Tip:** `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself (everything but the expressions in the `WHERE` clause will be ignored). Trailing semicolon is optional.
 
@@ -122,12 +122,13 @@ console.log(query);
 */
 ```
 
-Note: `formatQuery` and the `parse*` functions can be used without importing React (e.g., on the server) like this:
+Note: `formatQuery`, `transformQuery`, and the `parse*` functions can be used without importing React (e.g., on the server) like this:
 
 ```js
-import { formatQuery } from 'react-querybuilder/dist/formatQuery';
-import { parseCEL } from 'react-querybuilder/dist/parseCEL';
-import { parseJsonLogic } from 'react-querybuilder/dist/parseJsonLogic';
-import { parseMongoDB } from 'react-querybuilder/dist/parseMongoDB';
-import { parseSQL } from 'react-querybuilder/dist/parseSQL';
+import { formatQuery } from 'react-querybuilder/formatQuery';
+import { parseCEL } from 'react-querybuilder/parseCEL';
+import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
+import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+import { parseSQL } from 'react-querybuilder/parseSQL';
+import { transformQuery } from 'react-querybuilder/transformQuery';
 ```

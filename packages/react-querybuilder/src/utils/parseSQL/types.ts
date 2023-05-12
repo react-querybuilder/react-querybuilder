@@ -1,4 +1,4 @@
-import type { DefaultCombinatorNameExtended } from '@react-querybuilder/ts';
+import type { DefaultCombinatorNameExtended } from '../../types';
 
 type AnyCase<T extends string> = string extends T
   ? string
@@ -87,7 +87,7 @@ export interface SQLWhereObjectAny extends SQLWhereObject {
 }
 export interface SQLStringValue extends SQLWhereObject {
   type: 'String';
-  value: `'${string}'` | `"${string}"`;
+  value: string;
 }
 export interface SQLNumberValue extends SQLWhereObject {
   type: 'Number';
