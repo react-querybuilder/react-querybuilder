@@ -5,6 +5,7 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { MantineValueSelector } from './MantineValueSelector';
+import { toNumberInputValue } from './utils';
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
@@ -60,7 +61,7 @@ export const MantineValueEditor = ({
             key={key}
             type={inputTypeCoerced || 'text'}
             placeholder={placeHolderText}
-            value={valueAsArray[i] ?? ''}
+            value={toNumberInputValue(valueAsArray[i])}
             className={`${standardClassnames.valueListItem} input`}
             data-disabled={disabled}
             disabled={disabled}
@@ -271,7 +272,7 @@ export const MantineValueEditor = ({
         type={inputTypeCoerced}
         data-disabled={disabled}
         disabled={disabled}
-        value={value}
+        value={toNumberInputValue(value)}
         onChange={v => handleOnChange(v)}
       />
     );

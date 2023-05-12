@@ -18,3 +18,10 @@ export const optionListMapNameToValue = (list: OptionList) => {
 
   return listFlat.map(opt => ({ name: opt.name, value: opt.name, label: opt.label }));
 };
+
+export const toNumberInputValue = (val: any) => {
+  if (typeof val === 'number') return val;
+  const valParseFloat = parseFloat(val);
+  if (!isNaN(valParseFloat)) return valParseFloat;
+  return '';
+};
