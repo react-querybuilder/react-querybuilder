@@ -1,4 +1,5 @@
 import { Checkbox, NumberInput, Radio, Switch, Textarea, TextInput } from '@mantine/core';
+import type { DateValue } from '@mantine/dates';
 import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import * as React from 'react';
@@ -59,7 +60,7 @@ export const MantineValueEditor = ({
         return (
           <NumberInput
             key={key}
-            type={inputTypeCoerced || 'text'}
+            type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={toNumberInputValue(valueAsArray[i])}
             className={`${standardClassnames.valueListItem} input`}
@@ -70,30 +71,31 @@ export const MantineValueEditor = ({
         );
       }
       if (inputTypeCoerced === 'datetime-local') {
+        const dateTime = dayjs(valueAsArray[i]);
+        const dateTimeValue = dateTime.isValid() ? dateTime.toDate() : null;
         return (
           <DateTimePicker
             key={key}
-            value={
-              valueAsArray[i] && dayjs(valueAsArray[i]).isValid()
-                ? dayjs(valueAsArray[i]).toDate()
-                : null
-            }
+            value={dateTimeValue}
             className={standardClassnames.valueListItem}
             data-disabled={disabled}
             disabled={disabled}
             placeholder={placeHolderText}
+            withSeconds
             onChange={d =>
-              handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateTimeLocalFormat) : '')
+              multiValueHandler(
+                d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '',
+                i
+              )
             }
           />
-          //   onChange={v => multiValueHandler(v, i)}
         );
       }
       if (type === 'text') {
         return (
           <TextInput
             key={key}
-            type={inputTypeCoerced || 'text'}
+            type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} input`}
@@ -205,7 +207,7 @@ export const MantineValueEditor = ({
           date = dayjs(`${dayjs().format('YYYY-MM-DD')}T${valueAsArray[i]}`);
         }
         return date.isValid() ? date.toDate() : null;
-      }) as [Date | null, Date | null];
+      }) as [DateValue, DateValue];
 
       return (
         <DatePickerInput
@@ -217,15 +219,7 @@ export const MantineValueEditor = ({
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={dates => {
-            const dateArray = dates
-              .map(d => dayjs(d))
-              .map(d =>
-                d.isValid()
-                  ? d.format(
-                      inputTypeCoerced === 'datetime-local' ? dateTimeLocalFormat : dateFormat
-                    )
-                  : null
-              );
+            const dateArray = dates.map(d => (d ? dayjs(d).format(dateFormat) : ''));
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
           }}
         />
@@ -236,13 +230,14 @@ export const MantineValueEditor = ({
       return (
         <DateTimePicker
           data-testid={testID}
-          value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
+          value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
           className={className}
           data-disabled={disabled}
           disabled={disabled}
           placeholder={placeHolderText}
+          withSeconds
           onChange={d =>
-            handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateTimeLocalFormat) : '')
+            handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
           }
         />
       );
@@ -252,12 +247,14 @@ export const MantineValueEditor = ({
       <DatePickerInput
         data-testid={testID}
         type="default"
-        value={value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
+        value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
         className={className}
         data-disabled={disabled}
         disabled={disabled}
         placeholder={placeHolderText}
-        onChange={d => handleOnChange(dayjs(d).isValid() ? dayjs(d).format(dateFormat) : '')}
+        onChange={d =>
+          handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
+        }
       />
     );
   }

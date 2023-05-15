@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { OptionList, Schema, ValueEditorProps } from '../src/types/';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
-import { findInput, findTextarea, userEventSetup } from './utils';
+import { findInput, findInputs, findTextarea, userEventSetup } from './utils';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
@@ -86,7 +86,9 @@ export const testValueEditor = (
         });
 
         it('should make the inputType "text" if operator is "in" or "notIn"', () => {
-          render(<ValueEditor {...props} inputType="number" operator="in" />);
+          const { rerender } = render(<ValueEditor {...props} inputType="number" operator="in" />);
+          expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
+          rerender(<ValueEditor {...props} inputType="number" operator="notIn" />);
           expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');
         });
 
@@ -294,6 +296,72 @@ export const testValueEditor = (
           const handleOnChange = jest.fn();
           render(<ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} disabled />);
           const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs).toHaveLength(2);
+          for (const r of betweenInputs) {
+            expect(r).toBeDisabled();
+            await user.click(r);
+          }
+          expect(handleOnChange).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when rendering a "between" number input (with parseNumbers)', () => {
+        const betweenNumberProps: ValueEditorProps = {
+          ...props,
+          inputType: 'number',
+          operator: 'between',
+          parseNumbers: true,
+          type: 'text',
+          value: '12,14',
+        };
+
+        it('should render the "between" number input', () => {
+          render(<ValueEditor {...betweenNumberProps} />);
+          const betweenInputs = findInputs(screen.getByTitle(title));
+          expect(betweenInputs).toHaveLength(2);
+          expect(betweenInputs[0]).toHaveValue(12);
+          expect(betweenInputs[1]).toHaveValue(14);
+        });
+
+        it('should call the onChange handler', async () => {
+          const handleOnChange = jest.fn();
+          render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} />);
+          const betweenInputs = findInputs(screen.getByTitle(title));
+          expect(betweenInputs).toHaveLength(2);
+          await user.type(betweenInputs[0], '4');
+          await user.type(betweenInputs[1], '8');
+          expect(handleOnChange).toHaveBeenCalledWith('124,14');
+          expect(handleOnChange).toHaveBeenCalledWith('12,148');
+        });
+
+        it('should assume empty string as the second value if not provided', async () => {
+          const handleOnChange = jest.fn();
+          render(
+            <ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} value={['12']} />
+          );
+          const betweenInputs = findInputs(screen.getByTitle(title));
+          expect(betweenInputs).toHaveLength(2);
+          await user.type(betweenInputs[0], '4');
+          expect(handleOnChange).toHaveBeenCalledWith('124,');
+        });
+
+        it('should call the onChange handler with lists as arrays', async () => {
+          const handleOnChange = jest.fn();
+          render(
+            <ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} listsAsArrays />
+          );
+          const betweenInputs = findInputs(screen.getByTitle(title));
+          expect(betweenInputs).toHaveLength(2);
+          await user.type(betweenInputs[0], '4');
+          await user.type(betweenInputs[1], '8');
+          expect(handleOnChange).toHaveBeenCalledWith([124, '14']);
+          expect(handleOnChange).toHaveBeenCalledWith(['12', 148]);
+        });
+
+        it('should be disabled by the disabled prop', async () => {
+          const handleOnChange = jest.fn();
+          render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} disabled />);
+          const betweenInputs = findInputs(screen.getByTitle(title));
           expect(betweenInputs).toHaveLength(2);
           for (const r of betweenInputs) {
             expect(r).toBeDisabled();

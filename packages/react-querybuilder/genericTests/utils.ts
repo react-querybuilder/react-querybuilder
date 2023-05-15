@@ -6,6 +6,9 @@ export const UNUSED = 'UNUSED';
 export const findInput = (el: HTMLElement) =>
   (el.tagName === 'INPUT' ? el : el.querySelector('input')) as HTMLInputElement;
 
+export const findInputs = (el: HTMLElement) =>
+  (el.tagName === 'INPUT' ? el : el.querySelectorAll('input')) as NodeListOf<HTMLInputElement>;
+
 export const findTextarea = (el: HTMLElement) =>
   (el.tagName === 'TEXTAREA' ? el : el.querySelector('textarea')) as HTMLTextAreaElement;
 
