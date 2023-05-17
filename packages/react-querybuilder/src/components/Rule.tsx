@@ -1,19 +1,15 @@
-import type { MouseEvent as ReactMouseEvent } from 'react';
 import * as React from 'react';
 import { TestID } from '../defaults';
-import { useRule } from '../hooks';
+import { useEventMethods, useRule } from '../hooks';
 import type { RuleProps } from '../types';
 
 export const Rule = (props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
-  const [cloneRule, toggleLockRule, removeRule] = [r.cloneRule, r.toggleLockRule, r.removeRule].map(
-    f => (event: ReactMouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-      f();
-    }
-  );
+  const { cloneRule, toggleLockRule, removeRule } = r;
+  const eventMethods = useEventMethods({ cloneRule, toggleLockRule, removeRule });
+
+  const subComponentProps = { ...r, ...eventMethods };
 
   return (
     <div
@@ -25,7 +21,7 @@ export const Rule = (props: RuleProps) => {
       data-rule-id={r.id}
       data-level={r.path.length}
       data-path={JSON.stringify(r.path)}>
-      <RuleComponents {...r} {...{ cloneRule, toggleLockRule, removeRule }} />
+      <RuleComponents {...subComponentProps} />
     </div>
   );
 };

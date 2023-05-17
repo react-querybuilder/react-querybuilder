@@ -88,24 +88,24 @@ export const useRule = (props: RuleProps) => {
   );
 
   const generateOnChangeHandler =
-    (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any) => {
+    (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, _context?: any) => {
       if (!disabled) {
         onPropChange(prop, value, path);
       }
     };
 
-  const cloneRule = (_event?: any) => {
+  const cloneRule = (_event?: any, _context?: any) => {
     if (!disabled) {
       const newPath = [...getParentPath(path), path[path.length - 1] + 1];
       moveRule(path, newPath, true);
     }
   };
 
-  const toggleLockRule = (_event?: any) => {
+  const toggleLockRule = (_event?: any, _context?: any) => {
     onPropChange('disabled', !disabled, path);
   };
 
-  const removeRule = (_event?: any) => {
+  const removeRule = (_event?: any, _context?: any) => {
     if (!disabled) {
       onRuleRemove(path);
     }

@@ -1,3 +1,4 @@
+export * from './useEventMethods';
 export * from './useQueryBuilder';
 export * from './useRule';
 export * from './useRuleGroup';
