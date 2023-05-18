@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Fragment } from 'react';
 import { TestID } from '../defaults';
-import { useEventMethods, useRuleGroup } from '../hooks';
+import { useRuleGroup, useStopEventPropagation } from '../hooks';
 import type { RuleGroupProps } from '../types';
 import { pathsAreEqual } from '../utils';
 
@@ -9,7 +9,7 @@ export const RuleGroup = (props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
 
   const { addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup } = rg;
-  const eventMethods = useEventMethods({
+  const eventMethods = useStopEventPropagation({
     addRule,
     addGroup,
     cloneGroup,

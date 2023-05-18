@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { TestID } from '../defaults';
-import { useEventMethods, useRule } from '../hooks';
+import { useRule, useStopEventPropagation } from '../hooks';
 import type { RuleProps } from '../types';
 
 export const Rule = (props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
   const { cloneRule, toggleLockRule, removeRule } = r;
-  const eventMethods = useEventMethods({ cloneRule, toggleLockRule, removeRule });
+  const eventMethods = useStopEventPropagation({ cloneRule, toggleLockRule, removeRule });
 
   const subComponentProps = { ...r, ...eventMethods };
 
