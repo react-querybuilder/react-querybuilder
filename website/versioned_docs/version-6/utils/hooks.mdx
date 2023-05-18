@@ -112,6 +112,18 @@ function useSelectElementChangeHandler(props: {
 
 Used by the [`ValueSelector`](../components/valueselector) component. Returns a memoized change handler specifically for HTML `<select />` elements.
 
+### `useStopEventPropagation`
+
+```ts
+function useStopEventPropagation(
+  methods: Record<string, (event: React.MouseEvent, context: any) => void>
+): Record<string, (event: React.MouseEvent, context: any) => void>;
+```
+
+Used by the default [`Rule`](../components/rule) and [`RuleGroup`](../components/rulegroup) components to prevent default behavior and stop propagation of events (e.g., a `MouseEvent` after clicking a `<button>`). Takes an object where the value of each key is a function taking `MouseEvent` and context parameters; returns the same object with the respective functions having the same signature but calling `event.preventDefault()` and `event.stopPropagation()` first.
+
+This hook is _not_ used in the `Rule` and `RuleGroup` components used/exported by `@react-querybuilder/native`.
+
 ## Utilities
 
 ### `useMergedContext`
