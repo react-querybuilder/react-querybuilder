@@ -8,7 +8,7 @@ import type {
   WithRequired,
 } from '../../types';
 import { mergeClassnames } from '../mergeClassnames';
-import { objectKeys } from '../objectKeys';
+import { objectKeys } from '../objectUtils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;

@@ -10,7 +10,7 @@ import type {
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
-import { objectKeys } from '../objectKeys';
+import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import type { MongoDbSupportedOperators } from './types';
 import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';

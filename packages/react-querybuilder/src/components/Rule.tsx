@@ -7,9 +7,13 @@ export const Rule = (props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
   const { cloneRule, toggleLockRule, removeRule } = r;
-  const eventMethods = useStopEventPropagation({ cloneRule, toggleLockRule, removeRule });
+  const methodsWithoutEventPropagation = useStopEventPropagation({
+    cloneRule,
+    toggleLockRule,
+    removeRule,
+  });
 
-  const subComponentProps = { ...r, ...eventMethods };
+  const subComponentProps = { ...r, ...methodsWithoutEventPropagation };
 
   return (
     <div

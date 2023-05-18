@@ -9,7 +9,7 @@ export const RuleGroup = (props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
 
   const { addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup } = rg;
-  const eventMethods = useStopEventPropagation({
+  const methodsWithoutEventPropagation = useStopEventPropagation({
     addRule,
     addGroup,
     cloneGroup,
@@ -17,7 +17,7 @@ export const RuleGroup = (props: RuleGroupProps) => {
     removeGroup,
   });
 
-  const subComponentProps = { ...rg, ...eventMethods };
+  const subComponentProps = { ...rg, ...methodsWithoutEventPropagation };
 
   return (
     <div
