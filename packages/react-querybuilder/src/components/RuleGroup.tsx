@@ -1,27 +1,23 @@
-import type { MouseEvent as ReactMouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment } from 'react';
 import { TestID } from '../defaults';
-import { useRuleGroup } from '../hooks';
+import { useRuleGroup, useStopEventPropagation } from '../hooks';
 import type { RuleGroupProps } from '../types';
 import { pathsAreEqual } from '../utils';
 
 export const RuleGroup = (props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
 
-  const [addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup] = [
-    rg.addRule,
-    rg.addGroup,
-    rg.cloneGroup,
-    rg.toggleLockGroup,
-    rg.removeGroup,
-  ].map(f => (event: ReactMouseEvent, context?: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-    f(event, context);
+  const { addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup } = rg;
+  const methodsWithoutEventPropagation = useStopEventPropagation({
+    addRule,
+    addGroup,
+    cloneGroup,
+    toggleLockGroup,
+    removeGroup,
   });
 
-  const subComponentProps = { ...rg, addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup };
+  const subComponentProps = { ...rg, ...methodsWithoutEventPropagation };
 
   return (
     <div

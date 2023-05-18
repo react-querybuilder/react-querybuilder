@@ -98,19 +98,19 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     !!(dragMonitorId || dropMonitorId || previewRef || dragRef || dropRef)
   );
 
-  const onCombinatorChange = (value: any) => {
+  const onCombinatorChange = (value: any, _context?: any) => {
     if (!disabled) {
       onPropChange('combinator', value, path);
     }
   };
 
-  const onIndependentCombinatorChange = (value: any, index: number) => {
+  const onIndependentCombinatorChange = (value: any, index: number, _context?: any) => {
     if (!disabled) {
       onPropChange('combinator', value, path.concat([index]));
     }
   };
 
-  const onNotToggleChange = (checked: boolean) => {
+  const onNotToggleChange = (checked: boolean, _context?: any) => {
     if (!disabled) {
       onPropChange('not', checked, path);
     }
@@ -130,18 +130,18 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     }
   };
 
-  const cloneGroup = (_event?: any) => {
+  const cloneGroup = (_event?: any, _context?: any) => {
     if (!disabled) {
       const newPath = [...getParentPath(path), path[path.length - 1] + 1];
       moveRule(path, newPath, true);
     }
   };
 
-  const toggleLockGroup = (_event?: any) => {
+  const toggleLockGroup = (_event?: any, _context?: any) => {
     onPropChange('disabled', !disabled, path);
   };
 
-  const removeGroup = (_event?: any) => {
+  const removeGroup = (_event?: any, _context?: any) => {
     if (!disabled) {
       onGroupRemove(path);
     }

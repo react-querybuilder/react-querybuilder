@@ -12,7 +12,7 @@ export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
 export * from './mergeClassnames';
 export * from './misc';
-export * from './objectKeys';
+export * from './objectUtils';
 export * from './optGroupUtils';
 export * from './parseCEL';
 export * from './parseJsonLogic';
