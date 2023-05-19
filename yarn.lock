@@ -16612,6 +16612,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"entities@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "entities@npm:4.5.0"
+  checksum: 853f8ebd5b425d350bffa97dd6958143179a5938352ccae092c62d1267c4e392a039be1bae7d51b6e4ffad25f51f9617531fedf5237f15df302ccfb452cbf2d7
+  languageName: node
+  linkType: hard
+
 "env-paths@npm:^2.2.0":
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
@@ -18607,6 +18614,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"happy-dom@npm:^9.19.2":
+  version: 9.19.2
+  resolution: "happy-dom@npm:9.19.2"
+  dependencies:
+    css.escape: ^1.5.1
+    entities: ^4.5.0
+    iconv-lite: ^0.6.3
+    webidl-conversions: ^7.0.0
+    whatwg-encoding: ^2.0.0
+    whatwg-mimetype: ^3.0.0
+  checksum: 99d64054e14e8bcfdbd1e144ef7984acf1365ebad3b066b0c22422882c52410bc84db5fd4d2d100d4aa8318724df6bbe19908b6775690ffb548dd5b33c3bf74b
+  languageName: node
+  linkType: hard
+
 "hard-rejection@npm:^2.1.0":
   version: 2.1.0
   resolution: "hard-rejection@npm:2.1.0"
@@ -19174,7 +19195,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:
@@ -26732,6 +26753,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.6.0
     fast-json-stable-stringify: ^2.1.0
     glob: ^10.2.2
+    happy-dom: ^9.19.2
     jest: ^29.5.0
     jest-environment-jsdom: ^29.5.0
     jest-watch-typeahead: ^2.2.2
