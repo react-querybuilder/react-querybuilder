@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types/index.noReact';
 import { transformQuery } from './transformQuery';
 
 const query: RuleGroupType = {
@@ -57,6 +57,16 @@ it('respects the propertyMap option', () => {
     AndOr: 'and',
     path: [],
     rules: [{ field: 'f1', operator: '=', val: 'v1', path: [0] }],
+  });
+});
+
+it('does not set operator property if it is missing', () => {
+  expect(
+    transformQuery({ combinator: 'and', rules: [{ field: 'f1', value: 'v1' } as RuleType] })
+  ).toEqual({
+    combinator: 'and',
+    path: [],
+    rules: [{ field: 'f1', value: 'v1', path: [0] }],
   });
 });
 

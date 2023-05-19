@@ -13,9 +13,9 @@ const remapProperties = (
 ) =>
   produce(obj, draft => {
     for (const [k, v] of Object.entries(propertyMap)) {
-      if (k !== v) {
+      if (!!v && k !== v && Object.hasOwn(draft, k)) {
         draft[v] = draft[k];
-        if (deleteRemappedProperties && Object.hasOwn(draft, k)) {
+        if (deleteRemappedProperties) {
           delete draft[k];
         }
       }
@@ -165,7 +165,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
         remapProperties(
           {
             ...{ ...r, path: [...rg.path, idx] },
-            operator: operatorMap[r.operator] ?? r.operator,
+            ...('operator' in r ? { operator: operatorMap[r.operator] ?? r.operator } : {}),
           },
           propertyMap,
           deleteRemappedProperties
