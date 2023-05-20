@@ -10,6 +10,7 @@ import type {
 } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
+  findInput,
   testActionElement,
   testNotToggle,
   testValueEditor,
@@ -44,6 +45,10 @@ const now = new Date();
 const year = now.getFullYear();
 const month = `${now.getMonth() + 1}`.padStart(2, '0');
 const dateStub = `${year}-${month}-`;
+
+// https://github.com/mantinedev/mantine/blob/d37666f12296741d894f036a9d9b3d0c8f4d4670/src/mantine-dates/src/components/DateTimePicker/DateTimePicker.tsx#L81
+const defaultDateTimePickerLabelValueFormat = 'DD/MM/YYYY HH:mm:ss';
+const toDateTimePickerLabel = (s: string) => dayjs(s).format(defaultDateTimePickerLabelValueFormat);
 
 describe('MantineValueSelector', () => {
   (window as any).ResizeObserver = ResizeObserver;
@@ -116,7 +121,7 @@ describe('MantineValueSelector', () => {
   });
 });
 
-describe('MantineValueEditor as select and date picker', () => {
+describe('MantineValueEditor as numeric editor, select, date picker', () => {
   const props: ValueEditorProps = {
     testID: TestID.valueEditor,
     values: options,
@@ -132,6 +137,22 @@ describe('MantineValueEditor as select and date picker', () => {
     inputType: 'text',
     type: 'text',
   };
+
+  it('renders value editor as numeric editor', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <MantineValueEditor
+        {...props}
+        inputType="number"
+        handleOnChange={handleOnChange}
+        value={1214}
+      />
+    );
+    await act(async () => {
+      await user.type(findInput(screen.getByTestId(TestID.valueEditor)), '02');
+    });
+    expect(handleOnChange).toHaveBeenCalledWith(121402);
+  });
 
   it('renders value editor as select', () => {
     render(<MantineValueEditor {...props} type="select" />);
@@ -186,9 +207,11 @@ describe('MantineValueEditor as select and date picker', () => {
         handleOnChange={handleOnChange}
       />
     );
-    expect(screen.getByDisplayValue(dayjs(dateString).format('MMMM D, YYYY'))).toBeInTheDocument();
-    await user.click(screen.getByRole('button'));
-    expect(handleOnChange).toHaveBeenCalledWith('');
+    const button = screen.getByText(dayjs(dateString).format('MMMM D, YYYY'));
+    await user.click(button);
+    const day = screen.getByText('16');
+    await user.click(day);
+    expect(handleOnChange).toHaveBeenCalledWith('2002-12-16');
   });
 
   it('renders value editor as date range editor', async () => {
@@ -203,6 +226,17 @@ describe('MantineValueEditor as select and date picker', () => {
     );
     await user.click(screen.getByTestId(TestID.valueEditor));
     await user.click(screen.getByText('10'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,`);
+    rerender(
+      <MantineValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+        value={[`${dateStub}10`, '']}
+      />
+    );
+    await user.click(screen.getByTestId(TestID.valueEditor));
     await user.click(screen.getByText('20'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
     rerender(
@@ -232,30 +266,24 @@ describe('MantineValueEditor as select and date picker', () => {
       />
     );
     await user.click(screen.getByTestId(TestID.valueEditor));
-    await user.click(screen.getByText('10'));
-    await user.click(screen.getByText('20'));
-    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
+    await user.click(screen.getByText('16'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}16,`);
   });
 
   it('renders value editor as time editor', async () => {
     const handleOnChange = jest.fn();
     render(<MantineValueEditor {...props} inputType="time" handleOnChange={handleOnChange} />);
-    await user.tab();
     await act(async () => {
-      await user.keyboard('2');
+      await user.type(findInput(screen.getByTestId(TestID.valueEditor)), '124');
     });
-    expect(handleOnChange).toHaveBeenCalledWith('02:00:00');
+    expect(handleOnChange).toHaveBeenCalledWith('12:04');
   });
 
   it('handles preloaded dates as time editor', async () => {
-    const { rerender } = render(
-      <MantineValueEditor {...props} inputType="time" value="12:14:26" />
-    );
-    expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[0]).toHaveValue('12');
-    rerender(<MantineValueEditor {...props} inputType="time" value="2002-12-14T14:12:26" />);
-    expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[0]).toHaveValue('14');
+    const { rerender } = render(<MantineValueEditor {...props} inputType="time" value="12:14" />);
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveValue('12:14');
     rerender(<MantineValueEditor {...props} inputType="time" value="" />);
-    expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[0]).toHaveValue('');
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveValue('');
   });
 
   it('renders value editor as time range editor', async () => {
@@ -266,36 +294,143 @@ describe('MantineValueEditor as select and date picker', () => {
         inputType="time"
         operator="between"
         handleOnChange={handleOnChange}
+        values={[]}
       />
     );
-    await user.tab();
-    await act(async () => await user.keyboard('2'));
-    expect(handleOnChange).toHaveBeenCalledWith('02:00:00,');
     await act(async () => {
-      await user.tab();
-      await user.tab();
-      await user.keyboard('4');
+      await user.type(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[0], '124');
     });
-    expect(handleOnChange).toHaveBeenCalledWith('02:00:00,04:00:00');
+    expect(handleOnChange).toHaveBeenCalledWith('12:04,');
     rerender(
       <MantineValueEditor
         {...props}
         inputType="time"
         operator="between"
         handleOnChange={handleOnChange}
+        values={[]}
         listsAsArrays
-        value={['02:00:00', '04:00:00']}
+        value={['12:04', '']}
       />
     );
     await act(async () => {
-      await user.tab({ shift: true });
-      await user.keyboard('6');
+      await user.type(screen.getByTestId(TestID.valueEditor).querySelectorAll('input')[1], '142');
     });
-    expect(handleOnChange).toHaveBeenCalledWith(['02:00:00', '06:00:00']);
+    expect(handleOnChange).toHaveBeenCalledWith(['12:04', '14:02']);
   });
 
-  it('renders value editor as datetime-local editor', () => {
-    render(<MantineValueEditor {...props} inputType="datetime-local" />);
+  it('renders value editor as datetime-local editor', async () => {
+    const handleOnChange = jest.fn();
+    const { rerender } = render(
+      <MantineValueEditor
+        {...props}
+        value="not a date"
+        inputType="datetime-local"
+        handleOnChange={handleOnChange}
+      />
+    );
+    await user.click(screen.getByTestId(TestID.valueEditor));
+    await user.click(screen.getByText('10'));
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveTextContent('');
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10T00:00:00`);
+    rerender(
+      <MantineValueEditor
+        {...props}
+        value={`${dateStub}10T00:00:00`}
+        inputType="datetime-local"
+        handleOnChange={handleOnChange}
+      />
+    );
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveTextContent(
+      toDateTimePickerLabel(`${dateStub}10T00:00:00`)
+    );
+  });
+
+  describe('when rendering a "between" datetime-local input', () => {
+    const betweenDateTimeLocalProps: ValueEditorProps = {
+      ...props,
+      inputType: 'datetime-local',
+      operator: 'between',
+      type: 'text',
+      value: `not a date,${dateStub}20T00:00:00`,
+      values: undefined,
+    };
+
+    it('should render the "between" datetime-local input', () => {
+      render(<MantineValueEditor {...betweenDateTimeLocalProps} />);
+      const betweenInputs = screen.getAllByRole('button');
+      expect(betweenInputs).toHaveLength(2);
+      expect(betweenInputs[0]).toHaveTextContent('');
+      expect(betweenInputs[1]).toHaveTextContent(toDateTimePickerLabel(`${dateStub}20T00:00:00`));
+    });
+
+    it('should call the onChange handler', async () => {
+      const handleOnChange = jest.fn();
+      render(<MantineValueEditor {...betweenDateTimeLocalProps} handleOnChange={handleOnChange} />);
+      const betweenInputs = screen.getAllByRole('button');
+      expect(betweenInputs).toHaveLength(2);
+      await user.click(betweenInputs[0]);
+      await user.click(screen.getByText('12'));
+      await user.click(betweenInputs[1]);
+      await user.click(screen.getByText('14'));
+      expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}12T00:00:00,${dateStub}20T00:00:00`);
+      expect(handleOnChange).toHaveBeenCalledWith(`not a date,${dateStub}14T00:00:00`);
+    });
+
+    it('should assume empty string as the second value if not provided', async () => {
+      const handleOnChange = jest.fn();
+      render(
+        <MantineValueEditor
+          {...betweenDateTimeLocalProps}
+          handleOnChange={handleOnChange}
+          value={[`${dateStub}10T00:00:00`]}
+        />
+      );
+      const betweenInputs = screen.getAllByRole('button');
+      expect(betweenInputs).toHaveLength(2);
+      await user.click(betweenInputs[0]);
+      await user.click(screen.getByText('12'));
+      expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}12T00:00:00,`);
+    });
+
+    it('should call the onChange handler with lists as arrays', async () => {
+      const handleOnChange = jest.fn();
+      render(
+        <MantineValueEditor
+          {...betweenDateTimeLocalProps}
+          handleOnChange={handleOnChange}
+          listsAsArrays
+        />
+      );
+      const betweenInputs = screen.getAllByRole('button');
+      expect(betweenInputs).toHaveLength(2);
+      await user.click(betweenInputs[0]);
+      await user.click(screen.getByText('12'));
+      await user.click(betweenInputs[1]);
+      await user.click(screen.getByText('14'));
+      expect(handleOnChange).toHaveBeenCalledWith([
+        `${dateStub}12T00:00:00`,
+        `${dateStub}20T00:00:00`,
+      ]);
+      expect(handleOnChange).toHaveBeenCalledWith([`not a date`, `${dateStub}14T00:00:00`]);
+    });
+
+    it('should be disabled by the disabled prop', async () => {
+      const handleOnChange = jest.fn();
+      render(
+        <MantineValueEditor
+          {...betweenDateTimeLocalProps}
+          handleOnChange={handleOnChange}
+          disabled
+        />
+      );
+      const betweenInputs = screen.getAllByRole('button');
+      expect(betweenInputs).toHaveLength(2);
+      for (const r of betweenInputs) {
+        expect(r).toBeDisabled();
+        await user.click(r);
+      }
+      expect(handleOnChange).not.toHaveBeenCalled();
+    });
   });
 });
 

@@ -38,6 +38,7 @@ export const MantineValueSelector = ({
       title={title}
       className={className}
       data={data}
+      data-disabled={disabled}
       disabled={disabled}
       value={val as any[]}
       onChange={changeHandler}
@@ -50,6 +51,7 @@ export const MantineValueSelector = ({
       className={className}
       value={val as string}
       data={data}
+      data-disabled={disabled}
       disabled={disabled}
       onChange={changeHandler}
     />
