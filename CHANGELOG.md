@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Added
+
+- [#519] Extracted event default/propagation code from `Rule` and `RuleGroup` into a new `useStopEventPropagation` hook.
+
+### Fixed
+
+- `transformQuery` no longer reassigns or remaps properties that don't already exist in the source query object.
 
 ## [v6.3.0] - 2023-05-03
 
