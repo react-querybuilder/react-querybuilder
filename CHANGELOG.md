@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.4.0] - 2023-05-20
+
+### Changed
+
+- [#517] `@react-querybuilder/mantine` now requires Mantine v6. React Query Builder v6.3.0 is compatible with Mantine v5.
+
 ### Added
 
 - [#519] Extracted event default/propagation code from `Rule` and `RuleGroup` into a new `useStopEventPropagation` hook.
@@ -1333,10 +1341,13 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
 [#499]: https://github.com/react-querybuilder/react-querybuilder/pull/499
 [#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
+[#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
+[#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.3.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...HEAD
+[v6.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.3.0...v6.4.0
 [v6.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.2.0...v6.3.0
 [v6.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.4...v6.2.0
 [v6.1.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.3...v6.1.4
