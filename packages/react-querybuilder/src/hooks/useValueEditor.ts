@@ -75,9 +75,12 @@ export const useValueEditor = ({
      */
     valueAsArray,
     /**
-     * A handler for a series of editors, e.g. when operator is "between".
+     * An update handler for a series of value editors, e.g. when operator is "between".
+     * Calling this function will update a single element of the value array and leave
+     * the rest of the array as is.
+     *
      * @param {string} val The new value for the editor
-     * @param {number} idx The index of the editor
+     * @param {number} idx The index of the editor (and the array element to update)
      */
     multiValueHandler,
   };
