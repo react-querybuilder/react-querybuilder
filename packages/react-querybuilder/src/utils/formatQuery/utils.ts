@@ -62,8 +62,8 @@ export const jsonLogicAdditionalOperators: Record<
   'startsWith' | 'endsWith',
   (...args: any[]) => boolean
 > = {
-  startsWith: (a: string, b: string) => a.startsWith(b),
-  endsWith: (a: string, b: string) => a.endsWith(b),
+  startsWith: (a: string, b: string) => typeof a === 'string' && a.startsWith(b),
+  endsWith: (a: string, b: string) => typeof a === 'string' && a.endsWith(b),
 };
 
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({

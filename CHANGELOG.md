@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+- The custom JsonLogic operators `startsWith` and `endsWith` ([properties of `jsonLogicAdditionalOperators`](https://react-querybuilder.js.org/docs/utils/export#jsonlogic)) now check the type of the first parameter before calling the respective methods. This avoids errors like "Uncaught TypeError: Cannot read properties of null (reading 'startsWith')" when a field in the object in question is `null`.
 
 ## [v6.4.0] - 2023-05-20
 
