@@ -2163,6 +2163,12 @@ describe('misc', () => {
   it('runs the jsonLogic additional operators', () => {
     const { startsWith, endsWith } = jsonLogicAdditionalOperators;
     expect(startsWith('TestString', 'Test')).toBe(true);
+    expect(startsWith(null, 'Test')).toBe(false);
+    expect(startsWith([], 'Test')).toBe(false);
+    expect(startsWith({}, 'Test')).toBe(false);
     expect(endsWith('TestString', 'String')).toBe(true);
+    expect(endsWith(null, 'String')).toBe(false);
+    expect(endsWith([], 'String')).toBe(false);
+    expect(endsWith({}, 'String')).toBe(false);
   });
 });
