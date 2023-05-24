@@ -236,8 +236,10 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
         value={[`${dateStub}10`, '']}
       />
     );
-    await user.click(screen.getByTestId(TestID.valueEditor));
-    await new Promise(r => setTimeout(r, 500));
+    await act(async () => {
+      await user.click(screen.getByTestId(TestID.valueEditor));
+      await new Promise(r => setTimeout(r, 500));
+    });
     await user.click(screen.getByText('20'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
     rerender(
@@ -329,7 +331,9 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
         handleOnChange={handleOnChange}
       />
     );
-    await user.click(screen.getByTestId(TestID.valueEditor));
+    await act(async () => {
+      await user.click(screen.getByTestId(TestID.valueEditor));
+    });
     await user.click(screen.getByText('10'));
     expect(screen.getByTestId(TestID.valueEditor)).toHaveTextContent('');
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10T00:00:00`);
