@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- The custom JsonLogic operators `startsWith` and `endsWith` ([properties of `jsonLogicAdditionalOperators`](https://react-querybuilder.js.org/docs/utils/export#jsonlogic)) now check the type of the first parameter before calling the respective methods. This avoids errors like "Uncaught TypeError: Cannot read properties of null (reading 'startsWith')" when a field in the object in question is `null`.
+- N/A
+
+## [v6.4.1] - 2023-05-23
+
+### Fixed
+
+- The custom JsonLogic operators `startsWith` and `endsWith` (properties of `jsonLogicAdditionalOperators`) now check the type of the first parameter before calling the respective methods. This avoids errors like "Uncaught TypeError: Cannot read properties of null (reading 'startsWith')" when a field in the object being evaluated is `null`.
 
 ## [v6.4.0] - 2023-05-20
 
@@ -1346,7 +1352,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...HEAD
+[v6.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...v6.4.1
 [v6.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.3.0...v6.4.0
 [v6.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.2.0...v6.3.0
 [v6.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.1.4...v6.2.0
