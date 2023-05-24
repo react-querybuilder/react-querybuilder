@@ -5,7 +5,7 @@ import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
 // import glob from 'glob';
 import { join as pathJoin } from 'path';
-import prettier from 'prettier';
+// import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
 
@@ -206,7 +206,9 @@ const generateCommonExample = (exampleID: string) => async () => {
   }
   await Bun.write(
     pathJoin(examplePath, '.eslintrc.json'),
-    prettier.format(stableStringify(exampleESLintRC), { filepath: 'f.json' })
+    // prettier.format(
+    stableStringify(exampleESLintRC)
+    //, { filepath: 'f.json' })
   );
   // #endregion
 
@@ -263,11 +265,14 @@ const updateOtherExample = (otherExampleName: string) => async () => {
     }
   }
   const otherExamplePkgJsonPath = pathJoin(import.meta.dir, `${otherExampleName}/package.json`);
-  const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
-  const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
-    ...otherExamplePrettierOptions,
-    filepath: otherExamplePkgJsonPath,
-  });
+  // const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
+  const otherExamplePkgJsonFileContents =
+    // prettier.format(
+    stableStringify(otherExamplePkgJSON);
+  //   , {
+  //   ...otherExamplePrettierOptions,
+  //   filepath: otherExamplePkgJsonPath,
+  // });
   await Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
   console.log(`Updated package.json for "${otherExampleName}" example`);
 };
