@@ -33,20 +33,20 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@ant-design/icons": "^5.1.2",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.0",
-    "@vitejs/plugin-react-swc": "^3.3.0",
-    "antd": "^5.4.6",
+    "@types/react": "^18.2.7",
+    "@vitejs/plugin-react-swc": "^3.3.1",
+    "antd": "^5.5.1",
     "dayjs": "^1.11.7",
-    "rc-picker": "^3.6.2",
-    "rc-select": "^14.4.3",
+    "rc-picker": "^3.7.5",
+    "rc-select": "^14.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.4.1",
     "rollup-plugin-visualizer": "^5.9.0",
-    "typescript": "^4.9.5",
-    "vite": "^4.3.4"
+    "typescript": "^5.0.4",
+    "vite": "^4.3.8"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=4.7.0",
