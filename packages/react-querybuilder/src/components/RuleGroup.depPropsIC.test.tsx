@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { consoleMocks, getRuleGroupProps } from '../../genericTests';
-import { defaultCombinators, TestID } from '../defaults';
+import { TestID, defaultCombinators } from '../defaults';
 import { errorDeprecatedRuleGroupProps } from '../messages';
 import { add } from '../utils';
 import { RuleGroup } from './RuleGroup';

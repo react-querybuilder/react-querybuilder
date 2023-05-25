@@ -16,11 +16,11 @@ import {
   testValueEditor,
   userEventSetup,
 } from 'react-querybuilder/genericTests';
-import { QueryBuilderMantine } from './index';
 import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
+import { QueryBuilderMantine } from './index';
 
 jest.setTimeout(30_000);
 

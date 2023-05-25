@@ -20,17 +20,17 @@ import {
   Switch,
   TextareaAutosize,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { act, render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import * as React from 'react';
 import {
-  cloneElement as mockCloneElement,
   forwardRef,
+  cloneElement as mockCloneElement,
   isValidElement as mockIsValidElement,
 } from 'react';
 import type { DragHandleProps, Schema } from 'react-querybuilder';
-import { defaultTranslations, QueryBuilder, TestID } from 'react-querybuilder';
+import { QueryBuilder, TestID, defaultTranslations } from 'react-querybuilder';
 import {
   testActionElement,
   testDragHandle,

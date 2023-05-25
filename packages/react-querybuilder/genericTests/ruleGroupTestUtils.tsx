@@ -2,10 +2,10 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import { defaultControlElements } from '../src/components';
 import {
+  TestID,
   defaultCombinators,
   defaultControlClassnames,
   defaultTranslations as translations,
-  TestID,
 } from '../src/defaults';
 import type {
   Classnames,

@@ -28,8 +28,8 @@ import type {
   OperatorSelectorProps,
   QueryActions,
   SelectorOrEditorProps,
-  Translations,
   TranslationWithLabel,
+  Translations,
   ValueSelectorProps,
   ValueSourceSelectorProps,
 } from './props';

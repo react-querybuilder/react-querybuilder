@@ -14,11 +14,11 @@ export type {
   JsonLogicNegation,
   JsonLogicNotEqual,
   JsonLogicOr,
+  ReservedOperations as JsonLogicReservedOperations,
+  RulesLogic as JsonLogicRulesLogic,
   JsonLogicStrictEqual,
   JsonLogicStrictNotEqual,
   JsonLogicVar,
-  ReservedOperations as JsonLogicReservedOperations,
-  RulesLogic as JsonLogicRulesLogic,
 } from './json-logic-js';
 export * from './props';
 export * from './ruleGroups';

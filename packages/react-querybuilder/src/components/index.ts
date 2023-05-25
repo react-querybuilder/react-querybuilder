@@ -1,5 +1,4 @@
 export * from './ActionElement';
-export * from './defaults';
 export * from './DragHandle';
 export * from './InlineCombinator';
 export * from './NotToggle';
@@ -9,3 +8,4 @@ export * from './Rule';
 export * from './RuleGroup';
 export * from './ValueEditor';
 export * from './ValueSelector';
+export * from './defaults';

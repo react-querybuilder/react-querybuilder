@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
 import type { QueryActions, RuleGroupProps, Schema } from 'react-querybuilder';
-import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
+import { TestID, defaultControlElements, standardClassnames as sc } from 'react-querybuilder';
 import { getRuleGroupProps } from 'react-querybuilder/genericTests';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';

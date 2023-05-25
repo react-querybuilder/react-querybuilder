@@ -1,4 +1,3 @@
-export * from './defaults';
 export * from './NativeActionElement';
 export * from './NativeInlineCombinator';
 export * from './NativeNotToggle';
@@ -9,3 +8,4 @@ export * from './NativeValueSelectorWeb';
 export * from './QueryBuilderNative';
 export * from './RuleGroupNative';
 export * from './RuleNative';
+export * from './defaults';

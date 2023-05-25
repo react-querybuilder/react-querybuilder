@@ -7,7 +7,7 @@ import {
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import type { Option } from 'react-querybuilder';
-import { joinWith, TestID, useValueSelector } from 'react-querybuilder';
+import { TestID, joinWith, useValueSelector } from 'react-querybuilder';
 
 export const NativeValueSelectorExample = ({
   handleOnChange,

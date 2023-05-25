@@ -8,12 +8,12 @@ import {
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
 import type { QueryActions, RuleProps, Schema } from 'react-querybuilder';
-import { defaultControlElements, standardClassnames as sc, TestID } from 'react-querybuilder';
+import { TestID, defaultControlElements, standardClassnames as sc } from 'react-querybuilder';
 import { getRuleProps } from 'react-querybuilder/genericTests';
-import type { GenericDropTargetProps } from './genericTests';
-import { GenericDropTarget as GenericDropTargetOriginal } from './genericTests';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
+import type { GenericDropTargetProps } from './genericTests';
+import { GenericDropTarget as GenericDropTargetOriginal } from './genericTests';
 
 const { rule, ruleGroup, combinatorSelector } = defaultControlElements;
 

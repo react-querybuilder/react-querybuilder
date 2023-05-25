@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { StyleSheet, Text, View } from 'react-native';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { defaultNativeWebControlElements, QueryBuilderNative } from '../src';
+import { QueryBuilderNative, defaultNativeWebControlElements } from '../src';
 
 const styles = StyleSheet.create({
   outer: {

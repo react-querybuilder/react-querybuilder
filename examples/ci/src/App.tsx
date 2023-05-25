@@ -5,9 +5,9 @@ import type {
   QueryBuilderProps,
 } from 'react-querybuilder';
 import {
+  QueryBuilder,
   defaultValidator,
   formatQuery,
-  QueryBuilder,
 } from 'react-querybuilder';
 import { fields } from './fields';
 import { initialQuery, initialQueryIC } from './initialQuery';

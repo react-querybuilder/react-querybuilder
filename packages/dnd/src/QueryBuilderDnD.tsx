@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useContext } from 'react';
 import type { QueryBuilderContextProps } from 'react-querybuilder';
 import { QueryBuilderContext, useMergedContext, usePreferProp } from 'react-querybuilder';
-import { useReactDnD } from './hooks';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
+import { useReactDnD } from './hooks';
 import type { QueryBuilderDndProps } from './types';
 
 export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {

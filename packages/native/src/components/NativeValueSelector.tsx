@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
-import { joinWith, TestID, useValueSelector } from 'react-querybuilder';
+import { TestID, joinWith, useValueSelector } from 'react-querybuilder';
 import { defaultNativeSelectStyles, defaultNativeStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 

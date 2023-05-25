@@ -1,10 +1,10 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  LogType,
   defaultCombinators,
   defaultOperators,
   defaultTranslations,
-  LogType,
   standardClassnames,
 } from '../defaults';
 import type {

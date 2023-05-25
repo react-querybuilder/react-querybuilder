@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import type { RuleGroupProps } from 'react-querybuilder';
-import { useRuleGroupDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
+import { useRuleGroupDnD } from './hooks';
 
 export const RuleGroupDnD = (props: RuleGroupProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);

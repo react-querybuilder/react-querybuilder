@@ -11,6 +11,7 @@ import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
+  QueryBuilder,
   convertToIC,
   defaultValidator,
   formatQuery,
@@ -19,14 +20,13 @@ import {
   parseJsonLogic,
   parseMongoDB,
   parseSQL,
-  QueryBuilder,
 } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import {
-  defaultOptions,
-  formatMap,
   initialQuery as defaultInitialQuery,
   initialQueryIC as defaultInitialQueryIC,
+  defaultOptions,
+  formatMap,
   optionOrderByLabel,
   optionsMetadata,
   peerDependencies,

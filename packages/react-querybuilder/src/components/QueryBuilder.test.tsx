@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { consoleMocks } from '../../genericTests';
 import {
+  LogType,
+  TestID,
   defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,
   defaultPlaceholderOperatorName,
-  defaultTranslations as t,
-  LogType,
   standardClassnames as sc,
-  TestID,
+  defaultTranslations as t,
 } from '../defaults';
 import {
   errorBothQueryDefaultQuery,
@@ -31,8 +31,8 @@ import type {
   ValidationMap,
 } from '../types';
 import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from '../utils';
-import { defaultControlElements } from './defaults';
 import { QueryBuilder } from './QueryBuilder';
+import { defaultControlElements } from './defaults';
 
 const user = userEvent.setup();
 

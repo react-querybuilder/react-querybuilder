@@ -14,11 +14,11 @@ import type {
   RuleGroupTypeIC,
 } from 'react-querybuilder';
 import {
+  QueryBuilder,
+  TestID,
   formatQuery,
   getCompatContextProvider,
-  QueryBuilder,
   standardClassnames,
-  TestID,
 } from 'react-querybuilder';
 import { consoleMocks } from 'react-querybuilder/genericTests';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';

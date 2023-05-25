@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import type { RuleProps } from 'react-querybuilder';
-import { useRuleDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
+import { useRuleDnD } from './hooks';
 
 export const RuleDnD = (props: RuleProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);

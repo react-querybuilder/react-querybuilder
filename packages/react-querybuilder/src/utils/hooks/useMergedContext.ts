@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { defaultControlElements, QueryBuilderContext } from '../../components';
+import { QueryBuilderContext, defaultControlElements } from '../../components';
 import { defaultControlClassnames, defaultTranslations } from '../../defaults';
 import type {
   Controls,

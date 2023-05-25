@@ -7,7 +7,7 @@ import {
   getRuleGroupProps,
   ruleGroupClassnames,
 } from '../../genericTests';
-import { defaultTranslations as t, standardClassnames as sc, TestID } from '../defaults';
+import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { errorEnabledDndWithoutReactDnD } from '../messages';
 import type { ActionProps, RuleGroupICArray, ValidationResult, ValueSelectorProps } from '../types';
 import { RuleGroup } from './RuleGroup';

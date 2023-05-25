@@ -1,10 +1,10 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import * as React from 'react';
 import {
+  ValueSelector,
   getFirstOption,
   standardClassnames,
   useValueEditor,
-  ValueSelector,
   type ValueEditorProps,
 } from 'react-querybuilder';
 import { ChakraValueSelector } from './ChakraValueSelector';
