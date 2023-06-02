@@ -10,14 +10,14 @@ const packages = (await readdir(packagesDir, { withFileTypes: true })).filter(
   p => p.isDirectory() && p.name !== 'react-querybuilder'
 );
 
-for (const pkg of packages) {
-  const pkgJsonPath = `${packagesDir}/${pkg.name}/package.json`;
+for (const { name } of packages) {
+  const pkgJsonPath = `${packagesDir}/${name}/package.json`;
   const pkgJson = await Bun.file(pkgJsonPath).text();
-  const replacedRqbPeerDep = pkgJson.replaceAll(
+  const replacedRqbDeps = pkgJson.replaceAll(
     /(\s+"react-querybuilder":\s+").+(")/g,
     `$1^${version}$2`
   );
-  await Bun.write(pkgJsonPath, replacedRqbPeerDep);
+  await Bun.write(pkgJsonPath, replacedRqbDeps);
 }
 
 console.log('Finished updating local package dependency versions.');

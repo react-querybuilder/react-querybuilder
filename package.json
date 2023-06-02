@@ -46,7 +46,7 @@
     "typecheck:examples": "tsc -p examples",
     "pretty-print": "yarn prettier --config .prettierrc.json --write *.{mj,t}s examples/**/* packages/*/{src,dev,genericTests}/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**",
     "pretty-check": "yarn prettier --config .prettierrc.json --check *.{mj,t}s examples/**/* packages/*/{src,dev,genericTests}/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**",
-    "generate-examples": "bun ./examples/generateExamples.ts && yarn prettier --write examples/** --loglevel=silent",
+    "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
     "outdated": "yarn upgrade-interactive",
     "version": "bun ./version.ts && yarn && concurrently --timings --names examples,packages bun:generate-examples bun:build && concurrently \"git add examples packages yarn.lock\"",

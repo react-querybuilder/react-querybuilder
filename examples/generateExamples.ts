@@ -1,5 +1,6 @@
 /// <reference types="bun-types" />
 
+import { execSync } from 'child_process';
 import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
@@ -281,6 +282,9 @@ await Promise.all([
   ...Object.keys(configs).map(async ex => generateCommonExample(ex)()),
   ...otherExamples.map(async ex => updateOtherExample(ex)()),
 ]);
+
+console.log('Formatting examples with Prettier');
+execSync('yarn prettier --write examples/** --loglevel=silent');
 
 console.log('Finished generating/updating examples');
 // #endregion

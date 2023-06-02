@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatQuery, QueryBuilder } from 'react-querybuilder';
+import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.css';
 
 const fields = [
