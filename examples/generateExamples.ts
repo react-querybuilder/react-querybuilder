@@ -1,12 +1,11 @@
 /// <reference types="bun-types" />
 
-import { execSync } from 'child_process';
 import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
-// import glob from 'glob';
+import { glob } from 'glob';
 import { join as pathJoin } from 'path';
-// import prettier from 'prettier';
+import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
 
@@ -29,7 +28,8 @@ interface PackageJSON {
 
 console.log('Generating/updating examples');
 
-// const rootPrettierConfig = await prettier.resolveConfig(__filename);
+const rootNodeModulesPath = pathJoin(import.meta.dir, '../node_modules');
+const rootPrettierConfig = await prettier.resolveConfig(import.meta.file);
 const lernaJson = Bun.file(pathJoin(import.meta.dir, '../lerna.json'));
 const { version } = await lernaJson.json();
 const eslintrc: ESLintExtendsIsArray = await Bun.file(
@@ -185,7 +185,7 @@ const generateCommonExample = (exampleID: string) => async () => {
       Bun.file(pathJoin(templatePath, '.gitignore'))
     ),
     await Bun.write(
-      pathJoin(examplePath, 'vite.config.ts'),
+      pathJoin(examplePath, `vite.config.${exampleConfig.compileToJS ? 'j' : 't'}s`),
       Bun.file(pathJoin(templatePath, 'vite.config.ts'))
     ),
   ]);
@@ -227,28 +227,28 @@ const generateCommonExample = (exampleID: string) => async () => {
   await Bun.write(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
   // #endregion
 
-  // This section is commented out until Bun doesn't segfault when a prettier plugin is used
-  // // #region Prettify this example
-  // const fileList = glob.sync(`examples/${exampleID}/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}`);
-  // for (const filepath of fileList) {
-  //   const fileContents = await Bun.file(filepath).text();
-  //   const printWidth = filepath.endsWith('css')
-  //     ? rootPrettierConfig?.printWidth
-  //     : (await prettier.resolveConfig(filepath))?.printWidth;
-  //   const { plugins: _p, ...rpc } = rootPrettierConfig ?? {};
-  //   const prettierOptions: prettier.Options = {
-  //     ...rpc,
-  //     printWidth,
-  //     filepath,
-  //     // plugins: ['prettier-plugin-organize-imports'],
-  //   };
-  //   const alreadyPretty = prettier.check(fileContents, prettierOptions);
-  //   if (!alreadyPretty) {
-  //     const prettified = prettier.format(fileContents, prettierOptions);
-  //     await Bun.write(filepath, prettified);
-  //   }
-  // }
-  // // #endregion
+  // #region Prettify this example
+  const fileList = await glob(`examples/${exampleID}/**/?*.{ts,tsx,js,jsx,json,css,scss,html,md}`, {
+    dot: true,
+  });
+  const examplePrettierConfig = await prettier.resolveConfig(pathJoin(examplePath, 'package.json'));
+  let printWidth = examplePrettierConfig?.printWidth;
+  for (const filepath of fileList) {
+    const fileContents = await Bun.file(filepath).text();
+    if (filepath.endsWith('css')) printWidth = rootPrettierConfig?.printWidth;
+    const prettierOptions: prettier.Options = {
+      ...examplePrettierConfig,
+      ...(printWidth ? { printWidth } : {}),
+      filepath,
+      pluginSearchDirs: [rootNodeModulesPath],
+    };
+    const alreadyPretty = prettier.check(fileContents, prettierOptions);
+    if (!alreadyPretty) {
+      const prettified = prettier.format(fileContents, prettierOptions);
+      await Bun.write(filepath, prettified);
+    }
+  }
+  // #endregion
 
   console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
 };
@@ -266,25 +266,34 @@ const updateOtherExample = (otherExampleName: string) => async () => {
     }
   }
   const otherExamplePkgJsonPath = pathJoin(import.meta.dir, `${otherExampleName}/package.json`);
-  // const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
-  const otherExamplePkgJsonFileContents =
-    // prettier.format(
-    stableStringify(otherExamplePkgJSON);
-  //   , {
-  //   ...otherExamplePrettierOptions,
-  //   filepath: otherExamplePkgJsonPath,
-  // });
+  const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
+  const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
+    ...otherExamplePrettierOptions,
+    filepath: otherExamplePkgJsonPath,
+    pluginSearchDirs: [rootNodeModulesPath],
+  });
   await Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
   console.log(`Updated package.json for "${otherExampleName}" example`);
 };
+// #endregion
 
-await Promise.all([
-  ...Object.keys(configs).map(async ex => generateCommonExample(ex)()),
+const templateExamples = Object.keys(configs);
+
+const results = await Promise.allSettled([
+  ...templateExamples.map(async ex => generateCommonExample(ex)()),
   ...otherExamples.map(async ex => updateOtherExample(ex)()),
 ]);
 
-console.log('Formatting examples with Prettier');
-execSync('yarn prettier --write examples/** --loglevel=silent');
+results.forEach((result, idx) => {
+  if (result.status === 'rejected') {
+    const exampleName =
+      idx >= templateExamples.length
+        ? otherExamples[idx - templateExamples.length]
+        : templateExamples[idx];
+    console.log(
+      `Failed to generate or format "${exampleName}" example. Reason: "${result.reason}"`
+    );
+  }
+});
 
 console.log('Finished generating/updating examples');
-// #endregion
