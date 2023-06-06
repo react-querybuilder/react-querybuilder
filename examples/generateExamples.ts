@@ -3,7 +3,6 @@
 import type { ESLint as _ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
-import { glob } from 'glob';
 import { join as pathJoin } from 'path';
 import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
@@ -63,20 +62,82 @@ const templatePkgJsonNewText = (
 await Bun.write(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON: PackageJSON = await Bun.file(pathJoin(templatePath, 'package.json')).json();
 
-const generateCommonExample = (exampleID: string) => async () => {
+const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(import.meta.dir, exampleID);
   const exampleDotCS = pathJoin(examplePath, '.codesandbox');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
   await rm(examplePath, { recursive: true, force: true });
-  await mkdir(examplePath), await Promise.all([await mkdir(exampleDotCS), await mkdir(exampleSrc)]);
+  await mkdir(examplePath);
+  await Promise.all([mkdir(exampleDotCS), mkdir(exampleSrc)]);
+
+  await Bun.write(
+    pathJoin(examplePath, '.prettierrc'),
+    Bun.file(pathJoin(templatePath, '.prettierrc'))
+  );
+
+  const examplePrettierConfig = await prettier.resolveConfig(pathJoin(examplePath, 'package.json'));
+  const formatAndWrite = (filepath: string, fileContents: string) => {
+    let printWidth = examplePrettierConfig?.printWidth;
+
+    if (filepath.endsWith('css')) {
+      printWidth = rootPrettierConfig?.printWidth;
+    }
+
+    const prettierOptions: prettier.Options = {
+      ...examplePrettierConfig,
+      ...(printWidth ? { printWidth } : {}),
+      filepath,
+      pluginSearchDirs: [rootNodeModulesPath],
+    };
+
+    return Bun.write(
+      filepath,
+      prettier.check(fileContents, prettierOptions)
+        ? fileContents
+        : prettier.format(fileContents, prettierOptions)
+    );
+  };
+
+  // Array of Bun.write promises
+  const toWrite: ReturnType<typeof Bun.write>[] = [];
+
+  // #region Straight copies
+  toWrite.push(
+    Bun.write(
+      pathJoin(exampleDotCS, 'workspace.json'),
+      Bun.file(pathJoin(templateDotCS, 'workspace.json'))
+    ),
+    Bun.write(pathJoin(examplePath, '.gitignore'), Bun.file(pathJoin(templatePath, '.gitignore'))),
+    Bun.write(
+      pathJoin(examplePath, `vite.config.${exampleConfig.compileToJS ? 'j' : 't'}s`),
+      Bun.file(pathJoin(templatePath, 'vite.config.ts'))
+    ),
+    ...(exampleConfig.compileToJS
+      ? []
+      : [
+          Bun.write(
+            pathJoin(exampleSrc, 'vite-env.d.ts'),
+            Bun.file(pathJoin(templateSrc, 'vite-env.d.ts'))
+          ),
+          Bun.write(
+            pathJoin(examplePath, 'tsconfig.json'),
+            Bun.file(pathJoin(templatePath, 'tsconfig.json'))
+          ),
+          Bun.write(
+            pathJoin(examplePath, 'tsconfig.node.json'),
+            Bun.file(pathJoin(templatePath, 'tsconfig.node.json'))
+          ),
+        ])
+  );
+  // #endregion
 
   // #region /index.html
   const exampleIndexHTML = templateIndexHTML
     .replace('__TITLE__', exampleTitle)
     .replace('index.tsx', exampleConfig.compileToJS ? 'index.jsx' : 'index.tsx');
-  await Bun.write(pathJoin(examplePath, 'index.html'), exampleIndexHTML);
+  toWrite.push(formatAndWrite(pathJoin(examplePath, 'index.html'), exampleIndexHTML));
   // #endregion
 
   // #region src/index.scss
@@ -84,9 +145,11 @@ const generateCommonExample = (exampleID: string) => async () => {
     .replace('// __SCSS_PRE__', exampleConfig.scssPre.join('\n'))
     .replace('// __SCSS_POST__', exampleConfig.scssPost.join('\n'))
     .replace(/((query-builder\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
-  await Bun.write(
-    pathJoin(exampleSrc, `styles.${exampleConfig.compileToJS ? '' : 's'}css`),
-    processedTemplateSCSS
+  toWrite.push(
+    formatAndWrite(
+      pathJoin(exampleSrc, `styles.${exampleConfig.compileToJS ? '' : 's'}css`),
+      processedTemplateSCSS
+    )
   );
   // #endregion
 
@@ -98,9 +161,11 @@ const generateCommonExample = (exampleID: string) => async () => {
   const exampleIndexSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
     : processedTemplateIndexTSX;
-  await Bun.write(
-    pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
-    exampleIndexSourceCode
+  toWrite.push(
+    formatAndWrite(
+      pathJoin(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
+      exampleIndexSourceCode
+    )
   );
   // #endregion
 
@@ -115,9 +180,11 @@ const generateCommonExample = (exampleID: string) => async () => {
   const exampleAppSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateAppTSX, 'App.tsx')
     : processedTemplateAppTSX;
-  await Bun.write(
-    pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
-    exampleAppSourceCode
+  toWrite.push(
+    formatAndWrite(
+      pathJoin(exampleSrc, `App.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
+      exampleAppSourceCode
+    )
   );
   // #endregion
 
@@ -148,47 +215,9 @@ const generateCommonExample = (exampleID: string) => async () => {
       examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
     }
   }
-  await Bun.write(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON));
-  // #endregion
-
-  // #region tsconfig.json
-  if (!exampleConfig.compileToJS) {
-    await Promise.all([
-      await Bun.write(
-        pathJoin(exampleSrc, 'vite-env.d.ts'),
-        Bun.file(pathJoin(templateSrc, 'vite-env.d.ts'))
-      ),
-      await Bun.write(
-        pathJoin(examplePath, 'tsconfig.json'),
-        Bun.file(pathJoin(templatePath, 'tsconfig.json'))
-      ),
-      await Bun.write(
-        pathJoin(examplePath, 'tsconfig.node.json'),
-        Bun.file(pathJoin(templatePath, 'tsconfig.node.json'))
-      ),
-    ]);
-  }
-  // #endregion
-
-  // #region Straight copies
-  await Promise.all([
-    await Bun.write(
-      pathJoin(exampleDotCS, 'workspace.json'),
-      Bun.file(pathJoin(templateDotCS, 'workspace.json'))
-    ),
-    await Bun.write(
-      pathJoin(examplePath, '.prettierrc'),
-      Bun.file(pathJoin(templatePath, '.prettierrc'))
-    ),
-    await Bun.write(
-      pathJoin(examplePath, '.gitignore'),
-      Bun.file(pathJoin(templatePath, '.gitignore'))
-    ),
-    await Bun.write(
-      pathJoin(examplePath, `vite.config.${exampleConfig.compileToJS ? 'j' : 't'}s`),
-      Bun.file(pathJoin(templatePath, 'vite.config.ts'))
-    ),
-  ]);
+  toWrite.push(
+    formatAndWrite(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON))
+  );
   // #endregion
 
   // #region .eslintrc.json
@@ -205,11 +234,8 @@ const generateCommonExample = (exampleID: string) => async () => {
       }
     }
   }
-  await Bun.write(
-    pathJoin(examplePath, '.eslintrc.json'),
-    // prettier.format(
-    stableStringify(exampleESLintRC)
-    //, { filepath: 'f.json' })
+  toWrite.push(
+    formatAndWrite(pathJoin(examplePath, '.eslintrc.json'), stableStringify(exampleESLintRC))
   );
   // #endregion
 
@@ -224,39 +250,18 @@ const generateCommonExample = (exampleID: string) => async () => {
     '> _Development note: Do not modify the files in this folder directly. Edit corresponding ' +
     'files in the [_template](../_template) folder and/or [exampleConfigs.ts](../exampleConfigs.ts), ' +
     'then run `bun generate-examples` from the repository root directory (requires [Bun](https://bun.sh/))._';
-  await Bun.write(pathJoin(examplePath, 'README.md'), exampleREADMEmd);
+  toWrite.push(formatAndWrite(pathJoin(examplePath, 'README.md'), exampleREADMEmd));
   // #endregion
 
-  // #region Prettify this example
-  const fileList = await glob(`examples/${exampleID}/**/?*.{ts,tsx,js,jsx,json,css,scss,html,md}`, {
-    dot: true,
-  });
-  const examplePrettierConfig = await prettier.resolveConfig(pathJoin(examplePath, 'package.json'));
-  let printWidth = examplePrettierConfig?.printWidth;
-  for (const filepath of fileList) {
-    const fileContents = await Bun.file(filepath).text();
-    if (filepath.endsWith('css')) printWidth = rootPrettierConfig?.printWidth;
-    const prettierOptions: prettier.Options = {
-      ...examplePrettierConfig,
-      ...(printWidth ? { printWidth } : {}),
-      filepath,
-      pluginSearchDirs: [rootNodeModulesPath],
-    };
-    const alreadyPretty = prettier.check(fileContents, prettierOptions);
-    if (!alreadyPretty) {
-      const prettified = prettier.format(fileContents, prettierOptions);
-      await Bun.write(filepath, prettified);
-    }
-  }
-  // #endregion
+  console.log(`Generated "${exampleConfig.name}" example code (${exampleID})`);
 
-  console.log(`Generated "${exampleConfig.name}" example (${exampleID})`);
+  return Promise.all(toWrite);
 };
 
 // #region Other examples' package.json
 const otherExamples = ['ci', 'native'];
 
-const updateOtherExample = (otherExampleName: string) => async () => {
+const updateOtherExample = async (otherExampleName: string) => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(
     pathJoin(import.meta.dir, `${otherExampleName}/package.json`)
   ).json();
@@ -272,16 +277,16 @@ const updateOtherExample = (otherExampleName: string) => async () => {
     filepath: otherExamplePkgJsonPath,
     pluginSearchDirs: [rootNodeModulesPath],
   });
-  await Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
   console.log(`Updated package.json for "${otherExampleName}" example`);
+  return Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
 };
 // #endregion
 
 const templateExamples = Object.keys(configs);
 
 const results = await Promise.allSettled([
-  ...templateExamples.map(async ex => generateCommonExample(ex)()),
-  ...otherExamples.map(async ex => updateOtherExample(ex)()),
+  ...templateExamples.map(generateExampleFromTemplate),
+  ...otherExamples.map(updateOtherExample),
 ]);
 
 results.forEach((result, idx) => {
