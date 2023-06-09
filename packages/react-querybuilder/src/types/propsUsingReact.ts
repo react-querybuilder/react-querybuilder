@@ -21,6 +21,7 @@ import type { DropEffect } from './dnd';
 import type {
   Classnames,
   CombinatorSelectorProps,
+  CommonRuleSubComponentProps,
   CommonSubComponentProps,
   DragHandleProps,
   FieldSelectorProps,
@@ -65,7 +66,8 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
 }
 
 export interface ValueEditorProps<F extends Field = Field, O extends string = string>
-  extends SelectorOrEditorProps {
+  extends SelectorOrEditorProps,
+    CommonRuleSubComponentProps {
   field: F['name'];
   operator: O;
   value?: any;

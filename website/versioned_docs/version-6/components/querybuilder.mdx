@@ -360,17 +360,18 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 
 Default is [`DragHandle`](./draghandle). Note that this component must be based on `React.forwardRef`, and must always render an element (never return `null`). Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
 
-| Prop         | Type                                     | Description                                                  |
-| ------------ | ---------------------------------------- | ------------------------------------------------------------ |
-| `title`      | `string`                                 | `translations.dragHandle.title`, e.g. "Drag handle"          |
-| `label`      | `string`                                 | `translations.dragHandle.label`, e.g. "⁞⁞"                   |
-| `className`  | `string`                                 | CSS `classNames` to be applied                               |
-| `level`      | `number`                                 | The `level` of this rule/group                               |
-| `context`    | `any`                                    | Container for custom props that are passed to all components |
-| `validation` | <code>boolean \| ValidationResult</code> | Validation result of this rule/group                         |
-| `disabled`   | `boolean`                                | Whether this rule/group is disabled/locked                   |
-| `path`       | `number[]`                               | [Path](../tips/path) of this rule/group                      |
-| `schema`     | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
+| Prop          | Type                                      | Description                                                  |
+| ------------- | ----------------------------------------- | ------------------------------------------------------------ |
+| `title`       | `string`                                  | `translations.dragHandle.title`, e.g. "Drag handle"          |
+| `label`       | `string`                                  | `translations.dragHandle.label`, e.g. "⁞⁞"                   |
+| `className`   | `string`                                  | CSS `classNames` to be applied                               |
+| `level`       | `number`                                  | The `level` of this rule/group                               |
+| `context`     | `any`                                     | Container for custom props that are passed to all components |
+| `validation`  | <code>boolean \| ValidationResult</code>  | Validation result of this rule/group                         |
+| `disabled`    | `boolean`                                 | Whether this rule/group is disabled/locked                   |
+| `path`        | `number[]`                                | [Path](../tips/path) of this rule/group                      |
+| `schema`      | `Schema`                                  | Query [schema](../typescript#miscellaneous)                  |
+| `ruleOrGroup` | <code>RuleGroupTypeAny \| RuleType</code> | This group or rule, depending on the parent component        |
 
 #### `fieldSelector`
 
@@ -390,6 +391,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                               |
 | `path`           | `number[]`                               | [Path](../tips/path) of this rule                                  |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                        |
+| `rule`           | `RuleType`                               | This rule                                                          |
 
 #### `inlineCombinator`
 
@@ -456,6 +458,7 @@ Default is [`NotToggle`](./nottoggle). Receives the following props per the `Not
 | `disabled`       | `boolean`                                | Whether this group is disabled/locked                        |
 | `path`           | `number[]`                               | [Path](../tips/path) of this group                           |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
+| `ruleGroup`      | `RuleGroupTypeAny`                       | This group                                                   |
 
 #### `operatorSelector`
 
@@ -476,6 +479,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                             |
 | `path`           | `number[]`                               | [Path](../tips/path) of this rule                                |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                      |
+| `rule`           | `RuleType`                               | This rule                                                        |
 
 #### `removeGroupAction`
 
@@ -584,6 +588,7 @@ Default is [`ValueEditor`](./valueeditor). Receives the following props per the 
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                                    |
 | `path`           | `number[]`                               | [Path](../tips/path) of this rule                                       |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                             |
+| `rule`           | `RuleType`                               | This rule                                                               |
 
 #### `valueSourceSelector`
 
@@ -604,6 +609,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `disabled`       | `boolean`                                        | Whether this rule is disabled/locked                             |
 | `path`           | `number[]`                                       | [Path](../tips/path) of this rule                                |
 | `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                      |
+| `rule`           | `RuleType`                                       | This rule                                                        |
 
 ### `getOperators`
 

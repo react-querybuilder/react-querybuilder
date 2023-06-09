@@ -48,6 +48,7 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
   schema: {} as Schema,
   type: 'multiselect',
   values: defaultValueSelectorProps.options,
+  rule: { field: '', operator: '', value: '' },
 };
 
 const testSelect = (

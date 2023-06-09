@@ -72,6 +72,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
           context={rg.context}
           validation={rg.validationResult}
           schema={rg.schema}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
@@ -105,6 +106,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
           context={rg.context}
           validation={rg.validationResult}
           schema={rg.schema}
+          ruleGroup={rg.ruleGroup}
         />
       )}
       <AddRuleActionControlElement
@@ -172,7 +174,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
           schema={rg.schema}
         />
       )}
-      {rg.path.length >= 1 && (
+      {rg.path.length > 0 && (
         <RemoveGroupActionControlElement
           testID={TestID.removeGroup}
           label={rg.translations.removeGroup.label}

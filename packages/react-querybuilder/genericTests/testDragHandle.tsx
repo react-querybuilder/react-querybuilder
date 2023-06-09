@@ -6,6 +6,7 @@ export const defaultDragHandleProps: DragHandleProps = {
   level: 1,
   path: [0],
   schema: {} as Schema,
+  ruleOrGroup: { combinator: 'and', rules: [] },
 };
 
 export const testDragHandle = (

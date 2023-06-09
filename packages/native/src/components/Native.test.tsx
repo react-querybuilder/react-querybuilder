@@ -127,6 +127,7 @@ describe('NativeNotToggle', () => {
     path: [],
     schema: {} as Schema,
     testID: TestID.notToggle,
+    ruleGroup: { combinator: 'and', rules: [] },
   };
 
   it('works', () => {
@@ -221,6 +222,7 @@ describe('NativeValueEditor', () => {
     level: 0,
     schema: {} as SchemaNative,
     testID: TestID.valueEditor,
+    rule: { field: '', operator: '', value: '' },
   };
 
   beforeEach(() => {

@@ -25,6 +25,7 @@ export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandle
       context,
       validation,
       schema,
+      ruleOrGroup,
       muiComponents: muiComponentsProp,
       ...otherProps
     },
@@ -46,6 +47,7 @@ export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandle
           context={context}
           validation={validation}
           schema={schema}
+          ruleOrGroup={ruleOrGroup}
         />
       );
     }

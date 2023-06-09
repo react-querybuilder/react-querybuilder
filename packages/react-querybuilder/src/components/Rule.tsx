@@ -62,6 +62,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
         context={r.context}
         validation={r.validationResult}
         schema={r.schema}
+        ruleOrGroup={r.rule}
       />
       <FieldSelectorControlElement
         testID={TestID.fields}
@@ -77,6 +78,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
         context={r.context}
         validation={r.validationResult}
         schema={r.schema}
+        rule={r.rule}
       />
       {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
         <>
@@ -95,6 +97,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
             context={r.context}
             validation={r.validationResult}
             schema={r.schema}
+            rule={r.rule}
           />
           {(r.schema.autoSelectOperator ||
             r.rule.operator !== r.translations.operators.placeholderName) &&
@@ -116,6 +119,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
                     context={r.context}
                     validation={r.validationResult}
                     schema={r.schema}
+                    rule={r.rule}
                   />
                 )}
                 <ValueEditorControlElement
@@ -140,6 +144,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
                   context={r.context}
                   validation={r.validationResult}
                   schema={r.schema}
+                  rule={r.rule}
                 />
               </>
             )}

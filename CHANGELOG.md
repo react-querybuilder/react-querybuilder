@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Added
+
+- New props for several sub-components:
+  - The parent `rule` object will be provided to `fieldSelector`, `operatorSelector`, `valueSourceSelector`, and `valueEditor` components.
+  - The parent `ruleGroup` object will be provided to `notToggle` components.
+  - The parent `ruleOrGroup` object will be provided to `dragHandle` components.
+
+### Fixed
+
+- The full rule object will be passed to [field-based `validator` functions](https://react-querybuilder.js.org/docs/utils/validation#field-based-validation). Previously, the parameter object only included the `field`, `operator`, `valueSource`, and `value` properties of the rule.
 
 ## [v6.4.1] - 2023-05-23
 
