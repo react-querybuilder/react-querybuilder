@@ -50,20 +50,22 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
 
   return (
     <>
-      <DragHandleControlElement
-        testID={TestID.dragHandle}
-        ref={r.dragRef}
-        level={r.path.length}
-        path={r.path}
-        title={r.translations.dragHandle.title}
-        label={r.translations.dragHandle.label}
-        className={r.classNames.dragHandle}
-        disabled={r.disabled}
-        context={r.context}
-        validation={r.validationResult}
-        schema={r.schema}
-        ruleOrGroup={r.rule}
-      />
+      {r.schema.enableDragAndDrop && (
+        <DragHandleControlElement
+          testID={TestID.dragHandle}
+          ref={r.dragRef}
+          level={r.path.length}
+          path={r.path}
+          title={r.translations.dragHandle.title}
+          label={r.translations.dragHandle.label}
+          className={r.classNames.dragHandle}
+          disabled={r.disabled}
+          context={r.context}
+          validation={r.validationResult}
+          schema={r.schema}
+          ruleOrGroup={r.rule}
+        />
+      )}
       <FieldSelectorControlElement
         testID={TestID.fields}
         options={r.schema.fields}

@@ -59,7 +59,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
 
   return (
     <>
-      {rg.path.length > 0 && (
+      {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
         <DragHandleControlElement
           testID={TestID.dragHandle}
           ref={rg.dragRef}

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
+import { TestID } from '../src/defaults';
 import type { DragHandleProps, Schema } from '../src/types/';
 
 export const defaultDragHandleProps: DragHandleProps = {
@@ -16,6 +17,11 @@ export const testDragHandle = (
   const props = { ...defaultDragHandleProps, title };
 
   describe(title, () => {
+    it('should not render if drag-and-drop is disabled', () => {
+      render(<DragHandle {...props} className="foo" />);
+      expect(() => screen.getByTestId(TestID.dragHandle)).toThrow();
+    });
+
     it('should have the className passed into the <span />', () => {
       render(<DragHandle {...props} className="foo" />);
       expect(screen.getByTitle(title)).toHaveClass('foo');

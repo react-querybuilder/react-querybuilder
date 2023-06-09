@@ -358,7 +358,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 
 #### `dragHandle`
 
-Default is [`DragHandle`](./draghandle). Note that this component must be based on `React.forwardRef`, and must always render an element (never return `null`). Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
+Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enabled](#enabledraganddrop). Note that this component must be based on `React.forwardRef`. Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
 
 | Prop          | Type                                      | Description                                                  |
 | ------------- | ----------------------------------------- | ------------------------------------------------------------ |

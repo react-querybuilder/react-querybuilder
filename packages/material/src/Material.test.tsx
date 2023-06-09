@@ -115,12 +115,13 @@ const WrapperDH = forwardRef<
   DragHandleProps & {
     muiComponents?: Partial<RQBMaterialComponents> | null;
   }
->(({ muiComponents: muiComps, ...props }, ref) => (
+>(({ muiComponents: muiComps, schema, ...props }, ref) => (
   <ThemeProvider theme={theme}>
     <MaterialDragHandle
       ref={ref}
       muiComponents={muiComps === null ? undefined : muiComponents}
       {...props}
+      schema={{ ...schema, enableDragAndDrop: true }}
     />
   </ThemeProvider>
 ));
