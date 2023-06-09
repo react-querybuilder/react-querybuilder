@@ -17,7 +17,7 @@ export const useRule = (props: RuleProps) => {
     path,
     rule: ruleProp,
     schema,
-    actions,
+    actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
     parentDisabled,
     field: fieldProp,
@@ -47,22 +47,21 @@ export const useRule = (props: RuleProps) => {
     getRuleClassname,
   } = schema;
 
-  const { moveRule, onPropChange, onRuleRemove } = actions;
+  useDeprecatedProps('rule', !!ruleProp);
+
+  useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
+
   const disabled = !!parentDisabled || !!disabledProp;
 
   const rule = ruleProp
     ? ruleProp
     : {
-        field: fieldProp!,
-        operator: operatorProp!,
+        id,
+        field: fieldProp ?? '',
+        operator: operatorProp ?? '',
         value: valueProp,
         valueSource: valueSourceProp,
       };
-  const { field, operator, value, valueSource } = rule;
-
-  useDeprecatedProps('rule', !!ruleProp);
-
-  useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 
   const classNames = useMemo(
     () => ({
@@ -111,35 +110,33 @@ export const useRule = (props: RuleProps) => {
     }
   };
 
-  const fieldData = fieldMap?.[field] ?? { name: field, label: field };
-  const inputType = fieldData.inputType ?? getInputType(field, operator);
-  const operators = getOperators(field);
-  const operatorObject = getOption(operators, operator);
+  const fieldData = fieldMap?.[rule.field] ?? { name: rule.field, label: rule.field };
+  const inputType = fieldData.inputType ?? getInputType(rule.field, rule.operator);
+  const operators = getOperators(rule.field);
+  const operatorObject = getOption(operators, rule.operator);
   const arity = operatorObject?.arity;
   const hideValueControls =
     (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
   const valueSources =
     typeof fieldData.valueSources === 'function'
-      ? fieldData.valueSources(operator)
-      : fieldData.valueSources ?? getValueSources(field, operator);
+      ? fieldData.valueSources(rule.operator)
+      : fieldData.valueSources ?? getValueSources(rule.field, rule.operator);
   const valueEditorType =
-    valueSource === 'field'
+    rule.valueSource === 'field'
       ? 'select'
       : (typeof fieldData.valueEditorType === 'function'
-          ? fieldData.valueEditorType(operator)
-          : fieldData.valueEditorType) ?? getValueEditorType(field, operator);
-  const valueEditorSeparator = getValueEditorSeparator(field, operator);
+          ? fieldData.valueEditorType(rule.operator)
+          : fieldData.valueEditorType) ?? getValueEditorType(rule.field, rule.operator);
+  const valueEditorSeparator = getValueEditorSeparator(rule.field, rule.operator);
   const values =
-    valueSource === 'field'
-      ? filterFieldsByComparator(fieldData, fields, operator)
-      : fieldData.values ?? getValues(field, operator);
+    rule.valueSource === 'field'
+      ? filterFieldsByComparator(fieldData, fields, rule.operator)
+      : fieldData.values ?? getValues(rule.field, rule.operator);
   const valueSourceOptions = valueSources.map(vs => ({ name: vs, label: vs }));
 
   const validationResult =
     validationMap[id ?? /* istanbul ignore next */ ''] ??
-    (typeof fieldData.validator === 'function'
-      ? fieldData.validator({ id, field, operator, value })
-      : null);
+    (typeof fieldData.validator === 'function' ? fieldData.validator(rule) : null);
   const validationClassName = getValidationClassNames(validationResult);
   const fieldBasedClassName = useMemo(() => fieldData?.className ?? '', [fieldData?.className]);
   const operatorBasedClassName = useMemo(

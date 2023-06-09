@@ -17,7 +17,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     path,
     ruleGroup: ruleGroupProp,
     schema,
-    actions,
+    actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
     disabled: disabledProp,
     parentDisabled,
     combinator: combinatorProp,
@@ -32,6 +32,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     isDragging = false,
     isOver = false,
   } = props;
+
   const {
     classNames: classNamesProp,
     combinators,
@@ -42,26 +43,30 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     enableDragAndDrop,
     getRuleGroupClassname,
   } = schema;
-  const { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule } = actions;
+
+  useDeprecatedProps('ruleGroup', !!ruleGroupProp);
+
+  useReactDndWarning(
+    enableDragAndDrop,
+    !!(dragMonitorId || dropMonitorId || previewRef || dragRef || dropRef)
+  );
+
   const disabled = !!parentDisabled || !!disabledProp;
 
   const ruleGroup = ruleGroupProp
     ? { ...ruleGroupProp }
     : ({ rules: rulesProp, not: notProp } as RuleGroupTypeAny);
 
-  const firstCombinator = getFirstOption(combinators)!;
   const combinator =
     ruleGroupProp && 'combinator' in ruleGroupProp
       ? ruleGroupProp.combinator
       : !ruleGroupProp
-      ? combinatorProp ?? firstCombinator
-      : firstCombinator;
+      ? combinatorProp ?? getFirstOption(combinators)!
+      : getFirstOption(combinators)!;
 
   if (!independentCombinators) {
     (ruleGroup as RuleGroupType).combinator = combinator;
   }
-
-  useDeprecatedProps('ruleGroup', !!ruleGroupProp);
 
   const classNames = useMemo(
     () => ({
@@ -91,11 +96,6 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       classNamesProp.removeGroup,
       isOver,
     ]
-  );
-
-  useReactDndWarning(
-    enableDragAndDrop,
-    !!(dragMonitorId || dropMonitorId || previewRef || dragRef || dropRef)
   );
 
   const onCombinatorChange = (value: any, _context?: any) => {
