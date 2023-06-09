@@ -18,6 +18,7 @@ export const FluentNotToggle = ({
   context: _context,
   validation: _validation,
   schema: _schema,
+  ruleGroup: _ruleGroup,
   ...otherProps
 }: FluentNotToggleProps) => (
   <Switch

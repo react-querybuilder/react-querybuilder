@@ -57,8 +57,8 @@ export const useRule = (props: RuleProps) => {
     ? ruleProp
     : {
         id,
-        field: fieldProp ?? '',
-        operator: operatorProp ?? '',
+        field: fieldProp ?? /* istanbul ignore next */ '',
+        operator: operatorProp ?? /* istanbul ignore next */ '',
         value: valueProp,
         valueSource: valueSourceProp,
       };

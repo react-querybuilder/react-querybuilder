@@ -1,4 +1,5 @@
 {
+  "prettier.prettierPath": "./node_modules/prettier",
   "editor.formatOnSave": true,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {

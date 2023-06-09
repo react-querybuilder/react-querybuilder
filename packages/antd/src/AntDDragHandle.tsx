@@ -20,6 +20,7 @@ export const AntDDragHandle = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
       context: _context,
       validation: _validation,
       schema: _schema,
+      ruleOrGroup: _ruleOrGroup,
       ...extraProps
     },
     dragRef
