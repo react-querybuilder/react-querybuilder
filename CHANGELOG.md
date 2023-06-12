@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [Drag handle components](https://react-querybuilder.js.org/docs/components/draghandle) will no longer be rendered unless [drag-and-drop is enabled](https://react-querybuilder.js.org/docs/components/querybuilder#enabledraganddrop). The `display: none` style rule in the default stylesheet which applied to the `queryBuilder-dragHandle` class when drag-and-drop was disabled has been removed as it is no longer necessary.
+- [Drag handle components](https://react-querybuilder.js.org/docs/components/draghandle) will no longer be rendered unless [drag-and-drop is enabled](https://react-querybuilder.js.org/docs/components/querybuilder#enabledraganddrop). Previously, drag handle components were rendered unconditionally. The default stylesheet no longer applies `display: none` to the `queryBuilder-dragHandle` class when drag-and-drop is disabled since the components will not be rendered anyway.
 
 ### Added
 
