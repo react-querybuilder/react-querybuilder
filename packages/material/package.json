@@ -33,20 +33,20 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@emotion/react": "^11.11.0",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.13.2",
+    "@mui/material": "^5.13.5",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.7",
-    "@vitejs/plugin-react-swc": "^3.3.1",
+    "@types/react": "^18.2.12",
+    "@vitejs/plugin-react-swc": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.4.1",
     "regenerator-runtime": "^0.13.11",
-    "rollup-plugin-visualizer": "^5.9.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.8"
+    "rollup-plugin-visualizer": "^5.9.2",
+    "typescript": "^5.1.3",
+    "vite": "^4.3.9"
   },
   "peerDependencies": {
     "@emotion/react": "^11",

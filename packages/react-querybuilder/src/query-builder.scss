@@ -104,16 +104,9 @@ $rqb-branch-style: $rqb-border-style !default;
     cursor: move;
   }
 }
-
-// When drag-and-drop is disabled, hide all drag handles
-[data-dnd='disabled'] .queryBuilder-dragHandle {
-  display: none;
-}
-
 // #endregion
 
 // #region Branches
-
 .queryBuilder-branches {
   .ruleGroup-body {
     margin-left: calc(2 * #{$rqb-branch-indent});
@@ -188,5 +181,4 @@ $rqb-branch-style: $rqb-border-style !default;
     }
   }
 }
-
 // #endregion

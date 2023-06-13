@@ -60,6 +60,10 @@ export interface SelectorOrEditorProps extends CommonSubComponentProps {
   handleOnChange(value: any): void;
 }
 
+export interface CommonRuleSubComponentProps {
+  rule: RuleType;
+}
+
 export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
   options: OptionList<OptType>;
 }
@@ -74,24 +78,29 @@ export interface NotToggleProps extends CommonSubComponentProps {
   checked?: boolean;
   handleOnChange(checked: boolean): void;
   label?: string;
+  ruleGroup: RuleGroupTypeAny;
 }
 
 export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
   rules?: RuleOrGroupArray;
 }
 
-export interface FieldSelectorProps extends BaseSelectorProps<Field> {
+export interface FieldSelectorProps extends BaseSelectorProps<Field>, CommonRuleSubComponentProps {
   operator?: string;
 }
 
-export interface OperatorSelectorProps extends BaseSelectorProps<Operator> {
+export interface OperatorSelectorProps
+  extends BaseSelectorProps<Operator>,
+    CommonRuleSubComponentProps {
   field: string;
   fieldData: Field;
 }
 
 type ValueSourceOption = Option<ValueSource>;
 
-export interface ValueSourceSelectorProps extends BaseSelectorProps<ValueSourceOption> {
+export interface ValueSourceSelectorProps
+  extends BaseSelectorProps<ValueSourceOption>,
+    CommonRuleSubComponentProps {
   field: string;
   fieldData: Field;
 }
@@ -103,6 +112,7 @@ export type VersatileSelectorProps = ValueSelectorProps &
 
 export interface DragHandleProps extends CommonSubComponentProps {
   label?: string;
+  ruleOrGroup: RuleGroupTypeAny | RuleType;
 }
 
 export interface Classnames {

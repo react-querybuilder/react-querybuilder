@@ -29,7 +29,7 @@ import {
   cloneElement as mockCloneElement,
   isValidElement as mockIsValidElement,
 } from 'react';
-import type { DragHandleProps, Schema } from 'react-querybuilder';
+import type { DragHandleProps, RuleGroupType, Schema } from 'react-querybuilder';
 import { QueryBuilder, TestID, defaultTranslations } from 'react-querybuilder';
 import {
   testActionElement,
@@ -115,12 +115,13 @@ const WrapperDH = forwardRef<
   DragHandleProps & {
     muiComponents?: Partial<RQBMaterialComponents> | null;
   }
->(({ muiComponents: muiComps, ...props }, ref) => (
+>(({ muiComponents: muiComps, schema, ...props }, ref) => (
   <ThemeProvider theme={theme}>
     <MaterialDragHandle
       ref={ref}
       muiComponents={muiComps === null ? undefined : muiComponents}
       {...props}
+      schema={{ ...schema, enableDragAndDrop: true }}
     />
   </ThemeProvider>
 ));
@@ -151,7 +152,13 @@ describe('drag handle', () => {
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
-        <WrapperDH path={[]} level={0} muiComponents={null} schema={{} as Schema} />
+        <WrapperDH
+          path={[]}
+          level={0}
+          muiComponents={null}
+          schema={{} as Schema}
+          ruleOrGroup={{} as RuleGroupType}
+        />
       </div>
     );
     expect(screen.getByTestId('test').querySelector('span')).toBeInTheDocument();
@@ -164,7 +171,13 @@ describe('not toggle', () => {
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
-        <MaterialNotToggle handleOnChange={() => {}} path={[]} level={0} schema={{} as Schema} />
+        <MaterialNotToggle
+          handleOnChange={() => {}}
+          path={[]}
+          level={0}
+          schema={{} as Schema}
+          ruleGroup={{} as RuleGroupType}
+        />
       </div>
     );
     expect(screen.getByTestId('test').querySelector('input[type=checkbox]')).toBeInTheDocument();
@@ -186,6 +199,7 @@ describe('value editor', () => {
           operator="="
           fieldData={{ name: 'f1', label: 'Field 1' }}
           schema={{} as Schema}
+          rule={{ field: '', operator: '', value: '' }}
         />
       </div>
     );

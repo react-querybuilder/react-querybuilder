@@ -18,6 +18,7 @@ export const MantineNotToggle = ({
   context: _context,
   validation: _validation,
   schema: _schema,
+  ruleGroup: _ruleGroup,
   ...otherProps
 }: MantineNotToggleProps) => (
   <Switch

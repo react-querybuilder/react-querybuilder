@@ -34,20 +34,20 @@
   },
   "devDependencies": {
     "@chakra-ui/icons": "^2.0.19",
-    "@chakra-ui/react": "^2.6.1",
-    "@chakra-ui/system": "^2.5.7",
-    "@emotion/react": "^11.11.0",
+    "@chakra-ui/react": "^2.7.0",
+    "@chakra-ui/system": "^2.5.8",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.7",
-    "@vitejs/plugin-react-swc": "^3.3.1",
+    "@types/react": "^18.2.12",
+    "@vitejs/plugin-react-swc": "^3.3.2",
     "framer-motion": "^10.12.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.4.1",
-    "rollup-plugin-visualizer": "^5.9.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.8"
+    "rollup-plugin-visualizer": "^5.9.2",
+    "typescript": "^5.1.3",
+    "vite": "^4.3.9"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

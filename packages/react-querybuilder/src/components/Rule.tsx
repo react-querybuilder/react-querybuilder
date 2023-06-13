@@ -50,19 +50,22 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
 
   return (
     <>
-      <DragHandleControlElement
-        testID={TestID.dragHandle}
-        ref={r.dragRef}
-        level={r.path.length}
-        path={r.path}
-        title={r.translations.dragHandle.title}
-        label={r.translations.dragHandle.label}
-        className={r.classNames.dragHandle}
-        disabled={r.disabled}
-        context={r.context}
-        validation={r.validationResult}
-        schema={r.schema}
-      />
+      {r.schema.enableDragAndDrop && (
+        <DragHandleControlElement
+          testID={TestID.dragHandle}
+          ref={r.dragRef}
+          level={r.path.length}
+          path={r.path}
+          title={r.translations.dragHandle.title}
+          label={r.translations.dragHandle.label}
+          className={r.classNames.dragHandle}
+          disabled={r.disabled}
+          context={r.context}
+          validation={r.validationResult}
+          schema={r.schema}
+          ruleOrGroup={r.rule}
+        />
+      )}
       <FieldSelectorControlElement
         testID={TestID.fields}
         options={r.schema.fields}
@@ -77,6 +80,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
         context={r.context}
         validation={r.validationResult}
         schema={r.schema}
+        rule={r.rule}
       />
       {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
         <>
@@ -95,6 +99,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
             context={r.context}
             validation={r.validationResult}
             schema={r.schema}
+            rule={r.rule}
           />
           {(r.schema.autoSelectOperator ||
             r.rule.operator !== r.translations.operators.placeholderName) &&
@@ -116,6 +121,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
                     context={r.context}
                     validation={r.validationResult}
                     schema={r.schema}
+                    rule={r.rule}
                   />
                 )}
                 <ValueEditorControlElement
@@ -140,6 +146,7 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
                   context={r.context}
                   validation={r.validationResult}
                   schema={r.schema}
+                  rule={r.rule}
                 />
               </>
             )}

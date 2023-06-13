@@ -17,7 +17,7 @@ export const defaultNativeControlElements: Controls = {
   cloneRuleAction: NativeActionElement,
   combinatorSelector: NativeValueSelector,
   // TODO?: implement drag-and-drop
-  dragHandle: forwardRef(() => null),
+  dragHandle: forwardRef(/* istanbul ignore next */ () => null),
   fieldSelector: NativeValueSelector,
   inlineCombinator: NativeInlineCombinator,
   lockGroupAction: NativeActionElement,

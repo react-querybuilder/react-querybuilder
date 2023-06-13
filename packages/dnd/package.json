@@ -34,10 +34,10 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
-    "@types/node": "^18.16.14",
-    "@types/react": "^18.2.7",
-    "@vitejs/plugin-react-swc": "^3.3.1",
-    "concurrently": "^8.0.1",
+    "@types/node": "^18.16.17",
+    "@types/react": "^18.2.12",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "concurrently": "^8.2.0",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
@@ -45,9 +45,9 @@
     "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.4.1",
-    "rollup-plugin-visualizer": "^5.9.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.8"
+    "rollup-plugin-visualizer": "^5.9.2",
+    "typescript": "^5.1.3",
+    "vite": "^4.3.9"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

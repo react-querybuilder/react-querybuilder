@@ -37,10 +37,12 @@ export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export { jsonLogicAdditionalOperators } from './utils';
-export { defaultValueProcessorByRule };
-export { defaultRuleProcessorCEL };
-export { defaultRuleProcessorMongoDB };
-export { defaultRuleProcessorSpEL };
+export {
+  defaultRuleProcessorCEL,
+  defaultRuleProcessorMongoDB,
+  defaultRuleProcessorSpEL,
+  defaultValueProcessorByRule,
+};
 /**
  * @deprecated Renamed to "defaultRuleProcessorCEL".
  */

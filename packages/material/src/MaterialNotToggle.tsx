@@ -27,6 +27,7 @@ export const MaterialNotToggle = ({
   validation,
   testID,
   schema,
+  ruleGroup,
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialNotToggleProps) => {
@@ -48,6 +49,7 @@ export const MaterialNotToggle = ({
         validation={validation}
         testID={testID}
         schema={schema}
+        ruleGroup={ruleGroup}
       />
     );
   }

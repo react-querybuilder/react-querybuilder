@@ -7,7 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Changed
+
+- [Drag handle components](https://react-querybuilder.js.org/docs/components/draghandle) will no longer be rendered unless [drag-and-drop is enabled](https://react-querybuilder.js.org/docs/components/querybuilder#enabledraganddrop). Previously, drag handle components were rendered unconditionally. The default stylesheet no longer applies `display: none` to the `queryBuilder-dragHandle` class when drag-and-drop is disabled since the components will not be rendered anyway.
+
+### Added
+
+- New props for several sub-components:
+  - The parent `rule` object will now be provided to `fieldSelector`, `operatorSelector`, `valueSourceSelector`, and `valueEditor` components.
+  - The parent `ruleGroup` object will now be provided to `notToggle` components.
+  - The parent `ruleOrGroup` object will now be provided to `dragHandle` components.
+
+### Fixed
+
+- The full rule object will now be passed to [field-based `validator` functions](https://react-querybuilder.js.org/docs/utils/validation#field-based-validation). Previously, the parameter object only included the `field`, `operator`, `valueSource`, and `value` properties of the rule.
 
 ## [v6.4.1] - 2023-05-23
 

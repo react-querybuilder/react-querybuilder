@@ -9,7 +9,6 @@ dist/
 .parcel-cache
 .env
 build-stats.*
-website/src/pages/demo/_styles/demo.css
 
 .pnp.*
 .yarn/*

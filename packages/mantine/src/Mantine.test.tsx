@@ -136,6 +136,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     value: 'opt1',
     inputType: 'text',
     type: 'text',
+    rule: { field: '', operator: '', value: '' },
   };
 
   it('renders value editor as numeric editor', async () => {

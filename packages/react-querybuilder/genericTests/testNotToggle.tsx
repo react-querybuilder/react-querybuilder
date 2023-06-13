@@ -8,6 +8,7 @@ export const defaultNotToggleProps: NotToggleProps = {
   level: 0,
   path: [],
   schema: {} as Schema,
+  ruleGroup: { combinator: 'and', rules: [] },
 };
 
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {

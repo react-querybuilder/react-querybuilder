@@ -1,8 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import extraStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import extraStylesSCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.scss';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -17,6 +14,7 @@ import parserTypeScript from 'prettier/esm/parser-typescript.mjs';
 import prettier from 'prettier/esm/standalone.mjs';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
+import { compileString } from 'sass';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
@@ -226,8 +224,10 @@ export const App = () => {
   });
 };
 
+const compiledCSS = compileString(extraStylesSCSS).css;
+
 export const extraStyles = {
-  css: prettier.format(extraStylesCSS, {
+  css: prettier.format(compiledCSS, {
     filepath: 'styles.css',
     plugins: [parserPostCSS],
     printWidth: 100,

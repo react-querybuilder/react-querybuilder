@@ -30,6 +30,7 @@ export const defaultValueEditorProps: ValueEditorProps = {
   path: [],
   valueSource: 'value',
   schema: {} as Schema,
+  rule: { field: '', operator: '', value: '' },
 };
 
 export const testValueEditor = (
