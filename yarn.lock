@@ -28569,7 +28569,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.63.3":
+"sass@npm:1.63.3":
   version: 1.63.3
   resolution: "sass@npm:1.63.3"
   dependencies:
@@ -28579,6 +28579,19 @@ __metadata:
   bin:
     sass: sass.js
   checksum: 41d1d7e875be738a8b5ef92bc722b20fd88f9fc8db61caa17dec37e0a53739cf28dc3b79481b1998c410c82c30247f473c2559e64cec7c4d851e5cea0434ec4e
+  languageName: node
+  linkType: hard
+
+"sass@patch:sass@npm%3A1.63.3#./.yarn/patches/sass-npm-1.63.3-5219516133.patch::locator=react-querybuilder-monorepo%40workspace%3A.":
+  version: 1.63.3
+  resolution: "sass@patch:sass@npm%3A1.63.3#./.yarn/patches/sass-npm-1.63.3-5219516133.patch::version=1.63.3&hash=387c8a&locator=react-querybuilder-monorepo%40workspace%3A."
+  dependencies:
+    chokidar: ">=3.0.0 <4.0.0"
+    immutable: ^4.0.0
+    source-map-js: ">=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 9712032847786eb47da5f56d90ab86794bb61d743d0f18c544338d007d397a50cbed3ee67044b825bb935d8e988feb79778b31ed5438cf3de710daecd9e48fb5
   languageName: node
   linkType: hard
 
