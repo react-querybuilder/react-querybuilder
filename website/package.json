@@ -3,15 +3,14 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "bun run regen-demo-css && docusaurus start",
-    "build": "bun run regen-demo-css && docusaurus build",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "bun run regen-demo-css && docusaurus deploy",
+    "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "regen-demo-css": "bun x sass --no-source-map src/pages/demo/_styles/demo.scss src/pages/demo/_styles/demo.css",
     "typecheck": "tsc"
   },
   "dependencies": {
