@@ -7,20 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v6.5.0] - 2023-06-13
+
 ### Changed
 
-- [Drag handle components](https://react-querybuilder.js.org/docs/components/draghandle) will no longer be rendered unless [drag-and-drop is enabled](https://react-querybuilder.js.org/docs/components/querybuilder#enabledraganddrop). Previously, drag handle components were rendered unconditionally. The default stylesheet no longer applies `display: none` to the `queryBuilder-dragHandle` class when drag-and-drop is disabled since the components will not be rendered anyway.
+- [#529] [Drag handle components](https://react-querybuilder.js.org/docs/components/draghandle) will no longer be rendered unless [drag-and-drop is enabled](https://react-querybuilder.js.org/docs/components/querybuilder#enabledraganddrop). Previously, drag handle components were rendered unconditionally. Accordingly, the default stylesheet no longer applies `display: none` to the `queryBuilder-dragHandle` class when drag-and-drop is disabled since the components will not be rendered anyway.
 
 ### Added
 
-- New props for several sub-components:
+- [#529] New props for several sub-components:
   - The parent `rule` object will now be provided to `fieldSelector`, `operatorSelector`, `valueSourceSelector`, and `valueEditor` components.
   - The parent `ruleGroup` object will now be provided to `notToggle` components.
   - The parent `ruleOrGroup` object will now be provided to `dragHandle` components.
 
 ### Fixed
 
-- The full rule object will now be passed to [field-based `validator` functions](https://react-querybuilder.js.org/docs/utils/validation#field-based-validation). Previously, the parameter object only included the `field`, `operator`, `valueSource`, and `value` properties of the rule.
+- [#529] The full rule object will now be passed to [field-based `validator` functions](https://react-querybuilder.js.org/docs/utils/validation#field-based-validation). Previously, the parameter object only included the `field`, `operator`, `valueSource`, and `value` properties of the rule.
 
 ## [v6.4.1] - 2023-05-23
 
@@ -1362,10 +1366,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
 [#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
 [#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
+[#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...HEAD
+[v6.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...v6.5.0
 [v6.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...v6.4.1
 [v6.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.3.0...v6.4.0
 [v6.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.2.0...v6.3.0
