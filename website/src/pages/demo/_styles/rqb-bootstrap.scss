@@ -1,11 +1,11 @@
-.rqb-bootstrap {
-  @import 'bootstrap/scss/functions';
-  @import 'bootstrap/scss/variables';
-  @import 'bootstrap/scss/variables-dark';
-  @import 'bootstrap/scss/maps';
-  @import 'bootstrap/scss/mixins';
-  @import 'bootstrap/scss/root';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/root';
 
+.rqb-bootstrap {
   @import 'bootstrap/scss/utilities';
   @import 'bootstrap/scss/reboot';
   @import 'bootstrap/scss/type';
