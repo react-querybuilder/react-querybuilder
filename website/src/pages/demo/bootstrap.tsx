@@ -1,17 +1,26 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
 import Layout from '@theme/Layout';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-bootstrap.scss';
 
+const getQueryWrapper =
+  ({ colorMode }: { colorMode: 'dark' | 'light' }) =>
+  ({ children }: { children: ReactNode }) =>
+    <div data-bs-theme={colorMode}>{children}</div>;
+
 function ReactQueryBuilderDemo_BootstrapBrowser() {
+  const { colorMode } = useColorMode();
   const [{ Demo }, setComponents] = useState<{
     Demo?: typeof import('./_components/Demo').default;
   }>({});
+
+  const QueryWrapper = useMemo(() => getQueryWrapper({ colorMode }), [colorMode]);
 
   useEffect(() => {
     let active = true;
@@ -33,7 +42,7 @@ function ReactQueryBuilderDemo_BootstrapBrowser() {
 
   return (
     <QueryBuilderBootstrap>
-      <Demo variant="bootstrap" />
+      <Demo variant="bootstrap" queryWrapper={QueryWrapper} />
     </QueryBuilderBootstrap>
   );
 }
