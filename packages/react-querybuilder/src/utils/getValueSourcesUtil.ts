@@ -1,5 +1,7 @@
 import type { Field, ValueSources } from '../types/index.noReact';
 
+const defaultValueSourcesArray: ValueSources = ['value'];
+
 export const getValueSourcesUtil = (
   fieldData: Field,
   operator: string,
@@ -23,5 +25,5 @@ export const getValueSourcesUtil = (
     if (vals) return vals;
   }
 
-  return ['value'];
+  return defaultValueSourcesArray;
 };

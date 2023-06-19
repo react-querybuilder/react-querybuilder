@@ -12,11 +12,13 @@ import type {
   Option,
   QueryActions,
   QueryBuilderProps,
+  QueryValidator,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
   Schema,
   UpdateableProperties,
+  ValidationMap,
 } from '../types';
 import {
   add,
@@ -40,6 +42,9 @@ import {
 } from '../utils';
 
 const noop = () => {};
+
+const defaultValidationResult: ReturnType<QueryValidator> = {};
+const defaultValidationMap: ValidationMap = {};
 
 export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>
@@ -581,8 +586,10 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   // #endregion
 
   const { validationResult, validationMap } = useMemo(() => {
-    const validationResult = typeof validator === 'function' ? validator(query) : {};
-    const validationMap = typeof validationResult === 'object' ? validationResult : {};
+    const validationResult =
+      typeof validator === 'function' ? validator(query) : defaultValidationResult;
+    const validationMap =
+      typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
     return { validationResult, validationMap };
   }, [query, validator]);
 
