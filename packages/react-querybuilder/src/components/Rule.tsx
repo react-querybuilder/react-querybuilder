@@ -3,17 +3,12 @@ import { TestID } from '../defaults';
 import { useRule, useStopEventPropagation } from '../hooks';
 import type { RuleProps } from '../types';
 
-export const Rule = (props: RuleProps) => {
+export const Rule = React.memo((props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
-  const { cloneRule, toggleLockRule, removeRule } = r;
-  const methodsWithoutEventPropagation = useStopEventPropagation({
-    cloneRule,
-    toggleLockRule,
-    removeRule,
-  });
-
-  const subComponentProps = { ...r, ...methodsWithoutEventPropagation };
+  r.cloneRule = useStopEventPropagation(r.cloneRule);
+  r.toggleLockRule = useStopEventPropagation(r.toggleLockRule);
+  r.removeRule = useStopEventPropagation(r.removeRule);
 
   return (
     <div
@@ -25,14 +20,14 @@ export const Rule = (props: RuleProps) => {
       data-rule-id={r.id}
       data-level={r.path.length}
       data-path={JSON.stringify(r.path)}>
-      <RuleComponents {...subComponentProps} />
+      <RuleComponents {...r} />
     </div>
   );
-};
+});
 
 Rule.displayName = 'Rule';
 
-export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
+export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRule>) => {
   const {
     schema: {
       controls: {
@@ -201,4 +196,4 @@ export const RuleComponents = (r: RuleProps & ReturnType<typeof useRule>) => {
       />
     </>
   );
-};
+});
