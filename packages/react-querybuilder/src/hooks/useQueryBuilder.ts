@@ -1,15 +1,7 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  LogType,
-  defaultCombinators,
-  defaultOperators,
-  defaultTranslations,
-  standardClassnames,
-} from '../defaults';
+import { useCallback, useEffect, useMemo } from 'react';
+import { LogType, defaultCombinators, standardClassnames } from '../defaults';
 import type {
-  Field,
-  Option,
   QueryActions,
   QueryBuilderProps,
   QueryValidator,
@@ -20,26 +12,10 @@ import type {
   UpdateableProperties,
   ValidationMap,
 } from '../types';
-import {
-  add,
-  filterFieldsByComparator,
-  findPath,
-  generateID,
-  getFirstOption,
-  getValueSourcesUtil,
-  isOptionGroupArray,
-  joinWith,
-  move,
-  objectKeys,
-  pathIsDisabled,
-  prepareRuleGroup,
-  remove,
-  uniqByName,
-  uniqOptGroups,
-  update,
-  useControlledOrUncontrolled,
-  useMergedContext,
-} from '../utils';
+import { add, findPath, move, pathIsDisabled, remove, update } from '../utils';
+import type { useCreateReduxSlice } from './useCreateReduxSlice';
+import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
+import { getReduxQuery, useAppDispatch, useAppSelector, useAppStore } from './useRedux';
 
 const noop = () => {};
 
@@ -47,27 +23,14 @@ const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
 
 export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderProps<RG>
+  props: QueryBuilderProps<RG>,
+  setup: ReturnType<typeof useQueryBuilderSetup<RG>>,
+  { setReduxQuery }: ReturnType<typeof useCreateReduxSlice>['actions']
 ) => {
   const {
-    defaultQuery,
     query: queryProp,
-    fields: fieldsPropOriginal,
-    operators = defaultOperators,
     combinators = defaultCombinators,
-    translations: translationsProp = defaultTranslations,
-    enableMountQueryChange: enableMountQueryChangeProp = true,
-    controlClassnames: controlClassnamesProp,
-    controlElements: controlElementsProp,
-    getDefaultField,
-    getDefaultOperator,
-    getDefaultValue,
-    getOperators,
-    getValueEditorType,
     getValueEditorSeparator = () => null,
-    getValueSources,
-    getInputType,
-    getValues,
     getRuleClassname = () => '',
     getRuleGroupClassname = () => '',
     onAddRule = r => r,
@@ -83,25 +46,28 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     autoSelectField = true,
     autoSelectOperator = true,
     addRuleToNewGroups = false,
-    enableDragAndDrop: enableDragAndDropProp,
     independentCombinators,
     listsAsArrays = false,
     parseNumbers = false,
     disabled = false,
     validator,
-    debugMode: debugModeProp = false,
     onLog = console.log,
-    idGenerator = generateID,
   } = props as QueryBuilderProps<RG>;
 
-  const rqbContext = useMergedContext({
-    controlClassnames: controlClassnamesProp,
-    controlElements: controlElementsProp,
-    debugMode: debugModeProp,
-    enableDragAndDrop: enableDragAndDropProp,
-    enableMountQueryChange: enableMountQueryChangeProp,
-    translations: translationsProp,
-  });
+  const {
+    rqbContext,
+    fields,
+    fieldMap,
+    getOperatorsMain,
+    getRuleDefaultOperator,
+    getValueEditorTypeMain,
+    getValueSourcesMain,
+    getValuesMain,
+    getRuleDefaultValue,
+    getInputTypeMain,
+    createRule,
+    createRuleGroup,
+  } = setup;
 
   const {
     controlClassnames,
@@ -112,328 +78,37 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     translations,
   } = rqbContext;
 
-  // #region Set up `fields`
-  const defaultField = useMemo(
-    (): Field => ({
-      id: translations.fields.placeholderName,
-      name: translations.fields.placeholderName,
-      label: translations.fields.placeholderLabel,
-    }),
-    [translations.fields.placeholderLabel, translations.fields.placeholderName]
-  );
-  const fieldsProp = useMemo(
-    () => fieldsPropOriginal ?? [defaultField],
-    [defaultField, fieldsPropOriginal]
-  );
-
-  const fields = useMemo(() => {
-    const f = Array.isArray(fieldsProp)
-      ? fieldsProp
-      : objectKeys(fieldsProp)
-          .map((fld): Field => ({ ...fieldsProp[fld], name: fld }))
-          .sort((a, b) => a.label.localeCompare(b.label));
-    if (isOptionGroupArray(f)) {
-      if (autoSelectField) {
-        return uniqOptGroups(f);
-      } else {
-        return uniqOptGroups([
-          {
-            label: translations.fields.placeholderGroupLabel,
-            options: [defaultField],
-          },
-          ...f,
-        ]);
-      }
-    } else {
-      if (autoSelectField) {
-        return uniqByName(f);
-      } else {
-        return uniqByName([defaultField, ...f]);
-      }
-    }
-  }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
-
-  const fieldMap = useMemo(() => {
-    if (!Array.isArray(fieldsProp)) {
-      const fp: Record<string, Field> = {};
-      objectKeys(fieldsProp).forEach(f => (fp[f] = { ...fieldsProp[f], name: f }));
-      if (autoSelectField) {
-        return fp;
-      } else {
-        return { ...fp, [translations.fields.placeholderName]: defaultField };
-      }
-    }
-    const fm: Record<string, Field> = {};
-    if (isOptionGroupArray(fields)) {
-      fields.forEach(f => f.options.forEach(opt => (fm[opt.name] = opt)));
-    } else {
-      fields.forEach(f => (fm[f.name] = f));
-    }
-    return fm;
-  }, [autoSelectField, defaultField, fields, fieldsProp, translations.fields.placeholderName]);
-  // #endregion
-
-  // #region Set up `operators`
-  const defaultOperator = useMemo(
-    (): Option => ({
-      id: translations.operators.placeholderName,
-      name: translations.operators.placeholderName,
-      label: translations.operators.placeholderLabel,
-    }),
-    [translations.operators.placeholderLabel, translations.operators.placeholderName]
-  );
-
-  const getOperatorsMain = useCallback(
-    (field: string) => {
-      const fieldData = fieldMap[field];
-      let opsFinal = operators;
-
-      if (fieldData?.operators) {
-        opsFinal = fieldData.operators;
-      } else if (getOperators) {
-        const ops = getOperators(field);
-        if (ops) {
-          opsFinal = ops;
-        }
-      }
-
-      if (!autoSelectOperator) {
-        if (isOptionGroupArray(opsFinal)) {
-          opsFinal = [
-            {
-              label: translations.operators.placeholderGroupLabel,
-              options: [defaultOperator],
-            },
-            ...opsFinal,
-          ];
-        } else {
-          opsFinal = [defaultOperator, ...opsFinal];
-        }
-      }
-
-      return isOptionGroupArray(opsFinal) ? uniqOptGroups(opsFinal) : uniqByName(opsFinal);
-    },
-    [
-      autoSelectOperator,
-      defaultOperator,
-      fieldMap,
-      getOperators,
-      operators,
-      translations.operators.placeholderGroupLabel,
-    ]
-  );
-
-  const getRuleDefaultOperator = useCallback(
-    (field: string) => {
-      const fieldData = fieldMap[field];
-      if (fieldData?.defaultOperator) {
-        return fieldData.defaultOperator;
-      }
-
-      if (getDefaultOperator) {
-        if (typeof getDefaultOperator === 'function') {
-          return getDefaultOperator(field);
-        } else {
-          return getDefaultOperator;
-        }
-      }
-
-      const ops = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
-      return ops.length
-        ? getFirstOption(ops) ?? /* istanbul ignore next */ ''
-        : /* istanbul ignore next */ '';
-    },
-    [fieldMap, getDefaultOperator, getOperatorsMain]
-  );
-  // #endregion
-
-  // #region Rule property getters
-  const getValueEditorTypeMain = useCallback(
-    (field: string, operator: string) => {
-      if (getValueEditorType) {
-        const vet = getValueEditorType(field, operator);
-        if (vet) return vet;
-      }
-
-      return 'text';
-    },
-    [getValueEditorType]
-  );
-
-  const getValueSourcesMain = useCallback(
-    (field: string, operator: string) =>
-      getValueSourcesUtil(fieldMap[field], operator, getValueSources),
-    [fieldMap, getValueSources]
-  );
-
-  const getValuesMain = useCallback(
-    (field: string, operator: string) => {
-      const fieldData = fieldMap[field];
-      // Ignore this in tests because Rule already checks for
-      // the presence of the values property in fieldData.
-      /* istanbul ignore if */
-      if (fieldData?.values) {
-        return fieldData.values;
-      }
-      if (getValues) {
-        const vals = getValues(field, operator);
-        if (vals) return vals;
-      }
-
-      return [];
-    },
-    [fieldMap, getValues]
-  );
-
-  const getRuleDefaultValue = useCallback(
-    (rule: RuleType) => {
-      const fieldData = fieldMap[rule.field];
-      if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
-        return fieldData.defaultValue;
-      } else if (getDefaultValue) {
-        return getDefaultValue(rule);
-      }
-
-      let value: any = '';
-
-      const values = getValuesMain(rule.field, rule.operator);
-
-      const getFirstOptionsFrom = (opts: any[]) => {
-        const firstOption = getFirstOption(opts);
-        if (rule.operator === 'between' || rule.operator === 'notBetween') {
-          const valueAsArray = [firstOption, firstOption];
-          return listsAsArrays
-            ? valueAsArray
-            : joinWith(
-                valueAsArray.map(v => v ?? /* istanbul ignore next */ ''),
-                ','
-              );
-        } else {
-          return firstOption;
-        }
-      };
-
-      if (rule.valueSource === 'field') {
-        const filteredFields = filterFieldsByComparator(fieldData, fields, rule.operator);
-        if (filteredFields.length > 0) {
-          value = getFirstOptionsFrom(filteredFields);
-        } else {
-          value = '';
-        }
-      } else if (values.length) {
-        value = getFirstOptionsFrom(values);
-      } else {
-        const editorType = getValueEditorTypeMain(rule.field, rule.operator);
-        if (editorType === 'checkbox') {
-          value = false;
-        }
-      }
-
-      return value;
-    },
-    [fieldMap, fields, getDefaultValue, getValueEditorTypeMain, getValuesMain, listsAsArrays]
-  );
-
-  const getInputTypeMain = useCallback(
-    (field: string, operator: string) => {
-      if (getInputType) {
-        const inputType = getInputType(field, operator);
-        if (inputType) return inputType;
-      }
-
-      return 'text';
-    },
-    [getInputType]
-  );
-  // #endregion
-
-  // #region Rule/group creators
-  const createRule = useCallback((): RuleType => {
-    let field = '';
-    /* istanbul ignore else */
-    if (fields?.length > 0 && fields[0]) {
-      field = getFirstOption(fields) ?? /* istanbul ignore next */ '';
-    }
-    if (getDefaultField) {
-      if (typeof getDefaultField === 'function') {
-        field = getDefaultField(fields);
-      } else {
-        field = getDefaultField;
-      }
-    }
-
-    const operator = getRuleDefaultOperator(field);
-
-    const valueSource = getValueSourcesMain(field, operator)[0] ?? 'value';
-
-    const newRule: RuleType = {
-      id: idGenerator(),
-      field,
-      operator,
-      valueSource,
-      value: '',
-    };
-
-    const value = getRuleDefaultValue(newRule);
-
-    return { ...newRule, value };
-  }, [
-    fields,
-    getDefaultField,
-    getRuleDefaultOperator,
-    getRuleDefaultValue,
-    getValueSourcesMain,
-    idGenerator,
-  ]);
-
-  const createRuleGroup = useCallback((): RG => {
-    // TODO: figure out how to avoid `@ts-expect-error` here
-    if (independentCombinators) {
-      // @ts-expect-error TS can't tell that RG means RuleGroupTypeIC
-      return {
-        id: idGenerator(),
-        rules: addRuleToNewGroups ? [createRule()] : [],
-        not: false,
-      };
-    }
-    // @ts-expect-error TS can't tell that RG means RuleGroupType
-    return {
-      id: idGenerator(),
-      rules: addRuleToNewGroups ? [createRule()] : [],
-      combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
-      not: false,
-    };
-  }, [addRuleToNewGroups, combinators, createRule, idGenerator, independentCombinators]);
-  // #endregion
-
   // #region Handle controlled mode vs uncontrolled mode
-  const isFirstRender = useRef(true);
-  // This state variable is only used when the component is uncontrolled
-  const [queryState, setQueryState] = useState(
-    defaultQuery ? prepareRuleGroup(defaultQuery, { idGenerator }) : createRuleGroup()
-  );
+  const reduxStore = useAppStore();
+  const reduxDispatch = useAppDispatch();
+  const reduxQuery = useAppSelector(getReduxQuery) as RG;
+
+  // useEffect(() => {
+  //   reduxDispatch(
+  //     setQuery(defaultQuery ? prepareRuleGroup(defaultQuery, { idGenerator }) : createRuleGroup())
+  //   );
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // const [queryState, setQueryState] = useState(() => {
+  //   const q = query ?? defaultQuery;
+  //   return q ? prepareRuleGroup(q, { idGenerator }) : createRuleGroup();
+  // });
+
   // We assume here that if `queryProp` is passed in, and it's not the first render,
   // that `queryProp` has already been prepared, i.e. the user is just passing back
   // the `onQueryChange` callback parameter as `queryProp`. This appears to have a huge
   // performance impact.
-  const query: RG = queryProp
-    ? isFirstRender.current
-      ? prepareRuleGroup(queryProp, { idGenerator })
-      : queryProp
-    : queryState;
-
-  useControlledOrUncontrolled({
-    defaultQuery,
-    queryProp,
-    isFirstRender: isFirstRender.current,
-  });
-
-  isFirstRender.current = false;
+  // const query: RG = queryProp
+  //   ? isFirstRender.current
+  //     ? prepareRuleGroup(queryProp, { idGenerator })
+  //     : queryProp
+  //   : reduxQuery;
 
   // Run `onQueryChange` on mount, if enabled
   useEffect(() => {
     if (enableMountQueryChange) {
-      onQueryChange(query);
+      onQueryChange(reduxQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -451,12 +126,15 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
+      reduxDispatch(setReduxQuery(newQuery));
+      console.log(newQuery);
       if (uncontrolled) {
-        setQueryState(newQuery);
+        // setQueryState(newQuery);
       }
-      onQueryChange(newQuery);
+      // onQueryChange(newQuery);
     },
-    [onQueryChange, uncontrolled]
+    // [reduxDispatch, onQueryChange, setReduxQuery, uncontrolled]
+    [reduxDispatch, setReduxQuery, uncontrolled]
   );
   // #endregion
 
@@ -467,131 +145,162 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
-  const onRuleAdd = (rule: RuleType, parentPath: number[], context?: any) => {
-    if (pathIsDisabled(parentPath, query) || queryDisabled) {
-      // istanbul ignore else
-      if (debugMode) {
-        onLog({ type: LogType.parentPathDisabled, rule, parentPath, query });
+  const onRuleAdd = useCallback(
+    (rule: RuleType, parentPath: number[], context?: any) => {
+      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
+        // istanbul ignore else
+        if (debugMode) {
+          onLog({ type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
+        }
+        return;
       }
-      return;
-    }
-    const newRule = onAddRule(rule, parentPath, query, context);
-    if (!newRule) {
-      // istanbul ignore else
-      if (debugMode) {
-        onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query });
+      const newRule = onAddRule(rule, parentPath, queryLocal, context);
+      if (!newRule) {
+        // istanbul ignore else
+        if (debugMode) {
+          onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
+        }
+        return;
       }
-      return;
-    }
-    const newQuery = add(query, newRule, parentPath, {
-      combinators,
-      combinatorPreceding: newRule.combinatorPreceding ?? undefined,
-    });
-    if (debugMode) {
-      onLog({ type: LogType.add, query, newQuery, newRule, parentPath });
-    }
-    dispatch(newQuery);
-  };
+      const newQuery = add(queryLocal, newRule, parentPath, {
+        combinators,
+        combinatorPreceding: newRule.combinatorPreceding ?? undefined,
+      });
+      if (debugMode) {
+        onLog({ type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
+      }
+      dispatch(newQuery);
+    },
+    [combinators, debugMode, dispatch, onAddRule, onLog, queryDisabled, reduxStore]
+  );
 
-  const onGroupAdd = (ruleGroup: RG, parentPath: number[], context?: any) => {
-    if (pathIsDisabled(parentPath, query) || queryDisabled) {
-      // istanbul ignore else
-      if (debugMode) {
-        onLog({
-          type: LogType.parentPathDisabled,
-          ruleGroup,
-          parentPath,
-          query,
-        });
+  const onGroupAdd = useCallback(
+    (ruleGroup: RG, parentPath: number[], context?: any) => {
+      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
+        // istanbul ignore else
+        if (debugMode) {
+          onLog({
+            type: LogType.parentPathDisabled,
+            ruleGroup,
+            parentPath,
+            query: queryLocal,
+          });
+        }
+        return;
       }
-      return;
-    }
-    const newGroup = onAddGroup(ruleGroup, parentPath, query, context);
-    if (!newGroup) {
-      // istanbul ignore else
-      if (debugMode) {
-        onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query });
+      const newGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
+      if (!newGroup) {
+        // istanbul ignore else
+        if (debugMode) {
+          onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
+        }
+        return;
       }
-      return;
-    }
-    const newQuery = add(query, newGroup, parentPath, {
-      combinators,
-      combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
-    });
-    if (debugMode) {
-      onLog({ type: LogType.add, query, newQuery, newGroup, parentPath });
-    }
-    dispatch(newQuery);
-  };
+      const newQuery = add(queryLocal, newGroup, parentPath, {
+        combinators,
+        combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
+      });
+      if (debugMode) {
+        onLog({ type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
+      }
+      dispatch(newQuery);
+    },
+    [combinators, debugMode, dispatch, onAddGroup, onLog, queryDisabled, reduxStore]
+  );
 
-  const onPropChange = (prop: UpdateableProperties, value: any, path: number[]) => {
-    if ((pathIsDisabled(path, query) && prop !== 'disabled') || queryDisabled) {
-      if (debugMode) {
-        onLog({ type: LogType.pathDisabled, path, prop, value, query });
+  const onPropChange = useCallback(
+    (prop: UpdateableProperties, value: any, path: number[]) => {
+      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
+        if (debugMode) {
+          onLog({ type: LogType.pathDisabled, path, prop, value, query: queryLocal });
+        }
+        return;
       }
-      return;
-    }
-    const newQuery = update(query, prop, value, path, {
+      const newQuery = update(queryLocal, prop, value, path, {
+        resetOnFieldChange,
+        resetOnOperatorChange,
+        getRuleDefaultOperator,
+        getValueSources: getValueSourcesMain,
+        getRuleDefaultValue,
+      });
+      if (debugMode) {
+        onLog({ type: LogType.update, query: queryLocal, newQuery, prop, value, path });
+      }
+      dispatch(newQuery);
+    },
+    [
+      debugMode,
+      dispatch,
+      getRuleDefaultOperator,
+      getRuleDefaultValue,
+      getValueSourcesMain,
+      onLog,
+      queryDisabled,
+      reduxStore,
       resetOnFieldChange,
       resetOnOperatorChange,
-      getRuleDefaultOperator,
-      getValueSources: getValueSourcesMain,
-      getRuleDefaultValue,
-    });
-    if (debugMode) {
-      onLog({ type: LogType.update, query, newQuery, prop, value, path });
-    }
-    dispatch(newQuery);
-  };
+    ]
+  );
 
-  const onRuleOrGroupRemove = (path: number[], context?: any) => {
-    if (pathIsDisabled(path, query) || queryDisabled) {
-      // istanbul ignore else
-      if (debugMode) {
-        onLog({ type: LogType.pathDisabled, path, query });
-      }
-      return;
-    }
-    const ruleOrGroup = findPath(path, query);
-    // istanbul ignore else
-    if (ruleOrGroup) {
-      if (onRemove(ruleOrGroup as RG | RuleType, path, query, context)) {
-        const newQuery = remove(query, path);
+  const onRuleOrGroupRemove = useCallback(
+    (path: number[], context?: any) => {
+      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      if (pathIsDisabled(path, queryLocal) || queryDisabled) {
+        // istanbul ignore else
         if (debugMode) {
-          onLog({ type: LogType.remove, query, newQuery, path, ruleOrGroup });
+          onLog({ type: LogType.pathDisabled, path, query: queryLocal });
         }
-        dispatch(newQuery);
-      } else {
-        if (debugMode) {
-          onLog({ type: LogType.onRemoveFalse, ruleOrGroup, path, query });
+        return;
+      }
+      const ruleOrGroup = findPath(path, queryLocal);
+      // istanbul ignore else
+      if (ruleOrGroup) {
+        if (onRemove(ruleOrGroup as RG | RuleType, path, queryLocal, context)) {
+          const newQuery = remove(queryLocal, path);
+          if (debugMode) {
+            onLog({ type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
+          }
+          dispatch(newQuery);
+        } else {
+          if (debugMode) {
+            onLog({ type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
+          }
         }
       }
-    }
-  };
+    },
+    [debugMode, dispatch, onLog, onRemove, queryDisabled, reduxStore]
+  );
 
-  const moveRule = (oldPath: number[], newPath: number[], clone?: boolean) => {
-    if (pathIsDisabled(oldPath, query) || queryDisabled) {
-      // istanbul ignore else
-      if (debugMode) {
-        onLog({ type: LogType.pathDisabled, oldPath, newPath, query });
+  const moveRule = useCallback(
+    (oldPath: number[], newPath: number[], clone?: boolean) => {
+      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
+        // istanbul ignore else
+        if (debugMode) {
+          onLog({ type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
+        }
+        return;
       }
-      return;
-    }
-    const newQuery = move(query, oldPath, newPath, { clone, combinators });
-    if (debugMode) {
-      onLog({ type: LogType.move, query, newQuery, oldPath, newPath, clone });
-    }
-    dispatch(newQuery);
-  };
+      const newQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
+      if (debugMode) {
+        onLog({ type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
+      }
+      dispatch(newQuery);
+    },
+    [combinators, debugMode, dispatch, onLog, queryDisabled, reduxStore]
+  );
   // #endregion
 
   const { validationResult, validationMap } = useMemo(() => {
     const validationResult =
-      typeof validator === 'function' ? validator(query) : defaultValidationResult;
+      typeof validator === 'function' ? validator(reduxQuery) : defaultValidationResult;
     const validationMap =
       typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
     return { validationResult, validationMap };
-  }, [query, validator]);
+  }, [reduxQuery, validator]);
 
   const schema = useMemo(
     (): Schema => ({
@@ -668,16 +377,16 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const wrapperClassName = useMemo(
     () =>
       clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
-        [standardClassnames.disabled]: query.disabled || queryDisabled,
+        [standardClassnames.disabled]: reduxQuery.disabled || queryDisabled,
         [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
         [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
       }),
-    [controlClassnames.queryBuilder, queryDisabled, query.disabled, validationResult]
+    [controlClassnames.queryBuilder, queryDisabled, reduxQuery.disabled, validationResult]
   );
 
   return {
     actions,
-    query,
+    query: reduxQuery,
     queryDisabled,
     rqbContext,
     schema,

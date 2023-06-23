@@ -1,6 +1,6 @@
 import type { Combinator, Operator, ValueSource } from './basic';
 
-interface CommonProperties {
+export interface CommonRuleAndGroupProperties {
   path?: number[];
   id?: string;
   disabled?: boolean;
@@ -11,7 +11,7 @@ export type RuleType<
   O extends string = string,
   V = any,
   C extends string = string
-> = CommonProperties & {
+> = CommonRuleAndGroupProperties & {
   field: F;
   operator: O;
   value: V;
@@ -25,7 +25,7 @@ export type RuleType<
 export type RuleGroupType<
   R extends RuleType = RuleType,
   C extends string = string
-> = CommonProperties & {
+> = CommonRuleAndGroupProperties & {
   combinator: C;
   rules: RuleGroupArray<RuleGroupType<R, C>, R>;
   not?: boolean;
