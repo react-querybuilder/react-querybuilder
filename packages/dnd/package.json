@@ -10,12 +10,17 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder_dnd.d.ts",
-      "import": "./dist/react-querybuilder_dnd.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder_dnd.d.mts",
+        "default": "./dist/react-querybuilder_dnd.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_dnd.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "types": "./dist/react-querybuilder_dnd.d.ts",
+  "types": "./dist/react-querybuilder_dnd.d.mts",
   "files": [
     "dist"
   ],
@@ -34,8 +39,8 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
-    "@types/node": "^18.16.17",
-    "@types/react": "^18.2.12",
+    "@types/node": "^20.3.2",
+    "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "concurrently": "^8.2.0",
     "react": "^18.2.0",

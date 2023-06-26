@@ -8,6 +8,7 @@ export default defineConfig(options => {
       'react-querybuilder': 'src/index.ts',
     },
     sourcemap: true,
+    dts: true,
     // TODO: "use client" only for the React components
     // esbuildOptions: options => {
     //   options.banner = {
@@ -27,7 +28,6 @@ export default defineConfig(options => {
     {
       ...commonOptions,
       format: ['esm'],
-      dts: true,
       clean: true,
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
@@ -86,7 +86,6 @@ if (process.env.NODE_ENV === 'production') {
     // CJS modules without React dependency
     {
       ...commonOptions,
-      dts: true,
       // TODO: don't "use client" here
       // esbuildOptions() {},
       entry: {

@@ -10,12 +10,17 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder_antd.d.ts",
-      "import": "./dist/react-querybuilder_antd.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder_antd.d.mts",
+        "default": "./dist/react-querybuilder_antd.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_antd.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "types": "./dist/react-querybuilder_antd.d.ts",
+  "types": "./dist/react-querybuilder_antd.d.mts",
   "files": [
     "dist"
   ],
@@ -35,11 +40,11 @@
   "devDependencies": {
     "@ant-design/icons": "^5.1.4",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.12",
+    "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "antd": "^5.6.1",
+    "antd": "^5.6.3",
     "dayjs": "^1.11.8",
-    "rc-picker": "^3.8.1",
+    "rc-picker": "^3.9.0",
     "rc-select": "^14.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -10,12 +10,17 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder_bulma.d.ts",
-      "import": "./dist/react-querybuilder_bulma.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder_bulma.d.mts",
+        "default": "./dist/react-querybuilder_bulma.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_bulma.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "types": "./dist/react-querybuilder_bulma.d.ts",
+  "types": "./dist/react-querybuilder_bulma.d.mts",
   "files": [
     "dist"
   ],
@@ -34,7 +39,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.12",
+    "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "bulma": "^0.9.4",
     "react": "^18.2.0",

@@ -10,12 +10,17 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder_bootstrap.d.ts",
-      "import": "./dist/react-querybuilder_bootstrap.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder_bootstrap.d.mts",
+        "default": "./dist/react-querybuilder_bootstrap.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_bootstrap.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "types": "./dist/react-querybuilder_bootstrap.d.ts",
+  "types": "./dist/react-querybuilder_bootstrap.d.mts",
   "files": [
     "dist"
   ],
@@ -35,7 +40,7 @@
   "devDependencies": {
     "@popperjs/core": "^2.11.8",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.12",
+    "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "bootstrap": "^5.3.0",
     "bootstrap-icons": "^1.10.5",

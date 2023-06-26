@@ -10,12 +10,17 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder_mantine.d.ts",
-      "import": "./dist/react-querybuilder_mantine.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder_mantine.d.mts",
+        "default": "./dist/react-querybuilder_mantine.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_mantine.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "types": "./dist/react-querybuilder_mantine.d.ts",
+  "types": "./dist/react-querybuilder_mantine.d.mts",
   "files": [
     "dist"
   ],
@@ -33,11 +38,11 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "^6.0.13",
-    "@mantine/dates": "^6.0.13",
-    "@mantine/hooks": "^6.0.13",
+    "@mantine/core": "^6.0.14",
+    "@mantine/dates": "^6.0.14",
+    "@mantine/hooks": "^6.0.14",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.12",
+    "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "dayjs": "^1.11.8",
     "react": "^18.2.0",
