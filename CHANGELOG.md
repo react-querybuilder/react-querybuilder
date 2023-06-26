@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - N/A
 
+## [v6.5.1] - 2023-06-26
+
+### Fixed
+
+- `AntDValueEditor` calls `generatePicker` from the correct import.
+- Packages no longer ["masquerade as CJS"](https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/main/docs/problems/FalseCJS.md) when imported from ESM under `"node16"` module resolution.
+
 ## [v6.5.0] - 2023-06-13
 
 ### Changed
@@ -1370,7 +1377,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...HEAD
+[v6.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...v6.5.1
 [v6.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...v6.5.0
 [v6.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...v6.4.1
 [v6.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.3.0...v6.4.0
