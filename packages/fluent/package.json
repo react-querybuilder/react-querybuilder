@@ -38,7 +38,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.22.1",
+    "@fluentui/react-components": "^9.23.0",
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
