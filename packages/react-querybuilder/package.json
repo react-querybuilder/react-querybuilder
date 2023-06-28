@@ -1,15 +1,20 @@
 {
   "name": "react-querybuilder",
-  "version": "6.5.0",
+  "version": "6.5.1",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder.d.ts",
-      "import": "./dist/react-querybuilder.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder.d.mts",
+        "default": "./dist/react-querybuilder.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./dev": "./dev/index.ts",
     "./dist/*": "./dist/*",
@@ -40,7 +45,7 @@
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
-  "types": "./dist/react-querybuilder.d.ts",
+  "types": "./dist/react-querybuilder.d.mts",
   "files": [
     "dist",
     "formatQuery",
@@ -82,9 +87,9 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jscodeshift": "^0.11.6",
-    "@types/node": "^18.16.17",
-    "@types/react": "^18.2.12",
-    "@types/react-dom": "^18.2.5",
+    "@types/node": "^20.3.2",
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "babel-plugin-istanbul": "^6.1.1",
     "concurrently": "^8.2.0",
@@ -96,7 +101,7 @@
     "react-redux": "^8.1.0",
     "regenerator-runtime": "^0.13.11",
     "rollup-plugin-visualizer": "^5.9.2",
-    "sass": "^1.63.3",
+    "sass": "^1.63.6",
     "typescript": "^5.1.3",
     "vite": "^4.3.9"
   },

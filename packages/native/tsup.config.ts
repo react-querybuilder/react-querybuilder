@@ -7,6 +7,7 @@ export default defineConfig(options => {
     entry: {
       'react-querybuilder_native': 'src/index.ts',
     },
+    dts: true,
     sourcemap: true,
     external: ['react-native'],
     ...options,
@@ -22,7 +23,6 @@ export default defineConfig(options => {
     {
       ...commonOptions,
       format: ['esm'],
-      dts: true,
       clean: true,
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads

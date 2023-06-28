@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/fluent",
   "description": "Custom Fluent UI components for react-querybuilder",
-  "version": "6.5.0",
+  "version": "6.5.1",
   "publishConfig": {
     "access": "public"
   },
@@ -10,12 +10,17 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/react-querybuilder_fluent.d.ts",
-      "import": "./dist/react-querybuilder_fluent.mjs",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/react-querybuilder_fluent.d.mts",
+        "default": "./dist/react-querybuilder_fluent.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_fluent.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
-  "types": "./dist/react-querybuilder_fluent.d.ts",
+  "types": "./dist/react-querybuilder_fluent.d.mts",
   "files": [
     "dist"
   ],
@@ -33,13 +38,13 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.21.0",
+    "@fluentui/react-components": "^9.23.0",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.12",
+    "@types/react": "^18.2.14",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.5.0",
+    "react-querybuilder": "^6.5.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.3",
     "vite": "^4.3.9"
@@ -48,6 +53,6 @@
     "@fluentui/react-components": "^9",
     "dayjs": ">=1",
     "react": ">=16.8.0",
-    "react-querybuilder": "^6.5.0"
+    "react-querybuilder": "^6.5.1"
   }
 }

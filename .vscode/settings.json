@@ -1,12 +1,11 @@
 {
-  "prettier.prettierPath": "./node_modules/prettier",
   "editor.formatOnSave": true,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.test.ts, ${capture}.test.tsx, ${capture}.*.test.ts, ${capture}.*.test.tsx",
-    "*.cjs": "${capture}.cjs.map, ${capture}.min.cjs, ${capture}.d.ts",
+    "*.cjs": "${capture}.cjs.map, ${capture}.min.cjs, ${capture}.d.cts",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
-    "*.mjs": "${capture}.mjs.map, ${capture}.min.mjs, ${capture}.d.ts",
+    "*.mjs": "${capture}.mjs.map, ${capture}.min.mjs, ${capture}.d.mts",
     "*.css": "${capture}.css.map, ${capture}.min.css",
     "*.jsx": "${capture}.js",
     "*.tsx": "${capture}.js, ${capture}.ts, ${capture}.d.ts, ${capture}.test.ts, ${capture}.test.tsx, ${capture}.*.test.ts, ${capture}.*.test.tsx",
