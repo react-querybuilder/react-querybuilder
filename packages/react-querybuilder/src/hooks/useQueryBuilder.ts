@@ -1,11 +1,19 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, defaultCombinators, standardClassnames } from '../defaults';
-import { getReduxQuery, setReduxQuery, useAppDispatch, useAppStore } from '../redux';
+import type { RootState } from '../redux';
+import {
+  getReduxQuery,
+  setReduxQuery,
+  useAppDispatch,
+  useAppSelector,
+  useAppStore,
+} from '../redux';
 import type {
   QueryActions,
   QueryBuilderProps,
   QueryValidator,
+  RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
@@ -13,7 +21,7 @@ import type {
   UpdateableProperties,
   ValidationMap,
 } from '../types';
-import { add, findPath, move, pathIsDisabled, remove, update } from '../utils';
+import { add, findPath, move, pathIsDisabled, prepareRuleGroup, remove, update } from '../utils';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
@@ -24,7 +32,8 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   setup: ReturnType<typeof useQueryBuilderSetup<RG>>
 ) => {
   const {
-    query,
+    query: queryProp,
+    defaultQuery: defaultQueryProp,
     combinators = defaultCombinators,
     getValueEditorSeparator = () => null,
     getRuleClassname = () => '',
@@ -33,26 +42,28 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     onAddGroup = rg => rg,
     onRemove = () => true,
     onQueryChange,
-    showCombinatorsBetweenRules = false,
-    showNotToggle = false,
-    showCloneButtons = false,
-    showLockButtons = false,
-    resetOnFieldChange = true,
-    resetOnOperatorChange = false,
-    autoSelectField = true,
-    autoSelectOperator = true,
-    addRuleToNewGroups = false,
-    independentCombinators,
-    listsAsArrays = false,
+    independentCombinators: icProp,
+    showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
+    showNotToggle: showNotToggleProp = false,
+    showCloneButtons: showCloneButtonsProp = false,
+    showLockButtons: showLockButtonsProp = false,
+    resetOnFieldChange: resetOnFieldChangeProp = true,
+    resetOnOperatorChange: resetOnOperatorChangeProp = false,
+    autoSelectField: autoSelectFieldProp = true,
+    autoSelectOperator: autoSelectOperatorProp = true,
+    addRuleToNewGroups: addRuleToNewGroupsProp = false,
+    listsAsArrays: listsAsArraysProp = false,
     parseNumbers = false,
     disabled = false,
     validator,
     onLog = console.log,
+    idGenerator,
   } = props as QueryBuilderProps<RG>;
 
   const {
     qbId,
     rqbContext,
+    initialQuery,
     fields,
     fieldMap,
     getOperatorsMain,
@@ -75,43 +86,50 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     translations,
   } = rqbContext;
 
+  const isFirstRender = useRef(true);
+
+  // #region Boolean coercion
+  const independentCombinators = !!icProp;
+  const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
+  const showNotToggle = !!showNotToggleProp;
+  const showCloneButtons = !!showCloneButtonsProp;
+  const showLockButtons = !!showLockButtonsProp;
+  const resetOnFieldChange = !!resetOnFieldChangeProp;
+  const resetOnOperatorChange = !!resetOnOperatorChangeProp;
+  const autoSelectField = !!autoSelectFieldProp;
+  const autoSelectOperator = !!autoSelectOperatorProp;
+  const addRuleToNewGroups = !!addRuleToNewGroupsProp;
+  const listsAsArrays = !!listsAsArraysProp;
+  // #endregion
+
   // #region Handle controlled mode vs uncontrolled mode
   const reduxStore = useAppStore();
   const reduxDispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   reduxDispatch(
-  //     setQuery(defaultQuery ? prepareRuleGroup(defaultQuery, { idGenerator }) : createRuleGroup())
-  //   );
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  const querySelector = useCallback(
+    (state: RootState) => getReduxQuery(state, setup.qbId),
+    [setup.qbId]
+  );
+  const reduxQuery = useAppSelector(querySelector);
 
-  // const [queryState, setQueryState] = useState(() => {
-  //   const q = query ?? defaultQuery;
-  //   return q ? prepareRuleGroup(q, { idGenerator }) : createRuleGroup();
-  // });
-
-  // We assume here that if `queryProp` is passed in, and it's not the first render,
-  // that `queryProp` has already been prepared, i.e. the user is just passing back
-  // the `onQueryChange` callback parameter as `queryProp`. This appears to have a huge
-  // performance impact.
-  // const query: RG = queryProp
-  //   ? isFirstRender.current
-  //     ? prepareRuleGroup(queryProp, { idGenerator })
-  //     : queryProp
-  //   : reduxQuery;
+  // We assume here that if this is not the first render, the query has already
+  // been prepared. If `preliminaryQuery === query`, the user is probably
+  // passing back the parameter from the `onQueryChange` callback.
+  const preliminaryQuery = queryProp ?? reduxQuery ?? defaultQueryProp ?? initialQuery;
+  const rootQuery = isFirstRender.current
+    ? prepareRuleGroup(preliminaryQuery, { idGenerator })
+    : preliminaryQuery;
 
   // Run `onQueryChange` on mount, if enabled
   useEffect(() => {
     if (enableMountQueryChange && typeof onQueryChange === 'function') {
-      // @ts-expect-error query can be undefined
-      onQueryChange(query);
+      onQueryChange(rootQuery as RG);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
-   * Updates the state-based query if the component is uncontrolled, then calls
+   * Updates the redux-based query if the component is uncontrolled, then calls
    * `onQueryChange` with the updated query object. (`useCallback` is only effective
    * here when the user's `onQueryChange` handler is undefined or has a stable reference,
    * which usually means that it's wrapped in its own `useCallback`).
@@ -128,8 +146,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   // #endregion
 
   // #region Query update methods
-
-  const queryDotDisabled = !!query?.disabled;
+  const queryDotDisabled = !!rootQuery.disabled;
   const queryDisabled = useMemo(
     () =>
       disabled === true ||
@@ -289,13 +306,26 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   );
   // #endregion
 
+  const dndEnabledAttr = useMemo(
+    () => (enableDragAndDrop ? 'enabled' : 'disabled'),
+    [enableDragAndDrop]
+  );
+  const inlineCombinatorsAttr = useMemo(
+    () => (independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'),
+    [independentCombinators, showCombinatorsBetweenRules]
+  );
+  const combinatorPropObject: Pick<RuleGroupProps, 'combinator'> = useMemo(
+    () => ('combinator' in rootQuery ? { combinator: rootQuery.combinator } : {}),
+    [rootQuery]
+  );
+
   const { validationResult, validationMap } = useMemo(() => {
     const validationResult =
-      typeof validator === 'function' && query ? validator(query) : defaultValidationResult;
+      typeof validator === 'function' && rootQuery ? validator(rootQuery) : defaultValidationResult;
     const validationMap =
       typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
     return { validationResult, validationMap };
-  }, [query, validator]);
+  }, [rootQuery, validator]);
 
   const schema = useMemo(
     (): Schema => ({
@@ -322,7 +352,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       autoSelectOperator,
       addRuleToNewGroups,
       enableDragAndDrop,
-      independentCombinators: !!independentCombinators,
+      independentCombinators,
       listsAsArrays,
       parseNumbers,
       validationMap,
@@ -360,14 +390,17 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     ]
   );
 
-  const actions: QueryActions = {
-    onRuleAdd,
-    onGroupAdd,
-    onRuleRemove: onRuleOrGroupRemove,
-    onGroupRemove: onRuleOrGroupRemove,
-    onPropChange,
-    moveRule,
-  };
+  const actions = useMemo(
+    (): QueryActions => ({
+      onRuleAdd,
+      onGroupAdd,
+      onRuleRemove: onRuleOrGroupRemove,
+      onGroupRemove: onRuleOrGroupRemove,
+      onPropChange,
+      moveRule,
+    }),
+    [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
+  );
 
   const wrapperClassName = useMemo(
     () =>
@@ -379,13 +412,18 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     [controlClassnames.queryBuilder, queryDisabled, validationResult]
   );
 
+  if (isFirstRender.current) isFirstRender.current = false;
+
   return {
     actions,
-    // query,
+    rootQuery,
     queryDisabled,
     rqbContext,
     schema,
     translations,
     wrapperClassName,
+    dndEnabledAttr,
+    inlineCombinatorsAttr,
+    combinatorPropObject,
   };
 };

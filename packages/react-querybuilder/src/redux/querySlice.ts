@@ -20,7 +20,8 @@ interface SetReduxQueryParams {
   query: RuleGroupTypeAny;
 }
 
-export const getReduxQuery = (state: QuerySliceState, qbId: string) => state[qbId];
+export const getReduxQuery = (state: QuerySliceState, qbId: string): RuleGroupTypeAny | undefined =>
+  state[qbId];
 
 const initialState: QuerySliceState = {};
 

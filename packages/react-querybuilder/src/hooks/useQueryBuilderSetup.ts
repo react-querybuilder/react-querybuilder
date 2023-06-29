@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators, defaultTranslations } from '../defaults';
+import { setReduxQuery, store } from '../redux';
 import type {
   Field,
   Option,
@@ -16,8 +17,10 @@ import {
   isOptionGroupArray,
   joinWith,
   objectKeys,
+  prepareRuleGroup,
   uniqByName,
   uniqOptGroups,
+  useControlledOrUncontrolled,
   useMergedContext,
 } from '../utils';
 
@@ -25,7 +28,11 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   props: QueryBuilderProps<RG>
 ) => {
   const qbId = useRef(generateID());
+  const firstRender = useRef(true);
+
   const {
+    query: queryProp,
+    defaultQuery,
     fields: fieldsPropOriginal,
     operators = defaultOperators,
     combinators = defaultCombinators,
@@ -356,9 +363,29 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   }, [addRuleToNewGroups, combinators, createRule, idGenerator, independentCombinators]);
   // #endregion
 
+  const initialQuery = useRef<RG>(
+    prepareRuleGroup(queryProp ?? defaultQuery ?? createRuleGroup(), { idGenerator })
+  );
+
+  useEffect(() => {
+    store.dispatch(setReduxQuery({ qbId: qbId.current, query: initialQuery.current }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useControlledOrUncontrolled({
+    defaultQuery,
+    queryProp,
+    isFirstRender: firstRender.current,
+  });
+
+  if (firstRender.current) {
+    firstRender.current = false;
+  }
+
   return {
     qbId: qbId.current,
     rqbContext,
+    initialQuery: initialQuery.current,
     fields,
     fieldMap,
     getOperatorsMain,
