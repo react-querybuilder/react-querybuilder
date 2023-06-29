@@ -49,6 +49,7 @@
     "react-native": "~0.72.0",
     "react-native-web": "~0.19.6",
     "react-querybuilder": "^6.5.1",
+    "react-redux": "^8.1.1",
     "react-test-renderer": "^18.2.0",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.5",
@@ -56,6 +57,7 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-querybuilder": "^6.5.1"
+    "react-querybuilder": "^6.5.1",
+    "react-redux": "^8.1.1"
   }
 }

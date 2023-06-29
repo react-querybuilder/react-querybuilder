@@ -1,13 +1,13 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, defaultCombinators, standardClassnames } from '../defaults';
-import type { RootState } from '../redux';
+import type { QueryBuilderStoreState } from '../redux';
 import {
-  getReduxQuery,
-  setReduxQuery,
-  useAppDispatch,
-  useAppSelector,
-  useAppStore,
+  getQueryState,
+  setQueryState,
+  useQueryBuilderDispatch,
+  useQueryBuilderSelector,
+  useQueryBuilderStore,
 } from '../redux';
 import type {
   QueryActions,
@@ -27,7 +27,7 @@ import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
 
-export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
+export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG>>
 ) => {
@@ -63,7 +63,6 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const {
     qbId,
     rqbContext,
-    initialQuery,
     fields,
     fieldMap,
     getOperatorsMain,
@@ -103,14 +102,15 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   // #endregion
 
   // #region Handle controlled mode vs uncontrolled mode
-  const reduxStore = useAppStore();
-  const reduxDispatch = useAppDispatch();
+  const reduxStore = useQueryBuilderStore();
+  const reduxDispatch = useQueryBuilderDispatch();
 
   const querySelector = useCallback(
-    (state: RootState) => getReduxQuery(state, setup.qbId),
+    (state: QueryBuilderStoreState) => getQueryState(state, setup.qbId),
     [setup.qbId]
   );
-  const reduxQuery = useAppSelector(querySelector);
+  const reduxQuery = useQueryBuilderSelector(querySelector);
+  const initialQuery = useMemo(() => createRuleGroup(), [createRuleGroup]);
 
   // We assume here that if this is not the first render, the query has already
   // been prepared. If `preliminaryQuery === query`, the user is probably
@@ -120,11 +120,13 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
 
-  // Run `onQueryChange` on mount, if enabled
+  // This effect only runs once, at the beginning of the component lifecycle
   useEffect(() => {
+    // Run `onQueryChange` on mount, if enabled
     if (enableMountQueryChange && typeof onQueryChange === 'function') {
       onQueryChange(rootQuery as RG);
     }
+    reduxDispatch(setQueryState({ qbId: qbId, query: rootQuery }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -136,7 +138,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
-      reduxDispatch(setReduxQuery({ qbId, query: newQuery }));
+      reduxDispatch(setQueryState({ qbId, query: newQuery }));
       if (typeof onQueryChange === 'function') {
         onQueryChange(newQuery);
       }
@@ -158,7 +160,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onRuleAdd = useCallback(
     (rule: RuleType, parentPath: number[], context?: any) => {
-      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -188,7 +190,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onGroupAdd = useCallback(
     (ruleGroup: RG, parentPath: number[], context?: any) => {
-      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -223,7 +225,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onPropChange = useCallback(
     (prop: UpdateableProperties, value: any, path: number[]) => {
-      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         if (debugMode) {
           onLog({ type: LogType.pathDisabled, path, prop, value, query: queryLocal });
@@ -259,7 +261,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onRuleOrGroupRemove = useCallback(
     (path: number[], context?: any) => {
-      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -288,7 +290,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const moveRule = useCallback(
     (oldPath: number[], newPath: number[], clone?: boolean) => {
-      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -329,6 +331,8 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const schema = useMemo(
     (): Schema => ({
+      // TODO: add qbId to schema
+      // qbId,
       fields,
       fieldMap,
       combinators,

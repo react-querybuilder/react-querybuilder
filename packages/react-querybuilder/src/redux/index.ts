@@ -1,3 +1,2 @@
-export { reducer, setReduxQuery } from './querySlice';
-export type { QuerySliceState } from './querySlice';
+export { setQueryState } from './querySlice';
 export * from './store';

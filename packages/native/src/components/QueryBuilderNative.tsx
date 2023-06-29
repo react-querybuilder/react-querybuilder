@@ -1,33 +1,66 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import type { RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import { QueryBuilderContext, useQueryBuilder } from 'react-querybuilder';
+import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from 'react-querybuilder';
+import {
+  QueryBuilderContext,
+  queryBuilderStore,
+  useQueryBuilderSchema,
+  useQueryBuilderSetup,
+} from 'react-querybuilder';
+import { Provider } from 'react-redux';
 import type { QueryBuilderNativeProps, WithSchemaNative } from '../types';
 import { defaultNativeControlElements } from './defaults';
 
-export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType>(
+const rootPath: number[] = [];
+
+export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderNativeProps<RG>
 ) => {
   const controlElements = useMemo(
     () => ({ ...defaultNativeControlElements, ...props.controlElements }),
     [props.controlElements]
   );
-  const qb = useQueryBuilder({ ...props, controlElements }) as ReturnType<typeof useQueryBuilder> &
-    WithSchemaNative;
+  const setup = useQueryBuilderSetup({ ...props, controlElements });
 
-  qb.schema.styles = useMemo(() => StyleSheet.create(props.styles ?? {}), [props.styles]);
+  return (
+    <Provider store={queryBuilderStore}>
+      <QueryBuilderNativeInternal {...props} setup={setup} />
+    </Provider>
+  );
+};
 
-  const { ruleGroup: RuleGroupComponent } = controlElements;
+const QueryBuilderNativeInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
+  allProps: QueryBuilderNativeProps<RG> & {
+    setup: ReturnType<typeof useQueryBuilderSetup>;
+  }
+) => {
+  const { setup, ...props } = allProps;
+  const qb = {
+    ...props,
+    ...(useQueryBuilderSchema(
+      props as QueryBuilderNativeProps<RuleGroupTypeAny>,
+      setup
+    ) as ReturnType<typeof useQueryBuilderSchema> & WithSchemaNative),
+  };
+
+  qb.schema.styles = useMemo(() => StyleSheet.create(allProps.styles ?? {}), [allProps.styles]);
+
+  const { ruleGroup: RuleGroupComponent } = qb.schema.controls;
 
   return (
     <QueryBuilderContext.Provider value={qb.rqbContext}>
       <RuleGroupComponent
-        ruleGroup={qb.query}
-        path={[]}
+        ruleGroup={qb.rootQuery}
+        {...qb.combinatorPropObject}
+        path={rootPath}
         translations={qb.translations}
         schema={qb.schema}
         actions={qb.actions}
+        id={qb.rootQuery.id}
+        disabled={!!qb.rootQuery.disabled || qb.queryDisabled}
+        parentDisabled={qb.queryDisabled}
+        context={qb.context}
       />
     </QueryBuilderContext.Provider>
   );

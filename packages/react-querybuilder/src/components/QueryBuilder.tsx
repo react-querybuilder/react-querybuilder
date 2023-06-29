@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { useQueryBuilder } from '../hooks/useQueryBuilder';
-import { useQueryBuilderSetup } from '../hooks/useQueryBuilderSetup';
-import { store } from '../redux';
+import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
+import { queryBuilderStore } from '../redux';
 import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from '../types';
 import { QueryBuilderContext } from './QueryBuilderContext';
 
@@ -14,7 +13,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const setup = useQueryBuilderSetup(props);
 
   return (
-    <Provider store={store}>
+    <Provider store={queryBuilderStore}>
       <QueryBuilderInternal {...props} setup={setup} />
     </Provider>
   );
@@ -30,7 +29,7 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const { setup, ...props } = allProps;
   const qb = {
     ...props,
-    ...useQueryBuilder(props as QueryBuilderProps<RuleGroupTypeAny>, setup),
+    ...useQueryBuilderSchema(props as QueryBuilderProps<RuleGroupTypeAny>, setup),
   };
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;

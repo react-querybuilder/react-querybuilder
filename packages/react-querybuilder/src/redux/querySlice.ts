@@ -13,26 +13,26 @@ import type { RuleGroupTypeAny } from '../types';
 //   queryDisabled?: boolean;
 // };
 
-export type QuerySliceState = Record<string, RuleGroupTypeAny>;
+type QuerySliceState = Record<string, RuleGroupTypeAny>;
 
 interface SetReduxQueryParams {
   qbId: string;
   query: RuleGroupTypeAny;
 }
 
-export const getReduxQuery = (state: QuerySliceState, qbId: string): RuleGroupTypeAny | undefined =>
+export const getQueryState = (state: QuerySliceState, qbId: string): RuleGroupTypeAny | undefined =>
   state[qbId];
 
 const initialState: QuerySliceState = {};
 
 export const {
-  reducer,
-  actions: { setReduxQuery },
+  reducer: querySliceReducer,
+  actions: { setQueryState },
 } = createSlice({
   name: 'query',
   initialState,
   reducers: {
-    setReduxQuery(state, action: PayloadAction<SetReduxQueryParams>) {
+    setQueryState(state, action: PayloadAction<SetReduxQueryParams>) {
       state[action.payload.qbId] = action.payload.query;
     },
     // addRule(

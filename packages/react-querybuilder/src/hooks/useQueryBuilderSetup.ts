@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators, defaultTranslations } from '../defaults';
-import { setReduxQuery, store } from '../redux';
 import type {
   Field,
   Option,
@@ -17,7 +16,6 @@ import {
   isOptionGroupArray,
   joinWith,
   objectKeys,
-  prepareRuleGroup,
   uniqByName,
   uniqOptGroups,
   useControlledOrUncontrolled,
@@ -363,15 +361,6 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   }, [addRuleToNewGroups, combinators, createRule, idGenerator, independentCombinators]);
   // #endregion
 
-  const initialQuery = useRef<RG>(
-    prepareRuleGroup(queryProp ?? defaultQuery ?? createRuleGroup(), { idGenerator })
-  );
-
-  useEffect(() => {
-    store.dispatch(setReduxQuery({ qbId: qbId.current, query: initialQuery.current }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useControlledOrUncontrolled({
     defaultQuery,
     queryProp,
@@ -385,7 +374,6 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   return {
     qbId: qbId.current,
     rqbContext,
-    initialQuery: initialQuery.current,
     fields,
     fieldMap,
     getOperatorsMain,

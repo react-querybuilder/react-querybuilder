@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Changed
+
+- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`.
 
 ## [v6.5.1] - 2023-06-26
 

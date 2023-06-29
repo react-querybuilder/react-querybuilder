@@ -1,17 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import type { QuerySliceState } from './querySlice';
-import * as fromQuerySlice from './querySlice';
+import { getQueryState as getQuerySliceState, querySliceReducer } from './querySlice';
 
-export const store = configureStore({ reducer: { query: fromQuerySlice.reducer } });
+// Redux store
+export const queryBuilderStore = configureStore({
+  reducer: { [querySliceReducer.name]: querySliceReducer },
+});
 
-export type RootState = { query: QuerySliceState };
-export type AppDispatch = ReturnType<typeof useStore<RootState>>['dispatch'];
+// Types
+export type QueryBuilderStoreState = ReturnType<(typeof queryBuilderStore)['getState']>;
+type QueryBuilderDispatch = ReturnType<typeof useStore<QueryBuilderStoreState>>['dispatch'];
 
-export const useAppStore = () => useStore<RootState>();
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+// Hooks
+export const useQueryBuilderStore = () => useStore<QueryBuilderStoreState>();
+export const useQueryBuilderDispatch = () => useDispatch<QueryBuilderDispatch>();
+export const useQueryBuilderSelector: TypedUseSelectorHook<QueryBuilderStoreState> = useSelector;
 
-export const getReduxQuery = ({ query: querySliceState }: RootState, qbId: string) =>
-  fromQuerySlice.getReduxQuery(querySliceState, qbId);
+// Selectors
+export const getQueryState = (state: QueryBuilderStoreState, qbId: string) =>
+  getQuerySliceState(state[querySliceReducer.name], qbId);
