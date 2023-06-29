@@ -1,4 +1,3 @@
-export * from './useCreateReduxSlice';
 export * from './useQueryBuilder';
 export * from './useQueryBuilderSetup';
 export * from './useRule';

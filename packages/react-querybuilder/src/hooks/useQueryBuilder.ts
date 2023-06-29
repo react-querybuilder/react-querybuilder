@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo } from 'react';
 import { LogType, defaultCombinators, standardClassnames } from '../defaults';
+import { getReduxQuery, setReduxQuery, useAppDispatch, useAppStore } from '../redux';
 import type {
   QueryActions,
   QueryBuilderProps,
@@ -13,22 +14,17 @@ import type {
   ValidationMap,
 } from '../types';
 import { add, findPath, move, pathIsDisabled, remove, update } from '../utils';
-import type { useCreateReduxSlice } from './useCreateReduxSlice';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
-import { getReduxQuery, useAppDispatch, useAppSelector, useAppStore } from './useRedux';
-
-const noop = () => {};
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
 
 export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>,
-  setup: ReturnType<typeof useQueryBuilderSetup<RG>>,
-  { setReduxQuery }: ReturnType<typeof useCreateReduxSlice>['actions']
+  setup: ReturnType<typeof useQueryBuilderSetup<RG>>
 ) => {
   const {
-    query: queryProp,
+    query,
     combinators = defaultCombinators,
     getValueEditorSeparator = () => null,
     getRuleClassname = () => '',
@@ -36,7 +32,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     onAddRule = r => r,
     onAddGroup = rg => rg,
     onRemove = () => true,
-    onQueryChange = noop,
+    onQueryChange,
     showCombinatorsBetweenRules = false,
     showNotToggle = false,
     showCloneButtons = false,
@@ -55,6 +51,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   } = props as QueryBuilderProps<RG>;
 
   const {
+    qbId,
     rqbContext,
     fields,
     fieldMap,
@@ -81,7 +78,6 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   // #region Handle controlled mode vs uncontrolled mode
   const reduxStore = useAppStore();
   const reduxDispatch = useAppDispatch();
-  const reduxQuery = useAppSelector(getReduxQuery) as RG;
 
   // useEffect(() => {
   //   reduxDispatch(
@@ -107,16 +103,12 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   // Run `onQueryChange` on mount, if enabled
   useEffect(() => {
-    if (enableMountQueryChange) {
-      onQueryChange(reduxQuery);
+    if (enableMountQueryChange && typeof onQueryChange === 'function') {
+      // @ts-expect-error query can be undefined
+      onQueryChange(query);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Help prevent `dispatch` from being regenerated on every render.
-  // This assignment doesn't need memoization because even if `queryProp`
-  // changes references, `!queryProp` is still `true`.
-  const uncontrolled = !queryProp;
 
   /**
    * Updates the state-based query if the component is uncontrolled, then calls
@@ -126,28 +118,30 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
-      reduxDispatch(setReduxQuery(newQuery));
-      console.log(newQuery);
-      if (uncontrolled) {
-        // setQueryState(newQuery);
+      reduxDispatch(setReduxQuery({ qbId, query: newQuery }));
+      if (typeof onQueryChange === 'function') {
+        onQueryChange(newQuery);
       }
-      // onQueryChange(newQuery);
     },
-    // [reduxDispatch, onQueryChange, setReduxQuery, uncontrolled]
-    [reduxDispatch, setReduxQuery, uncontrolled]
+    [onQueryChange, qbId, reduxDispatch]
   );
   // #endregion
 
   // #region Query update methods
+
+  const queryDotDisabled = !!query?.disabled;
   const queryDisabled = useMemo(
-    () => disabled === true || (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
-    [disabled]
+    () =>
+      disabled === true ||
+      queryDotDisabled ||
+      (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
+    [disabled, queryDotDisabled]
   );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
   const onRuleAdd = useCallback(
     (rule: RuleType, parentPath: number[], context?: any) => {
-      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -172,12 +166,12 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       }
       dispatch(newQuery);
     },
-    [combinators, debugMode, dispatch, onAddRule, onLog, queryDisabled, reduxStore]
+    [combinators, debugMode, dispatch, onAddRule, onLog, qbId, queryDisabled, reduxStore]
   );
 
   const onGroupAdd = useCallback(
     (ruleGroup: RG, parentPath: number[], context?: any) => {
-      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -207,12 +201,12 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       }
       dispatch(newQuery);
     },
-    [combinators, debugMode, dispatch, onAddGroup, onLog, queryDisabled, reduxStore]
+    [combinators, debugMode, dispatch, onAddGroup, onLog, qbId, queryDisabled, reduxStore]
   );
 
   const onPropChange = useCallback(
     (prop: UpdateableProperties, value: any, path: number[]) => {
-      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         if (debugMode) {
           onLog({ type: LogType.pathDisabled, path, prop, value, query: queryLocal });
@@ -238,6 +232,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       getRuleDefaultValue,
       getValueSourcesMain,
       onLog,
+      qbId,
       queryDisabled,
       reduxStore,
       resetOnFieldChange,
@@ -247,7 +242,7 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const onRuleOrGroupRemove = useCallback(
     (path: number[], context?: any) => {
-      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -271,12 +266,12 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
         }
       }
     },
-    [debugMode, dispatch, onLog, onRemove, queryDisabled, reduxStore]
+    [debugMode, dispatch, onLog, onRemove, qbId, queryDisabled, reduxStore]
   );
 
   const moveRule = useCallback(
     (oldPath: number[], newPath: number[], clone?: boolean) => {
-      const queryLocal = getReduxQuery(reduxStore.getState()) as RG;
+      const queryLocal = getReduxQuery(reduxStore.getState(), qbId) as RG;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -290,17 +285,17 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
       }
       dispatch(newQuery);
     },
-    [combinators, debugMode, dispatch, onLog, queryDisabled, reduxStore]
+    [combinators, debugMode, dispatch, onLog, qbId, queryDisabled, reduxStore]
   );
   // #endregion
 
   const { validationResult, validationMap } = useMemo(() => {
     const validationResult =
-      typeof validator === 'function' ? validator(reduxQuery) : defaultValidationResult;
+      typeof validator === 'function' && query ? validator(query) : defaultValidationResult;
     const validationMap =
       typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
     return { validationResult, validationMap };
-  }, [reduxQuery, validator]);
+  }, [query, validator]);
 
   const schema = useMemo(
     (): Schema => ({
@@ -377,16 +372,16 @@ export const useQueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const wrapperClassName = useMemo(
     () =>
       clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
-        [standardClassnames.disabled]: reduxQuery.disabled || queryDisabled,
+        [standardClassnames.disabled]: queryDisabled,
         [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
         [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
       }),
-    [controlClassnames.queryBuilder, queryDisabled, reduxQuery.disabled, validationResult]
+    [controlClassnames.queryBuilder, queryDisabled, validationResult]
   );
 
   return {
     actions,
-    query: reduxQuery,
+    // query,
     queryDisabled,
     rqbContext,
     schema,

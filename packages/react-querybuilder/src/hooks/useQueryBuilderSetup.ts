@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators, defaultTranslations } from '../defaults';
 import type {
   Field,
@@ -24,6 +24,7 @@ import {
 export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>
 ) => {
+  const qbId = useRef(generateID());
   const {
     fields: fieldsPropOriginal,
     operators = defaultOperators,
@@ -356,6 +357,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   // #endregion
 
   return {
+    qbId: qbId.current,
     rqbContext,
     fields,
     fieldMap,

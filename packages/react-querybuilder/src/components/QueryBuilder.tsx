@@ -1,7 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { useCreateReduxSlice, useQueryBuilder, useQueryBuilderSetup } from '../hooks';
+import { useQueryBuilder, useQueryBuilderSetup } from '../hooks';
+import type { RootState } from '../redux';
+import { getReduxQuery, setReduxQuery, store, useAppSelector } from '../redux';
 import type {
   QueryBuilderProps,
   RuleGroupProps,
@@ -21,12 +22,14 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
 
   const setup = useQueryBuilderSetup(props);
   const { query, defaultQuery, idGenerator } = props;
-  const firstQueryProp = React.useRef(query ?? defaultQuery);
   const initialQuery = React.useRef<RG>(
-    firstQueryProp.current
-      ? prepareRuleGroup(firstQueryProp.current, { idGenerator })
-      : setup.createRuleGroup()
+    prepareRuleGroup(query ?? defaultQuery ?? setup.createRuleGroup(), { idGenerator })
   );
+
+  React.useEffect(() => {
+    store.dispatch(setReduxQuery({ qbId: setup.qbId, query: initialQuery.current }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useControlledOrUncontrolled({
     defaultQuery,
@@ -34,21 +37,13 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
     isFirstRender: firstRender.current,
   });
 
-  const { reducer: queryReducer, actions } = useCreateReduxSlice(initialQuery.current);
-
-  const store = React.useRef(
-    firstRender.current
-      ? configureStore({ reducer: { query: queryReducer } })
-      : (null as unknown as ReturnType<typeof configureStore>)
-  );
-
   if (firstRender.current) {
     firstRender.current = false;
   }
 
   return (
-    <Provider store={store.current}>
-      <QueryBuilderInternal {...props} setup={setup} actions={actions} />
+    <Provider store={store}>
+      <QueryBuilderInternal {...props} setup={setup} initialQuery={initialQuery.current} />
     </Provider>
   );
 };
@@ -58,13 +53,19 @@ QueryBuilder.displayName = 'QueryBuilder';
 const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
   allProps: QueryBuilderProps<RG> & {
     setup: ReturnType<typeof useQueryBuilderSetup>;
-    actions: ReturnType<typeof useCreateReduxSlice>['actions'];
+    initialQuery: RG;
   }
 ) => {
-  const { actions, setup, ...props } = allProps;
+  const { initialQuery, setup, ...props } = allProps;
+  const querySelector = React.useCallback(
+    (state: RootState) => getReduxQuery(state, setup.qbId),
+    [setup.qbId]
+  );
+  const reduxQuery = useAppSelector(querySelector);
+  const rootQuery = props.query ?? reduxQuery ?? props.defaultQuery ?? initialQuery;
   const qb = {
     ...props,
-    ...useQueryBuilder(props as QueryBuilderProps<RuleGroupTypeAny>, setup, actions),
+    ...useQueryBuilder(props as QueryBuilderProps<RuleGroupTypeAny>, setup),
   };
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
@@ -74,7 +75,7 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
       ? 'enabled'
       : 'disabled';
   const combinatorPropObject: Pick<RuleGroupProps, 'combinator'> =
-    'combinator' in qb.query ? { combinator: qb.query.combinator } : {};
+    'combinator' in rootQuery ? { combinator: rootQuery.combinator } : {};
 
   return (
     <QueryBuilderContext.Provider key={dndEnabled} value={qb.rqbContext}>
@@ -84,15 +85,15 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
         data-inlinecombinators={inlinecombinators}>
         <RuleGroupControlElement
           translations={qb.translations}
-          ruleGroup={qb.query}
-          rules={qb.query.rules}
+          ruleGroup={rootQuery}
+          rules={rootQuery.rules}
           {...combinatorPropObject}
-          not={!!qb.query.not}
+          not={!!rootQuery.not}
           schema={qb.schema}
           actions={qb.actions}
-          id={qb.query.id}
+          id={rootQuery.id}
           path={rootPath}
-          disabled={!!qb.query.disabled || qb.queryDisabled}
+          disabled={!!rootQuery.disabled || qb.queryDisabled}
           parentDisabled={qb.queryDisabled}
           context={qb.context}
         />
