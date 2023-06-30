@@ -21,8 +21,8 @@ import { QueryBuilderNative } from './QueryBuilderNative';
 const query: RuleGroupType = {
   combinator: 'and',
   rules: [
-    { field: 'f1', operator: '=', value: 'v1' },
-    { field: 'f2', operator: '=', value: 'v2' },
+    { id: '1', field: 'f1', operator: '=', value: 'v1' },
+    { id: '2', field: 'f2', operator: '=', value: 'v2' },
   ],
 };
 const queryIC = convertToIC(query);
