@@ -27,6 +27,16 @@ import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
+const defaultGetValueEditorSeparator = () => null;
+const defaultGetRuleClassname = () => '';
+const defaultGetRuleGroupClassname = () => '';
+const defaultOnAddRule = (r: RuleType) => r;
+const defaultOnAddGroup = (rg: any) => rg;
+const defaultOnRemove = () => true;
+// istanbul ignore next
+const defaultOnLog = (...params: any[]) => {
+  console.log(...params);
+};
 
 export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>,
@@ -36,12 +46,12 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     query: queryProp,
     defaultQuery: defaultQueryProp,
     combinators = defaultCombinators,
-    getValueEditorSeparator = () => null,
-    getRuleClassname = () => '',
-    getRuleGroupClassname = () => '',
-    onAddRule = r => r,
-    onAddGroup = rg => rg,
-    onRemove = () => true,
+    getValueEditorSeparator = defaultGetValueEditorSeparator,
+    getRuleClassname = defaultGetRuleClassname,
+    getRuleGroupClassname = defaultGetRuleGroupClassname,
+    onAddRule = defaultOnAddRule,
+    onAddGroup = defaultOnAddGroup,
+    onRemove = defaultOnRemove,
     onQueryChange,
     independentCombinators: icProp,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
@@ -57,7 +67,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     parseNumbers = false,
     disabled = false,
     validator,
-    onLog = console.log,
+    onLog = defaultOnLog,
     idGenerator,
   } = props as QueryBuilderProps<RG>;
 

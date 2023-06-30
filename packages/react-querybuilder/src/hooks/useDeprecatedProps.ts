@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { errorDeprecatedRuleGroupProps, errorDeprecatedRuleProps } from '../../messages';
+import { errorDeprecatedRuleGroupProps, errorDeprecatedRuleProps } from '../messages';
 
 let didWarnUsingDeprecatedRuleProps = false;
 let didWarnUsingDeprecatedRuleGroupProps = false;

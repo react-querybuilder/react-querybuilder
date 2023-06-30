@@ -59,7 +59,11 @@ export const useValueEditor = ({
       const val = produce(valueAsArray, va => {
         va[i] = parseNumber(v, { parseNumbers });
         // Enforce an array length of (at least) two for "between"/"notBetween"
-        if (i === 0 && (operator === 'between' || operator === 'notBetween') && !va[1]) {
+        if (
+          i === 0 &&
+          (operator === 'between' || operator === 'notBetween') &&
+          (va.length < 2 || typeof va[1] === 'undefined')
+        ) {
           va[1] = getFirstOption(values);
         }
       });

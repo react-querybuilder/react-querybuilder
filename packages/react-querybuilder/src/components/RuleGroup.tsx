@@ -3,7 +3,6 @@ import { Fragment } from 'react';
 import { TestID } from '../defaults';
 import { useRuleGroup, useStopEventPropagation } from '../hooks';
 import type { RuleGroupProps } from '../types';
-import { pathsAreEqual } from '../utils';
 
 export const RuleGroup = React.memo((props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
@@ -208,11 +207,9 @@ export const RuleGroupBodyComponents = React.memo(
     return (
       <>
         {rg.ruleGroup.rules.map((r, idx) => {
-          const thisPath = [...rg.path, idx];
-          const thisPathDisabled =
-            rg.disabled ||
-            (typeof r !== 'string' && r.disabled) ||
-            rg.schema.disabledPaths.some(p => pathsAreEqual(thisPath, p));
+          const thisPathMemo = rg.pathsMemo[idx];
+          const thisPath = thisPathMemo.path;
+          const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
           const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
           return (
             <Fragment key={key}>

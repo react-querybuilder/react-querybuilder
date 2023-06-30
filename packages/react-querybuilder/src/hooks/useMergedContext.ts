@@ -1,14 +1,8 @@
 import { useContext, useMemo } from 'react';
-import { QueryBuilderContext, defaultControlElements } from '../../components';
-import { defaultControlClassnames, defaultTranslations } from '../../defaults';
-import type {
-  Controls,
-  QueryBuilderContextProps,
-  TranslationsFull,
-  WithRequired,
-} from '../../types';
-import { mergeClassnames } from '../mergeClassnames';
-import { objectKeys } from '../objectUtils';
+import { QueryBuilderContext, defaultControlElements } from '../components';
+import { defaultControlClassnames, defaultTranslations } from '../defaults';
+import type { Controls, QueryBuilderContextProps, TranslationsFull, WithRequired } from '../types';
+import { mergeClassnames, objectKeys } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;

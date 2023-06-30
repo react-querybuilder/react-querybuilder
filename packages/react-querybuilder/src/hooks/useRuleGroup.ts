@@ -1,14 +1,14 @@
 import { clsx } from 'clsx';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
-import type { RuleGroupProps, RuleGroupType, RuleGroupTypeAny } from '../types';
+import { useDeprecatedProps, useReactDndWarning } from '../hooks';
+import type { RuleGroupProps, RuleGroupTypeAny } from '../types';
 import {
   getFirstOption,
   getOption,
   getParentPath,
   getValidationClassNames,
-  useDeprecatedProps,
-  useReactDndWarning,
+  pathsAreEqual,
 } from '../utils';
 
 export const useRuleGroup = (props: RuleGroupProps) => {
@@ -53,20 +53,23 @@ export const useRuleGroup = (props: RuleGroupProps) => {
 
   const disabled = !!parentDisabled || !!disabledProp;
 
-  const ruleGroup = ruleGroupProp
-    ? { ...ruleGroupProp }
-    : ({ rules: rulesProp, not: notProp } as RuleGroupTypeAny);
+  const combinator = useMemo(
+    () =>
+      ruleGroupProp && 'combinator' in ruleGroupProp
+        ? ruleGroupProp.combinator
+        : !ruleGroupProp
+        ? combinatorProp ?? getFirstOption(combinators)!
+        : getFirstOption(combinators)!,
+    [combinatorProp, combinators, ruleGroupProp]
+  );
 
-  const combinator =
-    ruleGroupProp && 'combinator' in ruleGroupProp
-      ? ruleGroupProp.combinator
-      : !ruleGroupProp
-      ? combinatorProp ?? getFirstOption(combinators)!
-      : getFirstOption(combinators)!;
-
-  if (!independentCombinators) {
-    (ruleGroup as RuleGroupType).combinator = combinator;
-  }
+  const ruleGroup = useMemo(
+    () =>
+      ruleGroupProp
+        ? { ...ruleGroupProp, ...(!independentCombinators ? { combinator } : {}) }
+        : ({ rules: rulesProp, not: notProp } as RuleGroupTypeAny),
+    [combinator, independentCombinators, notProp, ruleGroupProp, rulesProp]
+  );
 
   const classNames = useMemo(
     () => ({
@@ -98,73 +101,132 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     ]
   );
 
-  const onCombinatorChange = (value: any, _context?: any) => {
-    if (!disabled) {
-      onPropChange('combinator', value, path);
-    }
-  };
+  const onCombinatorChange = useCallback(
+    (value: any, _context?: any) => {
+      if (!disabled) {
+        onPropChange('combinator', value, path);
+      }
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const onIndependentCombinatorChange = (value: any, index: number, _context?: any) => {
-    if (!disabled) {
-      onPropChange('combinator', value, path.concat([index]));
-    }
-  };
+  const onIndependentCombinatorChange = useCallback(
+    (value: any, index: number, _context?: any) => {
+      if (!disabled) {
+        onPropChange('combinator', value, path.concat([index]));
+      }
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const onNotToggleChange = (checked: boolean, _context?: any) => {
-    if (!disabled) {
-      onPropChange('not', checked, path);
-    }
-  };
+  const onNotToggleChange = useCallback(
+    (checked: boolean, _context?: any) => {
+      if (!disabled) {
+        onPropChange('not', checked, path);
+      }
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const addRule = (_event?: any, context?: any) => {
-    if (!disabled) {
-      const newRule = createRule();
-      onRuleAdd(newRule, path, context);
-    }
-  };
+  const addRule = useCallback(
+    (_event?: any, context?: any) => {
+      if (!disabled) {
+        const newRule = createRule();
+        onRuleAdd(newRule, path, context);
+      }
+    },
+    [createRule, disabled, onRuleAdd, path]
+  );
 
-  const addGroup = (_event?: any, context?: any) => {
-    if (!disabled) {
-      const newGroup = createRuleGroup();
-      onGroupAdd(newGroup, path, context);
-    }
-  };
+  const addGroup = useCallback(
+    (_event?: any, context?: any) => {
+      if (!disabled) {
+        const newGroup = createRuleGroup();
+        onGroupAdd(newGroup, path, context);
+      }
+    },
+    [createRuleGroup, disabled, onGroupAdd, path]
+  );
 
-  const cloneGroup = (_event?: any, _context?: any) => {
-    if (!disabled) {
-      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
-      moveRule(path, newPath, true);
-    }
-  };
+  const cloneGroup = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled) {
+        const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+        moveRule(path, newPath, true);
+      }
+    },
+    [disabled, moveRule, path]
+  );
 
-  const toggleLockGroup = (_event?: any, _context?: any) => {
-    onPropChange('disabled', !disabled, path);
-  };
+  const toggleLockGroup = useCallback(
+    (_event?: any, _context?: any) => {
+      onPropChange('disabled', !disabled, path);
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const removeGroup = (_event?: any, _context?: any) => {
-    if (!disabled) {
-      onGroupRemove(path);
-    }
-  };
+  const removeGroup = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled) {
+        onGroupRemove(path);
+      }
+    },
+    [disabled, onGroupRemove, path]
+  );
 
-  const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
-  const validationClassName = getValidationClassNames(validationResult);
+  const validationResult = useMemo(
+    () => validationMap[id ?? /* istanbul ignore next */ ''],
+    [id, validationMap]
+  );
+  const validationClassName = useMemo(
+    () => getValidationClassNames(validationResult),
+    [validationResult]
+  );
   const combinatorBasedClassName = useMemo(
     () => (independentCombinators ? null : getOption(combinators, combinator)?.className ?? ''),
     [combinator, combinators, independentCombinators]
   );
 
-  const outerClassName = clsx(
-    getRuleGroupClassname(ruleGroup),
-    combinatorBasedClassName,
-    standardClassnames.ruleGroup,
-    classNamesProp.ruleGroup,
-    {
-      [standardClassnames.disabled]: disabled,
-      [standardClassnames.dndDragging]: isDragging,
-    },
-    validationClassName
+  const ruleGroupClassname = useMemo(
+    () => getRuleGroupClassname(ruleGroup),
+    [getRuleGroupClassname, ruleGroup]
   );
+
+  const outerClassName = useMemo(
+    () =>
+      clsx(
+        ruleGroupClassname,
+        combinatorBasedClassName,
+        standardClassnames.ruleGroup,
+        classNamesProp.ruleGroup,
+        {
+          [standardClassnames.disabled]: disabled,
+          [standardClassnames.dndDragging]: isDragging,
+        },
+        validationClassName
+      ),
+    [
+      classNamesProp.ruleGroup,
+      combinatorBasedClassName,
+      disabled,
+      ruleGroupClassname,
+      isDragging,
+      validationClassName,
+    ]
+  );
+
+  // Memoize the path info so every render doesn't generate a new array
+  const pathsMemo = useMemo(() => {
+    const paths: { path: number[]; disabled: boolean }[] = [];
+    for (let i = 0; i < ruleGroup.rules.length; i++) {
+      const thisPath = [...path, i];
+      paths[i] = {
+        path: thisPath,
+        disabled: disabled || schema.disabledPaths.some(p => pathsAreEqual(thisPath, p)),
+      };
+    }
+    return paths;
+  }, [disabled, path, ruleGroup.rules.length, schema.disabledPaths]);
 
   return {
     addGroup,
@@ -185,6 +247,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     onNotToggleChange,
     outerClassName,
     parentDisabled,
+    pathsMemo,
     previewRef,
     removeGroup,
     ruleGroup,

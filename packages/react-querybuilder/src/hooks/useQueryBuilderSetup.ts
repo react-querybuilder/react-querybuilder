@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators, defaultTranslations } from '../defaults';
+import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
   Field,
   Option,
@@ -18,8 +19,6 @@ import {
   objectKeys,
   uniqByName,
   uniqOptGroups,
-  useControlledOrUncontrolled,
-  useMergedContext,
 } from '../utils';
 
 export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>(

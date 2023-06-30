@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { errorEnabledDndWithoutReactDnD } from '../../messages';
+import { errorEnabledDndWithoutReactDnD } from '../messages';
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
