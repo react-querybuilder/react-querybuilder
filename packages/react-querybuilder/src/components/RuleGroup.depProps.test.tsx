@@ -3,6 +3,7 @@
  * way to isolate the import of the useDeprecatedProps module and get a "clean" test.
  */
 import { render, screen } from '@testing-library/react';
+import * as React from 'react';
 import { consoleMocks, getRuleGroupProps } from '../../genericTests';
 import { TestID } from '../defaults';
 import { errorDeprecatedRuleGroupProps } from '../messages';
