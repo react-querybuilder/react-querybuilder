@@ -4,6 +4,7 @@ import { LogType, defaultCombinators, standardClassnames } from '../defaults';
 import type { QueryBuilderStoreState } from '../redux';
 import {
   getQueryState,
+  removeQueryState,
   setQueryState,
   useQueryBuilderDispatch,
   useQueryBuilderSelector,
@@ -120,21 +121,27 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
 
-  // This effect only runs once, at the beginning of the component lifecycle
+  // This effect only runs once, at the beginning of the component lifecycle.
+  // The returned cleanup function clears the query from the store when the
+  // component is destroyed.
   useEffect(() => {
     // Run `onQueryChange` on mount, if enabled
     if (enableMountQueryChange && typeof onQueryChange === 'function') {
       onQueryChange(rootQuery as RG);
     }
     reduxDispatch(setQueryState({ qbId: qbId, query: rootQuery }));
+
+    return () => {
+      reduxDispatch(removeQueryState(qbId));
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
-   * Updates the redux-based query if the component is uncontrolled, then calls
-   * `onQueryChange` with the updated query object. (`useCallback` is only effective
-   * here when the user's `onQueryChange` handler is undefined or has a stable reference,
-   * which usually means that it's wrapped in its own `useCallback`).
+   * Updates the redux-based query, then calls `onQueryChange` with the updated
+   * query object. NOTE: `useCallback` is only effective here when the user's
+   * `onQueryChange` handler is undefined or has a stable reference, which usually
+   * means that it's wrapped in its own `useCallback`.
    */
   const dispatch = useCallback(
     (newQuery: RG) => {
@@ -331,36 +338,35 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
 
   const schema = useMemo(
     (): Schema => ({
-      // TODO: add qbId to schema
-      // qbId,
-      fields,
-      fieldMap,
-      combinators,
-      classNames: controlClassnames,
-      createRule,
-      createRuleGroup,
-      controls: controlElements,
-      getOperators: getOperatorsMain,
-      getValueEditorType: getValueEditorTypeMain,
-      getValueSources: getValueSourcesMain,
-      getInputType: getInputTypeMain,
-      getValues: getValuesMain,
-      getValueEditorSeparator,
-      getRuleClassname,
-      getRuleGroupClassname,
-      showCombinatorsBetweenRules,
-      showNotToggle,
-      showCloneButtons,
-      showLockButtons,
+      addRuleToNewGroups,
       autoSelectField,
       autoSelectOperator,
-      addRuleToNewGroups,
+      classNames: controlClassnames,
+      combinators,
+      controls: controlElements,
+      createRule,
+      createRuleGroup,
+      disabledPaths,
       enableDragAndDrop,
+      fieldMap,
+      fields,
+      getInputType: getInputTypeMain,
+      getOperators: getOperatorsMain,
+      getRuleClassname,
+      getRuleGroupClassname,
+      getValueEditorSeparator,
+      getValueEditorType: getValueEditorTypeMain,
+      getValues: getValuesMain,
+      getValueSources: getValueSourcesMain,
       independentCombinators,
       listsAsArrays,
       parseNumbers,
+      qbId,
+      showCloneButtons,
+      showCombinatorsBetweenRules,
+      showLockButtons,
+      showNotToggle,
       validationMap,
-      disabledPaths,
     }),
     [
       addRuleToNewGroups,
@@ -386,6 +392,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       independentCombinators,
       listsAsArrays,
       parseNumbers,
+      qbId,
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
@@ -396,12 +403,12 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
 
   const actions = useMemo(
     (): QueryActions => ({
-      onRuleAdd,
+      moveRule,
       onGroupAdd,
-      onRuleRemove: onRuleOrGroupRemove,
       onGroupRemove: onRuleOrGroupRemove,
       onPropChange,
-      moveRule,
+      onRuleAdd,
+      onRuleRemove: onRuleOrGroupRemove,
     }),
     [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
   );

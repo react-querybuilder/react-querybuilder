@@ -109,6 +109,7 @@ export interface Controls {
 }
 
 export interface Schema {
+  qbId: string;
   fields: OptionList<Field>;
   fieldMap: Record<string, Field>;
   classNames: Classnames;

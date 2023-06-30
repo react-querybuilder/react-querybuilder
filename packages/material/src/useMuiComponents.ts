@@ -50,9 +50,7 @@ export const useMuiComponents = (
         ? { ...defaultMuiComponents, ...preloadedComponents }
         : muiComponentsFromContext
         ? { ...defaultMuiComponents, ...muiComponentsFromContext }
-        : /* TODO: why does this next line cause the app to crash? */
-          /* componentCache && process.env.NODE_ENV === 'production' ? componentCache : */
-          defaultMuiComponents,
+        : defaultMuiComponents,
     [muiComponentsFromContext, preloadedComponents]
   );
 

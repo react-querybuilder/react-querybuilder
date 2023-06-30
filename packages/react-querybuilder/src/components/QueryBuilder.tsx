@@ -35,7 +35,7 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
 
   return (
-    <QueryBuilderContext.Provider value={qb.rqbContext}>
+    <QueryBuilderContext.Provider key={qb.dndEnabledAttr} value={qb.rqbContext}>
       <div
         className={qb.wrapperClassName}
         data-dnd={qb.dndEnabledAttr}
