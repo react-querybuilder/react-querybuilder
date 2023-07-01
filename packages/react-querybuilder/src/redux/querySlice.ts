@@ -4,7 +4,7 @@ import type { RuleGroupTypeAny } from '../types';
 
 type QuerySliceState = Record<string, RuleGroupTypeAny>;
 
-interface SetReduxQueryParams {
+export interface SetQueryStateParams {
   qbId: string;
   query: RuleGroupTypeAny;
 }
@@ -21,7 +21,7 @@ export const {
   name: 'query',
   initialState,
   reducers: {
-    setQueryState(state, { payload: { qbId, query } }: PayloadAction<SetReduxQueryParams>) {
+    setQueryState(state, { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>) {
       state[qbId] = query;
     },
     removeQueryState(state, { payload }: PayloadAction<string>) {

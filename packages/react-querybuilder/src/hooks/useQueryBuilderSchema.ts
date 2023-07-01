@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, defaultCombinators, standardClassnames } from '../defaults';
 import type { QueryBuilderStoreState } from '../redux';
 import {
+  dispatchThunk,
   getQueryState,
   removeQueryState,
-  setQueryState,
   useQueryBuilderDispatch,
   useQueryBuilderSelector,
   useQueryBuilderStore,
@@ -113,20 +113,25 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   // #endregion
 
   // #region Handle controlled mode vs uncontrolled mode
-  const reduxStore = useQueryBuilderStore();
-  const reduxDispatch = useQueryBuilderDispatch();
+  const queryBuilderStore = useQueryBuilderStore();
+  const queryBuilderDispatch = useQueryBuilderDispatch();
 
   const querySelector = useCallback(
     (state: QueryBuilderStoreState) => getQueryState(state, setup.qbId),
     [setup.qbId]
   );
-  const reduxQuery = useQueryBuilderSelector(querySelector);
+  const storeQuery = useQueryBuilderSelector(querySelector);
+  const getQuery = useCallback(
+    () => querySelector(queryBuilderStore.getState()),
+    [queryBuilderStore, querySelector]
+  );
+
   const initialQuery = useMemo(() => createRuleGroup(), [createRuleGroup]);
 
   // We assume here that if this is not the first render, the query has already
   // been prepared. If `preliminaryQuery === query`, the user is probably
   // passing back the parameter from the `onQueryChange` callback.
-  const preliminaryQuery = queryProp ?? reduxQuery ?? defaultQueryProp ?? initialQuery;
+  const preliminaryQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? initialQuery;
   const rootQuery = isFirstRender.current
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
@@ -135,14 +140,15 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   // The returned cleanup function clears the query from the store when the
   // component is destroyed.
   useEffect(() => {
-    // Run `onQueryChange` on mount, if enabled
-    if (enableMountQueryChange && typeof onQueryChange === 'function') {
-      onQueryChange(rootQuery as RG);
-    }
-    reduxDispatch(setQueryState({ qbId: qbId, query: rootQuery }));
+    // Leave `onQueryChange` undefined if `enableMountQueryChange` is disabled
+    const oQC =
+      enableMountQueryChange && typeof onQueryChange === 'function' ? onQueryChange : undefined;
+    queryBuilderDispatch(
+      dispatchThunk({ payload: { qbId: qbId, query: rootQuery }, onQueryChange: oQC })
+    );
 
     return () => {
-      reduxDispatch(removeQueryState(qbId));
+      queryBuilderDispatch(removeQueryState(qbId));
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -153,14 +159,11 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
    * `onQueryChange` handler is undefined or has a stable reference, which usually
    * means that it's wrapped in its own `useCallback`.
    */
-  const dispatch = useCallback(
+  const dispatchQuery = useCallback(
     (newQuery: RG) => {
-      reduxDispatch(setQueryState({ qbId, query: newQuery }));
-      if (typeof onQueryChange === 'function') {
-        onQueryChange(newQuery);
-      }
+      queryBuilderDispatch(dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange }));
     },
-    [onQueryChange, qbId, reduxDispatch]
+    [onQueryChange, qbId, queryBuilderDispatch]
   );
   // #endregion
 
@@ -177,7 +180,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
 
   const onRuleAdd = useCallback(
     (rule: RuleType, parentPath: number[], context?: any) => {
-      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -200,14 +203,23 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       if (debugMode) {
         onLog({ type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
       }
-      dispatch(newQuery);
+      dispatchQuery(newQuery);
     },
-    [combinators, debugMode, dispatch, onAddRule, onLog, qbId, queryDisabled, reduxStore]
+    [
+      combinators,
+      debugMode,
+      dispatchQuery,
+      onAddRule,
+      onLog,
+      qbId,
+      queryDisabled,
+      queryBuilderStore,
+    ]
   );
 
   const onGroupAdd = useCallback(
     (ruleGroup: RG, parentPath: number[], context?: any) => {
-      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -235,14 +247,23 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       if (debugMode) {
         onLog({ type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
       }
-      dispatch(newQuery);
+      dispatchQuery(newQuery);
     },
-    [combinators, debugMode, dispatch, onAddGroup, onLog, qbId, queryDisabled, reduxStore]
+    [
+      combinators,
+      debugMode,
+      dispatchQuery,
+      onAddGroup,
+      onLog,
+      qbId,
+      queryDisabled,
+      queryBuilderStore,
+    ]
   );
 
   const onPropChange = useCallback(
     (prop: UpdateableProperties, value: any, path: number[]) => {
-      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         if (debugMode) {
           onLog({ type: LogType.pathDisabled, path, prop, value, query: queryLocal });
@@ -259,18 +280,18 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       if (debugMode) {
         onLog({ type: LogType.update, query: queryLocal, newQuery, prop, value, path });
       }
-      dispatch(newQuery);
+      dispatchQuery(newQuery);
     },
     [
       debugMode,
-      dispatch,
+      dispatchQuery,
       getRuleDefaultOperator,
       getRuleDefaultValue,
       getValueSourcesMain,
       onLog,
       qbId,
       queryDisabled,
-      reduxStore,
+      queryBuilderStore,
       resetOnFieldChange,
       resetOnOperatorChange,
     ]
@@ -278,7 +299,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
 
   const onRuleOrGroupRemove = useCallback(
     (path: number[], context?: any) => {
-      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -294,7 +315,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
           if (debugMode) {
             onLog({ type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
           }
-          dispatch(newQuery);
+          dispatchQuery(newQuery);
         } else {
           if (debugMode) {
             onLog({ type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
@@ -302,12 +323,12 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
         }
       }
     },
-    [debugMode, dispatch, onLog, onRemove, qbId, queryDisabled, reduxStore]
+    [debugMode, dispatchQuery, onLog, onRemove, qbId, queryDisabled, queryBuilderStore]
   );
 
   const moveRule = useCallback(
     (oldPath: number[], newPath: number[], clone?: boolean) => {
-      const queryLocal = getQueryState(reduxStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -319,9 +340,9 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       if (debugMode) {
         onLog({ type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
       }
-      dispatch(newQuery);
+      dispatchQuery(newQuery);
     },
-    [combinators, debugMode, dispatch, onLog, qbId, queryDisabled, reduxStore]
+    [combinators, debugMode, dispatchQuery, onLog, qbId, queryDisabled, queryBuilderStore]
   );
   // #endregion
 
@@ -360,6 +381,8 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       enableDragAndDrop,
       fieldMap,
       fields,
+      dispatchQuery,
+      getQuery,
       getInputType: getInputTypeMain,
       getOperators: getOperatorsMain,
       getRuleClassname,
@@ -391,6 +414,8 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       enableDragAndDrop,
       fieldMap,
       fields,
+      dispatchQuery,
+      getQuery,
       getInputTypeMain,
       getOperatorsMain,
       getRuleClassname,

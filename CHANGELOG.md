@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`.
 
+### Added
+
+- The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
+  - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
+  - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.
+
+### Fixed
+
+- Performance is improved via `React.memo`, as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that is probably the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
+
 ## [v6.5.1] - 2023-06-26
 
 ### Fixed

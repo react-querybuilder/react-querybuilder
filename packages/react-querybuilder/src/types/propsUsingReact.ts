@@ -117,6 +117,8 @@ export interface Schema {
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
+  dispatchQuery(query: RuleGroupTypeAny): void;
+  getQuery(): RuleGroupTypeAny | undefined;
   getOperators(field: string): OptionList<Operator>;
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string): ReactNode;

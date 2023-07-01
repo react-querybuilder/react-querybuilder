@@ -1,7 +1,13 @@
+import type { PayloadAction, ThunkAction } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { getQueryState as getQuerySliceState, querySliceReducer } from './querySlice';
+import type { SetQueryStateParams } from './querySlice';
+import {
+  getQueryState as getQuerySliceState,
+  querySliceReducer,
+  setQueryState,
+} from './querySlice';
 
 // Redux store
 export const queryBuilderStore = configureStore({
@@ -18,8 +24,8 @@ export const queryBuilderStore = configureStore({
 });
 
 // Types
-export type QueryBuilderStoreState = ReturnType<(typeof queryBuilderStore)['getState']>;
-type QueryBuilderDispatch = ReturnType<typeof useStore<QueryBuilderStoreState>>['dispatch'];
+export type QueryBuilderStoreState = ReturnType<typeof queryBuilderStore.getState>;
+type QueryBuilderDispatch = typeof queryBuilderStore.dispatch;
 
 // Hooks
 export const useQueryBuilderStore = () => useStore<QueryBuilderStoreState>();
@@ -31,4 +37,20 @@ export const getQueryState = (state: QueryBuilderStoreState, qbId: string) =>
   getQuerySliceState(state.query, qbId);
 
 // Misc exports
-export { removeQueryState, setQueryState } from './querySlice';
+export { removeQueryState } from './querySlice';
+export { setQueryState };
+
+// Thunks
+type QueryBuilderThunk<T> = ThunkAction<T, QueryBuilderStoreState, unknown, PayloadAction<any>>;
+type DispatchThunkParams = {
+  payload: SetQueryStateParams;
+  onQueryChange?: (...args: any[]) => void;
+};
+export const dispatchThunk =
+  ({ payload, onQueryChange }: DispatchThunkParams): QueryBuilderThunk<void> =>
+  dispatch => {
+    dispatch(setQueryState(payload));
+    if (typeof onQueryChange === 'function') {
+      onQueryChange(payload.query);
+    }
+  };
