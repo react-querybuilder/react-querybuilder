@@ -11,3 +11,14 @@ const preferProp = (def: boolean, prop?: boolean, context?: boolean) =>
 
 export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean) =>
   useMemo(() => preferProp(def, prop, context), [context, def, prop]);
+
+export const usePreferAnyProp = (def?: any, prop?: any, context?: any) =>
+  useMemo(
+    () =>
+      typeof prop !== 'undefined' && prop != null
+        ? prop
+        : typeof context !== 'undefined' && context != null
+        ? context
+        : def,
+    [context, def, prop]
+  );

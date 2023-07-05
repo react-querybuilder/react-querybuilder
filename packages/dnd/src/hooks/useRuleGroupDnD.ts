@@ -8,18 +8,19 @@ import type {
   UseRuleGroupDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import type { QueryBuilderDndContextProps } from '../types';
 import { useDragCommon } from './useDragCommon';
 
-interface UseRuleGroupDndParams {
+type UseRuleGroupDndParams = {
   path: number[];
   disabled?: boolean;
   independentCombinators?: boolean;
-  moveRule: QueryActions['moveRule'];
-  /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
-  useDrag: typeof import('react-dnd')['useDrag'];
-  /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
-  useDrop: typeof import('react-dnd')['useDrop'];
-}
+} & Pick<QueryActions, 'moveRule'> &
+  Pick<QueryBuilderDndContextProps, 'canDrop'> &
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
+
+const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
 export const useRuleGroupDnD = ({
   disabled,
@@ -28,6 +29,7 @@ export const useRuleGroupDnD = ({
   moveRule,
   useDrag,
   useDrop,
+  canDrop,
 }: UseRuleGroupDndParams): UseRuleGroupDnD => {
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -48,9 +50,11 @@ export const useRuleGroupDnD = ({
     DropCollection
   >(
     () => ({
-      accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
+      accept,
       canDrop: item => {
-        if (disabled) return false;
+        if (disabled || (typeof canDrop === 'function' && !canDrop({ item, path }))) {
+          return false;
+        }
         const parentItemPath = getParentPath(item.path);
         const itemIndex = item.path[item.path.length - 1];
         // Don't allow drop if 1) item is ancestor of drop target,

@@ -7,7 +7,7 @@ import { useRuleDnD } from './hooks';
 export const RuleDnD = (props: RuleProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
-  const { useDrag, useDrop } = rqbDndContext;
+  const { canDrop, useDrag, useDrop } = rqbDndContext;
   const {
     path,
     disabled: disabledProp,
@@ -25,6 +25,7 @@ export const RuleDnD = (props: RuleProps) => {
     moveRule,
     useDrag: useDrag!,
     useDrop: useDrop!,
+    canDrop,
   });
 
   const { rule: BaseRuleComponent } = rqbDndContext.baseControls;

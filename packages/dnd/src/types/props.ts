@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import type {
   Controls,
+  DraggedItem,
   InlineCombinatorProps,
   QueryActions,
   QueryBuilderContextProviderProps,
@@ -41,6 +42,11 @@ export interface InlineCombinatorDndProps extends InlineCombinatorProps {
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-html5-backend');
 
+export interface CustomCanDropParams {
+  item: DraggedItem;
+  path: number[];
+}
+
 export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   /**
    * Provide this prop if `enableDragAndDrop` is `true` for the child element and
@@ -50,6 +56,7 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
+  canDrop?(params: CustomCanDropParams): boolean;
 };
 
 export type QueryBuilderDndContextProps = {
@@ -58,4 +65,5 @@ export type QueryBuilderDndContextProps = {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop?: typeof import('react-dnd')['useDrop'];
   baseControls: Pick<Controls, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
+  canDrop?(params: CustomCanDropParams): boolean;
 };
