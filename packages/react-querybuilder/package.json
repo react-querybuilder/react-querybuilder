@@ -78,17 +78,17 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.22.5",
-    "@babel/preset-env": "^7.22.5",
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
     "@babel/preset-react": "^7.22.5",
     "@babel/preset-typescript": "^7.22.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jscodeshift": "^0.11.6",
-    "@types/node": "^20.3.2",
-    "@types/react": "^18.2.14",
-    "@types/react-dom": "^18.2.6",
+    "@types/node": "^20.4.5",
+    "@types/react": "^18.2.17",
+    "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "babel-plugin-istanbul": "^6.1.1",
     "concurrently": "^8.2.0",
@@ -100,8 +100,8 @@
     "regenerator-runtime": "^0.13.11",
     "rollup-plugin-visualizer": "^5.9.2",
     "sass": "^1.63.6",
-    "typescript": "^5.1.5",
-    "vite": "^4.3.9"
+    "typescript": "^5.1.6",
+    "vite": "^4.4.7"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",

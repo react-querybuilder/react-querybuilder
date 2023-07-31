@@ -60,6 +60,49 @@ const config = {
         module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
       }),
     }),
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        entryPoints: [
+          '../packages/react-querybuilder',
+          '../packages/antd',
+          '../packages/bootstrap',
+          '../packages/bulma',
+          '../packages/chakra',
+          '../packages/dnd',
+          '../packages/fluent',
+          '../packages/mantine',
+          '../packages/material',
+          '../packages/native',
+        ],
+        out: '../api',
+        entryPointStrategy: 'packages',
+        includeVersion: true,
+        name: 'React Query Builder API',
+        readme: '_API_INDEX.md',
+        readmeTitle: 'React Query Builder API',
+        hideMembersSymbol: true,
+        sidebar: {
+          readmeLabel: 'API Index',
+          fullNames: false,
+        },
+      },
+    ],
+    [
+      'content-docs',
+      /** @type {import('@docusaurus/plugin-content-docs').Options} */
+      ({
+        id: 'api',
+        path: 'api',
+        routeBasePath: 'api',
+        editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
+        sidebarPath: require.resolve('./sidebarAPI.js'),
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true,
+        versions: { current: { label: 'Latest' } },
+        breadcrumbs: false,
+      }),
+    ],
   ],
   presets: [
     [
@@ -129,6 +172,11 @@ const config = {
           {
             to: '/demo',
             label: 'Demo',
+            position: 'right',
+          },
+          {
+            to: '/api',
+            label: 'API',
             position: 'right',
           },
           // {to: '/blog', label: 'Blog', position: 'right'},

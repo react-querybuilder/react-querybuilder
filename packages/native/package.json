@@ -41,7 +41,7 @@
     "@babel/preset-flow": "^7.22.5",
     "@testing-library/jest-native": "^5.4.2",
     "@testing-library/react-native": "^12.1.2",
-    "@types/react": "^18.2.14",
+    "@types/react": "^18.2.17",
     "@types/react-test-renderer": "^18.0.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "react": "^18.2.0",
@@ -52,8 +52,8 @@
     "react-redux": "^8.1.1",
     "react-test-renderer": "^18.2.0",
     "rollup-plugin-visualizer": "^5.9.2",
-    "typescript": "^5.1.5",
-    "vite": "^4.3.9"
+    "typescript": "^5.1.6",
+    "vite": "^4.4.7"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

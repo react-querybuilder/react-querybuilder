@@ -112,7 +112,7 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
 /**
  * Recursively process a query heirarchy with this versatile utility function.
  *
- * Documentation: https://react-querybuilder.js.org/docs/api/misc#transformquery
+ * [Documentation](https://react-querybuilder.js.org/docs/utils/misc#transformquery)
  *
  * @param query - The query to transform
  * @param options - Options

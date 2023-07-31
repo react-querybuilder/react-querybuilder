@@ -113,7 +113,7 @@ const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const formatInfo = formatMap.find(([fmt]) => fmt === format);
   return (
     <>
-      <Link href={`/docs/api/export#${formatInfo[3]}`}>Documentation</Link>
+      <Link href={`/docs/utils/export#${formatInfo[3]}`}>Documentation</Link>
       <Link href={formatInfo[2]}>Format info</Link>
     </>
   );
@@ -408,7 +408,7 @@ export default function Demo({
       <div>
         <h3>
           <Link
-            href={'/docs/api/querybuilder'}
+            href={'/docs/components/querybuilder'}
             title={'Boolean props on the QueryBuilder component (click for documentation)'}
             className={styles.demoSidebarHeader}>
             <span>Options</span>
@@ -466,7 +466,7 @@ export default function Demo({
         </div>
         <h3>
           <Link
-            href={'/docs/api/import'}
+            href={'/docs/utils/import'}
             title={
               'Use the parse* methods to set the query from SQL/JsonLogic/etc. (click for documentation)'
             }

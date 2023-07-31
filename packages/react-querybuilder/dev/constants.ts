@@ -54,90 +54,90 @@ export const optionsMetadata: Record<
   }
 > = {
   showCombinatorsBetweenRules: {
-    link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
+    link: '/docs/components/querybuilder#showcombinatorsbetweenrules',
     label: 'Combinators between rules',
     title: 'Display combinator (and/or) selectors between rules instead of in the group header',
   },
   showNotToggle: {
-    link: '/docs/api/querybuilder#shownottoggle',
+    link: '/docs/components/querybuilder#shownottoggle',
     label: 'Show "not" toggle',
     title: `Display a checkbox to invert a group's rules (labelled "Not" by default)`,
   },
   showCloneButtons: {
-    link: '/docs/api/querybuilder#showclonebuttons',
+    link: '/docs/components/querybuilder#showclonebuttons',
     label: 'Show clone buttons',
     title: 'Display buttons to clone rules and groups',
   },
   resetOnFieldChange: {
-    link: '/docs/api/querybuilder#resetonfieldchange',
+    link: '/docs/components/querybuilder#resetonfieldchange',
     label: 'Reset on field change',
     title: `Operator and value will be reset when a rule's field selection changes`,
   },
   resetOnOperatorChange: {
-    link: '/docs/api/querybuilder#resetonoperatorchange',
+    link: '/docs/components/querybuilder#resetonoperatorchange',
     label: 'Reset on operator change',
     title: 'The value will reset when the operator changes',
   },
   autoSelectField: {
-    link: '/docs/api/querybuilder#autoselectfield',
+    link: '/docs/components/querybuilder#autoselectfield',
     label: 'Auto-select field',
     title: 'The default field will be automatically selected for new rules',
   },
   autoSelectOperator: {
-    link: '/docs/api/querybuilder#autoselectoperator',
+    link: '/docs/components/querybuilder#autoselectoperator',
     label: 'Auto-select operator',
     title: 'The default operator will be automatically selected for new rules',
   },
   addRuleToNewGroups: {
-    link: '/docs/api/querybuilder#addruletonewgroups',
+    link: '/docs/components/querybuilder#addruletonewgroups',
     label: 'Add rule to new groups',
     title: 'A rule will be automatically added to new groups',
   },
   validateQuery: {
-    link: '/docs/api/validation',
+    link: '/docs/utils/validation',
     label: 'Use validation',
     title:
       'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+Rule" button for empty groups',
   },
   independentCombinators: {
-    link: '/docs/api/querybuilder#independentcombinators',
+    link: '/docs/components/querybuilder#independentcombinators',
     label: 'Independent combinators',
     title: 'Combinators between rules can be independently updated',
   },
   listsAsArrays: {
-    link: '/docs/api/querybuilder#listsasarrays',
+    link: '/docs/components/querybuilder#listsasarrays',
     label: 'Lists as arrays',
     title: 'Lists will be stored as arrays instead of comma-separated strings',
   },
   enableDragAndDrop: {
-    link: '/docs/api/querybuilder#enabledraganddrop',
+    link: '/docs/components/querybuilder#enabledraganddrop',
     label: 'Enable drag-and-drop',
     title: 'Rules and groups can be reordered and dragged to different groups',
   },
   disabled: {
-    link: '/docs/api/querybuilder#disabled',
+    link: '/docs/components/querybuilder#disabled',
     label: 'Disabled',
     title: 'Disable all components within the query builder',
   },
   showLockButtons: {
-    link: '/docs/api/querybuilder#showlockbuttons',
+    link: '/docs/components/querybuilder#showlockbuttons',
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
   },
   debugMode: {
-    link: '/docs/api/querybuilder#debugmode',
+    link: '/docs/components/querybuilder#debugmode',
     label: 'Debug mode',
     title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
   parseNumbers: {
-    link: '/docs/api/export#parse-numbers',
+    link: '/docs/utils/export#parse-numbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values',
   },
   showBranches: {
-    link: '/docs/api/classnames',
-    label: 'Debug mode',
-    title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
+    link: '/docs/styling/overview#branch-lines',
+    label: 'Show branches',
+    title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
 };
 
