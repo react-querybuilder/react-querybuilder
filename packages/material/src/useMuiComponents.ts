@@ -17,7 +17,7 @@ import { useContext, useMemo } from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
-export const defaultMuiComponents: RQBMaterialComponents = {
+export const defaultMuiComponents = {
   DragIndicator,
   Button,
   Checkbox,
@@ -31,7 +31,7 @@ export const defaultMuiComponents: RQBMaterialComponents = {
   Select,
   Switch,
   TextareaAutosize,
-};
+} satisfies RQBMaterialComponents;
 
 export const useMuiComponents = (
   preloadedComponents?: RQBMaterialComponents

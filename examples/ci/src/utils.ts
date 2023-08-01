@@ -1,6 +1,6 @@
 import type { CIOption, CIOptions, CIOptionsAction } from './types';
 
-export const defaultOptions: CIOptions = {
+export const defaultOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
@@ -17,7 +17,7 @@ export const defaultOptions: CIOptions = {
   parseNumbers: false,
   listsAsArrays: false,
   showBranches: false,
-};
+} satisfies CIOptions;
 
 export const optionsOrder: CIOption[] = [
   'showCombinatorsBetweenRules',

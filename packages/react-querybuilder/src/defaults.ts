@@ -42,7 +42,7 @@ export const defaultJoinChar = ',';
 /**
  * Default configuration of translatable strings.
  */
-export const defaultTranslations: TranslationsFull = {
+export const defaultTranslations = {
   fields: {
     title: 'Fields',
     placeholderName: defaultPlaceholderFieldName,
@@ -112,7 +112,7 @@ export const defaultTranslations: TranslationsFull = {
   valueSourceSelector: {
     title: 'Value source',
   },
-};
+} satisfies TranslationsFull;
 
 /**
  * Default operator list.
@@ -141,7 +141,7 @@ export const defaultOperators: DefaultOperator[] = [
 /**
  * Map of default operators to their respective opposite/negating operators.
  */
-export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
+export const defaultOperatorNegationMap = {
   '=': '!=',
   '!=': '=',
   '<': '>=',
@@ -160,7 +160,7 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   notIn: 'in',
   notNull: 'null',
   null: 'notNull',
-};
+} satisfies Record<DefaultOperatorName, DefaultOperatorName>;
 
 /**
  * Default combinator list.
@@ -216,7 +216,7 @@ export const standardClassnames = {
 /**
  * Default classnames for each component.
  */
-export const defaultControlClassnames: Classnames = {
+export const defaultControlClassnames = {
   queryBuilder: '',
   ruleGroup: '',
   header: '',
@@ -237,7 +237,7 @@ export const defaultControlClassnames: Classnames = {
   lockRule: '',
   lockGroup: '',
   valueSource: '',
-};
+} satisfies Classnames;
 
 /**
  * Default reason codes for a group being invalid.

@@ -100,6 +100,11 @@
   },
   "packageManager": "yarn@3.5.0",
   "resolutions": {
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-flow": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
     "sass@^1.63.6": "patch:sass@npm%3A1.63.6#./.yarn/patches/sass-npm-1.63.6-f415fe5e15.patch"
   }
 }

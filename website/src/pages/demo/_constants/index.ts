@@ -6,11 +6,11 @@ import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
 import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
-import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
-export const defaultOptions: DemoOptions = {
+export const defaultOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
@@ -29,7 +29,7 @@ export const defaultOptions: DemoOptions = {
   parseNumbers: false,
   justifiedLayout: false,
   showBranches: false,
-};
+} satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
   'showCombinatorsBetweenRules',
@@ -52,14 +52,7 @@ export const optionOrder: DemoOption[] = [
   'showBranches',
 ];
 
-export const optionsMetadata: Record<
-  DemoOption,
-  {
-    link: string;
-    label: string;
-    title: string;
-  }
-> = {
+export const optionsMetadata = {
   showCombinatorsBetweenRules: {
     link: '/docs/components/querybuilder#showcombinatorsbetweenrules',
     label: 'Combinators between rules',
@@ -151,14 +144,14 @@ export const optionsMetadata: Record<
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
-};
+} satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 
 export const optionOrderByLabel = optionOrder.sort((a, b) =>
   optionsMetadata[a].label.localeCompare(optionsMetadata[b].label)
 );
 
-export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
-export const emptyQueryIC = convertToIC(emptyQuery);
+export const emptyQuery = { combinator: 'and', rules: [] } satisfies RuleGroupType;
+export const emptyQueryIC = { rules: [] } satisfies RuleGroupTypeIC;
 
 export const initialQuery: RuleGroupType = {
   id: generateID(),
