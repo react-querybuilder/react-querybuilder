@@ -64,6 +64,9 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
   return { ...rg, rules: returnArray };
 };
 
+/**
+ * Converts a {@link RuleGroupTypeIC} to {@link RuleGroupType}.
+ */
 export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
   rg: RuleGroupTypeIC
 ): RG => {
@@ -76,6 +79,9 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
   return { ...processedRG, combinator, rules } as RG;
 };
 
+/**
+ * Converts a {@link RuleGroupType} to {@link RuleGroupTypeIC}.
+ */
 export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   rg: RuleGroupType
 ): RGIC => {
@@ -94,7 +100,15 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   return { ...queryWithoutCombinator, rules } as RGIC;
 };
 
+/**
+ * Converts a {@link RuleGroupType} to {@link RuleGroupTypeIC}. For a more explicit
+ * operation, use {@link convertToIC}.
+ */
 function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
+/**
+ * Converts a {@link RuleGroupTypeIC} to {@link RuleGroupType}. For a more explicit
+ * operation, use {@link convertFromIC}.
+ */
 function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 function convertQuery(query: RuleGroupType | RuleGroupTypeIC): RuleGroupType | RuleGroupTypeIC {
   return isRuleGroupTypeIC(query) ? convertFromIC(query) : convertToIC(query);

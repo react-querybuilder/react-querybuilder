@@ -7,7 +7,7 @@ interface UseSelectElementChangeHandlerParams {
 }
 
 /**
- * Returns a memoized change handler for HTML select elements.
+ * Returns a memoized change handler for HTML `<select>` elements.
  */
 export const useSelectElementChangeHandler = ({
   multiple,

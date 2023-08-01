@@ -5,6 +5,9 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 const escapeDoubleQuotes = (v: any) =>
   typeof v !== 'string' ? v : v.replaceAll('\\', '\\\\').replaceAll(`"`, `\\"`);
 
+/**
+ * Default rule processor used by {@link formatQuery} for "mongodb" format.
+ */
 export const defaultRuleProcessorMongoDB: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next

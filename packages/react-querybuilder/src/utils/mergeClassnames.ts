@@ -1,6 +1,9 @@
 import clsx from 'clsx';
 import type { Classnames } from '../types';
 
+/**
+ * Merges a list of partial {@link Classnames} definitions into a single definition.
+ */
 export const mergeClassnames = (...args: (Partial<Classnames> | undefined)[]): Classnames => {
   const joinClassnamesByName = (name: keyof Classnames) =>
     clsx((args.filter(Boolean) as Partial<Classnames>[]).map(c => clsx(c[name])));

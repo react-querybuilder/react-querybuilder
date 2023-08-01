@@ -9,15 +9,39 @@ import type {
 
 const placeholderName = '~';
 const placeholderLabel = '------';
+/**
+ * Default `name` for placeholder option in the `fields` array.
+ */
 export const defaultPlaceholderFieldName = placeholderName;
+/**
+ * Default `label` for placeholder option in the `fields` array.
+ */
 export const defaultPlaceholderFieldLabel = placeholderLabel;
+/**
+ * Default `label` for placeholder option group in the `fields` array.
+ */
 export const defaultPlaceholderFieldGroupLabel = placeholderLabel;
+/**
+ * Default `name` for placeholder option in the `operators` array.
+ */
 export const defaultPlaceholderOperatorName = placeholderName;
+/**
+ * Default `label` for placeholder option in the `operators` array.
+ */
 export const defaultPlaceholderOperatorLabel = placeholderLabel;
+/**
+ * Default `label` for placeholder option group in the `operators` array.
+ */
 export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
 
+/**
+ * Default character used to `.join` and `.split` arrays.
+ */
 export const defaultJoinChar = ',';
 
+/**
+ * Default configuration of translatable strings.
+ */
 export const defaultTranslations: TranslationsFull = {
   fields: {
     title: 'Fields',
@@ -90,6 +114,9 @@ export const defaultTranslations: TranslationsFull = {
   },
 };
 
+/**
+ * Default operator list.
+ */
 export const defaultOperators: DefaultOperator[] = [
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
@@ -111,6 +138,9 @@ export const defaultOperators: DefaultOperator[] = [
   { name: 'notBetween', label: 'not between' },
 ];
 
+/**
+ * Map of default operators to their respective opposite/negating operators.
+ */
 export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
   '=': '!=',
   '!=': '=',
@@ -132,16 +162,25 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   null: 'notNull',
 };
 
+/**
+ * Default combinator list.
+ */
 export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' },
 ];
 
+/**
+ * Default combinator list, with `XOR` added.
+ */
 export const defaultCombinatorsExtended: DefaultCombinatorExtended[] = [
   ...defaultCombinators,
   { name: 'xor', label: 'XOR' },
 ];
 
+/**
+ * Standard classnames applied to each component.
+ */
 export const standardClassnames = {
   queryBuilder: 'queryBuilder',
   ruleGroup: 'ruleGroup',
@@ -174,6 +213,9 @@ export const standardClassnames = {
   branches: 'queryBuilder-branches',
 } as const;
 
+/**
+ * Default classnames for each component.
+ */
 export const defaultControlClassnames: Classnames = {
   queryBuilder: '',
   ruleGroup: '',
@@ -197,12 +239,18 @@ export const defaultControlClassnames: Classnames = {
   valueSource: '',
 };
 
+/**
+ * Default reason codes for a group being invalid.
+ */
 export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
   invalidIndependentCombinators: 'invalid independent combinators',
 } as const;
 
+/**
+ * Component identifiers for testing.
+ */
 export const TestID = {
   rule: 'rule',
   ruleGroup: 'rule-group',

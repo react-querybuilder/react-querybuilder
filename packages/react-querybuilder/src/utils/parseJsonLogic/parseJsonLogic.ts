@@ -41,16 +41,27 @@ import {
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
 /**
- * Converts a JsonLogic object into a query suitable for
- * the QueryBuilder component's `query` or `defaultQuery` props.
+ * Converts a JsonLogic object into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
  */
 function parseJsonLogic(rqbJsonLogic: string | RQBJsonLogic): DefaultRuleGroupType;
+/**
+ * Converts a JsonLogic object into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
+ */
 function parseJsonLogic(
   rqbJsonLogic: string | RQBJsonLogic,
   options: Omit<ParseJsonLogicOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
+/**
+ * Converts a JsonLogic object into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupTypeIC}).
+ */
 function parseJsonLogic(
   rqbJsonLogic: string | RQBJsonLogic,
   options: Omit<ParseJsonLogicOptions, 'independentCombinators'> & {

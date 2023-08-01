@@ -7,12 +7,15 @@ import type {
 } from '../types/index.noReact';
 import { generateID } from './generateID';
 
+/**
+ * Options for {@link prepareRule}/{@link prepareRuleGroup}.
+ */
 export interface PreparerOptions {
   idGenerator?: () => string;
 }
 
 /**
- * Generates a valid rule
+ * Ensures that a rule is valid by adding an `id` property if it does not already exist.
  */
 export const prepareRule = (rule: RuleType, { idGenerator = generateID }: PreparerOptions = {}) =>
   produce(rule, draft => {
@@ -22,7 +25,8 @@ export const prepareRule = (rule: RuleType, { idGenerator = generateID }: Prepar
   });
 
 /**
- * Generates a valid rule group
+ * Ensures that a rule group is valid by recursively adding an `id` property to the group itself
+ * and all its rules and subgroups where one does not already exist.
  */
 export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
   queryObject: RG,
@@ -42,7 +46,7 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
   });
 
 /**
- * Generates a valid rule or group
+ * Ensures that a rule or group is valid. See {@link prepareRule} and {@link prepareRuleGroup}.
  */
 export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(
   rg: RG | RuleType,

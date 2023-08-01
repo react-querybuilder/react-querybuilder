@@ -33,16 +33,27 @@ import {
 } from './utils';
 
 /**
- * Converts a CEL string expression into a query suitable for
- * the QueryBuilder component's `query` or `defaultQuery` props.
+ * Converts a CEL string expression into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
  */
 function parseCEL(cel: string): DefaultRuleGroupType;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
+ */
 function parseCEL(
   cel: string,
   options: Omit<ParseCELOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupTypeIC}).
+ */
 function parseCEL(
   cel: string,
   options: Omit<ParseCELOptions, 'independentCombinators'> & {

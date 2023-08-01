@@ -9,9 +9,17 @@ const preferPropDefaultFalse = (prop?: boolean, context?: boolean) =>
 const preferProp = (def: boolean, prop?: boolean, context?: boolean) =>
   def ? preferPropDefaultTrue(prop, context) : preferPropDefaultFalse(prop, context);
 
+/**
+ * For given default, prop, and context values, return the first provided of prop,
+ * context, and default, in that order.
+ */
 export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean) =>
   useMemo(() => preferProp(def, prop, context), [context, def, prop]);
 
+/**
+ * For given default, prop, and context values, return the first provided of prop,
+ * context, and default, in that order.
+ */
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any) =>
   useMemo(
     () =>

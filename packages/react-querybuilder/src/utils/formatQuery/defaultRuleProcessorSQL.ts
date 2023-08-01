@@ -11,6 +11,9 @@ type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
   quoteFieldNamesWith?: string | [string, string];
 };
 
+/**
+ * Default rule processor used by {@link formatQuery} for "sql" format.
+ */
 export const defaultRuleProcessorSQL = (
   rule: RuleType,
   {

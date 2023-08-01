@@ -9,6 +9,9 @@ export type GetCompatContextProviderProps = Pick<
   'controlClassnames' | 'controlElements'
 > & { key: string };
 
+/**
+ * Generates a context provider for a compatibility package.
+ */
 export const getCompatContextProvider =
   ({
     key,

@@ -18,18 +18,21 @@ const generateValueProcessor =
       { field, operator, value, valueSource },
       { parseNumbers: false }
     );
-// TODO: deprecate this
+// TODO: Deprecate defaultValueProcessor.
+/**
+ * Default value processor used by {@link formatQuery} for "sql" format.
+ */
 export const defaultValueProcessor = generateValueProcessor('default');
 /**
- * @deprecated Prefer `defaultRuleProcessorMongoDB`.
+ * @deprecated Prefer {@link defaultRuleProcessorMongoDB}.
  */
 export const defaultMongoDBValueProcessor = generateValueProcessor('mongodb');
 /**
- * @deprecated Prefer `defaultRuleProcessorCEL`.
+ * @deprecated Prefer {@link defaultRuleProcessorCEL}.
  */
 export const defaultCELValueProcessor = generateValueProcessor('cel');
 /**
- * @deprecated Prefer `defaultRuleProcessorSpEL`.
+ * @deprecated Prefer {@link defaultRuleProcessorSpEL}.
  */
 export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
@@ -44,14 +47,14 @@ export {
   defaultValueProcessorByRule,
 };
 /**
- * @deprecated Renamed to "defaultRuleProcessorCEL".
+ * @deprecated Renamed to {@link defaultRuleProcessorCEL}.
  */
 export const defaultValueProcessorCELByRule = defaultRuleProcessorCEL;
 /**
- * @deprecated Renamed to "defaultRuleProcessorMongoDB".
+ * @deprecated Renamed to {@link defaultRuleProcessorMongoDB}.
  */
 export const defaultValueProcessorMongoDBByRule = defaultRuleProcessorMongoDB;
 /**
- * @deprecated Renamed to "defaultRuleProcessorSpEL".
+ * @deprecated Renamed to {@link defaultRuleProcessorSpEL}.
  */
 export const defaultValueProcessorSpELByRule = defaultRuleProcessorSpEL;

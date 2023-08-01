@@ -17,10 +17,10 @@ export type UseValueEditorParams = Pick<
 >;
 
 /**
- * This Effect trims the value if all of the following are true:
- *  - `inputType` is "number"
- *  - `operator` is _not_ one of ("between", "notBetween", "in", "notIn")
- *  - `value` is an array _or_ the value is a string containing a comma
+ * This effect trims the value if all of the following are true:
+ * - `inputType` is "number"
+ * - `operator` is _not_ one of ("between", "notBetween", "in", "notIn")
+ * - `value` is either an array or a string containing a comma
  *
  * For example, consider the following rule:
  *
@@ -29,7 +29,7 @@ export type UseValueEditorParams = Pick<
  * If its operator changes to "=", the value will be reset to "12" since
  * the "number" input type can't handle arrays or strings with commas.
  *
- * Returns the value as an array and a change handler for series of editors.
+ * @returns The value as an array and a change handler for series of editors.
  */
 export const useValueEditor = ({
   handleOnChange,

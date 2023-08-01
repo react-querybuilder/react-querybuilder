@@ -1,11 +1,12 @@
 const cryptoModule = globalThis.crypto;
 
 /**
- * Generates a valid v4 UUID, i.e. matching this regex:
+ * Default `id` generator. Generates a valid v4 UUID using `crypto.randomUUID()`
+ * when available. Result guaranteed to match this regex:
  * ```
  * /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
  * ```
- * @returns Valid v4 UUID
+ * @returns Valid v4 UUID.
  */
 // Default implementation adapted from https://stackoverflow.com/a/68141099/217579
 export let generateID = () =>
@@ -22,7 +23,7 @@ if (cryptoModule) {
     // `randomUUID` is much simpler and [faster](https://jsbench.me/krlcjfxscp/1),
     // but it's only guaranteed to be available in secure contexts (https, etc.).
     // `generateID` doesn't need to be cryptographically secure, it only needs a
-    // low chance of collisions. We can fall back to the always-available
+    // very low chance of collisions. We can fall back to the always-available
     // `getRandomValues` to build a v4 UUID when `randomUUID` is not available.
     /** `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` */
     const template = [

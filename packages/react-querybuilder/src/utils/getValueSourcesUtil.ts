@@ -2,6 +2,12 @@ import type { Field, ValueSources } from '../types/index.noReact';
 
 const defaultValueSourcesArray: ValueSources = ['value'];
 
+/**
+ * Utility function to get the value sources array for the given
+ * field and operator. If the field definition does not define a
+ * `valueSources` property, the `getValueSources` prop is used.
+ * Returns `["value"]` by default.
+ */
 export const getValueSourcesUtil = (
   fieldData: Field,
   operator: string,

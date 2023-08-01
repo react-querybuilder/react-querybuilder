@@ -1,8 +1,15 @@
 import type { RuleGroupTypeAny, RuleType } from '../types/index.noReact';
 import { isPojo } from './misc';
 
+/**
+ * Return type for {@link findPath}.
+ */
 export type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 
+/**
+ * Returns the {@link RuleType} or {@link RuleGroupType}/{@link RuleGroupTypeIC}
+ * at the given path within a query.
+ */
 export const findPath = (path: number[], query: RuleGroupTypeAny): FindPathReturnType => {
   let target: FindPathReturnType = query;
   let level = 0;
@@ -19,14 +26,27 @@ export const findPath = (path: number[], query: RuleGroupTypeAny): FindPathRetur
   return target;
 };
 
+/**
+ * Truncates the last element of an array and returns the result as a new array.
+ */
 export const getParentPath = (path: number[]) => path.slice(0, path.length - 1);
 
+/**
+ * Determines if two paths (each `number[]`) are equivalent.
+ */
 export const pathsAreEqual = (path1: number[], path2: number[]) =>
   path1.length === path2.length && path1.every((val, idx) => val === path2[idx]);
 
+/**
+ * Determines if the first path is an ancestor of the second path. The first path must
+ * be shorter and exactly match the second path up through the length of the first path.
+ */
 export const isAncestor = (maybeAncestor: number[], path: number[]) =>
   maybeAncestor.length < path.length && RegExp(`^${maybeAncestor.join('-')}`).test(path.join('-'));
 
+/**
+ * Finds the deepest/longest path that two paths have in common.
+ */
 export const getCommonAncestorPath = (path1: number[], path2: number[]) => {
   const commonAncestorPath: number[] = [];
   const parentPath1 = getParentPath(path1);
@@ -41,6 +61,10 @@ export const getCommonAncestorPath = (path1: number[], path2: number[]) => {
   return commonAncestorPath;
 };
 
+/**
+ * Determines if the rule or group at the specified path is either disabled itself
+ * or disabled by an ancestor group.
+ */
 export const pathIsDisabled = (path: number[], query: RuleGroupTypeAny) => {
   let disabled = !!query.disabled;
   let target: RuleType | RuleGroupTypeAny = query;

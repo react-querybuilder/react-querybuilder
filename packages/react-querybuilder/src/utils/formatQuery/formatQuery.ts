@@ -35,31 +35,49 @@ import {
 } from './utils';
 
 /**
- * Formats a query in the requested output format.
+ * Generates a formatted (indented two spaces) JSON string from a query object.
  */
 function formatQuery(ruleGroup: RuleGroupTypeAny): string;
+/**
+ * Generates a {@link ParameterizedSQL} object from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'parameterized' | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized' })
 ): ParameterizedSQL;
+/**
+ * Generates a {@link ParameterizedNamedSQL} object from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options:
     | 'parameterized_named'
     | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized_named' })
 ): ParameterizedNamedSQL;
+/**
+ * Generates a {@link JsonLogic} object from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'jsonlogic' | (Omit<FormatQueryOptions, 'format'> & { format: 'jsonlogic' })
 ): RQBJsonLogic;
+/**
+ * Generates a formatted (indented two spaces) JSON string from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'>
 ): string;
+/**
+ * Generates a query string in the requested format.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named' | 'jsonlogic'>
 ): string;
+/**
+ * Generates a query string in the requested format.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'> & {

@@ -10,6 +10,9 @@ import {
   getValidationClassNames,
 } from '../utils';
 
+/**
+ * Prepares all values and methods used by the {@link Rule} component.
+ */
 export const useRule = (props: RuleProps) => {
   const {
     id,

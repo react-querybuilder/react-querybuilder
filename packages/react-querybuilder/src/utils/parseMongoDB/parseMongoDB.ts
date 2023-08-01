@@ -18,16 +18,27 @@ import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
 /**
- * Converts a MongoDB query object or parseable string into a query suitable for
- * the QueryBuilder component's `query` or `defaultQuery` props.
+ * Converts a MongoDB query object or parseable string into a query suitable
+ * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
  */
 function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGroupType;
+/**
+ * Converts a MongoDB query object or parseable string into a query suitable
+ * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
+ */
 function parseMongoDB(
   mongoDbRules: string | Record<string, any>,
   options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
+/**
+ * Converts a MongoDB query object or parseable string into a query suitable
+ * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupTypeIC}).
+ */
 function parseMongoDB(
   mongoDbRules: string | Record<string, any>,
   options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {

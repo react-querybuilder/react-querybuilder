@@ -8,6 +8,9 @@ import { RuleGroup } from './RuleGroup';
 import { ValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
 
+/**
+ * Default components used by {@link QueryBuilder}.
+ */
 export const defaultControlElements: Controls = {
   addGroupAction: ActionElement,
   removeGroupAction: ActionElement,

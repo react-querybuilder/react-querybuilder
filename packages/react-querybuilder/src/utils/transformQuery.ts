@@ -22,6 +22,9 @@ const remapProperties = (
     }
   });
 
+/**
+ * Options object for {@link transformQuery}.
+ */
 export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
   /**
    * When a rule is encountered in the hierarchy, it will be replaced
@@ -110,18 +113,20 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
 }
 
 /**
- * Recursively process a query heirarchy with this versatile utility function.
+ * Recursively process a query heirarchy using this versatile utility function.
  *
  * [Documentation](https://react-querybuilder.js.org/docs/utils/misc#transformquery)
- *
- * @param query - The query to transform
- * @param options - Options
- * @returns The transformed query
  */
 export function transformQuery(
   query: RuleGroupType,
   options?: TransformQueryOptions<RuleGroupType>
 ): any;
+/**
+ * Recursively process a query heirarchy with independent combinators using this
+ * versatile utility function.
+ *
+ * [Documentation](https://react-querybuilder.js.org/docs/utils/misc#transformquery)
+ */
 export function transformQuery(
   query: RuleGroupTypeIC,
   options?: TransformQueryOptions<RuleGroupTypeIC>

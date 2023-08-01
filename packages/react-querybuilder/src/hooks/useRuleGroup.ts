@@ -11,6 +11,9 @@ import {
   pathsAreEqual,
 } from '../utils';
 
+/**
+ * Prepares all values and methods used by the {@link RuleGroup} component.
+ */
 export const useRuleGroup = (props: RuleGroupProps) => {
   const {
     id,

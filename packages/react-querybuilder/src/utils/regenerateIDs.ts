@@ -8,12 +8,15 @@ import type {
 import { generateID } from './generateID';
 import { isPojo } from './misc';
 
+/**
+ * Options object for {@link regenerateID}/{@link regenerateIDs}.
+ */
 export interface RegenerateIdOptions {
   idGenerator?: () => string;
 }
 
 /**
- * Generates new `id` property for a rule.
+ * Generates a new `id` property for a rule.
  */
 export const regenerateID = (
   rule: RuleType,
@@ -21,7 +24,7 @@ export const regenerateID = (
 ): RuleType => JSON.parse(JSON.stringify({ ...rule, id: idGenerator() }));
 
 /**
- * Recursively generates new `id` properties for all objects in a rule group.
+ * Recursively generates new `id` properties for a group and all its rules and subgroups.
  */
 export const regenerateIDs = (
   ruleOrGroup: RuleGroupType | RuleGroupTypeIC,

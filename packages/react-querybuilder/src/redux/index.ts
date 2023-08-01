@@ -28,8 +28,17 @@ export type QueryBuilderStoreState = ReturnType<typeof queryBuilderStore.getStat
 type QueryBuilderDispatch = typeof queryBuilderStore.dispatch;
 
 // Hooks
+/**
+ * Gets the full RQB Redux store.
+ */
 export const useQueryBuilderStore = () => useStore<QueryBuilderStoreState>();
+/**
+ * Gets the Redux `dispatch` function for the RQB store.
+ */
 export const useQueryBuilderDispatch = () => useDispatch<QueryBuilderDispatch>();
+/**
+ * Gets the Redux `useSelector` hook for the RQB store.
+ */
 export const useQueryBuilderSelector: TypedUseSelectorHook<QueryBuilderStoreState> = useSelector;
 
 // Selectors

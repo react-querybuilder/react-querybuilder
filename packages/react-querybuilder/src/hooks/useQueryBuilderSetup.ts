@@ -21,6 +21,10 @@ import {
   uniqOptGroups,
 } from '../utils';
 
+/**
+ * Massages the props as necessary and prepares the basic update/generate methods
+ * for use by the {@link QueryBuilder} component.
+ */
 export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>
 ) => {

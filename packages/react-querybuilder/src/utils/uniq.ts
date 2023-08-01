@@ -1,5 +1,9 @@
 import type { Option, OptionGroup } from '../types/index.noReact';
 
+/**
+ * Generates a new array of objects with duplicates removed
+ * based on the `name` property.
+ */
 export const uniqByName = <T extends { name: string }>(originalArray: T[]): T[] => {
   const names = new Set<string>();
   const newArray: any[] = [];
@@ -12,6 +16,10 @@ export const uniqByName = <T extends { name: string }>(originalArray: T[]): T[] 
   return newArray;
 };
 
+/**
+ * Generates a new {@link OptionGroup} array with duplicates removed
+ * based on the `name` property.
+ */
 export const uniqOptGroups = <T extends Option>(originalArray: OptionGroup<T>[]) => {
   const labels = new Set<string>();
   const names = new Set<string>();

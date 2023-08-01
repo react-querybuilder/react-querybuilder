@@ -38,6 +38,10 @@ const defaultOnLog = (...params: any[]) => {
   console.log(...params);
 };
 
+/**
+ * For given {@link QueryBuilderProps} and setup values from {@link useQueryBuilderSetup},
+ * prepares and returns all values required to render a query builder.
+ */
 export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG>>
