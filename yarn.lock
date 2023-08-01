@@ -24584,16 +24584,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.0.0":
-  version: 3.0.0
-  resolution: "prettier@npm:3.0.0"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: 6a832876a1552dc58330d2467874e5a0b46b9ccbfc5d3531eb69d15684743e7f83dc9fbd202db6270446deba9c82b79d24383d09924c462b457136a759425e33
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^2":
+"prettier@npm:^2, prettier@npm:^2.8.8":
   version: 2.8.8
   resolution: "prettier@npm:2.8.8"
   bin:
@@ -26186,7 +26177,7 @@ __metadata:
     jest-watch-typeahead: ^2.2.2
     lerna: ^7.1.4
     native-base: ^3.4.28
-    prettier: 3.0.0
+    prettier: ^2.8.8
     prettier-plugin-organize-imports: ^3.2.3
     react: ^18.2.0
     react-dnd: ^16.0.1
@@ -27475,7 +27466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.64.2":
+"sass@npm:1.64.2":
   version: 1.64.2
   resolution: "sass@npm:1.64.2"
   dependencies:
@@ -27485,6 +27476,19 @@ __metadata:
   bin:
     sass: sass.js
   checksum: 43a5c9b9b3b6ba27feb5c45eba90edc437b15a30fd443f5d2623bbd59fe4a922f2a6a9990296c6a6c2b5bce7f401922c5049357415f50b745952c2d478bc5526
+  languageName: node
+  linkType: hard
+
+"sass@patch:sass@npm%3A1.64.2#./.yarn/patches/sass-npm-1.64.2-0ae93546db.patch::locator=react-querybuilder-monorepo%40workspace%3A.":
+  version: 1.64.2
+  resolution: "sass@patch:sass@npm%3A1.64.2#./.yarn/patches/sass-npm-1.64.2-0ae93546db.patch::version=1.64.2&hash=df24f2&locator=react-querybuilder-monorepo%40workspace%3A."
+  dependencies:
+    chokidar: ">=3.0.0 <4.0.0"
+    immutable: ^4.0.0
+    source-map-js: ">=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 3580a4071b98430b26272390239d63ca2086f9dda111ada26fa7a02d0d90a650ef4b2cc515d680c238d73669200ea346bd95c6f3342e7e951349019cd60d3a48
   languageName: node
   linkType: hard
 

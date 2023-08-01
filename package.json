@@ -87,7 +87,7 @@
     "jest-watch-typeahead": "^2.2.2",
     "lerna": "^7.1.4",
     "native-base": "^3.4.28",
-    "prettier": "3.0.0",
+    "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.3",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
@@ -101,6 +101,6 @@
   },
   "packageManager": "yarn@3.5.0",
   "resolutions": {
-    "sass@^1.63.6": "patch:sass@npm%3A1.63.6#./.yarn/patches/sass-npm-1.63.6-f415fe5e15.patch"
+    "sass@^1.64.2": "patch:sass@npm%3A1.64.2#./.yarn/patches/sass-npm-1.64.2-0ae93546db.patch"
   }
 }
