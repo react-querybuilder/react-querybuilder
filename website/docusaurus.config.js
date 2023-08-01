@@ -242,8 +242,8 @@ const config = {
                 href: 'https://www.npmjs.com/package/react-querybuilder',
               },
               {
-                label: 'npm org',
-                href: 'https://www.npmjs.com/org/react-querybuilder',
+                label: 'Support ♥',
+                href: 'https://github.com/sponsors/jakeboone02',
               },
             ],
           },
