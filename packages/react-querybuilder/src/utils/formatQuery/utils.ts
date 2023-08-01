@@ -47,8 +47,8 @@ export const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
 };
 
 /**
- * Register these operators with jsonLogic before applying the
- * result of formatQuery(query, 'jsonlogic').
+ * Register these operators with `jsonLogic` before applying the result
+ * of `formatQuery(query, 'jsonlogic')`.
  *
  * @example
  * ```
