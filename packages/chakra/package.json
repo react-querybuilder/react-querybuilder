@@ -38,21 +38,21 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@chakra-ui/icons": "^2.0.19",
-    "@chakra-ui/react": "^2.7.1",
-    "@chakra-ui/system": "^2.5.8",
+    "@chakra-ui/icons": "^2.1.0",
+    "@chakra-ui/react": "^2.8.0",
+    "@chakra-ui/system": "^2.6.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.17",
+    "@types/react": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "framer-motion": "^10.12.17",
+    "framer-motion": "^10.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.5.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.6",
-    "vite": "^4.4.7"
+    "vite": "^4.4.8"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

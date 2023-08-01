@@ -38,16 +38,16 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.23.1",
+    "@fluentui/react-components": "^9.27.3",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.17",
+    "@types/react": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.5.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.6",
-    "vite": "^4.4.7"
+    "vite": "^4.4.8"
   },
   "peerDependencies": {
     "@fluentui/react-components": "^9",

@@ -40,16 +40,16 @@
   "devDependencies": {
     "@popperjs/core": "^2.11.8",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.17",
+    "@types/react": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "bootstrap": "^5.3.0",
+    "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.5.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.6",
-    "vite": "^4.4.7"
+    "vite": "^4.4.8"
   },
   "peerDependencies": {
     "bootstrap": ">=5",
