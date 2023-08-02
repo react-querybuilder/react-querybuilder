@@ -8,7 +8,7 @@ import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 import { toOptions } from './utils';
 
-type MaterialValueSelectorProps = VersatileSelectorProps &
+export type MaterialValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
     muiComponents?: RQBMaterialComponents;
   };

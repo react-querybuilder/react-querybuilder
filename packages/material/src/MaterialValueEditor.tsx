@@ -11,7 +11,7 @@ import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
-type MaterialValueEditorProps = ValueEditorProps & {
+export type MaterialValueEditorProps = ValueEditorProps & {
   muiComponents?: RQBMaterialComponents;
 };
 

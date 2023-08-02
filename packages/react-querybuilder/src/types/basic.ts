@@ -1,16 +1,13 @@
 import type { RuleValidator } from './validation';
 
 /**
- * The list of indexes of each `rules` array within a {@link RuleGroupArray}
- * or {@link RuleGroupICArray} needed to arrive at a particular rule or group.
- *
  * @see https://react-querybuilder.js.org/docs/tips/path
  */
 export type Path = number[];
 
 /**
  * String of classnames, array of classname strings, or object where the
- * keys are classnames and the truthiness of the values enables them.
+ * keys are classnames and those with truthy values will be included.
  * Suitable for passing to the `clsx` package.
  */
 export type Classname = string | string[] | Record<string, any>;

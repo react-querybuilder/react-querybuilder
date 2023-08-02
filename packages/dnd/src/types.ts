@@ -10,6 +10,9 @@ import type {
   RuleProps,
 } from 'react-querybuilder';
 
+/**
+ * {@link RuleGroupDnD} props.
+ */
 export interface RuleGroupDndProps {
   disabled: boolean;
   parentDisabled: boolean;
@@ -22,6 +25,9 @@ export interface RuleGroupDndProps {
   children: ReactElement<RuleGroupProps>;
 }
 
+/**
+ * {@link RuleDnD} props.
+ */
 export interface RuleDndProps {
   moveRule: QueryActions['moveRule'];
   disabled: boolean;
@@ -35,19 +41,31 @@ export interface RuleDndProps {
   children: ReactElement<RuleProps>;
 }
 
+/**
+ * {@link InlineCombinatorDnD} props.
+ */
 export interface InlineCombinatorDndProps extends InlineCombinatorProps {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop: typeof import('react-dnd')['useDrop'];
 }
 
+/**
+ * Combination of all exports from `react-dnd` and `react-dnd-html5-backend`.
+ */
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-html5-backend');
 
+/**
+ * Parameters passed to custom `canDrop` functions.
+ */
 export interface CustomCanDropParams {
   item: DraggedItem;
   path: Path;
 }
 
+/**
+ * {@link QueryBuilderDnD} props.
+ */
 export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   /**
    * Provide this prop if `enableDragAndDrop` is `true` for the child element and

@@ -3,7 +3,7 @@ import { Button } from '@fluentui/react-components';
 import * as React from 'react';
 import type { ActionProps } from 'react-querybuilder';
 
-type FluentActionProps = ActionProps & ButtonProps;
+export type FluentActionProps = ActionProps & ButtonProps;
 
 export const FluentActionElement = ({
   className,

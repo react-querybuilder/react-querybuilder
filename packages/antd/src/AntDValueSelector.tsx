@@ -5,7 +5,7 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 
-type AntDValueSelectorProps = VersatileSelectorProps &
+export type AntDValueSelectorProps = VersatileSelectorProps &
   Omit<ComponentPropsWithoutRef<typeof Select>, 'onChange' | 'defaultValue'>;
 
 export const AntDValueSelector = ({

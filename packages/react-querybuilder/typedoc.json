@@ -1,3 +1,6 @@
 {
-  "entryPoints": ["src/index.ts"]
+  "entryPoints": ["src/index.ts"],
+  "validation": {
+    "notExported": false
+  }
 }

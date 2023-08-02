@@ -4,7 +4,7 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-type AntDDragHandleProps = DragHandleProps & ComponentPropsWithRef<typeof HolderOutlined>;
+export type AntDDragHandleProps = DragHandleProps & ComponentPropsWithRef<typeof HolderOutlined>;
 
 export const AntDDragHandle = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
   (

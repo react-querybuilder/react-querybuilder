@@ -6,7 +6,7 @@ import type {
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { mapSQLOperator, quoteFieldNamesWithArray } from './utils';
 
-type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
+export type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
   valueProcessor?: ValueProcessorByRule;
   quoteFieldNamesWith?: string | [string, string];
 };

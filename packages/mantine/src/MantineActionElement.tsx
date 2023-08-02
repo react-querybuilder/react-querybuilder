@@ -3,7 +3,7 @@ import { Button } from '@mantine/core';
 import * as React from 'react';
 import type { ActionProps } from 'react-querybuilder';
 
-type MantineActionProps = ActionProps & Partial<ButtonProps>;
+export type MantineActionProps = ActionProps & Partial<ButtonProps>;
 
 export const MantineActionElement = ({
   className,

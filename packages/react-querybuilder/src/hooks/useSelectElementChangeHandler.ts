@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
 import { useMemo } from 'react';
 
-interface UseSelectElementChangeHandlerParams {
+export interface UseSelectElementChangeHandlerParams {
   onChange: (v: string | string[]) => void;
   multiple?: boolean;
 }

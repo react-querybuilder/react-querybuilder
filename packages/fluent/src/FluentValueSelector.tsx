@@ -5,7 +5,7 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toArray, toOptions, useValueSelector } from 'react-querybuilder';
 import { toDropdownOptions } from './utils';
 
-type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
+export type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
 
 export const FluentValueSelector = ({
   className,

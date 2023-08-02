@@ -5,13 +5,12 @@ import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';
 import { FluentValueEditor } from './FluentValueEditor';
 import { FluentValueSelector } from './FluentValueSelector';
-export {
-  FluentActionElement,
-  FluentDragHandle,
-  FluentNotToggle,
-  FluentValueEditor,
-  FluentValueSelector,
-};
+
+export * from './FluentActionElement';
+export * from './FluentDragHandle';
+export * from './FluentNotToggle';
+export * from './FluentValueEditor';
+export * from './FluentValueSelector';
 
 export const fluentControlElements: Partial<Controls> = {
   dragHandle: FluentDragHandle,

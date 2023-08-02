@@ -5,7 +5,7 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { optionListMapNameToValue } from './utils';
 
-type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
+export type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
 
 export const MantineValueSelector = ({
   className,

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in IDEs.
 - The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
   - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
   - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.

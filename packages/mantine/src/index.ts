@@ -4,7 +4,11 @@ import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
-export { MantineActionElement, MantineNotToggle, MantineValueEditor, MantineValueSelector };
+
+export * from './MantineActionElement';
+export * from './MantineNotToggle';
+export * from './MantineValueEditor';
+export * from './MantineValueSelector';
 
 export const mantineControlElements: Partial<Controls> = {
   notToggle: MantineNotToggle,

@@ -3,7 +3,10 @@ import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
-export { BootstrapDragHandle, BootstrapNotToggle, BootstrapValueEditor };
+
+export * from './BootstrapDragHandle';
+export * from './BootstrapNotToggle';
+export * from './BootstrapValueEditor';
 
 export const bootstrapControlElements: Partial<Controls> = {
   dragHandle: BootstrapDragHandle,

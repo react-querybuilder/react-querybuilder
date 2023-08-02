@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 
-type ChakraActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;
+export type ChakraActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;
 
 export const ChakraActionElement = ({
   className,

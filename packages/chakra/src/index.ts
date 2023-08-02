@@ -5,13 +5,12 @@ import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
-export {
-  ChakraActionElement,
-  ChakraDragHandle,
-  ChakraNotToggle,
-  ChakraValueEditor,
-  ChakraValueSelector,
-};
+
+export * from './ChakraActionElement';
+export * from './ChakraDragHandle';
+export * from './ChakraNotToggle';
+export * from './ChakraValueEditor';
+export * from './ChakraValueSelector';
 
 export const chakraControlElements: Partial<Controls> = {
   addGroupAction: ChakraActionElement,
