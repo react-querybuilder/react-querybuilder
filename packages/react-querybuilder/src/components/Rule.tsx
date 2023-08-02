@@ -3,6 +3,10 @@ import { TestID } from '../defaults';
 import { useRule, useStopEventPropagation } from '../hooks';
 import type { RuleProps } from '../types';
 
+/**
+ * Default component to display {@link RuleType} objects. This is
+ * actually a small wrapper around {@link RuleComponents}.
+ */
 export const Rule = React.memo((props: RuleProps) => {
   const r = { ...props, ...useRule(props) };
 
@@ -27,6 +31,10 @@ export const Rule = React.memo((props: RuleProps) => {
 
 Rule.displayName = 'Rule';
 
+/**
+ * Renders a `React.Fragment` containing an array of form controls for managing
+ * a {@link RuleType}.
+ */
 export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRule>) => {
   const {
     schema: {

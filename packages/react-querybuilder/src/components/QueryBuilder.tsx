@@ -13,6 +13,11 @@ import { QueryBuilderContext } from './QueryBuilderContext';
 
 const rootPath = [] satisfies Path;
 
+/**
+ * The query builder component for React.
+ *
+ * See https://react-querybuilder.js.org/ for demos and documentation.
+ */
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>
 ) => {

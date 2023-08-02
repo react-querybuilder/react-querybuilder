@@ -3,6 +3,9 @@ import { useSelectElementChangeHandler, useValueSelector } from '../hooks';
 import type { ValueSelectorProps } from '../types';
 import { toOptions } from '../utils';
 
+/**
+ * Default `<select>` component used by {@link QueryBuilder}.
+ */
 export const ValueSelector = ({
   className,
   handleOnChange,

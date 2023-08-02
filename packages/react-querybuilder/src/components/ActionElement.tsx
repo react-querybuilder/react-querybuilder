@@ -1,6 +1,9 @@
 import * as React from 'react';
 import type { ActionProps } from '../types';
 
+/**
+ * Default `<button>` component used by {@link QueryBuilder}.
+ */
 export const ActionElement = ({
   className,
   handleOnClick,

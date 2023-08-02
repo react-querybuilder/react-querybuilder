@@ -5,6 +5,9 @@ import type { ValueEditorProps } from '../types';
 import { getFirstOption, parseNumber } from '../utils';
 import { ValueSelector } from './ValueSelector';
 
+/**
+ * Default `valueEditor` component used by {@link QueryBuilder}.
+ */
 export const ValueEditor = ({
   operator,
   value,

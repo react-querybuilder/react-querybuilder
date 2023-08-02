@@ -4,6 +4,11 @@ import { TestID } from '../defaults';
 import { useRuleGroup, useStopEventPropagation } from '../hooks';
 import type { RuleGroupProps } from '../types';
 
+/**
+ * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
+ * objects. This is actually a small wrapper around {@link RuleGroupHeaderComponents}
+ * and {@link RuleGroupBodyComponents}.
+ */
 export const RuleGroup = React.memo((props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
 
@@ -35,6 +40,10 @@ export const RuleGroup = React.memo((props: RuleGroupProps) => {
 
 RuleGroup.displayName = 'RuleGroup';
 
+/**
+ * Renders a `React.Fragment` containing an array of form controls for managing
+ * a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
+ */
 export const RuleGroupHeaderComponents = React.memo(
   (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => {
     const {
@@ -191,6 +200,10 @@ export const RuleGroupHeaderComponents = React.memo(
   }
 );
 
+/**
+ * Renders a `React.Fragment` containing an array of either (1) {@link Rule} and
+ * {@link RuleGroup}, or (2) {@link Rule}, {@link RuleGroup}, and {@link InlineCombinator}.
+ */
 export const RuleGroupBodyComponents = React.memo(
   (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => {
     const {
