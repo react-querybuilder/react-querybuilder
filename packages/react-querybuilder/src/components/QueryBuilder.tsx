@@ -2,10 +2,16 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
 import { queryBuilderStore } from '../redux';
-import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from '../types';
+import type {
+  Path,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+} from '../types';
 import { QueryBuilderContext } from './QueryBuilderContext';
 
-const rootPath: number[] = [];
+const rootPath = [] satisfies Path;
 
 export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderProps<RG>

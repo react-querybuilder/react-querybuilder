@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from 'react-querybuilder';
+import type { Path, RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from 'react-querybuilder';
 import {
   QueryBuilderContext,
   queryBuilderStore,
@@ -12,7 +12,7 @@ import { Provider } from 'react-redux';
 import type { QueryBuilderNativeProps, WithSchemaNative } from '../types';
 import { defaultNativeControlElements } from './defaults';
 
-const rootPath: number[] = [];
+const rootPath = [] satisfies Path;
 
 export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC>(
   props: QueryBuilderNativeProps<RG>

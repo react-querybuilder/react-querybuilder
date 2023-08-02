@@ -6,11 +6,12 @@ import type {
   DropCollection,
   DropEffect,
   DropResult,
+  Path,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 
 interface UseInlineCombinatorDndParams {
-  path: number[];
+  path: Path;
   independentCombinators?: boolean;
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop: typeof import('react-dnd')['useDrop'];

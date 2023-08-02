@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 import type {
+  Path,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
@@ -144,7 +145,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
     deleteRemappedProperties = true,
   } = options;
 
-  const processGroup = (rg: RuleGroupTypeAny & { path: number[] }): any => ({
+  const processGroup = (rg: RuleGroupTypeAny & { path: Path }): any => ({
     ...ruleGroupProcessor(
       remapProperties(
         {

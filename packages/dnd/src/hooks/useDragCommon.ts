@@ -3,12 +3,13 @@ import type {
   DragCollection,
   DraggedItem,
   DropResult,
+  Path,
   QueryActions,
 } from 'react-querybuilder';
 import { getParentPath } from 'react-querybuilder';
 
 type UseDragCommonProps = {
-  path: number[];
+  path: Path;
   type: DndDropTargetType;
   disabled?: boolean;
   independentCombinators?: boolean;

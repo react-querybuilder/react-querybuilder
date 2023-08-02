@@ -2,6 +2,7 @@ import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
   OptionList,
+  Path,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
@@ -19,13 +20,13 @@ import { regenerateID, regenerateIDs } from './regenerateIDs';
 export function add<RG extends RuleGroupType>(
   query: RG,
   ruleOrGroup: RG | RuleType,
-  parentPath: number[],
+  parentPath: Path,
   options?: Omit<AddOptions, 'combinatorPreceding'>
 ): RG;
 export function add<RGIC extends RuleGroupTypeIC>(
   query: RGIC,
   ruleOrGroup: RGIC | RuleType,
-  parentPath: number[],
+  parentPath: Path,
   options?: AddOptions
 ): RGIC;
 */
@@ -63,7 +64,7 @@ export const add = <RG extends RuleGroupTypeAny>(
   /** The rule or group to add. */
   ruleOrGroup: RG | RuleType,
   /** Path of the group to add to. */
-  parentPath: number[],
+  parentPath: Path,
   /** Options object. */
   {
     combinators = defaultCombinators,
@@ -129,7 +130,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   /** The new value of the property. */
   value: any,
   /** The path of the rule or group to update. */
-  path: number[],
+  path: Path,
   /** Options object. */
   {
     resetOnFieldChange = true,
@@ -215,7 +216,7 @@ export const remove = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
   query: RG,
   /** Path of the rule or group to remove. */
-  path: number[]
+  path: Path
 ) => {
   if (
     // Can't remove the root group
@@ -268,9 +269,9 @@ export const move = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
   query: RG,
   /** Original path of the rule or group to move. */
-  oldPath: number[],
+  oldPath: Path,
   /** Path to move the rule or group to. */
-  newPath: number[],
+  newPath: Path,
   /** Options object. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {

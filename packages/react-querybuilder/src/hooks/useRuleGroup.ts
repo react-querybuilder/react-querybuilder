@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
-import type { RuleGroupProps, RuleGroupTypeAny } from '../types';
+import type { Path, RuleGroupProps, RuleGroupTypeAny } from '../types';
 import {
   getFirstOption,
   getOption,
@@ -220,7 +220,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
 
   // Memoize the path info so every render doesn't generate a new array
   const pathsMemo = useMemo(() => {
-    const paths: { path: number[]; disabled: boolean }[] = [];
+    const paths: { path: Path; disabled: boolean }[] = [];
     for (let i = 0; i < ruleGroup.rules.length; i++) {
       const thisPath = [...path, i];
       paths[i] = {

@@ -3,6 +3,7 @@ import type {
   Controls,
   DraggedItem,
   InlineCombinatorProps,
+  Path,
   QueryActions,
   QueryBuilderContextProviderProps,
   RuleGroupProps,
@@ -12,7 +13,7 @@ import type {
 export interface RuleGroupDndProps {
   disabled: boolean;
   parentDisabled: boolean;
-  path: number[];
+  path: Path;
   moveRule: QueryActions['moveRule'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrag: typeof import('react-dnd')['useDrag'];
@@ -25,7 +26,7 @@ export interface RuleDndProps {
   moveRule: QueryActions['moveRule'];
   disabled: boolean;
   parentDisabled: boolean;
-  path: number[];
+  path: Path;
   independentCombinators: boolean;
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrag: typeof import('react-dnd')['useDrag'];
@@ -44,7 +45,7 @@ export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-
 
 export interface CustomCanDropParams {
   item: DraggedItem;
-  path: number[];
+  path: Path;
 }
 
 export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {

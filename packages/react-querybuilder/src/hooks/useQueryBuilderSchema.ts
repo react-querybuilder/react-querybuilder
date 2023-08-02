@@ -11,6 +11,7 @@ import {
   useQueryBuilderStore,
 } from '../redux';
 import type {
+  Path,
   QueryActions,
   QueryBuilderProps,
   QueryValidator,
@@ -183,7 +184,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
   const onRuleAdd = useCallback(
-    (rule: RuleType, parentPath: number[], context?: any) => {
+    (rule: RuleType, parentPath: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
@@ -222,7 +223,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   );
 
   const onGroupAdd = useCallback(
-    (ruleGroup: RG, parentPath: number[], context?: any) => {
+    (ruleGroup: RG, parentPath: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
@@ -266,7 +267,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   );
 
   const onPropChange = useCallback(
-    (prop: UpdateableProperties, value: any, path: number[]) => {
+    (prop: UpdateableProperties, value: any, path: Path) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         if (debugMode) {
@@ -302,7 +303,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   );
 
   const onRuleOrGroupRemove = useCallback(
-    (path: number[], context?: any) => {
+    (path: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         // istanbul ignore else
@@ -331,7 +332,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   );
 
   const moveRule = useCallback(
-    (oldPath: number[], newPath: number[], clone?: boolean) => {
+    (oldPath: Path, newPath: Path, clone?: boolean) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         // istanbul ignore else

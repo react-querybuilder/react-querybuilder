@@ -1,10 +1,10 @@
-import type { Combinator, Operator, ValueSource } from './basic';
+import type { Combinator, Operator, Path, ValueSource } from './basic';
 
 /**
  * Properties common to both rules and groups.
  */
 export interface CommonRuleAndGroupProperties {
-  path?: number[];
+  path?: Path;
   id?: string;
   disabled?: boolean;
 }

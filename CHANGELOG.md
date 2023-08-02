@@ -9,18 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`.
+- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. The latter accepts the return value of the former as its second parameter.
+- Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 
 ### Added
 
 - The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
   - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
   - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.
-- `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: number[] }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
+- `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
 
 ### Fixed
 
-- Performance is improved via `React.memo`, as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that is probably the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
+- Performance is improved, especially for larger queries, via `React.memo`, as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
 
 ## [v6.5.1] - 2023-06-26
 

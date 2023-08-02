@@ -1,6 +1,6 @@
-// This file is adapted from the `json-logic-js` type definitions in the DefinitelyTyped
-// repository. Function declarations and declaration-specific lines have been removed.
-// See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/f8e745a63ae4890edbc871f2adf8c292f313c7cf/types/json-logic-js/index.d.ts.
+// This file is adapted from `@types/json-logic-js`. Function declarations
+// and declaration-specific lines have been removed. Original:
+// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/f8e745a63ae4890edbc871f2adf8c292f313c7cf/types/json-logic-js/index.d.ts
 
 type RenameToIn<T> = {
   [K in keyof T as K extends `in${Uppercase<string>}${Lowercase<string>}` ? `in` : K]: T[K];

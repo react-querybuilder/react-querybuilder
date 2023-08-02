@@ -4,6 +4,7 @@ import type {
   DraggedItem,
   DropCollection,
   DropResult,
+  Path,
   QueryActions,
   UseRuleGroupDnD,
 } from 'react-querybuilder';
@@ -12,7 +13,7 @@ import type { QueryBuilderDndContextProps } from '../types';
 import { useDragCommon } from './useDragCommon';
 
 type UseRuleGroupDndParams = {
-  path: number[];
+  path: Path;
   disabled?: boolean;
   independentCombinators?: boolean;
 } & Pick<QueryActions, 'moveRule'> &
