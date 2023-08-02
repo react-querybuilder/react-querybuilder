@@ -38,6 +38,9 @@ import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
 import type { QueryValidator, ValidationMap } from './validation';
 
+/**
+ * Props passed to every action component (rendered as `<button>` by default).
+ */
 export interface ActionProps extends CommonSubComponentProps {
   label?: string;
   handleOnClick(e: ReactMouseEvent): void;
@@ -45,6 +48,9 @@ export interface ActionProps extends CommonSubComponentProps {
   ruleOrGroup: RuleGroupTypeAny | RuleType;
 }
 
+/**
+ * Props passed to every group action component.
+ */
 export interface ActionWithRulesProps extends ActionProps {
   /**
    * Rules already present for this group
@@ -52,6 +58,9 @@ export interface ActionWithRulesProps extends ActionProps {
   rules?: RuleOrGroupArray;
 }
 
+/**
+ * Props passed to every action component that adds a rule or group.
+ */
 export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
   /**
    * Triggers the addition of a new rule or group. The second parameter will
@@ -60,11 +69,17 @@ export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
   handleOnClick(e: ReactMouseEvent, context?: any): void;
 }
 
+/**
+ * Props passed to `inlineCombinator` components.
+ */
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: Schema['controls']['combinatorSelector'];
   independentCombinators?: boolean;
 }
 
+/**
+ * Props passed to `valueEditor` components.
+ */
 export interface ValueEditorProps<F extends Field = Field, O extends string = string>
   extends SelectorOrEditorProps,
     CommonRuleSubComponentProps {
@@ -87,6 +102,9 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
   skipHook?: boolean;
 }
 
+/**
+ * All subcomponent types.
+ */
 export interface Controls {
   addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
   addRuleAction: ComponentType<ActionWithRulesAndAddersProps>;
@@ -108,6 +126,10 @@ export interface Controls {
   valueSourceSelector: ComponentType<ValueSourceSelectorProps>;
 }
 
+/**
+ * Configuration options included in the `schema` prop passed to
+ * each subcomponent.
+ */
 export interface Schema {
   qbId: string;
   fields: OptionList<Field>;
@@ -142,6 +164,9 @@ export interface Schema {
   disabledPaths: number[][];
 }
 
+/**
+ * Common props between {@link Rule} and {@link RuleGroup}.
+ */
 interface CommonRuleAndGroupProps {
   id?: string;
   path: number[];
@@ -153,6 +178,9 @@ interface CommonRuleAndGroupProps {
   context?: any;
 }
 
+/**
+ * Return type of {@link useRuleGroupDnD} hook.
+ */
 export interface UseRuleGroupDnD {
   isDragging: boolean;
   dragMonitorId: string | symbol;
@@ -164,6 +192,9 @@ export interface UseRuleGroupDnD {
   dropEffect?: DropEffect;
 }
 
+/**
+ * {@link RuleGroup} props.
+ */
 export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRuleGroupDnD> {
   ruleGroup: RuleGroupTypeAny;
   /**
@@ -180,6 +211,9 @@ export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRule
   not?: boolean;
 }
 
+/**
+ * Return type of {@link useRuleDnD} hook.
+ */
 export interface UseRuleDnD {
   isDragging: boolean;
   dragMonitorId: string | symbol;
@@ -190,6 +224,9 @@ export interface UseRuleDnD {
   dropEffect?: DropEffect;
 }
 
+/**
+ * {@link Rule} props.
+ */
 export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> {
   rule: RuleType;
   /**
@@ -210,6 +247,9 @@ export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> 
   valueSource?: ValueSource;
 }
 
+/**
+ * Props passed down through context from a {@link QueryBuilderContextProvider}.
+ */
 export interface QueryBuilderContextProps {
   /**
    * Define replacement components.

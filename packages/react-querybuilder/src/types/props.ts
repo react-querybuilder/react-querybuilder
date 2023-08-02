@@ -12,6 +12,9 @@ import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
 
+/**
+ * Base interface for all subcomponents.
+ */
 export interface CommonSubComponentProps {
   /**
    * CSS classNames to be applied
@@ -55,25 +58,40 @@ export interface CommonSubComponentProps {
   schema: Schema;
 }
 
+/**
+ * Base interface for selectors and editors.
+ */
 export interface SelectorOrEditorProps extends CommonSubComponentProps {
   value?: string;
   handleOnChange(value: any): void;
 }
 
+/**
+ * Base interface for all rule subcomponents.
+ */
 export interface CommonRuleSubComponentProps {
   rule: RuleType;
 }
 
+/**
+ * Base interface for selector components.
+ */
 export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
   options: OptionList<OptType>;
 }
 
+/**
+ * Props for all value selector components.
+ */
 export interface ValueSelectorProps<OptType extends Option = Option>
   extends BaseSelectorProps<OptType> {
   multiple?: boolean;
   listsAsArrays?: boolean;
 }
 
+/**
+ * Props for `notToggle` components.
+ */
 export interface NotToggleProps extends CommonSubComponentProps {
   checked?: boolean;
   handleOnChange(checked: boolean): void;
@@ -81,14 +99,23 @@ export interface NotToggleProps extends CommonSubComponentProps {
   ruleGroup: RuleGroupTypeAny;
 }
 
+/**
+ * Props for `combinatorSelector` components.
+ */
 export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
   rules?: RuleOrGroupArray;
 }
 
+/**
+ * Props for `fieldSelector` components.
+ */
 export interface FieldSelectorProps extends BaseSelectorProps<Field>, CommonRuleSubComponentProps {
   operator?: string;
 }
 
+/**
+ * Props for `operatorSelector` components.
+ */
 export interface OperatorSelectorProps
   extends BaseSelectorProps<Operator>,
     CommonRuleSubComponentProps {
@@ -96,25 +123,36 @@ export interface OperatorSelectorProps
   fieldData: Field;
 }
 
-type ValueSourceOption = Option<ValueSource>;
-
+/**
+ * Props for `valueSourceSelector` components.
+ */
 export interface ValueSourceSelectorProps
-  extends BaseSelectorProps<ValueSourceOption>,
+  extends BaseSelectorProps<Option<ValueSource>>,
     CommonRuleSubComponentProps {
   field: string;
   fieldData: Field;
 }
 
+/**
+ * Utility type representing value selector props for components
+ * that could potentially be any of the standard selector types.
+ */
 export type VersatileSelectorProps = ValueSelectorProps &
   Partial<FieldSelectorProps> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 
+/**
+ * Props for `dragHandle` components.
+ */
 export interface DragHandleProps extends CommonSubComponentProps {
   label?: string;
   ruleOrGroup: RuleGroupTypeAny | RuleType;
 }
 
+/**
+ * Classnames applied to each component.
+ */
 export interface Classnames {
   /**
    * Root `<div>` element
@@ -198,6 +236,9 @@ export interface Classnames {
   valueSource: Classname;
 }
 
+/**
+ * Functions included in the `actions` prop passed to every subcomponent.
+ */
 export interface QueryActions {
   onGroupAdd(group: RuleGroupTypeAny, parentPath: number[], context?: any): void;
   onGroupRemove(path: number[]): void;
@@ -211,12 +252,21 @@ export interface QueryActions {
   moveRule(oldPath: number[], newPath: number[], clone?: boolean): void;
 }
 
+/**
+ * A translation for a component with `title` only.
+ */
 export interface Translation {
   title?: string;
 }
+/**
+ * A translation for a component with `title` and `label`.
+ */
 export interface TranslationWithLabel extends Translation {
   label?: string;
 }
+/**
+ * A translation for a component with `title` and a placeholder.
+ */
 export interface TranslationWithPlaceholders extends Translation {
   /**
    * Value for the placeholder field option if autoSelectField is false,
@@ -234,6 +284,9 @@ export interface TranslationWithPlaceholders extends Translation {
    */
   placeholderGroupLabel?: string;
 }
+/**
+ * The shape of the `translations` prop.
+ */
 export interface Translations {
   fields: TranslationWithPlaceholders;
   operators: TranslationWithPlaceholders;
@@ -253,6 +306,9 @@ export interface Translations {
   lockGroupDisabled: TranslationWithLabel;
   valueSourceSelector: Translation;
 }
+/**
+ * The full `translations` interface with all properties required.
+ */
 export type TranslationsFull = {
   [K in keyof Translations]: { [T in keyof Translations[K]]-?: string };
 };
