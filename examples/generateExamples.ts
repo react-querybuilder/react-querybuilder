@@ -106,6 +106,10 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   // #region Straight copies
   toWrite.push(
     Bun.write(
+      pathJoin(exampleDotCS, 'tasks.json'),
+      Bun.file(pathJoin(templateDotCS, 'tasks.json'))
+    ),
+    Bun.write(
       pathJoin(exampleDotCS, 'workspace.json'),
       Bun.file(pathJoin(templateDotCS, 'workspace.json'))
     ),
