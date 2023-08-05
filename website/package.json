@@ -14,7 +14,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.2",
+    "@ant-design/icons": "^5.2.4",
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/react": "^2.8.0",
     "@chakra-ui/system": "^2.6.0",
@@ -25,7 +25,7 @@
     "@docusaurus/theme-search-algolia": "^2.4.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@fluentui/react-components": "^9.27.3",
+    "@fluentui/react-components": "^9.27.4",
     "@mantine/core": "^6.0.17",
     "@mantine/dates": "^6.0.17",
     "@mantine/hooks": "^6.0.17",
@@ -39,7 +39,7 @@
     "@react-querybuilder/fluent": "link:../packages/fluent",
     "@react-querybuilder/mantine": "link:../packages/mantine",
     "@react-querybuilder/material": "link:../packages/material",
-    "antd": "^5.8.0",
+    "antd": "^5.8.2",
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "buffer": "^6.0.3",
