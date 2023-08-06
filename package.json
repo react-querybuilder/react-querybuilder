@@ -30,7 +30,7 @@
     "build:rqb": "cd packages/react-querybuilder && bun run build",
     "codesandbox-ci": "bash .codesandbox/ci.sh",
     "lint": "eslint 'packages/*/src/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
-    "test": "jest",
+    "test": "bun test sqlite && jest",
     "test:watch": "jest --watch",
     "typecheck": "concurrently --timings --max-processes 14 --names antd,bootstrap,bulma,chakra,dnd,fluent,mantine,material,native,rqb,examples bun:typecheck:antd bun:typecheck:bootstrap bun:typecheck:bulma bun:typecheck:chakra bun:typecheck:dnd bun:typecheck:fluent bun:typecheck:mantine bun:typecheck:material bun:typecheck:native bun:typecheck:rqb bun:typecheck:examples",
     "typecheck:antd": "tsc -p packages/antd --noEmit",
