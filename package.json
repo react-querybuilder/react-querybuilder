@@ -102,6 +102,6 @@
   "packageManager": "yarn@3.5.0",
   "resolutions": {
     "sass@^1.64.2": "patch:sass@npm%3A1.64.2#./.yarn/patches/sass-npm-1.64.2-0ae93546db.patch",
-    "nx": "npm:nx@15.5.3"
+    "nx": "npm:nx@16.5.3"
   }
 }
