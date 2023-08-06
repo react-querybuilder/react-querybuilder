@@ -68,6 +68,23 @@ export interface FormatQueryOptions {
    */
   paramPrefix?: string;
   /**
+   * Maintains the parameter prefix in the `params` object keys when using the
+   * "parameterized_named" export format. Recommended when using SQLite.
+   *
+   * @default false
+   *
+   * @example
+   * console.log(formatQuery(query, {
+   *   format: "parameterized_named",
+   *   paramPrefix: "$",
+   *   paramsKeepPrefix: true
+   * }).params)
+   * // { $firstName: "Stev" }
+   * // Default (`paramsKeepPrefix` is `false`):
+   * // { firstName: "Stev" }
+   */
+  paramsKeepPrefix?: boolean;
+  /**
    * Renders values as either `number`-types or unquoted strings, as
    * appropriate and when possible. Each `string`-type value is passed
    * to `parseFloat` to determine if it can be represented as a plain

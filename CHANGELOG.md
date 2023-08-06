@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- New `paramsKeepPrefix` option for `formatQuery`. When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
+
 ### Fixed
 
 - [#523] `parseMongoDB` now properly handles objects in the form of `{ fieldName: { $not: { /* ...rule */ } } }`. This problem was particularly evident for `$regex` operators that should have generated rules with `"doesNot[Contain/BeginWith/EndWith]"` operators, since `formatQuery(query, 'mongodb')` produces this structure and `parseMongoDB` was not handling the inverse operation.
