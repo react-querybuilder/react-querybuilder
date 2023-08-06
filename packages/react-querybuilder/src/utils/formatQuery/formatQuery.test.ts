@@ -1071,6 +1071,16 @@ it('uses paramPrefix correctly', () => {
     sql: '(firstName = $firstName_1)',
     params: { firstName_1: 'Test' },
   });
+  expect(
+    formatQuery(queryToTest, {
+      format: 'parameterized_named',
+      paramPrefix: '$',
+      paramsKeepPrefix: true,
+    })
+  ).toEqual({
+    sql: '(firstName = $firstName_1)',
+    params: { $firstName_1: 'Test' },
+  });
 });
 
 describe('escapes quotes when appropriate', () => {

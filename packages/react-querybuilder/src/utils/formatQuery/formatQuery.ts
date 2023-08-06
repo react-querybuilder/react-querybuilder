@@ -95,6 +95,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
   let paramPrefix = ':';
+  let paramsKeepPrefix = false;
   let parseNumbers = false;
   let placeholderFieldName = defaultPlaceholderFieldName;
   let placeholderOperatorName = defaultPlaceholderOperatorName;
@@ -136,6 +137,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     fields = options.fields ?? [];
     fallbackExpression = options.fallbackExpression ?? '';
     paramPrefix = options.paramPrefix ?? ':';
+    paramsKeepPrefix = !!options.paramsKeepPrefix;
     parseNumbers = !!options.parseNumbers;
     placeholderFieldName = options.placeholderFieldName ?? defaultPlaceholderFieldName;
     placeholderOperatorName = options.placeholderOperatorName ?? defaultPlaceholderOperatorName;
@@ -369,7 +371,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           params.push(paramValue);
         } else {
           paramName = getNextNamedParam(rule.field);
-          params_named[paramName] = paramValue;
+          params_named[`${paramsKeepPrefix ? paramPrefix : ''}${paramName}`] = paramValue;
         }
         return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${
           parameterized ? '?' : `${paramPrefix}${paramName}`
