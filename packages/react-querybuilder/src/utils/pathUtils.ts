@@ -1,4 +1,5 @@
 import type { Path, RuleGroupTypeAny, RuleType } from '../types/index.noReact';
+import { isRuleGroup } from './isRuleGroup';
 import { isPojo } from './misc';
 
 /**
@@ -13,7 +14,7 @@ export type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
 export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnType => {
   let target: FindPathReturnType = query;
   let level = 0;
-  while (level < path.length && target && 'rules' in target) {
+  while (level < path.length && target && isRuleGroup(target)) {
     const t: RuleGroupTypeAny | RuleType | string = target.rules[path[level]];
     if (typeof t !== 'string') {
       target = t;
@@ -69,9 +70,9 @@ export const pathIsDisabled = (path: Path, query: RuleGroupTypeAny) => {
   let disabled = !!query.disabled;
   let target: RuleType | RuleGroupTypeAny = query;
   let level = 0;
-  while (level < path.length && !disabled && 'rules' in target) {
+  while (level < path.length && !disabled && isRuleGroup(target)) {
     const t: RuleGroupTypeAny | RuleType | string = target.rules[path[level]];
-    if (isPojo(t) && ('rules' in t || 'field' in t)) {
+    if (isPojo(t) && (isRuleGroup(t) || ('field' in t && !!t.field))) {
       disabled = !!t.disabled;
       target = t;
     }

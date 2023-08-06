@@ -9,6 +9,7 @@ import type {
   ValueSources,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
+import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -75,9 +76,9 @@ export const add = <RG extends RuleGroupTypeAny>(
   produce(query, draft => {
     const parent = findPath(parentPath, draft);
 
-    if (!parent || !('rules' in parent)) return;
+    if (!parent || !isRuleGroup(parent)) return;
 
-    if (!('combinator' in parent) && parent.rules.length > 0) {
+    if (!isRuleGroupType(parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
         // @ts-expect-error This is technically a type violation until the next push
@@ -141,7 +142,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   }: UpdateOptions = {}
 ) =>
   produce(query, draft => {
-    if (prop === 'combinator' && !('combinator' in draft)) {
+    if (prop === 'combinator' && !isRuleGroupType(draft)) {
       // Independent combinators
       const parentRules = (findPath(getParentPath(path), draft) as RG).rules;
       // Only update an independent combinator if it occupies an odd index
@@ -156,7 +157,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     // Ignore invalid paths
     if (!ruleOrGroup) return;
 
-    const isGroup = 'rules' in ruleOrGroup;
+    const isGroup = isRuleGroup(ruleOrGroup);
 
     // Only update if there is actually a change
     // @ts-expect-error prop can refer to rule or group properties
@@ -222,7 +223,7 @@ export const remove = <RG extends RuleGroupTypeAny>(
     // Can't remove the root group
     path.length === 0 ||
     // Can't independently remove independent combinators
-    (!('combinator' in query) && !findPath(path, query))
+    (!isRuleGroupType(query) && !findPath(path, query))
   ) {
     return query;
   }
@@ -230,8 +231,8 @@ export const remove = <RG extends RuleGroupTypeAny>(
   return produce(query, draft => {
     const index = path[path.length - 1];
     const parent = findPath(getParentPath(path), draft);
-    if (parent && 'rules' in parent) {
-      if (!('combinator' in parent) && parent.rules.length > 1) {
+    if (parent && isRuleGroup(parent)) {
+      if (!isRuleGroupType(parent) && parent.rules.length > 1) {
         const idxStartDelete = index === 0 ? 0 : index - 1;
         parent.rules.splice(idxStartDelete, 2);
       } else {
@@ -285,13 +286,13 @@ export const move = <RG extends RuleGroupTypeAny>(
     return query;
   }
   const ruleOrGroup = clone
-    ? 'rules' in ruleOrGroupOriginal
+    ? isRuleGroup(ruleOrGroupOriginal)
       ? regenerateIDs(ruleOrGroupOriginal, { idGenerator })
       : regenerateID(ruleOrGroupOriginal, { idGenerator })
     : ruleOrGroupOriginal;
 
   return produce(query, draft => {
-    const independentCombinators = !('combinator' in draft);
+    const independentCombinators = !isRuleGroupType(draft);
     const parentOfRuleToRemove = findPath(getParentPath(oldPath), draft) as RG;
     const ruleToRemoveIndex = oldPath[oldPath.length - 1];
     const oldPrevCombinator =

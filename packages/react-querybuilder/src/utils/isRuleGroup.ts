@@ -1,27 +1,18 @@
-import type {
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-  RuleType,
-} from '../types/index.noReact';
+import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from '../types/index.noReact';
 
 /**
- * Determines if an object is either a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
- * `'rules' in rg` can be used as an alternative.
+ * Determines if an object is a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
  */
-export const isRuleGroup = (rg: RuleType | RuleGroupTypeAny): rg is RuleGroupTypeAny =>
+export const isRuleGroup = (rg: any): rg is RuleGroupTypeAny =>
   typeof rg === 'object' && 'rules' in rg && Array.isArray(rg.rules);
 
 /**
- * Determines if an object is a {@link RuleGroupType}. `'rules' in rg && 'combinator' in rg`
- * can be used as an alternative.
+ * Determines if an object is a {@link RuleGroupType}.
  */
-export const isRuleGroupType = (rg: RuleType | RuleGroupTypeAny): rg is RuleGroupType =>
-  isRuleGroup(rg) && 'combinator' in rg;
+export const isRuleGroupType = (rg: any): rg is RuleGroupType => isRuleGroup(rg) && !!rg.combinator;
 
 /**
- * Determines if an object is a {@link RuleGroupTypeIC}. `'rules' in rg && !('combinator' in rg)`
- * can be used as an alternative.
+ * Determines if an object is a {@link RuleGroupTypeIC}.
  */
-export const isRuleGroupTypeIC = (rg: RuleType | RuleGroupTypeAny): rg is RuleGroupTypeIC =>
-  isRuleGroup(rg) && !('combinator' in rg);
+export const isRuleGroupTypeIC = (rg: any): rg is RuleGroupTypeIC =>
+  isRuleGroup(rg) && !rg.combinator;

@@ -4,6 +4,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
 
@@ -72,7 +73,7 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
       return r;
     }
 
-    if ('rules' in r) {
+    if (isRuleGroup(r)) {
       return numerifyValues(r);
     }
 

@@ -6,6 +6,7 @@ import type {
   RuleType,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
+import { isRuleGroup } from './isRuleGroup';
 
 /**
  * Options for {@link prepareRule}/{@link prepareRuleGroup}.
@@ -39,7 +40,7 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
     draft.rules = draft.rules.map(r =>
       typeof r === 'string'
         ? r
-        : 'rules' in r
+        : isRuleGroup(r)
         ? prepareRuleGroup(r, { idGenerator })
         : prepareRule(r, { idGenerator })
     ) as RuleGroupArray | RuleGroupICArray;
@@ -51,4 +52,4 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
 export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(
   rg: RG | RuleType,
   { idGenerator = generateID }: PreparerOptions = {}
-) => ('rules' in rg ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator }));
+) => (isRuleGroup(rg) ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator }));

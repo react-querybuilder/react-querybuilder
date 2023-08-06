@@ -6,6 +6,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '../types/index.noReact';
+import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 const remapProperties = (
   obj: Record<string, any>,
@@ -150,7 +151,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
       remapProperties(
         {
           ...rg,
-          ...('combinator' in rg
+          ...(isRuleGroupType(rg)
             ? { combinator: combinatorMap[rg.combinator] ?? rg.combinator }
             : {}),
         },
@@ -162,7 +163,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
       if (typeof r === 'string') {
         // independent combinators
         return combinatorMap[r] ?? r;
-      } else if ('rules' in r) {
+      } else if (isRuleGroup(r)) {
         // sub-groups
         return processGroup({ ...r, path: [...rg.path, idx] });
       }

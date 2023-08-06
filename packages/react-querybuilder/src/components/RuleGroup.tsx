@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import { TestID } from '../defaults';
 import { useRuleGroup, useStopEventPropagation } from '../hooks';
-import type { RuleGroupProps } from '../types';
+import type { RuleGroupArray, RuleGroupICArray, RuleGroupProps } from '../types';
+import { isRuleGroup, isRuleGroupType } from '../utils';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
@@ -29,10 +30,12 @@ export const RuleGroup = React.memo((props: RuleGroupProps) => {
       data-level={rg.path.length}
       data-path={JSON.stringify(rg.path)}>
       <div ref={rg.dropRef} className={rg.classNames.header}>
-        <RuleGroupHeaderComponents {...rg} />
+        {/* TODO: do better than `as any` here */}
+        <RuleGroupHeaderComponents {...(rg as any)} />
       </div>
       <div className={rg.classNames.body}>
-        <RuleGroupBodyComponents {...rg} />
+        {/* TODO: do better than `as any` here */}
+        <RuleGroupBodyComponents {...(rg as any)} />
       </div>
     </div>
   );
@@ -219,7 +222,7 @@ export const RuleGroupBodyComponents = React.memo(
 
     return (
       <>
-        {rg.ruleGroup.rules.map((r, idx) => {
+        {(rg.ruleGroup.rules as RuleGroupICArray | RuleGroupArray).map((r, idx) => {
           const thisPathMemo = rg.pathsMemo[idx];
           const thisPath = thisPathMemo.path;
           const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
@@ -263,7 +266,7 @@ export const RuleGroupBodyComponents = React.memo(
                   independentCombinators={rg.schema.independentCombinators}
                   schema={rg.schema}
                 />
-              ) : 'rules' in r ? (
+              ) : isRuleGroup(r) ? (
                 <RuleGroupControlElement
                   id={r.id}
                   schema={rg.schema}
@@ -272,7 +275,7 @@ export const RuleGroupBodyComponents = React.memo(
                   translations={rg.translations}
                   ruleGroup={r}
                   rules={r.rules}
-                  combinator={'combinator' in r ? r.combinator : undefined}
+                  combinator={isRuleGroupType(r) ? r.combinator : undefined}
                   not={!!r.not}
                   disabled={thisPathDisabled}
                   parentDisabled={rg.parentDisabled || rg.disabled}

@@ -23,7 +23,16 @@ import type {
   UpdateableProperties,
   ValidationMap,
 } from '../types';
-import { add, findPath, move, pathIsDisabled, prepareRuleGroup, remove, update } from '../utils';
+import {
+  add,
+  findPath,
+  isRuleGroupType,
+  move,
+  pathIsDisabled,
+  prepareRuleGroup,
+  remove,
+  update,
+} from '../utils';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
@@ -360,7 +369,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     [independentCombinators, showCombinatorsBetweenRules]
   );
   const combinatorPropObject: Pick<RuleGroupProps, 'combinator'> = useMemo(
-    () => ('combinator' in rootQuery ? { combinator: rootQuery.combinator } : {}),
+    () => (isRuleGroupType(rootQuery) ? { combinator: rootQuery.combinator } : {}),
     [rootQuery]
   );
 

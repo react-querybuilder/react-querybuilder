@@ -4,6 +4,7 @@ import type {
   RuleValidator,
   ValidationResult,
 } from '../types/index.noReact';
+import { isRuleGroup } from './isRuleGroup';
 import { isPojo } from './misc';
 
 /**
@@ -27,7 +28,7 @@ export const isRuleOrGroupValid = (
   if (isValidationResult(validationResult)) {
     return validationResult.valid;
   }
-  if (typeof validator === 'function' && !('rules' in rg)) {
+  if (typeof validator === 'function' && !isRuleGroup(rg)) {
     const vr = validator(rg);
     if (typeof vr === 'boolean') {
       return vr;

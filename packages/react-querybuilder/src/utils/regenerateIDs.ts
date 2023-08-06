@@ -6,6 +6,7 @@ import type {
   RuleType,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
+import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 import { isPojo } from './misc';
 
 /**
@@ -32,15 +33,13 @@ export const regenerateIDs = (
 ): RuleGroupType | RuleGroupTypeIC => {
   if (!isPojo(ruleOrGroup)) return ruleOrGroup;
 
-  if (!('rules' in ruleOrGroup)) {
+  if (!isRuleGroup(ruleOrGroup)) {
     return JSON.parse(JSON.stringify({ ...(ruleOrGroup as any), id: idGenerator() }));
   }
 
-  if ('combinator' in ruleOrGroup) {
+  if (isRuleGroupType(ruleOrGroup)) {
     const rules = ruleOrGroup.rules.map(r =>
-      isPojo(r) && 'rules' in r
-        ? regenerateIDs(r, { idGenerator })
-        : regenerateID(r, { idGenerator })
+      isRuleGroup(r) ? regenerateIDs(r, { idGenerator }) : regenerateID(r, { idGenerator })
     ) as RuleGroupArray;
     return { ...ruleOrGroup, id: idGenerator(), rules };
   }
@@ -48,7 +47,7 @@ export const regenerateIDs = (
   const rules = ruleOrGroup.rules.map(r =>
     typeof r === 'string'
       ? r
-      : isPojo(r) && 'rules' in r
+      : isRuleGroup(r)
       ? regenerateIDs(r, { idGenerator })
       : regenerateID(r, { idGenerator })
   ) as RuleGroupICArray;

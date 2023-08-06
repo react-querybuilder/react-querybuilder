@@ -5,10 +5,10 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '../types/index.noReact';
-import { isRuleGroupTypeIC } from './isRuleGroup';
+import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
 
 const processRuleOrStringOrRuleGroupIC = (r: string | RuleType | RuleGroupTypeIC) =>
-  typeof r === 'object' && 'rules' in r ? generateRuleGroupICWithConsistentCombinators(r) : r;
+  isRuleGroup(r) ? generateRuleGroupICWithConsistentCombinators(r) : r;
 
 const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): RuleGroupTypeIC => {
   const returnArray: RuleGroupICArray = [];
@@ -55,7 +55,7 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
     // @ts-expect-error TS still thinks returnArray has length 0
     returnArray.length === 1 &&
     typeof returnArray[0] === 'object' &&
-    'rules' in returnArray[0]
+    isRuleGroup(returnArray[0])
   ) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error TS still thinks returnArray has length 0
@@ -72,7 +72,7 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
 ): RG => {
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
   const rulesAsMixedList = processedRG.rules.map(r =>
-    typeof r === 'string' || !('rules' in r) ? r : convertFromIC(r)
+    typeof r === 'string' || !isRuleGroup(r) ? r : convertFromIC(r)
   );
   const combinator = rulesAsMixedList.length < 2 ? 'and' : (rulesAsMixedList[1] as string);
   const rules = rulesAsMixedList.filter(r => typeof r !== 'string') as RuleGroupArray;
@@ -88,7 +88,7 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
   rg.rules.forEach((r, idx, arr) => {
-    if ('rules' in r) {
+    if (isRuleGroup(r)) {
       rules.push(convertToIC(r));
     } else {
       rules.push(r);

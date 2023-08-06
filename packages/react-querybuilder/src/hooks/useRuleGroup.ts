@@ -8,6 +8,7 @@ import {
   getOption,
   getParentPath,
   getValidationClassNames,
+  isRuleGroupType,
   pathsAreEqual,
 } from '../utils';
 
@@ -58,7 +59,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
 
   const combinator = useMemo(
     () =>
-      ruleGroupProp && 'combinator' in ruleGroupProp
+      ruleGroupProp && isRuleGroupType(ruleGroupProp)
         ? ruleGroupProp.combinator
         : !ruleGroupProp
         ? combinatorProp ?? getFirstOption(combinators)!
@@ -191,7 +192,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const ruleGroupClassname = useMemo(
-    () => getRuleGroupClassname(ruleGroup),
+    () => getRuleGroupClassname(ruleGroup as RuleGroupTypeAny),
     [getRuleGroupClassname, ruleGroup]
   );
 
