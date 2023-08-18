@@ -422,10 +422,10 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
     return `UPPER(${rule.field}) LIKE UPPER('%${rule.value}%')`;
   }
 
-  return defaultRuleProcessorByRule(rule, options);
+  return defaultRuleProcessorSQL(rule, options);
 };
 
-formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
+formatQuery(query, { format: 'sql', ruleProcessor: customRuleProcessor });
 // Returns: "(UPPER(firstName) LIKE UPPER('%S%') and lastName = 'Vai')"
 //            ^------------custom--------------^ ^------default-----^
 ```
