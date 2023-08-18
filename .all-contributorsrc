@@ -282,8 +282,18 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mnlfischer",
+      "name": "Manuel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3883653?v=4",
+      "profile": "https://github.com/mnlfischer",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }
