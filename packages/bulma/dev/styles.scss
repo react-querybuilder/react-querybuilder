@@ -1,7 +1,8 @@
 $code: #333333;
 $code-background: unset;
 
-@import 'bulma/bulma.sass';
+@import '../../react-querybuilder/dev/styles.scss';
+@import '../../../node_modules/bulma/bulma.sass';
 
 pre {
   white-space: pre-wrap;

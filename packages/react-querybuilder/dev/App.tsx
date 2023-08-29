@@ -20,9 +20,10 @@ import {
   initialQueryIC,
   optionOrder,
 } from './constants';
-import './styles.scss';
 import type { CommonRQBProps, DemoOptions, DemoOptionsHash } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
+
+globalThis.React = React;
 
 const { defaultValidator, QueryBuilder, standardClassnames } = RQB;
 

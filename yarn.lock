@@ -8471,6 +8471,7 @@ __metadata:
     "@types/react": ^18.2.20
     "@types/react-test-renderer": ^18.0.0
     "@vitejs/plugin-react-swc": ^3.3.2
+    flow-remove-types: ^2.215.1
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: ~0.72.4
@@ -15520,6 +15521,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"flow-parser@npm:^0.215.1":
+  version: 0.215.1
+  resolution: "flow-parser@npm:0.215.1"
+  checksum: bc2bb20e49f81f6b1a60848de3be291eb2e9bf7b1cdc748d747b02985aa9ddcf5981bf6b9983062aaa058a1466c996afc539ce9e5637c68dce318524096a623e
+  languageName: node
+  linkType: hard
+
+"flow-remove-types@npm:^2.215.1":
+  version: 2.215.1
+  resolution: "flow-remove-types@npm:2.215.1"
+  dependencies:
+    flow-parser: ^0.215.1
+    pirates: ^3.0.2
+    vlq: ^0.2.1
+  bin:
+    flow-node: flow-node
+    flow-remove-types: flow-remove-types
+  checksum: b8c4c470d757b2918820d056a489d8d3feb84f1a3e2176446cb965ee6c9553b5114373130cb09136c3d0bc69ac490533474a255d32779f0cd5d21067987e348d
+  languageName: node
+  linkType: hard
+
 "flux@npm:^4.0.1":
   version: 4.0.4
   resolution: "flux@npm:4.0.4"
@@ -20357,6 +20379,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-modules-regexp@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "node-modules-regexp@npm:1.0.0"
+  checksum: 99541903536c5ce552786f0fca7f06b88df595e62e423c21fa86a1674ee2363dad1f7482d1bec20b4bd9fa5f262f88e6e5cb788fc56411113f2fe2e97783a3a7
+  languageName: node
+  linkType: hard
+
 "node-releases@npm:^2.0.13":
   version: 2.0.13
   resolution: "node-releases@npm:2.0.13"
@@ -21422,6 +21451,15 @@ __metadata:
   version: 4.0.1
   resolution: "pify@npm:4.0.1"
   checksum: 9c4e34278cb09987685fa5ef81499c82546c033713518f6441778fbec623fc708777fe8ac633097c72d88470d5963094076c7305cafc7ad340aae27cfacd856b
+  languageName: node
+  linkType: hard
+
+"pirates@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "pirates@npm:3.0.2"
+  dependencies:
+    node-modules-regexp: ^1.0.0
+  checksum: 73bc9d8a1859c0854740541d1afd0c87b62d3d63fdaec38c3ac7f57d9d70b9f6f325f5ffcac11b8935c8d9249ead41c9c59632ed098b225a96219274ca6248c8
   languageName: node
   linkType: hard
 
@@ -23374,6 +23412,7 @@ __metadata:
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
     regenerator-runtime: ^0.14.0
+    sass: ^1.64.2
     tsup: ^7.2.0
     typescript: ^5.1.6
     vite: ^4.4.9
@@ -27002,6 +27041,13 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: c511024ceae39c68c7dbf2ac4381ee655cd7bb62cf43867a14798bc835d3320b8fa7867a336143c30825c191c1fb4e9aa3348fce831ab617e96203080d3d2908
+  languageName: node
+  linkType: hard
+
+"vlq@npm:^0.2.1":
+  version: 0.2.3
+  resolution: "vlq@npm:0.2.3"
+  checksum: 2231d8caeb5b2c1a438677ab029e9a94aa6fb61ab05819c72691b792aea0456dab29576aff5ae29309ee45bad0a309e832dc45173119bca1393f3b87709d8f8d
   languageName: node
   linkType: hard
 

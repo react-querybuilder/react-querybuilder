@@ -8,13 +8,6 @@ import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
 
-// Seems like this should be unnecessary...
-declare module 'bun' {
-  interface BunFile {
-    json(): Promise<any>;
-  }
-}
-
 type ESLintExtendsIsArray = _ESLint.ConfigData & { extends: string[] };
 
 interface PackageJSON {

@@ -44,6 +44,7 @@
     "@types/react": "^18.2.20",
     "@types/react-test-renderer": "^18.0.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "flow-remove-types": "^2.215.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "~0.72.4",

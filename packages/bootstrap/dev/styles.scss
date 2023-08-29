@@ -1,5 +1,9 @@
 $code-color: #333333;
 
+@import '../../react-querybuilder/dev/styles.scss';
+@import '../../../node_modules/bootstrap-icons/font/bootstrap-icons.scss';
+@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
+
 #app > div:first-child > label > input {
   margin: 3px;
 }

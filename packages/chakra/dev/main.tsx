@@ -1,9 +1,8 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from 'react-querybuilder/dev';
+import { App } from '../../react-querybuilder/dev';
 import { QueryBuilderChakra } from '../src';
-import './styles.scss';
 
 const chakraTheme = extendTheme({
   components: {
