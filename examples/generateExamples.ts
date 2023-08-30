@@ -1,6 +1,6 @@
 /// <reference types="bun-types" />
 
-import type { ESLint as _ESLint } from 'eslint';
+import type { ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
 import { join as pathJoin } from 'path';
@@ -8,14 +8,7 @@ import prettier from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
 
-// Seems like this should be unnecessary...
-declare module 'bun' {
-  interface BunFile {
-    json(): Promise<any>;
-  }
-}
-
-type ESLintExtendsIsArray = _ESLint.ConfigData & { extends: string[] };
+type ESLintExtendsIsArray = ESLint.ConfigData & { extends: string[] };
 
 interface PackageJSON {
   name: string;
@@ -44,7 +37,7 @@ const compileToJS = async (code: string, fileName: string) =>
     })
   ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1');
 
-const noTypeScriptESLint = (/** @type {string} */ s) => !/@typescript-eslint/.test(s);
+const noTypeScriptESLint = (s: string) => !/@typescript-eslint/.test(s);
 
 const packagesPath = pathJoin(import.meta.dir, '../packages');
 const templatePath = pathJoin(import.meta.dir, '_template');
