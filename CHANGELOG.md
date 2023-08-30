@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- The `useValueEditor` hook will now update all values that are arrays (`Array.isArray(value)`) to the first element of the array (`value[0]`) when `operator` is anything except "between", "notBetween", "in", or "notIn". Previously this logic only applied when `inputType` was "number". (To bypass this logic, pass `{ skipHook: true }`.)
 - The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. The latter accepts the return value of the former as its second parameter.
 - Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.

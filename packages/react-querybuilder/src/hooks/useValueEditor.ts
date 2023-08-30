@@ -17,19 +17,31 @@ export type UseValueEditorParams = Pick<
 >;
 
 /**
- * This effect trims the value if all of the following are true:
- * - `inputType` is "number"
- * - `operator` is _not_ one of ("between", "notBetween", "in", "notIn")
- * - `value` is either an array or a string containing a comma
+ * This effect is primarily concerned with multi-value editors like date range
+ * pickers, editors for 'in' and 'between' operators, etc.
  *
- * For example, consider the following rule:
+ * @returns The value as an array (`valueAsArray`) and a change handler for
+ * series of editors (`multiValueHandler`).
  *
+ * **NOTE:** The following logic only applies if `skipHook` is not `true`. To avoid
+ * automatically updating the `value`, pass `{ skipHook: true }`.
+ *
+ * If the `value` is an array and the `operator` is _not_ one of the known multi-value
+ * operators ("between", "notBetween", "in", "notIn"), then the `value` will be set to
+ * the first element of the array, i.e. `value[0]`.
+ *
+ * The same thing will happen if `inputType` is "number" and `value` is a string
+ * containing a comma, since `<input type="number">` doesn't handle commas.
+ *
+ * @example
+ * // Consider the following rule:
+ * `{ field: "f1", operator: "in", value: ["twelve","fourteen"] }`
+ * // If `operator` changes to "=", the value will be reset to "twelve".
+ *
+ * @example
+ * // Consider the following rule:
  * `{ field: "f1", operator: "between", value: "12,14" }`
- *
- * If its operator changes to "=", the value will be reset to "12" since
- * the "number" input type can't handle arrays or strings with commas.
- *
- * @returns The value as an array and a change handler for series of editors.
+ * // If `operator` changes to "=", the value will be reset to "12".
  */
 export const useValueEditor = ({
   handleOnChange,
@@ -44,9 +56,9 @@ export const useValueEditor = ({
   useEffect(() => {
     if (skipHook) return;
     if (
-      inputType === 'number' &&
       !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      ((typeof value === 'string' && value.includes(',')) || Array.isArray(value))
+      (Array.isArray(value) ||
+        (inputType === 'number' && typeof value === 'string' && value.includes(',')))
     ) {
       handleOnChange(toArray(value)[0] ?? '');
     }
