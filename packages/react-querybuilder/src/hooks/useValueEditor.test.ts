@@ -1,6 +1,14 @@
 import { renderHook } from '@testing-library/react';
 import { useValueEditor } from './useValueEditor';
 
+it('calls handleOnChange when operator is not "between"/"in" and value is an array', async () => {
+  const handleOnChange = jest.fn();
+  renderHook(() =>
+    useValueEditor({ handleOnChange, operator: '=', value: ['twelve', 'fourteen'] })
+  );
+  expect(handleOnChange).toHaveBeenCalledWith('twelve');
+});
+
 it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is an array', async () => {
   const handleOnChange = jest.fn();
   renderHook(() =>

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- The `useValueEditor` hook will now update all values that are arrays (`Array.isArray(value)`) to the first element of the array (`value[0]`) when `operator` is anything except "between", "notBetween", "in", or "notIn". Previously this logic only applied when `inputType` was "number". (To bypass this logic, pass `{ skipHook: true }`.)
+
 ### Added
 
 - New `paramsKeepPrefix` option for `formatQuery`. When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
