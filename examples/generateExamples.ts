@@ -259,7 +259,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
 };
 
 // #region Other examples' package.json
-const otherExamples = ['ci', 'native'];
+const otherExamples = ['ci', 'native', 'next'] as const;
 
 const updateOtherExample = async (otherExampleName: string) => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(
