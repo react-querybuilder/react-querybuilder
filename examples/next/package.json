@@ -9,7 +9,7 @@
     "react-querybuilder": "^6.5.1",
     "typescript": "5.2.2"
   },
-  "name": "rqb-next-example",
+  "name": "react-querybuilder-next-example",
   "private": true,
   "scripts": {
     "build": "next build",
