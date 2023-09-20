@@ -10,11 +10,10 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true
-  },
-  "references": [{ "path": "./tsconfig.node.json" }]
+  }
 }

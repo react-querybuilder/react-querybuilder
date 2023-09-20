@@ -1,5 +1,6 @@
 {
   "include": ["src"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": false,
@@ -10,11 +11,10 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true
-  },
-  "references": [{ "path": "./tsconfig.node.json" }]
+  }
 }

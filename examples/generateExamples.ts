@@ -125,10 +125,6 @@ const generateExampleFromTemplate = async (exampleID: string) => {
             pathJoin(examplePath, 'tsconfig.json'),
             Bun.file(pathJoin(templatePath, 'tsconfig.json'))
           ),
-          Bun.write(
-            pathJoin(examplePath, 'tsconfig.node.json'),
-            Bun.file(pathJoin(templatePath, 'tsconfig.node.json'))
-          ),
         ])
   );
   // #endregion
