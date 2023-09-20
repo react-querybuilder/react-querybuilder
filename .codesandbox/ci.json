@@ -11,7 +11,8 @@
     "/examples/fluent",
     "/examples/mantine",
     "/examples/material",
-    "/examples/native"
+    "/examples/native",
+    "/examples/next"
   ],
   "node": "18"
 }
