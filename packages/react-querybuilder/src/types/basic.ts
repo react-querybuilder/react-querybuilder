@@ -84,11 +84,11 @@ export interface Field<
     HasOptionalClassName {
   id?: string;
   operators?: OptionList<OperatorObj>;
-  valueEditorType?: ValueEditorType | ((operator: string) => ValueEditorType);
-  valueSources?: ValueSources | ((operator: string) => ValueSources);
+  valueEditorType?: ValueEditorType | ((operator: OperatorName) => ValueEditorType);
+  valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
   inputType?: string | null;
   values?: OptionList<ValueObj>;
-  defaultOperator?: string;
+  defaultOperator?: OperatorName;
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;

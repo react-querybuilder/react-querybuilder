@@ -122,10 +122,6 @@ const generateExampleFromTemplate = async (exampleID: string) => {
             pathJoin(examplePath, 'tsconfig.json'),
             Bun.file(pathJoin(templatePath, 'tsconfig.json'))
           ),
-          Bun.write(
-            pathJoin(examplePath, 'tsconfig.node.json'),
-            Bun.file(pathJoin(templatePath, 'tsconfig.node.json'))
-          ),
         ])
   );
   // #endregion
@@ -256,7 +252,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
 };
 
 // #region Other examples' package.json
-const otherExamples = ['ci', 'native'];
+const otherExamples = ['ci', 'native', 'next'] as const;
 
 const updateOtherExample = async (otherExampleName: string) => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(
