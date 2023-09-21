@@ -38,20 +38,20 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.2.5",
+    "@ant-design/icons": "^5.2.6",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.20",
+    "@types/react": "^18.2.22",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "antd": "^5.8.3",
-    "dayjs": "^1.11.9",
-    "rc-picker": "^3.13.0",
-    "rc-select": "^14.7.4",
-    "rc-util": "^5.36.0",
+    "antd": "^5.9.2",
+    "dayjs": "^1.11.10",
+    "rc-picker": "^3.14.2",
+    "rc-select": "^14.9.0",
+    "rc-util": "^5.37.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.6.0-alpha.0",
     "rollup-plugin-visualizer": "^5.9.2",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "vite": "^4.4.9"
   },
   "peerDependencies": {

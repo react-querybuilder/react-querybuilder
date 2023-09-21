@@ -38,18 +38,18 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "^6.0.19",
-    "@mantine/dates": "^6.0.19",
-    "@mantine/hooks": "^6.0.19",
+    "@mantine/core": "^6.0.21",
+    "@mantine/dates": "^6.0.21",
+    "@mantine/hooks": "^6.0.21",
     "@testing-library/react": "^14.0.0",
-    "@types/react": "^18.2.20",
+    "@types/react": "^18.2.22",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "dayjs": "^1.11.9",
+    "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^6.6.0-alpha.0",
     "rollup-plugin-visualizer": "^5.9.2",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "vite": "^4.4.9"
   },
   "peerDependencies": {

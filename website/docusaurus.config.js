@@ -80,7 +80,7 @@ const config = {
         includeVersion: true,
         name: 'React Query Builder API',
         readme: '_API_INDEX.md',
-        readmeTitle: 'React Query Builder API',
+        indexTitle: 'React Query Builder API',
         hideMembersSymbol: true,
         sidebar: {
           readmeLabel: 'API Index',

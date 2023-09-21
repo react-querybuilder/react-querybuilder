@@ -13,7 +13,7 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "esnext",
-    "types": ["@testing-library/jest-dom", "web"]
+    "types": ["@testing-library/jest-dom", "node", "web"]
   },
   "include": ["./*.ts"]
 }

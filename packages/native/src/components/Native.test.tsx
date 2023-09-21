@@ -1,3 +1,5 @@
+/// <reference types="@testing-library/jest-native" />
+
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
 import { Platform, StyleSheet, Switch, TextInput } from 'react-native';
