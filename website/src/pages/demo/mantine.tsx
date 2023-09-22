@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
 import React, { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
@@ -7,6 +8,7 @@ import './_styles/demo.scss';
 import './_styles/rqb-mantine.scss';
 
 function ReactQueryBuilderDemo_MantineBrowser() {
+  const { colorMode } = useColorMode();
   const [{ MantineProvider, QueryBuilderMantine, Demo }, setComponents] = useState<{
     MantineProvider?: typeof import('@mantine/core').MantineProvider;
     QueryBuilderMantine?: typeof import('@react-querybuilder/mantine').QueryBuilderMantine;
@@ -41,11 +43,13 @@ function ReactQueryBuilderDemo_MantineBrowser() {
   if (!MantineProvider || !QueryBuilderMantine || !Demo) return <Loading />;
 
   return (
-    <MantineProvider>
-      <QueryBuilderMantine>
-        <Demo variant="mantine" />
-      </QueryBuilderMantine>
-    </MantineProvider>
+    <>
+      <MantineProvider forceColorScheme={colorMode}>
+        <QueryBuilderMantine>
+          <Demo variant="mantine" />
+        </QueryBuilderMantine>
+      </MantineProvider>
+    </>
   );
 }
 

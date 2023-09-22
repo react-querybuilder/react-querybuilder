@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@mantine/core": ">=6",
-    "@mantine/dates": ">=6",
-    "@mantine/hooks": ">=6",
+    "@mantine/core": ">=7",
+    "@mantine/dates": ">=7",
+    "@mantine/hooks": ">=7",
     "@react-querybuilder/mantine": "^6.6.0-alpha.0",
     "dayjs": ">=1",
     "react": "^18.2.0",
