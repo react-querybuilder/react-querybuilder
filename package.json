@@ -103,6 +103,7 @@
   "packageManager": "yarn@3.5.0",
   "resolutions": {
     "nx": "npm:nx@16.5.3",
-    "sass@^1.68.0": "patch:sass@npm%3A1.68.0#./.yarn/patches/sass-npm-1.68.0-960a5fc7e0.patch"
+    "sass@^1.68.0": "patch:sass@npm%3A1.68.0#./.yarn/patches/sass-npm-1.68.0-960a5fc7e0.patch",
+    "typedoc-plugin-markdown@^3.16.0": "patch:typedoc-plugin-markdown@npm%3A3.16.0#./.yarn/patches/typedoc-plugin-markdown-npm-3.16.0-db041bab98.patch"
   }
 }
