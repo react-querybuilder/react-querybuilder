@@ -38,7 +38,8 @@
 // The rest of this file was copied from @mantine/core/esm/index.css (v7.0.0).
 // The "CSS reset" section (except for the `html, body` styles) and the `body`
 // styles from the "Global styles" section have been commented here and copied
-// into the `.rqb-mantine` block above.
+// into the `.rqb-mantine` block above. The `:root { color-scheme: ... }`
+// declaration in the "Default CSS variables" section has been commented.
 
 /* ----- CSS reset ----- */
 /*
@@ -118,7 +119,7 @@ body {
 /* ----- Default CSS variables ----- */
 
 :root {
-  color-scheme: var(--mantine-color-scheme);
+  // color-scheme: var(--mantine-color-scheme);
 
   --mantine-scale: 1;
   --mantine-cursor-type: default;
