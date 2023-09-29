@@ -40,7 +40,7 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, [c
 [![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign)](https://www.npmjs.com/package/@react-querybuilder/antd)
 [![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
 [![Bulma](https://img.shields.io/badge/RQB-for_Bulma-blue?logo=bulma)](https://www.npmjs.com/package/@react-querybuilder/bulma)
-[![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui)](https://www.npmjs.com/package/@react-querybuilder/chakra)
+[![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui)](https://www.npmjs.com/package/@react-querybuilder/chakra)<br>
 [![Fluent UI](https://img.shields.io/badge/RQB-for_Fluent%20UI-blue?logo=fluentui)](https://www.npmjs.com/package/@react-querybuilder/fluent)
 [![Mantine](https://img.shields.io/badge/RQB-for_Mantine-blue?logo=mantine)](https://www.npmjs.com/package/@react-querybuilder/mantine)
 [![MUI](https://img.shields.io/badge/RQB-for_MUI-blue?logo=mui)](https://www.npmjs.com/package/@react-querybuilder/material)
@@ -50,11 +50,11 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 ## Development
 
-> Most scripts in this repository require [Bun](https://bun.sh/).
+> _Most scripts in this repository require [Bun](https://bun.sh/)._
 
-To run a test page with a basic query builder using the default components, run `bun run start`.
+To run a test page with a basic query builder using the default components, run `bun start`.
 
-To run the documentation website, run `bun run website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
+To run the documentation website, run `bun run build && bun website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
 
 ## Credits
 
@@ -128,7 +128,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
-[badge-demo]: https://img.shields.io/badge/demo-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAHSAAAB0gGhKG2eAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA/VJREFUWIW1l21MW1UYx//P7aWUbQU6shleBtncYApxRNHETGb0yxaiiGZD2AdDNMaE+MG4LL4sWZaQaJZsM3NgFjVGo9EwMzWylddQWFllyV6kjrYrw6lQoZSEvr/ee48fdKb3Figt7fPt/s95nt//nnuec++lc2bv3wQUI4sRDAbRffGnQCgcVsXr2yvKZvhsggFAEARc6h+AP+DfKB+hm8/s26fnsm1g9KoJTueCUp4TVcILGk1eLKsGbtz6FRarTSmHmcQ13T33ziwAUKfZ0wFwBZmG3560VowYjc8zMIqTWW1NzddP1T95/d9LqqNls9cZlW+e2k0SxgHIbkytUZ954/W2D+5f5wQEgc6YWF5ugUuVUCXNMPaZdDen7w4TsDNeJw4/6w47Wgq3CNJ9LTRbJPLqTf4xJmoezQRckiS4wiEolzWvKILdrfcaVWoxKDNV7u/J6Ca8MmbCrMMh03iNiJ1Nf0GlFpfNyZgB8+1J/GaxyDTiGB5snEFuQXTFvIwYcMzNwfjLeIJe8ewctGWBVXN5AF+AoT9d+PyCs7BH39smiWJevF64w39jyyNLhtVyJUaT62rDqldPaqFRmQDUxOsMGCzZ6m8YOXFCSFaDuiZ8B0FSbqpwSRLpm+6L77o9nup4XaPRLLS+1HRWm68NJS3CMM8zYp8BVJiqgavXrsPt8Shl3+aN+Y06zQYbosvv+viIqlVH0nobWu1TuDVhVsoiI2oxdLxyzdCxtjqdZp+QchfMO50wjF5JHCD2tr3riD7VeimtQCAYgL5/CKIoX14GfGnvOvpxqnAAoE/M7sckRkmNuN2e3O4ffjwfjcUeitfzN2lnWpsPfpWTwyd/6Eo4KLDGNmRU1X76OwAvKwb+FCT2xPT5owlfHGs20TnhfZ/Atq02adAwUme1T9XJEjkWqWhwnCqq8jhWyksKZ/QHD7BDjKh2pUnTv9+DbWpKmYkdDY5cXaXnGFi6eACMXVq1C1yLixgYNoApIKV7XdBVJpwBacWKBkKhEC73DUAQ5KepbpcXxY8vZgQOADyIYgBkFEkUoR8YUvn8ftkm3bA1jO0HZgFaz7rLY9kuqGo//TnAXpOJnOTa9vRCc/EetzNTcIngS+j/mrc+ei8WFeVwokhJSWnbiw+32xDLFB4gUYjwXWbvSUbYDAAWq61seNS4XzGP7amu/ra+fm+5JLHyzOEBAlfLM+AwGMqW3G6MmcbBFFueMXx4of3AsQuZJP8XnWbfcQ4AIuEIenr7EIkmfLv12hfLj2eB/X9wjEnQDw7B4/HKBohgEVXqFnzfnPIZn0pQ09ket/XOHdkfDM/nhBuf2/9pyQPFS1mFc1T6D+rMjhBdvrClAAAAAElFTkSuQmCC
+[badge-demo]: https://img.shields.io/badge/demo-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAHYAAAB2AH6XKZyAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA7JJREFUWIW1ld9PW2UYx7/P6ZHhVrMFcAQBQWHuB5h17sKpGTaBocRFK+yCxCwmaozxL/DO7c4rYyIXS7xaTIwaHZsyAu3KoKXQbMlW2Jjlx5RKC7RCW9qChZ5zHi9mk42+3dpy+lyez/Oez5P3fZ/3oZ6JmJ/BCooUE3enjE7XWLmINTa8uCQzWCGiumLI/1lZwbj7RjbsMbe0XJWKIQaAzeQm+gdtUFTB5hLCkLiztOQppSgFMDMG7XbE4nER1sDSB4f9rr8AQCaQzMw+PQsYdbv3+Rb8e0XspcYDw+2t5hPAxydAZCaLxaKnG97qk6eZ+QqAjN1lRt9MZeI9i8ejpb/pegSzz7U0MvP3Qjkwt7XLcPZhOQBQz0RslKHtuA1TKVX6+dKlY5HomnE7IwNrBzt9t5+pWU88UhSRLDO4hkjacRuOuByIRNeErL5tUTLWrh/nDMI+XY5g8s4UvNMzQrb/2CrKm6JZ1+64gOVgCE63W8j2VG2gtiX42PUygfzM2nwh8kRivaRvYOAVTVV3bWeGUnWroSNwS5J4E5l7D+DBHSi4DaMmk7wU2nMNoDcFWCGW2g4tOUae9J+Cj2AxZPwqixwEfJGLHHjQhnlPw9m5+7utQ0PPsmBrKyrKvd1dZ34CtEyYYSdz3tMwEo3iutMJkRzAdDASf9X+5dlYLv9qPX/xnJyrGABSKQX9Vhu2tlIinFBVdDYvDuUkT0fOd4AZuDY8jHA4IsRg+qg5OHovHzkAyEQ0wMylT0p0uMaa5+7/eVzE6p+vGz/d0d4EfNKUbwE5taG35g0za2QDkHlkjOGqysSpfR5PQfOEvr0TNz8uYcE3X9ZntX2nKlpZxmIDhw+84/90b8PaaiFyAJDB/CMBlSKoaRpu3pqAqmS2FEmMg2fmy4zVG78wqFB/UAJzMht1jo1jcXlZyGrNyzBWbxQqTkcyaxfMzM5h8u6UkJUdXsN+U3incgCABKKMDlgNh2EfcQgXPF2RRH1bQBc5gFIZRN0PP2rBlZCxt/f3C4qiVG/PJkKiyhT5zCBrgWwTLt94pA0vX+6lQ59//SuD3xfkMhN3HQm4evVR/19Az2TsQvohGnI4j977w2sSJTa8UO/oaD91XU85AMjM/DYR1S0EAvB6p7Pl2ftvaG+VuD5U9ZS3nr94TgKARDyBQZsdmmjEEf3NCrotqR90ladDUhSFrlqt+DcpfA6SIOo6EhpdKYYcAOjdb66sT8/M7hbBoy83/3by9dduF0sOIvN/iyuX1reeUXwAAAAASUVORK5CYII=
 [badge-docs]: https://img.shields.io/badge/📖_documentation-blue.svg
 [badge-npm]: https://img.shields.io/npm/v/react-querybuilder.svg?cacheSeconds=3600&logo=npm
 [badge-training]: https://img.shields.io/badge/training-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAACXBIWXMAAAEIAAABCAFpWn9CAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAgdJREFUKJGNkb9rE2EYxz/33l0uubTXwYSLwWroIgoWIUqoBUF0KS4HQkAKkqndtDi5mLb/h4sGIUOwQkDIkoAiblo0ASXEwSKVYEtKk+Zi877nYmNLsfjdngc+3+/zQ3NdN+q67rNYLHZFKSX4t/bbPzbrkc9f7kx63j7T09Olfr8f/I/KL1+ou5nJp57nIeLxeDocDjMYDAiC4IRAuH7jpiZCodsAQgihA8zOzlIul08EhRBEjeDU2qU3V0c7LS4uks/nR6mdTodms0m9XqfRaBwxUEK7PwJzuRzdbpdSqQRApVIhk8mwsLBAOp1mZ2fnLxmQHYGmaZLP51lZWUFKiWmaJBIJarUag8GAdrv9h0EBIRFCjx7A8/PzKKUoFosYhoFSCsuyjozZhy6AMJH6QVPXdZaXl1ldXcW2bZLJJABTU1OYpgmAFR3awFCgadphx2w2i23bbGxsUK1WAWi1WqRSKQA0HYOo/GQEUh47eaFQIBKJHHtHr9cjainU2X5KP+84ufFEIhZ3XXzfx/d9HMfBtu1R7fs+nU6HpUcP1L3L68Mzroxor+bmnMb2dqspZUwGBD/luZ6hRcaGmhx+C4ekJgxLiq1dJjfHQ9cmeJL6+PrCcGtc8zyPNdO8uC/le8DqBae/fvi1lATC6xNj76oxZwZg79bjt9L5PhNXe7Xnu5WHvwH2M+1kJKUCQwAAAABJRU5ErkJggg==
