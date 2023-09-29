@@ -81,6 +81,7 @@ const config = {
         name: 'React Query Builder API',
         readme: '_API_INDEX.md',
         indexTitle: 'React Query Builder API',
+        includeExtension: false,
         hideMembersSymbol: true,
         sidebar: {
           readmeLabel: 'API Index',
