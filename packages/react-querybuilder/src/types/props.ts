@@ -8,7 +8,7 @@ import type {
   Path,
   ValueSource,
 } from './basic';
-import type { Schema } from './propsUsingReact';
+import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
 import type { ValidationResult } from './validation';
@@ -91,16 +91,6 @@ export interface ValueSelectorProps<OptType extends Option = Option>
 }
 
 /**
- * Props for `notToggle` components.
- */
-export interface NotToggleProps extends CommonSubComponentProps {
-  checked?: boolean;
-  handleOnChange(checked: boolean): void;
-  label?: string;
-  ruleGroup: RuleGroupTypeAny;
-}
-
-/**
  * Props for `combinatorSelector` components.
  */
 export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
@@ -142,14 +132,6 @@ export type VersatileSelectorProps = ValueSelectorProps &
   Partial<FieldSelectorProps> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
-
-/**
- * Props for `dragHandle` components.
- */
-export interface DragHandleProps extends CommonSubComponentProps {
-  label?: string;
-  ruleOrGroup: RuleGroupTypeAny | RuleType;
-}
 
 /**
  * Classnames applied to each component.
@@ -258,12 +240,6 @@ export interface QueryActions {
  */
 export interface Translation {
   title?: string;
-}
-/**
- * A translation for a component with `title` and `label`.
- */
-export interface TranslationWithLabel extends Translation {
-  label?: string;
 }
 /**
  * A translation for a component with `title` and a placeholder.

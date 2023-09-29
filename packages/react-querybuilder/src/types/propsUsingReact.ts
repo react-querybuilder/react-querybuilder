@@ -24,13 +24,11 @@ import type {
   CombinatorSelectorProps,
   CommonRuleSubComponentProps,
   CommonSubComponentProps,
-  DragHandleProps,
   FieldSelectorProps,
-  NotToggleProps,
   OperatorSelectorProps,
   QueryActions,
   SelectorOrEditorProps,
-  TranslationWithLabel,
+  Translation,
   Translations,
   ValueSelectorProps,
   ValueSourceSelectorProps,
@@ -40,11 +38,17 @@ import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './rule
 import type { QueryValidator, ValidationMap } from './validation';
 
 /**
+ * A translation for a component with `title` and `label`.
+ */
+export interface TranslationWithLabel extends Translation {
+  label?: ReactNode;
+}
+/**
  * Props passed to every action component (rendered as `<button>` by default).
  */
 export interface ActionProps extends CommonSubComponentProps {
   /** Visible text. */
-  label?: string;
+  label?: ReactNode;
   /** Call this function to trigger the action. */
   handleOnClick(e: ReactMouseEvent): void;
   /**
@@ -78,6 +82,24 @@ export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
    * be forwarded to the `onAddRule` or `onAddGroup` callback, appropriately.
    */
   handleOnClick(e: ReactMouseEvent, context?: any): void;
+}
+
+/**
+ * Props for `notToggle` components.
+ */
+export interface NotToggleProps extends CommonSubComponentProps {
+  checked?: boolean;
+  handleOnChange(checked: boolean): void;
+  label?: ReactNode;
+  ruleGroup: RuleGroupTypeAny;
+}
+
+/**
+ * Props for `dragHandle` components.
+ */
+export interface DragHandleProps extends CommonSubComponentProps {
+  label?: ReactNode;
+  ruleOrGroup: RuleGroupTypeAny | RuleType;
 }
 
 /**
