@@ -199,17 +199,9 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
   }
 
   /**
-   * TODO: support `inputType`s of "date" (`<DatePicker />`), "datetime-local"
-   * (`<DateTimePicker />`), and "time" (`<TimePicker />`) once the components are
-   * out of the MUI "lab" and into MUI core. Add something like this to the README:
-   *
-   * > If you intend to use an inputType of "date", "datetime-local", or "time",
-   * > wrap your `<QueryBuilder />` element in a `LocalizationProvider` (and install
-   * > the date library associated with the selected `dateAdapter`) like this:
-   * >
-   * > <LocalizationProvider dateAdapter={AdapterDateFns}>
-   * >   <QueryBuilder />
-   * > </LocalizationProvider>
+   * TODO: Provide either (1) examples or (2) alternate exports that support `inputType`
+   * "date", "datetime-local", and "time", with components from `@mui/x-date-pickers`
+   * (`<DatePicker />`, `<DateTimePicker />`, and `<TimePicker />`, respecitively).
    */
 
   return (
