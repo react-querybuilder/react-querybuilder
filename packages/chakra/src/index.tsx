@@ -1,4 +1,6 @@
-import type { Controls } from 'react-querybuilder';
+import { CloseIcon, CopyIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
+import * as React from 'react';
+import type { Controls, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
@@ -30,7 +32,19 @@ export const chakraControlElements: Partial<Controls> = {
   valueSourceSelector: ChakraValueSelector,
 };
 
+export const chakraTranslations: Partial<Translations> = {
+  removeGroup: { label: <CloseIcon /> },
+  removeRule: { label: <CloseIcon /> },
+  cloneRuleGroup: { label: <CopyIcon /> },
+  cloneRule: { label: <CopyIcon /> },
+  lockGroup: { label: <UnlockIcon /> },
+  lockRule: { label: <UnlockIcon /> },
+  lockGroupDisabled: { label: <LockIcon /> },
+  lockRuleDisabled: { label: <LockIcon /> },
+};
+
 export const QueryBuilderChakra = getCompatContextProvider({
   key: 'chakra',
   controlElements: chakraControlElements,
+  translations: chakraTranslations,
 });

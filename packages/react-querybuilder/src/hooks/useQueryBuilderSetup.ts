@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { defaultCombinators, defaultOperators, defaultTranslations } from '../defaults';
+import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
   Field,
@@ -37,7 +37,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
     fields: fieldsPropOriginal,
     operators = defaultOperators,
     combinators = defaultCombinators,
-    translations: translationsProp = defaultTranslations,
+    translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
     controlClassnames: controlClassnamesProp,
     controlElements: controlElementsProp,

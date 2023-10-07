@@ -36,7 +36,7 @@ export const ruleControls: Partial<Controls> = {
       data-testid={TestID.cloneRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      ⧉
+      {translations.cloneRule.label}
     </button>
   ),
   fieldSelector: (props: FieldSelectorProps) => (
@@ -70,7 +70,7 @@ export const ruleControls: Partial<Controls> = {
       data-testid={TestID.removeRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      x
+      {translations.removeRule.label}
     </button>
   ),
   dragHandle: forwardRef(({ className, label }, ref) => (

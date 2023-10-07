@@ -16,6 +16,7 @@ export const ChakraValueSelector = ({
   disabled,
   // Props that should not be in extraProps
   testID: _testID,
+  rule: _rule,
   rules: _rules,
   level: _level,
   path: _path,

@@ -9,9 +9,9 @@ To see them in action, check out the [`react-querybuilder` demo](https://react-q
 ## Installation
 
 ```bash
-npm i --save react-querybuilder @react-querybuilder/fluent @fluentui/react-components
+npm i --save react-querybuilder @react-querybuilder/fluent @fluentui/react-components @fluentui/react-icons-mdl2
 # OR
-yarn add react-querybuilder @react-querybuilder/fluent @fluentui/react-components
+yarn add react-querybuilder @react-querybuilder/fluent @fluentui/react-components @fluentui/react-icons-mdl2
 ```
 
 ## Usage

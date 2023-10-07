@@ -10,6 +10,7 @@ export * from './getValueSourcesUtil';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
 export * from './mergeClassnames';
+export * from './mergeTranslations';
 export * from './misc';
 export * from './objectUtils';
 export * from './optGroupUtils';

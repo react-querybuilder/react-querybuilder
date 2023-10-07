@@ -74,7 +74,7 @@ html[data-theme='dark'] {
     .chakra-select__wrapper + button.rule-cloneRule,
     .chakra-select__wrapper + button.rule-lock,
     .chakra-select__wrapper + button.rule-remove {
-      margin-left: auto;
+      margin-left: auto !important;
     }
   }
 }

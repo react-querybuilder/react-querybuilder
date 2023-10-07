@@ -393,11 +393,14 @@ export default function Demo({
   const qbWrapperClassName = useMemo(
     () =>
       clsx(
-        { validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout },
-        variant === 'default' ? '' : `rqb-${variant}`,
-        options.showBranches ? 'queryBuilder-branches' : ''
+        {
+          validateQuery: options.validateQuery,
+          justifiedLayout: options.justifiedLayout,
+          'queryBuilder-branches': options.showBranches,
+        },
+        variant === 'default' ? '' : qbWrapperId
       ),
-    [options.justifiedLayout, options.showBranches, options.validateQuery, variant]
+    [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
   );
 
   const onQueryChangeIC = useCallback((q: RuleGroupTypeIC) => setQueryIC(q), []);

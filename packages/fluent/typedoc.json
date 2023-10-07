@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": ["src/index.tsx"],
   "validation": {
     "notExported": false
   }

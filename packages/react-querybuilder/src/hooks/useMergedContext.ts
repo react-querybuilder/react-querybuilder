@@ -1,11 +1,11 @@
 import { useContext, useMemo } from 'react';
 import { QueryBuilderContext, defaultControlElements } from '../components';
 import { defaultControlClassnames, defaultTranslations } from '../defaults';
-import type { Controls, QueryBuilderContextProps, TranslationsFull, WithRequired } from '../types';
-import { mergeClassnames, objectKeys } from '../utils';
+import type { Controls, QueryBuilderContextProps, TranslationsFull } from '../types';
+import { mergeClassnames, mergeTranslations } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
-export type UseMergedContextProps = WithRequired<QueryBuilderContextProps, 'translations'>;
+export type UseMergedContextProps = QueryBuilderContextProps;
 
 /**
  * Merges inherited context values with props, giving precedence to props.
@@ -47,20 +47,15 @@ export const useMergedContext = (props: UseMergedContextProps) => {
     [props.controlElements, rqbContext.controlElements]
   );
 
-  const translations = useMemo((): TranslationsFull => {
-    const translationsTemp: Partial<TranslationsFull> = {};
-    objectKeys(props.translations).forEach(t => {
-      const contextTranslations = rqbContext.translations;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore Different keys have different requirements
-      translationsTemp[t] = {
-        ...defaultTranslations[t],
-        ...contextTranslations,
-        ...props.translations[t],
-      };
-    });
-    return { ...defaultTranslations, ...translationsTemp };
-  }, [rqbContext.translations, props.translations]);
+  const translations = useMemo(
+    () =>
+      mergeTranslations(
+        defaultTranslations,
+        rqbContext.translations,
+        props.translations
+      ) as TranslationsFull,
+    [props.translations, rqbContext.translations]
+  );
 
   const {
     controlClassnames: _controlClassnames,

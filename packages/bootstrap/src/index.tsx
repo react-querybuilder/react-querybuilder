@@ -1,15 +1,13 @@
-import type { Classnames, Controls } from 'react-querybuilder';
+import * as React from 'react';
+import type { Classnames, Controls, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
-import { BootstrapDragHandle } from './BootstrapDragHandle';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
 
-export * from './BootstrapDragHandle';
 export * from './BootstrapNotToggle';
 export * from './BootstrapValueEditor';
 
 export const bootstrapControlElements: Partial<Controls> = {
-  dragHandle: BootstrapDragHandle,
   notToggle: BootstrapNotToggle,
   valueEditor: BootstrapValueEditor,
 };
@@ -30,8 +28,21 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   valueSource: 'form-select form-select-sm',
 };
 
+export const bootstrapTranslations: Partial<Translations> = {
+  removeGroup: { label: <i className="bi bi-x" /> },
+  removeRule: { label: <i className="bi bi-x" /> },
+  cloneRule: { label: <i className="bi bi-copy" /> },
+  cloneRuleGroup: { label: <i className="bi bi-copy" /> },
+  dragHandle: { label: <i className="bi bi-grip-vertical" /> },
+  lockGroup: { label: <i className="bi bi-unlock" /> },
+  lockRule: { label: <i className="bi bi-unlock" /> },
+  lockGroupDisabled: { label: <i className="bi bi-lock" /> },
+  lockRuleDisabled: { label: <i className="bi bi-lock" /> },
+};
+
 export const QueryBuilderBootstrap = getCompatContextProvider({
   key: 'bootstrap',
   controlClassnames: bootstrapControlClassnames,
   controlElements: bootstrapControlElements,
+  translations: bootstrapTranslations,
 });

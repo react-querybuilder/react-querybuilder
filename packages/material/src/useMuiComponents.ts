@@ -1,4 +1,10 @@
-import { DragIndicator } from '@mui/icons-material';
+import {
+  Close as CloseIcon,
+  ContentCopy as ContentCopyIcon,
+  DragIndicator,
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon,
+} from '@mui/icons-material';
 import {
   Button,
   Checkbox,
@@ -21,10 +27,14 @@ export const defaultMuiComponents = {
   DragIndicator,
   Button,
   Checkbox,
+  CloseIcon,
+  ContentCopyIcon,
   FormControl,
   FormControlLabel,
   Input,
   ListSubheader,
+  LockIcon,
+  LockOpenIcon,
   MenuItem,
   Radio,
   RadioGroup,

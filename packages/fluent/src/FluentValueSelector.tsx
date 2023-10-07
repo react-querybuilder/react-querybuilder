@@ -24,6 +24,8 @@ export const FluentValueSelector = ({
   context: _context,
   validation: _validation,
   schema: _schema,
+  rule: _rule,
+  rules: _rules,
   ...otherProps
 }: FluentValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });

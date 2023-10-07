@@ -60,13 +60,11 @@ export const MantineValueEditor = ({
         return (
           <NumberInput
             key={key}
-            // @ts-expect-error https://github.com/mantinedev/mantine/issues/4821
-            type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={toNumberInputValue(valueAsArray[i])}
             className={`${standardClassnames.valueListItem} input`}
             disabled={disabled}
-            onChange={v => multiValueHandler(v, i)}
+            onChange={v => multiValueHandler(toNumberInputValue(v), i)}
           />
         );
       }
@@ -252,11 +250,9 @@ export const MantineValueEditor = ({
         title={title}
         className={className}
         placeholder={placeHolderText}
-        // @ts-expect-error https://github.com/mantinedev/mantine/issues/4821
-        type={inputTypeCoerced}
         disabled={disabled}
         value={toNumberInputValue(value)}
-        onChange={v => handleOnChange(v)}
+        onChange={v => handleOnChange(toNumberInputValue(v))}
       />
     );
   }

@@ -3,10 +3,11 @@ import { useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../components';
 import type { QueryBuilderContextProps, QueryBuilderContextProvider } from '../types';
 import { mergeClassnames } from './mergeClassnames';
+import { mergeTranslations } from './mergeTranslations';
 
 export type GetCompatContextProviderProps = Pick<
   QueryBuilderContextProps,
-  'controlClassnames' | 'controlElements'
+  'controlClassnames' | 'controlElements' | 'translations'
 > & { key: string };
 
 /**
@@ -17,9 +18,11 @@ export const getCompatContextProvider =
     key,
     controlClassnames: compatClassnames,
     controlElements: compatElements,
+    translations: compatTranslations,
   }: GetCompatContextProviderProps): QueryBuilderContextProvider =>
   props => {
     const rqbContext = useContext(QueryBuilderContext);
+
     const classnamesObject = useMemo(
       () =>
         compatClassnames
@@ -33,6 +36,12 @@ export const getCompatContextProvider =
           : {},
       [props.controlClassnames, rqbContext.controlClassnames]
     );
+
+    const newTranslations = useMemo(
+      () => mergeTranslations(rqbContext.translations, compatTranslations, props.translations),
+      [props.translations, rqbContext.translations]
+    );
+
     const newContextProps = useMemo(
       (): QueryBuilderContextProps => ({
         ...rqbContext,
@@ -42,8 +51,9 @@ export const getCompatContextProvider =
           ...compatElements,
           ...props.controlElements,
         },
+        translations: newTranslations,
       }),
-      [classnamesObject, props.controlElements, rqbContext]
+      [classnamesObject, newTranslations, props.controlElements, rqbContext]
     );
 
     return (

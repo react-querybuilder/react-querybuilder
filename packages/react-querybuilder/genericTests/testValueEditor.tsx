@@ -320,8 +320,9 @@ export const testValueEditor = (
           render(<ValueEditor {...betweenNumberProps} />);
           const betweenInputs = findInputs(screen.getByTitle(title));
           expect(betweenInputs).toHaveLength(2);
-          expect(betweenInputs[0]).toHaveValue(12);
-          expect(betweenInputs[1]).toHaveValue(14);
+          // Mantine uses an input with type "text" so the input value is a string
+          expect(betweenInputs[0]).toHaveValue(betweenInputs[0].type === 'text' ? '12' : 12);
+          expect(betweenInputs[1]).toHaveValue(betweenInputs[1].type === 'text' ? '14' : 14);
         });
 
         it('should call the onChange handler', async () => {

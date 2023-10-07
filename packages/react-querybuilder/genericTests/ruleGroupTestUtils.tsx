@@ -36,8 +36,11 @@ export const ruleGroupControls: Partial<Controls> = {
       title={props.title}
       value={props.value}
       onChange={e => props.handleOnChange(e.target.value)}>
-      <option value="and">AND</option>
-      <option value="or">OR</option>
+      {defaultCombinators.map(c => (
+        <option key={c.name} value={c.name}>
+          {c.label}
+        </option>
+      ))}
       <option value="any_combinator_value">Any Combinator</option>
     </select>
   ),
@@ -46,7 +49,7 @@ export const ruleGroupControls: Partial<Controls> = {
       data-testid={TestID.addRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      +Rule
+      {translations.addRule.label}
     </button>
   ),
   addGroupAction: props => (
@@ -54,7 +57,7 @@ export const ruleGroupControls: Partial<Controls> = {
       data-testid={TestID.addGroup}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      +Group
+      {translations.addGroup.label}
     </button>
   ),
   cloneGroupAction: props => (
@@ -62,7 +65,7 @@ export const ruleGroupControls: Partial<Controls> = {
       data-testid={TestID.cloneGroup}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      ⧉
+      {translations.cloneRuleGroup.label}
     </button>
   ),
   cloneRuleAction: props => (
@@ -70,7 +73,7 @@ export const ruleGroupControls: Partial<Controls> = {
       data-testid={TestID.cloneRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      ⧉
+      {translations.cloneRule.label}
     </button>
   ),
   removeGroupAction: props => (
@@ -78,7 +81,7 @@ export const ruleGroupControls: Partial<Controls> = {
       data-testid={TestID.removeGroup}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      x
+      {translations.removeGroup.label}
     </button>
   ),
   removeRuleAction: props => (
@@ -86,13 +89,13 @@ export const ruleGroupControls: Partial<Controls> = {
       data-testid={TestID.removeRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      x
+      {translations.removeRule.label}
     </button>
   ),
   notToggle: props => (
     <label data-testid={TestID.notToggle} className={props.className}>
       <input type="checkbox" onChange={e => props.handleOnChange(e.target.checked)} />
-      Not
+      {translations.notToggle.label}
     </label>
   ),
   fieldSelector: props => (
@@ -121,7 +124,11 @@ export const ruleGroupControls: Partial<Controls> = {
       onChange={e => props.handleOnChange(e.target.value)}
     />
   ),
-  dragHandle: forwardRef(() => <span>:</span>),
+  dragHandle: forwardRef(({ className, label }, ref) => (
+    <span ref={ref} className={className}>
+      {label}
+    </span>
+  )),
 };
 
 export const ruleGroupClassnames: Partial<Classnames> = {

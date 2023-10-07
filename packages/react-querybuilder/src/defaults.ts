@@ -59,19 +59,19 @@ export const defaultTranslations = {
     title: 'Value',
   },
   removeRule: {
-    label: 'x',
+    label: '⨯',
     title: 'Remove rule',
   },
   removeGroup: {
-    label: 'x',
+    label: '⨯',
     title: 'Remove group',
   },
   addRule: {
-    label: '+Rule',
+    label: '+ Rule',
     title: 'Add rule',
   },
   addGroup: {
-    label: '+Group',
+    label: '+ Group',
     title: 'Add group',
   },
   combinators: {

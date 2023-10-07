@@ -1,4 +1,10 @@
-import { DragIndicator } from '@mui/icons-material';
+import {
+  Close as CloseIcon,
+  ContentCopy as ContentCopyIcon,
+  DragIndicator,
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon,
+} from '@mui/icons-material';
 import type {
   FormControlProps,
   ListSubheaderProps,
@@ -30,7 +36,7 @@ import {
   isValidElement as mockIsValidElement,
 } from 'react';
 import type { DragHandleProps, RuleGroupType, Schema } from 'react-querybuilder';
-import { QueryBuilder, TestID, defaultTranslations } from 'react-querybuilder';
+import { QueryBuilder, TestID, defaultTranslations, objectEntries } from 'react-querybuilder';
 import {
   testActionElement,
   testDragHandle,
@@ -40,11 +46,13 @@ import {
 } from 'react-querybuilder/genericTests';
 import 'regenerator-runtime/runtime';
 import { QueryBuilderMaterial } from '.';
+import type { MaterialActionProps } from './MaterialActionElement';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
 import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
+import { materialTranslations } from './translations';
 import type { RQBMaterialComponents } from './types';
 
 jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
@@ -88,11 +96,15 @@ jest.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) 
 const muiComponents = {
   Button,
   Checkbox,
+  CloseIcon,
+  ContentCopyIcon,
   DragIndicator,
   FormControl,
   FormControlLabel,
   Input,
   ListSubheader,
+  LockIcon,
+  LockOpenIcon,
   MenuItem,
   Radio,
   RadioGroup,
@@ -101,7 +113,7 @@ const muiComponents = {
   TextareaAutosize,
 };
 const theme = createTheme();
-const generateWrapper = (RQBComponent: any) => {
+const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
       <RQBComponent muiComponents={muiComponents} {...props} />
@@ -225,6 +237,41 @@ describe('value selector', () => {
     expect(screen.getByTestId('test').querySelector('select')).toBeInTheDocument();
     expect(screen.getByTestId('test').querySelector('option')).toBeInTheDocument();
   });
+});
+
+describe('icon translations', () => {
+  for (const [trnsltn, { label: lbl }] of objectEntries(materialTranslations)) {
+    const iconTranslationProps: MaterialActionProps = {
+      handleOnClick: () => {},
+      path: [],
+      level: 0,
+      ruleOrGroup: { combinator: 'and', rules: [] },
+      schema: {} as Schema,
+      label: lbl,
+    };
+
+    it(`renders ${trnsltn} with preloaded components`, () => {
+      const MAE = generateWrapper(MaterialActionElement);
+      const { schema: _s, ...itProps } = iconTranslationProps;
+      render(
+        <div data-testid="test">
+          <QueryBuilderMaterial>
+            <MAE {...itProps} />
+          </QueryBuilderMaterial>
+        </div>
+      );
+      expect(screen.getByTestId('test').querySelector('button')).toBeInTheDocument();
+    });
+
+    it(`renders ${trnsltn} without preloaded components`, async () => {
+      render(
+        <div data-testid="test">
+          <MaterialActionElement {...iconTranslationProps} />
+        </div>
+      );
+      expect(screen.getByTestId('test').querySelector('button')).toBeInTheDocument();
+    });
+  }
 });
 
 it('renders with composition', async () => {

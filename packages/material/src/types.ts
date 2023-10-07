@@ -1,4 +1,10 @@
-import type { DragIndicator } from '@mui/icons-material';
+import type {
+  Close as CloseIcon,
+  ContentCopy as ContentCopyIcon,
+  DragIndicator,
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon,
+} from '@mui/icons-material';
 import type {
   Button,
   Checkbox,
@@ -17,11 +23,15 @@ import type {
 export type RQBMaterialComponents = {
   Button: typeof Button;
   Checkbox: typeof Checkbox;
+  CloseIcon: typeof CloseIcon;
+  ContentCopyIcon: typeof ContentCopyIcon;
   DragIndicator: typeof DragIndicator;
   FormControl: typeof FormControl;
   FormControlLabel: typeof FormControlLabel;
   Input: typeof Input;
   ListSubheader: typeof ListSubheader;
+  LockIcon: typeof LockIcon;
+  LockOpenIcon: typeof LockOpenIcon;
   MenuItem: typeof MenuItem;
   Radio: typeof Radio;
   RadioGroup: typeof RadioGroup;

@@ -13,7 +13,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. The latter accepts the return value of the former as its second parameter.
 - Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
-- `@react-querybuilder/mantine` now supports/requires Mantine v7.
+- Some of the default labels have been updated per the table below.
+  | `translations` key | Old `label` | New `label` | Notes |
+  | ------------------ | ----------- | ----------- | --- |
+  | `addRule` | "+Rule" | "+ Rule" | A space was added before "Rule". |
+  | `addGroup` | "+Group" | "+ Group" | A space was added before "Group". |
+  | `removeRule` | "x" | "⨯" | Unicode `U+2A2F` (HTML entity `&cross;`). |
+  | `removeGroup` | "x" | "⨯" | Unicode `U+2A2F` (HTML entity `&cross;`). |
+
+#### Compatibility packages
+
+- Several compatibility packages now override the default labels for non-text components (`lock*`, `clone*`, `remove*`, and `dragHandle`) with SVGs from official icon packages. This brings them more in line with their respective design systems by default.
+  - `@react-querybuilder/bootstrap`: `bootstrap-icons`
+  - `@react-querybuilder/chakra`: `@chakra-ui/icons`
+  - `@react-querybuilder/fluent`: `@fluentui/react-icons-mdl2`
+  - `@react-querybuilder/material`: `@mui/icons-material`
+- `@react-querybuilder/mantine` now supports/requires Mantine v7+.
+- `@react-querybuilder/bootstrap` component `BootstrapDragHandle` has been removed. It is redundant since `dragHandle.label` can be a `ReactNode`.
 
 ### Added
 
@@ -24,10 +40,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New `paramsKeepPrefix` option for `formatQuery`. When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
 - `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
 - All `label` props and `translations.*.label` properties now accept `ReactNode`. This includes all action elements (buttons), "not" toggles, and drag handles. Previously `label` was limited to `string`. This enables, for example, the assignment of SVG elements as labels.
+- Compatibility package for [Blueprint](https://blueprintjs.com/).
+- The `translations` prop can now be passed down through the compatibility context providers like `<QueryBuilderBootstrap />` and `<QueryBuilderMaterial />`. The object will be merged with the `translations` prop of nested `QueryBuilder` components.
 
 ### Fixed
 
-- Performance is improved, especially for larger queries, via `React.memo`, as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
+- Performance is improved via `React.memo` (especially for larger queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
 
 ## [v6.5.1] - 2023-06-26
 

@@ -1,4 +1,12 @@
-import type { Controls } from 'react-querybuilder';
+import {
+  CancelIcon,
+  DuplicateRowIcon,
+  GripperDotsVerticalIcon,
+  LockIcon,
+  UnlockIcon,
+} from '@fluentui/react-icons-mdl2';
+import * as React from 'react';
+import type { Controls, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
@@ -30,7 +38,20 @@ export const fluentControlElements: Partial<Controls> = {
   valueSourceSelector: FluentValueSelector,
 };
 
+export const fluentTranslations: Partial<Translations> = {
+  removeGroup: { label: <CancelIcon /> },
+  removeRule: { label: <CancelIcon /> },
+  cloneRule: { label: <DuplicateRowIcon /> },
+  cloneRuleGroup: { label: <DuplicateRowIcon /> },
+  dragHandle: { label: <GripperDotsVerticalIcon /> },
+  lockGroup: { label: <UnlockIcon /> },
+  lockRule: { label: <UnlockIcon /> },
+  lockGroupDisabled: { label: <LockIcon /> },
+  lockRuleDisabled: { label: <LockIcon /> },
+};
+
 export const QueryBuilderFluent = getCompatContextProvider({
   key: 'fluent',
   controlElements: fluentControlElements,
+  translations: fluentTranslations,
 });

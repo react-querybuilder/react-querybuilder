@@ -1,4 +1,5 @@
 import packageJSON_rqb_antd from '@react-querybuilder/antd/package.json';
+import packageJSON_rqb_blueprint from '@react-querybuilder/blueprint/package.json';
 import packageJSON_rqb_bootstrap from '@react-querybuilder/bootstrap/package.json';
 import packageJSON_rqb_bulma from '@react-querybuilder/bulma/package.json';
 import packageJSON_rqb_chakra from '@react-querybuilder/chakra/package.json';
@@ -226,14 +227,15 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
 ];
 
 export const styleNameMap: Record<StyleName, string> = {
-  default: 'Default',
-  bootstrap: 'Bootstrap',
-  material: 'MUI/Material',
-  mantine: 'Mantine',
-  fluent: 'Fluent UI',
   antd: 'Ant Design',
-  chakra: 'Chakra UI',
+  blueprint: 'Blueprint',
+  bootstrap: 'Bootstrap',
   bulma: 'Bulma',
+  chakra: 'Chakra UI',
+  default: 'Default',
+  fluent: 'Fluent UI',
+  mantine: 'Mantine',
+  material: 'MUI/Material',
 };
 
 const { default: _d, ...compatStyles } = styleNameMap;
@@ -244,6 +246,7 @@ export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>>
   default: {},
   dnd: packageJSON_rqb_dnd.peerDependencies,
   antd: packageJSON_rqb_antd.peerDependencies,
+  blueprint: packageJSON_rqb_blueprint.peerDependencies,
   bootstrap: packageJSON_rqb_bootstrap.peerDependencies,
   bulma: packageJSON_rqb_bulma.peerDependencies,
   chakra: packageJSON_rqb_chakra.peerDependencies,

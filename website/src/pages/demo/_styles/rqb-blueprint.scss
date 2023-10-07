@@ -1,0 +1,8 @@
+.rqb-blueprint,
+.bp5-portal {
+  @import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+  @import '@blueprintjs/core/src/blueprint';
+  @import '@blueprintjs/datetime/src/blueprint-datetime';
+  @import '@blueprintjs/datetime2/src/blueprint-datetime2';
+  @import '@blueprintjs/select/src/blueprint-select';
+}
