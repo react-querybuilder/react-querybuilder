@@ -36,67 +36,6 @@ it('renders with composition', () => {
 
 const user = userEventSetup();
 
-// const testBlueprintSelect = (
-//   title: string,
-//   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-//   props: any
-// ) => {
-//   const testValues: Option[] = props.values ?? props.options;
-//   const testVal = testValues[1];
-
-//   describe(title, () => {
-//     it('should have the options passed into the <select />', () => {
-//       render(<Component {...props} />);
-//       expect(screen.getAllByRole('option')).toHaveLength(testValues.length);
-//     });
-
-//     it('should render the correct number of options', () => {
-//       render(<Component {...props} />);
-//       const select = findSelect(screen.getByRole('combobox'));
-//       expect(select).toHaveLength(testValues.length);
-//     });
-
-//     it('should render optgroups', () => {
-//       const optGroups = [
-//         { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
-//       ];
-//       const newProps =
-//         'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
-//       render(<Component {...newProps} />);
-//       expect(screen.getAllByRole('group')).toHaveLength(optGroups.length);
-//       expect(screen.getAllByRole('option')).toHaveLength(testValues.length);
-//     });
-
-//     // Test as single-value selector
-//     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
-//       it('should have the value passed into the <select />', () => {
-//         render(<Component {...props} value={testVal.name} />);
-//         expect(screen.getByRole('combobox')).toHaveValue(testVal.name);
-//       });
-//     }
-
-//     it('should have the className passed into the <select />', () => {
-//       render(<Component {...props} className="foo" />);
-//       expect(hasOrInheritsClass(screen.getByRole('combobox'), 'foo')).toBe(true);
-//     });
-
-//     it('should call the onChange method passed in', async () => {
-//       const onChange = jest.fn();
-//       render(<Component {...props} handleOnChange={onChange} />);
-//       await user.selectOptions(screen.getByRole('combobox'), testVal.name);
-//       expect(onChange).toHaveBeenCalledWith(testVal.name);
-//     });
-
-//     it('should be disabled by the disabled prop', async () => {
-//       const onChange = jest.fn();
-//       render(<Component {...props} handleOnChange={onChange} disabled />);
-//       expect(screen.getByRole('combobox')).toBeDisabled();
-//       await user.selectOptions(screen.getByRole('combobox'), testVal.name);
-//       expect(onChange).not.toHaveBeenCalled();
-//     });
-//   });
-// };
-
 describe('BlueprintValueSelector as multiselect', () => {
   it('should have the values passed into the component', () => {
     const onChange = jest.fn();
