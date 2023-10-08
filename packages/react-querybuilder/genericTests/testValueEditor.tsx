@@ -14,14 +14,13 @@ type ValueEditorTestsToSkip = Partial<{
   switch: boolean;
   between: boolean;
   betweenSelect: boolean;
-  selectorClassOnParent: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: OptionList;
   testID: string;
 }
 
-export const defaultValueEditorProps: ValueEditorProps = {
+export const defaultValueEditorProps = {
   field: 'TEST',
   fieldData: { name: 'TEST', label: 'Test' },
   operator: '=',
@@ -31,7 +30,7 @@ export const defaultValueEditorProps: ValueEditorProps = {
   valueSource: 'value',
   schema: {} as Schema,
   rule: { field: '', operator: '', value: '' },
-};
+} satisfies ValueEditorProps;
 
 export const testValueEditor = (
   ValueEditor: React.ComponentType<ValueEditorProps>,
@@ -165,9 +164,7 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps, {
-        classOnParent: skip.selectorClassOnParent,
-      });
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
     }
 
     if (!skip.multiselect) {
@@ -179,9 +176,7 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps, {
-        classOnParent: skip.selectorClassOnParent,
-      });
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps);
     }
 
     if (!skip.checkbox) {

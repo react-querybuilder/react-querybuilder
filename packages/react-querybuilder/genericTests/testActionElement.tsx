@@ -3,14 +3,14 @@ import * as React from 'react';
 import type { ActionWithRulesProps, Schema } from '../src/types/';
 import { userEventSetup } from './utils';
 
-export const defaultActionElementProps: ActionWithRulesProps = {
+export const defaultActionElementProps = {
   handleOnClick: () => {},
   className: '',
   level: 0,
   path: [],
   ruleOrGroup: { combinator: 'and', rules: [] },
   schema: {} as Schema,
-};
+} satisfies ActionWithRulesProps;
 
 export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {
   const user = userEventSetup();

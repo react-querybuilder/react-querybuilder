@@ -19,16 +19,15 @@ import type {
 } from '../src/types/';
 import { UNUSED } from './utils';
 
-export const createRule = (index: number): RuleType => {
-  return {
+export const createRule = (index: number) =>
+  ({
     id: `rule_id_${index}`,
     field: `field_${index}`,
     operator: `operator_${index}`,
     value: `value_${index}`,
-  };
-};
+  } satisfies RuleType);
 
-export const ruleGroupControls: Partial<Controls> = {
+export const ruleGroupControls = {
   combinatorSelector: props => (
     <select
       data-testid={TestID.combinators}
@@ -129,9 +128,9 @@ export const ruleGroupControls: Partial<Controls> = {
       {label}
     </span>
   )),
-};
+} satisfies Partial<Controls>;
 
-export const ruleGroupClassnames: Partial<Classnames> = {
+export const ruleGroupClassnames = {
   header: 'custom-header-class',
   body: 'custom-body-class',
   combinators: 'custom-combinators-class',
@@ -141,9 +140,9 @@ export const ruleGroupClassnames: Partial<Classnames> = {
   removeGroup: 'custom-removeGroup-class',
   notToggle: { 'custom-notToggle-class': true },
   ruleGroup: ['custom-ruleGroup-class'],
-};
+} satisfies Partial<Classnames>;
 
-const ruleGroupSchema: Partial<Schema> = {
+const ruleGroupSchema = {
   fields: [{ name: 'field1', label: 'Field 1' }],
   combinators: defaultCombinators,
   controls: { ...defaultControlElements, ...ruleGroupControls },
@@ -169,13 +168,13 @@ const ruleGroupSchema: Partial<Schema> = {
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],
-};
+} satisfies Partial<Schema>;
 
-const ruleGroupActions: Partial<QueryActions> = {
+const ruleGroupActions = {
   onPropChange: () => {},
   onRuleAdd: () => {},
   onGroupAdd: () => {},
-};
+} satisfies Partial<QueryActions>;
 
 export const getRuleGroupProps = (
   mergeIntoSchema: Partial<Schema> = {},

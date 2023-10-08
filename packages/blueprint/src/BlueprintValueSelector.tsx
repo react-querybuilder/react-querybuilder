@@ -30,18 +30,13 @@ const getOptionProps = (
 
 const tagRenderer = (opt: Option) => opt.label;
 
-const itemPredicate: ItemPredicate<Option> = (query, opt, _idx, exactMatch) => {
+const itemPredicate: ItemPredicate<Option> = (query, opt, _idx, _exactMatch) => {
   const normalizedLabel = opt.label.toLowerCase();
   const normalizedQuery = query.toLowerCase();
-  if (exactMatch) {
-    return normalizedLabel === normalizedQuery;
-  } else {
-    // return normalizedLabel.indexOf(normalizedQuery) >= 0;
-    return new RegExp(normalizedQuery.split('').join('.*?'), 'i').test(normalizedLabel);
-  }
+  return new RegExp(normalizedQuery.split('').join('.*?'), 'i').test(normalizedLabel);
 };
 
-const noResults = <MenuItem disabled={true} text="No results" roleStructure="listoption" />;
+const noResults = <MenuItem disabled text="No results" roleStructure="listoption" />;
 
 export const BlueprintValueSelector = ({
   className,

@@ -3,12 +3,12 @@ import * as React from 'react';
 import { TestID } from '../src/defaults';
 import type { DragHandleProps, Schema } from '../src/types/';
 
-export const defaultDragHandleProps: DragHandleProps = {
+export const defaultDragHandleProps = {
   level: 1,
   path: [0],
   schema: {} as Schema,
   ruleOrGroup: { combinator: 'and', rules: [] },
-};
+} satisfies DragHandleProps;
 
 export const testDragHandle = (
   DragHandle: React.ForwardRefExoticComponent<DragHandleProps & React.RefAttributes<any>>

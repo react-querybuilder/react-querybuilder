@@ -3,13 +3,13 @@ import * as React from 'react';
 import type { NotToggleProps, Schema } from '../src/types/';
 import { findInput, hasOrInheritsClass, isOrInheritsChecked, userEventSetup } from './utils';
 
-export const defaultNotToggleProps: NotToggleProps = {
+export const defaultNotToggleProps = {
   handleOnChange: () => {},
   level: 0,
   path: [],
   schema: {} as Schema,
   ruleGroup: { combinator: 'and', rules: [] },
-};
+} satisfies NotToggleProps;
 
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {
   const user = userEventSetup();
