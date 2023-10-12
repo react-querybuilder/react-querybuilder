@@ -15,6 +15,7 @@ describe('valueSource: "value"', () => {
         $or: [
           { f1: null },
           { f1: { $ne: null } },
+          { f1: { $not: { $eq: 'Test' } } },
           { $not: { f1: 'Test' } },
           { $not: { f1: { $eq: 'Test' } } },
           { f1: 'Test' },
@@ -40,16 +41,9 @@ describe('valueSource: "value"', () => {
       rules: [
         { field: 'f1', operator: 'null', value: null },
         { field: 'f1', operator: 'notNull', value: null },
-        {
-          combinator: 'and',
-          rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-          not: true,
-        },
-        {
-          combinator: 'and',
-          rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-          not: true,
-        },
+        { field: 'f1', operator: '!=', value: 'Test' },
+        { field: 'f1', operator: '!=', value: 'Test' },
+        { field: 'f1', operator: '!=', value: 'Test' },
         { field: 'f1', operator: '=', value: 'Test' },
         {
           combinator: 'and',
@@ -110,6 +104,9 @@ describe('valueSource: "value"', () => {
           { f1: { $regex: /^Test/ } },
           { f1: { $regex: /Test$/ } },
           { f1: { $regex: /Test/ } },
+          { f1: { $not: { $regex: '^Test' } } },
+          { f1: { $not: { $regex: 'Test$' } } },
+          { f1: { $not: { $regex: 'Test' } } },
           { $not: { f1: { $regex: '^Test' } } },
           { $not: { f1: { $regex: 'Test$' } } },
           { $not: { f1: { $regex: 'Test' } } },
@@ -124,6 +121,9 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'beginsWith', value: 'Test' },
         { field: 'f1', operator: 'endsWith', value: 'Test' },
         { field: 'f1', operator: 'contains', value: 'Test' },
+        { field: 'f1', operator: 'doesNotBeginWith', value: 'Test' },
+        { field: 'f1', operator: 'doesNotEndWith', value: 'Test' },
+        { field: 'f1', operator: 'doesNotContain', value: 'Test' },
         { field: 'f1', operator: 'doesNotBeginWith', value: 'Test' },
         { field: 'f1', operator: 'doesNotEndWith', value: 'Test' },
         { field: 'f1', operator: 'doesNotContain', value: 'Test' },
@@ -157,6 +157,7 @@ describe('valueSource: "value"', () => {
           { f1: { $nin: ['Test', 'Test2'] } },
           { f1: { $nin: [12, 14] } },
           { f1: { $nin: [true, false] } },
+          { f1: { $not: { $gt: 14, $gte: 12 } } },
         ],
       })
     ).toEqual({
@@ -196,6 +197,14 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'notIn', value: 'Test,Test2' },
         { field: 'f1', operator: 'notIn', value: '12,14' },
         { field: 'f1', operator: 'notIn', value: 'true,false' },
+        {
+          combinator: 'and',
+          not: true,
+          rules: [
+            { field: 'f1', operator: '>', value: 14 },
+            { field: 'f1', operator: '>=', value: 12 },
+          ],
+        },
       ],
     });
   });
@@ -206,28 +215,24 @@ describe('valueSource: "field"', () => {
     expect(
       parseMongoDB({
         $or: [
-          { $not: { $expr: { $eq: ['$f1', '$f2'] } } },
           { $expr: { $eq: ['$f1', '$f2'] } },
           { $expr: { $ne: ['$f1', '$f2'] } }, // ignored
           { $expr: { $gt: ['$f1', '$f2'] } },
           { $expr: { $gte: ['$f1', '$f2'] } },
           { $expr: { $lt: ['$f1', '$f2'] } },
           { $expr: { $lte: ['$f1', '$f2'] } },
+          { $not: { $expr: { $eq: ['$f1', '$f2'] } } },
         ],
       })
     ).toEqual({
       combinator: 'or',
       rules: [
-        {
-          combinator: 'and',
-          not: true,
-          rules: [{ field: 'f1', operator: '=', value: 'f2', valueSource: 'field' }],
-        },
         { field: 'f1', operator: '=', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: '>', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: '>=', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: '<', value: 'f2', valueSource: 'field' },
         { field: 'f1', operator: '<=', value: 'f2', valueSource: 'field' },
+        { field: 'f1', operator: '!=', value: 'f2', valueSource: 'field' },
       ],
     });
   });
