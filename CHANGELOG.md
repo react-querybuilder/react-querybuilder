@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Fixed
+
+- [#523] `parseMongoDB` now properly handles objects in the form of `{ fieldName: { $not: { /* ...rule */ } } }`. This problem was particularly evident for `$regex` operators that should have generated rules with `"doesNot[Contain/BeginWith/EndWith]"` operators, since `formatQuery(query, 'mongodb')` produces this structure and `parseMongoDB` was not handling the inverse operation.
 
 ## [v6.5.1] - 2023-06-26
 
@@ -1373,7 +1375,9 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
 [#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
 [#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
+[#523]: https://github.com/react-querybuilder/react-querybuilder/issues/523
 [#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
+[#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
 
 <!-- Release comparison links -->
 

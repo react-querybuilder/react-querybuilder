@@ -217,19 +217,14 @@ function parseMongoDB(
 
       return rules.length > 0 ? { combinator: 'or', rules } : false;
     } else if (key === '$not' && isPojo(keyValue)) {
-      const rule = processMongoDbQueryObject(keyValue);
-      if (rule) {
-        if (
-          !isRuleGroupType(rule) &&
-          (rule.operator === 'between' ||
-            rule.operator === 'in' ||
-            rule.operator === 'contains' ||
-            rule.operator === 'beginsWith' ||
-            rule.operator === 'endsWith')
-        ) {
-          return { ...rule, operator: defaultOperatorNegationMap[rule.operator] };
+      const ruleOrGroup = processMongoDbQueryObject(keyValue);
+      if (ruleOrGroup) {
+        if (isRuleGroupType(ruleOrGroup)) {
+          return ruleOrGroup.not
+            ? { combinator: 'and', rules: [ruleOrGroup], not: true }
+            : { ...ruleOrGroup, not: true };
         }
-        return { combinator: 'and', rules: [rule], not: true };
+        return { ...ruleOrGroup, operator: defaultOperatorNegationMap[ruleOrGroup.operator] };
       }
       return false;
     } else if (key === '$expr') {
@@ -279,12 +274,27 @@ function parseMongoDB(
         }
       } else if (isPojo(keyValue)) {
         let betweenRule: DefaultRuleType | false = false;
+        let notRule: DefaultRuleType | DefaultRuleGroupType | false = false;
 
         const operators = objectKeys(keyValue)
-          .filter(o => /^\$(eq|ne|gte?|lte?|n?in|regex)$/.test(o))
+          .filter(o => /^\$(eq|ne|gte?|lte?|n?in|regex|not)$/.test(o))
           .sort() as MongoDbSupportedOperators[];
         if (operators.length === 0) {
           return false;
+        }
+
+        if ('$not' in keyValue && isPojo(keyValue.$not)) {
+          const invertedNotRule = processMongoDbQueryObject({ [field]: keyValue.$not });
+          if (invertedNotRule) {
+            if (isRuleGroupType(invertedNotRule)) {
+              notRule = { ...invertedNotRule, not: true };
+            } else {
+              notRule = {
+                ...invertedNotRule,
+                operator: defaultOperatorNegationMap[invertedNotRule.operator],
+              };
+            }
+          }
         }
 
         if ('$gte' in keyValue && '$lte' in keyValue) {
@@ -299,10 +309,16 @@ function parseMongoDB(
         }
 
         const rules = operators
+          // filter out $not
+          .filter(op => !(notRule && op === '$not'))
           // filter out $gte and $lte if they were both present
           .filter(op => !(betweenRule && (op === '$gte' || op === '$lte')))
           .map(op => processMongoDbQueryBooleanOperator(field, op, keyValue[op]))
           .filter(Boolean) as (DefaultRuleGroupType | DefaultRuleType)[];
+
+        if (notRule) {
+          rules.unshift(notRule);
+        }
 
         if (betweenRule) {
           rules.unshift(betweenRule);
