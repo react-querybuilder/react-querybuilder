@@ -9,9 +9,8 @@ To see them in action, check out the [`react-querybuilder` demo](https://react-q
 ## Installation
 
 ```bash
-npm i --save react-querybuilder @react-querybuilder/material @mui/icons-material @mui/material
-# OR
-yarn add react-querybuilder @react-querybuilder/material @mui/icons-material @mui/material
+npm i react-querybuilder @react-querybuilder/material @mui/icons-material @mui/material
+# OR yarn add / pnpm add / bun add
 ```
 
 ## Usage

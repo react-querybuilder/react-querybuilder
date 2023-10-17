@@ -9,9 +9,8 @@ To see this in action, check out the [`react-querybuilder` demo](https://react-q
 ## Installation
 
 ```bash
-npm i --save react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
-# OR
-yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+# OR yarn add / pnpm add / bun add
 ```
 
 ## Usage

@@ -2,9 +2,12 @@
 // npm: https://www.npmjs.com/package/ts-extras
 // src: https://github.com/sindresorhus/ts-extras
 
-// Original (not sure why template string is used):
-// type ObjectKeys<T extends object> = `${Exclude<keyof T, symbol>}`;
-// Modified:
+/**
+ * Original looked like this (not sure why template string is used):
+ * ```
+ * type ObjectKeys<T extends object> = `${Exclude<keyof T, symbol>}`;
+ * ```
+ */
 type ObjectKeys<T extends object> = Exclude<keyof T, symbol>;
 
 /**
