@@ -4,7 +4,7 @@ import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from '../types/
  * Determines if an object is a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
  */
 export const isRuleGroup = (rg: any): rg is RuleGroupTypeAny =>
-  typeof rg === 'object' && 'rules' in rg && Array.isArray(rg.rules);
+  !!rg && typeof rg === 'object' && 'rules' in rg && Array.isArray(rg.rules);
 
 /**
  * Determines if an object is a {@link RuleGroupType}.
