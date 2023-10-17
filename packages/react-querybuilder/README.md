@@ -8,7 +8,7 @@ _The Query Builder component for React_
 
 ## Documentation
 
-Complete documentation is available at [https://react-querybuilder.js.org](https://react-querybuilder.js.org).
+Complete documentation is available at [https://react-querybuilder.js.org].
 
 ## Demo
 
@@ -30,10 +30,9 @@ Custom components are not limited to the following libraries, but these have fir
 
 ## Basic usage
 
-```shell
-npm install react-querybuilder --save
-# OR
-yarn add react-querybuilder
+```bash
+npm i react-querybuilder
+# OR yarn add / pnpm add / bun add
 ```
 
 ```tsx
@@ -64,7 +63,7 @@ export const App = () => {
 };
 ```
 
-To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/) and nest `<QueryBuilder />` under `<QueryBuilderDnD />`.
+To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/dnd) and nest `<QueryBuilder />` under `<QueryBuilderDnD />`.
 
 ## Export
 
@@ -88,9 +87,7 @@ const query = {
 };
 const sqlWhere = formatQuery(query, 'sql');
 console.log(sqlWhere);
-/*
-`(first_name like 'Stev%' and last_name in ('Vai', 'Vaughan'))`
-*/
+// `(first_name like 'Stev%' and last_name in ('Vai', 'Vaughan'))`
 ```
 
 ## Import

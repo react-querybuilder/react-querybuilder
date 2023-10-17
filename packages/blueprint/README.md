@@ -10,10 +10,7 @@ To see them in action, check out the [`react-querybuilder` demo](https://react-q
 
 ```bash
 npm i react-querybuilder @react-querybuilder/blueprint @blueprintjs/core @blueprintjs/datetime2 @blueprintjs/icons @blueprintjs/select
-# OR
-# yarn add react-querybuilder @react-querybuilder/blueprint @blueprintjs/core @blueprintjs/datetime2 @blueprintjs/icons @blueprintjs/select
-# pnpm add react-querybuilder @react-querybuilder/blueprint @blueprintjs/core @blueprintjs/datetime2 @blueprintjs/icons @blueprintjs/select
-# bun add react-querybuilder @react-querybuilder/blueprint @blueprintjs/core @blueprintjs/datetime2 @blueprintjs/icons @blueprintjs/select
+# OR yarn add / pnpm add / bun add
 ```
 
 ## Usage

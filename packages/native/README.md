@@ -9,9 +9,8 @@ To see them in action, [load the example in Expo Snack](TODO: url here).
 ## Installation
 
 ```bash
-npm i --save react-querybuilder @react-querybuilder/native
-# OR
-yarn add react-querybuilder @react-querybuilder/native
+npm i react-querybuilder @react-querybuilder/native
+# OR yarn add / pnpm add / bun add
 ```
 
 ## Usage
