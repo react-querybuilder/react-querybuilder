@@ -6,7 +6,7 @@ build/
 dist/
 coverage/
 
-# website/api is (re)generated when running `website:start` or `website:build`,
+# website/api is (re)generated when running `bun web` or `bun website:build`,
 # but it needs to exist for docusaurus to begin
 website/api/*
 !website/api/.gitkeep

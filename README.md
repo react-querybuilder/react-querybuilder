@@ -55,7 +55,7 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 To run a test page with a basic query builder using the default components, run `bun start`.
 
-To run the documentation website, run `bun run build && bun website:start`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
+To run the documentation website, run `bun run build && bun run web`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
 
 ## Credits
 

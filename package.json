@@ -54,7 +54,7 @@
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
     "outdated": "yarn upgrade-interactive",
     "version": "bun ./version.ts && yarn && concurrently --timings --names examples,packages bun:generate-examples bun:build && concurrently \"git add examples packages yarn.lock\"",
-    "website:start": "cd website && bun run start",
+    "web": "cd website && bun run start",
     "website:build": "cd website && bun run build",
     "website:serve": "cd website && bun run serve",
     "website:deploy": "cd website && bun run deploy",
@@ -107,6 +107,8 @@
   "resolutions": {
     "nx": "npm:nx@16.5.3",
     "sass@^1.68.0": "patch:sass@npm%3A1.68.0#./.yarn/patches/sass-npm-1.68.0-960a5fc7e0.patch",
-    "typedoc-plugin-markdown@^3.16.0": "patch:typedoc-plugin-markdown@npm%3A3.16.0#./.yarn/patches/typedoc-plugin-markdown-npm-3.16.0-db041bab98.patch"
+    "typedoc-plugin-markdown@^3.16.0": "patch:typedoc-plugin-markdown@npm%3A3.16.0#./.yarn/patches/typedoc-plugin-markdown-npm-3.16.0-db041bab98.patch",
+    "typedoc-plugin-markdown@next": "patch:typedoc-plugin-markdown@npm%3A4.0.0-next.23#./.yarn/patches/typedoc-plugin-markdown-npm-4.0.0-next.23-8fb54301d6.patch",
+    "docusaurus-plugin-typedoc@next": "patch:docusaurus-plugin-typedoc@npm%3A1.0.0-next.17#./.yarn/patches/docusaurus-plugin-typedoc-npm-1.0.0-next.17-f81e7646bc.patch"
   }
 }
