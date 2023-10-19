@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [#523] `parseMongoDB` now properly handles objects in the form of `{ fieldName: { $not: { /* ...rule */ } } }`. This problem was particularly evident for `$regex` operators that should have generated rules with `"doesNot[Contain/BeginWith/EndWith]"` operators, since `formatQuery(query, 'mongodb')` produces this structure and `parseMongoDB` was not handling the inverse operation.
+- `isRuleGroup` will not error when the argument is `null`.
+- `parseSQL` properly recognizes signed numbers like `-1` or `+1`.
 
 ## [v6.5.1] - 2023-06-26
 
