@@ -93,6 +93,11 @@ export interface SQLNumberValue extends SQLWhereObject {
   type: 'Number';
   value: string;
 }
+export interface SQLSignedNumberValue extends SQLWhereObject {
+  type: 'Prefix';
+  prefix: '+' | '-';
+  value: SQLNumberValue;
+}
 export interface SQLBooleanValue extends SQLWhereObject {
   type: 'Boolean';
   value: AnyCase<'TRUE'> | AnyCase<'FALSE'>;

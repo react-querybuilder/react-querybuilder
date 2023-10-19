@@ -9,16 +9,24 @@ import type {
   SQLIdentifier,
   SQLLiteralValue,
   SQLOrExpression,
+  SQLSignedNumberValue,
   SQLWhereObjectAny,
   SQLXorExpression,
   XorOperator,
 } from './types';
 
 export const isSQLLiteralValue = (v?: SQLWhereObjectAny): v is SQLLiteralValue =>
-  !!v && (v.type === 'String' || v.type === 'Number' || v.type === 'Boolean');
+  v?.type === 'String' || v?.type === 'Number' || v?.type === 'Boolean';
+
+export const isSQLSignedNumber = (v?: SQLWhereObjectAny): v is SQLSignedNumberValue =>
+  v?.type === 'Prefix' && (v.prefix === '+' || v.prefix === '-') && v.value.type === 'Number';
+
+export const isSQLLiteralOrSignedNumberValue = (
+  v?: SQLWhereObjectAny
+): v is SQLLiteralValue | SQLSignedNumberValue => isSQLLiteralValue(v) || isSQLSignedNumber(v);
 
 export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
-  !!v && v.type === 'Identifier';
+  v?.type === 'Identifier';
 
 export const isWildcardsOnly = (sqlExpr: SQLExpression) =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^['"]?%+['"]?$/.test(sqlExpr.value);
@@ -62,7 +70,7 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
   return op;
 };
 
-export const evalSQLLiteralValue = (valueObj: SQLLiteralValue) => {
+export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberValue) => {
   if (valueObj.type === 'String') {
     const valueString: string = valueObj.value;
     if (
@@ -77,6 +85,8 @@ export const evalSQLLiteralValue = (valueObj: SQLLiteralValue) => {
     return valueString;
   } else if (valueObj.type === 'Boolean') {
     return valueObj.value.toLowerCase() === 'true';
+  } else if (isSQLSignedNumber(valueObj)) {
+    return parseFloat(`${valueObj.prefix}${valueObj.value.value}`);
   }
   return parseFloat(valueObj.value);
 };

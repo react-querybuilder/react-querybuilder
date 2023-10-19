@@ -113,6 +113,7 @@ is a ''bad'' guy!`,
     expect(parseSQL(`age > 14`)).toEqual(wrapRule({ field: 'age', operator: '>', value: 14 }));
     expect(parseSQL(`age <= 14`)).toEqual(wrapRule({ field: 'age', operator: '<=', value: 14 }));
     expect(parseSQL(`age < 14`)).toEqual(wrapRule({ field: 'age', operator: '<', value: 14 }));
+    expect(parseSQL(`age > -14`)).toEqual(wrapRule({ field: 'age', operator: '>', value: -14 }));
   });
 
   it('reversed identifier and value and/or operator needs normalizing', () => {
@@ -124,6 +125,7 @@ is a ''bad'' guy!`,
     expect(parseSQL(`21 <= age`)).toEqual(wrapRule({ field: 'age', operator: '>=', value: 21 }));
     expect(parseSQL(`21 > age`)).toEqual(wrapRule({ field: 'age', operator: '<', value: 21 }));
     expect(parseSQL(`21 >= age`)).toEqual(wrapRule({ field: 'age', operator: '<=', value: 21 }));
+    expect(parseSQL(`-21 > age`)).toEqual(wrapRule({ field: 'age', operator: '<', value: -21 }));
   });
 
   it('booleans', () => {
@@ -320,10 +322,6 @@ describe('options', () => {
       { name: 'f10', label: 'f10', comparator: f => f.group === 'g2' },
     ];
     const optionGroups: OptionGroup[] = [{ label: 'Option Group1', options: fields }];
-    const fieldsObject: Record<string, Field> = {};
-    for (const f of fields) {
-      fieldsObject[f.name] = f;
-    }
     const getValueSources = (): ValueSources => ['field'];
 
     it('sets the valueSource when fields are valid', () => {
@@ -340,7 +338,9 @@ describe('options', () => {
         })
       );
       // fields as object
-      expect(parseSQL(`f3 = f1`, { fields: fieldsObject })).toEqual(
+      expect(
+        parseSQL(`f3 = f1`, { fields: Object.fromEntries(fields.map(f => [f.name, f])) })
+      ).toEqual(
         wrapRule({
           field: 'f3',
           operator: '=',

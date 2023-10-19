@@ -19,7 +19,7 @@ import {
   getFieldName,
   getParamString,
   isSQLIdentifier,
-  isSQLLiteralValue,
+  isSQLLiteralOrSignedNumberValue,
   normalizeOperator,
 } from './utils';
 
@@ -200,7 +200,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           ? expr.left.value
           : (expr.right as SQLIdentifier).value;
         const valueObj = [expr.left, expr.right].find(t => !isSQLIdentifier(t));
-        if (isSQLLiteralValue(valueObj)) {
+        if (isSQLLiteralOrSignedNumberValue(valueObj)) {
           const f = getFieldName(identifier);
           // flip the operator if the identifier was on the right,
           // since it's now on the left as `field`
@@ -230,7 +230,9 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
       /* istanbul ignore else */
       if (isSQLIdentifier(expr.left)) {
         const f = getFieldName(expr.left);
-        const valueArray = expr.right.value.filter(isSQLLiteralValue).map(evalSQLLiteralValue);
+        const valueArray = expr.right.value
+          .filter(isSQLLiteralOrSignedNumberValue)
+          .map(evalSQLLiteralValue);
         const operator = expr.hasNot ? 'notIn' : 'in';
         const fieldArray = expr.right.value
           .filter(isSQLIdentifier)
@@ -253,8 +255,8 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
       /* istanbul ignore else */
       if (
         isSQLIdentifier(expr.left) &&
-        isSQLLiteralValue(expr.right.left) &&
-        isSQLLiteralValue(expr.right.right)
+        isSQLLiteralOrSignedNumberValue(expr.right.left) &&
+        isSQLLiteralOrSignedNumberValue(expr.right.right)
       ) {
         const valueArray = [expr.right.left, expr.right.right].map(evalSQLLiteralValue);
         const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
