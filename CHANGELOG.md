@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v6.5.2] - 2023-10-19
+
 ### Changed
 
 - The `useValueEditor` hook will now update all values that are arrays (`Array.isArray(value)`) to the first element of the array (`value[0]`) when `operator` is anything except "between", "notBetween", "in", or "notIn". Previously this logic only applied when `inputType` was "number". (To bypass this logic, pass `{ skipHook: true }`.)
 
 ### Added
 
-- New `paramsKeepPrefix` option for `formatQuery`. When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
+- New `paramsKeepPrefix` option for `formatQuery`, which enables compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
 
 ### Fixed
 
@@ -1391,7 +1393,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...HEAD
+[v6.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...v6.5.2
 [v6.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...v6.5.1
 [v6.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...v6.5.0
 [v6.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...v6.4.1
