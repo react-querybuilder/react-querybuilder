@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/mantine",
   "description": "Custom Mantine components for react-querybuilder",
-  "version": "6.5.1",
+  "version": "6.5.2",
   "publishConfig": {
     "access": "public"
   },
@@ -47,7 +47,7 @@
     "dayjs": "^1.11.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^6.5.1",
+    "react-querybuilder": "^6.5.2",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.3",
     "vite": "^4.3.9"
@@ -58,6 +58,6 @@
     "@mantine/hooks": ">=6",
     "dayjs": ">=1",
     "react": ">=16.8.0",
-    "react-querybuilder": "^6.5.1"
+    "react-querybuilder": "^6.5.2"
   }
 }
