@@ -55,6 +55,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `propertyMap` keys can now have `false` values. Properties matching a `propertyMap` key with a value of `false` will be removed without further processing (including the `rules` property, which would avoid recursion through the hierarchy althogether).
   - New boolean option `omitPath`. When `true`, a `path` property will _not_ be added to each rule and group in the query hierarchy.
 
+## Fixed
+
+- `paramsKeepPrefix` was not applying to bind variables generated from rules with an `operator` of "between", "notBetween", "in", or "notIn".
+
 ## [v6.5.2] - 2023-10-19
 
 ### Changed
