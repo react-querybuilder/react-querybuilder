@@ -1060,26 +1060,48 @@ it('handles json_without_ids correctly', () => {
 it('uses paramPrefix correctly', () => {
   const queryToTest: RuleGroupType = {
     combinator: 'and',
-    rules: [{ field: 'firstName', operator: '=', value: 'Test' }],
+    rules: [
+      { field: 'firstName', operator: '=', value: 'Test' },
+      { field: 'lastName', operator: 'in', value: 'Test1,Test2' },
+      { field: 'age', operator: 'between', value: [26, 52] },
+    ],
   };
+  const sql = `(firstName = $firstName_1 and lastName in ($lastName_1, $lastName_2) and age between $age_1 and $age_2)`;
+  const paramPrefix = '$';
+
+  // Control (default) - param prefixes removed
   expect(
     formatQuery(queryToTest, {
       format: 'parameterized_named',
-      paramPrefix: '$',
+      paramPrefix,
     })
   ).toEqual({
-    sql: '(firstName = $firstName_1)',
-    params: { firstName_1: 'Test' },
+    sql,
+    params: {
+      firstName_1: 'Test',
+      lastName_1: 'Test1',
+      lastName_2: 'Test2',
+      age_1: 26,
+      age_2: 52,
+    },
   });
+
+  // Experimental - param prefixes retained
   expect(
     formatQuery(queryToTest, {
       format: 'parameterized_named',
-      paramPrefix: '$',
+      paramPrefix,
       paramsKeepPrefix: true,
     })
   ).toEqual({
-    sql: '(firstName = $firstName_1)',
-    params: { $firstName_1: 'Test' },
+    sql,
+    params: {
+      [`${paramPrefix}firstName_1`]: 'Test',
+      [`${paramPrefix}lastName_1`]: 'Test1',
+      [`${paramPrefix}lastName_2`]: 'Test2',
+      [`${paramPrefix}age_1`]: 26,
+      [`${paramPrefix}age_2`]: 52,
+    },
   });
 });
 

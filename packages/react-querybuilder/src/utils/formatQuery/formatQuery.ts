@@ -17,6 +17,7 @@ import type {
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
+import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { uniqByName } from '../uniq';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
@@ -35,31 +36,49 @@ import {
 } from './utils';
 
 /**
- * Formats a query in the requested output format.
+ * Generates a formatted (indented two spaces) JSON string from a query object.
  */
 function formatQuery(ruleGroup: RuleGroupTypeAny): string;
+/**
+ * Generates a {@link ParameterizedSQL} object from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'parameterized' | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized' })
 ): ParameterizedSQL;
+/**
+ * Generates a {@link ParameterizedNamedSQL} object from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options:
     | 'parameterized_named'
     | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized_named' })
 ): ParameterizedNamedSQL;
+/**
+ * Generates a {@link JsonLogic} object from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'jsonlogic' | (Omit<FormatQueryOptions, 'format'> & { format: 'jsonlogic' })
 ): RQBJsonLogic;
+/**
+ * Generates a formatted (indented two spaces) JSON string from a query object.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'>
 ): string;
+/**
+ * Generates a query string in the requested format.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named' | 'jsonlogic'>
 ): string;
+/**
+ * Generates a query string in the requested format.
+ */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'> & {
@@ -215,7 +234,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         }
 
         // Groups
-        if ('rules' in rule) {
+        if (isRuleGroup(rule)) {
           return processRuleGroup(rule);
         }
 
@@ -251,7 +270,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       return `${rg.not ? 'NOT ' : ''}(${processedRules
         .filter(Boolean)
-        .join('combinator' in rg ? ` ${rg.combinator} ` : ' ')})`;
+        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
     };
 
     return processRuleGroup(ruleGroup, true);
@@ -302,9 +321,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             splitValue.forEach(v => {
               const thisParamName = getNextNamedParam(rule.field);
               inParams.push(`${paramPrefix}${thisParamName}`);
-              params_named[thisParamName] = shouldRenderAsNumber(v, parseNumbers)
-                ? parseFloat(v)
-                : v;
+              params_named[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] =
+                shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
             });
             return `${quoteFieldNamesWith[0]}${rule.field}${
               quoteFieldNamesWith[1]
@@ -328,8 +346,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             }
             const firstParamName = getNextNamedParam(rule.field);
             const secondParamName = getNextNamedParam(rule.field);
-            params_named[firstParamName] = first;
-            params_named[secondParamName] = second;
+            params_named[`${paramsKeepPrefix ? paramPrefix : ''}${firstParamName}`] = first;
+            params_named[`${paramsKeepPrefix ? paramPrefix : ''}${secondParamName}`] = second;
             return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
           } else {
             return '';
@@ -381,7 +399,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         if (typeof rule === 'string') {
           return rule;
         }
-        if ('rules' in rule) {
+        if (isRuleGroup(rule)) {
           return processRuleGroup(rule);
         }
         return processRule(rule);
@@ -393,7 +411,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       return `${rg.not ? 'NOT ' : ''}(${processedRules
         .filter(Boolean)
-        .join('combinator' in rg ? ` ${rg.combinator} ` : ' ')})`;
+        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
     };
 
     if (parameterized) {
@@ -416,7 +434,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       const expressions: string[] = rg.rules
         .map(rule => {
-          if ('rules' in rule) {
+          if (isRuleGroup(rule)) {
             const processedRuleGroup = processRuleGroup(rule);
             if (processedRuleGroup) {
               hasChildRules = true;
@@ -446,7 +464,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         : fallbackExpression;
     };
 
-    const rgStandard = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
+    const rgStandard = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
     const processedQuery = processRuleGroup(rgStandard, true);
     return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
   }
@@ -465,7 +483,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (typeof rule === 'string') {
             return celCombinatorMap[rule as DefaultCombinatorName];
           }
-          if ('rules' in rule) {
+          if (isRuleGroup(rule)) {
             return processRuleGroup(rule);
           }
           const [validationResult, fieldValidator] = validateRule(rule);
@@ -483,7 +501,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         })
         .filter(Boolean)
         .join(
-          'combinator' in rg ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} ` : ' '
+          isRuleGroupType(rg)
+            ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} `
+            : ' '
         );
 
       const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
@@ -508,7 +528,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (typeof rule === 'string') {
             return rule;
           }
-          if ('rules' in rule) {
+          if (isRuleGroup(rule)) {
             return processRuleGroup(rule);
           }
           const [validationResult, fieldValidator] = validateRule(rule);
@@ -525,7 +545,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           });
         })
         .filter(Boolean)
-        .join('combinator' in rg ? ` ${rg.combinator} ` : ' ');
+        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ');
 
       const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
 
@@ -539,7 +559,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
    * JsonLogic
    */
   if (format === 'jsonlogic') {
-    const query = 'combinator' in ruleGroup ? ruleGroup : convertFromIC(ruleGroup);
+    const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
     const processRuleGroup = (rg: RuleGroupType): RQBJsonLogic => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -548,7 +568,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       const processedRules = rg.rules
         .map(rule => {
-          if ('rules' in rule) {
+          if (isRuleGroup(rule)) {
             return processRuleGroup(rule);
           }
           const [validationResult, fieldValidator] = validateRule(rule);
