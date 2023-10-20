@@ -176,7 +176,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
       ? null
       : {
           [propertyMap['rules'] ?? 'rules']: rg.rules.map((r: any, idx) => {
-            const pathObject = omitPath ? null : { path: [...(rg.path ?? []), idx] };
+            const pathObject = omitPath ? null : { path: [...rg.path!, idx] };
             if (typeof r === 'string') {
               // independent combinators
               return combinatorMap[r] ?? r;
