@@ -1,6 +1,5 @@
 import { produce } from 'immer';
 import type {
-  Path,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
@@ -10,12 +9,14 @@ import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 const remapProperties = (
   obj: Record<string, any>,
-  propertyMap: Record<string, string>,
+  propertyMap: Record<string, string | false>,
   deleteRemappedProperties: boolean
 ) =>
   produce(obj, draft => {
     for (const [k, v] of Object.entries(propertyMap)) {
-      if (!!v && k !== v && Object.hasOwn(draft, k)) {
+      if (v === false) {
+        delete draft[k];
+      } else if (!!v && k !== v && Object.hasOwn(draft, k)) {
         draft[v] = draft[k];
         if (deleteRemappedProperties) {
           delete draft[k];
@@ -50,18 +51,22 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
    * the new _and_ the original properties, set `deleteRemappedProperties`
    * to `false`.
    *
+   * If a key has a value of `false`, the corresponding property will be removed
+   * without being copied to a new property name. (Warning: `{ rules: false }`
+   * will prevent recursion and only return the processed root group.)
+   *
    * @defaultValue `{}`
    *
    * @example
    * ```
    *   transformQuery(
-   *     { combinator: 'and', rules: [] },
-   *     { propertyMap: { combinator: 'AndOr' } }
+   *     { combinator: 'and', not: true, rules: [] },
+   *     { propertyMap: { combinator: 'AndOr', not: false } }
    *   )
    *   // Returns: { AndOr: 'and', rules: [] }
    * ```
    */
-  propertyMap?: Record<string, string>;
+  propertyMap?: Record<string, string | false>;
   /**
    * Any combinator values (including independent combinators) will be translated
    * from the key in this object to the value.
@@ -97,6 +102,13 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
    * ```
    */
   operatorMap?: Record<string, string>;
+  /**
+   * Prevents the `path` property (see {@link Path}) from being added to each
+   * rule and group in the hierarchy.
+   *
+   * @defaultValue `false`
+   */
+  omitPath?: boolean;
   /**
    * Original properties remapped according to the `propertyMap` option will be removed.
    *
@@ -143,10 +155,11 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
     propertyMap = {},
     combinatorMap = {},
     operatorMap = {},
+    omitPath = false,
     deleteRemappedProperties = true,
   } = options;
 
-  const processGroup = (rg: RuleGroupTypeAny & { path: Path }): any => ({
+  const processGroup = (rg: RuleGroupTypeAny): any => ({
     ...ruleGroupProcessor(
       remapProperties(
         {
@@ -159,27 +172,32 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
         deleteRemappedProperties
       ) as RG
     ),
-    rules: rg.rules.map((r: any, idx) => {
-      if (typeof r === 'string') {
-        // independent combinators
-        return combinatorMap[r] ?? r;
-      } else if (isRuleGroup(r)) {
-        // sub-groups
-        return processGroup({ ...r, path: [...rg.path, idx] });
-      }
-      // rules
-      return ruleProcessor(
-        remapProperties(
-          {
-            ...{ ...r, path: [...rg.path, idx] },
-            ...('operator' in r ? { operator: operatorMap[r.operator] ?? r.operator } : {}),
-          },
-          propertyMap,
-          deleteRemappedProperties
-        ) as RuleType
-      );
-    }),
+    ...(propertyMap['rules'] === false
+      ? null
+      : {
+          [propertyMap['rules'] ?? 'rules']: rg.rules.map((r: any, idx) => {
+            const pathObject = omitPath ? null : { path: [...(rg.path ?? []), idx] };
+            if (typeof r === 'string') {
+              // independent combinators
+              return combinatorMap[r] ?? r;
+            } else if (isRuleGroup(r)) {
+              // sub-groups
+              return processGroup({ ...r, ...pathObject });
+            }
+            // rules
+            return ruleProcessor(
+              remapProperties(
+                {
+                  ...{ ...r, ...pathObject },
+                  ...('operator' in r ? { operator: operatorMap[r.operator] ?? r.operator } : {}),
+                },
+                propertyMap,
+                deleteRemappedProperties
+              ) as RuleType
+            );
+          }),
+        }),
   });
 
-  return processGroup({ ...query, path: [] });
+  return processGroup({ ...query, ...(omitPath ? null : { path: [] }) });
 }

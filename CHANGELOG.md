@@ -46,6 +46,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [#537] Performance is improved via `React.memo` (especially for larger queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
 
+## [v6.5.3] - 2023-10-20
+
+### Added
+
+- [#574] `transformQuery` enhancements:
+  - `rules` properties are no longer retained unconditionally. The `rules` property can be copied or renamed like any other property using the `propertyMap` option.
+  - `propertyMap` keys can now have `false` values. Properties matching a `propertyMap` key with a value of `false` will be removed without further processing (including the `rules` property, which would avoid recursion through the hierarchy althogether).
+  - New boolean option `omitPath`. When `true`, a `path` property will _not_ be added to each rule and group in the query hierarchy.
+
 ## [v6.5.2] - 2023-10-19
 
 ### Changed
@@ -1430,10 +1439,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
 [#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
 [#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572
+[#574]: https://github.com/react-querybuilder/react-querybuilder/issues/574
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.3...HEAD
+[v6.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...v6.5.3
 [v6.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...v6.5.2
 [v6.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...v6.5.1
 [v6.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...v6.5.0
