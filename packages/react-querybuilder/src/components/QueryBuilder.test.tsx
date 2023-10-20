@@ -1673,7 +1673,7 @@ describe('disabled', () => {
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of rg.querySelectorAll('button')) {
+    for (const b of Array.from(rg.querySelectorAll('button'))) {
       await user.click(b);
     }
     expect(onQueryChange).not.toHaveBeenCalled();
@@ -1715,7 +1715,7 @@ describe('locked rules', () => {
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of rg.querySelectorAll('button')) {
+    for (const b of Array.from(rg.querySelectorAll('button'))) {
       await user.click(b);
     }
     expect(onQueryChange).not.toHaveBeenCalled();
@@ -1756,7 +1756,7 @@ describe('locked rules', () => {
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of rg.querySelectorAll('button')) {
+    for (const b of Array.from(rg.querySelectorAll('button'))) {
       await user.click(b);
     }
     expect(onQueryChange).not.toHaveBeenCalled();

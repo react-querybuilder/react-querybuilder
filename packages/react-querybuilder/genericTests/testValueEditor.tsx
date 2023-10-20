@@ -209,7 +209,9 @@ export const testValueEditor = (
 
         it('should render the radio buttons with labels', () => {
           render(<ValueEditor {...radioProps} />);
-          const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
+          const radioButtons = Array.from(
+            screen.getByTitle(title).querySelectorAll('input[type="radio"]')
+          );
           expect(radioButtons).toHaveLength(2);
           for (const r of radioButtons) {
             expect(r).toHaveAttribute('type', 'radio');
@@ -232,7 +234,10 @@ export const testValueEditor = (
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
           render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} disabled />);
-          for (const r of screen.getByTitle(title).querySelectorAll('input[type="radio"]')) {
+          const radioButtons = Array.from(
+            screen.getByTitle(title).querySelectorAll('input[type="radio"]')
+          );
+          for (const r of radioButtons) {
             expect(r).toBeDisabled();
             await user.click(r);
           }
@@ -362,7 +367,7 @@ export const testValueEditor = (
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
           render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} disabled />);
-          const betweenInputs = findInputs(screen.getByTitle(title));
+          const betweenInputs = Array.from(findInputs(screen.getByTitle(title)));
           expect(betweenInputs).toHaveLength(2);
           for (const r of betweenInputs) {
             expect(r).toBeDisabled();
