@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#537] The `useValueEditor` hook will now update all values that are arrays (`Array.isArray(value)`) to the first element of the array (`value[0]`) when `operator` is anything except "between", "notBetween", "in", or "notIn". Previously this logic only applied when `inputType` was "number". (To bypass this logic, pass `{ skipHook: true }`.)
 - [#537] The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. The latter accepts the return value of the former as its second parameter.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
@@ -38,7 +37,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
   - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
   - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.
-- [#537] New `paramsKeepPrefix` option for `formatQuery`. When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
 - [#537] `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
 - [#537] All `label` props and `translations.*.label` properties now accept `ReactNode`. This includes all action elements (buttons), "not" toggles, and drag handles. Previously `label` was limited to `string`. This enables, for example, the assignment of SVG elements as labels.
 - [#537] Compatibility package for [Blueprint](https://blueprintjs.com/).
@@ -47,7 +45,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [#537] Performance is improved via `React.memo` (especially for larger queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
+
+## [v6.5.2] - 2023-10-19
+
+### Changed
+
+- The `useValueEditor` hook will now update all values that are arrays (`Array.isArray(value)`) to the first element of the array (`value[0]`) when `operator` is anything except "between", "notBetween", "in", or "notIn". Previously this logic only applied when `inputType` was "number". (To bypass this logic, pass `{ skipHook: true }`.)
+
+### Added
+
+- New `paramsKeepPrefix` option for `formatQuery`, which enables compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
+
+### Fixed
+
 - [#523] `parseMongoDB` now properly handles objects in the form of `{ fieldName: { $not: { /* ...rule */ } } }`. This problem was particularly evident for `$regex` operators that should have generated rules with `"doesNot[Contain/BeginWith/EndWith]"` operators, since `formatQuery(query, 'mongodb')` produces this structure and `parseMongoDB` was not handling the inverse operation.
+- `isRuleGroup` will not error when the argument is `null`.
+- [#572] `parseSQL` now recognizes signed numeric values like `-12` or `+14`.
 
 ## [v6.5.1] - 2023-06-26
 
@@ -1416,10 +1429,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#523]: https://github.com/react-querybuilder/react-querybuilder/issues/523
 [#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
 [#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
+[#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...HEAD
+[v6.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...v6.5.2
 [v6.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...v6.5.1
 [v6.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.1...v6.5.0
 [v6.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.4.0...v6.4.1
