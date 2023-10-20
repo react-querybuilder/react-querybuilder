@@ -321,9 +321,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             splitValue.forEach(v => {
               const thisParamName = getNextNamedParam(rule.field);
               inParams.push(`${paramPrefix}${thisParamName}`);
-              params_named[thisParamName] = shouldRenderAsNumber(v, parseNumbers)
-                ? parseFloat(v)
-                : v;
+              params_named[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] =
+                shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
             });
             return `${quoteFieldNamesWith[0]}${rule.field}${
               quoteFieldNamesWith[1]
@@ -347,8 +346,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             }
             const firstParamName = getNextNamedParam(rule.field);
             const secondParamName = getNextNamedParam(rule.field);
-            params_named[firstParamName] = first;
-            params_named[secondParamName] = second;
+            params_named[`${paramsKeepPrefix ? paramPrefix : ''}${firstParamName}`] = first;
+            params_named[`${paramsKeepPrefix ? paramPrefix : ''}${secondParamName}`] = second;
             return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
           } else {
             return '';
