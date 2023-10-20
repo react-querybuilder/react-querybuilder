@@ -51,13 +51,24 @@ it('respects the ruleGroupProcessor option', () => {
 it('respects the propertyMap option', () => {
   expect(
     transformQuery(query, {
-      propertyMap: { combinator: 'AndOr', value: 'val' },
+      propertyMap: { combinator: 'AndOr', rules: 'filters', value: 'val', operator: false },
     })
   ).toEqual({
     AndOr: 'and',
     path: [],
-    rules: [{ field: 'f1', operator: '=', val: 'v1', path: [0] }],
+    filters: [{ field: 'f1', val: 'v1', path: [0] }],
   });
+});
+
+it('avoids recursion for { rules: false } propertyMap', () => {
+  expect(
+    transformQuery(query, {
+      propertyMap: { rules: false },
+      ruleProcessor: () => {
+        throw 'should never see this';
+      },
+    })
+  ).toEqual({ combinator: 'and', path: [] });
 });
 
 it('does not set operator property if it is missing', () => {
@@ -84,6 +95,13 @@ it('respects the operatorMap option', () => {
     ...query,
     path: [],
     rules: [{ ...query.rules[0], operator: '==', path: [0] }],
+  });
+});
+
+it('respects the omitPath option', () => {
+  expect(transformQuery(query, { omitPath: true })).toEqual({
+    ...query,
+    rules: [{ ...query.rules[0], operator: '=' }],
   });
 });
 
