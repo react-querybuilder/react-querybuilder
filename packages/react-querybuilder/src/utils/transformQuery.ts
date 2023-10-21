@@ -37,10 +37,8 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
    */
   ruleProcessor?: (rule: RuleType) => any;
   /**
-   * When a group is encountered in the hierarchy, it will be replaced
-   * with the result of this function. Note that the `rules` property from
-   * the original group will be processed as normal and reapplied to the
-   * new group object.
+   * When a group is encountered in the hierarchy (including the root group, the
+   * query itself), it will be replaced with the result of this function.
    *
    * @defaultValue `rg => rg`
    */
