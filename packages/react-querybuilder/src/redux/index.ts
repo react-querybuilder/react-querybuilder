@@ -1,62 +1,93 @@
-import type { PayloadAction, ThunkAction } from '@reduxjs/toolkit';
-import { configureStore } from '@reduxjs/toolkit';
-import type { TypedUseSelectorHook } from 'react-redux';
-import { useDispatch, useSelector, useStore } from 'react-redux';
-import type { SetQueryStateParams } from './querySlice';
+import type {
+  AnyAction,
+  Dispatch,
+  PayloadAction,
+  ThunkAction,
+  ThunkDispatch,
+} from '@reduxjs/toolkit';
 import {
-  getQueryState as getQuerySliceState,
-  querySliceReducer,
+  applyMiddleware,
+  combineReducers,
+  createStore,
+  getDefaultMiddleware,
+} from '@reduxjs/toolkit';
+import * as React from 'react';
+import type { ReactReduxContextValue } from 'react-redux';
+import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
+import { createSubscription } from './Subscription';
+import type { QueriesSliceState, SetQueryStateParams } from './queriesSlice';
+import {
+  getQueriesSliceState,
+  initialState,
+  queriesSliceReducer,
   setQueryState,
-} from './querySlice';
+} from './queriesSlice';
 
-// Redux store
-export const queryBuilderStore = configureStore({
-  reducer: { query: querySliceReducer },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
+export type QueryBuilderStoreState = { queries: QueriesSliceState };
+
+const rootReducer = combineReducers<QueryBuilderStoreState>({ queries: queriesSliceReducer });
+
+export const queryBuilderStore = createStore(
+  rootReducer,
+  { queries: initialState },
+  applyMiddleware(
+    ...getDefaultMiddleware({
       // Ignore non-serializable values in setQueryState actions and rule `value`s
       // https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
       serializableCheck: {
-        ignoredActions: ['query/setQueryState'],
-        ignoredPaths: [/^query\b.*\.rules\.\d+\.value$/],
+        ignoredActions: ['queries/setQueryState'],
+        ignoredPaths: [/^queries\b.*\.rules\.\d+\.value$/],
       },
-    }),
-});
-
-// Types
-export type QueryBuilderStoreState = ReturnType<typeof queryBuilderStore.getState>;
-type QueryBuilderDispatch = typeof queryBuilderStore.dispatch;
+    })
+  )
+);
+const contextInitalValue: ReactReduxContextValue<QueryBuilderStoreState, AnyAction> = {
+  store: queryBuilderStore,
+  subscription: createSubscription(queryBuilderStore),
+  stabilityCheck: 'never',
+  noopCheck: 'never',
+};
+export const RqbStoreContext = React.createContext(contextInitalValue);
 
 // Hooks
 /**
  * Gets the full RQB Redux store.
  */
-export const useQueryBuilderStore = () => useStore<QueryBuilderStoreState>();
+export const useQueryBuilderStore = createStoreHook(RqbStoreContext);
+
 /**
- * Gets the Redux `dispatch` function for the RQB store.
+ * Gets the `dispatch` function for the RQB Redux store.
  */
-export const useQueryBuilderDispatch = () => useDispatch<QueryBuilderDispatch>();
+export const useQueryBuilderDispatch: UseQueryBuilderDispatch = createDispatchHook(RqbStoreContext);
+type UseQueryBuilderDispatch = () => ThunkDispatch<QueryBuilderStoreState, undefined, AnyAction> &
+  Dispatch<AnyAction>;
+
 /**
- * Gets the Redux `useSelector` hook for the RQB store.
+ * A `useSelector` hook for the RQB Redux store.
  */
-export const useQueryBuilderSelector: TypedUseSelectorHook<QueryBuilderStoreState> = useSelector;
+export const useQueryBuilderSelector = createSelectorHook(RqbStoreContext);
 
 // Selectors
 export const getQueryState = (state: QueryBuilderStoreState, qbId: string) =>
-  getQuerySliceState(state.query, qbId);
+  getQueriesSliceState(state.queries, qbId);
 
 // Misc exports
-export { removeQueryState } from './querySlice';
+export { removeQueryState } from './queriesSlice';
 export { setQueryState };
 
 // Thunks
-type QueryBuilderThunk<T> = ThunkAction<T, QueryBuilderStoreState, unknown, PayloadAction<any>>;
-type DispatchThunkParams = {
+interface DispatchThunkParams {
   payload: SetQueryStateParams;
-  onQueryChange?: (...args: any[]) => void;
-};
+  onQueryChange?: (query: any /* RuleGroupTypeAny */) => void;
+}
+type QueryBuilderThunk = ThunkAction<
+  void,
+  QueryBuilderStoreState,
+  unknown,
+  PayloadAction<SetQueryStateParams>
+>;
 export const dispatchThunk =
-  ({ payload, onQueryChange }: DispatchThunkParams): QueryBuilderThunk<void> =>
+  ({ payload, onQueryChange }: DispatchThunkParams): QueryBuilderThunk =>
   dispatch => {
     dispatch(setQueryState(payload));
     if (typeof onQueryChange === 'function') {

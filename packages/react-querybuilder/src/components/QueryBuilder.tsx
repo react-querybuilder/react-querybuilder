@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
-import { queryBuilderStore } from '../redux';
+import { RqbStoreContext, queryBuilderStore } from '../redux';
 import type {
   Path,
   QueryBuilderProps,
@@ -24,7 +24,7 @@ export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const setup = useQueryBuilderSetup(props);
 
   return (
-    <Provider store={queryBuilderStore}>
+    <Provider context={RqbStoreContext} store={queryBuilderStore}>
       <QueryBuilderInternal {...props} setup={setup} />
     </Provider>
   );

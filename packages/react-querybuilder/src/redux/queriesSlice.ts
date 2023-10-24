@@ -2,30 +2,32 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { RuleGroupTypeAny } from '../types';
 
-type QuerySliceState = Record<string, RuleGroupTypeAny>;
+export type QueriesSliceState = Record<string, RuleGroupTypeAny>;
 
 export interface SetQueryStateParams {
   qbId: string;
   query: RuleGroupTypeAny;
 }
 
-export const getQueryState = (state: QuerySliceState, qbId: string): RuleGroupTypeAny | undefined =>
-  state[qbId];
+export const getQueriesSliceState = (
+  state: QueriesSliceState,
+  qbId: string
+): RuleGroupTypeAny | undefined => state[qbId];
 
-const initialState: QuerySliceState = {};
+export const initialState: QueriesSliceState = {};
 
 export const {
-  reducer: querySliceReducer,
+  reducer: queriesSliceReducer,
   actions: { removeQueryState, setQueryState },
 } = createSlice({
-  name: 'query',
+  name: 'queries',
   initialState,
   reducers: {
     setQueryState(state, { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>) {
       state[qbId] = query;
     },
-    removeQueryState(state, { payload }: PayloadAction<string>) {
-      delete state[payload];
+    removeQueryState(state, { payload: qbId }: PayloadAction<string>) {
+      delete state[qbId];
     },
   },
 });
