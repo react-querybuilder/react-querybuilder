@@ -5,6 +5,17 @@ const config = async () => {
   const lightCodeTheme = (await import('prism-react-renderer/dist/index.mjs')).themes.github;
   const darkCodeTheme = (await import('prism-react-renderer/dist/index.mjs')).themes.dracula;
 
+  // https://blueprintjs.com/docs/#core/classes.namespacing
+  const { legacySassSvgInlinerFactory } = await import('./src/legacySassSvgInlinerFactory.mjs');
+  // @ts-expect-error This is fine?
+  const { sassNodeModulesLoadPaths } = await import('@blueprintjs/node-build-scripts');
+  const sassFunctions = {
+    'svg-icon($path, $selectors: null)': legacySassSvgInlinerFactory('assets/blueprint/icons', {
+      optimize: true,
+      encodingFormat: 'uri',
+    }),
+  };
+
   return {
     title: 'React Query Builder',
     tagline: 'The Query Builder Component for React',
@@ -52,6 +63,27 @@ const config = async () => {
           module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
         }),
       }),
+      () => ({
+        name: 'sass-loader-legacy-svg-inliner',
+        configureWebpack: () => ({
+          module: {
+            rules: [
+              {
+                test: /\.scss$/,
+                use: {
+                  loader: 'sass-loader',
+                  options: {
+                    sassOptions: {
+                      loadPaths: sassNodeModulesLoadPaths,
+                      functions: sassFunctions,
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        }),
+      }),
       ...(process.env.RQB_TYPEDOC_DONE
         ? []
         : [
@@ -61,6 +93,7 @@ const config = async () => {
                 entryPoints: [
                   '../packages/react-querybuilder',
                   '../packages/antd',
+                  '../packages/blueprint',
                   '../packages/bootstrap',
                   '../packages/bulma',
                   '../packages/chakra',
