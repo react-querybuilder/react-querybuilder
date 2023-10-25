@@ -60,13 +60,11 @@ export const MantineValueEditor = ({
         return (
           <NumberInput
             key={key}
-            type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={toNumberInputValue(valueAsArray[i])}
             className={`${standardClassnames.valueListItem} input`}
-            data-disabled={disabled}
             disabled={disabled}
-            onChange={v => multiValueHandler(v, i)}
+            onChange={v => multiValueHandler(toNumberInputValue(v), i)}
           />
         );
       }
@@ -78,7 +76,6 @@ export const MantineValueEditor = ({
             key={key}
             value={dateTimeValue}
             className={standardClassnames.valueListItem}
-            data-disabled={disabled}
             disabled={disabled}
             placeholder={placeHolderText}
             withSeconds
@@ -99,7 +96,6 @@ export const MantineValueEditor = ({
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             className={`${standardClassnames.valueListItem} input`}
-            data-disabled={disabled}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
           />
@@ -152,7 +148,6 @@ export const MantineValueEditor = ({
           value={value}
           title={title}
           placeholder={placeHolderText}
-          data-disabled={disabled}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.value)}
         />
@@ -164,7 +159,6 @@ export const MantineValueEditor = ({
           className={className}
           title={title}
           checked={value}
-          data-disabled={disabled}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />
@@ -176,7 +170,6 @@ export const MantineValueEditor = ({
           className={className}
           title={title}
           checked={value}
-          data-disabled={disabled}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
         />
@@ -186,13 +179,7 @@ export const MantineValueEditor = ({
       return (
         <Radio.Group className={className} title={title} value={value} onChange={handleOnChange}>
           {values.map(v => (
-            <Radio
-              key={v.name}
-              value={v.name}
-              label={v.label}
-              data-disabled={disabled}
-              disabled={disabled}
-            />
+            <Radio key={v.name} value={v.name} label={v.label} disabled={disabled} />
           ))}
         </Radio.Group>
       );
@@ -215,7 +202,6 @@ export const MantineValueEditor = ({
           type="range"
           value={twoDateArray}
           className={className}
-          data-disabled={disabled}
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={dates => {
@@ -232,7 +218,6 @@ export const MantineValueEditor = ({
           data-testid={testID}
           value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
           className={className}
-          data-disabled={disabled}
           disabled={disabled}
           placeholder={placeHolderText}
           withSeconds
@@ -249,7 +234,6 @@ export const MantineValueEditor = ({
         type="default"
         value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
         className={className}
-        data-disabled={disabled}
         disabled={disabled}
         placeholder={placeHolderText}
         onChange={d =>
@@ -266,11 +250,9 @@ export const MantineValueEditor = ({
         title={title}
         className={className}
         placeholder={placeHolderText}
-        type={inputTypeCoerced}
-        data-disabled={disabled}
         disabled={disabled}
         value={toNumberInputValue(value)}
-        onChange={v => handleOnChange(v)}
+        onChange={v => handleOnChange(toNumberInputValue(v))}
       />
     );
   }
@@ -282,7 +264,6 @@ export const MantineValueEditor = ({
       className={className}
       placeholder={placeHolderText}
       type={inputTypeCoerced}
-      data-disabled={disabled}
       disabled={disabled}
       value={value}
       onChange={e => handleOnChange(e.target.value)}

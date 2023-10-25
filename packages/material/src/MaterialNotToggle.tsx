@@ -7,7 +7,7 @@ import { NotToggle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
-type MaterialNotToggleProps = NotToggleProps &
+export type MaterialNotToggleProps = NotToggleProps &
   ComponentPropsWithoutRef<typeof Switch> & {
     muiComponents?: RQBMaterialComponents;
   };

@@ -23,20 +23,20 @@ import { UNUSED } from './utils';
 export const getFieldMapFromArray = (fieldArray: Field[]) =>
   Object.fromEntries(fieldArray.map(f => [f.name, f]));
 
-export const ruleDefaultFields: Field[] = [
+export const ruleDefaultFields = [
   { name: 'field1', label: 'Field 1' },
   { name: 'field2', label: 'Field 2' },
-];
+] satisfies Field[];
 
 export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
 
-export const ruleControls: Partial<Controls> = {
+export const ruleControls = {
   cloneRuleAction: (props: ActionProps) => (
     <button
       data-testid={TestID.cloneRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      ⧉
+      {translations.cloneRule.label}
     </button>
   ),
   fieldSelector: (props: FieldSelectorProps) => (
@@ -70,7 +70,7 @@ export const ruleControls: Partial<Controls> = {
       data-testid={TestID.removeRule}
       className={props.className}
       onClick={e => props.handleOnClick(e)}>
-      x
+      {translations.removeRule.label}
     </button>
   ),
   dragHandle: forwardRef(({ className, label }, ref) => (
@@ -78,18 +78,18 @@ export const ruleControls: Partial<Controls> = {
       {label}
     </span>
   )),
-};
+} satisfies Partial<Controls>;
 
-export const ruleClassnames: Partial<Classnames> = {
+export const ruleClassnames = {
   cloneRule: 'custom-cloneRule-class',
   dragHandle: 'custom-dragHandle-class',
   fields: 'custom-fields-class',
   operators: 'custom-operators-class',
   removeRule: { 'custom-removeRule-class': true },
   rule: ['custom-rule-class'],
-};
+} satisfies Partial<Classnames>;
 
-const ruleSchema: Partial<Schema> = {
+const ruleSchema = {
   fields: ruleDefaultFields,
   fieldMap: ruleFieldMap,
   controls: { ...defaultControlElements, ...ruleControls },
@@ -109,12 +109,12 @@ const ruleSchema: Partial<Schema> = {
   getRuleClassname: () => '',
   showCloneButtons: false,
   validationMap: {},
-};
+} satisfies Partial<Schema>;
 
-const ruleActions: Partial<QueryActions> = {
+const ruleActions = {
   onPropChange: () => {},
   onRuleRemove: () => {},
-};
+} satisfies Partial<QueryActions>;
 
 export const getRuleProps = (
   mergeIntoSchema: Partial<Schema> = {},

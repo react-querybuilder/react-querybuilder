@@ -5,7 +5,7 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 
-type AntDValueSelectorProps = VersatileSelectorProps &
+export type AntDValueSelectorProps = VersatileSelectorProps &
   Omit<ComponentPropsWithoutRef<typeof Select>, 'onChange' | 'defaultValue'>;
 
 export const AntDValueSelector = ({
@@ -19,6 +19,7 @@ export const AntDValueSelector = ({
   listsAsArrays,
   // Props that should not be in extraProps
   testID: _testID,
+  rule: _rule,
   rules: _rules,
   level: _level,
   path: _path,
@@ -38,7 +39,7 @@ export const AntDValueSelector = ({
     <span title={title} className={className}>
       <Select
         {...modeObj}
-        dropdownMatchSelectWidth={false}
+        popupMatchSelectWidth={false}
         disabled={disabled}
         value={val}
         onChange={onChange}

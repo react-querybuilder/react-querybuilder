@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useId } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
-type ChakraNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
+export type ChakraNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
 
 export const ChakraNotToggle = ({
   className,

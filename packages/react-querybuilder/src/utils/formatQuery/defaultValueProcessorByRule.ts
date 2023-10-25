@@ -5,6 +5,9 @@ import { isValidValue, quoteFieldNamesWithArray, shouldRenderAsNumber } from './
 const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string' ? v.replaceAll(`'`, `''`) : v;
 
+/**
+ * Default value processor used by {@link formatQuery} for "sql" format.
+ */
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
   // istanbul ignore next

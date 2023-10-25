@@ -1,3 +1,4 @@
+import { MantineProvider } from '@mantine/core';
 import { QueryBuilderMantine } from '@react-querybuilder/mantine';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
@@ -22,13 +23,15 @@ export const App = () => {
 
   return (
     <div>
-      <QueryBuilderMantine>
-        <QueryBuilder
-          fields={fields}
-          query={query}
-          onQueryChange={q => setQuery(q)}
-        />
-      </QueryBuilderMantine>
+      <MantineProvider>
+        <QueryBuilderMantine>
+          <QueryBuilder
+            fields={fields}
+            query={query}
+            onQueryChange={q => setQuery(q)}
+          />
+        </QueryBuilderMantine>
+      </MantineProvider>
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

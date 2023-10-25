@@ -8,15 +8,19 @@ import { MaterialNotToggle } from './MaterialNotToggle';
 import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
+import { materialTranslations } from './translations';
 import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
-export {
-  MaterialActionElement,
-  MaterialDragHandle,
-  MaterialNotToggle,
-  MaterialValueEditor,
-  MaterialValueSelector,
-};
+
+export * from './MaterialActionElement';
+export * from './MaterialDragHandle';
+export * from './MaterialNotToggle';
+export * from './MaterialValueEditor';
+export * from './MaterialValueSelector';
+export * from './RQBMaterialContext';
+export type { RQBMaterialComponents } from './types';
+export * from './useMuiComponents';
+export { materialTranslations };
 
 export const materialControlElements: Partial<Controls> = {
   addGroupAction: MaterialActionElement,
@@ -39,6 +43,7 @@ export const materialControlElements: Partial<Controls> = {
 const MaterialContextProvider = getCompatContextProvider({
   key: 'material',
   controlElements: materialControlElements,
+  translations: materialTranslations,
 });
 
 export const QueryBuilderMaterial: QueryBuilderContextProvider<{

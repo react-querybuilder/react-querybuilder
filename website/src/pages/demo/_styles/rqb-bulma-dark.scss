@@ -1,7 +1,29 @@
 [data-theme='dark'] {
   .rqb-bulma {
-    @import 'bulma-darkly_variables';
+    $black: hsl(0, 0%, 10%);
+    $black-bis: hsl(0, 0%, 17%);
+    $black-ter: hsl(0, 0%, 24%);
+
+    $grey-darker: hsl(0, 0%, 41%);
+    $grey-dark: hsl(0, 0%, 49%);
+    $grey: hsl(0, 0%, 58%);
+    $grey-light: hsl(0, 0%, 61%);
+    $grey-lighter: hsl(0, 0%, 69%);
+    $grey-lightest: hsl(0, 0%, 79%);
+
+    $white-ter: hsl(0, 0%, 82%);
+    $white-bis: hsl(0, 0%, 88%);
+    $white: hsl(0, 0%, 90%);
+
+    $scheme-main: $black;
+    $scheme-main-bis: $black-bis;
+    $scheme-main-ter: $black-ter;
+    $scheme-invert: $white;
+    $scheme-invert-bis: $white-bis;
+    $scheme-invert-ter: $white-ter;
+
+    $link: rebeccapurple;
+
     @import 'bulma/bulma.sass';
-    @import 'bulma-darkly_overrides';
   }
 }

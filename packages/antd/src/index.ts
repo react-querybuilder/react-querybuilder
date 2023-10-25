@@ -5,7 +5,12 @@ import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
 import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
-export { AntDActionElement, AntDDragHandle, AntDNotToggle, AntDValueEditor, AntDValueSelector };
+
+export * from './AntDActionElement';
+export * from './AntDDragHandle';
+export * from './AntDNotToggle';
+export * from './AntDValueEditor';
+export * from './AntDValueSelector';
 
 export const antdControlElements: Partial<Controls> = {
   addGroupAction: AntDActionElement,

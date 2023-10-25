@@ -10,6 +10,7 @@ import type {
   ParseCELOptions,
   ValueSource,
 } from '../../types/index.noReact';
+import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLiteral } from './types';
@@ -33,16 +34,27 @@ import {
 } from './utils';
 
 /**
- * Converts a CEL string expression into a query suitable for
- * the QueryBuilder component's `query` or `defaultQuery` props.
+ * Converts a CEL string expression into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
  */
 function parseCEL(cel: string): DefaultRuleGroupType;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupType}).
+ */
 function parseCEL(
   cel: string,
   options: Omit<ParseCELOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link DefaultRuleGroupTypeIC}).
+ */
 function parseCEL(
   cel: string,
   options: Omit<ParseCELOptions, 'independentCombinators'> & {
@@ -95,7 +107,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       if (negatedExpr) {
         if (
           !negate ||
-          (negate && !('rules' in negatedExpr) && negatedExpr.operator.startsWith('doesNot'))
+          (negate && !isRuleGroup(negatedExpr) && negatedExpr.operator.startsWith('doesNot'))
         ) {
           return ic
             ? ({ rules: [negatedExpr] } as DefaultRuleGroupTypeIC)
@@ -117,7 +129,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         groupOnlyIfNecessary: true,
       });
       if (rule) {
-        if ('rules' in rule || (groupOnlyIfNecessary && isCELExpressionGroup(expr.value))) {
+        if (isRuleGroup(rule) || (groupOnlyIfNecessary && isCELExpressionGroup(expr.value))) {
           return rule;
         }
         return ic ? { rules: [rule] } : { combinator: 'and', rules: [rule] };
@@ -247,7 +259,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
   }
   const result = processCELExpression(processedCEL);
   if (result) {
-    if ('rules' in result) {
+    if (isRuleGroup(result)) {
       return result;
     }
     return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };

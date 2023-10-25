@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import type { QueryBuilderContextProps } from 'react-querybuilder';
-import { QueryBuilderContext, useMergedContext, usePreferProp } from 'react-querybuilder';
+import {
+  QueryBuilderContext,
+  useMergedContext,
+  usePreferAnyProp,
+  usePreferProp,
+} from 'react-querybuilder';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
@@ -17,6 +22,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
     enableDragAndDrop: enableDragAndDropProp,
     enableMountQueryChange,
     translations,
+    canDrop,
   } = props;
 
   const rqbContext = useMergedContext({
@@ -49,7 +55,9 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
       <QueryBuilderContext.Provider
         key={key}
         value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
-        <QueryBuilderDndWithoutProvider dnd={dnd}>{props.children}</QueryBuilderDndWithoutProvider>
+        <QueryBuilderDndWithoutProvider dnd={dnd} canDrop={canDrop}>
+          {props.children}
+        </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
     </DndProvider>
   );
@@ -62,6 +70,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
   const dnd = useReactDnD(props.dnd);
   const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
+  const canDrop = usePreferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
   const enableDragAndDrop = usePreferProp(
     true,
     props.enableDragAndDrop,
@@ -110,7 +119,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
     <DndContext.Consumer key={key}>
       {() => (
         <QueryBuilderContext.Provider key={key} value={newContext}>
-          <QueryBuilderDndContext.Provider value={{ useDrag, useDrop, baseControls }}>
+          <QueryBuilderDndContext.Provider value={{ useDrag, useDrop, baseControls, canDrop }}>
             {props.children}
           </QueryBuilderDndContext.Provider>
         </QueryBuilderContext.Provider>

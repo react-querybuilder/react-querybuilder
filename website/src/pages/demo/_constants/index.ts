@@ -1,4 +1,5 @@
 import packageJSON_rqb_antd from '@react-querybuilder/antd/package.json';
+import packageJSON_rqb_blueprint from '@react-querybuilder/blueprint/package.json';
 import packageJSON_rqb_bootstrap from '@react-querybuilder/bootstrap/package.json';
 import packageJSON_rqb_bulma from '@react-querybuilder/bulma/package.json';
 import packageJSON_rqb_chakra from '@react-querybuilder/chakra/package.json';
@@ -6,11 +7,11 @@ import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
 import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
-import type { ExportFormat, RuleGroupType } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
-export const defaultOptions: DemoOptions = {
+export const defaultOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
@@ -29,7 +30,7 @@ export const defaultOptions: DemoOptions = {
   parseNumbers: false,
   justifiedLayout: false,
   showBranches: false,
-};
+} satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
   'showCombinatorsBetweenRules',
@@ -52,92 +53,85 @@ export const optionOrder: DemoOption[] = [
   'showBranches',
 ];
 
-export const optionsMetadata: Record<
-  DemoOption,
-  {
-    link: string;
-    label: string;
-    title: string;
-  }
-> = {
+export const optionsMetadata = {
   showCombinatorsBetweenRules: {
-    link: '/docs/api/querybuilder#showcombinatorsbetweenrules',
+    link: '/docs/components/querybuilder#showcombinatorsbetweenrules',
     label: 'Combinators between rules',
     title: 'Display combinator (and/or) selectors between rules instead of in the group header',
   },
   showNotToggle: {
-    link: '/docs/api/querybuilder#shownottoggle',
+    link: '/docs/components/querybuilder#shownottoggle',
     label: 'Show "not" toggle',
     title: `Display a checkbox to invert a group's rules (labelled "Not" by default)`,
   },
   showCloneButtons: {
-    link: '/docs/api/querybuilder#showclonebuttons',
+    link: '/docs/components/querybuilder#showclonebuttons',
     label: 'Show clone buttons',
     title: 'Display buttons to clone rules and groups',
   },
   resetOnFieldChange: {
-    link: '/docs/api/querybuilder#resetonfieldchange',
+    link: '/docs/components/querybuilder#resetonfieldchange',
     label: 'Reset on field change',
     title: `Operator and value will be reset when a rule's field selection changes`,
   },
   resetOnOperatorChange: {
-    link: '/docs/api/querybuilder#resetonoperatorchange',
+    link: '/docs/components/querybuilder#resetonoperatorchange',
     label: 'Reset on operator change',
     title: 'The value will reset when the operator changes',
   },
   autoSelectField: {
-    link: '/docs/api/querybuilder#autoselectfield',
+    link: '/docs/components/querybuilder#autoselectfield',
     label: 'Auto-select field',
     title: 'The default field will be automatically selected for new rules',
   },
   autoSelectOperator: {
-    link: '/docs/api/querybuilder#autoselectoperator',
+    link: '/docs/components/querybuilder#autoselectoperator',
     label: 'Auto-select operator',
     title: 'The default operator will be automatically selected for new rules',
   },
   addRuleToNewGroups: {
-    link: '/docs/api/querybuilder#addruletonewgroups',
+    link: '/docs/components/querybuilder#addruletonewgroups',
     label: 'Add rule to new groups',
     title: 'A rule will be automatically added to new groups',
   },
   validateQuery: {
-    link: '/docs/api/validation',
+    link: '/docs/utils/validation',
     label: 'Use validation',
     title:
       'The validator function(s) will be used to bold the "+Rule" button for empty groups and put a purple background on empty text fields and emtpy groups',
   },
   independentCombinators: {
-    link: '/docs/api/querybuilder#independentcombinators',
+    link: '/docs/components/querybuilder#independentcombinators',
     label: 'Independent combinators',
     title: 'Combinators between rules can be independently updated',
   },
   listsAsArrays: {
-    link: '/docs/api/querybuilder#listsasarrays',
+    link: '/docs/components/querybuilder#listsasarrays',
     label: 'Lists as arrays',
     title: 'Lists will be stored as arrays instead of comma-separated strings',
   },
   enableDragAndDrop: {
-    link: '/docs/api/querybuilder#enabledraganddrop',
+    link: '/docs/components/querybuilder#enabledraganddrop',
     label: 'Drag-and-drop enabled',
     title: 'Rules and groups can be reordered and dragged to different groups',
   },
   disabled: {
-    link: '/docs/api/querybuilder#disabled',
+    link: '/docs/components/querybuilder#disabled',
     label: 'Disabled',
     title: 'Disable all components within the query builder',
   },
   showLockButtons: {
-    link: '/docs/api/querybuilder#showlockbuttons',
+    link: '/docs/components/querybuilder#showlockbuttons',
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
   },
   debugMode: {
-    link: '/docs/api/querybuilder#debugmode',
+    link: '/docs/components/querybuilder#debugmode',
     label: 'Debug mode',
     title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
   parseNumbers: {
-    link: '/docs/api/export#parse-numbers',
+    link: '/docs/utils/export#parse-numbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values',
   },
@@ -147,18 +141,18 @@ export const optionsMetadata: Record<
     title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
-    link: '/docs/tips/styling#branch-lines',
+    link: '/docs/styling/overview#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
-};
+} satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 
 export const optionOrderByLabel = optionOrder.sort((a, b) =>
   optionsMetadata[a].label.localeCompare(optionsMetadata[b].label)
 );
 
-export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
-export const emptyQueryIC = convertToIC(emptyQuery);
+export const emptyQuery = { combinator: 'and', rules: [] } satisfies RuleGroupType;
+export const emptyQueryIC = { rules: [] } satisfies RuleGroupTypeIC;
 
 export const initialQuery: RuleGroupType = {
   id: generateID(),
@@ -233,14 +227,15 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
 ];
 
 export const styleNameMap: Record<StyleName, string> = {
-  default: 'Default',
-  bootstrap: 'Bootstrap',
-  material: 'MUI/Material',
-  mantine: 'Mantine',
-  fluent: 'Fluent UI',
   antd: 'Ant Design',
-  chakra: 'Chakra UI',
+  blueprint: 'Blueprint',
+  bootstrap: 'Bootstrap',
   bulma: 'Bulma',
+  chakra: 'Chakra UI',
+  default: 'Default',
+  fluent: 'Fluent UI',
+  mantine: 'Mantine',
+  material: 'MUI/Material',
 };
 
 const { default: _d, ...compatStyles } = styleNameMap;
@@ -251,6 +246,7 @@ export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>>
   default: {},
   dnd: packageJSON_rqb_dnd.peerDependencies,
   antd: packageJSON_rqb_antd.peerDependencies,
+  blueprint: packageJSON_rqb_blueprint.peerDependencies,
   bootstrap: packageJSON_rqb_bootstrap.peerDependencies,
   bulma: packageJSON_rqb_bulma.peerDependencies,
   chakra: packageJSON_rqb_chakra.peerDependencies,

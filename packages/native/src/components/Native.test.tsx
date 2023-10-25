@@ -1,3 +1,5 @@
+/// <reference types="@testing-library/jest-native" />
+
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
 import { Platform, StyleSheet, Switch, TextInput } from 'react-native';
@@ -133,7 +135,8 @@ describe('NativeNotToggle', () => {
   it('works', () => {
     const handleOnChange = jest.fn();
     render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
-    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch);
+    // TODO: Figure out why we have to use `as any` here
+    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch as any);
     fireEvent(switchEl, 'valueChange', true);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
     fireEvent(switchEl, 'valueChange', false);
@@ -292,7 +295,8 @@ describe('NativeValueEditor', () => {
         value={'opt1,opt1'}
       />
     );
-    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput);
+    // TODO: Figure out why we have to use `as any` here
+    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput as any);
     [0, 1].forEach(i => {
       fireEvent.changeText(selectors[i], 'opt2');
     });

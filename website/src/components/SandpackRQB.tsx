@@ -20,58 +20,47 @@ export const SandpackRQB = ({
   const bkgdColor = isDarkTheme ? '#343a46' : '#ffffff';
   let hideStylesCSS = true;
 
-  const files = codeSnippets.reduce(
-    (result: Record<string, SandpackFile>, codeSnippet: React.ReactElement) => {
-      if (codeSnippet.props.mdxType !== 'pre') {
-        return result;
-      }
-      const { props } = codeSnippet.props.children;
-      let filePath: string;
-      let fileHidden = false;
-      let fileActive = false;
+  const files: Record<string, SandpackFile> = {};
 
-      if (props.metastring) {
-        const [name, ...params] = props.metastring.split(' ');
-        filePath = '/' + name;
-        if (params.includes('hidden')) {
-          fileHidden = true;
-        }
-        if (params.includes('active')) {
-          fileActive = true;
-        }
-        // isSingleFile = false;
+  for (const codeSnippet of codeSnippets) {
+    const { props } = codeSnippet.props.children;
+    let filePath: string;
+    let fileHidden = false;
+    let fileActive = false;
+
+    if (props.metastring) {
+      const [name, ...params] = props.metastring.split(' ');
+      filePath = '/' + name;
+      fileHidden = params.includes('hidden');
+      fileActive = params.includes('active');
+    } else {
+      if (props.className === 'language-tsx') {
+        filePath = '/App.tsx';
+      } else if (props.className === 'language-js') {
+        filePath = '/App.js';
+      } else if (props.className === 'language-css') {
+        filePath = '/styles.css';
       } else {
-        if (props.className === 'language-tsx') {
-          filePath = '/App.tsx';
-        } else if (props.className === 'language-js') {
-          filePath = '/App.js';
-        } else if (props.className === 'language-css') {
-          filePath = '/styles.css';
-        } else {
-          throw new Error(`Code block is missing a filename: ${props.children}`);
-        }
+        throw new Error(`Code block is missing a filename: ${props.children}`);
       }
-      if (result[filePath]) {
-        throw new Error(
-          `File ${filePath} was defined multiple times. Each file snippet should have a unique path name.`
-        );
-      }
-      if (filePath === '/styles.css' && !fileHidden) {
-        hideStylesCSS = false;
-      }
-      result[filePath] = {
-        code: props.children,
-        hidden: fileHidden,
-        active: fileActive,
-      };
-
-      return result;
-    },
-    {}
-  );
+    }
+    if (files[filePath]) {
+      throw new Error(
+        `File ${filePath} was defined multiple times. Each file snippet should have a unique path name.`
+      );
+    }
+    if (filePath === '/styles.css' && !fileHidden) {
+      hideStylesCSS = false;
+    }
+    files[filePath] = {
+      code: props.children,
+      hidden: fileHidden,
+      active: fileActive,
+    };
+  }
 
   const rqbCSSimport = RegExp(`^import +'react-querybuilder/dist/query-builder\\.s?css';?$`).test(
-    files['/App.tsx'].code
+    files['/App.tsx']?.code
   )
     ? ''
     : `@import 'react-querybuilder/dist/query-builder.css';`;

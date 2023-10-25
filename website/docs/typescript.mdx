@@ -2,11 +2,13 @@
 title: TypeScript reference
 ---
 
-These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript (you really should! 😊), you can use the information below to understand the required shape of the props and function parameters.
+These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript, you can use the information below to understand the required shape of the props and function parameters.
 
 :::note
 
-Library types are typically significantly more complex than application types, so many of the definitions below have been simplified from their actual implemenatations for legibility and ease of comprehension. The full type definitions for `react-querybuilder` are [here](https://github.com/react-querybuilder/react-querybuilder/tree/main/packages/react-querybuilder/src/types).
+Some of the definitions below have been simplified from their actual implementations for legibility and ease of comprehension.
+
+The **[API documentation](/api)**, however, is generated directly from the source code and provides direct links to the actual definitions of each type within the repository should you need more detailed information.
 
 :::
 
@@ -38,7 +40,7 @@ interface Field {
 
 ```ts
 type RuleType = {
-  path?: number[];
+  path?: Path;
   id?: string;
   disabled?: boolean;
   field: string;
@@ -48,7 +50,7 @@ type RuleType = {
 };
 
 type RuleGroupType = {
-  path?: number[];
+  path?: Path;
   id?: string;
   disabled?: boolean;
   combinator: string;
@@ -57,7 +59,7 @@ type RuleGroupType = {
 };
 
 type RuleGroupTypeIC = {
-  path?: number[];
+  path?: Path;
   id?: string;
   disabled?: boolean;
   rules: (RuleType | RuleGroupTypeIC | string)[]; // see note below
@@ -190,7 +192,11 @@ type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
 
 ## Miscellaneous
 
+_For more information about the `Path` type, see [Path concepts](./tips/path)._
+
 ```ts
+type Path = number[];
+
 // Formerly `NameLabelPair`
 interface Option {
   name: string;
@@ -259,19 +265,19 @@ interface Schema {
   independentCombinators: boolean;
   listsAsArrays: boolean;
   parseNumbers: ParseNumbersMethod;
-  disabledPaths: number[][];
+  disabledPaths: Path[];
 }
 
 interface QueryActions {
-  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[], context?: any): void;
-  onGroupRemove(path: number[]): void;
+  onGroupAdd(group: RuleGroupTypeAny, parentPath: Path, context?: any): void;
+  onGroupRemove(path: Path): void;
   onPropChange(
     prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
     value: any,
-    path: number[]
+    path: Path
   ): void;
-  onRuleAdd(rule: RuleType, parentPath: number[], context?: any): void;
-  onRuleRemove(path: number[]): void;
-  moveRule(oldPath: number[], newPath: number[], clone?: boolean): void;
+  onRuleAdd(rule: RuleType, parentPath: Path, context?: any): void;
+  onRuleRemove(path: Path): void;
+  moveRule(oldPath: Path, newPath: Path, clone?: boolean): void;
 }
 ```

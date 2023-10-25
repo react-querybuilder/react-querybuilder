@@ -1,4 +1,10 @@
-import { DragIndicator } from '@mui/icons-material';
+import {
+  Close as CloseIcon,
+  ContentCopy as ContentCopyIcon,
+  DragIndicator,
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon,
+} from '@mui/icons-material';
 import {
   Button,
   Checkbox,
@@ -17,21 +23,25 @@ import { useContext, useMemo } from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
-export const defaultMuiComponents: RQBMaterialComponents = {
+export const defaultMuiComponents = {
   DragIndicator,
   Button,
   Checkbox,
+  CloseIcon,
+  ContentCopyIcon,
   FormControl,
   FormControlLabel,
   Input,
   ListSubheader,
+  LockIcon,
+  LockOpenIcon,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
   Switch,
   TextareaAutosize,
-};
+} satisfies RQBMaterialComponents;
 
 export const useMuiComponents = (
   preloadedComponents?: RQBMaterialComponents
@@ -50,9 +60,7 @@ export const useMuiComponents = (
         ? { ...defaultMuiComponents, ...preloadedComponents }
         : muiComponentsFromContext
         ? { ...defaultMuiComponents, ...muiComponentsFromContext }
-        : /* TODO: why does this next line cause the app to crash? */
-          /* componentCache && process.env.NODE_ENV === 'production' ? componentCache : */
-          defaultMuiComponents,
+        : defaultMuiComponents,
     [muiComponentsFromContext, preloadedComponents]
   );
 

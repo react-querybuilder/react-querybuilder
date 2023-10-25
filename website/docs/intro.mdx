@@ -4,6 +4,7 @@ hide_table_of_contents: true
 ---
 
 import { SandpackRQB } from '@site/src/components/SandpackRQB';
+import Details from '@theme/Details';
 
 ## TL;DR
 
@@ -86,8 +87,7 @@ export default () => {
 
 </SandpackRQB>
 
-<details>
-<summary>Non-TypeScript version</summary>
+<Details summary="Non-TypeScript version">
 
 ```jsx
 import { useState } from 'react';
@@ -112,7 +112,7 @@ export default () => {
 };
 ```
 
-</details>
+</Details>
 
 ## Exporting queries
 

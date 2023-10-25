@@ -278,7 +278,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                          | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this group                              |
 | `disabled`      | `boolean`                                      | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                                     | [Path](../tips/path) of this group                           |
+| `path`          | `Path`                                         | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
 #### `addRuleAction`
@@ -297,7 +297,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                          | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this group                              |
 | `disabled`      | `boolean`                                      | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                                     | [Path](../tips/path) of this group                           |
+| `path`          | `Path`                                         | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
 #### `cloneGroupAction`
@@ -316,7 +316,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                               | [Path](../tips/path) of this group                           |
+| `path`          | `Path`                                   | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `cloneRuleAction`
@@ -334,7 +334,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                               |
 | `disabled`      | `boolean`                                | Whether this rule is disabled/locked                         |
-| `path`          | `number[]`                               | [Path](../tips/path) of this rule                            |
+| `path`          | `Path`                                   | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `combinatorSelector`
@@ -353,7 +353,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                    | Container for custom props that are passed to all components         |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this group                                      |
 | `disabled`       | `boolean`                                | Whether this group is disabled/locked                                |
-| `path`           | `number[]`                               | [Path](../tips/path) of this group                                   |
+| `path`           | `Path`                                   | [Path](../tips/path) of this group                                   |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                          |
 
 #### `dragHandle`
@@ -369,7 +369,7 @@ Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enab
 | `context`     | `any`                                     | Container for custom props that are passed to all components |
 | `validation`  | <code>boolean \| ValidationResult</code>  | Validation result of this rule/group                         |
 | `disabled`    | `boolean`                                 | Whether this rule/group is disabled/locked                   |
-| `path`        | `number[]`                                | [Path](../tips/path) of this rule/group                      |
+| `path`        | `Path`                                    | [Path](../tips/path) of this rule/group                      |
 | `schema`      | `Schema`                                  | Query [schema](../typescript#miscellaneous)                  |
 | `ruleOrGroup` | <code>RuleGroupTypeAny \| RuleType</code> | This group or rule, depending on the parent component        |
 
@@ -389,7 +389,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                    | Container for custom props that are passed to all components       |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                     |
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                               |
-| `path`           | `number[]`                               | [Path](../tips/path) of this rule                                  |
+| `path`           | `Path`                                   | [Path](../tips/path) of this rule                                  |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                        |
 | `rule`           | `RuleType`                               | This rule                                                          |
 
@@ -419,7 +419,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this group                                                         |
 | `disabled`            | `boolean`                                | Whether this group is disabled/locked                                                   |
 | `disabledTranslation` | `string`                                 | `translations.lockGroupDisabled` if parent group is not disabled, otherwise `undefined` |
-| `path`                | `number[]`                               | [Path](../tips/path) of this group                                                      |
+| `path`                | `Path`                                   | [Path](../tips/path) of this group                                                      |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                             |
 
 #### `lockRuleAction`
@@ -438,7 +438,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this rule                                                         |
 | `disabled`            | `boolean`                                | Whether this rule is disabled/locked                                                   |
 | `disabledTranslation` | `string`                                 | `translations.lockRuleDisabled` if parent group is not disabled, otherwise `undefined` |
-| `path`                | `number[]`                               | [Path](../tips/path) of this rule                                                      |
+| `path`                | `Path`                                   | [Path](../tips/path) of this rule                                                      |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                            |
 
 #### `notToggle`
@@ -456,7 +456,7 @@ Default is [`NotToggle`](./nottoggle). Receives the following props per the `Not
 | `context`        | `any`                                    | Container for custom props that are passed to all components |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`       | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`           | `number[]`                               | [Path](../tips/path) of this group                           |
+| `path`           | `Path`                                   | [Path](../tips/path) of this group                           |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 | `ruleGroup`      | `RuleGroupTypeAny`                       | This group                                                   |
 
@@ -477,7 +477,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                    | Container for custom props that are passed to all components     |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                   |
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                             |
-| `path`           | `number[]`                               | [Path](../tips/path) of this rule                                |
+| `path`           | `Path`                                   | [Path](../tips/path) of this rule                                |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                      |
 | `rule`           | `RuleType`                               | This rule                                                        |
 
@@ -497,7 +497,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`          | `number[]`                               | [Path](../tips/path) of this group                           |
+| `path`          | `Path`                                   | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `removeRuleAction`
@@ -515,7 +515,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 | `context`       | `any`                                    | Container for custom props that are passed to all components |
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                               |
 | `disabled`      | `boolean`                                | Whether this rule is disabled/locked                         |
-| `path`          | `number[]`                               | [Path](../tips/path) of this rule                            |
+| `path`          | `Path`                                   | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
 #### `rule`
@@ -525,7 +525,7 @@ Default is [`Rule`](./rule). Receives the following props per the `RuleProps` in
 | Prop             | Type           | Description                                                  |
 | ---------------- | -------------- | ------------------------------------------------------------ |
 | `id`             | `string`       | Unique identifier for this rule                              |
-| `path`           | `number[]`     | [Path](../tips/path) of this rule                            |
+| `path`           | `Path`         | [Path](../tips/path) of this rule                            |
 | `rule`           | `RuleType`     | The rule object                                              |
 | `translations`   | `Translations` | The default translations merged with the `translations` prop |
 | `schema`         | `Schema`       | Query [schema](../typescript#miscellaneous)                  |
@@ -547,7 +547,7 @@ Default is [`RuleGroup`](./rulegroup). Receives the following props per the `Rul
 | Prop             | Type               | Description                                                  |
 | ---------------- | ------------------ | ------------------------------------------------------------ |
 | `id`             | `string`           | Unique identifier for this group                             |
-| `path`           | `number[]`         | [Path](../tips/path) of this group                           |
+| `path`           | `Path`             | [Path](../tips/path) of this group                           |
 | `ruleGroup`      | `RuleGroupTypeAny` | The group object                                             |
 | `translations`   | `Translations`     | The default translations merged with the `translations` prop |
 | `schema`         | `Schema`           | Query [schema](../typescript#miscellaneous)                  |
@@ -586,7 +586,7 @@ Default is [`ValueEditor`](./valueeditor). Receives the following props per the 
 | `context`        | `any`                                    | Container for custom props that are passed to all components            |
 | `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                          |
 | `disabled`       | `boolean`                                | Whether this rule is disabled/locked                                    |
-| `path`           | `number[]`                               | [Path](../tips/path) of this rule                                       |
+| `path`           | `Path`                                   | [Path](../tips/path) of this rule                                       |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                             |
 | `rule`           | `RuleType`                               | This rule                                                               |
 
@@ -607,7 +607,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | `context`        | `any`                                            | Container for custom props that are passed to all components     |
 | `validation`     | <code>boolean \| ValidationResult</code>         | Validation result of this rule                                   |
 | `disabled`       | `boolean`                                        | Whether this rule is disabled/locked                             |
-| `path`           | `number[]`                                       | [Path](../tips/path) of this rule                                |
+| `path`           | `Path`                                           | [Path](../tips/path) of this rule                                |
 | `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                      |
 | `rule`           | `RuleType`                                       | This rule                                                        |
 
@@ -679,7 +679,7 @@ Generate custom classes which will be added to the outer `div` of a group based 
 
 ### `onAddRule`
 
-`(rule: RuleType, parentPath: number[], query: RuleGroupTypeAny, context?: any) => RuleType | false`
+`(rule: RuleType, parentPath: Path, query: RuleGroupTypeAny, context?: any) => RuleType | false`
 
 This callback is invoked immediately before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType` or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
 
@@ -693,7 +693,7 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 ### `onAddGroup`
 
-`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: number[], query: RG, context?: any) => RG | false`
+`<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: Path, query: RG, context?: any) => RG | false`
 
 This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
 
@@ -707,7 +707,7 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 
 ### `onRemove`
 
-`<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: number[], query: RG, context?: any) => boolean`
+`<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: Path, query: RG, context?: any) => boolean`
 
 This callback is invoked before a rule or group is removed. The function should return `true` if the removal should proceed as normal, or `false` if the removal should be aborted.
 
@@ -944,13 +944,13 @@ If your application already uses [`react-dnd`](https://react-dnd.github.io/react
 
 ### `disabled`
 
-:::caution Deprecated
+:::caution[Deprecated]
 
 Use the `disabled` property on rules and groups within the query object instead.
 
 :::
 
-`boolean | number[][]` (default `false`) _<DemoLink option="disabled" />_
+`boolean | Path[]` (default `false`) _<DemoLink option="disabled" />_
 
 Pass `true` to disable all subcomponents and prevent changes to the query. Pass an array of paths to disable specific rules and/or groups. For example, `disabled={[[0]]}` will disable the top-most rule/group and its subcomponents, but nothing else.
 

@@ -14,14 +14,13 @@ type ValueEditorTestsToSkip = Partial<{
   switch: boolean;
   between: boolean;
   betweenSelect: boolean;
-  selectorClassOnParent: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: OptionList;
   testID: string;
 }
 
-export const defaultValueEditorProps: ValueEditorProps = {
+export const defaultValueEditorProps = {
   field: 'TEST',
   fieldData: { name: 'TEST', label: 'Test' },
   operator: '=',
@@ -31,7 +30,7 @@ export const defaultValueEditorProps: ValueEditorProps = {
   valueSource: 'value',
   schema: {} as Schema,
   rule: { field: '', operator: '', value: '' },
-};
+} satisfies ValueEditorProps;
 
 export const testValueEditor = (
   ValueEditor: React.ComponentType<ValueEditorProps>,
@@ -165,9 +164,7 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps, {
-        classOnParent: skip.selectorClassOnParent,
-      });
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
     }
 
     if (!skip.multiselect) {
@@ -179,9 +176,7 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps, {
-        classOnParent: skip.selectorClassOnParent,
-      });
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps);
     }
 
     if (!skip.checkbox) {
@@ -325,8 +320,9 @@ export const testValueEditor = (
           render(<ValueEditor {...betweenNumberProps} />);
           const betweenInputs = findInputs(screen.getByTitle(title));
           expect(betweenInputs).toHaveLength(2);
-          expect(betweenInputs[0]).toHaveValue(12);
-          expect(betweenInputs[1]).toHaveValue(14);
+          // Mantine uses an input with type "text" so the input value is a string
+          expect(betweenInputs[0]).toHaveValue(betweenInputs[0].type === 'text' ? '12' : 12);
+          expect(betweenInputs[1]).toHaveValue(betweenInputs[1].type === 'text' ? '14' : 14);
         });
 
         it('should call the onChange handler', async () => {

@@ -4,7 +4,11 @@ import { BulmaActionElement } from './BulmaActionElement';
 import { BulmaNotToggle } from './BulmaNotToggle';
 import { BulmaValueEditor } from './BulmaValueEditor';
 import { BulmaValueSelector } from './BulmaValueSelector';
-export { BulmaActionElement, BulmaNotToggle, BulmaValueEditor, BulmaValueSelector };
+
+export * from './BulmaActionElement';
+export * from './BulmaNotToggle';
+export * from './BulmaValueEditor';
+export * from './BulmaValueSelector';
 
 export const bulmaControlElements: Partial<Controls> = {
   notToggle: BulmaNotToggle,

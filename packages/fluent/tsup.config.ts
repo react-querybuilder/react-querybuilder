@@ -5,7 +5,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig(options => {
   const commonOptions: Options = {
     entry: {
-      'react-querybuilder_fluent': 'src/index.ts',
+      'react-querybuilder_fluent': 'src/index.tsx',
     },
     dts: true,
     sourcemap: true,
@@ -28,7 +28,7 @@ export default defineConfig(options => {
     {
       ...commonOptions,
       entry: {
-        'react-querybuilder_fluent.legacy-esm': 'src/index.ts',
+        'react-querybuilder_fluent.legacy-esm': 'src/index.tsx',
       },
       // ESBuild outputs `'.mjs'` by default for the 'esm' format. Force '.js'
       outExtension: () => ({ js: '.js' }),
@@ -40,7 +40,7 @@ export default defineConfig(options => {
       ...commonOptions,
       ...productionOptions,
       entry: {
-        'react-querybuilder_fluent.production': 'src/index.ts',
+        'react-querybuilder_fluent.production': 'src/index.tsx',
       },
       format: ['esm'],
       outExtension: () => ({ js: '.mjs' }),
@@ -49,7 +49,7 @@ export default defineConfig(options => {
     {
       ...commonOptions,
       entry: {
-        'react-querybuilder_fluent.cjs.development': 'src/index.ts',
+        'react-querybuilder_fluent.cjs.development': 'src/index.tsx',
       },
       format: 'cjs',
       outDir: './dist/cjs/',
@@ -59,7 +59,7 @@ export default defineConfig(options => {
       ...commonOptions,
       ...productionOptions,
       entry: {
-        'react-querybuilder_fluent.cjs.production': 'src/index.ts',
+        'react-querybuilder_fluent.cjs.production': 'src/index.tsx',
       },
       format: 'cjs',
       outDir: './dist/cjs/',

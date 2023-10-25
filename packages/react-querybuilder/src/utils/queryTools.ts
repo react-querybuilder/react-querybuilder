@@ -2,12 +2,14 @@ import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
   OptionList,
+  Path,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
   ValueSources,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
+import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -19,17 +21,20 @@ import { regenerateID, regenerateIDs } from './regenerateIDs';
 export function add<RG extends RuleGroupType>(
   query: RG,
   ruleOrGroup: RG | RuleType,
-  parentPath: number[],
+  parentPath: Path,
   options?: Omit<AddOptions, 'combinatorPreceding'>
 ): RG;
 export function add<RGIC extends RuleGroupTypeIC>(
   query: RGIC,
   ruleOrGroup: RGIC | RuleType,
-  parentPath: number[],
+  parentPath: Path,
   options?: AddOptions
 ): RGIC;
 */
 
+/**
+ * Options object for {@link add}.
+ */
 export interface AddOptions {
   /**
    * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
@@ -52,16 +57,16 @@ export interface AddOptions {
 }
 /**
  * Adds a rule or group to a query.
- * @param query - The query to update
- * @param ruleOrGroup - The rule or group to add
- * @param parentPath - Path of the group to add to
- * @param options -
- * @returns The full query with the new rule or group added
+ * @returns The new query with the rule or group added.
  */
 export const add = <RG extends RuleGroupTypeAny>(
+  /** The query to update. */
   query: RG,
+  /** The rule or group to add. */
   ruleOrGroup: RG | RuleType,
-  parentPath: number[],
+  /** Path of the group to add to. */
+  parentPath: Path,
+  /** Options object. */
   {
     combinators = defaultCombinators,
     combinatorPreceding,
@@ -71,9 +76,9 @@ export const add = <RG extends RuleGroupTypeAny>(
   produce(query, draft => {
     const parent = findPath(parentPath, draft);
 
-    if (!parent || !('rules' in parent)) return;
+    if (!parent || !isRuleGroup(parent)) return;
 
-    if (!('combinator' in parent) && parent.rules.length > 0) {
+    if (!isRuleGroupType(parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
         // @ts-expect-error This is technically a type violation until the next push
@@ -87,6 +92,9 @@ export const add = <RG extends RuleGroupTypeAny>(
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
   });
 
+/**
+ * Options object for {@link update}.
+ */
 export interface UpdateOptions {
   /**
    * When updating the `field` of a rule, the rule's `operator`, `value`, and `valueSource`
@@ -113,18 +121,18 @@ export interface UpdateOptions {
 }
 /**
  * Updates a property of a rule or group within a query.
- * @param query - The query to update
- * @param prop - The name of the property to update
- * @param value - The new value of the property
- * @param path - The path of the rule or group to update
- * @param options -
- * @returns The updated query
+ * @returns The new query with the rule or group property updated.
  */
 export const update = <RG extends RuleGroupTypeAny>(
+  /** The query to update. */
   query: RG,
+  /** The name of the property to update. */
   prop: UpdateableProperties,
+  /** The new value of the property. */
   value: any,
-  path: number[],
+  /** The path of the rule or group to update. */
+  path: Path,
+  /** Options object. */
   {
     resetOnFieldChange = true,
     resetOnOperatorChange = false,
@@ -134,7 +142,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   }: UpdateOptions = {}
 ) =>
   produce(query, draft => {
-    if (prop === 'combinator' && !('combinator' in draft)) {
+    if (prop === 'combinator' && !isRuleGroupType(draft)) {
       // Independent combinators
       const parentRules = (findPath(getParentPath(path), draft) as RG).rules;
       // Only update an independent combinator if it occupies an odd index
@@ -149,7 +157,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     // Ignore invalid paths
     if (!ruleOrGroup) return;
 
-    const isGroup = 'rules' in ruleOrGroup;
+    const isGroup = isRuleGroup(ruleOrGroup);
 
     // Only update if there is actually a change
     // @ts-expect-error prop can refer to rule or group properties
@@ -203,16 +211,19 @@ export const update = <RG extends RuleGroupTypeAny>(
 
 /**
  * Removes a rule or group from a query.
- * @param query - The query to update
- * @param path - Path of the rule or group to remove
- * @returns The updated query
+ * @returns The new query with the rule or group removed.
  */
-export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) => {
+export const remove = <RG extends RuleGroupTypeAny>(
+  /** The query to update. */
+  query: RG,
+  /** Path of the rule or group to remove. */
+  path: Path
+) => {
   if (
     // Can't remove the root group
     path.length === 0 ||
     // Can't independently remove independent combinators
-    (!('combinator' in query) && !findPath(path, query))
+    (!isRuleGroupType(query) && !findPath(path, query))
   ) {
     return query;
   }
@@ -220,8 +231,8 @@ export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) =
   return produce(query, draft => {
     const index = path[path.length - 1];
     const parent = findPath(getParentPath(path), draft);
-    if (parent && 'rules' in parent) {
-      if (!('combinator' in parent) && parent.rules.length > 1) {
+    if (parent && isRuleGroup(parent)) {
+      if (!isRuleGroupType(parent) && parent.rules.length > 1) {
         const idxStartDelete = index === 0 ? 0 : index - 1;
         parent.rules.splice(idxStartDelete, 2);
       } else {
@@ -231,6 +242,9 @@ export const remove = <RG extends RuleGroupTypeAny>(query: RG, path: number[]) =
   });
 };
 
+/**
+ * Options object for {@link move}.
+ */
 export interface MoveOptions {
   /**
    * When `true`, the source rule/group will not be removed from its original path.
@@ -250,16 +264,16 @@ export interface MoveOptions {
 /**
  * Moves a rule or group from one path to another. In the options parameter, pass
  * `{ clone: true }` to copy instead of move.
- * @param query - The query to update
- * @param oldPath - Original path of the rule or group to move
- * @param newPath - Path to move the rule or group to
- * @param options -
- * @returns The updated query
+ * @returns The new query with the rule or group moved or cloned.
  */
 export const move = <RG extends RuleGroupTypeAny>(
+  /** The query to update. */
   query: RG,
-  oldPath: number[],
-  newPath: number[],
+  /** Original path of the rule or group to move. */
+  oldPath: Path,
+  /** Path to move the rule or group to. */
+  newPath: Path,
+  /** Options object. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
   // Don't move to the same location or a path that doesn't exist yet
@@ -272,13 +286,13 @@ export const move = <RG extends RuleGroupTypeAny>(
     return query;
   }
   const ruleOrGroup = clone
-    ? 'rules' in ruleOrGroupOriginal
+    ? isRuleGroup(ruleOrGroupOriginal)
       ? regenerateIDs(ruleOrGroupOriginal, { idGenerator })
       : regenerateID(ruleOrGroupOriginal, { idGenerator })
     : ruleOrGroupOriginal;
 
   return produce(query, draft => {
-    const independentCombinators = !('combinator' in draft);
+    const independentCombinators = !isRuleGroupType(draft);
     const parentOfRuleToRemove = findPath(getParentPath(oldPath), draft) as RG;
     const ruleToRemoveIndex = oldPath[oldPath.length - 1];
     const oldPrevCombinator =

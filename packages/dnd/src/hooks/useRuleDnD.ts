@@ -4,22 +4,24 @@ import type {
   DraggedItem,
   DropCollection,
   DropResult,
+  Path,
   QueryActions,
   UseRuleDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import type { QueryBuilderDndContextProps } from '../types';
 import { useDragCommon } from './useDragCommon';
 
-interface UseRuleDndParams {
-  path: number[];
+type UseRuleDndParams = {
+  path: Path;
   disabled?: boolean;
   independentCombinators?: boolean;
-  moveRule: QueryActions['moveRule'];
+} & Pick<QueryActions, 'moveRule'> &
+  Pick<QueryBuilderDndContextProps, 'canDrop'> &
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: typeof import('react-dnd')['useDrag'];
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: typeof import('react-dnd')['useDrop'];
-}
+  Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
+
+const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
 export const useRuleDnD = ({
   path,
@@ -28,6 +30,7 @@ export const useRuleDnD = ({
   moveRule,
   useDrag,
   useDrop,
+  canDrop,
 }: UseRuleDndParams): UseRuleDnD => {
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -47,8 +50,11 @@ export const useRuleDnD = ({
     DropCollection
   >(
     () => ({
-      accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
+      accept,
       canDrop: item => {
+        if (typeof canDrop === 'function' && !canDrop({ item, path })) {
+          return false;
+        }
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(item.path);
         const hoverIndex = path[path.length - 1];

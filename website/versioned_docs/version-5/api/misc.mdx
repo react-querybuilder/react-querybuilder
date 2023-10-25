@@ -5,6 +5,7 @@ description: Assorted utilities and other exports
 ---
 
 import { DemoLink } from '@site/src/components/DemoLink';
+import Details from '@theme/Details';
 import TypeScriptAdmonition from './_ts_admonition.md';
 
 <TypeScriptAdmonition />
@@ -74,8 +75,7 @@ Check out the ["External controls" Tips & Tricks page](../tips/external-controls
 
 Adds a rule or group (and an independent combinator if necessary, to keep the query valid).
 
-<details>
-  <summary><code>AddOptions</code></summary>
+<Details summary="AddOptions">
 
 ```ts
 interface AddOptions {
@@ -84,7 +84,7 @@ interface AddOptions {
 }
 ```
 
-</details>
+</Details>
 
 ### `remove`
 
@@ -98,8 +98,7 @@ Removes a rule or group (and the preceding independent combinator, if one exists
 
 Updates a property of a rule or group, or updates an independent combinator.
 
-<details>
-  <summary><code>UpdateOptions</code></summary>
+<Details summary="UpdateOptions">
 
 ```ts
 interface UpdateOptions {
@@ -116,7 +115,7 @@ interface UpdateOptions {
 }
 ```
 
-</details>
+</Details>
 
 ### `move`
 
@@ -124,8 +123,7 @@ interface UpdateOptions {
 
 Moves (or clones, with a new `id`) a rule or group to a new location in the query tree.
 
-<details>
-  <summary><code>MoveOptions</code></summary>
+<Details summary="MoveOptions">
 
 ```ts
 interface MoveOptions {
@@ -136,7 +134,7 @@ interface MoveOptions {
 }
 ```
 
-</details>
+</Details>
 
 ## Defaults
 

@@ -9,7 +9,7 @@ To see them in action, check out the [`react-querybuilder` demo](https://react-q
 ## Installation
 
 ```bash
-npm i react-querybuilder @react-querybuilder/fluent @fluentui/react-components
+npm i react-querybuilder @react-querybuilder/fluent @fluentui/react-components @fluentui/react-icons-mdl2
 # OR yarn add / pnpm add / bun add
 ```
 

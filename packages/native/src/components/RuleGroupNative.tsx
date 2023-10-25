@@ -35,10 +35,10 @@ export const RuleGroupNative = (props: RuleGroupNativeProps) => {
   return (
     <View style={styles.ruleGroup} testID={TestID.ruleGroup}>
       <View style={styles.ruleGroupHeader}>
-        <RuleGroupHeaderComponents {...rg} />
+        <RuleGroupHeaderComponents {...(rg as any)} />
       </View>
       <View style={styles.ruleGroupBody}>
-        <RuleGroupBodyComponents {...rg} />
+        <RuleGroupBodyComponents {...(rg as any)} />
       </View>
     </View>
   );

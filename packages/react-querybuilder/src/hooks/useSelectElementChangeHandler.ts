@@ -1,13 +1,13 @@
 import type { ChangeEvent } from 'react';
 import { useMemo } from 'react';
 
-interface UseSelectElementChangeHandlerParams {
+export interface UseSelectElementChangeHandlerParams {
   onChange: (v: string | string[]) => void;
   multiple?: boolean;
 }
 
 /**
- * Returns a memoized change handler for HTML select elements.
+ * Returns a memoized change handler for HTML `<select>` elements.
  */
 export const useSelectElementChangeHandler = ({
   multiple,

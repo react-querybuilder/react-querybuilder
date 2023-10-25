@@ -16,6 +16,9 @@ const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
 const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
   /^(does)?not/i.test(op) ? { '!': jsonRule } : jsonRule;
 
+/**
+ * Default rule processor used by {@link formatQuery} for "jsonlogic" format.
+ */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   { field, operator, value, valueSource }: RuleType,
   { parseNumbers } = {}

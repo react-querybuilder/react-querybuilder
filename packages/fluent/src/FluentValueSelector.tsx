@@ -5,7 +5,7 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toArray, toOptions, useValueSelector } from 'react-querybuilder';
 import { toDropdownOptions } from './utils';
 
-type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
+export type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
 
 export const FluentValueSelector = ({
   className,
@@ -24,6 +24,8 @@ export const FluentValueSelector = ({
   context: _context,
   validation: _validation,
   schema: _schema,
+  rule: _rule,
+  rules: _rules,
   ...otherProps
 }: FluentValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });

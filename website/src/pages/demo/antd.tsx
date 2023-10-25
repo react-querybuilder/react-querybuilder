@@ -1,19 +1,25 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import { useColorMode } from '@docusaurus/theme-common';
 import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
+import { theme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-antd.scss';
 
+const { defaultAlgorithm, darkAlgorithm } = theme;
+
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
   <AntDValueSelector {...props} getPopupContainer={() => document.getElementById('rqb-antd')} />
 );
 
 function ReactQueryBuilderDemo_AntdBrowser() {
-  const [{ Demo }, setComponents] = useState<{
+  const { colorMode } = useColorMode();
+  const [{ ConfigProvider, Demo }, setComponents] = useState<{
+    ConfigProvider?: typeof import('antd').ConfigProvider;
     Demo?: typeof import('./_components/Demo').default;
   }>({});
 
@@ -21,10 +27,13 @@ function ReactQueryBuilderDemo_AntdBrowser() {
     let active = true;
 
     (async () => {
-      const comps = await Promise.all([(await import('./_components/Demo')).default]);
+      const comps = await Promise.all([
+        (await import('antd')).ConfigProvider,
+        (await import('./_components/Demo')).default,
+      ]);
       if (active && !Demo) {
-        const [ImportedDemo] = comps;
-        setComponents({ Demo: ImportedDemo });
+        const [ImportedConfigProvider, ImportedDemo] = comps;
+        setComponents({ ConfigProvider: ImportedConfigProvider, Demo: ImportedDemo });
       }
     })();
 
@@ -36,15 +45,20 @@ function ReactQueryBuilderDemo_AntdBrowser() {
   if (!Demo) return <Loading />;
 
   return (
-    <QueryBuilderAntD
-      controlElements={{
-        fieldSelector: AntDValueSelectorWrapper,
-        combinatorSelector: AntDValueSelectorWrapper,
-        operatorSelector: AntDValueSelectorWrapper,
-        valueSourceSelector: AntDValueSelectorWrapper,
+    <ConfigProvider
+      theme={{
+        algorithm: colorMode === 'dark' ? darkAlgorithm : defaultAlgorithm,
       }}>
-      <Demo variant="antd" />
-    </QueryBuilderAntD>
+      <QueryBuilderAntD
+        controlElements={{
+          fieldSelector: AntDValueSelectorWrapper,
+          combinatorSelector: AntDValueSelectorWrapper,
+          operatorSelector: AntDValueSelectorWrapper,
+          valueSourceSelector: AntDValueSelectorWrapper,
+        }}>
+        <Demo variant="antd" />
+      </QueryBuilderAntD>
+    </ConfigProvider>
   );
 }
 

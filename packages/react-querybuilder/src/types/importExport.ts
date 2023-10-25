@@ -4,6 +4,9 @@ import type { RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
 import type { QueryValidator } from './validation';
 
+/**
+ * Available export formats for {@link formatQuery}.
+ */
 export type ExportFormat =
   | 'json'
   | 'sql'
@@ -15,9 +18,12 @@ export type ExportFormat =
   | 'jsonlogic'
   | 'spel';
 
+/**
+ * Options object shape for {@link formatQuery}.
+ */
 export interface FormatQueryOptions {
   /**
-   * The export format.
+   * The {@link ExportFormat}.
    */
   format?: ExportFormat;
   /**
@@ -37,34 +43,40 @@ export interface FormatQueryOptions {
    * field names will be bracketed by this string. If an array of strings
    * is passed, field names will be preceded by the first element and
    * succeeded by the second element. A common value for this option is
-   * the backtick ('`').
+   * the backtick (```'`'```).
    *
    * @default '' // the empty string
    *
    * @example
+   * formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' })
+   * // "`First name` = 'Steve'"
+   *
+   * @example
    * formatQuery(query, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })
-   * // `[First name] = 'Steve'`
+   * // "[First name] = 'Steve'"
    */
   quoteFieldNamesWith?: string | [string, string];
   /**
    * Validator function for the entire query. Can be the same function passed
-   * as `validator` prop to `<QueryBuilder />`.
+   * as `validator` prop to {@link QueryBuilder}.
    */
   validator?: QueryValidator;
   /**
-   * This can be the same Field[] passed to <QueryBuilder />, but really
-   * all you need to provide is the name and validator for each field.
+   * This can be the same {@link Field} array passed to {@link QueryBuilder}, but
+   * really all you need to provide is the `name` and `validator` for each field.
    */
   fields?: (Pick<Field, 'name' | 'validator'> & Record<string, any>)[];
   /**
    * This string will be inserted in place of invalid groups for non-JSON formats.
-   * Defaults to '(1 = 1)' for "sql"/"parameterized"/"parameterized_named",
-   * '$and:[{$expr:true}]' for "mongodb".
+   * Defaults to `'(1 = 1)'` for "sql"/"parameterized"/"parameterized_named" and
+   * `'$and:[{$expr:true}]'` for "mongodb".
    */
   fallbackExpression?: string;
   /**
    * This string will be placed in front of named parameters (aka bind variables)
-   * when using the "parameterized_named" export format. Default is ":".
+   * when using the "parameterized_named" export format.
+   *
+   * @default ":"
    */
   paramPrefix?: string;
   /**
@@ -86,9 +98,9 @@ export interface FormatQueryOptions {
   paramsKeepPrefix?: boolean;
   /**
    * Renders values as either `number`-types or unquoted strings, as
-   * appropriate and when possible. Each `string`-type value is passed
-   * to `parseFloat` to determine if it can be represented as a plain
-   * numeric value.
+   * appropriate and when possible. Each `string`-type value is evaluated
+   * against {@link numericRegex} to determine if it can be represented as a
+   * plain numeric value. If so, `parseFloat` is used to convert it to a number.
    */
   parseNumbers?: boolean;
   /**
@@ -105,6 +117,9 @@ export interface FormatQueryOptions {
   placeholderOperatorName?: string;
 }
 
+/**
+ * Options object for {@link ValueProcessorByRule} functions.
+ */
 export type ValueProcessorOptions = Pick<
   FormatQueryOptions,
   'parseNumbers' | 'quoteFieldNamesWith'
@@ -112,8 +127,15 @@ export type ValueProcessorOptions = Pick<
   escapeQuotes?: boolean;
 };
 
+/**
+ * Function that produces a processed value for a given {@link RuleType}.
+ */
 export type ValueProcessorByRule = (rule: RuleType, options?: ValueProcessorOptions) => string;
 
+/**
+ * Function that produces a processed value for a given `field`, `operator`, `value`,
+ * and `valueSource`.
+ */
 export type ValueProcessorLegacy = (
   field: string,
   operator: string,
@@ -126,13 +148,25 @@ export type ValueProcessor = ValueProcessorLegacy;
 // TODO: narrow the return type based on options.format? (must add format to options first)
 export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
 
+/**
+ * Object produced by {@link formatQuery} for the `"parameterized"` format.
+ */
 export interface ParameterizedSQL {
+  /** The SQL `WHERE` clause fragment with `?` placeholders for each value. */
   sql: string;
+  /**
+   * Parameter values in the same order their respective placeholders
+   * appear in the `sql` string.
+   */
   params: any[];
 }
 
 export interface ParameterizedNamedSQL {
+  /** The SQL `WHERE` clause fragment with bind variable placeholders for each value. */
   sql: string;
+  /**
+   * Map of bind variable names from the `sql` string to the associated values.
+   */
   params: Record<string, any>;
 }
 
@@ -142,9 +176,18 @@ export interface RQBJsonLogicStartsWith {
 export interface RQBJsonLogicEndsWith {
   endsWith: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
 }
-export type RQBJsonLogicVar = { var: string };
+export interface RQBJsonLogicVar {
+  var: string;
+}
+/**
+ * JsonLogic rule object with additional operators generated by {@link formatQuery}
+ * and accepted by {@link parseJsonLogic}.
+ */
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
 
+/**
+ * Options common to all parsers.
+ */
 interface ParserCommonOptions {
   fields?: OptionList<Field> | Record<string, Field>;
   getValueSources?: (field: string, operator: string) => ValueSources;
@@ -152,15 +195,29 @@ interface ParserCommonOptions {
   independentCombinators?: boolean;
 }
 
+/**
+ * Options object for {@link parseSQL}.
+ */
 export interface ParseSQLOptions extends ParserCommonOptions {
   paramPrefix?: string;
   params?: any[] | Record<string, any>;
 }
 
-export type ParseCELOptions = ParserCommonOptions;
+/**
+ * Options object for {@link parseCEL}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ParseCELOptions extends ParserCommonOptions {}
 
+/**
+ * Options object for {@link parseJsonLogic}.
+ */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
   jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny>;
 }
 
-export type ParseMongoDbOptions = ParserCommonOptions;
+/**
+ * Options object for {@link parseMongoDB}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ParseMongoDbOptions extends ParserCommonOptions {}

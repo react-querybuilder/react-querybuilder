@@ -1,0 +1,24 @@
+diff --git a/sass.dart.js b/sass.dart.js
+index 11ad458393f02eb998674ca2375e2528a8e5b053..cc9cfc019b8e03a532b60b087c5ddbb8021500bb 100644
+--- a/sass.dart.js
++++ b/sass.dart.js
+@@ -35,13 +35,13 @@ if (typeof process !== "undefined") {
+   self.process = process;
+ }
+ 
+-if (typeof __dirname !== "undefined") {
+-  self.__dirname = __dirname;
+-}
++// if (typeof __dirname !== "undefined") {
++//   self.__dirname = __dirname;
++// }
+ 
+-if (typeof __filename !== "undefined") {
+-  self.__filename = __filename;
+-}
++// if (typeof __filename !== "undefined") {
++//   self.__filename = __filename;
++// }
+ 
+ if (typeof Buffer !== "undefined") {
+   self.Buffer = Buffer;

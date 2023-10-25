@@ -8,7 +8,7 @@ import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 import { toOptions } from './utils';
 
-type MaterialValueSelectorProps = VersatileSelectorProps &
+export type MaterialValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
     muiComponents?: RQBMaterialComponents;
   };
@@ -23,6 +23,7 @@ export const MaterialValueSelector = ({
   multiple,
   listsAsArrays,
   testID,
+  rule,
   rules,
   level,
   path,
@@ -57,6 +58,7 @@ export const MaterialValueSelector = ({
         multiple={multiple}
         listsAsArrays={listsAsArrays}
         testID={testID}
+        rule={rule}
         rules={rules}
         level={level}
         path={path}

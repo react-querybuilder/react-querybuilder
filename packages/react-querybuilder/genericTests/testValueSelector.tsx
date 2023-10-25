@@ -1,14 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { Option, Schema, ValueEditorProps, ValueSelectorProps } from '../src/types/';
-import { findSelect, userEventSetup } from './utils';
+import { findSelect, hasOrInheritsClass, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
   multi: boolean;
-  classOnParent: boolean;
 }>;
 
-export const defaultValueSelectorProps: ValueSelectorProps = {
+export const defaultValueSelectorProps = {
   handleOnChange: () => {},
   options: [
     { name: 'foo', label: 'Foo' },
@@ -18,7 +17,7 @@ export const defaultValueSelectorProps: ValueSelectorProps = {
   level: 0,
   path: [],
   schema: {} as Schema,
-};
+} satisfies ValueSelectorProps;
 
 export const testSelect = (
   title: string,
@@ -117,11 +116,7 @@ export const testSelect = (
 
     it('should have the className passed into the <select />', () => {
       render(<Component {...props} className="foo" />);
-      if (skip.classOnParent) {
-        expect(screen.getByTitle(title).parentElement).toHaveClass('foo');
-      } else {
-        expect(screen.getByTitle(title)).toHaveClass('foo');
-      }
+      expect(hasOrInheritsClass(screen.getByTitle(title), 'foo')).toBe(true);
     });
 
     it('should call the onChange method passed in', async () => {

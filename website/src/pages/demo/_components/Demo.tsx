@@ -9,7 +9,12 @@ import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
+import type {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleGroupTypeIC,
+} from 'react-querybuilder';
 import {
   QueryBuilder,
   convertToIC,
@@ -108,7 +113,7 @@ const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const formatInfo = formatMap.find(([fmt]) => fmt === format);
   return (
     <>
-      <Link href={`/docs/api/export#${formatInfo[3]}`}>Documentation</Link>
+      <Link href={`/docs/utils/export#${formatInfo[3]}`}>Documentation</Link>
       <Link href={formatInfo[2]}>Format info</Link>
     </>
   );
@@ -388,19 +393,25 @@ export default function Demo({
   const qbWrapperClassName = useMemo(
     () =>
       clsx(
-        { validateQuery: options.validateQuery, justifiedLayout: options.justifiedLayout },
-        variant === 'default' ? '' : `rqb-${variant}`,
-        options.showBranches ? 'queryBuilder-branches' : ''
+        {
+          validateQuery: options.validateQuery,
+          justifiedLayout: options.justifiedLayout,
+          'queryBuilder-branches': options.showBranches,
+        },
+        variant === 'default' ? '' : qbWrapperId
       ),
-    [options.justifiedLayout, options.showBranches, options.validateQuery, variant]
+    [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
   );
+
+  const onQueryChangeIC = useCallback((q: RuleGroupTypeIC) => setQueryIC(q), []);
+  const onQueryChange = useCallback((q: RuleGroupType) => setQuery(q), []);
 
   return (
     <div className={styles.demoLayout}>
       <div>
         <h3>
           <Link
-            href={'/docs/api/querybuilder'}
+            href={'/docs/components/querybuilder'}
             title={'Boolean props on the QueryBuilder component (click for documentation)'}
             className={styles.demoSidebarHeader}>
             <span>Options</span>
@@ -458,7 +469,7 @@ export default function Demo({
         </div>
         <h3>
           <Link
-            href={'/docs/api/import'}
+            href={'/docs/utils/import'}
             title={
               'Use the parse* methods to set the query from SQL/JsonLogic/etc. (click for documentation)'
             }
@@ -499,7 +510,7 @@ export default function Demo({
                   independentCombinators
                   key={'queryIC'}
                   query={queryIC}
-                  onQueryChange={q => setQueryIC(q)}
+                  onQueryChange={onQueryChangeIC}
                 />
               ) : (
                 <QueryBuilder
@@ -507,7 +518,7 @@ export default function Demo({
                   independentCombinators={false}
                   key={'query'}
                   query={query}
-                  onQueryChange={q => setQuery(q)}
+                  onQueryChange={onQueryChange}
                 />
               )}
             </QueryBuilderDnD>

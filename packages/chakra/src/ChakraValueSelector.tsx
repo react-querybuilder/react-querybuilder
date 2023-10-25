@@ -4,7 +4,8 @@ import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 
-type ChakraValueSelectorProps = VersatileSelectorProps & ComponentPropsWithoutRef<typeof Select>;
+export type ChakraValueSelectorProps = VersatileSelectorProps &
+  ComponentPropsWithoutRef<typeof Select>;
 
 export const ChakraValueSelector = ({
   className,
@@ -15,6 +16,7 @@ export const ChakraValueSelector = ({
   disabled,
   // Props that should not be in extraProps
   testID: _testID,
+  rule: _rule,
   rules: _rules,
   level: _level,
   path: _path,

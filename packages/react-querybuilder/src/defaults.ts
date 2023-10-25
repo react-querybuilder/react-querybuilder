@@ -9,16 +9,40 @@ import type {
 
 const placeholderName = '~';
 const placeholderLabel = '------';
+/**
+ * Default `name` for placeholder option in the `fields` array.
+ */
 export const defaultPlaceholderFieldName = placeholderName;
+/**
+ * Default `label` for placeholder option in the `fields` array.
+ */
 export const defaultPlaceholderFieldLabel = placeholderLabel;
+/**
+ * Default `label` for placeholder option group in the `fields` array.
+ */
 export const defaultPlaceholderFieldGroupLabel = placeholderLabel;
+/**
+ * Default `name` for placeholder option in the `operators` array.
+ */
 export const defaultPlaceholderOperatorName = placeholderName;
+/**
+ * Default `label` for placeholder option in the `operators` array.
+ */
 export const defaultPlaceholderOperatorLabel = placeholderLabel;
+/**
+ * Default `label` for placeholder option group in the `operators` array.
+ */
 export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
 
+/**
+ * Default character used to `.join` and `.split` arrays.
+ */
 export const defaultJoinChar = ',';
 
-export const defaultTranslations: TranslationsFull = {
+/**
+ * Default configuration of translatable strings.
+ */
+export const defaultTranslations = {
   fields: {
     title: 'Fields',
     placeholderName: defaultPlaceholderFieldName,
@@ -35,19 +59,19 @@ export const defaultTranslations: TranslationsFull = {
     title: 'Value',
   },
   removeRule: {
-    label: 'x',
+    label: '⨯',
     title: 'Remove rule',
   },
   removeGroup: {
-    label: 'x',
+    label: '⨯',
     title: 'Remove group',
   },
   addRule: {
-    label: '+Rule',
+    label: '+ Rule',
     title: 'Add rule',
   },
   addGroup: {
-    label: '+Group',
+    label: '+ Group',
     title: 'Add group',
   },
   combinators: {
@@ -88,8 +112,11 @@ export const defaultTranslations: TranslationsFull = {
   valueSourceSelector: {
     title: 'Value source',
   },
-};
+} satisfies TranslationsFull;
 
+/**
+ * Default operator list.
+ */
 export const defaultOperators: DefaultOperator[] = [
   { name: '=', label: '=' },
   { name: '!=', label: '!=' },
@@ -111,7 +138,10 @@ export const defaultOperators: DefaultOperator[] = [
   { name: 'notBetween', label: 'not between' },
 ];
 
-export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
+/**
+ * Map of default operators to their respective opposite/negating operators.
+ */
+export const defaultOperatorNegationMap = {
   '=': '!=',
   '!=': '=',
   '<': '>=',
@@ -130,18 +160,27 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   notIn: 'in',
   notNull: 'null',
   null: 'notNull',
-};
+} satisfies Record<DefaultOperatorName, DefaultOperatorName>;
 
+/**
+ * Default combinator list.
+ */
 export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', label: 'AND' },
   { name: 'or', label: 'OR' },
 ];
 
+/**
+ * Default combinator list, with `XOR` added.
+ */
 export const defaultCombinatorsExtended: DefaultCombinatorExtended[] = [
   ...defaultCombinators,
   { name: 'xor', label: 'XOR' },
 ];
 
+/**
+ * Standard classnames applied to each component.
+ */
 export const standardClassnames = {
   queryBuilder: 'queryBuilder',
   ruleGroup: 'ruleGroup',
@@ -174,7 +213,10 @@ export const standardClassnames = {
   branches: 'queryBuilder-branches',
 } as const;
 
-export const defaultControlClassnames: Classnames = {
+/**
+ * Default classnames for each component.
+ */
+export const defaultControlClassnames = {
   queryBuilder: '',
   ruleGroup: '',
   header: '',
@@ -195,14 +237,20 @@ export const defaultControlClassnames: Classnames = {
   lockRule: '',
   lockGroup: '',
   valueSource: '',
-};
+} satisfies Classnames;
 
+/**
+ * Default reason codes for a group being invalid.
+ */
 export const groupInvalidReasons = {
   empty: 'empty',
   invalidCombinator: 'invalid combinator',
   invalidIndependentCombinators: 'invalid independent combinators',
 } as const;
 
+/**
+ * Component identifiers for testing.
+ */
 export const TestID = {
   rule: 'rule',
   ruleGroup: 'rule-group',

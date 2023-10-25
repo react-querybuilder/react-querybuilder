@@ -4,6 +4,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
 
@@ -41,14 +42,14 @@ export const mongoOperators = {
   notIn: '$nin',
 };
 
-export const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
+export const celCombinatorMap = {
   and: '&&',
   or: '||',
-};
+} satisfies Record<DefaultCombinatorName, '&&' | '||'>;
 
 /**
- * Register these operators with jsonLogic before applying the
- * result of formatQuery(query, 'jsonlogic').
+ * Register these operators with `jsonLogic` before applying the result
+ * of `formatQuery(query, 'jsonlogic')`.
  *
  * @example
  * ```
@@ -58,13 +59,10 @@ export const celCombinatorMap: Record<DefaultCombinatorName, '&&' | '||'> = {
  * jsonLogic.apply({ "startsWith": [{ "var": "firstName" }, "Stev"] }, data);
  * ```
  */
-export const jsonLogicAdditionalOperators: Record<
-  'startsWith' | 'endsWith',
-  (...args: any[]) => boolean
-> = {
+export const jsonLogicAdditionalOperators = {
   startsWith: (a: string, b: string) => typeof a === 'string' && a.startsWith(b),
   endsWith: (a: string, b: string) => typeof a === 'string' && a.endsWith(b),
-};
+} satisfies Record<'startsWith' | 'endsWith', (...args: any[]) => boolean>;
 
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
@@ -75,7 +73,7 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
       return r;
     }
 
-    if ('rules' in r) {
+    if (isRuleGroup(r)) {
       return numerifyValues(r);
     }
 

@@ -1870,6 +1870,41 @@ describe('dynamic classNames', () => {
   });
 });
 
+describe('dispatchQuery and getQuery', () => {
+  it('gets the query from the store', async () => {
+    const onQueryChange = jest.fn();
+    const testFunc = jest.fn();
+    const getQueryBtnText = 'Get Query';
+    const dispatchQueryBtnText = 'Dispatch Query';
+    const rule = ({ schema: { getQuery, dispatchQuery } }: RuleProps) => (
+      <>
+        <button onClick={() => testFunc(getQuery())}>{getQueryBtnText}</button>
+        <button onClick={() => dispatchQuery({ combinator: 'or', rules: [] })}>
+          {' '}
+          {dispatchQueryBtnText}{' '}
+        </button>
+      </>
+    );
+    render(<QueryBuilder onQueryChange={onQueryChange} controlElements={{ rule }} />);
+    await user.click(screen.getByTestId(TestID.addRule));
+    await user.click(screen.getByText(getQueryBtnText));
+    expect(testFunc.mock.lastCall?.[0]).toMatchObject({
+      combinator: 'and',
+      not: false,
+      rules: [
+        {
+          field: '~',
+          operator: '=',
+          value: '',
+          valueSource: 'value',
+        },
+      ],
+    });
+    await user.click(screen.getByText(dispatchQueryBtnText));
+    expect(onQueryChange.mock.lastCall?.[0]).toMatchObject({ combinator: 'or', rules: [] });
+  });
+});
+
 describe('nested object immutability', () => {
   it('does not modify rules it does not have to modify', async () => {
     const onQueryChange = jest.fn();

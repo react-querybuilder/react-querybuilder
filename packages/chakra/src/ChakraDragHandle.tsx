@@ -7,7 +7,7 @@ import type { DragHandleProps } from 'react-querybuilder';
 
 type IBP = ComponentPropsWithRef<typeof IconButton>;
 
-type ChakraDragHandleProps = DragHandleProps &
+export type ChakraDragHandleProps = DragHandleProps &
   Omit<IBP, 'aria-label'> &
   Partial<Pick<IBP, 'aria-label'>>;
 

@@ -9,6 +9,9 @@ const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${claus
 const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`);
 
+/**
+ * Default rule processor used by {@link formatQuery} for "spel" format.
+ */
 export const defaultRuleProcessorSpEL: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next

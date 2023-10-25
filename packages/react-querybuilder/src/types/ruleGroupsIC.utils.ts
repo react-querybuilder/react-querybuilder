@@ -26,7 +26,7 @@ export type OddRangeWithZero = OddRange | 0;
 /* istanbul ignore next */
 export const isOddOrZero = (n: number): n is OddRangeWithZero => n >= 0 && (n === 0 || n % 2 === 1);
 
-// Utility for repeating the rule(,combinator,rule)* pattern of the RuleGroupIC types
+// Utility for repeating the rule(,combinator,rule)* pattern of the RuleGroupTypeIC types
 type MAXIMUM_ALLOWED_BOUNDARY = 80;
 export type MappedTuple<
   Tuple extends Array<unknown>,

@@ -6,11 +6,11 @@ export const getRegExStr = (re: string | RegExp) => (typeof re === 'string' ? re
 export const isPrimitive = (v: any): v is string | number | boolean =>
   typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean';
 
-export const mongoDbToRqbOperatorMap: { [o in MongoDbSupportedOperators]?: DefaultOperatorName } = {
+export const mongoDbToRqbOperatorMap = {
   $eq: '=',
   $ne: '!=',
   $gt: '>',
   $gte: '>=',
   $lt: '<',
   $lte: '<=',
-};
+} satisfies { [o in MongoDbSupportedOperators]?: DefaultOperatorName };

@@ -5,11 +5,12 @@ import type {
   RuleType,
   ValidationMap,
 } from '../types/index.noReact';
+import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 /**
- * This is an example validation function you can pass to QueryBuilder in the
+ * This is an example validation function you can pass to {@link QueryBuilder} in the
  * `validator` prop. It assumes that you want to validate groups, and has a no-op
- * for validating rules which you should replace with your own implementation.
+ * for validating rules which you can replace with your own implementation.
  */
 export const defaultValidator: QueryValidator = query => {
   const result: ValidationMap = {};
@@ -25,7 +26,7 @@ export const defaultValidator: QueryValidator = query => {
     const reasons: any[] = [];
     if (rg.rules.length === 0) {
       reasons.push(groupInvalidReasons.empty);
-    } else if (!('combinator' in rg)) {
+    } else if (!isRuleGroupType(rg)) {
       // Odd indexes should be valid combinators and even indexes should be rules or groups
       let invalidICs = false;
       for (let i = 0; i < rg.rules.length && !invalidICs; i++) {
@@ -46,7 +47,7 @@ export const defaultValidator: QueryValidator = query => {
     // Non-independent combinators should be valid, but only checked if there are multiple rules
     // since combinators don't really apply to groups with only one rule/group
     if (
-      'combinator' in rg &&
+      isRuleGroupType(rg) &&
       !defaultCombinators.map(c => c.name as string).includes(rg.combinator) &&
       rg.rules.length > 1
     ) {
@@ -63,7 +64,7 @@ export const defaultValidator: QueryValidator = query => {
     rg.rules.forEach(r => {
       if (typeof r === 'string') {
         // Validation for this case was done earlier
-      } else if ('rules' in r) {
+      } else if (isRuleGroup(r)) {
         validateGroup(r);
       } else {
         validateRule(r);

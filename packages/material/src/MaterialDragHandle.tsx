@@ -7,7 +7,7 @@ import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
-type MaterialDragHandleProps = DragHandleProps &
+export type MaterialDragHandleProps = DragHandleProps &
   Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> & {
     muiComponents?: RQBMaterialComponents;
   };

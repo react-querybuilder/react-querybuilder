@@ -1,16 +1,18 @@
 import { clsx } from 'clsx';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
+import { useDeprecatedProps, useReactDndWarning } from '../hooks';
 import type { RuleProps, RuleType } from '../types';
 import {
   filterFieldsByComparator,
   getOption,
   getParentPath,
   getValidationClassNames,
-  useDeprecatedProps,
-  useReactDndWarning,
 } from '../utils';
 
+/**
+ * Prepares all values and methods used by the {@link Rule} component.
+ */
 export const useRule = (props: RuleProps) => {
   const {
     id,
@@ -53,15 +55,19 @@ export const useRule = (props: RuleProps) => {
 
   const disabled = !!parentDisabled || !!disabledProp;
 
-  const rule = ruleProp
-    ? ruleProp
-    : {
-        id,
-        field: fieldProp ?? /* istanbul ignore next */ '',
-        operator: operatorProp ?? /* istanbul ignore next */ '',
-        value: valueProp,
-        valueSource: valueSourceProp,
-      };
+  const rule = useMemo(
+    () =>
+      ruleProp
+        ? ruleProp
+        : {
+            id,
+            field: fieldProp ?? /* istanbul ignore next */ '',
+            operator: operatorProp ?? /* istanbul ignore next */ '',
+            value: valueProp,
+            valueSource: valueSourceProp,
+          },
+    [fieldProp, id, operatorProp, ruleProp, valueProp, valueSourceProp]
+  );
 
   const classNames = useMemo(
     () => ({
@@ -86,58 +92,99 @@ export const useRule = (props: RuleProps) => {
     ]
   );
 
-  const generateOnChangeHandler =
+  const generateOnChangeHandler = useCallback(
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, _context?: any) => {
       if (!disabled) {
         onPropChange(prop, value, path);
       }
-    };
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const cloneRule = (_event?: any, _context?: any) => {
-    if (!disabled) {
-      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
-      moveRule(path, newPath, true);
-    }
-  };
+  const cloneRule = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled) {
+        const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+        moveRule(path, newPath, true);
+      }
+    },
+    [disabled, moveRule, path]
+  );
 
-  const toggleLockRule = (_event?: any, _context?: any) => {
-    onPropChange('disabled', !disabled, path);
-  };
+  const toggleLockRule = useCallback(
+    (_event?: any, _context?: any) => {
+      onPropChange('disabled', !disabled, path);
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const removeRule = (_event?: any, _context?: any) => {
-    if (!disabled) {
-      onRuleRemove(path);
-    }
-  };
+  const removeRule = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled) {
+        onRuleRemove(path);
+      }
+    },
+    [disabled, onRuleRemove, path]
+  );
 
-  const fieldData = fieldMap?.[rule.field] ?? { name: rule.field, label: rule.field };
-  const inputType = fieldData.inputType ?? getInputType(rule.field, rule.operator);
-  const operators = getOperators(rule.field);
-  const operatorObject = getOption(operators, rule.operator);
+  const fieldData = useMemo(
+    () => fieldMap?.[rule.field] ?? { name: rule.field, label: rule.field },
+    [fieldMap, rule.field]
+  );
+  const inputType = useMemo(
+    () => fieldData.inputType ?? getInputType(rule.field, rule.operator),
+    [fieldData.inputType, getInputType, rule.field, rule.operator]
+  );
+  const operators = useMemo(() => getOperators(rule.field), [getOperators, rule.field]);
+  const operatorObject = useMemo(
+    () => getOption(operators, rule.operator),
+    [operators, rule.operator]
+  );
   const arity = operatorObject?.arity;
   const hideValueControls =
     (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
-  const valueSources =
-    typeof fieldData.valueSources === 'function'
-      ? fieldData.valueSources(rule.operator)
-      : fieldData.valueSources ?? getValueSources(rule.field, rule.operator);
-  const valueEditorType =
-    rule.valueSource === 'field'
-      ? 'select'
-      : (typeof fieldData.valueEditorType === 'function'
-          ? fieldData.valueEditorType(rule.operator)
-          : fieldData.valueEditorType) ?? getValueEditorType(rule.field, rule.operator);
-  const valueEditorSeparator = getValueEditorSeparator(rule.field, rule.operator);
-  const values =
-    rule.valueSource === 'field'
-      ? filterFieldsByComparator(fieldData, fields, rule.operator)
-      : fieldData.values ?? getValues(rule.field, rule.operator);
-  const valueSourceOptions = valueSources.map(vs => ({ name: vs, label: vs }));
+  const valueSources = useMemo(
+    () =>
+      typeof fieldData.valueSources === 'function'
+        ? fieldData.valueSources(rule.operator)
+        : fieldData.valueSources ?? getValueSources(rule.field, rule.operator),
+    [fieldData, getValueSources, rule.field, rule.operator]
+  );
+  const valueEditorType = useMemo(
+    () =>
+      rule.valueSource === 'field'
+        ? 'select'
+        : (typeof fieldData.valueEditorType === 'function'
+            ? fieldData.valueEditorType(rule.operator)
+            : fieldData.valueEditorType) ?? getValueEditorType(rule.field, rule.operator),
+    [fieldData, getValueEditorType, rule.field, rule.operator, rule.valueSource]
+  );
+  const valueEditorSeparator = useMemo(
+    () => getValueEditorSeparator(rule.field, rule.operator),
+    [getValueEditorSeparator, rule.field, rule.operator]
+  );
+  const values = useMemo(
+    () =>
+      rule.valueSource === 'field'
+        ? filterFieldsByComparator(fieldData, fields, rule.operator)
+        : fieldData.values ?? getValues(rule.field, rule.operator),
+    [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
+  );
+  const valueSourceOptions = useMemo(
+    () => valueSources.map(vs => ({ name: vs, label: vs })),
+    [valueSources]
+  );
 
-  const validationResult =
-    validationMap[id ?? /* istanbul ignore next */ ''] ??
-    (typeof fieldData.validator === 'function' ? fieldData.validator(rule) : null);
-  const validationClassName = getValidationClassNames(validationResult);
+  const validationResult = useMemo(
+    () =>
+      validationMap[id ?? /* istanbul ignore next */ ''] ??
+      (typeof fieldData.validator === 'function' ? fieldData.validator(rule) : null),
+    [fieldData, id, rule, validationMap]
+  );
+  const validationClassName = useMemo(
+    () => getValidationClassNames(validationResult),
+    [validationResult]
+  );
   const fieldBasedClassName = useMemo(() => fieldData?.className ?? '', [fieldData?.className]);
   const operatorBasedClassName = useMemo(
     () => operatorObject?.className ?? '',

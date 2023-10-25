@@ -6,7 +6,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './_styles/demo.scss';
 import './_styles/rqb-material.scss';
 
+import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DragIndicator from '@mui/icons-material/DragIndicator';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -28,10 +32,14 @@ const muiComponents = {
   DragIndicator,
   Button,
   Checkbox,
+  CloseIcon,
+  ContentCopyIcon,
   FormControl,
   FormControlLabel,
   Input,
   ListSubheader,
+  LockIcon,
+  LockOpenIcon,
   MenuItem,
   Radio,
   RadioGroup,

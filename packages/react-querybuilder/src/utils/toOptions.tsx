@@ -2,6 +2,10 @@ import * as React from 'react';
 import type { OptionList } from '../types/index.noReact';
 import { isOptionGroupArray } from './optGroupUtils';
 
+/**
+ * Generates an array of `<option>` or `<optgroup>` elements
+ * from a given {@link OptionList}.
+ */
 export const toOptions = (arr?: OptionList) =>
   isOptionGroupArray(arr)
     ? arr.map(og => (

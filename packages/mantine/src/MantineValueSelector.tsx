@@ -5,7 +5,7 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { optionListMapNameToValue } from './utils';
 
-type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
+export type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
 
 export const MantineValueSelector = ({
   className,
@@ -17,7 +17,10 @@ export const MantineValueSelector = ({
   multiple,
   listsAsArrays,
   testID,
+  field: _field,
   fieldData: _fieldData,
+  rule: _rule,
+  rules: _rules,
   path: _path,
   level: _level,
   context: _context,
@@ -38,7 +41,6 @@ export const MantineValueSelector = ({
       title={title}
       className={className}
       data={data}
-      data-disabled={disabled}
       disabled={disabled}
       value={val as any[]}
       onChange={changeHandler}
@@ -51,7 +53,6 @@ export const MantineValueSelector = ({
       className={className}
       value={val as string}
       data={data}
-      data-disabled={disabled}
       disabled={disabled}
       onChange={changeHandler}
     />

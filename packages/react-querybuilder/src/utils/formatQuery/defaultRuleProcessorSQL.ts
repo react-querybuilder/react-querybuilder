@@ -6,11 +6,14 @@ import type {
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { mapSQLOperator, quoteFieldNamesWithArray } from './utils';
 
-type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
+export type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
   valueProcessor?: ValueProcessorByRule;
   quoteFieldNamesWith?: string | [string, string];
 };
 
+/**
+ * Default rule processor used by {@link formatQuery} for "sql" format.
+ */
 export const defaultRuleProcessorSQL = (
   rule: RuleType,
   {

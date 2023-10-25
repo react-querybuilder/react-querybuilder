@@ -7,7 +7,7 @@ import { ActionElement } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
-type MaterialActionProps = ActionWithRulesProps &
+export type MaterialActionProps = ActionWithRulesProps &
   ComponentPropsWithoutRef<typeof Button> & {
     muiComponents?: RQBMaterialComponents;
   };

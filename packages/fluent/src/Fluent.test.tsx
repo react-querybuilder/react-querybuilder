@@ -22,8 +22,8 @@ const user = userEventSetup();
 testActionElement(FluentActionElement);
 testDragHandle(FluentDragHandle);
 testNotToggle(FluentNotToggle);
-testValueEditor(FluentValueEditor, { selectorClassOnParent: true, multiselect: true });
-testValueSelector(FluentValueSelector, { classOnParent: true, multi: true });
+testValueEditor(FluentValueEditor, { multiselect: true });
+testValueSelector(FluentValueSelector, { multi: true });
 
 const defaultValueSelectorProps: ValueSelectorProps = {
   handleOnChange: () => {},
