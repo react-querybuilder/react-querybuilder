@@ -4,7 +4,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
 import Layout from '@theme/Layout';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-bootstrap.scss';

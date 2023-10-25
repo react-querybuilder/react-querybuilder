@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import React from 'react';
 import styles from './HomepageFeatures.module.css';
 
 type FeatureItem = {

@@ -4,7 +4,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { QueryBuilderFluent } from '@react-querybuilder/fluent';
 import Layout from '@theme/Layout';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-fluent.scss';

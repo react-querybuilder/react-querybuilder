@@ -1,6 +1,6 @@
 import { useColorMode } from '@docusaurus/theme-common';
 import type { ReactNode } from 'react';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import Modal from 'react-modal';
 import { fields } from '../_constants/fields';
 import { getReactModalStyles } from '../_styles/getReactModalStyles';

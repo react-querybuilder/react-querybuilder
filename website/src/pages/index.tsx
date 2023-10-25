@@ -5,7 +5,7 @@ import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
-import React, { forwardRef, StrictMode, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, StrictMode, useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as ReactDnD from 'react-dnd';

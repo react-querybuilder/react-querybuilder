@@ -1,5 +1,5 @@
 import Layout from '@theme/Layout';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const discordLink = 'https://discord.gg/MnAQWyUtEg';
 

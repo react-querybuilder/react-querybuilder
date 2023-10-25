@@ -4,7 +4,7 @@ import { useColorMode } from '@docusaurus/theme-common';
 import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
 import { theme } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
