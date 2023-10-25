@@ -11,7 +11,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';

@@ -2,7 +2,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './_styles/demo.scss';
 import './_styles/rqb-material.scss';
 

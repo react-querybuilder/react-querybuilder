@@ -1,5 +1,4 @@
 import { useLocation } from '@docusaurus/router';
-import React from 'react';
 import { styleNameArray, styleNameMap } from '../_constants';
 import type { StyleName } from '../_constants/types';
 import CodeSandBoxLogo from './Logo-CodeSandbox';

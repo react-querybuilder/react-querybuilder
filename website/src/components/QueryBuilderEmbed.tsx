@@ -1,4 +1,3 @@
-import React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import { QueryBuilder } from 'react-querybuilder';
 // import { QueryBuilder as QueryBuilder_v4 } from 'react-querybuilder-v4';
