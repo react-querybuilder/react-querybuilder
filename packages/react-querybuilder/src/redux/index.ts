@@ -14,7 +14,6 @@ import {
 import * as React from 'react';
 import type { ReactReduxContextValue } from 'react-redux';
 import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
-import { createSubscription } from './Subscription';
 import type { QueriesSliceState, SetQueryStateParams } from './queriesSlice';
 import {
   getQueriesSliceState,
@@ -41,13 +40,9 @@ export const queryBuilderStore = createStore(
     })
   )
 );
-const contextInitalValue: ReactReduxContextValue<QueryBuilderStoreState, AnyAction> = {
-  store: queryBuilderStore,
-  subscription: createSubscription(queryBuilderStore),
-  stabilityCheck: 'never',
-  noopCheck: 'never',
-};
-export const RqbStoreContext = React.createContext(contextInitalValue);
+export const RqbStoreContext = React.createContext<
+  ReactReduxContextValue<QueryBuilderStoreState, AnyAction>
+>(null as any);
 
 // Hooks
 /**
