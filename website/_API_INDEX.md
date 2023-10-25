@@ -8,7 +8,6 @@ Choose a package to see detailed API documentation, generated directly from the 
 
 - [react-querybuilder](/api/modules/react_querybuilder)
 - [@react-querybuilder/antd](/api/modules/react_querybuilder_antd)
-- [@react-querybuilder/blueprint](/api/modules/react_querybuilder_blueprint)
 - [@react-querybuilder/bootstrap](/api/modules/react_querybuilder_bootstrap)
 - [@react-querybuilder/bulma](/api/modules/react_querybuilder_bulma)
 - [@react-querybuilder/chakra](/api/modules/react_querybuilder_chakra)

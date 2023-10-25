@@ -45,7 +45,6 @@ export type HttpsURL = `${'https'}://${string}`;
 export type StyleName =
   | 'default'
   | 'antd'
-  | 'blueprint'
   | 'bootstrap'
   | 'bulma'
   | 'chakra'
