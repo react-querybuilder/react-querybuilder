@@ -5,8 +5,6 @@ import type { NotToggleProps } from 'react-querybuilder';
 
 export type BlueprintNotToggleProps = NotToggleProps & Omit<Partial<SwitchProps>, 'label'>;
 
-const _x: BlueprintNotToggleProps['label'] = '';
-
 export const BlueprintNotToggle = ({
   className,
   handleOnChange,
@@ -30,7 +28,7 @@ export const BlueprintNotToggle = ({
     title={title}
     disabled={disabled}
     checked={checked}
-    onChange={e => handleOnChange((e.target as HTMLFormElement).checked)}>
+    onChange={e => handleOnChange(e.target.checked)}>
     {label}
   </Switch>
 );
