@@ -73,6 +73,7 @@ export const configs: Record<string, ExampleConfig> = {
       '@blueprintjs/datetime2',
       '@blueprintjs/icons',
       '@blueprintjs/select',
+      'dayjs',
     ],
     scssPre: [
       `@import '@blueprintjs/icons/src/blueprint-icons.scss';`,
