@@ -8,6 +8,7 @@ export type CIOption =
   | 'showCombinatorsBetweenRules'
   | 'showNotToggle'
   | 'showCloneButtons'
+  | 'showShiftActions'
   | 'resetOnFieldChange'
   | 'resetOnOperatorChange'
   | 'autoSelectField'
