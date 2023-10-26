@@ -17,12 +17,14 @@ export const defaultOptions = {
   parseNumbers: false,
   listsAsArrays: false,
   showBranches: false,
+  showShiftActions: false,
 } satisfies CIOptions;
 
 export const optionsOrder: CIOption[] = [
   'showCombinatorsBetweenRules',
   'showNotToggle',
   'showCloneButtons',
+  'showShiftActions',
   'resetOnFieldChange',
   'resetOnOperatorChange',
   'autoSelectField',
