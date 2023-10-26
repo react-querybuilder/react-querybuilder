@@ -20,21 +20,49 @@ The `@react-querybuilder/native` package is a good example of this concept. It c
 
 :::
 
-### `useQueryBuilder`
+### `useQueryBuilderSetup`
 
 ```ts
-function useQueryBuilder(props: QueryBuilderProps): {
+function useQueryBuilderSetup(props: QueryBuilderProps): {
+  qbId: qbId.current;
+  rqbContext: ReturnType<typeof useMergedContext>;
+  fields: OptionList<Field>;
+  fieldMap: Record<string, Field>;
+  getOperatorsMain: (field: string) => OptionList<Operator>;
+  getRuleDefaultOperator: (field: string) => string;
+  getValueEditorTypeMain: (field: string, operator: string) => ValueEditorType;
+  getValueSourcesMain: (field: string, operator: string) => ValueSources;
+  getValuesMain: (field: string, operator: string) => OptionList;
+  getRuleDefaultValue: (rule: RuleType) => any;
+  getInputTypeMain: (field: string, operator: string) => string;
+  createRule: () => RuleType;
+  createRuleGroup: () => RuleGroupTypeAny;
+};
+```
+
+Used by the [`QueryBuilder`](../components/querybuilder) component. Merges props and context values with the defaults and generates actions.
+
+### `useQueryBuilderSchema`
+
+```ts
+function useQueryBuilderSchema(
+  props: QueryBuilderProps,
+  setup: ReturnType<typeof useQueryBuilderSetup>
+): {
   actions: QueryActions;
-  query: RuleGroupTypeAny;
+  rootQuery: RuleGroupTypeAny;
   queryDisabled: boolean;
   rqbContext: ReturnType<typeof useMergedContext>;
   schema: Schema;
   translations: TranslationsFull;
   wrapperClassName: string;
+  dndEnabledAttr: 'enabled' | 'disabled';
+  inlineCombinatorsAttr: 'enabled' | 'disabled';
+  combinatorPropObject: Pick<RuleGroupProps, 'combinator'>;
 };
 ```
 
-Used by the [`QueryBuilder`](../components/querybuilder) component. Returns everything needed to render a wrapper element (e.g. `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props. Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
+Used by the internal component rendered by [`QueryBuilder`](../components/querybuilder). Returns everything needed to render a wrapper element (e.g., `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props and the result from [`useQueryBuilderSetup`](#usequerybuildersetup). Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
 
 ### `useRuleGroup`
 

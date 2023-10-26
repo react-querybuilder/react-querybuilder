@@ -10,7 +10,7 @@ import TypeScriptAdmonition from '../_ts_admonition.md';
 
 The default export of `react-querybuilder` is the `<QueryBuilder />` React component (also available as a named export).
 
-`QueryBuilder` calls the [`useQueryBuilder`](../utils/hooks#usequerybuilder) hook to prepare the query, schema, update methods, etc., that get passed down to the subcomponents.
+`QueryBuilder` calls the [`useQueryBuilderSetup`](../utils/hooks#usequerybuildersetup) hook to merge props and context with defaults, generate update methods, etc. It then renders a context provider over an internal component that calls the [`useQueryBuilderSchema`](../utils/hooks#usequerybuilderschema) hook to consume the context, prepare the query, and finish setting up the schema.
 
 ## Subcomponents
 
