@@ -71,6 +71,7 @@ export const useRule = (props: RuleProps) => {
 
   const classNames = useMemo(
     () => ({
+      shiftActions: clsx(standardClassnames.shiftActions, classNamesProp.shiftActions),
       dragHandle: clsx(standardClassnames.dragHandle, classNamesProp.dragHandle),
       fields: clsx(standardClassnames.fields, classNamesProp.fields),
       operators: clsx(standardClassnames.operators, classNamesProp.operators),
@@ -81,6 +82,7 @@ export const useRule = (props: RuleProps) => {
       removeRule: clsx(standardClassnames.removeRule, classNamesProp.removeRule),
     }),
     [
+      classNamesProp.shiftActions,
       classNamesProp.dragHandle,
       classNamesProp.fields,
       classNamesProp.operators,

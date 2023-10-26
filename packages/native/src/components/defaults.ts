@@ -3,6 +3,7 @@ import type { Controls } from 'react-querybuilder';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeInlineCombinator } from './NativeInlineCombinator';
 import { NativeNotToggle } from './NativeNotToggle';
+import { NativeShiftActions } from './NativeShiftActions';
 import { NativeValueEditor } from './NativeValueEditor';
 import { NativeValueEditorWeb } from './NativeValueEditorWeb';
 import { NativeValueSelector } from './NativeValueSelector';
@@ -28,6 +29,7 @@ export const defaultNativeControlElements: Controls = {
   removeRuleAction: NativeActionElement,
   rule: RuleNative,
   ruleGroup: RuleGroupNative,
+  shiftActions: NativeShiftActions,
   valueEditor: NativeValueEditor,
   valueSourceSelector: NativeValueSelector,
 };

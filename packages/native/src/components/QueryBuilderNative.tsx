@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import type { Path, RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from 'react-querybuilder';
 import {
   QueryBuilderContext,
+  RqbStateContext,
   queryBuilderStore,
   useQueryBuilderSchema,
   useQueryBuilderSetup,
@@ -24,7 +25,7 @@ export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC>(
   const setup = useQueryBuilderSetup({ ...props, controlElements });
 
   return (
-    <Provider store={queryBuilderStore}>
+    <Provider context={RqbStateContext} store={queryBuilderStore}>
       <QueryBuilderNativeInternal {...props} setup={setup} />
     </Provider>
   );

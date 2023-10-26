@@ -24,6 +24,7 @@ export const mergeClassnames = (...args: (Partial<Classnames> | undefined)[]): C
     value: joinClassnamesByName('value'),
     removeRule: joinClassnamesByName('removeRule'),
     notToggle: joinClassnamesByName('notToggle'),
+    shiftActions: joinClassnamesByName('shiftActions'),
     dragHandle: joinClassnamesByName('dragHandle'),
     lockRule: joinClassnamesByName('lockRule'),
     lockGroup: joinClassnamesByName('lockGroup'),

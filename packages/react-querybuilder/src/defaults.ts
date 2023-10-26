@@ -48,95 +48,103 @@ export const defaultTranslations = {
     placeholderName: defaultPlaceholderFieldName,
     placeholderLabel: defaultPlaceholderFieldLabel,
     placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
-  },
+  } as const,
   operators: {
     title: 'Operators',
     placeholderName: defaultPlaceholderOperatorName,
     placeholderLabel: defaultPlaceholderOperatorLabel,
     placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
-  },
+  } as const,
   value: {
     title: 'Value',
-  },
+  } as const,
   removeRule: {
     label: '⨯',
     title: 'Remove rule',
-  },
+  } as const,
   removeGroup: {
     label: '⨯',
     title: 'Remove group',
-  },
+  } as const,
   addRule: {
     label: '+ Rule',
     title: 'Add rule',
-  },
+  } as const,
   addGroup: {
     label: '+ Group',
     title: 'Add group',
-  },
+  } as const,
   combinators: {
     title: 'Combinators',
-  },
+  } as const,
   notToggle: {
     label: 'Not',
     title: 'Invert this group',
-  },
+  } as const,
   cloneRule: {
     label: '⧉',
     title: 'Clone rule',
-  },
+  } as const,
   cloneRuleGroup: {
     label: '⧉',
     title: 'Clone group',
-  },
+  } as const,
+  shiftActionUp: {
+    label: '▴',
+    title: 'Shift up',
+  } as const,
+  shiftActionDown: {
+    label: '▾',
+    title: 'Shift down',
+  } as const,
   dragHandle: {
     label: '⁞⁞',
     title: 'Drag handle',
-  },
+  } as const,
   lockRule: {
     label: '🔓',
     title: 'Lock rule',
-  },
+  } as const,
   lockGroup: {
     label: '🔓',
     title: 'Lock group',
-  },
+  } as const,
   lockRuleDisabled: {
     label: '🔒',
     title: 'Unlock rule',
-  },
+  } as const,
   lockGroupDisabled: {
     label: '🔒',
     title: 'Unlock group',
-  },
+  } as const,
   valueSourceSelector: {
     title: 'Value source',
-  },
+  } as const,
 } satisfies TranslationsFull;
 
 /**
  * Default operator list.
  */
-export const defaultOperators: DefaultOperator[] = [
-  { name: '=', label: '=' },
-  { name: '!=', label: '!=' },
-  { name: '<', label: '<' },
-  { name: '>', label: '>' },
-  { name: '<=', label: '<=' },
-  { name: '>=', label: '>=' },
-  { name: 'contains', label: 'contains' },
-  { name: 'beginsWith', label: 'begins with' },
-  { name: 'endsWith', label: 'ends with' },
-  { name: 'doesNotContain', label: 'does not contain' },
-  { name: 'doesNotBeginWith', label: 'does not begin with' },
-  { name: 'doesNotEndWith', label: 'does not end with' },
-  { name: 'null', label: 'is null' },
-  { name: 'notNull', label: 'is not null' },
-  { name: 'in', label: 'in' },
-  { name: 'notIn', label: 'not in' },
-  { name: 'between', label: 'between' },
-  { name: 'notBetween', label: 'not between' },
-];
+export const defaultOperators = [
+  { name: '=', label: '=' } as const,
+  { name: '!=', label: '!=' } as const,
+  { name: '<', label: '<' } as const,
+  { name: '>', label: '>' } as const,
+  { name: '<=', label: '<=' } as const,
+  { name: '>=', label: '>=' } as const,
+  { name: 'contains', label: 'contains' } as const,
+  { name: 'beginsWith', label: 'begins with' } as const,
+  { name: 'endsWith', label: 'ends with' } as const,
+  { name: 'doesNotContain', label: 'does not contain' } as const,
+  { name: 'doesNotBeginWith', label: 'does not begin with' } as const,
+  { name: 'doesNotEndWith', label: 'does not end with' } as const,
+  { name: 'null', label: 'is null' } as const,
+  { name: 'notNull', label: 'is not null' } as const,
+  { name: 'in', label: 'in' } as const,
+  { name: 'notIn', label: 'not in' } as const,
+  { name: 'between', label: 'between' } as const,
+  { name: 'notBetween', label: 'not between' } as const,
+] satisfies DefaultOperator[];
 
 /**
  * Map of default operators to their respective opposite/negating operators.
@@ -165,18 +173,18 @@ export const defaultOperatorNegationMap = {
 /**
  * Default combinator list.
  */
-export const defaultCombinators: DefaultCombinator[] = [
-  { name: 'and', label: 'AND' },
-  { name: 'or', label: 'OR' },
-];
+export const defaultCombinators = [
+  { name: 'and', label: 'AND' } as const,
+  { name: 'or', label: 'OR' } as const,
+] satisfies DefaultCombinator[];
 
 /**
  * Default combinator list, with `XOR` added.
  */
-export const defaultCombinatorsExtended: DefaultCombinatorExtended[] = [
+export const defaultCombinatorsExtended = [
   ...defaultCombinators,
-  { name: 'xor', label: 'XOR' },
-];
+  { name: 'xor', label: 'XOR' } as const,
+] satisfies DefaultCombinatorExtended[];
 
 /**
  * Standard classnames applied to each component.
@@ -201,6 +209,7 @@ export const standardClassnames = {
   betweenRules: 'betweenRules',
   valid: 'queryBuilder-valid',
   invalid: 'queryBuilder-invalid',
+  shiftActions: 'shiftActions',
   dndDragging: 'dndDragging',
   dndOver: 'dndOver',
   dndCopy: 'dndCopy',
@@ -233,6 +242,7 @@ export const defaultControlClassnames = {
   operators: '',
   value: '',
   removeRule: '',
+  shiftActions: '',
   dragHandle: '',
   lockRule: '',
   lockGroup: '',
@@ -266,6 +276,7 @@ export const TestID = {
   operators: 'operators',
   valueEditor: 'value-editor',
   notToggle: 'not-toggle',
+  shiftActions: 'shift-actions',
   dragHandle: 'drag-handle',
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',

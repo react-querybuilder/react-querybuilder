@@ -6,6 +6,7 @@ export * from './QueryBuilder';
 export * from './QueryBuilderContext';
 export * from './Rule';
 export * from './RuleGroup';
+export * from './ShiftActions';
 export * from './ValueEditor';
 export * from './ValueSelector';
 export * from './defaults';

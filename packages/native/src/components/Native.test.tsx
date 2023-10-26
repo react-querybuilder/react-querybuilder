@@ -1,19 +1,27 @@
 /// <reference types="@testing-library/jest-native" />
 
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
-import { Platform, StyleSheet, Switch, TextInput } from 'react-native';
-import type { ActionWithRulesProps, Option, RuleGroupType, Schema } from 'react-querybuilder';
-import { TestID, convertToIC } from 'react-querybuilder';
+import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
+import type {
+  ActionWithRulesProps,
+  Option,
+  RuleGroupType,
+  RuleType,
+  Schema,
+} from 'react-querybuilder';
+import { TestID, convertToIC, defaultCombinators } from 'react-querybuilder';
 import type {
   ActionNativeProps,
   NotToggleNativeProps,
   SchemaNative,
+  ShiftActionsNativeProps,
   ValueEditorNativeProps,
   ValueSelectorNativeProps,
 } from '../types';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeNotToggle } from './NativeNotToggle';
+import { NativeShiftActions } from './NativeShiftActions';
 import { NativeValueEditor } from './NativeValueEditor';
 import { NativeValueEditorWeb } from './NativeValueEditorWeb';
 import { NativeValueSelector } from './NativeValueSelector';
@@ -141,6 +149,58 @@ describe('NativeNotToggle', () => {
     expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
     fireEvent(switchEl, 'valueChange', false);
     expect(handleOnChange).toHaveBeenNthCalledWith(2, false);
+  });
+});
+
+describe('NativeShiftActions', () => {
+  it('works', async () => {
+    const r1: RuleType = { field: 'f1', operator: '=', value: 'v1' };
+    const r2: RuleType = { field: 'f2', operator: '=', value: 'v2' };
+    const labels = { shiftUp: 'shiftUp', shiftDown: 'shiftDown' } as const;
+    const dispatchQuery = jest.fn();
+    const disabledProps: ShiftActionsNativeProps = {
+      level: 0,
+      path: [0],
+      lastInGroup: true,
+      ruleOrGroup: { combinator: 'and', rules: [r1, r2] },
+      labels,
+      testID: TestID.shiftActions,
+      schema: {
+        combinators: defaultCombinators,
+        dispatchQuery: dispatchQuery as (q: any) => void,
+        getQuery: () => ({ combinator: 'and', rules: [{ combinator: 'and', rules: [r1, r2] }] }),
+      } as SchemaNative,
+    };
+    const { rerender } = render(<NativeShiftActions {...disabledProps} />);
+    const btnUp = screen.getByLabelText(labels.shiftUp);
+    const btnDown = screen.getByLabelText(labels.shiftDown);
+    for (const btn of [btnUp, btnDown]) {
+      expect(btn).toBeDisabled();
+      fireEvent.press(btn);
+      expect(dispatchQuery).not.toHaveBeenCalled();
+    }
+    const enabledProps = {
+      ...disabledProps,
+      lastInGroup: false,
+      ruleOrGroup: r1,
+      path: [1],
+      schema: {
+        ...disabledProps.schema,
+        getQuery: () => ({ combinator: 'and', rules: [r2, r1, r2] }),
+      },
+    } as ShiftActionsNativeProps;
+    rerender(<NativeShiftActions {...enabledProps} />);
+    const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button);
+    await act(() => {
+      // Move up
+      fireEvent.press(btnsEnabled[0]);
+      expect(dispatchQuery).toHaveBeenNthCalledWith(1, { combinator: 'and', rules: [r1, r2, r2] });
+    });
+    await act(() => {
+      // Move down
+      fireEvent.press(btnsEnabled[1]);
+      expect(dispatchQuery).toHaveBeenNthCalledWith(2, { combinator: 'and', rules: [r2, r2, r1] });
+    });
   });
 });
 

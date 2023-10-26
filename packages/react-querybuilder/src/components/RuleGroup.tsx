@@ -52,6 +52,7 @@ export const RuleGroupHeaderComponents = React.memo(
     const {
       schema: {
         controls: {
+          shiftActions: ShiftActionsControlElement,
           dragHandle: DragHandleControlElement,
           combinatorSelector: CombinatorSelectorControlElement,
           notToggle: NotToggleControlElement,
@@ -66,6 +67,28 @@ export const RuleGroupHeaderComponents = React.memo(
 
     return (
       <>
+        {rg.path.length > 0 && rg.schema.showShiftActions && (
+          <ShiftActionsControlElement
+            testID={TestID.shiftActions}
+            level={rg.path.length}
+            path={rg.path}
+            titles={{
+              shiftUp: rg.translations.shiftActionUp.title,
+              shiftDown: rg.translations.shiftActionDown.title,
+            }}
+            labels={{
+              shiftUp: rg.translations.shiftActionUp.label,
+              shiftDown: rg.translations.shiftActionDown.label,
+            }}
+            className={rg.classNames.shiftActions}
+            disabled={rg.disabled}
+            context={rg.context}
+            validation={rg.validationResult}
+            schema={rg.schema}
+            ruleOrGroup={rg.ruleGroup}
+            lastInGroup={rg.lastInGroup}
+          />
+        )}
         {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
           <DragHandleControlElement
             testID={TestID.dragHandle}
@@ -222,85 +245,90 @@ export const RuleGroupBodyComponents = React.memo(
 
     return (
       <>
-        {(rg.ruleGroup.rules as RuleGroupICArray | RuleGroupArray).map((r, idx) => {
-          const thisPathMemo = rg.pathsMemo[idx];
-          const thisPath = thisPathMemo.path;
-          const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
-          const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
-          return (
-            <Fragment key={key}>
-              {idx > 0 &&
-                !rg.schema.independentCombinators &&
-                rg.schema.showCombinatorsBetweenRules && (
+        {(rg.ruleGroup.rules as RuleGroupICArray | RuleGroupArray).map(
+          (r, idx, { length: ruleArrayLength }) => {
+            const thisPathMemo = rg.pathsMemo[idx];
+            const thisPath = thisPathMemo.path;
+            const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
+            const lastInGroup = idx === ruleArrayLength - 1;
+            const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
+            return (
+              <Fragment key={key}>
+                {idx > 0 &&
+                  !rg.schema.independentCombinators &&
+                  rg.schema.showCombinatorsBetweenRules && (
+                    <InlineCombinatorControlElement
+                      options={rg.schema.combinators}
+                      value={rg.combinator}
+                      title={rg.translations.combinators.title}
+                      className={rg.classNames.combinators}
+                      handleOnChange={rg.onCombinatorChange}
+                      rules={rg.ruleGroup.rules}
+                      level={rg.path.length}
+                      context={rg.context}
+                      validation={rg.validationResult}
+                      component={CombinatorSelectorControlElement}
+                      path={thisPath}
+                      disabled={rg.disabled}
+                      independentCombinators={rg.schema.independentCombinators}
+                      schema={rg.schema}
+                    />
+                  )}
+                {typeof r === 'string' ? (
                   <InlineCombinatorControlElement
                     options={rg.schema.combinators}
-                    value={rg.combinator}
+                    value={r}
                     title={rg.translations.combinators.title}
                     className={rg.classNames.combinators}
-                    handleOnChange={rg.onCombinatorChange}
+                    handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
                     rules={rg.ruleGroup.rules}
                     level={rg.path.length}
                     context={rg.context}
                     validation={rg.validationResult}
                     component={CombinatorSelectorControlElement}
                     path={thisPath}
-                    disabled={rg.disabled}
+                    disabled={thisPathDisabled}
                     independentCombinators={rg.schema.independentCombinators}
                     schema={rg.schema}
                   />
+                ) : isRuleGroup(r) ? (
+                  <RuleGroupControlElement
+                    id={r.id}
+                    schema={rg.schema}
+                    actions={rg.actions}
+                    path={thisPath}
+                    translations={rg.translations}
+                    ruleGroup={r}
+                    rules={r.rules}
+                    combinator={isRuleGroupType(r) ? r.combinator : undefined}
+                    not={!!r.not}
+                    disabled={thisPathDisabled}
+                    parentDisabled={rg.parentDisabled || rg.disabled}
+                    context={rg.context}
+                    lastInGroup={lastInGroup}
+                  />
+                ) : (
+                  <RuleControlElement
+                    id={r.id!}
+                    rule={r}
+                    field={r.field}
+                    operator={r.operator}
+                    value={r.value}
+                    valueSource={r.valueSource}
+                    schema={rg.schema}
+                    actions={rg.actions}
+                    path={thisPath}
+                    disabled={thisPathDisabled}
+                    parentDisabled={rg.parentDisabled || rg.disabled}
+                    translations={rg.translations}
+                    context={rg.context}
+                    lastInGroup={lastInGroup}
+                  />
                 )}
-              {typeof r === 'string' ? (
-                <InlineCombinatorControlElement
-                  options={rg.schema.combinators}
-                  value={r}
-                  title={rg.translations.combinators.title}
-                  className={rg.classNames.combinators}
-                  handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
-                  rules={rg.ruleGroup.rules}
-                  level={rg.path.length}
-                  context={rg.context}
-                  validation={rg.validationResult}
-                  component={CombinatorSelectorControlElement}
-                  path={thisPath}
-                  disabled={thisPathDisabled}
-                  independentCombinators={rg.schema.independentCombinators}
-                  schema={rg.schema}
-                />
-              ) : isRuleGroup(r) ? (
-                <RuleGroupControlElement
-                  id={r.id}
-                  schema={rg.schema}
-                  actions={rg.actions}
-                  path={thisPath}
-                  translations={rg.translations}
-                  ruleGroup={r}
-                  rules={r.rules}
-                  combinator={isRuleGroupType(r) ? r.combinator : undefined}
-                  not={!!r.not}
-                  disabled={thisPathDisabled}
-                  parentDisabled={rg.parentDisabled || rg.disabled}
-                  context={rg.context}
-                />
-              ) : (
-                <RuleControlElement
-                  id={r.id!}
-                  rule={r}
-                  field={r.field}
-                  operator={r.operator}
-                  value={r.value}
-                  valueSource={r.valueSource}
-                  schema={rg.schema}
-                  actions={rg.actions}
-                  path={thisPath}
-                  disabled={thisPathDisabled}
-                  parentDisabled={rg.parentDisabled || rg.disabled}
-                  translations={rg.translations}
-                  context={rg.context}
-                />
-              )}
-            </Fragment>
-          );
-        })}
+              </Fragment>
+            );
+          }
+        )}
       </>
     );
   }

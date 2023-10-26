@@ -5,6 +5,7 @@ import { InlineCombinator } from './InlineCombinator';
 import { NotToggle } from './NotToggle';
 import { Rule } from './Rule';
 import { RuleGroup } from './RuleGroup';
+import { ShiftActions } from './ShiftActions';
 import { ValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
 
@@ -26,6 +27,7 @@ export const defaultControlElements: Controls = {
   notToggle: NotToggle,
   ruleGroup: RuleGroup,
   rule: Rule,
+  shiftActions: ShiftActions,
   dragHandle: DragHandle,
   lockRuleAction: ActionElement,
   lockGroupAction: ActionElement,

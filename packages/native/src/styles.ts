@@ -35,6 +35,7 @@ const defaultStylesObject: QueryBuilderNativeStyles = {
     paddingRight: 10,
     paddingLeft: 10,
   },
+  shiftActions: { flexDirection: 'column' },
   value: { borderWidth: 1, height: 32, width: 150 },
   valueEditorOption: defaultNativeSelectStyles.option,
   valueEditorSelector: defaultNativeSelectStyles.selector,

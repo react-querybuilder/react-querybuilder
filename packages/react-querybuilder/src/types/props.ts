@@ -204,6 +204,10 @@ export interface Classnames {
   /**
    * `<span>` handle for dragging rules/groups.
    */
+  shiftActions: Classname;
+  /**
+   * `<span>` handle for dragging rules/groups.
+   */
   dragHandle: Classname;
   /**
    * `<button>` to lock (i.e. disable) a Rule.
@@ -276,6 +280,8 @@ export interface Translations {
   notToggle: TranslationWithLabel;
   cloneRule: TranslationWithLabel;
   cloneRuleGroup: TranslationWithLabel;
+  shiftActionUp: TranslationWithLabel;
+  shiftActionDown: TranslationWithLabel;
   dragHandle: TranslationWithLabel;
   lockRule: TranslationWithLabel;
   lockGroup: TranslationWithLabel;

@@ -520,3 +520,65 @@ describe('move', () => {
 
   testQT('bails out on bad path', move(rg1, [1], badPath), rg1);
 });
+
+describe('shift', () => {
+  describe('standard rule groups', () => {
+    testQT('shifts a rule down within the same group', move(rg3, [0], 'down'), {
+      combinator: and,
+      rules: [r2, r1, r3],
+    });
+    testQT(
+      'shifts a rule down into a subgroup',
+      move({ combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }] }, [0], 'down'),
+      { combinator: and, rules: [{ combinator: and, rules: [r1, r2, r3] }] }
+    );
+    testQT(
+      'shifts a rule down out of a subgroup',
+      move({ combinator: and, rules: [rg3] }, [0, 2], 'down'),
+      { combinator: and, rules: [{ combinator: and, rules: [r1, r2] }, r3] }
+    );
+    testQT('shifts a rule up within the same group', move(rg3, [1], 'up'), {
+      combinator: and,
+      rules: [r2, r1, r3],
+    });
+    testQT(
+      'shifts a rule up out of a sub group',
+      move({ combinator: and, rules: [rg3] }, [0, 0], 'up'),
+      { combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }] }
+    );
+    testQT(
+      'shifts a rule up into a subgroup',
+      move({ combinator: and, rules: [{ combinator: and, rules: [r1, r2] }, r3] }, [1], 'up'),
+      { combinator: and, rules: [rg3] }
+    );
+    testQT('does not shift first rule up', move(rg3, [0], 'up'), rg3, true);
+    testQT('does not shift last rule down', move(rg3, [2], 'down'), rg3, true);
+  });
+
+  describe('independent combinators', () => {
+    testQT(
+      'shifts a rule down within the same group',
+      move({ rules: [r1, and, r2, or, r3] }, [0], 'down'),
+      { rules: [r2, and, r1, or, r3] }
+    );
+    testQT(
+      'shifts a rule down into a subgroup',
+      move({ rules: [r1, or, { rules: [r2, and, r3] }] }, [0], 'down'),
+      { rules: [{ rules: [r1, or, r2, and, r3] }] }
+    );
+    testQT('shifts a rule down out of a subgroup', move({ rules: [rgic2] }, [0, 2], 'down'), {
+      rules: [{ rules: [r1] }, and, r2],
+    });
+    testQT('shifts a rule up within the same group', move(rgic2, [2], 'up'), {
+      rules: [r2, and, r1],
+    });
+    testQT('shifts a rule up out of a sub group', move({ rules: [rgic2] }, [0, 0], 'up'), {
+      rules: [r1, and, { rules: [r2] }],
+    });
+    testQT('shifts a rule up into a subgroup', move({ rules: [rgic2, or, r3] }, [2], 'up'), {
+      rules: [{ rules: [r1, and, r2, or, r3] }],
+    });
+  });
+
+  testQT('does not alter query for invalid direction', move(rg3, [0], 'x' as any), rg3, true);
+});

@@ -10,6 +10,7 @@ import type {
   RuleGroupTypeIC,
   RuleProps,
   Schema,
+  ShiftActionsProps,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
@@ -46,6 +47,7 @@ export interface QueryBuilderNativeStyles {
   ruleGroup: ViewStyle;
   ruleGroupBody: ViewStyle;
   ruleGroupHeader: ViewStyle;
+  shiftActions: ViewStyle;
   value: TextStyle;
   valueEditorOption: TextStyle;
   valueEditorSelector: TextStyle;
@@ -66,6 +68,8 @@ export type NotToggleNativeProps = NotToggleProps & WithSchemaNative;
 export type InlineCombinatorNativeProps = InlineCombinatorProps & WithSchemaNative;
 
 export type ActionNativeProps = ActionProps & WithSchemaNative;
+
+export type ShiftActionsNativeProps = ShiftActionsProps & WithSchemaNative;
 
 export type ValueSelectorNativeProps = ValueSelectorProps & WithSchemaNative;
 
