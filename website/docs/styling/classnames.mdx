@@ -15,6 +15,7 @@ The following standard classnames are not labeled below, but for most of them th
 - `.rule.queryBuilder-disabled` (<span style={{ fontWeight: 'bold', color:'gray' }}>gray</span> outline for locked/disabled rules)
 - `.rule.queryBuilder-valid` (<span style={{ fontWeight: 'bold', color:'green' }}>green</span> outline for valid rules)
 - `.rule.queryBuilder-invalid` (<span style={{ fontWeight: 'bold', color:'red' }}>red</span> outline for invalid rules)
+- `.shiftActions` (<span style={{ fontWeight: 'bold', color:'#ff7e16' }}>orange</span> outline for the wrapper `<div>` around the "Shift up"/"Shift down" buttons)
 - `.dndDragging` (applied to "preview" element while dragging)
 - `.dndOver` (applied to "hovered over" element while dragging)
 
@@ -115,13 +116,15 @@ export const translations = {
     title: `.${sc.lockGroup}`,
   },
   lockRuleDisabled: {
-    label: `.${sc.lockRuleDisabled}`,
-    title: `.${sc.lockRuleDisabled}`,
+    label: `.${sc.lockRule}`,
+    title: `.${sc.lockRule}`,
   },
   lockGroupDisabled: {
-    label: `.${sc.lockGroupDisabled}`,
-    title: `.${sc.lockGroupDisabled}`,
+    label: `.${sc.lockGroup}`,
+    title: `.${sc.lockGroup}`,
   },
+  // shiftActionUp: { label: `.${sc.shiftActions}` },
+  // shiftActionDown: { label: `.${sc.shiftActions}` },
   valueSourceSelector: {
     title: `.${sc.valueSource}`,
   },
@@ -159,6 +162,7 @@ export const defaultQuery = {
     showNotToggle
     showCloneButtons
     showLockButtons
+    showShiftActions
     enableDragAndDrop
     fields={fields}
     combinators={combinators}

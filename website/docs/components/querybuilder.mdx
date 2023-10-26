@@ -259,6 +259,7 @@ The following control overrides are supported per the `Controls` interface:
 | [`removeRuleAction`](#removeruleaction)       | <code>React.ComponentType&lt;ActionProps&gt;</code>                                                              |
 | [`rule`](#rule)                               | <code>React.ComponentType&lt;RuleProps&gt;</code>                                                                |
 | [`ruleGroup`](#rulegroup)                     | <code>React.ComponentType&lt;RuleGroupProps&gt;</code>                                                           |
+| [`shiftActions`](#shiftactions)               | <code>React.ComponentType&lt;ShiftActionsProps&gt;</code>                                                        |
 | [`valueEditor`](#valueeditor)                 | <code>React.ComponentType&lt;ValueEditorProps&gt;</code>                                                         |
 | [`valueSourceSelector`](#valuesourceselector) | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt;</code>                                                 |
 
@@ -561,6 +562,24 @@ Default is [`RuleGroup`](./rulegroup). Receives the following props per the `Rul
 If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `RuleGroup` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
 
 :::
+
+#### `shiftActions`
+
+Default is [`ShiftActions`](./shiftactions). Receives the following props per the `ShiftActionsProps` interface:
+
+| Prop          | Type                                      | Description                                                                           |
+| ------------- | ----------------------------------------- | ------------------------------------------------------------------------------------- |
+| `labels`      | `{ shiftUp: string; shiftDown: string; }` | `translations['shiftActionUp'/'shiftActionDown'].label`, e.g. "▴"/"▾"                 |
+| `titles`      | `{ shiftUp: string; shiftDown: string; }` | `translations['shiftActionUp'/'shiftActionDown'].title`, e.g. "Shift up"/"Shift down" |
+| `className`   | `string`                                  | CSS `classNames` to be applied                                                        |
+| `ruleOrGroup` | `RuleGroupTypeAny`                        | This rule or group                                                                    |
+| `level`       | `number`                                  | The `level` of this rule or group                                                     |
+| `context`     | `any`                                     | Container for custom props that are passed to all components                          |
+| `validation`  | <code>boolean \| ValidationResult</code>  | Validation result of this rule or group                                               |
+| `disabled`    | `boolean`                                 | Whether this rule or group is disabled/locked                                         |
+| `path`        | `Path`                                    | [Path](../tips/path) of this rule or group                                            |
+| `schema`      | `Schema`                                  | Query [schema](../typescript#miscellaneous)                                           |
+| `lastInGroup` | `boolean`                                 | Whether this rule or group is the last of its siblings                                |
 
 #### `valueEditor`
 

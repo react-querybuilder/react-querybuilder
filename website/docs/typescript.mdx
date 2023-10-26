@@ -237,14 +237,17 @@ type ValueSource = 'value' | 'field';
 type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
 interface Schema {
-  fields: OptionList<Field>[];
+  qbId: string;
+  fields: OptionList<Field>;
   fieldMap: Record<string, Field>;
   classNames: Classnames;
   combinators: OptionList<Combinator>;
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
-  getOperators(field: string): OptionList<Operator>[];
+  dispatchQuery(query: RuleGroupTypeAny): void;
+  getQuery(): RuleGroupTypeAny | undefined;
+  getOperators(field: string): OptionList<Operator>;
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string): ReactNode;
   getValueSources(field: string, operator: string): ValueSources;
@@ -252,9 +255,9 @@ interface Schema {
   getValues(field: string, operator: string): OptionList;
   getRuleClassname(rule: RuleType): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
-  isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
+  showShiftActions: boolean;
   showCloneButtons: boolean;
   showLockButtons: boolean;
   autoSelectField: boolean;
