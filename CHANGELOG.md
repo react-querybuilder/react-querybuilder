@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- New `showShiftActions` boolean prop, with corresponding `ShiftActions` component and `useShiftActions` hook, provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), the first of which will shift the rule/group one spot higher, while the second will shift it one spot lower. ("Higher" and "lower" are respective of the entire hierarchy, not just the objects on the same level. For example, if a subgroup is immediately below a rule, shifting the rule down will make it the first element of that subgroup.)
+- [#577] New `showShiftActions` boolean prop, with corresponding `ShiftActions` component and `useShiftActions` hook, provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), the first of which will shift the rule/group one spot higher, while the second will shift it one spot lower. ("Higher" and "lower" are respective of the entire hierarchy, not just the objects on the same level. For example, if a subgroup is immediately below a rule, shifting the rule down will make it the first element of that subgroup.)
 - [#537] The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
   - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
   - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.
@@ -1473,6 +1473,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
 [#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572
 [#574]: https://github.com/react-querybuilder/react-querybuilder/issues/574
+[#577]: https://github.com/react-querybuilder/react-querybuilder/pull/577
 
 <!-- Release comparison links -->
 
