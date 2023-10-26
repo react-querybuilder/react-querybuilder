@@ -39,6 +39,7 @@ export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRu
   const {
     schema: {
       controls: {
+        shiftActions: ShiftActionsControlElement,
         dragHandle: DragHandleControlElement,
         fieldSelector: FieldSelectorControlElement,
         operatorSelector: OperatorSelectorControlElement,
@@ -53,6 +54,28 @@ export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRu
 
   return (
     <>
+      {r.schema.showShiftActions && (
+        <ShiftActionsControlElement
+          testID={TestID.shiftActions}
+          level={r.path.length}
+          path={r.path}
+          titles={{
+            shiftUp: r.translations.shiftActionUp.title,
+            shiftDown: r.translations.shiftActionDown.title,
+          }}
+          labels={{
+            shiftUp: r.translations.shiftActionUp.label,
+            shiftDown: r.translations.shiftActionDown.label,
+          }}
+          className={r.classNames.shiftActions}
+          disabled={r.disabled}
+          context={r.context}
+          validation={r.validationResult}
+          schema={r.schema}
+          ruleOrGroup={r.rule}
+          lastInGroup={r.lastInGroup}
+        />
+      )}
       {r.schema.enableDragAndDrop && (
         <DragHandleControlElement
           testID={TestID.dragHandle}

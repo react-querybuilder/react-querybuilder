@@ -1181,6 +1181,124 @@ describe('addRuleToNewGroups', () => {
   });
 });
 
+describe('showShiftActions', () => {
+  describe('standard rule groups', () => {
+    it('should shift rules', async () => {
+      const onQueryChange = jest.fn();
+      render(
+        <QueryBuilder
+          showShiftActions
+          onQueryChange={onQueryChange}
+          defaultQuery={{
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
+        />
+      );
+      expect(screen.getAllByText(t.shiftActionUp.label)[0]).toBeDisabled();
+      expect(screen.getAllByText(t.shiftActionDown.label).at(-1)).toBeDisabled();
+      await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+      expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+        combinator: 'and',
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
+    });
+
+    it('should shift rule groups', async () => {
+      const onQueryChange = jest.fn();
+      render(
+        <QueryBuilder
+          showShiftActions
+          onQueryChange={onQueryChange}
+          defaultQuery={{
+            combinator: 'and',
+            rules: [
+              { field: 'lastName', operator: '=', value: 'Vai' },
+              {
+                combinator: 'or',
+                rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+              },
+            ],
+          }}
+        />
+      );
+      await user.click(screen.getAllByText(t.shiftActionUp.label)[1]);
+      expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+          },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      });
+    });
+  });
+
+  describe('independent combinators', () => {
+    it('should shift rulew with independent combinators', async () => {
+      const onQueryChange = jest.fn();
+      render(
+        <QueryBuilder
+          showShiftActions
+          independentCombinators
+          onQueryChange={onQueryChange}
+          defaultQuery={{
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
+        />
+      );
+      expect(screen.getAllByText(t.shiftActionUp.label)[0]).toBeDisabled();
+      expect(screen.getAllByText(t.shiftActionDown.label).at(-1)).toBeDisabled();
+      await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+      expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
+    });
+
+    it('should shift first rule with independent combinators', async () => {
+      const onQueryChange = jest.fn();
+      render(
+        <QueryBuilder
+          showShiftActions
+          independentCombinators
+          onQueryChange={onQueryChange}
+          defaultQuery={{
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
+        />
+      );
+      await user.click(screen.getAllByText(t.shiftActionUp.label)[1]);
+      expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
+    });
+  });
+});
+
 describe('showCloneButtons', () => {
   describe('standard rule groups', () => {
     it('should clone rules', async () => {

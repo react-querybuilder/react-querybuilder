@@ -5,6 +5,7 @@ export type DemoOption =
   | 'showNotToggle'
   | 'showCloneButtons'
   | 'showLockButtons'
+  | 'showShiftActions'
   | 'resetOnFieldChange'
   | 'resetOnOperatorChange'
   | 'autoSelectField'

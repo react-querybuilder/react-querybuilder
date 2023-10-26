@@ -9,7 +9,7 @@ import type {
   ValueSources,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
-import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
+import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -242,6 +242,63 @@ export const remove = <RG extends RuleGroupTypeAny>(
   });
 };
 
+const getShiftedPath = (
+  query: RuleGroupTypeAny,
+  currentPath: Path,
+  shiftDirection: Path | 'up' | 'down'
+): Path => {
+  if (Array.isArray(shiftDirection)) {
+    return shiftDirection;
+  }
+
+  const ic = isRuleGroupTypeIC(query);
+
+  if (shiftDirection === 'up') {
+    if (pathsAreEqual(currentPath, [0])) {
+      return currentPath;
+    } else if (currentPath.at(-1) === 0) {
+      const parentPath = getParentPath(currentPath);
+      return [...getParentPath(parentPath), Math.max(0, parentPath.at(-1)! - (ic ? 1 : 0))];
+    } else {
+      const evaluationPath = [
+        ...getParentPath(currentPath),
+        Math.max(0, currentPath.at(-1)! - (ic ? 2 : 1)),
+      ];
+      const entityAtTarget = findPath(evaluationPath, query);
+      if (isRuleGroup(entityAtTarget)) {
+        return [...evaluationPath, entityAtTarget.rules.length];
+      } else {
+        const targetPath = [
+          ...getParentPath(currentPath),
+          Math.max(0, currentPath.at(-1)! - (ic ? 3 : 1)),
+        ];
+        return targetPath;
+      }
+    }
+  } else if (shiftDirection === 'down') {
+    if (pathsAreEqual([query.rules.length - 1], currentPath)) {
+      return currentPath;
+    } else if (
+      currentPath.at(-1) ===
+      (findPath(getParentPath(currentPath), query) as RuleGroupTypeAny).rules.length - 1
+    ) {
+      const parentPath = getParentPath(currentPath);
+      return [...getParentPath(parentPath), parentPath.at(-1)! + 1];
+    } else {
+      const evaluationPath = [...getParentPath(currentPath), currentPath.at(-1)! + (ic ? 2 : 1)];
+      const entityToEvaluate = findPath(evaluationPath, query);
+      if (isRuleGroup(entityToEvaluate)) {
+        return [...evaluationPath, 0];
+      } else {
+        const targetPath = [...getParentPath(currentPath), currentPath.at(-1)! + (ic ? 3 : 2)];
+        return targetPath;
+      }
+    }
+  }
+
+  return currentPath;
+};
+
 /**
  * Options object for {@link move}.
  */
@@ -271,13 +328,19 @@ export const move = <RG extends RuleGroupTypeAny>(
   query: RG,
   /** Original path of the rule or group to move. */
   oldPath: Path,
-  /** Path to move the rule or group to. */
-  newPath: Path,
+  /** Path to move the rule or group to, or a shift direction. */
+  newPath: Path | 'up' | 'down',
   /** Options object. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
+  const nextPath = getShiftedPath(query, oldPath, newPath);
+
   // Don't move to the same location or a path that doesn't exist yet
-  if (pathsAreEqual(oldPath, newPath) || !findPath(getParentPath(newPath), query)) {
+  if (
+    oldPath.length === 0 ||
+    pathsAreEqual(oldPath, nextPath) ||
+    !findPath(getParentPath(nextPath), query)
+  ) {
     return query;
   }
 
@@ -313,16 +376,16 @@ export const move = <RG extends RuleGroupTypeAny>(
       parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
     }
 
-    const newNewPath = [...newPath];
-    const commonAncestorPath = getCommonAncestorPath(oldPath, newPath);
+    const newNewPath = [...nextPath];
+    const commonAncestorPath = getCommonAncestorPath(oldPath, nextPath);
     if (
       !clone &&
       oldPath.length === commonAncestorPath.length + 1 &&
-      newPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
+      nextPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
     ) {
       // Getting here means there will be a shift of paths upward at the common
       // ancestor level because the object at `oldPath` will be spliced out. The
-      // real new path should therefore be one or two higher than `newPath`.
+      // real new path should therefore be one or two higher than `newPathCalc`.
       newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
     }
     const newNewParentPath = getParentPath(newNewPath);

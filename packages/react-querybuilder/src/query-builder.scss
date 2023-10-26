@@ -55,6 +55,18 @@ $rqb-branch-style: $rqb-border-style !default;
       align-items: baseline;
     }
   }
+
+  .shiftActions {
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+  }
 }
 
 // #region Drag-and-drop

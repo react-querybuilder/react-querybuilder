@@ -22,9 +22,9 @@ import {
   setQueryState,
 } from './queriesSlice';
 
-export type QueryBuilderStoreState = { queries: QueriesSliceState };
+export type RqbState = { queries: QueriesSliceState };
 
-const rootReducer = combineReducers<QueryBuilderStoreState>({ queries: queriesSliceReducer });
+const rootReducer = combineReducers<RqbState>({ queries: queriesSliceReducer });
 
 export const queryBuilderStore = createStore(
   rootReducer,
@@ -40,30 +40,30 @@ export const queryBuilderStore = createStore(
     })
   )
 );
-export const RqbStoreContext = React.createContext<
-  ReactReduxContextValue<QueryBuilderStoreState, AnyAction>
->(null as any);
+export const RqbStateContext = React.createContext<ReactReduxContextValue<RqbState, AnyAction>>(
+  null as any
+);
 
 // Hooks
 /**
  * Gets the full RQB Redux store.
  */
-export const useQueryBuilderStore = createStoreHook(RqbStoreContext);
+export const useQueryBuilderStore = createStoreHook(RqbStateContext);
 
 /**
  * Gets the `dispatch` function for the RQB Redux store.
  */
-export const useQueryBuilderDispatch: UseQueryBuilderDispatch = createDispatchHook(RqbStoreContext);
-type UseQueryBuilderDispatch = () => ThunkDispatch<QueryBuilderStoreState, undefined, AnyAction> &
+export const useQueryBuilderDispatch: UseQueryBuilderDispatch = createDispatchHook(RqbStateContext);
+type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, AnyAction> &
   Dispatch<AnyAction>;
 
 /**
  * A `useSelector` hook for the RQB Redux store.
  */
-export const useQueryBuilderSelector = createSelectorHook(RqbStoreContext);
+export const useQueryBuilderSelector = createSelectorHook(RqbStateContext);
 
 // Selectors
-export const getQueryState = (state: QueryBuilderStoreState, qbId: string) =>
+export const getQueryState = (state: RqbState, qbId: string) =>
   getQueriesSliceState(state.queries, qbId);
 
 // Misc exports
@@ -75,12 +75,7 @@ interface DispatchThunkParams {
   payload: SetQueryStateParams;
   onQueryChange?: (query: any /* RuleGroupTypeAny */) => void;
 }
-type QueryBuilderThunk = ThunkAction<
-  void,
-  QueryBuilderStoreState,
-  unknown,
-  PayloadAction<SetQueryStateParams>
->;
+type QueryBuilderThunk = ThunkAction<void, RqbState, unknown, PayloadAction<SetQueryStateParams>>;
 export const dispatchThunk =
   ({ payload, onQueryChange }: DispatchThunkParams): QueryBuilderThunk =>
   dispatch => {

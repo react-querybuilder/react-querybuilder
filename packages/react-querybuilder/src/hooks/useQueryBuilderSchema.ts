@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, defaultCombinators, standardClassnames } from '../defaults';
-import type { QueryBuilderStoreState } from '../redux';
+import type { RqbState } from '../redux';
 import {
   dispatchThunk,
   getQueryState,
@@ -70,6 +70,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     independentCombinators: icProp,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
     showNotToggle: showNotToggleProp = false,
+    showShiftActions: showShiftActionsProp = false,
     showCloneButtons: showCloneButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
     resetOnFieldChange: resetOnFieldChangeProp = true,
@@ -116,6 +117,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const independentCombinators = !!icProp;
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
+  const showShiftActions = !!showShiftActionsProp;
   const showCloneButtons = !!showCloneButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
   const resetOnFieldChange = !!resetOnFieldChangeProp;
@@ -131,7 +133,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const queryBuilderDispatch = useQueryBuilderDispatch();
 
   const querySelector = useCallback(
-    (state: QueryBuilderStoreState) => getQueryState(state, setup.qbId),
+    (state: RqbState) => getQueryState(state, setup.qbId),
     [setup.qbId]
   );
   const storeQuery = useQueryBuilderSelector(querySelector);
@@ -413,6 +415,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       showCombinatorsBetweenRules,
       showLockButtons,
       showNotToggle,
+      showShiftActions,
       validationMap,
     }),
     [
@@ -446,6 +449,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
       showCombinatorsBetweenRules,
       showLockButtons,
       showNotToggle,
+      showShiftActions,
       validationMap,
     ]
   );

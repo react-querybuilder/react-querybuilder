@@ -95,6 +95,30 @@ export interface NotToggleProps extends CommonSubComponentProps {
 }
 
 /**
+ * Props passed to `shiftActions` components.
+ */
+export interface ShiftActionsProps extends CommonSubComponentProps {
+  /**
+   * Visible text for "shift up"/"shift down" elements.
+   */
+  labels?: { shiftUp?: ReactNode; shiftDown?: ReactNode };
+  /**
+   * Tooltips for "shift up"/"shift down" elements.
+   */
+  titles?: { shiftUp?: string; shiftDown?: string };
+  /**
+   * The {@link RuleType} or {@link RuleGroupType}/{@link RuleGroupTypeIC}
+   * associated with this element.
+   */
+  ruleOrGroup: RuleGroupTypeAny | RuleType;
+  /**
+   * Whether this rule or group is the last element in the root group
+   * (path is `[query.rules.length -1 ]`).
+   */
+  lastInGroup?: boolean;
+}
+
+/**
  * Props for `dragHandle` components.
  */
 export interface DragHandleProps extends CommonSubComponentProps {
@@ -146,6 +170,7 @@ export interface Controls {
   cloneRuleAction: ComponentType<ActionProps>;
   combinatorSelector: ComponentType<CombinatorSelectorProps>;
   inlineCombinator: ComponentType<InlineCombinatorProps>;
+  shiftActions: ComponentType<ShiftActionsProps>;
   dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<any>>;
   fieldSelector: ComponentType<FieldSelectorProps>;
   notToggle: ComponentType<NotToggleProps>;
@@ -185,6 +210,7 @@ export interface Schema {
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
+  showShiftActions: boolean;
   showCloneButtons: boolean;
   showLockButtons: boolean;
   autoSelectField: boolean;
@@ -210,6 +236,7 @@ interface CommonRuleAndGroupProps {
   actions: QueryActions;
   disabled?: boolean;
   context?: any;
+  lastInGroup?: boolean;
 }
 
 /**
@@ -495,6 +522,12 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * @default false
      */
     showNotToggle?: boolean;
+    /**
+     * Show the "Shift up"/"Shift down" actions.
+     *
+     * @default false
+     */
+    showShiftActions?: boolean;
     /**
      * Show the "Clone rule" and "Clone group" buttons.
      *
