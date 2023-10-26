@@ -287,17 +287,17 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 | Prop            | Type                                           | Description                                                  |
 | --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `string`                                       | `translations.addGroup.label`, e.g. "+Rule"                  |
-| `title`         | `string`                                       | `translations.addGroup.title`, e.g. "Add rule"               |
+| `label`         | `string`                                       | `translations.addRule.label`, e.g. "+Rule"                   |
+| `title`         | `string`                                       | `translations.addRule.title`, e.g. "Add rule"                |
 | `className`     | `string`                                       | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent, context?: any) => void` | Adds a new rule to this group                                |
-| `rules`         | `RuleOrGroupArray`                             | The `rules` array for this group                             |
-| `ruleOrGroup`   | `RuleGroupTypeAny`                             | This group                                                   |
-| `level`         | `number`                                       | The `level` of this group                                    |
+| `handleOnClick` | `(e: React.MouseEvent, context?: any) => void` | Adds a new rule to this rule                                 |
+| `rules`         | `RuleOrGroupArray`                             | The `rules` array for this rule                              |
+| `ruleOrGroup`   | `RuleGroupTypeAny`                             | This rule                                                    |
+| `level`         | `number`                                       | The `level` of this rule                                     |
 | `context`       | `any`                                          | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this group                              |
-| `disabled`      | `boolean`                                      | Whether this group is disabled/locked                        |
-| `path`          | `Path`                                         | [Path](../tips/path) of this group                           |
+| `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this rule                               |
+| `disabled`      | `boolean`                                      | Whether this rule is disabled/locked                         |
+| `path`          | `Path`                                         | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
 #### `cloneGroupAction`
@@ -306,8 +306,8 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `string`                                 | `translations.addGroup.label`, e.g. "+Group"                 |
-| `title`         | `string`                                 | `translations.addGroup.title`, e.g. "Add group"              |
+| `label`         | `string`                                 | `translations.cloneRuleGroup.label`, e.g. "⧉"                |
+| `title`         | `string`                                 | `translations.cloneRuleGroup.title`, e.g. "Clone group"      |
 | `className`     | `string`                                 | CSS `classNames` to be applied                               |
 | `handleOnClick` | `(e: React.MouseEvent) => void`          | Clones this group                                            |
 | `rules`         | `RuleOrGroupArray`                       | The `rules` array for this group                             |
@@ -325,8 +325,8 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `string`                                 | `translations.addGroup.label`, e.g. "+Rule"                  |
-| `title`         | `string`                                 | `translations.addGroup.title`, e.g. "Add rule"               |
+| `label`         | `string`                                 | `translations.cloneRule.label`, e.g. "⧉"                     |
+| `title`         | `string`                                 | `translations.cloneRule.title`, e.g. "Clone rule"            |
 | `className`     | `string`                                 | CSS `classNames` to be applied                               |
 | `handleOnClick` | `(e: React.MouseEvent) => void`          | Clones the rule                                              |
 | `ruleOrGroup`   | `RuleType`                               | This rule                                                    |
@@ -362,8 +362,8 @@ Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enab
 
 | Prop          | Type                                      | Description                                                  |
 | ------------- | ----------------------------------------- | ------------------------------------------------------------ |
-| `title`       | `string`                                  | `translations.dragHandle.title`, e.g. "Drag handle"          |
 | `label`       | `string`                                  | `translations.dragHandle.label`, e.g. "⁞⁞"                   |
+| `title`       | `string`                                  | `translations.dragHandle.title`, e.g. "Drag handle"          |
 | `className`   | `string`                                  | CSS `classNames` to be applied                               |
 | `level`       | `number`                                  | The `level` of this rule/group                               |
 | `context`     | `any`                                     | Container for custom props that are passed to all components |
@@ -406,40 +406,40 @@ A small wrapper around the [`combinatorSelector`](#combinatorselector) component
 
 Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
 
-| Prop                  | Type                                     | Description                                                                             |
-| --------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------- |
-| `label`               | `string`                                 | `translations.lockGroup.label`, e.g. "🔓" when unlocked and "🔒" when locked            |
-| `title`               | `string`                                 | `translations.lockGroup.title`, e.g. "Lock group" or "Unlock group"                     |
-| `className`           | `string`                                 | CSS `classNames` to be applied                                                          |
-| `handleOnClick`       | `(e: React.MouseEvent) => void`          | Locks the group                                                                         |
-| `rules`               | `RuleOrGroupArray`                       | The rules present for this group                                                        |
-| `ruleOrGroup`         | `RuleGroupTypeAny`                       | This group                                                                              |
-| `level`               | `number`                                 | The `level` of this group                                                               |
-| `context`             | `any`                                    | Container for custom props that are passed to all components                            |
-| `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this group                                                         |
-| `disabled`            | `boolean`                                | Whether this group is disabled/locked                                                   |
-| `disabledTranslation` | `string`                                 | `translations.lockGroupDisabled` if parent group is not disabled, otherwise `undefined` |
-| `path`                | `Path`                                   | [Path](../tips/path) of this group                                                      |
-| `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                             |
+| Prop                  | Type                                     | Description                                                                                                            |
+| --------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `label`               | `string`                                 | `translations.lockGroup.label` or `translations.lockGroupDisabled.label`, e.g. "🔓" when unlocked and "🔒" when locked |
+| `title`               | `string`                                 | `translations.lockGroup.title` or `translations.lockGroupDisabled.title`, e.g. "Lock group" or "Unlock group"          |
+| `className`           | `string`                                 | CSS `classNames` to be applied                                                                                         |
+| `handleOnClick`       | `(e: React.MouseEvent) => void`          | Locks the group                                                                                                        |
+| `rules`               | `RuleOrGroupArray`                       | The rules present for this group                                                                                       |
+| `ruleOrGroup`         | `RuleGroupTypeAny`                       | This group                                                                                                             |
+| `level`               | `number`                                 | The `level` of this group                                                                                              |
+| `context`             | `any`                                    | Container for custom props that are passed to all components                                                           |
+| `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this group                                                                                        |
+| `disabled`            | `boolean`                                | Whether this group is disabled/locked                                                                                  |
+| `disabledTranslation` | `string`                                 | `translations.lockGroupDisabled` if parent group is not disabled, otherwise `undefined`                                |
+| `path`                | `Path`                                   | [Path](../tips/path) of this group                                                                                     |
+| `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                            |
 
 #### `lockRuleAction`
 
 Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
 
-| Prop                  | Type                                     | Description                                                                            |
-| --------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| `label`               | `string`                                 | `translations.lockRule.label`, e.g. "🔓" when unlocked and "🔒" when locked            |
-| `title`               | `string`                                 | `translations.lockRule.title`, e.g. "Lock rule" or "Unlock rule"                       |
-| `className`           | `string`                                 | CSS `classNames` to be applied                                                         |
-| `handleOnClick`       | `(e: React.MouseEvent) => void`          | Locks the rule                                                                         |
-| `ruleOrGroup`         | `RuleType`                               | This rule                                                                              |
-| `level`               | `number`                                 | The `level` of this rule                                                               |
-| `context`             | `any`                                    | Container for custom props that are passed to all components                           |
-| `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this rule                                                         |
-| `disabled`            | `boolean`                                | Whether this rule is disabled/locked                                                   |
-| `disabledTranslation` | `string`                                 | `translations.lockRuleDisabled` if parent group is not disabled, otherwise `undefined` |
-| `path`                | `Path`                                   | [Path](../tips/path) of this rule                                                      |
-| `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                            |
+| Prop                  | Type                                     | Description                                                                                                          |
+| --------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `label`               | `string`                                 | `translations.lockRule.label` or `translations.lockRuleDisabled.label`, e.g. "🔓" when unlocked and "🔒" when locked |
+| `title`               | `string`                                 | `translations.lockRule.title` or `translations.lockRuleDisabled.title`, e.g. "Lock rule" or "Unlock rule"            |
+| `className`           | `string`                                 | CSS `classNames` to be applied                                                                                       |
+| `handleOnClick`       | `(e: React.MouseEvent) => void`          | Locks the rule                                                                                                       |
+| `ruleOrGroup`         | `RuleType`                               | This rule                                                                                                            |
+| `level`               | `number`                                 | The `level` of this rule                                                                                             |
+| `context`             | `any`                                    | Container for custom props that are passed to all components                                                         |
+| `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this rule                                                                                       |
+| `disabled`            | `boolean`                                | Whether this rule is disabled/locked                                                                                 |
+| `disabledTranslation` | `string`                                 | `translations.lockRuleDisabled` if parent group is not disabled, otherwise `undefined`                               |
+| `path`                | `Path`                                   | [Path](../tips/path) of this rule                                                                                    |
+| `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                          |
 
 #### `notToggle`
 
