@@ -1182,6 +1182,35 @@ describe('addRuleToNewGroups', () => {
 });
 
 describe('showShiftActions', () => {
+  it('should be disabled if rule is locked', async () => {
+    const onQueryChange = jest.fn();
+    render(
+      <QueryBuilder
+        showShiftActions
+        onQueryChange={onQueryChange}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            {
+              combinator: 'and',
+              rules: [
+                { field: 'firstName', operator: '=', value: 'Steve' },
+                { field: 'lastName', operator: '=', value: 'Vai' },
+              ],
+              disabled: true,
+            },
+          ],
+        }}
+      />
+    );
+    const shiftRuleButtons = screen
+      .getAllByTestId(TestID.ruleGroup)[1]
+      .querySelectorAll(`.${sc.shiftActions}>button`);
+    for (const b of Array.from(shiftRuleButtons)) {
+      expect(b).toBeDisabled();
+    }
+  });
+
   describe('standard rule groups', () => {
     it('should shift rules', async () => {
       const onQueryChange = jest.fn();

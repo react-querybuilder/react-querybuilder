@@ -112,8 +112,7 @@ export interface ShiftActionsProps extends CommonSubComponentProps {
    */
   ruleOrGroup: RuleGroupTypeAny | RuleType;
   /**
-   * Whether this rule or group is the last element in the root group
-   * (path is `[query.rules.length -1 ]`).
+   * Whether this rule or group is the last of its siblings.
    */
   lastInGroup?: boolean;
 }

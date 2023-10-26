@@ -8,6 +8,7 @@ import { pathsAreEqual } from '../utils';
  */
 export const ShiftActions = ({
   path,
+  disabled,
   className,
   labels,
   titles,
@@ -19,11 +20,14 @@ export const ShiftActions = ({
 
   return (
     <div data-testid={testID} className={className}>
-      <button disabled={pathsAreEqual([0], path)} onClick={shiftUp} title={titles?.shiftUp}>
+      <button
+        disabled={disabled || pathsAreEqual([0], path)}
+        onClick={shiftUp}
+        title={titles?.shiftUp}>
         {labels?.shiftUp}
       </button>
       <button
-        disabled={lastInGroup && path.length === 1}
+        disabled={disabled || (lastInGroup && path.length === 1)}
         onClick={shiftDown}
         title={titles?.shiftDown}>
         {labels?.shiftDown}
