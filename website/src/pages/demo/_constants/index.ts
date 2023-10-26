@@ -29,6 +29,7 @@ export const defaultOptions = {
   parseNumbers: false,
   justifiedLayout: false,
   showBranches: false,
+  showShiftActions: false,
 } satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
@@ -36,6 +37,7 @@ export const optionOrder: DemoOption[] = [
   'showNotToggle',
   'showCloneButtons',
   'showLockButtons',
+  'showShiftActions',
   'resetOnFieldChange',
   'resetOnOperatorChange',
   'autoSelectField',
@@ -62,6 +64,11 @@ export const optionsMetadata = {
     link: '/docs/components/querybuilder#shownottoggle',
     label: 'Show "not" toggle',
     title: `Display a checkbox to invert a group's rules (labelled "Not" by default)`,
+  },
+  showShiftActions: {
+    link: '/docs/components/querybuilder#showshiftactions',
+    label: 'Show shift actions',
+    title: 'Display buttons to shift rules and groups up or down',
   },
   showCloneButtons: {
     link: '/docs/components/querybuilder#showclonebuttons',

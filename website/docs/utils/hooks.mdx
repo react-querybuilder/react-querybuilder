@@ -101,6 +101,19 @@ function useValueSelector(
 
 Used by the [`ValueSelector`](../components/valueselector) component. Transforms the given value into an array when appropriate and provides a memoized change handler.
 
+### `useShiftActions`
+
+```ts
+function useShiftActions(
+  props: { path: Path } & Pick<Schema, 'combinators' | 'dispatchQuery' | 'getQuery'>
+): {
+  shiftDown: () => void;
+  shiftUp: () => void;
+};
+```
+
+Used by the [`ShiftActions`](../components/shiftactions) component. Generates `shiftUp` and `shiftDown` methods used to move rules and group up or down, respectively, in the query hierarchy.
+
 ### `useSelectElementChangeHandler`
 
 ```ts

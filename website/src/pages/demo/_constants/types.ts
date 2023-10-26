@@ -3,6 +3,7 @@ import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from 'react-qu
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
   | 'showNotToggle'
+  | 'showShiftActions'
   | 'showCloneButtons'
   | 'showLockButtons'
   | 'resetOnFieldChange'
