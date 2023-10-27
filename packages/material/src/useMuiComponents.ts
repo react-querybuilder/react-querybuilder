@@ -2,6 +2,8 @@ import {
   Close as CloseIcon,
   ContentCopy as ContentCopyIcon,
   DragIndicator,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
   Lock as LockIcon,
   LockOpen as LockOpenIcon,
 } from '@mui/icons-material';
@@ -32,6 +34,8 @@ export const defaultMuiComponents = {
   FormControl,
   FormControlLabel,
   Input,
+  KeyboardArrowDownIcon,
+  KeyboardArrowUpIcon,
   ListSubheader,
   LockIcon,
   LockOpenIcon,

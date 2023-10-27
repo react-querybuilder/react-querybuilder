@@ -5,6 +5,7 @@ import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
+import { MaterialShiftActions } from './MaterialShiftActions';
 import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
@@ -15,6 +16,7 @@ import { useMuiComponents } from './useMuiComponents';
 export * from './MaterialActionElement';
 export * from './MaterialDragHandle';
 export * from './MaterialNotToggle';
+export * from './MaterialShiftActions';
 export * from './MaterialValueEditor';
 export * from './MaterialValueSelector';
 export * from './RQBMaterialContext';
@@ -38,6 +40,7 @@ export const materialControlElements: Partial<Controls> = {
   valueEditor: MaterialValueEditor,
   dragHandle: MaterialDragHandle,
   valueSourceSelector: MaterialValueSelector,
+  shiftActions: MaterialShiftActions,
 };
 
 const MaterialContextProvider = getCompatContextProvider({

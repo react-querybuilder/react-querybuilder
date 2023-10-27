@@ -136,11 +136,13 @@ function useShiftActions(
   props: { path: Path } & Pick<Schema, 'combinators' | 'dispatchQuery' | 'getQuery'>
 ): {
   shiftDown: () => void;
+  shiftDownDisabled: boolean;
   shiftUp: () => void;
+  shiftUpDisabled: boolean;
 };
 ```
 
-Used by the [`ShiftActions`](../components/shiftactions) component. Generates `shiftUp` and `shiftDown` methods used to move rules and group up or down, respectively, in the query hierarchy.
+Used by the [`ShiftActions`](../components/shiftactions) component. Generates `shiftUp` and `shiftDown` methods to move a rule/group up or down, respectively, in the query hierarchy, as well as `shiftUpDisabled`/`shiftDownDisabled` to indicate whether either button should be disabled.
 
 ### `useSelectElementChangeHandler`
 

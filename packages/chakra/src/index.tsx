@@ -1,4 +1,11 @@
-import { CloseIcon, CopyIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  CopyIcon,
+  LockIcon,
+  UnlockIcon,
+} from '@chakra-ui/icons';
 import * as React from 'react';
 import type { Controls, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
@@ -41,6 +48,8 @@ export const chakraTranslations: Partial<Translations> = {
   lockRule: { label: <UnlockIcon /> },
   lockGroupDisabled: { label: <LockIcon /> },
   lockRuleDisabled: { label: <LockIcon /> },
+  shiftActionDown: { label: <ChevronDownIcon /> },
+  shiftActionUp: { label: <ChevronUpIcon /> },
 };
 
 export const QueryBuilderChakra = getCompatContextProvider({

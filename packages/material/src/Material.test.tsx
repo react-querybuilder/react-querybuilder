@@ -2,6 +2,8 @@ import {
   Close as CloseIcon,
   ContentCopy as ContentCopyIcon,
   DragIndicator,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
   Lock as LockIcon,
   LockOpen as LockOpenIcon,
 } from '@mui/icons-material';
@@ -38,9 +40,11 @@ import {
 import type { DragHandleProps, RuleGroupType, Schema } from 'react-querybuilder';
 import { QueryBuilder, TestID, defaultTranslations, objectEntries } from 'react-querybuilder';
 import {
+  defaultShiftActionsProps,
   testActionElement,
   testDragHandle,
   testNotToggle,
+  testShiftActions,
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
@@ -50,6 +54,7 @@ import type { MaterialActionProps } from './MaterialActionElement';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
 import { MaterialNotToggle } from './MaterialNotToggle';
+import { MaterialShiftActions } from './MaterialShiftActions';
 import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import { materialTranslations } from './translations';
@@ -102,6 +107,8 @@ const muiComponents = {
   FormControl,
   FormControlLabel,
   Input,
+  KeyboardArrowDownIcon,
+  KeyboardArrowUpIcon,
   ListSubheader,
   LockIcon,
   LockOpenIcon,
@@ -193,6 +200,22 @@ describe('not toggle', () => {
       </div>
     );
     expect(screen.getByTestId('test').querySelector('input[type=checkbox]')).toBeInTheDocument();
+  });
+});
+
+describe('shift actions', () => {
+  testShiftActions(generateWrapper(MaterialShiftActions));
+
+  it('renders without preloaded components', async () => {
+    render(
+      <div data-testid="test">
+        <MaterialShiftActions {...defaultShiftActionsProps} />
+      </div>
+    );
+    const btns = screen.getAllByRole('button');
+    for (const btn of btns) {
+      expect(btn).toBeInTheDocument();
+    }
   });
 });
 

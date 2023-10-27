@@ -38,6 +38,8 @@ export const bootstrapTranslations: Partial<Translations> = {
   lockRule: { label: <i className="bi bi-unlock" /> },
   lockGroupDisabled: { label: <i className="bi bi-lock" /> },
   lockRuleDisabled: { label: <i className="bi bi-lock" /> },
+  shiftActionUp: { label: <i className="bi bi-chevron-compact-up" /> },
+  shiftActionDown: { label: <i className="bi bi-chevron-compact-down" /> },
 };
 
 export const QueryBuilderBootstrap = getCompatContextProvider({

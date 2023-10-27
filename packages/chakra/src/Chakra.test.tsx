@@ -9,12 +9,14 @@ import {
   testActionElement,
   testDragHandle,
   testNotToggle,
+  testShiftActions,
   testValueEditor,
   testValueSelector,
 } from 'react-querybuilder/genericTests';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
+import { ChakraShiftActions } from './ChakraShiftActions';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 import { QueryBuilderChakra } from './index';
@@ -38,6 +40,7 @@ WrapperDH.displayName = ChakraDragHandle.displayName;
 testActionElement(generateWrapper(ChakraActionElement));
 testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(ChakraNotToggle));
+testShiftActions(ChakraShiftActions);
 testValueEditor(generateWrapper(ChakraValueEditor));
 testValueSelector(generateWrapper(ChakraValueSelector), { multi: true });
 

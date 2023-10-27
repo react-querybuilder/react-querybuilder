@@ -35,6 +35,22 @@ const LockOpenIconWrapper = () => {
   const { LockOpenIcon } = muiComponents;
   return <LockOpenIcon />;
 };
+const ShiftDownIconWrapper = () => {
+  const muiComponents = React.useContext(RQBMaterialContext);
+  if (!muiComponents) {
+    return defaultTranslations.shiftActionDown.label;
+  }
+  const { KeyboardArrowDownIcon } = muiComponents;
+  return <KeyboardArrowDownIcon />;
+};
+const ShiftUpIconWrapper = () => {
+  const muiComponents = React.useContext(RQBMaterialContext);
+  if (!muiComponents) {
+    return defaultTranslations.shiftActionUp.label;
+  }
+  const { KeyboardArrowUpIcon } = muiComponents;
+  return <KeyboardArrowUpIcon />;
+};
 
 export const materialTranslations = {
   removeGroup: { label: <CloseIconWrapper /> },
@@ -45,4 +61,6 @@ export const materialTranslations = {
   lockRule: { label: <LockOpenIconWrapper /> },
   lockGroupDisabled: { label: <LockIconWrapper /> },
   lockRuleDisabled: { label: <LockIconWrapper /> },
+  shiftActionDown: { label: <ShiftDownIconWrapper /> },
+  shiftActionUp: { label: <ShiftUpIconWrapper /> },
 } satisfies Partial<Translations>;

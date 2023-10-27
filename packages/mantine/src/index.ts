@@ -2,11 +2,13 @@ import type { Controls } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
+import { MantineShiftActions } from './MantineShiftActions';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
 
 export * from './MantineActionElement';
 export * from './MantineNotToggle';
+export * from './MantineShiftActions';
 export * from './MantineValueEditor';
 export * from './MantineValueSelector';
 
@@ -25,6 +27,7 @@ export const mantineControlElements: Partial<Controls> = {
   removeGroupAction: MantineActionElement,
   removeRuleAction: MantineActionElement,
   valueSourceSelector: MantineValueSelector,
+  shiftActions: MantineShiftActions,
 };
 
 export const QueryBuilderMantine = getCompatContextProvider({

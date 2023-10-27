@@ -1,11 +1,9 @@
+import { Button } from '@chakra-ui/react';
 import * as React from 'react';
-import { useShiftActions } from '../hooks';
-import type { ShiftActionsProps } from '../types';
+import type { ShiftActionsProps } from 'react-querybuilder';
+import { useShiftActions } from 'react-querybuilder';
 
-/**
- * Default "shift up"/"shift down" buttons used by {@link QueryBuilder}.
- */
-export const ShiftActions = ({
+export const ChakraShiftActions = ({
   path,
   disabled,
   className,
@@ -26,14 +24,14 @@ export const ShiftActions = ({
 
   return (
     <div data-testid={testID} className={className}>
-      <button disabled={shiftUpDisabled} onClick={shiftUp} title={titles?.shiftUp}>
+      <Button isDisabled={shiftUpDisabled} onClick={shiftUp} title={titles?.shiftUp}>
         {labels?.shiftUp}
-      </button>
-      <button disabled={shiftDownDisabled} onClick={shiftDown} title={titles?.shiftDown}>
+      </Button>
+      <Button isDisabled={shiftDownDisabled} onClick={shiftDown} title={titles?.shiftDown}>
         {labels?.shiftDown}
-      </button>
+      </Button>
     </div>
   );
 };
 
-ShiftActions.displayName = 'ShiftActions';
+ChakraShiftActions.displayName = 'ChakraShiftActions';
