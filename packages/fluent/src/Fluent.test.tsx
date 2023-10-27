@@ -6,6 +6,7 @@ import {
   testActionElement,
   testDragHandle,
   testNotToggle,
+  testShiftActions,
   testValueEditor,
   testValueSelector,
   userEventSetup,
@@ -13,6 +14,7 @@ import {
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';
+import { FluentShiftActions } from './FluentShiftActions';
 import { FluentValueEditor } from './FluentValueEditor';
 import { FluentValueSelector } from './FluentValueSelector';
 import { QueryBuilderFluent } from './index';
@@ -22,6 +24,7 @@ const user = userEventSetup();
 testActionElement(FluentActionElement);
 testDragHandle(FluentDragHandle);
 testNotToggle(FluentNotToggle);
+testShiftActions(FluentShiftActions);
 testValueEditor(FluentValueEditor, { multiselect: true });
 testValueSelector(FluentValueSelector, { multi: true });
 

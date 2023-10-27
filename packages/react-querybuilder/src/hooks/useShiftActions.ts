@@ -1,8 +1,8 @@
 import * as React from 'react';
 import type { Path, Schema } from '../types';
-import { move } from '../utils';
+import { move, pathsAreEqual } from '../utils';
 
-type UseShiftActionsProps = { path: Path } & Pick<
+type UseShiftActionsProps = { path: Path; disabled?: boolean; lastInGroup?: boolean } & Pick<
   Schema,
   'combinators' | 'dispatchQuery' | 'getQuery'
 >;
@@ -13,8 +13,10 @@ type UseShiftActionsProps = { path: Path } & Pick<
  */
 export const useShiftActions = ({
   combinators,
+  disabled,
   dispatchQuery,
   getQuery,
+  lastInGroup,
   path,
 }: UseShiftActionsProps) => {
   const shiftUp = React.useCallback(() => {
@@ -25,5 +27,14 @@ export const useShiftActions = ({
     dispatchQuery(move(getQuery()!, path, 'down', { combinators }));
   }, [combinators, dispatchQuery, getQuery, path]);
 
-  return { shiftUp, shiftDown };
+  const shiftUpDisabled = React.useMemo(
+    () => disabled || pathsAreEqual([0], path),
+    [disabled, path]
+  );
+  const shiftDownDisabled = React.useMemo(
+    () => disabled || (lastInGroup && path.length === 1),
+    [disabled, lastInGroup, path.length]
+  );
+
+  return { shiftUp, shiftUpDisabled, shiftDown, shiftDownDisabled };
 };

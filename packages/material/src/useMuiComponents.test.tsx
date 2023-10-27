@@ -26,6 +26,8 @@ const componentMocks: Record<MuiComponentName, any> = {
   Select: () => <>Select</>,
   Switch: () => <>Switch</>,
   TextareaAutosize: () => <>TextareaAutosize</>,
+  KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
+  KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
 };
 
 // We don't *actually* need to load the components, just test that

@@ -1,5 +1,7 @@
 import {
   CancelIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   DuplicateRowIcon,
   GripperDotsVerticalIcon,
   LockIcon,
@@ -48,6 +50,8 @@ export const fluentTranslations: Partial<Translations> = {
   lockRule: { label: <UnlockIcon /> },
   lockGroupDisabled: { label: <LockIcon /> },
   lockRuleDisabled: { label: <LockIcon /> },
+  shiftActionDown: { label: <ChevronDownIcon /> },
+  shiftActionUp: { label: <ChevronUpIcon /> },
 };
 
 export const QueryBuilderFluent = getCompatContextProvider({

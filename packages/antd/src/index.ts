@@ -3,12 +3,14 @@ import { getCompatContextProvider } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
+import { AntDShiftActions } from './AntDShiftActions';
 import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
 
 export * from './AntDActionElement';
 export * from './AntDDragHandle';
 export * from './AntDNotToggle';
+export * from './AntDShiftActions';
 export * from './AntDValueEditor';
 export * from './AntDValueSelector';
 
@@ -28,6 +30,7 @@ export const antdControlElements: Partial<Controls> = {
   valueEditor: AntDValueEditor,
   dragHandle: AntDDragHandle,
   valueSourceSelector: AntDValueSelector,
+  shiftActions: AntDShiftActions,
 };
 
 export const QueryBuilderAntD = getCompatContextProvider({

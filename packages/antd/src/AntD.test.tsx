@@ -14,6 +14,7 @@ import {
   hasOrInheritsClass,
   testActionElement,
   testDragHandle,
+  testShiftActions,
   testValueEditor,
   testValueSelector,
   userEventSetup,
@@ -23,7 +24,7 @@ import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
 import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
-import { QueryBuilderAntD } from './index';
+import { AntDShiftActions, QueryBuilderAntD } from './index';
 
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.
@@ -307,6 +308,7 @@ describe('extra AntDValueSelector tests', () => {
 
 testActionElement(AntDActionElement);
 testDragHandle(AntDDragHandle);
+testShiftActions(AntDShiftActions);
 testValueEditor(AntDValueEditor, { switch: true });
 testValueSelector(AntDValueSelector);
 

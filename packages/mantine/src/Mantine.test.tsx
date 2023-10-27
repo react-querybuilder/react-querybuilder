@@ -15,11 +15,13 @@ import {
   findInput,
   testActionElement,
   testNotToggle,
+  testShiftActions,
   testValueEditor,
   userEventSetup,
 } from 'react-querybuilder/genericTests';
 import { MantineActionElement as MantineActionElement_original } from './MantineActionElement';
 import { MantineNotToggle as MantineNotToggle_original } from './MantineNotToggle';
+import { MantineShiftActions as MantineShiftActions_original } from './MantineShiftActions';
 import { MantineValueEditor as MantineValueEditor_original } from './MantineValueEditor';
 import { MantineValueSelector as MantineValueSelector_original } from './MantineValueSelector';
 import { QueryBuilderMantine } from './index';
@@ -58,11 +60,13 @@ const generateWrapper = (RQBComponent: any) => {
 
 const MantineActionElement = generateWrapper(MantineActionElement_original);
 const MantineNotToggle = generateWrapper(MantineNotToggle_original);
+const MantineShiftActions = generateWrapper(MantineShiftActions_original);
 const MantineValueEditor = generateWrapper(MantineValueEditor_original);
 const MantineValueSelector = generateWrapper(MantineValueSelector_original);
 
 testActionElement(MantineActionElement);
 testNotToggle(MantineNotToggle);
+testShiftActions(MantineShiftActions);
 testValueEditor(MantineValueEditor, {
   select: true,
   multiselect: true,

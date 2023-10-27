@@ -2,6 +2,8 @@ import type {
   Close as CloseIcon,
   ContentCopy as ContentCopyIcon,
   DragIndicator,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
   Lock as LockIcon,
   LockOpen as LockOpenIcon,
 } from '@mui/icons-material';
@@ -33,6 +35,8 @@ export type RQBMaterialComponents = {
   LockIcon: typeof LockIcon;
   LockOpenIcon: typeof LockOpenIcon;
   MenuItem: typeof MenuItem;
+  KeyboardArrowDownIcon: typeof KeyboardArrowDownIcon;
+  KeyboardArrowUpIcon: typeof KeyboardArrowUpIcon;
   Radio: typeof Radio;
   RadioGroup: typeof RadioGroup;
   Select: typeof Select;
