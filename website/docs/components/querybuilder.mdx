@@ -991,6 +991,12 @@ Receives logging messages when [`debugMode`](#debugmode) is `true`.
 
 Used to generate `id`s for rules and groups without them (or clones that need a new `id`). By default, `QueryBuilder` generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122), using the `crypto` package if available or a `Math.random()`-based method otherwise.
 
+### `accessibleDescriptionGenerator`
+
+`(props: { path: Path; qbId: string; }) => string` (default `generateAccessibleDescription`)
+
+Used to generate the `title` attribute applied to the outermost `<div>` of each rule group. As this is intended to help with accessibility, the text output from this function should be meaningful, descriptive, and unique within the page.
+
 ### `validator`
 
 `QueryValidator` _<DemoLink option="validateQuery" />_

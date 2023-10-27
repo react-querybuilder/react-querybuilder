@@ -26,6 +26,7 @@ import type {
 import {
   add,
   findPath,
+  generateAccessibleDescription,
   isRuleGroupType,
   move,
   pathIsDisabled,
@@ -84,6 +85,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     validator,
     onLog = defaultOnLog,
     idGenerator,
+    accessibleDescriptionGenerator = generateAccessibleDescription,
   } = props as QueryBuilderProps<RG>;
 
   const {
@@ -386,6 +388,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const schema = useMemo(
     (): Schema => ({
       addRuleToNewGroups,
+      accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
       classNames: controlClassnames,
@@ -420,6 +423,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     }),
     [
       addRuleToNewGroups,
+      accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
       combinators,

@@ -207,6 +207,7 @@ export interface Schema {
   getValues(field: string, operator: string): OptionList;
   getRuleClassname(rule: RuleType): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
+  accessibleDescriptionGenerator: (props: { path: Path; qbId: string }) => string;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showShiftActions: boolean;
@@ -603,6 +604,12 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * @default crypto.randomUUID
      */
     idGenerator?: () => string;
+    /**
+     * Generator function for the `title` attribute applied to the outermost `<div>` of each
+     * rule group. As this is intended to help with accessibility, the text output from this
+     * function should be meaningful, descriptive, and unique within the page.
+     */
+    accessibleDescriptionGenerator?: (props: { path: Path; qbId: string }) => string;
     /**
      * Container for custom props that are passed to all components.
      */

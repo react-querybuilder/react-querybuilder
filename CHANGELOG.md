@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `ShiftActions` component
   - `useShiftActions` hook, called by `ShiftActions`
   - New `translations` properties `shiftActionUp` and `shiftActionDown`
+- [#512] Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop.
 - [#537] The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
   - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
   - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.
@@ -1469,6 +1470,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
 [#499]: https://github.com/react-querybuilder/react-querybuilder/pull/499
 [#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
+[#512]: https://github.com/react-querybuilder/react-querybuilder/issues/512
 [#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
 [#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
 [#523]: https://github.com/react-querybuilder/react-querybuilder/issues/523

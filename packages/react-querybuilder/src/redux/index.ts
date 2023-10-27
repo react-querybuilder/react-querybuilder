@@ -40,27 +40,28 @@ export const queryBuilderStore = createStore(
     })
   )
 );
-export const RqbStateContext = React.createContext<ReactReduxContextValue<RqbState, AnyAction>>(
-  null as any
-);
+export const QueryBuilderStateContext = React.createContext<
+  ReactReduxContextValue<RqbState, AnyAction>
+>(null as any);
 
 // Hooks
 /**
  * Gets the full RQB Redux store.
  */
-export const useQueryBuilderStore = createStoreHook(RqbStateContext);
+export const useQueryBuilderStore = createStoreHook(QueryBuilderStateContext);
 
 /**
  * Gets the `dispatch` function for the RQB Redux store.
  */
-export const useQueryBuilderDispatch: UseQueryBuilderDispatch = createDispatchHook(RqbStateContext);
+export const useQueryBuilderDispatch: UseQueryBuilderDispatch =
+  createDispatchHook(QueryBuilderStateContext);
 type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, AnyAction> &
   Dispatch<AnyAction>;
 
 /**
  * A `useSelector` hook for the RQB Redux store.
  */
-export const useQueryBuilderSelector = createSelectorHook(RqbStateContext);
+export const useQueryBuilderSelector = createSelectorHook(QueryBuilderStateContext);
 
 // Selectors
 export const getQueryState = (state: RqbState, qbId: string) =>

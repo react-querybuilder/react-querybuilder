@@ -5,7 +5,7 @@ export * from './components';
 export * from './defaults';
 export * from './hooks';
 export {
-  RqbStateContext,
+  QueryBuilderStateContext,
   queryBuilderStore,
   useQueryBuilderDispatch,
   useQueryBuilderSelector,

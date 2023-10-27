@@ -22,6 +22,7 @@ export const RuleGroup = React.memo((props: RuleGroupProps) => {
   return (
     <div
       ref={rg.previewRef}
+      title={rg.accessibleDescription}
       className={rg.outerClassName}
       data-testid={TestID.ruleGroup}
       data-dragmonitorid={rg.dragMonitorId}
@@ -30,12 +31,10 @@ export const RuleGroup = React.memo((props: RuleGroupProps) => {
       data-level={rg.path.length}
       data-path={JSON.stringify(rg.path)}>
       <div ref={rg.dropRef} className={rg.classNames.header}>
-        {/* TODO: do better than `as any` here */}
-        <RuleGroupHeaderComponents {...(rg as any)} />
+        <RuleGroupHeaderComponents {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])} />
       </div>
       <div className={rg.classNames.body}>
-        {/* TODO: do better than `as any` here */}
-        <RuleGroupBodyComponents {...(rg as any)} />
+        <RuleGroupBodyComponents {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])} />
       </div>
     </div>
   );
