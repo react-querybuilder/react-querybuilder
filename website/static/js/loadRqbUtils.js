@@ -15,7 +15,7 @@ if (ExecutionEnvironment.canUseDOM) {
     const { transformQuery } = await import('react-querybuilder/transformQuery');
     globalThis.transformQuery = transformQuery;
     console.log(
-      `RQB utilities availble in the console:
+      `RQB utilities available in the console:
  • formatQuery
  • parseCEL
  • parseJsonLogic
