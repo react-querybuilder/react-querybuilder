@@ -291,6 +291,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "VictorArowo",
+      "name": "Victor Arowo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25545108?v=4",
+      "profile": "http://victorarowo.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
