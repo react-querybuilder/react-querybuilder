@@ -38,15 +38,16 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, [c
 ## Compatibility packages
 
 [![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign)](https://www.npmjs.com/package/@react-querybuilder/antd)
-[![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
+[![Blueprint](https://img.shields.io/badge/RQB-for_Blueprint-blue?logo=blueprint)](https://www.npmjs.com/package/@react-querybuilder/blueprint)
+[![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)<br />
 [![Bulma](https://img.shields.io/badge/RQB-for_Bulma-blue?logo=bulma)](https://www.npmjs.com/package/@react-querybuilder/bulma)
-[![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui)](https://www.npmjs.com/package/@react-querybuilder/chakra)<br />
-[![Fluent UI](https://img.shields.io/badge/RQB-for_Fluent%20UI-blue?logo=fluentui)](https://www.npmjs.com/package/@react-querybuilder/fluent)
+[![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui)](https://www.npmjs.com/package/@react-querybuilder/chakra)
+[![Fluent UI](https://img.shields.io/badge/RQB-for_Fluent%20UI-blue?logo=fluentui)](https://www.npmjs.com/package/@react-querybuilder/fluent)<br />
 [![Mantine](https://img.shields.io/badge/RQB-for_Mantine-blue?logo=mantine)](https://www.npmjs.com/package/@react-querybuilder/mantine)
 [![MUI](https://img.shields.io/badge/RQB-for_MUI-blue?logo=mui)](https://www.npmjs.com/package/@react-querybuilder/material)
 [![React Native](https://img.shields.io/badge/RQB-for_React_Native-blue?logo=react)](https://www.npmjs.com/package/@react-querybuilder/native)
 
-In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), [Fluent UI](https://www.npmjs.com/package/@react-querybuilder/fluent), [Mantine](https://www.npmjs.com/package/@react-querybuilder/mantine), and [MUI](https://www.npmjs.com/package/@react-querybuilder/material). A functionally equivalent [React Native-compatible component](https://www.npmjs.com/package/@react-querybuilder/native) is also available.
+In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Blueprint](https://www.npmjs.com/package/@react-querybuilder/blueprint), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), [Fluent UI](https://www.npmjs.com/package/@react-querybuilder/fluent), [Mantine](https://www.npmjs.com/package/@react-querybuilder/mantine), and [MUI](https://www.npmjs.com/package/@react-querybuilder/material). A functionally equivalent [React Native-compatible component](https://www.npmjs.com/package/@react-querybuilder/native) is also available.
 
 ## Development
 

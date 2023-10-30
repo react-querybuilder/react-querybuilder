@@ -1,0 +1,6 @@
+{
+  "entryPoints": ["src/index.tsx"],
+  "validation": {
+    "notExported": false
+  }
+}

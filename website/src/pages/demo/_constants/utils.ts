@@ -94,6 +94,12 @@ const getCompatWrapper = (style: StyleName): [string, string, string] => {
         '<QueryBuilderAntD>',
         '</QueryBuilderAntD>',
       ];
+    case 'blueprint':
+      return [
+        `import { QueryBuilderBlueprint } from '@react-querybuilder/blueprint';`,
+        '<QueryBuilderBlueprint>',
+        '</QueryBuilderBlueprint>',
+      ];
     case 'bootstrap':
       return [
         `import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';

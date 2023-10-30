@@ -13,6 +13,7 @@ You can see each alternate component package in action by clicking the correspon
 | Official site                                       | Compatibility package                                                                        | Demo                    | CodeSandbox                                                                                                                         | StackBlitz                                                                                                                      |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | [Ant Design](https://ant.design/)                   | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [Demo](/demo/antd)      | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd?file=/src/App.tsx)      | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/antd?file=src/App.tsx)      |
+| [Blueprint](https://blueprintjs.com/)               | [@react-querybuilder/blueprint](https://www.npmjs.com/package/@react-querybuilder/blueprint) | [Demo](/demo/blueprint) | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/blueprint?file=/src/App.tsx) | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/blueprint?file=src/App.tsx) |
 | [Bootstrap](https://getbootstrap.com/)              | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](/demo/bootstrap) | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap?file=/src/App.tsx) | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap?file=src/App.tsx) |
 | [Bulma](https://bulma.io/)                          | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](/demo/bulma)     | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma?file=/src/App.tsx)     | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma?file=src/App.tsx)     |
 | [Chakra UI](https://chakra-ui.com/)                 | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](/demo/chakra)    | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra?file=src/App.tsx)    |
@@ -158,32 +159,36 @@ export function App() {
 
 This list shows which library components' props will be accepted by the compatibility components, in addition to those defined by `react-querybuilder`.
 
-| Component                          | Base props (from RQB)    | Rendered library component                                      |
-| ---------------------------------- | ------------------------ | --------------------------------------------------------------- |
-| **`@react-querybuilder/antd`**     |                          |                                                                 |
-| `AntDActionElement`                | `ActionWithRulesProps`   | `import { Button } from 'antd'`                                 |
-| `AntDDragHandle`                   | `DragHandleProps`        | `import { HolderOutlined } from '@ant-design/icons'`            |
-| `AntDNotToggle`                    | `NotToggleProps`         | `import { Switch } from 'antd'`                                 |
-| `AntDValueSelector`                | `VersatileSelectorProps` | `import { Select } from 'antd'`                                 |
-| **`@react-querybuilder/chakra`**   |                          |                                                                 |
-| `ChakraActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                     |
-| `ChakraDragHandle`                 | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
-| `ChakraNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
-| `ChakraValueSelector`              | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
-| **`@react-querybuilder/fluent`**   |                          |                                                                 |
-| `FluentActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@fluentui/react-components'`           |
-| `FluentDragHandle`                 | `DragHandleProps`        | `import { Text } from '@fluentui/react-components'`             |
-| `FluentNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@fluentui/react-components'`           |
-| `FluentValueSelector`              | `VersatileSelectorProps` | `import { Dropdown, Select } from '@fluentui/react-components'` |
-| **`@react-querybuilder/mantine`**  |                          |                                                                 |
-| `MantineActionElement`             | `ActionWithRulesProps`   | `import { Button } from '@mantine/core'`                        |
-| `MantineNotToggle`                 | `NotToggleProps`         | `import { Switch } from '@mantine/core'`                        |
-| `MantineValueSelector`             | `VersatileSelectorProps` | `import { Select } from '@mantine/core'`                        |
-| **`@react-querybuilder/material`** |                          |                                                                 |
-| `MaterialActionElement`            | `ActionWithRulesProps`   | `import { Button } from '@mui/material'`                        |
-| `MaterialDragHandle`               | `DragHandleProps`        | `import { DragIndicator } from '@mui/icons-material'`           |
-| `MaterialNotToggle`                | `NotToggleProps`         | `import { Switch } from '@mui/material'`                        |
-| `MaterialValueSelector`            | `VersatileSelectorProps` | `import { Select } from '@mui/material'`                        |
+| Component                           | Base props (from RQB)    | Rendered library component                                              |
+| ----------------------------------- | ------------------------ | ----------------------------------------------------------------------- |
+| **`@react-querybuilder/antd`**      |                          |                                                                         |
+| `AntDActionElement`                 | `ActionWithRulesProps`   | `import { Button } from 'antd'`                                         |
+| `AntDDragHandle`                    | `DragHandleProps`        | `import { HolderOutlined } from '@ant-design/icons'`                    |
+| `AntDNotToggle`                     | `NotToggleProps`         | `import { Switch } from 'antd'`                                         |
+| `AntDValueSelector`                 | `VersatileSelectorProps` | `import { Select } from 'antd'`                                         |
+| **`@react-querybuilder/blueprint`** |                          |                                                                         |
+| `BlueprintActionElement`            | `ActionWithRulesProps`   | `import { Button } from '@blueprintjs/core'`                            |
+| `BlueprintNotToggle`                | `NotToggleProps`         | `import { Switch } from '@blueprintjs/core'`                            |
+| `BlueprintValueSelector`            | `VersatileSelectorProps` | `import { MultiSelect } from '@blueprintjs/select'` (multi-select only) |
+| **`@react-querybuilder/chakra`**    |                          |                                                                         |
+| `ChakraActionElement`               | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                             |
+| `ChakraDragHandle`                  | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                         |
+| `ChakraNotToggle`                   | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                             |
+| `ChakraValueSelector`               | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                             |
+| **`@react-querybuilder/fluent`**    |                          |                                                                         |
+| `FluentActionElement`               | `ActionWithRulesProps`   | `import { Button } from '@fluentui/react-components'`                   |
+| `FluentDragHandle`                  | `DragHandleProps`        | `import { Text } from '@fluentui/react-components'`                     |
+| `FluentNotToggle`                   | `NotToggleProps`         | `import { Switch } from '@fluentui/react-components'`                   |
+| `FluentValueSelector`               | `VersatileSelectorProps` | `import { Dropdown, Select } from '@fluentui/react-components'`         |
+| **`@react-querybuilder/mantine`**   |                          |                                                                         |
+| `MantineActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@mantine/core'`                                |
+| `MantineNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@mantine/core'`                                |
+| `MantineValueSelector`              | `VersatileSelectorProps` | `import { Select } from '@mantine/core'`                                |
+| **`@react-querybuilder/material`**  |                          |                                                                         |
+| `MaterialActionElement`             | `ActionWithRulesProps`   | `import { Button } from '@mui/material'`                                |
+| `MaterialDragHandle`                | `DragHandleProps`        | `import { DragIndicator } from '@mui/icons-material'`                   |
+| `MaterialNotToggle`                 | `NotToggleProps`         | `import { Switch } from '@mui/material'`                                |
+| `MaterialValueSelector`             | `VersatileSelectorProps` | `import { Select } from '@mui/material'`                                |
 
 ## Preload MUI components
 
