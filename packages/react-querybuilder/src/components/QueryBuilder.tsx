@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
-import { RqbStateContext, queryBuilderStore } from '../redux';
+import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
   Path,
   QueryBuilderProps,
@@ -11,26 +11,19 @@ import type {
 } from '../types';
 import { QueryBuilderContext } from './QueryBuilderContext';
 
-const rootPath = [] satisfies Path;
+/**
+ * The {@link Path} of the root group.
+ */
+export const rootPath = [] satisfies Path;
 
 /**
- * The query builder component for React.
- *
- * See https://react-querybuilder.js.org/ for demos and documentation.
+ * Context provider for the {@link QueryBuilder} state store.
  */
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderProps<RG>
-) => {
-  const setup = useQueryBuilderSetup(props);
-
-  return (
-    <Provider context={RqbStateContext} store={queryBuilderStore}>
-      <QueryBuilderInternal {...props} setup={setup} />
-    </Provider>
-  );
-};
-
-QueryBuilder.displayName = 'QueryBuilder';
+export const QueryBuilderStateProvider = ({ children }: { children: React.ReactNode }) => (
+  <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
+    {children}
+  </Provider>
+);
 
 const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
   allProps: QueryBuilderProps<RG> & {
@@ -48,6 +41,7 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
   return (
     <QueryBuilderContext.Provider key={qb.dndEnabledAttr} value={qb.rqbContext}>
       <div
+        role="form"
         className={qb.wrapperClassName}
         data-dnd={qb.dndEnabledAttr}
         data-inlinecombinators={qb.inlineCombinatorsAttr}>
@@ -69,3 +63,22 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
     </QueryBuilderContext.Provider>
   );
 };
+
+/**
+ * The query builder component for React.
+ *
+ * See https://react-querybuilder.js.org/ for demos and documentation.
+ */
+export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
+  props: QueryBuilderProps<RG>
+) => {
+  const setup = useQueryBuilderSetup(props);
+
+  return (
+    <QueryBuilderStateProvider>
+      <QueryBuilderInternal {...props} setup={setup} />
+    </QueryBuilderStateProvider>
+  );
+};
+
+QueryBuilder.displayName = 'QueryBuilder';

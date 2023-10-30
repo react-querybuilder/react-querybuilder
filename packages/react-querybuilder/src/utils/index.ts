@@ -3,6 +3,7 @@ export * from './convertQuery';
 export * from './defaultValidator';
 export * from './filterFieldsByComparator';
 export * from './formatQuery';
+export * from './generateAccessibleDescription';
 export * from './generateID';
 export * from './getCompatContextProvider';
 export * from './getValidationClassNames';

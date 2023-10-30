@@ -16,7 +16,8 @@ import type {
   RuleGroupProps,
   RuleType,
   Schema,
-} from '../src/types/';
+} from '../src/types';
+import { generateAccessibleDescription } from '../src/utils';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number) =>
@@ -143,6 +144,7 @@ export const ruleGroupClassnames = {
 } satisfies Partial<Classnames>;
 
 const ruleGroupSchema = {
+  qbId: 'qbId',
   fields: [{ name: 'field1', label: 'Field 1' }],
   combinators: defaultCombinators,
   controls: { ...defaultControlElements, ...ruleGroupControls },
@@ -162,6 +164,7 @@ const ruleGroupSchema = {
     rules: [],
     combinator: 'and',
   }),
+  accessibleDescriptionGenerator: generateAccessibleDescription,
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,

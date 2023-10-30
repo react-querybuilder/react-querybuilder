@@ -9,17 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#537] The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. The latter accepts the return value of the former as its second parameter.
+- [#537] Some of the default labels have been updated per the table below.
+  <!-- prettier-ignore -->
+  | Key                                   | Old         | New         | Notes                               |
+  | ------------------------------------- | ----------- | ----------- | ----------------------------------- |
+  | `translations.addRule.label`          | `"+Rule"`   | `"+ Rule"`  | Space added between "+" and "Rule"  |
+  | `translations.addGroup.label`         | `"+Group"`  | `"+ Group"` | Space added between "+" and "Group" |
+  | `translations.removeRule.label`       | `"x"`       | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+  | `translations.removeGroup.label`      | `"x"`       | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+- [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
+- [#537] The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. Each hook takes the full `QueryBuilder` props object as its first parameter (as `useQueryBuilder` did), and `useQueryBuilderSchema` accepts the return value of `useQueryBuilderSetup` as its second parameter.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
-- [#537] Some of the default labels have been updated per the table below.
-  | `translations` key | Old `label` | New `label` | Notes |
-  | ------------------ | ----------- | ----------- | ----- |
-  | `addRule` | "+Rule" | "+ Rule" | A space was added before "Rule". |
-  | `addGroup` | "+Group" | "+ Group" | A space was added before "Group". |
-  | `removeRule` | "x" | "⨯" | Unicode `U+2A2F` (HTML entity `&cross;`). |
-  | `removeGroup` | "x" | "⨯" | Unicode `U+2A2F` (HTML entity `&cross;`). |
-- [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition (specifically, one rule with a negated operator–e.g., `"!="` in place of `"="`–instead of a "not" group containing a single rule).
 
 #### Compatibility packages
 
@@ -37,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `ShiftActions` component
   - `useShiftActions` hook, called by `ShiftActions`
   - New `translations` properties `shiftActionUp` and `shiftActionDown`
+- [#512] Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop.
 - [#537] The `schema` prop object, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
   - `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary.
   - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query.
@@ -1469,6 +1471,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#491]: https://github.com/react-querybuilder/react-querybuilder/pull/491
 [#499]: https://github.com/react-querybuilder/react-querybuilder/pull/499
 [#503]: https://github.com/react-querybuilder/react-querybuilder/pull/503
+[#512]: https://github.com/react-querybuilder/react-querybuilder/issues/512
 [#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
 [#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
 [#523]: https://github.com/react-querybuilder/react-querybuilder/issues/523

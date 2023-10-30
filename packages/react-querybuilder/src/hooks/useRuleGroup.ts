@@ -20,7 +20,19 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     id,
     path,
     ruleGroup: ruleGroupProp,
-    schema,
+    schema: {
+      qbId,
+      accessibleDescriptionGenerator,
+      classNames: classNamesProp,
+      combinators,
+      createRule,
+      createRuleGroup,
+      disabledPaths,
+      independentCombinators,
+      validationMap,
+      enableDragAndDrop,
+      getRuleGroupClassname,
+    },
     actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
     disabled: disabledProp,
     parentDisabled,
@@ -36,17 +48,6 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     isDragging = false,
     isOver = false,
   } = props;
-
-  const {
-    classNames: classNamesProp,
-    combinators,
-    createRule,
-    createRuleGroup,
-    independentCombinators,
-    validationMap,
-    enableDragAndDrop,
-    getRuleGroupClassname,
-  } = schema;
 
   useDeprecatedProps('ruleGroup', !!ruleGroupProp);
 
@@ -228,15 +229,21 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       const thisPath = [...path, i];
       paths[i] = {
         path: thisPath,
-        disabled: disabled || schema.disabledPaths.some(p => pathsAreEqual(thisPath, p)),
+        disabled: disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p)),
       };
     }
     return paths;
-  }, [disabled, path, ruleGroup.rules.length, schema.disabledPaths]);
+  }, [disabled, path, ruleGroup.rules.length, disabledPaths]);
+
+  const accessibleDescription = useMemo(
+    () => accessibleDescriptionGenerator({ path, qbId }),
+    [accessibleDescriptionGenerator, path, qbId]
+  );
 
   return {
     addGroup,
     addRule,
+    accessibleDescription,
     classNames,
     cloneGroup,
     combinator,

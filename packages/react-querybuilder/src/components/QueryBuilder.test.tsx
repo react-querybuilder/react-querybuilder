@@ -42,9 +42,14 @@ export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
 const { consoleError } = consoleMocks();
 
 describe('when rendered', () => {
+  it('should have the correct role', () => {
+    render(<QueryBuilder />);
+    expect(screen.getByRole('form')).toBeInTheDocument();
+  });
+
   it('should have the correct className', () => {
-    const { container } = render(<QueryBuilder />);
-    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.queryBuilder);
+    render(<QueryBuilder />);
+    expect(screen.getByRole('form')).toHaveClass(sc.queryBuilder);
   });
 
   it('should render the root RuleGroup', () => {
@@ -1621,9 +1626,9 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   it('should not validate if no validator function is provided', () => {
-    const { container } = render(<QueryBuilder />);
-    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.valid);
-    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.invalid);
+    render(<QueryBuilder />);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.valid);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.invalid);
   });
 
   it('should validate groups if default validator function is provided', async () => {
@@ -1637,18 +1642,18 @@ describe('validation', () => {
 
   it('should use custom validator function returning false', () => {
     const validator = jest.fn(() => false);
-    const { container } = render(<QueryBuilder validator={validator} />);
+    render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
-    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.valid);
-    expect(container.querySelector(`div.${sc.queryBuilder}`)).toHaveClass(sc.invalid);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.valid);
+    expect(screen.getByRole('form')).toHaveClass(sc.invalid);
   });
 
   it('should use custom validator function returning true', () => {
     const validator = jest.fn(() => true);
-    const { container } = render(<QueryBuilder validator={validator} />);
+    render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
-    expect(container.querySelector(`div.${sc.queryBuilder}`)).toHaveClass(sc.valid);
-    expect(container.querySelector(`div.${sc.queryBuilder}`)).not.toHaveClass(sc.invalid);
+    expect(screen.getByRole('form')).toHaveClass(sc.valid);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.invalid);
   });
 
   it('should pass down validationMap to children', () => {

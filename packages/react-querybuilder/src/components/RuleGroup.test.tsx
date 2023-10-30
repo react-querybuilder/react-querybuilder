@@ -16,6 +16,17 @@ const user = userEvent.setup();
 
 const { consoleError } = consoleMocks();
 
+it('should have correct accessible description', () => {
+  // Root group
+  const { rerender } = render(<RuleGroup {...getRuleGroupProps()} path={[]} />);
+  expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription('Query builder qbId');
+  // Sub group
+  rerender(<RuleGroup {...getRuleGroupProps()} path={[0]} />);
+  expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription(
+    'Rule group at path 0 in query builder qbId'
+  );
+});
+
 it('should have correct classNames', () => {
   render(<RuleGroup {...getRuleGroupProps()} />);
   expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.ruleGroup, 'custom-ruleGroup-class');
