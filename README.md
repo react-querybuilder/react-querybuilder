@@ -111,6 +111,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mnlfischer"><img src="https://avatars.githubusercontent.com/u/3883653?v=4?s=100" width="100px;" alt="Manuel"/><br /><sub><b>Manuel</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=mnlfischer" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://victorarowo.com"><img src="https://avatars.githubusercontent.com/u/25545108?v=4?s=100" width="100px;" alt="Victor Arowo"/><br /><sub><b>Victor Arowo</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=VictorArowo" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
@@ -124,7 +125,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-29-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-30-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
