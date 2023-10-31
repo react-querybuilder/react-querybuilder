@@ -40,7 +40,7 @@ const negateIfNotOp = (
 ): ElasticSearchQuery | ElasticSearchRule =>
   /^(does)?not/i.test(op) ? { bool: { must_not: elasticSearchRule } } : elasticSearchRule;
 
-const escapeSQ = (s: string) => s?.replace(/'/g, `\\'`);
+const escapeSQ = (s: string) => s?.replace(/('|\\)/g, `\\$1`);
 
 const textFunctionMap: Record<string, string> = {
   beginsWith: 'startsWith',

@@ -1044,6 +1044,8 @@ it('formats ElasticSearch correctly', () => {
       {
         combinator: 'and',
         rules: [
+          // Weird field names
+          { field: "f\\'1", operator: 'contains', value: 'v1', valueSource: 'field' },
           // Ranges
           { field: 'f1', operator: '<', value: 0 },
           { field: 'f1', operator: '<=', value: 0 },
@@ -1065,6 +1067,7 @@ it('formats ElasticSearch correctly', () => {
   ).toEqual({
     bool: {
       must: [
+        { bool: { filter: { script: { script: `doc['f\\\\\\'1'].contains(doc['v1'])` } } } },
         { range: { f1: { lt: 0 } } },
         { range: { f1: { lte: 0 } } },
         { range: { f1: { gt: 0 } } },
