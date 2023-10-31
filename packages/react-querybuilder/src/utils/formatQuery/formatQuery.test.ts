@@ -1,4 +1,7 @@
-import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
+import {
+  defaultPlaceholderFieldName as defaultFieldPlaceholder,
+  defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
+} from '../../defaults';
 import type {
   RuleGroupType,
   RuleGroupTypeIC,
@@ -27,115 +30,31 @@ import { jsonLogicAdditionalOperators, quoteFieldNamesWithArray } from './utils'
 const query: RuleGroupType = {
   id: 'g-root',
   rules: [
-    {
-      field: defaultPlaceholderFieldName,
-      operator: defaultPlaceholderOperatorName,
-      value: 'Placeholder',
-    },
-    {
-      field: defaultPlaceholderFieldName,
-      operator: '=',
-      value: 'Placeholder',
-    },
-    {
-      field: 'firstName',
-      operator: defaultPlaceholderOperatorName,
-      value: 'Placeholder',
-    },
-    {
-      field: 'firstName',
-      operator: 'null',
-      value: '',
-    },
-    {
-      field: 'lastName',
-      operator: 'notNull',
-      value: '',
-    },
-    {
-      field: 'firstName',
-      operator: 'in',
-      value: 'Test,This',
-    },
-    {
-      field: 'lastName',
-      operator: 'notIn',
-      value: 'Test,This',
-    },
-    {
-      field: 'firstName',
-      operator: 'in',
-      value: false,
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: 'Test,This',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: ['Test', 'This'],
-    },
-    {
-      field: 'lastName',
-      operator: 'notBetween',
-      value: 'Test,This',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: 'MissingComma',
-    },
-    {
-      field: 'age',
-      operator: 'between',
-      value: '12,14',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: 'OnlyFirstElement,',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: ',OnlySecondElement',
-    },
-    {
-      field: 'age',
-      operator: '=',
-      value: '26',
-    },
-    {
-      field: 'isMusician',
-      operator: '=',
-      value: true,
-    },
-    {
-      field: 'isLucky',
-      operator: '=',
-      value: false,
-    },
+    { field: defaultFieldPlaceholder, operator: defaultOperatorPlaceholder, value: 'Placeholder' },
+    { field: defaultFieldPlaceholder, operator: '=', value: 'Placeholder' },
+    { field: 'firstName', operator: defaultOperatorPlaceholder, value: 'Placeholder' },
+    { field: 'firstName', operator: 'null', value: '' },
+    { field: 'lastName', operator: 'notNull', value: '' },
+    { field: 'firstName', operator: 'in', value: 'Test,This' },
+    { field: 'lastName', operator: 'notIn', value: 'Test,This' },
+    { field: 'firstName', operator: 'in', value: false },
+    { field: 'firstName', operator: 'between', value: 'Test,This' },
+    { field: 'firstName', operator: 'between', value: ['Test', 'This'] },
+    { field: 'lastName', operator: 'notBetween', value: 'Test,This' },
+    { field: 'firstName', operator: 'between', value: 'MissingComma' },
+    { field: 'age', operator: 'between', value: '12,14' },
+    { field: 'firstName', operator: 'between', value: 'OnlyFirstElement,' },
+    { field: 'firstName', operator: 'between', value: ',OnlySecondElement' },
+    { field: 'age', operator: '=', value: '26' },
+    { field: 'isMusician', operator: '=', value: true },
+    { field: 'isLucky', operator: '=', value: false },
     {
       id: 'g-sub1',
       combinator: 'or',
       rules: [
-        {
-          field: 'gender',
-          operator: '=',
-          value: 'M',
-        },
-        {
-          field: 'job',
-          operator: '!=',
-          value: 'Programmer',
-        },
-        {
-          field: 'email',
-          operator: 'contains',
-          value: '@',
-        },
+        { field: 'gender', operator: '=', value: 'M' },
+        { field: 'job', operator: '!=', value: 'Programmer' },
+        { field: 'email', operator: 'contains', value: '@' },
       ],
       not: true,
     },
@@ -143,31 +62,11 @@ const query: RuleGroupType = {
       id: 'g-sub2',
       combinator: 'or',
       rules: [
-        {
-          field: 'lastName',
-          operator: 'doesNotContain',
-          value: 'ab',
-        },
-        {
-          field: 'job',
-          operator: 'beginsWith',
-          value: 'Prog',
-        },
-        {
-          field: 'email',
-          operator: 'endsWith',
-          value: 'com',
-        },
-        {
-          field: 'job',
-          operator: 'doesNotBeginWith',
-          value: 'Man',
-        },
-        {
-          field: 'email',
-          operator: 'doesNotEndWith',
-          value: 'fr',
-        },
+        { field: 'lastName', operator: 'doesNotContain', value: 'ab' },
+        { field: 'job', operator: 'beginsWith', value: 'Prog' },
+        { field: 'email', operator: 'endsWith', value: 'com' },
+        { field: 'job', operator: 'doesNotBeginWith', value: 'Man' },
+        { field: 'email', operator: 'doesNotEndWith', value: 'fr' },
       ],
       not: false,
     },
@@ -179,145 +78,37 @@ const mongoQuery: RuleGroupType = {
   id: 'g-root',
   combinator: 'and',
   rules: [
-    {
-      field: '~',
-      operator: '~',
-      value: 'Placeholder',
-    },
-    {
-      field: '~',
-      operator: '=',
-      value: 'Placeholder',
-    },
-    {
-      field: 'firstName',
-      operator: '~',
-      value: 'Placeholder',
-    },
-    {
-      field: 'invalid',
-      value: '',
-      operator: 'invalid',
-    },
-    {
-      field: 'firstName',
-      value: '',
-      operator: 'null',
-    },
-    {
-      field: 'lastName',
-      value: '',
-      operator: 'notNull',
-    },
-    {
-      field: 'firstName',
-      value: 'Test,This',
-      operator: 'in',
-    },
-    {
-      field: 'lastName',
-      value: 'Test,This',
-      operator: 'notIn',
-    },
-    {
-      field: 'firstName',
-      value: false,
-      operator: 'in',
-    },
-    {
-      field: 'firstName',
-      value: 'Test,This',
-      operator: 'between',
-    },
-    {
-      field: 'firstName',
-      value: ['Test', 'This'],
-      operator: 'between',
-    },
-    {
-      field: 'lastName',
-      value: 'Test,This',
-      operator: 'notBetween',
-    },
-    {
-      field: 'firstName',
-      value: '',
-      operator: 'between',
-    },
-    {
-      field: 'firstName',
-      value: false,
-      operator: 'between',
-    },
-    {
-      field: 'age',
-      value: '12,14',
-      operator: 'between',
-    },
-    {
-      field: 'age',
-      value: '26',
-      operator: '=',
-    },
-    {
-      field: 'isMusician',
-      value: true,
-      operator: '=',
-    },
-    {
-      field: 'isLucky',
-      value: false,
-      operator: '=',
-    },
-    {
-      field: 'email',
-      value: '@',
-      operator: 'contains',
-    },
-    {
-      field: 'email',
-      value: 'ab',
-      operator: 'beginsWith',
-    },
-    {
-      field: 'email',
-      value: 'com',
-      operator: 'endsWith',
-    },
-    {
-      field: 'hello',
-      value: 'com',
-      operator: 'doesNotContain',
-    },
-    {
-      field: 'job',
-      value: 'Man',
-      operator: 'doesNotBeginWith',
-    },
-    {
-      field: 'job',
-      value: 'ger',
-      operator: 'doesNotEndWith',
-    },
+    { field: '~', operator: '~', value: 'Placeholder' },
+    { field: '~', operator: '=', value: 'Placeholder' },
+    { field: 'firstName', operator: '~', value: 'Placeholder' },
+    { field: 'invalid', value: '', operator: 'invalid' },
+    { field: 'firstName', value: '', operator: 'null' },
+    { field: 'lastName', value: '', operator: 'notNull' },
+    { field: 'firstName', value: 'Test,This', operator: 'in' },
+    { field: 'lastName', value: 'Test,This', operator: 'notIn' },
+    { field: 'firstName', value: false, operator: 'in' },
+    { field: 'firstName', value: 'Test,This', operator: 'between' },
+    { field: 'firstName', value: ['Test', 'This'], operator: 'between' },
+    { field: 'lastName', value: 'Test,This', operator: 'notBetween' },
+    { field: 'firstName', value: '', operator: 'between' },
+    { field: 'firstName', value: false, operator: 'between' },
+    { field: 'age', value: '12,14', operator: 'between' },
+    { field: 'age', value: '26', operator: '=' },
+    { field: 'isMusician', value: true, operator: '=' },
+    { field: 'isLucky', value: false, operator: '=' },
+    { field: 'email', value: '@', operator: 'contains' },
+    { field: 'email', value: 'ab', operator: 'beginsWith' },
+    { field: 'email', value: 'com', operator: 'endsWith' },
+    { field: 'hello', value: 'com', operator: 'doesNotContain' },
+    { field: 'job', value: 'Man', operator: 'doesNotBeginWith' },
+    { field: 'job', value: 'ger', operator: 'doesNotEndWith' },
     {
       id: 'g-sub1',
       combinator: 'or',
       rules: [
-        {
-          field: 'job',
-          value: 'Sales Executive',
-          operator: '=',
-        },
-        {
-          field: 'job',
-          value: [],
-          operator: 'in',
-        },
-        {
-          field: 'job',
-          value: ['just one value'],
-          operator: 'between',
-        },
+        { field: 'job', value: 'Sales Executive', operator: '=' },
+        { field: 'job', value: [], operator: 'in' },
+        { field: 'job', value: ['just one value'], operator: 'between' },
       ],
       not: false,
     },
@@ -327,42 +118,12 @@ const mongoQuery: RuleGroupType = {
 const queryWithValueSourceField: RuleGroupType = {
   combinator: 'and',
   rules: [
-    {
-      field: 'firstName',
-      operator: 'null',
-      value: '',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
-      operator: 'notNull',
-      value: '',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'in',
-      value: 'middleName,lastName',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
-      operator: 'notIn',
-      value: 'middleName,lastName',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'in',
-      value: false,
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: 'middleName,lastName',
-      valueSource: 'field',
-    },
+    { field: 'firstName', operator: 'null', value: '', valueSource: 'field' },
+    { field: 'lastName', operator: 'notNull', value: '', valueSource: 'field' },
+    { field: 'firstName', operator: 'in', value: 'middleName,lastName', valueSource: 'field' },
+    { field: 'lastName', operator: 'notIn', value: 'middleName,lastName', valueSource: 'field' },
+    { field: 'firstName', operator: 'in', value: false, valueSource: 'field' },
+    { field: 'firstName', operator: 'between', value: 'middleName,lastName', valueSource: 'field' },
     {
       field: 'firstName',
       operator: 'between',
@@ -375,46 +136,16 @@ const queryWithValueSourceField: RuleGroupType = {
       value: 'middleName,lastName',
       valueSource: 'field',
     },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: 'MissingComma',
-      valueSource: 'field',
-    },
-    {
-      field: 'age',
-      operator: '=',
-      value: 'iq',
-      valueSource: 'field',
-    },
-    {
-      field: 'isMusician',
-      operator: '=',
-      value: 'isCreative',
-      valueSource: 'field',
-    },
+    { field: 'firstName', operator: 'between', value: 'MissingComma', valueSource: 'field' },
+    { field: 'age', operator: '=', value: 'iq', valueSource: 'field' },
+    { field: 'isMusician', operator: '=', value: 'isCreative', valueSource: 'field' },
     {
       id: 'g-sub1',
       combinator: 'or',
       rules: [
-        {
-          field: 'gender',
-          operator: '=',
-          value: 'someLetter',
-          valueSource: 'field',
-        },
-        {
-          field: 'job',
-          operator: '!=',
-          value: 'isBetweenJobs',
-          valueSource: 'field',
-        },
-        {
-          field: 'email',
-          operator: 'contains',
-          value: 'atSign',
-          valueSource: 'field',
-        },
+        { field: 'gender', operator: '=', value: 'someLetter', valueSource: 'field' },
+        { field: 'job', operator: '!=', value: 'isBetweenJobs', valueSource: 'field' },
+        { field: 'email', operator: 'contains', value: 'atSign', valueSource: 'field' },
       ],
       not: true,
     },
@@ -422,36 +153,11 @@ const queryWithValueSourceField: RuleGroupType = {
       id: 'g-sub2',
       combinator: 'or',
       rules: [
-        {
-          field: 'lastName',
-          operator: 'doesNotContain',
-          value: 'firstName',
-          valueSource: 'field',
-        },
-        {
-          field: 'job',
-          operator: 'beginsWith',
-          value: 'jobPrefix',
-          valueSource: 'field',
-        },
-        {
-          field: 'email',
-          operator: 'endsWith',
-          value: 'dotCom',
-          valueSource: 'field',
-        },
-        {
-          field: 'job',
-          operator: 'doesNotBeginWith',
-          value: 'hasNoJob',
-          valueSource: 'field',
-        },
-        {
-          field: 'email',
-          operator: 'doesNotEndWith',
-          value: 'isInvalid',
-          valueSource: 'field',
-        },
+        { field: 'lastName', operator: 'doesNotContain', value: 'firstName', valueSource: 'field' },
+        { field: 'job', operator: 'beginsWith', value: 'jobPrefix', valueSource: 'field' },
+        { field: 'email', operator: 'endsWith', value: 'dotCom', valueSource: 'field' },
+        { field: 'job', operator: 'doesNotBeginWith', value: 'hasNoJob', valueSource: 'field' },
+        { field: 'email', operator: 'doesNotEndWith', value: 'isInvalid', valueSource: 'field' },
       ],
       not: false,
     },
@@ -461,48 +167,13 @@ const mongoQueryWithValueSourceField: RuleGroupType = {
   id: 'g-root',
   combinator: 'and',
   rules: [
-    {
-      field: 'invalid',
-      operator: 'invalid',
-      value: '',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'null',
-      value: '',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
-      operator: 'notNull',
-      value: '',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'in',
-      value: 'middleName,lastName',
-      valueSource: 'field',
-    },
-    {
-      field: 'lastName',
-      operator: 'notIn',
-      value: 'middleName,lastName',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'in',
-      value: false,
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: 'middleName,lastName',
-      valueSource: 'field',
-    },
+    { field: 'invalid', operator: 'invalid', value: '', valueSource: 'field' },
+    { field: 'firstName', operator: 'null', value: '', valueSource: 'field' },
+    { field: 'lastName', operator: 'notNull', value: '', valueSource: 'field' },
+    { field: 'firstName', operator: 'in', value: 'middleName,lastName', valueSource: 'field' },
+    { field: 'lastName', operator: 'notIn', value: 'middleName,lastName', valueSource: 'field' },
+    { field: 'firstName', operator: 'in', value: false, valueSource: 'field' },
+    { field: 'firstName', operator: 'between', value: 'middleName,lastName', valueSource: 'field' },
     {
       field: 'firstName',
       operator: 'between',
@@ -515,77 +186,20 @@ const mongoQueryWithValueSourceField: RuleGroupType = {
       value: 'middleName,lastName',
       valueSource: 'field',
     },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: '',
-      valueSource: 'field',
-    },
-    {
-      field: 'firstName',
-      operator: 'between',
-      value: false,
-      valueSource: 'field',
-    },
-    {
-      field: 'age',
-      operator: '=',
-      value: 'iq',
-      valueSource: 'field',
-    },
-    {
-      field: 'isMusician',
-      operator: '=',
-      value: 'isCreative',
-      valueSource: 'field',
-    },
-    {
-      field: 'email',
-      operator: 'contains',
-      value: 'atSign',
-      valueSource: 'field',
-    },
-    {
-      field: 'email',
-      operator: 'beginsWith',
-      value: 'name',
-      valueSource: 'field',
-    },
-    {
-      field: 'email',
-      operator: 'endsWith',
-      value: 'dotCom',
-      valueSource: 'field',
-    },
-    {
-      field: 'hello',
-      operator: 'doesNotContain',
-      value: 'dotCom',
-      valueSource: 'field',
-    },
-    {
-      field: 'job',
-      operator: 'doesNotBeginWith',
-      value: 'noJob',
-      valueSource: 'field',
-    },
-    {
-      field: 'job',
-      operator: 'doesNotEndWith',
-      value: 'noJob',
-      valueSource: 'field',
-    },
+    { field: 'firstName', operator: 'between', value: '', valueSource: 'field' },
+    { field: 'firstName', operator: 'between', value: false, valueSource: 'field' },
+    { field: 'age', operator: '=', value: 'iq', valueSource: 'field' },
+    { field: 'isMusician', operator: '=', value: 'isCreative', valueSource: 'field' },
+    { field: 'email', operator: 'contains', value: 'atSign', valueSource: 'field' },
+    { field: 'email', operator: 'beginsWith', value: 'name', valueSource: 'field' },
+    { field: 'email', operator: 'endsWith', value: 'dotCom', valueSource: 'field' },
+    { field: 'hello', operator: 'doesNotContain', value: 'dotCom', valueSource: 'field' },
+    { field: 'job', operator: 'doesNotBeginWith', value: 'noJob', valueSource: 'field' },
+    { field: 'job', operator: 'doesNotEndWith', value: 'noJob', valueSource: 'field' },
     {
       id: 'g-sub1',
       combinator: 'or',
-      rules: [
-        {
-          field: 'job',
-          operator: '=',
-          value: 'executiveJobName',
-          valueSource: 'field',
-        },
-      ],
+      rules: [{ field: 'job', operator: '=', value: 'executiveJobName', valueSource: 'field' }],
       not: false,
     },
   ],
@@ -982,10 +596,7 @@ it('formats CEL correctly', () => {
   ).toBe(celStringForValueSourceField);
   expect(
     formatQuery(
-      {
-        combinator: 'and',
-        rules: [{ field: 'f', operator: 'between', value: [14, 12] }],
-      },
+      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
       'cel'
     )
   ).toBe('(f >= 12 && f <= 14)');
@@ -1003,10 +614,7 @@ it('formats SpEL correctly', () => {
   ).toBe(spelStringForValueSourceField);
   expect(
     formatQuery(
-      {
-        combinator: 'and',
-        rules: [{ field: 'f', operator: 'between', value: [14, 12] }],
-      },
+      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
       'spel'
     )
   ).toBe('(f >= 12 and f <= 14)');
@@ -1088,16 +696,8 @@ it('handles custom valueProcessors correctly', () => {
     id: 'g-root',
     combinator: 'and',
     rules: [
-      {
-        field: 'instrument',
-        value: ['Guitar', 'Vocals'],
-        operator: 'in',
-      },
-      {
-        field: 'lastName',
-        value: 'Vai',
-        operator: '=',
-      },
+      { field: 'instrument', value: ['Guitar', 'Vocals'], operator: 'in' },
+      { field: 'lastName', value: 'Vai', operator: '=' },
     ],
     not: false,
   };
@@ -1159,22 +759,9 @@ it('handles quoteFieldNamesWith correctly', () => {
     id: 'g-root',
     combinator: 'and',
     rules: [
-      {
-        field: 'instrument',
-        value: 'Guitar, Vocals',
-        operator: 'in',
-      },
-      {
-        field: 'lastName',
-        value: 'Vai',
-        operator: '=',
-      },
-      {
-        field: 'lastName',
-        value: 'firstName',
-        operator: '!=',
-        valueSource: 'field',
-      },
+      { field: 'instrument', value: 'Guitar, Vocals', operator: 'in' },
+      { field: 'lastName', value: 'Vai', operator: '=' },
+      { field: 'lastName', value: 'firstName', operator: '!=', valueSource: 'field' },
     ],
     not: false,
   };
@@ -1190,11 +777,7 @@ it('handles quoteFieldNamesWith correctly', () => {
 
 it('handles custom fallbackExpression correctly', () => {
   const fallbackExpression = 'fallbackExpression';
-  const queryToTest: RuleGroupType = {
-    id: 'g-root',
-    combinator: 'and',
-    rules: [],
-  };
+  const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
 
   expect(formatQuery(queryToTest, { format: 'sql', fallbackExpression })).toBe(fallbackExpression);
 });
@@ -1203,14 +786,7 @@ it('handles json_without_ids correctly', () => {
   const queryToTest: RuleGroupType = {
     id: 'root',
     combinator: 'and',
-    rules: [
-      {
-        field: 'firstName',
-        value: '',
-        operator: 'null',
-        valueSource: 'value',
-      },
-    ],
+    rules: [{ field: 'firstName', value: '', operator: 'null', valueSource: 'value' }],
     not: false,
   };
   const expectedResult =
@@ -1231,12 +807,7 @@ it('uses paramPrefix correctly', () => {
   const paramPrefix = '$';
 
   // Control (default) - param prefixes removed
-  expect(
-    formatQuery(queryToTest, {
-      format: 'parameterized_named',
-      paramPrefix,
-    })
-  ).toEqual({
+  expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix })).toEqual({
     sql,
     params: {
       firstName_1: 'Test',
@@ -1275,10 +846,7 @@ describe('escapes quotes when appropriate', () => {
   for (const attempt of [
     { fmt: 'sql', result: `(f1 = 'Te''st')` },
     { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
-    {
-      fmt: 'parameterized_named',
-      result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } },
-    },
+    { fmt: 'parameterized_named', result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } } },
     { fmt: 'spel', result: `f1 == 'Te\\'st'` },
   ]) {
     it(`escapes single quotes (if appropriate) for ${attempt.fmt} export`, () => {
@@ -1442,10 +1010,7 @@ describe('validation', () => {
               { id: 'f2', field: 'field2', operator: '=', value: '' },
             ],
           },
-          {
-            format: 'sql',
-            validator: () => ({ f1: false }),
-          }
+          { format: 'sql', validator: () => ({ f1: false }) }
         )
       ).toBe(`(field2 = '')`);
     });
@@ -1458,10 +1023,7 @@ describe('validation', () => {
             combinator: 'and',
             rules: [],
           },
-          {
-            format: 'sql',
-            validator: () => ({ root: false }),
-          }
+          { format: 'sql', validator: () => ({ root: false }) }
         )
       ).toBe('(1 = 1)');
     });
@@ -1474,10 +1036,7 @@ describe('validation', () => {
             combinator: 'and',
             rules: [{ id: 'inner', combinator: 'and', rules: [] }],
           },
-          {
-            format: 'sql',
-            validator: () => ({ inner: false }),
-          }
+          { format: 'sql', validator: () => ({ inner: false }) }
         )
       ).toBe('()');
     });
@@ -1510,26 +1069,18 @@ describe('validation', () => {
         ],
       };
       const fields = [{ name: 'field', validator: () => false }];
-      expect(
-        formatQuery(queryToTest, {
-          format: 'parameterized',
-          fields,
-        })
-      ).toEqual({ sql: `(field2 = ?)`, params: [''] });
-      expect(
-        formatQuery(queryToTest, {
-          format: 'parameterized_named',
-          fields,
-        })
-      ).toEqual({ sql: '(field2 = :field2_1)', params: { field2_1: '' } });
+      expect(formatQuery(queryToTest, { format: 'parameterized', fields })).toEqual({
+        sql: `(field2 = ?)`,
+        params: [''],
+      });
+      expect(formatQuery(queryToTest, { format: 'parameterized_named', fields })).toEqual({
+        sql: '(field2 = :field2_1)',
+        params: { field2_1: '' },
+      });
     });
 
     it('should invalidate parameterized', () => {
-      const queryToTest: RuleGroupType = {
-        id: 'root',
-        combinator: 'and',
-        rules: [],
-      };
+      const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
       expect(formatQuery(queryToTest, { format: 'parameterized' })).toEqual({
         sql: '(1 = 1)',
         params: [],
@@ -1545,33 +1096,21 @@ describe('validation', () => {
           },
           { format: 'parameterized', validator: () => ({ not_root: false }) }
         )
-      ).toEqual({
-        sql: '(f1 = ?)',
-        params: ['v1'],
-      });
+      ).toEqual({ sql: '(f1 = ?)', params: ['v1'] });
+      expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual(
+        {
+          sql: '(1 = 1)',
+          params: [],
+        }
+      );
       expect(
-        formatQuery(queryToTest, {
-          format: 'parameterized',
-          validator: () => false,
-        })
-      ).toEqual({
-        sql: '(1 = 1)',
-        params: [],
-      });
-      expect(
-        formatQuery(queryToTest, {
-          format: 'parameterized',
-          validator: () => ({ root: false }),
-        })
+        formatQuery(queryToTest, { format: 'parameterized', validator: () => ({ root: false }) })
       ).toEqual({
         sql: '(1 = 1)',
         params: [],
       });
       expect(
-        formatQuery(queryToTest, {
-          format: 'parameterized_named',
-          validator: () => false,
-        })
+        formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
       ).toEqual({ sql: '(1 = 1)', params: {} });
     });
   });
@@ -1625,15 +1164,8 @@ describe('validation', () => {
     it('should invalidate mongodb outermost group', () => {
       expect(
         formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [],
-          },
-          {
-            format: 'mongodb',
-            validator: () => ({ root: false }),
-          }
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'mongodb', validator: () => ({ root: false }) }
         )
       ).toBe('{"$and":[{"$expr":true}]}');
     });
@@ -1701,15 +1233,8 @@ describe('validation', () => {
     it('should invalidate cel outermost group', () => {
       expect(
         formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [],
-          },
-          {
-            format: 'cel',
-            validator: () => ({ root: false }),
-          }
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'cel', validator: () => ({ root: false }) }
         )
       ).toBe('1 == 1');
     });
@@ -1780,15 +1305,8 @@ describe('validation', () => {
     it('should invalidate spel outermost group', () => {
       expect(
         formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [],
-          },
-          {
-            format: 'spel',
-            validator: () => ({ root: false }),
-          }
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'spel', validator: () => ({ root: false }) }
         )
       ).toBe('1 == 1');
     });
@@ -1859,15 +1377,8 @@ describe('validation', () => {
     it('should invalidate jsonlogic outermost group', () => {
       expect(
         formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [],
-          },
-          {
-            format: 'jsonlogic',
-            validator: () => ({ root: false }),
-          }
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'jsonlogic', validator: () => ({ root: false }) }
         )
       ).toBe(false);
     });
@@ -1938,15 +1449,8 @@ describe('validation', () => {
     it('should invalidate elasticsearch outermost group', () => {
       expect(
         formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [],
-          },
-          {
-            format: 'elasticsearch',
-            validator: () => ({ root: false }),
-          }
+          { id: 'root', combinator: 'and', rules: [] },
+          { format: 'elasticsearch', validator: () => ({ root: false }) }
         )
       ).toEqual({});
     });
@@ -1954,15 +1458,8 @@ describe('validation', () => {
     it('should invalidate elasticsearch inner group', () => {
       expect(
         formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-          },
-          {
-            format: 'elasticsearch',
-            validator: () => ({ inner: false }),
-          }
+          { id: 'root', combinator: 'and', rules: [{ id: 'inner', combinator: 'and', rules: [] }] },
+          { format: 'elasticsearch', validator: () => ({ inner: false }) }
         )
       ).toEqual({});
     });
@@ -2053,91 +1550,27 @@ describe('parseNumbers', () => {
   const queryForNumberParsing: RuleGroupType = {
     combinator: 'and',
     rules: [
-      {
-        field: 'f',
-        operator: '>',
-        value: 'NaN',
-      },
-      {
-        field: 'f',
-        operator: '=',
-        value: '0',
-      },
-      {
-        field: 'f',
-        operator: '=',
-        value: '    0    ',
-      },
-      {
-        field: 'f',
-        operator: '=',
-        value: 0,
-      },
+      { field: 'f', operator: '>', value: 'NaN' },
+      { field: 'f', operator: '=', value: '0' },
+      { field: 'f', operator: '=', value: '    0    ' },
+      { field: 'f', operator: '=', value: 0 },
       {
         combinator: 'or',
         rules: [
-          {
-            field: 'f',
-            operator: '<',
-            value: '1.5',
-          },
-          {
-            field: 'f',
-            operator: '>',
-            value: 1.5,
-          },
+          { field: 'f', operator: '<', value: '1.5' },
+          { field: 'f', operator: '>', value: 1.5 },
         ],
       },
-      {
-        field: 'f',
-        operator: 'in',
-        value: '0, 1, 2',
-      },
-      {
-        field: 'f',
-        operator: 'in',
-        value: [0, 1, 2],
-      },
-      {
-        field: 'f',
-        operator: 'in',
-        value: '0, abc, 2',
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: '0, 1',
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: [0, 1],
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: '0, abc',
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: '1',
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: 1,
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: [1],
-      },
-      {
-        field: 'f',
-        operator: 'between',
-        value: [{}, {}],
-      },
+      { field: 'f', operator: 'in', value: '0, 1, 2' },
+      { field: 'f', operator: 'in', value: [0, 1, 2] },
+      { field: 'f', operator: 'in', value: '0, abc, 2' },
+      { field: 'f', operator: 'between', value: '0, 1' },
+      { field: 'f', operator: 'between', value: [0, 1] },
+      { field: 'f', operator: 'between', value: '0, abc' },
+      { field: 'f', operator: 'between', value: '1' },
+      { field: 'f', operator: 'between', value: 1 },
+      { field: 'f', operator: 'between', value: [1] },
+      { field: 'f', operator: 'between', value: [{}, {}] },
     ],
   };
 
@@ -2250,10 +1683,7 @@ describe('parseNumbers', () => {
 
   it('parses numbers for json_without_ids', () => {
     expect(
-      formatQuery(queryForNumberParsing, {
-        format: 'json_without_ids',
-        parseNumbers: true,
-      })
+      formatQuery(queryForNumberParsing, { format: 'json_without_ids', parseNumbers: true })
     ).toBe(
       '{"rules":[{"field":"f","value":"NaN","operator":">"},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"<"},{"field":"f","value":1.5,"operator":">"}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
     );
@@ -2278,10 +1708,7 @@ describe('parseNumbers', () => {
 
   it('parses numbers for parameterized', () => {
     expect(
-      formatQuery(queryForNumberParsing, {
-        format: 'parameterized',
-        parseNumbers: true,
-      })
+      formatQuery(queryForNumberParsing, { format: 'parameterized', parseNumbers: true })
     ).toHaveProperty('params', [
       'NaN',
       0,
@@ -2311,10 +1738,7 @@ describe('parseNumbers', () => {
 
   it('parses numbers for parameterized_named', () => {
     expect(
-      formatQuery(queryForNumberParsing, {
-        format: 'parameterized_named',
-        parseNumbers: true,
-      })
+      formatQuery(queryForNumberParsing, { format: 'parameterized_named', parseNumbers: true })
     ).toHaveProperty('params', {
       f_1: 'NaN',
       f_2: 0,
@@ -2343,12 +1767,7 @@ describe('parseNumbers', () => {
   });
 
   it('parses numbers for mongodb', () => {
-    expect(
-      formatQuery(queryForNumberParsing, {
-        format: 'mongodb',
-        parseNumbers: true,
-      })
-    ).toBe(
+    expect(formatQuery(queryForNumberParsing, { format: 'mongodb', parseNumbers: true })).toBe(
       '{"$and":[{"f":{"$gt":"NaN"}},{"f":0},{"f":0},{"f":0},{"$or":[{"f":{"$lt":1.5}},{"f":{"$gt":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":"abc"}},{"f":{"$gte":"[object Object]","$lte":"[object Object]"}}]}'
     );
   });
@@ -2364,12 +1783,9 @@ describe('parseNumbers', () => {
         { field: 'f', operator: 'endsWith', value: 1 },
       ],
     };
-    expect(
-      formatQuery(queryForNumberParsingCEL, {
-        format: 'cel',
-        parseNumbers: true,
-      })
-    ).toBe(`f.startsWith("1") && f.endsWith("1")`);
+    expect(formatQuery(queryForNumberParsingCEL, { format: 'cel', parseNumbers: true })).toBe(
+      `f.startsWith("1") && f.endsWith("1")`
+    );
   });
 
   it('parses numbers for spel', () => {
@@ -2453,18 +1869,10 @@ describe('placeholder names', () => {
   const queryForPlaceholders: RuleGroupType = {
     combinator: 'and',
     rules: [
-      {
-        field: defaultPlaceholderFieldName,
-        operator: defaultPlaceholderOperatorName,
-        value: 'v1',
-      },
+      { field: defaultFieldPlaceholder, operator: defaultOperatorPlaceholder, value: 'v1' },
       { field: placeholderFieldName, operator: '=', value: 'v2' },
       { field: 'f3', operator: placeholderOperatorName, value: 'v3' },
-      {
-        field: placeholderFieldName,
-        operator: placeholderOperatorName,
-        value: 'v4',
-      },
+      { field: placeholderFieldName, operator: placeholderOperatorName, value: 'v4' },
     ],
   };
 
@@ -2475,7 +1883,7 @@ describe('placeholder names', () => {
         placeholderFieldName,
         placeholderOperatorName,
       })
-    ).toBe(`(${defaultPlaceholderFieldName} ${defaultPlaceholderOperatorName} 'v1')`);
+    ).toBe(`(${defaultFieldPlaceholder} ${defaultOperatorPlaceholder} 'v1')`);
   });
 });
 
