@@ -16,7 +16,8 @@ export type ExportFormat =
   | 'mongodb'
   | 'cel'
   | 'jsonlogic'
-  | 'spel';
+  | 'spel'
+  | 'elasticsearch';
 
 /**
  * Options object shape for {@link formatQuery}.

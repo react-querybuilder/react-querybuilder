@@ -47,39 +47,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] All `label` props and `translations.*.label` properties now accept `ReactNode`. This includes all action elements (buttons), "not" toggles, and drag handles. Previously `label` was limited to `string`. This enables, for example, the assignment of SVG elements as labels.
 - [#537] The `translations` prop can now be passed down through the compatibility context providers like `<QueryBuilderBootstrap />` and `<QueryBuilderMaterial />`. The object will be merged with the `translations` prop of nested `QueryBuilder` components.
 - [#537] New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in IDEs.
+- [#526] Experimental support for ElasticSearch export format in `formatQuery`.
 
 ### Fixed
 
-- [#537] Performance is improved via `React.memo` (especially for larger queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
-
-## [v6.5.3] - 2023-10-20
-
-### Added
-
-- [#574] `transformQuery` enhancements:
-  - `rules` properties are no longer retained unconditionally. The `rules` property can be copied or renamed like any other property using the `propertyMap` option.
-  - `propertyMap` keys can now have `false` values. Properties matching a `propertyMap` key with a value of `false` will be removed without further processing (including the `rules` property, which would avoid recursion through the hierarchy althogether).
-  - New boolean option `omitPath`. When `true`, a `path` property will _not_ be added to each rule and group in the query hierarchy.
-
-## Fixed
-
-- `paramsKeepPrefix` was not applying to bind variables generated from rules with an `operator` of "between", "notBetween", "in", or "notIn".
-
-## [v6.5.2] - 2023-10-19
-
-### Changed
-
-- The `useValueEditor` hook will now update all values that are arrays (`Array.isArray(value)`) to the first element of the array (`value[0]`) when `operator` is anything except "between", "notBetween", "in", or "notIn". Previously this logic only applied when `inputType` was "number". (To bypass this logic, pass `{ skipHook: true }`.)
-
-### Added
-
-- New `paramsKeepPrefix` option for `formatQuery`, which enables compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
-
-### Fixed
-
-- [#523] `parseMongoDB` now properly handles objects in the form of `{ fieldName: { $not: { /* ...rule */ } } }`. This problem was particularly evident for `$regex` operators that should have generated rules with `"doesNot[Contain/BeginWith/EndWith]"` operators, since `formatQuery(query, 'mongodb')` produces this structure and `parseMongoDB` was not handling the inverse operation.
-- `isRuleGroup` will not error when the argument is `null`.
-- [#572] `parseSQL` now recognizes signed numeric values like `-12` or `+14`.
+- [#537] Performance is improved via `React.memo` (especially for larger queries) as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can usually be addressed with `useCallback`.
 
 ## [v6.5.1] - 2023-06-26
 
@@ -1447,6 +1419,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
 [#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
 [#523]: https://github.com/react-querybuilder/react-querybuilder/issues/523
+[#526]: https://github.com/react-querybuilder/react-querybuilder/issues/526
 [#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
 [#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
 [#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572

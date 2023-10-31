@@ -29,8 +29,6 @@ export type CommonRQBProps = Pick<
   QueryBuilderProps,
   | 'fields'
   | 'validator'
-  | 'controlClassnames'
-  | 'controlElements'
   | Exclude<
       DemoOption,
       | 'validateQuery'
