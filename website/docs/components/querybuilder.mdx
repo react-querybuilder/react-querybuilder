@@ -469,7 +469,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 | ---------------- | ---------------------------------------- | ---------------------------------------------------------------- |
 | `field`          | `string`                                 | Field name corresponding to this rule                            |
 | `fieldData`      | `Field`                                  | The entire object from the fields array for this field           |
-| `options`        | <code>OptionList&lt;Operator&gt;</code>  | Return value of getOperators(field)                              |
+| `options`        | <code>OptionList&lt;Operator&gt;</code>  | Return value of `getOperators(field, { fieldData })`             |
 | `value`          | `string`                                 | Selected operator from the existing query representation, if any |
 | `title`          | `string`                                 | `translations.operators.title`, e.g. "Operators"                 |
 | `className`      | `string`                                 | CSS `classNames` to be applied                                   |
@@ -613,58 +613,70 @@ Default is [`ValueEditor`](./valueeditor). Receives the following props per the 
 
 Default is [`ValueSelector`](./valueselector). Receives the following props per the `ValueSourceSelectorProps` interface:
 
-| Prop             | Type                                             | Description                                                      |
-| ---------------- | ------------------------------------------------ | ---------------------------------------------------------------- |
-| `field`          | `string`                                         | Field `name` corresponding to this rule                          |
-| `fieldData`      | `Field`                                          | The entire object from the `fields` array for the selected field |
-| `options`        | <code>OptionList&lt;ValueSourceOption&gt;</code> | Return value of `getValueSources(field, operator)`               |
-| `value`          | `ValueSource`                                    | Selected value source for this rule, if any                      |
-| `title`          | `string`                                         | `translations.valueSourceSelector.title`, e.g. "Value source"    |
-| `className`      | `string`                                         | CSS `classNames` to be applied                                   |
-| `handleOnChange` | `(value: any) => void`                           | Updates the rule's `valueSource`                                 |
-| `level`          | `number`                                         | The `level` of this rule                                         |
-| `context`        | `any`                                            | Container for custom props that are passed to all components     |
-| `validation`     | <code>boolean \| ValidationResult</code>         | Validation result of this rule                                   |
-| `disabled`       | `boolean`                                        | Whether this rule is disabled/locked                             |
-| `path`           | `Path`                                           | [Path](../tips/path) of this rule                                |
-| `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                      |
-| `rule`           | `RuleType`                                       | This rule                                                        |
+| Prop             | Type                                             | Description                                                       |
+| ---------------- | ------------------------------------------------ | ----------------------------------------------------------------- |
+| `field`          | `string`                                         | Field `name` corresponding to this rule                           |
+| `fieldData`      | `Field`                                          | The entire object from the `fields` array for the selected field  |
+| `options`        | <code>OptionList&lt;ValueSourceOption&gt;</code> | Return value of `getValueSources(field, operator, { fieldData })` |
+| `value`          | `ValueSource`                                    | Selected value source for this rule, if any                       |
+| `title`          | `string`                                         | `translations.valueSourceSelector.title`, e.g. "Value source"     |
+| `className`      | `string`                                         | CSS `classNames` to be applied                                    |
+| `handleOnChange` | `(value: any) => void`                           | Updates the rule's `valueSource`                                  |
+| `level`          | `number`                                         | The `level` of this rule                                          |
+| `context`        | `any`                                            | Container for custom props that are passed to all components      |
+| `validation`     | <code>boolean \| ValidationResult</code>         | Validation result of this rule                                    |
+| `disabled`       | `boolean`                                        | Whether this rule is disabled/locked                              |
+| `path`           | `Path`                                           | [Path](../tips/path) of this rule                                 |
+| `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                       |
+| `rule`           | `RuleType`                                       | This rule                                                         |
 
 ### `getOperators`
 
-`(field: string) => OptionList<Operator> | null`
+`(field: string, misc: { fieldData: Field }) => OptionList<Operator> | null`
 
 This function is invoked to get the list of allowed operators for the given `field`. If `null` is returned, the [operators](#operators) prop is used (or the default operators if the `operators` prop is not defined).
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getValueEditorType`
 
-`(field: string, operator: string) => ValueEditorType`
+`(field: string, operator: string, misc: { fieldData: Field }) => ValueEditorType`
 
 This function is invoked to get the type of [`ValueEditor`](./valueeditor) for the given `field` and `operator`. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"multiselect"`, `"checkbox"`, `"radio"`, `"textarea"`, and `"switch"`.
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getValueSources`
 
-`(field: string, operator: string) => ValueSources`;
+`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources`;
 
 This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getValueEditorSeparator`
 
-`(field: string, operator: string) => ReactNode`;
+`(field: string, operator: string, misc: { fieldData: Field }) => ReactNode`;
 
 This function should return the separator element for a given `field` and `operator`. It will be placed in between value editors when multiple are rendered, e.g. when the operator is "between". The element can be any valid React element, including a plain string (e.g. "and" or "to") or an HTML element like `<span />`.
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getInputType`
 
-`(field: string, operator: string) => string`
+`(field: string, operator: string, misc: { fieldData: Field }) => string`
 
 This function is invoked to get the `type` attribute which will be applied to the rendered `<input />` for the given `field` and `operator`. This prop is only applicable when [`getValueEditorType`](#getvalueeditortype) returns `"text"` or a falsy value. If no function is provided, `"text"` is used.
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getValues`
 
-`(field: string, operator: string) => OptionList`
+`(field: string, operator: string, misc: { fieldData: Field }) => OptionList`
 
 This function is invoked to get the list of allowed values for the given `field` and `operator`. This prop is only applicable when [`getValueEditorType`](#getvalueeditortype) returns `"select"`, `"multiselect"`, or `"radio"`. If no function is provided, an empty array is used.
+
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 
 ### `getDefaultField`
 
@@ -674,21 +686,27 @@ The default `field` for new rules. This can be a field `name` or a function that
 
 ### `getDefaultOperator`
 
-`string | ((field: string) => string)`
+`string | ((field: string, misc: { fieldData: Field }) => string)`
 
 The default `operator` for new rules. This can be an operator `name` or a function that returns an operator `name`.
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getDefaultValue`
 
-`(rule: RuleType) => any`
+`(rule: RuleType, misc: { fieldData: Field }) => any`
 
 This function returns the default `value` for new rules based on the existing rule properties.
 
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
 ### `getRuleClassname`
 
-`(rule: RuleType) => Classname`
+`(rule: RuleType, misc: { fieldData: Field }) => Classname`
 
 Generate custom classes which will be added to the outer `div` of a rule based on the rule properties.
+
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 
 ### `getRuleGroupClassname`
 

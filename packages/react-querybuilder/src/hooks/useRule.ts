@@ -134,10 +134,13 @@ export const useRule = (props: RuleProps) => {
     [fieldMap, rule.field]
   );
   const inputType = useMemo(
-    () => fieldData.inputType ?? getInputType(rule.field, rule.operator),
-    [fieldData.inputType, getInputType, rule.field, rule.operator]
+    () => fieldData.inputType ?? getInputType(rule.field, rule.operator, { fieldData }),
+    [fieldData, getInputType, rule.field, rule.operator]
   );
-  const operators = useMemo(() => getOperators(rule.field), [getOperators, rule.field]);
+  const operators = useMemo(
+    () => getOperators(rule.field, { fieldData }),
+    [fieldData, getOperators, rule.field]
+  );
   const operatorObject = useMemo(
     () => getOption(operators, rule.operator),
     [operators, rule.operator]
@@ -149,7 +152,7 @@ export const useRule = (props: RuleProps) => {
     () =>
       typeof fieldData.valueSources === 'function'
         ? fieldData.valueSources(rule.operator)
-        : fieldData.valueSources ?? getValueSources(rule.field, rule.operator),
+        : fieldData.valueSources ?? getValueSources(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueSources, rule.field, rule.operator]
   );
   const valueEditorType = useMemo(
@@ -158,18 +161,19 @@ export const useRule = (props: RuleProps) => {
         ? 'select'
         : (typeof fieldData.valueEditorType === 'function'
             ? fieldData.valueEditorType(rule.operator)
-            : fieldData.valueEditorType) ?? getValueEditorType(rule.field, rule.operator),
+            : fieldData.valueEditorType) ??
+          getValueEditorType(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorType, rule.field, rule.operator, rule.valueSource]
   );
   const valueEditorSeparator = useMemo(
-    () => getValueEditorSeparator(rule.field, rule.operator),
-    [getValueEditorSeparator, rule.field, rule.operator]
+    () => getValueEditorSeparator(rule.field, rule.operator, { fieldData }),
+    [fieldData, getValueEditorSeparator, rule.field, rule.operator]
   );
   const values = useMemo(
     () =>
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : fieldData.values ?? getValues(rule.field, rule.operator),
+        : fieldData.values ?? getValues(rule.field, rule.operator, { fieldData }),
     [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
   );
   const valueSourceOptions = useMemo(
@@ -194,7 +198,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const outerClassName = clsx(
-    getRuleClassname(rule),
+    getRuleClassname(rule, { fieldData }),
     fieldBasedClassName,
     operatorBasedClassName,
     standardClassnames.rule,
