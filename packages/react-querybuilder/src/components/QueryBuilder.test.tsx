@@ -336,67 +336,7 @@ describe('when initial operators are provided', () => {
   });
 });
 
-describe('when getOperators fn prop is provided', () => {
-  const fields: Field[] = [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
-    { name: 'age', label: 'Age' },
-  ];
-  const query: RuleGroupType = {
-    combinator: 'or',
-    not: false,
-    rules: [
-      {
-        field: 'lastName',
-        value: 'Another Test',
-        operator: '=',
-      },
-    ],
-  };
-
-  it('should invoke custom getOperators function', () => {
-    const getOperators = jest.fn(() => [{ name: 'op1', label: 'Operator 1' }]);
-    render(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
-    expect(getOperators).toHaveBeenCalled();
-  });
-
-  it('should handle invalid getOperators return value', () => {
-    render(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
-    expect(screen.getByTestId(TestID.operators)).toHaveValue('=');
-  });
-});
-
-describe('when getValueEditorType fn prop is provided', () => {
-  const fields: Field[] = [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
-    { name: 'age', label: 'Age' },
-  ];
-  const query: RuleGroupType = {
-    combinator: 'or',
-    not: false,
-    rules: [
-      {
-        field: 'lastName',
-        value: 'Another Test',
-        operator: '=',
-      },
-    ],
-  };
-
-  it('should invoke custom getValueEditorType function', () => {
-    const getValueEditorType = jest.fn(() => 'text' as const);
-    render(<QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />);
-    expect(getValueEditorType).toHaveBeenCalled();
-  });
-
-  it('should handle invalid getValueEditorType function', () => {
-    render(<QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />);
-    expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
-  });
-});
-
-describe('when getInputType fn prop is provided', () => {
+describe('get* callbacks', () => {
   const fields: Field[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
@@ -413,69 +353,88 @@ describe('when getInputType fn prop is provided', () => {
     rules: [rule],
   };
 
-  it('should invoke custom getInputType function', () => {
-    const getInputType = jest.fn(() => 'text' as const);
-    render(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
-    expect(getInputType).toHaveBeenCalledWith(rule.field, rule.operator);
+  describe('when getOperators fn prop is provided', () => {
+    it('should invoke custom getOperators function', () => {
+      const getOperators = jest.fn(() => [{ name: 'op1', label: 'Operator 1' }]);
+      render(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
+      expect(getOperators).toHaveBeenCalledWith(rule.field, { fieldData: fields[1] });
+    });
+
+    it('should handle invalid getOperators return value', () => {
+      render(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
+      expect(screen.getByTestId(TestID.operators)).toHaveValue('=');
+    });
   });
 
-  it('should handle invalid getInputType function', () => {
-    render(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
-    expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
-  });
-});
+  describe('when getValueEditorType fn prop is provided', () => {
+    it('should invoke custom getValueEditorType function', () => {
+      const getValueEditorType = jest.fn(() => 'text' as const);
+      render(
+        <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
+      );
+      expect(getValueEditorType).toHaveBeenCalledWith(rule.field, rule.operator, {
+        fieldData: fields[1],
+      });
+    });
 
-describe('when getValues fn prop is provided', () => {
-  const getValueEditorType = () => 'select' as const;
-  const fields: Field[] = [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
-    { name: 'age', label: 'Age' },
-  ];
-  const rule: RuleType = {
-    field: 'lastName',
-    operator: '=',
-    value: 'Another Test',
-  };
-  const query: RuleGroupType = {
-    combinator: 'or',
-    not: false,
-    rules: [rule],
-  };
-
-  it('should invoke custom getValues function', () => {
-    const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
-    render(
-      <QueryBuilder
-        query={query}
-        fields={fields}
-        getValueEditorType={getValueEditorType}
-        getValues={getValues}
-      />
-    );
-    expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator);
+    it('should handle invalid getValueEditorType function', () => {
+      render(<QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />);
+      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
+    });
   });
 
-  it('should generate the correct number of options', () => {
-    const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
-    render(
-      <QueryBuilder
-        query={query}
-        fields={fields}
-        getValueEditorType={getValueEditorType}
-        getValues={getValues}
-      />
-    );
-    const opts = screen.getByTestId(TestID.valueEditor).querySelectorAll('option');
-    expect(opts).toHaveLength(1);
+  describe('when getInputType fn prop is provided', () => {
+    it('should invoke custom getInputType function', () => {
+      const getInputType = jest.fn(() => 'text' as const);
+      render(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
+      expect(getInputType).toHaveBeenCalledWith(rule.field, rule.operator, {
+        fieldData: fields[1],
+      });
+    });
+
+    it('should handle invalid getInputType function', () => {
+      render(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
+      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
+    });
   });
 
-  it('should handle invalid getValues function', () => {
-    // @ts-expect-error getValues should return an array of options or option groups
-    render(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
-    const select = screen.getByTestId(TestID.valueEditor);
-    const opts = select.querySelectorAll('option');
-    expect(opts).toHaveLength(0);
+  describe('when getValues fn prop is provided', () => {
+    const getValueEditorType = () => 'select' as const;
+
+    it('should invoke custom getValues function', () => {
+      const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
+      render(
+        <QueryBuilder
+          query={query}
+          fields={fields}
+          getValueEditorType={getValueEditorType}
+          getValues={getValues}
+        />
+      );
+      expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
+    });
+
+    it('should generate the correct number of options', () => {
+      const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
+      render(
+        <QueryBuilder
+          query={query}
+          fields={fields}
+          getValueEditorType={getValueEditorType}
+          getValues={getValues}
+        />
+      );
+      const opts = screen.getByTestId(TestID.valueEditor).querySelectorAll('option');
+      expect(opts).toHaveLength(1);
+    });
+
+    it('should handle invalid getValues function', () => {
+      // @ts-expect-error getValues should return an array of options or option groups
+      render(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
+      const select = screen.getByTestId(TestID.valueEditor);
+      const opts = select.querySelectorAll('option');
+      expect(opts).toHaveLength(0);
+    });
   });
 });
 

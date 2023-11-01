@@ -59,3 +59,9 @@ it('gets the correct value sources array', () => {
   expect(getValueSourcesUtil(f4fo, '>')).toEqual(['field', 'value']);
   expect(getValueSourcesUtil(f, '=', () => ['value'])).toEqual(['value']);
 });
+
+it('calls the custom getValueSources function correctly', () => {
+  const getValueSources = jest.fn();
+  getValueSourcesUtil(f, '=', getValueSources);
+  expect(getValueSources).toHaveBeenCalledWith(f.name, '=', { fieldData: f });
+});

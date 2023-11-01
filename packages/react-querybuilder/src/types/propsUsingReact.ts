@@ -199,13 +199,13 @@ export interface Schema {
   createRuleGroup(): RuleGroupTypeAny;
   dispatchQuery(query: RuleGroupTypeAny): void;
   getQuery(): RuleGroupTypeAny | undefined;
-  getOperators(field: string): OptionList<Operator>;
-  getValueEditorType(field: string, operator: string): ValueEditorType;
-  getValueEditorSeparator(field: string, operator: string): ReactNode;
-  getValueSources(field: string, operator: string): ValueSources;
-  getInputType(field: string, operator: string): string | null;
-  getValues(field: string, operator: string): OptionList;
-  getRuleClassname(rule: RuleType): Classname;
+  getOperators(field: string, meta: { fieldData: Field }): OptionList<Operator>;
+  getValueEditorType(field: string, operator: string, meta: { fieldData: Field }): ValueEditorType;
+  getValueEditorSeparator(field: string, operator: string, meta: { fieldData: Field }): ReactNode;
+  getValueSources(field: string, operator: string, meta: { fieldData: Field }): ValueSources;
+  getInputType(field: string, operator: string, meta: { fieldData: Field }): string | null;
+  getValues(field: string, operator: string, meta: { fieldData: Field }): OptionList;
+  getRuleClassname(rule: RuleType, misc: { fieldData: Field }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   accessibleDescriptionGenerator: (props: { path: Path; qbId: string }) => string;
   showCombinatorsBetweenRules: boolean;
@@ -434,22 +434,26 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * `name` or a function that returns a valid {@link Operator} `name` for
      * a given field name.
      */
-    getDefaultOperator?: string | ((field: string) => string);
+    getDefaultOperator?: string | ((field: string, misc: { fieldData: Field }) => string);
     /**
      * Returns the default `value` for new rules.
      */
-    getDefaultValue?(rule: RuleType): any;
+    getDefaultValue?(rule: RuleType, misc: { fieldData: Field }): any;
     /**
      * This function should return the list of allowed {@link Operator}s
      * for the given {@link Field} `name`. If `null` is returned, the
      * {@link DefaultOperator}s are used.
      */
-    getOperators?(field: string): OptionList<Operator> | null;
+    getOperators?(field: string, misc: { fieldData: Field }): OptionList<Operator> | null;
     /**
      * This function should return the type of {@link ValueEditor} (see
      * {@link ValueEditorType}) for the given field `name` and operator `name`.
      */
-    getValueEditorType?(field: string, operator: string): ValueEditorType;
+    getValueEditorType?(
+      field: string,
+      operator: string,
+      misc: { fieldData: Field }
+    ): ValueEditorType;
     /**
      * This function should return the separator element for a given field
      * `name` and operator `name`. The element can be any valid React element,
@@ -457,7 +461,11 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * `<span />`. It will be placed in between value editors when multiple
      * editors are rendered, such as when the `operator` is `"between"`.
      */
-    getValueEditorSeparator?(field: string, operator: string): ReactNode;
+    getValueEditorSeparator?(
+      field: string,
+      operator: string,
+      misc: { fieldData: Field }
+    ): ReactNode;
     /**
      * This function should return the list of valid {@link ValueSources}
      * for a given field `name` and operator `name`. The return value must
@@ -465,26 +473,26 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * (i.e. `["value"]`, `["field"]`, `["value", "field"]`, or
      * `["field", "value"]`).
      */
-    getValueSources?: (field: string, operator: string) => ValueSources;
+    getValueSources?(field: string, operator: string, misc: { fieldData: Field }): ValueSources;
     /**
      * This function should return the `type` of `<input />`
      * for the given field `name` and operator `name` (only applicable when
      * `getValueEditorType` returns `"text"` or a falsy value). If no
      * function is provided, `"text"` is used as the default.
      */
-    getInputType?(field: string, operator: string): string | null;
+    getInputType?(field: string, operator: string, misc: { fieldData: Field }): string | null;
     /**
      * This function should return the list of allowed values for the
      * given field `name` and operator `name` (only applicable when
      * `getValueEditorType` returns `"select"` or `"radio"`). If no
      * function is provided, an empty array is used as the default.
      */
-    getValues?(field: string, operator: string): OptionList;
+    getValues?(field: string, operator: string, misc: { fieldData: Field }): OptionList;
     /**
      * The return value of this function will be used to apply classnames to the
      * outer `<div>` of the given {@link Rule}.
      */
-    getRuleClassname?(rule: RuleType): Classname;
+    getRuleClassname?(rule: RuleType, misc: { fieldData: Field }): Classname;
     /**
      * The return value of this function will be used to apply classnames to the
      * outer `<div>` of the given {@link RuleGroup}.

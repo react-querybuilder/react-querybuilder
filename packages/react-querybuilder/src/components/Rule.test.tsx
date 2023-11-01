@@ -10,7 +10,14 @@ import {
 } from '../../genericTests';
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../messages';
-import type { Field, ValidationResult, ValueSelectorProps, ValueSources } from '../types';
+import type {
+  Field,
+  Operator,
+  RuleType,
+  ValidationResult,
+  ValueSelectorProps,
+  ValueSources,
+} from '../types';
 import { Rule } from './Rule';
 
 const user = userEvent.setup();
@@ -329,23 +336,21 @@ describe('valueSource', () => {
 
 describe('dynamic classNames', () => {
   it('should have correct group-based classNames', () => {
-    render(
-      <Rule
-        {...getProps({
-          fieldMap: { f1: { name: 'f1', label: 'F1', className: 'custom-fieldBased-class' } },
-          getOperators: () => [
-            { name: 'op', label: 'Op', className: 'custom-operatorBased-class' },
-          ],
-          getRuleClassname: () => 'custom-ruleBased-class',
-        })}
-        rule={{ field: 'f1', operator: 'op', value: 'v1' }}
-      />
-    );
+    const rule: RuleType = { field: 'f1', operator: 'op', value: 'v1' };
+    const fieldMap = {
+      f1: { name: 'f1', label: 'F1', className: 'custom-fieldBased-class' },
+    } satisfies Record<string, Field>;
+    const getOperators = (): Operator[] => [
+      { name: 'op', label: 'Op', className: 'custom-operatorBased-class' },
+    ];
+    const getRuleClassname = jest.fn(() => 'custom-ruleBased-class');
+    render(<Rule {...getProps({ fieldMap, getOperators, getRuleClassname })} rule={rule} />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(
       'custom-ruleBased-class',
       'custom-fieldBased-class',
       'custom-operatorBased-class'
     );
+    expect(getRuleClassname).toHaveBeenCalledWith(rule, { fieldData: fieldMap.f1 });
   });
 });
 
