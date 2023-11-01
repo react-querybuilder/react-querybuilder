@@ -9,14 +9,14 @@
     "react-querybuilder": "^7.0.0-alpha.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@typescript-eslint/eslint-plugin": "^5.52.0",
-    "@typescript-eslint/parser": "^5.52.0",
-    "@vitejs/plugin-react": "^3.1.0",
-    "sass": "^1.58.2",
-    "typescript": "^4.9.5",
-    "vite": "^4.1.2"
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "@vitejs/plugin-react": "^4.1.0",
+    "sass": "^1.69.5",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
   },
   "scripts": {
     "dev": "vite",
