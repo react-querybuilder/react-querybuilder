@@ -11,7 +11,7 @@ const defaultValueSourcesArray: ValueSources = ['value'];
 export const getValueSourcesUtil = (
   fieldData: Field,
   operator: string,
-  getValueSources?: (field: string, operator: string) => ValueSources
+  getValueSources?: (field: string, operator: string, misc: { fieldData: Field }) => ValueSources
 ): ValueSources => {
   // TypeScript doesn't allow it directly, but in practice
   // `fieldData` can end up being undefined or null. The nullish
@@ -26,7 +26,7 @@ export const getValueSourcesUtil = (
     return fd.valueSources;
   }
   if (getValueSources) {
-    const vals = getValueSources(fd.name, operator);
+    const vals = getValueSources(fd.name, operator, { fieldData: fd });
     /* istanbul ignore else */
     if (vals) return vals;
   }

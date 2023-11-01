@@ -142,14 +142,13 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   );
 
   const getOperatorsMain = useCallback(
-    (field: string) => {
-      const fieldData = fieldMap[field];
+    (field: string, { fieldData }: { fieldData: Field }) => {
       let opsFinal = operators;
 
       if (fieldData?.operators) {
         opsFinal = fieldData.operators;
       } else if (getOperators) {
-        const ops = getOperators(field);
+        const ops = getOperators(field, { fieldData });
         if (ops) {
           opsFinal = ops;
         }
@@ -174,7 +173,6 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
     [
       autoSelectOperator,
       defaultOperator,
-      fieldMap,
       getOperators,
       operators,
       translations.operators.placeholderGroupLabel,
@@ -190,13 +188,13 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
       if (getDefaultOperator) {
         if (typeof getDefaultOperator === 'function') {
-          return getDefaultOperator(field);
+          return getDefaultOperator(field, { fieldData });
         } else {
           return getDefaultOperator;
         }
       }
 
-      const ops = getOperatorsMain(field) ?? /* istanbul ignore next */ [];
+      const ops = getOperatorsMain(field, { fieldData }) ?? /* istanbul ignore next */ [];
       return ops.length
         ? getFirstOption(ops) ?? /* istanbul ignore next */ ''
         : /* istanbul ignore next */ '';
@@ -207,9 +205,9 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
   // #region Rule property getters
   const getValueEditorTypeMain = useCallback(
-    (field: string, operator: string) => {
+    (field: string, operator: string, { fieldData }: { fieldData: Field }) => {
       if (getValueEditorType) {
-        const vet = getValueEditorType(field, operator);
+        const vet = getValueEditorType(field, operator, { fieldData });
         if (vet) return vet;
       }
 
@@ -225,8 +223,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   );
 
   const getValuesMain = useCallback(
-    (field: string, operator: string) => {
-      const fieldData = fieldMap[field];
+    (field: string, operator: string, { fieldData }: { fieldData: Field }) => {
       // Ignore this in tests because Rule already checks for
       // the presence of the values property in fieldData.
       /* istanbul ignore if */
@@ -234,13 +231,13 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
         return fieldData.values;
       }
       if (getValues) {
-        const vals = getValues(field, operator);
+        const vals = getValues(field, operator, { fieldData });
         if (vals) return vals;
       }
 
       return [];
     },
-    [fieldMap, getValues]
+    [getValues]
   );
 
   const getRuleDefaultValue = useCallback(
@@ -249,12 +246,12 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
         return fieldData.defaultValue;
       } else if (getDefaultValue) {
-        return getDefaultValue(rule);
+        return getDefaultValue(rule, { fieldData });
       }
 
       let value: any = '';
 
-      const values = getValuesMain(rule.field, rule.operator);
+      const values = getValuesMain(rule.field, rule.operator, { fieldData });
 
       const getFirstOptionsFrom = (opts: any[]) => {
         const firstOption = getFirstOption(opts);
@@ -281,7 +278,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
       } else if (values.length) {
         value = getFirstOptionsFrom(values);
       } else {
-        const editorType = getValueEditorTypeMain(rule.field, rule.operator);
+        const editorType = getValueEditorTypeMain(rule.field, rule.operator, { fieldData });
         if (editorType === 'checkbox') {
           value = false;
         }
@@ -293,9 +290,9 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   );
 
   const getInputTypeMain = useCallback(
-    (field: string, operator: string) => {
+    (field: string, operator: string, { fieldData }: { fieldData: Field }) => {
       if (getInputType) {
-        const inputType = getInputType(field, operator);
+        const inputType = getInputType(field, operator, { fieldData });
         if (inputType) return inputType;
       }
 
