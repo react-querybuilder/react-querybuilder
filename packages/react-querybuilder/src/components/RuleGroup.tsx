@@ -6,6 +6,7 @@ import type { RuleGroupArray, RuleGroupICArray, RuleGroupProps } from '../types'
 import { isRuleGroup, isRuleGroupType } from '../utils';
 
 /**
+ * Update changelog for #585
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
  * objects. This is actually a small wrapper around {@link RuleGroupHeaderComponents}
  * and {@link RuleGroupBodyComponents}.
@@ -68,6 +69,7 @@ export const RuleGroupHeaderComponents = React.memo(
       <>
         {rg.path.length > 0 && rg.schema.showShiftActions && (
           <ShiftActionsControlElement
+            key={TestID.shiftActions}
             testID={TestID.shiftActions}
             level={rg.path.length}
             path={rg.path}
@@ -90,6 +92,7 @@ export const RuleGroupHeaderComponents = React.memo(
         )}
         {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
           <DragHandleControlElement
+            key={TestID.dragHandle}
             testID={TestID.dragHandle}
             ref={rg.dragRef}
             level={rg.path.length}
@@ -106,6 +109,7 @@ export const RuleGroupHeaderComponents = React.memo(
         )}
         {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
           <CombinatorSelectorControlElement
+            key={TestID.combinators}
             testID={TestID.combinators}
             options={rg.schema.combinators}
             value={rg.combinator}
@@ -123,6 +127,7 @@ export const RuleGroupHeaderComponents = React.memo(
         )}
         {rg.schema.showNotToggle && (
           <NotToggleControlElement
+            key={TestID.notToggle}
             testID={TestID.notToggle}
             className={rg.classNames.notToggle}
             title={rg.translations.notToggle.title}
@@ -139,6 +144,7 @@ export const RuleGroupHeaderComponents = React.memo(
           />
         )}
         <AddRuleActionControlElement
+          key={TestID.addRule}
           testID={TestID.addRule}
           label={rg.translations.addRule.label}
           title={rg.translations.addRule.title}
@@ -154,6 +160,7 @@ export const RuleGroupHeaderComponents = React.memo(
           schema={rg.schema}
         />
         <AddGroupActionControlElement
+          key={TestID.addGroup}
           testID={TestID.addGroup}
           label={rg.translations.addGroup.label}
           title={rg.translations.addGroup.title}
@@ -170,6 +177,7 @@ export const RuleGroupHeaderComponents = React.memo(
         />
         {rg.schema.showCloneButtons && rg.path.length >= 1 && (
           <CloneGroupActionControlElement
+            key={TestID.cloneGroup}
             testID={TestID.cloneGroup}
             label={rg.translations.cloneRuleGroup.label}
             title={rg.translations.cloneRuleGroup.title}
@@ -187,6 +195,7 @@ export const RuleGroupHeaderComponents = React.memo(
         )}
         {rg.schema.showLockButtons && (
           <LockGroupActionControlElement
+            key={TestID.lockGroup}
             testID={TestID.lockGroup}
             label={rg.translations.lockGroup.label}
             title={rg.translations.lockGroup.title}
@@ -205,6 +214,7 @@ export const RuleGroupHeaderComponents = React.memo(
         )}
         {rg.path.length > 0 && (
           <RemoveGroupActionControlElement
+            key={TestID.removeGroup}
             testID={TestID.removeGroup}
             label={rg.translations.removeGroup.label}
             title={rg.translations.removeGroup.title}
@@ -257,6 +267,7 @@ export const RuleGroupBodyComponents = React.memo(
                   !rg.schema.independentCombinators &&
                   rg.schema.showCombinatorsBetweenRules && (
                     <InlineCombinatorControlElement
+                      key="inline-combinator"
                       options={rg.schema.combinators}
                       value={rg.combinator}
                       title={rg.translations.combinators.title}
@@ -275,6 +286,7 @@ export const RuleGroupBodyComponents = React.memo(
                   )}
                 {typeof r === 'string' ? (
                   <InlineCombinatorControlElement
+                    key="inline-combinator-str"
                     options={rg.schema.combinators}
                     value={r}
                     title={rg.translations.combinators.title}
@@ -292,6 +304,7 @@ export const RuleGroupBodyComponents = React.memo(
                   />
                 ) : isRuleGroup(r) ? (
                   <RuleGroupControlElement
+                    key="rule-group"
                     id={r.id}
                     schema={rg.schema}
                     actions={rg.actions}
@@ -308,6 +321,7 @@ export const RuleGroupBodyComponents = React.memo(
                   />
                 ) : (
                   <RuleControlElement
+                    key="rule"
                     id={r.id!}
                     rule={r}
                     field={r.field}
