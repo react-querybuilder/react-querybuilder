@@ -51,6 +51,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [#537] Performance is improved via `React.memo` (especially for larger queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
+- [#585] Fixed invalid reference to `generatePicker` in `@react-querybuilder/antd`.
+- [#585] Avoid React warning about unique `key` props.
 
 ## [v6.5.3] - 2023-10-20
 
@@ -1452,6 +1454,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572
 [#574]: https://github.com/react-querybuilder/react-querybuilder/issues/574
 [#577]: https://github.com/react-querybuilder/react-querybuilder/pull/577
+[#585]: https://github.com/react-querybuilder/react-querybuilder/pull/585
 
 <!-- Release comparison links -->
 
