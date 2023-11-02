@@ -1,7 +1,6 @@
-import { DatePicker as AntdDatePicker, Checkbox, Input, Radio, Switch, TimePicker } from 'antd';
+import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import * as React from 'react';
 import {
   getFirstOption,
@@ -11,8 +10,6 @@ import {
   type ValueEditorProps,
 } from 'react-querybuilder';
 import { AntDValueSelector } from './AntDValueSelector';
-
-const DatePicker = AntdDatePicker.generatePicker(dayjsGenerateConfig);
 
 export const AntDValueEditor = ({
   fieldData,
