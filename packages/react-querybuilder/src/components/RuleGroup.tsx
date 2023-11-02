@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { TestID } from '../defaults';
 import { useRuleGroup, useStopEventPropagation } from '../hooks';
 import type { RuleGroupProps } from '../types';
-import { pathsAreEqual } from '../utils';
+import { isRuleGroup, isRuleGroupType, pathsAreEqual } from '../utils';
 
 export const RuleGroup = (props: RuleGroupProps) => {
   const rg = { ...props, ...useRuleGroup(props) };
@@ -61,6 +61,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
     <>
       {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
         <DragHandleControlElement
+          key={TestID.dragHandle}
           testID={TestID.dragHandle}
           ref={rg.dragRef}
           level={rg.path.length}
@@ -77,6 +78,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
       )}
       {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
         <CombinatorSelectorControlElement
+          key={TestID.combinators}
           testID={TestID.combinators}
           options={rg.schema.combinators}
           value={rg.combinator}
@@ -94,6 +96,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
       )}
       {rg.schema.showNotToggle && (
         <NotToggleControlElement
+          key={TestID.notToggle}
           testID={TestID.notToggle}
           className={rg.classNames.notToggle}
           title={rg.translations.notToggle.title}
@@ -110,6 +113,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
         />
       )}
       <AddRuleActionControlElement
+        key={TestID.addRule}
         testID={TestID.addRule}
         label={rg.translations.addRule.label}
         title={rg.translations.addRule.title}
@@ -125,6 +129,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
         schema={rg.schema}
       />
       <AddGroupActionControlElement
+        key={TestID.addGroup}
         testID={TestID.addGroup}
         label={rg.translations.addGroup.label}
         title={rg.translations.addGroup.title}
@@ -141,6 +146,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
       />
       {rg.schema.showCloneButtons && rg.path.length >= 1 && (
         <CloneGroupActionControlElement
+          key={TestID.cloneGroup}
           testID={TestID.cloneGroup}
           label={rg.translations.cloneRuleGroup.label}
           title={rg.translations.cloneRuleGroup.title}
@@ -158,6 +164,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
       )}
       {rg.schema.showLockButtons && (
         <LockGroupActionControlElement
+          key={TestID.lockGroup}
           testID={TestID.lockGroup}
           label={rg.translations.lockGroup.label}
           title={rg.translations.lockGroup.title}
@@ -176,6 +183,7 @@ export const RuleGroupHeaderComponents = (rg: RuleGroupProps & ReturnType<typeof
       )}
       {rg.path.length > 0 && (
         <RemoveGroupActionControlElement
+          key={TestID.removeGroup}
           testID={TestID.removeGroup}
           label={rg.translations.removeGroup.label}
           title={rg.translations.removeGroup.title}
@@ -222,6 +230,7 @@ export const RuleGroupBodyComponents = (rg: RuleGroupProps & ReturnType<typeof u
               !rg.schema.independentCombinators &&
               rg.schema.showCombinatorsBetweenRules && (
                 <InlineCombinatorControlElement
+                  key="inline-combinator"
                   options={rg.schema.combinators}
                   value={rg.combinator}
                   title={rg.translations.combinators.title}
@@ -240,6 +249,7 @@ export const RuleGroupBodyComponents = (rg: RuleGroupProps & ReturnType<typeof u
               )}
             {typeof r === 'string' ? (
               <InlineCombinatorControlElement
+                key="inline-combinator-str"
                 options={rg.schema.combinators}
                 value={r}
                 title={rg.translations.combinators.title}
@@ -255,8 +265,9 @@ export const RuleGroupBodyComponents = (rg: RuleGroupProps & ReturnType<typeof u
                 independentCombinators={rg.schema.independentCombinators}
                 schema={rg.schema}
               />
-            ) : 'rules' in r ? (
+            ) : isRuleGroup(r) ? (
               <RuleGroupControlElement
+                key="rule-group"
                 id={r.id}
                 schema={rg.schema}
                 actions={rg.actions}
@@ -264,7 +275,7 @@ export const RuleGroupBodyComponents = (rg: RuleGroupProps & ReturnType<typeof u
                 translations={rg.translations}
                 ruleGroup={r}
                 rules={r.rules}
-                combinator={'combinator' in r ? r.combinator : undefined}
+                combinator={isRuleGroupType(r) ? r.combinator : undefined}
                 not={!!r.not}
                 disabled={thisPathDisabled}
                 parentDisabled={rg.parentDisabled || rg.disabled}
@@ -272,6 +283,7 @@ export const RuleGroupBodyComponents = (rg: RuleGroupProps & ReturnType<typeof u
               />
             ) : (
               <RuleControlElement
+                key="rule"
                 id={r.id!}
                 rule={r}
                 field={r.field}
