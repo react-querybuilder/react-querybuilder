@@ -2,13 +2,8 @@ import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import * as React from 'react';
-import {
-  getFirstOption,
-  standardClassnames,
-  toArray,
-  useValueEditor,
-  type ValueEditorProps,
-} from 'react-querybuilder';
+import type { ValueEditorProps } from 'react-querybuilder';
+import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { AntDValueSelector } from './AntDValueSelector';
 
 export const AntDValueEditor = ({
@@ -174,34 +169,38 @@ export const AntDValueEditor = ({
 
   switch (inputTypeCoerced) {
     case 'date':
-    case 'datetime-local':
-      return operator === 'between' || operator === 'notBetween' ? (
-        <DatePicker.RangePicker
-          value={
-            toArray(value)?.length >= 2
-              ? (toArray(value).map(v => dayjs(v)) as [Dayjs, Dayjs])
-              : undefined
-          }
-          showTime={inputTypeCoerced === 'datetime-local'}
-          className={className}
-          disabled={disabled}
-          placeholder={[placeHolderText, placeHolderText]}
-          // TODO: the function below is currently untested (see the
-          // "should render a date range picker" test in ./AntD.test.tsx)
-          onChange={
-            /* istanbul ignore next */
-            dates => {
-              const format = `YYYY-MM-DD${
-                inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : ''
-              }`;
-              const dateArray = dates?.map(d => d?.format(format));
-              handleOnChange(dateArray ? (listsAsArrays ? dateArray : dateArray.join(',')) : dates);
+    case 'datetime-local': {
+      if (operator === 'between' || operator === 'notBetween') {
+        const [first, second] = valueAsArray;
+        return (
+          <DatePicker.RangePicker
+            value={
+              first && second ? ([first, second].map(v => dayjs(v)) as [Dayjs, Dayjs]) : undefined
             }
-          }
-        />
-      ) : (
+            showTime={inputTypeCoerced === 'datetime-local'}
+            className={className}
+            disabled={disabled}
+            placeholder={[placeHolderText, placeHolderText]}
+            // TODO: the function below is currently untested (see the
+            // "should render a date range picker" test in ./AntD.test.tsx)
+            onChange={
+              /* istanbul ignore next */
+              dates => {
+                const timeFormat = inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : '';
+                const format = `YYYY-MM-DD${timeFormat}`;
+                const dateArray = dates?.map(d => d?.format(format));
+                handleOnChange(
+                  dateArray ? (listsAsArrays ? dateArray : joinWith(dateArray, ',')) : dates
+                );
+              }
+            }
+          />
+        );
+      }
+
+      return (
         <DatePicker
-          value={value ? dayjs(value) : null}
+          value={value ? dayjs(value) : undefined}
           showTime={inputTypeCoerced === 'datetime-local'}
           className={className}
           disabled={disabled}
@@ -209,6 +208,7 @@ export const AntDValueEditor = ({
           onChange={(_d, dateString) => handleOnChange(dateString)}
         />
       );
+    }
 
     case 'time':
       return (
