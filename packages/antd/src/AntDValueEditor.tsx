@@ -1,10 +1,14 @@
-import { Checkbox, DatePicker, Input, Radio, Switch, TimePicker } from 'antd';
+import { Checkbox, Input, Radio, Switch, TimePicker } from 'antd';
+import generatePicker from 'antd/es/date-picker/generatePicker/index.js';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
+import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { AntDValueSelector } from './AntDValueSelector';
+
+const DatePicker = generatePicker(dayjsGenerateConfig);
 
 export const AntDValueEditor = ({
   fieldData,
@@ -171,12 +175,10 @@ export const AntDValueEditor = ({
     case 'date':
     case 'datetime-local': {
       if (operator === 'between' || operator === 'notBetween') {
-        const [first, second] = valueAsArray;
+        const dayjsArray = valueAsArray.slice(0, 2).map(dayjs) as [Dayjs, Dayjs];
         return (
           <DatePicker.RangePicker
-            value={
-              first && second ? ([first, second].map(v => dayjs(v)) as [Dayjs, Dayjs]) : undefined
-            }
+            value={dayjsArray.every(d => d.isValid()) ? dayjsArray : undefined}
             showTime={inputTypeCoerced === 'datetime-local'}
             className={className}
             disabled={disabled}
@@ -188,7 +190,7 @@ export const AntDValueEditor = ({
               dates => {
                 const timeFormat = inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : '';
                 const format = `YYYY-MM-DD${timeFormat}`;
-                const dateArray = dates?.map(d => d?.format(format));
+                const dateArray = dates?.map(d => (d?.isValid() ? d.format(format) : undefined));
                 handleOnChange(
                   dateArray ? (listsAsArrays ? dateArray : joinWith(dateArray, ',')) : dates
                 );
@@ -198,9 +200,10 @@ export const AntDValueEditor = ({
         );
       }
 
+      const dateValue = dayjs(value);
       return (
         <DatePicker
-          value={value ? dayjs(value) : undefined}
+          value={dateValue.isValid() ? dateValue : undefined}
           showTime={inputTypeCoerced === 'datetime-local'}
           className={className}
           disabled={disabled}
@@ -210,16 +213,18 @@ export const AntDValueEditor = ({
       );
     }
 
-    case 'time':
+    case 'time': {
+      const dateValue = dayjs(value, 'HH:mm:ss');
       return (
         <TimePicker
-          value={value ? dayjs(value, 'HH:mm:ss') : null}
+          value={dateValue.isValid() ? dateValue : undefined}
           className={className}
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={d => handleOnChange(d?.format('HH:mm:ss') ?? '')}
         />
       );
+    }
   }
 
   return (

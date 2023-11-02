@@ -22,9 +22,10 @@ import {
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
+import { AntDShiftActions } from './AntDShiftActions';
 import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
-import { AntDShiftActions, QueryBuilderAntD } from './index';
+import { QueryBuilderAntD } from './index';
 
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.
@@ -141,10 +142,22 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   it('should render a date picker', async () => {
     const onChange = jest.fn();
     const { container } = render(
-      <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} />
+      <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} value="invalid" />
     );
-    await user.click(findInput(container));
-    await user.click(screen.getByTitle(today));
+    await act(async () => {
+      await user.click(findInput(container));
+      await new Promise(r => setTimeout(r, 500));
+    });
+    await act(async () => {
+      await user.click(
+        screen
+          .getAllByTitle(today)
+          .find(el => el.tagName !== 'INPUT')!
+          .querySelector('div')!
+      );
+      await new Promise(r => setTimeout(r, 500));
+    });
+    // TODO: figure out why this test is NOT flaky like the range test below
     expect(onChange).toHaveBeenCalledWith(today);
   });
 
@@ -159,7 +172,13 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   it('should render a date range picker', async () => {
     const onChange = jest.fn();
     const { container } = render(
-      <AntDValueEditor {...props} inputType="date" operator="between" handleOnChange={onChange} />
+      <AntDValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={onChange}
+        value="invalid"
+      />
     );
     await act(async () => {
       await user.click(findInput(container));
@@ -202,7 +221,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
     await user.click(findInput(container));
     await user.click(screen.getByTitle(today));
-    for (const el of screen.getAllByText('02')) {
+    for (const el of Array.from(screen.getAllByText('02'))) {
       await user.click(el);
     }
     await user.click(screen.getByText(/ok/i));
@@ -215,7 +234,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
     );
     await user.click(findInput(container));
-    for (const el of screen.getAllByText('02')) {
+    for (const el of Array.from(screen.getAllByText('02'))) {
       await user.click(el);
     }
     await user.click(screen.getByText(/ok/i));
@@ -227,7 +246,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="time" value={'02:02:02'} />
     );
     await user.click(findInput(container));
-    for (const n of screen.getAllByText('02')) {
+    for (const n of Array.from(screen.getAllByText('02'))) {
       expect(hasOrInheritsClass(n, 'ant-picker-time-panel-cell-selected')).toBe(true);
     }
   });
