@@ -187,13 +187,13 @@ export const MantineValueEditor = ({
 
   if (inputTypeCoerced === 'date' || inputTypeCoerced === 'datetime-local') {
     if (operator === 'between' || operator === 'notBetween') {
-      const twoDateArray = [null, null].map((_d, i) => {
-        if (!valueAsArray[i]) return null;
+      const twoDateArray = [null, null].map((defaultValue, i) => {
+        if (!valueAsArray[i]) return defaultValue;
         let date = dayjs(valueAsArray[i]);
         if (!date.isValid()) {
           date = dayjs(`${dayjs().format('YYYY-MM-DD')}T${valueAsArray[i]}`);
         }
-        return date.isValid() ? date.toDate() : null;
+        return date.isValid() ? date.toDate() : defaultValue;
       }) as [DateValue, DateValue];
 
       return (
