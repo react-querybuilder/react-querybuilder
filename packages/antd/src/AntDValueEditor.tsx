@@ -1,4 +1,4 @@
-import { Checkbox, Input, Radio, Switch, TimePicker } from 'antd';
+import { Checkbox, Input, Radio, Switch } from 'antd';
 import generatePicker from 'antd/es/date-picker/generatePicker/index.js';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -58,7 +58,7 @@ export const AntDValueEditor = ({
       if (type === 'text') {
         if (inputTypeCoerced === 'time') {
           return (
-            <TimePicker
+            <DatePicker.TimePicker
               key={key}
               value={valueAsArray[i] ? dayjs(valueAsArray[i], 'HH:mm:ss') : null}
               className={standardClassnames.valueListItem}
@@ -216,7 +216,7 @@ export const AntDValueEditor = ({
     case 'time': {
       const dateValue = dayjs(value, 'HH:mm:ss');
       return (
-        <TimePicker
+        <DatePicker.TimePicker
           value={dateValue.isValid() ? dateValue : undefined}
           className={className}
           disabled={disabled}
