@@ -6,7 +6,6 @@ import type { RuleGroupArray, RuleGroupICArray, RuleGroupProps } from '../types'
 import { isRuleGroup, isRuleGroupType } from '../utils';
 
 /**
- * Update changelog for #585
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
  * objects. This is actually a small wrapper around {@link RuleGroupHeaderComponents}
  * and {@link RuleGroupBodyComponents}.
