@@ -38,7 +38,7 @@ export const AntDValueSelector = ({
     <span title={title} className={className}>
       <Select
         {...modeObj}
-        dropdownMatchSelectWidth={false}
+        popupMatchSelectWidth={false}
         disabled={disabled}
         value={val}
         onChange={onChange}
