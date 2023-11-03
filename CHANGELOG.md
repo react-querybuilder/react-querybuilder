@@ -11,14 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [#537] Some of the default labels have been updated per the table below.
   <!-- prettier-ignore -->
-  | Key                                   | Old         | New         | Notes                               |
-  | ------------------------------------- | ----------- | ----------- | ----------------------------------- |
-  | `translations.addRule.label`          | `"+Rule"`   | `"+ Rule"`  | Space added between "+" and "Rule"  |
-  | `translations.addGroup.label`         | `"+Group"`  | `"+ Group"` | Space added between "+" and "Group" |
-  | `translations.removeRule.label`       | `"x"`       | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
-  | `translations.removeGroup.label`      | `"x"`       | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+  | Key                              | Old        | New         | Notes                               |
+  | -------------------------------- | ---------- | ----------- | ----------------------------------- |
+  | `translations.addRule.label`     | `"+Rule"`  | `"+ Rule"`  | Space added between "+" and "Rule"  |
+  | `translations.addGroup.label`    | `"+Group"` | `"+ Group"` | Space added between "+" and "Group" |
+  | `translations.removeRule.label`  | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+  | `translations.removeGroup.label` | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
 - [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
 - [#537] The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. Each hook takes the full `QueryBuilder` props object as its first parameter (as `useQueryBuilder` did), and `useQueryBuilderSchema` accepts the return value of `useQueryBuilderSetup` as its second parameter.
+- [#537] The `useStopEventPropagation` hook now takes a single function as its parameter instead of an object map of functions, so it must be run for each wrapped function individually.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 
