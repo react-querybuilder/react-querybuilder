@@ -1,8 +1,166 @@
 ---
-title: Migrating to v6
-hide_table_of_contents: true
+title: Migrating to v7
 ---
 
-Version 6 requires no code changes when migrating from version 5, but the behavior of the default [`ValueEditor`](./components/valueeditor) component when the `operator` is "between" or "notBetween" is different.
+Version 7 shouldn't require many, if any, code changes when migrating from v6. However, some of the defaults have changed, and taking advantage of the performance improvements and other conveniences may require some minor refactoring. A summary of the important changes is below.
 
-Instructions on migrating from v4 to v5 are [here](/docs/5/migrate).
+## New features
+
+### Performance improvements
+
+Props and components are aggressively memoized using `React.memo`, `useMemo`, and `useCallback` in version 7, which can noticeably improve rendering performance for large queries. To take advantage of this change, it is important that _every_ prop value passed to `<QueryBuilder />` is either memoized itself or has a stable reference.
+
+The most common violation of that rule is probably inline arrow functions in the `onQueryChange` prop (something like `<QueryBuilder onQueryChange={q => setQuery(q)} />`). This can usually be addressed by moving the function definition outside the component rendering function, or, if that's not possible, by memoizing the function with `useCallback`.
+
+### Query selector and dispatcher
+
+The `schema` prop, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
+
+- `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary. **Tip:** this function should be called in an event handler, not on every render.
+- `dispatchQuery(query)`: updates the internal query builder state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
+
+Using these two methods together, you can get the existing query, modify it (with the utilities mentioned above), and dispatch the updated query without performing the updates externally.
+
+### Field data passed to `get*` callbacks
+
+Most of the `get*` callback props now receive an additional parameter with a `fieldData` property. `fieldData` is the full `Field` object from the `fields` array for the given `field` name, including any custom properties (a common one is `datatype`). This eliminates the need to find the field object based solely on the field's `name` within the `get*` functions themselves. Instead of something like `fields.find(f => f.name === field)`, you can retrieve `fieldData` from the last parameter.
+
+The following callback props are affected by this change: `getDefaultOperator`, `getDefaultValue`, `getInputType`, `getOperators`, `getRuleClassname`, `getValueEditorSeparator`, `getValueEditorType`, `getValues`, and `getValueSources`.
+
+### Shift actions
+
+A new `showShiftActions` prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), the first of which will shift the rule/group one spot higher, while the second will shift it one spot lower.
+
+Related additions:
+
+- `ShiftActions` component (with corresponding components in each compatibility package) that renders "shift up" and "shift down" action buttons. The default styles remove the border and background from these buttons, leaving only the `shiftActionUp.label`/`shiftActionDown.label` translation properties visible.
+- `useShiftActions` hook, called by the `ShiftActions` component, returns `shiftUp`/`shiftDown` methods and determines whether either button should be disabled. (Within the root group, "shift up" is disabled for the very first rule or group and "shift down" is disabled for the very last rule or group).
+- New properties on the `translations` prop: `shiftActionUp` and `shiftActionDown`.
+
+### Accessibility
+
+Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop. The default implementation is exported as [generateAccessibleDescription](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/generateAccessibleDescription.ts).
+
+### Drag-and-drop `canDrop` callback
+
+`<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
+
+## Updated default labels
+
+### Main package
+
+| Key                              | Old        | New         | Notes                               |
+| -------------------------------- | ---------- | ----------- | ----------------------------------- |
+| `translations.addRule.label`     | `"+Rule"`  | `"+ Rule"`  | Space added between "+" and "Rule"  |
+| `translations.addGroup.label`    | `"+Group"` | `"+ Group"` | Space added between "+" and "Group" |
+| `translations.removeRule.label`  | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+| `translations.removeGroup.label` | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+
+### Compatibility packages
+
+Several compatibility packages take advantage of the new ability to use a `ReactNode` as a `label` (previously only `string`s were allowed). These packages override the default `label` for non-text components (`lock*`, `clone*`, `remove*`, and `dragHandle`) with SVG icons from their official icon packages. This brings them more in line with their respective design systems by default. Use `translations={defaultTranslations}` to avoid using the icons.
+
+#### `@react-querybuilder/antd`
+
+Icon package: [`@ant-design/icons`](https://npmjs.com/package/@ant-design/icons)
+
+| Key                                    | Icon                 |
+| -------------------------------------- | -------------------- |
+| `translations.removeGroup.label`       | `<CloseOutlined />`  |
+| `translations.removeRule.label`        | `<CloseOutlined />`  |
+| `translations.cloneRule.label`         | `<CopyOutlined />`   |
+| `translations.cloneRuleGroup.label`    | `<CopyOutlined />`   |
+| `translations.lockGroup.label`         | `<UnlockOutlined />` |
+| `translations.lockRule.label`          | `<UnlockOutlined />` |
+| `translations.lockGroupDisabled.label` | `<LockOutlined />`   |
+| `translations.lockRuleDisabled.label`  | `<LockOutlined />`   |
+| `translations.shiftActionUp.label`     | `<UpOutlined />`     |
+| `translations.shiftActionDown.label`   | `<DownOutlined />`   |
+
+#### `@react-querybuilder/bootstrap`
+
+Icon package: [`bootstrap-icons`](https://npmjs.com/package/bootstrap-icons)
+
+> _Note: The `BootstrapDragHandle` component has been removed. It is redundant now that `label` can be a `ReactNode`._
+
+| Key                                    | Icon                                           |
+| -------------------------------------- | ---------------------------------------------- |
+| `translations.removeGroup.label`       | `<i className="bi bi-x" />`                    |
+| `translations.removeRule.label`        | `<i className="bi bi-x" />`                    |
+| `translations.cloneRule.label`         | `<i className="bi bi-copy" />`                 |
+| `translations.cloneRuleGroup.label`    | `<i className="bi bi-copy" />`                 |
+| `translations.dragHandle.label`        | `<i className="bi bi-grip-vertical" />`        |
+| `translations.lockGroup.label`         | `<i className="bi bi-unlock" />`               |
+| `translations.lockRule.label`          | `<i className="bi bi-unlock" />`               |
+| `translations.lockGroupDisabled.label` | `<i className="bi bi-lock" />`                 |
+| `translations.lockRuleDisabled.label`  | `<i className="bi bi-lock" />`                 |
+| `translations.shiftActionUp.label`     | `<i className="bi bi-chevron-compact-up" />`   |
+| `translations.shiftActionDown.label`   | `<i className="bi bi-chevron-compact-down" />` |
+
+#### `@react-querybuilder/chakra`
+
+Icon package: [`@chakra-ui/icons`](https://npmjs.com/package/@chakra-ui/icons)
+
+| Key                                    | Icon                  |
+| -------------------------------------- | --------------------- |
+| `translations.removeGroup.label`       | `<CloseIcon />`       |
+| `translations.removeRule.label`        | `<CloseIcon />`       |
+| `translations.cloneRuleGroup.label`    | `<CopyIcon />`        |
+| `translations.cloneRule.label`         | `<CopyIcon />`        |
+| `translations.lockGroup.label`         | `<UnlockIcon />`      |
+| `translations.lockRule.label`          | `<UnlockIcon />`      |
+| `translations.lockGroupDisabled.label` | `<LockIcon />`        |
+| `translations.lockRuleDisabled.label`  | `<LockIcon />`        |
+| `translations.shiftActionDown.label`   | `<ChevronDownIcon />` |
+| `translations.shiftActionUp.label`     | `<ChevronUpIcon />`   |
+
+#### `@react-querybuilder/fluent`
+
+Icon package: [`@fluentui/react-icons-mdl2`](https://npmjs.com/package/@fluentui/react-icons-mdl2)
+
+| Key                                    | Icon                          |
+| -------------------------------------- | ----------------------------- |
+| `translations.removeGroup.label`       | `<CancelIcon />`              |
+| `translations.removeRule.label`        | `<CancelIcon />`              |
+| `translations.cloneRule.label`         | `<DuplicateRowIcon />`        |
+| `translations.cloneRuleGroup.label`    | `<DuplicateRowIcon />`        |
+| `translations.dragHandle.label`        | `<GripperDotsVerticalIcon />` |
+| `translations.lockGroup.label`         | `<UnlockIcon />`              |
+| `translations.lockRule.label`          | `<UnlockIcon />`              |
+| `translations.lockGroupDisabled.label` | `<LockIcon />`                |
+| `translations.lockRuleDisabled.label`  | `<LockIcon />`                |
+| `translations.shiftActionDown.label`   | `<ChevronDownIcon />`         |
+| `translations.shiftActionUp.label`     | `<ChevronUpIcon />`           |
+
+#### `@react-querybuilder/material`
+
+Icon package: [`@mui/icons-material`](https://npmjs.com/package/@mui/icons-material)
+
+| Key                                    | Icon              |
+| -------------------------------------- | ----------------- |
+| `translations.removeGroup.label`       | `<Close />`       |
+| `translations.removeRule.label`        | `<Close />`       |
+| `translations.cloneRule.label`         | `<ContentCopy />` |
+| `translations.cloneRuleGroup.label`    | `<ContentCopy />` |
+| `translations.lockGroup.label`         | `<LockOpen />`    |
+| `translations.lockRule.label`          | `<LockOpen />`    |
+| `translations.lockGroupDisabled.label` | `<Lock />`        |
+| `translations.lockRuleDisabled.label`  | `<Lock />`        |
+| `translations.shiftActionDown.label`   | `<ShiftDown />`   |
+| `translations.shiftActionUp.label`     | `<ShiftUp />`     |
+
+## Hooks
+
+- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. `useQueryBuilderSchema` must be called from a child component of one that calls `useQueryBuilderSetup`. For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
+- The `useStopEventPropagation` hook, called from the default `Rule` and `RuleGroup` components, now takes a single function as its parameter instead of an object map of functions. It must be run for each wrapped function individually.
+
+## Other changes
+
+- `@react-querybuilder/mantine` now requires Mantine v7+.
+- `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
+- Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
+- The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
+
+{/* TODO: Use the commented line once v7 docs have been versioned */}
+Instructions on migrating from v5 to v6 are [here](/docs/migrate).
+{/* Instructions on migrating from v5 to v6 are [here](/docs/6/migrate). */}
