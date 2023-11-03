@@ -12,7 +12,7 @@ export * from './MantineShiftActions';
 export * from './MantineValueEditor';
 export * from './MantineValueSelector';
 
-export const mantineControlElements: Partial<Controls> = {
+export const mantineControlElements = {
   notToggle: MantineNotToggle,
   valueEditor: MantineValueEditor,
   addGroupAction: MantineActionElement,
@@ -28,7 +28,7 @@ export const mantineControlElements: Partial<Controls> = {
   removeRuleAction: MantineActionElement,
   valueSourceSelector: MantineValueSelector,
   shiftActions: MantineShiftActions,
-};
+} satisfies Partial<Controls>;
 
 export const QueryBuilderMantine = getCompatContextProvider({
   key: 'mantine',

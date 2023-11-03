@@ -21,7 +21,7 @@ export * from './ChakraNotToggle';
 export * from './ChakraValueEditor';
 export * from './ChakraValueSelector';
 
-export const chakraControlElements: Partial<Controls> = {
+export const chakraControlElements = {
   addGroupAction: ChakraActionElement,
   addRuleAction: ChakraActionElement,
   cloneGroupAction: ChakraActionElement,
@@ -37,9 +37,9 @@ export const chakraControlElements: Partial<Controls> = {
   removeRuleAction: ChakraActionElement,
   valueEditor: ChakraValueEditor,
   valueSourceSelector: ChakraValueSelector,
-};
+} satisfies Partial<Controls>;
 
-export const chakraTranslations: Partial<Translations> = {
+export const chakraTranslations = {
   removeGroup: { label: <CloseIcon /> },
   removeRule: { label: <CloseIcon /> },
   cloneRuleGroup: { label: <CopyIcon /> },
@@ -50,7 +50,7 @@ export const chakraTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <LockIcon /> },
   shiftActionDown: { label: <ChevronDownIcon /> },
   shiftActionUp: { label: <ChevronUpIcon /> },
-};
+} satisfies Partial<Translations>;
 
 export const QueryBuilderChakra = getCompatContextProvider({
   key: 'chakra',

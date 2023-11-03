@@ -7,12 +7,12 @@ import { BootstrapValueEditor } from './BootstrapValueEditor';
 export * from './BootstrapNotToggle';
 export * from './BootstrapValueEditor';
 
-export const bootstrapControlElements: Partial<Controls> = {
+export const bootstrapControlElements = {
   notToggle: BootstrapNotToggle,
   valueEditor: BootstrapValueEditor,
-};
+} satisfies Partial<Controls>;
 
-export const bootstrapControlClassnames: Partial<Classnames> = {
+export const bootstrapControlClassnames = {
   addGroup: 'btn btn-secondary btn-sm',
   addRule: 'btn btn-primary btn-sm',
   cloneGroup: 'btn btn-secondary btn-sm',
@@ -26,9 +26,9 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   operators: 'form-select form-select-sm',
   value: 'form-control form-control-sm',
   valueSource: 'form-select form-select-sm',
-};
+} satisfies Partial<Classnames>;
 
-export const bootstrapTranslations: Partial<Translations> = {
+export const bootstrapTranslations = {
   removeGroup: { label: <i className="bi bi-x" /> },
   removeRule: { label: <i className="bi bi-x" /> },
   cloneRule: { label: <i className="bi bi-copy" /> },
@@ -40,7 +40,7 @@ export const bootstrapTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <i className="bi bi-lock" /> },
   shiftActionUp: { label: <i className="bi bi-chevron-compact-up" /> },
   shiftActionDown: { label: <i className="bi bi-chevron-compact-down" /> },
-};
+} satisfies Partial<Translations>;
 
 export const QueryBuilderBootstrap = getCompatContextProvider({
   key: 'bootstrap',

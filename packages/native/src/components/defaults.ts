@@ -11,7 +11,7 @@ import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 import { RuleGroupNative } from './RuleGroupNative';
 import { RuleNative } from './RuleNative';
 
-export const defaultNativeControlElements: Controls = {
+export const defaultNativeControlElements = {
   addGroupAction: NativeActionElement,
   addRuleAction: NativeActionElement,
   cloneGroupAction: NativeActionElement,
@@ -32,13 +32,13 @@ export const defaultNativeControlElements: Controls = {
   shiftActions: NativeShiftActions,
   valueEditor: NativeValueEditor,
   valueSourceSelector: NativeValueSelector,
-};
+} satisfies Controls;
 
-export const defaultNativeWebControlElements: Controls = {
+export const defaultNativeWebControlElements = {
   ...defaultNativeControlElements,
   combinatorSelector: NativeValueSelectorWeb,
   fieldSelector: NativeValueSelectorWeb,
   operatorSelector: NativeValueSelectorWeb,
   valueEditor: NativeValueEditorWeb,
   valueSourceSelector: NativeValueSelectorWeb,
-};
+} satisfies Controls;
