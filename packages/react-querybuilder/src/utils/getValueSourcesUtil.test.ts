@@ -1,5 +1,6 @@
 import type { Field } from '../types/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { toFullOption } from './toFullOption';
 
 const f: Field = { name: 'f', label: 'F' };
 const f1: Field = { name: 'f1', label: 'F1', valueSources: ['value'] };
@@ -63,5 +64,5 @@ it('gets the correct value sources array', () => {
 it('calls the custom getValueSources function correctly', () => {
   const getValueSources = jest.fn();
   getValueSourcesUtil(f, '=', getValueSources);
-  expect(getValueSources).toHaveBeenCalledWith(f.name, '=', { fieldData: f });
+  expect(getValueSources).toHaveBeenCalledWith(f.name, '=', { fieldData: toFullOption(f) });
 });

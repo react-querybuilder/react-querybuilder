@@ -14,10 +14,12 @@ import type {
   Field,
   Operator,
   RuleType,
+  ToFullOption,
   ValidationResult,
   ValueSelectorProps,
   ValueSources,
 } from '../types';
+import { toFullOption } from '../utils';
 import { Rule } from './Rule';
 
 const user = userEvent.setup();
@@ -72,7 +74,7 @@ describe('onElementChanged methods', () => {
 
 describe('valueEditorType as function', () => {
   it('should determine the correct value editor type', () => {
-    const fields: Field[] = [{ name: 'f1', label: 'Field 1', valueEditorType: () => 'radio' }];
+    const fields = [toFullOption({ name: 'f1', label: 'Field 1', valueEditorType: () => 'radio' })];
     const fieldMap = getFieldMapFromArray(fields);
     const {
       schema: { controls },
@@ -119,7 +121,7 @@ describe('validation', () => {
   it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = {
-      field1: { name: 'field1', label: 'Field 1', validator },
+      field1: toFullOption({ name: 'field1', label: 'Field 1', validator }),
     };
     const validationMap = { id: false };
     render(<Rule {...getProps({ fieldMap, validationMap })} />);
@@ -138,7 +140,7 @@ describe('validation', () => {
   it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = {
-      field1: { name: 'field1', label: 'Field 1', validator },
+      field1: toFullOption({ name: 'field1', label: 'Field 1', validator }),
     };
     const props = getProps({ fieldMap });
     render(<Rule {...props} rule={{ ...props.rule, field: 'field1' }} />);
@@ -229,21 +231,23 @@ describe('locked rule', () => {
 
 describe('valueSource', () => {
   const valueSources: ValueSources = ['value', 'field'];
-  const fields: Field[] = [
-    {
-      name: 'fvsa',
-      label: 'Field w/ valueSources array',
-      valueSources,
-      comparator: f => f.label.includes('comparator'),
-    },
-    {
-      name: 'fvsf',
-      label: 'Field w/ valueSources function',
-      valueSources: () => valueSources,
-    },
-    { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
-    { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
-  ];
+  const fields = (
+    [
+      {
+        name: 'fvsa',
+        label: 'Field w/ valueSources array',
+        valueSources,
+        comparator: f => f.label.includes('comparator'),
+      },
+      {
+        name: 'fvsf',
+        label: 'Field w/ valueSources function',
+        valueSources: () => valueSources,
+      },
+      { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
+      { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
+    ] satisfies Field[]
+  ).map(toFullOption);
   const fieldMap = getFieldMapFromArray(fields);
   const getValueSources = (): ValueSources => valueSources;
 
@@ -338,10 +342,10 @@ describe('dynamic classNames', () => {
   it('should have correct group-based classNames', () => {
     const rule: RuleType = { field: 'f1', operator: 'op', value: 'v1' };
     const fieldMap = {
-      f1: { name: 'f1', label: 'F1', className: 'custom-fieldBased-class' },
-    } satisfies Record<string, Field>;
-    const getOperators = (): Operator[] => [
-      { name: 'op', label: 'Op', className: 'custom-operatorBased-class' },
+      f1: toFullOption({ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }),
+    } satisfies Record<string, ToFullOption<Field>>;
+    const getOperators = (): ToFullOption<Operator>[] => [
+      toFullOption({ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }),
     ];
     const getRuleClassname = jest.fn(() => 'custom-ruleBased-class');
     render(<Rule {...getProps({ fieldMap, getOperators, getRuleClassname })} rule={rule} />);
@@ -379,7 +383,9 @@ describe('arity property', () => {
     render(
       <Rule
         {...getProps({
-          getOperators: () => [{ name: 'unary_op', label: 'Unary Operator', arity: 'unary' }],
+          getOperators: () => [
+            toFullOption({ name: 'unary_op', label: 'Unary Operator', arity: 'unary' }),
+          ],
         })}
         rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}
       />
@@ -392,7 +398,9 @@ describe('arity property', () => {
     render(
       <Rule
         {...getProps({
-          getOperators: () => [{ name: 'unary_op', label: 'Unary Operator', arity: 1 }],
+          getOperators: () => [
+            toFullOption({ name: 'unary_op', label: 'Unary Operator', arity: 1 }),
+          ],
         })}
         rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}
       />

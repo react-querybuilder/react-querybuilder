@@ -4,6 +4,7 @@ import type {
   DefaultCombinatorExtended,
   DefaultOperator,
   DefaultOperatorName,
+  ToFullOption,
   TranslationsFull,
 } from './types/index.noReact';
 
@@ -126,25 +127,25 @@ export const defaultTranslations = {
  * Default operator list.
  */
 export const defaultOperators = [
-  { name: '=', label: '=' } as const,
-  { name: '!=', label: '!=' } as const,
-  { name: '<', label: '<' } as const,
-  { name: '>', label: '>' } as const,
-  { name: '<=', label: '<=' } as const,
-  { name: '>=', label: '>=' } as const,
-  { name: 'contains', label: 'contains' } as const,
-  { name: 'beginsWith', label: 'begins with' } as const,
-  { name: 'endsWith', label: 'ends with' } as const,
-  { name: 'doesNotContain', label: 'does not contain' } as const,
-  { name: 'doesNotBeginWith', label: 'does not begin with' } as const,
-  { name: 'doesNotEndWith', label: 'does not end with' } as const,
-  { name: 'null', label: 'is null' } as const,
-  { name: 'notNull', label: 'is not null' } as const,
-  { name: 'in', label: 'in' } as const,
-  { name: 'notIn', label: 'not in' } as const,
-  { name: 'between', label: 'between' } as const,
-  { name: 'notBetween', label: 'not between' } as const,
-] satisfies DefaultOperator[];
+  { name: '=', value: '=', label: '=' } as const,
+  { name: '!=', value: '!=', label: '!=' } as const,
+  { name: '<', value: '<', label: '<' } as const,
+  { name: '>', value: '>', label: '>' } as const,
+  { name: '<=', value: '<=', label: '<=' } as const,
+  { name: '>=', value: '>=', label: '>=' } as const,
+  { name: 'contains', value: 'contains', label: 'contains' } as const,
+  { name: 'beginsWith', value: 'beginsWith', label: 'begins with' } as const,
+  { name: 'endsWith', value: 'endsWith', label: 'ends with' } as const,
+  { name: 'doesNotContain', value: 'doesNotContain', label: 'does not contain' } as const,
+  { name: 'doesNotBeginWith', value: 'doesNotBeginWith', label: 'does not begin with' } as const,
+  { name: 'doesNotEndWith', value: 'doesNotEndWith', label: 'does not end with' } as const,
+  { name: 'null', value: 'null', label: 'is null' } as const,
+  { name: 'notNull', value: 'notNull', label: 'is not null' } as const,
+  { name: 'in', value: 'in', label: 'in' } as const,
+  { name: 'notIn', value: 'notIn', label: 'not in' } as const,
+  { name: 'between', value: 'between', label: 'between' } as const,
+  { name: 'notBetween', value: 'notBetween', label: 'not between' } as const,
+] satisfies ToFullOption<DefaultOperator>[];
 
 /**
  * Map of default operators to their respective opposite/negating operators.
@@ -174,17 +175,17 @@ export const defaultOperatorNegationMap = {
  * Default combinator list.
  */
 export const defaultCombinators = [
-  { name: 'and', label: 'AND' } as const,
-  { name: 'or', label: 'OR' } as const,
-] satisfies DefaultCombinator[];
+  { name: 'and', value: 'and', label: 'AND' } as const,
+  { name: 'or', value: 'or', label: 'OR' } as const,
+] satisfies ToFullOption<DefaultCombinator>[];
 
 /**
  * Default combinator list, with `XOR` added.
  */
 export const defaultCombinatorsExtended = [
   ...defaultCombinators,
-  { name: 'xor', label: 'XOR' } as const,
-] satisfies DefaultCombinatorExtended[];
+  { name: 'xor', value: 'xor', label: 'XOR' } as const,
+] satisfies ToFullOption<DefaultCombinatorExtended>[];
 
 /**
  * Standard classnames applied to each component.

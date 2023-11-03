@@ -3,11 +3,12 @@ import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
   Field,
-  Option,
+  FullOption,
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
+  ToFullOption,
 } from '../types';
 import {
   filterFieldsByComparator,
@@ -17,6 +18,8 @@ import {
   isOptionGroupArray,
   joinWith,
   objectKeys,
+  toFullOption,
+  toFullOptionList,
   uniqByName,
   uniqOptGroups,
 } from '../utils';
@@ -36,7 +39,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
     defaultQuery,
     fields: fieldsPropOriginal,
     operators = defaultOperators,
-    combinators = defaultCombinators,
+    combinators: combinatorsProp = defaultCombinators,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
     controlClassnames: controlClassnamesProp,
@@ -72,9 +75,10 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
   // #region Set up `fields`
   const defaultField = useMemo(
-    (): Field => ({
+    (): ToFullOption<Field> => ({
       id: translations.fields.placeholderName,
       name: translations.fields.placeholderName,
+      value: translations.fields.placeholderName,
       label: translations.fields.placeholderLabel,
     }),
     [translations.fields.placeholderLabel, translations.fields.placeholderName]
@@ -86,9 +90,9 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
   const fields = useMemo(() => {
     const f = Array.isArray(fieldsProp)
-      ? fieldsProp
+      ? toFullOptionList(fieldsProp)
       : objectKeys(fieldsProp)
-          .map((fld): Field => ({ ...fieldsProp[fld], name: fld }))
+          .map((fld): ToFullOption<Field> => toFullOption({ ...fieldsProp[fld], name: fld }))
           .sort((a, b) => a.label.localeCompare(b.label));
     if (isOptionGroupArray(f)) {
       if (autoSelectField) {
@@ -113,44 +117,55 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) {
-      const fp: Record<string, Field> = {};
-      objectKeys(fieldsProp).forEach(f => (fp[f] = { ...fieldsProp[f], name: f }));
+      const fp: Record<string, ToFullOption<Field>> = {};
+      objectKeys(fieldsProp).forEach(f => {
+        fp[f] = toFullOption({ ...fieldsProp[f], name: f });
+      });
       if (autoSelectField) {
         return fp;
       } else {
         return { ...fp, [translations.fields.placeholderName]: defaultField };
       }
     }
-    const fm: Record<string, Field> = {};
+    const fm: Record<string, ToFullOption<Field>> = {};
     if (isOptionGroupArray(fields)) {
-      fields.forEach(f => f.options.forEach(opt => (fm[opt.name] = opt)));
+      fields.forEach(f =>
+        f.options.forEach(opt => {
+          fm[opt.name] = toFullOption(opt);
+        })
+      );
     } else {
-      fields.forEach(f => (fm[f.name] = f));
+      fields.forEach(f => {
+        fm[f.name] = toFullOption(f);
+      });
     }
     return fm;
   }, [autoSelectField, defaultField, fields, fieldsProp, translations.fields.placeholderName]);
   // #endregion
 
+  const combinators = useMemo(() => toFullOptionList(combinatorsProp), [combinatorsProp]);
+
   // #region Set up `operators`
   const defaultOperator = useMemo(
-    (): Option => ({
+    (): FullOption => ({
       id: translations.operators.placeholderName,
       name: translations.operators.placeholderName,
+      value: translations.operators.placeholderName,
       label: translations.operators.placeholderLabel,
     }),
     [translations.operators.placeholderLabel, translations.operators.placeholderName]
   );
 
   const getOperatorsMain = useCallback(
-    (field: string, { fieldData }: { fieldData: Field }) => {
-      let opsFinal = operators;
+    (field: string, { fieldData }: { fieldData: ToFullOption<Field> }) => {
+      let opsFinal = toFullOptionList(operators);
 
       if (fieldData?.operators) {
-        opsFinal = fieldData.operators;
+        opsFinal = toFullOptionList(fieldData.operators);
       } else if (getOperators) {
         const ops = getOperators(field, { fieldData });
         if (ops) {
-          opsFinal = ops;
+          opsFinal = toFullOptionList(ops);
         }
       }
 
@@ -205,7 +220,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
   // #region Rule property getters
   const getValueEditorTypeMain = useCallback(
-    (field: string, operator: string, { fieldData }: { fieldData: Field }) => {
+    (field: string, operator: string, { fieldData }: { fieldData: ToFullOption<Field> }) => {
       if (getValueEditorType) {
         const vet = getValueEditorType(field, operator, { fieldData });
         if (vet) return vet;
@@ -223,16 +238,15 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   );
 
   const getValuesMain = useCallback(
-    (field: string, operator: string, { fieldData }: { fieldData: Field }) => {
+    (field: string, operator: string, { fieldData }: { fieldData: ToFullOption<Field> }) => {
       // Ignore this in tests because Rule already checks for
       // the presence of the values property in fieldData.
       /* istanbul ignore if */
       if (fieldData?.values) {
-        return fieldData.values;
+        return toFullOptionList(fieldData.values);
       }
       if (getValues) {
-        const vals = getValues(field, operator, { fieldData });
-        if (vals) return vals;
+        return toFullOptionList(getValues(field, operator, { fieldData }));
       }
 
       return [];
@@ -290,7 +304,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
   );
 
   const getInputTypeMain = useCallback(
-    (field: string, operator: string, { fieldData }: { fieldData: Field }) => {
+    (field: string, operator: string, { fieldData }: { fieldData: ToFullOption<Field> }) => {
       if (getInputType) {
         const inputType = getInputType(field, operator, { fieldData });
         if (inputType) return inputType;
@@ -376,6 +390,7 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
     rqbContext,
     fields,
     fieldMap,
+    combinators,
     getOperatorsMain,
     getRuleDefaultOperator,
     getValueEditorTypeMain,

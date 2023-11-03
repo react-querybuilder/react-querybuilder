@@ -47,6 +47,37 @@ export interface Option<N extends string = string> {
   [x: string]: any;
 }
 
+export type ValueOption<N extends string = string> = {
+  name?: N;
+  value: N;
+  label: string;
+};
+
+/**
+ * A generic {@link Option} with either a `name` or `value` as its primary identifier.
+ * {@link OptionList}-type props accept this type, but corresponding props sent to
+ * subcomponents will always be translated to {@link FullOption} first.
+ */
+export type FlexibleOption<N extends string = string> = {
+  label: string;
+  [x: string]: any;
+} & ({ name: N; value?: N } | { name?: N; value: N });
+
+/**
+ * A generic {@link Option} requiring `name` _and_ `value` properties.
+ * Props that extend {@link OptionList} accept {@link FlexibleOption}, but
+ * corresponding props sent to subcomponents will always be translated to this
+ * type first to ensure both `name` and `value` are available.
+ */
+export type FullOption<N extends string = string> = Option<N> & ValueOption;
+
+/**
+ * Utility type to turn an {@link Option} into a {@link FullOption}.
+ */
+export type ToFullOption<Opt extends Option = Option> = Opt extends Option<infer NameType>
+  ? Opt & FullOption<NameType>
+  : never;
+
 /**
  * @deprecated Renamed to `Option`.
  */
@@ -64,6 +95,13 @@ export type OptionGroup<Opt extends Option = Option> = {
  * Either an array of {@link Option} or an array of {@link OptionGroup}.
  */
 export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[];
+
+/**
+ * Like {@link OptionList}, but using {@link FullOption} instead of {@link Option}.
+ */
+export type FullOptionList<Opt extends Option = Option> =
+  | ToFullOption<Opt>[]
+  | OptionGroup<ToFullOption<Opt>>[];
 
 interface HasOptionalClassName {
   className?: Classname;

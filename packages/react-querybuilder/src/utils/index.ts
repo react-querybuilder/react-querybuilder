@@ -24,6 +24,7 @@ export * from './pathUtils';
 export * from './prepareQueryObjects';
 export * from './queryTools';
 export * from './regenerateIDs';
+export * from './toFullOption';
 export * from './toOptions';
 export * from './transformQuery';
 export * from './uniq';

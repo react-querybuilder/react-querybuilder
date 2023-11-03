@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
-import type { RuleProps, RuleType } from '../types';
+import type { Field, RuleProps, RuleType, ToFullOption } from '../types';
 import {
   filterFieldsByComparator,
   getOption,
@@ -129,8 +129,8 @@ export const useRule = (props: RuleProps) => {
     [disabled, onRuleRemove, path]
   );
 
-  const fieldData = useMemo(
-    () => fieldMap?.[rule.field] ?? { name: rule.field, label: rule.field },
+  const fieldData: ToFullOption<Field> = useMemo(
+    () => fieldMap?.[rule.field] ?? { name: rule.field, value: rule.field, label: rule.field },
     [fieldMap, rule.field]
   );
   const inputType = useMemo(

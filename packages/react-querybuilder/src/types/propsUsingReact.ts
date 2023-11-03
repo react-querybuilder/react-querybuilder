@@ -10,10 +10,12 @@ import type {
   Classname,
   Combinator,
   Field,
+  FullOptionList,
   Operator,
   OptionList,
   ParseNumbersMethod,
   Path,
+  ToFullOption,
   ValueEditorType,
   ValueSource,
   ValueSources,
@@ -190,22 +192,42 @@ export interface Controls {
  */
 export interface Schema {
   qbId: string;
-  fields: OptionList<Field>;
-  fieldMap: Record<string, Field>;
+  fields: FullOptionList<Field>;
+  fieldMap: Record<string, ToFullOption<Field>>;
   classNames: Classnames;
-  combinators: OptionList<Combinator>;
+  combinators: FullOptionList<Combinator>;
   controls: Controls;
   createRule(): RuleType;
   createRuleGroup(): RuleGroupTypeAny;
   dispatchQuery(query: RuleGroupTypeAny): void;
   getQuery(): RuleGroupTypeAny | undefined;
-  getOperators(field: string, meta: { fieldData: Field }): OptionList<Operator>;
-  getValueEditorType(field: string, operator: string, meta: { fieldData: Field }): ValueEditorType;
-  getValueEditorSeparator(field: string, operator: string, meta: { fieldData: Field }): ReactNode;
-  getValueSources(field: string, operator: string, meta: { fieldData: Field }): ValueSources;
-  getInputType(field: string, operator: string, meta: { fieldData: Field }): string | null;
-  getValues(field: string, operator: string, meta: { fieldData: Field }): OptionList;
-  getRuleClassname(rule: RuleType, misc: { fieldData: Field }): Classname;
+  getOperators(field: string, meta: { fieldData: ToFullOption<Field> }): FullOptionList<Operator>;
+  getValueEditorType(
+    field: string,
+    operator: string,
+    meta: { fieldData: ToFullOption<Field> }
+  ): ValueEditorType;
+  getValueEditorSeparator(
+    field: string,
+    operator: string,
+    meta: { fieldData: ToFullOption<Field> }
+  ): ReactNode;
+  getValueSources(
+    field: string,
+    operator: string,
+    meta: { fieldData: ToFullOption<Field> }
+  ): ValueSources;
+  getInputType(
+    field: string,
+    operator: string,
+    meta: { fieldData: ToFullOption<Field> }
+  ): string | null;
+  getValues(
+    field: string,
+    operator: string,
+    meta: { fieldData: ToFullOption<Field> }
+  ): FullOptionList;
+  getRuleClassname(rule: RuleType, misc: { fieldData: ToFullOption<Field> }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   accessibleDescriptionGenerator: (props: { path: Path; qbId: string }) => string;
   showCombinatorsBetweenRules: boolean;
@@ -428,23 +450,28 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * itself or a function that returns a valid {@link Field} `name` given
      * the `fields` list.
      */
-    getDefaultField?: string | ((fieldsData: OptionList<Field>) => string);
+    getDefaultField?: string | ((fieldsData: FullOptionList<Field>) => string);
     /**
      * The default `operator` value for new rules. This can be the operator
      * `name` or a function that returns a valid {@link Operator} `name` for
      * a given field name.
      */
-    getDefaultOperator?: string | ((field: string, misc: { fieldData: Field }) => string);
+    getDefaultOperator?:
+      | string
+      | ((field: string, misc: { fieldData: ToFullOption<Field> }) => string);
     /**
      * Returns the default `value` for new rules.
      */
-    getDefaultValue?(rule: RuleType, misc: { fieldData: Field }): any;
+    getDefaultValue?(rule: RuleType, misc: { fieldData: ToFullOption<Field> }): any;
     /**
      * This function should return the list of allowed {@link Operator}s
      * for the given {@link Field} `name`. If `null` is returned, the
      * {@link DefaultOperator}s are used.
      */
-    getOperators?(field: string, misc: { fieldData: Field }): OptionList<Operator> | null;
+    getOperators?(
+      field: string,
+      misc: { fieldData: ToFullOption<Field> }
+    ): OptionList<Operator> | null;
     /**
      * This function should return the type of {@link ValueEditor} (see
      * {@link ValueEditorType}) for the given field `name` and operator `name`.
@@ -452,7 +479,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
     getValueEditorType?(
       field: string,
       operator: string,
-      misc: { fieldData: Field }
+      misc: { fieldData: ToFullOption<Field> }
     ): ValueEditorType;
     /**
      * This function should return the separator element for a given field
@@ -464,7 +491,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
     getValueEditorSeparator?(
       field: string,
       operator: string,
-      misc: { fieldData: Field }
+      misc: { fieldData: ToFullOption<Field> }
     ): ReactNode;
     /**
      * This function should return the list of valid {@link ValueSources}
@@ -473,26 +500,38 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      * (i.e. `["value"]`, `["field"]`, `["value", "field"]`, or
      * `["field", "value"]`).
      */
-    getValueSources?(field: string, operator: string, misc: { fieldData: Field }): ValueSources;
+    getValueSources?(
+      field: string,
+      operator: string,
+      misc: { fieldData: ToFullOption<Field> }
+    ): ValueSources;
     /**
      * This function should return the `type` of `<input />`
      * for the given field `name` and operator `name` (only applicable when
      * `getValueEditorType` returns `"text"` or a falsy value). If no
      * function is provided, `"text"` is used as the default.
      */
-    getInputType?(field: string, operator: string, misc: { fieldData: Field }): string | null;
+    getInputType?(
+      field: string,
+      operator: string,
+      misc: { fieldData: ToFullOption<Field> }
+    ): string | null;
     /**
      * This function should return the list of allowed values for the
      * given field `name` and operator `name` (only applicable when
      * `getValueEditorType` returns `"select"` or `"radio"`). If no
      * function is provided, an empty array is used as the default.
      */
-    getValues?(field: string, operator: string, misc: { fieldData: Field }): OptionList;
+    getValues?(
+      field: string,
+      operator: string,
+      misc: { fieldData: ToFullOption<Field> }
+    ): OptionList;
     /**
      * The return value of this function will be used to apply classnames to the
      * outer `<div>` of the given {@link Rule}.
      */
-    getRuleClassname?(rule: RuleType, misc: { fieldData: Field }): Classname;
+    getRuleClassname?(rule: RuleType, misc: { fieldData: ToFullOption<Field> }): Classname;
     /**
      * The return value of this function will be used to apply classnames to the
      * outer `<div>` of the given {@link RuleGroup}.
@@ -638,10 +677,10 @@ export type QueryBuilderProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleG
        * Initial query object for uncontrolled components
        */
       defaultQuery?: RG;
-      query?: never;
+      query?: undefined;
     })
   | (QueryBuilderPropsBase<RG> & {
-      defaultQuery?: never;
+      defaultQuery?: undefined;
       /**
        * Query object for controlled components
        */

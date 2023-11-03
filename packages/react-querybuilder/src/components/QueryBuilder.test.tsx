@@ -28,9 +28,17 @@ import type {
   RuleGroupTypeIC,
   RuleProps,
   RuleType,
+  ToFullOption,
   ValidationMap,
 } from '../types';
-import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from '../utils';
+import {
+  defaultValidator,
+  findPath,
+  formatQuery,
+  generateID,
+  numericRegex,
+  toFullOption,
+} from '../utils';
 import { QueryBuilder } from './QueryBuilder';
 import { defaultControlElements } from './defaults';
 
@@ -337,11 +345,11 @@ describe('when initial operators are provided', () => {
 });
 
 describe('get* callbacks', () => {
-  const fields: Field[] = [
+  const fields: ToFullOption<Field>[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
-  ];
+  ].map(toFullOption);
   const rule: RuleType = {
     field: 'lastName',
     value: 'Another Test',

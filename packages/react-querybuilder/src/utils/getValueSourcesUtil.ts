@@ -1,4 +1,5 @@
-import type { Field, ValueSources } from '../types/index.noReact';
+import type { Field, ToFullOption, ValueSources } from '../types/index.noReact';
+import { toFullOption } from './toFullOption';
 
 const defaultValueSourcesArray: ValueSources = ['value'];
 
@@ -11,7 +12,11 @@ const defaultValueSourcesArray: ValueSources = ['value'];
 export const getValueSourcesUtil = (
   fieldData: Field,
   operator: string,
-  getValueSources?: (field: string, operator: string, misc: { fieldData: Field }) => ValueSources
+  getValueSources?: (
+    field: string,
+    operator: string,
+    misc: { fieldData: ToFullOption<Field> }
+  ) => ValueSources
 ): ValueSources => {
   // TypeScript doesn't allow it directly, but in practice
   // `fieldData` can end up being undefined or null. The nullish
@@ -26,7 +31,7 @@ export const getValueSourcesUtil = (
     return fd.valueSources;
   }
   if (getValueSources) {
-    const vals = getValueSources(fd.name, operator, { fieldData: fd });
+    const vals = getValueSources(fd.name, operator, { fieldData: toFullOption(fd) });
     /* istanbul ignore else */
     if (vals) return vals;
   }
