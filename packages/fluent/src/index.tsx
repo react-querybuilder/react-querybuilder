@@ -22,7 +22,7 @@ export * from './FluentNotToggle';
 export * from './FluentValueEditor';
 export * from './FluentValueSelector';
 
-export const fluentControlElements: Partial<Controls> = {
+export const fluentControlElements = {
   dragHandle: FluentDragHandle,
   notToggle: FluentNotToggle,
   valueEditor: FluentValueEditor,
@@ -38,9 +38,9 @@ export const fluentControlElements: Partial<Controls> = {
   removeGroupAction: FluentActionElement,
   removeRuleAction: FluentActionElement,
   valueSourceSelector: FluentValueSelector,
-};
+} satisfies Partial<Controls>;
 
-export const fluentTranslations: Partial<Translations> = {
+export const fluentTranslations = {
   removeGroup: { label: <CancelIcon /> },
   removeRule: { label: <CancelIcon /> },
   cloneRule: { label: <DuplicateRowIcon /> },
@@ -52,7 +52,7 @@ export const fluentTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <LockIcon /> },
   shiftActionDown: { label: <ChevronDownIcon /> },
   shiftActionUp: { label: <ChevronUpIcon /> },
-};
+} satisfies Partial<Translations>;
 
 export const QueryBuilderFluent = getCompatContextProvider({
   key: 'fluent',

@@ -1,4 +1,3 @@
-import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import * as React from 'react';
 import type { ShiftActionsProps } from 'react-querybuilder';
@@ -8,7 +7,7 @@ export const AntDShiftActions = ({
   path,
   disabled,
   className,
-  // labels, // Labels are hard-coded in this component
+  labels,
   titles,
   testID,
   lastInGroup,
@@ -31,7 +30,7 @@ export const AntDShiftActions = ({
         title={titles?.shiftUp}
         onClick={shiftUp}
         disabled={shiftUpDisabled}>
-        <CaretUpOutlined />
+        {labels?.shiftUp}
       </Button>
       <Button
         type="primary"
@@ -39,7 +38,7 @@ export const AntDShiftActions = ({
         title={titles?.shiftDown}
         onClick={shiftDown}
         disabled={shiftDownDisabled}>
-        <CaretDownOutlined />
+        {labels?.shiftDown}
       </Button>
     </div>
   );

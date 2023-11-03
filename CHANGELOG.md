@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Compatibility packages
 
 - [#537] Several compatibility packages now override the default labels for non-text components (`lock*`, `clone*`, `remove*`, and `dragHandle`) with SVGs from official icon packages. This brings them more in line with their respective design systems by default.
+  - `@react-querybuilder/antd`: `@ant-design/icons`
   - `@react-querybuilder/bootstrap`: `bootstrap-icons`
   - `@react-querybuilder/chakra`: `@chakra-ui/icons`
   - `@react-querybuilder/fluent`: `@fluentui/react-icons-mdl2`

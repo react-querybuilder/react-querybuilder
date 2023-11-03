@@ -10,7 +10,7 @@ export * from './BulmaNotToggle';
 export * from './BulmaValueEditor';
 export * from './BulmaValueSelector';
 
-export const bulmaControlElements: Partial<Controls> = {
+export const bulmaControlElements = {
   notToggle: BulmaNotToggle,
   valueEditor: BulmaValueEditor,
   addGroupAction: BulmaActionElement,
@@ -25,7 +25,7 @@ export const bulmaControlElements: Partial<Controls> = {
   removeGroupAction: BulmaActionElement,
   removeRuleAction: BulmaActionElement,
   valueSourceSelector: BulmaValueSelector,
-};
+} satisfies Partial<Controls>;
 
 export const QueryBuilderBulma = getCompatContextProvider({
   key: 'bulma',

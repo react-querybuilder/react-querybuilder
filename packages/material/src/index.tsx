@@ -24,7 +24,7 @@ export type { RQBMaterialComponents } from './types';
 export * from './useMuiComponents';
 export { materialTranslations };
 
-export const materialControlElements: Partial<Controls> = {
+export const materialControlElements = {
   addGroupAction: MaterialActionElement,
   addRuleAction: MaterialActionElement,
   cloneGroupAction: MaterialActionElement,
@@ -41,7 +41,7 @@ export const materialControlElements: Partial<Controls> = {
   dragHandle: MaterialDragHandle,
   valueSourceSelector: MaterialValueSelector,
   shiftActions: MaterialShiftActions,
-};
+} satisfies Partial<Controls>;
 
 const MaterialContextProvider = getCompatContextProvider({
   key: 'material',

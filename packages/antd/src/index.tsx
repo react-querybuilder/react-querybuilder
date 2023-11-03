@@ -1,4 +1,13 @@
-import type { Controls } from 'react-querybuilder';
+import {
+  CloseOutlined,
+  CopyOutlined,
+  DownOutlined,
+  LockOutlined,
+  UnlockOutlined,
+  UpOutlined,
+} from '@ant-design/icons';
+import * as React from 'react';
+import type { Controls, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
@@ -14,7 +23,7 @@ export * from './AntDShiftActions';
 export * from './AntDValueEditor';
 export * from './AntDValueSelector';
 
-export const antdControlElements: Partial<Controls> = {
+export const antdControlElements = {
   addGroupAction: AntDActionElement,
   addRuleAction: AntDActionElement,
   cloneGroupAction: AntDActionElement,
@@ -31,9 +40,23 @@ export const antdControlElements: Partial<Controls> = {
   dragHandle: AntDDragHandle,
   valueSourceSelector: AntDValueSelector,
   shiftActions: AntDShiftActions,
-};
+} satisfies Partial<Controls>;
+
+export const antdTranslations = {
+  removeGroup: { label: <CloseOutlined /> },
+  removeRule: { label: <CloseOutlined /> },
+  cloneRule: { label: <CopyOutlined /> },
+  cloneRuleGroup: { label: <CopyOutlined /> },
+  lockGroup: { label: <UnlockOutlined /> },
+  lockRule: { label: <UnlockOutlined /> },
+  lockGroupDisabled: { label: <LockOutlined /> },
+  lockRuleDisabled: { label: <LockOutlined /> },
+  shiftActionUp: { label: <UpOutlined /> },
+  shiftActionDown: { label: <DownOutlined /> },
+} satisfies Partial<Translations>;
 
 export const QueryBuilderAntD = getCompatContextProvider({
   key: 'antd',
   controlElements: antdControlElements,
+  translations: antdTranslations,
 });
