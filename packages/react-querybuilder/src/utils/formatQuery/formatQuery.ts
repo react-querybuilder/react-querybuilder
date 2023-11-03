@@ -660,7 +660,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       return {
         bool: rg.not
-          ? { must_not: processedRules }
+          ? {
+              must_not:
+                rg.combinator === 'or' ? { bool: { should: processedRules } } : processedRules,
+            }
           : { [rg.combinator === 'or' ? 'should' : 'must']: processedRules },
       };
     };

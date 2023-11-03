@@ -423,11 +423,15 @@ const elasticSearchQueryObject = {
       { term: { isLucky: false } },
       {
         bool: {
-          must_not: [
-            { term: { gender: 'M' } },
-            { bool: { must_not: { term: { job: 'Programmer' } } } },
-            { regexp: { email: { value: '@' } } },
-          ],
+          must_not: {
+            bool: {
+              should: [
+                { term: { gender: 'M' } },
+                { bool: { must_not: { term: { job: 'Programmer' } } } },
+                { regexp: { email: { value: '@' } } },
+              ],
+            },
+          },
         },
       },
       {
@@ -496,11 +500,17 @@ const elasticSearchQueryObjectForValueSourceField = {
       { bool: { filter: { script: { script: `doc['isMusician'] == doc['isCreative']` } } } },
       {
         bool: {
-          must_not: [
-            { bool: { filter: { script: { script: `doc['gender'] == doc['someLetter']` } } } },
-            { bool: { filter: { script: { script: `doc['job'] != doc['isBetweenJobs']` } } } },
-            { bool: { filter: { script: { script: `doc['email'].contains(doc['atSign'])` } } } },
-          ],
+          must_not: {
+            bool: {
+              should: [
+                { bool: { filter: { script: { script: `doc['gender'] == doc['someLetter']` } } } },
+                { bool: { filter: { script: { script: `doc['job'] != doc['isBetweenJobs']` } } } },
+                {
+                  bool: { filter: { script: { script: `doc['email'].contains(doc['atSign'])` } } },
+                },
+              ],
+            },
+          },
         },
       },
       {
@@ -652,6 +662,8 @@ it('formats ElasticSearch correctly', () => {
       {
         combinator: 'and',
         rules: [
+          // combinator: 'and', not: true
+          { combinator: 'and', not: true, rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
           // Weird field names
           { field: "f\\'1", operator: 'contains', value: 'v1', valueSource: 'field' },
           // Ranges
@@ -675,6 +687,7 @@ it('formats ElasticSearch correctly', () => {
   ).toEqual({
     bool: {
       must: [
+        { bool: { must_not: [{ term: { f1: 'v1' } }] } },
         { bool: { filter: { script: { script: `doc['f\\\\\\'1'].contains(doc['v1'])` } } } },
         { range: { f1: { lt: 0 } } },
         { range: { f1: { lte: 0 } } },
