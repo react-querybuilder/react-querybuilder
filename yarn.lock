@@ -11378,7 +11378,7 @@ __metadata:
     rc-select: ^14.10.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
@@ -11386,7 +11386,7 @@ __metadata:
     "@ant-design/icons": ">=4.7.0"
     antd: ">=4.10.0"
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11408,7 +11408,7 @@ __metadata:
     bootstrap-icons: ^1.11.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
@@ -11416,7 +11416,7 @@ __metadata:
     bootstrap: ">=5"
     bootstrap-icons: ">=1.7.0"
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11436,14 +11436,14 @@ __metadata:
     bulma: ^0.9.4
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
   peerDependencies:
     bulma: ^0.9.3
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11468,7 +11468,7 @@ __metadata:
     framer-motion: ^10.16.4
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
@@ -11480,7 +11480,7 @@ __metadata:
     "@emotion/styled": ^11
     framer-motion: ^6.3.3
     react: ">=18.1.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11505,7 +11505,7 @@ __metadata:
     react-dnd-test-backend: ^16.0.1
     react-dnd-test-utils: ^16.0.1
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
@@ -11513,7 +11513,7 @@ __metadata:
     react: ">=16.8.0"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11533,7 +11533,7 @@ __metadata:
     "@vitejs/plugin-react-swc": ^3.4.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
@@ -11541,7 +11541,7 @@ __metadata:
     "@fluentui/react-components": ^9
     dayjs: ">=1"
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11564,7 +11564,7 @@ __metadata:
     dayjs: ^1.11.10
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
@@ -11574,7 +11574,7 @@ __metadata:
     "@mantine/hooks": ">=6"
     dayjs: ">=1"
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11597,7 +11597,7 @@ __metadata:
     "@vitejs/plugin-react-swc": ^3.4.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     regenerator-runtime: ^0.14.0
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
@@ -11608,7 +11608,7 @@ __metadata:
     "@mui/icons-material": ">=5.0.0"
     "@mui/material": ">=5.0.0"
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -11626,14 +11626,14 @@ __metadata:
     react-dom: ^18.2.0
     react-native: ~0.72.6
     react-native-web: ~0.19.9
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
     react-test-renderer: ^18.2.0
     rollup-plugin-visualizer: ^5.9.2
     typescript: ^5.2.2
     vite: ^4.5.0
   peerDependencies:
     react: ">=16.8.0"
-    react-querybuilder: ^6.5.3
+    react-querybuilder: ^6.5.4
   languageName: unknown
   linkType: soft
 
@@ -28038,7 +28038,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@^6.5.3, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@^6.5.4, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
