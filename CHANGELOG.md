@@ -1465,7 +1465,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.4...HEAD
+[v6.5.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.3...v6.5.4
 [v6.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...v6.5.3
 [v6.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...v6.5.2
 [v6.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.0...v6.5.1
