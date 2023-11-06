@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { Option, Schema, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { QueryBuilder, TestID } from 'react-querybuilder';
+import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import {
   testActionElement,
   testDragHandle,
@@ -34,7 +34,7 @@ const defaultValueSelectorProps: ValueSelectorProps = {
     { name: 'foo', label: 'Foo' },
     { name: 'bar', label: 'Bar' },
     { name: 'baz', label: 'Baz' },
-  ],
+  ].map(toFullOption),
   level: 0,
   path: [],
   schema: {} as Schema,

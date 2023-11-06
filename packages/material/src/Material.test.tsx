@@ -38,7 +38,13 @@ import {
   isValidElement as mockIsValidElement,
 } from 'react';
 import type { DragHandleProps, RuleGroupType, Schema } from 'react-querybuilder';
-import { QueryBuilder, TestID, defaultTranslations, objectEntries } from 'react-querybuilder';
+import {
+  QueryBuilder,
+  TestID,
+  defaultTranslations,
+  objectEntries,
+  toFullOption,
+} from 'react-querybuilder';
 import {
   defaultShiftActionsProps,
   testActionElement,
@@ -252,7 +258,7 @@ describe('value selector', () => {
           handleOnChange={() => {}}
           path={[]}
           level={0}
-          options={[{ name: 'opt1', label: 'Option 1' }]}
+          options={[{ name: 'opt1', label: 'Option 1' }].map(toFullOption)}
           schema={{} as Schema}
         />
       </div>

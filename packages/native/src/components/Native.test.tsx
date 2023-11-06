@@ -10,7 +10,7 @@ import type {
   RuleType,
   Schema,
 } from 'react-querybuilder';
-import { TestID, convertToIC, defaultCombinators } from 'react-querybuilder';
+import { TestID, convertToIC, defaultCombinators, toFullOption } from 'react-querybuilder';
 import type {
   ActionNativeProps,
   NotToggleNativeProps,
@@ -222,7 +222,7 @@ describe('NativeValueSelector', () => {
     options: [
       { name: 'opt1', label: 'Option 1' },
       { name: 'opt2', label: 'Option 2' },
-    ],
+    ].map(toFullOption),
     value: 'opt1',
     handleOnChange,
     level: 0,

@@ -7,8 +7,8 @@ import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type {
   Field,
+  FullOptionList,
   Option,
-  OptionList,
   RuleGroupType,
 } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
@@ -36,9 +36,9 @@ type UILib =
   | 'fluentui'
   | 'tamagui';
 
-const uiLibs: OptionList<Option<UILib>> = [
-  { name: 'default', label: 'Default components' },
-  { name: 'native-base', label: 'NativeBase' },
+const uiLibs: FullOptionList<Option<UILib>> = [
+  { name: 'default', value: 'default', label: 'Default components' },
+  { name: 'native-base', value: 'native-base', label: 'NativeBase' },
   // TODO: add examples these UI libraries
   // { name: 'paper', label: 'React Native Paper' },
   // { name: 'kitten', label: 'Kitten' },

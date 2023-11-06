@@ -177,7 +177,7 @@ export const useRule = (props: RuleProps) => {
     [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
   );
   const valueSourceOptions = useMemo(
-    () => valueSources.map(vs => ({ name: vs, label: vs })),
+    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })),
     [valueSources]
   );
 

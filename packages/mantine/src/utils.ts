@@ -1,7 +1,7 @@
-import type { Option, OptionList } from 'react-querybuilder';
+import type { FullOption, FullOptionList, Option } from 'react-querybuilder';
 import { isOptionGroupArray, uniqByName } from 'react-querybuilder';
 
-export const optionListMapNameToValue = (list: OptionList) => {
+export const optionListMapNameToValue = (list: FullOptionList): FullOption[] => {
   let listFlat: (Option & { group?: string })[] = [];
 
   if (isOptionGroupArray(list)) {

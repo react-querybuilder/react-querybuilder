@@ -4,13 +4,13 @@ import dayjs from 'dayjs';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type {
-  Option,
+  FullOption,
   OptionGroup,
   Schema,
   ValueEditorProps,
   VersatileSelectorProps,
 } from 'react-querybuilder';
-import { QueryBuilder, TestID } from 'react-querybuilder';
+import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import {
   findInput,
   testActionElement,
@@ -75,10 +75,10 @@ testValueEditor(MantineValueEditor, {
 
 const user = userEventSetup();
 
-const options: Option[] = [
+const options: FullOption[] = [
   { name: 'opt1', label: 'Option 1' },
   { name: 'opt2', label: 'Option 2' },
-];
+].map(toFullOption);
 
 const now = new Date();
 const year = now.getFullYear();

@@ -2,9 +2,9 @@ import type {
   Classname,
   Combinator,
   Field,
+  FullOptionList,
   Operator,
   Option,
-  OptionList,
   Path,
   ValueSource,
 } from './basic';
@@ -78,7 +78,7 @@ export interface CommonRuleSubComponentProps {
  * Base interface for selector components.
  */
 export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
-  options: OptionList<OptType>;
+  options: FullOptionList<OptType>;
 }
 
 /**

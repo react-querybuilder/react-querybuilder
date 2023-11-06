@@ -30,7 +30,7 @@ export const MantineValueSelector = ({
 }: MantineValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const data = optionListMapNameToValue(options);
+  const data = React.useMemo(() => optionListMapNameToValue(options), [options]);
 
   const changeHandler = (v: string | string[] | null) => onChange(v ?? '');
 
