@@ -4,6 +4,7 @@ import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
   Field,
   FullOption,
+  FullOptionList,
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
@@ -158,7 +159,10 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
 
   const getOperatorsMain = useCallback(
     (field: string, { fieldData }: { fieldData: ToFullOption<Field> }) => {
-      let opsFinal = toFullOptionList(operators);
+      // We have to be explicit about the type here because otherwise `operators`
+      // is inferred to be `DefaultOperator[]`, not just `Option[]`, since the
+      // fallback parameter is `defaultOperators`.
+      let opsFinal: FullOptionList = toFullOptionList(operators);
 
       if (fieldData?.operators) {
         opsFinal = toFullOptionList(fieldData.operators);

@@ -12,6 +12,10 @@ Props and components are aggressively memoized using `React.memo`, `useMemo`, an
 
 The most common violation of that rule is probably inline arrow functions in the `onQueryChange` prop (something like `<QueryBuilder onQueryChange={q => setQuery(q)} />`). This can usually be addressed by moving the function definition outside the component rendering function, or, if that's not possible, by memoizing the function with `useCallback`.
 
+### Optional `name` but `value` prioritized
+
+Previously, props and properties that accepted an `OptionList` type or extension thereof (`fields`, `compbinators`, etc.) required a `name` property as a unique identifier for each member within the list. In version 7, list members may specify a `value` property as their identifier instead of `name`, which is now optional. If both `name` and `value` properties are present for a given item, `value` will be used.
+
 ### Query selector and dispatcher
 
 The `schema` prop, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.

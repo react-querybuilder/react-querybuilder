@@ -58,10 +58,28 @@ export type ValueOption<N extends string = string> = {
  * {@link OptionList}-type props accept this type, but corresponding props sent to
  * subcomponents will always be translated to {@link FullOption} first.
  */
-export type FlexibleOption<N extends string = string> = {
-  label: string;
-  [x: string]: any;
-} & ({ name: N; value?: N } | { name?: N; value: N });
+export type FlexibleOption<N extends string = string> =
+  | {
+      name: N;
+      value?: N;
+      label: string;
+      [x: string]: any;
+    }
+  | {
+      name?: N;
+      value: N;
+      label: string;
+      [x: string]: any;
+    };
+
+/**
+ * Utility type to turn an {@link Option} into a {@link FlexibleOption}.
+ */
+export type ToFlexibleOption<Opt = Option> = Opt extends Option<infer NameType>
+  ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
+  : Opt extends ValueOption<infer NameType>
+  ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
+  : never;
 
 /**
  * A generic {@link Option} requiring `name` _and_ `value` properties.
@@ -69,7 +87,12 @@ export type FlexibleOption<N extends string = string> = {
  * corresponding props sent to subcomponents will always be translated to this
  * type first to ensure both `name` and `value` are available.
  */
-export type FullOption<N extends string = string> = Option<N> & ValueOption;
+export interface FullOption<N extends string = string> {
+  name: N;
+  value: N;
+  label: string;
+  [x: string]: any;
+}
 
 /**
  * Utility type to turn an {@link Option} into a {@link FullOption}.
@@ -92,12 +115,32 @@ export type OptionGroup<Opt extends Option = Option> = {
 };
 
 /**
+ * A {@link FlexibleOption} group within a {@link FlexibleOptionList}.
+ */
+export type FlexibleOptionGroup<Opt extends FlexibleOption = FlexibleOption> = {
+  label: string;
+  options: Opt[];
+};
+
+/**
  * Either an array of {@link Option} or an array of {@link OptionGroup}.
  */
 export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[];
 
 /**
- * Like {@link OptionList}, but using {@link FullOption} instead of {@link Option}.
+ * An array of options or option groups, like {@link OptionList}, but each member may
+ * use either `name` or `value` as the primary identifier.
+ */
+export type FlexibleOptionList<Opt = FlexibleOption> = Opt extends FlexibleOption
+  ? Opt[] | FlexibleOptionGroup<Opt>[]
+  : Opt extends Option
+  ? ToFlexibleOption<Opt>[] | FlexibleOptionGroup<ToFlexibleOption<Opt>>[]
+  : never;
+
+/**
+ * An array of options or option groups, like {@link OptionList}, but using
+ * {@link FullOption} instead of {@link Option}. This means that every member is
+ * guaranteed to have both `name` and `value`.
  */
 export type FullOptionList<Opt extends Option = Option> =
   | ToFullOption<Opt>[]
@@ -139,7 +182,7 @@ export interface Field<
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 /**
- * Allowed values of the `arity` {@link Operator} property. A value of `"unary"` or
+ * Allowed values of the {@link Operator} property `arity`. A value of `"unary"` or
  * a number less than two will cause the default {@link ValueEditor} to render `null`.
  */
 export type Arity = number | 'unary' | 'binary' | 'ternary';

@@ -10,11 +10,12 @@ import type {
   Classname,
   Combinator,
   Field,
+  FlexibleOptionList,
   FullOptionList,
   Operator,
-  OptionList,
   ParseNumbersMethod,
   Path,
+  ToFlexibleOption,
   ToFullOption,
   ValueEditorType,
   ValueSource,
@@ -404,7 +405,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *
      * @default []
      */
-    fields?: OptionList<Field> | Record<string, Field>;
+    fields?: FlexibleOptionList<Field> | Record<string, ToFlexibleOption<Field>>;
     /**
      * List of valid {@link Operator}s.
      *
@@ -432,7 +433,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *   { name: 'notBetween', label: 'not between' },
      * ]
      */
-    operators?: OptionList<Operator>;
+    operators?: FlexibleOptionList<Operator>;
     /**
      * List of valid {@link Combinator}s.
      *
@@ -444,7 +445,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
      *   {name: 'or', label: 'OR'},
      * ]
      */
-    combinators?: OptionList<Combinator>;
+    combinators?: FlexibleOptionList<Combinator>;
     /**
      * The default `field` value for new rules. This can be the field `name`
      * itself or a function that returns a valid {@link Field} `name` given
@@ -471,7 +472,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
     getOperators?(
       field: string,
       misc: { fieldData: ToFullOption<Field> }
-    ): OptionList<Operator> | null;
+    ): FlexibleOptionList<Operator> | null;
     /**
      * This function should return the type of {@link ValueEditor} (see
      * {@link ValueEditorType}) for the given field `name` and operator `name`.
@@ -526,7 +527,7 @@ type QueryBuilderPropsBase<RG extends RuleGroupType | RuleGroupTypeIC> = (RG ext
       field: string,
       operator: string,
       misc: { fieldData: ToFullOption<Field> }
-    ): OptionList;
+    ): FlexibleOptionList;
     /**
      * The return value of this function will be used to apply classnames to the
      * outer `<div>` of the given {@link Rule}.
