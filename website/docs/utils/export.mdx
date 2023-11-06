@@ -18,13 +18,14 @@ function formatQuery(
 
 `formatQuery` converts a given query into one of the following formats:
 
-- JSON (with or without `id`s)
+- JSON (either the full query object or only the required properties)
 - SQL `WHERE` clause
-- Parameterized SQL (with anonymous or named parameters)
+- Parameterized SQL (with either anonymous or named parameters)
 - MongoDB
 - Common Expression Language (CEL)
 - Spring Expression Language (SpEL)
 - JsonLogic
+- ElasticSearch
 
 For the next few sections, assume the `query` variable has been defined as:
 
@@ -276,6 +277,20 @@ apply({ startsWith: [{ var: 'firstName' }, 'Stev'] }, data);
 ```
 
 :::
+
+### ElasticSearch
+
+The "elasticsearch" format produces an object that can be processed by [ElasticSearch](https://www.elastic.co/).
+
+```ts
+formatQuery(query, 'elasticsearch');
+```
+
+Output:
+
+```json
+{ "bool": { "must": [{ "term": { "firstName": "Steve" } }, { "term": { "lastName": "Vai" } }] } }
+```
 
 ## Configuration
 
@@ -556,6 +571,7 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 | "cel"                 | `'1 == 1'`                    |
 | "spel"                | `'1 == 1'`                    |
 | "jsonlogic"           | `false`                       |
+| "elasticsearch"       | `{}`                          |
 
 ### Value sources
 

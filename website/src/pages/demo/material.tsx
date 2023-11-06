@@ -39,6 +39,8 @@ const muiComponents = {
   FormControl,
   FormControlLabel,
   Input,
+  KeyboardArrowDownIcon,
+  KeyboardArrowUpIcon,
   ListSubheader,
   LockIcon,
   LockOpenIcon,

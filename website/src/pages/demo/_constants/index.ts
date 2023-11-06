@@ -230,6 +230,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['cel', 'CEL', 'https://github.com/google/cel-spec', 'common-expression-language'],
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref', 'spring-expression-language'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
+  ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/', 'elasticsearch'],
 ];
 
 export const styleNameMap: Record<StyleName, string> = {

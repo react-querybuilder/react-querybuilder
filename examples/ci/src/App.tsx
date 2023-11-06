@@ -143,6 +143,17 @@ export const App = () => {
           2
         )}
       </pre>
+      <h5>ElasticSearch</h5>
+      <pre>
+        {JSON.stringify(
+          formatQuery(queryForFormatting, {
+            format: 'elasticsearch',
+            parseNumbers,
+          }),
+          null,
+          2
+        )}
+      </pre>
     </div>
   );
 };

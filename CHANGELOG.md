@@ -50,16 +50,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] All `label` props and `translations.*.label` properties now accept `ReactNode`. This includes all action elements (buttons), "not" toggles, and drag handles. Previously `label` was limited to `string`. This enables, for example, the assignment of SVG elements as labels.
 - [#537] The `translations` prop can now be passed down through the compatibility context providers like `<QueryBuilderBootstrap />` and `<QueryBuilderMaterial />`. The object will be merged with the `translations` prop of nested `QueryBuilder` components.
 - [#537] New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in IDEs.
+- [#526] Experimental support for ElasticSearch export format in `formatQuery`.
 
 ### Fixed
 
-- [#537] Performance is improved via `React.memo` (especially for larger queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can be addressed with `useCallback`.
-- [#585] Avoid React warning about unique `key` props.
+- [#537] Performance is improved via `React.memo` (especially for large queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can usually be addressed with `useCallback`.
 
 ## [v6.5.4] - 2023-11-04
 
 ### Fixed
 
+- [#585] Avoid React warning about unique `key` props.
 - [#585] Fixed invalid reference to `generatePicker` in `@react-querybuilder/antd`.
 
 ## [v6.5.3] - 2023-10-20
@@ -1457,6 +1458,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#517]: https://github.com/react-querybuilder/react-querybuilder/pull/517
 [#519]: https://github.com/react-querybuilder/react-querybuilder/pull/519
 [#523]: https://github.com/react-querybuilder/react-querybuilder/issues/523
+[#526]: https://github.com/react-querybuilder/react-querybuilder/issues/526
 [#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
 [#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
 [#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572

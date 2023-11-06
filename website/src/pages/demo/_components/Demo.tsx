@@ -546,6 +546,11 @@ export default function Demo({
               label: 'JsonLogic',
               attributes: getExportTabAttributes('jsonlogic'),
             },
+            {
+              value: 'elasticsearch',
+              label: 'ElasticSearch',
+              attributes: getExportTabAttributes('elasticsearch'),
+            },
           ]}>
           <TabItem value="code" label="Code">
             <Details summary={<summary>Dependencies</summary>}>
@@ -680,6 +685,13 @@ export default function Demo({
           <TabItem value="jsonlogic">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="jsonlogic" />
+              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="elasticsearch">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="elasticsearch" />
               <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
             </div>
             {exportPresentation}

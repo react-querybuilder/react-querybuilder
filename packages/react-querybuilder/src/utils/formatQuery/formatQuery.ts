@@ -21,6 +21,7 @@ import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { uniqByName } from '../uniq';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
+import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
@@ -63,6 +64,17 @@ function formatQuery(
   options: 'jsonlogic' | (Omit<FormatQueryOptions, 'format'> & { format: 'jsonlogic' })
 ): RQBJsonLogic;
 /**
+ * Generates an ElasticSearch query object from an RQB query object.
+ *
+ * NOTE: Support for the ElasticSearch format is experimental.
+ * You may have better results exporting "sql" format then using
+ * [ElasticSearch SQL](https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-sql.html).
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'elasticsearch' | (Omit<FormatQueryOptions, 'format'> & { format: 'elasticsearch' })
+): Record<string, any>;
+/**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  */
 function formatQuery(
@@ -74,7 +86,10 @@ function formatQuery(
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: Exclude<ExportFormat, 'parameterized' | 'parameterized_named' | 'jsonlogic'>
+  options: Exclude<
+    ExportFormat,
+    'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch'
+  >
 ): string;
 /**
  * Generates a query string in the requested format.
@@ -82,7 +97,10 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Omit<FormatQueryOptions, 'format'> & {
-    format: Exclude<ExportFormat, 'parameterized' | 'parameterized_named' | 'jsonlogic'>;
+    format: Exclude<
+      ExportFormat,
+      'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch'
+    >;
   }
 ): string;
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
@@ -110,6 +128,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       ruleProcessorInternal = defaultRuleProcessorSpEL;
     } else if (format === 'jsonlogic') {
       ruleProcessorInternal = defaultRuleProcessorJsonLogic;
+    } else if (format === 'elasticsearch') {
+      ruleProcessorInternal = defaultRuleProcessorElasticSearch;
     }
   } else {
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
@@ -131,6 +151,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         ? ruleProcessorInternal ?? defaultRuleProcessorSpEL
         : format === 'jsonlogic'
         ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
+        : format == 'elasticsearch'
+        ? ruleProcessorInternal ?? defaultRuleProcessorElasticSearch
         : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
     validator = options.validator ?? (() => true);
@@ -183,6 +205,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           ? `{${fallbackExpression}}`
           : format === 'jsonlogic'
           ? false
+          : format === 'elasticsearch'
+          ? {}
           : fallbackExpression;
       }
     } else {
@@ -600,6 +624,52 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     };
 
     return processRuleGroup(query);
+  }
+
+  /**
+   * ElasticSearch
+   */
+  if (format === 'elasticsearch') {
+    const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
+
+    const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        return false;
+      }
+
+      const processedRules = rg.rules
+        .map(rule => {
+          if (isRuleGroup(rule)) {
+            return processRuleGroup(rule);
+          }
+          const [validationResult, fieldValidator] = validateRule(rule);
+          if (
+            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+            rule.field === placeholderFieldName ||
+            rule.operator === placeholderOperatorName
+          ) {
+            return false;
+          }
+          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
+        })
+        .filter(Boolean);
+
+      if (processedRules.length === 0) {
+        return false;
+      }
+
+      return {
+        bool: rg.not
+          ? {
+              must_not:
+                rg.combinator === 'or' ? { bool: { should: processedRules } } : processedRules,
+            }
+          : { [rg.combinator === 'or' ? 'should' : 'must']: processedRules },
+      };
+    };
+
+    const processedRuleGroup = processRuleGroup(query);
+    return processedRuleGroup === false ? {} : processedRuleGroup;
   }
 
   return '';

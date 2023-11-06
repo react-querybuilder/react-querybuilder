@@ -120,6 +120,7 @@ type ExportFormat =
   | 'mongodb'
   | 'cel'
   | 'jsonlogic'
+  | 'elasticsearch'
   | 'spel';
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
