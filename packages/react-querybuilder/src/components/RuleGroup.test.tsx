@@ -10,6 +10,7 @@ import {
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { errorEnabledDndWithoutReactDnD } from '../messages';
 import type { ActionProps, RuleGroupICArray, ValidationResult, ValueSelectorProps } from '../types';
+import { toFullOption } from '../utils';
 import { RuleGroup } from './RuleGroup';
 
 const user = userEvent.setup();
@@ -425,7 +426,9 @@ describe('dynamic classNames', () => {
     render(
       <RuleGroup
         {...getRuleGroupProps({
-          combinators: [{ name: 'or', label: 'OR', className: 'custom-combinatorBased-class' }],
+          combinators: [
+            toFullOption({ name: 'or', label: 'OR', className: 'custom-combinatorBased-class' }),
+          ],
           getRuleGroupClassname: () => 'custom-groupBased-class',
         })}
         ruleGroup={{ combinator: 'or', rules: [] }}

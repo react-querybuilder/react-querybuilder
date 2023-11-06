@@ -16,17 +16,19 @@ import type {
   QueryActions,
   RuleProps,
   Schema,
+  ToFullOption,
   ValueEditorProps,
-} from '../src/types/';
+} from '../src/types';
+import { toFullOption } from '../src/utils';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: Field[]) =>
-  Object.fromEntries(fieldArray.map(f => [f.name, f]));
+  Object.fromEntries(fieldArray.map(f => [f.name, toFullOption(f)]));
 
 export const ruleDefaultFields = [
   { name: 'field1', label: 'Field 1' },
   { name: 'field2', label: 'Field 2' },
-] satisfies Field[];
+].map(toFullOption) satisfies ToFullOption<Field>[];
 
 export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
 
@@ -94,18 +96,20 @@ const ruleSchema = {
   fieldMap: ruleFieldMap,
   controls: { ...defaultControlElements, ...ruleControls },
   classNames: { ...defaultControlClassnames, ...ruleClassnames },
-  getOperators: () => [
-    { name: '=', label: 'is' },
-    { name: '!=', label: 'is not' },
-  ],
+  getOperators: () =>
+    [
+      { name: '=', label: 'is' },
+      { name: '!=', label: 'is not' },
+    ].map(toFullOption),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
   getInputType: () => 'text',
-  getValues: () => [
-    { name: 'one', label: 'One' },
-    { name: 'two', label: 'Two' },
-  ],
+  getValues: () =>
+    [
+      { name: 'one', label: 'One' },
+      { name: 'two', label: 'Two' },
+    ].map(toFullOption),
   getRuleClassname: () => '',
   showCloneButtons: false,
   validationMap: {},

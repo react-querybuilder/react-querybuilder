@@ -9,6 +9,8 @@ import './_styles/rqb-material.scss';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DragIndicator from '@mui/icons-material/DragIndicator';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Button from '@mui/material/Button';
@@ -46,6 +48,8 @@ const muiComponents = {
   Select,
   Switch,
   TextareaAutosize,
+  KeyboardArrowDownIcon,
+  KeyboardArrowUpIcon,
 };
 
 function ReactQueryBuilderDemo_MaterialBrowser() {

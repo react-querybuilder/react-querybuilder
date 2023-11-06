@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- [#586] Options in option-list props can now have a `value` property as the identifier in lieu of a `name`. Additionally, all `Option`s and `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{value: string; label: string}[]` and not `{name: string; label: string}[]`.
 - [#577] New `showShiftActions` prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), the first of which will shift the rule/group one spot higher, while the second will shift it one spot lower. Related additions:
   - `ShiftActions` component
   - `useShiftActions` hook, called by `ShiftActions`

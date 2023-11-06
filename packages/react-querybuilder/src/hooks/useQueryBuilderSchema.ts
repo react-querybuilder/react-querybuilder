@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { LogType, defaultCombinators, standardClassnames } from '../defaults';
+import { LogType, standardClassnames } from '../defaults';
 import type { RqbState } from '../redux';
 import {
   dispatchThunk,
@@ -60,7 +60,6 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const {
     query: queryProp,
     defaultQuery: defaultQueryProp,
-    combinators = defaultCombinators,
     getValueEditorSeparator = defaultGetValueEditorSeparator,
     getRuleClassname = defaultGetRuleClassname,
     getRuleGroupClassname = defaultGetRuleGroupClassname,
@@ -86,13 +85,14 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     onLog = defaultOnLog,
     idGenerator,
     accessibleDescriptionGenerator = generateAccessibleDescription,
-  } = props as QueryBuilderProps<RG>;
+  } = props;
 
   const {
     qbId,
     rqbContext,
     fields,
     fieldMap,
+    combinators,
     getOperatorsMain,
     getRuleDefaultOperator,
     getValueEditorTypeMain,

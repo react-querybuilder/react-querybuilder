@@ -28,9 +28,17 @@ import type {
   RuleGroupTypeIC,
   RuleProps,
   RuleType,
+  ToFullOption,
   ValidationMap,
 } from '../types';
-import { defaultValidator, findPath, formatQuery, generateID, numericRegex } from '../utils';
+import {
+  defaultValidator,
+  findPath,
+  formatQuery,
+  generateID,
+  numericRegex,
+  toFullOption,
+} from '../utils';
 import { QueryBuilder } from './QueryBuilder';
 import { defaultControlElements } from './defaults';
 
@@ -101,12 +109,26 @@ describe('when initial query without fields is provided, create rule should work
 });
 
 describe('when initial query with duplicate fields is provided', () => {
-  it('passes down a unique set of fields (by name)', async () => {
+  it('passes down a unique set of fields by name', async () => {
     render(
       <QueryBuilder
         fields={[
           { name: 'dupe', label: 'One' },
           { name: 'dupe', label: 'Two' },
+        ]}
+      />
+    );
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
+    expect(screen.getAllByTestId(TestID.fields)).toHaveLength(1);
+  });
+
+  it('passes down a unique set of fields by value', async () => {
+    render(
+      <QueryBuilder
+        fields={[
+          { name: 'notdupe1', value: 'dupe', label: 'One' },
+          { name: 'notdupe2', value: 'dupe', label: 'Two' },
         ]}
       />
     );
@@ -337,11 +359,11 @@ describe('when initial operators are provided', () => {
 });
 
 describe('get* callbacks', () => {
-  const fields: Field[] = [
+  const fields: ToFullOption<Field>[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
-  ];
+  ].map(toFullOption);
   const rule: RuleType = {
     field: 'lastName',
     value: 'Another Test',
@@ -403,6 +425,19 @@ describe('get* callbacks', () => {
 
     it('should invoke custom getValues function', () => {
       const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
+      render(
+        <QueryBuilder
+          query={query}
+          fields={fields}
+          getValueEditorType={getValueEditorType}
+          getValues={getValues}
+        />
+      );
+      expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
+    });
+
+    it('should invoke custom getValues function returning value options', () => {
+      const getValues = jest.fn(() => [{ value: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
           query={query}

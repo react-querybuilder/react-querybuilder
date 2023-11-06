@@ -17,7 +17,7 @@ import type {
   RuleType,
   Schema,
 } from '../src/types';
-import { generateAccessibleDescription } from '../src/utils';
+import { generateAccessibleDescription, toFullOption } from '../src/utils';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number) =>
@@ -145,12 +145,12 @@ export const ruleGroupClassnames = {
 
 const ruleGroupSchema = {
   qbId: 'qbId',
-  fields: [{ name: 'field1', label: 'Field 1' }],
+  fields: [{ name: 'field1', label: 'Field 1' }].map(toFullOption),
   combinators: defaultCombinators,
   controls: { ...defaultControlElements, ...ruleGroupControls },
   classNames: { ...defaultControlClassnames, ...ruleGroupClassnames },
   getInputType: () => 'text',
-  getOperators: () => [{ name: 'operator1', label: 'Operator 1' }],
+  getOperators: () => [{ name: 'operator1', label: 'Operator 1' }].map(toFullOption),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
