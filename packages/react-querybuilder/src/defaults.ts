@@ -4,7 +4,6 @@ import type {
   DefaultCombinatorExtended,
   DefaultOperator,
   DefaultOperatorName,
-  ToFullOption,
   TranslationsFull,
 } from './types/index.noReact';
 
@@ -145,7 +144,7 @@ export const defaultOperators = [
   { name: 'notIn', value: 'notIn', label: 'not in' } as const,
   { name: 'between', value: 'between', label: 'between' } as const,
   { name: 'notBetween', value: 'notBetween', label: 'not between' } as const,
-] satisfies ToFullOption<DefaultOperator>[];
+] satisfies DefaultOperator[];
 
 /**
  * Map of default operators to their respective opposite/negating operators.
@@ -177,7 +176,7 @@ export const defaultOperatorNegationMap = {
 export const defaultCombinators = [
   { name: 'and', value: 'and', label: 'AND' } as const,
   { name: 'or', value: 'or', label: 'OR' } as const,
-] satisfies ToFullOption<DefaultCombinator>[];
+] satisfies DefaultCombinator[];
 
 /**
  * Default combinator list, with `XOR` added.
@@ -185,7 +184,7 @@ export const defaultCombinators = [
 export const defaultCombinatorsExtended = [
   ...defaultCombinators,
   { name: 'xor', value: 'xor', label: 'XOR' } as const,
-] satisfies ToFullOption<DefaultCombinatorExtended>[];
+] satisfies DefaultCombinatorExtended[];
 
 /**
  * Standard classnames applied to each component.
