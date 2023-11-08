@@ -43,7 +43,7 @@ interface HasOptionalClassName {
 }
 
 /**
- * HTML5 <input> types
+ * HTML5 input types
  */
 export type InputType =
   | 'button'
