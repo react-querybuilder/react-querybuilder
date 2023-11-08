@@ -10,18 +10,16 @@ import type {
   Classname,
   Combinator,
   Field,
-  FlexibleOptionList,
-  FullOptionList,
+  InputType,
   Operator,
   ParseNumbersMethod,
   Path,
-  ToFlexibleOption,
-  ToFullOption,
   ValueEditorType,
   ValueSource,
   ValueSources,
 } from './basic';
 import type { DropEffect } from './dnd';
+import type { FlexibleOptionList, FullOptionList, ToFlexibleOption, ToFullOption } from './options';
 import type {
   Classnames,
   CombinatorSelectorProps,
@@ -149,7 +147,7 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
   /** The entire {@link Field} object. */
   fieldData: F;
   type?: ValueEditorType;
-  inputType?: string | null;
+  inputType?: InputType | null;
   values?: any[];
   listsAsArrays?: boolean;
   parseNumbers?: ParseNumbersMethod;
@@ -222,7 +220,7 @@ export interface Schema {
     field: string,
     operator: string,
     meta: { fieldData: ToFullOption<Field> }
-  ): string | null;
+  ): InputType | null;
   getValues(
     field: string,
     operator: string,
@@ -512,7 +510,7 @@ export type QueryBuilderProps<RG extends RuleGroupTypeAny> = QueryBuilderContext
     field: string,
     operator: string,
     misc: { fieldData: ToFullOption<Field> }
-  ): string | null;
+  ): InputType | null;
   /**
    * This function should return the list of allowed values for the
    * given field `name` and operator `name` (only applicable when

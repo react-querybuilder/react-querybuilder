@@ -1,4 +1,5 @@
-import type { Combinator, Operator, Path, ToFullOption, ValueSource } from './basic';
+import type { Combinator, Operator, Path, ValueSource } from './basic';
+import type { ToFullOption } from './options';
 
 /**
  * Properties common to both rules and groups.

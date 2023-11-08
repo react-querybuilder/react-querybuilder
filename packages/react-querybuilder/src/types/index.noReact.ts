@@ -20,6 +20,7 @@ export type {
   JsonLogicStrictNotEqual,
   JsonLogicVar,
 } from './json-logic-js';
+export * from './options';
 export * from './props';
 export * from './ruleGroups';
 export * from './ruleGroupsIC';

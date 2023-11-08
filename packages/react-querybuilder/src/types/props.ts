@@ -1,13 +1,5 @@
-import type {
-  Classname,
-  Combinator,
-  Field,
-  FullOptionList,
-  Operator,
-  Option,
-  Path,
-  ValueSource,
-} from './basic';
+import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
+import type { FullOptionList, Option } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
