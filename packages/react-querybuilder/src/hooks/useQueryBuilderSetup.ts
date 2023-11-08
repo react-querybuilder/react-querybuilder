@@ -57,11 +57,10 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
     autoSelectOperator = true,
     addRuleToNewGroups = false,
     enableDragAndDrop: enableDragAndDropProp,
-    independentCombinators,
     listsAsArrays = false,
     debugMode: debugModeProp = false,
     idGenerator = generateID,
-  } = props as QueryBuilderProps<RG>;
+  } = props;
 
   const rqbContext = useMergedContext({
     controlClassnames: controlClassnamesProp,
@@ -359,24 +358,26 @@ export const useQueryBuilderSetup = <RG extends RuleGroupType | RuleGroupTypeIC>
     idGenerator,
   ]);
 
-  const createRuleGroup = useCallback((): RG => {
-    // TODO: figure out how to avoid `@ts-expect-error` here
-    if (independentCombinators) {
-      // @ts-expect-error TS can't tell that RG means RuleGroupTypeIC
+  const createRuleGroup = useCallback(
+    (independentCombinators?: boolean): RG => {
+      if (independentCombinators) {
+        return {
+          id: idGenerator(),
+          rules: addRuleToNewGroups ? [createRule()] : [],
+          not: false,
+        } as RG;
+      }
+      // TODO: figure out how to avoid `@ts-expect-error` here
+      // @ts-expect-error TS can't tell that RG means RuleGroupType
       return {
         id: idGenerator(),
         rules: addRuleToNewGroups ? [createRule()] : [],
+        combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
         not: false,
       };
-    }
-    // @ts-expect-error TS can't tell that RG means RuleGroupType
-    return {
-      id: idGenerator(),
-      rules: addRuleToNewGroups ? [createRule()] : [],
-      combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
-      not: false,
-    };
-  }, [addRuleToNewGroups, combinators, createRule, idGenerator, independentCombinators]);
+    },
+    [addRuleToNewGroups, combinators, createRule, idGenerator]
+  );
   // #endregion
 
   useControlledOrUncontrolled({

@@ -58,7 +58,7 @@ describe('QueryBuilderNative', () => {
   });
 
   it('renders with independent combinators', () => {
-    render(<QueryBuilderNative query={queryIC} independentCombinators />);
+    render(<QueryBuilderNative query={queryIC} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.inlineCombinator)).toBeOnTheScreen();
   });

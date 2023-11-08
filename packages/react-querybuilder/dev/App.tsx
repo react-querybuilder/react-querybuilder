@@ -152,7 +152,6 @@ export const App = ({
             <QueryBuilder
               {...commonRQBProps}
               key="query"
-              independentCombinators={false}
               query={query}
               onQueryChange={onQueryChange}
             />
@@ -160,7 +159,6 @@ export const App = ({
             <QueryBuilder
               {...commonRQBProps}
               key="queryIC"
-              independentCombinators
               query={queryIC}
               onQueryChange={onQueryChangeIC}
             />

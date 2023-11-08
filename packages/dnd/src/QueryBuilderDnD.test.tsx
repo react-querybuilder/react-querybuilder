@@ -129,7 +129,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule down within the same group', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupType]>();
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
@@ -145,14 +145,11 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         );
         const rules = screen.getAllByTestId(TestID.rule);
         simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), gDnDBe());
-        expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules.map(r => r.id)).toEqual([
-          '1',
-          '0',
-        ]);
+        expect(onQueryChange.mock.calls[1][0].rules.map(r => r.id)).toEqual(['1', '0']);
       });
 
       it('moves a rule to a different group with a common ancestor', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupType]>();
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
@@ -176,25 +173,20 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const rule = screen.getAllByTestId(TestID.rule)[1]; // id 2
         const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[2]; // id 3
         simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(ruleGroup, 'drop'), gDnDBe());
-        expect((onQueryChange.mock.calls[1][0] as RuleGroupType).rules).toHaveLength(1);
+        expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
+        expect((onQueryChange.mock.calls[1][0].rules[0] as RuleGroupType).rules).toHaveLength(2);
         expect(
-          ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType).rules
-        ).toHaveLength(2);
-        expect(
-          (
-            ((onQueryChange.mock.calls[1][0] as RuleGroupType).rules[0] as RuleGroupType)
-              .rules[1] as RuleGroupType
-          ).rules[0]
+          ((onQueryChange.mock.calls[1][0].rules[0] as RuleGroupType).rules[1] as RuleGroupType)
+            .rules[0]
         ).toHaveProperty('id', '2');
       });
     });
 
     describe('independent combinators', () => {
       it('swaps the first rule with the last within the same group', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -218,10 +210,9 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('swaps the last rule with the first within the same group', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -246,10 +237,9 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from first to last within the same group', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -277,10 +267,9 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from last to first within the same group', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -309,10 +298,9 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from last to middle by dropping on inline combinator', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -345,10 +333,9 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a first-child rule to a different group as the first child', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -385,10 +372,9 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a middle-child rule to a different group as a middle child', () => {
-        const onQueryChange = jest.fn();
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnD
-            independentCombinators
             onQueryChange={onQueryChange}
             enableDragAndDrop
             query={{
@@ -437,7 +423,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
 
 it('does not pass dnd classes down to nested rules and groups', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
-    (props: QueryBuilderProps<RuleGroupType | RuleGroupTypeIC>) => (
+    (props: QueryBuilderProps<RuleGroupType>) => (
       <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
         <QueryBuilder {...props} />
       </QueryBuilderDnD>
@@ -488,13 +474,13 @@ it('does not pass dnd classes down to nested rules and groups', async () => {
 
 it('prevents changes when disabled', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
-    (props: QueryBuilderProps<RuleGroupType | RuleGroupTypeIC>) => (
+    (props: QueryBuilderProps<RuleGroupTypeIC>) => (
       <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
         <QueryBuilder {...props} />
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn();
+  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
   render(
     <QueryBuilderWrapped
       fields={[
@@ -505,7 +491,6 @@ it('prevents changes when disabled', async () => {
         { name: 'field4', label: 'Field 4' },
       ]}
       enableMountQueryChange={false}
-      independentCombinators
       onQueryChange={onQueryChange}
       enableDragAndDrop
       disabled

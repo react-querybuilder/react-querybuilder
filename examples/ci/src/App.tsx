@@ -1,7 +1,7 @@
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { useReducer, useState } from 'react';
 import type {
-  DefaultRuleGroupType,
+  DefaultRuleGroupTypeAny,
   QueryBuilderProps,
 } from 'react-querybuilder';
 import {
@@ -29,7 +29,7 @@ export const App = () => {
     showBranches,
     ...commonOptions
   } = options;
-  const commonProps: QueryBuilderProps<DefaultRuleGroupType> = {
+  const commonProps: QueryBuilderProps<DefaultRuleGroupTypeAny> = {
     fields,
     ...commonOptions,
     parseNumbers,
@@ -46,9 +46,8 @@ export const App = () => {
         }}>
         {independentCombinators ? (
           <QueryBuilder
-            {...(commonProps as unknown as DefaultQBPropsNoDefaultQueryIC)}
+            {...(commonProps as DefaultQBPropsNoDefaultQueryIC)}
             key="rqb-ic"
-            independentCombinators
             query={queryIC}
             onQueryChange={qIC => setQueryIC(qIC)}
           />
@@ -56,7 +55,6 @@ export const App = () => {
           <QueryBuilder
             {...(commonProps as DefaultQBPropsNoDefaultQuery)}
             key="rqb"
-            independentCombinators={false}
             query={query}
             onQueryChange={q => setQuery(q)}
           />

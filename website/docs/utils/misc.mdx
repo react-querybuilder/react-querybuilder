@@ -64,7 +64,7 @@ function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
 function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 ```
 
-`convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure (`RuleGroupTypeIC`, used with the [`independentCombinators` prop](../components/querybuilder#independentcombinators)).
+`convertQuery` toggles a query between the conventional `RuleGroupType` structure–with combinators at the group level–and the "independent combinators" structure `RuleGroupTypeIC`–with combinators between every other rule/group.
 
 `convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in the directions indicated by their respective names.
 
@@ -156,7 +156,7 @@ The default components are also exported:
 
 - [`ActionElement`](../components/actionelement) - used for action buttons (to add rules, remove groups, etc.)
 - [`DragHandle`](../components/draghandle) - used for the drag handle on rules and group headers
-- [`InlineCombinator`](../components/rulegroup) - used when either [`showCombinatorsBetweenRules`](../components/querybuilder#showcombinatorsbetweenrules) or [`independentCombinators`](../components/querybuilder#independentcombinators) are `true`
+- [`InlineCombinator`](../components/rulegroup) - used when either [`showCombinatorsBetweenRules`](../components/querybuilder#showcombinatorsbetweenrules) is `true` or the query is using independent combinators.
 - [`NotToggle`](../components/nottoggle) - used for the "Invert this group" toggle switch
 - [`Rule`](../components/rule) - the default rule component
 - [`RuleGroup`](../components/rulegroup) - the default rule group component

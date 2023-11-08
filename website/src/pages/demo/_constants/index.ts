@@ -107,7 +107,7 @@ export const optionsMetadata = {
       'The validator function(s) will be used to bold the "+Rule" button for empty groups and put a purple background on empty text fields and emtpy groups',
   },
   independentCombinators: {
-    link: '/docs/components/querybuilder#independentcombinators',
+    link: '/docs/components/querybuilder#independent-combinators',
     label: 'Independent combinators',
     title: 'Combinators between rules can be independently updated',
   },

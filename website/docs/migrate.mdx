@@ -4,6 +4,12 @@ title: Migrating to v7
 
 Version 7 shouldn't require many, if any, code changes when migrating from v6. However, some of the defaults have changed, and taking advantage of the performance improvements and other conveniences may require some minor refactoring. A summary of the important changes is below.
 
+## Breaking changes
+
+### `QueryBuilder` prop types
+
+The TypeScript interface for the main component's props object has been overhauled. The [`QueryBuilder`](../components/querybuilder) component will now automatically infer the query type as either `RuleGroupType` or `RuleGroupTypeIC` instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](../components/querybuilder#independent-combinators).
+
 ## New features
 
 ### Performance improvements
@@ -12,7 +18,7 @@ Props and components are aggressively memoized using `React.memo`, `useMemo`, an
 
 The most common violation of that rule is probably inline arrow functions in the `onQueryChange` prop (something like `<QueryBuilder onQueryChange={q => setQuery(q)} />`). This can usually be addressed by moving the function definition outside the component rendering function, or, if that's not possible, by memoizing the function with `useCallback`.
 
-### Optional `name` but `value` prioritized
+### Optional `name`, `value` prioritized
 
 Previously, props and properties that accepted an `OptionList` type or extension thereof (`fields`, `compbinators`, etc.) required a `name` property as a unique identifier for each member within the list. In version 7, list members may specify a `value` property as their identifier instead of `name`, which is now optional. If both `name` and `value` properties are present for a given item, `value` will be used.
 

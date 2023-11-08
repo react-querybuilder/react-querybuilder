@@ -298,7 +298,7 @@ Output:
 
 ### Independent combinators
 
-When the `independentCombinators` option is `true`, `parse*` functions will output a query with combinator identifiers between sibling rules/groups instead of the group level. (For these queries to be valid for the `<QueryBuilder />` `query` prop, the `independentCombinators` prop must also be `true`.)
+When the `independentCombinators` option is `true`, `parse*` functions will output a query with combinator identifiers _between_ sibling rules/groups instead of the group level.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`, {

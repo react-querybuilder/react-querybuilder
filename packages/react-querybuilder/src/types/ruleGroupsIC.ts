@@ -10,7 +10,7 @@ import type {
 import type { MappedTuple } from './ruleGroupsIC.utils';
 
 /**
- * The main rule group type when `independentCombinators` is `true`. This type is used
+ * The main rule group type when using independent combinators. This type is used
  * for query definitions as well as all sub-groups of queries.
  */
 export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = Omit<
@@ -69,3 +69,7 @@ export interface DefaultRuleGroupTypeIC extends RuleGroupTypeIC {
  * Shorthand for "either {@link DefaultRuleGroupType} or {@link DefaultRuleGroupTypeIC}".
  */
 export type DefaultRuleGroupTypeAny = DefaultRuleGroupType | DefaultRuleGroupTypeIC;
+
+export type GetRuleGroupType<RG> = RG extends { combinator: string }
+  ? RuleGroupType
+  : RuleGroupTypeIC;

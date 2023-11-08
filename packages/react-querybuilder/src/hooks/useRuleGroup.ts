@@ -148,11 +148,11 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   const addGroup = useCallback(
     (_event?: any, context?: any) => {
       if (!disabled) {
-        const newGroup = createRuleGroup();
+        const newGroup = createRuleGroup(independentCombinators);
         onGroupAdd(newGroup, path, context);
       }
     },
-    [createRuleGroup, disabled, onGroupAdd, path]
+    [createRuleGroup, disabled, independentCombinators, onGroupAdd, path]
   );
 
   const cloneGroup = useCallback(

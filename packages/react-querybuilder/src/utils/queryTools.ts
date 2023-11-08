@@ -15,39 +15,21 @@ import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from '.
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
-// TODO: eventually refactor the RuleGroup/IC types to be either/or in ALL cases.
-// Example for `add`:
-/*
-export function add<RG extends RuleGroupType>(
-  query: RG,
-  ruleOrGroup: RG | RuleType,
-  parentPath: Path,
-  options?: Omit<AddOptions, 'combinatorPreceding'>
-): RG;
-export function add<RGIC extends RuleGroupTypeIC>(
-  query: RGIC,
-  ruleOrGroup: RGIC | RuleType,
-  parentPath: Path,
-  options?: AddOptions
-): RGIC;
-*/
-
 /**
  * Options object for {@link add}.
  */
 export interface AddOptions {
   /**
-   * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
-   * `independentCombinators`), then the first combinator in this list will be
-   * inserted before the new rule/group if the parent group is not empty. This
-   * option is overridden by `combinatorPreceding`.
+   * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
+   * combinators), then the first combinator in this list will be  inserted
+   * before the new rule/group if the parent group is not empty. This option
+   * is overridden by `combinatorPreceding`.
    */
   combinators?: OptionList;
   /**
-   * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
-   * `independentCombinators`), then this combinator will be inserted before
-   * the new rule/group if the parent group is not empty. This option will
-   * supersede `combinators`.
+   * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
+   * combinators), then this combinator will be inserted before  the new rule/group
+   * if the parent group is not empty. This option will supersede `combinators`.
    */
   combinatorPreceding?: string;
   /**
@@ -308,9 +290,9 @@ export interface MoveOptions {
    */
   clone?: boolean;
   /**
-   * If the query is of type `RuleGroupTypeIC` (i.e. the query builder used
-   * `independentCombinators`), then the first combinator in this list will be
-   * inserted before the rule/group if necessary.
+   * If the query extends `RuleGroupTypeIC` (i.e. the query is using independent
+   * combinators), then the first combinator in this list will be inserted before
+   * the rule/group if necessary.
    */
   combinators?: OptionList;
   /**
@@ -355,7 +337,7 @@ export const move = <RG extends RuleGroupTypeAny>(
     : ruleOrGroupOriginal;
 
   return produce(query, draft => {
-    const independentCombinators = !isRuleGroupType(draft);
+    const independentCombinators = isRuleGroupTypeIC(draft);
     const parentOfRuleToRemove = findPath(getParentPath(oldPath), draft) as RG;
     const ruleToRemoveIndex = oldPath[oldPath.length - 1];
     const oldPrevCombinator =

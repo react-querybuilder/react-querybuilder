@@ -1,4 +1,4 @@
-import type { QueryBuilderProps } from '../src';
+import type { QueryBuilderProps, RuleGroupTypeAny } from '../src';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
@@ -25,7 +25,7 @@ export type DemoOptions = Record<DemoOption, boolean>;
 export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>>;
 
 export type CommonRQBProps = Pick<
-  QueryBuilderProps,
+  QueryBuilderProps<RuleGroupTypeAny>,
   | 'fields'
   | 'validator'
   | 'controlClassnames'

@@ -31,8 +31,7 @@ export type RuleType<
 
 /**
  * The main rule group type. This type is used for query definitions as well as
- * all sub-groups of queries. Note that the `independentCombinators` prop must
- * be `false` or `undefined` to use this type in {@link QueryBuilder}.
+ * all sub-groups of queries.
  */
 export type RuleGroupType<
   R extends RuleType = RuleType,

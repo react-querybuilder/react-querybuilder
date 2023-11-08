@@ -16,7 +16,7 @@ The default export of `react-querybuilder` is the `<QueryBuilder />` React compo
 
 `QueryBuilder` renders a [`RuleGroup`](./rulegroup) representing the root of the query.
 
-That root `RuleGroup` is nested within a `<div>` that has the [standard `queryBuilder` class](../styling/classnames), any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators ([`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) or [`independentCombinators`](#independentcombinators)) are enabled.
+That root `RuleGroup` is nested within a `<div>` that has the [standard `queryBuilder` class](../styling/classnames), any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators (either [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) is `true` or the query is using [independent combinators](#independent-combinators)) are enabled.
 
 Finally, everything is wrapped in `<QueryBuilderContext.Provider>` which inherits any values from ancestor context providers and propogates them down to subcomponents (props will supersede context values).
 
@@ -26,7 +26,7 @@ All `QueryBuilder` props are optional, but as stated in the [getting started gui
 
 :::note
 
-When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. However, if the type is `RuleGroupTypeIC`, then the [`independentCombinators` prop](#independentcombinators) must be set to `true`. Likewise, if the type is `RuleGroupType` then `independentCombinators` must be `false` or `undefined`.
+When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. For more information about `RuleGroupTypeIC`, see the [independent combinators](#independent-combinators) section below.
 
 :::
 
@@ -46,75 +46,15 @@ Field objects can also contain custom properties. Each field object will be pass
 
 `(query: RuleGroupTypeAny) => void`
 
-This function is invoked whenever the query is updated from within the component. The `query` is provided as an object of type `RuleGroupType` by default. For example:
-
-```json
-{
-  "combinator": "and",
-  "not": false,
-  "rules": [
-    {
-      "field": "firstName",
-      "operator": "=",
-      "value": "Steve"
-    },
-    {
-      "field": "lastName",
-      "operator": "=",
-      "value": "Vai"
-    },
-    {
-      "combinator": "and",
-      "rules": [
-        {
-          "field": "age",
-          "operator": ">",
-          "value": "30"
-        }
-      ]
-    }
-  ]
-}
-```
-
-If the `independentCombinators` prop is provided, then the `query` argument will be of type `RuleGroupTypeIC`. The "IC" version of the example above would look like this:
-
-```json
-{
-  "not": false,
-  "rules": [
-    {
-      "field": "firstName",
-      "operator": "=",
-      "value": "Steve"
-    },
-    "and",
-    {
-      "field": "lastName",
-      "operator": "=",
-      "value": "Vai"
-    },
-    "and",
-    {
-      "rules": [
-        {
-          "field": "age",
-          "operator": ">",
-          "value": "30"
-        }
-      ]
-    }
-  ]
-}
-```
+This function is invoked with the updated query whenever a change is made from within the component.
 
 ### `query`
 
 `RuleGroupTypeAny`
 
-The query is an object of type `RuleGroupType` (or `RuleGroupTypeIC`, if [`independentCombinators`](#independentcombinators) is `true`). If this prop is provided, `<QueryBuilder />` will be a [controlled component](https://reactjs.org/docs/forms.html#controlled-components).
+The query is an object of type `RuleGroupType` or `RuleGroupTypeIC`. If this prop is provided, `<QueryBuilder />` will be a [controlled component](https://reactjs.org/docs/forms.html#controlled-components).
 
-The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used together to control the component. See [examples](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
+The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used in concert to control the component. See [examples here](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
 
 ### `defaultQuery`
 
@@ -124,9 +64,9 @@ The initial query when `<QueryBuilder />` is uncontrolled.
 
 :::caution
 
-Do not provide both `query` and `defaultQuery` props. To use `<QueryBuilder />` as a controlled component, provide and manage the `query` prop in combination with the `onQueryChange` callback. Use `defaultQuery` (or neither query prop) to render an uncontrolled component.
+Do not provide both `query` and `defaultQuery` props. To use `<QueryBuilder />` as a controlled component, provide and manage the `query` prop in combination with the `onQueryChange` callback. Use `defaultQuery` (or neither query prop) to render an uncontrolled component. The `onQueryChange` callback will be invoked for every update regardless of which prop is used.
 
-If both props are defined, TypeScript will throw an error during compilation and an error will be logged to the console during runtime (in "development" mode only). Errors will also be logged to the console if the `query` prop is defined during one render and undefined in the next, or vice versa.
+If both props are defined, an error will be logged to the console during runtime (in "development" mode only). Errors will also be logged to the console if the `query` prop is defined during one render and undefined in the next, or vice versa.
 
 :::
 
@@ -134,13 +74,13 @@ If both props are defined, TypeScript will throw an error during compilation and
 
 `any`
 
-A "bucket" for passing arbitrary props down to custom components (default components will ignore this prop). The `context` prop is passed to each and every component, so it's accessible anywhere in the `QueryBuilder` component tree.
+A "bucket" for passing arbitrary props down to custom components. The default components ignore this prop, but it is passed to each and every component so it's accessible anywhere in the `QueryBuilder` component tree.
 
 ### `operators`
 
 `OptionList<Operator>`
 
-The array of operators that should be used. Custom operators must define a `name` and `label` property. An `arity` property, which can be "unary", "binary", or a number, may also be defined for each operator. If `arity` is either "unary" or a number less than 2, the [value editor component](./valueeditor) will not be rendered when that operator is selected.
+The array of operators that should be used. Custom operators must define a `label` property and either a `name` or `value` (`value` takes precedence). An `arity` property, which can be "unary", "binary", or a number, may also be defined for each operator. If `arity` is either "unary" or a number less than 2, the [value editor component](./valueeditor) will not be rendered when that operator is selected.
 
 To build the operator list dynamically depending on a rule's `field` property, use [`getOperators`](#getoperators). The result of `getOperators`, if not `null`, will supersede the `operators` prop.
 
@@ -398,10 +338,10 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 
 A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Receives the following props per the `InlineCombinatorProps` interface (which extends `CombinatorSelectorProps`):
 
-| Prop                     | Type                                       | Description                                                       |
-| ------------------------ | ------------------------------------------ | ----------------------------------------------------------------- |
-| `component`              | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component                        |
-| `independentCombinators` | <code>boolean \| undefined</code>          | Same as `independentCombinators` prop passed in to `QueryBuilder` |
+| Prop                     | Type                                       | Description                                                                    |
+| ------------------------ | ------------------------------------------ | ------------------------------------------------------------------------------ |
+| `component`              | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component                                     |
+| `independentCombinators` | `boolean`                                  | Whether the query is using [independent combinators](#independent-combinators) |
 
 #### `lockGroupAction`
 
@@ -720,7 +660,7 @@ Generate custom classes which will be added to the outer `div` of a group based 
 
 This callback is invoked immediately before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType` or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
 
-If [`independentCombinators`](#independentcombinators) is enabled, you can specify the combinator inserted immediately before the new rule (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the rule before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
+If the query is using [independent combinators](#independent-combinators), you can specify the combinator inserted immediately before the new rule (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the rule before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
 
 :::tip
 
@@ -734,7 +674,7 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
 
-If [`independentCombinators`](#independentcombinators) is enabled, you can specify the combinator inserted immediately before the new group (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the group before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
+If the query is using [independent combinators](#independent-combinators), you can specify the combinator inserted immediately before the new group (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the group before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
 
 :::tip
 
@@ -833,7 +773,7 @@ All keys in the object and all properties within each key are optional. The `tra
 
 Pass `true` to render the combinator selector between each child rule/group in the group body instead of in the group header. This can make some queries easier to understand as it encourages a more natural style of reading.
 
-Note that when this option is enabled, the `combinator` property is still managed at the group level even though selectors are displayed among the rules. Selecting a new combinator with one of the inline selectors will update all combinator selectors within the same group since they all use the same value. To display inline combinator selectors that are managed independently, use the [`independentCombinators`](#independentcombinators) prop.
+Note that when this option is enabled, the `combinator` property is still managed at the group level even though selectors are displayed among the rules. Selecting a new combinator with one of the inline selectors will update _all_ combinator selectors within the same group since they all use the same value. To display inline combinator selectors that are managed independently, use [independent combinators](#independent-combinators).
 
 ### `showNotToggle`
 
@@ -923,20 +863,6 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 Pass `true`, `"strict"`, or `"native"` to store `value` as a `number` instead of a string (when possible). Passing `"native"` will use `parseFloat` to determine if a value is numeric, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the [note about the corresponding `formatQuery` option](../utils/export#parse-numbers).
 
-### `independentCombinators`
-
-`boolean` (default `false`) _<DemoLink option="independentCombinators" />_
-
-Pass `true` to insert an independent combinator selector between each child rule/group within the body of a group. A combinator selector will not be rendered in group headers.
-
-Visually, this option has a similar effect as the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independently controlled. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
-
-:::caution
-
-When the `independentCombinators` option is enabled, the `query` (or `defaultQuery`) prop _must_ be of type `RuleGroupTypeIC` instead of the default `RuleGroupType`. See [`onQueryChange`](#onquerychange) above, or the [Rules and groups section](../typescript#rules-and-groups) of the TypeScript documentation for more information.
-
-:::
-
 ### `enableDragAndDrop`
 
 `boolean` (default `false`) _<DemoLink option="enableDragAndDrop" />_
@@ -1020,3 +946,35 @@ Used to generate the `title` attribute applied to the outermost `<div>` of each 
 `QueryValidator` _<DemoLink option="validateQuery" />_
 
 This function is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each validated rule and group in the query tree. If an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the `id` of its rule or group. See the [validation documentation](../utils/validation) for more information.
+
+## Independent combinators
+
+The props listed above that specify `RuleGroupTypeAny` will actually be inferred as one of the more specific types, `RuleGroupType` or `RuleGroupTypeIC`. When a query is of type `RuleGroupTypeIC`, we say that it is using "independent combinators."
+
+What this means is that a combinator value is defined between each neighboring pair of rules/groups in a group's `rules` array (every odd-numbered index). Visually, this has a similar effect as the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator is independently controlled by its own selector. You may find that users take to this configuration more easily, as it can allow them to express queries more like they would in natural language.
+
+A standard query (`RuleGroupType`) might look like this:
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'f1', operator: '=', value: 'v1' },
+    { field: 'f2', operator: '=', value: 'v2' },
+  ],
+};
+```
+
+The same query using independent combinators would look like this:
+
+```ts
+const query: RuleGroupTypeIC = {
+  rules: [
+    { field: 'f1', operator: '=', value: 'v1' },
+    'and',
+    { field: 'f2', operator: '=', value: 'v2' },
+  ],
+};
+```
+
+Click <DemoLink option="independentCombinators" text="here" /> to load the demo with a query using independent combinators.

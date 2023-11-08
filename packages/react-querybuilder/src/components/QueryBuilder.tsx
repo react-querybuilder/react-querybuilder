@@ -2,13 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
-import type {
-  Path,
-  QueryBuilderProps,
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-} from '../types';
+import type { Path, QueryBuilderProps, RuleGroupTypeAny } from '../types';
 import { QueryBuilderContext } from './QueryBuilderContext';
 
 /**
@@ -25,16 +19,11 @@ export const QueryBuilderStateProvider = ({ children }: { children: React.ReactN
   </Provider>
 );
 
-const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  allProps: QueryBuilderProps<RG> & {
-    setup: ReturnType<typeof useQueryBuilderSetup>;
-  }
-) => {
-  const { setup, ...props } = allProps;
-  const qb = {
-    ...props,
-    ...useQueryBuilderSchema(props as QueryBuilderProps<RuleGroupTypeAny>, setup),
-  };
+const QueryBuilderInternal = ({
+  setup,
+  ...props
+}: QueryBuilderProps<RuleGroupTypeAny> & { setup: ReturnType<typeof useQueryBuilderSetup> }) => {
+  const qb = { ...props, ...useQueryBuilderSchema(props, setup) };
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
 
@@ -69,9 +58,7 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
  *
  * See https://react-querybuilder.js.org/ for demos and documentation.
  */
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderProps<RG>
-) => {
+export const QueryBuilder = <RG extends RuleGroupTypeAny>(props: QueryBuilderProps<RG>) => {
   const setup = useQueryBuilderSetup(props);
 
   return (

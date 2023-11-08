@@ -507,7 +507,6 @@ export default function Demo({
               {options.independentCombinators ? (
                 <QueryBuilder
                   {...commonRQBProps}
-                  independentCombinators
                   key={'queryIC'}
                   query={queryIC}
                   onQueryChange={onQueryChangeIC}
@@ -515,7 +514,6 @@ export default function Demo({
               ) : (
                 <QueryBuilder
                   {...commonRQBProps}
-                  independentCombinators={false}
                   key={'query'}
                   query={query}
                   onQueryChange={onQueryChange}

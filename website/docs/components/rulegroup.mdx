@@ -35,17 +35,17 @@ This component loops through a group's `rules` array and renders a child `RuleGr
 
 If [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is `true`, an inline combinator[^8] (whose `value` is the group's `combinator`) is rendered ahead of each rule or group except the first.
 
-When [`independentCombinators`](./querybuilder#independentcombinators) is `true`, each odd-numbered index in the `rules` array is a `string` representing a combinator value. For those elements, an independent, inline combinator is rendered.
+When the query is using [independent combinators](./querybuilder#independent-combinators), each odd-numbered index in the `rules` array is a `string` representing a combinator value. For those elements, an independent, inline combinator is rendered.
 
 :::note
 
-The `independentCombinators` prop supersedes `showCombinatorsBetweenRules`.
+The `showCombinatorsBetweenRules` prop is ignored if the query is using independent combinators.
 
 :::
 
 [^1]: Only rendered if [`showShiftActions`](./querybuilder#showshiftactions) is `true`.
 [^2]: Only rendered if [`enableDragAndDrop`](./querybuilder#enabledraganddrop) is `true`.
-[^3]: Only rendered if neither [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) nor [`independentCombinators`](./querybuilder#independentcombinators) are `true`.
+[^3]: Only rendered if [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is disabled and the query is not using [independent combinators](./querybuilder#independent-combinators).
 [^4]: Only rendered if [`showNotToggle`](./querybuilder#shownottoggle) is `true`.
 [^5]: Only rendered if [`showCloneButtons`](./querybuilder#showclonebuttons) is `true`.
 [^6]: Only rendered if [`showLockButtons`](./querybuilder#showlockbuttons) is `true`.

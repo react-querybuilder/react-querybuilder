@@ -9,10 +9,11 @@ export const isRuleGroup = (rg: any): rg is RuleGroupTypeAny =>
 /**
  * Determines if an object is a {@link RuleGroupType}.
  */
-export const isRuleGroupType = (rg: any): rg is RuleGroupType => isRuleGroup(rg) && !!rg.combinator;
+export const isRuleGroupType = (rg: any): rg is RuleGroupType =>
+  isRuleGroup(rg) && typeof rg.combinator === 'string';
 
 /**
  * Determines if an object is a {@link RuleGroupTypeIC}.
  */
 export const isRuleGroupTypeIC = (rg: any): rg is RuleGroupTypeIC =>
-  isRuleGroup(rg) && !rg.combinator;
+  isRuleGroup(rg) && !Object.hasOwn(rg, 'combinator');

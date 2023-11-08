@@ -16,7 +16,7 @@ import type {
   QueryBuilderProps,
   QueryValidator,
   RuleGroupProps,
-  RuleGroupType,
+  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   Schema,
@@ -53,10 +53,10 @@ const defaultOnLog = (...params: any[]) => {
  * For given {@link QueryBuilderProps} and setup values from {@link useQueryBuilderSetup},
  * prepares and returns all values required to render a query builder.
  */
-export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC>(
+export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
   props: QueryBuilderProps<RG>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG>>
-) => {
+) {
   const {
     query: queryProp,
     defaultQuery: defaultQueryProp,
@@ -67,7 +67,6 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     onAddGroup = defaultOnAddGroup,
     onRemove = defaultOnRemove,
     onQueryChange,
-    independentCombinators: icProp,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
     showNotToggle: showNotToggleProp = false,
     showShiftActions: showShiftActionsProp = false,
@@ -116,7 +115,6 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const isFirstRender = useRef(true);
 
   // #region Boolean coercion
-  const independentCombinators = !!icProp;
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
@@ -154,6 +152,11 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
 
+  const independentCombinators = useMemo(
+    () => !Object.hasOwn(rootQuery, 'combinator'),
+    [rootQuery]
+  );
+
   // This effect only runs once, at the beginning of the component lifecycle.
   // The returned cleanup function clears the query from the store when the
   // component is destroyed.
@@ -178,7 +181,7 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
    * means that it's wrapped in its own `useCallback`.
    */
   const dispatchQuery = useCallback(
-    (newQuery: RG) => {
+    (newQuery: RuleGroupTypeAny) => {
       queryBuilderDispatch(dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange }));
     },
     [onQueryChange, qbId, queryBuilderDispatch]
@@ -199,6 +202,8 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const onRuleAdd = useCallback(
     (rule: RuleType, parentPath: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      // istanbul ignore if
+      if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -238,6 +243,8 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const onGroupAdd = useCallback(
     (ruleGroup: RG, parentPath: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      // istanbul ignore if
+      if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -281,7 +288,9 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
 
   const onPropChange = useCallback(
     (prop: UpdateableProperties, value: any, path: Path) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId);
+      // istanbul ignore if
+      if (!queryLocal) return;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         if (debugMode) {
           onLog({ type: LogType.pathDisabled, path, prop, value, query: queryLocal });
@@ -318,6 +327,8 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
   const onRuleOrGroupRemove = useCallback(
     (path: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      // istanbul ignore if
+      if (!queryLocal) return;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -325,10 +336,10 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
         }
         return;
       }
-      const ruleOrGroup = findPath(path, queryLocal);
+      const ruleOrGroup = findPath(path, queryLocal) as RG | RuleType;
       // istanbul ignore else
       if (ruleOrGroup) {
-        if (onRemove(ruleOrGroup as RG | RuleType, path, queryLocal, context)) {
+        if (onRemove(ruleOrGroup, path, queryLocal, context)) {
           const newQuery = remove(queryLocal, path);
           if (debugMode) {
             onLog({ type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
@@ -346,7 +357,9 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
 
   const moveRule = useCallback(
     (oldPath: Path, newPath: Path, clone?: boolean) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId);
+      // istanbul ignore if
+      if (!queryLocal) return;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
@@ -494,4 +507,4 @@ export const useQueryBuilderSchema = <RG extends RuleGroupType | RuleGroupTypeIC
     inlineCombinatorsAttr,
     combinatorPropObject,
   };
-};
+}
