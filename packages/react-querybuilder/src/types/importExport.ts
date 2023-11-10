@@ -1,6 +1,6 @@
 import type { Field, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from './json-logic-js';
-import type { OptionList } from './options';
+import type { FlexibleOptionList, OptionList, ToFullOption } from './options';
 import type { RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
 import type { QueryValidator } from './validation';
@@ -66,8 +66,11 @@ export interface FormatQueryOptions {
   /**
    * This can be the same {@link Field} array passed to {@link QueryBuilder}, but
    * really all you need to provide is the `name` and `validator` for each field.
+   *
+   * The full field object from this array, where the field's identifying property
+   * matches the rule's `field`, will be passed to the rule processor.
    */
-  fields?: (Pick<Field, 'name' | 'validator'> & Record<string, any>)[];
+  fields?: FlexibleOptionList<Field>;
   /**
    * This string will be inserted in place of invalid groups for non-JSON formats.
    * Defaults to `'(1 = 1)'` for "sql"/"parameterized"/"parameterized_named" and
@@ -127,6 +130,11 @@ export type ValueProcessorOptions = Pick<
   'parseNumbers' | 'quoteFieldNamesWith'
 > & {
   escapeQuotes?: boolean;
+  /**
+   * The full field object, if `fields` was provided in the
+   * {@link formatQuery} options parameter.
+   */
+  fieldData?: ToFullOption<Field>;
 };
 
 /**
@@ -147,6 +155,10 @@ export type ValueProcessorLegacy = (
 
 export type ValueProcessor = ValueProcessorLegacy;
 
+/**
+ * Function to produce a result that {@link formatQuery} uses when processing a
+ * {@link RuleType} object.
+ */
 // TODO: narrow the return type based on options.format? (must add format to options first)
 export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
 
@@ -163,6 +175,9 @@ export interface ParameterizedSQL {
   params: any[];
 }
 
+/**
+ * Object produced by {@link formatQuery} for the `"parameterized_named"` format.
+ */
 export interface ParameterizedNamedSQL {
   /** The SQL `WHERE` clause fragment with bind variable placeholders for each value. */
   sql: string;

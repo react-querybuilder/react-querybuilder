@@ -172,7 +172,7 @@ export interface ValueEditorProps<
 }
 
 /**
- * All subcomponent types.
+ * Subcomponents.
  */
 export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
   addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
@@ -373,8 +373,8 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
  * Notes:
  * - Only one of `query` or `defaultQuery` should be provided. If `query` is present,
  * then `defaultQuery` should be undefined and vice versa.
- * - If rendered initially with a `query` prop, then `query` must always be defined in
- * every subsequent render or warnings will be logged (in non-production modes only).
+ * - If rendered initially with a `query` prop, then `query` must be defined in every
+ * subsequent render or warnings will be logged (in non-production modes only).
  */
 export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,

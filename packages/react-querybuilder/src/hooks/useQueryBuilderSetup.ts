@@ -28,8 +28,9 @@ import {
   toFullOption,
   toFullOptionList,
   toFullOptionMap,
-  uniqByName,
+  uniqByIdentifier,
   uniqOptGroups,
+  uniqOptList,
 } from '../utils';
 
 /**
@@ -130,9 +131,9 @@ export const useQueryBuilderSetup = <
       }
     } else {
       if (autoSelectField) {
-        return uniqByName(flds as FullField[]);
+        return uniqByIdentifier(flds as FullField[]);
       } else {
-        return uniqByName([defaultField, ...(flds as FullField[])]);
+        return uniqByIdentifier([defaultField, ...(flds as FullField[])]);
       }
     }
   }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
@@ -207,9 +208,7 @@ export const useQueryBuilderSetup = <
         }
       }
 
-      return (isFlexibleOptionGroupArray(opsFinal)
-        ? uniqOptGroups(opsFinal)
-        : uniqByName(opsFinal)) as unknown as FullOptionList<O>;
+      return uniqOptList(opsFinal) as FullOptionList<O>;
     },
     [
       autoSelectOperator,

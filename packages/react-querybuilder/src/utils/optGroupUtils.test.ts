@@ -1,8 +1,10 @@
+import type { FlexibleOption } from '../types';
 import {
   getFirstOption,
   isFlexibleOptionGroupArray,
   isFullOptionGroupArray,
   isOptionGroupArray,
+  toFlatOptionArray,
 } from './optGroupUtils';
 
 it('identifies option group arrays', () => {
@@ -55,4 +57,20 @@ it('identifies full option group arrays', () => {
   expect(
     isFullOptionGroupArray([{ label: 'l', options: [{ name: 'n', value: 'v', label: 'l' }] }])
   ).toBe(true);
+});
+
+describe('toFlatOptionArray', () => {
+  const arr: FlexibleOption[] = [
+    { name: 'test1', label: 'Test1' },
+    { name: 'test2', label: 'Test2' },
+    { name: 'test2', label: 'Test3' },
+  ];
+
+  it('returns option arrays as is instead of flattening', () => {
+    expect(toFlatOptionArray(arr)).toEqual(arr.slice(0, 2));
+  });
+
+  it('flattens option group arrays', () => {
+    expect(toFlatOptionArray([{ label: 'test', options: arr }])).toEqual(arr.slice(0, 2));
+  });
 });

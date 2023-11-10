@@ -1,6 +1,12 @@
+/**
+ * Extracts the {@link Option} type from a {@link FlexibleOptionList}.
+ */
 export type GetOptionType<OL extends FlexibleOptionList<FlexibleOption>> =
   OL extends FlexibleOptionList<infer Opt> ? Opt : never;
 
+/**
+ * Extracts the type of the identifying property from a {@link FlexibleOption}.
+ */
 export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
   | Option<infer NameType>
   | ValueOption<infer NameType>
@@ -13,6 +19,7 @@ export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
  */
 export interface Option<N extends string = string> {
   name: N;
+  value?: N;
   label: string;
   [x: string]: any;
 }
@@ -118,6 +125,9 @@ export type FullOptionList<Opt extends FlexibleOption> = Opt extends FullOption
   ? Opt[] | OptionGroup<Opt>[]
   : ToFullOption<Opt>[] | OptionGroup<ToFullOption<Opt>>[];
 
+/**
+ * Map of option identifiers to their respective {@link Option}.
+ */
 export type FlexibleOptionMap<
   V extends FlexibleOption,
   K extends string = GetOptionIdentifierType<V>
@@ -125,10 +135,17 @@ export type FlexibleOptionMap<
   [k in K]?: V;
 };
 
+/**
+ * Map of option identifiers to their respective {@link FullOption}.
+ */
 export type FullOptionMap<V extends FullOption, K extends string = GetOptionIdentifierType<V>> = {
   [k in K]?: V;
 };
 
+/**
+ * Map of option identifiers to their respective {@link FullOption}.
+ * Must include all possible strings from the identifier type.
+ */
 export type FullOptionRecord<
   V extends FullOption,
   K extends string = GetOptionIdentifierType<V>

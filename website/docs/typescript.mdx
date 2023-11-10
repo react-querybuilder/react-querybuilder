@@ -125,6 +125,13 @@ type ExportFormat =
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
 
+interface ValueProcessorOptions {
+  parseNumbers?: boolean;
+  quoteFieldNamesWith?: string | [string, string];
+  escapeQuotes?: boolean;
+  fieldData?: Field;
+}
+
 type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
 
 interface FormatQueryOptions {
@@ -133,7 +140,7 @@ interface FormatQueryOptions {
   ruleProcessor?: RuleProcessor;
   quoteFieldNamesWith?: string | [string, string];
   validator?: QueryValidator;
-  fields?: { name: string; validator?: RuleValidator; [k: string]: any }[];
+  fields?: OptionList<Field>;
   fallbackExpression?: string;
   paramPrefix?: string;
   parseNumbers?: boolean;

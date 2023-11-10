@@ -40,6 +40,7 @@ export type RuleGroupICArray<
   R extends RuleType = RuleType,
   C extends string = string
 > = [R | RG] | [R | RG, ...MappedTuple<[C, R | RG]>] | ((R | RG)[] & { length: 0 });
+
 /**
  * Shorthand for "either {@link RuleGroupArray} or {@link RuleGroupICArray}".
  */
@@ -77,6 +78,10 @@ export type DefaultRuleGroupTypeAny<F extends string = string> =
   | DefaultRuleGroupType<F>
   | DefaultRuleGroupTypeIC<F>;
 
+/**
+ * Determines if a type extending {@link RuleGroupTypeAny} is actually
+ * {@link RuleGroupType} or {@link RuleGroupTypeIC}.
+ */
 export type GetRuleGroupType<RG> = RG extends { combinator: string }
   ? RuleGroupType
   : RuleGroupTypeIC;

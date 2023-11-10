@@ -1,16 +1,29 @@
 import type {
   FlexibleOption,
   FlexibleOptionGroup,
+  FlexibleOptionList,
   OptionGroup,
   ToFullOption,
 } from '../types/index.noReact';
+import { isFlexibleOptionGroupArray } from './optGroupUtils';
 import { toFullOption } from './toFullOption';
 
 /**
- * Generates a new array of objects with duplicates removed
- * based on the `name` property.
+ * @deprecated Renamed to {@link uniqByIdentifier}.
  */
-export const uniqByName = <T extends { name?: string; value?: string }>(
+export const uniqByName = <
+  T extends { name: string; value?: string } | { name?: string; value: string }
+>(
+  originalArray: T[]
+): T[] => uniqByIdentifier(originalArray);
+
+/**
+ * Generates a new array of objects with duplicates removed based
+ * on the identifying property (`value` or `name`)
+ */
+export const uniqByIdentifier = <
+  T extends { name: string; value?: string } | { name?: string; value: string }
+>(
   originalArray: T[]
 ): T[] => {
   const names = new Set<string>();
@@ -21,12 +34,12 @@ export const uniqByName = <T extends { name?: string; value?: string }>(
       newArray.push(el);
     }
   });
-  return newArray;
+  return originalArray.length === newArray.length ? originalArray : newArray;
 };
 
 /**
- * Generates a new {@link OptionGroup} array with duplicates removed
- * based on the `name` property.
+ * Generates a new {@link OptionGroup} array with duplicates
+ * removed based on the identifying property (`value` or `name`).
  */
 export const uniqOptGroups = <T extends FlexibleOption>(
   originalArray: FlexibleOptionGroup<T>[]
@@ -49,4 +62,15 @@ export const uniqOptGroups = <T extends FlexibleOption>(
     }
   });
   return newArray;
+};
+
+/**
+ * Generates a new {@link Option} or {@link OptionGroup} array with duplicates
+ * removed based on the identifier property (`value` or `name`).
+ */
+export const uniqOptList = <T extends FlexibleOption>(originalArray: FlexibleOptionList<T>) => {
+  if (isFlexibleOptionGroupArray(originalArray)) {
+    return uniqOptGroups(originalArray);
+  }
+  return uniqByIdentifier((originalArray as FlexibleOption[]).map(toFullOption));
 };

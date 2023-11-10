@@ -117,16 +117,16 @@ export type DefaultOperatorName =
   | 'notBetween';
 
 /**
- * A combinator definition with a {@link DefaultCombinatorName} `name` property.
+ * A {@link Combinator} definition with a {@link DefaultCombinatorName} `name` property.
  */
 export type DefaultCombinator = ToFullOption<Combinator<DefaultCombinatorName>>;
 
 /**
- * A combinator definition with a {@link DefaultCombinatorNameExtended} `name` property.
+ * A {@link Combinator} definition with a {@link DefaultCombinatorNameExtended} `name` property.
  */
 export type DefaultCombinatorExtended = ToFullOption<Combinator<DefaultCombinatorNameExtended>>;
 
 /**
- * An operator definition with a {@link DefaultOperatorName} `name` property.
+ * An {@link Operator} definition with a {@link DefaultOperatorName} `name` property.
  */
 export type DefaultOperator = ToFullOption<Operator<DefaultOperatorName>>;

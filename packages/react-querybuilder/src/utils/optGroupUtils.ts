@@ -9,6 +9,7 @@ import type {
   OptionList,
 } from '../types/index.noReact';
 import { isPojo } from './misc';
+import { uniqByIdentifier } from './uniq';
 
 /**
  * Determines if an {@link OptionList} is an {@link OptionGroup} array.
@@ -65,3 +66,11 @@ export const getFirstOption = <
     : isFlexibleOptionGroupArray(arr)
     ? arr[0].options[0].value ?? arr[0].options[0].name
     : arr[0].value ?? arr[0].name) as GetOptionIdentifierType<Opt>;
+
+/**
+ * Flattens {@link FlexibleOptionGroup} arrays into {@link FlexibleOption} arrays.
+ * If the array is already flat, it is returned as is.
+ */
+export const toFlatOptionArray = <T extends FlexibleOption, OL extends FlexibleOptionList<T>>(
+  arr: OL
+) => uniqByIdentifier(isFlexibleOptionGroupArray(arr) ? arr.flatMap(og => og.options) : arr) as T[];
