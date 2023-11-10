@@ -39,8 +39,8 @@ describe('uniqOptGroups', () => {
       {
         label: 'Test',
         options: [
-          { id: 1, name: 'test1', label: 'Test1' },
-          { id: 2, name: 'test2', label: 'Test2' },
+          { id: 1, name: 'test1', value: 'test1', label: 'Test1' },
+          { id: 2, name: 'test2', value: 'test2', label: 'Test2' },
         ],
       },
     ]);
@@ -68,8 +68,8 @@ describe('uniqOptGroups', () => {
       {
         label: 'Test',
         options: [
-          { id: 1, name: 'test1', label: 'Test1' },
-          { id: 2, name: 'test2', label: 'Test2' },
+          { id: 1, name: 'test1', value: 'test1', label: 'Test1' },
+          { id: 2, name: 'test2', value: 'test2', label: 'Test2' },
         ],
       },
     ]);
@@ -97,13 +97,13 @@ describe('uniqOptGroups', () => {
       {
         label: 'Test 1',
         options: [
-          { id: 1, name: 'test1', label: 'Test1' },
-          { id: 2, name: 'test2', label: 'Test2' },
+          { id: 1, name: 'test1', value: 'test1', label: 'Test1' },
+          { id: 2, name: 'test2', value: 'test2', label: 'Test2' },
         ],
       },
       {
         label: 'Test 2',
-        options: [{ id: 3, name: 'test3', label: 'Test3' }],
+        options: [{ id: 3, name: 'test3', value: 'test3', label: 'Test3' }],
       },
     ]);
   });

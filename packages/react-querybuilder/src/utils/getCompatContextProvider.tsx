@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../components';
-import type { QueryBuilderContextProps, QueryBuilderContextProvider } from '../types';
+import type { Field, QueryBuilderContextProps, QueryBuilderContextProvider } from '../types';
 import { mergeClassnames } from './mergeClassnames';
 import { mergeTranslations } from './mergeTranslations';
 
 export type GetCompatContextProviderProps = Pick<
-  QueryBuilderContextProps,
+  QueryBuilderContextProps<Field, string>,
   'controlClassnames' | 'controlElements' | 'translations'
 > & { key: string };
 
@@ -43,7 +43,7 @@ export const getCompatContextProvider =
     );
 
     const newContextProps = useMemo(
-      (): QueryBuilderContextProps => ({
+      (): QueryBuilderContextProps<Field, string> => ({
         ...rqbContext,
         ...classnamesObject,
         controlElements: {

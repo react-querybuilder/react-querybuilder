@@ -50,8 +50,6 @@ const muiComponents = {
   Select,
   Switch,
   TextareaAutosize,
-  KeyboardArrowDownIcon,
-  KeyboardArrowUpIcon,
 };
 
 function ReactQueryBuilderDemo_MaterialBrowser() {

@@ -23,11 +23,7 @@ export const App = () => {
   return (
     <div>
       <QueryBuilderBootstrap>
-        <QueryBuilder
-          fields={fields}
-          query={query}
-          onQueryChange={q => setQuery(q)}
-        />
+        <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       </QueryBuilderBootstrap>
       <h4>Query</h4>
       <pre>

@@ -1,4 +1,4 @@
-import type { Controls } from 'react-querybuilder';
+import type { Controls, Field } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { BulmaActionElement } from './BulmaActionElement';
 import { BulmaNotToggle } from './BulmaNotToggle';
@@ -25,7 +25,7 @@ export const bulmaControlElements = {
   removeGroupAction: BulmaActionElement,
   removeRuleAction: BulmaActionElement,
   valueSourceSelector: BulmaValueSelector,
-} satisfies Partial<Controls>;
+} satisfies Partial<Controls<Field, string>>;
 
 export const QueryBuilderBulma = getCompatContextProvider({
   key: 'bulma',

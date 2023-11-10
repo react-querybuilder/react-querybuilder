@@ -2,6 +2,7 @@ import type { DefaultOperatorName, Field, OptionList, ValueSources } from '../ty
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isOptionGroupArray } from './optGroupUtils';
+import { toFullOption } from './toFullOption';
 import { uniqByName } from './uniq';
 
 export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field>) => {
@@ -40,7 +41,7 @@ export function fieldIsValidUtil({
 
   let valid = false;
 
-  const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
+  const primaryField = toFullOption(fieldsFlat.find(ff => ff.name === fieldName)!);
   if (primaryField) {
     if (
       !subordinateFieldName &&

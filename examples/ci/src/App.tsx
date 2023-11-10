@@ -1,9 +1,5 @@
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { useReducer, useState } from 'react';
-import type {
-  DefaultRuleGroupTypeAny,
-  QueryBuilderProps,
-} from 'react-querybuilder';
 import {
   QueryBuilder,
   defaultValidator,
@@ -12,10 +8,6 @@ import {
 import { fields } from './fields';
 import { initialQuery, initialQueryIC } from './initialQuery';
 import './styles.scss';
-import type {
-  DefaultQBPropsNoDefaultQuery,
-  DefaultQBPropsNoDefaultQueryIC,
-} from './types';
 import { defaultOptions, optionsOrder, optionsReducer } from './utils';
 
 export const App = () => {
@@ -29,12 +21,6 @@ export const App = () => {
     showBranches,
     ...commonOptions
   } = options;
-  const commonProps: QueryBuilderProps<DefaultRuleGroupTypeAny> = {
-    fields,
-    ...commonOptions,
-    parseNumbers,
-    validator: useValidation ? defaultValidator : undefined,
-  };
 
   const queryForFormatting = independentCombinators ? queryIC : query;
 
@@ -46,17 +32,23 @@ export const App = () => {
         }}>
         {independentCombinators ? (
           <QueryBuilder
-            {...(commonProps as DefaultQBPropsNoDefaultQueryIC)}
             key="rqb-ic"
+            {...commonOptions}
+            fields={fields}
+            parseNumbers={parseNumbers}
+            validator={useValidation ? defaultValidator : undefined}
             query={queryIC}
-            onQueryChange={qIC => setQueryIC(qIC)}
+            onQueryChange={setQueryIC as (q: typeof queryIC) => void}
           />
         ) : (
           <QueryBuilder
-            {...(commonProps as DefaultQBPropsNoDefaultQuery)}
             key="rqb"
+            {...commonOptions}
+            fields={fields}
+            parseNumbers={parseNumbers}
+            validator={useValidation ? defaultValidator : undefined}
             query={query}
-            onQueryChange={q => setQuery(q)}
+            onQueryChange={setQuery as (q: typeof query) => void}
           />
         )}
       </QueryBuilderDnD>

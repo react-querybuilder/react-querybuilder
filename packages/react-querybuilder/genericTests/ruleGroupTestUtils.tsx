@@ -8,14 +8,22 @@ import {
   defaultTranslations as translations,
 } from '../src/defaults';
 import type {
+  ActionProps,
   Classnames,
+  CombinatorSelectorProps,
   Controls,
+  DragHandleProps,
   Field,
+  FieldSelectorProps,
+  FullOption,
+  NotToggleProps,
+  OperatorSelectorProps,
   Option,
   QueryActions,
   RuleGroupProps,
   RuleType,
   Schema,
+  ValueEditorProps,
 } from '../src/types';
 import { generateAccessibleDescription, toFullOption } from '../src/utils';
 import { UNUSED } from './utils';
@@ -29,7 +37,7 @@ export const createRule = (index: number) =>
   } satisfies RuleType);
 
 export const ruleGroupControls = {
-  combinatorSelector: props => (
+  combinatorSelector: (props: CombinatorSelectorProps) => (
     <select
       data-testid={TestID.combinators}
       className={props.className}
@@ -44,7 +52,7 @@ export const ruleGroupControls = {
       <option value="any_combinator_value">Any Combinator</option>
     </select>
   ),
-  addRuleAction: props => (
+  addRuleAction: (props: ActionProps) => (
     <button
       data-testid={TestID.addRule}
       className={props.className}
@@ -52,7 +60,7 @@ export const ruleGroupControls = {
       {translations.addRule.label}
     </button>
   ),
-  addGroupAction: props => (
+  addGroupAction: (props: ActionProps) => (
     <button
       data-testid={TestID.addGroup}
       className={props.className}
@@ -60,7 +68,7 @@ export const ruleGroupControls = {
       {translations.addGroup.label}
     </button>
   ),
-  cloneGroupAction: props => (
+  cloneGroupAction: (props: ActionProps) => (
     <button
       data-testid={TestID.cloneGroup}
       className={props.className}
@@ -68,7 +76,7 @@ export const ruleGroupControls = {
       {translations.cloneRuleGroup.label}
     </button>
   ),
-  cloneRuleAction: props => (
+  cloneRuleAction: (props: ActionProps) => (
     <button
       data-testid={TestID.cloneRule}
       className={props.className}
@@ -76,7 +84,7 @@ export const ruleGroupControls = {
       {translations.cloneRule.label}
     </button>
   ),
-  removeGroupAction: props => (
+  removeGroupAction: (props: ActionProps) => (
     <button
       data-testid={TestID.removeGroup}
       className={props.className}
@@ -84,7 +92,7 @@ export const ruleGroupControls = {
       {translations.removeGroup.label}
     </button>
   ),
-  removeRuleAction: props => (
+  removeRuleAction: (props: ActionProps) => (
     <button
       data-testid={TestID.removeRule}
       className={props.className}
@@ -92,13 +100,13 @@ export const ruleGroupControls = {
       {translations.removeRule.label}
     </button>
   ),
-  notToggle: props => (
+  notToggle: (props: NotToggleProps) => (
     <label data-testid={TestID.notToggle} className={props.className}>
       <input type="checkbox" onChange={e => props.handleOnChange(e.target.checked)} />
       {translations.notToggle.label}
     </label>
   ),
-  fieldSelector: props => (
+  fieldSelector: (props: FieldSelectorProps) => (
     <select
       data-testid={TestID.fields}
       className={props.className}
@@ -107,7 +115,7 @@ export const ruleGroupControls = {
       <option value={(props.options[0] as Field).name}>{props.options[0].label}</option>
     </select>
   ),
-  operatorSelector: props => (
+  operatorSelector: (props: OperatorSelectorProps) => (
     <select
       data-testid={TestID.operators}
       className={props.className}
@@ -116,7 +124,7 @@ export const ruleGroupControls = {
       <option value={(props.options[0] as Option).name}>{props.options[0].label}</option>
     </select>
   ),
-  valueEditor: props => (
+  valueEditor: (props: ValueEditorProps) => (
     <input
       data-testid={TestID.valueEditor}
       className={props.className}
@@ -124,12 +132,12 @@ export const ruleGroupControls = {
       onChange={e => props.handleOnChange(e.target.value)}
     />
   ),
-  dragHandle: forwardRef(({ className, label }, ref) => (
+  dragHandle: forwardRef<HTMLSpanElement, DragHandleProps>(({ className, label }, ref) => (
     <span ref={ref} className={className}>
       {label}
     </span>
   )),
-} satisfies Partial<Controls>;
+} satisfies Partial<Controls<Field, string>>;
 
 export const ruleGroupClassnames = {
   header: 'custom-header-class',
@@ -171,7 +179,7 @@ const ruleGroupSchema = {
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],
-} satisfies Partial<Schema>;
+} satisfies Partial<Schema<FullOption, string>>;
 
 const ruleGroupActions = {
   onPropChange: () => {},
@@ -180,7 +188,7 @@ const ruleGroupActions = {
 } satisfies Partial<QueryActions>;
 
 export const getRuleGroupProps = (
-  mergeIntoSchema: Partial<Schema> = {},
+  mergeIntoSchema: Partial<Schema<FullOption, string>> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ): RuleGroupProps => ({
   id: 'id',
@@ -188,7 +196,7 @@ export const getRuleGroupProps = (
   ruleGroup: { rules: [], combinator: 'and' },
   rules: [], // UNUSED
   combinator: UNUSED,
-  schema: { ...ruleGroupSchema, ...mergeIntoSchema } as Schema,
+  schema: { ...ruleGroupSchema, ...mergeIntoSchema } as Schema<FullOption, string>,
   actions: { ...ruleGroupActions, ...mergeIntoActions } as QueryActions,
   translations,
   disabled: false,

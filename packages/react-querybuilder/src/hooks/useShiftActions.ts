@@ -1,9 +1,9 @@
 import * as React from 'react';
-import type { Path, Schema } from '../types';
+import type { Field, Path, Schema, ToFullOption } from '../types';
 import { move, pathsAreEqual } from '../utils';
 
 type UseShiftActionsProps = { path: Path; disabled?: boolean; lastInGroup?: boolean } & Pick<
-  Schema,
+  Schema<ToFullOption<Field>, string>,
   'combinators' | 'dispatchQuery' | 'getQuery'
 >;
 

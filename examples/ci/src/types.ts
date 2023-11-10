@@ -1,6 +1,9 @@
 import type {
+  DefaultCombinator,
+  DefaultOperator,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
+  Field,
   QueryBuilderProps,
 } from 'react-querybuilder';
 
@@ -33,11 +36,15 @@ export type CIOptionsAction = {
   };
 };
 
-export type DefaultQBPropsNoDefaultQueryIC = Omit<
-  QueryBuilderProps<DefaultRuleGroupTypeIC>,
-  'defaultQuery'
+export type DefaultQBPropsNoDefaultQueryIC = QueryBuilderProps<
+  DefaultRuleGroupTypeIC,
+  Field,
+  DefaultOperator,
+  DefaultCombinator
 >;
-export type DefaultQBPropsNoDefaultQuery = Omit<
-  QueryBuilderProps<DefaultRuleGroupType>,
-  'defaultQuery'
+export type DefaultQBPropsNoDefaultQuery = QueryBuilderProps<
+  DefaultRuleGroupType,
+  Field,
+  DefaultOperator,
+  DefaultCombinator
 >;

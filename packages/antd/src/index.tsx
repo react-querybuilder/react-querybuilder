@@ -7,7 +7,7 @@ import {
   UpOutlined,
 } from '@ant-design/icons';
 import * as React from 'react';
-import type { Controls, Translations } from 'react-querybuilder';
+import type { Controls, Field, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
@@ -40,7 +40,7 @@ export const antdControlElements = {
   dragHandle: AntDDragHandle,
   valueSourceSelector: AntDValueSelector,
   shiftActions: AntDShiftActions,
-} satisfies Partial<Controls>;
+} satisfies Partial<Controls<Field, string>>;
 
 export const antdTranslations = {
   removeGroup: { label: <CloseOutlined /> },

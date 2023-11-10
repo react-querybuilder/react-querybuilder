@@ -5,10 +5,12 @@ import * as React from 'react';
 import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type {
   ActionWithRulesProps,
+  Field,
   Option,
   RuleGroupType,
   RuleType,
   Schema,
+  ToFullOption,
 } from 'react-querybuilder';
 import { TestID, convertToIC, defaultCombinators, toFullOption } from 'react-querybuilder';
 import type {
@@ -72,7 +74,7 @@ describe('NativeActionElement', () => {
     level: 0,
     path: [],
     ruleOrGroup: { combinator: 'and', rules: [] },
-    schema: {} as Schema,
+    schema: {} as Schema<ToFullOption<Field>, string>,
   };
 
   const title = NativeActionElement.displayName;
@@ -135,7 +137,7 @@ describe('NativeNotToggle', () => {
     label: NativeNotToggle.displayName,
     level: 0,
     path: [],
-    schema: {} as Schema,
+    schema: {} as Schema<ToFullOption<Field>, string>,
     testID: TestID.notToggle,
     ruleGroup: { combinator: 'and', rules: [] },
   };
@@ -169,7 +171,7 @@ describe('NativeShiftActions', () => {
         combinators: defaultCombinators,
         dispatchQuery: dispatchQuery as (q: any) => void,
         getQuery: () => ({ combinator: 'and', rules: [{ combinator: 'and', rules: [r1, r2] }] }),
-      } as SchemaNative,
+      } as SchemaNative<ToFullOption<Field>, string>,
     };
     const { rerender } = render(<NativeShiftActions {...disabledProps} />);
     const btnUp = screen.getByLabelText(labels.shiftUp);
@@ -227,7 +229,7 @@ describe('NativeValueSelector', () => {
     handleOnChange,
     level: 0,
     path: [],
-    schema: { styles } as SchemaNative,
+    schema: { styles } as SchemaNative<ToFullOption<Field>, string>,
   };
 
   const variants = [
@@ -283,7 +285,7 @@ describe('NativeValueEditor', () => {
     handleOnChange,
     path: [],
     level: 0,
-    schema: {} as SchemaNative,
+    schema: {} as SchemaNative<ToFullOption<Field>, string>,
     testID: TestID.valueEditor,
     rule: { field: '', operator: '', value: '' },
   };

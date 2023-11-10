@@ -92,7 +92,11 @@ describe('add', () => {
     testQT(
       'adds a rule and a custom combinator',
       add({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, [], {
-        combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
+        combinators: defaultCombinators.map(c => ({
+          ...c,
+          name: `custom-${c.name}`,
+          value: `custom-${c.name}`,
+        })),
       }),
       {
         rules: [r1, `custom-${and}` as any, r2],
@@ -325,7 +329,10 @@ describe('update', () => {
       'resets value source to default of "field" on field change when Field specifies value sources',
       update(rgvsv, 'field', 'fu', [0], {
         getValueSources: (fld, op) =>
-          getValueSourcesUtil({ name: fld, label: 'Fld', valueSources: ['field', 'value'] }, op),
+          getValueSourcesUtil(
+            { name: fld, value: fld, label: 'Fld', valueSources: ['field', 'value'] },
+            op
+          ),
       }),
       {
         combinator: 'and',

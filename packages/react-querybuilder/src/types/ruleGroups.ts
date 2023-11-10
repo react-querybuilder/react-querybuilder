@@ -63,20 +63,26 @@ export type UpdateableProperties = Exclude<
 /**
  * The type of the `rules` array in a {@link DefaultRuleGroupType}.
  */
-export type DefaultRuleGroupArray = RuleGroupArray<DefaultRuleGroupType, DefaultRuleType>;
+export type DefaultRuleGroupArray<F extends string = string> = RuleGroupArray<
+  DefaultRuleGroupType,
+  DefaultRuleType<F>
+>;
 
 /**
  * {@link RuleGroupType} with the `combinator` property limited to
  * {@link DefaultCombinatorNameExtended} and `rules` limited to {@link DefaultRuleType}.
  */
-export type DefaultRuleGroupType = RuleGroupType<DefaultRuleType, DefaultCombinatorNameExtended> & {
-  rules: DefaultRuleGroupArray;
+export type DefaultRuleGroupType<F extends string = string> = RuleGroupType<
+  DefaultRuleType<F>,
+  DefaultCombinatorNameExtended
+> & {
+  rules: DefaultRuleGroupArray<F>;
 };
 
 /**
  * {@link RuleType} with the `operator` property limited to {@link DefaultOperatorName}.
  */
-export type DefaultRuleType = RuleType<string, DefaultOperatorName>;
+export type DefaultRuleType<F extends string = string> = RuleType<F, DefaultOperatorName>;
 
 /**
  * Default allowed values for the `combinator` property.

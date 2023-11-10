@@ -172,12 +172,10 @@ This hook is _not_ used in the `Rule` and `RuleGroup` components used/exported b
 ### `useMergedContext`
 
 ```ts
-function useMergedContext(
-  props: QueryBuilderContextProps & { translations: Translations }
-): QueryBuilderContextProps;
+function useMergedContext(props: QueryBuilderContextProps): QueryBuilderContextProps;
 ```
 
-Merges the values inherited from the nearest ancestor `QueryBuilderContext` provider with the current component's props.
+Merges the values inherited from the nearest ancestor `QueryBuilderContext.Provider` with the current component's props. For `controlClassnames`, `controlElements`, and `translations`, options that are not defined through either context or props will fall back to the defaults.
 
 ### `usePreferProp`
 

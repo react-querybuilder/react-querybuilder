@@ -198,7 +198,11 @@ _For more information about the `Path` type, see [Path concepts](./tips/path)._
 ```ts
 type Path = number[];
 
-// Formerly `NameLabelPair`
+// As of version 7, options and lists can use `name` or `value`
+// as the item identifier. Both `name` and `value` will be
+// passed down to subcomponents, so `name` will be available
+// even if `value` is used in props. `name` is used in this
+// documentation for brevity and backwards compatibility.
 interface Option {
   name: string;
   label: string;

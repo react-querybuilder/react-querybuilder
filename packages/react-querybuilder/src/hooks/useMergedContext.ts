@@ -1,16 +1,30 @@
 import { useContext, useMemo } from 'react';
 import { QueryBuilderContext, defaultControlElements } from '../components';
 import { defaultControlClassnames, defaultTranslations } from '../defaults';
-import type { Controls, QueryBuilderContextProps, TranslationsFull } from '../types';
+import type {
+  Controls,
+  Field,
+  QueryBuilderContextProps,
+  ToFlexibleOption,
+  TranslationsFull,
+} from '../types';
 import { mergeClassnames, mergeTranslations } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
-export type UseMergedContextProps = QueryBuilderContextProps;
+export type UseMergedContextProps<
+  F extends ToFlexibleOption<Field> = Field,
+  O extends string = string
+> = QueryBuilderContextProps<F, O>;
 
 /**
  * Merges inherited context values with props, giving precedence to props.
  */
-export const useMergedContext = (props: UseMergedContextProps) => {
+export const useMergedContext = <
+  F extends ToFlexibleOption<Field> = Field,
+  O extends string = string
+>(
+  props: UseMergedContextProps<F, O>
+) => {
   const rqbContext = useContext(QueryBuilderContext);
 
   const enableMountQueryChange = usePreferProp(
@@ -39,11 +53,12 @@ export const useMergedContext = (props: UseMergedContextProps) => {
   );
 
   const controlElements = useMemo(
-    (): Controls => ({
-      ...defaultControlElements,
-      ...rqbContext.controlElements,
-      ...props.controlElements,
-    }),
+    () =>
+      ({
+        ...defaultControlElements,
+        ...rqbContext.controlElements,
+        ...props.controlElements,
+      } as Controls<F, O>),
     [props.controlElements, rqbContext.controlElements]
   );
 

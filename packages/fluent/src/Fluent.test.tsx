@@ -1,6 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { Option, Schema, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import type {
+  Field,
+  Option,
+  Schema,
+  ToFullOption,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from 'react-querybuilder';
 import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import {
   testActionElement,
@@ -37,7 +44,7 @@ const defaultValueSelectorProps: ValueSelectorProps = {
   ].map(toFullOption),
   level: 0,
   path: [],
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
 };
 
 const valueEditorAsMultiselectProps: ValueEditorProps = {
@@ -48,7 +55,7 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
   level: 0,
   path: [],
   valueSource: 'value',
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
   type: 'multiselect',
   values: defaultValueSelectorProps.options,
   rule: { field: '', operator: '', value: '' },

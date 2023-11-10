@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import type { Controls, QueryBuilderContextProvider } from 'react-querybuilder';
+import type { Controls, Field, QueryBuilderContextProvider } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MaterialActionElement } from './MaterialActionElement';
 import { MaterialDragHandle } from './MaterialDragHandle';
@@ -41,7 +41,7 @@ export const materialControlElements = {
   dragHandle: MaterialDragHandle,
   valueSourceSelector: MaterialValueSelector,
   shiftActions: MaterialShiftActions,
-} satisfies Partial<Controls>;
+} satisfies Partial<Controls<Field, string>>;
 
 const MaterialContextProvider = getCompatContextProvider({
   key: 'material',

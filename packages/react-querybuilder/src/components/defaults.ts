@@ -1,4 +1,4 @@
-import type { Controls } from '../types';
+import type { Controls, Field } from '../types';
 import { ActionElement } from './ActionElement';
 import { DragHandle } from './DragHandle';
 import { InlineCombinator } from './InlineCombinator';
@@ -12,7 +12,7 @@ import { ValueSelector } from './ValueSelector';
 /**
  * Default components used by {@link QueryBuilder}.
  */
-export const defaultControlElements: Controls = {
+export const defaultControlElements: Controls<Field, string> = {
   addGroupAction: ActionElement,
   removeGroupAction: ActionElement,
   cloneGroupAction: ActionElement,

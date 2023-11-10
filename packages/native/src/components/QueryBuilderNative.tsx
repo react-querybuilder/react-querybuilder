@@ -1,51 +1,41 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
-import type { Path, RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC } from 'react-querybuilder';
+import type {
+  Combinator,
+  Controls,
+  Field,
+  GetOptionIdentifierType,
+  Operator,
+  Path,
+  RuleGroupTypeAny,
+  ToFlexibleOption,
+} from 'react-querybuilder';
 import {
   QueryBuilderContext,
   QueryBuilderStateContext,
   queryBuilderStore,
-  useQueryBuilderSchema,
   useQueryBuilderSetup,
 } from 'react-querybuilder';
 import { Provider } from 'react-redux';
-import type { QueryBuilderNativeProps, WithSchemaNative } from '../types';
+import type { QueryBuilderNativeProps } from '../types';
 import { defaultNativeControlElements } from './defaults';
+import { useQueryBuilderSchemaNative } from './useQueryBuilderSchemaNative';
 
 const rootPath = [] satisfies Path;
 
-export const QueryBuilderNative = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderNativeProps<RG>
-) => {
-  const controlElements = useMemo(
-    () => ({ ...defaultNativeControlElements, ...props.controlElements }),
-    [props.controlElements]
-  );
-  const setup = useQueryBuilderSetup({ ...props, controlElements });
-
-  return (
-    <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
-      <QueryBuilderNativeInternal {...props} setup={setup} />
-    </Provider>
-  );
-};
-
-const QueryBuilderNativeInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  allProps: QueryBuilderNativeProps<RG> & {
-    setup: ReturnType<typeof useQueryBuilderSetup>;
-  }
-) => {
-  const { setup, ...props } = allProps;
-  const qb = {
-    ...props,
-    ...(useQueryBuilderSchema(
-      props as QueryBuilderNativeProps<RuleGroupTypeAny>,
-      setup
-    ) as ReturnType<typeof useQueryBuilderSchema> & WithSchemaNative),
-  };
-
-  qb.schema.styles = useMemo(() => StyleSheet.create(allProps.styles ?? {}), [allProps.styles]);
+const QueryBuilderNativeInternal = <
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+>({
+  props,
+  setup,
+}: {
+  props: QueryBuilderNativeProps<RG, F, O, C>;
+  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
+}) => {
+  const qb = useQueryBuilderSchemaNative(props, setup);
 
   const { ruleGroup: RuleGroupComponent } = qb.schema.controls;
 
@@ -64,6 +54,31 @@ const QueryBuilderNativeInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
         context={qb.context}
       />
     </QueryBuilderContext.Provider>
+  );
+};
+
+export const QueryBuilderNative = <
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+>(
+  props: QueryBuilderNativeProps<RG, F, O, C>
+) => {
+  const controlElements = useMemo(
+    () =>
+      ({ ...defaultNativeControlElements, ...props.controlElements } as Controls<
+        F,
+        GetOptionIdentifierType<O>
+      >),
+    [props.controlElements]
+  );
+  const setup = useQueryBuilderSetup({ ...props, controlElements });
+
+  return (
+    <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
+      <QueryBuilderNativeInternal props={props} setup={setup} />
+    </Provider>
   );
 };
 

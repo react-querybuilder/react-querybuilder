@@ -18,7 +18,9 @@ import {
 } from '../messages';
 import type {
   ActionWithRulesAndAddersProps,
+  Combinator,
   Field,
+  Operator,
   Option,
   OptionGroup,
   QueryBuilderProps,
@@ -2034,7 +2036,7 @@ describe('nested object immutability', () => {
         { combinator: 'and', rules: [immutableRule] },
       ],
     };
-    const props: QueryBuilderProps<typeof defaultQuery> = {
+    const props: QueryBuilderProps<typeof defaultQuery, Field, Operator, Combinator> = {
       onQueryChange,
       defaultQuery,
       enableMountQueryChange: false,

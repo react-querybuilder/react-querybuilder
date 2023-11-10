@@ -37,7 +37,13 @@ import {
   cloneElement as mockCloneElement,
   isValidElement as mockIsValidElement,
 } from 'react';
-import type { DragHandleProps, RuleGroupType, Schema } from 'react-querybuilder';
+import type {
+  DragHandleProps,
+  Field,
+  RuleGroupType,
+  Schema,
+  ToFullOption,
+} from 'react-querybuilder';
 import {
   QueryBuilder,
   TestID,
@@ -163,7 +169,7 @@ describe('action element', () => {
           path={[]}
           level={0}
           ruleOrGroup={{ combinator: 'and', rules: [] }}
-          schema={{} as Schema}
+          schema={{} as Schema<ToFullOption<Field>, string>}
         />
       </div>
     );
@@ -181,7 +187,7 @@ describe('drag handle', () => {
           path={[]}
           level={0}
           muiComponents={null}
-          schema={{} as Schema}
+          schema={{} as Schema<ToFullOption<Field>, string>}
           ruleOrGroup={{} as RuleGroupType}
         />
       </div>
@@ -200,7 +206,7 @@ describe('not toggle', () => {
           handleOnChange={() => {}}
           path={[]}
           level={0}
-          schema={{} as Schema}
+          schema={{} as Schema<ToFullOption<Field>, string>}
           ruleGroup={{} as RuleGroupType}
         />
       </div>
@@ -239,7 +245,7 @@ describe('value editor', () => {
           field="f1"
           operator="="
           fieldData={{ name: 'f1', label: 'Field 1' }}
-          schema={{} as Schema}
+          schema={{} as Schema<ToFullOption<Field>, string>}
           rule={{ field: '', operator: '', value: '' }}
         />
       </div>
@@ -259,7 +265,7 @@ describe('value selector', () => {
           path={[]}
           level={0}
           options={[{ name: 'opt1', label: 'Option 1' }].map(toFullOption)}
-          schema={{} as Schema}
+          schema={{} as Schema<ToFullOption<Field>, string>}
         />
       </div>
     );
@@ -275,7 +281,7 @@ describe('icon translations', () => {
       path: [],
       level: 0,
       ruleOrGroup: { combinator: 'and', rules: [] },
-      schema: {} as Schema,
+      schema: {} as Schema<ToFullOption<Field>, string>,
       label: lbl,
     };
 

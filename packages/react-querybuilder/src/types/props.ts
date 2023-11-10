@@ -1,5 +1,5 @@
 import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
-import type { FullOptionList, Option } from './options';
+import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
@@ -8,7 +8,10 @@ import type { ValidationResult } from './validation';
 /**
  * Base interface for all subcomponents.
  */
-export interface CommonSubComponentProps {
+export interface CommonSubComponentProps<
+  F extends FullOption = ToFullOption<Field>,
+  O extends string = string
+> {
   /**
    * CSS classNames to be applied.
    *
@@ -48,13 +51,16 @@ export interface CommonSubComponentProps {
   /**
    * All subcomponents receive the configuration schema as a prop.
    */
-  schema: Schema;
+  schema: Schema<F, O>;
 }
 
 /**
  * Base interface for selectors and editors.
  */
-export interface SelectorOrEditorProps extends CommonSubComponentProps {
+export interface SelectorOrEditorProps<
+  F extends FullOption = ToFullOption<Field>,
+  O extends string = string
+> extends CommonSubComponentProps<F, O> {
   value?: string;
   handleOnChange(value: any): void;
 }

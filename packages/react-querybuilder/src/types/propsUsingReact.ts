@@ -19,7 +19,16 @@ import type {
   ValueSources,
 } from './basic';
 import type { DropEffect } from './dnd';
-import type { FlexibleOptionList, FullOptionList, ToFlexibleOption, ToFullOption } from './options';
+import type {
+  FlexibleOptionList,
+  FlexibleOptionMap,
+  FullOption,
+  FullOptionList,
+  GetOptionIdentifierType,
+  Option,
+  ToFlexibleOption,
+  ToFullOption,
+} from './options';
 import type {
   Classnames,
   CombinatorSelectorProps,
@@ -34,8 +43,8 @@ import type {
   ValueSelectorProps,
   ValueSourceSelectorProps,
 } from './props';
-import type { RuleType } from './ruleGroups';
-import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
+import type { RuleGroupType, RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
 import type { QueryValidator, ValidationMap } from './validation';
 
 /**
@@ -130,17 +139,19 @@ export interface DragHandleProps extends CommonSubComponentProps {
  * Props passed to `inlineCombinator` components.
  */
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
-  component: Schema['controls']['combinatorSelector'];
+  component: Schema<FullOption, string>['controls']['combinatorSelector'];
   independentCombinators?: boolean;
 }
 
 /**
  * Props passed to `valueEditor` components.
  */
-export interface ValueEditorProps<F extends Field = Field, O extends string = string>
-  extends SelectorOrEditorProps,
+export interface ValueEditorProps<
+  F extends ToFlexibleOption<Field> = Field,
+  O extends string = string
+> extends SelectorOrEditorProps<ToFullOption<F>, O>,
     CommonRuleSubComponentProps {
-  field: F['name'];
+  field: GetOptionIdentifierType<F>;
   operator: O;
   value?: any;
   valueSource: ValueSource;
@@ -163,7 +174,7 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
 /**
  * All subcomponent types.
  */
-export interface Controls {
+export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
   addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
   addRuleAction: ComponentType<ActionWithRulesAndAddersProps>;
   cloneGroupAction: ComponentType<ActionWithRulesProps>;
@@ -181,7 +192,7 @@ export interface Controls {
   removeRuleAction: ComponentType<ActionProps>;
   rule: ComponentType<RuleProps>;
   ruleGroup: ComponentType<RuleGroupProps>;
-  valueEditor: ComponentType<ValueEditorProps>;
+  valueEditor: ComponentType<ValueEditorProps<F, O>>;
   valueSourceSelector: ComponentType<ValueSourceSelectorProps>;
 }
 
@@ -189,44 +200,24 @@ export interface Controls {
  * Configuration options passed in the `schema` prop from
  * {@link QueryBuilder} to each subcomponent.
  */
-export interface Schema {
+export interface Schema<F extends ToFullOption<Field>, O extends string> {
   qbId: string;
-  fields: FullOptionList<Field>;
-  fieldMap: Record<string, ToFullOption<Field>>;
+  fields: FullOptionList<F>;
+  fieldMap: Record<GetOptionIdentifierType<F>, F>;
   classNames: Classnames;
   combinators: FullOptionList<Combinator>;
-  controls: Controls;
+  controls: Controls<F, O>;
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
   dispatchQuery(query: RuleGroupTypeAny): void;
   getQuery(): RuleGroupTypeAny | undefined;
-  getOperators(field: string, meta: { fieldData: ToFullOption<Field> }): FullOptionList<Operator>;
-  getValueEditorType(
-    field: string,
-    operator: string,
-    meta: { fieldData: ToFullOption<Field> }
-  ): ValueEditorType;
-  getValueEditorSeparator(
-    field: string,
-    operator: string,
-    meta: { fieldData: ToFullOption<Field> }
-  ): ReactNode;
-  getValueSources(
-    field: string,
-    operator: string,
-    meta: { fieldData: ToFullOption<Field> }
-  ): ValueSources;
-  getInputType(
-    field: string,
-    operator: string,
-    meta: { fieldData: ToFullOption<Field> }
-  ): InputType | null;
-  getValues(
-    field: string,
-    operator: string,
-    meta: { fieldData: ToFullOption<Field> }
-  ): FullOptionList;
-  getRuleClassname(rule: RuleType, misc: { fieldData: ToFullOption<Field> }): Classname;
+  getOperators(field: string, meta: { fieldData: F }): FullOptionList<Operator>;
+  getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
+  getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
+  getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSources;
+  getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
+  getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
+  getRuleClassname(rule: RuleType, misc: { fieldData: F }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   accessibleDescriptionGenerator: (props: { path: Path; qbId: string }) => string;
   showCombinatorsBetweenRules: boolean;
@@ -253,7 +244,7 @@ interface CommonRuleAndGroupProps {
   path: Path;
   parentDisabled?: boolean;
   translations: Translations;
-  schema: Schema;
+  schema: Schema<ToFullOption<Field>, string>;
   actions: QueryActions;
   disabled?: boolean;
   context?: any;
@@ -334,11 +325,11 @@ export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> 
 /**
  * Props passed down through context from a {@link QueryBuilderContextProvider}.
  */
-export interface QueryBuilderContextProps {
+export interface QueryBuilderContextProps<F extends ToFlexibleOption<Field>, O extends string> {
   /**
    * Defines replacement components.
    */
-  controlElements?: Partial<Controls>;
+  controlElements?: Partial<Controls<F, O>>;
   /**
    * Set to `false` to avoid calling the `onQueryChange` callback
    * when the component mounts.
@@ -370,7 +361,7 @@ export interface QueryBuilderContextProps {
   debugMode?: boolean;
 }
 
-export type QueryBuilderContextProviderProps = QueryBuilderContextProps & {
+export type QueryBuilderContextProviderProps = QueryBuilderContextProps<Field, string> & {
   children?: ReactNode;
 };
 export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
@@ -385,287 +376,316 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
  * - If rendered initially with a `query` prop, then `query` must always be defined in
  * every subsequent render or warnings will be logged (in non-production modes only).
  */
-export type QueryBuilderProps<RG extends RuleGroupTypeAny> = QueryBuilderContextProps & {
-  /**
-   * Initial query object for uncontrolled components.
-   */
-  defaultQuery?: RG;
-  /**
-   * Query object for controlled components.
-   */
-  query?: RG;
-  /**
-   * List of valid {@link Field}s.
-   *
-   * @default []
-   */
-  fields?: FlexibleOptionList<Field> | Record<string, ToFlexibleOption<Field>>;
-  /**
-   * List of valid {@link Operator}s.
-   *
-   * @see {@link DefaultOperatorName}
-   *
-   * @default
-   * [
-   *   { name: '=', label: '=' },
-   *   { name: '!=', label: '!=' },
-   *   { name: '<', label: '<' },
-   *   { name: '>', label: '>' },
-   *   { name: '<=', label: '<=' },
-   *   { name: '>=', label: '>=' },
-   *   { name: 'contains', label: 'contains' },
-   *   { name: 'beginsWith', label: 'begins with' },
-   *   { name: 'endsWith', label: 'ends with' },
-   *   { name: 'doesNotContain', label: 'does not contain' },
-   *   { name: 'doesNotBeginWith', label: 'does not begin with' },
-   *   { name: 'doesNotEndWith', label: 'does not end with' },
-   *   { name: 'null', label: 'is null' },
-   *   { name: 'notNull', label: 'is not null' },
-   *   { name: 'in', label: 'in' },
-   *   { name: 'notIn', label: 'not in' },
-   *   { name: 'between', label: 'between' },
-   *   { name: 'notBetween', label: 'not between' },
-   * ]
-   */
-  operators?: FlexibleOptionList<Operator>;
-  /**
-   * List of valid {@link Combinator}s.
-   *
-   * @see {@link DefaultCombinatorName}
-   *
-   * @default
-   * [
-   *   {name: 'and', label: 'AND'},
-   *   {name: 'or', label: 'OR'},
-   * ]
-   */
-  combinators?: FlexibleOptionList<Combinator>;
-  /**
-   * The default `field` value for new rules. This can be the field `name`
-   * itself or a function that returns a valid {@link Field} `name` given
-   * the `fields` list.
-   */
-  getDefaultField?: string | ((fieldsData: FullOptionList<Field>) => string);
-  /**
-   * The default `operator` value for new rules. This can be the operator
-   * `name` or a function that returns a valid {@link Operator} `name` for
-   * a given field name.
-   */
-  getDefaultOperator?:
-    | string
-    | ((field: string, misc: { fieldData: ToFullOption<Field> }) => string);
-  /**
-   * Returns the default `value` for new rules.
-   */
-  getDefaultValue?(rule: RuleType, misc: { fieldData: ToFullOption<Field> }): any;
-  /**
-   * This function should return the list of allowed {@link Operator}s
-   * for the given {@link Field} `name`. If `null` is returned, the
-   * {@link DefaultOperator}s are used.
-   */
-  getOperators?(
-    field: string,
-    misc: { fieldData: ToFullOption<Field> }
-  ): FlexibleOptionList<Operator> | null;
-  /**
-   * This function should return the type of {@link ValueEditor} (see
-   * {@link ValueEditorType}) for the given field `name` and operator `name`.
-   */
-  getValueEditorType?(
-    field: string,
-    operator: string,
-    misc: { fieldData: ToFullOption<Field> }
-  ): ValueEditorType;
-  /**
-   * This function should return the separator element for a given field
-   * `name` and operator `name`. The element can be any valid React element,
-   * including a bare string (e.g., "and" or "to") or an HTML element like
-   * `<span />`. It will be placed in between value editors when multiple
-   * editors are rendered, such as when the `operator` is `"between"`.
-   */
-  getValueEditorSeparator?(
-    field: string,
-    operator: string,
-    misc: { fieldData: ToFullOption<Field> }
-  ): ReactNode;
-  /**
-   * This function should return the list of valid {@link ValueSources}
-   * for a given field `name` and operator `name`. The return value must
-   * be an array that includes at least one valid {@link ValueSource}
-   * (i.e. `["value"]`, `["field"]`, `["value", "field"]`, or
-   * `["field", "value"]`).
-   */
-  getValueSources?(
-    field: string,
-    operator: string,
-    misc: { fieldData: ToFullOption<Field> }
-  ): ValueSources;
-  /**
-   * This function should return the `type` of `<input />`
-   * for the given field `name` and operator `name` (only applicable when
-   * `getValueEditorType` returns `"text"` or a falsy value). If no
-   * function is provided, `"text"` is used as the default.
-   */
-  getInputType?(
-    field: string,
-    operator: string,
-    misc: { fieldData: ToFullOption<Field> }
-  ): InputType | null;
-  /**
-   * This function should return the list of allowed values for the
-   * given field `name` and operator `name` (only applicable when
-   * `getValueEditorType` returns `"select"` or `"radio"`). If no
-   * function is provided, an empty array is used as the default.
-   */
-  getValues?(
-    field: string,
-    operator: string,
-    misc: { fieldData: ToFullOption<Field> }
-  ): FlexibleOptionList;
-  /**
-   * The return value of this function will be used to apply classnames to the
-   * outer `<div>` of the given {@link Rule}.
-   */
-  getRuleClassname?(rule: RuleType, misc: { fieldData: ToFullOption<Field> }): Classname;
-  /**
-   * The return value of this function will be used to apply classnames to the
-   * outer `<div>` of the given {@link RuleGroup}.
-   */
-  getRuleGroupClassname?(ruleGroup: RG): Classname;
-  /**
-   * This callback is invoked before a new rule is added. The function should either manipulate
-   * the rule and return the new object, or return `false` to cancel the addition of the rule.
-   */
-  onAddRule?(rule: RuleType, parentPath: Path, query: RG, context?: any): RuleType | false;
-  /**
-   * This callback is invoked before a new group is added. The function should either manipulate
-   * the group and return the new object, or return `false` to cancel the addition of the group.
-   */
-  onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | false;
-  /**
-   * This callback is invoked before a rule or group is removed. The function should return
-   * `true` if the rule or group should be removed or `false` if it should not be removed.
-   */
-  onRemove?(ruleOrGroup: RuleType | RG, path: Path, query: RG, context?: any): boolean;
-  /**
-   * This callback is invoked anytime the query state is updated.
-   */
-  onQueryChange?(query: RG): void;
-  /**
-   * Each log object will be passed to this function when `debugMode` is `true`.
-   *
-   * @default console.log
-   */
-  onLog?(obj: any): void;
-  /**
-   * Show group combinator selectors in the body of the group, between each child rule/group,
-   * instead of in the group header.
-   *
-   * @default false
-   */
-  showCombinatorsBetweenRules?: boolean;
-  /**
-   * @deprecated As of v7, this prop is ignored. To enable independent combinators, use
-   * {@link RuleGroupTypeIC} for the `query` or `defaultQuery` prop. The query builder
-   * will detect the query type and behave accordingly.
-   */
-  independentCombinators?: boolean;
-  /**
-   * Show the "not" (aka inversion) toggle for rule groups.
-   *
-   * @default false
-   */
-  showNotToggle?: boolean;
-  /**
-   * Show the "Shift up"/"Shift down" actions.
-   *
-   * @default false
-   */
-  showShiftActions?: boolean;
-  /**
-   * Show the "Clone rule" and "Clone group" buttons.
-   *
-   * @default false
-   */
-  showCloneButtons?: boolean;
-  /**
-   * Show the "Lock rule" and "Lock group" buttons.
-   *
-   * @default false
-   */
-  showLockButtons?: boolean;
-  /**
-   * Reset the `operator` and `value` when the `field` changes.
-   *
-   * @default true
-   */
-  resetOnFieldChange?: boolean;
-  /**
-   * Reset the `value` when the `operator` changes.
-   *
-   * @default false
-   */
-  resetOnOperatorChange?: boolean;
-  /**
-   * Select the first field in the array automatically.
-   *
-   * @default true
-   */
-  autoSelectField?: boolean;
-  /**
-   * Select the first operator in the array automatically.
-   *
-   * @default true
-   */
-  autoSelectOperator?: boolean;
-  /**
-   * Adds a new default rule automatically to each new group.
-   *
-   * @default false
-   */
-  addRuleToNewGroups?: boolean;
-  /**
-   * Store list-type values as native arrays instead of comma-separated strings.
-   *
-   * @default false
-   */
-  listsAsArrays?: boolean;
-  /**
-   * Store values as numbers if possible.
-   *
-   * @default false
-   */
-  parseNumbers?: ParseNumbersMethod;
-  /**
-   * Disables the entire query builder if true, or the rules and groups at
-   * the specified paths (as well as all child rules/groups and subcomponents)
-   * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
-   * no changes to the query are allowed.
-   *
-   * @default false
-   *
-   * @deprecated This prop may be removed in a future major version. Use the `disabled`
-   * property on rules and groups (including the root group, the query itself) instead.
-   */
-  disabled?: boolean | Path[];
-  /**
-   * Query validation function.
-   */
-  validator?: QueryValidator;
-  /**
-   * `id` generator function. Should always produce a unique/random value.
-   *
-   * @default crypto.randomUUID
-   */
-  idGenerator?: () => string;
-  /**
-   * Generator function for the `title` attribute applied to the outermost `<div>` of each
-   * rule group. As this is intended to help with accessibility, the text output from this
-   * function should be meaningful, descriptive, and unique within the page.
-   */
-  accessibleDescriptionGenerator?: (props: { path: Path; qbId: string }) => string;
-  /**
-   * Container for custom props that are passed to all components.
-   */
-  context?: any;
-};
+export type QueryBuilderProps<
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+> = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
+  ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
+      /**
+       * Initial query object for uncontrolled components.
+       */
+      defaultQuery?: RG;
+      /**
+       * Query object for controlled components.
+       */
+      query?: RG;
+      /**
+       * List of valid {@link Field}s.
+       *
+       * @default []
+       */
+      fields?: FlexibleOptionList<F> | FlexibleOptionMap<F, GetOptionIdentifierType<F>>;
+      /**
+       * List of valid {@link Operator}s.
+       *
+       * @see {@link DefaultOperatorName}
+       *
+       * @default
+       * [
+       *   { name: '=', label: '=' },
+       *   { name: '!=', label: '!=' },
+       *   { name: '<', label: '<' },
+       *   { name: '>', label: '>' },
+       *   { name: '<=', label: '<=' },
+       *   { name: '>=', label: '>=' },
+       *   { name: 'contains', label: 'contains' },
+       *   { name: 'beginsWith', label: 'begins with' },
+       *   { name: 'endsWith', label: 'ends with' },
+       *   { name: 'doesNotContain', label: 'does not contain' },
+       *   { name: 'doesNotBeginWith', label: 'does not begin with' },
+       *   { name: 'doesNotEndWith', label: 'does not end with' },
+       *   { name: 'null', label: 'is null' },
+       *   { name: 'notNull', label: 'is not null' },
+       *   { name: 'in', label: 'in' },
+       *   { name: 'notIn', label: 'not in' },
+       *   { name: 'between', label: 'between' },
+       *   { name: 'notBetween', label: 'not between' },
+       * ]
+       */
+      operators?: FlexibleOptionList<O>;
+      /**
+       * List of valid {@link Combinator}s.
+       *
+       * @see {@link DefaultCombinatorName}
+       *
+       * @default
+       * [
+       *   {name: 'and', label: 'AND'},
+       *   {name: 'or', label: 'OR'},
+       * ]
+       */
+      combinators?: FlexibleOptionList<C>;
+      /**
+       * The default `field` value for new rules. This can be the field `name`
+       * itself or a function that returns a valid {@link Field} `name` given
+       * the `fields` list.
+       */
+      getDefaultField?: GetOptionIdentifierType<F> | ((fieldsData: FullOptionList<F>) => string);
+      /**
+       * The default `operator` value for new rules. This can be the operator
+       * `name` or a function that returns a valid {@link Operator} `name` for
+       * a given field name.
+       */
+      getDefaultOperator?:
+        | GetOptionIdentifierType<O>
+        | ((field: GetOptionIdentifierType<F>, misc: { fieldData: ToFullOption<F> }) => string);
+      /**
+       * Returns the default `value` for new rules.
+       */
+      getDefaultValue?(rule: R, misc: { fieldData: ToFullOption<F> }): any;
+      /**
+       * This function should return the list of allowed {@link Operator}s
+       * for the given {@link Field} `name`. If `null` is returned, the
+       * {@link DefaultOperator}s are used.
+       */
+      getOperators?(
+        field: GetOptionIdentifierType<F>,
+        misc: { fieldData: ToFullOption<F> }
+      ): FlexibleOptionList<Operator> | null;
+      /**
+       * This function should return the type of {@link ValueEditor} (see
+       * {@link ValueEditorType}) for the given field `name` and operator `name`.
+       */
+      getValueEditorType?(
+        field: GetOptionIdentifierType<F>,
+        operator: GetOptionIdentifierType<O>,
+        misc: { fieldData: ToFullOption<F> }
+      ): ValueEditorType;
+      /**
+       * This function should return the separator element for a given field
+       * `name` and operator `name`. The element can be any valid React element,
+       * including a bare string (e.g., "and" or "to") or an HTML element like
+       * `<span />`. It will be placed in between value editors when multiple
+       * editors are rendered, such as when the `operator` is `"between"`.
+       */
+      getValueEditorSeparator?(
+        field: GetOptionIdentifierType<F>,
+        operator: GetOptionIdentifierType<O>,
+        misc: { fieldData: ToFullOption<F> }
+      ): ReactNode;
+      /**
+       * This function should return the list of valid {@link ValueSources}
+       * for a given field `name` and operator `name`. The return value must
+       * be an array that includes at least one valid {@link ValueSource}
+       * (i.e. `["value"]`, `["field"]`, `["value", "field"]`, or
+       * `["field", "value"]`).
+       */
+      getValueSources?(
+        field: GetOptionIdentifierType<F>,
+        operator: GetOptionIdentifierType<O>,
+        misc: { fieldData: ToFullOption<F> }
+      ): ValueSources;
+      /**
+       * This function should return the `type` of `<input />`
+       * for the given field `name` and operator `name` (only applicable when
+       * `getValueEditorType` returns `"text"` or a falsy value). If no
+       * function is provided, `"text"` is used as the default.
+       */
+      getInputType?(
+        field: GetOptionIdentifierType<F>,
+        operator: GetOptionIdentifierType<O>,
+        misc: { fieldData: ToFullOption<F> }
+      ): InputType | null;
+      /**
+       * This function should return the list of allowed values for the
+       * given field `name` and operator `name` (only applicable when
+       * `getValueEditorType` returns `"select"` or `"radio"`). If no
+       * function is provided, an empty array is used as the default.
+       */
+      getValues?(
+        field: GetOptionIdentifierType<F>,
+        operator: GetOptionIdentifierType<O>,
+        misc: { fieldData: ToFullOption<F> }
+      ): FlexibleOptionList<Option>;
+      /**
+       * The return value of this function will be used to apply classnames to the
+       * outer `<div>` of the given {@link Rule}.
+       */
+      getRuleClassname?(rule: R, misc: { fieldData: ToFullOption<F> }): Classname;
+      /**
+       * The return value of this function will be used to apply classnames to the
+       * outer `<div>` of the given {@link RuleGroup}.
+       */
+      getRuleGroupClassname?(ruleGroup: RG): Classname;
+      /**
+       * This callback is invoked before a new rule is added. The function should either manipulate
+       * the rule and return the new object, or return `false` to cancel the addition of the rule.
+       */
+      onAddRule?(rule: R, parentPath: Path, query: RG, context?: any): RuleType | false;
+      /**
+       * This callback is invoked before a new group is added. The function should either manipulate
+       * the group and return the new object, or return `false` to cancel the addition of the group.
+       */
+      onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | false;
+      /**
+       * This callback is invoked before a rule or group is removed. The function should return
+       * `true` if the rule or group should be removed or `false` if it should not be removed.
+       */
+      onRemove?(ruleOrGroup: R | RG, path: Path, query: RG, context?: any): boolean;
+      /**
+       * This callback is invoked anytime the query state is updated.
+       */
+      onQueryChange?(query: RG): void;
+      /**
+       * Each log object will be passed to this function when `debugMode` is `true`.
+       *
+       * @default console.log
+       */
+      onLog?(obj: any): void;
+      /**
+       * Show group combinator selectors in the body of the group, between each child rule/group,
+       * instead of in the group header.
+       *
+       * @default false
+       */
+      showCombinatorsBetweenRules?: boolean;
+      /**
+       * @deprecated As of v7, this prop is ignored. To enable independent combinators, use
+       * {@link RuleGroupTypeIC} for the `query` or `defaultQuery` prop. The query builder
+       * will detect the query type and behave accordingly.
+       */
+      independentCombinators?: boolean;
+      /**
+       * Show the "not" (aka inversion) toggle for rule groups.
+       *
+       * @default false
+       */
+      showNotToggle?: boolean;
+      /**
+       * Show the "Shift up"/"Shift down" actions.
+       *
+       * @default false
+       */
+      showShiftActions?: boolean;
+      /**
+       * Show the "Clone rule" and "Clone group" buttons.
+       *
+       * @default false
+       */
+      showCloneButtons?: boolean;
+      /**
+       * Show the "Lock rule" and "Lock group" buttons.
+       *
+       * @default false
+       */
+      showLockButtons?: boolean;
+      /**
+       * Reset the `operator` and `value` when the `field` changes.
+       *
+       * @default true
+       */
+      resetOnFieldChange?: boolean;
+      /**
+       * Reset the `value` when the `operator` changes.
+       *
+       * @default false
+       */
+      resetOnOperatorChange?: boolean;
+      /**
+       * Select the first field in the array automatically.
+       *
+       * @default true
+       */
+      autoSelectField?: boolean;
+      /**
+       * Select the first operator in the array automatically.
+       *
+       * @default true
+       */
+      autoSelectOperator?: boolean;
+      /**
+       * Adds a new default rule automatically to each new group.
+       *
+       * @default false
+       */
+      addRuleToNewGroups?: boolean;
+      /**
+       * Store list-type values as native arrays instead of comma-separated strings.
+       *
+       * @default false
+       */
+      listsAsArrays?: boolean;
+      /**
+       * Store values as numbers if possible.
+       *
+       * @default false
+       */
+      parseNumbers?: ParseNumbersMethod;
+      /**
+       * Disables the entire query builder if true, or the rules and groups at
+       * the specified paths (as well as all child rules/groups and subcomponents)
+       * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
+       * no changes to the query are allowed.
+       *
+       * @default false
+       *
+       * @deprecated This prop may be removed in a future major version. Use the `disabled`
+       * property on rules and groups (including the root group, the query itself) instead.
+       */
+      disabled?: boolean | Path[];
+      /**
+       * Query validation function.
+       */
+      validator?: QueryValidator;
+      /**
+       * `id` generator function. Should always produce a unique/random value.
+       *
+       * @default crypto.randomUUID
+       */
+      idGenerator?: () => string;
+      /**
+       * Generator function for the `title` attribute applied to the outermost `<div>` of each
+       * rule group. As this is intended to help with accessibility, the text output from this
+       * function should be meaningful, descriptive, and unique within the page.
+       */
+      accessibleDescriptionGenerator?: (props: { path: Path; qbId: string }) => string;
+      /**
+       * Container for custom props that are passed to all components.
+       */
+      context?: any;
+    }
+  : never;
+
+// const fields: Field<'this' | 'that'>[] = [];
+// const _QB = <RG extends RuleGroupTypeAny, F extends ToFlexibleOption<Field>>(
+//   _p: QueryBuilderProps<RG, F>
+// ) => 1;
+// const _QBC = () =>
+//   _QB({
+//     defaultQuery: { rules: [] } as RuleGroupTypeIC,
+//     fields,
+//     onAddRule: (_rule, _parentPath, _query, _context) => false,
+//     controlElements: { valueEditor: _props => 1 },
+//   });
+// const _QBP: QueryBuilderProps<
+//   RuleGroupTypeIC<RuleType<'this' | 'that'>>,
+//   Field,
+//   Operator,
+//   Combinator
+// > = {
+//   fields,
+//   onAddRule: (_rule, _parentPath, _query, _context) => false,
+//   controlElements: { valueEditor: _props => 1 },
+// };

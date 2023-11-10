@@ -11,17 +11,28 @@ import {
   useQueryBuilderStore,
 } from '../redux';
 import type {
+  Combinator,
+  Controls,
+  Field,
+  FullOptionList,
+  FullOptionRecord,
+  GetOptionIdentifierType,
+  Operator,
   Path,
   QueryActions,
   QueryBuilderProps,
   QueryValidator,
   RuleGroupProps,
+  RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   Schema,
+  ToFlexibleOption,
+  ToFullOption,
   UpdateableProperties,
   ValidationMap,
+  ValueSources,
 } from '../types';
 import {
   add,
@@ -53,10 +64,17 @@ const defaultOnLog = (...params: any[]) => {
  * For given {@link QueryBuilderProps} and setup values from {@link useQueryBuilderSetup},
  * prepares and returns all values required to render a query builder.
  */
-export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
-  props: QueryBuilderProps<RG>,
-  setup: ReturnType<typeof useQueryBuilderSetup<RG>>
+export function useQueryBuilderSchema<
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+>(
+  props: QueryBuilderProps<RG, F, O, C>,
+  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
 ) {
+  type R = RG extends RuleGroupType<infer RT> | RuleGroupTypeIC<infer RT> ? RT : never;
+  type Setup = ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
   const {
     query: queryProp,
     defaultQuery: defaultQueryProp,
@@ -101,7 +119,7 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
     getInputTypeMain,
     createRule,
     createRuleGroup,
-  } = setup;
+  } = setup as unknown as Setup;
 
   const {
     controlClassnames,
@@ -200,7 +218,7 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
 
   const onRuleAdd = useCallback(
-    (rule: RuleType, parentPath: Path, context?: any) => {
+    (rule: R, parentPath: Path, context?: any) => {
       const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
@@ -211,6 +229,7 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
         }
         return;
       }
+      // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
       const newRule = onAddRule(rule, parentPath, queryLocal, context);
       if (!newRule) {
         // istanbul ignore else
@@ -257,6 +276,7 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
         }
         return;
       }
+      // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
       const newGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
       if (!newGroup) {
         // istanbul ignore else
@@ -300,8 +320,8 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
       const newQuery = update(queryLocal, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
-        getRuleDefaultOperator,
-        getValueSources: getValueSourcesMain,
+        getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
+        getValueSources: getValueSourcesMain as (field: string) => ValueSources,
         getRuleDefaultValue,
       });
       if (debugMode) {
@@ -336,9 +356,11 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
         }
         return;
       }
-      const ruleOrGroup = findPath(path, queryLocal) as RG | RuleType;
+      const ruleOrGroup = findPath(path, queryLocal) as RG | R;
       // istanbul ignore else
       if (ruleOrGroup) {
+        // @ts-expect-error `ruleOrGroup` and `queryLocal` are type `RuleGroupTypeAny`,
+        // but it doesn't matter here
         if (onRemove(ruleOrGroup, path, queryLocal, context)) {
           const newQuery = remove(queryLocal, path);
           if (debugMode) {
@@ -399,20 +421,23 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
   }, [rootQuery, validator]);
 
   const schema = useMemo(
-    (): Schema => ({
+    (): Schema<ToFullOption<F>, GetOptionIdentifierType<O>> => ({
       addRuleToNewGroups,
       accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
       classNames: controlClassnames,
       combinators,
-      controls: controlElements,
+      controls: controlElements as unknown as Controls<ToFullOption<F>, GetOptionIdentifierType<O>>,
       createRule,
       createRuleGroup,
       disabledPaths,
       enableDragAndDrop,
-      fieldMap,
-      fields,
+      fieldMap: fieldMap as unknown as FullOptionRecord<
+        ToFullOption<F>,
+        GetOptionIdentifierType<F>
+      >,
+      fields: fields as unknown as FullOptionList<ToFullOption<F>>,
       dispatchQuery,
       getQuery,
       getInputType: getInputTypeMain,
@@ -496,6 +521,7 @@ export function useQueryBuilderSchema<RG extends RuleGroupTypeAny>(
   if (isFirstRender.current) isFirstRender.current = false;
 
   return {
+    ...props,
     actions,
     rootQuery,
     queryDisabled,

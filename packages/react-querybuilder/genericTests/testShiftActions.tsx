@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { TestID, defaultCombinators } from '../src';
-import type { RuleType, Schema, ShiftActionsProps } from '../src/types/';
+import type { Field, RuleType, Schema, ShiftActionsProps, ToFullOption } from '../src/types';
 import { userEventSetup } from './utils';
 
 const labels = { shiftUp: 'shiftUp', shiftDown: 'shiftDown' } as const;
@@ -13,7 +13,7 @@ const r2 = { field: 'f2', operator: '=', value: 'v2' } satisfies RuleType;
 //   level: 0,
 //   path: [1],
 //   ruleOrGroup: { combinator: 'and', rules: [] },
-//   schema: {} as Schema,
+//   schema: {} as Schema<ToFullOption<Field>, string>
 // } satisfies ShiftActionsProps;
 export const defaultShiftActionsProps: ShiftActionsProps = {
   level: 0,
@@ -22,7 +22,7 @@ export const defaultShiftActionsProps: ShiftActionsProps = {
   ruleOrGroup: { combinator: 'and', rules: [r1, r2] },
   labels,
   testID: TestID.shiftActions,
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
 };
 
 export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsProps>) => {
@@ -47,7 +47,7 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
           combinators: defaultCombinators,
           dispatchQuery: dispatchQuery as (q: any) => void,
           getQuery: () => ({ combinator: 'and', rules: [{ combinator: 'and', rules: [r1, r2] }] }),
-        } as Schema,
+        } as Schema<ToFullOption<Field>, string>,
       };
       const { rerender } = render(<ShiftActions {...disabledProps} {...additionalProps} />);
       const btns = screen.getAllByRole('button');

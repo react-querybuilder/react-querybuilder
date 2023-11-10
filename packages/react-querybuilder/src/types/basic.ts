@@ -1,4 +1,4 @@
-import type { Option, OptionList } from './options';
+import type { FlexibleOptionList, Option } from './options';
 import type { RuleValidator } from './validation';
 
 /**
@@ -85,11 +85,11 @@ export interface Field<
 > extends Option<FieldName>,
     HasOptionalClassName {
   id?: string;
-  operators?: OptionList<OperatorObj>;
+  operators?: FlexibleOptionList<OperatorObj>;
   valueEditorType?: ValueEditorType | ((operator: OperatorName) => ValueEditorType);
   valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
   inputType?: InputType | null;
-  values?: OptionList<ValueObj>;
+  values?: FlexibleOptionList<ValueObj>;
   defaultOperator?: OperatorName;
   defaultValue?: any;
   placeholder?: string;

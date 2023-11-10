@@ -1,3 +1,12 @@
+export type GetOptionType<OL extends FlexibleOptionList<FlexibleOption>> =
+  OL extends FlexibleOptionList<infer Opt> ? Opt : never;
+
+export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
+  | Option<infer NameType>
+  | ValueOption<infer NameType>
+  ? NameType
+  : string;
+
 /**
  * A generic option. Used directly in {@link OptionList} or
  * as the child element of an {@link OptionGroup}.
@@ -39,9 +48,9 @@ export type FlexibleOption<N extends string = string> =
 /**
  * Utility type to turn an {@link Option} into a {@link FlexibleOption}.
  */
-export type ToFlexibleOption<Opt = Option> = Opt extends Option<infer NameType>
-  ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
-  : Opt extends ValueOption<infer NameType>
+export type ToFlexibleOption<Opt extends Option | ValueOption> = Opt extends
+  | Option<infer NameType>
+  | ValueOption<infer NameType>
   ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
   : never;
 
@@ -59,9 +68,10 @@ export interface FullOption<N extends string = string> {
 }
 
 /**
- * Utility type to turn an {@link Option} into a {@link FullOption}.
+ * Utility type to turn an {@link Option}, {@link ValueOption} or
+ * {@link FlexibleOption} into a {@link FullOption}.
  */
-export type ToFullOption<Opt extends Option = Option> = Opt extends Option<infer NameType>
+export type ToFullOption<Opt extends FlexibleOption> = Opt extends FlexibleOption<infer NameType>
   ? Opt & FullOption<NameType>
   : never;
 
@@ -73,7 +83,7 @@ export type NameLabelPair<N extends string = string> = Option<N>;
 /**
  * An {@link Option} group within an {@link OptionList}.
  */
-export type OptionGroup<Opt extends Option = Option> = {
+export type OptionGroup<Opt extends FlexibleOption = Option> = {
   label: string;
   options: Opt[];
 };
@@ -95,9 +105,7 @@ export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[]
  * An array of options or option groups, like {@link OptionList}, but each member may
  * use either `name` or `value` as the primary identifier.
  */
-export type FlexibleOptionList<Opt = FlexibleOption> = Opt extends FlexibleOption
-  ? Opt[] | FlexibleOptionGroup<Opt>[]
-  : Opt extends Option
+export type FlexibleOptionList<Opt extends FlexibleOption> = Opt extends FlexibleOption
   ? ToFlexibleOption<Opt>[] | FlexibleOptionGroup<ToFlexibleOption<Opt>>[]
   : never;
 
@@ -106,6 +114,22 @@ export type FlexibleOptionList<Opt = FlexibleOption> = Opt extends FlexibleOptio
  * {@link FullOption} instead of {@link Option}. This means that every member is
  * guaranteed to have both `name` and `value`.
  */
-export type FullOptionList<Opt extends Option = Option> =
-  | ToFullOption<Opt>[]
-  | OptionGroup<ToFullOption<Opt>>[];
+export type FullOptionList<Opt extends FlexibleOption> = Opt extends FullOption
+  ? Opt[] | OptionGroup<Opt>[]
+  : ToFullOption<Opt>[] | OptionGroup<ToFullOption<Opt>>[];
+
+export type FlexibleOptionMap<
+  V extends FlexibleOption,
+  K extends string = GetOptionIdentifierType<V>
+> = {
+  [k in K]?: V;
+};
+
+export type FullOptionMap<V extends FullOption, K extends string = GetOptionIdentifierType<V>> = {
+  [k in K]?: V;
+};
+
+export type FullOptionRecord<
+  V extends FullOption,
+  K extends string = GetOptionIdentifierType<V>
+> = Record<K, V>;
