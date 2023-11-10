@@ -31,7 +31,7 @@ const App = () => {
 
   return (
     <QueryBuilderMantine>
-      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
     </QueryBuilderMantine>
   );
 };

@@ -9,12 +9,7 @@ import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import type {
-  ExportFormat,
-  FormatQueryOptions,
-  RuleGroupType,
-  RuleGroupTypeIC,
-} from 'react-querybuilder';
+import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
 import {
   QueryBuilder,
   convertToIC,
@@ -403,9 +398,6 @@ export default function Demo({
     [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
   );
 
-  const onQueryChangeIC = useCallback((q: RuleGroupTypeIC) => setQueryIC(q), []);
-  const onQueryChange = useCallback((q: RuleGroupType) => setQuery(q), []);
-
   return (
     <div className={styles.demoLayout}>
       <div>
@@ -509,14 +501,14 @@ export default function Demo({
                   {...commonRQBProps}
                   key={'queryIC'}
                   query={queryIC}
-                  onQueryChange={onQueryChangeIC}
+                  onQueryChange={setQueryIC}
                 />
               ) : (
                 <QueryBuilder
                   {...commonRQBProps}
                   key={'query'}
                   query={query}
-                  onQueryChange={onQueryChange}
+                  onQueryChange={setQuery}
                 />
               )}
             </QueryBuilderDnD>

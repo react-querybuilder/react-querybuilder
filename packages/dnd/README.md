@@ -33,7 +33,7 @@ const App = () => {
 
   return (
     <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
-      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
     </QueryBuilderDnD>
   );
 };
@@ -64,7 +64,7 @@ const App = () => {
 
     return (
       <QueryBuilderDndWithoutProvider>
-        <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+        <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       </QueryBuilderDndWithoutProvider>
     );
   };

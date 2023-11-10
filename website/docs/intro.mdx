@@ -81,7 +81,7 @@ export default () => {
     ],
   });
 
-  return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
+  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
 };
 ```
 
@@ -108,7 +108,7 @@ export default () => {
     ],
   });
 
-  return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
+  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
 };
 ```
 
@@ -141,7 +141,7 @@ export default () => {
 
   return (
     <>
-      <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       <h4>
         SQL as result of <code>formatQuery(query, 'sql')</code>:
       </h4>

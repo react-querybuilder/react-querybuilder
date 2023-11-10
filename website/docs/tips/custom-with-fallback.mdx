@@ -103,7 +103,7 @@ export default function App() {
     <QueryBuilder
       fields={fields}
       query={query}
-      onQueryChange={q => setQuery(q)}
+      onQueryChange={setQuery}
       // highlight-start
       controlElements={{ valueEditor: CustomValueEditor }}
       // highlight-end
@@ -129,7 +129,7 @@ export default function App() {
     <QueryBuilder
       fields={fields}
       query={query}
-      onQueryChange={q => setQuery(q)}
+      onQueryChange={setQuery}
       controlElements={{ valueEditor: CustomValueEditor }}
     />
   );

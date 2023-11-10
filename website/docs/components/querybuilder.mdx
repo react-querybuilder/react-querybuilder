@@ -18,7 +18,7 @@ The default export of `react-querybuilder` is the `<QueryBuilder />` React compo
 
 That root `RuleGroup` is nested within a `<div>` that has the [standard `queryBuilder` class](../styling/classnames), any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators (either [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) is `true` or the query is using [independent combinators](#independent-combinators)) are enabled.
 
-Finally, everything is wrapped in `<QueryBuilderContext.Provider>` which inherits any values from ancestor context providers and propogates them down to subcomponents (props will supersede context values).
+Finally, everything is wrapped in `<QueryBuilderContext.Provider>` which inherits any values from ancestor context providers and propogates them down to subcomponents. Props supersede context values.
 
 ## Props
 
