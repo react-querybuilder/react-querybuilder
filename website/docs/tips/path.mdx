@@ -8,9 +8,9 @@ import { SandpackRQB } from '@site/src/components/SandpackRQB';
 
 While the `id` property can uniquely identify a rule or group, an `id` won't naturally indicate anything about the _position_ of the object within the query hierarchy. For that reason, React Query Builder uses the concept of a "path" to locate and update query objects.
 
-The `path` property is an array of integers unique to each rule and group within a query. The query object itself, aka the root group, has a `path` of `[]`. All other rules and groups within the query have a `path` that corresponds to their position within the `rules` array(s) of their ancestor group(s).
+The `path` property is an array of integers unique to each rule and group within a query. The query object itself (the root group) has a `path` of `[]`. All other rules and groups within the query have a `path` that corresponds to their position within the `rules` array(s) of their ancestor group(s).
 
-The `path` of any object (rule or group) is equivalent to the `path` of its parent group plus another array element which is the index of the object within its parent's `rules` array. You can think of it like this: `path = [...parentPath, index]`.
+The `path` of any object (rule or group) is equivalent to the `path` of its parent group, with the index of the object within its parent's `rules` array pushed onto the end. You can think of it like this: `path = [...parentPath, index]`.
 
 Consider the following query. The respective `path` for each rule and group is commented above it, along with a short explanation.
 
@@ -59,13 +59,9 @@ would return this object:
 
 In most scenarios you won't need to interact with the `path` attribute, but it can come in handy in certain situations. One such situation is if you need to access other parts of the query from within a custom component.
 
-:::tip
+Say you have a custom value editor that needs to know the `value` of each of its sibling rules. We would recommend calling `props.schema.getQuery()` to get the query and then retrieving the sibling rules with a combination of `getParentPath` and `findPath`.
 
-By default, custom components only receive props relevant to the rule or group they act on, but you can augment these default props with other data or information by using the [`context` prop](../components/querybuilder#context).
-
-:::
-
-Say you have a custom value editor that needs to know the `value` of each of its sibling rules. We would recommend passing the entire query down through the `context` prop and retrieving the sibling rules with a combination of `getParentPath` and `findPath`.
+> _Prior to version 7, custom components only received props relevant to the rule or group they acted on. You could augment these default props with other data or information--the root query object, for example--by using the [`context` prop](../components/querybuilder#context)._
 
 <SandpackRQB rqbVersion={6} options={{ editorHeight: 444, activeFile: "/CustomValueEditor.tsx" }}>
 
@@ -80,11 +76,13 @@ import {
 } from 'react-querybuilder';
 
 export const CustomValueEditor = (props: ValueEditorProps) => {
+  // Get the full query object
+  const query = props.schema.getQuery();
   // Get the path of this rule's parent group
   const parentPath = getParentPath(props.path);
   // Find the parent group object in the query
-  const parentGroup = findPath(parentPath, props.context.query) as RuleGroupType;
-  const id = findPath(props.path, props.context.query)!.id;
+  const parentGroup = findPath(parentPath, query) as RuleGroupType;
+  const id = findPath(props.path, query)!.id;
   // Get a comma-separated list of all sibling rule values
   const siblingValues = (
     parentGroup.rules.filter(
@@ -125,7 +123,6 @@ export default function App() {
       query={query}
       onQueryChange={setQuery}
       controlElements={{ valueEditor: CustomValueEditor }}
-      context={{ query }}
     />
   );
 }
