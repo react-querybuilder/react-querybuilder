@@ -234,7 +234,7 @@ export interface QueryActions {
   ): void;
   onRuleAdd(rule: RuleType, parentPath: Path, context?: any): void;
   onRuleRemove(path: Path): void;
-  moveRule(oldPath: Path, newPath: Path, clone?: boolean): void;
+  moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean): void;
 }
 
 /**

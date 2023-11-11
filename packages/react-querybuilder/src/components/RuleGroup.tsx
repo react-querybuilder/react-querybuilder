@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { TestID } from '../defaults';
 import { useRuleGroup, useStopEventPropagation } from '../hooks';
 import type { RuleGroupArray, RuleGroupICArray, RuleGroupProps } from '../types';
-import { isRuleGroup, isRuleGroupType } from '../utils';
+import { isRuleGroup, isRuleGroupType, pathsAreEqual } from '../utils';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
@@ -11,13 +11,15 @@ import { isRuleGroup, isRuleGroupType } from '../utils';
  * and {@link RuleGroupBodyComponents}.
  */
 export const RuleGroup = React.memo((props: RuleGroupProps) => {
-  const rg = { ...props, ...useRuleGroup(props) };
+  const rg = useRuleGroup(props);
 
   rg.addRule = useStopEventPropagation(rg.addRule);
   rg.addGroup = useStopEventPropagation(rg.addGroup);
   rg.cloneGroup = useStopEventPropagation(rg.cloneGroup);
   rg.toggleLockGroup = useStopEventPropagation(rg.toggleLockGroup);
   rg.removeGroup = useStopEventPropagation(rg.removeGroup);
+  rg.shiftGroupUp = useStopEventPropagation(rg.shiftGroupUp);
+  rg.shiftGroupDown = useStopEventPropagation(rg.shiftGroupDown);
 
   return (
     <div
@@ -66,7 +68,7 @@ export const RuleGroupHeaderComponents = React.memo(
 
     return (
       <>
-        {rg.path.length > 0 && rg.schema.showShiftActions && (
+        {rg.schema.showShiftActions && rg.path.length > 0 && (
           <ShiftActionsControlElement
             key={TestID.shiftActions}
             testID={TestID.shiftActions}
@@ -82,11 +84,14 @@ export const RuleGroupHeaderComponents = React.memo(
             }}
             className={rg.classNames.shiftActions}
             disabled={rg.disabled}
+            shiftUp={rg.shiftGroupUp}
+            shiftDown={rg.shiftGroupDown}
+            shiftUpDisabled={rg.shiftUpDisabled}
+            shiftDownDisabled={rg.shiftDownDisabled}
             context={rg.context}
             validation={rg.validationResult}
             schema={rg.schema}
             ruleOrGroup={rg.ruleGroup}
-            lastInGroup={rg.lastInGroup}
           />
         )}
         {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
@@ -258,7 +263,8 @@ export const RuleGroupBodyComponents = React.memo(
             const thisPathMemo = rg.pathsMemo[idx];
             const thisPath = thisPathMemo.path;
             const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
-            const lastInGroup = idx === ruleArrayLength - 1;
+            const shiftUpDisabled = pathsAreEqual([0], thisPath);
+            const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
             const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
             return (
               <Fragment key={key}>
@@ -315,8 +321,9 @@ export const RuleGroupBodyComponents = React.memo(
                     not={!!r.not}
                     disabled={thisPathDisabled}
                     parentDisabled={rg.parentDisabled || rg.disabled}
+                    shiftUpDisabled={shiftUpDisabled}
+                    shiftDownDisabled={shiftDownDisabled}
                     context={rg.context}
-                    lastInGroup={lastInGroup}
                   />
                 ) : (
                   <RuleControlElement
@@ -333,8 +340,9 @@ export const RuleGroupBodyComponents = React.memo(
                     disabled={thisPathDisabled}
                     parentDisabled={rg.parentDisabled || rg.disabled}
                     translations={rg.translations}
+                    shiftUpDisabled={shiftUpDisabled}
+                    shiftDownDisabled={shiftDownDisabled}
                     context={rg.context}
-                    lastInGroup={lastInGroup}
                   />
                 )}
               </Fragment>

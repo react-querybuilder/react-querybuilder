@@ -8,11 +8,13 @@ import type { RuleProps } from '../types';
  * actually a small wrapper around {@link RuleComponents}.
  */
 export const Rule = React.memo((props: RuleProps) => {
-  const r = { ...props, ...useRule(props) };
+  const r = useRule(props);
 
   r.cloneRule = useStopEventPropagation(r.cloneRule);
   r.toggleLockRule = useStopEventPropagation(r.toggleLockRule);
   r.removeRule = useStopEventPropagation(r.removeRule);
+  r.shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
+  r.shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
 
   return (
     <div
@@ -69,11 +71,14 @@ export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRu
           }}
           className={r.classNames.shiftActions}
           disabled={r.disabled}
+          shiftUp={r.shiftRuleUp}
+          shiftDown={r.shiftRuleDown}
+          shiftUpDisabled={r.shiftUpDisabled}
+          shiftDownDisabled={r.shiftDownDisabled}
           context={r.context}
           validation={r.validationResult}
           schema={r.schema}
           ruleOrGroup={r.rule}
-          lastInGroup={r.lastInGroup}
         />
       )}
       {r.schema.enableDragAndDrop && (

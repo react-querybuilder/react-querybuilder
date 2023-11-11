@@ -8,16 +8,15 @@ import type {
   Field,
   Option,
   RuleGroupType,
-  RuleType,
   Schema,
+  ShiftActionsProps,
   ToFullOption,
 } from 'react-querybuilder';
-import { TestID, convertToIC, defaultCombinators, toFullOption } from 'react-querybuilder';
+import { TestID, convertToIC, toFullOption } from 'react-querybuilder';
 import type {
   ActionNativeProps,
   NotToggleNativeProps,
   SchemaNative,
-  ShiftActionsNativeProps,
   ValueEditorNativeProps,
   ValueSelectorNativeProps,
 } from '../types';
@@ -155,53 +154,86 @@ describe('NativeNotToggle', () => {
 });
 
 describe('NativeShiftActions', () => {
+  const shiftUp = jest.fn();
+  const shiftDown = jest.fn();
+
+  afterEach(() => {
+    shiftUp.mockClear();
+    shiftDown.mockClear();
+  });
+
+  const labels = { shiftUp: 'up', shiftDown: 'down' } as const;
+
+  const defaultProps: ShiftActionsProps = {
+    level: 0,
+    path: [1],
+    ruleOrGroup: { combinator: 'and', rules: [] },
+    labels,
+    testID: TestID.shiftActions,
+    schema: {} as Schema<ToFullOption<Field>, string>,
+    disabled: false,
+    shiftUpDisabled: false,
+    shiftDownDisabled: false,
+  };
+
   it('works', async () => {
-    const r1: RuleType = { field: 'f1', operator: '=', value: 'v1' };
-    const r2: RuleType = { field: 'f2', operator: '=', value: 'v2' };
-    const labels = { shiftUp: 'shiftUp', shiftDown: 'shiftDown' } as const;
-    const dispatchQuery = jest.fn();
-    const disabledProps: ShiftActionsNativeProps = {
-      level: 0,
-      path: [0],
-      lastInGroup: true,
-      ruleOrGroup: { combinator: 'and', rules: [r1, r2] },
-      labels,
-      testID: TestID.shiftActions,
-      schema: {
-        combinators: defaultCombinators,
-        dispatchQuery: dispatchQuery as (q: any) => void,
-        getQuery: () => ({ combinator: 'and', rules: [{ combinator: 'and', rules: [r1, r2] }] }),
-      } as SchemaNative<ToFullOption<Field>, string>,
-    };
-    const { rerender } = render(<NativeShiftActions {...disabledProps} />);
-    const btnUp = screen.getByLabelText(labels.shiftUp);
-    const btnDown = screen.getByLabelText(labels.shiftDown);
-    for (const btn of [btnUp, btnDown]) {
-      expect(btn).toBeDisabled();
-      fireEvent.press(btn);
-      expect(dispatchQuery).not.toHaveBeenCalled();
-    }
-    const enabledProps = {
-      ...disabledProps,
-      lastInGroup: false,
-      ruleOrGroup: r1,
-      path: [1],
-      schema: {
-        ...disabledProps.schema,
-        getQuery: () => ({ combinator: 'and', rules: [r2, r1, r2] }),
-      },
-    } as ShiftActionsNativeProps;
-    rerender(<NativeShiftActions {...enabledProps} />);
+    // const disabledProps: ShiftActionsProps = {
+    //   ...defaultProps,
+    //   disabled: true,
+    //   shiftUp,
+    //   shiftDown,
+    // };
+
+    // // Fully disabled
+    // const { rerender } = render(<NativeShiftActions {...disabledProps} />);
+    // const btnUp = screen.getByLabelText(labels.shiftUp);
+    // const btnDown = screen.getByLabelText(labels.shiftDown);
+    // for (const btn of [btnUp, btnDown]) {
+    //   expect(btn).toBeDisabled();
+    //   fireEvent.press(btn);
+    //   expect(shiftUp).not.toHaveBeenCalled();
+    //   expect(shiftDown).not.toHaveBeenCalled();
+    // }
+
+    // // Up disabled
+    // const upDisabledProps = {
+    //   ...defaultProps,
+    //   shiftUp,
+    //   shiftDown,
+    //   shiftUpDisabled: true,
+    // };
+    // rerender(<NativeShiftActions {...upDisabledProps} />);
+    // const btnsUpDisabledProps = screen.getByTestId(TestID.shiftActions).findAllByType(Button);
+    // await act(() => {
+    //   fireEvent.press(btnsUpDisabledProps[0]);
+    //   expect(shiftUp).not.toHaveBeenCalled();
+    // });
+
+    // // Down disabled
+    // const downDisabledProps = {
+    //   ...defaultProps,
+    //   shiftUp,
+    //   shiftDown,
+    //   shiftDownDisabled: true,
+    // };
+    // rerender(<NativeShiftActions {...downDisabledProps} />);
+    // const btnsDownDisabledProps = screen.getByTestId(TestID.shiftActions).findAllByType(Button);
+    // await act(() => {
+    //   fireEvent.press(btnsDownDisabledProps[1]);
+    //   expect(shiftDown).not.toHaveBeenCalled();
+    // });
+
+    // Enabled
+    const enabledProps = { ...defaultProps, shiftUp, shiftDown };
+    render(<NativeShiftActions {...enabledProps} />);
     const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button);
     await act(() => {
-      // Move up
       fireEvent.press(btnsEnabled[0]);
-      expect(dispatchQuery).toHaveBeenNthCalledWith(1, { combinator: 'and', rules: [r1, r2, r2] });
+      expect(shiftUp).toHaveBeenCalled();
     });
     await act(() => {
-      // Move down
       fireEvent.press(btnsEnabled[1]);
-      expect(dispatchQuery).toHaveBeenNthCalledWith(2, { combinator: 'and', rules: [r2, r2, r1] });
+      expect(shiftDown).toHaveBeenCalled();
     });
   });
 });

@@ -122,9 +122,21 @@ export interface ShiftActionsProps extends CommonSubComponentProps {
    */
   ruleOrGroup: RuleGroupTypeAny | RuleType;
   /**
-   * Whether this rule or group is the last of its siblings.
+   * Method to shift the rule/group up one place.
    */
-  lastInGroup?: boolean;
+  shiftUp?: () => void;
+  /**
+   * Method to shift the rule/group down one place.
+   */
+  shiftDown?: () => void;
+  /**
+   * Whether shifting the rule/group up is disallowed.
+   */
+  shiftUpDisabled?: boolean;
+  /**
+   * Whether shifting the rule/group down is disallowed.
+   */
+  shiftDownDisabled?: boolean;
 }
 
 /**
@@ -247,8 +259,9 @@ interface CommonRuleAndGroupProps {
   schema: Schema<ToFullOption<Field>, string>;
   actions: QueryActions;
   disabled?: boolean;
+  shiftUpDisabled?: boolean;
+  shiftDownDisabled?: boolean;
   context?: any;
-  lastInGroup?: boolean;
 }
 
 /**

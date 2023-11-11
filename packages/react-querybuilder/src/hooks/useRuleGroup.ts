@@ -36,6 +36,8 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
     disabled: disabledProp,
     parentDisabled,
+    shiftUpDisabled,
+    shiftDownDisabled,
     combinator: combinatorProp,
     rules: rulesProp,
     not: notProp,
@@ -165,6 +167,24 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     [disabled, moveRule, path]
   );
 
+  const shiftGroupUp = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled && !shiftUpDisabled) {
+        moveRule(path, 'up');
+      }
+    },
+    [disabled, moveRule, path, shiftUpDisabled]
+  );
+
+  const shiftGroupDown = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled && !shiftDownDisabled) {
+        moveRule(path, 'down');
+      }
+    },
+    [disabled, moveRule, path, shiftDownDisabled]
+  );
+
   const toggleLockGroup = useCallback(
     (_event?: any, _context?: any) => {
       onPropChange('disabled', !disabled, path);
@@ -241,6 +261,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   return {
+    ...props,
     addGroup,
     addRule,
     accessibleDescription,
@@ -264,6 +285,8 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     previewRef,
     removeGroup,
     ruleGroup,
+    shiftGroupUp,
+    shiftGroupDown,
     toggleLockGroup,
     validationClassName,
     validationResult,

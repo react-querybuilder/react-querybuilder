@@ -463,17 +463,19 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 Default is [`Rule`](./rule). Receives the following props per the `RuleProps` interface:
 
-| Prop             | Type           | Description                                                  |
-| ---------------- | -------------- | ------------------------------------------------------------ |
-| `id`             | `string`       | Unique identifier for this rule                              |
-| `path`           | `Path`         | [Path](../tips/path) of this rule                            |
-| `rule`           | `RuleType`     | The rule object                                              |
-| `translations`   | `Translations` | The default translations merged with the `translations` prop |
-| `schema`         | `Schema`       | Query [schema](../typescript#miscellaneous)                  |
-| `actions`        | `QueryActions` | Query [update functions](../typescript#miscellaneous)        |
-| `context`        | `any`          | Container for custom props that are passed to all components |
-| `disabled`       | `boolean`      | Whether the rule itself is disabled                          |
-| `parentDisabled` | `boolean`      | Whether the parent group of this rule is disabled            |
+| Prop                | Type           | Description                                                  |
+| ------------------- | -------------- | ------------------------------------------------------------ |
+| `id`                | `string`       | Unique identifier for this rule                              |
+| `path`              | `Path`         | [Path](../tips/path) of this rule                            |
+| `rule`              | `RuleType`     | The rule object                                              |
+| `translations`      | `Translations` | The default translations merged with the `translations` prop |
+| `schema`            | `Schema`       | Query [schema](../typescript#miscellaneous)                  |
+| `actions`           | `QueryActions` | Query [update functions](../typescript#miscellaneous)        |
+| `context`           | `any`          | Container for custom props that are passed to all components |
+| `disabled`          | `boolean`      | Whether the rule itself is disabled                          |
+| `shiftUpDisabled`   | `boolean`      | Whether shifting the rule up is disallowed                   |
+| `shiftDownDisabled` | `boolean`      | Whether shifting the rule down is disallowed                 |
+| `parentDisabled`    | `boolean`      | Whether the parent group of this rule is disabled            |
 
 :::tip
 
@@ -485,17 +487,19 @@ If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule
 
 Default is [`RuleGroup`](./rulegroup). Receives the following props per the `RuleGroupProps` interface:
 
-| Prop             | Type               | Description                                                  |
-| ---------------- | ------------------ | ------------------------------------------------------------ |
-| `id`             | `string`           | Unique identifier for this group                             |
-| `path`           | `Path`             | [Path](../tips/path) of this group                           |
-| `ruleGroup`      | `RuleGroupTypeAny` | The group object                                             |
-| `translations`   | `Translations`     | The default translations merged with the `translations` prop |
-| `schema`         | `Schema`           | Query [schema](../typescript#miscellaneous)                  |
-| `actions`        | `QueryActions`     | Query [update functions](../typescript#miscellaneous)        |
-| `context`        | `any`              | Container for custom props that are passed to all components |
-| `disabled`       | `boolean`          | Whether the group itself is disabled                         |
-| `parentDisabled` | `boolean`          | Whether the parent group of this group is disabled           |
+| Prop                | Type               | Description                                                  |
+| ------------------- | ------------------ | ------------------------------------------------------------ |
+| `id`                | `string`           | Unique identifier for this group                             |
+| `path`              | `Path`             | [Path](../tips/path) of this group                           |
+| `ruleGroup`         | `RuleGroupTypeAny` | The group object                                             |
+| `translations`      | `Translations`     | The default translations merged with the `translations` prop |
+| `schema`            | `Schema`           | Query [schema](../typescript#miscellaneous)                  |
+| `actions`           | `QueryActions`     | Query [update functions](../typescript#miscellaneous)        |
+| `context`           | `any`              | Container for custom props that are passed to all components |
+| `disabled`          | `boolean`          | Whether the group itself is disabled                         |
+| `shiftUpDisabled`   | `boolean`          | Whether shifting the group up is disallowed                  |
+| `shiftDownDisabled` | `boolean`          | Whether shifting the group down is disallowed                |
+| `parentDisabled`    | `boolean`          | Whether the parent group of this group is disabled           |
 
 :::tip
 
@@ -507,19 +511,22 @@ If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule
 
 Default is [`ShiftActions`](./shiftactions). Receives the following props per the `ShiftActionsProps` interface:
 
-| Prop          | Type                                            | Description                                                                                                   |
-| ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `labels`      | `{ shiftUp: ReactNode; shiftDown: ReactNode; }` | `translations.shiftActionUp.label` and `translations.shiftActionDown.label`, e.g. "▴" and "▾"                 |
-| `titles`      | `{ shiftUp: string; shiftDown: string; }`       | `translations.shiftActionUp.title` and `translations.shiftActionDown.title`, e.g. "Shift up" and "Shift down" |
-| `className`   | `string`                                        | CSS `classNames` to be applied                                                                                |
-| `ruleOrGroup` | `RuleGroupTypeAny`                              | This rule/group                                                                                               |
-| `level`       | `number`                                        | The `level` of this rule/group                                                                                |
-| `context`     | `any`                                           | Container for custom props that are passed to all components                                                  |
-| `validation`  | <code>boolean \| ValidationResult</code>        | Validation result of this rule/group                                                                          |
-| `disabled`    | `boolean`                                       | Whether this rule/group is disabled/locked                                                                    |
-| `path`        | `Path`                                          | [Path](../tips/path) of this rule/group                                                                       |
-| `schema`      | `Schema`                                        | Query [schema](../typescript#miscellaneous)                                                                   |
-| `lastInGroup` | `boolean`                                       | Whether this rule/group is the last of its siblings                                                           |
+| Prop                | Type                                            | Description                                                                                                   |
+| ------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `labels`            | `{ shiftUp: ReactNode; shiftDown: ReactNode; }` | `translations.shiftActionUp.label` and `translations.shiftActionDown.label`, e.g. "▴" and "▾"                 |
+| `titles`            | `{ shiftUp: string; shiftDown: string; }`       | `translations.shiftActionUp.title` and `translations.shiftActionDown.title`, e.g. "Shift up" and "Shift down" |
+| `className`         | `string`                                        | CSS `classNames` to be applied                                                                                |
+| `ruleOrGroup`       | `RuleGroupTypeAny`                              | This rule/group                                                                                               |
+| `level`             | `number`                                        | The `level` of this rule/group                                                                                |
+| `context`           | `any`                                           | Container for custom props that are passed to all components                                                  |
+| `validation`        | <code>boolean \| ValidationResult</code>        | Validation result of this rule/group                                                                          |
+| `disabled`          | `boolean`                                       | Whether this rule/group is disabled/locked                                                                    |
+| `path`              | `Path`                                          | [Path](../tips/path) of this rule/group                                                                       |
+| `schema`            | `Schema`                                        | Query [schema](../typescript#miscellaneous)                                                                   |
+| `shiftUp`           | `() => void`                                    | Method to shift the rule/group up one place                                                                   |
+| `shiftDown`         | `() => void`                                    | Method to shift the rule/group down one place                                                                 |
+| `shiftUpDisabled`   | `boolean`                                       | Whether shifting the rule/group up is disallowed                                                              |
+| `shiftDownDisabled` | `boolean`                                       | Whether shifting the rule/group down is disallowed                                                            |
 
 #### `valueEditor`
 

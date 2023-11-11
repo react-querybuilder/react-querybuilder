@@ -102,6 +102,30 @@ describe('cloneRule', () => {
   });
 });
 
+describe('shiftRuleUp/Down', () => {
+  it('should call moveRule with the right params', async () => {
+    const moveRule = jest.fn();
+    const { rerender } = render(
+      <Rule {...getProps({ showShiftActions: true }, { moveRule })} disabled />
+    );
+    let n = 1;
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    expect(moveRule).not.toHaveBeenCalled();
+    rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} shiftUpDisabled />);
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    expect(moveRule).not.toHaveBeenCalled();
+    rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} shiftDownDisabled />);
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    expect(moveRule).not.toHaveBeenCalled();
+    rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up');
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down');
+  });
+});
+
 describe('removeRule', () => {
   it('should call onRuleRemove with the rule and path', async () => {
     const onRuleRemove = jest.fn();

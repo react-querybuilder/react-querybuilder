@@ -1,7 +1,7 @@
 import type { Button } from '@mui/material';
 import * as React from 'react';
 import type { ShiftActionsProps } from 'react-querybuilder';
-import { ShiftActions, useShiftActions } from 'react-querybuilder';
+import { ShiftActions } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
@@ -12,25 +12,18 @@ export type MaterialShiftActionsProps = ShiftActionsProps &
 
 export const MaterialShiftActions = ({
   path,
+  shiftUp,
+  shiftDown,
+  shiftUpDisabled,
+  shiftDownDisabled,
   disabled,
   className,
   labels,
   titles,
   testID,
-  lastInGroup,
-  schema: { combinators, dispatchQuery, getQuery, ...schema },
   muiComponents: muiComponentsProp,
   ...otherProps
 }: MaterialShiftActionsProps) => {
-  const { shiftUp, shiftUpDisabled, shiftDown, shiftDownDisabled } = useShiftActions({
-    combinators,
-    disabled,
-    dispatchQuery,
-    getQuery,
-    lastInGroup,
-    path,
-  });
-
   const muiComponents = React.useContext(RQBMaterialContext) ?? muiComponentsProp;
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
@@ -43,8 +36,10 @@ export const MaterialShiftActions = ({
         labels={labels}
         titles={titles}
         testID={testID}
-        lastInGroup={lastInGroup}
-        schema={{ combinators, dispatchQuery, getQuery, ...schema }}
+        shiftUp={shiftUp}
+        shiftDown={shiftDown}
+        shiftUpDisabled={shiftUpDisabled}
+        shiftDownDisabled={shiftDownDisabled}
         {...otherProps}
       />
     );
@@ -61,7 +56,7 @@ export const MaterialShiftActions = ({
         className={className}
         title={titles?.shiftUp}
         size="small"
-        disabled={shiftUpDisabled}
+        disabled={disabled || shiftUpDisabled}
         onClick={shiftUp}>
         {labels?.shiftUp}
       </Button>
@@ -72,7 +67,7 @@ export const MaterialShiftActions = ({
         className={className}
         title={titles?.shiftDown}
         size="small"
-        disabled={shiftDownDisabled}
+        disabled={disabled || shiftDownDisabled}
         onClick={shiftDown}>
         {labels?.shiftDown}
       </Button>

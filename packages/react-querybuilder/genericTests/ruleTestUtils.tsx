@@ -18,6 +18,7 @@ import type {
   QueryActions,
   RuleProps,
   Schema,
+  ShiftActionsProps,
   ToFullOption,
   ValueEditorProps,
 } from '../src/types';
@@ -82,6 +83,12 @@ export const ruleControls = {
       {label}
     </span>
   )),
+  shiftActions: (props: ShiftActionsProps) => (
+    <div data-testid={TestID.shiftActions} className={props.className}>
+      <button onClick={props.shiftUp}>{props.labels?.shiftUp}</button>
+      <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
+    </div>
+  ),
 } satisfies Partial<Controls<Field, string>>;
 
 export const ruleClassnames = {

@@ -23,6 +23,7 @@ import type {
   RuleGroupProps,
   RuleType,
   Schema,
+  ShiftActionsProps,
   ValueEditorProps,
 } from '../src/types';
 import { generateAccessibleDescription, toFullOption } from '../src/utils';
@@ -137,6 +138,12 @@ export const ruleGroupControls = {
       {label}
     </span>
   )),
+  shiftActions: (props: ShiftActionsProps) => (
+    <div data-testid={TestID.shiftActions} className={props.className}>
+      <button onClick={props.shiftUp}>{props.labels?.shiftUp}</button>
+      <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
+    </div>
+  ),
 } satisfies Partial<Controls<Field, string>>;
 
 export const ruleGroupClassnames = {

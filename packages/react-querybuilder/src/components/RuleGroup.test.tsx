@@ -123,6 +123,37 @@ describe('cloneGroup', () => {
   });
 });
 
+describe('shiftRuleUp/Down', () => {
+  it('should call moveRule with the right params', async () => {
+    const moveRule = jest.fn();
+    const { rerender } = render(
+      <RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} disabled />
+    );
+    let n = 1;
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    expect(moveRule).not.toHaveBeenCalled();
+    rerender(
+      <RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} shiftUpDisabled />
+    );
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    expect(moveRule).not.toHaveBeenCalled();
+    rerender(
+      <RuleGroup
+        {...getRuleGroupProps({ showShiftActions: true }, { moveRule })}
+        shiftDownDisabled
+      />
+    );
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    expect(moveRule).not.toHaveBeenCalled();
+    rerender(<RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} />);
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up');
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down');
+  });
+});
+
 describe('removeGroup', () => {
   it('calls onGroupRemove from the schema with expected values', async () => {
     const onGroupRemove = jest.fn();

@@ -3,14 +3,15 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RuleComponents, TestID, useRule } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
-import type { RuleNativeProps } from '../types';
+import type { RuleNativeProps, SchemaNative } from '../types';
 
 export const RuleNative = (props: RuleNativeProps) => {
-  const r = { ...props, ...useRule(props) };
+  const r = useRule(props);
+  const schema = r.schema as SchemaNative<any, string>;
 
   const styles = useMemo(
-    () => ({ rule: StyleSheet.flatten([defaultNativeStyles.rule, r.schema.styles?.rule]) }),
-    [r.schema.styles?.rule]
+    () => ({ rule: StyleSheet.flatten([defaultNativeStyles.rule, schema.styles?.rule]) }),
+    [schema.styles?.rule]
   );
 
   return (

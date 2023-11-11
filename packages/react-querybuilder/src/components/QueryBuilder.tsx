@@ -61,6 +61,8 @@ const QueryBuilderInternal = <
           id={qb.rootQuery.id}
           path={rootPath}
           disabled={!!qb.rootQuery.disabled || qb.queryDisabled}
+          shiftUpDisabled
+          shiftDownDisabled
           parentDisabled={qb.queryDisabled}
           context={qb.context}
         />
