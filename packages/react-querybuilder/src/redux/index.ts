@@ -64,7 +64,11 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, AnyActio
 export const useQueryBuilderSelector = createSelectorHook(QueryBuilderStateContext);
 
 // Selectors
-export const getQueryState = (state: RqbState, qbId: string) =>
+/**
+ * Given a `qbId` (provided as part of the `schema` prop), returns
+ * a selector for use with `useQueryBuilderSelector`.
+ */
+export const getQuerySelectorById = (qbId: string) => (state: RqbState) =>
   getQueriesSliceState(state.queries, qbId);
 
 // Misc exports

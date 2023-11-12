@@ -1,10 +1,9 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, standardClassnames } from '../defaults';
-import type { RqbState } from '../redux';
 import {
   dispatchThunk,
-  getQueryState,
+  getQuerySelectorById,
   removeQueryState,
   useQueryBuilderDispatch,
   useQueryBuilderSelector,
@@ -39,6 +38,7 @@ import {
   findPath,
   generateAccessibleDescription,
   isRuleGroupType,
+  isRuleGroupTypeIC,
   move,
   pathIsDisabled,
   prepareRuleGroup,
@@ -150,10 +150,7 @@ export function useQueryBuilderSchema<
   const queryBuilderStore = useQueryBuilderStore();
   const queryBuilderDispatch = useQueryBuilderDispatch();
 
-  const querySelector = useCallback(
-    (state: RqbState) => getQueryState(state, setup.qbId),
-    [setup.qbId]
-  );
+  const querySelector = useMemo(() => getQuerySelectorById(setup.qbId), [setup.qbId]);
   const storeQuery = useQueryBuilderSelector(querySelector);
   const getQuery = useCallback(
     () => querySelector(queryBuilderStore.getState()),
@@ -170,10 +167,7 @@ export function useQueryBuilderSchema<
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
 
-  const independentCombinators = useMemo(
-    () => !Object.hasOwn(rootQuery, 'combinator'),
-    [rootQuery]
-  );
+  const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootQuery), [rootQuery]);
 
   // This effect only runs once, at the beginning of the component lifecycle.
   // The returned cleanup function clears the query from the store when the
@@ -219,7 +213,7 @@ export function useQueryBuilderSchema<
 
   const onRuleAdd = useCallback(
     (rule: R, parentPath: Path, context?: any) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
@@ -261,7 +255,7 @@ export function useQueryBuilderSchema<
 
   const onGroupAdd = useCallback(
     (ruleGroup: RG, parentPath: Path, context?: any) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
@@ -308,7 +302,7 @@ export function useQueryBuilderSchema<
 
   const onPropChange = useCallback(
     (prop: UpdateableProperties, value: any, path: Path) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId);
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
       // istanbul ignore if
       if (!queryLocal) return;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
@@ -346,7 +340,7 @@ export function useQueryBuilderSchema<
 
   const onRuleOrGroupRemove = useCallback(
     (path: Path, context?: any) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId) as RG;
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
@@ -379,7 +373,7 @@ export function useQueryBuilderSchema<
 
   const moveRule = useCallback(
     (oldPath: Path, newPath: Path, clone?: boolean) => {
-      const queryLocal = getQueryState(queryBuilderStore.getState(), qbId);
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {

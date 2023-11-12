@@ -36,14 +36,13 @@ The most common violation of that requirement is probably inline arrow functions
 
 Previously, props and properties that accepted an `OptionList` type or extension thereof (`fields`, `compbinators`, etc.) required a `name` property as a unique identifier for each member within the list. In version 7, list members may specify a `value` property as their identifier instead of `name`, which is now optional. If both `name` and `value` properties are present for a given item, `value` will be used.
 
-### Query selector and dispatcher
+### Query selector, getter, and dispatcher
 
-The `schema` prop, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. (Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.) The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
 
-- `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary. **Tip:** this function should be called in an event handler, not on every render.
-- `dispatchQuery(query)`: updates the internal query builder state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
-
-Using these two methods together, you can get the existing query, modify it (with the utilities mentioned above), and dispatch the updated query without performing the updates externally.
+- `getQuery()`: returns the current root query object.
+- `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
+- `useQueryBuilderSelector(selector)`: generate the selector with `getQuerySelectorById(props.schema.qbId)`.
 
 ### Field data passed to `get*` callbacks
 

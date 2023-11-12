@@ -16,7 +16,7 @@ const remapProperties = (
     for (const [k, v] of Object.entries(propertyMap)) {
       if (v === false) {
         delete draft[k];
-      } else if (!!v && k !== v && Object.hasOwn(draft, k)) {
+      } else if (!!v && k !== v && k in draft) {
         draft[v] = draft[k];
         if (deleteRemappedProperties) {
           delete draft[k];

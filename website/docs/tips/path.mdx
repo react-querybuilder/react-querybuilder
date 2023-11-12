@@ -59,25 +59,33 @@ would return this object:
 
 In most scenarios you won't need to interact with the `path` attribute, but it can come in handy in certain situations. One such situation is if you need to access other parts of the query from within a custom component.
 
-Say you have a custom value editor that needs to know the `value` of each of its sibling rules. We would recommend calling `props.schema.getQuery()` to get the query and then retrieving the sibling rules with a combination of `getParentPath` and `findPath`.
+Say you have a custom value editor that needs to know the `value` of each of its sibling rules. You can get the full query object using the `useQueryBuilderSelector` hook (which connects to React Query Builder's custom Redux implementation). You can then retrieve the sibling rules with a combination of `getParentPath` and `findPath`.
 
-> _Prior to version 7, custom components only received props relevant to the rule or group they acted on. You could augment these default props with other data or information--the root query object, for example--by using the [`context` prop](../components/querybuilder#context)._
+:::info
+
+Prior to version 7, custom components only received props relevant to the rule or group they acted on. You could augment these default props with other data or information--the root query object, for example--by using the [`context` prop](../components/querybuilder#context).
+
+The `context` prop is still available, but is not necessary for retrieving the query.
+
+:::
 
 <SandpackRQB rqbVersion={6} options={{ editorHeight: 444, activeFile: "/CustomValueEditor.tsx" }}>
 
 ```tsx CustomValueEditor.tsx
 import {
-  findPath,
-  getParentPath,
   RuleGroupType,
   RuleType,
   ValueEditor,
   ValueEditorProps,
+  findPath,
+  getParentPath,
+  getQuerySelectorById,
+  useQueryBuilderSelector,
 } from 'react-querybuilder';
 
 export const CustomValueEditor = (props: ValueEditorProps) => {
   // Get the full query object
-  const query = props.schema.getQuery();
+  const query = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
   // Get the path of this rule's parent group
   const parentPath = getParentPath(props.path);
   // Find the parent group object in the query
