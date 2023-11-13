@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { NotToggleProps, Schema } from '../src/types/';
+import type { Field, NotToggleProps, Schema, ToFullOption } from '../src/types';
 import { findInput, hasOrInheritsClass, isOrInheritsChecked, userEventSetup } from './utils';
 
 export const defaultNotToggleProps = {
   handleOnChange: () => {},
   level: 0,
   path: [],
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
   ruleGroup: { combinator: 'and', rules: [] },
 } satisfies NotToggleProps;
 

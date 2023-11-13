@@ -50,7 +50,7 @@ function useQueryBuilderSchema(
   setup: ReturnType<typeof useQueryBuilderSetup>
 ): {
   actions: QueryActions;
-  rootQuery: RuleGroupTypeAny;
+  rootGroup: RuleGroupTypeAny;
   queryDisabled: boolean;
   rqbContext: ReturnType<typeof useMergedContext>;
   schema: Schema;
@@ -167,17 +167,50 @@ Used by the default [`Rule`](../components/rule) and [`RuleGroup`](../components
 
 This hook is _not_ used in the `Rule` and `RuleGroup` components used/exported by `@react-querybuilder/native`.
 
-## Utilities
+## Redux state access
+
+React Query Builder uses a custom React context for its Redux implementation, so it shouldn't interfere with existing Redux stores.
+
+### useQueryBuilderDispatch
+
+```ts
+function useQueryBuilderDispatch(): ThunkDispatch<RqbState> & Dispatch;
+```
+
+Gets the `dispatch` function from the React Query Builder Redux store.
+
+### useQueryBuilderSelector
+
+```ts
+function useQueryBuilderSelector(selector: (state: RqbState) => RuleGroupTypeAny): RuleGroupTypeAny;
+```
+
+Passes the current state from the React Query Builder Redux store to a selector that retrieves the query from the state object. To generate such a selector, call `getQuerySelectorById` from any custom component, passing it the `qbId` from the `schema` prop. For example:
+
+```ts
+const CustomValueEditor = (props: ValueEditorProps) => {
+  const fullQuery = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
+  // ...
+};
+```
+
+### useQueryBuilderStore
+
+```ts
+function useQueryBuilderStore(): Store<RqbState>;
+```
+
+Gets the full React Query Builder Redux store. Not recommended for general use.
+
+## Other utilities
 
 ### `useMergedContext`
 
 ```ts
-function useMergedContext(
-  props: QueryBuilderContextProps & { translations: Translations }
-): QueryBuilderContextProps;
+function useMergedContext(props: QueryBuilderContextProps): QueryBuilderContextProps;
 ```
 
-Merges the values inherited from the nearest ancestor `QueryBuilderContext` provider with the current component's props.
+Merges the values inherited from the nearest ancestor `QueryBuilderContext.Provider` with the current component's props. For `controlClassnames`, `controlElements`, and `translations`, options that are not defined through either context or props will fall back to the defaults.
 
 ### `usePreferProp`
 

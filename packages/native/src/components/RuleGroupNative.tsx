@@ -8,28 +8,25 @@ import {
   useRuleGroup,
 } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
-import type { RuleGroupNativeProps } from '../types';
+import type { RuleGroupNativeProps, SchemaNative } from '../types';
 
 export const RuleGroupNative = (props: RuleGroupNativeProps) => {
-  const rg = { ...props, ...useRuleGroup(props) };
+  const rg = useRuleGroup(props);
+  const schema = rg.schema as SchemaNative<any, string>;
 
   const styles = useMemo(
     () => ({
-      ruleGroup: StyleSheet.flatten([defaultNativeStyles.ruleGroup, rg.schema.styles?.ruleGroup]),
+      ruleGroup: StyleSheet.flatten([defaultNativeStyles.ruleGroup, schema.styles?.ruleGroup]),
       ruleGroupHeader: StyleSheet.flatten([
         defaultNativeStyles.ruleGroupHeader,
-        rg.schema.styles?.ruleGroupHeader,
+        schema.styles?.ruleGroupHeader,
       ]),
       ruleGroupBody: StyleSheet.flatten([
         defaultNativeStyles.ruleGroupBody,
-        rg.schema.styles?.ruleGroupBody,
+        schema.styles?.ruleGroupBody,
       ]),
     }),
-    [
-      rg.schema.styles?.ruleGroup,
-      rg.schema.styles?.ruleGroupBody,
-      rg.schema.styles?.ruleGroupHeader,
-    ]
+    [schema.styles?.ruleGroup, schema.styles?.ruleGroupBody, schema.styles?.ruleGroupHeader]
   );
 
   return (

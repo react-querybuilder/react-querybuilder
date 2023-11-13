@@ -1,11 +1,11 @@
 import type { FullOption, FullOptionList, Option } from 'react-querybuilder';
-import { isOptionGroupArray, uniqByName } from 'react-querybuilder';
+import { isOptionGroupArray, uniqByIdentifier } from 'react-querybuilder';
 
-export const optionListMapNameToValue = (list: FullOptionList): FullOption[] => {
+export const optionListMapNameToValue = (list: FullOptionList<FullOption>): FullOption[] => {
   let listFlat: (Option & { group?: string })[] = [];
 
   if (isOptionGroupArray(list)) {
-    listFlat = uniqByName(
+    listFlat = uniqByIdentifier(
       listFlat.concat(
         ...list.map(opt =>
           opt.options.map(o => ({ name: o.name, value: o.name, label: o.label, group: opt.label }))
@@ -13,7 +13,7 @@ export const optionListMapNameToValue = (list: FullOptionList): FullOption[] => 
       )
     );
   } else {
-    listFlat = uniqByName(list);
+    listFlat = uniqByIdentifier(list);
   }
 
   return listFlat.map(opt => ({ name: opt.name, value: opt.name, label: opt.label }));

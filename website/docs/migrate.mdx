@@ -4,32 +4,55 @@ title: Migrating to v7
 
 Version 7 shouldn't require many, if any, code changes when migrating from v6. However, some of the defaults have changed, and taking advantage of the performance improvements and other conveniences may require some minor refactoring. A summary of the important changes is below.
 
+## Breaking changes
+
+### `QueryBuilder` prop types
+
+The props themselves for the main component haven't changed much from version 6, but the TypeScript interface has been overhauled. Notable changes:
+
+- The query type, extending either `RuleGroupType` or `RuleGroupTypeIC`, will be automatically inferred instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](./components/querybuilder#independent-combinators).
+- The `QueryBuilderProps` type now requires four generic arguments.
+  - This shouldn't affect JSX declarations to render a `<QueryBuilder />` component since the generic types can almost alwasy be inferred from the props.
+  - While all props are technically still optional, TypeScript may have problems with inference if `fields` and at least one of `query` and `defaultQuery` are not provided.
+  - When manually creating an object of type `QueryBuilderProps`, all four generics must be provided. In order, they represent the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type (extending `Field`), the operator type (extending `Operator`), and the combinator type (extending `Combinator`).
+  ```tsx
+  // Valid in version 6:
+  const qbp6: QueryBuilderProps = {};
+  // Version 7 with the defaults (equivalent to the "version 6" line above):
+  const qbp7: QueryBuilderProps<RuleGroupType, Field, Operator, Combinator> = {};
+  // Also valid in version 7:
+  const qbp7a: QueryBuilderProps<RuleGroupType, Option, Option, Option> = {};
+  ```
+
 ## New features
 
 ### Performance improvements
 
-Props and components are aggressively memoized using `React.memo`, `useMemo`, and `useCallback` in version 7, which can noticeably improve rendering performance for large queries. To take advantage of this change, it is important that _every_ prop value passed to `<QueryBuilder />` is either memoized itself or has a stable reference.
+Props, components, and derived values are aggressively memoized using `React.memo`, `useMemo`, and `useCallback` in version 7. This can noticeably improve rendering performance for large queries, especially with certain style libraries. To take advantage of this change, _every_ prop passed to `<QueryBuilder />` must be memoized itself or have a stable reference.
 
-The most common violation of that rule is probably inline arrow functions in the `onQueryChange` prop (something like `<QueryBuilder onQueryChange={q => setQuery(q)} />`). This can usually be addressed by moving the function definition outside the component rendering function, or, if that's not possible, by memoizing the function with `useCallback`.
+The most common violation of that requirement is probably inline arrow functions in the `onQueryChange` prop (something like `<QueryBuilder onQueryChange={q => setQuery(q)} />`). This can usually be addressed by memoizing the change handler function with `useCallback`, or, if possible, by moving the change handler definition outside the component rendering function.
 
-### Optional `name` but `value` prioritized
+### Optional `name`, `value` prioritized
 
 Previously, props and properties that accepted an `OptionList` type or extension thereof (`fields`, `compbinators`, etc.) required a `name` property as a unique identifier for each member within the list. In version 7, list members may specify a `value` property as their identifier instead of `name`, which is now optional. If both `name` and `value` properties are present for a given item, `value` will be used.
 
-### Query selector and dispatcher
+### Query selector, getter, and dispatcher
 
-The `schema` prop, which is passed to every component, includes two new methods that should make it easier to manage arbitrary query updates from custom components.
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. (Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.) The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
 
-- `getQuery()`: returns the current root query object. Previously we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary. **Tip:** this function should be called in an event handler, not on every render.
-- `dispatchQuery(query)`: updates the internal query builder state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
-
-Using these two methods together, you can get the existing query, modify it (with the utilities mentioned above), and dispatch the updated query without performing the updates externally.
+- `getQuery()`: returns the current root query object.
+- `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
+- `useQueryBuilderSelector(selector)`: generate the selector with `getQuerySelectorById(props.schema.qbId)`.
 
 ### Field data passed to `get*` callbacks
 
 Most of the `get*` callback props now receive an additional parameter with a `fieldData` property. `fieldData` is the full `Field` object from the `fields` array for the given `field` name, including any custom properties (a common one is `datatype`). This eliminates the need to find the field object based solely on the field's `name` within the `get*` functions themselves. Instead of something like `fields.find(f => f.name === field)`, you can retrieve `fieldData` from the last parameter.
 
 The following callback props are affected by this change: `getDefaultOperator`, `getDefaultValue`, `getInputType`, `getOperators`, `getRuleClassname`, `getValueEditorSeparator`, `getValueEditorType`, `getValues`, and `getValueSources`.
+
+### Field data passed to `formatQuery` rule processors
+
+- Custom rule processors for `formatQuery` now receive the full `Field` object in the options parameter, as long as a `fields` array is provided alongside `ruleProcessor`. In TypeScript, the member type of the `fields` array now requires a `label: string` property. Previously, only `name` was required.
 
 ### Shift actions
 
@@ -47,7 +70,7 @@ Accessibility is improved with the addition of a `title` attribute to the outerm
 
 ### Drag-and-drop `canDrop` callback
 
-`<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
+`<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (type `{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
 
 ## Updated default labels
 
@@ -62,7 +85,7 @@ Accessibility is improved with the addition of a `title` attribute to the outerm
 
 ### Compatibility packages
 
-Several compatibility packages take advantage of the new ability to use a `ReactNode` as a `label` (previously only `string`s were allowed). These packages override the default `label` for non-text components (`lock*`, `clone*`, `remove*`, and `dragHandle`) with SVG icons from their official icon packages. This brings them more in line with their respective design systems by default. Use `translations={defaultTranslations}` to avoid using the icons.
+Several compatibility packages take advantage of the new ability to use a `ReactNode` as a `label` (previously only `string`s were allowed). These packages override the default `label` for non-text components (`lock*`, `clone*`, `remove*`, and `dragHandle`) with SVG icons from their official icon packages. This brings them more in line with their respective design systems by default. To avoid using the icons, use `translations={defaultTranslations}`.
 
 #### `@react-querybuilder/antd`
 
@@ -85,7 +108,7 @@ Icon package: [`@ant-design/icons`](https://npmjs.com/package/@ant-design/icons)
 
 Icon package: [`bootstrap-icons`](https://npmjs.com/package/bootstrap-icons)
 
-> _Note: The `BootstrapDragHandle` component has been removed. It is redundant now that `label` can be a `ReactNode`._
+> _Note: The `BootstrapDragHandle` component has been removed. It is unnecessary now that the default drag handle component can accept a `ReactNode` as its `label`._
 
 | Key                                    | Icon                                           |
 | -------------------------------------- | ---------------------------------------------- |

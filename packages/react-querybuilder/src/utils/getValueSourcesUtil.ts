@@ -1,7 +1,19 @@
-import type { Field, ToFullOption, ValueSources } from '../types/index.noReact';
+import type {
+  Field,
+  GetOptionIdentifierType,
+  ToFullOption,
+  ValueSources,
+} from '../types/index.noReact';
 import { toFullOption } from './toFullOption';
 
 const defaultValueSourcesArray: ValueSources = ['value'];
+
+const dummyFD = {
+  name: 'name',
+  value: 'name',
+  valueSources: null,
+  label: 'label',
+};
 
 /**
  * Utility function to get the value sources array for the given
@@ -9,29 +21,31 @@ const defaultValueSourcesArray: ValueSources = ['value'];
  * `valueSources` property, the `getValueSources` prop is used.
  * Returns `["value"]` by default.
  */
-export const getValueSourcesUtil = (
-  fieldData: Field,
+export const getValueSourcesUtil = <F extends ToFullOption<Field>, O extends string>(
+  fieldData: F,
   operator: string,
   getValueSources?: (
-    field: string,
-    operator: string,
-    misc: { fieldData: ToFullOption<Field> }
+    field: GetOptionIdentifierType<F>,
+    operator: O,
+    misc: { fieldData: F }
   ) => ValueSources
 ): ValueSources => {
   // TypeScript doesn't allow it directly, but in practice
   // `fieldData` can end up being undefined or null. The nullish
   // coalescing assignment below avoids errors like
   // "TypeError: Cannot read properties of undefined (reading 'name')"
-  const fd = fieldData ?? /* istanbul ignore else */ {};
+  const fd = fieldData ? toFullOption(fieldData) : /* istanbul ignore else */ dummyFD;
 
   if (fd.valueSources) {
     if (typeof fd.valueSources === 'function') {
-      return fd.valueSources(operator);
+      return fd.valueSources(operator as O);
     }
     return fd.valueSources;
   }
   if (getValueSources) {
-    const vals = getValueSources(fd.name, operator, { fieldData: toFullOption(fd) });
+    const vals = getValueSources(fd.value as GetOptionIdentifierType<F>, operator as O, {
+      fieldData: toFullOption(fd) as F,
+    });
     /* istanbul ignore else */
     if (vals) return vals;
   }

@@ -4,6 +4,7 @@ import type { ComponentType } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type {
+  Field,
   FormatQueryOptions,
   QueryBuilderContextProps,
   RuleGroupType,
@@ -39,7 +40,7 @@ export const App = ({
   controlElements,
   wrapper: Wrapper = Fragment,
   ...initialProps
-}: QueryBuilderContextProps & { wrapper?: ComponentType<any> }) => {
+}: QueryBuilderContextProps<Field, string> & { wrapper?: ComponentType<any> }) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, {
@@ -152,7 +153,6 @@ export const App = ({
             <QueryBuilder
               {...commonRQBProps}
               key="query"
-              independentCombinators={false}
               query={query}
               onQueryChange={onQueryChange}
             />
@@ -160,7 +160,6 @@ export const App = ({
             <QueryBuilder
               {...commonRQBProps}
               key="queryIC"
-              independentCombinators
               query={queryIC}
               onQueryChange={onQueryChangeIC}
             />

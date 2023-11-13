@@ -984,7 +984,7 @@ describe('validation', () => {
           {
             format: 'sql',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }],
+            fields: [{ name: 'field', label: 'field', validator: () => true }],
           }
         )
       ).toBe('(1 = 1)');
@@ -1004,8 +1004,8 @@ describe('validation', () => {
           {
             format: 'sql',
             fields: [
-              { name: 'field', validator: () => false },
-              { name: 'field3', validator: () => false },
+              { name: 'field', label: 'field', validator: () => false },
+              { name: 'field3', label: 'field3', validator: () => false },
             ],
           }
         )
@@ -1081,7 +1081,7 @@ describe('validation', () => {
           { id: 'r2', field: 'field2', operator: '=', value: '' },
         ],
       };
-      const fields = [{ name: 'field', validator: () => false }];
+      const fields = [{ name: 'field', label: 'field', validator: () => false }];
       expect(formatQuery(queryToTest, { format: 'parameterized', fields })).toEqual({
         sql: `(field2 = ?)`,
         params: [''],
@@ -1151,7 +1151,7 @@ describe('validation', () => {
           },
           {
             format: 'mongodb',
-            fields: [{ name: 'field', validator: () => false }],
+            fields: [{ name: 'field', label: 'field', validator: () => false }],
           }
         )
       ).toBe('{"otherfield":""}');
@@ -1168,7 +1168,7 @@ describe('validation', () => {
           {
             format: 'mongodb',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }],
+            fields: [{ name: 'field', label: 'field', validator: () => true }],
           }
         )
       ).toBe('{"$and":[{"$expr":true}]}');
@@ -1221,7 +1221,7 @@ describe('validation', () => {
               { field: 'otherfield', operator: '=', value: '' },
             ],
           },
-          { format: 'cel', fields: [{ name: 'field', validator: () => false }] }
+          { format: 'cel', fields: [{ name: 'field', label: 'field', validator: () => false }] }
         )
       ).toBe('otherfield == ""');
     });
@@ -1237,7 +1237,7 @@ describe('validation', () => {
           {
             format: 'cel',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }],
+            fields: [{ name: 'field', label: 'field', validator: () => true }],
           }
         )
       ).toBe('1 == 1');
@@ -1292,7 +1292,7 @@ describe('validation', () => {
           },
           {
             format: 'spel',
-            fields: [{ name: 'field', validator: () => false }],
+            fields: [{ name: 'field', label: 'field', validator: () => false }],
           }
         )
       ).toBe("otherfield == ''");
@@ -1309,7 +1309,7 @@ describe('validation', () => {
           {
             format: 'spel',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }],
+            fields: [{ name: 'field', label: 'field', validator: () => true }],
           }
         )
       ).toBe('1 == 1');
@@ -1364,7 +1364,7 @@ describe('validation', () => {
           },
           {
             format: 'jsonlogic',
-            fields: [{ name: 'field', validator: () => false }],
+            fields: [{ name: 'field', label: 'field', validator: () => false }],
           }
         )
       ).toEqual({ '==': [{ var: 'otherfield' }, ''] });
@@ -1381,7 +1381,7 @@ describe('validation', () => {
           {
             format: 'jsonlogic',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }],
+            fields: [{ name: 'field', label: 'field', validator: () => true }],
           }
         )
       ).toBe(false);
@@ -1436,7 +1436,7 @@ describe('validation', () => {
           },
           {
             format: 'elasticsearch',
-            fields: [{ name: 'field', validator: () => false }],
+            fields: [{ name: 'field', label: 'field', validator: () => false }],
           }
         )
       ).toEqual({ bool: { must: [{ term: { otherfield: '' } }] } });
@@ -1453,7 +1453,7 @@ describe('validation', () => {
           {
             format: 'elasticsearch',
             validator: () => false,
-            fields: [{ name: 'field', validator: () => true }],
+            fields: [{ name: 'field', label: 'field', validator: () => true }],
           }
         )
       ).toEqual({});

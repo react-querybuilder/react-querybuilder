@@ -1,4 +1,5 @@
-import type { Combinator, Operator, Path, ToFullOption, ValueSource } from './basic';
+import type { Combinator, Operator, Path, ValueSource } from './basic';
+import type { ToFullOption } from './options';
 
 /**
  * Properties common to both rules and groups.
@@ -31,8 +32,7 @@ export type RuleType<
 
 /**
  * The main rule group type. This type is used for query definitions as well as
- * all sub-groups of queries. Note that the `independentCombinators` prop must
- * be `false` or `undefined` to use this type in {@link QueryBuilder}.
+ * all sub-groups of queries.
  */
 export type RuleGroupType<
   R extends RuleType = RuleType,
@@ -63,20 +63,26 @@ export type UpdateableProperties = Exclude<
 /**
  * The type of the `rules` array in a {@link DefaultRuleGroupType}.
  */
-export type DefaultRuleGroupArray = RuleGroupArray<DefaultRuleGroupType, DefaultRuleType>;
+export type DefaultRuleGroupArray<F extends string = string> = RuleGroupArray<
+  DefaultRuleGroupType,
+  DefaultRuleType<F>
+>;
 
 /**
  * {@link RuleGroupType} with the `combinator` property limited to
  * {@link DefaultCombinatorNameExtended} and `rules` limited to {@link DefaultRuleType}.
  */
-export type DefaultRuleGroupType = RuleGroupType<DefaultRuleType, DefaultCombinatorNameExtended> & {
-  rules: DefaultRuleGroupArray;
+export type DefaultRuleGroupType<F extends string = string> = RuleGroupType<
+  DefaultRuleType<F>,
+  DefaultCombinatorNameExtended
+> & {
+  rules: DefaultRuleGroupArray<F>;
 };
 
 /**
  * {@link RuleType} with the `operator` property limited to {@link DefaultOperatorName}.
  */
-export type DefaultRuleType = RuleType<string, DefaultOperatorName>;
+export type DefaultRuleType<F extends string = string> = RuleType<F, DefaultOperatorName>;
 
 /**
  * Default allowed values for the `combinator` property.
@@ -111,16 +117,16 @@ export type DefaultOperatorName =
   | 'notBetween';
 
 /**
- * A combinator definition with a {@link DefaultCombinatorName} `name` property.
+ * A {@link Combinator} definition with a {@link DefaultCombinatorName} `name` property.
  */
 export type DefaultCombinator = ToFullOption<Combinator<DefaultCombinatorName>>;
 
 /**
- * A combinator definition with a {@link DefaultCombinatorNameExtended} `name` property.
+ * A {@link Combinator} definition with a {@link DefaultCombinatorNameExtended} `name` property.
  */
 export type DefaultCombinatorExtended = ToFullOption<Combinator<DefaultCombinatorNameExtended>>;
 
 /**
- * An operator definition with a {@link DefaultOperatorName} `name` property.
+ * An {@link Operator} definition with a {@link DefaultOperatorName} `name` property.
  */
 export type DefaultOperator = ToFullOption<Operator<DefaultOperatorName>>;

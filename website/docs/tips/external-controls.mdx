@@ -81,7 +81,7 @@ export default () => {
       <QueryBuilder
         fields={fields}
         query={query}
-        onQueryChange={q => setQuery(q)}
+        onQueryChange={setQuery}
         controlElements={{
           // These declarations prevent the "+Rule", "+Group",
           // and "x" (rule removal) buttons from rendering:

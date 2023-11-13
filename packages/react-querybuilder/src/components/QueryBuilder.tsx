@@ -3,11 +3,13 @@ import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
+  Combinator,
+  Field,
+  Operator,
   Path,
   QueryBuilderProps,
-  RuleGroupType,
   RuleGroupTypeAny,
-  RuleGroupTypeIC,
+  ToFlexibleOption,
 } from '../types';
 import { QueryBuilderContext } from './QueryBuilderContext';
 
@@ -17,7 +19,7 @@ import { QueryBuilderContext } from './QueryBuilderContext';
 export const rootPath = [] satisfies Path;
 
 /**
- * Context provider for the {@link QueryBuilder} state store.
+ * Context provider for the `{@link QueryBuilder}` state store.
  */
 export const QueryBuilderStateProvider = ({ children }: { children: React.ReactNode }) => (
   <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
@@ -25,16 +27,19 @@ export const QueryBuilderStateProvider = ({ children }: { children: React.ReactN
   </Provider>
 );
 
-const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  allProps: QueryBuilderProps<RG> & {
-    setup: ReturnType<typeof useQueryBuilderSetup>;
-  }
-) => {
-  const { setup, ...props } = allProps;
-  const qb = {
-    ...props,
-    ...useQueryBuilderSchema(props as QueryBuilderProps<RuleGroupTypeAny>, setup),
-  };
+const QueryBuilderInternal = <
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+>({
+  setup,
+  props,
+}: {
+  props: QueryBuilderProps<RG, F, O, C>;
+  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
+}) => {
+  const qb = useQueryBuilderSchema(props, setup);
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
 
@@ -47,15 +52,17 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
         data-inlinecombinators={qb.inlineCombinatorsAttr}>
         <RuleGroupControlElement
           translations={qb.translations}
-          ruleGroup={qb.rootQuery}
-          rules={qb.rootQuery.rules}
+          ruleGroup={qb.rootGroup}
+          rules={qb.rootGroup.rules}
           {...qb.combinatorPropObject}
-          not={!!qb.rootQuery.not}
+          not={!!qb.rootGroup.not}
           schema={qb.schema}
           actions={qb.actions}
-          id={qb.rootQuery.id}
+          id={qb.rootGroup.id}
           path={rootPath}
-          disabled={!!qb.rootQuery.disabled || qb.queryDisabled}
+          disabled={qb.rootGroupDisabled}
+          shiftUpDisabled
+          shiftDownDisabled
           parentDisabled={qb.queryDisabled}
           context={qb.context}
         />
@@ -69,14 +76,19 @@ const QueryBuilderInternal = <RG extends RuleGroupType | RuleGroupTypeIC>(
  *
  * See https://react-querybuilder.js.org/ for demos and documentation.
  */
-export const QueryBuilder = <RG extends RuleGroupType | RuleGroupTypeIC>(
-  props: QueryBuilderProps<RG>
+export const QueryBuilder = <
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+>(
+  props: QueryBuilderProps<RG, F, O, C>
 ) => {
   const setup = useQueryBuilderSetup(props);
 
   return (
     <QueryBuilderStateProvider>
-      <QueryBuilderInternal {...props} setup={setup} />
+      <QueryBuilderInternal props={props} setup={setup} />
     </QueryBuilderStateProvider>
   );
 };

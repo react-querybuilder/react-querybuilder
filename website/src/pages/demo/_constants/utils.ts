@@ -164,7 +164,7 @@ export const getCodeString = (
   const props = [
     'fields={fields}',
     'query={query}',
-    'onQueryChange={q => setQuery(q)}',
+    'onQueryChange={setQuery}',
     getPropText('addRuleToNewGroups'),
     getPropText('autoSelectField'),
     getPropText('autoSelectOperator'),

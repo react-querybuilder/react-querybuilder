@@ -192,7 +192,7 @@ const LandingPage = () => {
               </p>
             </div>
             <div>
-              <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+              <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
             </div>
             <div style={{ gap: '1rem' }}>
               <div>
@@ -269,7 +269,7 @@ const LandingPage = () => {
               <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
                 <QueryBuilder
                   query={query}
-                  onQueryChange={q => setQuery(q)}
+                  onQueryChange={setQuery}
                   fields={fields}
                   translations={{ dragHandle: { label: '⇅' } }}
                   controlClassnames={{

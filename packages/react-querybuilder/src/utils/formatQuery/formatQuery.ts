@@ -2,7 +2,9 @@ import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../
 import type {
   DefaultCombinatorName,
   ExportFormat,
+  Field,
   FormatQueryOptions,
+  FullOptionList,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   QueryValidator,
@@ -12,6 +14,7 @@ import type {
   RuleProcessor,
   RuleType,
   RuleValidator,
+  ToFullOption,
   ValidationMap,
   ValidationResult,
 } from '../../types/index.noReact';
@@ -19,7 +22,8 @@ import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
-import { uniqByName } from '../uniq';
+import { getOption, toFlatOptionArray } from '../optGroupUtils';
+import { toFullOptionList } from '../toFullOption';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
@@ -109,7 +113,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let ruleProcessorInternal: RuleProcessor | null = null;
   let quoteFieldNamesWith: [string, string] = ['', ''];
   let validator: QueryValidator = () => true;
-  let fields: Required<FormatQueryOptions>['fields'] = [];
+  let fields: FullOptionList<ToFullOption<Field>> = [];
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
   let paramPrefix = ':';
@@ -156,7 +160,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
     validator = options.validator ?? (() => true);
-    fields = options.fields ?? [];
+    fields = toFullOptionList(options.fields ?? []);
     fallbackExpression = options.fallbackExpression ?? '';
     paramPrefix = options.paramPrefix ?? ':';
     paramsKeepPrefix = !!options.paramsKeepPrefix;
@@ -215,11 +219,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   }
 
   const validatorMap: Record<string, RuleValidator> = {};
-  const uniqueFields = uniqByName(fields);
+  const uniqueFields = toFlatOptionArray(fields);
   uniqueFields.forEach(f => {
     // istanbul ignore else
     if (typeof f.validator === 'function') {
-      validatorMap[f.name] = f.validator;
+      validatorMap[(f.value ?? /* istanbul ignore next */ f.name)!] = f.validator;
     }
   });
 
@@ -229,8 +233,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     if (rule.id) {
       validationResult = validationMap[rule.id];
     }
-    if (fields.length) {
-      const fieldArr = fields.filter(f => f.name === rule.field);
+    if (uniqueFields.length) {
+      const fieldArr = uniqueFields.filter(f => f.name === rule.field);
       if (fieldArr.length) {
         const field = fieldArr[0];
         // istanbul ignore else
@@ -274,9 +278,16 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
 
+        const fieldData = getOption(fields, rule.field);
+
         // Use custom rule processor if provided...
         if (typeof ruleProcessorInternal === 'function') {
-          return ruleProcessorInternal(rule, { parseNumbers, escapeQuotes, quoteFieldNamesWith });
+          return ruleProcessorInternal(rule, {
+            parseNumbers,
+            escapeQuotes,
+            quoteFieldNamesWith,
+            fieldData,
+          });
         }
         // ...otherwise use default rule processor and pass in the value
         // processor (which may be custom)
@@ -285,6 +296,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           escapeQuotes,
           valueProcessor: valueProcessorInternal,
           quoteFieldNamesWith,
+          fieldData,
         });
       });
 
@@ -324,7 +336,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return '';
       }
 
-      const value = valueProcessorInternal(rule, { parseNumbers, quoteFieldNamesWith });
+      const fieldData = getOption(fields, rule.field);
+      const value = valueProcessorInternal(rule, { parseNumbers, quoteFieldNamesWith, fieldData });
       const operator = mapSQLOperator(rule.operator);
 
       if ((rule.valueSource ?? 'value') === 'value') {
@@ -477,7 +490,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           ) {
             return '';
           }
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
+          const fieldData = getOption(fields, rule.field);
+          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
+            parseNumbers,
+            fieldData,
+          });
         })
         .filter(Boolean);
 
@@ -518,9 +535,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           ) {
             return '';
           }
+          const fieldData = getOption(fields, rule.field);
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+            fieldData,
           });
         })
         .filter(Boolean)
@@ -563,9 +582,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           ) {
             return '';
           }
+          const fieldData = getOption(fields, rule.field);
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+            fieldData,
           });
         })
         .filter(Boolean)
@@ -603,7 +624,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           ) {
             return false;
           }
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
+          const fieldData = getOption(fields, rule.field);
+          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
+            parseNumbers,
+            fieldData,
+          });
         })
         .filter(Boolean);
 
@@ -650,7 +675,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           ) {
             return false;
           }
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, { parseNumbers });
+          const fieldData = getOption(fields, rule.field);
+          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
+            parseNumbers,
+            fieldData,
+          });
         })
         .filter(Boolean);
 

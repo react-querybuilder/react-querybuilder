@@ -5,6 +5,6 @@ import type { QueryBuilderContextProps } from '../types';
  * Context provider for {@link QueryBuilder}. Any descendant query builders
  * will inherit the props from a context provider.
  */
-export const QueryBuilderContext = createContext<QueryBuilderContextProps>({});
+export const QueryBuilderContext = createContext<QueryBuilderContextProps<any, any>>({});
 
 QueryBuilderContext.displayName = 'QueryBuilderContext';

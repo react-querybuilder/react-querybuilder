@@ -1,7 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { toFullOption, toFullOptionList } from '../src';
-import type { FullOption, Schema, ValueEditorProps, ValueSelectorProps } from '../src/types/';
+import type {
+  Field,
+  FullOption,
+  Schema,
+  ToFullOption,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from '../src/types';
 import { findSelect, hasOrInheritsClass, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
@@ -17,7 +24,7 @@ export const defaultValueSelectorProps = {
   ].map(toFullOption),
   level: 0,
   path: [],
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
 } satisfies ValueSelectorProps;
 
 export const testSelect = (

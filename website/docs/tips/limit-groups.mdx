@@ -18,7 +18,7 @@ The simplest way to prevent creation of new groups is to unconditionally hide th
 <QueryBuilder
   fields={fields}
   query={query}
-  onQueryChange={q => setQuery(q)}
+  onQueryChange={setQuery}
   controlElements={{
     // highlight-start
     addGroupAction: () => null,
@@ -49,7 +49,7 @@ To show the "+Group" button at the top level, but hide it in sub-groups, spread 
 <QueryBuilder
   fields={fields}
   query={query}
-  onQueryChange={q => setQuery(q)}
+  onQueryChange={setQuery}
   controlElements={{
     // highlight-start
     addGroupAction: props => (props.level === 0 ? <ActionElement {...props} /> : null),
@@ -97,7 +97,7 @@ On its own, this configuration may be a little confusing to the user since they 
 <QueryBuilder
   fields={fields}
   query={query}
-  onQueryChange={q => setQuery(q)}
+  onQueryChange={setQuery}
   // highlight-start
   onAddGroup={() => false}
   // highlight-end

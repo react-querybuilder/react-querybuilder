@@ -1,11 +1,16 @@
-import type { DefaultOperatorName, Field, OptionList, ValueSources } from '../types/index.noReact';
+import type {
+  DefaultOperatorName,
+  Field,
+  OptionList,
+  ToFlexibleOption,
+  ValueSources,
+} from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
-import { isOptionGroupArray } from './optGroupUtils';
-import { uniqByName } from './uniq';
+import { toFlatOptionArray } from './optGroupUtils';
+import { toFullOption } from './toFullOption';
 
 export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field>) => {
-  let fieldsFlat: Field[] = [];
   const fieldsArray = !fields
     ? []
     : Array.isArray(fields)
@@ -13,12 +18,7 @@ export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field
     : Object.keys(fields)
         .map(fld => ({ ...fields[fld], name: fld }))
         .sort((a, b) => a.label.localeCompare(b.label));
-  if (isOptionGroupArray(fieldsArray)) {
-    fieldsFlat = uniqByName(fieldsFlat.concat(...fieldsArray.map(opt => opt.options)));
-  } else {
-    fieldsFlat = uniqByName(fieldsArray);
-  }
-  return fieldsFlat;
+  return toFlatOptionArray(fieldsArray);
 };
 
 export function fieldIsValidUtil({
@@ -28,7 +28,7 @@ export function fieldIsValidUtil({
   subordinateFieldName,
   getValueSources,
 }: {
-  fieldsFlat: Field[];
+  fieldsFlat: ToFlexibleOption<Field>[];
   getValueSources?: (field: string, operator: string) => ValueSources;
   fieldName: string;
   operator: DefaultOperatorName;
@@ -40,7 +40,7 @@ export function fieldIsValidUtil({
 
   let valid = false;
 
-  const primaryField = fieldsFlat.find(ff => ff.name === fieldName);
+  const primaryField = toFullOption(fieldsFlat.find(ff => ff.name === fieldName)!);
   if (primaryField) {
     if (
       !subordinateFieldName &&

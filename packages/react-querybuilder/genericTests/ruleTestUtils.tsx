@@ -10,12 +10,15 @@ import type {
   ActionProps,
   Classnames,
   Controls,
+  DragHandleProps,
   Field,
   FieldSelectorProps,
+  FullOption,
   OperatorSelectorProps,
   QueryActions,
   RuleProps,
   Schema,
+  ShiftActionsProps,
   ToFullOption,
   ValueEditorProps,
 } from '../src/types';
@@ -75,12 +78,18 @@ export const ruleControls = {
       {translations.removeRule.label}
     </button>
   ),
-  dragHandle: forwardRef(({ className, label }, ref) => (
+  dragHandle: forwardRef<HTMLSpanElement, DragHandleProps>(({ className, label }, ref) => (
     <span ref={ref} className={className}>
       {label}
     </span>
   )),
-} satisfies Partial<Controls>;
+  shiftActions: (props: ShiftActionsProps) => (
+    <div data-testid={TestID.shiftActions} className={props.className}>
+      <button onClick={props.shiftUp}>{props.labels?.shiftUp}</button>
+      <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
+    </div>
+  ),
+} satisfies Partial<Controls<Field, string>>;
 
 export const ruleClassnames = {
   cloneRule: 'custom-cloneRule-class',
@@ -113,7 +122,7 @@ const ruleSchema = {
   getRuleClassname: () => '',
   showCloneButtons: false,
   validationMap: {},
-} satisfies Partial<Schema>;
+} satisfies Partial<Schema<FullOption, string>>;
 
 const ruleActions = {
   onPropChange: () => {},
@@ -121,7 +130,7 @@ const ruleActions = {
 } satisfies Partial<QueryActions>;
 
 export const getRuleProps = (
-  mergeIntoSchema: Partial<Schema> = {},
+  mergeIntoSchema: Partial<Schema<FullOption, string>> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ): RuleProps => ({
   id: 'id',
@@ -133,7 +142,7 @@ export const getRuleProps = (
   field: UNUSED,
   operator: UNUSED,
   value: UNUSED,
-  schema: { ...ruleSchema, ...mergeIntoSchema } as Schema,
+  schema: { ...ruleSchema, ...mergeIntoSchema } as Schema<FullOption, string>,
   actions: { ...ruleActions, ...mergeIntoActions } as QueryActions,
   path: [0],
   translations,

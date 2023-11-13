@@ -8,7 +8,7 @@ _The Query Builder component for React_
 
 ## Documentation
 
-Complete documentation is available at [https://react-querybuilder.js.org].
+Complete documentation is available at https://react-querybuilder.js.org.
 
 ## Demo
 
@@ -58,7 +58,7 @@ const initialQuery: RuleGroupType = {
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
-  return <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />;
+  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
 };
 ```
 

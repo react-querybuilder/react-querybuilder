@@ -22,6 +22,8 @@ export const useRule = (props: RuleProps) => {
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
     parentDisabled,
+    shiftUpDisabled,
+    shiftDownDisabled,
     field: fieldProp,
     operator: operatorProp,
     value: valueProp,
@@ -129,6 +131,24 @@ export const useRule = (props: RuleProps) => {
     [disabled, onRuleRemove, path]
   );
 
+  const shiftRuleUp = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled && !shiftUpDisabled) {
+        moveRule(path, 'up');
+      }
+    },
+    [disabled, moveRule, path, shiftUpDisabled]
+  );
+
+  const shiftRuleDown = useCallback(
+    (_event?: any, _context?: any) => {
+      if (!disabled && !shiftDownDisabled) {
+        moveRule(path, 'down');
+      }
+    },
+    [disabled, moveRule, path, shiftDownDisabled]
+  );
+
   const fieldData: ToFullOption<Field> = useMemo(
     () => fieldMap?.[rule.field] ?? { name: rule.field, value: rule.field, label: rule.field },
     [fieldMap, rule.field]
@@ -212,6 +232,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   return {
+    ...props,
     classNames,
     cloneRule,
     disabled,
@@ -227,6 +248,8 @@ export const useRule = (props: RuleProps) => {
     outerClassName,
     removeRule,
     rule,
+    shiftRuleUp,
+    shiftRuleDown,
     toggleLockRule,
     validationResult,
     valueEditorSeparator,

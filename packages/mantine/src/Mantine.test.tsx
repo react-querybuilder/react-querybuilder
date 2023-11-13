@@ -4,9 +4,11 @@ import dayjs from 'dayjs';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type {
+  Field,
   FullOption,
   OptionGroup,
   Schema,
+  ToFullOption,
   ValueEditorProps,
   VersatileSelectorProps,
 } from 'react-querybuilder';
@@ -96,7 +98,7 @@ describe('MantineValueSelector', () => {
     options,
     path: [0],
     level: 1,
-    schema: {} as Schema,
+    schema: {} as Schema<ToFullOption<Field>, string>,
     handleOnChange: () => {},
   };
 
@@ -164,7 +166,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     values: options,
     path: [0],
     level: 1,
-    schema: {} as Schema,
+    schema: {} as Schema<ToFullOption<Field>, string>,
     handleOnChange: () => {},
     field: 'f1',
     operator: '=',

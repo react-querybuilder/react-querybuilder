@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { TestID } from '../src/defaults';
-import type { DragHandleProps, Schema } from '../src/types/';
+import type { DragHandleProps, Field, Schema, ToFullOption } from '../src/types';
 
 export const defaultDragHandleProps = {
   level: 1,
   path: [0],
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
   ruleOrGroup: { combinator: 'and', rules: [] },
 } satisfies DragHandleProps;
 

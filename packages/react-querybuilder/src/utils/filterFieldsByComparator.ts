@@ -1,5 +1,7 @@
-import type { Field, OptionList } from '../types/index.noReact';
-import { isOptionGroupArray } from './optGroupUtils';
+import type { Field, FlexibleOptionList, ToFlexibleOption } from '../types/index.noReact';
+import { isFlexibleOptionGroupArray } from './optGroupUtils';
+
+type FlexibleField = ToFlexibleOption<Field>;
 
 /**
  * For a given {@link Field}, returns the `fields` list filtered for
@@ -12,23 +14,24 @@ import { isOptionGroupArray } from './optGroupUtils';
  */
 export const filterFieldsByComparator = (
   /** The field in question. */
-  field: Field,
+  field: FlexibleField,
   /** The full {@link Field} list to be filtered. */
-  fields: OptionList<Field>,
+  fields: FlexibleOptionList<Field>,
   operator: string
 ) => {
   if (!field.comparator) {
-    const filterOutSameName = (f: Field) => f.name !== field.name;
-    if (isOptionGroupArray(fields)) {
+    const filterOutSameField = (f: FlexibleField) =>
+      (f.value ?? f.name) !== (field.value ?? field.name);
+    if (isFlexibleOptionGroupArray(fields)) {
       return fields.map(og => ({
         ...og,
-        options: og.options.filter(filterOutSameName),
+        options: og.options.filter(filterOutSameField),
       }));
     }
-    return fields.filter(filterOutSameName);
+    return fields.filter(filterOutSameField);
   }
 
-  const filterByComparator = (fieldToCompare: Field) => {
+  const filterByComparator = (fieldToCompare: FlexibleField) => {
     if (field.name === fieldToCompare.name) {
       return false;
     }
@@ -38,7 +41,7 @@ export const filterFieldsByComparator = (
     return field.comparator!(fieldToCompare, operator);
   };
 
-  if (isOptionGroupArray(fields)) {
+  if (isFlexibleOptionGroupArray(fields)) {
     return fields
       .map(og => ({ ...og, options: og.options.filter(filterByComparator) }))
       .filter(og => og.options.length > 0);

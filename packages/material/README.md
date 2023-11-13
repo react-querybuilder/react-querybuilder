@@ -35,7 +35,7 @@ const App = () => {
   return (
     <ThemeProvider theme={muiTheme}>
       <QueryBuilderMaterial>
-        <QueryBuilder fields={fields} query={query} onQueryChange={q => setQuery(q)} />
+        <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       </QueryBuilderMaterial>
     </ThemeProvider>
   );

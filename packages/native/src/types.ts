@@ -2,15 +2,19 @@ import type { ComponentType } from 'react';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type {
   ActionProps,
+  Combinator,
+  Field,
   InlineCombinatorProps,
   NotToggleProps,
+  Operator,
   QueryBuilderProps,
   RuleGroupProps,
-  RuleGroupType,
-  RuleGroupTypeIC,
+  RuleGroupTypeAny,
   RuleProps,
   Schema,
   ShiftActionsProps,
+  ToFlexibleOption,
+  ToFullOption,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
@@ -25,10 +29,12 @@ interface WithOptionalStyleSheets {
   styles?: QueryBuilderNativeStyleSheets;
 }
 
-export interface SchemaNative extends Schema, WithOptionalStyleSheets {}
+export interface SchemaNative<F extends ToFullOption<Field>, O extends string>
+  extends Schema<F, O>,
+    WithOptionalStyleSheets {}
 
 export interface WithSchemaNative {
-  schema: SchemaNative;
+  schema: SchemaNative<any, any>;
 }
 
 export interface QueryBuilderNativeStyles {
@@ -78,5 +84,9 @@ export type ValueEditorNativeProps = ValueEditorProps &
     selectorComponent?: ComponentType<ValueSelectorNativeProps>;
   };
 
-export type QueryBuilderNativeProps<RG extends RuleGroupType | RuleGroupTypeIC = RuleGroupType> =
-  QueryBuilderProps<RG> & WithOptionalStyles;
+export type QueryBuilderNativeProps<
+  RG extends RuleGroupTypeAny,
+  F extends ToFlexibleOption<Field>,
+  O extends ToFlexibleOption<Operator>,
+  C extends ToFlexibleOption<Combinator>
+> = QueryBuilderProps<RG, F, O, C> & WithOptionalStyles;

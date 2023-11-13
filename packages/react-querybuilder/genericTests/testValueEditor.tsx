@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { OptionList, Schema, ValueEditorProps } from '../src/types/';
+import type { Field, OptionList, Schema, ToFullOption, ValueEditorProps } from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { findInput, findInputs, findTextarea, userEventSetup } from './utils';
 
@@ -28,7 +28,7 @@ export const defaultValueEditorProps = {
   level: 0,
   path: [],
   valueSource: 'value',
-  schema: {} as Schema,
+  schema: {} as Schema<ToFullOption<Field>, string>,
   rule: { field: '', operator: '', value: '' },
 } satisfies ValueEditorProps;
 

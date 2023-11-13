@@ -23,11 +23,7 @@ export const App = () => {
   return (
     <div>
       <QueryBuilderAntD>
-        <QueryBuilder
-          fields={fields}
-          query={query}
-          onQueryChange={q => setQuery(q)}
-        />
+        <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       </QueryBuilderAntD>
       <h4>Query</h4>
       <pre>

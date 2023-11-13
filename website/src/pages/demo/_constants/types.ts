@@ -1,4 +1,11 @@
-import type { QueryBuilderProps, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
+import type {
+  Combinator,
+  Field,
+  Operator,
+  QueryBuilderProps,
+  RuleGroupType,
+  RuleGroupTypeIC,
+} from 'react-querybuilder';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
@@ -26,7 +33,7 @@ export type DemoOptions = Record<DemoOption, boolean>;
 export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>> & { s?: string };
 
 export type CommonRQBProps = Pick<
-  QueryBuilderProps,
+  QueryBuilderProps<RuleGroupType, Field, Operator, Combinator>,
   | 'fields'
   | 'validator'
   | Exclude<

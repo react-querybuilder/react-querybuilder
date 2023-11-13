@@ -159,7 +159,7 @@ export const Showcase = () => {
       <QueryBuilderEmbed
         fields={fields}
         query={query}
-        onQueryChange={q => setQuery(q)}
+        onQueryChange={setQuery}
         listsAsArrays={listsAsArrays}
         operators={operators}
         controlElements={{

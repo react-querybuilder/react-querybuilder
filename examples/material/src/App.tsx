@@ -37,7 +37,7 @@ export const App = () => {
           <QueryBuilder
             fields={fields}
             query={query}
-            onQueryChange={q => setQuery(q)}
+            onQueryChange={setQuery}
           />
         </QueryBuilderMaterial>
       </ThemeProvider>

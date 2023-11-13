@@ -36,7 +36,7 @@ const App = () => {
       <QueryBuilderNative
         fields={fields}
         query={query}
-        onQueryChange={q => setQuery(q)}
+        onQueryChange={setQuery}
         controlElements={defaultNativeWebControlElements}
       />
       <Text style={styles.code}>{formatQuery(query, 'sql')}</Text>

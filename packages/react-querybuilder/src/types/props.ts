@@ -1,13 +1,5 @@
-import type {
-  Classname,
-  Combinator,
-  Field,
-  FullOptionList,
-  Operator,
-  Option,
-  Path,
-  ValueSource,
-} from './basic';
+import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
+import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
@@ -16,7 +8,10 @@ import type { ValidationResult } from './validation';
 /**
  * Base interface for all subcomponents.
  */
-export interface CommonSubComponentProps {
+export interface CommonSubComponentProps<
+  F extends FullOption = ToFullOption<Field>,
+  O extends string = string
+> {
   /**
    * CSS classNames to be applied.
    *
@@ -56,13 +51,16 @@ export interface CommonSubComponentProps {
   /**
    * All subcomponents receive the configuration schema as a prop.
    */
-  schema: Schema;
+  schema: Schema<F, O>;
 }
 
 /**
  * Base interface for selectors and editors.
  */
-export interface SelectorOrEditorProps extends CommonSubComponentProps {
+export interface SelectorOrEditorProps<
+  F extends FullOption = ToFullOption<Field>,
+  O extends string = string
+> extends CommonSubComponentProps<F, O> {
   value?: string;
   handleOnChange(value: any): void;
 }
@@ -236,7 +234,7 @@ export interface QueryActions {
   ): void;
   onRuleAdd(rule: RuleType, parentPath: Path, context?: any): void;
   onRuleRemove(path: Path): void;
-  moveRule(oldPath: Path, newPath: Path, clone?: boolean): void;
+  moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean): void;
 }
 
 /**

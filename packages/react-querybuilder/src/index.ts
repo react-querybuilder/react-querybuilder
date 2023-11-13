@@ -6,6 +6,7 @@ export * from './defaults';
 export * from './hooks';
 export {
   QueryBuilderStateContext,
+  getQuerySelectorById,
   queryBuilderStore,
   useQueryBuilderDispatch,
   useQueryBuilderSelector,
