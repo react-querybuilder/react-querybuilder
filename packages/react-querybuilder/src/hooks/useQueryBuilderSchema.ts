@@ -163,11 +163,11 @@ export function useQueryBuilderSchema<
   // been prepared. If `preliminaryQuery === query`, the user is probably
   // passing back the parameter from the `onQueryChange` callback.
   const preliminaryQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? initialQuery;
-  const rootQuery = isFirstRender.current
+  const rootGroup = isFirstRender.current
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
 
-  const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootQuery), [rootQuery]);
+  const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootGroup), [rootGroup]);
 
   // This effect only runs once, at the beginning of the component lifecycle.
   // The returned cleanup function clears the query from the store when the
@@ -177,7 +177,7 @@ export function useQueryBuilderSchema<
     const oQC =
       enableMountQueryChange && typeof onQueryChange === 'function' ? onQueryChange : undefined;
     queryBuilderDispatch(
-      dispatchThunk({ payload: { qbId: qbId, query: rootQuery }, onQueryChange: oQC })
+      dispatchThunk({ payload: { qbId: qbId, query: rootGroup }, onQueryChange: oQC })
     );
 
     return () => {
@@ -201,15 +201,12 @@ export function useQueryBuilderSchema<
   // #endregion
 
   // #region Query update methods
-  const queryDotDisabled = !!rootQuery.disabled;
-  const queryDisabled = useMemo(
-    () =>
-      disabled === true ||
-      queryDotDisabled ||
-      (Array.isArray(disabled) && disabled.some(p => p.length === 0)),
-    [disabled, queryDotDisabled]
-  );
   const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
+  const queryDisabled = disabled === true;
+  const rootGroupDisabled = useMemo(
+    () => rootGroup.disabled || disabledPaths.some(p => p.length === 0),
+    [disabledPaths, rootGroup.disabled]
+  );
 
   const onRuleAdd = useCallback(
     (rule: R, parentPath: Path, context?: any) => {
@@ -402,17 +399,17 @@ export function useQueryBuilderSchema<
     [independentCombinators, showCombinatorsBetweenRules]
   );
   const combinatorPropObject: Pick<RuleGroupProps, 'combinator'> = useMemo(
-    () => (isRuleGroupType(rootQuery) ? { combinator: rootQuery.combinator } : {}),
-    [rootQuery]
+    () => (isRuleGroupType(rootGroup) ? { combinator: rootGroup.combinator } : {}),
+    [rootGroup]
   );
 
   const { validationResult, validationMap } = useMemo(() => {
     const validationResult =
-      typeof validator === 'function' && rootQuery ? validator(rootQuery) : defaultValidationResult;
+      typeof validator === 'function' && rootGroup ? validator(rootGroup) : defaultValidationResult;
     const validationMap =
       typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
     return { validationResult, validationMap };
-  }, [rootQuery, validator]);
+  }, [rootGroup, validator]);
 
   const schema = useMemo(
     (): Schema<ToFullOption<F>, GetOptionIdentifierType<O>> => ({
@@ -517,7 +514,8 @@ export function useQueryBuilderSchema<
   return {
     ...props,
     actions,
-    rootQuery,
+    rootGroup,
+    rootGroupDisabled,
     queryDisabled,
     rqbContext,
     schema,

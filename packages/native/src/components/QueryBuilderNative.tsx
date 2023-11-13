@@ -42,14 +42,14 @@ const QueryBuilderNativeInternal = <
   return (
     <QueryBuilderContext.Provider value={qb.rqbContext}>
       <RuleGroupComponent
-        ruleGroup={qb.rootQuery}
+        ruleGroup={qb.rootGroup}
         {...qb.combinatorPropObject}
         path={rootPath}
         translations={qb.translations}
         schema={qb.schema}
         actions={qb.actions}
-        id={qb.rootQuery.id}
-        disabled={!!qb.rootQuery.disabled || qb.queryDisabled}
+        id={qb.rootGroup.id}
+        disabled={qb.rootGroupDisabled}
         parentDisabled={qb.queryDisabled}
         context={qb.context}
       />

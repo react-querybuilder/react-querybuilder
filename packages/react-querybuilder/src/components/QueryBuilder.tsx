@@ -52,15 +52,15 @@ const QueryBuilderInternal = <
         data-inlinecombinators={qb.inlineCombinatorsAttr}>
         <RuleGroupControlElement
           translations={qb.translations}
-          ruleGroup={qb.rootQuery}
-          rules={qb.rootQuery.rules}
+          ruleGroup={qb.rootGroup}
+          rules={qb.rootGroup.rules}
           {...qb.combinatorPropObject}
-          not={!!qb.rootQuery.not}
+          not={!!qb.rootGroup.not}
           schema={qb.schema}
           actions={qb.actions}
-          id={qb.rootQuery.id}
+          id={qb.rootGroup.id}
           path={rootPath}
-          disabled={!!qb.rootQuery.disabled || qb.queryDisabled}
+          disabled={qb.rootGroupDisabled}
           shiftUpDisabled
           shiftDownDisabled
           parentDisabled={qb.queryDisabled}

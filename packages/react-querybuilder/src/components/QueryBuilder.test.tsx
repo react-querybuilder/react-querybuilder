@@ -1647,11 +1647,11 @@ describe('disabled', () => {
     expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
   });
 
-  it('should have the correct classname when root group is disabled', () => {
+  it('should have the correct classname when disabled prop is false but root group is disabled', () => {
     const { container } = render(
       <QueryBuilder query={{ disabled: true, combinator: 'and', rules: [] }} />
     );
-    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
+    expect(container.querySelectorAll('div')[0]).not.toHaveClass(sc.disabled);
   });
 
   it('prevents changes when disabled', async () => {

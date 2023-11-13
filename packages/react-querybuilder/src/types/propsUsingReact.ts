@@ -653,9 +653,6 @@ export type QueryBuilderProps<
        * no changes to the query are allowed.
        *
        * @default false
-       *
-       * @deprecated This prop may be removed in a future major version. Use the `disabled`
-       * property on rules and groups (including the root group, the query itself) instead.
        */
       disabled?: boolean | Path[];
       /**
