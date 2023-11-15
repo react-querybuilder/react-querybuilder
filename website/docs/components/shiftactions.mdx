@@ -3,10 +3,6 @@ title: ShiftActions
 description: Shift up/down buttons
 ---
 
-Renders a `<div>` with default styles `display: flex; flex-direction: column;` containing two `<button>` elements. When the [`showShiftActions`](./querybuilder#showshiftactions) prop is `true`, these two buttons will appear at the front of each rule and group (except the root group). The first button will shift the rule/group one spot higher, while the second will shift it one spot lower.
+Renders a `<div>` containing two `<button>` elements, stacked vertically when using the [default styles](../styling/overview). When the [`showShiftActions`](./querybuilder#showshiftactions) prop is `true`, these two buttons will appear at the front of each rule and subgroup. The first button will shift the rule/group above the preceding rule or into the preceding group as the last member, while the second button will shift the rule/group below the next rule or into the next group as the first member.
 
-:::note
-
-"Higher" and "lower" are respective of the entire hierarchy, not just the sibling objects. For example, if a subgroup is immediately below a rule, shifting the rule down will make it the first element of that subgroup.
-
-:::
+For example, if a subgroup is immediately below a rule, shifting the rule down will make it the first element of that subgroup instead of moving it below the subgroup.

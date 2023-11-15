@@ -36,7 +36,7 @@ This query builder has been specially configured in the following ways:
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 import { ValueEditor } from 'react-querybuilder';
 
-export const fieldSelector = ({ value, options, path }) => (
+export const ShowcaseFieldSelector = ({ value, options, path }) => (
   <span>
     {`${path[0] + 1}. `}
     <select value={value} disabled>
@@ -52,7 +52,7 @@ export const fieldSelector = ({ value, options, path }) => (
     </select>
   </span>
 );
-export const operatorSelector = ({ value, options }) => (
+export const ShowcaseOperatorSelector = ({ value, options }) => (
   <select value={value} disabled>
     {options.map(o => (
       <option key={o.name} value={o.name}>
@@ -61,9 +61,9 @@ export const operatorSelector = ({ value, options }) => (
     ))}
   </select>
 );
-export const valueEditor = props => (
+export const ShowcaseValueEditor = props => (
   <div style={{ display: 'flex' }}>
-    <ValueEditor {...props} />
+    <ValueEditor {...props} skipHook />
     {'\u00a0'}
     <span
       style={{
@@ -109,6 +109,7 @@ export const fields = [
 ];
 export const operators = [
   { name: '=', label: '=' },
+  { name: 'in', label: 'in' },
   { name: 'between', label: 'between' },
 ];
 export const defaultQuery = {
@@ -119,7 +120,7 @@ export const defaultQuery = {
     { field: 'checkbox', operator: '=', value: true },
     { field: 'radio', operator: '=', value: 'option2' },
     { field: 'textarea', operator: '=', value: '' },
-    { field: 'multiselect', operator: '=', value: 'option1,option2' },
+    { field: 'multiselect', operator: 'in', value: 'option1,option2' },
     { field: 'date', operator: '=', value: '' },
     { field: 'datetime-local', operator: '=', value: '' },
     { field: 'time', operator: '=', value: '' },
@@ -141,15 +142,6 @@ export const Showcase = () => {
             type="checkbox"
             checked={listsAsArrays}
             onChange={e => {
-              if (e.target.checked) {
-                const q1 = update(query, 'value', toArray(query.rules[5].value), [5]);
-                const q2 = update(q1, 'value', toArray(q1.rules[10].value), [10]);
-                setQuery(update(q2, 'value', toArray(q2.rules[11].value), [11]));
-              } else {
-                const q1 = update(query, 'value', joinWith(query.rules[5].value, ','), [5]);
-                const q2 = update(q1, 'value', joinWith(q1.rules[10].value, ','), [10]);
-                setQuery(update(q2, 'value', joinWith(q2.rules[11].value), [11]));
-              }
               setListsAsArrays(e.target.checked);
             }}
           />
@@ -163,14 +155,14 @@ export const Showcase = () => {
         listsAsArrays={listsAsArrays}
         operators={operators}
         controlElements={{
-          fieldSelector: fieldSelector,
-          operatorSelector: operatorSelector,
+          fieldSelector: ShowcaseFieldSelector,
+          operatorSelector: ShowcaseOperatorSelector,
           combinatorSelector: NullComponent,
           addRuleAction: NullComponent,
           addGroupAction: NullComponent,
           removeRuleAction: NullComponent,
           removeGroupAction: NullComponent,
-          valueEditor: valueEditor,
+          valueEditor: ShowcaseValueEditor,
         }}
       />
     </>

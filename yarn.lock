@@ -21962,6 +21962,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"numeric-quantity@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "numeric-quantity@npm:2.0.0"
+  checksum: b6d69b1e39c905137de95610bff9c207904eec36412c842d9c03de8fb7d68df7b7904c4adc9395864355fbea482c99a1abb270b8193b1e51266cd107b29d66e9
+  languageName: node
+  linkType: hard
+
 "nwsapi@npm:^2.2.2":
   version: 2.2.7
   resolution: "nwsapi@npm:2.2.7"
@@ -24792,6 +24799,7 @@ __metadata:
     copyfiles: ^2.4.1
     immer: ^10.0.3
     jscodeshift: ^0.15.1
+    numeric-quantity: ^2.0.0
     query-string: ^8.1.0
     react: ^18.2.0
     react-dom: ^18.2.0

@@ -72,6 +72,10 @@ Accessibility is improved with the addition of a `title` attribute to the outerm
 
 `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (type `{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
 
+### Enhanced `parseNumber` behavior
+
+The `parseNumber` function now delegates parsing to [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) (essentially an enhanced version of `parseFloat`). The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., the "abc" in "123abc"). This matches the bahavior of the "native" option, which uses `parseFloat` directly, except it returns the original string when parsing fails instead of `NaN`.
+
 ## Updated default labels
 
 ### Main package
