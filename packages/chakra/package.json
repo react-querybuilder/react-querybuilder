@@ -39,20 +39,20 @@
   },
   "devDependencies": {
     "@chakra-ui/icons": "^2.1.1",
-    "@chakra-ui/react": "^2.8.1",
-    "@chakra-ui/system": "^2.6.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/system": "^2.6.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@testing-library/react": "^14.0.0",
+    "@testing-library/react": "^14.1.0",
     "@types/react": "^18.2.33",
-    "@vitejs/plugin-react-swc": "^3.4.1",
-    "framer-motion": "^10.16.4",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "framer-motion": "^10.16.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^7.0.0-alpha.2",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "vite": "^5.0.0"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",

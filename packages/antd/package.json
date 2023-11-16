@@ -39,10 +39,10 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@testing-library/react": "^14.0.0",
+    "@testing-library/react": "^14.1.0",
     "@types/react": "^18.2.33",
-    "@vitejs/plugin-react-swc": "^3.4.1",
-    "antd": "^5.11.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "antd": "^5.11.1",
     "dayjs": "^1.11.10",
     "rc-picker": "^3.14.6",
     "rc-select": "^14.10.0",
@@ -52,7 +52,7 @@
     "react-querybuilder": "^7.0.0-alpha.2",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "vite": "^5.0.0"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=4.7.0",
