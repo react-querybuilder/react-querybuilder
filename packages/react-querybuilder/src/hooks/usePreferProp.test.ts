@@ -1,6 +1,7 @@
+import { vi } from 'vitest';
 import { usePreferAnyProp, usePreferProp } from './usePreferProp';
 
-jest.mock('react', () => ({ useMemo: (fn: () => any) => fn() }));
+vi.mock('react', () => ({ useMemo: (fn: () => any) => fn() }));
 
 describe('usePreferProp', () => {
   it('prefers the prop with default true', async () => {

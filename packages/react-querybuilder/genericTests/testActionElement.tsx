@@ -25,7 +25,7 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
       const testTitle =
         (additionalProps?.disabled && additionalProps?.disabledTranslation?.title) || title;
-      const handleOnClick = jest.fn();
+      const handleOnClick = vi.fn();
       render(<ActionElement {...props} handleOnClick={handleOnClick} {...additionalProps} />);
       const btn = screen.getByTitle(testTitle);
       expect(btn).toBeEnabled();
@@ -63,7 +63,7 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionWithR
     });
 
     it('should be disabled by disabled prop', async () => {
-      const handleOnClick = jest.fn();
+      const handleOnClick = vi.fn();
       render(<ActionElement {...props} handleOnClick={handleOnClick} disabled />);
       const btn = screen.getByTitle(title);
       expect(btn).toBeDisabled();

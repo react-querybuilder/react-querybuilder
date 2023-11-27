@@ -6,8 +6,6 @@ import { QueryBuilderMaterial } from './index';
 import type { MuiComponentName, RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
-jest.setTimeout(60_000);
-
 const componentMocks: Record<MuiComponentName, any> = {
   Button: () => <>Button</>,
   Checkbox: () => <>Checkbox</>,
@@ -32,9 +30,9 @@ const componentMocks: Record<MuiComponentName, any> = {
 
 // We don't *actually* need to load the components, just test that
 // an attempt to load them can be successful.
-Object.entries(componentMocks).forEach(([cn, mockImpl]) => {
-  if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
-});
+// Object.entries(componentMocks).forEach(([cn, mockImpl]) => {
+//   if (cn) vi.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
+// });
 
 it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;

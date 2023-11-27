@@ -72,13 +72,13 @@ import { MaterialValueSelector } from './MaterialValueSelector';
 import { materialTranslations } from './translations';
 import type { RQBMaterialComponents } from './types';
 
-jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
+vi.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
   <optgroup label={children as string} />
 ));
-jest.mock('@mui/material/MenuItem', () => ({ value, children }: MenuItemProps) => (
+vi.mock('@mui/material/MenuItem', () => ({ value, children }: MenuItemProps) => (
   <option value={value}>{children}</option>
 ));
-jest.mock('@mui/material/FormControl', () => {
+vi.mock('@mui/material/FormControl', () => {
   const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
     <div className={className} title={title}>
       {mockIsValidElement(children)
@@ -89,7 +89,7 @@ jest.mock('@mui/material/FormControl', () => {
   FormControl.useFormControl = () => {};
   return FormControl;
 });
-jest.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) => (
+vi.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) => (
   <select
     disabled={!!props.disabled}
     multiple={!!props.multiple}

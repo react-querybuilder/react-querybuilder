@@ -100,10 +100,10 @@ export const consoleMocks = () => {
   const consoleInfoActual = console.info;
   const consoleLogActual = console.log;
   const consoleWarnActual = console.warn;
-  const consoleLog = jest.fn();
-  const consoleError = jest.fn();
-  const consoleInfo = jest.fn();
-  const consoleWarn = jest.fn();
+  const consoleLog = vi.fn();
+  const consoleError = vi.fn();
+  const consoleInfo = vi.fn();
+  const consoleWarn = vi.fn();
 
   beforeAll(() => {
     console.error = consoleError;

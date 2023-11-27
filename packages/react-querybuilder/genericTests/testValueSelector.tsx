@@ -69,7 +69,7 @@ export const testSelect = (
       (('values' in props && props.type === 'multiselect') || 'options' in props)
     ) {
       it('should have the values passed into the <select multiple />', () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
@@ -81,7 +81,7 @@ export const testSelect = (
       });
 
       it('should call the handleOnChange callback properly for <select multiple />', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         const allValuesExceptFirst = testValues.slice(1, 3).map(v => v.name);
         render(
@@ -98,7 +98,7 @@ export const testSelect = (
       });
 
       it('should respect the listsAsArrays option', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
           <Component
@@ -128,14 +128,14 @@ export const testSelect = (
     });
 
     it('should call the onChange method passed in', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<Component {...props} handleOnChange={onChange} />);
       await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
       expect(onChange).toHaveBeenCalledWith(testVal.name);
     });
 
     it('should be disabled by the disabled prop', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<Component {...props} handleOnChange={onChange} disabled />);
       expect(findSelect(screen.getByTitle(title))).toBeDisabled();
       await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);

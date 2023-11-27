@@ -1,8 +1,9 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useValueEditor } from './useValueEditor';
 
 it('calls handleOnChange when operator is not "between"/"in" and value is an array', async () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   renderHook(() =>
     useValueEditor({ handleOnChange, operator: '=', value: ['twelve', 'fourteen'] })
   );
@@ -10,7 +11,7 @@ it('calls handleOnChange when operator is not "between"/"in" and value is an arr
 });
 
 it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is an array', async () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   renderHook(() =>
     useValueEditor({ handleOnChange, operator: '=', inputType: 'number', value: [12, 14] })
   );
@@ -18,7 +19,7 @@ it('calls handleOnChange when inputType is number, operator is not "between"/"in
 });
 
 it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is a string with a comma', async () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const hr = renderHook(() =>
     useValueEditor({ handleOnChange, operator: '=', inputType: 'number', value: '12, 14' })
   );
@@ -27,7 +28,7 @@ it('calls handleOnChange when inputType is number, operator is not "between"/"in
 });
 
 it('sets valueAsArray when operator is "between"', async () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const hr = renderHook(() =>
     useValueEditor({
       handleOnChange,
@@ -41,7 +42,7 @@ it('sets valueAsArray when operator is "between"', async () => {
 });
 
 it('does not call handleOnChange when skipHook is true', async () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const hr = renderHook(() =>
     useValueEditor({
       handleOnChange,

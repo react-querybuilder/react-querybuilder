@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
@@ -15,8 +16,8 @@ import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
-import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
+import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { formatQuery } from './formatQuery';
 import {
   defaultCELValueProcessor,
@@ -407,7 +408,7 @@ const jsonLogicQueryObjectForValueSourceField = {
     },
   ],
 };
-const elasticSearchQueryObject = {
+const elasticSearchQueryObject: any = {
   bool: {
     must: [
       { bool: { must_not: { exists: { field: 'firstName' } } } },
@@ -448,7 +449,7 @@ const elasticSearchQueryObject = {
     ],
   },
 };
-const elasticSearchQueryObjectForValueSourceField = {
+const elasticSearchQueryObjectForValueSourceField: any = {
   bool: {
     must: [
       { bool: { must_not: { exists: { field: 'firstName' } } } },

@@ -140,7 +140,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule down within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupType]>();
+        const onQueryChange = vi.fn<never, [RuleGroupType]>();
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
@@ -160,7 +160,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule to a different group with a common ancestor', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupType]>();
+        const onQueryChange = vi.fn<never, [RuleGroupType]>();
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
@@ -195,7 +195,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
 
     describe('independent combinators', () => {
       it('swaps the first rule with the last within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -225,7 +225,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('swaps the last rule with the first within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -256,7 +256,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from first to last within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -290,7 +290,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from last to first within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -325,7 +325,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from last to middle by dropping on inline combinator', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -360,7 +360,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a first-child rule to a different group as the first child', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -399,7 +399,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a middle-child rule to a different group as a middle child', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -511,7 +511,7 @@ it('prevents changes when disabled', async () => {
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+  const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
   render(
     <QueryBuilderWrapped
       fields={[

@@ -1,5 +1,5 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import RTK from '@reduxjs/toolkit';
 import type { RuleGroupTypeAny } from '../types';
 
 export type QueriesSliceState = Record<string, RuleGroupTypeAny>;
@@ -19,7 +19,7 @@ export const initialState: QueriesSliceState = {};
 export const {
   reducer: queriesSliceReducer,
   actions: { removeQueryState, setQueryState },
-} = createSlice({
+} = RTK.createSlice({
   name: 'queries',
   initialState,
   reducers: {

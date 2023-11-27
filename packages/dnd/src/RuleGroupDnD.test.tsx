@@ -76,7 +76,7 @@ it('should have the drag class if dragging', () => {
 });
 
 it('should handle a dropped rule group', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -95,7 +95,7 @@ it('should handle a dropped rule group', () => {
 });
 
 it('should abort move if dropped on itself', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(<RuleGroupWithDndWrapper {...getProps({}, { moveRule })} />);
   const ruleGroup = screen.getByTestId(TestID.ruleGroup);
   simulateDragDrop(
@@ -109,7 +109,7 @@ it('should abort move if dropped on itself', () => {
 });
 
 it('should abort move if source item is first child of this group', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <RuleGroupWithDndWrapper
       {...getProps({}, { moveRule })}
@@ -129,7 +129,7 @@ it('should abort move if source item is first child of this group', () => {
 });
 
 it('should handle drops on combinator between rules', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleGroupWithDndWrapper
@@ -163,7 +163,7 @@ it('should handle drops on combinator between rules', () => {
 });
 
 it('should handle rule group drops on independent combinators', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleGroupWithDndWrapper
@@ -196,7 +196,7 @@ it('should handle rule group drops on independent combinators', () => {
 });
 
 it('should handle rule drops on independent combinators', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <RuleGroupWithDndWrapper
       {...getProps({ independentCombinators: true }, { moveRule })}
@@ -223,7 +223,7 @@ it('should handle rule drops on independent combinators', () => {
 });
 
 it('prevents drops when locked', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} disabled />
@@ -240,8 +240,8 @@ it('prevents drops when locked', () => {
 });
 
 it('respects custom canDrop', () => {
-  const moveRule = jest.fn();
-  const canDrop = jest.fn(() => false);
+  const moveRule = vi.fn();
+  const canDrop = vi.fn(() => false);
   render(
     <div>
       <RuleGroupWithDndWrapper {...getProps({}, { moveRule })} path={[0]} canDrop={canDrop} />

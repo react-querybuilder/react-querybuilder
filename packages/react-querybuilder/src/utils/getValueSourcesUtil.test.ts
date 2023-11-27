@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import type { Field, ToFullOption } from '../types/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFullOption } from './toFullOption';
@@ -70,7 +71,7 @@ it('gets the correct value sources array from name only', () => {
 });
 
 it('calls the custom getValueSources function correctly', () => {
-  const getValueSources = jest.fn();
+  const getValueSources = vi.fn();
   getValueSourcesUtil(f, '=', getValueSources);
   expect(getValueSources).toHaveBeenCalledWith(f.name, '=', { fieldData: toFullOption(f) });
 });

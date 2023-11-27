@@ -16,7 +16,7 @@ const { consoleError } = consoleMocks();
 const user = userEvent.setup();
 
 it('warns about deprecated props (independent combinators)', async () => {
-  const addListener = jest.fn();
+  const addListener = vi.fn();
   render(
     <RuleGroup
       {...getRuleGroupProps(

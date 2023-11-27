@@ -70,7 +70,7 @@ describe('when rendered', () => {
 
 describe('when rendered with defaultQuery only', () => {
   it('changes the query in uncontrolled state', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         defaultQuery={{
@@ -89,7 +89,7 @@ describe('when rendered with defaultQuery only', () => {
 
 describe('when rendered with onQueryChange callback', () => {
   it('should call onQueryChange with query', () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const idGenerator = () => 'id';
     render(<QueryBuilder onQueryChange={onQueryChange} idGenerator={idGenerator} />);
     expect(onQueryChange).toHaveBeenCalledTimes(1);
@@ -380,7 +380,7 @@ describe('get* callbacks', () => {
 
   describe('when getOperators fn prop is provided', () => {
     it('should invoke custom getOperators function', () => {
-      const getOperators = jest.fn(() => [{ name: 'op1', label: 'Operator 1' }]);
+      const getOperators = vi.fn(() => [{ name: 'op1', label: 'Operator 1' }]);
       render(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
       expect(getOperators).toHaveBeenCalledWith(rule.field, { fieldData: fields[1] });
     });
@@ -393,7 +393,7 @@ describe('get* callbacks', () => {
 
   describe('when getValueEditorType fn prop is provided', () => {
     it('should invoke custom getValueEditorType function', () => {
-      const getValueEditorType = jest.fn(() => 'text' as const);
+      const getValueEditorType = vi.fn(() => 'text' as const);
       render(
         <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
       );
@@ -410,7 +410,7 @@ describe('get* callbacks', () => {
 
   describe('when getInputType fn prop is provided', () => {
     it('should invoke custom getInputType function', () => {
-      const getInputType = jest.fn(() => 'text' as const);
+      const getInputType = vi.fn(() => 'text' as const);
       render(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
       expect(getInputType).toHaveBeenCalledWith(rule.field, rule.operator, {
         fieldData: fields[1],
@@ -427,7 +427,7 @@ describe('get* callbacks', () => {
     const getValueEditorType = () => 'select' as const;
 
     it('should invoke custom getValues function', () => {
-      const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
+      const getValues = vi.fn(() => [{ name: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
           query={query}
@@ -440,7 +440,7 @@ describe('get* callbacks', () => {
     });
 
     it('should invoke custom getValues function returning value options', () => {
-      const getValues = jest.fn(() => [{ value: 'test', label: 'Test' }]);
+      const getValues = vi.fn(() => [{ value: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
           query={query}
@@ -453,7 +453,7 @@ describe('get* callbacks', () => {
     });
 
     it('should generate the correct number of options', () => {
-      const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
+      const getValues = vi.fn(() => [{ name: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
           query={query}
@@ -483,7 +483,7 @@ describe('actions', () => {
   ];
 
   const setup = () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     return {
       onQueryChange,
       selectors: render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />),
@@ -603,7 +603,7 @@ describe('resetOnFieldChange prop', () => {
   ];
 
   const setup = () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     return {
       onQueryChange,
       selectors: render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />),
@@ -647,7 +647,7 @@ describe('resetOnOperatorChange prop', () => {
   ];
 
   it('resets the value when true', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(<QueryBuilder resetOnOperatorChange fields={fields} onQueryChange={onQueryChange} />);
     await user.click(screen.getByTestId(TestID.addRule));
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
@@ -661,7 +661,7 @@ describe('resetOnOperatorChange prop', () => {
   });
 
   it('does not reset the value when false', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder resetOnOperatorChange={false} fields={fields} onQueryChange={onQueryChange} />
     );
@@ -684,14 +684,14 @@ describe('getDefaultField prop', () => {
   ];
 
   it('sets the default field as a string', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(<QueryBuilder getDefaultField="field2" fields={fields} onQueryChange={onQueryChange} />);
     await user.click(screen.getByTestId(TestID.addRule));
     expect((onQueryChange.mock.calls[1][0].rules[0] as RuleType).field).toBe('field2');
   });
 
   it('sets the default field as a function', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         getDefaultField={() => 'field2'}
@@ -708,7 +708,7 @@ describe('getDefaultOperator prop', () => {
   const fields: Field[] = [{ name: 'field1', label: 'Field 1' }];
 
   it('sets the default operator as a string', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder getDefaultOperator="beginsWith" fields={fields} onQueryChange={onQueryChange} />
     );
@@ -717,7 +717,7 @@ describe('getDefaultOperator prop', () => {
   });
 
   it('sets the default operator as a function', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         getDefaultOperator={() => 'beginsWith'}
@@ -733,7 +733,7 @@ describe('getDefaultOperator prop', () => {
 describe('defaultOperator property in field', () => {
   it('sets the default operator', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', defaultOperator: 'beginsWith' }];
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
     await user.click(screen.getByTestId(TestID.addRule));
     expect((onQueryChange.mock.calls[1][0].rules[0] as RuleType).operator).toBe('beginsWith');
@@ -742,7 +742,7 @@ describe('defaultOperator property in field', () => {
 
 describe('getDefaultValue prop', () => {
   it('sets the default value', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' },
@@ -761,9 +761,9 @@ describe('getDefaultValue prop', () => {
 
 describe('onAddRule prop', () => {
   it('cancels the rule addition', async () => {
-    const onLog = jest.fn();
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const onAddRule = jest.fn(() => false as const);
+    const onLog = vi.fn();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
+    const onAddRule = vi.fn(() => false as const);
     render(
       <QueryBuilder onAddRule={onAddRule} onQueryChange={onQueryChange} debugMode onLog={onLog} />
     );
@@ -780,7 +780,7 @@ describe('onAddRule prop', () => {
   });
 
   it('modifies the rule addition', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
     render(<QueryBuilder onAddRule={() => rule} onQueryChange={onQueryChange} />);
 
@@ -790,7 +790,7 @@ describe('onAddRule prop', () => {
   });
 
   it('specifies the preceding combinator', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     const dq: RuleGroupTypeIC = { rules: [{ field: 'f1', operator: '=', value: 'v1' }] };
     const rule: RuleType = {
       field: 'test',
@@ -807,7 +807,7 @@ describe('onAddRule prop', () => {
   });
 
   it('passes handleOnClick context to onAddRule', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
     const AddRuleAction = (props: ActionWithRulesAndAddersProps) => (
       <>
@@ -834,9 +834,9 @@ describe('onAddRule prop', () => {
 
 describe('onAddGroup prop', () => {
   it('cancels the group addition', async () => {
-    const onLog = jest.fn();
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const onAddGroup = jest.fn(() => false as const);
+    const onLog = vi.fn();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
+    const onAddGroup = vi.fn(() => false as const);
     render(
       <QueryBuilder onAddGroup={onAddGroup} onQueryChange={onQueryChange} debugMode onLog={onLog} />
     );
@@ -853,7 +853,7 @@ describe('onAddGroup prop', () => {
   });
 
   it('modifies the group addition', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const group: RuleGroupType = { combinator: 'fake', rules: [] };
     render(<QueryBuilder onAddGroup={() => group} onQueryChange={onQueryChange} />);
 
@@ -863,7 +863,7 @@ describe('onAddGroup prop', () => {
   });
 
   it('specifies the preceding combinator', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     const group: RuleGroupTypeIC = { rules: [], combinatorPreceding: 'or' };
     render(
       <QueryBuilder
@@ -880,7 +880,7 @@ describe('onAddGroup prop', () => {
   });
 
   it('passes handleOnClick context to onAddGroup', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const ruleGroup: RuleGroupType = { combinator: 'fake', rules: [] };
     const AddGroupAction = (props: ActionWithRulesAndAddersProps) => (
       <>
@@ -907,7 +907,7 @@ describe('onAddGroup prop', () => {
 
 describe('onRemove prop', () => {
   it('cancels the removal', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         defaultQuery={{
@@ -937,7 +937,7 @@ describe('defaultValue property in field', () => {
       { name: 'field1', label: 'Field 1', defaultValue: 'Test Value 1' },
       { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' },
     ];
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
@@ -966,7 +966,7 @@ describe('values property in field', () => {
   ];
 
   it('sets the values list', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         getValueEditorType={() => 'select'}
@@ -982,7 +982,7 @@ describe('values property in field', () => {
   });
 
   it('sets the values list for "between" operator', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         getValueEditorType={() => 'select'}
@@ -1009,7 +1009,7 @@ describe('values property in field', () => {
 describe('inputType property in field', () => {
   it('sets the input type', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', inputType: 'number' }];
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
@@ -1021,7 +1021,7 @@ describe('inputType property in field', () => {
 describe('valueEditorType property in field', () => {
   it('sets the value editor type', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', valueEditorType: 'select' }];
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
@@ -1037,7 +1037,7 @@ describe('operators property in field', () => {
       { name: 'field1', label: 'Field 1', operators },
       { name: 'field2', label: 'Field 2', operators },
     ];
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
@@ -1162,7 +1162,7 @@ describe('addRuleToNewGroups', () => {
   });
 
   it('adds a rule when a new group is created', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(<QueryBuilder query={query} onQueryChange={onQueryChange} addRuleToNewGroups />);
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(
@@ -1178,7 +1178,7 @@ describe('addRuleToNewGroups', () => {
 
 describe('showShiftActions', () => {
   it('should be disabled if rule is locked', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         showShiftActions
@@ -1208,7 +1208,7 @@ describe('showShiftActions', () => {
 
   describe('standard rule groups', () => {
     it('should shift rules', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
           showShiftActions
@@ -1235,7 +1235,7 @@ describe('showShiftActions', () => {
     });
 
     it('should shift rule groups', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
           showShiftActions
@@ -1268,7 +1268,7 @@ describe('showShiftActions', () => {
 
   describe('independent combinators', () => {
     it('should shift rulew with independent combinators', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+      const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
           showShiftActions
@@ -1295,7 +1295,7 @@ describe('showShiftActions', () => {
     });
 
     it('should shift first rule with independent combinators', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+      const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
           showShiftActions
@@ -1324,7 +1324,7 @@ describe('showShiftActions', () => {
 describe('showCloneButtons', () => {
   describe('standard rule groups', () => {
     it('should clone rules', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
           showCloneButtons
@@ -1350,7 +1350,7 @@ describe('showCloneButtons', () => {
     });
 
     it('should clone rule groups', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
           showCloneButtons
@@ -1387,7 +1387,7 @@ describe('showCloneButtons', () => {
 
   describe('independent combinators', () => {
     it('should clone a single rule with independent combinators', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+      const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
           showCloneButtons
@@ -1408,7 +1408,7 @@ describe('showCloneButtons', () => {
     });
 
     it('should clone first rule with independent combinators', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+      const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
           showCloneButtons
@@ -1435,7 +1435,7 @@ describe('showCloneButtons', () => {
     });
 
     it('should clone last rule with independent combinators', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+      const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
           showCloneButtons
@@ -1465,7 +1465,7 @@ describe('showCloneButtons', () => {
 
 describe('idGenerator', () => {
   it('uses custom id generator', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const rule = (props: RuleProps) => (
       <div>
         <button type="button" onClick={() => props.actions.moveRule(props.path, [0], true)}>
@@ -1493,7 +1493,7 @@ describe('idGenerator', () => {
 
 describe('independent combinators', () => {
   it('should render a rule group with independent combinators', () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     render(<QueryBuilder defaultQuery={{ rules: [] }} onQueryChange={onQueryChange} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeDefined();
     expect(onQueryChange.mock.calls[0][0]).not.toHaveProperty('combinator');
@@ -1506,7 +1506,7 @@ describe('independent combinators', () => {
   });
 
   it('should call onQueryChange with query', () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     const dq: RuleGroupTypeIC = { id: 'id', rules: [], not: false };
     render(<QueryBuilder onQueryChange={onQueryChange} defaultQuery={dq} />);
     expect(onQueryChange).toHaveBeenCalledTimes(1);
@@ -1547,7 +1547,7 @@ describe('independent combinators', () => {
   });
 
   it('should remove rules along with independent combinators', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     const query: RuleGroupTypeIC = {
       rules: [
         { field: 'firstName', operator: '=', value: '1' },
@@ -1572,7 +1572,7 @@ describe('independent combinators', () => {
   });
 
   it('should remove groups along with independent combinators', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     const query: RuleGroupTypeIC = {
       rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }],
     };
@@ -1609,7 +1609,7 @@ describe('validation', () => {
   });
 
   it('should use custom validator function returning false', () => {
-    const validator = jest.fn(() => false);
+    const validator = vi.fn(() => false);
     render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
     expect(screen.getByRole('form')).not.toHaveClass(sc.valid);
@@ -1617,7 +1617,7 @@ describe('validation', () => {
   });
 
   it('should use custom validator function returning true', () => {
-    const validator = jest.fn(() => true);
+    const validator = vi.fn(() => true);
     render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
     expect(screen.getByRole('form')).toHaveClass(sc.valid);
@@ -1655,7 +1655,7 @@ describe('disabled', () => {
   });
 
   it('prevents changes when disabled', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     render(
       <QueryBuilder
         fields={[
@@ -1736,7 +1736,7 @@ describe('disabled', () => {
   });
 
   it('prevents changes from rogue components when disabled', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     const ruleToAdd: RuleType = { field: 'f1', operator: '=', value: 'v1' };
     const groupToAdd: RuleGroupTypeIC = { rules: [] };
     render(
@@ -1805,7 +1805,7 @@ describe('locked rules', () => {
   });
 
   it('does not update the query when the root group is disabled', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     render(
       <QueryBuilder
         fields={[
@@ -1839,7 +1839,7 @@ describe('locked rules', () => {
   });
 
   it('does not update the query when an ancestor group is disabled', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+    const onQueryChange = vi.fn<never, [RuleGroupTypeIC]>();
     render(
       <QueryBuilder
         fields={[
@@ -1912,7 +1912,7 @@ describe('value source field', () => {
   });
 
   it('sets the right default value for "between" operator', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder fields={fieldsWithBetween} getDefaultField="fb" onQueryChange={onQueryChange} />
     );
@@ -1926,7 +1926,7 @@ describe('value source field', () => {
   });
 
   it('sets the right default value for "between" operator and listsAsArrays', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
         fields={fieldsWithBetween}
@@ -1988,8 +1988,8 @@ describe('dynamic classNames', () => {
 
 describe('dispatchQuery and getQuery', () => {
   it('gets the query from the store', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const testFunc = jest.fn();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
+    const testFunc = vi.fn();
     const getQueryBtnText = 'Get Query';
     const dispatchQueryBtnText = 'Dispatch Query';
     const rule = ({ schema: { getQuery, dispatchQuery } }: RuleProps) => (
@@ -2023,7 +2023,7 @@ describe('dispatchQuery and getQuery', () => {
 
 describe('nested object immutability', () => {
   it('does not modify rules it does not have to modify', async () => {
-    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onQueryChange = vi.fn<never, [RuleGroupType]>();
     const immutableRule: RuleType = {
       field: 'this',
       operator: '=',
@@ -2055,7 +2055,7 @@ describe('nested object immutability', () => {
 
 describe('debug mode', () => {
   it('logs updates', async () => {
-    const onLog = jest.fn();
+    const onLog = vi.fn();
     const fields: Field[] = [
       { name: 'f1', label: 'Field 1' },
       { name: 'f2', label: 'Field 2' },
@@ -2098,7 +2098,7 @@ describe('debug mode', () => {
   });
 
   it('logs failed additions and removals due to onAdd/Remove handlers', async () => {
-    const onLog = jest.fn();
+    const onLog = vi.fn();
     const f = () => false as const;
     const defaultQuery: RuleGroupType = {
       combinator: 'and',
@@ -2123,7 +2123,7 @@ describe('debug mode', () => {
   });
 
   it('logs failed query updates due to disabled prop', async () => {
-    const onLog = jest.fn();
+    const onLog = vi.fn();
     const defaultQuery: RuleGroupType = {
       disabled: true,
       combinator: 'and',

@@ -96,7 +96,7 @@ it('should have the over class if hovered', () => {
 });
 
 it('should handle a dropped rule', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -111,7 +111,7 @@ it('should handle a dropped rule', () => {
 });
 
 it('should copy a dropped rule', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -126,7 +126,7 @@ it('should copy a dropped rule', () => {
 });
 
 it('should abort move if dropped on itself', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(<RuleWithDndWrapper {...getProps({}, { moveRule })} />);
   const rule = screen.getByTestId(TestID.rule);
   simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
@@ -136,7 +136,7 @@ it('should abort move if dropped on itself', () => {
 });
 
 it('should allow drops even if disabled', () => {
-  const moveRule = jest.fn();
+  const moveRule = vi.fn();
   render(
     <div>
       <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} />
@@ -149,8 +149,8 @@ it('should allow drops even if disabled', () => {
 });
 
 it('respects custom canDrop', () => {
-  const moveRule = jest.fn();
-  const canDrop = jest.fn(() => false);
+  const moveRule = vi.fn();
+  const canDrop = vi.fn(() => false);
   render(
     <div>
       <RuleWithDndWrapper {...getProps({}, { moveRule })} path={[0]} canDrop={canDrop} />

@@ -5,12 +5,7 @@ import type {
   ThunkAction,
   ThunkDispatch,
 } from '@reduxjs/toolkit';
-import {
-  applyMiddleware,
-  combineReducers,
-  createStore,
-  getDefaultMiddleware,
-} from '@reduxjs/toolkit';
+import RTK from '@reduxjs/toolkit';
 import * as React from 'react';
 import type { ReactReduxContextValue } from 'react-redux';
 import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
@@ -24,13 +19,13 @@ import {
 
 export type RqbState = { queries: QueriesSliceState };
 
-const rootReducer = combineReducers<RqbState>({ queries: queriesSliceReducer });
+const rootReducer = RTK.combineReducers<RqbState>({ queries: queriesSliceReducer });
 
-export const queryBuilderStore = createStore(
+export const queryBuilderStore = RTK.createStore(
   rootReducer,
   { queries: initialState },
-  applyMiddleware(
-    ...getDefaultMiddleware({
+  RTK.applyMiddleware(
+    ...RTK.getDefaultMiddleware({
       // Ignore non-serializable values in setQueryState actions and rule `value`s
       // https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
       serializableCheck: {
