@@ -7,14 +7,15 @@ const colorPrimary = 'color: #82a7dd';
 const colorSecondary = 'color: #3c649f';
 const textShadowNone = 'text-shadow: none';
 const textShadow = 'text-shadow: 2px 2px 2px rgba(152, 152, 152, 0.69)';
+const s = `\u00a0`; // &nbsp;
 
 const rqb = `%c
-██████%c╗%c        █████%c╗%c       ██████%c╗%c
-██%c╔══%c██%c╗%c      ██%c╔══%c██%c╗%c      ██%c╔══%c██%c╗%c
-██████%c╔╝%c      ██%c║%c  ██%c║%c      ██████%c╔╝%c
-██%c╔═%c██%c║%c       ██%c║%c ███%c║%c      ██%c╔══%c██%c╗%c
-██%c║%c %c╚%c██%c╗%ceact%c   ███%c╔%c██%c╣%cuery%c  ██████%c╔╝%cuilder%c
-╚═╝  ╚═╝       ╚══╩══╝      ╚═════╝
+██████%c╗%c${s}${s}${s}${s}${s}${s}${s}${s}█████%c╗%c${s}${s}${s}${s}${s}${s}${s}██████%c╗%c
+██%c╔══%c██%c╗%c${s}${s}${s}${s}${s}${s}██%c╔══%c██%c╗%c${s}${s}${s}${s}${s}${s}██%c╔══%c██%c╗%c
+██████%c╔╝%c${s}${s}${s}${s}${s}${s}██%c║%c${s}${s}██%c║%c${s}${s}${s}${s}${s}${s}██████%c╔╝%c
+██%c╔═%c██%c║%c${s}${s}${s}${s}${s}${s}${s}██%c║%c${s}███%c║%c${s}${s}${s}${s}${s}${s}██%c╔══%c██%c╗%c
+██%c║%c${s}%c╚%c██%c╗%ceact%c${s}${s}${s}███%c╔%c██%c╣%cuery%c${s}${s}██████%c╔╝%cuilder%c
+╚═╝${s}${s}╚═╝${s}${s}${s}${s}${s}${s}${s}╚══╩══╝${s}${s}${s}${s}${s}${s}╚═════╝
 `;
 
 const styleSequence = [
