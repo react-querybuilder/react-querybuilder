@@ -45,3 +45,4 @@ const App = () => {
 ## Notes
 
 - This package exports `materialControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but wrapping `<QueryBuilder />` in `<QueryBuilderMaterial />` is the recommended method.
+- In an environment based on React Server Components, [preloading the MUI components](https://react-querybuilder.js.org/docs/compat#preload-mui-components) may be necessary.
