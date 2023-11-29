@@ -189,13 +189,13 @@ This list shows which library components' props will be accepted by the compatib
 
 :::tip
 
-As of v6.2.0, MUI components will be loaded synchronously. Preloading the components is no longer necessary and there will be no flash of unstyled content.
+As of v6.2.0, MUI components will be loaded synchronously in traditional environments. However, preloading MUI components _may_ still be necessary when using React Server Components, even if the component file rendering the query builder includes the `"use client"` directive.
 
 :::
 
 Prior to v6.2.0, the `@react-querybuilder/material` compatibility package would load components from `@mui/material` asynchronously in order to properly inherit the theme context ([issue](https://github.com/react-querybuilder/react-querybuilder/issues/321)/[PR](https://github.com/react-querybuilder/react-querybuilder/pull/324)). This meant that the query builder would initially be rendered with the default components, and then—very quickly, if all went well—the MUI components would replace them.
 
-To avoid rendering the default components and render the MUI components immediately instead, import the MUI components in your application code and assign them as properties of the `muiComponents` prop on the `QueryBuilderMaterial` context provider. (Each individual compatibility component also accepts an optional `muiComponents` prop.)
+To avoid rendering the default components and render the MUI components immediately instead, import the MUI components in your application code and assign them as properties of the `muiComponents` prop on the `QueryBuilderMaterial` context provider. (The individual MUI compatibility components—`MaterialValueEditor`, `MaterialActionElement`, etc.—also accept an optional `muiComponents` prop.)
 
 ```tsx
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -203,7 +203,15 @@ import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { QueryBuilder } from 'react-querybuilder';
 import { defaultQuery, fields } from './constants';
 // highlight-start
-import { DragIndicator } from '@mui/icons-material';
+import {
+  Close as CloseIcon,
+  ContentCopy as ContentCopyIcon,
+  DragIndicator,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon,
+} from '@mui/icons-material';
 import {
   Button,
   Checkbox,
@@ -222,11 +230,17 @@ import {
 const muiComponents = {
   Button,
   Checkbox,
+  CloseIcon,
+  ContentCopyIcon,
   DragIndicator,
   FormControl,
   FormControlLabel,
   Input,
+  KeyboardArrowDownIcon,
+  KeyboardArrowUpIcon,
   ListSubheader,
+  LockIcon,
+  LockOpenIcon,
   MenuItem,
   Radio,
   RadioGroup,
