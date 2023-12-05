@@ -5,7 +5,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '../types/index.noReact';
-import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
+import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 
 const processRuleOrStringOrRuleGroupIC = (r: string | RuleType | RuleGroupTypeIC) =>
   isRuleGroup(r) ? generateRuleGroupICWithConsistentCombinators(r) : r;
@@ -66,10 +66,16 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
 
 /**
  * Converts a {@link RuleGroupTypeIC} to {@link RuleGroupType}.
+ *
+ * This function is idempotent: {@link RuleGroupType} queries will be
+ * returned as-is.
  */
 export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
   rg: RuleGroupTypeIC
 ): RG => {
+  if (isRuleGroupType(rg)) {
+    return rg;
+  }
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
   const rulesAsMixedList = processedRG.rules.map(r =>
     typeof r === 'string' || !isRuleGroup(r) ? r : convertFromIC(r)
@@ -81,19 +87,26 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
 
 /**
  * Converts a {@link RuleGroupType} to {@link RuleGroupTypeIC}.
+ *
+ * This function is idempotent: {@link RuleGroupTypeIC} queries will be
+ * returned as-is.
  */
 export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   rg: RuleGroupType
 ): RGIC => {
+  if (isRuleGroupTypeIC(rg)) {
+    return rg;
+  }
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
-  rg.rules.forEach((r, idx, arr) => {
+  const { length } = rg.rules;
+  rg.rules.forEach((r, idx) => {
     if (isRuleGroup(r)) {
       rules.push(convertToIC(r));
     } else {
       rules.push(r);
     }
-    if (idx < arr.length - 1) {
+    if (combinator && idx < length - 1) {
       rules.push(combinator);
     }
   });
