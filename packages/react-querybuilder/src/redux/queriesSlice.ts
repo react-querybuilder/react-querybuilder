@@ -1,4 +1,4 @@
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { RuleGroupTypeAny } from '../types';
 
@@ -9,17 +9,9 @@ export interface SetQueryStateParams {
   query: RuleGroupTypeAny;
 }
 
-export const getQueriesSliceState = (
-  state: QueriesSliceState,
-  qbId: string
-): RuleGroupTypeAny | undefined => state[qbId];
-
 export const initialState: QueriesSliceState = {};
 
-export const {
-  reducer: queriesSliceReducer,
-  actions: { removeQueryState, setQueryState },
-} = createSlice({
+export const queriesSlice = createSlice({
   name: 'queries',
   initialState,
   reducers: {
@@ -30,4 +22,7 @@ export const {
       delete state[qbId];
     },
   },
-});
+  selectors: {
+    getQuerySelectorById: (state, qbId: string) => state[qbId],
+  },
+}) satisfies Slice;

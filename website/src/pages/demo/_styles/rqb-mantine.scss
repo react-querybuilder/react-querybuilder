@@ -30,8 +30,9 @@
     width: inherit;
   }
 
-  .betweenRules {
-    display: flex;
+  .mantine-Button-loader {
+    // This seems unnecessary?
+    display: none;
   }
 }
 

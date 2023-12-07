@@ -56,6 +56,10 @@ $rqb-branch-style: $rqb-border-style !default;
     }
   }
 
+  .betweenRules {
+    display: flex;
+  }
+
   .shiftActions {
     display: flex;
     flex-direction: column;

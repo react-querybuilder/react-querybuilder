@@ -7,6 +7,7 @@ import type {
   GetOptionIdentifierType,
   Operator,
   Path,
+  QueryBuilderProps,
   RuleGroupTypeAny,
   ToFlexibleOption,
 } from 'react-querybuilder';
@@ -73,7 +74,12 @@ export const QueryBuilderNative = <
       >),
     [props.controlElements]
   );
-  const setup = useQueryBuilderSetup({ ...props, controlElements });
+  const setup = useQueryBuilderSetup({ ...props, controlElements } as QueryBuilderProps<
+    RG,
+    F,
+    O,
+    C
+  >);
 
   return (
     <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>

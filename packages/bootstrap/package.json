@@ -39,17 +39,17 @@
   },
   "devDependencies": {
     "@popperjs/core": "^2.11.8",
-    "@testing-library/react": "^14.1.0",
-    "@types/react": "^18.2.33",
+    "@testing-library/react": "^14.1.2",
+    "@types/react": "^18.2.42",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "bootstrap": "^5.3.2",
-    "bootstrap-icons": "^1.11.1",
+    "bootstrap-icons": "^1.11.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^7.0.0-alpha.2",
-    "rollup-plugin-visualizer": "^5.9.2",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "rollup-plugin-visualizer": "^5.10.0",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.6"
   },
   "peerDependencies": {
     "bootstrap": ">=5",
