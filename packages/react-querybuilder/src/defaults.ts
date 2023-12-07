@@ -90,11 +90,11 @@ export const defaultTranslations = {
     title: 'Clone group',
   } as const,
   shiftActionUp: {
-    label: '▴',
+    label: '˄',
     title: 'Shift up',
   } as const,
   shiftActionDown: {
-    label: '▾',
+    label: '˅',
     title: 'Shift down',
   } as const,
   dragHandle: {
