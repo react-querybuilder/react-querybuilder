@@ -23,6 +23,6 @@ export const queriesSlice = createSlice({
     },
   },
   selectors: {
-    getQuerySelectorById: (state, qbId: string) => state[qbId],
+    getQuerySelectorById: (state: QueriesSliceState, qbId: string) => state[qbId],
   },
 }) satisfies Slice;
