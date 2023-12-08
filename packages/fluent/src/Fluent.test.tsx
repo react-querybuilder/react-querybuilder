@@ -1,15 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type {
-  Field,
-  Option,
-  Schema,
-  ToFullOption,
-  ValueEditorProps,
-  ValueSelectorProps,
-} from 'react-querybuilder';
+import type { Option, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import {
+  basicSchema,
   testActionElement,
   testDragHandle,
   testNotToggle,
@@ -44,7 +38,7 @@ const defaultValueSelectorProps: ValueSelectorProps = {
   ].map(toFullOption),
   level: 0,
   path: [],
-  schema: {} as Schema<ToFullOption<Field>, string>,
+  schema: basicSchema,
 };
 
 const valueEditorAsMultiselectProps: ValueEditorProps = {
@@ -55,7 +49,10 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
   level: 0,
   path: [],
   valueSource: 'value',
-  schema: {} as Schema<ToFullOption<Field>, string>,
+  schema: {
+    ...basicSchema,
+    controls: { ...basicSchema.controls, valueSelector: FluentValueSelector },
+  },
   type: 'multiselect',
   values: defaultValueSelectorProps.options,
   rule: { field: '', operator: '', value: '' },

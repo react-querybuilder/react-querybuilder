@@ -6,29 +6,30 @@ import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
-import { AntDValueSelector } from './AntDValueSelector';
 
 const DatePicker = generatePicker(dayjsGenerateConfig);
 
-export const AntDValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  separator,
-  valueSource: _vs,
-  disabled,
-  testID,
-  selectorComponent: SelectorComponent = AntDValueSelector,
-  ...props
-}: ValueEditorProps) => {
+export const AntDValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    disabled,
+    testID,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,

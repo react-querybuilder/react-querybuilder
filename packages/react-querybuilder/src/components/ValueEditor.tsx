@@ -3,30 +3,31 @@ import { standardClassnames } from '../defaults';
 import { useValueEditor } from '../hooks';
 import type { ValueEditorProps } from '../types';
 import { getFirstOption, parseNumber } from '../utils';
-import { ValueSelector } from './ValueSelector';
 
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
  */
-export const ValueEditor = ({
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type = 'text',
-  inputType = 'text',
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  fieldData,
-  disabled,
-  separator = null,
-  skipHook = false,
-  testID,
-  selectorComponent: SelectorComponent = ValueSelector,
-  ...props
-}: ValueEditorProps) => {
+export const ValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type = 'text',
+    inputType = 'text',
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    fieldData,
+    disabled,
+    separator = null,
+    skipHook = false,
+    testID,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     skipHook,
     handleOnChange,

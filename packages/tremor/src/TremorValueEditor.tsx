@@ -21,30 +21,34 @@ import { TremorValueSelector } from './TremorValueSelector';
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
-const ClearableValueSelector = (props: VersatileSelectorProps) => (
-  <TremorValueSelector {...props} enableClear />
-);
+const ClearableValueSelector = (props: VersatileSelectorProps) => {
+  const SelectorComponent =
+    (props.schema.controls.valueSelector as typeof TremorValueSelector) ?? TremorValueSelector;
+  return <SelectorComponent {...props} enableClear />;
+};
 
-export const TremorValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  separator,
-  valueSource: _vs,
-  disabled,
-  testID,
-  selectorComponent: SelectorComponent = ClearableValueSelector,
-  validation: _validation,
-  ...props
-}: ValueEditorProps) => {
+export const TremorValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    disabled,
+    testID,
+    selectorComponent: SelectorComponent = ClearableValueSelector,
+    validation: _validation,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,

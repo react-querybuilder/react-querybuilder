@@ -6,7 +6,6 @@ import {
   ValueEditor,
   type ValueEditorProps,
 } from 'react-querybuilder';
-import { BulmaValueSelector } from './BulmaValueSelector';
 
 export const BulmaValueEditor = (props: ValueEditorProps) => {
   const { valueAsArray, multiValueHandler } = useValueEditor({
@@ -20,7 +19,7 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     values: props.values,
   });
 
-  const { selectorComponent: SelectorComponent = BulmaValueSelector } = props;
+  const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
 
   if (props.operator === 'null' || props.operator === 'notNull') {
     return null;

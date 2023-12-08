@@ -1,7 +1,49 @@
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
+import { defaultCombinators, defaultControlElements } from '../src';
+import type { Classnames, Field, Schema, ToFullOption } from '../src/types';
 
 export const UNUSED = 'UNUSED';
+
+const admonish = (fn: string) => () => {
+  throw new Error(`Implement schema.${fn} for this test.`);
+};
+
+export const basicSchema: Schema<ToFullOption<Field>, string> = {
+  qbId: 'qbId',
+  fields: [],
+  fieldMap: {},
+  classNames: {} as Classnames,
+  combinators: defaultCombinators,
+  controls: defaultControlElements,
+  createRule: admonish('createRule'),
+  createRuleGroup: admonish('createRuleGroup'),
+  dispatchQuery: admonish('dispatchQuery'),
+  getQuery: admonish('getQuery'),
+  getOperators: admonish('getOperators'),
+  getValueEditorType: admonish('getValueEditorType'),
+  getValueEditorSeparator: admonish('getValueEditorSeparator'),
+  getValueSources: admonish('getValueSources'),
+  getInputType: admonish('getInputType'),
+  getValues: admonish('getValues'),
+  getRuleClassname: admonish('getRuleClassname'),
+  getRuleGroupClassname: admonish('getRuleGroupClassname'),
+  accessibleDescriptionGenerator: admonish('accessibleDescriptionGenerator'),
+  showCombinatorsBetweenRules: false,
+  showNotToggle: false,
+  showShiftActions: false,
+  showCloneButtons: false,
+  showLockButtons: false,
+  autoSelectField: true,
+  autoSelectOperator: true,
+  addRuleToNewGroups: false,
+  enableDragAndDrop: false,
+  validationMap: {},
+  independentCombinators: false,
+  listsAsArrays: false,
+  parseNumbers: false,
+  disabledPaths: [],
+};
 
 export const findInput = (el: HTMLElement) =>
   (el.tagName === 'INPUT' ? el : el.querySelector('input')) as HTMLInputElement;

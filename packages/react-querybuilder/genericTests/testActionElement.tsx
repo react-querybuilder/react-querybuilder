@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { ActionWithRulesProps, Field, Schema, ToFullOption } from '../src/types';
-import { userEventSetup } from './utils';
+import type { ActionWithRulesProps } from '../src/types';
+import { basicSchema, userEventSetup } from './utils';
 
 export const defaultActionElementProps = {
   handleOnClick: () => {},
@@ -9,7 +9,7 @@ export const defaultActionElementProps = {
   level: 0,
   path: [],
   ruleOrGroup: { combinator: 'and', rules: [] },
-  schema: {} as Schema<ToFullOption<Field>, string>,
+  schema: basicSchema,
 } satisfies ActionWithRulesProps;
 
 export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {

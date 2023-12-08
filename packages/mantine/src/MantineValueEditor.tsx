@@ -5,32 +5,33 @@ import dayjs from 'dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
-import { MantineValueSelector } from './MantineValueSelector';
 import { toNumberInputValue } from './utils';
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
-export const MantineValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  separator,
-  valueSource: _vs,
-  disabled,
-  testID,
-  selectorComponent: SelectorComponent = MantineValueSelector,
-  validation: _validation,
-  ...props
-}: ValueEditorProps) => {
+export const MantineValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    disabled,
+    testID,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    validation: _validation,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,

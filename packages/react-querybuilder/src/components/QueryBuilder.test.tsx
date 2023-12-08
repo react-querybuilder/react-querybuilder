@@ -2074,7 +2074,7 @@ describe('controlElements bulk override properties', () => {
         controlElements={{ actionElement, valueSelector }}
         query={{
           combinator: 'and',
-          rules: [{ combinator: 'or', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }],
+          rules: [{ combinator: 'or', rules: [{ field: 'f1', operator: '=', value: 'not "v1"' }] }],
         }}
       />
     );

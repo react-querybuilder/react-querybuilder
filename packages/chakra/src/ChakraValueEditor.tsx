@@ -7,27 +7,28 @@ import {
   useValueEditor,
   type ValueEditorProps,
 } from 'react-querybuilder';
-import { ChakraValueSelector } from './ChakraValueSelector';
 
-export const ChakraValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  separator,
-  valueSource: _vs,
-  testID,
-  disabled,
-  selectorComponent: SelectorComponent = ChakraValueSelector,
-  ...props
-}: ValueEditorProps) => {
+export const ChakraValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    testID,
+    disabled,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,
