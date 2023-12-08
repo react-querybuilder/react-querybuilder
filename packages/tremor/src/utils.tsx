@@ -12,6 +12,7 @@ export const toSelectItems = (list: OptionList, multi?: boolean) => {
     flatList = list;
   }
 
+  // istanbul ignore else
   if (Array.isArray(flatList)) {
     return flatList.map(opt =>
       multi ? (
