@@ -17,6 +17,7 @@ import {
   errorUncontrolledToControlled,
 } from '../messages';
 import type {
+  ActionProps,
   ActionWithRulesAndAddersProps,
   Combinator,
   Field,
@@ -32,6 +33,7 @@ import type {
   RuleType,
   ToFullOption,
   ValidationMap,
+  ValueSelectorProps,
 } from '../types';
 import {
   defaultValidator,
@@ -42,6 +44,7 @@ import {
   toFullOption,
 } from '../utils';
 import { QueryBuilder } from './QueryBuilder';
+import { QueryBuilderContext } from './QueryBuilderContext';
 import { defaultControlElements } from './defaults';
 
 const user = userEvent.setup();
@@ -2050,6 +2053,68 @@ describe('nested object immutability', () => {
     await user.selectOptions(screen.getAllByTestId(TestID.operators)[0], '>');
     expect(findPath([0], calls[1][0])).not.toBe(findPath([0], calls[0][0]));
     expect(findPath([1, 0], calls[1][0])).toMatchObject(immutableRule);
+  });
+});
+
+describe('controlElements bulk override properties', () => {
+  const actionElement = (props: ActionProps) => (
+    <button data-testid={props.testID}>{'actionElement'}</button>
+  );
+  const valueSelector = (props: ValueSelectorProps) => (
+    <select data-testid={props.testID} value="v1">
+      <option value="v1">v1</option>
+    </select>
+  );
+
+  it('works from props', () => {
+    render(
+      <QueryBuilder
+        showCloneButtons
+        showLockButtons
+        controlElements={{ actionElement, valueSelector }}
+        query={{
+          combinator: 'and',
+          rules: [{ combinator: 'or', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }],
+        }}
+      />
+    );
+    expect(screen.getAllByTestId(TestID.addGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.addRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.removeGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.removeRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.cloneGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.cloneRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.lockGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.lockRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.combinators)[0]).toHaveValue('v1');
+    expect(screen.getAllByTestId(TestID.fields)[0]).toHaveValue('v1');
+    expect(screen.getAllByTestId(TestID.operators)[0]).toHaveValue('v1');
+  });
+
+  it('works from context', () => {
+    render(
+      <QueryBuilderContext.Provider value={{ controlElements: { actionElement, valueSelector } }}>
+        <QueryBuilder
+          showCloneButtons
+          showLockButtons
+          query={{
+            combinator: 'and',
+            rules: [{ combinator: 'or', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }],
+          }}
+        />
+      </QueryBuilderContext.Provider>
+    );
+    expect(screen.getAllByTestId(TestID.addGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.addRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.removeGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.removeRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.cloneGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.cloneRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.lockGroup)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.lockRule)[0]).toHaveTextContent('actionElement');
+    expect(screen.getAllByTestId(TestID.combinators)[0]).toHaveValue('v1');
+    expect(screen.getAllByTestId(TestID.fields)[0]).toHaveValue('v1');
+    expect(screen.getAllByTestId(TestID.operators)[0]).toHaveValue('v1');
   });
 });
 

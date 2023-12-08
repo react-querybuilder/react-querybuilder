@@ -12,6 +12,7 @@ import { RuleGroupNative } from './RuleGroupNative';
 import { RuleNative } from './RuleNative';
 
 export const defaultNativeControlElements = {
+  actionElement: NativeActionElement,
   addGroupAction: NativeActionElement,
   addRuleAction: NativeActionElement,
   cloneGroupAction: NativeActionElement,
@@ -31,6 +32,7 @@ export const defaultNativeControlElements = {
   ruleGroup: RuleGroupNative,
   shiftActions: NativeShiftActions,
   valueEditor: NativeValueEditor,
+  valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelector,
 } satisfies Controls<ToFullOption<Field>, string>;
 
@@ -40,5 +42,6 @@ export const defaultNativeWebControlElements = {
   fieldSelector: NativeValueSelectorWeb,
   operatorSelector: NativeValueSelectorWeb,
   valueEditor: NativeValueEditorWeb,
+  valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelectorWeb,
 } satisfies Controls<ToFullOption<Field>, string>;

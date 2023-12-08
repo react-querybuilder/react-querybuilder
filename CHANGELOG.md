@@ -39,6 +39,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - [#586] Options in option-list props can now use `value` as the identifying property in lieu of `name`. Additionally, all `Option`s and `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{value: string; label: string}[]` and not `{name: string; label: string}[]`.
+- [#595] Two new "bulk override" properties on the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` that is not explicitly defined. Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor`, but only when it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
+  <!-- prettier-ignore -->
+  | `controlElements` property | Sets default for                                                                                                                                       |
+  | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+  | `valueSelector`            | `combinatorSelector`, `fieldSelector`, `operatorSelector`, `valueSourceSelector`, `valueEditor` (when rendering a value selector)                      |
+  | `actionElement`            | `addGroupAction`, `addRuleAction`, `cloneGroupAction`, `cloneRuleAction`, `lockGroupAction`, `lockRuleAction`, `removeGroupAction`, `removeRuleAction` |
 - [#577] New `showShiftActions` prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), the first of which will shift the rule/group one spot higher, while the second will shift it one spot lower. A `ShiftActions` component has been added, along with corresponding components for compatibility packages. New `translations` properties `shiftActionUp` and `shiftActionDown` provide labels and titles for each button within the new component.
 - [#512] Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop.
 - [#537]/[#589] Three new methods are available that should make it easier to manage arbitrary query updates from custom components. (Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.) The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
@@ -1472,6 +1478,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#585]: https://github.com/react-querybuilder/react-querybuilder/pull/585
 [#586]: https://github.com/react-querybuilder/react-querybuilder/pull/586
 [#589]: https://github.com/react-querybuilder/react-querybuilder/pull/589
+[#595]: https://github.com/react-querybuilder/react-querybuilder/pull/595
 [#606]: https://github.com/react-querybuilder/react-querybuilder/pull/606
 
 <!-- Release comparison links -->

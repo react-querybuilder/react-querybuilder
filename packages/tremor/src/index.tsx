@@ -13,21 +13,11 @@ export * from './TremorValueEditor';
 export * from './TremorValueSelector';
 
 export const tremorControlElements = {
+  actionElement: TremorActionElement,
   dragHandle: TremorDragHandle,
   notToggle: TremorNotToggle,
   valueEditor: TremorValueEditor,
-  addGroupAction: TremorActionElement,
-  addRuleAction: TremorActionElement,
-  cloneGroupAction: TremorActionElement,
-  cloneRuleAction: TremorActionElement,
-  combinatorSelector: TremorValueSelector,
-  fieldSelector: TremorValueSelector,
-  operatorSelector: TremorValueSelector,
-  lockRuleAction: TremorActionElement,
-  lockGroupAction: TremorActionElement,
-  removeGroupAction: TremorActionElement,
-  removeRuleAction: TremorActionElement,
-  valueSourceSelector: TremorValueSelector,
+  valueSelector: TremorValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 export const tremorControlClassnames = {

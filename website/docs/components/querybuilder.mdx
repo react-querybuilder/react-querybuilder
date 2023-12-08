@@ -183,6 +183,7 @@ The following control overrides are supported per the `Controls` interface:
 
 | Property                                      | Type                                                                                                             |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [`actionElement`](#actionelement)             | <code>React.ComponentType&lt;ActionProps&gt;</code>                                                              |
 | [`addGroupAction`](#addgroupaction)           | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt;</code>                                            |
 | [`addRuleAction`](#addruleaction)             | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt;</code>                                            |
 | [`cloneGroupAction`](#clonegroupaction)       | <code>React.ComponentType&lt;ActionWithRulesProps&gt;</code>                                                     |
@@ -201,11 +202,48 @@ The following control overrides are supported per the `Controls` interface:
 | [`ruleGroup`](#rulegroup)                     | <code>React.ComponentType&lt;RuleGroupProps&gt;</code>                                                           |
 | [`shiftActions`](#shiftactions)               | <code>React.ComponentType&lt;ShiftActionsProps&gt;</code>                                                        |
 | [`valueEditor`](#valueeditor)                 | <code>React.ComponentType&lt;ValueEditorProps&gt;</code>                                                         |
+| [`valueSelector`](#valueselector)             | <code>React.ComponentType&lt;ValueSelectorProps&gt;</code>                                                       |
 | [`valueSourceSelector`](#valuesourceselector) | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt;</code>                                                 |
+
+#### `actionElement`
+
+The component for all button-type controls. Default is [`ActionElement`](./actionelement). Receives props per the `ActionProps`, `ActionWithRulesProps`, or `ActionWithRulesAndAddersProps` interface depending on the control, which can be any of the following:
+
+- [`addGroupAction`](#addgroupaction)
+- [`addRuleAction`](#addruleaction)
+- [`cloneGroupAction`](#clonegroupaction)
+- [`cloneRuleAction`](#cloneruleaction)
+- [`lockGroupAction`](#lockgroupaction)
+- [`lockRuleAction`](#lockruleaction)
+- [`removeGroupAction`](#removegroupaction)
+- [`removeRuleAction`](#removeruleaction)
+
+For example, this:
+
+```tsx
+<QueryBuilder controlElements={{ actionElement: MyAwesomeButton }} />
+```
+
+...is equivalent to this:
+
+```tsx
+<QueryBuilder
+  controlElements={{
+    addGroupAction: MyAwesomeButton
+    addRuleAction: MyAwesomeButton
+    cloneGroupAction: MyAwesomeButton
+    cloneRuleAction: MyAwesomeButton
+    lockGroupAction: MyAwesomeButton
+    lockRuleAction: MyAwesomeButton
+    removeGroupAction: MyAwesomeButton
+    removeRuleAction: MyAwesomeButton
+  }}
+/>
+```
 
 #### `addGroupAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesAndAddersProps` interface:
+Adds a sub-group to the current group. Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesAndAddersProps` interface:
 
 | Prop            | Type                                           | Description                                                  |
 | --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -224,7 +262,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `addRuleAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesAndAddersProps` interface:
+Adds a rule to the current group. Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesAndAddersProps` interface:
 
 | Prop            | Type                                           | Description                                                  |
 | --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -243,7 +281,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `cloneGroupAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
+Clones the current group. Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -262,7 +300,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `cloneRuleAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionProps` interface:
+Clones the current rule. Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionProps` interface:
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -280,7 +318,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `combinatorSelector`
 
-Default is [`ValueSelector`](./valueselector). Receives the following props per the `CombinatorSelectorProps` interface:
+Selects the `combinator` property for the current group, or the current independent combinator value. Default is [`ValueSelector`](./valueselector). Receives the following props per the `CombinatorSelectorProps` interface:
 
 | Prop             | Type                                     | Description                                                          |
 | ---------------- | ---------------------------------------- | -------------------------------------------------------------------- |
@@ -299,7 +337,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 
 #### `dragHandle`
 
-Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enabled](#enabledraganddrop). Note that this component must be based on `React.forwardRef`. Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
+Provides a draggable handle for reordering rules and groups. Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enabled](#enabledraganddrop). Note that this component must be based on `React.forwardRef`. Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
 
 | Prop          | Type                                      | Description                                                  |
 | ------------- | ----------------------------------------- | ------------------------------------------------------------ |
@@ -316,7 +354,7 @@ Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enab
 
 #### `fieldSelector`
 
-Default is [`ValueSelector`](./valueselector). Receives the following props per the `FieldSelectorProps` interface:
+Selects the `field` property for the current rule. Default is [`ValueSelector`](./valueselector). Receives the following props per the `FieldSelectorProps` interface:
 
 | Prop             | Type                                     | Description                                                        |
 | ---------------- | ---------------------------------------- | ------------------------------------------------------------------ |
@@ -345,7 +383,7 @@ A small wrapper around the [`combinatorSelector`](#combinatorselector) component
 
 #### `lockGroupAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
+Locks the current group (sets the `disabled` property to `true`). Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
 
 | Prop                  | Type                                     | Description                                                                                                            |
 | --------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -365,7 +403,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `lockRuleAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
+Locks the current rule (sets the `disabled` property to `true`). Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
 
 | Prop                  | Type                                     | Description                                                                                                          |
 | --------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -384,7 +422,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `notToggle`
 
-Default is [`NotToggle`](./nottoggle). Receives the following props per the `NotToggleProps` interface:
+Toggles the `not` property of the current group between `true` and `false`. Default is [`NotToggle`](./nottoggle). Receives the following props per the `NotToggleProps` interface:
 
 | Prop             | Type                                     | Description                                                  |
 | ---------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -403,7 +441,7 @@ Default is [`NotToggle`](./nottoggle). Receives the following props per the `Not
 
 #### `operatorSelector`
 
-Default is [`ValueSelector`](./valueselector). Receives the following props per the `OperatorSelectorProps` interface:
+Selects the `operator` property for the current rule. Default is [`ValueSelector`](./valueselector). Receives the following props per the `OperatorSelectorProps` interface:
 
 | Prop             | Type                                     | Description                                                      |
 | ---------------- | ---------------------------------------- | ---------------------------------------------------------------- |
@@ -424,7 +462,7 @@ Default is [`ValueSelector`](./valueselector). Receives the following props per 
 
 #### `removeGroupAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
+Removes the current group from its parent group's `rules` array. Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionWithRulesProps` interface:
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -443,7 +481,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `removeRuleAction`
 
-Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionProps` interface:
+Removes the current rule from its parent group's `rules` array. Default is [`ActionElement`](./actionelement). Receives the following props per the `ActionProps` interface:
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -461,7 +499,7 @@ Default is [`ActionElement`](./actionelement). Receives the following props per 
 
 #### `rule`
 
-Default is [`Rule`](./rule). Receives the following props per the `RuleProps` interface:
+Rule layout component. Default is [`Rule`](./rule). Receives the following props per the `RuleProps` interface:
 
 | Prop                | Type           | Description                                                  |
 | ------------------- | -------------- | ------------------------------------------------------------ |
@@ -485,7 +523,7 @@ If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule
 
 #### `ruleGroup`
 
-Default is [`RuleGroup`](./rulegroup). Receives the following props per the `RuleGroupProps` interface:
+Rule group layout component. Default is [`RuleGroup`](./rulegroup). Receives the following props per the `RuleGroupProps` interface:
 
 | Prop                | Type               | Description                                                  |
 | ------------------- | ------------------ | ------------------------------------------------------------ |
@@ -509,7 +547,7 @@ If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule
 
 #### `shiftActions`
 
-Default is [`ShiftActions`](./shiftactions). Receives the following props per the `ShiftActionsProps` interface:
+Shifts the current rule/group up or down in the query hierarchy. Default is [`ShiftActions`](./shiftactions). Receives the following props per the `ShiftActionsProps` interface:
 
 | Prop                | Type                                            | Description                                                                                                   |
 | ------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -530,7 +568,7 @@ Default is [`ShiftActions`](./shiftactions). Receives the following props per th
 
 #### `valueEditor`
 
-Default is [`ValueEditor`](./valueeditor). Receives the following props per the `ValueEditorProps` interface:
+Updates the `value` property for the current rule. Default is [`ValueEditor`](./valueeditor). Receives the following props per the `ValueEditorProps` interface:
 
 | Prop             | Type                                     | Description                                                             |
 | ---------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
@@ -556,9 +594,37 @@ Default is [`ValueEditor`](./valueeditor). Receives the following props per the 
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                             |
 | `rule`           | `RuleType`                               | This rule                                                               |
 
+#### `valueSelector`
+
+The component for all value selector controls. Default is [`ValueSelector`](./valueselector). Receives props per the `CombinatorSelectorProps`, `FieldSelectorProps`, `OperatorSelectorProps`, or `ValueSourceSelectorProps` interface depending on the control, which can be any of the following:
+
+- [`combinatorSelector`](#combinatorselector)
+- [`fieldSelector`](#fieldselector)
+- [`operatorSelector`](#operatorselector)
+- [`valueSourceSelector`](#valuesourceselector)
+
+For example, this:
+
+```tsx
+<QueryBuilder controlElements={{ valueSelector: MyAwesomeSelector }} />
+```
+
+...is equivalent to this:
+
+```tsx
+<QueryBuilder
+  controlElements={{
+    combinatorSelector: MyAwesomeSelector
+    fieldSelector: MyAwesomeSelector
+    operatorSelector: MyAwesomeSelector
+    valueSourceSelector: MyAwesomeSelector
+  }}
+/>
+```
+
 #### `valueSourceSelector`
 
-Default is [`ValueSelector`](./valueselector). Receives the following props per the `ValueSourceSelectorProps` interface:
+Selects the `valueSource` property for the current rule. Default is [`ValueSelector`](./valueselector). Receives the following props per the `ValueSourceSelectorProps` interface:
 
 | Prop             | Type                                             | Description                                                       |
 | ---------------- | ------------------------------------------------ | ----------------------------------------------------------------- |

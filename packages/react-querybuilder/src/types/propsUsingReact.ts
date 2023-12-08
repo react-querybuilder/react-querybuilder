@@ -187,24 +187,131 @@ export interface ValueEditorProps<
  * Subcomponents.
  */
 export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
+  /**
+   * Default component for all button-type controls.
+   *
+   * @default ActionElement
+   */
+  actionElement: ComponentType<ActionProps>;
+  /**
+   * Adds a sub-group to the current group.
+   *
+   * @default ActionElement
+   */
   addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
+  /**
+   * Adds a rule to the current group.
+   *
+   * @default ActionElement
+   */
   addRuleAction: ComponentType<ActionWithRulesAndAddersProps>;
+  /**
+   * Clones the current group.
+   *
+   * @default ActionElement
+   */
   cloneGroupAction: ComponentType<ActionWithRulesProps>;
+  /**
+   * Clones the current rule.
+   *
+   * @default ActionElement
+   */
   cloneRuleAction: ComponentType<ActionProps>;
+  /**
+   * Selects the `combinator` property for the current group, or the current independent combinator value.
+   *
+   * @default ValueSelector
+   */
   combinatorSelector: ComponentType<CombinatorSelectorProps>;
-  inlineCombinator: ComponentType<InlineCombinatorProps>;
-  shiftActions: ComponentType<ShiftActionsProps>;
+  /**
+   * Provides a draggable handle for reordering rules and groups.
+   *
+   * @default DragHandle
+   */
   dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<any>>;
+  /**
+   * Selects the `field` property for the current rule.
+   *
+   * @default ValueSelector
+   */
   fieldSelector: ComponentType<FieldSelectorProps>;
-  notToggle: ComponentType<NotToggleProps>;
-  operatorSelector: ComponentType<OperatorSelectorProps>;
-  lockRuleAction: ComponentType<ActionWithRulesProps>;
+  /**
+   * A small wrapper around the `combinatorSelector` component.
+   *
+   * @default InlineCombinator
+   */
+  inlineCombinator: ComponentType<InlineCombinatorProps>;
+  /**
+   * Locks the current group (sets the `disabled` property to `true`).
+   *
+   * @default ActionElement
+   */
   lockGroupAction: ComponentType<ActionWithRulesProps>;
+  /**
+   * Locks the current rule (sets the `disabled` property to `true`).
+   *
+   * @default ActionElement
+   */
+  lockRuleAction: ComponentType<ActionWithRulesProps>;
+  /**
+   * Toggles the `not` property of the current group between `true` and `false`.
+   *
+   * @default NotToggle
+   */
+  notToggle: ComponentType<NotToggleProps>;
+  /**
+   * Selects the `operator` property for the current rule.
+   *
+   * @default ValueSelector
+   */
+  operatorSelector: ComponentType<OperatorSelectorProps>;
+  /**
+   * Removes the current group from its parent group's `rules` array.
+   *
+   * @default ActionElement
+   */
   removeGroupAction: ComponentType<ActionWithRulesProps>;
+  /**
+   * Removes the current rule from its parent group's `rules` array.
+   *
+   * @default ActionElement
+   */
   removeRuleAction: ComponentType<ActionProps>;
+  /**
+   * Rule layout component.
+   *
+   * @default Rule
+   */
   rule: ComponentType<RuleProps>;
+  /**
+   * Rule group layout component.
+   *
+   * @default RuleGroup
+   */
   ruleGroup: ComponentType<RuleGroupProps>;
+  /**
+   * Shifts the current rule/group up or down in the query hierarchy.
+   *
+   * @default ShiftActions
+   */
+  shiftActions: ComponentType<ShiftActionsProps>;
+  /**
+   * Updates the `value` property for the current rule.
+   *
+   * @default ValueEditor
+   */
   valueEditor: ComponentType<ValueEditorProps<F, O>>;
+  /**
+   * Default component for all value selector controls.
+   *
+   * @default ValueSelector
+   */
+  valueSelector: ComponentType<ValueSelectorProps>;
+  /**
+   * Selects the `valueSource` property for the current rule.
+   *
+   * @default ValueSelector
+   */
   valueSourceSelector: ComponentType<ValueSourceSelectorProps>;
 }
 

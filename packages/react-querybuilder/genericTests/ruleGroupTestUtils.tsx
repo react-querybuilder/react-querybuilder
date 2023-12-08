@@ -17,8 +17,8 @@ import type {
   FieldSelectorProps,
   FullOption,
   NotToggleProps,
+  Operator,
   OperatorSelectorProps,
-  Option,
   QueryActions,
   RuleGroupProps,
   RuleType,
@@ -37,6 +37,12 @@ export const createRule = (index: number) =>
     value: `value_${index}`,
   } satisfies RuleType);
 
+const Button = (props: ActionProps) => (
+  <button data-testid={props.testID} className={props.className} onClick={props.handleOnClick}>
+    {props.label}
+  </button>
+);
+
 export const ruleGroupControls = {
   combinatorSelector: (props: CombinatorSelectorProps) => (
     <select
@@ -54,52 +60,22 @@ export const ruleGroupControls = {
     </select>
   ),
   addRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.addRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.addRule.label}
-    </button>
+    <Button {...props} testID={TestID.addRule} label={translations.addRule.label} />
   ),
   addGroupAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.addGroup}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.addGroup.label}
-    </button>
+    <Button {...props} testID={TestID.addGroup} label={translations.addGroup.label} />
   ),
   cloneGroupAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.cloneGroup}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.cloneRuleGroup.label}
-    </button>
+    <Button {...props} testID={TestID.cloneGroup} label={translations.cloneRuleGroup.label} />
   ),
   cloneRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.cloneRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.cloneRule.label}
-    </button>
+    <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
   removeGroupAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.removeGroup}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.removeGroup.label}
-    </button>
+    <Button {...props} testID={TestID.removeGroup} label={translations.removeGroup.label} />
   ),
   removeRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.removeRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.removeRule.label}
-    </button>
+    <Button {...props} testID={TestID.removeRule} label={translations.removeRule.label} />
   ),
   notToggle: (props: NotToggleProps) => (
     <label data-testid={TestID.notToggle} className={props.className}>
@@ -122,7 +98,7 @@ export const ruleGroupControls = {
       className={props.className}
       value={props.value}
       onChange={e => props.handleOnChange(e.target.value)}>
-      <option value={(props.options[0] as Option).name}>{props.options[0].label}</option>
+      <option value={(props.options[0] as Operator).name}>{props.options[0].label}</option>
     </select>
   ),
   valueEditor: (props: ValueEditorProps) => (

@@ -22,21 +22,11 @@ export * from './ChakraValueEditor';
 export * from './ChakraValueSelector';
 
 export const chakraControlElements = {
-  addGroupAction: ChakraActionElement,
-  addRuleAction: ChakraActionElement,
-  cloneGroupAction: ChakraActionElement,
-  cloneRuleAction: ChakraActionElement,
-  combinatorSelector: ChakraValueSelector,
+  actionElement: ChakraActionElement,
+  valueSelector: ChakraValueSelector,
   dragHandle: ChakraDragHandle,
-  fieldSelector: ChakraValueSelector,
   notToggle: ChakraNotToggle,
-  operatorSelector: ChakraValueSelector,
-  lockRuleAction: ChakraActionElement,
-  lockGroupAction: ChakraActionElement,
-  removeGroupAction: ChakraActionElement,
-  removeRuleAction: ChakraActionElement,
   valueEditor: ChakraValueEditor,
-  valueSourceSelector: ChakraValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 export const chakraTranslations = {
