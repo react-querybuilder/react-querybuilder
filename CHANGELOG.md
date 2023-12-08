@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#589] New utility function `uniqByIdentifier` replaces `uniqByName`, which has been deprecated. `uniqByIdentifier` will remove duplicates based on the `value` property, or `name` if `value` is undefined (see [#586]).
 - [#526] Experimental support for ElasticSearch export format in `formatQuery`.
 - `parseNumbers` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing, invalid characters (e.g., "abc" in "123abc") like the native `parseFloat` method without returning `NaN` when parsing fails.
-- New compatibility package for [Tremor](https://www.tremor.so/), `@react-querybuilder/tremor`.
+- [#606] New compatibility package for [Tremor](https://www.tremor.so/), `@react-querybuilder/tremor`.
 
 ### Fixed
 
@@ -1472,6 +1472,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#585]: https://github.com/react-querybuilder/react-querybuilder/pull/585
 [#586]: https://github.com/react-querybuilder/react-querybuilder/pull/586
 [#589]: https://github.com/react-querybuilder/react-querybuilder/pull/589
+[#606]: https://github.com/react-querybuilder/react-querybuilder/pull/606
 
 <!-- Release comparison links -->
 
