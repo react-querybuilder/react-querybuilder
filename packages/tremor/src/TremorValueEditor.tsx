@@ -9,7 +9,7 @@ import {
 } from '@tremor/react';
 import dayjs from 'dayjs';
 import * as React from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
+import type { ValueEditorProps, VersatileSelectorProps } from 'react-querybuilder';
 import {
   ValueEditor,
   getFirstOption,
@@ -20,6 +20,10 @@ import { TremorValueSelector } from './TremorValueSelector';
 
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
+
+const ClearableValueSelector = (props: VersatileSelectorProps) => (
+  <TremorValueSelector {...props} enableClear />
+);
 
 export const TremorValueEditor = ({
   fieldData,
@@ -37,7 +41,7 @@ export const TremorValueEditor = ({
   valueSource: _vs,
   disabled,
   testID,
-  selectorComponent: SelectorComponent = TremorValueSelector,
+  selectorComponent: SelectorComponent = ClearableValueSelector,
   validation: _validation,
   ...props
 }: ValueEditorProps) => {

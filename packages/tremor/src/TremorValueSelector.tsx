@@ -33,27 +33,31 @@ export const TremorValueSelector = ({
 }: TremorValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
+  const optionElements = React.useMemo(() => toSelectItems(options, multiple), [multiple, options]);
+
   return multiple ? (
     <MultiSelect
+      {...otherProps}
       data-testid={testID}
       title={title}
       className={className}
       disabled={disabled}
       value={toArray(val)}
       placeholder={placeholder}
-      onValueChange={v => onChange(v)}>
-      {toSelectItems(options, true)}
+      onValueChange={onChange}>
+      {optionElements}
     </MultiSelect>
   ) : (
     <Select
+      enableClear={false} // Remove "clear" button by default
       {...otherProps}
       data-testid={testID}
       title={title}
       className={className}
       value={value}
       disabled={disabled}
-      onValueChange={v => onChange(v)}>
-      {toSelectItems(options, false)}
+      onValueChange={onChange}>
+      {optionElements}
     </Select>
   );
 };
