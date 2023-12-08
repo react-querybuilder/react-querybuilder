@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import 'react-querybuilder/dist/query-builder.scss';
 
 body {
