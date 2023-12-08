@@ -193,4 +193,17 @@ export const configs: Record<string, ExampleConfig> = {
     isCompatPackage: true,
     enableDnD: false,
   },
+  tremor: {
+    name: 'Tremor',
+    dependencyKeys: ['@tremor/react', 'dayjs'],
+    scssPre: [],
+    scssPost: [],
+    tsxImports: [`import { QueryBuilderTremor } from '@react-querybuilder/tremor';`],
+    additionalDeclarations: [],
+    wrapper: ['<QueryBuilderTremor>', '</QueryBuilderTremor>'],
+    props: [],
+    compileToJS: false,
+    isCompatPackage: true,
+    enableDnD: false,
+  },
 };

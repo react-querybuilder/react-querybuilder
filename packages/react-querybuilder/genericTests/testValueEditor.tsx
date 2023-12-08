@@ -7,6 +7,7 @@ import { findInput, findInputs, findTextarea, userEventSetup } from './utils';
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
   select: boolean;
+  optgroup: boolean;
   multiselect: boolean;
   checkbox: boolean;
   radio: boolean;
@@ -164,7 +165,9 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps, {
+        optgroup: skip.optgroup,
+      });
     }
 
     if (!skip.multiselect) {
@@ -176,7 +179,9 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps, {
+        optgroup: skip.optgroup,
+      });
     }
 
     if (!skip.checkbox) {

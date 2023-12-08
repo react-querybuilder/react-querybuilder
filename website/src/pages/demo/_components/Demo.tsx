@@ -48,6 +48,15 @@ import styles from './Demo.module.css';
 import ImportModal from './ImportModal';
 import Nav from './Nav';
 
+// TODO: Find out why this is necessary
+import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
+declare module '@theme/TabItem' {
+  export default function TabItem(props: TabItemProps): JSX.Element;
+}
+declare module '@theme/Tabs' {
+  export default function Tabs(props: TabsProps): JSX.Element;
+}
+
 const { version: rqbVersion } = rqbPkgJson;
 
 const infoChar = 'ⓘ';

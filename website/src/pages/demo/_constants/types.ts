@@ -56,7 +56,8 @@ export type StyleName =
   | 'chakra'
   | 'fluent'
   | 'mantine'
-  | 'material';
+  | 'material'
+  | 'tremor';
 
 export interface DemoState {
   options: Partial<DemoOptions>;

@@ -4,7 +4,7 @@ import type { ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
 import { join as pathJoin } from 'path';
-import prettier from 'prettier';
+import prettier, { type Options as PrettierOptions } from 'prettier';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
 
@@ -78,7 +78,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       printWidth = rootPrettierConfig?.printWidth;
     }
 
-    const prettierOptions: prettier.Options = {
+    const prettierOptions: PrettierOptions = {
       ...examplePrettierConfig,
       ...(printWidth ? { printWidth } : {}),
       filepath,

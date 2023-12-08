@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "@react-querybuilder/tremor": "^7.0.0-alpha.2",
+    "@tremor/react": "^3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-querybuilder": "^7.0.0-alpha.2"
+  },
+  "description": "React Query Builder Tremor Example",
+  "devDependencies": {
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "@vitejs/plugin-react": "^4.1.0",
+    "sass": "1.69.4",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
+  },
+  "name": "react-querybuilder-tremor-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "type": "module"
+}

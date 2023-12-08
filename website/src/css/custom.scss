@@ -1,5 +1,9 @@
 @use 'sass:color';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import './classname-diagram.scss';
 
 /**
