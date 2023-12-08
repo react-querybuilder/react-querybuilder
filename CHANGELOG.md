@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [#537] Performance is improved via `React.memo` (especially for large queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can usually be addressed with `useCallback`.
 - [#589] Fixed issue where locking the root group would prevent unlocking the query.
+- [#595] `MantineValueSelector` now correctly renders option group headers.
 
 ## [v6.5.4] - 2023-11-04
 
