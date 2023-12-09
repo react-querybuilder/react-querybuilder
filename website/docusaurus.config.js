@@ -45,6 +45,14 @@ const config = async () => {
           },
         }),
       }),
+      async (_context, _options) => ({
+        name: 'docusaurus-tailwindcss',
+        configurePostCss(postcssOptions) {
+          postcssOptions.plugins.push(require.resolve('tailwindcss'));
+          postcssOptions.plugins.push(require.resolve('autoprefixer'));
+          return postcssOptions;
+        },
+      }),
       () => ({
         // This is not actually used, only here just in case
         name: 'rqb-wp5-raw-loader',
@@ -69,6 +77,7 @@ const config = async () => {
                   '../packages/mantine',
                   '../packages/material',
                   '../packages/native',
+                  '../packages/tremor',
                 ],
                 out: '../api',
                 entryPointStrategy: 'packages',

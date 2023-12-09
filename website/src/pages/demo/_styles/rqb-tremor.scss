@@ -1,0 +1,10 @@
+.rqb-tremor {
+  * {
+    border-style: solid;
+    border-width: 0;
+  }
+  // TODO: find out why this is necessary
+  button:has(.tremor-Select-clearIcon) {
+    background-color: transparent;
+  }
+}

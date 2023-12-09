@@ -179,7 +179,7 @@ const LandingPage = () => {
           </div>
         </div>
       </header>
-      <main className={styles.main}>
+      <main className={`${styles.main} homepage-showcase`}>
         <QueryBuilderContext.Provider
           value={{ controlClassnames: { queryBuilder: styles.queryBuilder } }}>
           <div className={styles.featureContainer}>

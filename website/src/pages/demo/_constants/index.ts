@@ -6,6 +6,7 @@ import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
 import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
+import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
 import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
@@ -242,6 +243,7 @@ export const styleNameMap: Record<StyleName, string> = {
   fluent: 'Fluent UI',
   mantine: 'Mantine',
   material: 'MUI/Material',
+  tremor: 'Tremor',
 };
 
 const { default: _d, ...compatStyles } = styleNameMap;
@@ -258,4 +260,5 @@ export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>>
   fluent: packageJSON_rqb_fluent.peerDependencies,
   mantine: packageJSON_rqb_mantine.peerDependencies,
   material: packageJSON_rqb_material.peerDependencies,
+  tremor: packageJSON_rqb_tremor.peerDependencies,
 };

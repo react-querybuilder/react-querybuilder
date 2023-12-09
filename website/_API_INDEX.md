@@ -16,3 +16,4 @@ Choose a package to see detailed API documentation, generated directly from the 
 - [@react-querybuilder/mantine](/api/modules/react_querybuilder_mantine)
 - [@react-querybuilder/material](/api/modules/react_querybuilder_material)
 - [@react-querybuilder/native](/api/modules/react_querybuilder_native)
+- [@react-querybuilder/tremor](/api/modules/react_querybuilder_tremor)

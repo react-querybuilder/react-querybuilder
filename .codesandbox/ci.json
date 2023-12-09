@@ -12,7 +12,8 @@
     "/examples/mantine",
     "/examples/material",
     "/examples/native",
-    "/examples/next"
+    "/examples/next",
+    "/examples/tremor"
   ],
   "node": "18"
 }
