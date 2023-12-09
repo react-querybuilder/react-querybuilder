@@ -4,7 +4,10 @@
     border-width: 0;
   }
   // TODO: find out why this is necessary
-  button:has(.tremor-Select-clearIcon) {
+  button:has(> svg.tremor-DateRangePicker-clearIcon),
+  button:has(> svg.tremor-MultiSelect-clearIcon),
+  button:has(> svg.tremor-SearchSelect-clearIcon),
+  button:has(> svg.tremor-Select-clearIcon) {
     background-color: transparent;
   }
 }
