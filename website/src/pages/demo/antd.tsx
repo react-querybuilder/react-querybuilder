@@ -49,13 +49,7 @@ function ReactQueryBuilderDemo_AntdBrowser() {
       theme={{
         algorithm: colorMode === 'dark' ? darkAlgorithm : defaultAlgorithm,
       }}>
-      <QueryBuilderAntD
-        controlElements={{
-          fieldSelector: AntDValueSelectorWrapper,
-          combinatorSelector: AntDValueSelectorWrapper,
-          operatorSelector: AntDValueSelectorWrapper,
-          valueSourceSelector: AntDValueSelectorWrapper,
-        }}>
+      <QueryBuilderAntD controlElements={{ valueSelector: AntDValueSelectorWrapper }}>
         <Demo variant="antd" />
       </QueryBuilderAntD>
     </ConfigProvider>
