@@ -16,7 +16,7 @@ export const optionListMapNameToValue = (list: FullOptionList<FullOption>): Full
     listFlat = uniqByIdentifier(list);
   }
 
-  return listFlat.map(opt => ({ name: opt.name, value: opt.name, label: opt.label }));
+  return listFlat.map(opt => ({ name: opt.name, value: opt.name, label: opt.label, group: opt.group}));
 };
 
 export const toNumberInputValue = (val: any) => {
