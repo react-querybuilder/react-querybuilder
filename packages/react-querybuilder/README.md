@@ -120,7 +120,9 @@ console.log(query);
 */
 ```
 
-Note: `formatQuery`, `transformQuery`, and the `parse*` functions can be used without importing React (e.g., on the server) like this:
+## Utilities
+
+`formatQuery`, `transformQuery`, and the `parse*` functions can be used without importing from `react` (on the server, for example) like this:
 
 ```js
 import { formatQuery } from 'react-querybuilder/formatQuery';
@@ -130,3 +132,5 @@ import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
 import { parseSQL } from 'react-querybuilder/parseSQL';
 import { transformQuery } from 'react-querybuilder/transformQuery';
 ```
+
+(As of version 7, the `parse*` functions are _only_ available through these extended exports.)

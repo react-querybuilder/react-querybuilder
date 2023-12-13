@@ -24,6 +24,17 @@ The props themselves for the main component haven't changed much from version 6,
   const qbp7a: QueryBuilderProps<RuleGroupType, Option, Option, Option> = {};
   ```
 
+### Parser functions removed from main bundle
+
+Since the parser functions are infrequently used and generally not used together, they have been removed from the main exports. They have been available as separate exports for some time now (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), but before version 7 they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. (This reduces the main bundle size by roughly 50%.)
+
+| Function         | New `import` requirement                                             |
+| ---------------- | -------------------------------------------------------------------- |
+| `parseCEL`       | `import { parseCEL } from "react-querybuilder/parseCEL"`             |
+| `parseJsonLogic` | `import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"` |
+| `parseMongoDB`   | `import { parseMongoDB } from "react-querybuilder/parseMongoDB"`     |
+| `parseSQL`       | `import { parseSQL } from "react-querybuilder/parseSQL"`             |
+
 ## New features
 
 ### Performance improvements
@@ -38,11 +49,16 @@ Previously, props and properties that accepted an `OptionList` type or extension
 
 ### Query selector, getter, and dispatcher
 
-Three new methods are available that should make it easier to manage arbitrary query updates from custom components. (Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.) The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
 
 - `getQuery()`: returns the current root query object.
 - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
 - `useQueryBuilderSelector(selector)`: generate the selector with `getQuerySelectorById(props.schema.qbId)`.
+
+Notes:
+
+- These functions use a custom [Redux](https://redux.js.org/) context behind the scenes.
+- Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.
 
 ### Field data passed to `get*` callbacks
 

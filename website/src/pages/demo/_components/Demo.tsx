@@ -16,12 +16,12 @@ import {
   defaultValidator,
   formatQuery,
   objectKeys,
-  parseCEL,
-  parseJsonLogic,
-  parseMongoDB,
-  parseSQL,
 } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
+import { parseCEL } from 'react-querybuilder/parseCEL';
+import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
+import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+import { parseSQL } from 'react-querybuilder/parseSQL';
 import {
   initialQuery as defaultInitialQuery,
   initialQueryIC as defaultInitialQueryIC,
