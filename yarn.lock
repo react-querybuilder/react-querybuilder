@@ -16619,6 +16619,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild-analyzer@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "esbuild-analyzer@npm:0.2.0"
+  dependencies:
+    pako: "npm:^2.1.0"
+    yargs: "npm:^17.6.2"
+  bin:
+    esbuild-analyzer: bin/index.js
+  checksum: d7f9957e8b0292f64d325fc37ee1bb1ad129814fc16e92027d4532d17788efa30345644075bfb9e7bb5ff88377c8ef70332f14f0ec45dc538796981ee9ae4892
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:^0.19.2":
   version: 0.19.8
   resolution: "esbuild@npm:0.19.8"
@@ -26450,6 +26462,7 @@ __metadata:
     all-contributors-cli: "npm:^6.26.1"
     bun-types: "npm:^1.0.15"
     concurrently: "npm:^8.2.2"
+    esbuild-analyzer: "npm:^0.2.0"
     eslint: "npm:^8.55.0"
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"

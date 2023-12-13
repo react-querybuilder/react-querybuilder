@@ -1,3 +1,4 @@
+import AnalyzerPlugin from 'esbuild-analyzer';
 import { writeFile } from 'fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
@@ -9,7 +10,7 @@ export default defineConfig(options => {
     },
     sourcemap: true,
     dts: true,
-    // TODO: "use client" only for the React components
+    // TODO: how to "use client" only for the React components?
     // esbuildOptions: options => {
     //   options.banner = {
     //     js: '"use client";',
@@ -29,6 +30,7 @@ export default defineConfig(options => {
       ...commonOptions,
       format: ['esm'],
       clean: true,
+      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.html' })],
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {
@@ -50,6 +52,7 @@ export default defineConfig(options => {
       },
       format: ['esm'],
       outExtension: () => ({ js: '.mjs' }),
+      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.production.html' })],
     },
     // CJS development
     {

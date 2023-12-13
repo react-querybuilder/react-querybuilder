@@ -5,6 +5,7 @@ node_modules/
 build/
 dist/
 coverage/
+build-analysis.*
 
 # website/api is (re)generated when running `bun web` or `bun website:build`,
 # but it needs to exist for docusaurus to begin
