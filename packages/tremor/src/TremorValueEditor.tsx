@@ -22,9 +22,7 @@ const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
 const ClearableValueSelector = (props: VersatileSelectorProps) => {
-  const SelectorComponent =
-    (props.schema.controls.valueSelector as typeof TremorValueSelector) ?? TremorValueSelector;
-  return <SelectorComponent {...props} enableClear />;
+  return <TremorValueSelector {...props} enableClear />;
 };
 
 export const TremorValueEditor = (allProps: ValueEditorProps) => {

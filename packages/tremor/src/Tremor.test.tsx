@@ -218,7 +218,7 @@ describe('TremorNotToggle', () => {
   });
 });
 
-describe.skip('TremorValueEditor as "between" select', () => {
+describe('TremorValueEditor as "between" select', () => {
   const betweenSelectProps = {
     ...defaultValueEditorProps,
     operator: 'between',
@@ -249,12 +249,12 @@ describe.skip('TremorValueEditor as "between" select', () => {
   it('should call the onChange handler', async () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
-    const betweenSelects = Array.from(
-      document.getElementsByClassName(standardClassnames.valueListItem)
-    ) as HTMLElement[];
+    const betweenSelects = (
+      Array.from(document.getElementsByClassName(standardClassnames.valueListItem)) as HTMLElement[]
+    ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[1]);
+    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[0]);
     await user.click(betweenSelects[1]);
     await user.click(screen.getAllByText(betweenSelectProps.values[0].label)[1]);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test2');
@@ -270,12 +270,12 @@ describe.skip('TremorValueEditor as "between" select', () => {
         value={['test1']}
       />
     );
-    const betweenSelects = Array.from(
-      document.getElementsByClassName(standardClassnames.valueListItem)
-    ) as HTMLElement[];
+    const betweenSelects = (
+      Array.from(document.getElementsByClassName(standardClassnames.valueListItem)) as HTMLElement[]
+    ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[1]);
+    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[0]);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test1');
   });
 
@@ -284,12 +284,12 @@ describe.skip('TremorValueEditor as "between" select', () => {
     render(
       <TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
     );
-    const betweenSelects = Array.from(
-      document.getElementsByClassName(standardClassnames.valueListItem)
-    ) as HTMLElement[];
+    const betweenSelects = (
+      Array.from(document.getElementsByClassName(standardClassnames.valueListItem)) as HTMLElement[]
+    ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[1]);
+    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[0]);
     await user.click(betweenSelects[1]);
     await user.click(screen.getAllByText(betweenSelectProps.values[0].label)[1]);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, ['test2', 'test2']);
