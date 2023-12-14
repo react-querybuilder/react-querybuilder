@@ -218,6 +218,36 @@ describe('TremorNotToggle', () => {
   });
 });
 
+describe('TremorValueEditor as switch', () => {
+  const props: ValueEditorProps = { ...defaultValueEditorProps, type: 'switch' };
+
+  it('should have the value passed into the <input />', () => {
+    render(<TremorValueEditor {...props} value />);
+    expect(findInput(document.body)).toBeChecked();
+  });
+
+  it('should have the className passed into the <label />', () => {
+    render(<TremorValueEditor {...props} className="foo" />);
+    expect(hasOrInheritsClass(findInput(document.body), 'foo')).toBe(true);
+  });
+
+  it('should call the handleOnChange method passed in', async () => {
+    const onChange = jest.fn();
+    render(<TremorValueEditor {...props} handleOnChange={onChange} />);
+    await user.click(screen.getByRole('switch'));
+    expect(onChange).toHaveBeenCalledWith(true);
+  });
+
+  it('should be disabled by disabled prop', async () => {
+    const onChange = jest.fn();
+    render(<TremorValueEditor {...props} handleOnChange={onChange} disabled />);
+    const valueEditor = screen.getByRole('switch');
+    expect(valueEditor).toBeDisabled();
+    await user.click(valueEditor);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
 describe('TremorValueEditor as "between" select', () => {
   const betweenSelectProps = {
     ...defaultValueEditorProps,
