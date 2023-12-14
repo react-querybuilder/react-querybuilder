@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import dayjs from 'dayjs';
 import * as React from 'react';
 import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import {
@@ -32,7 +33,6 @@ const user = userEventSetup();
 
 testActionElement(TremorActionElement);
 testDragHandle(TremorDragHandle);
-// testNotToggle(TremorNotToggle);
 testShiftActions(TremorShiftActions);
 testValueEditor(TremorValueEditor, {
   multiselect: true,
@@ -53,7 +53,7 @@ const defaultValueSelectorProps: ValueSelectorProps = {
   schema: basicSchema,
 };
 
-const valueEditorAsMultiselectProps: ValueEditorProps = {
+const valueEditorAsSelectProps: ValueEditorProps = {
   field: 'TEST',
   fieldData: { name: 'TEST', label: 'Test' },
   operator: '=',
@@ -61,11 +61,8 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
   level: 0,
   path: [],
   valueSource: 'value',
-  schema: {
-    ...basicSchema,
-    controls: { ...basicSchema.controls, valueSelector: TremorValueSelector },
-  },
-  type: 'multiselect',
+  schema: basicSchema,
+  type: 'select',
   values: defaultValueSelectorProps.options,
   rule: { field: '', operator: '', value: '' },
 };
@@ -268,14 +265,6 @@ describe('TremorValueEditor as "between" select', () => {
     expect(betweenSelects[1]).toHaveTextContent('Test 2');
   });
 
-  // it('should assume empty values array if not provided', () => {
-  //   render(<TremorValueEditor {...betweenSelectProps} values={undefined} />);
-  //   const betweenSelects = screen.getAllByRole('button').filter((_b, i) => !(i % 2));
-  //   expect(betweenSelects).toHaveLength(2);
-  //   expect(betweenSelects[0].querySelectorAll('li')).toHaveLength(0);
-  //   expect(betweenSelects[1].querySelectorAll('li')).toHaveLength(0);
-  // });
-
   it('should call the onChange handler', async () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
@@ -339,8 +328,125 @@ describe('TremorValueEditor as "between" select', () => {
   });
 });
 
+describe('TremorValueEditor as date picker', () => {
+  const props = defaultValueEditorProps;
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = `${now.getMonth() + 1}`.padStart(2, '0');
+  const dateStub = `${year}-${month}-`;
+
+  it('renders value editor as date editor', async () => {
+    const handleOnChange = jest.fn();
+    render(<TremorValueEditor {...props} inputType="date" handleOnChange={handleOnChange} />);
+    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByText('10'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10`);
+  });
+
+  it('handles preloaded dates and clearing value as date editor', async () => {
+    const handleOnChange = jest.fn();
+    const dateString = '2002-12-14';
+    render(
+      <TremorValueEditor
+        {...props}
+        inputType="date"
+        value={dateString}
+        handleOnChange={handleOnChange}
+      />
+    );
+    const button = screen.getByText(dayjs(dateString).format('MMM D, YYYY'));
+    await user.click(button);
+    const day = screen.getByText('16');
+    await user.click(day);
+    expect(handleOnChange).toHaveBeenCalledWith('2002-12-16');
+  });
+
+  it('calls handleOnChange for first date in range editor', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <TremorValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+      />
+    );
+    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByText('10'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,`);
+  });
+
+  it('calls handleOnChange for second date in range editor', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <TremorValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+        value={[`${dateStub}10`, '']}
+      />
+    );
+    await user.click(screen.getAllByRole('button')[0]);
+    await user.click(screen.getByText('20'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
+  });
+
+  it('calls handleOnChange as date range editor with listsAsArrays', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <TremorValueEditor
+        {...props}
+        listsAsArrays
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+      />
+    );
+    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByText('12'));
+    expect(handleOnChange).toHaveBeenCalledWith([`${dateStub}12`, '']);
+    await user.click(screen.getByText('14'));
+    expect(handleOnChange).toHaveBeenCalledWith([`${dateStub}14`, '']);
+  });
+
+  it('handles preloaded values as date range editor', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <TremorValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+        value={`${dateStub}12,${dateStub}14`}
+      />
+    );
+    await user.click(screen.getAllByRole('button')[0]);
+    await user.click(screen.getByText('16'));
+    expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}12,${dateStub}16`);
+  });
+
+  it('handles invalid dates', async () => {
+    const handleOnChange = jest.fn();
+    render(
+      <TremorValueEditor
+        {...props}
+        inputType="date"
+        operator="between"
+        handleOnChange={handleOnChange}
+        value={`invalid,datevalue`}
+      />
+    );
+    expect(screen.getByText(dayjs().format('MMM D, YYYY'))).toBeInTheDocument();
+  });
+});
+
 testSelect('TremorValueSelector', TremorValueSelector, defaultValueSelectorProps);
-testSelect('TremorValueEditor', TremorValueEditor, valueEditorAsMultiselectProps);
+testSelect('TremorValueEditor', TremorValueEditor, valueEditorAsSelectProps);
+testSelect('TremorValueEditor', TremorValueEditor, {
+  ...valueEditorAsSelectProps,
+  type: 'multiselect',
+});
 
 it('renders with composition', () => {
   render(

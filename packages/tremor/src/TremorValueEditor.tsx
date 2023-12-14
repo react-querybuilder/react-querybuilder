@@ -182,9 +182,9 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
         if (!valueAsArray[i]) return defaultValue;
         let date = dayjs(valueAsArray[i]);
         if (!date.isValid()) {
-          date = dayjs(`${dayjs().format('YYYY-MM-DD')}T${valueAsArray[i]}`);
+          date = dayjs(`${dayjs().format('YYYY-MM-DD')}`);
         }
-        return date.isValid() ? date.toDate() : defaultValue;
+        return date.toDate();
       }) as [DatePickerValue, DatePickerValue];
 
       return (
@@ -195,6 +195,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
           disabled={disabled}
           placeholder={placeHolderText}
           enableSelect={false}
+          enableClear
           onValueChange={dates => {
             const dateArray = [dates.from, dates.to].map(d =>
               d ? dayjs(d).format(dateFormat) : ''
@@ -212,6 +213,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
         className={className}
         placeholder={placeHolderText}
         disabled={disabled}
+        enableClear
         value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : undefined}
         onValueChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
