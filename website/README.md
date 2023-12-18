@@ -1,6 +1,8 @@
 # Website
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+
+**All commands below should be run in the repo root directory** (this directory's parent, i.e. `../` from here).
 
 ### Installation
 
@@ -10,24 +12,36 @@ $ yarn
 
 ### Local Development
 
+First build the packages.
+
 ```
-$ yarn start
+$ bun run build
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+Then start the website dev server.
+
+```
+$ bun web
+```
+
+If the API docs have already been generated, you can skip that step of the build by running
+
+```
+RQB_TYPEDOC_DONE=true bun web
+```
+
+This command starts a local development server and opens up a browser window. Most changes to the website code are reflected live without having to restart the server, but any changes to the packages would require a rebuild of any updated packages and a restart of the website server.
 
 ### Build
 
 ```
-$ yarn build
+$ bun website:build
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+This command generates static content into the `build` directory and can be served using any static content hosting service.
 
 ### Deployment
 
-```
-$ GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
-```
+A preview of the website will be available on Netlify when a PR is submitted.
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+The production website, https://react-querybuilder.js.com/, is deployed on every push to the `main` branch on GitHub.

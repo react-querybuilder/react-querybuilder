@@ -3,9 +3,7 @@ title: Export
 description: Convert query builder objects to SQL, etc.
 ---
 
-import TypeScriptAdmonition from '../_ts_admonition.md';
-
-<TypeScriptAdmonition />
+%importmd ../\_ts_admonition.md
 
 Use the `formatQuery` function to export queries in various formats. The function signature is:
 

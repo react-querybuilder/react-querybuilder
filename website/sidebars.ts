@@ -1,7 +1,6 @@
-// @ts-check
+import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
-/** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
-const sidebars = {
+export default {
   mySidebar: [
     'intro',
     {
@@ -68,6 +67,4 @@ const sidebars = {
     'buildless',
     'migrate',
   ],
-};
-
-module.exports = sidebars;
+} satisfies SidebarsConfig;

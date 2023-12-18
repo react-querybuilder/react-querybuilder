@@ -102,6 +102,7 @@
     "react-dnd-test-utils": "^16.0.1",
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.14.0",
+    "remark-import-partial": "^0.0.2",
     "tsup": "^8.0.1",
     "typescript": "^5.3.2",
     "vite": "^5.0.6"

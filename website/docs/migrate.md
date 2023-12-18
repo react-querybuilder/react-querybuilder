@@ -208,6 +208,8 @@ Icon package: [`@mui/icons-material`](https://npmjs.com/package/@mui/icons-mater
 - Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 
-{/* TODO: Use the commented line once v7 docs have been versioned */}
+<!-- TODO: Use the commented line once v7 docs have been versioned -->
+
 Instructions on migrating from v5 to v6 are [here](/docs/migrate).
-{/* Instructions on migrating from v5 to v6 are [here](/docs/6/migrate). */}
+
+<!-- Instructions on migrating from v5 to v6 are [here](/docs/6/migrate). -->

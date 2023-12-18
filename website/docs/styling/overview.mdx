@@ -31,14 +31,12 @@ $rqb-border-width: 1px !default;
 
 To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class to the query builder using the [`controlClassnames` prop](../components/querybuilder#controlclassnames), or to any ancestor element.
 
-<!-- prettier-ignore -->
 ```tsx
-export default () => (
-  <QueryBuilder
-    controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}
-    {...otherProps}
-  />
-);
+<QueryBuilder
+  // highlight-start
+  controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}
+  // highlight-end
+/>
 ```
 
 export const fields = [

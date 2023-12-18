@@ -5,9 +5,8 @@ description: Dynamic editor component
 
 import { useState } from 'react';
 import { joinWith, update, toArray } from 'react-querybuilder';
-import TypeScriptAdmonition from '../_ts_admonition.md';
 
-<TypeScriptAdmonition />
+%importmd ../\_ts_admonition.md
 
 `ValueEditor` renders an `<input>` by default, or a `<select>` (by way of [`ValueSelector`](./valueselector)) if the value should be selected from a list. The [`useValueEditor`](../utils/hooks#usevalueeditor) Hook is called to massage the `value` if necessary and retrieve utilities for managing list values.
 

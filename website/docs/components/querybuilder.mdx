@@ -4,9 +4,8 @@ description: The root component and context provider
 ---
 
 import { DemoLink } from '@site/src/components/DemoLink';
-import TypeScriptAdmonition from '../_ts_admonition.md';
 
-<TypeScriptAdmonition />
+%importmd ../\_ts_admonition.md
 
 The default export of `react-querybuilder` is the `<QueryBuilder />` React component (also available as a named export).
 
@@ -130,7 +129,7 @@ This prop can be used to assign custom CSS classes to the various controls rende
 
 #### Usage example
 
-In the example below, any "+Rule" buttons in the query builder will have the "bold" class which might have the associated CSS rule `.bold { font-weight: bold; }`.
+In the example below, any "+ Rule" buttons in the query builder will have the "bold" class which might have the associated CSS rule `.bold { font-weight: bold; }`.
 
 ```tsx
 function App() {
@@ -737,7 +736,7 @@ If the query is using [independent combinators](#independent-combinators), you c
 
 :::tip
 
-To completely [prevent the addition of new rules](../tips/limit-groups), pass `controlElements={{ addRuleAction: () => null }}` which will prevent the "+Rule" button from rendering.
+To completely [prevent the addition of new rules](../tips/limit-groups), pass `controlElements={{ addRuleAction: () => null }}` which will prevent the "+ Rule" button from rendering.
 
 :::
 
@@ -751,7 +750,7 @@ If the query is using [independent combinators](#independent-combinators), you c
 
 :::tip
 
-To completely [prevent the addition of new groups](../tips/limit-groups), pass `controlElements={{ addGroupAction: () => null }}` which will prevent the "+Group" button from rendering.
+To completely [prevent the addition of new groups](../tips/limit-groups), pass `controlElements={{ addGroupAction: () => null }}` which will prevent the "+ Group" button from rendering.
 
 :::
 
@@ -775,69 +774,80 @@ All keys in the object and all properties within each key are optional. The `tra
     "title": "Fields",
     "placeholderName": "~",
     "placeholderLabel": "------",
-    "placeholderGroupLabel": "------"
+    "placeholderGroupLabel": "------",
   },
   "operators": {
     "title": "Operators",
     "placeholderName": "~",
     "placeholderLabel": "------",
-    "placeholderGroupLabel": "------"
+    "placeholderGroupLabel": "------",
   },
   "value": {
-    "title": "Value"
+    "title": "Value",
   },
   "removeRule": {
-    "label": "x",
-    "title": "Remove rule"
+    "label": "⨯",
+    "title": "Remove rule",
   },
   "removeGroup": {
-    "label": "x",
-    "title": "Remove group"
+    "label": "⨯",
+    "title": "Remove group",
   },
   "addRule": {
-    "label": "+Rule",
-    "title": "Add rule"
+    "label": "+ Rule",
+    "title": "Add rule",
   },
   "addGroup": {
-    "label": "+Group",
-    "title": "Add group"
+    "label": "+ Group",
+    "title": "Add group",
   },
   "combinators": {
-    "title": "Combinators"
+    "title": "Combinators",
   },
   "notToggle": {
     "label": "Not",
-    "title": "Invert this group"
+    "title": "Invert this group",
   },
   "cloneRule": {
     "label": "⧉",
-    "title": "Clone rule"
+    "title": "Clone rule",
   },
   "cloneRuleGroup": {
     "label": "⧉",
-    "title": "Clone group"
+    "title": "Clone group",
+  },
+  "shiftActionUp": {
+    "label": "˄",
+    "title": "Shift up",
+  },
+  "shiftActionDown": {
+    "label": "˅",
+    "title": "Shift down",
   },
   "dragHandle": {
     "label": "⁞⁞",
-    "title": "Drag handle"
+    "title": "Drag handle",
   },
   "lockRule": {
     "label": "🔓",
-    "title": "Lock rule"
+    "title": "Lock rule",
   },
   "lockGroup": {
     "label": "🔓",
-    "title": "Lock group"
+    "title": "Lock group",
   },
   "lockRuleDisabled": {
     "label": "🔒",
-    "title": "Unlock rule"
+    "title": "Unlock rule",
   },
   "lockGroupDisabled": {
     "label": "🔒",
-    "title": "Unlock group"
-  }
-}
+    "title": "Unlock group",
+  },
+  "valueSourceSelector": {
+    "title": "Value source",
+  },
+};
 ```
 
 ### `showCombinatorsBetweenRules`

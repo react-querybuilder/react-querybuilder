@@ -105,7 +105,7 @@ export const optionsMetadata = {
     link: '/docs/utils/validation',
     label: 'Use validation',
     title:
-      'The validator function(s) will be used to bold the "+Rule" button for empty groups and put a purple background on empty text fields and emtpy groups',
+      'The validator function(s) will be used to bold the "+ Rule" button for empty groups and put a purple background on empty text fields and emtpy groups',
   },
   independentCombinators: {
     link: '/docs/components/querybuilder#independent-combinators',
