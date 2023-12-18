@@ -1,7 +1,7 @@
 import type { Field, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from './json-logic-js';
 import type { FlexibleOptionList, OptionList, ToFullOption } from './options';
-import type { RuleType } from './ruleGroups';
+import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
 import type { QueryValidator } from './validation';
 
@@ -236,5 +236,18 @@ export interface ParseJsonLogicOptions extends ParserCommonOptions {
 /**
  * Options object for {@link parseMongoDB}.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ParseMongoDbOptions extends ParserCommonOptions {}
+export interface ParseMongoDbOptions extends ParserCommonOptions {
+  /**
+   * Map of additional operators to their respective processing functions. Functions
+   * are passed the operator, the associated value, and any other options. They should
+   * return either a {@link RuleType} or {@link RuleGroupType}.
+   *
+   * (The functions should _not_ return {@link RuleGroupTypeIC}, even if using independent
+   * combinators. If the `independentCombinators` option is `true`, `parseMongoDB`
+   * will convert the final query to {@link RuleGroupTypeIC} before returning it.)
+   */
+  additonalOperators?: Record<
+    string,
+    (operator: string, value: any, options: ParserCommonOptions) => RuleType | RuleGroupType
+  >;
+}

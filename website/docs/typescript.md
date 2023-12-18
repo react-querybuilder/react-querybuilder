@@ -178,7 +178,12 @@ type ParseCELOptions = ParserCommonOptions;
 
 type ParseJsonLogicOptions = ParserCommonOptions;
 
-type ParseMongoDbOptions = ParserCommonOptions;
+interface ParseMongoDbOptions extends ParserCommonOptions {
+  additionalOperators?: Record<
+    string,
+    (operator: string, value: any, otherOptions: ParserCommonOptions) => RuleType | RuleGroupType
+  >;
+}
 ```
 
 ## Validation

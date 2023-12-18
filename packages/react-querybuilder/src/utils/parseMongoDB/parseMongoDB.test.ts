@@ -361,6 +361,43 @@ it('translates lists as arrays', () => {
   });
 });
 
+it('handles custom operators', () => {
+  expect(
+    parseMongoDB(
+      {
+        $and: [
+          { f1: { $gte: 12, $lte: 14 } },
+          { f1: 26 },
+          { $x: {} },
+          { $x: {}, $y: { f1: 12 } },
+          { $y: [{ f1: 12 }, { f1: 14 }] },
+        ],
+      },
+      {
+        additonalOperators: {
+          $x: () => ({ field: 'f1', operator: '=', value: 'x' }),
+          $y: () => ({ field: 'f1', operator: '=', value: 'y' }),
+        },
+      }
+    )
+  ).toEqual({
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'between', value: '12,14' },
+      { field: 'f1', operator: '=', value: 26 },
+      { field: 'f1', operator: '=', value: 'x' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'x' },
+          { field: 'f1', operator: '=', value: 'y' },
+        ],
+      },
+      { field: 'f1', operator: '=', value: 'y' },
+    ],
+  });
+});
+
 it('generates query with independent combinators', () => {
   expect(parseMongoDB({ f1: 'Test', f2: 'Test' }, { independentCombinators: true })).toEqual({
     rules: [

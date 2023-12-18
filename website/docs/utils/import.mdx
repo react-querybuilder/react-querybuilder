@@ -131,6 +131,44 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Custom operators
+
+`parseMongoDB` can identify and process custom operators with the `additionalOperators` option. The option is a map of operators to their respective processing functions. Functions are passed the operator, the associated value, and any other options that were set. They should return a `RuleType` or `RuleGroupType`. (They should _not_ return `RuleGroupTypeIC`, even if using [independent combinators](../components/querybuilder#independent-combinators). If the `independentCombinators` option is `true`, `parseMongoDB` will convert the final query to `RuleGroupTypeIC` before returning it.)
+
+Example:
+
+```ts
+parseMongoDB(
+  {
+    $myCustomOp: ['Vai', 'Vaughan'],
+  },
+  {
+    additionalOperators: {
+      $myCustomOp: (_op, val) => ({
+        field: 'lastName',
+        operator: 'in',
+        value: val,
+      }),
+    },
+  }
+);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "lastName",
+      "operator": "in",
+      "value": ["Vai", "Vaughan"]
+    }
+  ]
+}
+```
+
 :::tip
 
 Valid MongoDB query strings may not strictly conform to the JSON specification. To cover the extended format, you may want to pre-parse query strings with a library like [mongodb-query-parser](https://www.npmjs.com/package/mongodb-query-parser) before passing them to `parseMongoDB`.
