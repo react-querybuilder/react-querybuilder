@@ -374,7 +374,7 @@ it('handles custom operators', () => {
         ],
       },
       {
-        additonalOperators: {
+        additionalOperators: {
           $x: () => ({ field: 'f1', operator: '=', value: 'x' }),
           $y: () => ({ field: 'f1', operator: '=', value: 'y' }),
         },

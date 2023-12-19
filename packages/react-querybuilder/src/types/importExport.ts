@@ -246,7 +246,7 @@ export interface ParseMongoDbOptions extends ParserCommonOptions {
    * combinators. If the `independentCombinators` option is `true`, `parseMongoDB`
    * will convert the final query to {@link RuleGroupTypeIC} before returning it.)
    */
-  additonalOperators?: Record<
+  additionalOperators?: Record<
     string,
     (operator: string, value: any, options: ParserCommonOptions) => RuleType | RuleGroupType
   >;

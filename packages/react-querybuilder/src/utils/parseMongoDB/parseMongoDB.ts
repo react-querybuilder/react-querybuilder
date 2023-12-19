@@ -52,7 +52,7 @@ function parseMongoDB(
   const listsAsArrays = !!options.listsAsArrays;
   const fieldsFlat = getFieldsArray(options.fields);
   const getValueSources = options.getValueSources;
-  const additonalOperators = options.additonalOperators ?? {};
+  const additionalOperators = options.additionalOperators ?? {};
 
   const fieldIsValid = (
     fieldName: string,
@@ -344,10 +344,10 @@ function parseMongoDB(
         }
         return { combinator: 'and', rules };
       }
-    } else if (key in additonalOperators) {
-      const { additonalOperators: _ao, ...otherOptions } = options;
+    } else if (key in additionalOperators) {
+      const { additionalOperators: _ao, ...otherOptions } = options;
       return (
-        (additonalOperators[key](key, keyValue, otherOptions) as
+        (additionalOperators[key](key, keyValue, otherOptions) as
           | DefaultRuleType
           | DefaultRuleGroupType) || false
       );
