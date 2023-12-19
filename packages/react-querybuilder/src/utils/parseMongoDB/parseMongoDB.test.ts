@@ -368,15 +368,15 @@ it('handles custom operators', () => {
         $and: [
           { f1: { $gte: 12, $lte: 14 } },
           { f1: 26 },
-          { $x: {} },
-          { $x: {}, $y: { f1: 12 } },
-          { $y: [{ f1: 12 }, { f1: 14 }] },
+          { f2: { $x: {} } },
+          { f2: { $x: {}, $y: { f1: 12 } } },
+          { f2: { $y: [{ f1: 12 }, { f1: 14 }] } },
         ],
       },
       {
         additionalOperators: {
-          $x: () => ({ field: 'f1', operator: '=', value: 'x' }),
-          $y: () => ({ field: 'f1', operator: '=', value: 'y' }),
+          $x: field => ({ field, operator: '=', value: 'x' }),
+          $y: field => ({ field, operator: '=', value: 'y' }),
         },
       }
     )
@@ -385,15 +385,15 @@ it('handles custom operators', () => {
     rules: [
       { field: 'f1', operator: 'between', value: '12,14' },
       { field: 'f1', operator: '=', value: 26 },
-      { field: 'f1', operator: '=', value: 'x' },
+      { field: 'f2', operator: '=', value: 'x' },
       {
         combinator: 'and',
         rules: [
-          { field: 'f1', operator: '=', value: 'x' },
-          { field: 'f1', operator: '=', value: 'y' },
+          { field: 'f2', operator: '=', value: 'x' },
+          { field: 'f2', operator: '=', value: 'y' },
         ],
       },
-      { field: 'f1', operator: '=', value: 'y' },
+      { field: 'f2', operator: '=', value: 'y' },
     ],
   });
 });

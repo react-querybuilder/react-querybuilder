@@ -238,16 +238,21 @@ export interface ParseJsonLogicOptions extends ParserCommonOptions {
  */
 export interface ParseMongoDbOptions extends ParserCommonOptions {
   /**
-   * Map of additional operators to their respective processing functions. Functions
-   * are passed the operator, the associated value, and any other options. They should
-   * return either a {@link RuleType} or {@link RuleGroupType}.
+   * Map of additional operators to their respective processing functions. Operators
+   * must begin with `"$"`. Processing functions should return either a {@link RuleType}
+   * or {@link RuleGroupType}.
    *
    * (The functions should _not_ return {@link RuleGroupTypeIC}, even if using independent
    * combinators. If the `independentCombinators` option is `true`, `parseMongoDB`
    * will convert the final query to {@link RuleGroupTypeIC} before returning it.)
    */
   additionalOperators?: Record<
-    string,
-    (operator: string, value: any, options: ParserCommonOptions) => RuleType | RuleGroupType
+    `$${string}`,
+    (
+      field: string,
+      operator: string,
+      value: any,
+      options: ParserCommonOptions
+    ) => RuleType | RuleGroupType
   >;
 }
