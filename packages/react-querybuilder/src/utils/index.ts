@@ -15,11 +15,7 @@ export * from './mergeTranslations';
 export * from './misc';
 export * from './objectUtils';
 export * from './optGroupUtils';
-export * from './parseCEL';
-export * from './parseJsonLogic';
-export * from './parseMongoDB';
 export * from './parseNumber';
-export * from './parseSQL';
 export * from './pathUtils';
 export * from './prepareQueryObjects';
 export * from './queryTools';
@@ -28,3 +24,9 @@ export * from './toFullOption';
 export * from './toOptions';
 export * from './transformQuery';
 export * from './uniq';
+// In v7+, these are only available as separate exports
+// to reduce bundle size.
+// export * from './parseCEL';
+// export * from './parseJsonLogic';
+// export * from './parseMongoDB';
+// export * from './parseSQL';

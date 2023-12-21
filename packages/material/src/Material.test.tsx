@@ -37,13 +37,7 @@ import {
   cloneElement as mockCloneElement,
   isValidElement as mockIsValidElement,
 } from 'react';
-import type {
-  DragHandleProps,
-  Field,
-  RuleGroupType,
-  Schema,
-  ToFullOption,
-} from 'react-querybuilder';
+import type { DragHandleProps, RuleGroupType } from 'react-querybuilder';
 import {
   QueryBuilder,
   TestID,
@@ -52,6 +46,7 @@ import {
   toFullOption,
 } from 'react-querybuilder';
 import {
+  basicSchema,
   defaultShiftActionsProps,
   testActionElement,
   testDragHandle,
@@ -169,7 +164,7 @@ describe('action element', () => {
           path={[]}
           level={0}
           ruleOrGroup={{ combinator: 'and', rules: [] }}
-          schema={{} as Schema<ToFullOption<Field>, string>}
+          schema={basicSchema}
         />
       </div>
     );
@@ -187,7 +182,7 @@ describe('drag handle', () => {
           path={[]}
           level={0}
           muiComponents={null}
-          schema={{} as Schema<ToFullOption<Field>, string>}
+          schema={basicSchema}
           ruleOrGroup={{} as RuleGroupType}
         />
       </div>
@@ -206,7 +201,7 @@ describe('not toggle', () => {
           handleOnChange={() => {}}
           path={[]}
           level={0}
-          schema={{} as Schema<ToFullOption<Field>, string>}
+          schema={basicSchema}
           ruleGroup={{} as RuleGroupType}
         />
       </div>
@@ -245,7 +240,7 @@ describe('value editor', () => {
           field="f1"
           operator="="
           fieldData={{ name: 'f1', label: 'Field 1' }}
-          schema={{} as Schema<ToFullOption<Field>, string>}
+          schema={basicSchema}
           rule={{ field: '', operator: '', value: '' }}
         />
       </div>
@@ -265,7 +260,7 @@ describe('value selector', () => {
           path={[]}
           level={0}
           options={[{ name: 'opt1', label: 'Option 1' }].map(toFullOption)}
-          schema={{} as Schema<ToFullOption<Field>, string>}
+          schema={basicSchema}
         />
       </div>
     );
@@ -281,7 +276,7 @@ describe('icon translations', () => {
       path: [],
       level: 0,
       ruleOrGroup: { combinator: 'and', rules: [] },
-      schema: {} as Schema<ToFullOption<Field>, string>,
+      schema: basicSchema,
       label: lbl,
     };
 

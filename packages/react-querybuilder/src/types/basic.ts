@@ -123,7 +123,10 @@ export interface Operator<N extends string = string> extends Option<N>, HasOptio
 export interface Combinator<N extends string = string> extends Option<N>, HasOptionalClassName {}
 
 /**
- * Methods used by {@link parseNumbers}. `"native"` will force the use of `parseFloat`,
- * whether the string matches {@link numericRegex} or not.
+ * Methods used by {@link parseNumbers}.
+ * - `false` avoids parsing
+ * - `true`/`"enhanced"` (default) uses `numeric-quantity`
+ * - `"strict"` is the same as `true`, but bails out when trailing invalid characters are present
+ * - `"native"` forces the use of `parseFloat`, returning `NaN` when parsing fails
  */
-export type ParseNumbersMethod = boolean | 'strict' | 'native';
+export type ParseNumbersMethod = boolean | 'enhanced' | 'native' | 'strict';

@@ -24,6 +24,17 @@ The props themselves for the main component haven't changed much from version 6,
   const qbp7a: QueryBuilderProps<RuleGroupType, Option, Option, Option> = {};
   ```
 
+### Parser functions removed from main bundle
+
+Since the parser functions are infrequently used and generally not used together, they have been removed from the main exports. They have been available as separate exports for some time now (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), but before version 7 they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. (This reduces the main bundle size by roughly 50%.)
+
+| Function         | New `import` requirement                                             |
+| ---------------- | -------------------------------------------------------------------- |
+| `parseCEL`       | `import { parseCEL } from "react-querybuilder/parseCEL"`             |
+| `parseJsonLogic` | `import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"` |
+| `parseMongoDB`   | `import { parseMongoDB } from "react-querybuilder/parseMongoDB"`     |
+| `parseSQL`       | `import { parseSQL } from "react-querybuilder/parseSQL"`             |
+
 ## New features
 
 ### Performance improvements
@@ -38,11 +49,16 @@ Previously, props and properties that accepted an `OptionList` type or extension
 
 ### Query selector, getter, and dispatcher
 
-Three new methods are available that should make it easier to manage arbitrary query updates from custom components. (Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.) The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
 
 - `getQuery()`: returns the current root query object.
 - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
 - `useQueryBuilderSelector(selector)`: generate the selector with `getQuerySelectorById(props.schema.qbId)`.
+
+Notes:
+
+- These functions use a custom [Redux](https://redux.js.org/) context behind the scenes.
+- Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.
 
 ### Field data passed to `get*` callbacks
 
@@ -71,6 +87,10 @@ Accessibility is improved with the addition of a `title` attribute to the outerm
 ### Drag-and-drop `canDrop` callback
 
 `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (type `{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
+
+### Enhanced `parseNumber` behavior
+
+The `parseNumber` function now delegates parsing to [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) (essentially an enhanced version of `parseFloat`). The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., the "abc" in "123abc"). This matches the bahavior of the "native" option, which uses `parseFloat` directly, except it returns the original string when parsing fails instead of `NaN`.
 
 ## Updated default labels
 
@@ -188,6 +208,8 @@ Icon package: [`@mui/icons-material`](https://npmjs.com/package/@mui/icons-mater
 - Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 
-{/* TODO: Use the commented line once v7 docs have been versioned */}
+<!-- TODO: Use the commented line once v7 docs have been versioned -->
+
 Instructions on migrating from v5 to v6 are [here](/docs/migrate).
-{/* Instructions on migrating from v5 to v6 are [here](/docs/6/migrate). */}
+
+<!-- Instructions on migrating from v5 to v6 are [here](/docs/6/migrate). -->

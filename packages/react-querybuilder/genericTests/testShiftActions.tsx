@@ -1,8 +1,8 @@
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { TestID } from '../src';
-import type { Field, RuleType, Schema, ShiftActionsProps, ToFullOption } from '../src/types';
-import { userEventSetup } from './utils';
+import type { RuleType, ShiftActionsProps } from '../src/types';
+import { basicSchema, userEventSetup } from './utils';
 
 const labels = { shiftUp: 'shiftUp', shiftDown: 'shiftDown' } as const;
 const r1 = { field: 'f1', operator: '=', value: 'v1' } satisfies RuleType;
@@ -14,7 +14,7 @@ export const defaultShiftActionsProps: ShiftActionsProps = {
   ruleOrGroup: { combinator: 'and', rules: [r1, r2] },
   labels,
   testID: TestID.shiftActions,
-  schema: {} as Schema<ToFullOption<Field>, string>,
+  schema: basicSchema,
   disabled: false,
   shiftUpDisabled: false,
   shiftDownDisabled: false,

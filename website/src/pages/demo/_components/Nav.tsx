@@ -1,4 +1,7 @@
 import { useLocation } from '@docusaurus/router';
+import type { Location } from 'history';
+import type { ChangeEvent } from 'react';
+import { useCallback, useId } from 'react';
 import { styleNameArray, styleNameMap } from '../_constants';
 import type { StyleName } from '../_constants/types';
 import CodeSandBoxLogo from './Logo-CodeSandbox';
@@ -10,8 +13,28 @@ interface NavProps {
   compressedState?: string;
 }
 
+const getLink = ({
+  variant,
+  compressedState,
+  siteLocation,
+}: NavProps & { siteLocation: Location }) =>
+  `${siteLocation.pathname.replace(RegExp(`\\/(${styleNameArray.join('|')})$`), '')}${
+    variant === 'default' ? '' : `/${variant}`
+  }${compressedState ? `#s=${compressedState}` : ''}`;
+
 export default function Nav({ variant, compressedState }: NavProps) {
+  const slId = useId();
   const siteLocation = useLocation();
+
+  const goToStyle = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) =>
+      (location.href = getLink({
+        variant: e.target.value as StyleName,
+        compressedState,
+        siteLocation,
+      })),
+    [compressedState, siteLocation]
+  );
 
   return (
     <div className={styles.demoNav}>
@@ -38,19 +61,14 @@ export default function Nav({ variant, compressedState }: NavProps) {
         </a>
       </div>
       <div className={styles.demoNavStyleLinks}>
-        {styleNameArray.map(s => {
-          if (variant === s) return <span key={s}>{styleNameMap[s]}</span>;
-
-          const link = `${siteLocation.pathname.replace(RegExp(`\\/${variant}$`), '')}${
-            s === 'default' ? '' : `/${s}`
-          }${compressedState ? `#s=${compressedState}` : ''}`;
-
-          return (
-            <a key={s} href={link}>
+        <label htmlFor={slId}>{'Style library'}</label>
+        <select name={slId} id={slId} value={variant} onChange={goToStyle}>
+          {styleNameArray.map(s => (
+            <option key={s} value={s}>
               {styleNameMap[s]}
-            </a>
-          );
-        })}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

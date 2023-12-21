@@ -35,14 +35,15 @@ export const ruleDefaultFields = [
 
 export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
 
+const Button = (props: ActionProps) => (
+  <button data-testid={props.testID} className={props.className} onClick={props.handleOnClick}>
+    {props.label}
+  </button>
+);
+
 export const ruleControls = {
   cloneRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.cloneRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.cloneRule.label}
-    </button>
+    <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
   fieldSelector: (props: FieldSelectorProps) => (
     <select
@@ -71,12 +72,7 @@ export const ruleControls = {
     />
   ),
   removeRuleAction: (props: ActionProps) => (
-    <button
-      data-testid={TestID.removeRule}
-      className={props.className}
-      onClick={e => props.handleOnClick(e)}>
-      {translations.removeRule.label}
-    </button>
+    <Button {...props} testID={TestID.removeRule} label={translations.removeRule.label} />
   ),
   dragHandle: forwardRef<HTMLSpanElement, DragHandleProps>(({ className, label }, ref) => (
     <span ref={ref} className={className}>

@@ -2,33 +2,34 @@ import { Checkbox, Input, Radio, Switch } from 'antd';
 import generatePicker from 'antd/es/date-picker/generatePicker/index.js';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
-import { AntDValueSelector } from './AntDValueSelector';
+import dayjsGenerateConfig from './dayjs';
 
 const DatePicker = generatePicker(dayjsGenerateConfig);
 
-export const AntDValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  separator,
-  valueSource: _vs,
-  disabled,
-  testID,
-  selectorComponent: SelectorComponent = AntDValueSelector,
-  ...props
-}: ValueEditorProps) => {
+export const AntDValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    disabled,
+    testID,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,

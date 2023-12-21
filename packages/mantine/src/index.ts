@@ -13,21 +13,11 @@ export * from './MantineValueEditor';
 export * from './MantineValueSelector';
 
 export const mantineControlElements = {
+  actionElement: MantineActionElement,
   notToggle: MantineNotToggle,
-  valueEditor: MantineValueEditor,
-  addGroupAction: MantineActionElement,
-  addRuleAction: MantineActionElement,
-  cloneGroupAction: MantineActionElement,
-  cloneRuleAction: MantineActionElement,
-  combinatorSelector: MantineValueSelector,
-  fieldSelector: MantineValueSelector,
-  operatorSelector: MantineValueSelector,
-  lockRuleAction: MantineActionElement,
-  lockGroupAction: MantineActionElement,
-  removeGroupAction: MantineActionElement,
-  removeRuleAction: MantineActionElement,
-  valueSourceSelector: MantineValueSelector,
   shiftActions: MantineShiftActions,
+  valueEditor: MantineValueEditor,
+  valueSelector: MantineValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 export const QueryBuilderMantine = getCompatContextProvider({

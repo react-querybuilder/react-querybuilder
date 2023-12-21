@@ -1,12 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { Field, OptionList, Schema, ToFullOption, ValueEditorProps } from '../src/types';
+import type {
+  Field,
+  OptionList,
+  Schema,
+  ToFullOption,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
-import { findInput, findInputs, findTextarea, userEventSetup } from './utils';
+import { basicSchema, findInput, findInputs, findTextarea, userEventSetup } from './utils';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
   select: boolean;
+  optgroup: boolean;
   multiselect: boolean;
   checkbox: boolean;
   radio: boolean;
@@ -28,7 +36,7 @@ export const defaultValueEditorProps = {
   level: 0,
   path: [],
   valueSource: 'value',
-  schema: {} as Schema<ToFullOption<Field>, string>,
+  schema: basicSchema,
   rule: { field: '', operator: '', value: '' },
 } satisfies ValueEditorProps;
 
@@ -164,7 +172,26 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsSelectProps, {
+        optgroup: skip.optgroup,
+      });
+
+      it('uses valueSelector controlElements property', () => {
+        const valueSelector = (_props: ValueSelectorProps) => <div>{'valueSelector'}</div>;
+        render(
+          <ValueEditor
+            {...props}
+            type="select"
+            schema={
+              { ...props.schema, controls: { ...props.schema.controls, valueSelector } } as Schema<
+                ToFullOption<Field>,
+                string
+              >
+            }
+          />
+        );
+        expect(screen.getByText('valueSelector')).toBeInTheDocument();
+      });
     }
 
     if (!skip.multiselect) {
@@ -176,7 +203,9 @@ export const testValueEditor = (
         title: titleForSelectorTest,
         testID: 'value-editor',
       };
-      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps);
+      testSelect(titleForSelectorTest, ValueEditor, valueEditorAsMultiselectProps, {
+        optgroup: skip.optgroup,
+      });
     }
 
     if (!skip.checkbox) {

@@ -3,7 +3,7 @@ import { MultiSelect, Select } from '@mantine/core';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
-import { optionListMapNameToValue } from './utils';
+import { optionListToComboboxData } from './utils';
 
 export type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
 
@@ -30,7 +30,7 @@ export const MantineValueSelector = ({
 }: MantineValueSelectorProps) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const data = React.useMemo(() => optionListMapNameToValue(options), [options]);
+  const data = React.useMemo(() => optionListToComboboxData(options), [options]);
 
   const changeHandler = (v: string | string[] | null) => onChange(v ?? '');
 

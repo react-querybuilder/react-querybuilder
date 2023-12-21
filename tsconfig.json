@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react",
@@ -9,9 +8,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "sourceMap": true,
     "strict": true,
-    "strictNullChecks": true,
     "target": "esnext",
     "types": ["@testing-library/jest-dom", "node", "web"]
   },

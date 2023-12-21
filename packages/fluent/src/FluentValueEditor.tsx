@@ -3,28 +3,29 @@ import { Checkbox, Input, Radio, RadioGroup, Switch, Textarea } from '@fluentui/
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
-import { FluentValueSelector } from './FluentValueSelector';
 
-export const FluentValueEditor = ({
-  fieldData,
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type,
-  inputType,
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  separator,
-  valueSource: _vs,
-  disabled,
-  testID,
-  selectorComponent: SelectorComponent = FluentValueSelector,
-  validation: _validation,
-  ...props
-}: ValueEditorProps) => {
+export const FluentValueEditor = (allProps: ValueEditorProps) => {
+  const {
+    fieldData,
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type,
+    inputType,
+    values = [],
+    listsAsArrays,
+    parseNumbers,
+    separator,
+    valueSource: _vs,
+    disabled,
+    testID,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    validation: _validation,
+    ...props
+  } = allProps;
+
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange,
     inputType,

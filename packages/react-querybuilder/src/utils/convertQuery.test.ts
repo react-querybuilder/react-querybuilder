@@ -1,5 +1,5 @@
 import type { RuleType } from '../types/index.noReact';
-import { convertQuery } from './convertQuery';
+import { convertFromIC, convertQuery, convertToIC } from './convertQuery';
 
 const [rule1, rule2, rule3, rule4]: RuleType[] = [
   {
@@ -26,14 +26,10 @@ const [rule1, rule2, rule3, rule4]: RuleType[] = [
 
 describe('converts RuleGroupType to RuleGroupTypeIC', () => {
   it('no rules', () => {
-    expect(convertQuery({ combinator: 'and', rules: [] })).toEqual({
-      rules: [],
-    });
+    expect(convertQuery({ combinator: 'and', rules: [] })).toEqual({ rules: [] });
   });
   it('one rule', () => {
-    expect(convertQuery({ combinator: 'and', rules: [rule1] })).toEqual({
-      rules: [rule1],
-    });
+    expect(convertQuery({ combinator: 'and', rules: [rule1] })).toEqual({ rules: [rule1] });
   });
   it('two rules', () => {
     expect(convertQuery({ combinator: 'and', rules: [rule1, rule2] })).toEqual({
@@ -77,10 +73,7 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
     });
   });
   it('one rule', () => {
-    expect(convertQuery({ rules: [rule1] })).toEqual({
-      combinator: 'and',
-      rules: [rule1],
-    });
+    expect(convertQuery({ rules: [rule1] })).toEqual({ combinator: 'and', rules: [rule1] });
   });
   it('two rules', () => {
     expect(
@@ -212,5 +205,35 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
       combinator: 'and',
       rules: [rule1, rule2],
     });
+  });
+});
+
+describe('directed conversions are idempotent', () => {
+  it('RuleGroupType', () => {
+    const rg1: any = { combinator: 'and', rules: [] };
+    expect(convertFromIC(rg1)).toBe(rg1);
+    const rg2: any = {
+      combinator: 'and',
+      rules: [rule1, { combinator: 'or', rules: [rule2, rule3] }, rule4],
+    };
+    expect(convertFromIC(rg2)).toBe(rg2);
+  });
+  it('RuleGroupTypeIC', () => {
+    const rgic1: any = { rules: [] };
+    expect(convertToIC(rgic1)).toBe(rgic1);
+    const rgic2: any = {
+      rules: [
+        { field: 'firstName', operator: '=', value: 'Steve' },
+        'or',
+        { field: 'lastName', operator: '=', value: 'Vai' },
+        'or',
+        { field: 'middleName', operator: 'null', value: null },
+        'and',
+        { field: 'isMusician', operator: '=', value: true },
+        'or',
+        { field: 'fieldName', operator: '=', value: 'Test' },
+      ],
+    };
+    expect(convertToIC(rgic2)).toBe(rgic2);
   });
 });

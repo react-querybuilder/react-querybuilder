@@ -7,7 +7,7 @@ import {
   useValueEditor,
   ValueEditor,
 } from 'react-querybuilder';
-import { MaterialValueSelector } from './MaterialValueSelector';
+import type { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
@@ -36,7 +36,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     valueSource: _vs,
     disabled,
     testID,
-    selectorComponent: SelectorComponent = MaterialValueSelector,
+    selectorComponent: SelectorComponent = props.schema.controls
+      .valueSelector as typeof MaterialValueSelector,
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;

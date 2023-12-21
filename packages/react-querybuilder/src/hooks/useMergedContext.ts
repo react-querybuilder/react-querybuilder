@@ -1,12 +1,16 @@
+import type { ComponentType } from 'react';
 import { useContext, useMemo } from 'react';
 import { QueryBuilderContext, defaultControlElements } from '../components';
 import { defaultControlClassnames, defaultTranslations } from '../defaults';
 import type {
   Controls,
   Field,
+  FieldSelectorProps,
+  OperatorSelectorProps,
   QueryBuilderContextProps,
   ToFlexibleOption,
   TranslationsFull,
+  ValueSourceSelectorProps,
 } from '../types';
 import { mergeClassnames, mergeTranslations } from '../utils';
 import { usePreferProp } from './usePreferProp';
@@ -52,15 +56,99 @@ export const useMergedContext = <
     [rqbContext.controlClassnames, props.controlClassnames]
   );
 
-  const controlElements = useMemo(
-    () =>
-      ({
-        ...defaultControlElements,
-        ...rqbContext.controlElements,
-        ...props.controlElements,
-      } as Controls<F, O>),
-    [props.controlElements, rqbContext.controlElements]
-  );
+  const controlElements = useMemo(() => {
+    const contextControlElements: Partial<Controls<F, O>> = {
+      ...rqbContext.controlElements,
+      ...(rqbContext.controlElements?.actionElement
+        ? {
+            addGroupAction:
+              rqbContext.controlElements?.addGroupAction ??
+              rqbContext.controlElements.actionElement,
+            addRuleAction:
+              rqbContext.controlElements?.addRuleAction ?? rqbContext.controlElements.actionElement,
+            cloneGroupAction:
+              rqbContext.controlElements?.cloneGroupAction ??
+              rqbContext.controlElements.actionElement,
+            cloneRuleAction:
+              rqbContext.controlElements?.cloneRuleAction ??
+              rqbContext.controlElements.actionElement,
+            lockGroupAction:
+              rqbContext.controlElements?.lockGroupAction ??
+              rqbContext.controlElements.actionElement,
+            lockRuleAction:
+              rqbContext.controlElements?.lockRuleAction ??
+              rqbContext.controlElements.actionElement,
+            removeGroupAction:
+              rqbContext.controlElements?.removeGroupAction ??
+              rqbContext.controlElements.actionElement,
+            removeRuleAction:
+              rqbContext.controlElements?.removeRuleAction ??
+              rqbContext.controlElements.actionElement,
+          }
+        : {}),
+      ...(rqbContext.controlElements?.valueSelector
+        ? {
+            combinatorSelector:
+              rqbContext.controlElements?.combinatorSelector ??
+              rqbContext.controlElements.valueSelector,
+            fieldSelector:
+              rqbContext.controlElements?.fieldSelector ??
+              (rqbContext.controlElements.valueSelector as ComponentType<FieldSelectorProps>),
+            operatorSelector:
+              rqbContext.controlElements?.operatorSelector ??
+              (rqbContext.controlElements.valueSelector as ComponentType<OperatorSelectorProps>),
+            valueSourceSelector:
+              rqbContext.controlElements?.valueSourceSelector ??
+              (rqbContext.controlElements.valueSelector as ComponentType<ValueSourceSelectorProps>),
+          }
+        : {}),
+    };
+
+    const propsControlElements: Partial<Controls<F, O>> = {
+      ...props.controlElements,
+      ...(props.controlElements?.actionElement
+        ? {
+            addGroupAction:
+              props.controlElements?.addGroupAction ?? props.controlElements.actionElement,
+            addRuleAction:
+              props.controlElements?.addRuleAction ?? props.controlElements.actionElement,
+            cloneGroupAction:
+              props.controlElements?.cloneGroupAction ?? props.controlElements.actionElement,
+            cloneRuleAction:
+              props.controlElements?.cloneRuleAction ?? props.controlElements.actionElement,
+            lockGroupAction:
+              props.controlElements?.lockGroupAction ?? props.controlElements.actionElement,
+            lockRuleAction:
+              props.controlElements?.lockRuleAction ?? props.controlElements.actionElement,
+            removeGroupAction:
+              props.controlElements?.removeGroupAction ?? props.controlElements.actionElement,
+            removeRuleAction:
+              props.controlElements?.removeRuleAction ?? props.controlElements.actionElement,
+          }
+        : {}),
+      ...(props.controlElements?.valueSelector
+        ? {
+            combinatorSelector:
+              props.controlElements?.combinatorSelector ?? props.controlElements.valueSelector,
+            fieldSelector:
+              props.controlElements?.fieldSelector ??
+              (props.controlElements.valueSelector as ComponentType<FieldSelectorProps>),
+            operatorSelector:
+              props.controlElements?.operatorSelector ??
+              (props.controlElements.valueSelector as ComponentType<OperatorSelectorProps>),
+            valueSourceSelector:
+              props.controlElements?.valueSourceSelector ??
+              (props.controlElements.valueSelector as ComponentType<ValueSourceSelectorProps>),
+          }
+        : {}),
+    };
+
+    return {
+      ...defaultControlElements,
+      ...contextControlElements,
+      ...propsControlElements,
+    } as Controls<F, O>;
+  }, [props.controlElements, rqbContext.controlElements]);
 
   const translations = useMemo(
     () =>

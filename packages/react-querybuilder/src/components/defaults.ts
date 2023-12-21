@@ -12,24 +12,26 @@ import { ValueSelector } from './ValueSelector';
 /**
  * Default components used by {@link QueryBuilder}.
  */
-export const defaultControlElements: Controls<Field, string> = {
+export const defaultControlElements = {
+  actionElement: ActionElement,
   addGroupAction: ActionElement,
-  removeGroupAction: ActionElement,
+  addRuleAction: ActionElement,
   cloneGroupAction: ActionElement,
   cloneRuleAction: ActionElement,
-  addRuleAction: ActionElement,
-  removeRuleAction: ActionElement,
   combinatorSelector: ValueSelector,
-  inlineCombinator: InlineCombinator,
-  fieldSelector: ValueSelector,
-  operatorSelector: ValueSelector,
-  valueEditor: ValueEditor,
-  notToggle: NotToggle,
-  ruleGroup: RuleGroup,
-  rule: Rule,
-  shiftActions: ShiftActions,
   dragHandle: DragHandle,
-  lockRuleAction: ActionElement,
+  fieldSelector: ValueSelector,
+  inlineCombinator: InlineCombinator,
   lockGroupAction: ActionElement,
+  lockRuleAction: ActionElement,
+  notToggle: NotToggle,
+  operatorSelector: ValueSelector,
+  removeGroupAction: ActionElement,
+  removeRuleAction: ActionElement,
+  rule: Rule,
+  ruleGroup: RuleGroup,
+  shiftActions: ShiftActions,
+  valueEditor: ValueEditor,
+  valueSelector: ValueSelector,
   valueSourceSelector: ValueSelector,
-};
+} satisfies Controls<Field, string>;

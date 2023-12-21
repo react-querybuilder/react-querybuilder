@@ -25,7 +25,8 @@ Custom components are not limited to the following libraries, but these have fir
 | [Fluent UI](https://github.com/microsoft/fluentui) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [demo](https://react-querybuilder.js.org/demo/fluent)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/fluent)    |
 | [Mantine](https://mantine.dev/)                    | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [demo](https://react-querybuilder.js.org/demo/mantine)   | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine)   |
 | [MUI](https://mui.com/)                            | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
-| [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       |                                                          |                                                                                                                       |
+| [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       |                                                          | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/native)    |
+| [Tremor](https://www.tremor.so/)                   | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [demo](https://react-querybuilder.js.org/demo/tremor)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/tremor)    |
 
 ## Basic usage
 
@@ -119,7 +120,9 @@ console.log(query);
 */
 ```
 
-Note: `formatQuery`, `transformQuery`, and the `parse*` functions can be used without importing React (e.g., on the server) like this:
+## Utilities
+
+`formatQuery`, `transformQuery`, and the `parse*` functions can be used without importing from `react` (on the server, for example) like this:
 
 ```js
 import { formatQuery } from 'react-querybuilder/formatQuery';
@@ -129,3 +132,5 @@ import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
 import { parseSQL } from 'react-querybuilder/parseSQL';
 import { transformQuery } from 'react-querybuilder/transformQuery';
 ```
+
+(As of version 7, the `parse*` functions are _only_ available through these extended exports.)

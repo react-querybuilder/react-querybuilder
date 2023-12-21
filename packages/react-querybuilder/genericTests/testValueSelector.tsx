@@ -1,18 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { toFullOption, toFullOptionList } from '../src';
-import type {
-  Field,
-  FullOption,
-  Schema,
-  ToFullOption,
-  ValueEditorProps,
-  ValueSelectorProps,
-} from '../src/types';
-import { findSelect, hasOrInheritsClass, userEventSetup } from './utils';
+import type { FullOption, ValueEditorProps, ValueSelectorProps } from '../src/types';
+import { basicSchema, findSelect, hasOrInheritsClass, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
   multi: boolean;
+  optgroup: boolean;
 }>;
 
 export const defaultValueSelectorProps = {
@@ -24,7 +18,7 @@ export const defaultValueSelectorProps = {
   ].map(toFullOption),
   level: 0,
   path: [],
-  schema: {} as Schema<ToFullOption<Field>, string>,
+  schema: basicSchema,
 } satisfies ValueSelectorProps;
 
 export const testSelect = (
@@ -50,18 +44,20 @@ export const testSelect = (
       expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
     });
 
-    it('should render optgroups', () => {
-      const optGroups = [
-        { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
-      ];
-      const newProps =
-        'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
-      render(<Component {...newProps} />);
-      const getSelect = () => findSelect(screen.getByTitle(title));
-      expect(getSelect).not.toThrow();
-      expect(getSelect().querySelectorAll('optgroup')).toHaveLength(optGroups.length);
-      expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
-    });
+    if (!skip.optgroup) {
+      it('should render optgroups', () => {
+        const optGroups = [
+          { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
+        ];
+        const newProps =
+          'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
+        render(<Component {...newProps} />);
+        const getSelect = () => findSelect(screen.getByTitle(title));
+        expect(getSelect).not.toThrow();
+        expect(getSelect().querySelectorAll('optgroup')).toHaveLength(optGroups.length);
+        expect(getSelect().querySelectorAll('option')).toHaveLength(testValues.length);
+      });
+    }
 
     // Test as multiselect for <ValueEditor type="multiselect" /> and <ValueSelector />
     if (

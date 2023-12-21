@@ -1,27 +1,40 @@
 import { parseNumber } from './parseNumber';
 
-it('avoids parsing numbers', () => {
-  expect(parseNumber({}, { parseNumbers: false })).toEqual({});
-  expect(parseNumber([], { parseNumbers: false })).toEqual([]);
-  expect(parseNumber('', { parseNumbers: false })).toBe('');
-  expect(parseNumber('0', { parseNumbers: false })).toBe('0');
-  expect(parseNumber(0, { parseNumbers: false })).toBe(0);
+const emptyObject = {};
+const emptyArray = [] as const;
+
+it('no-ops when parseNumbers is false', () => {
+  for (const v of [emptyObject, emptyArray, '', '0', '1', '1abc', 0]) {
+    expect(parseNumber(v, { parseNumbers: false })).toBe(v);
+  }
 });
 
-it('parses numbers', () => {
-  expect(parseNumber({}, { parseNumbers: true })).toEqual({});
-  expect(parseNumber([], { parseNumbers: true })).toEqual([]);
-  expect(parseNumber('', { parseNumbers: true })).toBe('');
-  expect(parseNumber('0', { parseNumbers: true })).toBe(0);
-  expect(parseNumber('1', { parseNumbers: true })).toBe(1);
-  expect(parseNumber('1abc', { parseNumbers: true })).toBe('1abc');
-  expect(parseNumber('1abc', { parseNumbers: 'strict' })).toBe('1abc');
-});
+// Default/enhanced parser
+for (const pn of [true, 'strict'] as const) {
+  it(`parses numbers with ${pn === true ? 'default' : pn} parser`, () => {
+    expect(parseNumber(emptyObject, { parseNumbers: pn })).toBe(emptyObject);
+    expect(parseNumber(emptyArray, { parseNumbers: pn })).toBe(emptyArray);
+    expect(parseNumber('', { parseNumbers: pn })).toBe('');
+    expect(parseNumber('0', { parseNumbers: pn })).toBe(0);
+    expect(parseNumber('1', { parseNumbers: pn })).toBe(1);
+    expect(parseNumber('1abc', { parseNumbers: pn })).toBe('1abc');
+  });
+}
 
-it('parses numbers with native parseFloat', () => {
-  expect(parseNumber({}, { parseNumbers: 'native' })).toEqual(NaN);
-  expect(parseNumber('', { parseNumbers: 'native' })).toBe(NaN);
+it('parses numbers with native parser', () => {
+  expect(parseNumber(emptyObject, { parseNumbers: 'native' })).toBeNaN();
+  expect(parseNumber(emptyArray, { parseNumbers: 'native' })).toBeNaN();
+  expect(parseNumber('', { parseNumbers: 'native' })).toBeNaN();
   expect(parseNumber('0', { parseNumbers: 'native' })).toBe(0);
   expect(parseNumber('1', { parseNumbers: 'native' })).toBe(1);
   expect(parseNumber('1abc', { parseNumbers: 'native' })).toBe(1);
+});
+
+it('parses numbers with enhanced parser', () => {
+  expect(parseNumber(emptyObject, { parseNumbers: 'enhanced' })).toBe(emptyObject);
+  expect(parseNumber(emptyArray, { parseNumbers: 'enhanced' })).toBe(emptyArray);
+  expect(parseNumber('', { parseNumbers: 'enhanced' })).toBe('');
+  expect(parseNumber('0', { parseNumbers: 'enhanced' })).toBe(0);
+  expect(parseNumber('1', { parseNumbers: 'enhanced' })).toBe(1);
+  expect(parseNumber('1abc', { parseNumbers: 'enhanced' })).toBe(1);
 });

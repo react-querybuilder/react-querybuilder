@@ -52,6 +52,8 @@ function parseMongoDB(
   const listsAsArrays = !!options.listsAsArrays;
   const fieldsFlat = getFieldsArray(options.fields);
   const getValueSources = options.getValueSources;
+  const additionalOperators = options.additionalOperators ?? {};
+  const { additionalOperators: _ao, ...otherOptions } = options;
 
   const fieldIsValid = (
     fieldName: string,
@@ -286,10 +288,14 @@ function parseMongoDB(
       } else if (isPojo(keyValue)) {
         let betweenRule: DefaultRuleType | false = false;
         let notRule: DefaultRuleType | DefaultRuleGroupType | false = false;
+        const additionalOpKeys = objectKeys(additionalOperators).map(o => o.replace(/^\$/, ''));
+        const allOps = ['eq', 'ne', 'gte?', 'lte?', 'n?in', 'regex', 'not', ...additionalOpKeys];
+        const acceptedOpsRegExp = new RegExp(`^\\$(${allOps.join('|')})$`);
 
         const operators = objectKeys(keyValue)
-          .filter(o => /^\$(eq|ne|gte?|lte?|n?in|regex|not)$/.test(o))
+          .filter(o => acceptedOpsRegExp.test(o))
           .sort() as MongoDbSupportedOperators[];
+
         if (operators.length === 0) {
           return false;
         }
@@ -324,7 +330,11 @@ function parseMongoDB(
           .filter(op => !(notRule && op === '$not'))
           // filter out $gte and $lte if they were both present
           .filter(op => !(betweenRule && (op === '$gte' || op === '$lte')))
-          .map(op => processMongoDbQueryBooleanOperator(field, op, keyValue[op]))
+          .map(op =>
+            op in additionalOperators && typeof additionalOperators[op] === 'function'
+              ? additionalOperators[op](field, op, keyValue[op], otherOptions)
+              : processMongoDbQueryBooleanOperator(field, op, keyValue[op])
+          )
           .filter(Boolean) as (DefaultRuleGroupType | DefaultRuleType)[];
 
         if (notRule) {

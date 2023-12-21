@@ -24,22 +24,12 @@ export * from './AntDValueEditor';
 export * from './AntDValueSelector';
 
 export const antdControlElements = {
-  addGroupAction: AntDActionElement,
-  addRuleAction: AntDActionElement,
-  cloneGroupAction: AntDActionElement,
-  cloneRuleAction: AntDActionElement,
-  lockGroupAction: AntDActionElement,
-  lockRuleAction: AntDActionElement,
-  combinatorSelector: AntDValueSelector,
-  fieldSelector: AntDValueSelector,
-  notToggle: AntDNotToggle,
-  operatorSelector: AntDValueSelector,
-  removeGroupAction: AntDActionElement,
-  removeRuleAction: AntDActionElement,
-  valueEditor: AntDValueEditor,
+  actionElement: AntDActionElement,
   dragHandle: AntDDragHandle,
-  valueSourceSelector: AntDValueSelector,
+  notToggle: AntDNotToggle,
   shiftActions: AntDShiftActions,
+  valueEditor: AntDValueEditor,
+  valueSelector: AntDValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 export const antdTranslations = {

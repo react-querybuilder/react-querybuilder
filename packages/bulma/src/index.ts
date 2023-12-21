@@ -11,20 +11,10 @@ export * from './BulmaValueEditor';
 export * from './BulmaValueSelector';
 
 export const bulmaControlElements = {
+  actionElement: BulmaActionElement,
   notToggle: BulmaNotToggle,
   valueEditor: BulmaValueEditor,
-  addGroupAction: BulmaActionElement,
-  addRuleAction: BulmaActionElement,
-  cloneGroupAction: BulmaActionElement,
-  cloneRuleAction: BulmaActionElement,
-  combinatorSelector: BulmaValueSelector,
-  fieldSelector: BulmaValueSelector,
-  operatorSelector: BulmaValueSelector,
-  lockRuleAction: BulmaActionElement,
-  lockGroupAction: BulmaActionElement,
-  removeGroupAction: BulmaActionElement,
-  removeRuleAction: BulmaActionElement,
-  valueSourceSelector: BulmaValueSelector,
+  valueSelector: BulmaValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 export const QueryBuilderBulma = getCompatContextProvider({

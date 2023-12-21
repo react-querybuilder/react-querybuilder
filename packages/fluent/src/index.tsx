@@ -23,21 +23,11 @@ export * from './FluentValueEditor';
 export * from './FluentValueSelector';
 
 export const fluentControlElements = {
+  actionElement: FluentActionElement,
   dragHandle: FluentDragHandle,
   notToggle: FluentNotToggle,
   valueEditor: FluentValueEditor,
-  addGroupAction: FluentActionElement,
-  addRuleAction: FluentActionElement,
-  cloneGroupAction: FluentActionElement,
-  cloneRuleAction: FluentActionElement,
-  combinatorSelector: FluentValueSelector,
-  fieldSelector: FluentValueSelector,
-  operatorSelector: FluentValueSelector,
-  lockRuleAction: FluentActionElement,
-  lockGroupAction: FluentActionElement,
-  removeGroupAction: FluentActionElement,
-  removeRuleAction: FluentActionElement,
-  valueSourceSelector: FluentValueSelector,
+  valueSelector: FluentValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 export const fluentTranslations = {

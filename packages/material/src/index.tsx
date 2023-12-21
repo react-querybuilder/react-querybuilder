@@ -25,22 +25,12 @@ export * from './useMuiComponents';
 export { materialTranslations };
 
 export const materialControlElements = {
-  addGroupAction: MaterialActionElement,
-  addRuleAction: MaterialActionElement,
-  cloneGroupAction: MaterialActionElement,
-  cloneRuleAction: MaterialActionElement,
-  lockGroupAction: MaterialActionElement,
-  lockRuleAction: MaterialActionElement,
-  combinatorSelector: MaterialValueSelector,
-  fieldSelector: MaterialValueSelector,
-  notToggle: MaterialNotToggle,
-  operatorSelector: MaterialValueSelector,
-  removeGroupAction: MaterialActionElement,
-  removeRuleAction: MaterialActionElement,
-  valueEditor: MaterialValueEditor,
+  actionElement: MaterialActionElement,
   dragHandle: MaterialDragHandle,
-  valueSourceSelector: MaterialValueSelector,
+  notToggle: MaterialNotToggle,
   shiftActions: MaterialShiftActions,
+  valueEditor: MaterialValueEditor,
+  valueSelector: MaterialValueSelector,
 } satisfies Partial<Controls<Field, string>>;
 
 const MaterialContextProvider = getCompatContextProvider({

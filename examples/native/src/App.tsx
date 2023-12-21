@@ -74,10 +74,7 @@ export const App = () => {
     }
     return {
       ...defaultNativeWebControlElements,
-      combinatorSelector: NativeValueSelectorExample,
-      fieldSelector: NativeValueSelectorExample,
-      operatorSelector: NativeValueSelectorExample,
-      valueSourceSelector: NativeValueSelectorExample,
+      valueSelector: NativeValueSelectorExample,
     };
   }, [uiLib]);
 

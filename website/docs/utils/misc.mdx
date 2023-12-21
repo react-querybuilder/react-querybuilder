@@ -6,9 +6,8 @@ description: Assorted utilities and other exports
 
 import { DemoLink } from '@site/src/components/DemoLink';
 import Details from '@theme/Details';
-import TypeScriptAdmonition from '../_ts_admonition.md';
 
-<TypeScriptAdmonition />
+%importmd ../\_ts_admonition.md
 
 A non-comprehensive list of exports from `react-querybuilder`.
 
@@ -44,7 +43,7 @@ Pass `validator={defaultValidator}` to automatically validate groups (rules will
 1. The group has no child rules or groups (`query.rules.length === 0`)
 2. The group has a missing/invalid `combinator` property and more than one child rule or group (`rules.length >= 2`).
 
-You can see an example of the default validator in action in the [demo](/demo) if you check the <DemoLink option="validateQuery" text="'Use validation' option" />. Empty groups will have bold text on their "+Rule" button and a description of the situation where the rules normally appear.
+You can see an example of the default validator in action in the [demo](/demo) if you check the <DemoLink option="validateQuery" text="'Use validation' option" />. Empty groups will have bold text on their "+ Rule" button and a description of the situation where the rules normally appear.
 
 ### `findPath`
 
@@ -143,7 +142,7 @@ interface MoveOptions {
 
 ## Defaults
 
-The following default configuration objects are exported for convenience.
+The default configuration objects are exported for convenience, including the following.
 
 - `defaultCombinators` (see [`combinators` prop](../components/querybuilder#combinators))
 - `defaultOperators` (see [`operators` prop](../components/querybuilder#operators))
@@ -160,5 +159,6 @@ The default components are also exported:
 - [`NotToggle`](../components/nottoggle) - used for the "Invert this group" toggle switch
 - [`Rule`](../components/rule) - the default rule component
 - [`RuleGroup`](../components/rulegroup) - the default rule group component
+- [`ShiftActions`](../components/shiftactions) - used for the "shift up"/"shift down" buttons when [`showShiftActions`](../components/querybuilder#showshiftactions) is `true`
 - [`ValueEditor`](../components/valueeditor) - the default `valueEditor` component
 - [`ValueSelector`](../components/valueselector) - used for drop-down lists (combinator, field, and operator selectors)

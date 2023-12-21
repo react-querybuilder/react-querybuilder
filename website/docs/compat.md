@@ -20,6 +20,7 @@ You can see each alternate component package in action by clicking the correspon
 | [Mantine](https://mantine.dev/)                     | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [Demo](/demo/mantine)   | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine?file=/src/App.tsx)   | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine?file=src/App.tsx)   |
 | [MUI](https://mui.com/)                             | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](/demo/material)  | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/material?file=/src/App.tsx)  | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/material?file=src/App.tsx)  |
 | [React Native](https://reactnative.dev/)            | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       | _Coming soon!_          | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/native?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/native?file=src/App.tsx)    |
+| [Tremor](https://www.tremor.so/)                    | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [Demo](/demo/tremor)    | [CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/tremor?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/tremor?file=src/App.tsx)    |
 
 ## Usage
 
@@ -56,6 +57,8 @@ Each compatibility package exports its own context provider.
 | `@react-querybuilder/fluent`    | `QueryBuilderFluent`    |
 | `@react-querybuilder/mantine`   | `QueryBuilderMantine`   |
 | `@react-querybuilder/material`  | `QueryBuilderMaterial`  |
+| `@react-querybuilder/native`    | `QueryBuilderNative`    |
+| `@react-querybuilder/tremor`    | `QueryBuilderTremor`    |
 
 :::tip
 
@@ -86,7 +89,7 @@ export function App() {
 
 ## Other exports
 
-Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./components/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./components/querybuilder#controlclassnames). Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
+Each compatibility package exports a `*ControlElements` object that can be used as the [`controlElements` prop](./components/querybuilder#controlelements) in `<QueryBuilder />`. Some packages also export a `*ControlClassnames` object for use with the [`controlClassnames` prop](./components/querybuilder#controlclassnames) and a `*Translations` object for use with the [`translations`](./components/querybuilder#translations) prop. Use these exports if you need more fine-grained control over which standard components get replaced. For even more detailed [customization](#customization), continue reading below.
 
 This example uses the Bootstrap library:
 
@@ -120,6 +123,8 @@ export function App() {
 | `@react-querybuilder/fluent`    | `fluentControlElements`    |
 | `@react-querybuilder/mantine`   | `mantineControlElements`   |
 | `@react-querybuilder/material`  | `materialControlElements`  |
+| `@react-querybuilder/native`    | `nativeControlElements`    |
+| `@react-querybuilder/tremor`    | `tremorControlElements`    |
 
 ## Customization
 
@@ -184,6 +189,10 @@ This list shows which library components' props will be accepted by the compatib
 | `MaterialDragHandle`               | `DragHandleProps`        | `import { DragIndicator } from '@mui/icons-material'`           |
 | `MaterialNotToggle`                | `NotToggleProps`         | `import { Switch } from '@mui/material'`                        |
 | `MaterialValueSelector`            | `VersatileSelectorProps` | `import { Select } from '@mui/material'`                        |
+| **`@react-querybuilder/tremor`**   |                          |                                                                 |
+| `TremorActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@tremor/react'`                        |
+| `TremorNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@tremor/react'`                        |
+| `TremorValueSelector`              | `VersatileSelectorProps` | `import { MultiSelect, Select } from '@tremor/react'`           |
 
 ## Preload MUI components
 

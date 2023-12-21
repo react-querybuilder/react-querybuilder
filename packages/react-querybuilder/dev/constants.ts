@@ -104,7 +104,7 @@ export const optionsMetadata: Record<
     link: '/docs/utils/validation',
     label: 'Use validation',
     title:
-      'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+Rule" button for empty groups',
+      'The validator function(s) will be used to put a purple outline around empty text fields and bold the "+ Rule" button for empty groups',
   },
   independentCombinators: {
     link: '/docs/components/querybuilder#independentcombinators',

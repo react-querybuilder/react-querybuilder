@@ -4,6 +4,7 @@ import type {
   Combinator,
   Field,
   Operator,
+  QueryBuilderProps,
   RuleGroupTypeAny,
   ToFlexibleOption,
   useQueryBuilderSetup,
@@ -20,7 +21,7 @@ export const useQueryBuilderSchemaNative = <
   props: QueryBuilderNativeProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
 ) => {
-  const qb = useQueryBuilderSchema(props, setup);
+  const qb = useQueryBuilderSchema(props as QueryBuilderProps<RG, F, O, C>, setup);
 
   (qb as WithSchemaNative).schema.styles = useMemo(
     () => StyleSheet.create(props.styles ?? {}),

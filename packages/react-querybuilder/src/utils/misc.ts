@@ -1,8 +1,12 @@
+import { numericRegex as numericQuantityRegex } from 'numeric-quantity';
+
 /**
  * Regex matching numeric strings. Passes for positive/negative integers, decimals,
  * and E notation, with optional surrounding whitespace.
  */
-export const numericRegex = /^\s*[+-]?(\d+|\d*\.\d+|\d+\.\d*)([Ee][+-]?\d+)?\s*$/;
+export const numericRegex = new RegExp(
+  numericQuantityRegex.source.replace(/^\^/, '^\\s*').replace(/\$$/, '\\s*$')
+);
 
 /**
  * Determines if a variable is a plain old JavaScript object, aka POJO.

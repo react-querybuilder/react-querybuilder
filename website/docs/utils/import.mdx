@@ -3,9 +3,7 @@ title: Import
 description: Convert SQL and other formats to query builder objects
 ---
 
-import TypeScriptAdmonition from '../_ts_admonition.md';
-
-<TypeScriptAdmonition />
+%importmd ../\_ts_admonition.md
 
 Import/parser functions take a string or object representing a query in a specific language and translate it to a query suitable for the `query` or `defaultQuery` props in a `<QueryBuilder />` component.
 
@@ -128,6 +126,44 @@ Output (`RuleGroupType`):
       "field": "lastName",
       "operator": "=",
       "value": "Vai"
+    }
+  ]
+}
+```
+
+### Custom operators
+
+`parseMongoDB` can identify and process custom operators with the `additionalOperators` option. The option is a map of operators to their respective processing functions. Functions are passed the operator, the associated value, and any other options that were set. They should return a `RuleType` or `RuleGroupType`. (They should _not_ return `RuleGroupTypeIC`, even if using [independent combinators](../components/querybuilder#independent-combinators). If the `independentCombinators` option is `true`, `parseMongoDB` will convert the final query to `RuleGroupTypeIC` before returning it.)
+
+Example:
+
+```ts
+parseMongoDB(
+  {
+    $myCustomOp: ['Vai', 'Vaughan'],
+  },
+  {
+    additionalOperators: {
+      $myCustomOp: (_op, val) => ({
+        field: 'lastName',
+        operator: 'in',
+        value: val,
+      }),
+    },
+  }
+);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "lastName",
+      "operator": "in",
+      "value": ["Vai", "Vaughan"]
     }
   ]
 }
