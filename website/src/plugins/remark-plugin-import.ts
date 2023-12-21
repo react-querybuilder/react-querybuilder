@@ -7,12 +7,34 @@ import { visit } from 'unist-util-visit';
 
 const importMdRegExp = /^%importmd\s+(.*?)$/;
 const importCodeRegExp = /^%importcode\s+(.*?)$/;
-const hashRegExp = /^L(\d+)(-(L(\d+))?)?$/i;
+const lineNumbersRegExp = /^L(\d+)(-(L(\d+))?)?$/i;
 const regionRegExp = /^region=(.+)$/i;
+const rootDir = path.resolve(__dirname, '../../..');
+
+const getSourceLink = (filePath: string, start?: number, end?: number) => {
+  const restOfUrl = `${filePath}${start >= 0 && end >= 0 ? `#L${start + 2}-L${end}` : ''}`;
+  return {
+    type: 'paragraph',
+    children: [
+      {
+        type: 'emphasis',
+        children: [
+          { type: 'text', value: 'Source: ' },
+          {
+            type: 'link',
+            url: `https://github.com/react-querybuilder/react-querybuilder/blob/main${restOfUrl}`,
+            children: [{ type: 'text', value: restOfUrl }],
+          },
+        ],
+      },
+    ],
+  };
+};
 
 export const remarkPluginImport = () => async (ast, vfile) => {
   visit(ast, 'paragraph', node => {
     if (node.children?.length > 0 && node.children[0].type === 'text') {
+      // #region Markdown import
       const mdImportMatches = importMdRegExp.exec(node.children[0].value || '');
 
       if (mdImportMatches?.[1]) {
@@ -24,25 +46,27 @@ export const remarkPluginImport = () => async (ast, vfile) => {
           throw new Error(`Unable to locate file at path: ${mdFilePath}`);
         }
       }
+      // #endregion
 
+      // #region Code import
       const codeImportMatches = importCodeRegExp.exec(node?.children[0].value || '');
 
       if (codeImportMatches?.[1]) {
         const [url, hash] = codeImportMatches[1].split('#');
-        const codeFilePath = path.resolve(vfile.path, '..', url);
+        const codeFileAbsolutePath = path.join(rootDir, url);
 
-        if (existsSync(codeFilePath)) {
-          const rawCode = readFileSync(codeFilePath, 'utf-8');
+        if (existsSync(codeFileAbsolutePath)) {
+          const rawCode = readFileSync(codeFileAbsolutePath, 'utf-8');
           const codeLines = rawCode.split('\n');
-          const hashParts = hashRegExp.exec(hash);
+          const lineNumbers = lineNumbersRegExp.exec(hash);
           const region = regionRegExp.exec(hash);
-          const lang = path.extname(codeFilePath).replace(/^\./, '');
+          const lang = path.extname(codeFileAbsolutePath).replace(/^\./, '');
 
-          if (hashParts) {
-            const start = parseInt(hashParts[1]);
+          if (lineNumbers) {
+            const start = parseInt(lineNumbers[1]);
             const end =
-              (hashParts[4] ? parseInt(hashParts[4]) : null) ??
-              (hashParts[2] ? codeLines.length : start);
+              (lineNumbers[4] ? parseInt(lineNumbers[4]) : null) ??
+              (lineNumbers[2] ? codeLines.length : start);
             node.children = [
               {
                 type: 'code',
@@ -50,10 +74,11 @@ export const remarkPluginImport = () => async (ast, vfile) => {
                 lang,
                 meta: null,
               },
+              getSourceLink(url, start, end),
             ];
           } else if (region) {
-            const start = codeLines.indexOf(`// #region ${region[1]}`);
-            const end = codeLines.indexOf('// #endregion', start);
+            const start = codeLines.findIndex(v => v.match(`^\\s*// #region ${region[1]}$`));
+            const end = codeLines.findIndex((v, i) => i >= start && v.match('^\\s*// #endregion'));
             if (start >= 0) {
               node.children = [
                 {
@@ -62,6 +87,7 @@ export const remarkPluginImport = () => async (ast, vfile) => {
                   lang,
                   meta: null,
                 },
+                getSourceLink(url, start, end),
               ];
             }
           } else {
@@ -72,12 +98,14 @@ export const remarkPluginImport = () => async (ast, vfile) => {
                 lang,
                 meta: null,
               },
+              getSourceLink(url),
             ];
           }
         } else {
-          throw new Error(`Unable to locate file at path: ${codeFilePath}`);
+          throw new Error(`Unable to locate file at path: ${codeFileAbsolutePath}`);
         }
       }
+      // #endregion
     }
   });
 };
