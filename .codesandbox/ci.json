@@ -15,5 +15,5 @@
     "/examples/next",
     "/examples/tremor"
   ],
-  "node": "20"
+  "node": "18"
 }
