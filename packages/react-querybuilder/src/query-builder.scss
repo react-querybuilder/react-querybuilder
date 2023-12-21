@@ -1,23 +1,26 @@
-// Basic
+// #region Basic
 $rqb-spacing: 0.5rem !default;
 $rqb-background-color: rgba(0, 75, 183, 0.2) !default;
 $rqb-border-color: #8081a2 !default;
 $rqb-border-style: solid !default;
 $rqb-border-radius: 0.25rem !default;
 $rqb-border-width: 1px !default;
+// #endregion
 
-// Drag-and-drop
+// #region Drag-and-drop
 $rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
 $rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
 $rqb-dnd-hover-border-bottom-style: dashed !default;
 $rqb-dnd-hover-border-bottom-width: 2px !default;
+// #endregion
 
-// Branches
+// #region Branches
 $rqb-branch-indent: $rqb-spacing !default;
 $rqb-branch-color: $rqb-border-color !default;
 $rqb-branch-width: $rqb-border-width !default;
 $rqb-branch-radius: $rqb-border-radius !default;
 $rqb-branch-style: $rqb-border-style !default;
+// #endregion
 
 // Default styles
 .ruleGroup {
@@ -122,7 +125,7 @@ $rqb-branch-style: $rqb-border-style !default;
 }
 // #endregion
 
-// #region Branches
+// #region Branch styles
 .queryBuilder-branches {
   .ruleGroup-body {
     margin-left: calc(2 * #{$rqb-branch-indent});

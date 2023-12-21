@@ -42,6 +42,7 @@ export const defaultJoinChar = ',';
 /**
  * Default configuration of translatable strings.
  */
+// #region docs-translations
 export const defaultTranslations = {
   fields: {
     title: 'Fields',
@@ -121,10 +122,12 @@ export const defaultTranslations = {
     title: 'Value source',
   } as const,
 } satisfies TranslationsFull;
+// #endregion
 
 /**
  * Default operator list.
  */
+// #region docs-operators
 export const defaultOperators = [
   { name: '=', value: '=', label: '=' } as const,
   { name: '!=', value: '!=', label: '!=' } as const,
@@ -145,6 +148,7 @@ export const defaultOperators = [
   { name: 'between', value: 'between', label: 'between' } as const,
   { name: 'notBetween', value: 'notBetween', label: 'not between' } as const,
 ] satisfies DefaultOperator[];
+// #endregion
 
 /**
  * Map of default operators to their respective opposite/negating operators.
@@ -173,10 +177,12 @@ export const defaultOperatorNegationMap = {
 /**
  * Default combinator list.
  */
+// #region docs-combinators
 export const defaultCombinators = [
   { name: 'and', value: 'and', label: 'AND' } as const,
   { name: 'or', value: 'or', label: 'OR' } as const,
 ] satisfies DefaultCombinator[];
+// #endregion
 
 /**
  * Default combinator list, with `XOR` added.
@@ -189,6 +195,7 @@ export const defaultCombinatorsExtended = [
 /**
  * Standard classnames applied to each component.
  */
+// #region docs-standardclassnames
 export const standardClassnames = {
   queryBuilder: 'queryBuilder',
   ruleGroup: 'ruleGroup',
@@ -221,6 +228,7 @@ export const standardClassnames = {
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
 } as const;
+// #endregion
 
 /**
  * Default classnames for each component.

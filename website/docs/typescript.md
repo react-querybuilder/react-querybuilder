@@ -75,10 +75,10 @@ type RuleOrGroupArray = RuleGroupType['rules'] | RuleGroupTypeIC['rules'];
 
 `RuleGroupTypeIC['rules']` is _greatly_ simplified here for brevity. In reality, the following conditions will be enforced by TypeScript:
 
-- All even indexes in the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`
-- All odd indexes in the `rules` array must be of type `string`
-- The first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`
-- The array length must be an odd number (unless it is zero)
+- All even indexes in the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
+- All odd indexes in the `rules` array must be of type `string`.
+- The first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
+- The array length must be an odd number (unless it is zero).
 
 For example, the following would be invalid because the first element in the `rules` array (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string`, and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also, the length is an even number (2).
 

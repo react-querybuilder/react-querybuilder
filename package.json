@@ -57,9 +57,11 @@
     "outdated": "yarn upgrade-interactive",
     "version": "bun ./version.ts && yarn && concurrently --timings --names examples,packages bun:generate-examples bun:build && concurrently \"git add examples packages yarn.lock\"",
     "web": "cd website && bun run start",
-    "website:build": "cd website && bun run build",
+    "website:clearrun": "cd website && bun run clear && bun run start",
+    "website:build": "cd website && bun run clear && bun run build",
     "website:serve": "cd website && bun run serve",
-    "website:deploy": "cd website && bun run deploy"
+    "website:deploy": "cd website && bun run deploy",
+    "website:clear": "cd website && bun run clear"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
