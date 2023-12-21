@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.0.1",
+    "@docusaurus/remark-plugin-npm2yarn": "^3.0.1",
     "@docusaurus/tsconfig": "^3.0.1",
     "@mdx-js/react": "^3.0.0",
     "@svgr/webpack": "^8.1.0",

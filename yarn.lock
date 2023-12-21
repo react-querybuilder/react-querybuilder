@@ -5034,6 +5034,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@docusaurus/remark-plugin-npm2yarn@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@docusaurus/remark-plugin-npm2yarn@npm:3.0.1"
+  dependencies:
+    mdast-util-mdx: "npm:^3.0.0"
+    npm-to-yarn: "npm:^2.0.0"
+    tslib: "npm:^2.6.0"
+    unified: "npm:^11.0.3"
+    unist-util-visit: "npm:^5.0.0"
+  checksum: c52f237f7e1b9a3e2fa8f6efb7d72553a95c0072c1ae4cac944ea033994479e2358e220474b24daaa111d43515a71a343b546febbfb6d3cd180edd9f7e4e816b
+  languageName: node
+  linkType: hard
+
 "@docusaurus/theme-classic@npm:3.0.1":
   version: 3.0.1
   resolution: "@docusaurus/theme-classic@npm:3.0.1"
@@ -23553,6 +23566,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"npm-to-yarn@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "npm-to-yarn@npm:2.1.0"
+  checksum: b1e03d58a4e7bed710b5d937412a344fb8812f79cb47ed570563b7bb46f9ad05ac78379510708e4ded56880b5fa08722ed8406134f8b639d873582732a1c9ddc
+  languageName: node
+  linkType: hard
+
 "npmlog@npm:^6.0.0, npmlog@npm:^6.0.2":
   version: 6.0.2
   resolution: "npmlog@npm:6.0.2"
@@ -30737,6 +30757,7 @@ __metadata:
     "@docusaurus/module-type-aliases": "npm:^3.0.1"
     "@docusaurus/plugin-client-redirects": "npm:^3.0.1"
     "@docusaurus/preset-classic": "npm:^3.0.1"
+    "@docusaurus/remark-plugin-npm2yarn": "npm:^3.0.1"
     "@docusaurus/theme-search-algolia": "npm:^3.0.1"
     "@docusaurus/tsconfig": "npm:^3.0.1"
     "@emotion/react": "npm:^11.11.1"

@@ -1,5 +1,6 @@
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
+import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
 import { themes } from 'prism-react-renderer/dist/index.mjs';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
@@ -127,6 +128,19 @@ const config: Config = {
       {
         docs: {
           beforeDefaultRemarkPlugins: [remarkPluginImport],
+          remarkPlugins: [
+            [
+              remarkPluginNpm2Yarn,
+              {
+                sync: true,
+                converters: [
+                  ['Bun', (npmCode: string) => npmCode.replace(/npm i(nstall)? /, 'bun add ')],
+                  'yarn',
+                  'pnpm',
+                ],
+              },
+            ],
+          ],
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
           versions: {
