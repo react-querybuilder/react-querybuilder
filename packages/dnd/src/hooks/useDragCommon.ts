@@ -15,7 +15,7 @@ type UseDragCommonProps = {
   independentCombinators?: boolean;
   moveRule: QueryActions['moveRule'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: typeof import('react-dnd')['useDrag'];
+  useDrag: (typeof import('react-dnd'))['useDrag'];
 };
 
 export const useDragCommon = ({
@@ -47,8 +47,8 @@ export const useDragCommon = ({
           dropResult.type === 'ruleGroup'
             ? [...dropResult.path, 0]
             : dropResult.type === 'inlineCombinator'
-            ? [...parentHoverPath, hoverIndex]
-            : [...parentHoverPath, hoverIndex + 1];
+              ? [...parentHoverPath, hoverIndex]
+              : [...parentHoverPath, hoverIndex + 1];
 
         moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
       },

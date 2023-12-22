@@ -1,6 +1,6 @@
 :::note
 
-This section of the documentation is always generated from the latest commit on the `main` branch and may be inconsist with the latest release of React Query Builder.
+This section of the documentation is always generated from the latest commit on the `main` branch and therefore may be inconsist with the latest official release of React Query Builder.
 
 :::
 

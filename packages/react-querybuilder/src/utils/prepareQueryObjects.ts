@@ -41,8 +41,8 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
       typeof r === 'string'
         ? r
         : isRuleGroup(r)
-        ? prepareRuleGroup(r, { idGenerator })
-        : prepareRule(r, { idGenerator })
+          ? prepareRuleGroup(r, { idGenerator })
+          : prepareRule(r, { idGenerator })
     ) as RuleGroupArray | RuleGroupICArray;
   });
 

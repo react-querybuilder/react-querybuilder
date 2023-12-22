@@ -31,7 +31,7 @@ const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 >({
   setup,
   props,
@@ -80,7 +80,7 @@ export const QueryBuilder = <
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {

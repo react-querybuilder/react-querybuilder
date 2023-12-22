@@ -4,7 +4,10 @@ import type { ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
 import { join as pathJoin } from 'path';
-import prettier, { type Options as PrettierOptions } from 'prettier';
+import type { Options as PrettierOptions } from 'prettier';
+import prettier from 'prettier';
+import * as prettierPluginOrganizeImports from 'prettier-plugin-organize-imports';
+import * as prettierPluginEstree from 'prettier/plugins/estree';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
 
@@ -27,7 +30,6 @@ interface PackageJSON {
 
 console.log('Generating/updating examples');
 
-const rootNodeModulesPath = pathJoin(import.meta.dir, '../node_modules');
 const rootPrettierConfig = await prettier.resolveConfig(import.meta.file);
 const lernaJson = Bun.file(pathJoin(import.meta.dir, '../lerna.json'));
 const { version } = await lernaJson.json();
@@ -73,12 +75,12 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   await Promise.all([mkdir(exampleDotCS), mkdir(exampleSrc)]);
 
   await Bun.write(
-    pathJoin(examplePath, '.prettierrc'),
-    Bun.file(pathJoin(templatePath, '.prettierrc'))
+    pathJoin(examplePath, 'prettier.config.mjs'),
+    Bun.file(pathJoin(templatePath, 'prettier.config.mjs'))
   );
 
   const examplePrettierConfig = await prettier.resolveConfig(pathJoin(examplePath, 'package.json'));
-  const formatAndWrite = (filepath: string, fileContents: string) => {
+  const formatAndWrite = async (filepath: string, fileContents: string) => {
     let printWidth = examplePrettierConfig?.printWidth;
 
     if (filepath.endsWith('css')) {
@@ -89,14 +91,14 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       ...examplePrettierConfig,
       ...(printWidth ? { printWidth } : {}),
       filepath,
-      pluginSearchDirs: [rootNodeModulesPath],
+      plugins: [prettierPluginOrganizeImports, prettierPluginEstree],
     };
 
     return Bun.write(
       filepath,
-      prettier.check(fileContents, prettierOptions)
+      (await prettier.check(fileContents, prettierOptions))
         ? fileContents
-        : prettier.format(fileContents, prettierOptions)
+        : await prettier.format(fileContents, prettierOptions)
     );
   };
 
@@ -272,11 +274,14 @@ const updateOtherExample = async (otherExampleName: string) => {
   }
   const otherExamplePkgJsonPath = pathJoin(import.meta.dir, `${otherExampleName}/package.json`);
   const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
-  const otherExamplePkgJsonFileContents = prettier.format(stableStringify(otherExamplePkgJSON), {
-    ...otherExamplePrettierOptions,
-    filepath: otherExamplePkgJsonPath,
-    pluginSearchDirs: [rootNodeModulesPath],
-  });
+  const otherExamplePkgJsonFileContents = await prettier.format(
+    stableStringify(otherExamplePkgJSON),
+    {
+      ...otherExamplePrettierOptions,
+      filepath: otherExamplePkgJsonPath,
+      plugins: [prettierPluginOrganizeImports, prettierPluginEstree],
+    }
+  );
   console.log(`Updated package.json for "${otherExampleName}" example`);
   return Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
 };

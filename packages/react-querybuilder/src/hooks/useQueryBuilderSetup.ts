@@ -41,7 +41,7 @@ export const useQueryBuilderSetup = <
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {
@@ -101,7 +101,7 @@ export const useQueryBuilderSetup = <
         name: translations.fields.placeholderName,
         value: translations.fields.placeholderName,
         label: translations.fields.placeholderLabel,
-      } as unknown as FullField),
+      }) as unknown as FullField,
     [translations.fields.placeholderLabel, translations.fields.placeholderName]
   );
   const fieldsProp = useMemo(
@@ -177,7 +177,7 @@ export const useQueryBuilderSetup = <
         name: translations.operators.placeholderName,
         value: translations.operators.placeholderName,
         label: translations.operators.placeholderLabel,
-      } as unknown as FullOption<OperatorName>),
+      }) as unknown as FullOption<OperatorName>,
     [translations.operators.placeholderLabel, translations.operators.placeholderName]
   );
 

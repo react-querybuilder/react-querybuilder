@@ -8,7 +8,7 @@ React Query Builder can be used directly in the browser without a build step usi
 ## Basic example
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -65,7 +65,7 @@ React Query Builder can be used directly in the browser without a build step usi
 To add drag-and-drop capability, import `react-dnd`, `react-dnd-html5-backend`, and `@react-querybuilder/dnd`. Nest `<QueryBuilder />` inside `<QueryBuilderDnD />` and spread the `react-dnd*` exports to the `dnd` prop.
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />

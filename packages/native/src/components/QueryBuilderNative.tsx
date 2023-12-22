@@ -28,7 +28,7 @@ const QueryBuilderNativeInternal = <
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 >({
   props,
   setup,
@@ -62,16 +62,16 @@ export const QueryBuilderNative = <
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
 ) => {
   const controlElements = useMemo(
     () =>
-      ({ ...defaultNativeControlElements, ...props.controlElements } as Controls<
+      ({ ...defaultNativeControlElements, ...props.controlElements }) as Controls<
         F,
         GetOptionIdentifierType<O>
-      >),
+      >,
     [props.controlElements]
   );
   const setup = useQueryBuilderSetup({ ...props, controlElements } as QueryBuilderProps<

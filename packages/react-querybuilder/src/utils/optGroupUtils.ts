@@ -57,15 +57,15 @@ export const getOption = <OptType extends Option = Option>(
  */
 export const getFirstOption = <
   Opt extends FlexibleOption,
-  OL extends FlexibleOptionList<FlexibleOption> = FlexibleOptionList<Opt>
+  OL extends FlexibleOptionList<FlexibleOption> = FlexibleOptionList<Opt>,
 >(
   arr?: OL
 ) =>
   (!Array.isArray(arr) || arr.length === 0
     ? null
     : isFlexibleOptionGroupArray(arr)
-    ? arr[0].options[0].value ?? arr[0].options[0].name
-    : arr[0].value ?? arr[0].name) as GetOptionIdentifierType<Opt>;
+      ? arr[0].options[0].value ?? arr[0].options[0].name
+      : arr[0].value ?? arr[0].name) as GetOptionIdentifierType<Opt>;
 
 /**
  * Flattens {@link FlexibleOptionGroup} arrays into {@link FlexibleOption} arrays.

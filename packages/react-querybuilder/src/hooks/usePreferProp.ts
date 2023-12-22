@@ -26,7 +26,7 @@ export const usePreferAnyProp = (def?: any, prop?: any, context?: any) =>
       typeof prop !== 'undefined' && prop != null
         ? prop
         : typeof context !== 'undefined' && context != null
-        ? context
-        : def,
+          ? context
+          : def,
     [context, def, prop]
   );

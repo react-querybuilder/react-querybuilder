@@ -19,9 +19,9 @@ export const toOptions = (arr?: OptionList) =>
         </OptGroup>
       ))
     : Array.isArray(arr)
-    ? arr.map(opt => (
-        <Option key={opt.name} value={opt.name}>
-          {opt.label}
-        </Option>
-      ))
-    : /* istanbul ignore next */ null;
+      ? arr.map(opt => (
+          <Option key={opt.name} value={opt.name}>
+            {opt.label}
+          </Option>
+        ))
+      : /* istanbul ignore next */ null;

@@ -160,7 +160,7 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
  */
 export interface ValueEditorProps<
   F extends ToFlexibleOption<Field> = Field,
-  O extends string = string
+  O extends string = string,
 > extends SelectorOrEditorProps<ToFullOption<F>, O>,
     CommonRuleSubComponentProps {
   field: GetOptionIdentifierType<F>;
@@ -500,7 +500,7 @@ export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
   ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
       /**

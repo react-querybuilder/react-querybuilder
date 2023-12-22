@@ -12,8 +12,8 @@ type IsOdd<T extends `${number}`> = T extends `${infer Int}${infer Rest}`
       ? true
       : false
     : Rest extends `${number}`
-    ? IsOdd<Rest>
-    : false
+      ? IsOdd<Rest>
+      : false
   : false;
 type Compare<Num extends number> = Num extends number
   ? IsOdd<`${Num}`> extends true
@@ -31,11 +31,11 @@ type MAXIMUM_ALLOWED_BOUNDARY = 80;
 export type MappedTuple<
   Tuple extends Array<unknown>,
   Result extends Array<unknown> = [],
-  Count extends ReadonlyArray<number> = []
+  Count extends ReadonlyArray<number> = [],
 > = Count['length'] extends MAXIMUM_ALLOWED_BOUNDARY
   ? Result
   : Tuple extends []
-  ? []
-  : Result extends []
-  ? MappedTuple<Tuple, Tuple, [...Count, 1]>
-  : MappedTuple<Tuple, Result | [...Result, ...Tuple], [...Count, 1]>;
+    ? []
+    : Result extends []
+      ? MappedTuple<Tuple, Tuple, [...Count, 1]>
+      : MappedTuple<Tuple, Result | [...Result, ...Tuple], [...Count, 1]>;

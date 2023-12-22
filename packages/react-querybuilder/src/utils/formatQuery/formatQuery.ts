@@ -148,16 +148,16 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
               : valueProcessor(r, opts)
         : format === 'mongodb'
-        ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
-        : format === 'cel'
-        ? ruleProcessorInternal ?? defaultRuleProcessorCEL
-        : format === 'spel'
-        ? ruleProcessorInternal ?? defaultRuleProcessorSpEL
-        : format === 'jsonlogic'
-        ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
-        : format == 'elasticsearch'
-        ? ruleProcessorInternal ?? defaultRuleProcessorElasticSearch
-        : defaultValueProcessorByRule;
+          ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
+          : format === 'cel'
+            ? ruleProcessorInternal ?? defaultRuleProcessorCEL
+            : format === 'spel'
+              ? ruleProcessorInternal ?? defaultRuleProcessorSpEL
+              : format === 'jsonlogic'
+                ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
+                : format == 'elasticsearch'
+                  ? ruleProcessorInternal ?? defaultRuleProcessorElasticSearch
+                  : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
     validator = options.validator ?? (() => true);
     fields = toFullOptionList(options.fields ?? []);
@@ -173,8 +173,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       format === 'mongodb'
         ? '"$and":[{"$expr":true}]'
         : format === 'cel' || format === 'spel'
-        ? '1 == 1'
-        : '(1 = 1)';
+          ? '1 == 1'
+          : '(1 = 1)';
   }
 
   /**
@@ -204,14 +204,14 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return format === 'parameterized'
           ? { sql: fallbackExpression, params: [] }
           : format === 'parameterized_named'
-          ? { sql: fallbackExpression, params: {} }
-          : format === 'mongodb'
-          ? `{${fallbackExpression}}`
-          : format === 'jsonlogic'
-          ? false
-          : format === 'elasticsearch'
-          ? {}
-          : fallbackExpression;
+            ? { sql: fallbackExpression, params: {} }
+            : format === 'mongodb'
+              ? `{${fallbackExpression}}`
+              : format === 'jsonlogic'
+                ? false
+                : format === 'elasticsearch'
+                  ? {}
+                  : fallbackExpression;
       }
     } else {
       validationMap = validationResult;

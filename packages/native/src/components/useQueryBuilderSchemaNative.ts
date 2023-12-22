@@ -16,7 +16,7 @@ export const useQueryBuilderSchemaNative = <
   RG extends RuleGroupTypeAny,
   F extends ToFlexibleOption<Field>,
   O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>
+  C extends ToFlexibleOption<Combinator>,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>

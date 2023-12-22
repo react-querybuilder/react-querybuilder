@@ -21,9 +21,9 @@ export interface RuleGroupDndProps {
   path: Path;
   moveRule: QueryActions['moveRule'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: typeof import('react-dnd')['useDrag'];
+  useDrag: (typeof import('react-dnd'))['useDrag'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: typeof import('react-dnd')['useDrop'];
+  useDrop: (typeof import('react-dnd'))['useDrop'];
   children: ReactElement<RuleGroupProps>;
 }
 
@@ -37,9 +37,9 @@ export interface RuleDndProps {
   path: Path;
   independentCombinators: boolean;
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: typeof import('react-dnd')['useDrag'];
+  useDrag: (typeof import('react-dnd'))['useDrag'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: typeof import('react-dnd')['useDrop'];
+  useDrop: (typeof import('react-dnd'))['useDrop'];
   children: ReactElement<RuleProps>;
 }
 
@@ -48,7 +48,7 @@ export interface RuleDndProps {
  */
 export interface InlineCombinatorDndProps extends InlineCombinatorProps {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: typeof import('react-dnd')['useDrop'];
+  useDrop: (typeof import('react-dnd'))['useDrop'];
 }
 
 /**
@@ -82,9 +82,9 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
 
 export type QueryBuilderDndContextProps = {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag?: typeof import('react-dnd')['useDrag'];
+  useDrag?: (typeof import('react-dnd'))['useDrag'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop?: typeof import('react-dnd')['useDrop'];
+  useDrop?: (typeof import('react-dnd'))['useDrop'];
   baseControls: Pick<
     Controls<ToFlexibleOption<Field>, string>,
     'rule' | 'ruleGroup' | 'combinatorSelector'

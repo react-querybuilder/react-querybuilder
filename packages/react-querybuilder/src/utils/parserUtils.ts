@@ -14,10 +14,10 @@ export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field
   const fieldsArray = !fields
     ? []
     : Array.isArray(fields)
-    ? fields
-    : Object.keys(fields)
-        .map(fld => ({ ...fields[fld], name: fld }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+      ? fields
+      : Object.keys(fields)
+          .map(fld => ({ ...fields[fld], name: fld }))
+          .sort((a, b) => a.label.localeCompare(b.label));
   return toFlatOptionArray(fieldsArray);
 };
 

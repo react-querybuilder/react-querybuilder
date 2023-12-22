@@ -10,7 +10,7 @@ import type { ValidationResult } from './validation';
  */
 export interface CommonSubComponentProps<
   F extends FullOption = ToFullOption<Field>,
-  O extends string = string
+  O extends string = string,
 > {
   /**
    * CSS classNames to be applied.
@@ -59,7 +59,7 @@ export interface CommonSubComponentProps<
  */
 export interface SelectorOrEditorProps<
   F extends FullOption = ToFullOption<Field>,
-  O extends string = string
+  O extends string = string,
 > extends CommonSubComponentProps<F, O> {
   value?: string;
   handleOnChange(value: any): void;

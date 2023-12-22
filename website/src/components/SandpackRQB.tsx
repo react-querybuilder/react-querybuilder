@@ -93,14 +93,14 @@ h1, h2, h3, h4, h5, h6 {
     rqbVersion === 4
       ? { 'react-querybuilder': '^4.5.3' }
       : rqbVersion === 5
-      ? {
-          '@react-querybuilder/dnd': '^5.4.1',
-          'react-querybuilder': '^5.4.1',
-        }
-      : {
-          '@react-querybuilder/dnd': '^6.0.7',
-          'react-querybuilder': '^6.0.7',
-        };
+        ? {
+            '@react-querybuilder/dnd': '^5.4.1',
+            'react-querybuilder': '^5.4.1',
+          }
+        : {
+            '@react-querybuilder/dnd': '^6.0.7',
+            'react-querybuilder': '^6.0.7',
+          };
 
   const setup = {
     ...customSetup,

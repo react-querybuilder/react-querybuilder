@@ -10,8 +10,8 @@ export const getValidationClassNames = (validationResult: boolean | ValidationRe
     typeof validationResult === 'boolean'
       ? validationResult
       : typeof validationResult === 'object' && validationResult !== null
-      ? validationResult.valid
-      : null;
+        ? validationResult.valid
+        : null;
   return typeof valid === 'boolean'
     ? valid
       ? standardClassnames.valid

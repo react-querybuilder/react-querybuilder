@@ -107,5 +107,5 @@ export const quoteFieldNamesWithArray = (
   Array.isArray(quoteFieldNamesWith)
     ? quoteFieldNamesWith
     : typeof quoteFieldNamesWith === 'string'
-    ? [quoteFieldNamesWith, quoteFieldNamesWith]
-    : quoteFieldNamesWith ?? ['', ''];
+      ? [quoteFieldNamesWith, quoteFieldNamesWith]
+      : quoteFieldNamesWith ?? ['', ''];

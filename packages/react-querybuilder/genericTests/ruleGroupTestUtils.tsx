@@ -35,7 +35,7 @@ export const createRule = (index: number) =>
     field: `field_${index}`,
     operator: `operator_${index}`,
     value: `value_${index}`,
-  } satisfies RuleType);
+  }) satisfies RuleType;
 
 const Button = (props: ActionProps) => (
   <button data-testid={props.testID} className={props.className} onClick={props.handleOnClick}>

@@ -14,7 +14,7 @@ interface UseInlineCombinatorDndParams {
   path: Path;
   independentCombinators?: boolean;
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: typeof import('react-dnd')['useDrop'];
+  useDrop: (typeof import('react-dnd'))['useDrop'];
 }
 
 interface UseInlineCombinatorDnD {

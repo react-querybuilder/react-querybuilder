@@ -55,12 +55,12 @@ export const toArray = (v: any) =>
   Array.isArray(v)
     ? v.map(trimIfString)
     : typeof v === 'string'
-    ? splitBy(v, defaultJoinChar)
-        .filter(s => !/^\s*$/.test(s))
-        .map(s => s.trim())
-    : typeof v === 'number'
-    ? [v]
-    : [];
+      ? splitBy(v, defaultJoinChar)
+          .filter(s => !/^\s*$/.test(s))
+          .map(s => s.trim())
+      : typeof v === 'number'
+        ? [v]
+        : [];
 
 /**
  * Determines if an array is free of `null`/`undefined`.

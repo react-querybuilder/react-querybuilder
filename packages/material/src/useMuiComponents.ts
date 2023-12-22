@@ -61,10 +61,10 @@ export const useMuiComponents = (
             ...preloadedComponents,
           }
         : preloadedComponents
-        ? { ...defaultMuiComponents, ...preloadedComponents }
-        : muiComponentsFromContext
-        ? { ...defaultMuiComponents, ...muiComponentsFromContext }
-        : defaultMuiComponents,
+          ? { ...defaultMuiComponents, ...preloadedComponents }
+          : muiComponentsFromContext
+            ? { ...defaultMuiComponents, ...muiComponentsFromContext }
+            : defaultMuiComponents,
     [muiComponentsFromContext, preloadedComponents]
   );
 

@@ -130,7 +130,7 @@ export type FullOptionList<Opt extends FlexibleOption> = Opt extends FullOption
  */
 export type FlexibleOptionMap<
   V extends FlexibleOption,
-  K extends string = GetOptionIdentifierType<V>
+  K extends string = GetOptionIdentifierType<V>,
 > = {
   [k in K]?: V;
 };
@@ -148,5 +148,5 @@ export type FullOptionMap<V extends FullOption, K extends string = GetOptionIden
  */
 export type FullOptionRecord<
   V extends FullOption,
-  K extends string = GetOptionIdentifierType<V>
+  K extends string = GetOptionIdentifierType<V>,
 > = Record<K, V>;

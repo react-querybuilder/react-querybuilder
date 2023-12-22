@@ -81,7 +81,7 @@ export interface Field<
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
-  ValueObj extends Option = Option<ValueName>
+  ValueObj extends Option = Option<ValueName>,
 > extends Option<FieldName>,
     HasOptionalClassName {
   id?: string;

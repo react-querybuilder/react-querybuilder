@@ -17,7 +17,7 @@ import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextProps<
   F extends ToFlexibleOption<Field> = Field,
-  O extends string = string
+  O extends string = string,
 > = QueryBuilderContextProps<F, O>;
 
 /**
@@ -25,7 +25,7 @@ export type UseMergedContextProps<
  */
 export const useMergedContext = <
   F extends ToFlexibleOption<Field> = Field,
-  O extends string = string
+  O extends string = string,
 >(
   props: UseMergedContextProps<F, O>
 ) => {

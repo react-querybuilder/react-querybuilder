@@ -18,9 +18,9 @@ export const toOptions = (arr?: OptionList) =>
         </optgroup>
       ))
     : Array.isArray(arr)
-    ? arr.map(opt => (
-        <option key={opt.name} value={opt.name}>
-          {opt.label}
-        </option>
-      ))
-    : null;
+      ? arr.map(opt => (
+          <option key={opt.name} value={opt.name}>
+            {opt.label}
+          </option>
+        ))
+      : null;

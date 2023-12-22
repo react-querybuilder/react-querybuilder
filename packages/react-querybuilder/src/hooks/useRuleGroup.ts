@@ -65,8 +65,8 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       ruleGroupProp && isRuleGroupType(ruleGroupProp)
         ? ruleGroupProp.combinator
         : !ruleGroupProp
-        ? combinatorProp ?? getFirstOption(combinators)!
-        : getFirstOption(combinators)!,
+          ? combinatorProp ?? getFirstOption(combinators)!
+          : getFirstOption(combinators)!,
     [combinatorProp, combinators, ruleGroupProp]
   );
 

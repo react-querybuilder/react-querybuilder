@@ -38,7 +38,7 @@ export type RuleGroupTypeAny<R extends RuleType = RuleType, C extends string = s
 export type RuleGroupICArray<
   RG extends RuleGroupTypeIC = RuleGroupTypeIC,
   R extends RuleType = RuleType,
-  C extends string = string
+  C extends string = string,
 > = [R | RG] | [R | RG, ...MappedTuple<[C, R | RG]>] | ((R | RG)[] & { length: 0 });
 
 /**

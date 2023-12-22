@@ -629,7 +629,9 @@ body {
   user-select: none;
   touch-action: none;
   box-sizing: border-box;
-  transition: background-color 150ms ease, opacity 150ms ease;
+  transition:
+    background-color 150ms ease,
+    opacity 150ms ease;
 
   padding: calc(var(--scrollarea-scrollbar-size) / 5);
   display: var(--_scrollbar-display, flex);
@@ -2538,7 +2540,9 @@ body {
   padding: 0;
   display: block;
   margin: 0;
-  transition: border-color 100ms ease, background-color 100ms ease;
+  transition:
+    border-color 100ms ease,
+    background-color 100ms ease;
   cursor: var(--_checkbox-cursor, var(--mantine-cursor-type));
   -webkit-tap-highlight-color: transparent;
 }
@@ -2606,7 +2610,9 @@ body {
     translateY(calc(0.3125rem * var(--mantine-scale))) scale(0.5)
   );
   opacity: var(--_checkbox-icon-opacity, 0);
-  transition: transform 100ms ease, opacity 100ms ease;
+  transition:
+    transform 100ms ease,
+    opacity 100ms ease;
 }
 
 .m-f85678b6 {
@@ -3550,7 +3556,8 @@ body {
   inset: 0;
   border-radius: var(--cs-radius);
   z-index: 1;
-  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 calc(0.0625rem * var(--mantine-scale)) inset,
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0 0 0 calc(0.0625rem * var(--mantine-scale)) inset,
     rgb(0, 0, 0, 0.15) 0 0 calc(0.25rem * var(--mantine-scale)) inset;
 }
 
@@ -3559,7 +3566,9 @@ body {
   inset: 0;
   border-radius: var(--cs-radius);
   background-size: calc(0.5rem * var(--mantine-scale)) calc(0.5rem * var(--mantine-scale));
-  background-position: 0 0, 0 calc(0.25rem * var(--mantine-scale)),
+  background-position:
+    0 0,
+    0 calc(0.25rem * var(--mantine-scale)),
     calc(0.25rem * var(--mantine-scale)) calc(-0.25rem * var(--mantine-scale)),
     calc(-0.25rem * var(--mantine-scale)) 0;
   background-image: linear-gradient(45deg, var(--_alpha-overlay-color) 25%, transparent 25%),
@@ -5169,7 +5178,9 @@ body {
     --_radio-icon-transform,
     scale(0.2) translateY(calc(0.625rem * var(--mantine-scale)))
   );
-  transition: opacity 100ms ease, transform 200ms ease;
+  transition:
+    opacity 100ms ease,
+    transform 200ms ease;
   pointer-events: none;
   width: var(--radio-icon-size);
   height: var(--radio-icon-size);
@@ -5448,7 +5459,8 @@ body {
   width: var(--sc-indicator-width);
   height: var(--sc-indicator-height);
   transform: var(--sc-indicator-transform);
-  transition: transform var(--sc-transition-duration) var(--sc-transition-timing-function),
+  transition:
+    transform var(--sc-transition-duration) var(--sc-transition-timing-function),
     width var(--sc-transition-duration) var(--sc-transition-timing-function);
   background-color: var(--_bg);
 }
@@ -5746,7 +5758,9 @@ fieldset:disabled .m-1738fcb2,
   border-radius: var(--slider-radius);
   align-items: center;
   justify-content: center;
-  transition: box-shadow 100ms ease, transform 100ms ease;
+  transition:
+    box-shadow 100ms ease,
+    transform 100ms ease;
   z-index: 3;
   user-select: none;
   touch-action: none;
@@ -6120,7 +6134,9 @@ fieldset:disabled .m-38aeed47:not([data-inverted]),
   justify-content: center;
   position: relative;
   font-weight: bold;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
   background-color: var(--_step-icon-bg);
   border: calc(0.125rem * var(--mantine-scale)) solid var(--_step-icon-border-color);
   color: var(--_step-icon-color);
@@ -6266,7 +6282,9 @@ fieldset:disabled .m-38aeed47:not([data-inverted]),
   height: var(--switch-height);
   min-width: var(--switch-width);
   margin: 0;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
   appearance: none;
   display: flex;
   align-items: center;

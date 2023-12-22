@@ -18,7 +18,7 @@ export type RuleType<
   F extends string = string,
   O extends string = string,
   V = any,
-  C extends string = string
+  C extends string = string,
 > = CommonRuleAndGroupProperties & {
   field: F;
   operator: O;
@@ -36,7 +36,7 @@ export type RuleType<
  */
 export type RuleGroupType<
   R extends RuleType = RuleType,
-  C extends string = string
+  C extends string = string,
 > = CommonRuleAndGroupProperties & {
   combinator: C;
   rules: RuleGroupArray<RuleGroupType<R, C>, R>;
@@ -48,7 +48,7 @@ export type RuleGroupType<
  */
 export type RuleGroupArray<
   RG extends RuleGroupType = RuleGroupType,
-  R extends RuleType = RuleType
+  R extends RuleType = RuleType,
 > = (R | RG)[];
 
 /**

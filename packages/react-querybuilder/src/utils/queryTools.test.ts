@@ -138,7 +138,7 @@ describe('add', () => {
       ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
       Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
       ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>,
     ];
   });
 });
@@ -199,7 +199,7 @@ describe('remove', () => {
       ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
       Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
       ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>,
     ];
   });
 });

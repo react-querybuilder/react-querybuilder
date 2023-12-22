@@ -56,8 +56,8 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
   let sqlString = /^[ \t\n\r\s]*SELECT\b/i.test(sql)
     ? sql
     : /^[ \t\n\r\s]*WHERE\b/i.test(sql)
-    ? `SELECT * FROM t ${sql}`
-    : `SELECT * FROM t WHERE ${sql}`;
+      ? `SELECT * FROM t ${sql}`
+      : `SELECT * FROM t WHERE ${sql}`;
   let ic = false;
   const fieldsFlat = getFieldsArray(fields);
 

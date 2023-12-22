@@ -15,10 +15,10 @@ export const toDropdownOptions = (list: OptionList) =>
         </OptionGroup>
       ))
     : Array.isArray(list)
-    ? list.map(opt => (
-        <Option key={opt.name} value={opt.name}>
-          {opt.label}
-        </Option>
-      ))
-    : // istanbul ignore next
-      null;
+      ? list.map(opt => (
+          <Option key={opt.name} value={opt.name}>
+            {opt.label}
+          </Option>
+        ))
+      : // istanbul ignore next
+        null;

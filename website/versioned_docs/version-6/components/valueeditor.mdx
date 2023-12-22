@@ -45,8 +45,8 @@ export const fieldSelector = ({ value, options, path }) => (
           {o.valueSources?.includes('field')
             ? `valueSource: "field"`
             : 'inputType' in o
-            ? `inputType: "${o.label}"`
-            : `valueEditorType: "${o.label}"`}
+              ? `inputType: "${o.label}"`
+              : `valueEditorType: "${o.label}"`}
         </option>
       ))}
     </select>

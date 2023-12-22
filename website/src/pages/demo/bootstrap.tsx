@@ -11,8 +11,7 @@ import './_styles/rqb-bootstrap.scss';
 
 const getQueryWrapper =
   ({ colorMode }: { colorMode: 'dark' | 'light' }) =>
-  ({ children }: { children: ReactNode }) =>
-    <div data-bs-theme={colorMode}>{children}</div>;
+  ({ children }: { children: ReactNode }) => <div data-bs-theme={colorMode}>{children}</div>;
 
 function ReactQueryBuilderDemo_BootstrapBrowser() {
   const { colorMode } = useColorMode();

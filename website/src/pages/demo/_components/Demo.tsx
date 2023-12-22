@@ -178,6 +178,11 @@ export default function Demo({
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
   const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
+  const [codeStringState, setCodeStringState] = useState('');
+  const [extraStylesState, setExtraStylesState] = useState({ css: '', scss: '' });
+  const [fieldsTsStringState, setFieldsTsStringState] = useState('');
+  const [musicalInstrumentsTsStringState, setMusicalInstrumentsTsStringState] = useState('');
+
   const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
 
   const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
@@ -203,6 +208,18 @@ export default function Demo({
 
     return () => window.removeEventListener('hashchange', updateOptionsFromHash);
   }, [permalinkHash, updateOptionsFromHash]);
+
+  useEffect(() => {
+    Promise.all([extraStyles, fieldsTsString, musicalInstrumentsTsString]).then(([es, fs, ms]) => {
+      setExtraStylesState(es);
+      setFieldsTsStringState(fs);
+      setMusicalInstrumentsTsStringState(ms);
+    });
+  }, []);
+
+  useEffect(() => {
+    getCodeString(options, variant, styleLanguage).then(cs => setCodeStringState(cs));
+  }, [options, styleLanguage, variant]);
 
   const optionsInfo = useMemo(
     () =>
@@ -231,10 +248,10 @@ export default function Demo({
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
 
-  const codeString = useMemo(
-    () => getCodeString(options, variant, styleLanguage),
-    [options, variant, styleLanguage]
-  );
+  // const codeString = useMemo(
+  //   () => getCodeString(options, variant, styleLanguage),
+  //   [options, variant, styleLanguage]
+  // );
 
   const getExportTabAttributes = useCallback(
     (fmt: ExportFormat, others: ExportFormat[] = []) => {
@@ -574,7 +591,7 @@ export default function Demo({
               </p>
             </Details>
             <CodeBlock language="tsx" title="App.tsx">
-              {codeString}
+              {codeStringState}
             </CodeBlock>
             <Details summary={<summary>Styles</summary>}>
               <div className={styles.exportOptions}>
@@ -596,15 +613,15 @@ export default function Demo({
                 </label>
               </div>
               <CodeBlock language={styleLanguage} title={`styles.${styleLanguage}`}>
-                {extraStyles[styleLanguage]}
+                {extraStylesState[styleLanguage]}
               </CodeBlock>
             </Details>
             <Details summary={<summary>Other files</summary>}>
               <CodeBlock language="ts" title="fields.ts">
-                {fieldsTsString}
+                {fieldsTsStringState}
               </CodeBlock>
               <CodeBlock language="ts" title="musicalInstruments.ts">
-                {musicalInstrumentsTsString}
+                {musicalInstrumentsTsStringState}
               </CodeBlock>
             </Details>
           </TabItem>

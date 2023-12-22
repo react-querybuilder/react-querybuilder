@@ -34,8 +34,8 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
             valueIsField
               ? wrapFieldName(v)
               : shouldRenderAsNumber(v, parseNumbers)
-              ? `${trimIfString(v)}`
-              : `'${escapeSingleQuotes(v, escapeQuotes)}'`
+                ? `${trimIfString(v)}`
+                : `'${escapeSingleQuotes(v, escapeQuotes)}'`
           )
           .join(', ')})`;
       }
@@ -54,11 +54,11 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
         return valueIsField
           ? `${wrapFieldName(first)} and ${wrapFieldName(second)}`
           : shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers)
-          ? `${trimIfString(first)} and ${trimIfString(second)}`
-          : `'${escapeSingleQuotes(first, escapeQuotes)}' and '${escapeSingleQuotes(
-              second,
-              escapeQuotes
-            )}'`;
+            ? `${trimIfString(first)} and ${trimIfString(second)}`
+            : `'${escapeSingleQuotes(first, escapeQuotes)}' and '${escapeSingleQuotes(
+                second,
+                escapeQuotes
+              )}'`;
       }
       return '';
     }
@@ -89,6 +89,6 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   return valueIsField
     ? wrapFieldName(value)
     : shouldRenderAsNumber(value, parseNumbers)
-    ? `${trimIfString(value)}`
-    : `'${escapeSingleQuotes(value, escapeQuotes)}'`;
+      ? `${trimIfString(value)}`
+      : `'${escapeSingleQuotes(value, escapeQuotes)}'`;
 };

@@ -9,14 +9,18 @@ import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
 import { Buffer } from 'buffer';
 import pako from 'pako';
-import parserPostCSS from 'prettier/esm/parser-postcss.mjs';
-import parserTypeScript from 'prettier/esm/parser-typescript.mjs';
-import prettier from 'prettier/esm/standalone.mjs';
+import * as prettierPluginEstree from 'prettier/plugins/estree';
+import * as parserPostCSS from 'prettier/plugins/postcss.mjs';
+import * as parserTypeScript from 'prettier/plugins/typescript.mjs';
+import * as prettierStandalone from 'prettier/standalone.mjs';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { compileString } from 'sass';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+const prettier = prettierStandalone as typeof import('prettier');
 
 type OptionsAction =
   | { type: 'all' }
@@ -220,34 +224,34 @@ export const App = () => {
 
   return prettier.format(rawCode, {
     filepath: 'App.tsx',
-    plugins: [parserTypeScript],
+    plugins: [parserTypeScript, prettierPluginEstree],
     singleQuote: true,
   });
 };
 
 const compiledCSS = compileString(extraStylesSCSS).css;
 
-export const extraStyles = {
-  css: prettier.format(compiledCSS, {
+export const extraStyles = Promise.all([
+  prettier.format(compiledCSS, {
     filepath: 'styles.css',
     plugins: [parserPostCSS],
     printWidth: 100,
   }),
-  scss: prettier.format(extraStylesSCSS, {
+  prettier.format(extraStylesSCSS, {
     filepath: 'styles.scss',
     plugins: [parserPostCSS],
     printWidth: 100,
   }),
-};
+]).then(([css, scss]) => ({ css, scss }));
 
 export const fieldsTsString = prettier.format(fieldsCode, {
   filepath: 'fields.ts',
-  plugins: [parserTypeScript],
+  plugins: [parserTypeScript, prettierPluginEstree],
   singleQuote: true,
 });
 
 export const musicalInstrumentsTsString = prettier.format(musicalInstrumentsCode, {
   filepath: 'musicalInstrumentsCode.ts',
-  plugins: [parserTypeScript],
+  plugins: [parserTypeScript, prettierPluginEstree],
   singleQuote: true,
 });
