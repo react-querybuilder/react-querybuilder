@@ -78,17 +78,17 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.23.5",
-    "@babel/preset-env": "^7.23.5",
+    "@babel/core": "^7.23.6",
+    "@babel/preset-env": "^7.23.6",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
     "@types/hoist-non-react-statics": "^3.3.5",
     "@types/jscodeshift": "^0.11.11",
-    "@types/node": "^20.10.3",
-    "@types/react": "^18.2.42",
-    "@types/react-dom": "^18.2.17",
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "babel-plugin-istanbul": "^6.1.1",
     "concurrently": "^8.2.2",
@@ -97,18 +97,18 @@
     "query-string": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "regenerator-runtime": "^0.14.0",
-    "rollup-plugin-visualizer": "^5.10.0",
+    "regenerator-runtime": "^0.14.1",
+    "rollup-plugin-visualizer": "^5.11.0",
     "sass": "1.69.4",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.6"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
     "clsx": "^2.0.0",
     "immer": "^10.0.3",
     "numeric-quantity": "^2.0.0",
-    "react-redux": "^9.0.2"
+    "react-redux": "^9.0.4"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

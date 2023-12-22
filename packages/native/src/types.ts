@@ -37,7 +37,7 @@ export interface WithSchemaNative {
   schema: SchemaNative<any, any>;
 }
 
-export interface QueryBuilderNativeStyles {
+export type QueryBuilderNativeStyles = {
   combinatorOption: TextStyle;
   combinatorSelector: TextStyle;
   dragHandle: ViewStyle;
@@ -61,7 +61,7 @@ export interface QueryBuilderNativeStyles {
   valueList: ViewStyle;
   valueSourceOption: TextStyle;
   valueSourceSelector: TextStyle;
-}
+};
 
 export type QueryBuilderNativeStyleSheets = WrapEachPropertyInStyleProp<QueryBuilderNativeStyles>;
 

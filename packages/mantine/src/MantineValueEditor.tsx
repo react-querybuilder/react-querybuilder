@@ -78,7 +78,6 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
             value={dateTimeValue}
             className={standardClassnames.valueListItem}
             disabled={disabled}
-            placeholder={placeHolderText}
             withSeconds
             onChange={d =>
               multiValueHandler(
@@ -204,7 +203,6 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           value={twoDateArray}
           className={className}
           disabled={disabled}
-          placeholder={placeHolderText}
           onChange={dates => {
             const dateArray = dates.map(d => (d ? dayjs(d).format(dateFormat) : ''));
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
@@ -220,7 +218,6 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
           className={className}
           disabled={disabled}
-          placeholder={placeHolderText}
           withSeconds
           onChange={d =>
             handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
@@ -236,7 +233,6 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
         value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
         className={className}
         disabled={disabled}
-        placeholder={placeHolderText}
         onChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
         }

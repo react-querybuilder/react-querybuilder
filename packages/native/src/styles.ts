@@ -7,7 +7,7 @@ export const defaultNativeSelectStyles = {
   option: {} as TextStyle,
 } as const;
 
-const defaultStylesObject: QueryBuilderNativeStyles = {
+const defaultStylesObject = {
   combinatorOption: defaultNativeSelectStyles.option,
   combinatorSelector: defaultNativeSelectStyles.selector,
   // TODO?: implement drag-and-drop
@@ -43,6 +43,6 @@ const defaultStylesObject: QueryBuilderNativeStyles = {
   valueList: { flexDirection: 'row' },
   valueSourceOption: defaultNativeSelectStyles.option,
   valueSourceSelector: defaultNativeSelectStyles.selector,
-};
+} satisfies QueryBuilderNativeStyles;
 
 export const defaultNativeStyles = StyleSheet.create(defaultStylesObject);

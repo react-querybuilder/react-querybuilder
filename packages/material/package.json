@@ -40,18 +40,18 @@
   "devDependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.19",
-    "@mui/material": "^5.14.20",
+    "@mui/icons-material": "^5.15.1",
+    "@mui/material": "^5.15.1",
     "@testing-library/react": "^14.1.2",
-    "@types/react": "^18.2.42",
+    "@types/react": "^18.2.45",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^7.0.0-alpha.3",
-    "regenerator-runtime": "^0.14.0",
-    "rollup-plugin-visualizer": "^5.10.0",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.6"
+    "regenerator-runtime": "^0.14.1",
+    "rollup-plugin-visualizer": "^5.11.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
   },
   "peerDependencies": {
     "@emotion/react": "^11",

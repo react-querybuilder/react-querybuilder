@@ -10,6 +10,13 @@ import { configs } from './exampleConfigs.js';
 
 type ESLintExtendsIsArray = ESLint.ConfigData & { extends: string[] };
 
+// Seems like this should be unnecessary...
+declare module 'bun' {
+  interface BunFile {
+    json(): Promise<any>;
+  }
+}
+
 interface PackageJSON {
   name: string;
   description: string;
