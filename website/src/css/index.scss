@@ -107,7 +107,7 @@
       background: none;
       color: #ff663399;
       border: none;
-      text-shadow: 2px 2px 3px #33333333;
+      text-shadow: 2px 2px 3px #3333334d;
     }
 
     .ruleGroup-addRule {
@@ -135,8 +135,41 @@
 
     .queryBuilder-dragHandle {
       color: #3366ff99;
-      text-shadow: 2px 2px 3px #33333333;
+      text-shadow: 2px 2px 3px #3333334d;
       order: 99;
+    }
+  }
+}
+
+html[data-theme='dark'] {
+  .homepage-showcase {
+    .custom-styling {
+      .queryBuilder {
+        background-color: #2d694f30;
+      }
+
+      .ruleGroup {
+        background-color: rgba(0, 126, 48, 0.3);
+        box-shadow: inset 2px 2px 6px 0 rgb(0 0 0 / 70%);
+      }
+
+      .rule-remove,
+      .ruleGroup-remove {
+        color: #ff4500b3;
+        text-shadow: 2px 2px 3px #00000080;
+      }
+
+      .ruleGroup-addRule {
+        background-color: #3434ff4d;
+      }
+
+      .ruleGroup-addGroup {
+        background-color: #207e204d;
+      }
+
+      .queryBuilder-dragHandle {
+        text-shadow: 2px 2px 3px #00000080;
+      }
     }
   }
 }
