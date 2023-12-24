@@ -45,7 +45,7 @@
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
-  "types": "./dist/react-querybuilder.d.mts",
+  "types": "./dist/cjs/react-querybuilder.cjs.production.d.ts",
   "files": [
     "dist",
     "formatQuery",

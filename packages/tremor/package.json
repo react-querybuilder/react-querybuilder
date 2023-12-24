@@ -20,7 +20,7 @@
       }
     }
   },
-  "types": "./dist/react-querybuilder_tremor.d.mts",
+  "types": "./dist/cjs/react-querybuilder_tremor.cjs.production.d.ts",
   "files": [
     "dist"
   ],

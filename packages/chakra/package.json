@@ -20,7 +20,7 @@
       }
     }
   },
-  "types": "./dist/react-querybuilder_chakra.d.mts",
+  "types": "./dist/cjs/react-querybuilder_chakra.cjs.production.d.ts",
   "files": [
     "dist"
   ],

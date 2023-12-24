@@ -20,7 +20,7 @@
       }
     }
   },
-  "types": "./dist/react-querybuilder_bulma.d.mts",
+  "types": "./dist/cjs/react-querybuilder_bulma.cjs.production.d.ts",
   "files": [
     "dist"
   ],

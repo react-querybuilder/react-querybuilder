@@ -20,7 +20,7 @@
       }
     }
   },
-  "types": "./dist/react-querybuilder_antd.d.mts",
+  "types": "./dist/cjs/react-querybuilder_antd.cjs.production.d.ts",
   "files": [
     "dist"
   ],
