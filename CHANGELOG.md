@@ -87,6 +87,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] Performance is improved via `React.memo` (especially for large queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can usually be addressed with `useCallback`.
 - [#589] Fixed issue where locking the root group would prevent unlocking the query.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
+- [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
 
 ## [v6.5.4] - 2023-11-04
 
@@ -1501,6 +1502,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#589]: https://github.com/react-querybuilder/react-querybuilder/pull/589
 [#595]: https://github.com/react-querybuilder/react-querybuilder/pull/595
 [#606]: https://github.com/react-querybuilder/react-querybuilder/pull/606
+[#619]: https://github.com/react-querybuilder/react-querybuilder/pull/619
 
 <!-- Release comparison links -->
 
