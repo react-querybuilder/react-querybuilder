@@ -51,7 +51,6 @@ export const useQueryBuilderSetup = <
   type OperatorName = GetOptionIdentifierType<O>;
 
   const qbId = useRef(generateID());
-  const firstRender = useRef(true);
 
   const {
     query: queryProp,
@@ -419,12 +418,7 @@ export const useQueryBuilderSetup = <
   useControlledOrUncontrolled({
     defaultQuery,
     queryProp,
-    isFirstRender: firstRender.current,
   });
-
-  if (firstRender.current) {
-    firstRender.current = false;
-  }
 
   return {
     qbId: qbId.current,
