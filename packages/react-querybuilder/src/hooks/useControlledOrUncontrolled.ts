@@ -24,7 +24,7 @@ export const useControlledOrUncontrolled = ({
   defaultQuery,
   queryProp,
 }: UseControlledOrUncontrolledParams) => {
-  const prevQueryPresent = usePrevious(!!queryProp) !== false;
+  const prevQueryPresent = !!usePrevious(!!queryProp);
 
   useEffect(() => {
     // istanbul ignore else
