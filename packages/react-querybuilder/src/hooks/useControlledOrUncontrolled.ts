@@ -24,7 +24,7 @@ export const useControlledOrUncontrolled = ({
   defaultQuery,
   queryProp,
 }: UseControlledOrUncontrolledParams) => {
-  const prevQueryPresent = !!usePrevious(!!queryProp);
+  const prevQueryPresent = usePrevious(!!queryProp);
 
   useEffect(() => {
     // istanbul ignore else
@@ -33,7 +33,7 @@ export const useControlledOrUncontrolled = ({
         console.error(errorBothQueryDefaultQuery);
         didWarnBothQueryDefaultQuery = true;
       } else if (
-        prevQueryPresent &&
+        prevQueryPresent === true &&
         !queryProp &&
         !!defaultQuery &&
         !didWarnControlledToUncontrolled
@@ -41,7 +41,7 @@ export const useControlledOrUncontrolled = ({
         console.error(errorControlledToUncontrolled);
         didWarnControlledToUncontrolled = true;
       } else if (
-        !prevQueryPresent &&
+        prevQueryPresent === false &&
         !!queryProp &&
         !defaultQuery &&
         !didWarnUncontrolledToControlled
