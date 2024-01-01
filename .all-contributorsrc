@@ -300,6 +300,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "eknkc",
+      "name": "Ekin Koc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1248453?v=4",
+      "profile": "https://github.com/eknkc",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
