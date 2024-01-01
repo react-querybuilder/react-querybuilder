@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#589] Fixed issue where locking the root group would prevent unlocking the query.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
+- [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious`.
 
 ## [v6.5.4] - 2023-11-04
 
@@ -1503,6 +1504,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#595]: https://github.com/react-querybuilder/react-querybuilder/pull/595
 [#606]: https://github.com/react-querybuilder/react-querybuilder/pull/606
 [#619]: https://github.com/react-querybuilder/react-querybuilder/pull/619
+[#623]: https://github.com/react-querybuilder/react-querybuilder/pull/623
 
 <!-- Release comparison links -->
 
