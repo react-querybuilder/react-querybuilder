@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/native",
   "description": "React Native components for react-querybuilder",
-  "version": "7.0.0-alpha.4",
+  "version": "7.0.0-alpha.5",
   "publishConfig": {
     "access": "public"
   },
@@ -48,7 +48,7 @@
     "react-dom": "^18.2.0",
     "react-native": "~0.73.1",
     "react-native-web": "~0.19.10",
-    "react-querybuilder": "^7.0.0-alpha.4",
+    "react-querybuilder": "^7.0.0-alpha.5",
     "react-redux": "^9.0.4",
     "react-test-renderer": "^18.2.0",
     "rollup-plugin-visualizer": "^5.12.0",
@@ -57,7 +57,7 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-querybuilder": "^7.0.0-alpha.4",
+    "react-querybuilder": "^7.0.0-alpha.5",
     "react-redux": "^8.1.1"
   }
 }

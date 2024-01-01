@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/fluent",
   "description": "Custom Fluent UI components for react-querybuilder",
-  "version": "7.0.0-alpha.4",
+  "version": "7.0.0-alpha.5",
   "publishConfig": {
     "access": "public"
   },
@@ -46,7 +46,7 @@
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-alpha.4",
+    "react-querybuilder": "^7.0.0-alpha.5",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.10"
@@ -56,6 +56,6 @@
     "@fluentui/react-icons-mdl2": "^1",
     "dayjs": ">=1",
     "react": ">=16.8.0",
-    "react-querybuilder": "^7.0.0-alpha.4"
+    "react-querybuilder": "^7.0.0-alpha.5"
   }
 }
