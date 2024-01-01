@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 /**
  * Returns the prop value from the last render.
@@ -6,11 +6,13 @@ import { useEffect, useRef } from 'react';
  * Adapted from https://usehooks.com/usePrevious/.
  */
 export const usePrevious = <T>(value: T) => {
-  const ref = useRef<T | null>(null);
+  const ref = useRef<{ value: T | null; prev: T | null }>({ value, prev: null });
 
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
+  const current = ref.current.value;
 
-  return ref.current;
+  if (value !== current) {
+    ref.current = { value, prev: current };
+  }
+
+  return ref.current.prev;
 };

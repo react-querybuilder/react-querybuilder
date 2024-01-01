@@ -10,7 +10,6 @@ import { usePrevious } from './usePrevious';
 export interface UseControlledOrUncontrolledParams {
   defaultQuery?: RuleGroupTypeAny;
   queryProp?: RuleGroupTypeAny;
-  isFirstRender: boolean;
 }
 
 let didWarnBothQueryDefaultQuery = false;
@@ -24,7 +23,6 @@ let didWarnControlledToUncontrolled = false;
 export const useControlledOrUncontrolled = ({
   defaultQuery,
   queryProp,
-  isFirstRender,
 }: UseControlledOrUncontrolledParams) => {
   const prevQueryPresent = usePrevious(!!queryProp);
 
@@ -35,7 +33,7 @@ export const useControlledOrUncontrolled = ({
         console.error(errorBothQueryDefaultQuery);
         didWarnBothQueryDefaultQuery = true;
       } else if (
-        prevQueryPresent &&
+        prevQueryPresent === true &&
         !queryProp &&
         !!defaultQuery &&
         !didWarnControlledToUncontrolled
@@ -43,7 +41,7 @@ export const useControlledOrUncontrolled = ({
         console.error(errorControlledToUncontrolled);
         didWarnControlledToUncontrolled = true;
       } else if (
-        !(prevQueryPresent || isFirstRender) &&
+        prevQueryPresent === false &&
         !!queryProp &&
         !defaultQuery &&
         !didWarnUncontrolledToControlled
@@ -52,5 +50,5 @@ export const useControlledOrUncontrolled = ({
         didWarnUncontrolledToControlled = true;
       }
     }
-  }, [defaultQuery, prevQueryPresent, queryProp, isFirstRender]);
+  }, [defaultQuery, prevQueryPresent, queryProp]);
 };
