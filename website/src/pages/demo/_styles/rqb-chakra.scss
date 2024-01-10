@@ -15,12 +15,47 @@
       gap: 0.5rem;
     }
   }
+
+  // Override Chakra styles to maintain default branch styles
+  &.queryBuilder-branches,
+  .queryBuilder-branches {
+    .rule,
+    .ruleGroup .ruleGroup {
+      &::before,
+      &::after {
+        width: 0.5rem !important;
+        border-color: #8081a2 !important;
+        border-radius: 0 !important;
+        box-sizing: initial !important;
+      }
+
+      &::before {
+        border-width: 0 0 1px 1px !important;
+      }
+
+      &:last-child::before {
+        border-bottom-left-radius: 0.25rem !important;
+      }
+
+      &::after {
+        border-width: 0 0 0 1px !important;
+      }
+    }
+
+    .betweenRules {
+      &::before {
+        border-radius: 0 !important;
+        border-width: 0 0 0 1px !important;
+        box-sizing: initial !important;
+      }
+    }
+  }
 }
 
 // Styles below adapted from
 // https://github.com/chakra-ui/chakra-ui/blob/cc0598ddcb2a4e7f84859099556c228c5ff354fe/packages/components/css-reset/src/css-reset.tsx
 
-#rqb-chakra {
+.rqb-chakra {
   // html
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
