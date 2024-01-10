@@ -14,6 +14,9 @@
     .ruleGroup-notToggle {
       gap: 0.5rem;
     }
+    .ruleGroup {
+      border-width: 0 !important;
+    }
   }
 
   // Override Chakra styles to maintain default branch styles
@@ -39,6 +42,13 @@
 
       &::after {
         border-width: 0 0 0 1px !important;
+      }
+    }
+
+    .ruleGroup .ruleGroup {
+      &::before,
+      &::after {
+        left: calc(-0.5rem - 1px);
       }
     }
 
