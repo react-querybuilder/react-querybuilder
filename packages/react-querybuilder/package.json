@@ -79,15 +79,15 @@
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
     "@babel/core": "^7.23.7",
-    "@babel/preset-env": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.2",
     "@types/hoist-non-react-statics": "^3.3.5",
     "@types/jscodeshift": "^0.11.11",
-    "@types/node": "^20.10.6",
-    "@types/react": "^18.2.46",
+    "@types/node": "^20.10.8",
+    "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "babel-plugin-istanbul": "^6.1.1",
@@ -101,7 +101,7 @@
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "1.69.4",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.0.11"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",

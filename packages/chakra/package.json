@@ -44,15 +44,15 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@testing-library/react": "^14.1.2",
-    "@types/react": "^18.2.46",
+    "@types/react": "^18.2.47",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "framer-motion": "^10.16.16",
+    "framer-motion": "^10.17.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^7.0.0-alpha.5",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.0.11"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",
