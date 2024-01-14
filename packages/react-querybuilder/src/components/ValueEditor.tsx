@@ -22,23 +22,12 @@ export const ValueEditor = (allProps: ValueEditorProps) => {
     fieldData,
     disabled,
     separator = null,
-    skipHook = false,
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    skipHook,
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

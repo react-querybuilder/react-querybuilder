@@ -89,6 +89,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
 - [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious`.
+- The `useValueEditor` hook no longer updates values that are arrays to `value[0]` when `valueEditorType === "multiselect"`.
 
 ## [v6.5.4] - 2023-11-04
 

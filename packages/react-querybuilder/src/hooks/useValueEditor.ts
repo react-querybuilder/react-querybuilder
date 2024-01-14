@@ -51,18 +51,20 @@ export const useValueEditor = ({
   listsAsArrays,
   parseNumbers,
   values,
+  type,
   skipHook,
 }: UseValueEditorParams) => {
   useEffect(() => {
     if (skipHook) return;
     if (
+      type !== 'multiselect' &&
       !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
       (Array.isArray(value) ||
         (inputType === 'number' && typeof value === 'string' && value.includes(',')))
     ) {
       handleOnChange(toArray(value)[0] ?? '');
     }
-  }, [handleOnChange, inputType, operator, skipHook, value]);
+  }, [handleOnChange, inputType, operator, skipHook, type, value]);
 
   const valueAsArray = useMemo(() => toArray(value), [value]);
 
