@@ -89,6 +89,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
 - [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious`.
+
+## [v6.5.5] - 2024-01-15
+
+### Fixed
+
 - [#632] The `useValueEditor` hook no longer updates values that are arrays to `value[0]` when `valueEditorType === "multiselect"`.
 
 ## [v6.5.4] - 2023-11-04
@@ -1510,7 +1515,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.5...HEAD
+[v6.5.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.4...v6.5.5
 [v6.5.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.3...v6.5.4
 [v6.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...v6.5.3
 [v6.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.1...v6.5.2
