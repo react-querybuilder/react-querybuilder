@@ -40,6 +40,19 @@ it('sets valueAsArray when operator is "between"', async () => {
   expect(hr.result.current.valueAsArray).toEqual([12, 14]);
 });
 
+it('does not call handleOnChange when type is "multiselect"', async () => {
+  const handleOnChange = jest.fn();
+  renderHook(() =>
+    useValueEditor({
+      handleOnChange,
+      type: 'multiselect',
+      operator: 'custom',
+      value: ['twelve', 'fourteen'],
+    })
+  );
+  expect(handleOnChange).not.toHaveBeenCalled();
+});
+
 it('does not call handleOnChange when skipHook is true', async () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
