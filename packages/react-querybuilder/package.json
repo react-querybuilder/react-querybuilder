@@ -86,8 +86,8 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/hoist-non-react-statics": "^3.3.5",
     "@types/jscodeshift": "^0.11.11",
-    "@types/node": "^20.10.8",
-    "@types/react": "^18.2.47",
+    "@types/node": "^20.11.2",
+    "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "babel-plugin-istanbul": "^6.1.1",
@@ -107,8 +107,8 @@
     "@reduxjs/toolkit": "^2.0.1",
     "clsx": "^2.1.0",
     "immer": "^10.0.3",
-    "numeric-quantity": "^2.0.0",
-    "react-redux": "^9.0.4"
+    "numeric-quantity": "^2.0.1",
+    "react-redux": "^9.1.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

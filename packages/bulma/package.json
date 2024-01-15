@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.1.2",
-    "@types/react": "^18.2.47",
+    "@types/react": "^18.2.48",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "bulma": "^0.9.4",
     "react": "^18.2.0",

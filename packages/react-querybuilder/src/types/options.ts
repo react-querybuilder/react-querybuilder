@@ -78,9 +78,8 @@ export interface FullOption<N extends string = string> {
  * Utility type to turn an {@link Option}, {@link ValueOption} or
  * {@link FlexibleOption} into a {@link FullOption}.
  */
-export type ToFullOption<Opt extends FlexibleOption> = Opt extends FlexibleOption<infer NameType>
-  ? Opt & FullOption<NameType>
-  : never;
+export type ToFullOption<Opt extends FlexibleOption> =
+  Opt extends FlexibleOption<infer NameType> ? Opt & FullOption<NameType> : never;
 
 /**
  * @deprecated Renamed to `Option`.
