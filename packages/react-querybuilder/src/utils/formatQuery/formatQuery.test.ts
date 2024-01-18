@@ -807,7 +807,7 @@ it('handles json_without_ids correctly', () => {
   expect(formatQuery(queryToTest, 'json_without_ids')).toBe(expectedResult);
 });
 
-it('handles json_without_ids by only stripping the key id'()=> {
+it('handles json_without_ids by only stripping the key id', () => {
   const queryToTest: RuleGroupType = {
     id: 'root',
     combinator: 'and',
