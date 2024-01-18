@@ -144,9 +144,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     valueProcessorInternal =
       typeof valueProcessor === 'function'
         ? (r, opts) =>
-          isValueProcessorLegacy(valueProcessor)
-            ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
-            : valueProcessor(r, opts)
+            isValueProcessorLegacy(valueProcessor)
+              ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
+              : valueProcessor(r, opts)
         : format === 'mongodb'
           ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
           : format === 'cel'
@@ -349,8 +349,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               splitValue.forEach(v =>
                 params.push(shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v)
               );
-              return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]
-                } ${operator} (${splitValue.map(() => '?').join(', ')})`;
+              return `${quoteFieldNamesWith[0]}${rule.field}${
+                quoteFieldNamesWith[1]
+              } ${operator} (${splitValue.map(() => '?').join(', ')})`;
             }
             const inParams: string[] = [];
             splitValue.forEach(v => {
@@ -359,8 +360,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               params_named[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] =
                 shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
             });
-            return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]
-              } ${operator} (${inParams.join(', ')})`;
+            return `${quoteFieldNamesWith[0]}${rule.field}${
+              quoteFieldNamesWith[1]
+            } ${operator} (${inParams.join(', ')})`;
           } else {
             return '';
           }
@@ -406,8 +408,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           paramName = getNextNamedParam(rule.field);
           params_named[`${paramsKeepPrefix ? paramPrefix : ''}${paramName}`] = paramValue;
         }
-        return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${parameterized ? '?' : `${paramPrefix}${paramName}`
-          }`.trim();
+        return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${
+          parameterized ? '?' : `${paramPrefix}${paramName}`
+        }`.trim();
       } else {
         const operatorLowerCase = operator.toLowerCase();
         if (
@@ -636,8 +639,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         processedRules.length === 1
           ? processedRules[0]
           : ({
-            [rg.combinator]: processedRules,
-          } as {
+              [rg.combinator]: processedRules,
+            } as {
               [k in keyof DefaultCombinatorName]: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
             });
 
@@ -686,9 +689,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return {
         bool: rg.not
           ? {
-            must_not:
-              rg.combinator === 'or' ? { bool: { should: processedRules } } : processedRules,
-          }
+              must_not:
+                rg.combinator === 'or' ? { bool: { should: processedRules } } : processedRules,
+            }
           : { [rg.combinator === 'or' ? 'should' : 'must']: processedRules },
       };
     };
