@@ -1,14 +1,16 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import * as React from 'react';
+import type { ValueEditorProps } from 'react-querybuilder';
 import {
   ValueSelector,
   getFirstOption,
   standardClassnames,
   useValueEditor,
-  type ValueEditorProps,
 } from 'react-querybuilder';
 
-export const ChakraValueEditor = (allProps: ValueEditorProps) => {
+type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+
+export const ChakraValueEditor = (allProps: ChakraValueEditorProps) => {
   const {
     fieldData,
     operator,
@@ -26,6 +28,7 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
     testID,
     disabled,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    extraProps,
     ...props
   } = allProps;
 
@@ -62,6 +65,7 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
             className={standardClassnames.valueListItem}
             placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
+            {...extraProps}
           />
         );
       }
@@ -125,6 +129,7 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
           className={className}
           placeholder={placeHolderText}
           onChange={e => handleOnChange(e.target.value)}
+          {...extraProps}
         />
       );
 
@@ -136,6 +141,7 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
           title={title}
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
+          {...extraProps}
         />
       );
 
@@ -147,6 +153,7 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
           isDisabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
           isChecked={!!value}
+          {...extraProps}
         />
       );
 
@@ -157,7 +164,8 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
           title={title}
           value={value}
           onChange={handleOnChange}
-          isDisabled={disabled}>
+          isDisabled={disabled}
+          {...extraProps}>
           <Stack direction="row">
             {values.map(v => (
               <Radio key={v.name} value={v.name}>
@@ -178,6 +186,7 @@ export const ChakraValueEditor = (allProps: ValueEditorProps) => {
       className={className}
       placeholder={placeHolderText}
       onChange={e => handleOnChange(e.target.value)}
+      {...extraProps}
     />
   );
 };
