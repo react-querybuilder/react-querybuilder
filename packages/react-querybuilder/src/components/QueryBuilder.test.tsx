@@ -2022,6 +2022,31 @@ describe('dispatchQuery and getQuery', () => {
     await user.click(screen.getByText(dispatchQueryBtnText));
     expect(onQueryChange.mock.lastCall?.[0]).toMatchObject({ combinator: 'or', rules: [] });
   });
+
+  it('updates the store when an entirely new query prop is provided', async () => {
+    const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    const QBApp = ({ query }: { query: RuleGroupType }) => {
+      const [q, sq] = React.useState(query);
+
+      return (
+        <>
+          <button type="button" onClick={() => sq(emptyQuery)}>
+            Reset
+          </button>
+          <QueryBuilder query={q} onQueryChange={sq} enableMountQueryChange={false} />
+        </>
+      );
+    };
+
+    render(<QBApp query={emptyQuery} />);
+    await user.click(screen.getByTestId(TestID.addRule));
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(screen.queryAllByTestId(TestID.rule)).toHaveLength(2);
+    await user.click(screen.getByText('Reset'));
+    expect(screen.queryAllByTestId(TestID.rule)).toHaveLength(0);
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(screen.queryAllByTestId(TestID.rule)).toHaveLength(1);
+  });
 });
 
 describe('nested object immutability', () => {

@@ -157,15 +157,21 @@ export function useQueryBuilderSchema<
     [queryBuilderStore, querySelector]
   );
 
-  const initialQuery = useMemo(() => createRuleGroup(), [createRuleGroup]);
+  const fallbackQuery = useMemo(() => createRuleGroup(), [createRuleGroup]);
 
   // We assume here that if this is not the first render, the query has already
   // been prepared. If `preliminaryQuery === query`, the user is probably
   // passing back the parameter from the `onQueryChange` callback.
-  const preliminaryQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? initialQuery;
+  const preliminaryQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
   const rootGroup = isFirstRender.current
     ? prepareRuleGroup(preliminaryQuery, { idGenerator })
     : preliminaryQuery;
+
+  // If a query prop is passed in that doesn't match the query in the store,
+  // update the store query to match the prop _without_ calling `onQueryChange`.
+  if (!!queryProp && queryProp !== storeQuery) {
+    queryBuilderDispatch(dispatchThunk({ payload: { qbId, query: queryProp } }));
+  }
 
   const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootGroup), [rootGroup]);
 
@@ -177,7 +183,7 @@ export function useQueryBuilderSchema<
     const oQC =
       enableMountQueryChange && typeof onQueryChange === 'function' ? onQueryChange : undefined;
     queryBuilderDispatch(
-      dispatchThunk({ payload: { qbId: qbId, query: rootGroup }, onQueryChange: oQC })
+      dispatchThunk({ payload: { qbId, query: rootGroup }, onQueryChange: oQC })
     );
 
     return () => {
