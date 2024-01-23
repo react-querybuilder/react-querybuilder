@@ -18,6 +18,8 @@ import {
 } from 'react-querybuilder';
 import { TremorValueSelector } from './TremorValueSelector';
 
+type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
@@ -25,7 +27,7 @@ const ClearableValueSelector = (props: VersatileSelectorProps) => {
   return <TremorValueSelector {...props} enableClear />;
 };
 
-export const TremorValueEditor = (allProps: ValueEditorProps) => {
+export const TremorValueEditor = (allProps: TremorValueEditorProps) => {
   const {
     fieldData,
     operator,
@@ -44,6 +46,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
     testID,
     selectorComponent: SelectorComponent = ClearableValueSelector,
     validation: _validation,
+    extraProps,
     ...props
   } = allProps;
 
@@ -84,6 +87,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
             className={`${standardClassnames.valueListItem} input`}
             disabled={disabled}
             onValueChange={v => multiValueHandler(v, i)}
+            {...extraProps}
           />
         );
       }
@@ -136,6 +140,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
           placeholder={placeHolderText}
           disabled={disabled}
           onValueChange={handleOnChange}
+          {...extraProps}
         />
       );
 
@@ -147,6 +152,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
           checked={value}
           disabled={disabled}
           onChange={handleOnChange}
+          {...extraProps}
         />
       );
 
@@ -202,6 +208,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
             );
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
           }}
+          {...extraProps}
         />
       );
     }
@@ -218,6 +225,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
         onValueChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
         }
+        {...extraProps}
       />
     );
   }
@@ -232,6 +240,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
         disabled={disabled}
         value={value}
         onValueChange={handleOnChange}
+        {...extraProps}
       />
     );
   }
@@ -246,6 +255,7 @@ export const TremorValueEditor = (allProps: ValueEditorProps) => {
       disabled={disabled}
       value={value}
       onValueChange={handleOnChange}
+      {...extraProps}
     />
   );
 };

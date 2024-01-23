@@ -1,5 +1,5 @@
 import { Checkbox, NumberInput, Radio, Switch, Textarea, TextInput } from '@mantine/core';
-import type { DateValue } from '@mantine/dates';
+import type { DatesRangeValue, DateValue } from '@mantine/dates';
 import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import * as React from 'react';
@@ -7,10 +7,12 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { toNumberInputValue } from './utils';
 
+type MantineValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
-export const MantineValueEditor = (allProps: ValueEditorProps) => {
+export const MantineValueEditor = (allProps: MantineValueEditorProps) => {
   const {
     fieldData,
     operator,
@@ -29,6 +31,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     validation: _validation,
+    extraProps,
     ...props
   } = allProps;
 
@@ -66,6 +69,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
             className={`${standardClassnames.valueListItem} input`}
             disabled={disabled}
             onChange={v => multiValueHandler(toNumberInputValue(v), i)}
+            {...extraProps}
           />
         );
       }
@@ -85,6 +89,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
                 i
               )
             }
+            {...extraProps}
           />
         );
       }
@@ -98,6 +103,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
             className={`${standardClassnames.valueListItem} input`}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
+            {...extraProps}
           />
         );
       }
@@ -150,6 +156,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           placeholder={placeHolderText}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.value)}
+          {...extraProps}
         />
       );
 
@@ -161,6 +168,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           checked={value}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
+          {...extraProps}
         />
       );
 
@@ -172,12 +180,18 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           checked={value}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
+          {...extraProps}
         />
       );
 
     case 'radio':
       return (
-        <Radio.Group className={className} title={title} value={value} onChange={handleOnChange}>
+        <Radio.Group
+          className={className}
+          title={title}
+          value={value}
+          onChange={handleOnChange}
+          {...extraProps}>
           {values.map(v => (
             <Radio key={v.name} value={v.name} label={v.label} disabled={disabled} />
           ))}
@@ -203,10 +217,11 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           value={twoDateArray}
           className={className}
           disabled={disabled}
-          onChange={dates => {
+          onChange={(dates: DatesRangeValue) => {
             const dateArray = dates.map(d => (d ? dayjs(d).format(dateFormat) : ''));
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
           }}
+          {...extraProps}
         />
       );
     }
@@ -222,6 +237,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
           onChange={d =>
             handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
           }
+          {...extraProps}
         />
       );
     }
@@ -236,6 +252,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
         onChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
         }
+        {...extraProps}
       />
     );
   }
@@ -250,6 +267,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
         disabled={disabled}
         value={toNumberInputValue(value)}
         onChange={v => handleOnChange(toNumberInputValue(v))}
+        {...extraProps}
       />
     );
   }
@@ -264,6 +282,7 @@ export const MantineValueEditor = (allProps: ValueEditorProps) => {
       disabled={disabled}
       value={value}
       onChange={e => handleOnChange(e.target.value)}
+      {...extraProps}
     />
   );
 };
