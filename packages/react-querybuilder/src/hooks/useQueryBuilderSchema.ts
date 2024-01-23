@@ -46,6 +46,7 @@ import {
   update,
 } from '../utils';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
+import { useDeprecatedProps } from './useDeprecatedProps';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
@@ -174,6 +175,12 @@ export function useQueryBuilderSchema<
   }
 
   const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootGroup), [rootGroup]);
+  const invalidIC = !!props.independentCombinators && !independentCombinators;
+  useDeprecatedProps('invalid-ic', invalidIC);
+  useDeprecatedProps(
+    'unnecessary-ic',
+    !invalidIC && (props.independentCombinators ?? 'not present') !== 'not present'
+  );
 
   // This effect only runs once, at the beginning of the component lifecycle.
   // The returned cleanup function clears the query from the store when the

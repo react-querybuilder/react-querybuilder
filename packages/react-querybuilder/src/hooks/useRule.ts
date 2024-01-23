@@ -51,7 +51,7 @@ export const useRule = (props: RuleProps) => {
     getRuleClassname,
   } = schema;
 
-  useDeprecatedProps('rule', !!ruleProp);
+  useDeprecatedProps('rule', !ruleProp);
 
   useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 

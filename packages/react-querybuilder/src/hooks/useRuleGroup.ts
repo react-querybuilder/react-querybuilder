@@ -51,7 +51,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     isOver = false,
   } = props;
 
-  useDeprecatedProps('ruleGroup', !!ruleGroupProp);
+  useDeprecatedProps('ruleGroup', !ruleGroupProp);
 
   useReactDndWarning(
     enableDragAndDrop,

@@ -401,14 +401,14 @@ export default function Demo({
     setTimeout(() => setCopyPermalinkText(permalinkText), 1214);
   };
 
-  const commonRQBProps = useMemo(
-    (): CommonRQBProps => ({
+  const commonRQBProps = useMemo((): CommonRQBProps => {
+    const { independentCombinators: _ic, ...opts } = options;
+    return {
       fields,
-      ...options,
-      validator: options.validateQuery ? defaultValidator : undefined,
-    }),
-    [options]
-  );
+      ...opts,
+      validator: opts.validateQuery ? defaultValidator : undefined,
+    };
+  }, [options]);
 
   const qbWrapperId = `rqb-${variant}`;
   const qbWrapperClassName = useMemo(

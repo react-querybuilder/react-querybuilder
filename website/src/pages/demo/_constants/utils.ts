@@ -174,7 +174,6 @@ export const getCodeString = (
     getPropText('autoSelectOperator'),
     getPropText('debugMode'),
     getPropText('disabled'),
-    getPropText('independentCombinators'),
     getPropText('listsAsArrays'),
     getPropText('resetOnFieldChange'),
     getPropText('resetOnOperatorChange'),
