@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, standardClassnames } from '../defaults';
 import {
   dispatchThunk,
@@ -45,8 +45,8 @@ import {
   remove,
   update,
 } from '../utils';
-import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 import { useDeprecatedProps } from './useDeprecatedProps';
+import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
@@ -170,8 +170,7 @@ export function useQueryBuilderSchema<
 
   // If a query prop is passed in that doesn't match the query in the store,
   // update the store query to match the prop _without_ calling `onQueryChange`.
-  // TODO: Does useLayoutEffect provide an advantage over useEffect here?
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!!queryProp && queryProp !== storeQuery) {
       queryBuilderDispatch(
         dispatchThunk({ payload: { qbId, query: queryProp }, onQueryChange: undefined })
