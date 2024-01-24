@@ -185,15 +185,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     if (format === 'json') {
       return JSON.stringify(rg, null, 2);
     }
-    return JSON.stringify(rg, [
-      'rules',
-      'field',
-      'value',
-      'operator',
-      'combinator',
-      'not',
-      'valueSource',
-    ]);
+    return JSON.stringify(rg, (key, value) =>
+      // Remove `id` and `path` keys; leave everything else unchanged.
+      key === 'id' || key === 'path' ? undefined : value
+    );
   }
 
   // istanbul ignore else
