@@ -69,21 +69,21 @@ export const App = ({
     return () => window.removeEventListener('hashchange', updateOptionsFromHash);
   }, [permalinkHash, updateOptionsFromHash]);
 
-  const commonRQBProps = useMemo(
-    (): CommonRQBProps => ({
+  const commonRQBProps = useMemo((): CommonRQBProps => {
+    const { independentCombinators: _ic, ...opts } = optVals;
+    return {
       fields,
-      ...optVals,
-      validator: optVals.validateQuery ? defaultValidator : undefined,
+      ...opts,
+      validator: opts.validateQuery ? defaultValidator : undefined,
       controlClassnames: {
         ...controlClassnames,
         queryBuilder: clsx(controlClassnames?.queryBuilder, {
-          [standardClassnames.branches]: optVals.showBranches,
+          [standardClassnames.branches]: opts.showBranches,
         }),
       },
       controlElements,
-    }),
-    [controlClassnames, controlElements, optVals]
-  );
+    };
+  }, [controlClassnames, controlElements, optVals]);
 
   const formatQueryResults = formatMap.map(([format]) => {
     const formatQueryOptions: FormatQueryOptions = {
