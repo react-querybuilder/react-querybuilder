@@ -4,7 +4,9 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 
-export const FluentValueEditor = (allProps: ValueEditorProps) => {
+type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+
+export const FluentValueEditor = (allProps: FluentValueEditorProps) => {
   const {
     fieldData,
     operator,
@@ -23,6 +25,7 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     validation: _validation,
+    extraProps,
     ...props
   } = allProps;
 
@@ -61,6 +64,7 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
             className={`${standardClassnames.valueListItem} input`}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
+            {...extraProps}
           />
         );
       }
@@ -113,6 +117,7 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
           placeholder={placeHolderText}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.value)}
+          {...extraProps}
         />
       );
 
@@ -124,6 +129,7 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
           checked={value}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
+          {...extraProps}
         />
       );
 
@@ -135,6 +141,7 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
           checked={value}
           disabled={disabled}
           onChange={e => handleOnChange(e.target.checked)}
+          {...extraProps}
         />
       );
 
@@ -145,7 +152,8 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
           title={title}
           value={value}
           onChange={(_e, data) => handleOnChange(data.value)}
-          disabled={disabled}>
+          disabled={disabled}
+          {...extraProps}>
           {values.map(v => (
             <Radio key={v.name} value={v.name} label={v.label} />
           ))}
@@ -163,6 +171,7 @@ export const FluentValueEditor = (allProps: ValueEditorProps) => {
       disabled={disabled}
       value={value}
       onChange={e => handleOnChange(e.target.value)}
+      {...extraProps}
     />
   );
 };

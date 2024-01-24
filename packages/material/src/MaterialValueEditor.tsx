@@ -13,6 +13,7 @@ import type { RQBMaterialComponents } from './types';
 
 export type MaterialValueEditorProps = ValueEditorProps & {
   muiComponents?: RQBMaterialComponents;
+  extraProps?: Record<string, any>;
 };
 
 export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
@@ -38,6 +39,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     testID,
     selectorComponent: SelectorComponent = props.schema.controls
       .valueSelector as typeof MaterialValueSelector,
+    extraProps,
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
@@ -90,6 +92,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
             disabled={disabled}
             placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
+            {...extraProps}
           />
         );
       }
@@ -149,6 +152,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
           className={className}
           placeholder={placeHolderText}
           onChange={e => handleOnChange(e.target.value)}
+          {...extraProps}
         />
       );
 
@@ -161,6 +165,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
           disabled={disabled}
           className={className}
           onChange={e => handleOnChange(e.target.checked)}
+          {...extraProps}
         />
       );
 
@@ -173,6 +178,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
           onChange={e => handleOnChange(e.target.checked)}
           checked={!!value}
           disabled={disabled}
+          {...extraProps}
         />
       );
 
@@ -183,7 +189,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
           className={className}
           title={title}
           component="fieldset"
-          disabled={disabled}>
+          disabled={disabled}
+          {...extraProps}>
           <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
             {values.map(v => (
               <FormControlLabel
@@ -215,6 +222,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
       className={className}
       placeholder={placeHolderText}
       onChange={e => handleOnChange(e.target.value)}
+      {...extraProps}
     />
   );
 };

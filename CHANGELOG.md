@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#589] The `independentCombinators` prop has been deprecated and will be ignored if used. To enable the independent combinators functionality, use `RuleGroupTypeIC` for the `query` or `defaultQuery` prop. The query builder will detect the query type and behave accordingly. If the `independentCombinators` prop is present, a warning will be logged to the console (in "development" mode only).
 - [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
 - [#589] The `disabled` prop has been un-deprecated. Disabling the entire query with the prop and setting `disabled: true` as a property of the root group now produce different behaviors. Namely, the root group's lock/unlock button will always be enabled if the `disabled` prop is not `true`.
+- [#555] Value editors for compatibility packages that render components specific to their respective library now accept an `extraProps` prop that will be passed directly to the library component, spread like `{...extraProps}`. The type of `extraProps` is `any` because each value editor can render one of several library components that accept different props.
 
 <details>
 
@@ -46,7 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <details>
 
-<summary>Less impactful changes</summary>
+<summary>Low impact changes</summary>
 
 - [#537] The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. Each hook takes the full `QueryBuilder` props object as its first parameter (as `useQueryBuilder` did), and `useQueryBuilderSchema` accepts the return value of `useQueryBuilderSetup` as its second parameter.
 - [#537] The `useStopEventPropagation` hook now takes a single function as its parameter instead of an object map of functions, so it must be run for each wrapped function individually.
@@ -1502,6 +1503,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#526]: https://github.com/react-querybuilder/react-querybuilder/issues/526
 [#529]: https://github.com/react-querybuilder/react-querybuilder/pull/529
 [#537]: https://github.com/react-querybuilder/react-querybuilder/pull/537
+[#555]: https://github.com/react-querybuilder/react-querybuilder/issues/555
 [#572]: https://github.com/react-querybuilder/react-querybuilder/issues/572
 [#574]: https://github.com/react-querybuilder/react-querybuilder/issues/574
 [#577]: https://github.com/react-querybuilder/react-querybuilder/pull/577

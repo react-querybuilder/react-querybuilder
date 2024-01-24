@@ -7,9 +7,11 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
 import dayjsGenerateConfig from './dayjs';
 
+type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+
 const DatePicker = generatePicker(dayjsGenerateConfig);
 
-export const AntDValueEditor = (allProps: ValueEditorProps) => {
+export const AntDValueEditor = (allProps: AntDValueEditorProps) => {
   const {
     fieldData,
     operator,
@@ -27,6 +29,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
     disabled,
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    extraProps,
     ...props
   } = allProps;
 
@@ -66,6 +69,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
               disabled={disabled}
               placeholder={placeHolderText}
               onChange={d => multiValueHandler(d?.format('HH:mm:ss') ?? '', i)}
+              {...extraProps}
             />
           );
         }
@@ -78,6 +82,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
             disabled={disabled}
             placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
+            {...extraProps}
           />
         );
       }
@@ -117,6 +122,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
           disabled={disabled}
           multiple={type === 'multiselect'}
           listsAsArrays={listsAsArrays}
+          {...extraProps}
         />
       );
 
@@ -129,6 +135,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={e => handleOnChange(e.target.value)}
+          {...extraProps}
         />
       );
 
@@ -140,6 +147,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
           className={className}
           disabled={disabled}
           onChange={v => handleOnChange(v)}
+          {...extraProps}
         />
       );
 
@@ -151,6 +159,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
             disabled={disabled}
             onChange={e => handleOnChange(e.target.checked)}
             checked={!!value}
+            {...extraProps}
           />
         </span>
       );
@@ -164,7 +173,8 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
               value={v.name}
               checked={value === v.name}
               disabled={disabled}
-              onChange={e => handleOnChange(e.target.value)}>
+              onChange={e => handleOnChange(e.target.value)}
+              {...extraProps}>
               {v.label}
             </Radio>
           ))}
@@ -197,6 +207,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
                 );
               }
             }
+            {...extraProps}
           />
         );
       }
@@ -210,6 +221,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={(_d, dateString) => handleOnChange(dateString)}
+          {...extraProps}
         />
       );
     }
@@ -223,6 +235,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={d => handleOnChange(d?.format('HH:mm:ss') ?? '')}
+          {...extraProps}
         />
       );
     }
@@ -237,6 +250,7 @@ export const AntDValueEditor = (allProps: ValueEditorProps) => {
       disabled={disabled}
       placeholder={placeHolderText}
       onChange={e => handleOnChange(e.target.value)}
+      {...extraProps}
     />
   );
 };
