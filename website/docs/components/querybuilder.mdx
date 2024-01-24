@@ -770,6 +770,12 @@ Pass `true` to display a "clone" button on each group header and rule. Clicking 
 
 Pass `true` to display the "Lock rule" and "Lock group" buttons. When a rule is locked, all elements within the rule will be disabled except for the lock button itself (so the user can unlock the rule). When a group is locked, all elements within the group header (except the lock button itself), as well as all child rule/group elements (including their lock buttons), will be disabled.
 
+### `showShiftActions`
+
+`boolean` (default `false`) _<DemoLink option="showShiftActions" />_
+
+Pass `true` to display the "shift up"/"shift down" buttons. The buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. The `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button.
+
 ### `resetOnFieldChange`
 
 `boolean` (default `true`) _<DemoLink option="resetOnFieldChange" disabled />_
