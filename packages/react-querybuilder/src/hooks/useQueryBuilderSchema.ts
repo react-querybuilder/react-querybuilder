@@ -180,10 +180,11 @@ export function useQueryBuilderSchema<
 
   const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootGroup), [rootGroup]);
   const invalidIC = !!props.independentCombinators && !independentCombinators;
-  useDeprecatedProps('invalid-ic', invalidIC);
   useDeprecatedProps(
-    'unnecessary-ic',
-    !invalidIC && (props.independentCombinators ?? 'not present') !== 'not present'
+    'independentCombinators',
+    invalidIC || (!invalidIC && (props.independentCombinators ?? 'not present') !== 'not present'),
+    invalidIC ? 'invalid' : 'unnecessary'
+    // 'invalid'
   );
 
   // This effect only runs once, at the beginning of the component lifecycle.
