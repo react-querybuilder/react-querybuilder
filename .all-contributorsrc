@@ -309,6 +309,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "zachblume",
+      "name": "Zach Blume",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21265331?v=4",
+      "profile": "https://www.linkedin.com/in/zach-blume/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
