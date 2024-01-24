@@ -10,6 +10,7 @@ import type {
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import { add } from '../queryTools';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
@@ -796,34 +797,19 @@ it('handles custom fallbackExpression correctly', () => {
 });
 
 it('handles json_without_ids correctly', () => {
-  const queryToTest: RuleGroupType = {
+  const queryToTest: RuleGroupType & { extraProperty: string } = {
     id: 'root',
     combinator: 'and',
     rules: [{ field: 'firstName', value: '', operator: 'null', valueSource: 'value' }],
     not: false,
+    extraProperty: 'extraProperty',
   };
-  const expectedResult =
-    '{"rules":[{"field":"firstName","value":"","operator":"null","valueSource":"value"}],"combinator":"and","not":false}';
-  expect(formatQuery(queryToTest, 'json_without_ids')).toBe(expectedResult);
-});
-
-it('handles json_without_ids by only stripping the key id', () => {
-  const queryToTest: RuleGroupType = {
-    id: 'root',
-    combinator: 'and',
-    rules: [
-      {
-        field: 'firstName',
-        value: { aRandomKey: 'value' },
-        operator: 'null',
-        valueSource: 'value',
-      },
-    ],
-    not: false,
-  };
-  const expectedResult =
-    '{"rules":[{"field":"firstName","value":{"aRandomKey":"value"},"operator":"null","valueSource":"value"}],"combinator":"and","not":false}';
-  expect(formatQuery(queryToTest, 'json_without_ids')).toBe(expectedResult);
+  const expectedResult = JSON.parse(
+    '{"rules":[{"field":"firstName","value":"","operator":"null","valueSource":"value"}],"combinator":"and","not":false,"extraProperty":"extraProperty"}'
+  );
+  expect(JSON.parse(formatQuery(prepareRuleGroup(queryToTest), 'json_without_ids'))).toEqual(
+    expectedResult
+  );
 });
 
 it('uses paramPrefix correctly', () => {
@@ -1715,20 +1701,31 @@ describe('parseNumbers', () => {
 
   it('parses numbers for json_without_ids', () => {
     expect(
-      formatQuery(queryForNumberParsing, { format: 'json_without_ids', parseNumbers: true })
-    ).toBe(
-      '{"rules":[{"field":"f","value":"NaN","operator":">"},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"<"},{"field":"f","value":1.5,"operator":">"}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
+      JSON.parse(
+        formatQuery(prepareRuleGroup(queryForNumberParsing), {
+          format: 'json_without_ids',
+          parseNumbers: true,
+        })
+      )
+    ).toEqual(
+      JSON.parse(
+        '{"rules":[{"field":"f","value":"NaN","operator":">"},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"<"},{"field":"f","value":1.5,"operator":">"}],"combinator":"or"},{"field":"f","value":"0, 1, 2","operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":"0, 1","operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
+      )
     );
   });
 
   it('parses numbers for json_without_ids with independentCombinators', () => {
     expect(
-      formatQuery(convertToIC(queryForNumberParsing), {
-        format: 'json_without_ids',
-        parseNumbers: true,
-      })
-    ).toBe(
-      '{"rules":[{"field":"f","value":"NaN","operator":">"},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"<"},"or",{"field":"f","value":1.5,"operator":">"}]},"and",{"field":"f","value":"0, 1, 2","operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":"0, 1","operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
+      JSON.parse(
+        formatQuery(prepareRuleGroup(convertToIC(queryForNumberParsing)), {
+          format: 'json_without_ids',
+          parseNumbers: true,
+        })
+      )
+    ).toEqual(
+      JSON.parse(
+        '{"rules":[{"field":"f","value":"NaN","operator":">"},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"<"},"or",{"field":"f","value":1.5,"operator":">"}]},"and",{"field":"f","value":"0, 1, 2","operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":"0, 1","operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
+      )
     );
   });
 

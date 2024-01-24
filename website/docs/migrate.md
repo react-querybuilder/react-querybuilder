@@ -35,6 +35,14 @@ Since the parser functions are infrequently used and generally not used together
 | `parseMongoDB`   | `import { parseMongoDB } from "react-querybuilder/parseMongoDB"`     |
 | `parseSQL`       | `import { parseSQL } from "react-querybuilder/parseSQL"`             |
 
+### JSON without identifiers
+
+The `"json_without_ids"` export format now removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only _include_ specific properties. The following command will replicate the previous behavior:
+
+```ts
+JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not', 'valueSource']);
+```
+
 ## New features
 
 ### Performance improvements

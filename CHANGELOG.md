@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
 - [#589] The `disabled` prop has been un-deprecated. Disabling the entire query with the prop and setting `disabled: true` as a property of the root group now produce different behaviors. Namely, the root group's lock/unlock button will always be enabled if the `disabled` prop is not `true`.
 - [#555] Value editors for compatibility packages that render components specific to their respective library now accept an `extraProps` prop that will be passed directly to the library component, spread like `{...extraProps}`. The type of `extraProps` is `any` because each value editor can render one of several library components that accept different props.
+- [#637] The `"json_without_ids"` export format now removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only include specific properties.
 
 <details>
 
@@ -1515,6 +1516,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#619]: https://github.com/react-querybuilder/react-querybuilder/pull/619
 [#623]: https://github.com/react-querybuilder/react-querybuilder/pull/623
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
+[#637]: https://github.com/react-querybuilder/react-querybuilder/pull/637
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
 
 <!-- Release comparison links -->

@@ -185,14 +185,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     if (format === 'json') {
       return JSON.stringify(rg, null, 2);
     }
-    return JSON.stringify(rg, function (key, value) {
-      // Blacklist 'id' key instead of whitelisting 'acceptable' keys
-      // to prevent recursively key-stripping client-provided objects
-      if (key === 'id') {
-        return undefined;
-      }
-      return value;
-    });
+    return JSON.stringify(rg, (key, value) =>
+      // Remove `id` and `path` keys; leave everything else unchanged.
+      key === 'id' || key === 'path' ? undefined : value
+    );
   }
 
   // istanbul ignore else
