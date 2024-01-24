@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { LogType, standardClassnames } from '../defaults';
 import {
   dispatchThunk,
@@ -170,9 +170,14 @@ export function useQueryBuilderSchema<
 
   // If a query prop is passed in that doesn't match the query in the store,
   // update the store query to match the prop _without_ calling `onQueryChange`.
-  if (!!queryProp && queryProp !== storeQuery) {
-    queryBuilderDispatch(dispatchThunk({ payload: { qbId, query: queryProp } }));
-  }
+  // TODO: Does useLayoutEffect provide an advantage over useEffect here?
+  useLayoutEffect(() => {
+    if (!!queryProp && queryProp !== storeQuery) {
+      queryBuilderDispatch(
+        dispatchThunk({ payload: { qbId, query: queryProp }, onQueryChange: undefined })
+      );
+    }
+  });
 
   const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootGroup), [rootGroup]);
   const invalidIC = !!props.independentCombinators && !independentCombinators;
