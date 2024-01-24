@@ -7,6 +7,7 @@ import { basicSchema, findSelect, hasOrInheritsClass, userEventSetup } from './u
 type ValueSelectorTestsToSkip = Partial<{
   multi: boolean;
   optgroup: boolean;
+  disabledOptions: boolean;
 }>;
 
 export const defaultValueSelectorProps = {
@@ -137,6 +138,19 @@ export const testSelect = (
       await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
       expect(onChange).not.toHaveBeenCalled();
     });
+
+    if (!skip.disabledOptions) {
+      it('should disable individual options', async () => {
+        const onChange = jest.fn();
+        const disabledOption = { name: 'disabled', label: 'Disabled', disabled: true };
+        const newValues = [...testValues, disabledOption];
+        const propsWithDisabledOption =
+          'values' in props ? { ...props, values: newValues } : { ...props, options: newValues };
+        render(<Component {...propsWithDisabledOption} handleOnChange={onChange} />);
+        await user.selectOptions(findSelect(screen.getByTitle(title)), 'disabled');
+        expect(onChange).not.toHaveBeenCalled();
+      });
+    }
   });
 };
 

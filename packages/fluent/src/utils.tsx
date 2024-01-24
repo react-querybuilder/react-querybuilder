@@ -8,7 +8,7 @@ export const toDropdownOptions = (list: OptionList) =>
     ? list.map(og => (
         <OptionGroup key={og.label} label={og.label}>
           {og.options.map(opt => (
-            <Option key={opt.name} value={opt.name}>
+            <Option key={opt.name} value={opt.name} disabled={!!opt.disabled}>
               {opt.label}
             </Option>
           ))}
@@ -16,7 +16,7 @@ export const toDropdownOptions = (list: OptionList) =>
       ))
     : Array.isArray(list)
       ? list.map(opt => (
-          <Option key={opt.name} value={opt.name}>
+          <Option key={opt.name} value={opt.name} disabled={!!opt.disabled}>
             {opt.label}
           </Option>
         ))

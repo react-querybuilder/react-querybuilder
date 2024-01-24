@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#526] Experimental support for ElasticSearch export format in `formatQuery`.
 - [#606] New compatibility package for [Tremor](https://www.tremor.so/), `@react-querybuilder/tremor`.
 - [#537] New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in modern IDEs.
+- [#638] Value selectors now respect the `disabled` property of individual options in option lists.
 
 ### Fixed
 
@@ -1512,6 +1513,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#619]: https://github.com/react-querybuilder/react-querybuilder/pull/619
 [#623]: https://github.com/react-querybuilder/react-querybuilder/pull/623
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
+[#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
 
 <!-- Release comparison links -->
 

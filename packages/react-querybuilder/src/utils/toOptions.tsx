@@ -11,7 +11,7 @@ export const toOptions = (arr?: OptionList) =>
     ? arr.map(og => (
         <optgroup key={og.label} label={og.label}>
           {og.options.map(opt => (
-            <option key={opt.name} value={opt.name}>
+            <option key={opt.name} value={opt.name} disabled={opt.disabled}>
               {opt.label}
             </option>
           ))}
@@ -19,7 +19,7 @@ export const toOptions = (arr?: OptionList) =>
       ))
     : Array.isArray(arr)
       ? arr.map(opt => (
-          <option key={opt.name} value={opt.name}>
+          <option key={opt.name} value={opt.name} disabled={opt.disabled}>
             {opt.label}
           </option>
         ))

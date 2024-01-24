@@ -329,7 +329,7 @@ testActionElement(AntDActionElement);
 testDragHandle(AntDDragHandle);
 testShiftActions(AntDShiftActions);
 testValueEditor(AntDValueEditor, { switch: true });
-testValueSelector(AntDValueSelector);
+testValueSelector(AntDValueSelector, { disabledOptions: true });
 
 it('renders with composition', () => {
   render(

@@ -250,7 +250,7 @@ describe('value editor', () => {
 });
 
 describe('value selector', () => {
-  testValueSelector(generateWrapper(MaterialValueSelector));
+  testValueSelector(generateWrapper(MaterialValueSelector), { disabledOptions: true });
 
   it('renders without preloaded components', async () => {
     render(

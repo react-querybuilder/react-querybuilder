@@ -16,11 +16,11 @@ export const toSelectItems = (list: OptionList, multi?: boolean) => {
   if (Array.isArray(flatList)) {
     return flatList.map(opt =>
       multi ? (
-        <MultiSelectItem key={opt.name} value={opt.name}>
+        <MultiSelectItem key={opt.name} value={opt.name} aria-disabled={!!opt.disabled}>
           {opt.label}
         </MultiSelectItem>
       ) : (
-        <SelectItem key={opt.name} value={opt.name}>
+        <SelectItem key={opt.name} value={opt.name} aria-disabled={!!opt.disabled}>
           {opt.label}
         </SelectItem>
       )
