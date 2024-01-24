@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
-import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
   Combinator,
   Field,
@@ -21,11 +19,9 @@ export const rootPath = [] satisfies Path;
 /**
  * Context provider for the `{@link QueryBuilder}` state store.
  */
-export const QueryBuilderStateProvider = ({ children }: { children: React.ReactNode }) => (
-  <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
-    {children}
-  </Provider>
-);
+export const QueryBuilderStateProvider = ({ children }: { children: React.ReactNode }) => ({
+  children,
+});
 
 const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
@@ -86,11 +82,7 @@ export const QueryBuilder = <
 ) => {
   const setup = useQueryBuilderSetup(props);
 
-  return (
-    <QueryBuilderStateProvider>
-      <QueryBuilderInternal props={props} setup={setup} />
-    </QueryBuilderStateProvider>
-  );
+  return <QueryBuilderInternal props={props} setup={setup} />;
 };
 
 QueryBuilder.displayName = 'QueryBuilder';

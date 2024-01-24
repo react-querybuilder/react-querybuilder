@@ -1823,8 +1823,11 @@ describe('locked rules', () => {
         controlElements={{
           ruleGroup: ({ actions }) => (
             <div data-testid={TestID.ruleGroup}>
-              <button onClick={() => actions.onPropChange('not', true, [])} />
-              <button onClick={() => actions.onPropChange('field', 'f1', [0])} />
+              <button data-testid="button" onClick={() => actions.onPropChange('not', true, [])} />
+              <button
+                data-testid="button"
+                onClick={() => actions.onPropChange('field', 'f1', [0])}
+              />
             </div>
           ),
         }}
@@ -1834,10 +1837,12 @@ describe('locked rules', () => {
         }}
       />
     );
-    const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of Array.from(rg.querySelectorAll('button'))) {
+    let i = 0;
+    for (const b of Array.from(screen.getAllByTestId('button'))) {
+      i++;
       await user.click(b);
     }
+    expect(i).toBe(2);
     expect(onQueryChange).not.toHaveBeenCalled();
   });
 
@@ -1989,41 +1994,32 @@ describe('dynamic classNames', () => {
   });
 });
 
-describe('dispatchQuery and getQuery', () => {
+describe('updateQuery', () => {
   it('gets the query from the store', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const testFunc = jest.fn();
-    const getQueryBtnText = 'Get Query';
-    const dispatchQueryBtnText = 'Dispatch Query';
-    const rule = ({ schema: { getQuery, dispatchQuery } }: RuleProps) => (
-      <>
-        <button onClick={() => testFunc(getQuery())}>{getQueryBtnText}</button>
-        <button onClick={() => dispatchQuery({ combinator: 'or', rules: [] })}>
-          {' '}
-          {dispatchQueryBtnText}{' '}
-        </button>
-      </>
+    const updateQueryBtnText = 'Update Query';
+    const rule = ({ schema: { updateQuery } }: RuleProps) => (
+      <button
+        onClick={() =>
+          updateQuery(q => {
+            const newQ = { ...q, combinator: 'or', rules: [] };
+            testFunc(newQ);
+            return newQ;
+          })
+        }>
+        {updateQueryBtnText}
+      </button>
     );
     render(<QueryBuilder onQueryChange={onQueryChange} controlElements={{ rule }} />);
     await user.click(screen.getByTestId(TestID.addRule));
-    await user.click(screen.getByText(getQueryBtnText));
-    expect(testFunc.mock.lastCall?.[0]).toMatchObject({
-      combinator: 'and',
-      not: false,
-      rules: [
-        {
-          field: '~',
-          operator: '=',
-          value: '',
-          valueSource: 'value',
-        },
-      ],
-    });
-    await user.click(screen.getByText(dispatchQueryBtnText));
+    await user.click(screen.getByText(updateQueryBtnText));
+    expect(testFunc.mock.lastCall?.[0]).toMatchObject({ combinator: 'or', not: false, rules: [] });
     expect(onQueryChange.mock.lastCall?.[0]).toMatchObject({ combinator: 'or', rules: [] });
   });
 
-  it('updates the store when an entirely new query prop is provided', async () => {
+  // TODO: This was only useful when we used Redux for state management.
+  it.skip('updates the store when an entirely new query prop is provided', async () => {
     const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
     const QBApp = ({ query }: { query: RuleGroupType }) => {
       const [q, sq] = React.useState(query);
