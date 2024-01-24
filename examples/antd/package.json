@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "@ant-design/icons": ">=4.7.0",
-    "@react-querybuilder/antd": "^7.0.0-alpha.5",
+    "@react-querybuilder/antd": "^7.0.0-alpha.6",
     "antd": ">=4.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-alpha.5"
+    "react-querybuilder": "^7.0.0-alpha.6"
   },
   "description": "React Query Builder Ant Design Example",
   "devDependencies": {
