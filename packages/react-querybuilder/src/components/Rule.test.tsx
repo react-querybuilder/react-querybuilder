@@ -72,27 +72,6 @@ describe('onElementChanged methods', () => {
   });
 });
 
-describe('valueEditorType as function', () => {
-  it('determines the correct value editor type', () => {
-    const fields = [toFullOption({ name: 'f1', label: 'Field 1', valueEditorType: () => 'radio' })];
-    const fieldMap = getFieldMapFromArray(fields);
-    const {
-      schema: { controls },
-      rule,
-    } = getProps();
-    const props = getProps({
-      fields,
-      fieldMap,
-      controls: {
-        ...controls,
-        valueEditor: ({ type }) => <button>{type}</button>,
-      },
-    });
-    render(<Rule {...props} rule={{ ...rule, field: 'f1' }} />);
-    expect(screen.getByText('radio')).toBeInTheDocument();
-  });
-});
-
 describe('cloneRule', () => {
   it('calls moveRule with the right paths', async () => {
     const moveRule = jest.fn();

@@ -410,8 +410,16 @@ describe('get* callbacks', () => {
       expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
     });
 
-    it('prefers valueEditorType field property', () => {
+    it('prefers valueEditorType field property as string', () => {
       const checkboxFields = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
+      render(
+        <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
+      );
+      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'checkbox');
+    });
+
+    it('prefers valueEditorType field property as function', () => {
+      const checkboxFields = fields.map(f => ({ ...f, valueEditorType: () => 'checkbox' }));
       render(
         <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
       );
