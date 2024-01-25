@@ -179,10 +179,7 @@ export const useRule = (props: RuleProps) => {
     () =>
       rule.valueSource === 'field'
         ? 'select'
-        : (typeof fieldData.valueEditorType === 'function'
-            ? fieldData.valueEditorType(rule.operator)
-            : fieldData.valueEditorType) ??
-          getValueEditorType(rule.field, rule.operator, { fieldData }),
+        : getValueEditorType(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorType, rule.field, rule.operator, rule.valueSource]
   );
   const valueEditorSeparator = useMemo(

@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 - `parseNumbers` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., "abc" in "123abc"), just like the native `parseFloat` method, with the only difference being it won't return `NaN` when parsing fails. Additionally, the `numericRegex` export is now adapted from (but largely identical to) the export of the same name from `numeric-quantity`.
+- The logic to prefer a field's `valueEditorType` over the `getValueEditorType` prop has moved from the `useRule` hook to the `useQueryBuilderSetup` hook.
 
 </details>
 
@@ -92,6 +93,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
 - [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious`.
+- [#625] A default value will not be selected unnecessarily when `valueEditorType` evaluates to `"multiselect"`.
 
 ## [v6.5.5] - 2024-01-15
 
@@ -1515,6 +1517,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#606]: https://github.com/react-querybuilder/react-querybuilder/pull/606
 [#619]: https://github.com/react-querybuilder/react-querybuilder/pull/619
 [#623]: https://github.com/react-querybuilder/react-querybuilder/pull/623
+[#625]: https://github.com/react-querybuilder/react-querybuilder/issues/625
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
 [#637]: https://github.com/react-querybuilder/react-querybuilder/pull/637
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638

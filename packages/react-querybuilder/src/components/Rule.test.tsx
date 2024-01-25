@@ -26,14 +26,14 @@ const user = userEvent.setup();
 
 const { consoleError } = consoleMocks();
 
-it('should have correct classNames', () => {
+it('has correct classNames', () => {
   render(<Rule {...getProps()} />);
   expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, clsx(ruleClassnames.rule));
 });
 
 describe('onElementChanged methods', () => {
   describe('onFieldChanged', () => {
-    it('should call onPropChange with the rule path', async () => {
+    it('calls onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
@@ -46,7 +46,7 @@ describe('onElementChanged methods', () => {
   });
 
   describe('onOperatorChanged', () => {
-    it('should call onPropChange with the rule path', async () => {
+    it('calls onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
@@ -59,7 +59,7 @@ describe('onElementChanged methods', () => {
   });
 
   describe('onValueChanged', () => {
-    it('should call onPropChange with the rule path', async () => {
+    it('calls onPropChange with the rule path', async () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
@@ -73,7 +73,7 @@ describe('onElementChanged methods', () => {
 });
 
 describe('valueEditorType as function', () => {
-  it('should determine the correct value editor type', () => {
+  it('determines the correct value editor type', () => {
     const fields = [toFullOption({ name: 'f1', label: 'Field 1', valueEditorType: () => 'radio' })];
     const fieldMap = getFieldMapFromArray(fields);
     const {
@@ -94,7 +94,7 @@ describe('valueEditorType as function', () => {
 });
 
 describe('cloneRule', () => {
-  it('should call moveRule with the right paths', async () => {
+  it('calls moveRule with the right paths', async () => {
     const moveRule = jest.fn();
     render(<Rule {...getProps({ showCloneButtons: true }, { moveRule })} />);
     await user.click(screen.getByText(t.cloneRule.label));
@@ -103,7 +103,7 @@ describe('cloneRule', () => {
 });
 
 describe('shiftRuleUp/Down', () => {
-  it('should call moveRule with the right params', async () => {
+  it('calls moveRule with the right params', async () => {
     const moveRule = jest.fn();
     const { rerender } = render(
       <Rule {...getProps({ showShiftActions: true }, { moveRule })} disabled />
@@ -127,7 +127,7 @@ describe('shiftRuleUp/Down', () => {
 });
 
 describe('removeRule', () => {
-  it('should call onRuleRemove with the rule and path', async () => {
+  it('calls onRuleRemove with the rule and path', async () => {
     const onRuleRemove = jest.fn();
     render(<Rule {...getProps({}, { onRuleRemove })} />);
     await user.click(screen.getByText(t.removeRule.label));
@@ -136,13 +136,13 @@ describe('removeRule', () => {
 });
 
 describe('validation', () => {
-  it('should not validate if no validationMap[id] value exists and no validator function is provided', () => {
+  it('does not validate if no validationMap[id] value exists and no validator function is provided', () => {
     render(<Rule {...getProps()} />);
     expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
     expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
   });
 
-  it('should validate to false if validationMap[id] = false even if a validator function is provided', () => {
+  it('validates to false if validationMap[id] = false even if a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = {
       field1: toFullOption({ name: 'field1', label: 'Field 1', validator }),
@@ -154,14 +154,14 @@ describe('validation', () => {
     expect(validator).not.toHaveBeenCalled();
   });
 
-  it('should validate to true if validationMap[id] = true', () => {
+  it('validates to true if validationMap[id] = true', () => {
     const validationMap = { id: true };
     render(<Rule {...getProps({ validationMap })} />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
     expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
   });
 
-  it('should validate if validationMap[id] does not exist and a validator function is provided', () => {
+  it('validates if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
     const fieldMap = {
       field1: toFullOption({ name: 'field1', label: 'Field 1', validator }),
@@ -173,7 +173,7 @@ describe('validation', () => {
     expect(validator).toHaveBeenCalled();
   });
 
-  it('should pass down validationResult as validation to children', () => {
+  it('passes down validationResult as validation to children', () => {
     const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
     const defaultProps = getProps();
     const controls = {
@@ -189,7 +189,7 @@ describe('validation', () => {
 });
 
 describe('disabled', () => {
-  it('should have the correct classname', () => {
+  it('has the correct classname', () => {
     render(<Rule {...getProps()} disabled />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.disabled);
   });
@@ -363,7 +363,7 @@ describe('valueSource', () => {
 });
 
 describe('dynamic classNames', () => {
-  it('should have correct group-based classNames', () => {
+  it('has correct group-based classNames', () => {
     const rule: RuleType = { field: 'f1', operator: 'op', value: 'v1' };
     const fieldMap = {
       f1: toFullOption({ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }),
