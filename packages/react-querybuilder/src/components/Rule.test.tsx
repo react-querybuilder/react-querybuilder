@@ -120,9 +120,17 @@ describe('shiftRuleUp/Down', () => {
     expect(moveRule).not.toHaveBeenCalled();
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
     await user.click(screen.getByText(t.shiftActionUp.label));
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up');
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up', false);
     await user.click(screen.getByText(t.shiftActionDown.label));
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down');
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down', false);
+    await user.keyboard('{Alt>}');
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    await user.keyboard('{/Alt}');
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up', true);
+    await user.keyboard('{Alt>}');
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    await user.keyboard('{/Alt}');
+    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down', true);
   });
 });
 

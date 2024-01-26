@@ -69,24 +69,24 @@ describe(notToggleTitle, () => {
     title: notToggleTitle,
   };
 
-  it('should have the value passed in', () => {
+  it('has the value passed in', () => {
     render(<AntDNotToggle {...props} checked />);
     expect(screen.getByTitle(notToggleTitle)).toBeDefined();
   });
 
-  it('should have the className passed into the <label />', () => {
+  it('has the className passed into the <label />', () => {
     render(<AntDNotToggle {...props} className="foo" />);
     expect(screen.getByTitle(notToggleTitle)).toHaveClass('foo');
   });
 
-  it('should call the onChange method passed in', async () => {
+  it('calls the onChange method passed in', async () => {
     const onChange = jest.fn();
     render(<AntDNotToggle {...props} handleOnChange={onChange} />);
     await user.click(screen.getByTitle(notToggleTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should be disabled by disabled prop', async () => {
+  it('is disabled by disabled prop', async () => {
     const onChange = jest.fn();
     render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
     expect(screen.getByTitle(notToggleTitle)).toBeDisabled();
@@ -103,24 +103,24 @@ describe(`${valueEditorTitle} as switch`, () => {
     type: 'switch',
   };
 
-  it('should have the value passed in', () => {
+  it('has the value passed in', () => {
     render(<AntDValueEditor {...props} value />);
     expect(screen.getByTitle(valueEditorTitle)).toBeDefined();
   });
 
-  it('should have the className passed into the <label />', () => {
+  it('has the className passed into the <label />', () => {
     render(<AntDValueEditor {...props} className="foo" />);
     expect(screen.getByTitle(valueEditorTitle)).toHaveClass('foo');
   });
 
-  it('should call the onChange method passed in', async () => {
+  it('calls the onChange method passed in', async () => {
     const onChange = jest.fn();
     render(<AntDValueEditor {...props} handleOnChange={onChange} />);
     await user.click(screen.getByTitle(valueEditorTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should be disabled by disabled prop', async () => {
+  it('is disabled by disabled prop', async () => {
     const onChange = jest.fn();
     render(<AntDValueEditor {...props} handleOnChange={onChange} disabled />);
     expect(screen.getByTitle(valueEditorTitle)).toBeDisabled();
@@ -139,7 +139,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
   // const rightNow = dayjs().format('HH:mm');
 
-  it('should render a date picker', async () => {
+  it('renders a date picker', async () => {
     const onChange = jest.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} value="invalid" />
@@ -161,7 +161,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(onChange).toHaveBeenCalledWith(today);
   });
 
-  it('should render a date picker with a preset value', async () => {
+  it('renders a date picker with a preset value', async () => {
     const { container } = render(<AntDValueEditor {...props} inputType="date" value={today} />);
     await user.click(findInput(container));
     expect(screen.getAllByTitle(today).find(el => el.tagName !== 'INPUT')).toHaveClass(
@@ -169,7 +169,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
   });
 
-  it('should render a date range picker', async () => {
+  it('renders a date range picker', async () => {
     const onChange = jest.fn();
     const { container } = render(
       <AntDValueEditor
@@ -196,7 +196,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     // expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });
 
-  it('should render a date range picker with a preset value', async () => {
+  it('renders a date range picker with a preset value', async () => {
     const { container } = render(
       <AntDValueEditor
         {...props}
@@ -214,7 +214,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
   });
 
-  it('should render a datetime picker', async () => {
+  it('renders a datetime picker', async () => {
     const onChange = jest.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="datetime-local" handleOnChange={onChange} />
@@ -228,7 +228,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(onChange).toHaveBeenCalledWith(`${today} 02:02:02`);
   });
 
-  it('should render a time picker', async () => {
+  it('renders a time picker', async () => {
     const onChange = jest.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
@@ -241,7 +241,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(onChange).toHaveBeenCalledWith('02:02:02');
   });
 
-  it('should render a time picker with a preset value', async () => {
+  it('renders a time picker with a preset value', async () => {
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" value={'02:02:02'} />
     );
@@ -251,7 +251,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     }
   });
 
-  it('should render a time picker with a preset value and clear the value', async () => {
+  it('renders a time picker with a preset value and clear the value', async () => {
     const onChange = jest.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} value={'02:02:02'} />
@@ -260,7 +260,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(onChange).toHaveBeenCalledWith('');
   });
 
-  it('should render empty "between" time pickers', async () => {
+  it('renders empty "between" time pickers', async () => {
     const handleOnChange = jest.fn();
     const { rerender } = render(
       <AntDValueEditor
@@ -288,7 +288,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(handleOnChange).toHaveBeenCalledWith(',12:14:26');
   });
 
-  it('should call the onChange handler for "between" time pickers', async () => {
+  it('calls the onChange handler for "between" time pickers', async () => {
     const handleOnChange = jest.fn();
     render(
       <AntDValueEditor

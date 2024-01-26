@@ -1,4 +1,3 @@
-import { QueryBuilder } from './components';
 import * as messages from './messages';
 
 export * from './components';
@@ -15,4 +14,3 @@ export {
 export * from './types';
 export * from './utils';
 export { messages };
-export default QueryBuilder;

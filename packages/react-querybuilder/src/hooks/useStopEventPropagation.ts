@@ -1,4 +1,5 @@
-import { useCallback, type MouseEvent as ReactMouseEvent } from 'react';
+import type { MouseEvent } from 'react';
+import { useCallback } from 'react';
 
 /**
  * Wraps an event handler function in another function that calls
@@ -6,12 +7,12 @@ import { useCallback, type MouseEvent as ReactMouseEvent } from 'react';
  * returned function accepts and forwards a second `context` argument.
  */
 export const useStopEventPropagation = (
-  method: (event: ReactMouseEvent, context?: any) => void
-): ((event: ReactMouseEvent, context?: any) => void) => {
+  method: (event?: MouseEvent, context?: any) => void
+): ((event?: MouseEvent, context?: any) => void) => {
   return useCallback(
     (event, context) => {
-      event.preventDefault();
-      event.stopPropagation();
+      event?.preventDefault();
+      event?.stopPropagation();
       method(event, context);
     },
     [method]
