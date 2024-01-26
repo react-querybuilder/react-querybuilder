@@ -1237,6 +1237,36 @@ describe('showShiftActions', () => {
       });
     });
 
+    it('clones rules', async () => {
+      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      render(
+        <QueryBuilder
+          showShiftActions
+          onQueryChange={onQueryChange}
+          defaultQuery={{
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
+        />
+      );
+      expect(screen.getAllByText(t.shiftActionUp.label)[0]).toBeDisabled();
+      expect(screen.getAllByText(t.shiftActionDown.label).at(-1)).toBeDisabled();
+      await user.keyboard('{Alt>}');
+      await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+      await user.keyboard('{/Alt}');
+      expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
+    });
+
     it('should shift rule groups', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       render(
@@ -1270,7 +1300,7 @@ describe('showShiftActions', () => {
   });
 
   describe('independent combinators', () => {
-    it('should shift rulew with independent combinators', async () => {
+    it('should shift rules with independent combinators', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
@@ -1290,6 +1320,37 @@ describe('showShiftActions', () => {
       await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
       expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
         rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
+    });
+
+    it('clones rules with independent combinators', async () => {
+      const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+      render(
+        <QueryBuilder
+          showShiftActions
+          onQueryChange={onQueryChange}
+          defaultQuery={{
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Steve' },
+              'and',
+              { field: 'lastName', operator: '=', value: 'Vai' },
+            ],
+          }}
+        />
+      );
+      expect(screen.getAllByText(t.shiftActionUp.label)[0]).toBeDisabled();
+      expect(screen.getAllByText(t.shiftActionDown.label).at(-1)).toBeDisabled();
+      await user.keyboard('{Alt>}');
+      await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+      await user.keyboard('{/Alt}');
+      expect(stripQueryIds(onQueryChange.mock.calls[1][0])).toEqual({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
           { field: 'lastName', operator: '=', value: 'Vai' },
           'and',
           { field: 'firstName', operator: '=', value: 'Steve' },

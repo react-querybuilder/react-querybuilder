@@ -154,11 +154,11 @@ The following callback props are affected by this change: `getDefaultOperator`, 
 
 ### Shift actions
 
-A new `showShiftActions` prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), the first of which will shift the rule/group one spot higher, while the second will shift it one spot lower.
+A new `showShiftActions` prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule/group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (`Alt` on Windows/Linux, `Option ⌥` on Mac) while clicking will clone the rule/group instead of just moving it.
 
 Related additions:
 
-- `ShiftActions` component (with corresponding components in each compatibility package) that renders "shift up" and "shift down" action buttons. The default styles remove the border and background from these buttons, leaving only the `shiftActionUp.label`/`shiftActionDown.label` translation properties visible.
+- `ShiftActions` component (with a corresponding component in each compatibility package) that renders "shift up" and "shift down" action buttons. The default styles remove the border and background from these buttons, leaving only the `shiftActionUp.label`/`shiftActionDown.label` translation properties visible.
 - `useShiftActions` hook, called by the `ShiftActions` component, returns `shiftUp`/`shiftDown` methods and determines whether either button should be disabled. (Within the root group, "shift up" is disabled for the very first rule or group and "shift down" is disabled for the very last rule or group).
 - New properties on the `translations` prop: `shiftActionUp` and `shiftActionDown`.
 

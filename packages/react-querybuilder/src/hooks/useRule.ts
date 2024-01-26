@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
@@ -132,18 +133,18 @@ export const useRule = (props: RuleProps) => {
   );
 
   const shiftRuleUp = useCallback(
-    (_event?: any, _context?: any) => {
+    (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftUpDisabled) {
-        moveRule(path, 'up');
+        moveRule(path, 'up', event?.altKey);
       }
     },
     [disabled, moveRule, path, shiftUpDisabled]
   );
 
   const shiftRuleDown = useCallback(
-    (_event?: any, _context?: any) => {
+    (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftDownDisabled) {
-        moveRule(path, 'down');
+        moveRule(path, 'down', event?.altKey);
       }
     },
     [disabled, moveRule, path, shiftDownDisabled]

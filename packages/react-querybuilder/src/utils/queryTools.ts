@@ -224,18 +224,18 @@ export const remove = <RG extends RuleGroupTypeAny>(
   });
 };
 
-const getShiftedPath = (
+const getNextPath = (
   query: RuleGroupTypeAny,
   currentPath: Path,
-  shiftDirection: Path | 'up' | 'down'
+  newPathOrShiftDirection: Path | 'up' | 'down'
 ): Path => {
-  if (Array.isArray(shiftDirection)) {
-    return shiftDirection;
+  if (Array.isArray(newPathOrShiftDirection)) {
+    return newPathOrShiftDirection;
   }
 
   const ic = isRuleGroupTypeIC(query);
 
-  if (shiftDirection === 'up') {
+  if (newPathOrShiftDirection === 'up') {
     if (pathsAreEqual(currentPath, [0])) {
       return currentPath;
     } else if (currentPath.at(-1) === 0) {
@@ -257,7 +257,7 @@ const getShiftedPath = (
         return targetPath;
       }
     }
-  } else if (shiftDirection === 'down') {
+  } else if (newPathOrShiftDirection === 'down') {
     if (pathsAreEqual([query.rules.length - 1], currentPath)) {
       return currentPath;
     } else if (
@@ -315,7 +315,7 @@ export const move = <RG extends RuleGroupTypeAny>(
   /** Options object. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
-  const nextPath = getShiftedPath(query, oldPath, newPath);
+  const nextPath = getNextPath(query, oldPath, newPath);
 
   // Don't move to the same location or a path that doesn't exist yet
   if (
