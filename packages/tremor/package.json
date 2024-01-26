@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.1.2",
-    "@tremor/react": "^3.13.1",
+    "@tremor/react": "^3.13.3",
     "@types/react": "^18.2.48",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "dayjs": "^1.11.10",
@@ -48,7 +48,7 @@
     "react-querybuilder": "^7.0.0-alpha.6",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.11"
+    "vite": "^5.0.12"
   },
   "peerDependencies": {
     "@tremor/react": "^3",
