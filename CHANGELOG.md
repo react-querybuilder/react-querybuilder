@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead.
+- [#646] `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead.
 - [#595] The parser functions have been available as separate exports for some time now (along with `formatQuery` and `transformQuery`), but they could still be imported from `"react-querybuilder"`. They have now been removed from the main exports, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
   <!-- prettier-ignore -->
   | Function         | New `import` requirement                                             |
@@ -1519,6 +1519,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
 [#637]: https://github.com/react-querybuilder/react-querybuilder/pull/637
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
+[#646]: https://github.com/react-querybuilder/react-querybuilder/pull/646
 
 <!-- Release comparison links -->
 
