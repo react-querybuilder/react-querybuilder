@@ -4,18 +4,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        If you need help or support using React Query Builder and you are not reporting a bug, please
-        start a [discussion topic](https://github.com/react-querybuilder/react-querybuilder/discussions/new)
-        or join our [Discord](https://react-querybuilder.js.org/discord) server.
+        If you need help or support using React Query Builder and you are not reporting a bug, please start a [discussion topic](https://github.com/react-querybuilder/react-querybuilder/discussions/new) or join our [Discord](https://react-querybuilder.js.org/discord) server.
 
-        If you are not running the latest version of React Query Builder, first try upgrading as it may
-        already have been fixed.
+        If you are not running the latest version of React Query Builder, first try upgrading as it may already have been fixed.
 
-        Minimal starter projects using the latest React Query Builder version can be found in the
-        [`/examples` folder](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples).
-        Each sub folder is a complete working project that can be loaded in CodeSandbox/StackBlitz or
-        downloaded locally with `degit`. Instructions are in each folder's respective README file.
-        (Note: most examples use one of the compatibility packages, but `basic` and `basic-ts` do not.)
+        Minimal starter projects using the latest React Query Builder version can be found in the [`/examples` folder](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples). Each sub folder is a complete working project that can be loaded in CodeSandbox/StackBlitz or downloaded locally with `degit`. Instructions are in each folder's respective README file. (Note: most examples use one of the compatibility packages, but `basic` and `basic-ts` do not.)
 
   - type: input
     attributes:
@@ -30,15 +23,17 @@ body:
   - type: textarea
     attributes:
       label: Description of the issue
+      description: Describe the issue in as much detail as possible. The more information you provide, the quicker we can help.
+    validations:
+      required: true
 
   - type: textarea
     attributes:
       label: Reproduction
       description: |
-        Provide detailed steps to reproduce the behavior, preferably including a link to a
-        sandbox or minimal project repo that reproduces the issue. You can start with one of the
-        [examples](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples).
-        The more information you provide, the quicker we can help.
+        Provide detailed steps to reproduce the behavior, preferably including a link to a sandbox or minimal project repo that reproduces the issue.
+
+        You can start with one of the [examples](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples).
     validations:
       required: true
 
