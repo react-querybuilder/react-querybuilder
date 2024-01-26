@@ -108,7 +108,7 @@ The `"json_without_ids"` export format now explicitly removes the `id` and `path
 JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not', 'valueSource']);
 ```
 
-## Miscellaneous
+### Miscellaneous
 
 - `@react-querybuilder/mantine` now requires Mantine v7+.
 - `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
