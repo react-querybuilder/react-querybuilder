@@ -10,12 +10,6 @@ export default defineConfig(options => {
     },
     sourcemap: true,
     dts: true,
-    // TODO: how to "use client" only for the React components?
-    // esbuildOptions: options => {
-    //   options.banner = {
-    //     js: '"use client";',
-    //   };
-    // },
     ...options,
   };
 

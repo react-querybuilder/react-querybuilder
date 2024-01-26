@@ -6,42 +6,114 @@ Version 7 shouldn't require many, if any, code changes when migrating from v6. H
 
 ## Breaking changes
 
+### No default export
+
+- `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead:
+
+```diff
+-import QueryBuilder from "react-querybuilder";
++import { QueryBuilder } from "react-querybuilder";
+```
+
+Or, if you named the default export something other than `QueryBuilder`, like `ReactQueryBuilder`:
+
+```diff
+-import ReactQueryBuilder from "react-querybuilder";
++import { QueryBuilder as ReactQueryBuilder } from "react-querybuilder";
+```
+
 ### `QueryBuilder` prop types
 
 The props themselves for the main component haven't changed much from version 6, but the TypeScript interface has been overhauled. Notable changes:
 
 - The query type, extending either `RuleGroupType` or `RuleGroupTypeIC`, will be automatically inferred instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](./components/querybuilder#independent-combinators).
 - The `QueryBuilderProps` type now requires four generic arguments.
-  - This shouldn't affect JSX declarations to render a `<QueryBuilder />` component since the generic types can almost alwasy be inferred from the props.
-  - While all props are technically still optional, TypeScript may have problems with inference if `fields` and at least one of `query` and `defaultQuery` are not provided.
+  - This shouldn't affect JSX which renders a `<QueryBuilder />` component since the generic types can almost always be inferred from the props.
+  - While all props are technically still optional, TypeScript may have problems inferring the generics if `fields` and `query`/`defaultQuery` are not provided.
   - When manually creating an object of type `QueryBuilderProps`, all four generics must be provided. In order, they represent the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type (extending `Field`), the operator type (extending `Operator`), and the combinator type (extending `Combinator`).
   ```tsx
   // Valid in version 6:
   const qbp6: QueryBuilderProps = {};
   // Version 7 with the defaults (equivalent to the "version 6" line above):
   const qbp7: QueryBuilderProps<RuleGroupType, Field, Operator, Combinator> = {};
-  // Also valid in version 7:
+  // Also valid in version 7 (since Field, Operator, and Combinator all extend Option):
   const qbp7a: QueryBuilderProps<RuleGroupType, Option, Option, Option> = {};
   ```
 
 ### Parser functions removed from main bundle
 
-Since the parser functions are infrequently used and generally not used together, they have been removed from the main exports. They have been available as separate exports for some time now (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), but before version 7 they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. (This reduces the main bundle size by roughly 50%.)
+Since the parser functions are used less frequently than other utility functions—and generally not used together—they have been removed from the main exports. They have been available as separate exports for some time now (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), but before version 7 they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. (This reduces the main bundle size by roughly 50%.)
 
-| Function         | New `import` requirement                                             |
-| ---------------- | -------------------------------------------------------------------- |
-| `parseCEL`       | `import { parseCEL } from "react-querybuilder/parseCEL"`             |
-| `parseJsonLogic` | `import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"` |
-| `parseMongoDB`   | `import { parseMongoDB } from "react-querybuilder/parseMongoDB"`     |
-| `parseSQL`       | `import { parseSQL } from "react-querybuilder/parseSQL"`             |
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>V7 <code>import</code> udpate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>parseCEL</code></td>
+<td>
+
+```diff
+-import { parseCEL } from "react-querybuilder"
++import { parseCEL } from "react-querybuilder/parseCEL"
+```
+
+</td>
+</tr>
+<tr>
+<td><code>parseJsonLogic</code></td>
+<td>
+
+```diff
+-import { parseJsonLogic } from "react-querybuilder"
++import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"
+```
+
+</td>
+</tr>
+<tr>
+<td><code>parseMongoDB</code></td>
+<td>
+
+```diff
+-import { parseMongoDB } from "react-querybuilder"
++import { parseMongoDB } from "react-querybuilder/parseMongoDB"
+```
+
+</td>
+</tr>
+<tr>
+<td><code>parseSQL</code></td>
+<td>
+
+```diff
+-import { parseSQL } from "react-querybuilder"
++import { parseSQL } from "react-querybuilder/parseSQL"
+```
+
+</td>
+</tr>
+
+</tbody>
+</table>
 
 ### JSON without identifiers
 
-The `"json_without_ids"` export format now removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only _include_ specific properties. The following command will replicate the previous behavior:
+The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only _include_ specific properties. The following command will replicate the previous behavior:
 
 ```ts
 JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not', 'valueSource']);
 ```
+
+## Miscellaneous
+
+- `@react-querybuilder/mantine` now requires Mantine v7+.
+- `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
+- Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
+- The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 
 ## New features
 
@@ -51,13 +123,15 @@ Props, components, and derived values are aggressively memoized using `React.mem
 
 The most common violation of that requirement is probably inline arrow functions in the `onQueryChange` prop (something like `<QueryBuilder onQueryChange={q => setQuery(q)} />`). This can usually be addressed by memoizing the change handler function with `useCallback`, or, if possible, by moving the change handler definition outside the component rendering function.
 
-### Optional `name`, `value` prioritized
+If you're using a state setter function generated by `useState` or `useReducer`, you don't need to memoize it. Relatedly, TypeScript no longer throws an error in version 7 if you pass the setter function directly like `onQueryChange={setQuery}`. Version 6 and earlier required a wrapper function like `onQueryChange={q => setQuery(q)}`.
 
-Previously, props and properties that accepted an `OptionList` type or extension thereof (`fields`, `compbinators`, etc.) required a `name` property as a unique identifier for each member within the list. In version 7, list members may specify a `value` property as their identifier instead of `name`, which is now optional. If both `name` and `value` properties are present for a given item, `value` will be used.
+### Option lists can use `value` as identifiers instead of `name`
+
+Previously, props and properties that accepted an `OptionList` type or extension thereof (`fields`, `combinators`, etc.) required a `name` property as the unique identifier for each member within the list. In version 7, list members may specify a `value` property as their identifier instead of `name`, which is now optional. If both `name` and `value` properties are present for a given item, `value` will be used. All option lists will be augmented to contain equivalent `name` and `value` properties if only one is provided, so subcomponents can always assume both will be present.
 
 ### Query selector, getter, and dispatcher
 
-Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two are available from the `schema` prop which is passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning).
 
 - `getQuery()`: returns the current root query object.
 - `dispatchQuery(query)`: updates the internal state and calls the `onQueryChange` callback with the provided query. Previously, updates that couldn't be performed with the `handleOnChange` or `handleOnClick` callbacks had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities.
@@ -76,7 +150,7 @@ The following callback props are affected by this change: `getDefaultOperator`, 
 
 ### Field data passed to `formatQuery` rule processors
 
-- Custom rule processors for `formatQuery` now receive the full `Field` object in the options parameter, as long as a `fields` array is provided alongside `ruleProcessor`. In TypeScript, the member type of the `fields` array now requires a `label: string` property. Previously, only `name` was required.
+- Custom rule processors for `formatQuery` now receive the full `Field` object in the options parameter, as long as a `fields` array is provided alongside `ruleProcessor`. In TypeScript, the member type of the `fields` array now requires a `label: string` property (just like `QueryBuilder`'s `fields` prop). Previously, only `name` was required.
 
 ### Shift actions
 
@@ -208,13 +282,6 @@ Icon package: [`@mui/icons-material`](https://npmjs.com/package/@mui/icons-mater
 
 - The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. `useQueryBuilderSchema` must be called from a child component of one that calls `useQueryBuilderSetup`. For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
 - The `useStopEventPropagation` hook, called from the default `Rule` and `RuleGroup` components, now takes a single function as its parameter instead of an object map of functions. It must be run for each wrapped function individually.
-
-## Other changes
-
-- `@react-querybuilder/mantine` now requires Mantine v7+.
-- `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
-- Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
-- The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 
 <!-- TODO: Use the commented line once v7 docs have been versioned -->
 
