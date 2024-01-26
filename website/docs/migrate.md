@@ -2,13 +2,13 @@
 title: Migrating to v7
 ---
 
-Version 7 shouldn't require many, if any, code changes when migrating from v6. However, some of the defaults have changed, and taking advantage of the performance improvements and other conveniences may require some minor refactoring. A summary of the important changes is below.
+Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-lists-can-use-value-as-identifiers-instead-of-name) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
 
 ## Breaking changes
 
 ### No default export
 
-- `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead:
+`react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead:
 
 ```diff
 -import QueryBuilder from "react-querybuilder";
@@ -114,6 +114,8 @@ JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not
 - `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
 - Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
+- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. `useQueryBuilderSchema` must be called from a child component of one that calls `useQueryBuilderSetup` (`QueryBuilder` takes care of that internally). For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
+- The `useStopEventPropagation` hook, called from the default `Rule` and `RuleGroup` components, now takes a single function as its parameter instead of an object map of functions. It must be run for each wrapped function individually.
 
 ## New features
 
@@ -277,11 +279,6 @@ Icon package: [`@mui/icons-material`](https://npmjs.com/package/@mui/icons-mater
 | `translations.lockRuleDisabled.label`  | `<Lock />`        |
 | `translations.shiftActionDown.label`   | `<ShiftDown />`   |
 | `translations.shiftActionUp.label`     | `<ShiftUp />`     |
-
-## Hooks
-
-- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. `useQueryBuilderSchema` must be called from a child component of one that calls `useQueryBuilderSetup`. For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
-- The `useStopEventPropagation` hook, called from the default `Rule` and `RuleGroup` components, now takes a single function as its parameter instead of an object map of functions. It must be run for each wrapped function individually.
 
 <!-- TODO: Use the commented line once v7 docs have been versioned -->
 
