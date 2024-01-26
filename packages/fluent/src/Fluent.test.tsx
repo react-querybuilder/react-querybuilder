@@ -67,7 +67,7 @@ const testSelect = (
   const testVal = testValues[1];
 
   describe(title, () => {
-    it('should render optgroups', async () => {
+    it('renders optgroups', async () => {
       const optGroups = [
         { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
       ];
@@ -78,7 +78,7 @@ const testSelect = (
       expect(screen.getByText(optGroups[0].label)).toBeInTheDocument();
     });
 
-    it('should have the values passed into the <select multiple />', async () => {
+    it('has the values passed into the <select multiple />', async () => {
       const onChange = jest.fn();
       const value = testValues.map(v => v.name).join(',');
       const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
@@ -92,7 +92,7 @@ const testSelect = (
       }
     });
 
-    it('should call the handleOnChange callback properly for <select multiple />', async () => {
+    it('calls the handleOnChange callback properly for <select multiple />', async () => {
       const onChange = jest.fn();
       const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
       const allValuesExceptFirst = testValues.slice(1, 3).map(v => v.name);
@@ -111,7 +111,7 @@ const testSelect = (
       expect(onChange).toHaveBeenCalledWith(allValuesExceptFirst.join(','));
     });
 
-    it('should respect the listsAsArrays option', async () => {
+    it('respects the listsAsArrays option', async () => {
       const onChange = jest.fn();
       const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
       render(

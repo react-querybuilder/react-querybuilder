@@ -132,7 +132,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
     const gDnDBe = () => getBackend()!;
     const gDnDBeIC = () => getBackendIC()!;
     describe('standard rule groups', () => {
-      it('should set data-dnd attribute appropriately', () => {
+      it('sets data-dnd attribute appropriately', () => {
         const { container, rerender } = render(<QBforDnD enableDragAndDrop={false} />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('disabled');
         rerender(<QBforDnD enableDragAndDrop />);

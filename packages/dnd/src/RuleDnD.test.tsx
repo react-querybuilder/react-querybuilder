@@ -60,13 +60,13 @@ afterEach(() => {
   cleanup();
 });
 
-it('should not have the drag class if not dragging', () => {
+it('does not have the drag class if not dragging', () => {
   render(<RuleWithDndWrapper {...getProps()} />);
   const rule = screen.getByTestId(TestID.rule);
   expect(rule).not.toHaveClass(sc.dndDragging);
 });
 
-it('should have the drag class if dragging', () => {
+it('has the drag class if dragging', () => {
   render(<RuleWithDndWrapper {...getProps()} />);
   const rule = screen.getByTestId(TestID.rule);
   simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
@@ -76,7 +76,7 @@ it('should have the drag class if dragging', () => {
   });
 });
 
-it('should have the over class if hovered', () => {
+it('has the over class if hovered', () => {
   render(
     <div>
       <RuleWithDndWrapper {...getProps()} path={[0]} />
@@ -95,7 +95,7 @@ it('should have the over class if hovered', () => {
   });
 });
 
-it('should handle a dropped rule', () => {
+it('handles a dropped rule', () => {
   const moveRule = jest.fn();
   render(
     <div>
@@ -110,7 +110,7 @@ it('should handle a dropped rule', () => {
   expect(moveRule).toHaveBeenCalledWith([0], [2], false);
 });
 
-it('should copy a dropped rule', () => {
+it('copies a dropped rule', () => {
   const moveRule = jest.fn();
   render(
     <div>
@@ -125,7 +125,7 @@ it('should copy a dropped rule', () => {
   expect(moveRule).toHaveBeenCalledWith([0], [2], true);
 });
 
-it('should abort move if dropped on itself', () => {
+it('aborts move if dropped on itself', () => {
   const moveRule = jest.fn();
   render(<RuleWithDndWrapper {...getProps({}, { moveRule })} />);
   const rule = screen.getByTestId(TestID.rule);
@@ -135,7 +135,7 @@ it('should abort move if dropped on itself', () => {
   expect(moveRule).not.toHaveBeenCalled();
 });
 
-it('should allow drops even if disabled', () => {
+it('allows drops even if disabled', () => {
   const moveRule = jest.fn();
   render(
     <div>

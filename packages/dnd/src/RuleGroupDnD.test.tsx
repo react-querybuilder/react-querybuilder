@@ -59,13 +59,13 @@ const getProps = (
   };
 };
 
-it('should not have the drag class if not dragging', () => {
+it('does not have the drag class if not dragging', () => {
   render(<RuleGroupWithDndWrapper {...getProps()} />);
   const ruleGroup = screen.getByTestId(TestID.ruleGroup);
   expect(ruleGroup).not.toHaveClass(sc.dndDragging);
 });
 
-it('should have the drag class if dragging', () => {
+it('has the drag class if dragging', () => {
   render(<RuleGroupWithDndWrapper {...getProps()} />);
   const ruleGroup = screen.getByTestId(TestID.ruleGroup);
   simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
@@ -75,7 +75,7 @@ it('should have the drag class if dragging', () => {
   });
 });
 
-it('should handle a dropped rule group', () => {
+it('handles a dropped rule group', () => {
   const moveRule = jest.fn();
   render(
     <div>
@@ -94,7 +94,7 @@ it('should handle a dropped rule group', () => {
   expect(moveRule).toHaveBeenCalledWith([1], [0, 0], false);
 });
 
-it('should abort move if dropped on itself', () => {
+it('aborts move if dropped on itself', () => {
   const moveRule = jest.fn();
   render(<RuleGroupWithDndWrapper {...getProps({}, { moveRule })} />);
   const ruleGroup = screen.getByTestId(TestID.ruleGroup);
@@ -108,7 +108,7 @@ it('should abort move if dropped on itself', () => {
   expect(moveRule).not.toHaveBeenCalled();
 });
 
-it('should abort move if source item is first child of this group', () => {
+it('aborts move if source item is first child of this group', () => {
   const moveRule = jest.fn();
   render(
     <RuleGroupWithDndWrapper
@@ -128,7 +128,7 @@ it('should abort move if source item is first child of this group', () => {
   expect(moveRule).not.toHaveBeenCalled();
 });
 
-it('should handle drops on combinator between rules', () => {
+it('handles drops on combinator between rules', () => {
   const moveRule = jest.fn();
   render(
     <div>
@@ -162,7 +162,7 @@ it('should handle drops on combinator between rules', () => {
   expect(moveRule).toHaveBeenCalledWith([0, 2], [0, 1], false);
 });
 
-it('should handle rule group drops on independent combinators', () => {
+it('handles rule group drops on independent combinators', () => {
   const moveRule = jest.fn();
   render(
     <div>
@@ -195,7 +195,7 @@ it('should handle rule group drops on independent combinators', () => {
   expect(moveRule).toHaveBeenCalledWith([2], [0, 1], false);
 });
 
-it('should handle rule drops on independent combinators', () => {
+it('handles rule drops on independent combinators', () => {
   const moveRule = jest.fn();
   render(
     <RuleGroupWithDndWrapper

@@ -76,14 +76,14 @@ const testSelect = (
   const testVal = testValues[1];
 
   describe(title, () => {
-    it('should render the correct number of options', async () => {
+    it('renders the correct number of options', async () => {
       render(<Component {...props} />);
       await user.click(screen.getByRole('button'));
       expect(screen.getByRole('listbox').querySelectorAll('li')).toHaveLength(testValues.length);
       expect(screen.getAllByRole('option')).toHaveLength(testValues.length);
     });
 
-    it('should flatten optgroups', async () => {
+    it('flattens optgroups', async () => {
       const optGroups = [
         { label: 'Test Option Group', options: 'values' in props ? props.values : props.options },
       ];
@@ -98,7 +98,7 @@ const testSelect = (
 
     // Test as multiselect for <TremorValueEditor type="multiselect" /> and <ValueSelector />
     if (('values' in props && props.type === 'multiselect') || 'options' in props) {
-      it('should have the values passed into the <select multiple />', async () => {
+      it('has the values passed into the <select multiple />', async () => {
         const onChange = jest.fn();
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
@@ -114,7 +114,7 @@ const testSelect = (
         }
       });
 
-      it('should call the handleOnChange callback properly for <select multiple />', async () => {
+      it('calls the handleOnChange callback properly for <select multiple />', async () => {
         const onChange = jest.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         const allLabelsExceptFirst = testValues.slice(1, 3).map(v => v.label);
@@ -134,7 +134,7 @@ const testSelect = (
         expect(onChange).toHaveBeenCalledWith(allValuesExceptFirst.join(','));
       });
 
-      it('should respect the listsAsArrays option', async () => {
+      it('respects the listsAsArrays option', async () => {
         const onChange = jest.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
@@ -154,18 +154,18 @@ const testSelect = (
 
     // Test as single-value selector
     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
-      it('should have the value passed into the <select />', async () => {
+      it('has the value passed into the <select />', async () => {
         render(<Component {...props} value={testVal.name} />);
         expect(screen.getByText(testVal.label)).toBeInTheDocument();
       });
     }
 
-    it('should have the className passed into the <select />', () => {
+    it('has the className passed into the <select />', () => {
       render(<Component {...props} className="foo" />);
       expect(hasOrInheritsClass(screen.getAllByRole('button')[0], 'foo')).toBe(true);
     });
 
-    it('should call the onChange method passed in', async () => {
+    it('calls the onChange method passed in', async () => {
       const onChange = jest.fn();
       render(<Component {...props} handleOnChange={onChange} />);
       await user.click(screen.getByRole('button'));
@@ -173,7 +173,7 @@ const testSelect = (
       expect(onChange).toHaveBeenCalledWith(testVal.name);
     });
 
-    it('should be disabled by the disabled prop', async () => {
+    it('is disabled by the disabled prop', async () => {
       const onChange = jest.fn();
       render(<Component {...props} handleOnChange={onChange} disabled />);
       expect(screen.getByRole('button')).toBeDisabled();
@@ -188,24 +188,24 @@ describe('TremorNotToggle', () => {
   const label = 'Not';
   const props = { ...defaultNotToggleProps, label };
 
-  it('should have the value passed into the <input />', () => {
+  it('has the value passed into the <input />', () => {
     render(<TremorNotToggle {...props} checked />);
     expect(findInput(screen.getByLabelText(label).parentElement!)).toBeChecked();
   });
 
-  it('should have the className passed into the <label />', () => {
+  it('has the className passed into the <label />', () => {
     render(<TremorNotToggle {...props} className="foo" />);
     expect(hasOrInheritsClass(screen.getByLabelText(label), 'foo')).toBe(true);
   });
 
-  it('should call the onChange method passed in', async () => {
+  it('calls the onChange method passed in', async () => {
     const onChange = jest.fn();
     render(<TremorNotToggle {...props} handleOnChange={onChange} />);
     await user.click(screen.getByLabelText(label));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should be disabled by disabled prop', async () => {
+  it('is disabled by disabled prop', async () => {
     const onChange = jest.fn();
     render(<TremorNotToggle {...props} handleOnChange={onChange} disabled />);
     const notToggle = screen.getByLabelText(label);
@@ -218,24 +218,24 @@ describe('TremorNotToggle', () => {
 describe('TremorValueEditor as switch', () => {
   const props: ValueEditorProps = { ...defaultValueEditorProps, type: 'switch' };
 
-  it('should have the value passed into the <input />', () => {
+  it('has the value passed into the <input />', () => {
     render(<TremorValueEditor {...props} value />);
     expect(findInput(document.body)).toBeChecked();
   });
 
-  it('should have the className passed into the <label />', () => {
+  it('has the className passed into the <label />', () => {
     render(<TremorValueEditor {...props} className="foo" />);
     expect(hasOrInheritsClass(findInput(document.body), 'foo')).toBe(true);
   });
 
-  it('should call the handleOnChange method passed in', async () => {
+  it('calls the handleOnChange method passed in', async () => {
     const onChange = jest.fn();
     render(<TremorValueEditor {...props} handleOnChange={onChange} />);
     await user.click(screen.getByRole('switch'));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should be disabled by disabled prop', async () => {
+  it('is disabled by disabled prop', async () => {
     const onChange = jest.fn();
     render(<TremorValueEditor {...props} handleOnChange={onChange} disabled />);
     const valueEditor = screen.getByRole('switch');
@@ -257,7 +257,7 @@ describe('TremorValueEditor as "between" select', () => {
     ],
   } satisfies ValueEditorProps;
 
-  it('should render the "between" selects', () => {
+  it('renders the "between" selects', () => {
     render(<TremorValueEditor {...betweenSelectProps} />);
     const betweenSelects = screen.getAllByRole('button').filter((_b, i) => !(i % 2));
     expect(betweenSelects).toHaveLength(2);
@@ -265,7 +265,7 @@ describe('TremorValueEditor as "between" select', () => {
     expect(betweenSelects[1]).toHaveTextContent('Test 2');
   });
 
-  it('should call the onChange handler', async () => {
+  it('calls the onChange handler', async () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
     const betweenSelects = (
@@ -280,7 +280,7 @@ describe('TremorValueEditor as "between" select', () => {
     expect(handleOnChange).toHaveBeenNthCalledWith(2, 'test1,test1');
   });
 
-  it('should assume the second value if not provided', async () => {
+  it('assumes the second value if not provided', async () => {
     const handleOnChange = jest.fn();
     render(
       <TremorValueEditor
@@ -298,7 +298,7 @@ describe('TremorValueEditor as "between" select', () => {
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test1');
   });
 
-  it('should call the onChange handler with lists as arrays', async () => {
+  it('calls the onChange handler with lists as arrays', async () => {
     const handleOnChange = jest.fn();
     render(
       <TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
@@ -315,7 +315,7 @@ describe('TremorValueEditor as "between" select', () => {
     expect(handleOnChange).toHaveBeenNthCalledWith(2, ['test1', 'test1']);
   });
 
-  it('should be disabled by the disabled prop', async () => {
+  it('is disabled by the disabled prop', async () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} disabled />);
     const betweenSelects = screen.getAllByRole('button').filter((_b, i) => !(i % 2));
