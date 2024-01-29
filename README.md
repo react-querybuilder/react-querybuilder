@@ -22,16 +22,21 @@ To get started, import the main component and the default stylesheet, then rende
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.css';
+import 'react-querybuilder/dist/query-builder.css'; // or .scss
 
-export const App = () => {
-  return <QueryBuilder />;
-};
+export function App() {
+  const [query, setQuery] = useState({
+    combinator: 'and',
+    rules: [],
+  });
+
+  return <QueryBuilder query={query} onQueryChange={setQuery} />;
+}
 ```
 
 For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/intro), or browse the [example projects](./examples/).
 
-To enable drag-and-drop functionality, see the [`@react-querybuilder/dnd` package README](packages/dnd/README.md).
+To enable drag-and-drop functionality, use the [`@react-querybuilder/dnd` package](packages/dnd).
 
 _For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
 
@@ -51,11 +56,7 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 ## Development
 
-> _Most scripts in this repository require [Bun](https://bun.sh/)._
-
-To run a test page with a basic query builder using the default components, run `bun start`.
-
-To run the documentation website, run `bun run build && bun run web`. Click "Demo" in the page header to load the full demo with all options and compatibility components available.
+See [the contribution guidelines](./CONTRIBUTING.md).
 
 ## Credits
 
