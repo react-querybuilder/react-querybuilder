@@ -11734,6 +11734,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bun@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/bun@npm:1.0.4"
+  dependencies:
+    bun-types: "npm:1.0.25"
+  checksum: 84a8cba1bd7b67a4dfec6faa1788101646c852dd766cdf7bf5cabe1117bbddc248ea947741961f4a6fd850092885c59061513baf22b4576dddcae65dc77a1571
+  languageName: node
+  linkType: hard
+
 "@types/connect-history-api-fallback@npm:^1.3.5":
   version: 1.5.1
   resolution: "@types/connect-history-api-fallback@npm:1.5.1"
@@ -14245,7 +14254,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bun-types@npm:^1.0.25":
+"bun-types@npm:1.0.25":
   version: 1.0.25
   resolution: "bun-types@npm:1.0.25"
   dependencies:
@@ -27024,6 +27033,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.3.0"
     "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.2"
+    "@types/bun": "npm:^1.0.4"
     "@types/glob": "npm:^8.1.0"
     "@types/jest": "npm:^29.5.11"
     "@types/node": "npm:^20.11.7"
@@ -27034,7 +27044,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.19.1"
     "@typescript-eslint/parser": "npm:^6.19.1"
     all-contributors-cli: "npm:^6.26.1"
-    bun-types: "npm:^1.0.25"
     concurrently: "npm:^8.2.2"
     esbuild-analyzer: "npm:^0.2.0"
     eslint: "npm:^8.56.0"
