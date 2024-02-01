@@ -120,9 +120,9 @@
     "build:css": "copyfiles -f src/query-builder.scss dist && bun x sass dist/query-builder.scss dist/query-builder.css",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
-    "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",
+    "generate:parsers": "concurrently --timings --names sqlParser,celParser bun:generate:sqlparser bun:generate:celparser && bun generate:parsers-codemod",
     "generate:sqlparser": "bun x jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
     "generate:celparser": "bun x jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:parsers-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
+    "generate:parsers-codemod": "bun x jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
   }
 }
