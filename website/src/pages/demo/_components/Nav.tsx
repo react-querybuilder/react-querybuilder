@@ -59,9 +59,16 @@ export default function Nav({ variant, compressedState }: NavProps) {
           style={{ minWidth: '1rem' }}>
           <StackBlitzLogo />
         </a>
+        <a
+          href={getLink({ variant, compressedState, siteLocation })}
+          className={styles.smallerAnchor}
+          target="_blank"
+          rel="noreferrer">
+          Permalink
+        </a>
       </div>
       <div className={styles.demoNavStyleLinks}>
-        <label htmlFor={slId}>{'Style library'}</label>
+        <label htmlFor={slId}>Style library:</label>
         <select name={slId} id={slId} value={variant} onChange={goToStyle}>
           {styleNameArray.map(s => (
             <option key={s} value={s}>
