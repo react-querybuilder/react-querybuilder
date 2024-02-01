@@ -89,7 +89,9 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
 };
 
 export const getExportDisplayLanguage = (format: ExportFormat) =>
-  format === 'sql' || format === 'cel' || format === 'spel' ? format : 'json';
+  format === 'sql' || format === 'cel' || format === 'spel' || format === 'mongodb'
+    ? format
+    : 'json';
 
 const getCompatWrapper = (style: StyleName): [string, string, string] => {
   switch (style) {

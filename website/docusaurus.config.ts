@@ -282,7 +282,7 @@ const config: Config = {
     prism: {
       theme: themes.github,
       darkTheme: themes.dracula,
-      additionalLanguages: ['diff', 'scss'],
+      additionalLanguages: ['diff', 'json', 'mongodb', 'scss'],
     },
   } satisfies ThemeConfig,
 };
