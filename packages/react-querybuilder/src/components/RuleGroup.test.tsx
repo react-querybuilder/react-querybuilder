@@ -71,6 +71,7 @@ describe('onCombinatorChange', () => {
   it('calls onPropChange from the schema with expected values', async () => {
     const onPropChange = jest.fn();
     const { container } = render(<RuleGroup {...getRuleGroupProps({}, { onPropChange })} />);
+
     await user.selectOptions(
       container.querySelector(`.${sc.combinators}`)!,
       'any_combinator_value'
@@ -83,6 +84,7 @@ describe('onNotToggleChange', () => {
   it('calls onPropChange from the schema with expected values', async () => {
     const onPropChange = jest.fn();
     render(<RuleGroup {...getRuleGroupProps({ showNotToggle: true }, { onPropChange })} />);
+
     await user.click(screen.getByLabelText('Not'));
     expect(onPropChange).toHaveBeenCalledWith('not', true, [0]);
   });
@@ -92,13 +94,19 @@ describe('addRule', () => {
   it('calls onRuleAdd from the schema with expected values', async () => {
     const onRuleAdd = jest.fn();
     render(<RuleGroup {...getRuleGroupProps({}, { onRuleAdd })} />);
+
     await user.click(screen.getByText(t.addRule.label));
-    const call0 = onRuleAdd.mock.calls[0];
-    expect(call0[0]).toHaveProperty('id');
-    expect(call0[0]).toHaveProperty('field', 'field_0');
-    expect(call0[0]).toHaveProperty('operator', 'operator_0');
-    expect(call0[0]).toHaveProperty('value', 'value_0');
-    expect(call0[1]).toEqual([0]);
+    expect(onRuleAdd).toHaveBeenCalledTimes(1);
+    expect(onRuleAdd).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        field: 'field_0',
+        operator: 'operator_0',
+        value: 'value_0',
+      }),
+      [0],
+      undefined
+    );
   });
 });
 
@@ -106,11 +114,14 @@ describe('addGroup', () => {
   it('calls onGroupAdd from the schema with expected values', async () => {
     const onGroupAdd = jest.fn();
     render(<RuleGroup {...getRuleGroupProps({}, { onGroupAdd })} />);
+
     await user.click(screen.getByText(t.addGroup.label));
-    const call0 = onGroupAdd.mock.calls[0];
-    expect(call0[0]).toHaveProperty('id');
-    expect(call0[0]).toHaveProperty('rules', []);
-    expect(call0[1]).toEqual([0]);
+    expect(onGroupAdd).toHaveBeenCalledTimes(1);
+    expect(onGroupAdd).toHaveBeenLastCalledWith(
+      expect.objectContaining({ id: expect.any(String), rules: [] }),
+      [0],
+      undefined
+    );
   });
 });
 
@@ -118,6 +129,7 @@ describe('cloneGroup', () => {
   it('calls moveRule from the schema with expected values', async () => {
     const moveRule = jest.fn();
     render(<RuleGroup {...getRuleGroupProps({ showCloneButtons: true }, { moveRule })} />);
+
     await user.click(screen.getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
@@ -129,13 +141,14 @@ describe('shiftRuleUp/Down', () => {
     const { rerender } = render(
       <RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} disabled />
     );
-    let n = 1;
+
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.click(screen.getByText(t.shiftActionDown.label));
     expect(moveRule).not.toHaveBeenCalled();
     rerender(
       <RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} shiftUpDisabled />
     );
+
     await user.click(screen.getByText(t.shiftActionUp.label));
     expect(moveRule).not.toHaveBeenCalled();
     rerender(
@@ -144,21 +157,26 @@ describe('shiftRuleUp/Down', () => {
         shiftDownDisabled
       />
     );
+
     await user.click(screen.getByText(t.shiftActionDown.label));
     expect(moveRule).not.toHaveBeenCalled();
     rerender(<RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} />);
+
     await user.click(screen.getByText(t.shiftActionUp.label));
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up', false);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false);
+
     await user.click(screen.getByText(t.shiftActionDown.label));
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down', false);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false);
+
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.keyboard('{/Alt}');
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up', true);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true);
+
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionDown.label));
     await user.keyboard('{/Alt}');
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down', true);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true);
   });
 });
 
@@ -166,6 +184,7 @@ describe('removeGroup', () => {
   it('calls onGroupRemove from the schema with expected values', async () => {
     const onGroupRemove = jest.fn();
     render(<RuleGroup {...getRuleGroupProps({}, { onGroupRemove })} />);
+
     await user.click(screen.getByText(t.removeGroup.label));
     expect(onGroupRemove).toHaveBeenCalledWith([0]);
   });
@@ -262,6 +281,7 @@ describe('independent combinators', () => {
         ruleGroup={{ rules }}
       />
     );
+
     await user.selectOptions(screen.getByTitle(t.combinators.title), [screen.getByText('OR')]);
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
   });
@@ -276,6 +296,7 @@ describe('independent combinators', () => {
         )}
       />
     );
+
     await user.click(screen.getByText(t.cloneRuleGroup.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
@@ -347,18 +368,8 @@ describe('disabled', () => {
     render(
       <RuleGroup
         {...getRuleGroupProps(
-          {
-            showCloneButtons: true,
-            showNotToggle: true,
-          },
-          {
-            onRuleAdd,
-            onRuleRemove,
-            onGroupAdd,
-            onGroupRemove,
-            onPropChange,
-            moveRule,
-          }
+          { showCloneButtons: true, showNotToggle: true },
+          { onRuleAdd, onRuleRemove, onGroupAdd, onGroupRemove, onPropChange, moveRule }
         )}
         disabled
         ruleGroup={{
@@ -370,6 +381,7 @@ describe('disabled', () => {
         }}
       />
     );
+
     await user.click(screen.getByTestId(TestID.addRule));
     await user.click(screen.getByTestId(TestID.addGroup));
     await user.click(screen.getByTestId(TestID.cloneGroup));
@@ -395,19 +407,8 @@ describe('disabled', () => {
     render(
       <RuleGroup
         {...getRuleGroupProps(
-          {
-            showCloneButtons: true,
-            showNotToggle: true,
-            independentCombinators: true,
-          },
-          {
-            onRuleAdd,
-            onRuleRemove,
-            onGroupAdd,
-            onGroupRemove,
-            onPropChange,
-            moveRule,
-          }
+          { showCloneButtons: true, showNotToggle: true, independentCombinators: true },
+          { onRuleAdd, onRuleRemove, onGroupAdd, onGroupRemove, onPropChange, moveRule }
         )}
         disabled
         ruleGroup={{
@@ -419,6 +420,7 @@ describe('disabled', () => {
         }}
       />
     );
+
     await user.selectOptions(screen.getByTestId(TestID.combinators), 'or');
     expect(onPropChange).not.toHaveBeenCalled();
   });
@@ -439,6 +441,7 @@ describe('lock buttons', () => {
       />
     );
     expect(screen.getByTestId(TestID.lockGroup)).toBeDisabled();
+
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).not.toHaveBeenCalled();
   });
@@ -446,6 +449,7 @@ describe('lock buttons', () => {
   it('sets the disabled property', async () => {
     const onPropChange = jest.fn();
     render(<RuleGroup {...getRuleGroupProps({ showLockButtons: true }, { onPropChange })} />);
+
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
@@ -455,6 +459,7 @@ describe('lock buttons', () => {
     render(
       <RuleGroup {...getRuleGroupProps({ showLockButtons: true }, { onPropChange })} disabled />
     );
+
     await user.click(screen.getByTestId(TestID.lockGroup));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
   });

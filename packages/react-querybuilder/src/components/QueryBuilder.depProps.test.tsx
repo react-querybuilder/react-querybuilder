@@ -10,11 +10,14 @@ import {
   errorUnnecessaryIndependentCombinatorsProp,
 } from '../messages';
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type QB = typeof import('./QueryBuilder');
+
 const { consoleError } = consoleMocks();
 
 describe('deprecated props - unnecessary independentCombinators', () => {
   it('warns about unnecessary independentCombinators prop', () => {
-    const { QueryBuilder } = jest.requireActual('./QueryBuilder');
+    const { QueryBuilder } = jest.requireActual<QB>('./QueryBuilder');
     render(<QueryBuilder query={{ rules: [] }} />);
     expect(consoleError).not.toHaveBeenCalledWith(errorUnnecessaryIndependentCombinatorsProp);
     // independentCombinators is unnecessary even if it's false
@@ -25,7 +28,7 @@ describe('deprecated props - unnecessary independentCombinators', () => {
 
 describe('deprecated props - invalid independentCombinators', () => {
   it('warns about invalid independentCombinators prop', () => {
-    const { QueryBuilder } = jest.requireActual('./QueryBuilder');
+    const { QueryBuilder } = jest.requireActual<QB>('./QueryBuilder');
     render(<QueryBuilder independentCombinators query={{ rules: [] }} />);
     expect(consoleError).not.toHaveBeenCalledWith(errorInvalidIndependentCombinatorsProp);
     render(<QueryBuilder independentCombinators query={{ combinator: 'and', rules: [] }} />);

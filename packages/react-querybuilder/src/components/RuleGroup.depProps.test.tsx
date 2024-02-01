@@ -7,11 +7,14 @@ import * as React from 'react';
 import { consoleMocks, getRuleGroupProps } from '../../genericTests';
 import { TestID } from '../defaults';
 import { errorDeprecatedRuleGroupProps } from '../messages';
-import { RuleGroup } from './RuleGroup';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type RG = typeof import('./RuleGroup');
 
 const { consoleError } = consoleMocks();
 
 it('warns about deprecated props', () => {
+  const { RuleGroup } = jest.requireActual<RG>('./RuleGroup');
   // @ts-expect-error ruleGroup is required
   render(<RuleGroup {...getRuleGroupProps()} ruleGroup={undefined} rules={[]} combinator="or" />);
   expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
