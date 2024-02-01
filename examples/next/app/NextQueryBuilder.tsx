@@ -35,4 +35,6 @@ const QB = () => {
 
 // Lazy load the QueryBuilder component so it doesn't get rendered on the server.
 // See https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#skipping-ssr
-export const NextQueryBuilder = dynamic(QB, { ssr: false });
+export const NextQueryBuilder = dynamic(() => Promise.resolve(QB), {
+  ssr: false,
+});
