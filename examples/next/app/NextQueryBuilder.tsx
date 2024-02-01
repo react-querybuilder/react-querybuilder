@@ -19,21 +19,20 @@ const initialQuery: RuleGroupType = {
   ],
 };
 
+const QB = () => {
+  const [query, setQuery] = useState(initialQuery);
+
+  return (
+    <>
+      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+      <h4>Query</h4>
+      <pre>
+        <code>{formatQuery(query, 'json')}</code>
+      </pre>
+    </>
+  );
+};
+
 // Lazy load the QueryBuilder component so it doesn't get rendered on the server.
 // See https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#skipping-ssr
-export const NextQueryBuilder = dynamic(
-  () => {
-    const [query, setQuery] = useState(initialQuery);
-
-    return (
-      <>
-        <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
-        <h4>Query</h4>
-        <pre>
-          <code>{formatQuery(query, 'json')}</code>
-        </pre>
-      </>
-    );
-  },
-  { ssr: false }
-);
+export const NextQueryBuilder = dynamic(QB, { ssr: false });
