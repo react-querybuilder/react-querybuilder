@@ -272,7 +272,7 @@ export const RuleGroupBodyComponents = React.memo(
                   !rg.schema.independentCombinators &&
                   rg.schema.showCombinatorsBetweenRules && (
                     <InlineCombinatorControlElement
-                      key="inline-combinator"
+                      key={TestID.inlineCombinator}
                       options={rg.schema.combinators}
                       value={rg.combinator}
                       title={rg.translations.combinators.title}
@@ -291,7 +291,7 @@ export const RuleGroupBodyComponents = React.memo(
                   )}
                 {typeof r === 'string' ? (
                   <InlineCombinatorControlElement
-                    key="inline-combinator-str"
+                    key={`${TestID.inlineCombinator}-independent`}
                     options={rg.schema.combinators}
                     value={r}
                     title={rg.translations.combinators.title}
@@ -309,7 +309,7 @@ export const RuleGroupBodyComponents = React.memo(
                   />
                 ) : isRuleGroup(r) ? (
                   <RuleGroupControlElement
-                    key="rule-group"
+                    key={TestID.ruleGroup}
                     id={r.id}
                     schema={rg.schema}
                     actions={rg.actions}
@@ -327,7 +327,7 @@ export const RuleGroupBodyComponents = React.memo(
                   />
                 ) : (
                   <RuleControlElement
-                    key="rule"
+                    key={TestID.rule}
                     id={r.id!}
                     rule={r}
                     field={r.field}
