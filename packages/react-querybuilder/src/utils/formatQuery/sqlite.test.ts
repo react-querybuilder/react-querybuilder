@@ -1,4 +1,4 @@
-/// <reference types="bun-types" />
+/// <reference types="bun" />
 
 import { Database } from 'bun:sqlite';
 import type { DefaultRuleGroupTypeAny, FormatQueryOptions } from '../../types';

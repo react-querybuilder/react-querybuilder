@@ -1,14 +1,14 @@
-import path from 'node:path';
+import nodePath from 'node:path';
 
 /** @type {import('./types').LanguageParserCodeMod} */
-export default ({ path: filePath, source }, { jscodeshift: j }) =>
-  j(
-    j(source)
-      .find(j.LabeledStatement)
+export default ({ path, source }, { jscodeshift }) =>
+  jscodeshift(
+    jscodeshift(source)
+      .find(jscodeshift.LabeledStatement)
       .replaceWith(n => n.node.body)
       .toSource()
   )
-    .find(j.IfStatement)
+    .find(jscodeshift.IfStatement)
     .filter(
       e =>
         e.node?.test?.left?.left?.argument?.name === 'require' &&
@@ -21,11 +21,11 @@ export default ({ path: filePath, source }, { jscodeshift: j }) =>
           type: 'ExportSpecifier',
           local: {
             type: 'Identifier',
-            name: path.parse(filePath).name,
+            name: nodePath.parse(path).name,
           },
           exported: {
             type: 'Identifier',
-            name: path.parse(filePath).name,
+            name: nodePath.parse(path).name,
           },
         },
       ],

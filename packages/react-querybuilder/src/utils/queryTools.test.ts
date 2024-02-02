@@ -534,6 +534,10 @@ describe('shift', () => {
       combinator: and,
       rules: [r2, r1, r3],
     });
+    testQT('clones a rule down within the same group', move(rg3, [0], 'down', { clone: true }), {
+      combinator: and,
+      rules: [r1, r2, r1, r3],
+    });
     testQT(
       'shifts a rule down into a subgroup',
       move({ combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }] }, [0], 'down'),
@@ -567,6 +571,11 @@ describe('shift', () => {
       'shifts a rule down within the same group',
       move({ rules: [r1, and, r2, or, r3] }, [0], 'down'),
       { rules: [r2, and, r1, or, r3] }
+    );
+    testQT(
+      'clones a rule down within the same group',
+      move({ rules: [r1, and, r2, or, r3] }, [0], 'down', { clone: true }),
+      { rules: [r1, and, r2, and, r1, or, r3] }
     );
     testQT(
       'shifts a rule down into a subgroup',

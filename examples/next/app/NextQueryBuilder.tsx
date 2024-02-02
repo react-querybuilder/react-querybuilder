@@ -11,14 +11,25 @@ const fields: Field[] = [
 ];
 
 const initialQuery: RuleGroupType = {
+  id: 'root',
   combinator: 'and',
   rules: [
-    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
-    { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
+    {
+      id: 'rule1',
+      field: 'firstName',
+      operator: 'beginsWith',
+      value: 'Stev',
+    },
+    {
+      id: 'rule2',
+      field: 'lastName',
+      operator: 'in',
+      value: 'Vai,Vaughan',
+    },
   ],
 };
 
-export const NextQueryBuilder = () => {
+const QB = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (
@@ -31,3 +42,17 @@ export const NextQueryBuilder = () => {
     </>
   );
 };
+
+// NOTE: This only works if each object in the query hierarchy (including the query
+// object itself) has a unique `id` property at the time of server rendering.
+export const NextQueryBuilder = QB;
+
+// If the query doesn't have `id`s, the component must be lazy-loaded without SSR
+// to avoid conflicting props during hydration.
+// See https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#skipping-ssr
+
+// Uncomment the following lines and remove the existing export to enable SSR-less lazy-loading
+// import dynamic from 'next/dynamic';
+// export const NextQueryBuilder = dynamic(() => Promise.resolve(QB), {
+//   ssr: false,
+// });

@@ -130,3 +130,5 @@ export interface Combinator<N extends string = string> extends Option<N>, HasOpt
  * - `"native"` forces the use of `parseFloat`, returning `NaN` when parsing fails
  */
 export type ParseNumbersMethod = boolean | 'enhanced' | 'native' | 'strict';
+
+export type AccessibleDescriptionGenerator = (props: { path: Path; qbId: string }) => string;

@@ -1,0 +1,48 @@
+name: 🐛 Bug report
+description: Report an issue that should be fixed
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you need help or support using React Query Builder and you are not reporting a bug, please start a [discussion topic](https://github.com/react-querybuilder/react-querybuilder/discussions/new) or join our [Discord](https://react-querybuilder.js.org/discord) server.
+
+        If you are not running the latest version of React Query Builder, first try upgrading as the issue may already have been fixed.
+
+        Minimal starter projects using the latest React Query Builder can be found in the [`/examples` folder](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples). Each sub folder is a complete working project that can be loaded in CodeSandbox/StackBlitz or downloaded locally with `degit`. Instructions are in each folder's respective README file. (Note: most examples use one of the [compatibility packages](https://react-querybuilder.js.org/docs/compat), but [`basic`](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/basic) and [`basic-ts`](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/basic-ts) do not.)
+
+  - type: input
+    attributes:
+      label: React Query Builder version
+      description: '"v6.5.5", for example.'
+
+  - type: input
+    attributes:
+      label: Platform
+      description: 'OS and browser or Node version, etc. "Firefox on Windows 11", for example.'
+
+  - type: textarea
+    attributes:
+      label: Description
+      description: Describe the issue in as much detail as possible. The more information you provide, the quicker we can help.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Reproduction
+      description: |
+        Provide detailed steps to reproduce the behavior, preferably including a link to a sandbox or minimal project repo that reproduces the issue.
+
+        You can start with one of the [examples](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples).
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: How should the issue be resolved?
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Is there anything else you think we should know?

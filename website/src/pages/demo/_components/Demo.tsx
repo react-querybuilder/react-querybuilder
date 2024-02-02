@@ -78,8 +78,8 @@ const initialMongoDB = JSON.stringify(
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
-const permalinkText = 'Copy link';
-const permalinkCopiedText = 'Copied!';
+const permalinkText = 'Copy permalink';
+const permalinkCopiedText = 'Copied permalink';
 
 interface DemoProps {
   variant?: StyleName;
@@ -476,10 +476,7 @@ export default function Demo({
               Select all
             </button>
           </div>
-          <div
-            title={
-              'Copy a URL that will load this demo with the options set as they are currently'
-            }>
+          <div title="Copy a URL that will load this demo with the same query and the options as currently set">
             <button type="button" onClick={onClickCopyPermalink}>
               {copyPermalinkText}
             </button>
@@ -570,25 +567,20 @@ export default function Demo({
           ]}>
           <TabItem value="code" label="Code">
             <Details summary={<summary>Dependencies</summary>}>
-              <p>
-                The selected options require the following package{packageNames.length > 1 && 's'}:
-              </p>
-              <CodeBlock language="shell">{packageNames.join(' ')}</CodeBlock>
-              <p>
-                Registry link{packageNames.length > 1 && 's'}:{' '}
-                {packageNames.map(packageName => (
-                  <span key={packageName}>
-                    {' '}
-                    <a
-                      href={`https://www.npmjs.com/package/${packageName}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={styles.demoNavPackageLink}>
-                      {packageName}
-                    </a>
-                  </span>
-                ))}
-              </p>
+              <Tabs>
+                <TabItem value="npm" label="npm">
+                  <CodeBlock language="shell">npm install {packageNames.join(' ')}</CodeBlock>
+                </TabItem>
+                <TabItem value="bun" label="Bun">
+                  <CodeBlock language="shell">bun add {packageNames.join(' ')}</CodeBlock>
+                </TabItem>
+                <TabItem value="yarn" label="Yarn">
+                  <CodeBlock language="shell">yarn add {packageNames.join(' ')}</CodeBlock>
+                </TabItem>
+                <TabItem value="pnpm" label="pnpm">
+                  <CodeBlock language="shell">pnpm add {packageNames.join(' ')}</CodeBlock>
+                </TabItem>
+              </Tabs>
             </Details>
             <CodeBlock language="tsx" title="App.tsx">
               {codeStringState}

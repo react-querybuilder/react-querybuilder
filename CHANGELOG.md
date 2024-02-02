@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#595] The parser functions have been available as separate exports for some time now (along with `formatQuery` and `transformQuery`), but they could still be imported from `"react-querybuilder"`. They have now been removed from the main exports, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
+- [#646] `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead.
+- [#595] The parser functions have been removed from the main export, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
   <!-- prettier-ignore -->
   | Function         | New `import` requirement                                             |
   | ---------------- | -------------------------------------------------------------------- |
@@ -26,10 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   | `translations.removeRule.label`  | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
   | `translations.removeGroup.label` | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
 - [#589] The `independentCombinators` prop has been deprecated and will be ignored if used. To enable the independent combinators functionality, use `RuleGroupTypeIC` for the `query` or `defaultQuery` prop. The query builder will detect the query type and behave accordingly. If the `independentCombinators` prop is present, a warning will be logged to the console (in "development" mode only).
-- [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, now it generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.).
-- [#589] The `disabled` prop has been un-deprecated. Disabling the entire query with the prop and setting `disabled: true` as a property of the root group now produce different behaviors. Namely, the root group's lock/unlock button will always be enabled if the `disabled` prop is not `true`.
+- [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, it will now generate a rule with a inverted/negated operator (`"="` inverted is `"!="`, `"contains"` inverted is `"doesNotContain"`, etc.).
+- [#589] The `disabled` prop has been un-deprecated. Disabling the entire query with the prop and setting `disabled: true` as a property of the root group now produce different behaviors. Specifically, the root group's lock/unlock button will always be enabled if the `disabled` prop is not `true`.
 - [#555] Value editors for compatibility packages that render components specific to their respective library now accept an `extraProps` prop that will be passed directly to the library component, spread like `{...extraProps}`. The type of `extraProps` is `any` because each value editor can render one of several library components that accept different props.
-- [#637] The `"json_without_ids"` export format now removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only include specific properties.
+- [#637] The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only include specific properties which had the effect of removing any non-standard properties.
 
 <details>
 
@@ -41,43 +42,43 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `@react-querybuilder/chakra`: `@chakra-ui/icons`
   - `@react-querybuilder/fluent`: `@fluentui/react-icons-mdl2`
   - `@react-querybuilder/material`: `@mui/icons-material`
-- [#537] `@react-querybuilder/mantine` now supports and requires Mantine 7.
-- [#537] `@react-querybuilder/bootstrap` component `BootstrapDragHandle` has been removed. It is redundant since `dragHandle.label` can be a `ReactNode`.
+- [#537] `@react-querybuilder/mantine` now requires Mantine v7.
+- [#537] `@react-querybuilder/bootstrap` component `BootstrapDragHandle` has been removed. It is redundant since `dragHandle.label` can now be a `ReactNode`.
 
 </details>
 
 <details>
 
-<summary>Low impact changes</summary>
+<summary>Low-impact changes</summary>
 
 - [#537] The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. Each hook takes the full `QueryBuilder` props object as its first parameter (as `useQueryBuilder` did), and `useQueryBuilderSchema` accepts the return value of `useQueryBuilderSetup` as its second parameter.
 - [#537] The `useStopEventPropagation` hook now takes a single function as its parameter instead of an object map of functions, so it must be run for each wrapped function individually.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
-- `parseNumbers` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., "abc" in "123abc"), just like the native `parseFloat` method, with the only difference being it won't return `NaN` when parsing fails. Additionally, the `numericRegex` export is now adapted from (but largely identical to) the export of the same name from `numeric-quantity`.
+- `parseNumbers` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., "abc" in "123abc") just like the native `parseFloat` method, with the only difference being it won't return `NaN` when parsing fails. Additionally, the `numericRegex` export is now adapted from (but largely identical to) the export of the same name from `numeric-quantity`.
 - The logic to prefer a field's `valueEditorType` over the `getValueEditorType` prop has moved from the `useRule` hook to the `useQueryBuilderSetup` hook.
 
 </details>
 
 ### Added
 
-- [#586] Options in option-list props can now use `value` as the identifying property in lieu of `name`. Additionally, all `Option`s and `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{ value: string; label: string; }[]` and not `{ name: string; label: string; }[]`.
-- [#595] Two "bulk override" properties have been added to the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` (as long as that component is not explicitly defined). Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor`, but only when it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
+- [#586] Options in list-type props can now use `value` as the identifier property in lieu of `name`. Additionally, all `Option`s and `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{ value: string; label: string; }[]` and not `{ name: string; label: string; }[]`.
+- [#595] Two "bulk override" properties have been added to the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` (as long as that component is not explicitly overridden in the `controlElements` prop). Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor` in cases where it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
   <!-- prettier-ignore -->
   | `controlElements` property | Sets default for                                                                                                                                       |
   | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
   | `valueSelector`            | `combinatorSelector`, `fieldSelector`, `operatorSelector`, `valueSourceSelector`, `valueEditor` (when rendering a value selector)                      |
   | `actionElement`            | `addGroupAction`, `addRuleAction`, `cloneGroupAction`, `cloneRuleAction`, `lockGroupAction`, `lockRuleAction`, `removeGroupAction`, `removeRuleAction` |
-- [#577] New `showShiftActions` prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group) stacked vertically by default. The first/upper button will shift the rule/group one spot higher, while the second/lower button will shift it one spot lower. A `ShiftActions` component has been added, along with corresponding components for each compatibility package. New `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button within the new component.
+- [#577] A new `showShiftActions` prop provides first-class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) while clicking a shift action will clone the rule or group instead of just moving it. A `ShiftActions` component has been added, along with a corresponding component for each compatibility package. New `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button within the new component.
 - [#512] Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop.
-- [#537]/[#589] Three new methods are available that should make it easier to manage arbitrary query updates from custom components. (Previously we recommended adding the query object as a property of the `context` prop. That workaround is no longer necessary.) The first two are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
+- [#537]/[#589] Three new methods make it easier to manage arbitrary query updates from custom components. (Previously we recommended including the query object as a property of the `context` prop, but that workaround is no longer necessary.) The first two methods are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
   - `getQuery()`: returns the current root query object.
-  - `dispatchQuery(query)`: updates the internal query state and calls the `onQueryChange` callback with the provided query.
-  - `useQueryBuilderSelector(selector)`: returns the current root query object (generate the selector with `getQuerySelectorById(props.schema.qbId)`).
-- Most of the `get*` callback props now receive an additional "meta" parameter with a `fieldData` property (more properties may be added in the future). `fieldData` is the full `Field` object from the `fields` array for the given `field` name, including any custom properties (a common one is `datatype`). This eliminates the need to find the field object based solely on the field's `name` within the `get*` functions themselves. The following callback props are enhanced: `getDefaultOperator`, `getDefaultValue`, `getInputType`, `getOperators`, `getRuleClassname`, `getValueEditorSeparator`, `getValueEditorType`, `getValues`, and `getValueSources`.
-- [#537] `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (`{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the default rules will apply.
+  - `dispatchQuery(query)`: updates the internal query state and then calls the `onQueryChange` callback.
+  - `useQueryBuilderSelector(selector)`: returns the current root query object using the provided selector function, which can be generated with `getQuerySelectorById(props.schema.qbId)`.
+- Most of the `get*` callback props now receive an additional "meta" parameter with a `fieldData` property (more properties may be added to the "meta" object in the future). `fieldData` is the full `Field` object from the `fields` array for the given `field` name, including any custom properties (a common one is `datatype`). This eliminates the need to find the field object based solely on the field's `name` within the `get*` functions themselves. The following callback props provide the new "meta" parameter: `getDefaultOperator`, `getDefaultValue`, `getInputType`, `getOperators`, `getRuleClassname`, `getValueEditorSeparator`, `getValueEditorType`, `getValues`, and `getValueSources`.
+- [#537] `<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (type `{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the normal rules will apply.
 - [#537] All `label` props and `translations.*.label` properties now accept `ReactNode`. This includes all action elements (buttons), "not" toggles, and drag handles. Previously `label` was limited to `string`. This enables, for example, the assignment of SVG elements as labels.
-- [#537] The `translations` prop can now be passed down through the compatibility context providers like `<QueryBuilderBootstrap />` and `<QueryBuilderMaterial />`. The object will be merged with the `translations` prop of nested `QueryBuilder` components.
+- [#537] The `translations` prop can now be passed down through the compatibility context providers like `<QueryBuilderBootstrap />` and `<QueryBuilderMaterial />`. The object will be merged with the `translations` prop of descendant `QueryBuilder` components.
 - [#589] Custom rule processors for `formatQuery` now receive the full `Field` object in the options parameter, as long as the `fields` array is provided alongside `ruleProcessor`. In TypeScript, the member type of the `fields` array now requires a `label: string` property. Previously, only `name` was required.
 - [#595] `parseMongoDB` now supports custom operators through the `additionalOperators` option.
 - [#589] New utility function `uniqByIdentifier` replaces `uniqByName`, which has been deprecated. `uniqByIdentifier` will remove duplicates based on the `value` property, or `name` if `value` is undefined (see [#586]).
@@ -88,11 +89,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [#537] Performance is improved via `React.memo` (especially for large queries), as long as each prop passed to `<QueryBuilder />` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can usually be addressed with `useCallback`.
+- [#537] Performance is improved (especially for large queries), as long as each prop except for `query` has a stable reference. The most common violation of that rule is probably inline arrow function declarations in the `onQueryChange` prop, a problem which can usually be addressed with `useCallback`.
 - [#589] Fixed issue where locking the root group would prevent unlocking the query.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
-- [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious`.
+- [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious` and a ref that tracked "first render" from `useQueryBuilderSchema`.
 - [#625] A default value will not be selected unnecessarily when `valueEditorType` evaluates to `"multiselect"`.
 
 ## [v6.5.5] - 2024-01-15
@@ -447,7 +448,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Each [compatibility package](https://react-querybuilder.js.org/docs/compat) now exports its own context provider that injects the appropriate `controlElements` and `controlClassnames` properties into any descendant `QueryBuilder` components (composition FTW!). This is now the recommended usage for all compatibility packages.
 - The [`onAddRule`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddrule) and [`onAddGroup`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddgroup) callback props now receive an optional "context" parameter as the fourth argument. This parameter can be provided by a custom `addRuleAction`/`addGroupAction` component to its `handleOnClick` prop. This allows users to alter or replace the default rule based on arbitrary data. For example, the `addRuleAction` component could render two "add rule" buttons which add different rules depending on which one was clicked, as long as they provided a different `context` parameter.
-- When drag-and-drop is enabled, rules will be copied instead of moved if the user has a modifier key (`Alt` on Windows/Linux, `Option ⌥` on Mac) pressed when the drop occurs.
+- When drag-and-drop is enabled, rules will be copied instead of moved if the user has a modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) pressed when the drop occurs.
 - `formatQuery` has a new `ruleProcessor` configuration option applicable to non-SQL query language formats. When provided, the entire rule output will be determined by the function. For the relevant formats, `valueProcessor` already behaved this way; the default "value" processors have been renamed to `defaultRuleProcessor[Format]` to clarify the behavior. The default processors' original "value" names are deprecated but still available (with no immediate plans to remove them).
 - `parseSQL` will now ignore a leading `WHERE` keyword, e.g. `parseSQL("WHERE firstName = 'Steve'")` will not fail to produce a query rule like in v4.
 
@@ -1521,6 +1522,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
 [#637]: https://github.com/react-querybuilder/react-querybuilder/pull/637
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
+[#646]: https://github.com/react-querybuilder/react-querybuilder/pull/646
 
 <!-- Release comparison links -->
 

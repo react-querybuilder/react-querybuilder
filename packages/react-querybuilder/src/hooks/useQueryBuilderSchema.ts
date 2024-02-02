@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { LogType, standardClassnames } from '../defaults';
 import {
   dispatchThunk,
@@ -131,8 +131,6 @@ export function useQueryBuilderSchema<
     translations,
   } = rqbContext;
 
-  const isFirstRender = useRef(true);
-
   // #region Boolean coercion
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
@@ -160,16 +158,16 @@ export function useQueryBuilderSchema<
 
   const fallbackQuery = useMemo(() => createRuleGroup(), [createRuleGroup]);
 
-  // We assume here that if this is not the first render, the query has already
-  // been prepared. If `preliminaryQuery === query`, the user is probably
+  // We assume here that if the query has an `id` property, the query has already
+  // been prepared. If `candidateQuery === query`, the user is probably just
   // passing back the parameter from the `onQueryChange` callback.
-  const preliminaryQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
-  const rootGroup = isFirstRender.current
-    ? prepareRuleGroup(preliminaryQuery, { idGenerator })
-    : preliminaryQuery;
+  const candidateQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
+  const rootGroup = !candidateQuery.id
+    ? prepareRuleGroup(candidateQuery, { idGenerator })
+    : candidateQuery;
 
-  // If a query prop is passed in that doesn't match the query in the store,
-  // update the store query to match the prop _without_ calling `onQueryChange`.
+  // If a new `query` prop is passed in that doesn't match the query in the store,
+  // update the store to match the prop _without_ calling `onQueryChange`.
   useEffect(() => {
     if (!!queryProp && queryProp !== storeQuery) {
       queryBuilderDispatch(
@@ -526,8 +524,6 @@ export function useQueryBuilderSchema<
       }),
     [controlClassnames.queryBuilder, queryDisabled, validationResult]
   );
-
-  if (isFirstRender.current) isFirstRender.current = false;
 
   return {
     ...props,

@@ -401,7 +401,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       values: undefined,
     };
 
-    it('should render the "between" datetime-local input', () => {
+    it('renders the "between" datetime-local input', () => {
       render(<MantineValueEditor {...betweenDateTimeLocalProps} />);
       const betweenInputs = screen.getAllByRole('button');
       expect(betweenInputs).toHaveLength(2);
@@ -409,7 +409,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       expect(betweenInputs[1]).toHaveTextContent(toDateTimePickerLabel(`${dateStub}20T00:00:00`));
     });
 
-    it('should call the onChange handler', async () => {
+    it('calls the onChange handler', async () => {
       const handleOnChange = jest.fn();
       render(<MantineValueEditor {...betweenDateTimeLocalProps} handleOnChange={handleOnChange} />);
       const betweenInputs = screen.getAllByRole('button');
@@ -429,7 +429,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       // expect(handleOnChange).toHaveBeenCalledWith(`not a date,${dateStub}14T00:00:00`);
     });
 
-    it('should assume empty string as the second value if not provided', async () => {
+    it('assumes empty string as the second value if not provided', async () => {
       const handleOnChange = jest.fn();
       render(
         <MantineValueEditor
@@ -445,7 +445,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}12T00:00:00,`);
     });
 
-    it('should call the onChange handler with lists as arrays', async () => {
+    it('calls the onChange handler with lists as arrays', async () => {
       const handleOnChange = jest.fn();
       render(
         <MantineValueEditor
@@ -474,7 +474,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       // expect(handleOnChange).toHaveBeenCalledWith([`not a date`, `${dateStub}14T00:00:00`]);
     });
 
-    it('should be disabled by the disabled prop', async () => {
+    it('is disabled by the disabled prop', async () => {
       const handleOnChange = jest.fn();
       render(
         <MantineValueEditor

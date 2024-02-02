@@ -29,7 +29,7 @@ import '../css/index.scss';
 import { formatMap, initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 import { musicalInstruments } from './demo/_constants/musicalInstruments';
-import { getFormatQueryString } from './demo/_constants/utils';
+import { getFormatQueryString, getExportDisplayLanguage } from './demo/_constants/utils';
 import styles from './index.module.css';
 
 const datePickerFields = fields.filter(f => f.name === 'birthdate');
@@ -207,7 +207,9 @@ const LandingPage = () => {
                   ))}
                 </select>
               </div>
-              <CodeBlock className={`${styles.wsPreWrap} ${styles.scrollVert200}`}>
+              <CodeBlock
+                className={`${styles.wsPreWrap} ${styles.scrollVert200}`}
+                language={getExportDisplayLanguage(exportFormat)}>
                 {getFormatQueryString(query, { format: exportFormat, valueProcessor })}
               </CodeBlock>
             </div>

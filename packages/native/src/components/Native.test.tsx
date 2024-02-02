@@ -96,7 +96,7 @@ describe('NativeActionElement', () => {
     });
   };
 
-  it('should have the label passed into the <button />', () => {
+  it('has the label passed into the <button />', () => {
     const testLabel = 'Test label';
     render(<NativeActionElement {...props} label={testLabel} />);
     expect(screen.getByTestId(testID)).toHaveTextContent(testLabel);
@@ -121,7 +121,7 @@ describe('NativeActionElement', () => {
     disabledTranslation: dt,
   });
 
-  it('should be disabled by disabled prop', () => {
+  it('is disabled by disabled prop', () => {
     const handleOnPress = jest.fn();
     render(<NativeActionElement {...props} handleOnClick={handleOnPress} disabled />);
     const btn = screen.getByTestId(testID);

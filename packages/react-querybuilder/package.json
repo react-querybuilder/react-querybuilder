@@ -78,15 +78,15 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.23.7",
-    "@babel/preset-env": "^7.23.8",
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.2",
     "@types/hoist-non-react-statics": "^3.3.5",
     "@types/jscodeshift": "^0.11.11",
-    "@types/node": "^20.11.2",
+    "@types/node": "^20.11.7",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react-swc": "^3.5.0",
@@ -101,10 +101,10 @@
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "1.69.4",
     "typescript": "^5.3.3",
-    "vite": "^5.0.11"
+    "vite": "^5.0.12"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.0.1",
+    "@reduxjs/toolkit": "^2.1.0",
     "clsx": "^2.1.0",
     "immer": "^10.0.3",
     "numeric-quantity": "^2.0.1",
@@ -120,9 +120,9 @@
     "build:css": "copyfiles -f src/query-builder.scss dist && bun x sass dist/query-builder.scss dist/query-builder.css",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
-    "generate:parsers": "concurrently --timings --names sqlParser,celParser yarn:generate:sqlparser yarn:generate:celparser && yarn generate:parsers-codemod",
+    "generate:parsers": "concurrently --timings --names sqlParser,celParser bun:generate:sqlparser bun:generate:celparser && bun generate:parsers-codemod",
     "generate:sqlparser": "bun x jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
     "generate:celparser": "bun x jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:parsers-codemod": "jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
+    "generate:parsers-codemod": "bun x jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
   }
 }

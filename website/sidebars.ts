@@ -13,13 +13,14 @@ export default {
       },
       items: [
         'components/querybuilder',
-        'components/rulegroup',
-        'components/rule',
-        'components/actionelement',
-        'components/valueselector',
         'components/valueeditor',
+        'components/valueselector',
+        'components/actionelement',
         'components/nottoggle',
         'components/draghandle',
+        'components/shiftactions',
+        'components/rulegroup',
+        'components/rule',
       ],
     },
     {

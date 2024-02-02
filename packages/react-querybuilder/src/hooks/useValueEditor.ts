@@ -17,7 +17,7 @@ export type UseValueEditorParams = Pick<
 >;
 
 /**
- * This effect is primarily concerned with multi-value editors like date range
+ * This hook is primarily concerned with multi-value editors like date range
  * pickers, editors for 'in' and 'between' operators, etc.
  *
  * @returns The value as an array (`valueAsArray`) and a change handler for
@@ -26,9 +26,10 @@ export type UseValueEditorParams = Pick<
  * **NOTE:** The following logic only applies if `skipHook` is not `true`. To avoid
  * automatically updating the `value`, pass `{ skipHook: true }`.
  *
- * If the `value` is an array and the `operator` is _not_ one of the known multi-value
- * operators ("between", "notBetween", "in", "notIn"), then the `value` will be set to
- * the first element of the array, i.e. `value[0]`.
+ * If the `value` is an array of non-zero length, the `operator` is _not_ one of
+ * the known multi-value operators ("between", "notBetween", "in", "notIn"), and
+ * the `type` is not "multiselect", then the `value` will be set to the first
+ * element of the array (i.e., `value[0]`).
  *
  * The same thing will happen if `inputType` is "number" and `value` is a string
  * containing a comma, since `<input type="number">` doesn't handle commas.

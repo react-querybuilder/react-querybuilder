@@ -37,6 +37,7 @@ describe('onElementChanged methods', () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
+
       await user.selectOptions(
         screen.getByTestId(TestID.rule).querySelector(`select.${sc.fields}`)!,
         'any_field'
@@ -50,6 +51,7 @@ describe('onElementChanged methods', () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
+
       await user.selectOptions(
         screen.getByTestId(TestID.rule).querySelector(`select.${sc.operators}`)!,
         'any_operator'
@@ -63,6 +65,7 @@ describe('onElementChanged methods', () => {
       const onPropChange = jest.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
+
       await user.type(
         screen.getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!,
         'any_value'
@@ -76,6 +79,7 @@ describe('cloneRule', () => {
   it('calls moveRule with the right paths', async () => {
     const moveRule = jest.fn();
     render(<Rule {...getProps({ showCloneButtons: true }, { moveRule })} />);
+
     await user.click(screen.getByText(t.cloneRule.label));
     expect(moveRule).toHaveBeenCalledWith([0], [1], true);
   });
@@ -87,21 +91,35 @@ describe('shiftRuleUp/Down', () => {
     const { rerender } = render(
       <Rule {...getProps({ showShiftActions: true }, { moveRule })} disabled />
     );
-    let n = 1;
+
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.click(screen.getByText(t.shiftActionDown.label));
     expect(moveRule).not.toHaveBeenCalled();
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} shiftUpDisabled />);
+
     await user.click(screen.getByText(t.shiftActionUp.label));
     expect(moveRule).not.toHaveBeenCalled();
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} shiftDownDisabled />);
+
     await user.click(screen.getByText(t.shiftActionDown.label));
     expect(moveRule).not.toHaveBeenCalled();
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
+
     await user.click(screen.getByText(t.shiftActionUp.label));
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'up');
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false);
+
     await user.click(screen.getByText(t.shiftActionDown.label));
-    expect(moveRule).toHaveBeenNthCalledWith(n++, [0], 'down');
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false);
+
+    await user.keyboard('{Alt>}');
+    await user.click(screen.getByText(t.shiftActionUp.label));
+    await user.keyboard('{/Alt}');
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true);
+
+    await user.keyboard('{Alt>}');
+    await user.click(screen.getByText(t.shiftActionDown.label));
+    await user.keyboard('{/Alt}');
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true);
   });
 });
 
@@ -109,6 +127,7 @@ describe('removeRule', () => {
   it('calls onRuleRemove with the rule and path', async () => {
     const onRuleRemove = jest.fn();
     render(<Rule {...getProps({}, { onRuleRemove })} />);
+
     await user.click(screen.getByText(t.removeRule.label));
     expect(onRuleRemove).toHaveBeenCalledWith([0]);
   });
@@ -179,19 +198,11 @@ describe('disabled', () => {
     const moveRule = jest.fn();
     render(
       <Rule
-        {...getProps(
-          {
-            showCloneButtons: true,
-          },
-          {
-            onRuleRemove,
-            onPropChange,
-            moveRule,
-          }
-        )}
+        {...getProps({ showCloneButtons: true }, { onRuleRemove, onPropChange, moveRule })}
         disabled
       />
     );
+
     await user.selectOptions(screen.getByTestId(TestID.fields), 'any_field');
     await user.selectOptions(screen.getByTestId(TestID.operators), 'any_operator');
     await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
@@ -213,6 +224,7 @@ describe('locked rule', () => {
     const onPropChange = jest.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} parentDisabled />);
     expect(screen.getByTestId(TestID.lockRule)).toBeDisabled();
+
     await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).not.toHaveBeenCalled();
   });
@@ -220,6 +232,7 @@ describe('locked rule', () => {
   it('sets the disabled property', async () => {
     const onPropChange = jest.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} />);
+
     await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
   });
@@ -227,6 +240,7 @@ describe('locked rule', () => {
   it('unsets the disabled property', async () => {
     const onPropChange = jest.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
+
     await user.click(screen.getByTestId(TestID.lockRule));
     expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
   });
@@ -326,12 +340,7 @@ describe('valueSource', () => {
     render(
       <Rule
         {...props}
-        rule={{
-          ...props.rule,
-          field: 'fvsa',
-          value: 'fc2',
-          valueSource: 'field',
-        }}
+        rule={{ ...props.rule, field: 'fvsa', value: 'fc2', valueSource: 'field' }}
       />
     );
     expect(

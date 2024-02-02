@@ -7,9 +7,9 @@ import { DemoLink } from '@site/src/components/DemoLink';
 
 %importmd ../\_ts_admonition.md
 
-The default export of `react-querybuilder` is the `<QueryBuilder />` React component (also available as a named export).
+The primary export of `react-querybuilder` is the `<QueryBuilder />` React component.
 
-`QueryBuilder` calls the [`useQueryBuilderSetup`](../utils/hooks#usequerybuildersetup) hook to merge props and context with defaults, generate update methods, etc. It then renders a context provider over an internal component that calls the [`useQueryBuilderSchema`](../utils/hooks#usequerybuilderschema) hook to consume the context, prepare the query, and finish setting up the schema.
+`QueryBuilder` calls the [`useQueryBuilderSetup`](../utils/hooks#usequerybuildersetup) Hook to merge props and context values with defaults, generate update methods, etc. It then renders a context provider over an internal component that calls the [`useQueryBuilderSchema`](../utils/hooks#usequerybuilderschema) Hook to consume the context, prepare the query, and finalize the schema.
 
 ## Subcomponents
 
@@ -17,11 +17,11 @@ The default export of `react-querybuilder` is the `<QueryBuilder />` React compo
 
 That root `RuleGroup` is nested within a `<div>` that has the [standard `queryBuilder` class](../styling/classnames), any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators (either [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) is `true` or the query is using [independent combinators](#independent-combinators)) are enabled.
 
-Finally, everything is wrapped in `<QueryBuilderContext.Provider>` which inherits any values from ancestor context providers and propogates them down to subcomponents. Props supersede context values.
+Finally, everything is wrapped in `<QueryBuilderStateProvider>` and `<QueryBuilderContext.Provider>`. The latter inherits any values from ancestor context providers and propogates them down to subcomponents. Props supersede context values.
 
 ## Props
 
-All `QueryBuilder` props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when, at a minimum, the `fields` prop is defined.
+All `QueryBuilder` props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when at least the `fields` and `onQueryChange` props are implemented.
 
 :::note
 
@@ -866,7 +866,8 @@ When `true` (under the conditions detailed above), a [drag handle](./draghandle)
 #### Recommended usage
 
 ```bash
-yarn add react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+# OR yarn add / pnpm add / bun add
 ```
 
 ```tsx
