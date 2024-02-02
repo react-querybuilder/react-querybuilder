@@ -7,6 +7,7 @@ import type {
   RefAttributes,
 } from 'react';
 import type {
+  AccessibleDescriptionGenerator,
   Classname,
   Combinator,
   Field,
@@ -338,7 +339,7 @@ export interface Schema<F extends ToFullOption<Field>, O extends string> {
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
   getRuleClassname(rule: RuleType, misc: { fieldData: F }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
-  accessibleDescriptionGenerator: (props: { path: Path; qbId: string }) => string;
+  accessibleDescriptionGenerator: AccessibleDescriptionGenerator;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showShiftActions: boolean;
@@ -777,7 +778,7 @@ export type QueryBuilderProps<
        * rule group. As this is intended to help with accessibility, the text output from this
        * function should be meaningful, descriptive, and unique within the page.
        */
-      accessibleDescriptionGenerator?: (props: { path: Path; qbId: string }) => string;
+      accessibleDescriptionGenerator?: AccessibleDescriptionGenerator;
       /**
        * Container for custom props that are passed to all components.
        */
