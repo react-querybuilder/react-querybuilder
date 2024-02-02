@@ -33,6 +33,22 @@ import {
   uniqOptList,
 } from '../utils';
 
+const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
+  const firstOption = getFirstOption(opts);
+
+  if (r.operator === 'between' || r.operator === 'notBetween') {
+    const valueAsArray = [firstOption, firstOption];
+    return listsAsArrays
+      ? valueAsArray
+      : joinWith(
+          valueAsArray.map(v => v ?? /* istanbul ignore next */ ''),
+          ','
+        );
+  }
+
+  return firstOption;
+};
+
 /**
  * Massages the props as necessary and prepares the basic update/generate methods
  * for use by the {@link QueryBuilder} component.
@@ -234,7 +250,7 @@ export const useQueryBuilderSetup = <
       }
 
       const ops = getOperatorsMain(field, { fieldData }) ?? /* istanbul ignore next */ [];
-      return (getFirstOption(ops) as unknown as OperatorName) ?? /* istanbul ignore next */ '';
+      return getFirstOption(ops) ?? /* istanbul ignore next */ '';
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
@@ -243,12 +259,14 @@ export const useQueryBuilderSetup = <
   // #region Rule property getters
   const getValueEditorTypeMain = useCallback(
     (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: FullField }) => {
-      if (getValueEditorType) {
-        const vet = getValueEditorType(field, operator, { fieldData });
-        if (vet) return vet;
+      if (fieldData.valueEditorType) {
+        if (typeof fieldData.valueEditorType === 'function') {
+          return fieldData.valueEditorType(operator);
+        }
+        return fieldData.valueEditorType;
       }
 
-      return 'text';
+      return getValueEditorType?.(field, operator, { fieldData }) ?? 'text';
     },
     [getValueEditorType]
   );
@@ -296,30 +314,23 @@ export const useQueryBuilderSetup = <
         fieldData,
       });
 
-      const getFirstOptionsFrom = (opts: any[]) => {
-        const firstOption = getFirstOption(opts);
-        if (r.operator === 'between' || r.operator === 'notBetween') {
-          const valueAsArray = [firstOption, firstOption];
-          return listsAsArrays
-            ? valueAsArray
-            : joinWith(
-                valueAsArray.map(v => v ?? /* istanbul ignore next */ ''),
-                ','
-              );
-        } else {
-          return firstOption;
-        }
-      };
-
       if (r.valueSource === 'field') {
         const filteredFields = filterFieldsByComparator(fieldData, fields, r.operator);
         if (filteredFields.length > 0) {
-          value = getFirstOptionsFrom(filteredFields);
+          value = getFirstOptionsFrom(filteredFields, r, listsAsArrays);
         } else {
           value = '';
         }
       } else if (values.length) {
-        value = getFirstOptionsFrom(values);
+        if (
+          getValueEditorTypeMain(r.field as FieldName, r.operator as OperatorName, {
+            fieldData,
+          }) === 'multiselect'
+        ) {
+          value = listsAsArrays ? [] : '';
+        } else {
+          value = getFirstOptionsFrom(values, r, listsAsArrays);
+        }
       } else {
         const editorType = getValueEditorTypeMain(
           r.field as FieldName,
@@ -352,10 +363,10 @@ export const useQueryBuilderSetup = <
   // #region Rule/group creators
   const createRule = useCallback((): RuleType => {
     let field: FieldName = '' as any;
-    const flds = fields as unknown as FullOptionList<F>;
+    const flds = fields as FullOptionList<F>;
     /* istanbul ignore else */
     if (flds?.length > 0 && flds[0]) {
-      const fo = getFirstOption(flds) as unknown as FieldName;
+      const fo = getFirstOption(flds) as FieldName;
       /* istanbul ignore else */
       if (fo) field = fo;
     }

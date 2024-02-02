@@ -17,7 +17,7 @@ const user = userEvent.setup();
 
 const { consoleError } = consoleMocks();
 
-it('should have correct accessible description', () => {
+it('has correct accessible description', () => {
   // Root group
   const { rerender } = render(<RuleGroup {...getRuleGroupProps()} path={[]} />);
   expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription('Query builder');
@@ -26,7 +26,7 @@ it('should have correct accessible description', () => {
   expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription('Rule group at path 0');
 });
 
-it('should have correct classNames', () => {
+it('has correct classNames', () => {
   render(<RuleGroup {...getRuleGroupProps()} />);
   expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.ruleGroup, 'custom-ruleGroup-class');
   expect(screen.getByTestId(TestID.ruleGroup).querySelector(`.${sc.header}`)!.classList).toContain(
@@ -134,7 +134,7 @@ describe('cloneGroup', () => {
 });
 
 describe('shiftRuleUp/Down', () => {
-  it('should call moveRule with the right params', async () => {
+  it('calls moveRule with the right params', async () => {
     const moveRule = jest.fn();
     const { rerender } = render(
       <RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} disabled />
@@ -251,7 +251,7 @@ describe('showCloneButtons', () => {
 });
 
 describe('independent combinators', () => {
-  it('should render combinator selector for string elements', () => {
+  it('renders combinator selector for string elements', () => {
     const rules: RuleGroupICArray = [
       { field: 'firstName', operator: '=', value: 'Test' },
       'and',
@@ -266,7 +266,7 @@ describe('independent combinators', () => {
     expect(combinatorSelector).toHaveValue('and');
   });
 
-  it('should call handleOnChange for string elements', async () => {
+  it('calls handleOnChange for string elements', async () => {
     const onPropChange = jest.fn();
     const rules: RuleGroupICArray = [
       { field: 'firstName', operator: '=', value: 'Test' },
@@ -284,7 +284,7 @@ describe('independent combinators', () => {
     expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
   });
 
-  it('should clone independent combinator groups', async () => {
+  it('clones independent combinator groups', async () => {
     const moveRule = jest.fn();
     render(
       <RuleGroup
@@ -301,25 +301,25 @@ describe('independent combinators', () => {
 });
 
 describe('validation', () => {
-  it('should not validate if no validationMap[id] value exists', () => {
+  it('does not validate if no validationMap[id] value exists', () => {
     render(<RuleGroup {...getRuleGroupProps()} />);
     expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.valid);
     expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.invalid);
   });
 
-  it('should validate to false if validationMap[id] = false', () => {
+  it('validates to false if validationMap[id] = false', () => {
     render(<RuleGroup {...getRuleGroupProps({ validationMap: { id: false } })} />);
     expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.valid);
     expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.invalid);
   });
 
-  it('should validate to true if validationMap[id] = true', () => {
+  it('validates to true if validationMap[id] = true', () => {
     render(<RuleGroup {...getRuleGroupProps({ validationMap: { id: true } })} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.valid);
     expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.invalid);
   });
 
-  it('should pass down validationResult as validation to children', () => {
+  it('passes down validationResult as validation to children', () => {
     const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
     const props = getRuleGroupProps();
     const controls = {
@@ -338,7 +338,7 @@ describe('validation', () => {
 });
 
 describe('disabled', () => {
-  it('should have the correct classname', () => {
+  it('has the correct classname', () => {
     render(<RuleGroup {...getRuleGroupProps()} disabled />);
     expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.disabled);
   });
@@ -464,7 +464,7 @@ describe('lock buttons', () => {
 });
 
 describe('dynamic classNames', () => {
-  it('should have correct group-based classNames', () => {
+  it('has correct group-based classNames', () => {
     render(
       <RuleGroup
         {...getRuleGroupProps({

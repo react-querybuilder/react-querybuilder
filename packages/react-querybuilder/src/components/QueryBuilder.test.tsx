@@ -55,17 +55,17 @@ export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
 const { consoleError } = consoleMocks();
 
 describe('when rendered', () => {
-  it('should have the correct role', () => {
+  it('has the correct role', () => {
     render(<QueryBuilder />);
     expect(screen.getByRole('form')).toBeInTheDocument();
   });
 
-  it('should have the correct className', () => {
+  it('has the correct className', () => {
     render(<QueryBuilder />);
     expect(screen.getByRole('form')).toHaveClass(sc.queryBuilder);
   });
 
-  it('should render the root RuleGroup', () => {
+  it('renders the root RuleGroup', () => {
     render(<QueryBuilder />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   });
@@ -95,7 +95,7 @@ describe('when rendered with defaultQuery only', () => {
 });
 
 describe('when rendered with onQueryChange callback', () => {
-  it('should call onQueryChange with query', () => {
+  it('calls onQueryChange with query', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const idGenerator = () => 'id';
     render(<QueryBuilder onQueryChange={onQueryChange} idGenerator={idGenerator} />);
@@ -111,7 +111,7 @@ describe('when rendered with onQueryChange callback', () => {
 });
 
 describe('when initial query without fields is provided, create rule should work', () => {
-  it('should be able to create rule on add rule click', async () => {
+  it('is able to create rule on add rule click', async () => {
     render(<QueryBuilder />);
 
     await user.click(screen.getByTestId(TestID.addRule));
@@ -268,7 +268,7 @@ describe('when initial query, without ID, is provided', () => {
     selectors: render(<QueryBuilder query={queryWithoutID} fields={fields} />),
   });
 
-  it('should contain a <Rule /> with the correct props', () => {
+  it('contains a <Rule /> with the correct props', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.rule)).toBeInTheDocument();
     expect(selectors.getByTestId(TestID.fields)).toHaveValue('firstName');
@@ -276,22 +276,22 @@ describe('when initial query, without ID, is provided', () => {
     expect(selectors.getByTestId(TestID.valueEditor)).toHaveValue('Test without ID');
   });
 
-  it('should have a select control with the provided fields', () => {
+  it('has a select control with the provided fields', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(3);
   });
 
-  it('should have a field selector with the correct field', () => {
+  it('has a field selector with the correct field', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.fields)).toHaveValue('firstName');
   });
 
-  it('should have an operator selector with the correct operator', () => {
+  it('has an operator selector with the correct operator', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.operators)).toHaveValue('=');
   });
 
-  it('should have an input control with the correct value', () => {
+  it('has an input control with the correct value', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.rule).querySelector('input')).toHaveValue(
       'Test without ID'
@@ -377,12 +377,12 @@ describe('when initial operators are provided', () => {
     selectors: render(<QueryBuilder operators={operators} fields={fields} query={query} />),
   });
 
-  it('should use the given operators', () => {
+  it('uses the given operators', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.operators).querySelectorAll('option')).toHaveLength(4);
   });
 
-  it('should match the label of the first operator', () => {
+  it('matches the label of the first operator', () => {
     const { selectors } = setup();
     expect(selectors.getByTestId(TestID.operators).querySelectorAll('option')[0]).toHaveTextContent(
       'Custom Is Null'
@@ -408,20 +408,20 @@ describe('get* callbacks', () => {
   };
 
   describe('when getOperators fn prop is provided', () => {
-    it('should invoke custom getOperators function', () => {
+    it('invokes custom getOperators function', () => {
       const getOperators = jest.fn(() => [{ name: 'op1', label: 'Operator 1' }]);
       render(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
       expect(getOperators).toHaveBeenCalledWith(rule.field, { fieldData: fields[1] });
     });
 
-    it('should handle invalid getOperators return value', () => {
+    it('handles invalid getOperators return value', () => {
       render(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
       expect(screen.getByTestId(TestID.operators)).toHaveValue('=');
     });
   });
 
   describe('when getValueEditorType fn prop is provided', () => {
-    it('should invoke custom getValueEditorType function', () => {
+    it('invokes custom getValueEditorType function', () => {
       const getValueEditorType = jest.fn(() => 'text' as const);
       render(
         <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
@@ -431,14 +431,30 @@ describe('get* callbacks', () => {
       });
     });
 
-    it('should handle invalid getValueEditorType function', () => {
+    it('handles invalid getValueEditorType function', () => {
       render(<QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />);
       expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
+    });
+
+    it('prefers valueEditorType field property as string', () => {
+      const checkboxFields = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
+      render(
+        <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
+      );
+      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'checkbox');
+    });
+
+    it('prefers valueEditorType field property as function', () => {
+      const checkboxFields = fields.map(f => ({ ...f, valueEditorType: () => 'checkbox' }));
+      render(
+        <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
+      );
+      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'checkbox');
     });
   });
 
   describe('when getInputType fn prop is provided', () => {
-    it('should invoke custom getInputType function', () => {
+    it('invokes custom getInputType function', () => {
       const getInputType = jest.fn(() => 'text' as const);
       render(<QueryBuilder query={query} fields={fields} getInputType={getInputType} />);
       expect(getInputType).toHaveBeenCalledWith(rule.field, rule.operator, {
@@ -446,7 +462,7 @@ describe('get* callbacks', () => {
       });
     });
 
-    it('should handle invalid getInputType function', () => {
+    it('handles invalid getInputType function', () => {
       render(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
       expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
     });
@@ -455,7 +471,7 @@ describe('get* callbacks', () => {
   describe('when getValues fn prop is provided', () => {
     const getValueEditorType = () => 'select' as const;
 
-    it('should invoke custom getValues function', () => {
+    it('invokes custom getValues function', () => {
       const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
@@ -468,7 +484,7 @@ describe('get* callbacks', () => {
       expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
     });
 
-    it('should invoke custom getValues function returning value options', () => {
+    it('invokes custom getValues function returning value options', () => {
       const getValues = jest.fn(() => [{ value: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
@@ -481,7 +497,7 @@ describe('get* callbacks', () => {
       expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
     });
 
-    it('should generate the correct number of options', () => {
+    it('generates the correct number of options', () => {
       const getValues = jest.fn(() => [{ name: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
@@ -495,7 +511,7 @@ describe('get* callbacks', () => {
       expect(opts).toHaveLength(1);
     });
 
-    it('should handle invalid getValues function', () => {
+    it('handles invalid getValues function', () => {
       // @ts-expect-error getValues should return an array of options or option groups
       render(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
       const select = screen.getByTestId(TestID.valueEditor);
@@ -519,7 +535,7 @@ describe('actions', () => {
     };
   };
 
-  it('should create a new rule and remove that rule', async () => {
+  it('creates a new rule and remove that rule', async () => {
     const { selectors, onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -534,7 +550,7 @@ describe('actions', () => {
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
   });
 
-  it('should create a new group and remove that group', async () => {
+  it('creates a new group and remove that group', async () => {
     const { selectors, onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -550,7 +566,7 @@ describe('actions', () => {
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
   });
 
-  it('should create a new rule and change the fields', async () => {
+  it('creates a new rule and change the fields', async () => {
     const { selectors, onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -565,7 +581,7 @@ describe('actions', () => {
     );
   });
 
-  it('should create a new rule and change the operator', async () => {
+  it('creates a new rule and change the operator', async () => {
     const { selectors, onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -580,7 +596,7 @@ describe('actions', () => {
     );
   });
 
-  it('should change the combinator of the root group', async () => {
+  it('changes the combinator of the root group', async () => {
     const { selectors, onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -589,7 +605,7 @@ describe('actions', () => {
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ combinator: 'or' }));
   });
 
-  it('should set default value for a rule', async () => {
+  it('sets default value for a rule', async () => {
     const { selectors, onQueryChange } = setup();
     selectors.rerender(
       <QueryBuilder
@@ -1138,9 +1154,9 @@ describe('inputType property in field', () => {
   it('sets the input type', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', inputType: 'number' }];
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
+    const { container } = render(
+      <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
+    );
 
     expect(container.querySelector('input[type="number"]')).toBeDefined();
   });
@@ -1150,9 +1166,9 @@ describe('valueEditorType property in field', () => {
   it('sets the value editor type', async () => {
     const fields: Field[] = [{ name: 'field1', label: 'Field 1', valueEditorType: 'select' }];
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
+    const { container } = render(
+      <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
+    );
 
     expect(container.querySelector(`select.${sc.value}`)).toBeDefined();
   });
@@ -1166,9 +1182,9 @@ describe('operators property in field', () => {
       { name: 'field2', label: 'Field 2', operators },
     ];
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const { container } = render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
+    const { container } = render(
+      <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
+    );
 
     expect(container.querySelector(`select.${sc.operators}`)).toBeDefined();
     expect(container.querySelectorAll(`select.${sc.operators} option`)).toHaveLength(1);
@@ -1281,6 +1297,69 @@ describe('autoSelectOperator', () => {
   });
 });
 
+describe('valueEditorType "multiselect" default values', () => {
+  const fields: Field[] = [
+    {
+      name: 'field1',
+      label: 'Field 1',
+      valueEditorType: 'multiselect',
+      values: [
+        { name: 'test1', label: 'Test1' },
+        { name: 'test2', label: 'Test2' },
+      ],
+    },
+  ];
+
+  it('does not unnecessarily select a value - string values', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(<QueryBuilder fields={fields} addRuleToNewGroups onQueryChange={onQueryChange} />);
+    expect(onQueryChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        combinator: 'and',
+        not: false,
+        rules: [
+          {
+            id: expect.any(String),
+            field: 'field1',
+            operator: '=',
+            value: '',
+            valueSource: 'value',
+          },
+        ],
+      })
+    );
+  });
+
+  it('does not unnecessarily select a value - lists as arrays', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        fields={fields}
+        addRuleToNewGroups
+        onQueryChange={onQueryChange}
+        listsAsArrays
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        combinator: 'and',
+        not: false,
+        rules: [
+          {
+            id: expect.any(String),
+            field: 'field1',
+            operator: '=',
+            value: [],
+            valueSource: 'value',
+          },
+        ],
+      })
+    );
+  });
+});
+
 describe('addRuleToNewGroups', () => {
   const query: RuleGroupType = { combinator: 'and', rules: [] };
 
@@ -1313,7 +1392,7 @@ describe('addRuleToNewGroups', () => {
 });
 
 describe('showShiftActions', () => {
-  it('should be disabled if rule is locked', async () => {
+  it('is disabled if rule is locked', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     render(
       <QueryBuilder
@@ -1343,7 +1422,7 @@ describe('showShiftActions', () => {
   });
 
   describe('standard rule groups', () => {
-    it('should shift rules', async () => {
+    it('shifts rules', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
@@ -1408,7 +1487,7 @@ describe('showShiftActions', () => {
       );
     });
 
-    it('should shift rule groups', async () => {
+    it('shifts rule groups', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
@@ -1447,7 +1526,7 @@ describe('showShiftActions', () => {
   });
 
   describe('independent combinators', () => {
-    it('should shift rules with independent combinators', async () => {
+    it('shifts rules with independent combinators', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
@@ -1513,7 +1592,7 @@ describe('showShiftActions', () => {
       );
     });
 
-    it('should shift first rule with independent combinators', async () => {
+    it('shifts first rule with independent combinators', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
@@ -1546,7 +1625,7 @@ describe('showShiftActions', () => {
 
 describe('showCloneButtons', () => {
   describe('standard rule groups', () => {
-    it('should clone rules', async () => {
+    it('clones rules', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
@@ -1576,7 +1655,7 @@ describe('showCloneButtons', () => {
       );
     });
 
-    it('should clone rule groups', async () => {
+    it('clones rule groups', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
@@ -1621,7 +1700,7 @@ describe('showCloneButtons', () => {
   });
 
   describe('independent combinators', () => {
-    it('should clone a single rule with independent combinators', async () => {
+    it('clones a single rule with independent combinators', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
@@ -1646,7 +1725,7 @@ describe('showCloneButtons', () => {
       );
     });
 
-    it('should clone first rule with independent combinators', async () => {
+    it('clones first rule with independent combinators', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
@@ -1677,7 +1756,7 @@ describe('showCloneButtons', () => {
       );
     });
 
-    it('should clone last rule with independent combinators', async () => {
+    it('clones last rule with independent combinators', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
       render(
         <QueryBuilder
@@ -1761,7 +1840,7 @@ describe('idGenerator', () => {
 });
 
 describe('independent combinators', () => {
-  it('should render a rule group with independent combinators', () => {
+  it('renders a rule group with independent combinators', () => {
     const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
     render(<QueryBuilder defaultQuery={{ rules: [] }} onQueryChange={onQueryChange} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeDefined();
@@ -1770,14 +1849,14 @@ describe('independent combinators', () => {
     );
   });
 
-  it('should render a rule group with addRuleToNewGroups', async () => {
+  it('renders a rule group with addRuleToNewGroups', async () => {
     render(<QueryBuilder addRuleToNewGroups defaultQuery={{ rules: [] }} />);
 
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(screen.getByTestId(TestID.rule)).toBeDefined();
   });
 
-  it('should call onQueryChange with query', () => {
+  it('calls onQueryChange with query', () => {
     const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
     const dq: RuleGroupTypeIC = { id: 'id', rules: [], not: false };
     render(<QueryBuilder onQueryChange={onQueryChange} defaultQuery={dq} />);
@@ -1785,7 +1864,7 @@ describe('independent combinators', () => {
     expect(onQueryChange).toHaveBeenLastCalledWith(dq);
   });
 
-  it('should add rules with independent combinators', async () => {
+  it('adds rules with independent combinators', async () => {
     // render(<QueryBuilder defaultQuery={{ rules: [] }} />);
     render(<QueryBuilder defaultQuery={{ rules: [] }} />);
     expect(screen.queryAllByTestId(TestID.combinators)).toHaveLength(0);
@@ -1805,7 +1884,7 @@ describe('independent combinators', () => {
     expect(combinatorSelectors[0]).toHaveValue('or');
   });
 
-  it('should add groups with independent combinators', async () => {
+  it('adds groups with independent combinators', async () => {
     render(<QueryBuilder defaultQuery={{ rules: [] }} />);
     expect(screen.queryAllByTestId(TestID.combinators)).toHaveLength(0);
 
@@ -1824,7 +1903,7 @@ describe('independent combinators', () => {
     expect(combinatorSelectors[0]).toHaveValue('or');
   });
 
-  it('should remove rules along with independent combinators', async () => {
+  it('removes rules along with independent combinators', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
     const query: RuleGroupTypeIC = {
       rules: [
@@ -1862,7 +1941,7 @@ describe('independent combinators', () => {
     );
   });
 
-  it('should remove groups along with independent combinators', async () => {
+  it('removes groups along with independent combinators', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
     const query: RuleGroupTypeIC = {
       rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [] }],
@@ -1897,13 +1976,13 @@ describe('independent combinators', () => {
 });
 
 describe('validation', () => {
-  it('should not validate if no validator function is provided', () => {
+  it('does not validate if no validator function is provided', () => {
     render(<QueryBuilder />);
     expect(screen.getByRole('form')).not.toHaveClass(sc.valid);
     expect(screen.getByRole('form')).not.toHaveClass(sc.invalid);
   });
 
-  it('should validate groups if default validator function is provided', async () => {
+  it('validates groups if default validator function is provided', async () => {
     const { container } = render(<QueryBuilder validator={defaultValidator} />);
 
     await user.click(screen.getByTestId(TestID.addGroup));
@@ -1913,7 +1992,7 @@ describe('validation', () => {
     expect(container.querySelectorAll(`.${sc.ruleGroup}.${sc.invalid}`)).toHaveLength(1);
   });
 
-  it('should use custom validator function returning false', () => {
+  it('uses custom validator function returning false', () => {
     const validator = jest.fn(() => false);
     render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
@@ -1921,7 +2000,7 @@ describe('validation', () => {
     expect(screen.getByRole('form')).toHaveClass(sc.invalid);
   });
 
-  it('should use custom validator function returning true', () => {
+  it('uses custom validator function returning true', () => {
     const validator = jest.fn(() => true);
     render(<QueryBuilder validator={validator} />);
     expect(validator).toHaveBeenCalled();
@@ -1929,7 +2008,7 @@ describe('validation', () => {
     expect(screen.getByRole('form')).not.toHaveClass(sc.invalid);
   });
 
-  it('should pass down validationMap to children', () => {
+  it('passes down validationMap to children', () => {
     const valMap: ValidationMap = {
       id: { valid: false, reasons: ['invalid'] },
     };
@@ -1947,12 +2026,12 @@ describe('validation', () => {
 });
 
 describe('disabled', () => {
-  it('should have the correct classname', () => {
+  it('has the correct classname', () => {
     const { container } = render(<QueryBuilder disabled />);
     expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
   });
 
-  it('should have the correct classname when disabled prop is false but root group is disabled', () => {
+  it('has the correct classname when disabled prop is false but root group is disabled', () => {
     const { container } = render(
       <QueryBuilder query={{ disabled: true, combinator: 'and', rules: [] }} />
     );
@@ -2274,7 +2353,7 @@ describe('value source field', () => {
 });
 
 describe('dynamic classNames', () => {
-  it('should have correct group-based classNames', () => {
+  it('has correct group-based classNames', () => {
     render(
       <QueryBuilder
         fields={[{ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }]}
@@ -2297,7 +2376,7 @@ describe('dynamic classNames', () => {
   });
 });
 
-describe('dispatchQuery and getQuery', () => {
+describe('redux functions', () => {
   it('gets the query from the store', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const testFunc = jest.fn();

@@ -120,7 +120,7 @@ export function useQueryBuilderSchema<
     getInputTypeMain,
     createRule,
     createRuleGroup,
-  } = setup as unknown as Setup;
+  } = setup as Setup;
 
   const {
     controlClassnames,

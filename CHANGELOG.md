@@ -56,12 +56,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
 - `parseNumbers` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., "abc" in "123abc") just like the native `parseFloat` method, with the only difference being it won't return `NaN` when parsing fails. Additionally, the `numericRegex` export is now adapted from (but largely identical to) the export of the same name from `numeric-quantity`.
+- The logic to prefer a field's `valueEditorType` over the `getValueEditorType` prop has moved from the `useRule` hook to the `useQueryBuilderSetup` hook.
 
 </details>
 
 ### Added
 
-- [#586] Options in list-type props can now use `value` as the identifier property in lieu of `name`. Additionally, all `Option`s and `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{ value: string; label: string; }[]` and not `{ name: string; label: string; }[]`.
+- [#586] Options in list-type props can now use `value` as the identifier property in lieu of `name`. Additionally, all `Option`s within `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{ value: string; label: string; }[]` and not `{ name: string; label: string; }[]`.
 - [#595] Two "bulk override" properties have been added to the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` (as long as that component is not explicitly overridden in the `controlElements` prop). Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor` in cases where it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
   <!-- prettier-ignore -->
   | `controlElements` property | Sets default for                                                                                                                                       |
@@ -93,6 +94,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#595] `MantineValueSelector` now correctly renders option group headers.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
 - [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious` and a ref that tracked "first render" from `useQueryBuilderSchema`.
+- [#625] A default value will not be selected unnecessarily when `valueEditorType` evaluates to `"multiselect"`.
 
 ## [v6.5.5] - 2024-01-15
 
@@ -1516,6 +1518,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#606]: https://github.com/react-querybuilder/react-querybuilder/pull/606
 [#619]: https://github.com/react-querybuilder/react-querybuilder/pull/619
 [#623]: https://github.com/react-querybuilder/react-querybuilder/pull/623
+[#625]: https://github.com/react-querybuilder/react-querybuilder/issues/625
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
 [#637]: https://github.com/react-querybuilder/react-querybuilder/pull/637
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
