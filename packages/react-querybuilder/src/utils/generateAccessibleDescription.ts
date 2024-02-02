@@ -1,8 +1,5 @@
-import type { Field, Schema, ToFullOption } from '../types/index';
+import type { AccessibleDescriptionGenerator as ADG } from '../types/index';
 import { pathsAreEqual } from './pathUtils';
 
-export const generateAccessibleDescription = (({ path, qbId }) => {
-  return pathsAreEqual([], path)
-    ? `Query builder ${qbId}`
-    : `Rule group at path ${path.join('-')} in query builder ${qbId}`;
-}) satisfies Schema<ToFullOption<Field>, string>['accessibleDescriptionGenerator'];
+export const generateAccessibleDescription: ADG = ({ path, qbId: _qbID }) =>
+  pathsAreEqual([], path) ? `Query builder` : `Rule group at path ${path.join('-')}`;
