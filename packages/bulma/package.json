@@ -38,9 +38,9 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.1.2",
-    "@types/react": "^18.2.48",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@testing-library/react": "^14.2.1",
+    "@types/react": "^18.2.51",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "bulma": "^0.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

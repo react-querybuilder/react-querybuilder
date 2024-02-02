@@ -38,11 +38,11 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.2.6",
-    "@testing-library/react": "^14.1.2",
-    "@types/react": "^18.2.48",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "antd": "^5.13.2",
+    "@ant-design/icons": "^5.3.0",
+    "@testing-library/react": "^14.2.1",
+    "@types/react": "^18.2.51",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "antd": "^5.13.3",
     "dayjs": "^1.11.10",
     "rc-picker": "^4.0.0-alpha.20",
     "rc-select": "^14.11.0",
