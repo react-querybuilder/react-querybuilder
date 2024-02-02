@@ -20,12 +20,10 @@ const { consoleError } = consoleMocks();
 it('should have correct accessible description', () => {
   // Root group
   const { rerender } = render(<RuleGroup {...getRuleGroupProps()} path={[]} />);
-  expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription('Query builder qbId');
+  expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription('Query builder');
   // Sub group
   rerender(<RuleGroup {...getRuleGroupProps()} path={[0]} />);
-  expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription(
-    'Rule group at path 0 in query builder qbId'
-  );
+  expect(screen.getByTestId(TestID.ruleGroup)).toHaveAccessibleDescription('Rule group at path 0');
 });
 
 it('should have correct classNames', () => {
