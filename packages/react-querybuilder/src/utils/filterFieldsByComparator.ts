@@ -1,7 +1,24 @@
 import type { Field, FlexibleOptionList, ToFlexibleOption } from '../types/index.noReact';
 import { isFlexibleOptionGroupArray } from './optGroupUtils';
+import { toFullOption } from './toFullOption';
 
 type FlexibleField = ToFlexibleOption<Field>;
+
+const filterByComparator = (
+  field: FlexibleField,
+  operator: string,
+  fieldToCompare: FlexibleField
+) => {
+  const fullField = toFullOption(field);
+  const fullFieldToCompare = toFullOption(fieldToCompare);
+  if (fullField.value === fullFieldToCompare.value) {
+    return false;
+  }
+  if (typeof fullField.comparator === 'string') {
+    return fullField[fullField.comparator] === fullFieldToCompare[fullField.comparator];
+  }
+  return fullField.comparator!(fullFieldToCompare, operator);
+};
 
 /**
  * For a given {@link Field}, returns the `fields` list filtered for
@@ -31,21 +48,14 @@ export const filterFieldsByComparator = (
     return fields.filter(filterOutSameField);
   }
 
-  const filterByComparator = (fieldToCompare: FlexibleField) => {
-    if (field.name === fieldToCompare.name) {
-      return false;
-    }
-    if (typeof field.comparator === 'string') {
-      return field[field.comparator] === fieldToCompare[field.comparator];
-    }
-    return field.comparator!(fieldToCompare, operator);
-  };
-
   if (isFlexibleOptionGroupArray(fields)) {
     return fields
-      .map(og => ({ ...og, options: og.options.filter(filterByComparator) }))
+      .map(og => ({
+        ...og,
+        options: og.options.filter(f => filterByComparator(field, operator, f)),
+      }))
       .filter(og => og.options.length > 0);
   }
 
-  return fields.filter(filterByComparator);
+  return fields.filter(f => filterByComparator(field, operator, f));
 };

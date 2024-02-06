@@ -1,3 +1,5 @@
+import type { RequireAtLeastOne, SetRequired } from 'type-fest';
+
 /**
  * Extracts the {@link Option} type from a {@link FlexibleOptionList}.
  */
@@ -14,52 +16,52 @@ export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
   : string;
 
 /**
- * A generic option. Used directly in {@link OptionList} or
- * as the child element of an {@link OptionGroup}.
+ * Do not use this type directly. Use {@link Option}, {@link ValueOption},
+ * {@link FullOption}, or {@link FlexibleOption} instead.
  */
-export interface Option<N extends string = string> {
-  name: N;
+export interface BaseOption<N extends string> {
+  name?: N;
   value?: N;
   label: string;
   [x: string]: any;
 }
 
 /**
+ * A generic option. Used directly in {@link OptionList} or
+ * as the child element of an {@link OptionGroup}.
+ */
+export interface Option<N extends string = string> extends SetRequired<BaseOption<N>, 'name'> {}
+
+/**
  * Like {@link Option} but requiring `value` instead of `name`.
  */
-export type ValueOption<N extends string = string> = {
-  name?: N;
-  value: N;
-  label: string;
-};
+export interface ValueOption<N extends string = string>
+  extends SetRequired<BaseOption<N>, 'value'> {}
 
 /**
  * A generic {@link Option} with either a `name` or `value` as its primary identifier.
- * {@link OptionList}-type props accept this type, but corresponding props sent to
- * subcomponents will always be translated to {@link FullOption} first.
+ * {@link OptionList}-type props on the {@link QueryBuilder} component accept this type,
+ * but corresponding props passed down to subcomponents will always be translated
+ * to {@link FullOption} first.
  */
-export type FlexibleOption<N extends string = string> =
-  | {
-      name: N;
-      value?: N;
-      label: string;
-      [x: string]: any;
-    }
-  | {
-      name?: N;
-      value: N;
-      label: string;
-      [x: string]: any;
-    };
+export type FlexibleOption<N extends string = string> = RequireAtLeastOne<
+  BaseOption<N>,
+  'name' | 'value'
+>;
 
 /**
  * Utility type to turn an {@link Option} into a {@link FlexibleOption}.
  */
-export type ToFlexibleOption<Opt extends Option | ValueOption> = Opt extends
-  | Option<infer NameType>
-  | ValueOption<infer NameType>
-  ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
-  : never;
+export type ToFlexibleOption<Opt extends FlexibleOption> = RequireAtLeastOne<
+  ToFullOption<Opt>,
+  'name' | 'value'
+>;
+// Old way:
+// export type ToFlexibleOption<Opt extends Option | ValueOption> = Opt extends
+//   | Option<infer NameType>
+//   | ValueOption<infer NameType>
+//   ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
+//   : never;
 
 /**
  * A generic {@link Option} requiring `name` _and_ `value` properties.
@@ -67,19 +69,20 @@ export type ToFlexibleOption<Opt extends Option | ValueOption> = Opt extends
  * corresponding props sent to subcomponents will always be translated to this
  * type first to ensure both `name` and `value` are available.
  */
-export interface FullOption<N extends string = string> {
-  name: N;
-  value: N;
-  label: string;
-  [x: string]: any;
-}
+export interface FullOption<N extends string = string>
+  extends SetRequired<BaseOption<N>, 'name' | 'value'> {}
 
 /**
  * Utility type to turn an {@link Option}, {@link ValueOption} or
  * {@link FlexibleOption} into a {@link FullOption}.
  */
-export type ToFullOption<Opt extends FlexibleOption> =
-  Opt extends FlexibleOption<infer NameType> ? Opt & FullOption<NameType> : never;
+// TODO: Use SetRequired?
+// export type ToFullOption<Opt extends FlexibleOption> = SetRequired<Opt, 'name' | 'value'>;
+export type ToFullOption<Opt extends FlexibleOption> = Opt extends FullOption
+  ? Opt
+  : Opt extends FlexibleOption<infer IdentifierType>
+    ? Opt & FullOption<IdentifierType>
+    : never;
 
 /**
  * @deprecated Renamed to `Option`.

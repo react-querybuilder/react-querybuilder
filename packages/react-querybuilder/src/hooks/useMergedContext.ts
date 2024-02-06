@@ -6,6 +6,7 @@ import type {
   Controls,
   Field,
   FieldSelectorProps,
+  GetOptionIdentifierType,
   OperatorSelectorProps,
   QueryBuilderContextProps,
   ToFlexibleOption,
@@ -29,7 +30,8 @@ export const useMergedContext = <
 >(
   props: UseMergedContextProps<F, O>
 ) => {
-  const rqbContext = useContext(QueryBuilderContext);
+  const rqbContext = useContext(QueryBuilderContext) as QueryBuilderContextProps<F, O>;
+  // as ContextType<Context<QueryBuilderContextProps<any, any>>>;
 
   const enableMountQueryChange = usePreferProp(
     true,
@@ -93,7 +95,9 @@ export const useMergedContext = <
               rqbContext.controlElements.valueSelector,
             fieldSelector:
               rqbContext.controlElements?.fieldSelector ??
-              (rqbContext.controlElements.valueSelector as ComponentType<FieldSelectorProps>),
+              (rqbContext.controlElements.valueSelector as ComponentType<
+                FieldSelectorProps<GetOptionIdentifierType<F>, O, any>
+              >),
             operatorSelector:
               rqbContext.controlElements?.operatorSelector ??
               (rqbContext.controlElements.valueSelector as ComponentType<OperatorSelectorProps>),
@@ -132,7 +136,9 @@ export const useMergedContext = <
               props.controlElements?.combinatorSelector ?? props.controlElements.valueSelector,
             fieldSelector:
               props.controlElements?.fieldSelector ??
-              (props.controlElements.valueSelector as ComponentType<FieldSelectorProps>),
+              (props.controlElements.valueSelector as ComponentType<
+                FieldSelectorProps<GetOptionIdentifierType<F>, O, any>
+              >),
             operatorSelector:
               props.controlElements?.operatorSelector ??
               (props.controlElements.valueSelector as ComponentType<OperatorSelectorProps>),

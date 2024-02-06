@@ -5,13 +5,17 @@ import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
   Combinator,
   Field,
+  GetOptionIdentifierType,
   Operator,
   Path,
+  QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
+  Schema,
   ToFlexibleOption,
+  ToFullOption,
 } from '../types';
-import { QueryBuilderContext } from './QueryBuilderContext';
+import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
 
 /**
  * The {@link Path} of the root group.
@@ -39,9 +43,13 @@ const QueryBuilderInternal = <
   props: QueryBuilderProps<RG, F, O, C>;
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
-  const qb = useQueryBuilderSchema(props, setup);
+  const qb = useQueryBuilderSchema<RG, F, O, C>(props, setup);
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
+
+  const QueryBuilderContext = _QBC as React.Context<
+    QueryBuilderContextProps<F, GetOptionIdentifierType<O>>
+  >;
 
   return (
     <QueryBuilderContext.Provider key={qb.dndEnabledAttr} value={qb.rqbContext}>
@@ -56,7 +64,10 @@ const QueryBuilderInternal = <
           rules={qb.rootGroup.rules}
           {...qb.combinatorPropObject}
           not={!!qb.rootGroup.not}
-          schema={qb.schema}
+          // TODO: Next line should be:
+          // schema={qb.schema}
+          // ...but "Type 'ToFullOption<F>' is not assignable to type 'ToFullOption<ToFullOption<F>>'."
+          schema={qb.schema as Schema<ToFullOption<ToFullOption<F>>, GetOptionIdentifierType<O>>}
           actions={qb.actions}
           id={qb.rootGroup.id}
           path={rootPath}

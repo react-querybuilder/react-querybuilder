@@ -83,7 +83,7 @@ export const ruleGroupControls = {
       {translations.notToggle.label}
     </label>
   ),
-  fieldSelector: (props: FieldSelectorProps) => (
+  fieldSelector: (props: FieldSelectorProps<string, string, any>) => (
     <select
       data-testid={TestID.fields}
       className={props.className}

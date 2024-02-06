@@ -8,6 +8,7 @@ import type {
   FullOption,
   FullOptionList,
   FullOptionMap,
+  FullOptionRecord,
   GetOptionIdentifierType,
   Operator,
   OptionGroup,
@@ -155,14 +156,14 @@ export const useQueryBuilderSetup = <
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) {
-      const fp = toFullOptionMap(fieldsProp);
+      const fp = toFullOptionMap(fieldsProp) as FullOptionMap<FullField, FieldName>;
       if (autoSelectField) {
         return fp;
       } else {
         return { ...fp, [translations.fields.placeholderName]: defaultField };
       }
     }
-    const fm: { [k in FieldName]?: FullField } = {};
+    const fm: Partial<FullOptionRecord<FullField>> = {};
     if (isFlexibleOptionGroupArray(fields)) {
       fields.forEach(f =>
         f.options.forEach(opt => {
@@ -186,13 +187,12 @@ export const useQueryBuilderSetup = <
 
   // #region Set up `operators`
   const defaultOperator = useMemo(
-    () =>
-      ({
-        id: translations.operators.placeholderName,
-        name: translations.operators.placeholderName,
-        value: translations.operators.placeholderName,
-        label: translations.operators.placeholderLabel,
-      }) as unknown as FullOption<OperatorName>,
+    (): FullOption<OperatorName> => ({
+      id: translations.operators.placeholderName,
+      name: translations.operators.placeholderName as OperatorName,
+      value: translations.operators.placeholderName as OperatorName,
+      label: translations.operators.placeholderLabel,
+    }),
     [translations.operators.placeholderLabel, translations.operators.placeholderName]
   );
 
@@ -237,8 +237,9 @@ export const useQueryBuilderSetup = <
   const getRuleDefaultOperator = useCallback(
     (field: FieldName): OperatorName => {
       const fieldData = (fieldMap as FullOptionMap<FullField, FieldName>)[field] as FullField;
+
       if (fieldData?.defaultOperator) {
-        return fieldData.defaultOperator;
+        return fieldData.defaultOperator as OperatorName;
       }
 
       if (getDefaultOperator) {

@@ -69,7 +69,7 @@ function toFullOptionMap<OptMap extends FlexibleOptionMap<FlexibleOption>>(
 
   return Object.fromEntries(
     (Object.entries(optMap) as [K, V][]).map(([k, v]) => [k, toFullOption(v)])
-  ) as unknown as OptMap extends FlexibleOptionMap<infer V, infer K>
+  ) as OptMap extends FlexibleOptionMap<infer V, infer K>
     ? FullOptionMap<ToFullOption<V>, K>
     : never;
 }

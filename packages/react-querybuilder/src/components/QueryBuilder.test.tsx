@@ -437,7 +437,7 @@ describe('get* callbacks', () => {
     });
 
     it('prefers valueEditorType field property as string', () => {
-      const checkboxFields = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
+      const checkboxFields: Field[] = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
       render(
         <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
       );

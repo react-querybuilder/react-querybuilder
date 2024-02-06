@@ -14,15 +14,14 @@ import type {
   Controls,
   Field,
   FullOptionList,
-  FullOptionRecord,
   GetOptionIdentifierType,
+  GetRuleTypeFromGroupWithFieldAndOperator,
   Operator,
   Path,
   QueryActions,
   QueryBuilderProps,
   QueryValidator,
   RuleGroupProps,
-  RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
@@ -74,8 +73,8 @@ export function useQueryBuilderSchema<
   props: QueryBuilderProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
 ) {
-  type R = RG extends RuleGroupType<infer RT> | RuleGroupTypeIC<infer RT> ? RT : never;
-  type Setup = ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
+  type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
+
   const {
     query: queryProp,
     defaultQuery: defaultQueryProp,
@@ -120,7 +119,7 @@ export function useQueryBuilderSchema<
     getInputTypeMain,
     createRule,
     createRuleGroup,
-  } = setup as Setup;
+  } = setup;
 
   const {
     controlClassnames,
@@ -162,9 +161,9 @@ export function useQueryBuilderSchema<
   // been prepared. If `candidateQuery === query`, the user is probably just
   // passing back the parameter from the `onQueryChange` callback.
   const candidateQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
-  const rootGroup = !candidateQuery.id
-    ? prepareRuleGroup(candidateQuery, { idGenerator })
-    : candidateQuery;
+  const rootGroup = (
+    !candidateQuery.id ? prepareRuleGroup(candidateQuery, { idGenerator }) : candidateQuery
+  ) as RuleGroupTypeAny<R>;
 
   // If a new `query` prop is passed in that doesn't match the query in the store,
   // update the store to match the prop _without_ calling `onQueryChange`.
@@ -440,10 +439,7 @@ export function useQueryBuilderSchema<
       createRuleGroup,
       disabledPaths,
       enableDragAndDrop,
-      fieldMap: fieldMap as unknown as FullOptionRecord<
-        ToFullOption<F>,
-        GetOptionIdentifierType<F>
-      >,
+      fieldMap,
       fields: fields as unknown as FullOptionList<ToFullOption<F>>,
       dispatchQuery,
       getQuery,

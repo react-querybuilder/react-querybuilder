@@ -152,7 +152,7 @@ export interface DragHandleProps extends CommonSubComponentProps {
  * Props passed to `inlineCombinator` components.
  */
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
-  component: Schema<FullOption, string>['controls']['combinatorSelector'];
+  component: ComponentType<CombinatorSelectorProps>;
   independentCombinators?: boolean;
 }
 
@@ -235,7 +235,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
    *
    * @default ValueSelector
    */
-  fieldSelector: ComponentType<FieldSelectorProps>;
+  fieldSelector: ComponentType<FieldSelectorProps<GetOptionIdentifierType<F>, O, any>>;
   /**
    * A small wrapper around the `combinatorSelector` component.
    *
@@ -289,7 +289,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
    *
    * @default RuleGroup
    */
-  ruleGroup: ComponentType<RuleGroupProps>;
+  ruleGroup: ComponentType<RuleGroupProps<GetOptionIdentifierType<F>, O>>;
   /**
    * Shifts the current rule/group up or down in the query hierarchy.
    *
@@ -323,7 +323,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
 export interface Schema<F extends ToFullOption<Field>, O extends string> {
   qbId: string;
   fields: FullOptionList<F>;
-  fieldMap: Record<GetOptionIdentifierType<F>, F>;
+  fieldMap: Partial<Record<GetOptionIdentifierType<F>, F>>;
   classNames: Classnames;
   combinators: FullOptionList<Combinator>;
   controls: Controls<F, O>;
@@ -359,12 +359,15 @@ export interface Schema<F extends ToFullOption<Field>, O extends string> {
 /**
  * Common props between {@link Rule} and {@link RuleGroup}.
  */
-interface CommonRuleAndGroupProps {
+interface CommonRuleAndGroupProps<
+  F extends ToFullOption<Field> = ToFullOption<Field>,
+  O extends string = string,
+> {
   id?: string;
   path: Path;
   parentDisabled?: boolean;
   translations: Translations;
-  schema: Schema<ToFullOption<Field>, string>;
+  schema: Schema<F, O>;
   actions: QueryActions;
   disabled?: boolean;
   shiftUpDisabled?: boolean;
@@ -390,8 +393,10 @@ export interface UseRuleGroupDnD {
 /**
  * {@link RuleGroup} props.
  */
-export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRuleGroupDnD> {
-  ruleGroup: RuleGroupTypeAny;
+export interface RuleGroupProps<F extends string = string, O extends string = string>
+  extends CommonRuleAndGroupProps<FullOption<F>, O>,
+    Partial<UseRuleGroupDnD> {
+  ruleGroup: RuleGroupTypeAny<RuleType<F, O>>;
   /**
    * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
    */
@@ -423,8 +428,10 @@ export interface UseRuleDnD {
 /**
  * {@link Rule} props.
  */
-export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> {
-  rule: RuleType;
+export interface RuleProps<F extends string = string, O extends string = string>
+  extends CommonRuleAndGroupProps<FullOption<F>, O>,
+    Partial<UseRuleDnD> {
+  rule: RuleType<F, O>;
   /**
    * @deprecated Use the `field` property of the `rule` prop instead
    */
@@ -786,24 +793,30 @@ export type QueryBuilderProps<
     }
   : never;
 
-// const fields: Field<'this' | 'that'>[] = [];
-// const _QB = <RG extends RuleGroupTypeAny, F extends ToFlexibleOption<Field>>(
-//   _p: QueryBuilderProps<RG, F>
-// ) => 1;
-// const _QBC = () =>
-//   _QB({
-//     defaultQuery: { rules: [] } as RuleGroupTypeIC,
-//     fields,
-//     onAddRule: (_rule, _parentPath, _query, _context) => false,
-//     controlElements: { valueEditor: _props => 1 },
-//   });
-// const _QBP: QueryBuilderProps<
-//   RuleGroupTypeIC<RuleType<'this' | 'that'>>,
-//   Field,
-//   Operator,
-//   Combinator
-// > = {
-//   fields,
-//   onAddRule: (_rule, _parentPath, _query, _context) => false,
-//   controlElements: { valueEditor: _props => 1 },
-// };
+const fields: Field<'this' | 'that'>[] = [];
+const _QB = <RG extends RuleGroupTypeAny, F extends ToFlexibleOption<Field>>(
+  _p: QueryBuilderProps<RG, F, Operator, Combinator>
+) => 1;
+const _QBC = () =>
+  _QB({
+    defaultQuery: { rules: [] } as RuleGroupTypeIC,
+    fields,
+    onAddRule: (_rule, _parentPath, _query, _context) => false,
+    controlElements: {
+      fieldSelector: _props => 1,
+      valueEditor: _props => 1,
+    },
+  });
+const _QBP: QueryBuilderProps<
+  RuleGroupTypeIC<RuleType<'this' | 'that'>>,
+  Field,
+  Operator,
+  Combinator
+> = {
+  fields,
+  onAddRule: (_rule, _parentPath, _query, _context) => false,
+  controlElements: {
+    fieldSelector: _props => 1,
+    valueEditor: _props => 1,
+  },
+};

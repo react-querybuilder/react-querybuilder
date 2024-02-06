@@ -75,7 +75,7 @@ export interface CommonRuleSubComponentProps {
 /**
  * Base interface for selector components.
  */
-export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
+interface BaseSelectorProps<OptType extends Option> extends SelectorOrEditorProps {
   options: FullOptionList<OptType>;
 }
 
@@ -98,7 +98,12 @@ export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
 /**
  * Props for `fieldSelector` components.
  */
-export interface FieldSelectorProps extends BaseSelectorProps<Field>, CommonRuleSubComponentProps {
+export interface FieldSelectorProps<
+  FieldName extends string,
+  OperatorName extends string,
+  ValueName extends string,
+> extends BaseSelectorProps<Field<FieldName, OperatorName, ValueName>>,
+    CommonRuleSubComponentProps {
   operator?: string;
 }
 
@@ -127,7 +132,7 @@ export interface ValueSourceSelectorProps
  * that could potentially be any of the standard selector types.
  */
 export type VersatileSelectorProps = ValueSelectorProps &
-  Partial<FieldSelectorProps> &
+  Partial<FieldSelectorProps<string, string, any>> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 

@@ -7,12 +7,15 @@ import type {
   GetOptionIdentifierType,
   Operator,
   Path,
+  QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
+  Schema,
   ToFlexibleOption,
+  ToFullOption,
 } from 'react-querybuilder';
 import {
-  QueryBuilderContext,
+  QueryBuilderContext as _QBC,
   QueryBuilderStateContext,
   queryBuilderStore,
   useQueryBuilderSetup,
@@ -36,9 +39,13 @@ const QueryBuilderNativeInternal = <
   props: QueryBuilderNativeProps<RG, F, O, C>;
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
-  const qb = useQueryBuilderSchemaNative(props, setup);
+  const qb = useQueryBuilderSchemaNative<RG, F, O, C>(props, setup);
 
   const { ruleGroup: RuleGroupComponent } = qb.schema.controls;
+
+  const QueryBuilderContext = _QBC as React.Context<
+    QueryBuilderContextProps<F, GetOptionIdentifierType<O>>
+  >;
 
   return (
     <QueryBuilderContext.Provider value={qb.rqbContext}>
@@ -47,7 +54,7 @@ const QueryBuilderNativeInternal = <
         {...qb.combinatorPropObject}
         path={rootPath}
         translations={qb.translations}
-        schema={qb.schema}
+        schema={qb.schema as Schema<ToFullOption<ToFullOption<F>>, GetOptionIdentifierType<O>>}
         actions={qb.actions}
         id={qb.rootGroup.id}
         disabled={qb.rootGroupDisabled}
