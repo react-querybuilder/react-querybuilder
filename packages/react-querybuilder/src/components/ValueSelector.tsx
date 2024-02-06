@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useSelectElementChangeHandler, useValueSelector } from '../hooks';
-import type { ValueSelectorProps } from '../types';
+import type { FullOption, ValueSelectorProps } from '../types';
 import { toOptions } from '../utils';
 
 /**
  * Default `<select>` component used by {@link QueryBuilder}.
  */
-export const ValueSelector = ({
+export const ValueSelector = <Opt extends FullOption = FullOption>({
   className,
   handleOnChange,
   options,
@@ -16,7 +16,7 @@ export const ValueSelector = ({
   listsAsArrays,
   disabled,
   testID,
-}: ValueSelectorProps) => {
+}: ValueSelectorProps<Opt>) => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });

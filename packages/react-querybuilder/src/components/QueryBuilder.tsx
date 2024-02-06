@@ -67,7 +67,12 @@ const QueryBuilderInternal = <
           // TODO: Next line should be:
           // schema={qb.schema}
           // ...but "Type 'ToFullOption<F>' is not assignable to type 'ToFullOption<ToFullOption<F>>'."
-          schema={qb.schema as Schema<ToFullOption<ToFullOption<F>>, GetOptionIdentifierType<O>>}
+          schema={
+            qb.schema as unknown as Schema<
+              ToFullOption<ToFullOption<F>>,
+              GetOptionIdentifierType<O>
+            >
+          }
           actions={qb.actions}
           id={qb.rootGroup.id}
           path={rootPath}

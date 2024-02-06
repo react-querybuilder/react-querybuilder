@@ -45,7 +45,7 @@ export const ruleControls = {
   cloneRuleAction: (props: ActionProps) => (
     <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
-  fieldSelector: (props: FieldSelectorProps<string, string, any>) => (
+  fieldSelector: (props: FieldSelectorProps<Field>) => (
     <select
       data-testid={TestID.fields}
       className={props.className}

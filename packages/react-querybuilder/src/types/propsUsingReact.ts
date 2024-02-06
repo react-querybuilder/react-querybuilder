@@ -47,6 +47,7 @@ import type {
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
 import type { QueryValidator, ValidationMap } from './validation';
+import { getFirstOption } from '../utils';
 
 /**
  * A translation for a component with `title` and `label`.
@@ -235,7 +236,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
    *
    * @default ValueSelector
    */
-  fieldSelector: ComponentType<FieldSelectorProps<GetOptionIdentifierType<F>, O, any>>;
+  fieldSelector: ComponentType<FieldSelectorProps<F>>;
   /**
    * A small wrapper around the `combinatorSelector` component.
    *
@@ -289,7 +290,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
    *
    * @default RuleGroup
    */
-  ruleGroup: ComponentType<RuleGroupProps<GetOptionIdentifierType<F>, O>>;
+  ruleGroup: ComponentType<RuleGroupProps<ToFullOption<F>, O>>;
   /**
    * Shifts the current rule/group up or down in the query hierarchy.
    *
@@ -393,10 +394,10 @@ export interface UseRuleGroupDnD {
 /**
  * {@link RuleGroup} props.
  */
-export interface RuleGroupProps<F extends string = string, O extends string = string>
-  extends CommonRuleAndGroupProps<FullOption<F>, O>,
+export interface RuleGroupProps<F extends FullOption = FullOption, O extends string = string>
+  extends CommonRuleAndGroupProps<F, O>,
     Partial<UseRuleGroupDnD> {
-  ruleGroup: RuleGroupTypeAny<RuleType<F, O>>;
+  ruleGroup: RuleGroupTypeAny<RuleType<GetOptionIdentifierType<F>, O>>;
   /**
    * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
    */
@@ -793,23 +794,27 @@ export type QueryBuilderProps<
     }
   : never;
 
-const fields: Field<'this' | 'that'>[] = [];
+type ThisThat = 'this' | 'that';
+const fields: Field<ThisThat>[] = [];
+const fieldSelector = (_props: FieldSelectorProps<Field<ThisThat>>) => _props.value;
+const valueEditor = (_props: ValueEditorProps<Field<ThisThat>, string>) =>
+  getFirstOption(_props.values);
 const _QB = <RG extends RuleGroupTypeAny, F extends ToFlexibleOption<Field>>(
   _p: QueryBuilderProps<RG, F, Operator, Combinator>
 ) => 1;
 const _QBC = () =>
   _QB({
-    defaultQuery: { rules: [] } as RuleGroupTypeIC,
     fields,
     onAddRule: (_rule, _parentPath, _query, _context) => false,
     controlElements: {
-      fieldSelector: _props => 1,
-      valueEditor: _props => 1,
+      fieldSelector,
+      valueEditor,
     },
+    defaultQuery: { rules: [] },
   });
 const _QBP: QueryBuilderProps<
-  RuleGroupTypeIC<RuleType<'this' | 'that'>>,
-  Field,
+  RuleGroupTypeIC<RuleType<ThisThat>>,
+  Field<ThisThat>,
   Operator,
   Combinator
 > = {

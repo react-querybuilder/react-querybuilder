@@ -6,7 +6,6 @@ import type {
   Controls,
   Field,
   FieldSelectorProps,
-  GetOptionIdentifierType,
   OperatorSelectorProps,
   QueryBuilderContextProps,
   ToFlexibleOption,
@@ -95,8 +94,8 @@ export const useMergedContext = <
               rqbContext.controlElements.valueSelector,
             fieldSelector:
               rqbContext.controlElements?.fieldSelector ??
-              (rqbContext.controlElements.valueSelector as ComponentType<
-                FieldSelectorProps<GetOptionIdentifierType<F>, O, any>
+              (rqbContext.controlElements.valueSelector as unknown as ComponentType<
+                FieldSelectorProps<F>
               >),
             operatorSelector:
               rqbContext.controlElements?.operatorSelector ??
@@ -136,8 +135,8 @@ export const useMergedContext = <
               props.controlElements?.combinatorSelector ?? props.controlElements.valueSelector,
             fieldSelector:
               props.controlElements?.fieldSelector ??
-              (props.controlElements.valueSelector as ComponentType<
-                FieldSelectorProps<GetOptionIdentifierType<F>, O, any>
+              (props.controlElements.valueSelector as unknown as ComponentType<
+                FieldSelectorProps<F>
               >),
             operatorSelector:
               props.controlElements?.operatorSelector ??

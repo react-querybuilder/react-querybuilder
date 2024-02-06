@@ -1,5 +1,5 @@
 import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
-import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
+import type { FullOption, FullOptionList, Option, ToFlexibleOption, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
@@ -75,14 +75,15 @@ export interface CommonRuleSubComponentProps {
 /**
  * Base interface for selector components.
  */
-interface BaseSelectorProps<OptType extends Option> extends SelectorOrEditorProps {
+interface BaseSelectorProps<OptType extends Option>
+  extends SelectorOrEditorProps<ToFullOption<OptType>> {
   options: FullOptionList<OptType>;
 }
 
 /**
  * Props for all `value` selector components.
  */
-export interface ValueSelectorProps<OptType extends Option = Option>
+export interface ValueSelectorProps<OptType extends Option = FullOption>
   extends BaseSelectorProps<OptType> {
   multiple?: boolean;
   listsAsArrays?: boolean;
@@ -98,13 +99,10 @@ export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
 /**
  * Props for `fieldSelector` components.
  */
-export interface FieldSelectorProps<
-  FieldName extends string,
-  OperatorName extends string,
-  ValueName extends string,
-> extends BaseSelectorProps<Field<FieldName, OperatorName, ValueName>>,
+export interface FieldSelectorProps<F extends ToFlexibleOption<Field> = Field>
+  extends BaseSelectorProps<ToFullOption<F>>,
     CommonRuleSubComponentProps {
-  operator?: string;
+  operator?: F extends Field<string, infer OperatorName> ? OperatorName : string;
 }
 
 /**
@@ -132,7 +130,7 @@ export interface ValueSourceSelectorProps
  * that could potentially be any of the standard selector types.
  */
 export type VersatileSelectorProps = ValueSelectorProps &
-  Partial<FieldSelectorProps<string, string, any>> &
+  Partial<FieldSelectorProps<Field>> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 

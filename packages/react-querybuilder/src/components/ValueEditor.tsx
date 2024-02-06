@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { standardClassnames } from '../defaults';
 import { useValueEditor } from '../hooks';
-import type { ValueEditorProps } from '../types';
+import type { FullOption, ValueEditorProps } from '../types';
 import { getFirstOption, parseNumber } from '../utils';
 
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
  */
-export const ValueEditor = (allProps: ValueEditorProps) => {
+export const ValueEditor = (allProps: ValueEditorProps<FullOption>) => {
   const {
     operator,
     value,
