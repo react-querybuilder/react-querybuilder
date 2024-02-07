@@ -40,9 +40,9 @@
   "devDependencies": {
     "@ant-design/icons": "^5.3.0",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.51",
+    "@types/react": "^18.2.55",
     "@vitejs/plugin-react-swc": "^3.6.0",
-    "antd": "^5.13.3",
+    "antd": "^5.14.0",
     "dayjs": "^1.11.10",
     "rc-picker": "^4.0.0-alpha.20",
     "rc-select": "^14.11.0",
