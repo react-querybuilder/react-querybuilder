@@ -1,4 +1,10 @@
-import type { Combinator, FullField, Operator, QueryBuilderProps, RuleGroupTypeAny } from '../src';
+import type {
+  FullCombinator,
+  FullField,
+  FullOperator,
+  QueryBuilderProps,
+  RuleGroupTypeAny,
+} from '../src';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
@@ -25,7 +31,7 @@ export type DemoOptions = Record<DemoOption, boolean>;
 export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>>;
 
 export type CommonRQBProps = Pick<
-  QueryBuilderProps<RuleGroupTypeAny, FullField, Operator, Combinator>,
+  QueryBuilderProps<RuleGroupTypeAny, FullField, FullOperator, FullCombinator>,
   | 'fields'
   | 'validator'
   | 'controlClassnames'

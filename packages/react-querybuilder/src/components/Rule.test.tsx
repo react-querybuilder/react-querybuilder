@@ -12,7 +12,7 @@ import { TestID, standardClassnames as sc, defaultTranslations as t } from '../d
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../messages';
 import type {
   FullField,
-  Operator,
+  FullOperator,
   RuleType,
   ToFullOption,
   ValidationResult,
@@ -354,7 +354,7 @@ describe('dynamic classNames', () => {
     const fieldMap = {
       f1: toFullOption({ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }),
     } satisfies Record<string, ToFullOption<FullField>>;
-    const getOperators = (): ToFullOption<Operator>[] => [
+    const getOperators = (): ToFullOption<FullOperator>[] => [
       toFullOption({ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }),
     ];
     const getRuleClassname = jest.fn(() => 'custom-ruleBased-class');

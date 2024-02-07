@@ -19,10 +19,10 @@ import {
 import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
-  Combinator,
+  FullCombinator,
   FullField,
   Field,
-  Operator,
+  FullOperator,
   Option,
   OptionGroup,
   QueryBuilderProps,
@@ -2456,7 +2456,7 @@ describe('nested object immutability', () => {
         { combinator: 'and', rules: [immutableRule] },
       ],
     };
-    const props: QueryBuilderProps<typeof defaultQuery, FullField, Operator, Combinator> = {
+    const props: QueryBuilderProps<typeof defaultQuery, FullField, FullOperator, FullCombinator> = {
       onQueryChange,
       defaultQuery,
       enableMountQueryChange: false,

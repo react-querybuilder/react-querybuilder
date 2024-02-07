@@ -9,10 +9,10 @@ import type {
 import type {
   AccessibleDescriptionGenerator,
   Classname,
-  Combinator,
+  FullCombinator,
   FullField,
   InputType,
-  Operator,
+  FullOperator,
   ParseNumbersMethod,
   Path,
   ValueEditorType,
@@ -321,13 +321,13 @@ export interface Schema<F extends FullField, O extends string> {
   fields: FullOptionList<F>;
   fieldMap: Partial<Record<GetOptionIdentifierType<F>, F>>;
   classNames: Classnames;
-  combinators: FullOptionList<Combinator>;
+  combinators: FullOptionList<FullCombinator>;
   controls: Controls<F, O>;
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
   dispatchQuery(query: RuleGroupTypeAny): void;
   getQuery(): RuleGroupTypeAny | undefined;
-  getOperators(field: string, meta: { fieldData: F }): FullOptionList<Operator>;
+  getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
   getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSources;
@@ -500,8 +500,8 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
 export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
   ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
       /**
@@ -519,7 +519,7 @@ export type QueryBuilderProps<
        */
       fields?: FlexibleOptionList<F> | FlexibleOptionMap<F, GetOptionIdentifierType<F>>;
       /**
-       * List of valid {@link Operator}s.
+       * List of valid {@link FullOperator}s.
        *
        * @see {@link DefaultOperatorName}
        *
@@ -547,7 +547,7 @@ export type QueryBuilderProps<
        */
       operators?: FlexibleOptionList<O>;
       /**
-       * List of valid {@link Combinator}s.
+       * List of valid {@link FullCombinator}s.
        *
        * @see {@link DefaultCombinatorName}
        *
@@ -566,7 +566,7 @@ export type QueryBuilderProps<
       getDefaultField?: GetOptionIdentifierType<F> | ((fieldsData: FullOptionList<F>) => string);
       /**
        * The default `operator` value for new rules. This can be the operator
-       * `name` or a function that returns a valid {@link Operator} `name` for
+       * `name` or a function that returns a valid {@link FullOperator} `name` for
        * a given field name.
        */
       getDefaultOperator?:
@@ -577,14 +577,14 @@ export type QueryBuilderProps<
        */
       getDefaultValue?(rule: R, misc: { fieldData: F }): any;
       /**
-       * This function should return the list of allowed {@link Operator}s
+       * This function should return the list of allowed {@link FullOperator}s
        * for the given {@link FullField} `name`. If `null` is returned, the
        * {@link DefaultOperator}s are used.
        */
       getOperators?(
         field: GetOptionIdentifierType<F>,
         misc: { fieldData: F }
-      ): FlexibleOptionList<Operator> | null;
+      ): FlexibleOptionList<FullOperator> | null;
       /**
        * This function should return the type of {@link ValueEditor} (see
        * {@link ValueEditorType}) for the given field `name` and operator `name`.

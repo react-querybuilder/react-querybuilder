@@ -2,12 +2,12 @@ import type { ComponentType } from 'react';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type {
   ActionProps,
-  Combinator,
+  FullCombinator,
   FullField,
   FullOption,
   InlineCombinatorProps,
   NotToggleProps,
-  Operator,
+  FullOperator,
   QueryBuilderProps,
   RuleGroupProps,
   RuleGroupTypeAny,
@@ -86,6 +86,6 @@ export type ValueEditorNativeProps = ValueEditorProps &
 export type QueryBuilderNativeProps<
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 > = QueryBuilderProps<RG, F, O, C> & WithOptionalStyles;

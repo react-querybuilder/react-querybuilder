@@ -3,10 +3,10 @@ import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
-  Combinator,
+  FullCombinator,
   FullField,
   GetOptionIdentifierType,
-  Operator,
+  FullOperator,
   Path,
   QueryBuilderContextProps,
   QueryBuilderProps,
@@ -31,8 +31,8 @@ export const QueryBuilderStateProvider = ({ children }: { children: React.ReactN
 const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >({
   setup,
   props,
@@ -84,8 +84,8 @@ const QueryBuilderInternal = <
 export const QueryBuilder = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {

@@ -1,4 +1,4 @@
-import type { Combinator, Operator, Path, ValueSource } from './basic';
+import type { FullCombinator, FullOperator, Path, ValueSource } from './basic';
 
 /**
  * Properties common to both rules and groups.
@@ -116,16 +116,16 @@ export type DefaultOperatorName =
   | 'notBetween';
 
 /**
- * A {@link Combinator} definition with a {@link DefaultCombinatorName} `name` property.
+ * A {@link FullCombinator} definition with a {@link DefaultCombinatorName} `name` property.
  */
-export type DefaultCombinator = Combinator<DefaultCombinatorName>;
+export type DefaultCombinator = FullCombinator<DefaultCombinatorName>;
 
 /**
- * A {@link Combinator} definition with a {@link DefaultCombinatorNameExtended} `name` property.
+ * A {@link FullCombinator} definition with a {@link DefaultCombinatorNameExtended} `name` property.
  */
-export type DefaultCombinatorExtended = Combinator<DefaultCombinatorNameExtended>;
+export type DefaultCombinatorExtended = FullCombinator<DefaultCombinatorNameExtended>;
 
 /**
- * An {@link Operator} definition with a {@link DefaultOperatorName} `name` property.
+ * An {@link FullOperator} definition with a {@link DefaultOperatorName} `name` property.
  */
-export type DefaultOperator = Operator<DefaultOperatorName>;
+export type DefaultOperator = FullOperator<DefaultOperatorName>;

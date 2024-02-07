@@ -1,4 +1,11 @@
-import type { Classname, Combinator, FullField, Operator, Path, ValueSource } from './basic';
+import type {
+  Classname,
+  FullCombinator,
+  FullField,
+  FullOperator,
+  Path,
+  ValueSource,
+} from './basic';
 import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -90,7 +97,7 @@ export interface ValueSelectorProps<OptType extends Option = FullOption>
 /**
  * Props for `combinatorSelector` components.
  */
-export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
+export interface CombinatorSelectorProps extends BaseSelectorProps<FullCombinator> {
   rules?: RuleOrGroupArray;
 }
 
@@ -107,7 +114,7 @@ export interface FieldSelectorProps<F extends FullField = FullField>
  * Props for `operatorSelector` components.
  */
 export interface OperatorSelectorProps
-  extends BaseSelectorProps<Operator>,
+  extends BaseSelectorProps<FullOperator>,
     CommonRuleSubComponentProps {
   field: string;
   fieldData: FullField;

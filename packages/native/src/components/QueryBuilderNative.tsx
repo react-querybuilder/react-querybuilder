@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import type {
-  Combinator,
+  FullCombinator,
   Controls,
   FullField,
   GetOptionIdentifierType,
-  Operator,
+  FullOperator,
   Path,
   QueryBuilderContextProps,
   QueryBuilderProps,
@@ -27,8 +27,8 @@ const rootPath = [] satisfies Path;
 const QueryBuilderNativeInternal = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >({
   props,
   setup,
@@ -65,8 +65,8 @@ const QueryBuilderNativeInternal = <
 export const QueryBuilderNative = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
 ) => {

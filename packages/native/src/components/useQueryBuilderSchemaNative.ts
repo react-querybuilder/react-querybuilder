@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import type {
-  Combinator,
+  FullCombinator,
   FullField,
-  Operator,
+  FullOperator,
   QueryBuilderProps,
   RuleGroupTypeAny,
   useQueryBuilderSetup,
@@ -14,8 +14,8 @@ import type { QueryBuilderNativeProps, WithSchemaNative } from '../types';
 export const useQueryBuilderSchemaNative = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>

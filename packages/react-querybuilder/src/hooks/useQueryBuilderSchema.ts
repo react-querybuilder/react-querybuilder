@@ -10,14 +10,14 @@ import {
   useQueryBuilderStore,
 } from '../redux';
 import type {
-  Combinator,
+  FullCombinator,
   Controls,
   FullField,
   FullOptionList,
   FullOptionMap,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
-  Operator,
+  FullOperator,
   Path,
   QueryActions,
   QueryBuilderProps,
@@ -66,8 +66,8 @@ const defaultOnLog = (...params: any[]) => {
 export function useQueryBuilderSchema<
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>

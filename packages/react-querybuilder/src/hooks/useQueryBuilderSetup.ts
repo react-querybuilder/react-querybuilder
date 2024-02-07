@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
-  Combinator,
+  FullCombinator,
   FullField,
   FlexibleOptionList,
   FullOption,
@@ -11,7 +11,7 @@ import type {
   FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
-  Operator,
+  FullOperator,
   OptionGroup,
   OptionList,
   QueryBuilderProps,
@@ -57,8 +57,8 @@ const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) 
 export const useQueryBuilderSetup = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
-  O extends Operator,
-  C extends Combinator,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {

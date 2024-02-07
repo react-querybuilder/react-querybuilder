@@ -17,7 +17,7 @@ import type {
   FieldSelectorProps,
   FullOption,
   NotToggleProps,
-  Operator,
+  FullOperator,
   OperatorSelectorProps,
   QueryActions,
   RuleGroupProps,
@@ -98,7 +98,7 @@ export const ruleGroupControls = {
       className={props.className}
       value={props.value}
       onChange={e => props.handleOnChange(e.target.value)}>
-      <option value={(props.options[0] as Operator).name}>{props.options[0].label}</option>
+      <option value={(props.options[0] as FullOperator).name}>{props.options[0].label}</option>
     </select>
   ),
   valueEditor: (props: ValueEditorProps) => (
