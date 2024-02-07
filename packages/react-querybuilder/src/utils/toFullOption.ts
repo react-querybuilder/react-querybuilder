@@ -19,11 +19,11 @@ const isOptionWithValue = (opt: FlexibleOption): opt is ValueOption =>
   isPojo(opt) && 'value' in opt && typeof opt.value === 'string';
 
 /**
- * Converts an {@link Option} or {@link FlexibleOption} into a {@link FullOption}.
- * Full options are left unchanged.
+ * Converts an {@link Option} or {@link ValueOption} (i.e., {@link FlexibleOption})
+ * into a {@link FullOption}. Full options are left unchanged.
  */
 function toFullOption<N extends string>(opt: FlexibleOption<N>): FullOption<N> {
-  const recipe: (o: FlexibleOption) => FullOption<N> = produce(draft => {
+  const recipe: (o: FlexibleOption<N>) => FullOption<N> = produce(draft => {
     if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
       draft.value = draft.name;
     } else if (!isOptionWithName(draft) && isOptionWithValue(draft)) {

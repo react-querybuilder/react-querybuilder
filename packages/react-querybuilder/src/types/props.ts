@@ -97,7 +97,8 @@ export interface ValueSelectorProps<OptType extends Option = FullOption>
 /**
  * Props for `combinatorSelector` components.
  */
-export interface CombinatorSelectorProps extends BaseSelectorProps<FullCombinator> {
+export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
+  options: FullOptionList<FullCombinator>;
   rules?: RuleOrGroupArray;
 }
 
@@ -114,8 +115,9 @@ export interface FieldSelectorProps<F extends FullField = FullField>
  * Props for `operatorSelector` components.
  */
 export interface OperatorSelectorProps
-  extends BaseSelectorProps<FullOperator>,
+  extends BaseSelectorProps<FullOption>,
     CommonRuleSubComponentProps {
+  options: FullOptionList<FullOperator>;
   field: string;
   fieldData: FullField;
 }
@@ -124,8 +126,9 @@ export interface OperatorSelectorProps
  * Props for `valueSourceSelector` components.
  */
 export interface ValueSourceSelectorProps
-  extends BaseSelectorProps<FullOption<ValueSource>>,
+  extends BaseSelectorProps<FullOption>,
     CommonRuleSubComponentProps {
+  options: FullOptionList<FullOption<ValueSource>>;
   field: string;
   fieldData: FullField;
 }

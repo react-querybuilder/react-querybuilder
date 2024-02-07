@@ -16,13 +16,11 @@ import {
   findInput,
   hasOrInheritsClass,
   testActionElement,
-  testDragHandle,
   testShiftActions,
   testValueEditor,
   userEventSetup,
 } from 'react-querybuilder/genericTests';
 import { TremorActionElement } from './TremorActionElement';
-import { TremorDragHandle } from './TremorDragHandle';
 import { TremorNotToggle } from './TremorNotToggle';
 import { TremorShiftActions } from './TremorShiftActions';
 import { TremorValueEditor } from './TremorValueEditor';
@@ -32,7 +30,6 @@ import { QueryBuilderTremor } from './index';
 const user = userEventSetup();
 
 testActionElement(TremorActionElement);
-testDragHandle(TremorDragHandle);
 testShiftActions(TremorShiftActions);
 testValueEditor(TremorValueEditor, {
   multiselect: true,

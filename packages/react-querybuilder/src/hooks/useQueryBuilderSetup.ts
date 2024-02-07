@@ -2,16 +2,16 @@ import { useCallback, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
+  FlexibleOptionList,
   FullCombinator,
   FullField,
-  FlexibleOptionList,
+  FullOperator,
   FullOption,
   FullOptionList,
   FullOptionMap,
   FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
-  FullOperator,
   OptionGroup,
   OptionList,
   QueryBuilderProps,
@@ -408,8 +408,8 @@ export const useQueryBuilderSetup = <
           not: false,
         } as RG;
       }
-      // TODO: figure out how to avoid `@ts-expect-error` here
-      // @ts-expect-error TS can't tell that RG means RuleGroupType
+      // TODO: Avoid `@ts-expect-error`
+      // @ts-expect-error TS can't tell that RG is necessarily RuleGroupType
       return {
         id: idGenerator(),
         rules: addRuleToNewGroups ? [createRule()] : [],

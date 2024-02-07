@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TestID } from '../defaults';
 import { useRule, useStopEventPropagation } from '../hooks';
-import type { FullOption, RuleProps, Schema, ValueSource } from '../types';
+import type { RuleProps } from '../types';
 
 /**
  * Default component to display {@link RuleType} objects. This is
@@ -151,8 +151,7 @@ export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRu
                     disabled={r.disabled}
                     context={r.context}
                     validation={r.validationResult}
-                    // TODO: remove this cast
-                    schema={r.schema as Schema<FullOption<ValueSource>, string>}
+                    schema={r.schema}
                     rule={r.rule}
                   />
                 )}
