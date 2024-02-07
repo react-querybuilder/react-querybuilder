@@ -1,4 +1,4 @@
-import type { Field, ValueSource, ValueSources } from './basic';
+import type { FullField, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from './json-logic-js';
 import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -64,13 +64,13 @@ export interface FormatQueryOptions {
    */
   validator?: QueryValidator;
   /**
-   * This can be the same {@link Field} array passed to {@link QueryBuilder}, but
+   * This can be the same {@link FullField} array passed to {@link QueryBuilder}, but
    * really all you need to provide is the `name` and `validator` for each field.
    *
    * The full field object from this array, where the field's identifying property
    * matches the rule's `field`, will be passed to the rule processor.
    */
-  fields?: FlexibleOptionList<Field>;
+  fields?: FlexibleOptionList<FullField>;
   /**
    * This string will be inserted in place of invalid groups for non-JSON formats.
    * Defaults to `'(1 = 1)'` for "sql"/"parameterized"/"parameterized_named" and
@@ -134,7 +134,7 @@ export type ValueProcessorOptions = Pick<
    * The full field object, if `fields` was provided in the
    * {@link formatQuery} options parameter.
    */
-  fieldData?: Field;
+  fieldData?: FullField;
 };
 
 /**
@@ -206,7 +206,7 @@ export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsW
  * Options common to all parsers.
  */
 interface ParserCommonOptions {
-  fields?: OptionList<Field> | Record<string, Field>;
+  fields?: OptionList<FullField> | Record<string, FullField>;
   getValueSources?: (field: string, operator: string) => ValueSources;
   listsAsArrays?: boolean;
   independentCombinators?: boolean;

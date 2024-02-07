@@ -1,4 +1,4 @@
-import type { ExportFormat, FieldLegacy, RuleGroupType, RuleType } from '../src';
+import type { ExportFormat, Field, RuleGroupType, RuleType } from '../src';
 import { convertToIC, defaultOperators, generateID } from '../src';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
@@ -148,7 +148,7 @@ export const optionsMetadata: Record<
   },
 };
 
-export const fields: FieldLegacy[] = [
+export const fields: Field[] = [
   {
     name: 'firstName',
     label: 'First Name',

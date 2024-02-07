@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import type { Field, RuleGroupType } from 'react-querybuilder';
+import type { FullField, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
-const fields: Field[] = [
+const fields: FullField[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

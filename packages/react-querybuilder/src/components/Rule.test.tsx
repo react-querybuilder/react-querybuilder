@@ -11,7 +11,7 @@ import {
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../messages';
 import type {
-  Field,
+  FullField,
   Operator,
   RuleType,
   ToFullOption,
@@ -253,7 +253,7 @@ describe('valueSource', () => {
       name: 'fvsa',
       label: 'Field w/ valueSources array',
       valueSources,
-      comparator: (f: Field) => f.label.includes('comparator'),
+      comparator: (f: FullField) => f.label.includes('comparator'),
     },
     {
       name: 'fvsf',
@@ -262,7 +262,7 @@ describe('valueSource', () => {
     },
     { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
     { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
-  ].map(toFullOption) satisfies Field[];
+  ].map(toFullOption) satisfies FullField[];
   const fieldMap = getFieldMapFromArray(fields);
   const getValueSources = (): ValueSources => valueSources;
 
@@ -353,7 +353,7 @@ describe('dynamic classNames', () => {
     const rule: RuleType = { field: 'f1', operator: 'op', value: 'v1' };
     const fieldMap = {
       f1: toFullOption({ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }),
-    } satisfies Record<string, ToFullOption<Field>>;
+    } satisfies Record<string, ToFullOption<FullField>>;
     const getOperators = (): ToFullOption<Operator>[] => [
       toFullOption({ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }),
     ];

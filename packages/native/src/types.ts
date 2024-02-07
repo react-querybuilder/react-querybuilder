@@ -3,7 +3,7 @@ import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type {
   ActionProps,
   Combinator,
-  Field,
+  FullField,
   FullOption,
   InlineCombinatorProps,
   NotToggleProps,
@@ -27,7 +27,7 @@ interface WithOptionalStyleSheets {
   styles?: QueryBuilderNativeStyleSheets;
 }
 
-export interface SchemaNative<F extends Field, O extends string>
+export interface SchemaNative<F extends FullField, O extends string>
   extends Schema<F, O>,
     WithOptionalStyleSheets {}
 
@@ -85,7 +85,7 @@ export type ValueEditorNativeProps = ValueEditorProps &
 
 export type QueryBuilderNativeProps<
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 > = QueryBuilderProps<RG, F, O, C> & WithOptionalStyles;

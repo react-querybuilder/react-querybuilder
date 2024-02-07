@@ -17,7 +17,9 @@ export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
 
 /**
  * Do not use this type directly. Use {@link Option}, {@link ValueOption},
- * {@link FullOption}, or {@link FlexibleOption} instead.
+ * {@link FullOption}, or {@link FlexibleOption} instead. For specific
+ * option lists, you can use {@link Field}, {@link Operator}, or
+ * {@link Combinator}, all of which extend {@link FullOption}.
  */
 export interface BaseOption<N extends string = string> {
   name?: N;

@@ -1,6 +1,6 @@
 import type {
   Combinator,
-  Field,
+  FullField,
   Operator,
   QueryBuilderProps,
   RuleGroupType,
@@ -13,7 +13,7 @@ import './QueryBuilderEmbed.scss';
 
 type QueryBuilderEmbedProps<V extends 4 | 5 | 6 = 6> = QueryBuilderProps<
   RuleGroupType,
-  Field,
+  FullField,
   Operator,
   Combinator
 > & {

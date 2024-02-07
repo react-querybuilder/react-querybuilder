@@ -20,8 +20,8 @@ import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
   Combinator,
+  FullField,
   Field,
-  FieldLegacy,
   Operator,
   Option,
   OptionGroup,
@@ -224,7 +224,7 @@ describe('when initial query with fields object is provided', () => {
   });
 
   it('does not mutate a fields array with duplicates', () => {
-    const fields: FieldLegacy[] = [
+    const fields: Field[] = [
       { name: 'f', label: 'Field' },
       { name: 'f', label: 'Field' },
     ];
@@ -233,7 +233,7 @@ describe('when initial query with fields object is provided', () => {
   });
 
   it('does not mutate a fields option group array with duplicates', () => {
-    const optgroups: OptionGroup<FieldLegacy>[] = [
+    const optgroups: OptionGroup<Field>[] = [
       { label: 'OG1', options: [{ name: 'f1', label: 'Field' }] },
       { label: 'OG1', options: [{ name: 'f2', label: 'Field' }] },
       { label: 'OG2', options: [{ name: 'f1', label: 'Field' }] },
@@ -258,7 +258,7 @@ describe('when initial query, without ID, is provided', () => {
       },
     ],
   };
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
@@ -311,7 +311,7 @@ describe('when fields are provided with optgroups', () => {
       },
     ],
   };
-  const fields: OptionGroup<FieldLegacy>[] = [
+  const fields: OptionGroup<Field>[] = [
     {
       label: 'Names',
       options: [
@@ -356,7 +356,7 @@ describe('when initial operators are provided', () => {
     { name: 'in', label: 'In' },
     { name: 'notIn', label: 'Not In' },
   ];
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
@@ -391,7 +391,7 @@ describe('when initial operators are provided', () => {
 });
 
 describe('get* callbacks', () => {
-  const fields: Field[] = [
+  const fields: FullField[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
@@ -437,7 +437,7 @@ describe('get* callbacks', () => {
     });
 
     it('prefers valueEditorType field property as string', () => {
-      const checkboxFields: Field[] = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
+      const checkboxFields: FullField[] = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
       render(
         <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
       );
@@ -522,7 +522,7 @@ describe('get* callbacks', () => {
 });
 
 describe('actions', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
   ];
@@ -662,7 +662,7 @@ describe('actions', () => {
 });
 
 describe('resetOnFieldChange prop', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
   ];
@@ -722,7 +722,7 @@ describe('resetOnFieldChange prop', () => {
 });
 
 describe('resetOnOperatorChange prop', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
   ];
@@ -785,7 +785,7 @@ describe('resetOnOperatorChange prop', () => {
 });
 
 describe('getDefaultField prop', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
   ];
@@ -818,7 +818,7 @@ describe('getDefaultField prop', () => {
 });
 
 describe('getDefaultOperator prop', () => {
-  const fields: FieldLegacy[] = [{ name: 'field1', label: 'Field 1' }];
+  const fields: Field[] = [{ name: 'field1', label: 'Field 1' }];
 
   it('sets the default operator as a string', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
@@ -851,9 +851,7 @@ describe('getDefaultOperator prop', () => {
 
 describe('defaultOperator property in field', () => {
   it('sets the default operator', async () => {
-    const fields: FieldLegacy[] = [
-      { name: 'field1', label: 'Field 1', defaultOperator: 'beginsWith' },
-    ];
+    const fields: Field[] = [{ name: 'field1', label: 'Field 1', defaultOperator: 'beginsWith' }];
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
@@ -867,7 +865,7 @@ describe('defaultOperator property in field', () => {
 describe('getDefaultValue prop', () => {
   it('sets the default value', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const fields: FieldLegacy[] = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1' },
       { name: 'field2', label: 'Field 2' },
     ];
@@ -1078,7 +1076,7 @@ describe('onRemove prop', () => {
 
 describe('defaultValue property in field', () => {
   it('sets the default value', async () => {
-    const fields: FieldLegacy[] = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1', defaultValue: 'Test Value 1' },
       { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' },
     ];
@@ -1093,7 +1091,7 @@ describe('defaultValue property in field', () => {
 });
 
 describe('values property in field', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     {
       name: 'field1',
       label: 'Field 1',
@@ -1154,7 +1152,7 @@ describe('values property in field', () => {
 
 describe('inputType property in field', () => {
   it('sets the input type', async () => {
-    const fields: FieldLegacy[] = [{ name: 'field1', label: 'Field 1', inputType: 'number' }];
+    const fields: Field[] = [{ name: 'field1', label: 'Field 1', inputType: 'number' }];
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const { container } = render(
       <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
@@ -1166,7 +1164,7 @@ describe('inputType property in field', () => {
 
 describe('valueEditorType property in field', () => {
   it('sets the value editor type', async () => {
-    const fields: FieldLegacy[] = [{ name: 'field1', label: 'Field 1', valueEditorType: 'select' }];
+    const fields: Field[] = [{ name: 'field1', label: 'Field 1', valueEditorType: 'select' }];
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const { container } = render(
       <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
@@ -1179,7 +1177,7 @@ describe('valueEditorType property in field', () => {
 describe('operators property in field', () => {
   it('sets the operators options', async () => {
     const operators = [{ name: '=', label: '=' }];
-    const fields: FieldLegacy[] = [
+    const fields: Field[] = [
       { name: 'field1', label: 'Field 1', operators },
       { name: 'field2', label: 'Field 2', operators },
     ];
@@ -1195,7 +1193,7 @@ describe('operators property in field', () => {
 
 describe('autoSelectField', () => {
   const operators = [{ name: '=', label: '=' }];
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'field1', label: 'Field 1', operators },
     { name: 'field2', label: 'Field 2', operators },
   ];
@@ -1246,7 +1244,7 @@ describe('autoSelectField', () => {
 
 describe('autoSelectOperator', () => {
   const operators = [{ name: '=', label: '=' }];
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'field1', label: 'Field 1', operators },
     { name: 'field2', label: 'Field 2', operators },
   ];
@@ -1300,7 +1298,7 @@ describe('autoSelectOperator', () => {
 });
 
 describe('valueEditorType "multiselect" default values', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     {
       name: 'field1',
       label: 'Field 1',
@@ -2267,7 +2265,7 @@ describe('locked rules', () => {
 });
 
 describe('value source field', () => {
-  const fields: FieldLegacy[] = [
+  const fields: Field[] = [
     { name: 'f1', label: 'Field 1', valueSources: ['field'] },
     { name: 'f2', label: 'Field 2', valueSources: ['field'] },
     {
@@ -2280,7 +2278,7 @@ describe('value source field', () => {
     { name: 'f4', label: 'Field 4', valueSources: [] },
     { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
-  const fieldsWithBetween: FieldLegacy[] = [
+  const fieldsWithBetween: Field[] = [
     {
       name: 'fb',
       label: 'Field B',
@@ -2458,7 +2456,7 @@ describe('nested object immutability', () => {
         { combinator: 'and', rules: [immutableRule] },
       ],
     };
-    const props: QueryBuilderProps<typeof defaultQuery, Field, Operator, Combinator> = {
+    const props: QueryBuilderProps<typeof defaultQuery, FullField, Operator, Combinator> = {
       onQueryChange,
       defaultQuery,
       enableMountQueryChange: false,
@@ -2542,7 +2540,7 @@ describe('controlElements bulk override properties', () => {
 describe('debug mode', () => {
   it('logs updates', async () => {
     const onLog = jest.fn();
-    const fields: FieldLegacy[] = [
+    const fields: Field[] = [
       { name: 'f1', label: 'Field 1' },
       { name: 'f2', label: 'Field 2' },
     ];

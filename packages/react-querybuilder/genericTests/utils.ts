@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { defaultCombinators, defaultControlElements } from '../src';
-import type { Classnames, Field, Schema } from '../src/types';
+import type { Classnames, FullField, Schema } from '../src/types';
 
 export const UNUSED = 'UNUSED';
 
@@ -9,7 +9,7 @@ const admonish = (fn: string) => () => {
   throw new Error(`Implement schema.${fn} for this test.`);
 };
 
-export const basicSchema: Schema<Field, string> = {
+export const basicSchema: Schema<FullField, string> = {
   qbId: 'qbId',
   fields: [],
   fieldMap: {},

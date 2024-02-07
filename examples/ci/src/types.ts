@@ -3,7 +3,7 @@ import type {
   DefaultOperator,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
-  Field,
+  FullField,
   QueryBuilderProps,
 } from 'react-querybuilder';
 
@@ -38,13 +38,13 @@ export type CIOptionsAction = {
 
 export type DefaultQBPropsNoDefaultQueryIC = QueryBuilderProps<
   DefaultRuleGroupTypeIC,
-  Field,
+  FullField,
   DefaultOperator,
   DefaultCombinator
 >;
 export type DefaultQBPropsNoDefaultQuery = QueryBuilderProps<
   DefaultRuleGroupType,
-  Field,
+  FullField,
   DefaultOperator,
   DefaultCombinator
 >;

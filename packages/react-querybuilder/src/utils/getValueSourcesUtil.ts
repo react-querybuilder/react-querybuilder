@@ -1,4 +1,4 @@
-import type { Field, GetOptionIdentifierType, ValueSources } from '../types/index.noReact';
+import type { FullField, GetOptionIdentifierType, ValueSources } from '../types/index.noReact';
 import { toFullOption } from './toFullOption';
 
 const defaultValueSourcesArray: ValueSources = ['value'];
@@ -16,7 +16,7 @@ const dummyFD = {
  * `valueSources` property, the `getValueSources` prop is used.
  * Returns `["value"]` by default.
  */
-export const getValueSourcesUtil = <F extends Field, O extends string>(
+export const getValueSourcesUtil = <F extends FullField, O extends string>(
   fieldData: F,
   operator: string,
   getValueSources?: (

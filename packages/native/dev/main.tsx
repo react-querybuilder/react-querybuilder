@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { StyleSheet, Text, View } from 'react-native';
-import type { Field, RuleGroupType } from 'react-querybuilder';
+import type { FullField, RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { QueryBuilderNative, defaultNativeWebControlElements } from '../src';
 
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const fields: Field[] = [
+const fields: FullField[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

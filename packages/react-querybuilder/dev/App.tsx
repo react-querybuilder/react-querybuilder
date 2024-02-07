@@ -4,7 +4,7 @@ import type { ComponentType } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type {
-  Field,
+  FullField,
   FormatQueryOptions,
   QueryBuilderContextProps,
   RuleGroupType,
@@ -40,7 +40,7 @@ export const App = ({
   controlElements,
   wrapper: Wrapper = Fragment,
   ...initialProps
-}: QueryBuilderContextProps<Field, string> & { wrapper?: ComponentType<any> }) => {
+}: QueryBuilderContextProps<FullField, string> & { wrapper?: ComponentType<any> }) => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, {

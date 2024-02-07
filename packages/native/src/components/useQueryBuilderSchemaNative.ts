@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import type {
   Combinator,
-  Field,
+  FullField,
   Operator,
   QueryBuilderProps,
   RuleGroupTypeAny,
@@ -13,7 +13,7 @@ import type { QueryBuilderNativeProps, WithSchemaNative } from '../types';
 
 export const useQueryBuilderSchemaNative = <
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >(

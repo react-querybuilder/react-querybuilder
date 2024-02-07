@@ -1,8 +1,8 @@
-import type { Field, ToFullOption } from '../types/index.noReact';
+import type { FullField, ToFullOption } from '../types/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFullOption } from './toFullOption';
 
-type F = ToFullOption<Field>;
+type F = ToFullOption<FullField>;
 
 const f: F = toFullOption({ name: 'f', label: 'F' });
 const f1: F = toFullOption({ name: 'f1', label: 'F1', valueSources: ['value'] });

@@ -2,7 +2,7 @@ import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Field,
+  FullField,
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
@@ -310,7 +310,7 @@ describe('options', () => {
   });
 
   describe('fields and getValueSources', () => {
-    const fields: Field[] = [
+    const fields: FullField[] = [
       { name: 'f1', label: 'f1' },
       { name: 'f2', label: 'f2', valueSources: ['value'] },
       { name: 'f3', label: 'f3', valueSources: ['field'] },
@@ -319,10 +319,10 @@ describe('options', () => {
       { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
       { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
       { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
-      { name: 'f9', label: 'f9', comparator: (f: Field) => f.name === 'f1' },
-      { name: 'f10', label: 'f10', comparator: (f: Field) => f.group === 'g2' },
+      { name: 'f9', label: 'f9', comparator: (f: FullField) => f.name === 'f1' },
+      { name: 'f10', label: 'f10', comparator: (f: FullField) => f.group === 'g2' },
     ].map(toFullOption);
-    const optionGroups: OptionGroup<Field>[] = [{ label: 'Option Group1', options: fields }];
+    const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
     const getValueSources = (): ValueSources => ['field'];
 
     it('sets the valueSource when fields are valid', () => {

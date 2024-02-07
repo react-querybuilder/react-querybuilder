@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
-import type { Field, RuleProps, RuleType } from '../types';
+import type { FullField, RuleProps, RuleType } from '../types';
 import {
   filterFieldsByComparator,
   getOption,
@@ -150,7 +150,7 @@ export const useRule = (props: RuleProps) => {
     [disabled, moveRule, path, shiftDownDisabled]
   );
 
-  const fieldData: Field = useMemo(
+  const fieldData: FullField = useMemo(
     () => fieldMap?.[rule.field] ?? { name: rule.field, value: rule.field, label: rule.field },
     [fieldMap, rule.field]
   );

@@ -9,7 +9,7 @@ import {
 import * as reactDnD from 'react-dnd/dist/index.js';
 import type {
   Combinator,
-  Field,
+  FullField,
   Operator,
   QueryBuilderProps,
   RuleGroupType,
@@ -111,14 +111,14 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
   'enableDragAndDrop ($QBctx.displayName)',
   ({ QBctx }) => {
     const [QBforDnD, getBackend] = wrapWithTestBackend(
-      (props: QueryBuilderProps<RuleGroupType, Field, Operator, Combinator>) => (
+      (props: QueryBuilderProps<RuleGroupType, FullField, Operator, Combinator>) => (
         <QBctx dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
           <QueryBuilder {...props} />
         </QBctx>
       )
     );
     const [QBforDnDIC, getBackendIC] = wrapWithTestBackend(
-      (props: QueryBuilderProps<RuleGroupTypeIC, Field, Operator, Combinator>) => (
+      (props: QueryBuilderProps<RuleGroupTypeIC, FullField, Operator, Combinator>) => (
         <QBctx dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
           <QueryBuilder {...props} />
         </QBctx>
@@ -484,7 +484,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
 
 it('does not pass dnd classes down to nested rules and groups', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
-    (props: QueryBuilderProps<RuleGroupType, Field, Operator, Combinator>) => (
+    (props: QueryBuilderProps<RuleGroupType, FullField, Operator, Combinator>) => (
       <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
         <QueryBuilder {...props} />
       </QueryBuilderDnD>
@@ -535,7 +535,7 @@ it('does not pass dnd classes down to nested rules and groups', async () => {
 
 it('prevents changes when disabled', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
-    (props: QueryBuilderProps<RuleGroupTypeIC, Field, Operator, Combinator>) => (
+    (props: QueryBuilderProps<RuleGroupTypeIC, FullField, Operator, Combinator>) => (
       <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
         <QueryBuilder {...props} />
       </QueryBuilderDnD>

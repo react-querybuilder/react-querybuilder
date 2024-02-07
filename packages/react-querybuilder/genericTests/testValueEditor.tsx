@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { Field, OptionList, Schema, ValueEditorProps, ValueSelectorProps } from '../src/types';
+import type {
+  FullField,
+  OptionList,
+  Schema,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from '../src/types';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { basicSchema, findInput, findInputs, findTextarea, userEventSetup } from './utils';
 
@@ -177,7 +183,7 @@ export const testValueEditor = (
             type="select"
             schema={
               { ...props.schema, controls: { ...props.schema.controls, valueSelector } } as Schema<
-                Field,
+                FullField,
                 string
               >
             }

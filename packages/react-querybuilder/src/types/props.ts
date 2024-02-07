@@ -1,4 +1,4 @@
-import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
+import type { Classname, Combinator, FullField, Operator, Path, ValueSource } from './basic';
 import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -8,7 +8,10 @@ import type { ValidationResult } from './validation';
 /**
  * Base interface for all subcomponents.
  */
-export interface CommonSubComponentProps<F extends FullOption = Field, O extends string = string> {
+export interface CommonSubComponentProps<
+  F extends FullOption = FullField,
+  O extends string = string,
+> {
   /**
    * CSS classNames to be applied.
    *
@@ -54,7 +57,7 @@ export interface CommonSubComponentProps<F extends FullOption = Field, O extends
 /**
  * Base interface for selectors and editors.
  */
-export interface SelectorOrEditorProps<F extends FullOption = Field, O extends string = string>
+export interface SelectorOrEditorProps<F extends FullOption = FullField, O extends string = string>
   extends CommonSubComponentProps<F, O> {
   value?: string;
   handleOnChange(value: any): void;
@@ -94,10 +97,10 @@ export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
 /**
  * Props for `fieldSelector` components.
  */
-export interface FieldSelectorProps<F extends Field = Field>
+export interface FieldSelectorProps<F extends FullField = FullField>
   extends BaseSelectorProps<F>,
     CommonRuleSubComponentProps {
-  operator?: F extends Field<string, infer OperatorName> ? OperatorName : string;
+  operator?: F extends FullField<string, infer OperatorName> ? OperatorName : string;
 }
 
 /**
@@ -107,7 +110,7 @@ export interface OperatorSelectorProps
   extends BaseSelectorProps<Operator>,
     CommonRuleSubComponentProps {
   field: string;
-  fieldData: Field;
+  fieldData: FullField;
 }
 
 /**
@@ -117,7 +120,7 @@ export interface ValueSourceSelectorProps
   extends BaseSelectorProps<FullOption<ValueSource>>,
     CommonRuleSubComponentProps {
   field: string;
-  fieldData: Field;
+  fieldData: FullField;
 }
 
 /**
@@ -125,7 +128,7 @@ export interface ValueSourceSelectorProps
  * that could potentially be any of the standard selector types.
  */
 export type VersatileSelectorProps = ValueSelectorProps &
-  Partial<FieldSelectorProps<Field>> &
+  Partial<FieldSelectorProps<FullField>> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 

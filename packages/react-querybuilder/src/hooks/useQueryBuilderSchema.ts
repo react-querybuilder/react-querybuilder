@@ -12,7 +12,7 @@ import {
 import type {
   Combinator,
   Controls,
-  Field,
+  FullField,
   FullOptionList,
   FullOptionMap,
   GetOptionIdentifierType,
@@ -65,7 +65,7 @@ const defaultOnLog = (...params: any[]) => {
  */
 export function useQueryBuilderSchema<
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >(

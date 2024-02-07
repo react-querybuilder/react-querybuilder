@@ -4,7 +4,7 @@ import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
   Combinator,
-  Field,
+  FullField,
   GetOptionIdentifierType,
   Operator,
   Path,
@@ -30,7 +30,7 @@ export const QueryBuilderStateProvider = ({ children }: { children: React.ReactN
 
 const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >({
@@ -83,7 +83,7 @@ const QueryBuilderInternal = <
  */
 export const QueryBuilder = <
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >(

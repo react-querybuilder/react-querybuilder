@@ -1,12 +1,12 @@
 // __IMPORTS__
 import { useState } from 'react';
-import type { FieldLegacy, RuleGroupType } from 'react-querybuilder';
+import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.scss';
 
 // __ADDITIONAL_DECLARATIONS__
 
-const fields: FieldLegacy[] = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

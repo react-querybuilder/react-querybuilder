@@ -3,7 +3,7 @@ import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
   Combinator,
-  Field,
+  FullField,
   FlexibleOptionList,
   FullOption,
   FullOptionList,
@@ -56,7 +56,7 @@ const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) 
  */
 export const useQueryBuilderSetup = <
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >(
@@ -116,7 +116,7 @@ export const useQueryBuilderSetup = <
         name: translations.fields.placeholderName,
         value: translations.fields.placeholderName,
         label: translations.fields.placeholderLabel,
-      }) as Field,
+      }) as FullField,
     [translations.fields.placeholderLabel, translations.fields.placeholderName]
   );
   const fieldsProp = useMemo(
@@ -155,25 +155,27 @@ export const useQueryBuilderSetup = <
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) {
-      const fp = toFullOptionMap(fieldsProp) as FullOptionMap<Field, FieldName>;
+      const fp = toFullOptionMap(fieldsProp) as FullOptionMap<FullField, FieldName>;
       if (autoSelectField) {
         return fp;
       } else {
         return { ...fp, [translations.fields.placeholderName]: defaultField };
       }
     }
-    const fm: Partial<FullOptionRecord<Field>> = {};
+    const fm: Partial<FullOptionRecord<FullField>> = {};
     if (isFlexibleOptionGroupArray(fields)) {
       fields.forEach(f =>
         f.options.forEach(opt => {
           fm[(opt.value ?? /* istanbul ignore next */ opt.name) as FieldName] = toFullOption(
             opt
-          ) as Field;
+          ) as FullField;
         })
       );
     } else {
       fields.forEach(f => {
-        fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(f) as Field;
+        fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(
+          f
+        ) as FullField;
       });
     }
     return fm;

@@ -73,11 +73,16 @@ export type InputType =
   | (string & {});
 
 /**
- * Field definition used in the `fields` prop of {@link QueryBuilder}.
- * The `name`, `operators`, and `values` properties can be narrowed
- * with generics.
+ * Full field definition used in the `fields` prop of {@link QueryBuilder}.
+ * This type requires both `name` and `value`, but the `fields` prop itself
+ * can use a {@link FlexibleOption} where only one of `name` or `value` is
+ * required (along with `label`), or {@link Field} where only `name` and
+ * `label` are required.
+ *
+ * The `name`/`value`, `operators`, and `values` properties of this interface
+ * can be narrowed with generics.
  */
-export interface Field<
+export interface FullField<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
@@ -95,15 +100,23 @@ export interface Field<
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
-  comparator?: string | ((f: Field, operator: string) => boolean);
+  comparator?: string | ((f: FullField, operator: string) => boolean);
 }
 
-export type FieldLegacy<
+/**
+ * Field definition used in the `fields` prop of {@link QueryBuilder}.
+ * This type is an extension of {@link FullField} where only `name` and
+ * `label` are required.
+ *
+ * The `name`/`value`, `operators`, and `values` properties of this interface
+ * can be narrowed with generics.
+ */
+export type Field<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
-> = SetOptional<Field<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
+> = SetOptional<FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
 
 /**
  * Utility type to make one or more properties required.

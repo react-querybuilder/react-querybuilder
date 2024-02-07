@@ -1,10 +1,10 @@
-import type { Controls, Field } from 'react-querybuilder';
+import type { Controls, FullField } from 'react-querybuilder';
 import { NativeBaseActionElement } from './NativeBaseActionElement';
 import { NativeBaseNotToggle } from './NativeBaseNotToggle';
 import { NativeBaseValueEditor } from './NativeBaseValueEditor';
 import { NativeBaseValueSelector } from './NativeBaseValueSelector';
 
-export const controlElements: Partial<Controls<Field, string>> = {
+export const controlElements: Partial<Controls<FullField, string>> = {
   actionElement: NativeBaseActionElement,
   notToggle: NativeBaseNotToggle,
   valueEditor: NativeBaseValueEditor,

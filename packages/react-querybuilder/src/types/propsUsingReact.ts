@@ -10,7 +10,7 @@ import type {
   AccessibleDescriptionGenerator,
   Classname,
   Combinator,
-  Field,
+  FullField,
   InputType,
   Operator,
   ParseNumbersMethod,
@@ -157,14 +157,14 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
 /**
  * Props passed to `valueEditor` components.
  */
-export interface ValueEditorProps<F extends Field = Field, O extends string = string>
+export interface ValueEditorProps<F extends FullField = FullField, O extends string = string>
   extends SelectorOrEditorProps<F, O>,
     CommonRuleSubComponentProps {
   field: GetOptionIdentifierType<F>;
   operator: O;
   value?: any;
   valueSource: ValueSource;
-  /** The entire {@link Field} object. */
+  /** The entire {@link FullField} object. */
   fieldData: F;
   type?: ValueEditorType;
   inputType?: InputType | null;
@@ -183,7 +183,7 @@ export interface ValueEditorProps<F extends Field = Field, O extends string = st
 /**
  * Subcomponents.
  */
-export interface Controls<F extends Field, O extends string> {
+export interface Controls<F extends FullField, O extends string> {
   /**
    * Default component for all button-type controls.
    *
@@ -316,7 +316,7 @@ export interface Controls<F extends Field, O extends string> {
  * Configuration options passed in the `schema` prop from
  * {@link QueryBuilder} to each subcomponent.
  */
-export interface Schema<F extends Field, O extends string> {
+export interface Schema<F extends FullField, O extends string> {
   qbId: string;
   fields: FullOptionList<F>;
   fieldMap: Partial<Record<GetOptionIdentifierType<F>, F>>;
@@ -355,7 +355,7 @@ export interface Schema<F extends Field, O extends string> {
 /**
  * Common props between {@link Rule} and {@link RuleGroup}.
  */
-interface CommonRuleAndGroupProps<F extends Field = Field, O extends string = string> {
+interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends string = string> {
   id?: string;
   path: Path;
   parentDisabled?: boolean;
@@ -446,7 +446,7 @@ export interface RuleProps<F extends string = string, O extends string = string>
 /**
  * Props passed down through context from a {@link QueryBuilderContextProvider}.
  */
-export interface QueryBuilderContextProps<F extends Field, O extends string> {
+export interface QueryBuilderContextProps<F extends FullField, O extends string> {
   /**
    * Defines replacement components.
    */
@@ -482,7 +482,7 @@ export interface QueryBuilderContextProps<F extends Field, O extends string> {
   debugMode?: boolean;
 }
 
-export type QueryBuilderContextProviderProps = QueryBuilderContextProps<Field, string> & {
+export type QueryBuilderContextProviderProps = QueryBuilderContextProps<FullField, string> & {
   children?: ReactNode;
 };
 export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
@@ -499,7 +499,7 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
  */
 export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
@@ -513,7 +513,7 @@ export type QueryBuilderProps<
        */
       query?: RG;
       /**
-       * List of valid {@link Field}s.
+       * List of valid {@link FullField}s.
        *
        * @default []
        */
@@ -560,7 +560,7 @@ export type QueryBuilderProps<
       combinators?: FlexibleOptionList<C>;
       /**
        * The default `field` value for new rules. This can be the field `name`
-       * itself or a function that returns a valid {@link Field} `name` given
+       * itself or a function that returns a valid {@link FullField} `name` given
        * the `fields` list.
        */
       getDefaultField?: GetOptionIdentifierType<F> | ((fieldsData: FullOptionList<F>) => string);
@@ -578,7 +578,7 @@ export type QueryBuilderProps<
       getDefaultValue?(rule: R, misc: { fieldData: F }): any;
       /**
        * This function should return the list of allowed {@link Operator}s
-       * for the given {@link Field} `name`. If `null` is returned, the
+       * for the given {@link FullField} `name`. If `null` is returned, the
        * {@link DefaultOperator}s are used.
        */
       getOperators?(

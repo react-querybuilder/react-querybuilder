@@ -6,7 +6,7 @@ import { extendTheme, NativeBaseProvider } from 'native-base';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type {
-  FieldLegacy,
+  Field,
   FullOptionList,
   Option,
   RuleGroupType,
@@ -15,7 +15,7 @@ import { formatQuery } from 'react-querybuilder';
 import { nativeBaseControlElements } from './components';
 import { NativeValueSelectorExample } from './components/NativeValueSelectorExample';
 
-const fields: FieldLegacy[] = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

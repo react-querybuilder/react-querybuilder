@@ -1,8 +1,8 @@
-import type { FieldLegacy, RuleType } from 'react-querybuilder';
+import type { Field, RuleType } from 'react-querybuilder';
 
 const validator = (r: RuleType) => !!r.value;
 
-export const fields: FieldLegacy[] = [
+export const fields: Field[] = [
   {
     name: 'firstName',
     label: 'First Name',

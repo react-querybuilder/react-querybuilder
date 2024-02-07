@@ -1,11 +1,11 @@
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { QueryBuilderFluent } from '@react-querybuilder/fluent';
 import { useState } from 'react';
-import type { FieldLegacy, RuleGroupType } from 'react-querybuilder';
+import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.scss';
 
-const fields: FieldLegacy[] = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

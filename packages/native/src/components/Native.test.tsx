@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type {
   ActionWithRulesProps,
-  Field,
+  FullField,
   Option,
   RuleGroupType,
   Schema,
@@ -75,7 +75,7 @@ describe('NativeActionElement', () => {
     ruleOrGroup: { combinator: 'and', rules: [] },
     // We don't use `basicSchema` here because we can't import
     // from "react-querybuilder/genericTests".
-    schema: {} as Schema<ToFullOption<Field>, string>,
+    schema: {} as Schema<ToFullOption<FullField>, string>,
   };
 
   const title = NativeActionElement.displayName;
@@ -140,7 +140,7 @@ describe('NativeNotToggle', () => {
     path: [],
     // We don't use `basicSchema` here because we can't import
     // from "react-querybuilder/genericTests".
-    schema: {} as Schema<ToFullOption<Field>, string>,
+    schema: {} as Schema<ToFullOption<FullField>, string>,
     testID: TestID.notToggle,
     ruleGroup: { combinator: 'and', rules: [] },
   };
@@ -176,7 +176,7 @@ describe('NativeShiftActions', () => {
     testID: TestID.shiftActions,
     // We don't use `basicSchema` here because we can't import
     // from "react-querybuilder/genericTests".
-    schema: {} as Schema<ToFullOption<Field>, string>,
+    schema: {} as Schema<ToFullOption<FullField>, string>,
     disabled: false,
     shiftUpDisabled: false,
     shiftDownDisabled: false,
@@ -267,7 +267,7 @@ describe('NativeValueSelector', () => {
     handleOnChange,
     level: 0,
     path: [],
-    schema: { styles } as SchemaNative<ToFullOption<Field>, string>,
+    schema: { styles } as SchemaNative<ToFullOption<FullField>, string>,
   };
 
   const variants = [
@@ -325,7 +325,7 @@ describe('NativeValueEditor', () => {
     level: 0,
     // We don't use `basicSchema` here because we can't import
     // from "react-querybuilder/genericTests".
-    schema: {} as Schema<ToFullOption<Field>, string>,
+    schema: {} as Schema<ToFullOption<FullField>, string>,
     testID: TestID.valueEditor,
     rule: { field: '', operator: '', value: '' },
   };

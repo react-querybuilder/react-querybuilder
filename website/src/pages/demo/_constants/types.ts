@@ -1,6 +1,6 @@
 import type {
   Combinator,
-  Field,
+  FullField,
   Operator,
   QueryBuilderProps,
   RuleGroupType,
@@ -33,7 +33,7 @@ export type DemoOptions = Record<DemoOption, boolean>;
 export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>> & { s?: string };
 
 export type CommonRQBProps = Pick<
-  QueryBuilderProps<RuleGroupType, Field, Operator, Combinator>,
+  QueryBuilderProps<RuleGroupType, FullField, Operator, Combinator>,
   | 'fields'
   | 'validator'
   | Exclude<

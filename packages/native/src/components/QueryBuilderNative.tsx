@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type {
   Combinator,
   Controls,
-  Field,
+  FullField,
   GetOptionIdentifierType,
   Operator,
   Path,
@@ -26,7 +26,7 @@ const rootPath = [] satisfies Path;
 
 const QueryBuilderNativeInternal = <
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >({
@@ -64,7 +64,7 @@ const QueryBuilderNativeInternal = <
 
 export const QueryBuilderNative = <
   RG extends RuleGroupTypeAny,
-  F extends Field,
+  F extends FullField,
   O extends Operator,
   C extends Combinator,
 >(
