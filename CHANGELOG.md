@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - [#646] `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead.
+- [#654] The minimum TypeScript version is now 5.1.
 - [#595] The parser functions have been removed from the main export, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
   <!-- prettier-ignore -->
   | Function         | New `import` requirement                                             |
@@ -63,6 +64,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - [#586] Options in list-type props can now use `value` as the identifier property in lieu of `name`. Additionally, all `Option`s within `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{ value: string; label: string; }[]` and not `{ name: string; label: string; }[]`.
+  - [#654] Related to [#586], field identifier types (`name`/`value` properties) will now be inferred from the `fields` prop if they have been narrowed from `string`. These narrowed types will be applied to subcomponents and other props that take fields or field identifiers as arguments/props.
 - [#595] Two "bulk override" properties have been added to the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` (as long as that component is not explicitly overridden in the `controlElements` prop). Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor` in cases where it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
   <!-- prettier-ignore -->
   | `controlElements` property | Sets default for                                                                                                                                       |
@@ -1524,6 +1526,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
 [#646]: https://github.com/react-querybuilder/react-querybuilder/pull/646
 [#653]: https://github.com/react-querybuilder/react-querybuilder/pull/653
+[#654]: https://github.com/react-querybuilder/react-querybuilder/pull/654
 
 <!-- Release comparison links -->
 
