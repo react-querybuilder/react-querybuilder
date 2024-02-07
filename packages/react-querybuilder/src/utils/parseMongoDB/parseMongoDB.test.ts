@@ -399,6 +399,28 @@ it('handles custom operators', () => {
   });
 });
 
+it('prevents operator negation', () => {
+  expect(
+    parseMongoDB(
+      {
+        $and: [
+          { f1: { $not: { $eq: 'Test' } } },
+          { $not: { f1: 'Test' } },
+          { $not: { f1: { $eq: 'Test' } } },
+        ],
+      },
+      { preventOperatorNegation: true }
+    )
+  ).toEqual({
+    combinator: 'and',
+    rules: [
+      { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'Test' }], not: true },
+      { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'Test' }], not: true },
+      { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'Test' }], not: true },
+    ],
+  });
+});
+
 it('generates query with independent combinators', () => {
   expect(parseMongoDB({ f1: 'Test', f2: 'Test' }, { independentCombinators: true })).toEqual({
     rules: [
