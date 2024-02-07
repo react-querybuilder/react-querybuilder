@@ -788,12 +788,12 @@ export type QueryBuilderProps<
 
 // import { getFirstOption } from '../utils';
 // type ThisThat = 'this' | 'that';
-// const fields: Field<ThisThat>[] = [];
-// const fieldSelector = (_props: FieldSelectorProps<Field<ThisThat>>) => _props.value;
-// const valueEditor = (_props: ValueEditorProps<Field<ThisThat>, string>) =>
+// const fields: FullField<ThisThat>[] = [];
+// const fieldSelector = (_props: FieldSelectorProps<FullField<ThisThat>>) => _props.value;
+// const valueEditor = (_props: ValueEditorProps<FullField<ThisThat>, string>) =>
 //   getFirstOption(_props.values);
-// const _QB = <RG extends RuleGroupTypeAny, F extends Field>(
-//   _p: QueryBuilderProps<RG, F, Operator, Combinator>
+// const _QB = <RG extends RuleGroupTypeAny, F extends FullField>(
+//   _p: QueryBuilderProps<RG, F, FullOperator, FullCombinator>
 // ) => 1;
 // const _QBC = () =>
 //   _QB({
@@ -807,9 +807,9 @@ export type QueryBuilderProps<
 //   });
 // const _QBP: QueryBuilderProps<
 //   RuleGroupTypeIC<RuleType<ThisThat>>,
-//   Field<ThisThat>,
-//   Operator,
-//   Combinator
+//   FullField<ThisThat>,
+//   FullOperator,
+//   FullCombinator
 // > = {
 //   fields,
 //   onAddRule: (_rule, _parentPath, _query, _context) => false,
