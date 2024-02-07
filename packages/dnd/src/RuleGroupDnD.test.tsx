@@ -2,13 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
-import type {
-  FullField,
-  QueryActions,
-  RuleGroupProps,
-  Schema,
-  ToFullOption,
-} from 'react-querybuilder';
+import type { FullField, QueryActions, RuleGroupProps, Schema } from 'react-querybuilder';
 import { TestID, defaultControlElements, standardClassnames as sc } from 'react-querybuilder';
 import { getRuleGroupProps } from 'react-querybuilder/genericTests';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
@@ -52,7 +46,7 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
 const getProps = (
-  mergeIntoSchema: Partial<Schema<ToFullOption<FullField>, string>> = {},
+  mergeIntoSchema: Partial<Schema<FullField, string>> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ) => {
   const props = getRuleGroupProps(mergeIntoSchema, mergeIntoActions);
