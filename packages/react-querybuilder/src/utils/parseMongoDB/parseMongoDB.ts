@@ -53,6 +53,7 @@ function parseMongoDB(
   const fieldsFlat = getFieldsArray(options.fields);
   const getValueSources = options.getValueSources;
   const additionalOperators = options.additionalOperators ?? {};
+  const preventOperatorNegation = !!options.preventOperatorNegation;
   const { additionalOperators: _ao, ...otherOptions } = options;
 
   const fieldIsValid = (
@@ -237,7 +238,9 @@ function parseMongoDB(
             ? { combinator: 'and', rules: [ruleOrGroup], not: true }
             : { ...ruleOrGroup, not: true };
         }
-        return { ...ruleOrGroup, operator: defaultOperatorNegationMap[ruleOrGroup.operator] };
+        return preventOperatorNegation
+          ? { combinator: 'and', rules: [ruleOrGroup], not: true }
+          : { ...ruleOrGroup, operator: defaultOperatorNegationMap[ruleOrGroup.operator] };
       }
       return false;
     } else if (key === '$expr') {
@@ -292,9 +295,9 @@ function parseMongoDB(
         const allOps = ['eq', 'ne', 'gte?', 'lte?', 'n?in', 'regex', 'not', ...additionalOpKeys];
         const acceptedOpsRegExp = new RegExp(`^\\$(${allOps.join('|')})$`);
 
-        const operators = objectKeys(keyValue)
+        const operators = objectKeys<Record<MongoDbSupportedOperators, unknown>>(keyValue)
           .filter(o => acceptedOpsRegExp.test(o))
-          .sort() as MongoDbSupportedOperators[];
+          .sort();
 
         if (operators.length === 0) {
           return false;
@@ -306,10 +309,12 @@ function parseMongoDB(
             if (isRuleGroupType(invertedNotRule)) {
               notRule = { ...invertedNotRule, not: true };
             } else {
-              notRule = {
-                ...invertedNotRule,
-                operator: defaultOperatorNegationMap[invertedNotRule.operator],
-              };
+              notRule = preventOperatorNegation
+                ? { combinator: 'and', rules: [invertedNotRule], not: true }
+                : {
+                    ...invertedNotRule,
+                    operator: defaultOperatorNegationMap[invertedNotRule.operator],
+                  };
             }
           }
         }
