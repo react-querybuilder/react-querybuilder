@@ -16,6 +16,6 @@
     "checkJs": true,
     "alwaysStrict": false,
     "baseUrl": "..",
-    "jsx": "react-jsx",
-  },
+    "jsx": "react-jsx"
+  }
 }
