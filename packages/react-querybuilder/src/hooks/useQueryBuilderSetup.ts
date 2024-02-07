@@ -2,20 +2,19 @@ import { useCallback, useMemo, useRef } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
-  Combinator,
-  Field,
   FlexibleOptionList,
+  FullCombinator,
+  FullField,
+  FullOperator,
   FullOption,
   FullOptionList,
   FullOptionMap,
+  FullOptionRecord,
   GetOptionIdentifierType,
-  Operator,
-  OptionGroup,
+  GetRuleTypeFromGroupWithFieldAndOperator,
   QueryBuilderProps,
   RuleGroupTypeAny,
   RuleType,
-  ToFlexibleOption,
-  ToFullOption,
 } from '../types';
 import {
   filterFieldsByComparator,
@@ -55,15 +54,14 @@ const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) 
  */
 export const useQueryBuilderSetup = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {
-  type R = RG extends RuleGroupTypeAny<infer RT> ? RT : never;
+  type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   type FieldName = GetOptionIdentifierType<F>;
-  type FullField = ToFullOption<F>;
   type OperatorName = GetOptionIdentifierType<O>;
 
   const qbId = useRef(generateID());
@@ -116,7 +114,7 @@ export const useQueryBuilderSetup = <
         name: translations.fields.placeholderName,
         value: translations.fields.placeholderName,
         label: translations.fields.placeholderLabel,
-      }) as unknown as FullField,
+      }) as FullField,
     [translations.fields.placeholderLabel, translations.fields.placeholderName]
   );
   const fieldsProp = useMemo(
@@ -124,7 +122,7 @@ export const useQueryBuilderSetup = <
     [defaultField, fieldsPropOriginal]
   );
 
-  const fields = useMemo((): OptionGroup<FullField>[] | FullField[] => {
+  const fields = useMemo((): FullOptionList<F> => {
     const flds = (
       Array.isArray(fieldsProp)
         ? toFullOptionList(fieldsProp)
@@ -134,35 +132,35 @@ export const useQueryBuilderSetup = <
     ) as FullOptionList<F>;
     if (isFlexibleOptionGroupArray(flds)) {
       if (autoSelectField) {
-        return uniqOptGroups(flds as OptionGroup<FullField>[]);
+        return uniqOptGroups(flds) as FullOptionList<F>;
       } else {
         return uniqOptGroups([
           {
             label: translations.fields.placeholderGroupLabel,
             options: [defaultField],
           },
-          ...(flds as OptionGroup<FullField>[]),
-        ]);
+          ...flds,
+        ]) as FullOptionList<F>;
       }
     } else {
       if (autoSelectField) {
-        return uniqByIdentifier(flds as FullField[]);
+        return uniqByIdentifier(flds as F[]) as FullOptionList<F>;
       } else {
-        return uniqByIdentifier([defaultField, ...(flds as FullField[])]);
+        return uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>;
       }
     }
   }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) {
-      const fp = toFullOptionMap(fieldsProp);
+      const fp = toFullOptionMap(fieldsProp) as FullOptionMap<FullField, FieldName>;
       if (autoSelectField) {
         return fp;
       } else {
         return { ...fp, [translations.fields.placeholderName]: defaultField };
       }
     }
-    const fm: { [k in FieldName]?: FullField } = {};
+    const fm: Partial<FullOptionRecord<FullField>> = {};
     if (isFlexibleOptionGroupArray(fields)) {
       fields.forEach(f =>
         f.options.forEach(opt => {
@@ -186,18 +184,17 @@ export const useQueryBuilderSetup = <
 
   // #region Set up `operators`
   const defaultOperator = useMemo(
-    () =>
-      ({
-        id: translations.operators.placeholderName,
-        name: translations.operators.placeholderName,
-        value: translations.operators.placeholderName,
-        label: translations.operators.placeholderLabel,
-      }) as unknown as FullOption<OperatorName>,
+    (): FullOption<OperatorName> => ({
+      id: translations.operators.placeholderName,
+      name: translations.operators.placeholderName as OperatorName,
+      value: translations.operators.placeholderName as OperatorName,
+      label: translations.operators.placeholderLabel,
+    }),
     [translations.operators.placeholderLabel, translations.operators.placeholderName]
   );
 
   const getOperatorsMain = useCallback(
-    (field: FieldName, { fieldData }: { fieldData: FullField }): FullOptionList<O> => {
+    (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
       let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>);
 
       if (fieldData?.operators) {
@@ -236,9 +233,10 @@ export const useQueryBuilderSetup = <
 
   const getRuleDefaultOperator = useCallback(
     (field: FieldName): OperatorName => {
-      const fieldData = (fieldMap as FullOptionMap<FullField, FieldName>)[field] as FullField;
+      const fieldData = fieldMap[field] as F;
+
       if (fieldData?.defaultOperator) {
-        return fieldData.defaultOperator;
+        return fieldData.defaultOperator as OperatorName;
       }
 
       if (getDefaultOperator) {
@@ -250,7 +248,7 @@ export const useQueryBuilderSetup = <
       }
 
       const ops = getOperatorsMain(field, { fieldData }) ?? /* istanbul ignore next */ [];
-      return getFirstOption(ops) ?? /* istanbul ignore next */ '';
+      return (getFirstOption(ops) ?? /* istanbul ignore next */ '') as OperatorName;
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
@@ -258,7 +256,7 @@ export const useQueryBuilderSetup = <
 
   // #region Rule property getters
   const getValueEditorTypeMain = useCallback(
-    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: FullField }) => {
+    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) => {
       if (fieldData.valueEditorType) {
         if (typeof fieldData.valueEditorType === 'function') {
           return fieldData.valueEditorType(operator);
@@ -273,16 +271,12 @@ export const useQueryBuilderSetup = <
 
   const getValueSourcesMain = useCallback(
     (field: FieldName, operator: OperatorName) =>
-      getValueSourcesUtil<FullField, OperatorName>(
-        fieldMap[field] as FullField,
-        operator,
-        getValueSources
-      ),
+      getValueSourcesUtil<F, OperatorName>(fieldMap[field] as F, operator, getValueSources),
     [fieldMap, getValueSources]
   );
 
   const getValuesMain = useCallback(
-    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: FullField }) => {
+    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) => {
       // Ignore this in tests because Rule already checks for
       // the presence of the values property in fieldData.
       /* istanbul ignore if */
@@ -299,9 +293,8 @@ export const useQueryBuilderSetup = <
   );
 
   const getRuleDefaultValue = useCallback(
-    (rule: RuleType) => {
-      const r = rule as R;
-      const fieldData = fieldMap[r.field as FieldName] as FullField;
+    <RT extends RuleType = R>(r: RT) => {
+      const fieldData = fieldMap[r.field as FieldName] as F;
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
         return fieldData.defaultValue;
       } else if (getDefaultValue) {
@@ -348,7 +341,7 @@ export const useQueryBuilderSetup = <
   );
 
   const getInputTypeMain = useCallback(
-    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: FullField }) => {
+    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) => {
       if (getInputType) {
         const inputType = getInputType(field, operator, { fieldData });
         if (inputType) return inputType;
@@ -361,7 +354,7 @@ export const useQueryBuilderSetup = <
   // #endregion
 
   // #region Rule/group creators
-  const createRule = useCallback((): RuleType => {
+  const createRule = useCallback((): R => {
     let field: FieldName = '' as any;
     const flds = fields as FullOptionList<F>;
     /* istanbul ignore else */
@@ -409,12 +402,12 @@ export const useQueryBuilderSetup = <
       if (independentCombinators) {
         return {
           id: idGenerator(),
-          rules: addRuleToNewGroups ? [createRule()] : [],
+          rules: addRuleToNewGroups ? [createRule() as RuleType] : [],
           not: false,
         } as RG;
       }
-      // TODO: figure out how to avoid `@ts-expect-error` here
-      // @ts-expect-error TS can't tell that RG means RuleGroupType
+      // TODO: Avoid `@ts-expect-error`
+      // @ts-expect-error TS can't tell that RG is necessarily RuleGroupType
       return {
         id: idGenerator(),
         rules: addRuleToNewGroups ? [createRule()] : [],

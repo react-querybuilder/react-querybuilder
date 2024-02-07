@@ -2,7 +2,7 @@ import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../
 import type {
   DefaultCombinatorName,
   ExportFormat,
-  Field,
+  FullField,
   FormatQueryOptions,
   FullOptionList,
   ParameterizedNamedSQL,
@@ -14,7 +14,6 @@ import type {
   RuleProcessor,
   RuleType,
   RuleValidator,
-  ToFullOption,
   ValidationMap,
   ValidationResult,
 } from '../../types/index.noReact';
@@ -113,7 +112,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let ruleProcessorInternal: RuleProcessor | null = null;
   let quoteFieldNamesWith: [string, string] = ['', ''];
   let validator: QueryValidator = () => true;
-  let fields: FullOptionList<ToFullOption<Field>> = [];
+  let fields: FullOptionList<FullField> = [];
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
   let paramPrefix = ':';

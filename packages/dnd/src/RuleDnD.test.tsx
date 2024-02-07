@@ -7,7 +7,7 @@ import {
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import type { Field, QueryActions, RuleProps, Schema, ToFullOption } from 'react-querybuilder';
+import type { FullField, QueryActions, RuleProps, Schema } from 'react-querybuilder';
 import { TestID, defaultControlElements, standardClassnames as sc } from 'react-querybuilder';
 import { getRuleProps } from 'react-querybuilder/genericTests';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
@@ -43,7 +43,7 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
 const getProps = (
-  mergeIntoSchema: Partial<Schema<ToFullOption<Field>, string>> = {},
+  mergeIntoSchema: Partial<Schema<FullField, string>> = {},
   mergeIntoActions: Partial<QueryActions> = {}
 ) => {
   const props = getRuleProps(mergeIntoSchema, mergeIntoActions);

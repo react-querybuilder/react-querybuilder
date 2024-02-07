@@ -11,10 +11,9 @@ import {
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../messages';
 import type {
-  Field,
-  Operator,
+  FullField,
+  FullOperator,
   RuleType,
-  ToFullOption,
   ValidationResult,
   ValueSelectorProps,
   ValueSources,
@@ -248,23 +247,21 @@ describe('locked rule', () => {
 
 describe('valueSource', () => {
   const valueSources: ValueSources = ['value', 'field'];
-  const fields = (
-    [
-      {
-        name: 'fvsa',
-        label: 'Field w/ valueSources array',
-        valueSources,
-        comparator: f => f.label.includes('comparator'),
-      },
-      {
-        name: 'fvsf',
-        label: 'Field w/ valueSources function',
-        valueSources: () => valueSources,
-      },
-      { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
-      { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
-    ] satisfies Field[]
-  ).map(toFullOption);
+  const fields = [
+    {
+      name: 'fvsa',
+      label: 'Field w/ valueSources array',
+      valueSources,
+      comparator: (f: FullField) => f.label.includes('comparator'),
+    },
+    {
+      name: 'fvsf',
+      label: 'Field w/ valueSources function',
+      valueSources: () => valueSources,
+    },
+    { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
+    { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
+  ].map(toFullOption) satisfies FullField[];
   const fieldMap = getFieldMapFromArray(fields);
   const getValueSources = (): ValueSources => valueSources;
 
@@ -355,8 +352,8 @@ describe('dynamic classNames', () => {
     const rule: RuleType = { field: 'f1', operator: 'op', value: 'v1' };
     const fieldMap = {
       f1: toFullOption({ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }),
-    } satisfies Record<string, ToFullOption<Field>>;
-    const getOperators = (): ToFullOption<Operator>[] => [
+    } satisfies Record<string, FullField>;
+    const getOperators = (): FullOperator[] => [
       toFullOption({ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }),
     ];
     const getRuleClassname = jest.fn(() => 'custom-ruleBased-class');

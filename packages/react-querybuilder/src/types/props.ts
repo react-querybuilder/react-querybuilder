@@ -1,4 +1,11 @@
-import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
+import type {
+  Classname,
+  FullCombinator,
+  FullField,
+  FullOperator,
+  Path,
+  ValueSource,
+} from './basic';
 import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -9,7 +16,7 @@ import type { ValidationResult } from './validation';
  * Base interface for all subcomponents.
  */
 export interface CommonSubComponentProps<
-  F extends FullOption = ToFullOption<Field>,
+  F extends FullOption = FullField,
   O extends string = string,
 > {
   /**
@@ -57,10 +64,8 @@ export interface CommonSubComponentProps<
 /**
  * Base interface for selectors and editors.
  */
-export interface SelectorOrEditorProps<
-  F extends FullOption = ToFullOption<Field>,
-  O extends string = string,
-> extends CommonSubComponentProps<F, O> {
+export interface SelectorOrEditorProps<F extends FullOption = FullField, O extends string = string>
+  extends CommonSubComponentProps<F, O> {
   value?: string;
   handleOnChange(value: any): void;
 }
@@ -75,14 +80,15 @@ export interface CommonRuleSubComponentProps {
 /**
  * Base interface for selector components.
  */
-export interface BaseSelectorProps<OptType extends Option = Option> extends SelectorOrEditorProps {
+interface BaseSelectorProps<OptType extends Option>
+  extends SelectorOrEditorProps<ToFullOption<OptType>> {
   options: FullOptionList<OptType>;
 }
 
 /**
  * Props for all `value` selector components.
  */
-export interface ValueSelectorProps<OptType extends Option = Option>
+export interface ValueSelectorProps<OptType extends Option = FullOption>
   extends BaseSelectorProps<OptType> {
   multiple?: boolean;
   listsAsArrays?: boolean;
@@ -91,35 +97,40 @@ export interface ValueSelectorProps<OptType extends Option = Option>
 /**
  * Props for `combinatorSelector` components.
  */
-export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
+export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
+  options: FullOptionList<FullCombinator>;
   rules?: RuleOrGroupArray;
 }
 
 /**
  * Props for `fieldSelector` components.
  */
-export interface FieldSelectorProps extends BaseSelectorProps<Field>, CommonRuleSubComponentProps {
-  operator?: string;
+export interface FieldSelectorProps<F extends FullField = FullField>
+  extends BaseSelectorProps<F>,
+    CommonRuleSubComponentProps {
+  operator?: F extends FullField<string, infer OperatorName> ? OperatorName : string;
 }
 
 /**
  * Props for `operatorSelector` components.
  */
 export interface OperatorSelectorProps
-  extends BaseSelectorProps<Operator>,
+  extends BaseSelectorProps<FullOption>,
     CommonRuleSubComponentProps {
+  options: FullOptionList<FullOperator>;
   field: string;
-  fieldData: Field;
+  fieldData: FullField;
 }
 
 /**
  * Props for `valueSourceSelector` components.
  */
 export interface ValueSourceSelectorProps
-  extends BaseSelectorProps<Option<ValueSource>>,
+  extends BaseSelectorProps<FullOption>,
     CommonRuleSubComponentProps {
+  options: FullOptionList<FullOption<ValueSource>>;
   field: string;
-  fieldData: Field;
+  fieldData: FullField;
 }
 
 /**
@@ -127,7 +138,7 @@ export interface ValueSourceSelectorProps
  * that could potentially be any of the standard selector types.
  */
 export type VersatileSelectorProps = ValueSelectorProps &
-  Partial<FieldSelectorProps> &
+  Partial<FieldSelectorProps<FullField>> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 

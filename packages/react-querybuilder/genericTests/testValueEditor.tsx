@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type {
-  Field,
+  FullField,
   OptionList,
   Schema,
-  ToFullOption,
   ValueEditorProps,
   ValueSelectorProps,
 } from '../src/types';
@@ -30,7 +29,7 @@ interface ValueEditorAsSelectProps extends ValueEditorProps {
 
 export const defaultValueEditorProps = {
   field: 'TEST',
-  fieldData: { name: 'TEST', label: 'Test' },
+  fieldData: { name: 'TEST', value: 'TEST', label: 'Test' },
   operator: '=',
   handleOnChange: () => {},
   level: 0,
@@ -184,7 +183,7 @@ export const testValueEditor = (
             type="select"
             schema={
               { ...props.schema, controls: { ...props.schema.controls, valueSelector } } as Schema<
-                ToFullOption<Field>,
+                FullField,
                 string
               >
             }

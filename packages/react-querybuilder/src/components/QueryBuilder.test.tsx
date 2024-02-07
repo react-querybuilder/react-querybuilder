@@ -19,9 +19,10 @@ import {
 import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
-  Combinator,
+  FullCombinator,
+  FullField,
   Field,
-  Operator,
+  FullOperator,
   Option,
   OptionGroup,
   QueryBuilderProps,
@@ -31,7 +32,6 @@ import type {
   RuleGroupTypeIC,
   RuleProps,
   RuleType,
-  ToFullOption,
   ValidationMap,
   ValueSelectorProps,
 } from '../types';
@@ -391,7 +391,7 @@ describe('when initial operators are provided', () => {
 });
 
 describe('get* callbacks', () => {
-  const fields: ToFullOption<Field>[] = [
+  const fields: FullField[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
@@ -437,7 +437,7 @@ describe('get* callbacks', () => {
     });
 
     it('prefers valueEditorType field property as string', () => {
-      const checkboxFields = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
+      const checkboxFields: FullField[] = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
       render(
         <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
       );
@@ -2456,7 +2456,7 @@ describe('nested object immutability', () => {
         { combinator: 'and', rules: [immutableRule] },
       ],
     };
-    const props: QueryBuilderProps<typeof defaultQuery, Field, Operator, Combinator> = {
+    const props: QueryBuilderProps<typeof defaultQuery, FullField, FullOperator, FullCombinator> = {
       onQueryChange,
       defaultQuery,
       enableMountQueryChange: false,

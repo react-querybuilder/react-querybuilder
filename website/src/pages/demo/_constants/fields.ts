@@ -1,10 +1,10 @@
-import type { Field, RuleType } from 'react-querybuilder';
-import { defaultOperators } from 'react-querybuilder';
+import type { FullField, RuleType } from 'react-querybuilder';
+import { defaultOperators, toFullOption } from 'react-querybuilder';
 import { musicalInstruments } from './musicalInstruments';
 
 export const validator = (r: RuleType) => !!r.value;
 
-export const fields: Field[] = [
+export const fields: FullField[] = [
   {
     name: 'firstName',
     label: 'First Name',
@@ -87,4 +87,4 @@ export const fields: Field[] = [
     groupNumber: 'group1',
     valueSources: ['field', 'value'],
   },
-];
+].map(toFullOption);

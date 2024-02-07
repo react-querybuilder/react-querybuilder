@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useContext } from 'react';
-import type { Field, QueryBuilderContextProps } from 'react-querybuilder';
+import type { FullField, QueryBuilderContextProps } from 'react-querybuilder';
 import {
   QueryBuilderContext,
   useMergedContext,
@@ -105,7 +105,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
       rqbDndContext.baseControls.combinatorSelector,
   };
 
-  const newContext: QueryBuilderContextProps<Field, string> = {
+  const newContext: QueryBuilderContextProps<FullField, string> = {
     ...rqbContext,
     controlElements: {
       ...rqbContext.controlElements,

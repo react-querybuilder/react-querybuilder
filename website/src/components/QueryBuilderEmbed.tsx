@@ -1,7 +1,7 @@
 import type {
-  Combinator,
-  Field,
-  Operator,
+  FullCombinator,
+  FullField,
+  FullOperator,
   QueryBuilderProps,
   RuleGroupType,
 } from 'react-querybuilder';
@@ -13,9 +13,9 @@ import './QueryBuilderEmbed.scss';
 
 type QueryBuilderEmbedProps<V extends 4 | 5 | 6 = 6> = QueryBuilderProps<
   RuleGroupType,
-  Field,
-  Operator,
-  Combinator
+  FullField,
+  FullOperator,
+  FullCombinator
 > & {
   version?: V;
 };

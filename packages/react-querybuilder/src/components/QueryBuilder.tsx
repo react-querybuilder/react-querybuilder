@@ -3,15 +3,16 @@ import { Provider } from 'react-redux';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
-  Combinator,
-  Field,
-  Operator,
+  FullCombinator,
+  FullField,
+  GetOptionIdentifierType,
+  FullOperator,
   Path,
+  QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
-  ToFlexibleOption,
 } from '../types';
-import { QueryBuilderContext } from './QueryBuilderContext';
+import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
 
 /**
  * The {@link Path} of the root group.
@@ -29,9 +30,9 @@ export const QueryBuilderStateProvider = ({ children }: { children: React.ReactN
 
 const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 >({
   setup,
   props,
@@ -39,9 +40,13 @@ const QueryBuilderInternal = <
   props: QueryBuilderProps<RG, F, O, C>;
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
-  const qb = useQueryBuilderSchema(props, setup);
+  const qb = useQueryBuilderSchema<RG, F, O, C>(props, setup);
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
+
+  const QueryBuilderContext = _QBC as React.Context<
+    QueryBuilderContextProps<F, GetOptionIdentifierType<O>>
+  >;
 
   return (
     <QueryBuilderContext.Provider key={qb.dndEnabledAttr} value={qb.rqbContext}>
@@ -78,9 +83,9 @@ const QueryBuilderInternal = <
  */
 export const QueryBuilder = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {

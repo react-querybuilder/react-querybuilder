@@ -9,10 +9,10 @@ import type {
 import type {
   AccessibleDescriptionGenerator,
   Classname,
-  Combinator,
-  Field,
+  FullCombinator,
+  FullField,
   InputType,
-  Operator,
+  FullOperator,
   ParseNumbersMethod,
   Path,
   ValueEditorType,
@@ -27,8 +27,6 @@ import type {
   FullOptionList,
   GetOptionIdentifierType,
   Option,
-  ToFlexibleOption,
-  ToFullOption,
 } from './options';
 import type {
   Classnames,
@@ -152,23 +150,21 @@ export interface DragHandleProps extends CommonSubComponentProps {
  * Props passed to `inlineCombinator` components.
  */
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
-  component: Schema<FullOption, string>['controls']['combinatorSelector'];
+  component: ComponentType<CombinatorSelectorProps>;
   independentCombinators?: boolean;
 }
 
 /**
  * Props passed to `valueEditor` components.
  */
-export interface ValueEditorProps<
-  F extends ToFlexibleOption<Field> = Field,
-  O extends string = string,
-> extends SelectorOrEditorProps<ToFullOption<F>, O>,
+export interface ValueEditorProps<F extends FullField = FullField, O extends string = string>
+  extends SelectorOrEditorProps<F, O>,
     CommonRuleSubComponentProps {
   field: GetOptionIdentifierType<F>;
   operator: O;
   value?: any;
   valueSource: ValueSource;
-  /** The entire {@link Field} object. */
+  /** The entire {@link FullField} object. */
   fieldData: F;
   type?: ValueEditorType;
   inputType?: InputType | null;
@@ -187,7 +183,7 @@ export interface ValueEditorProps<
 /**
  * Subcomponents.
  */
-export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
+export interface Controls<F extends FullField, O extends string> {
   /**
    * Default component for all button-type controls.
    *
@@ -235,7 +231,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
    *
    * @default ValueSelector
    */
-  fieldSelector: ComponentType<FieldSelectorProps>;
+  fieldSelector: ComponentType<FieldSelectorProps<F>>;
   /**
    * A small wrapper around the `combinatorSelector` component.
    *
@@ -289,7 +285,7 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
    *
    * @default RuleGroup
    */
-  ruleGroup: ComponentType<RuleGroupProps>;
+  ruleGroup: ComponentType<RuleGroupProps<F, O>>;
   /**
    * Shifts the current rule/group up or down in the query hierarchy.
    *
@@ -320,18 +316,18 @@ export interface Controls<F extends ToFlexibleOption<Field>, O extends string> {
  * Configuration options passed in the `schema` prop from
  * {@link QueryBuilder} to each subcomponent.
  */
-export interface Schema<F extends ToFullOption<Field>, O extends string> {
+export interface Schema<F extends FullField, O extends string> {
   qbId: string;
   fields: FullOptionList<F>;
-  fieldMap: Record<GetOptionIdentifierType<F>, F>;
+  fieldMap: Partial<Record<GetOptionIdentifierType<F>, F>>;
   classNames: Classnames;
-  combinators: FullOptionList<Combinator>;
+  combinators: FullOptionList<FullCombinator>;
   controls: Controls<F, O>;
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
   dispatchQuery(query: RuleGroupTypeAny): void;
   getQuery(): RuleGroupTypeAny | undefined;
-  getOperators(field: string, meta: { fieldData: F }): FullOptionList<Operator>;
+  getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
   getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSources;
@@ -359,12 +355,12 @@ export interface Schema<F extends ToFullOption<Field>, O extends string> {
 /**
  * Common props between {@link Rule} and {@link RuleGroup}.
  */
-interface CommonRuleAndGroupProps {
+interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends string = string> {
   id?: string;
   path: Path;
   parentDisabled?: boolean;
   translations: Translations;
-  schema: Schema<ToFullOption<Field>, string>;
+  schema: Schema<F, O>;
   actions: QueryActions;
   disabled?: boolean;
   shiftUpDisabled?: boolean;
@@ -390,8 +386,10 @@ export interface UseRuleGroupDnD {
 /**
  * {@link RuleGroup} props.
  */
-export interface RuleGroupProps extends CommonRuleAndGroupProps, Partial<UseRuleGroupDnD> {
-  ruleGroup: RuleGroupTypeAny;
+export interface RuleGroupProps<F extends FullOption = FullOption, O extends string = string>
+  extends CommonRuleAndGroupProps<F, O>,
+    Partial<UseRuleGroupDnD> {
+  ruleGroup: RuleGroupTypeAny<RuleType<GetOptionIdentifierType<F>, O>>;
   /**
    * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
    */
@@ -423,8 +421,10 @@ export interface UseRuleDnD {
 /**
  * {@link Rule} props.
  */
-export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> {
-  rule: RuleType;
+export interface RuleProps<F extends string = string, O extends string = string>
+  extends CommonRuleAndGroupProps<FullOption<F>, O>,
+    Partial<UseRuleDnD> {
+  rule: RuleType<F, O>;
   /**
    * @deprecated Use the `field` property of the `rule` prop instead
    */
@@ -446,7 +446,7 @@ export interface RuleProps extends CommonRuleAndGroupProps, Partial<UseRuleDnD> 
 /**
  * Props passed down through context from a {@link QueryBuilderContextProvider}.
  */
-export interface QueryBuilderContextProps<F extends ToFlexibleOption<Field>, O extends string> {
+export interface QueryBuilderContextProps<F extends FullField, O extends string> {
   /**
    * Defines replacement components.
    */
@@ -482,7 +482,7 @@ export interface QueryBuilderContextProps<F extends ToFlexibleOption<Field>, O e
   debugMode?: boolean;
 }
 
-export type QueryBuilderContextProviderProps = QueryBuilderContextProps<Field, string> & {
+export type QueryBuilderContextProviderProps = QueryBuilderContextProps<FullField, string> & {
   children?: ReactNode;
 };
 export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
@@ -499,9 +499,9 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
  */
 export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
   ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
       /**
@@ -513,13 +513,13 @@ export type QueryBuilderProps<
        */
       query?: RG;
       /**
-       * List of valid {@link Field}s.
+       * List of valid {@link FullField}s.
        *
        * @default []
        */
       fields?: FlexibleOptionList<F> | FlexibleOptionMap<F, GetOptionIdentifierType<F>>;
       /**
-       * List of valid {@link Operator}s.
+       * List of valid {@link FullOperator}s.
        *
        * @see {@link DefaultOperatorName}
        *
@@ -547,7 +547,7 @@ export type QueryBuilderProps<
        */
       operators?: FlexibleOptionList<O>;
       /**
-       * List of valid {@link Combinator}s.
+       * List of valid {@link FullCombinator}s.
        *
        * @see {@link DefaultCombinatorName}
        *
@@ -560,31 +560,31 @@ export type QueryBuilderProps<
       combinators?: FlexibleOptionList<C>;
       /**
        * The default `field` value for new rules. This can be the field `name`
-       * itself or a function that returns a valid {@link Field} `name` given
+       * itself or a function that returns a valid {@link FullField} `name` given
        * the `fields` list.
        */
       getDefaultField?: GetOptionIdentifierType<F> | ((fieldsData: FullOptionList<F>) => string);
       /**
        * The default `operator` value for new rules. This can be the operator
-       * `name` or a function that returns a valid {@link Operator} `name` for
+       * `name` or a function that returns a valid {@link FullOperator} `name` for
        * a given field name.
        */
       getDefaultOperator?:
         | GetOptionIdentifierType<O>
-        | ((field: GetOptionIdentifierType<F>, misc: { fieldData: ToFullOption<F> }) => string);
+        | ((field: GetOptionIdentifierType<F>, misc: { fieldData: F }) => string);
       /**
        * Returns the default `value` for new rules.
        */
-      getDefaultValue?(rule: R, misc: { fieldData: ToFullOption<F> }): any;
+      getDefaultValue?(rule: R, misc: { fieldData: F }): any;
       /**
-       * This function should return the list of allowed {@link Operator}s
-       * for the given {@link Field} `name`. If `null` is returned, the
+       * This function should return the list of allowed {@link FullOperator}s
+       * for the given {@link FullField} `name`. If `null` is returned, the
        * {@link DefaultOperator}s are used.
        */
       getOperators?(
         field: GetOptionIdentifierType<F>,
-        misc: { fieldData: ToFullOption<F> }
-      ): FlexibleOptionList<Operator> | null;
+        misc: { fieldData: F }
+      ): FlexibleOptionList<FullOperator> | null;
       /**
        * This function should return the type of {@link ValueEditor} (see
        * {@link ValueEditorType}) for the given field `name` and operator `name`.
@@ -592,7 +592,7 @@ export type QueryBuilderProps<
       getValueEditorType?(
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: ToFullOption<F> }
+        misc: { fieldData: F }
       ): ValueEditorType;
       /**
        * This function should return the separator element for a given field
@@ -604,7 +604,7 @@ export type QueryBuilderProps<
       getValueEditorSeparator?(
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: ToFullOption<F> }
+        misc: { fieldData: F }
       ): ReactNode;
       /**
        * This function should return the list of valid {@link ValueSources}
@@ -616,7 +616,7 @@ export type QueryBuilderProps<
       getValueSources?(
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: ToFullOption<F> }
+        misc: { fieldData: F }
       ): ValueSources;
       /**
        * This function should return the `type` of `<input />`
@@ -627,7 +627,7 @@ export type QueryBuilderProps<
       getInputType?(
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: ToFullOption<F> }
+        misc: { fieldData: F }
       ): InputType | null;
       /**
        * This function should return the list of allowed values for the
@@ -638,13 +638,13 @@ export type QueryBuilderProps<
       getValues?(
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: ToFullOption<F> }
+        misc: { fieldData: F }
       ): FlexibleOptionList<Option>;
       /**
        * The return value of this function will be used to apply classnames to the
        * outer `<div>` of the given {@link Rule}.
        */
-      getRuleClassname?(rule: R, misc: { fieldData: ToFullOption<F> }): Classname;
+      getRuleClassname?(rule: R, misc: { fieldData: F }): Classname;
       /**
        * The return value of this function will be used to apply classnames to the
        * outer `<div>` of the given {@link RuleGroup}.
@@ -786,24 +786,35 @@ export type QueryBuilderProps<
     }
   : never;
 
-// const fields: Field<'this' | 'that'>[] = [];
-// const _QB = <RG extends RuleGroupTypeAny, F extends ToFlexibleOption<Field>>(
-//   _p: QueryBuilderProps<RG, F>
+// import { getFirstOption } from '../utils';
+// type ThisThat = 'this' | 'that';
+// const fields: FullField<ThisThat>[] = [];
+// const fieldSelector = (_props: FieldSelectorProps<FullField<ThisThat>>) => _props.value;
+// const valueEditor = (_props: ValueEditorProps<FullField<ThisThat>, string>) =>
+//   getFirstOption(_props.values);
+// const _QB = <RG extends RuleGroupTypeAny, F extends FullField>(
+//   _p: QueryBuilderProps<RG, F, FullOperator, FullCombinator>
 // ) => 1;
 // const _QBC = () =>
 //   _QB({
-//     defaultQuery: { rules: [] } as RuleGroupTypeIC,
 //     fields,
 //     onAddRule: (_rule, _parentPath, _query, _context) => false,
-//     controlElements: { valueEditor: _props => 1 },
+//     controlElements: {
+//       fieldSelector,
+//       valueEditor,
+//     },
+//     defaultQuery: { rules: [] },
 //   });
 // const _QBP: QueryBuilderProps<
-//   RuleGroupTypeIC<RuleType<'this' | 'that'>>,
-//   Field,
-//   Operator,
-//   Combinator
+//   RuleGroupTypeIC<RuleType<ThisThat>>,
+//   FullField<ThisThat>,
+//   FullOperator,
+//   FullCombinator
 // > = {
 //   fields,
 //   onAddRule: (_rule, _parentPath, _query, _context) => false,
-//   controlElements: { valueEditor: _props => 1 },
+//   controlElements: {
+//     fieldSelector: _props => 1,
+//     valueEditor: _props => 1,
+//   },
 // };

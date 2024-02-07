@@ -3,10 +3,11 @@ import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Field,
+  FullField,
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
+import { toFullOption } from '../toFullOption';
 import { parseCEL } from './parseCEL';
 
 const wrapRule = (
@@ -298,7 +299,7 @@ it('mixed and/or', () => {
 });
 
 describe('fields and getValueSources', () => {
-  const fields: Field[] = [
+  const fields: FullField[] = [
     { name: 'f1', label: 'f1' },
     { name: 'f2', label: 'f2', valueSources: ['value'] },
     { name: 'f3', label: 'f3', valueSources: ['field'] },
@@ -307,11 +308,11 @@ describe('fields and getValueSources', () => {
     { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
     { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
     { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
-    { name: 'f9', label: 'f9', comparator: f => f.name === 'f1' },
-    { name: 'f10', label: 'f10', comparator: f => f.group === 'g2' },
-  ];
-  const optionGroups: OptionGroup[] = [{ label: 'Option Group1', options: fields }];
-  const fieldsObject: Record<string, Field> = {};
+    { name: 'f9', label: 'f9', comparator: (f: FullField) => f.name === 'f1' },
+    { name: 'f10', label: 'f10', comparator: (f: FullField) => f.group === 'g2' },
+  ].map(toFullOption);
+  const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
+  const fieldsObject: Record<string, FullField> = {};
   for (const f of fields) {
     fieldsObject[f.name] = f;
   }
@@ -435,10 +436,10 @@ describe('fields and getValueSources', () => {
     // but `f5` is not a valid subordinate field
     testParseCEL(parseCEL(`f10 == f5`, { fields, getValueSources }), wrapRule());
     // independent combinators
-    const fieldsForIC: Field[] = [
+    const fieldsForIC: FullField[] = [
       { name: 'f1', label: 'Field 1' },
       { name: 'f3', label: 'Field 3', valueSources: ['field'] },
-    ];
+    ].map(toFullOption);
     testParseCELic(
       parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', {
         fields: fieldsForIC,

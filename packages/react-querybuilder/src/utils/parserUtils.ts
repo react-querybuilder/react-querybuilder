@@ -1,8 +1,7 @@
 import type {
   DefaultOperatorName,
-  Field,
+  FullField,
   OptionList,
-  ToFlexibleOption,
   ValueSources,
 } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
@@ -10,7 +9,7 @@ import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFlatOptionArray } from './optGroupUtils';
 import { toFullOption } from './toFullOption';
 
-export const getFieldsArray = (fields?: OptionList<Field> | Record<string, Field>) => {
+export const getFieldsArray = (fields?: OptionList<FullField> | Record<string, FullField>) => {
   const fieldsArray = !fields
     ? []
     : Array.isArray(fields)
@@ -28,7 +27,7 @@ export function fieldIsValidUtil({
   subordinateFieldName,
   getValueSources,
 }: {
-  fieldsFlat: ToFlexibleOption<Field>[];
+  fieldsFlat: FullField[];
   getValueSources?: (field: string, operator: string) => ValueSources;
   fieldName: string;
   operator: DefaultOperatorName;
@@ -62,7 +61,7 @@ export function fieldIsValidUtil({
           primaryField,
           fieldsFlat,
           operator
-        ) as Field[];
+        ) as FullField[];
         if (!validSubordinateFields.find(vsf => vsf.name === subordinateFieldName)) {
           valid = false;
         }

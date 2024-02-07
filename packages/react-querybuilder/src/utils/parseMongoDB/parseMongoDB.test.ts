@@ -1,9 +1,10 @@
 import type {
   DefaultRuleGroupType,
-  Field,
+  FullField,
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
+import { toFullOption } from '../toFullOption';
 import { parseMongoDB } from './parseMongoDB';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
@@ -262,14 +263,16 @@ it('parses MongoDB as string', () => {
 it('validates fields', () => {
   const getValueSources = (field: string): ValueSources =>
     field === 'f4' ? ['field'] : ['value', 'field'];
-  const fields: Field[] = [
+  const fields: FullField[] = [
     { name: 'f1', label: 'Field 1', c: '1or2', comparator: 'c' },
     { name: 'f2', label: 'Field 2', c: '1or2', comparator: 'c' },
     { name: 'f3', label: 'Field 3', c: '3', comparator: 'c' },
     { name: 'f4', label: 'Field 4', c: '4', comparator: 'c' },
-  ];
-  const fieldsAsOptGroup: OptionGroup<Field>[] = [{ label: 'OptGroup', options: fields }];
-  const fieldsAsObject: Record<string, Field> = {};
+  ].map(toFullOption);
+  const fieldsAsOptGroup = [
+    { label: 'OptGroup', options: fields },
+  ] satisfies OptionGroup<FullField>[];
+  const fieldsAsObject: Record<string, FullField> = {};
   for (const f of fields) {
     fieldsAsObject[f.name] = f;
   }
@@ -301,9 +304,9 @@ it('validates fields', () => {
     rules: [{ field: 'f1', operator: '=', value: 'f2', valueSource: 'field' }],
   };
 
-  expect(parseMongoDB(mongoDbRulesForFields, { getValueSources, fields })).toEqual(
-    ruleGroupForFields
-  );
+  expect(
+    parseMongoDB(mongoDbRulesForFields, { getValueSources, fields: fields as FullField[] })
+  ).toEqual(ruleGroupForFields);
   expect(
     parseMongoDB(mongoDbRulesForFields, {
       getValueSources,

@@ -1,10 +1,21 @@
-import type { Field, FlexibleOptionList, ToFlexibleOption } from '../types/index.noReact';
+import type { FullField, OptionList } from '../types/index.noReact';
 import { isFlexibleOptionGroupArray } from './optGroupUtils';
+import { toFullOption } from './toFullOption';
 
-type FlexibleField = ToFlexibleOption<Field>;
+const filterByComparator = (field: FullField, operator: string, fieldToCompare: FullField) => {
+  const fullField = toFullOption(field);
+  const fullFieldToCompare = toFullOption(fieldToCompare);
+  if (fullField.value === fullFieldToCompare.value) {
+    return false;
+  }
+  if (typeof fullField.comparator === 'string') {
+    return fullField[fullField.comparator] === fullFieldToCompare[fullField.comparator];
+  }
+  return fullField.comparator!(fullFieldToCompare, operator);
+};
 
 /**
- * For a given {@link Field}, returns the `fields` list filtered for
+ * For a given {@link FullField}, returns the `fields` list filtered for
  * other fields that match by `comparator`. Only fields *other than the
  * one in question* will ever be included, even if `comparator` is `null`
  * or `undefined`. If `comparator` is a string, fields with the same value
@@ -14,14 +25,15 @@ type FlexibleField = ToFlexibleOption<Field>;
  */
 export const filterFieldsByComparator = (
   /** The field in question. */
-  field: FlexibleField,
-  /** The full {@link Field} list to be filtered. */
-  fields: FlexibleOptionList<Field>,
+  field: FullField,
+  /** The full {@link FullField} list to be filtered. */
+  fields: OptionList<FullField>,
   operator: string
 ) => {
   if (!field.comparator) {
-    const filterOutSameField = (f: FlexibleField) =>
-      (f.value ?? f.name) !== (field.value ?? field.name);
+    const filterOutSameField = (f: FullField) =>
+      (f.value ?? /* istanbul ignore next */ f.name) !==
+      (field.value ?? /* istanbul ignore next */ field.name);
     if (isFlexibleOptionGroupArray(fields)) {
       return fields.map(og => ({
         ...og,
@@ -31,21 +43,14 @@ export const filterFieldsByComparator = (
     return fields.filter(filterOutSameField);
   }
 
-  const filterByComparator = (fieldToCompare: FlexibleField) => {
-    if (field.name === fieldToCompare.name) {
-      return false;
-    }
-    if (typeof field.comparator === 'string') {
-      return field[field.comparator] === fieldToCompare[field.comparator];
-    }
-    return field.comparator!(fieldToCompare, operator);
-  };
-
   if (isFlexibleOptionGroupArray(fields)) {
     return fields
-      .map(og => ({ ...og, options: og.options.filter(filterByComparator) }))
+      .map(og => ({
+        ...og,
+        options: og.options.filter(f => filterByComparator(field, operator, f)),
+      }))
       .filter(og => og.options.length > 0);
   }
 
-  return fields.filter(filterByComparator);
+  return fields.filter(f => filterByComparator(field, operator, f));
 };

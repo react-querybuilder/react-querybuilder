@@ -6,7 +6,7 @@ import {
 } from '@react-querybuilder/native';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import type { Option } from 'react-querybuilder';
+import type { FullOption, Option } from 'react-querybuilder';
 import { TestID, joinWith, useValueSelector } from 'react-querybuilder';
 
 export const NativeValueSelectorExample = ({
@@ -18,7 +18,7 @@ export const NativeValueSelectorExample = ({
   listsAsArrays,
   schema,
   testID,
-}: ValueSelectorNativeProps) => {
+}: ValueSelectorNativeProps<FullOption>) => {
   const styles = useMemo(() => {
     if (testID === TestID.combinators) {
       return {

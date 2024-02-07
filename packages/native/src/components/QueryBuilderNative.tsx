@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import type {
-  Combinator,
+  FullCombinator,
   Controls,
-  Field,
+  FullField,
   GetOptionIdentifierType,
-  Operator,
+  FullOperator,
   Path,
+  QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
-  ToFlexibleOption,
 } from 'react-querybuilder';
 import {
-  QueryBuilderContext,
+  QueryBuilderContext as _QBC,
   QueryBuilderStateContext,
   queryBuilderStore,
   useQueryBuilderSetup,
@@ -26,9 +26,9 @@ const rootPath = [] satisfies Path;
 
 const QueryBuilderNativeInternal = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 >({
   props,
   setup,
@@ -36,9 +36,13 @@ const QueryBuilderNativeInternal = <
   props: QueryBuilderNativeProps<RG, F, O, C>;
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
-  const qb = useQueryBuilderSchemaNative(props, setup);
+  const qb = useQueryBuilderSchemaNative<RG, F, O, C>(props, setup);
 
   const { ruleGroup: RuleGroupComponent } = qb.schema.controls;
+
+  const QueryBuilderContext = _QBC as React.Context<
+    QueryBuilderContextProps<F, GetOptionIdentifierType<O>>
+  >;
 
   return (
     <QueryBuilderContext.Provider value={qb.rqbContext}>
@@ -60,9 +64,9 @@ const QueryBuilderNativeInternal = <
 
 export const QueryBuilderNative = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
 ) => {

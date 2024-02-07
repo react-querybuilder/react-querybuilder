@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import type { Controls, Field, ToFullOption } from 'react-querybuilder';
+import type { Controls, FullField } from 'react-querybuilder';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeInlineCombinator } from './NativeInlineCombinator';
 import { NativeNotToggle } from './NativeNotToggle';
@@ -34,7 +34,7 @@ export const defaultNativeControlElements = {
   valueEditor: NativeValueEditor,
   valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelector,
-} satisfies Controls<ToFullOption<Field>, string>;
+} satisfies Controls<FullField, string>;
 
 export const defaultNativeWebControlElements = {
   ...defaultNativeControlElements,
@@ -44,4 +44,4 @@ export const defaultNativeWebControlElements = {
   valueEditor: NativeValueEditorWeb,
   valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelectorWeb,
-} satisfies Controls<ToFullOption<Field>, string>;
+} satisfies Controls<FullField, string>;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { Classnames, Controls, Field, Translations } from 'react-querybuilder';
+import type { Classnames, Controls, FullField, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
@@ -10,7 +10,7 @@ export * from './BootstrapValueEditor';
 export const bootstrapControlElements = {
   notToggle: BootstrapNotToggle,
   valueEditor: BootstrapValueEditor,
-} satisfies Partial<Controls<Field, string>>;
+} satisfies Partial<Controls<FullField, string>>;
 
 export const bootstrapControlClassnames = {
   addGroup: 'btn btn-secondary btn-sm',

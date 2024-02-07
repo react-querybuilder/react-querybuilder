@@ -10,25 +10,21 @@ import {
   useQueryBuilderStore,
 } from '../redux';
 import type {
-  Combinator,
-  Controls,
-  Field,
-  FullOptionList,
-  FullOptionRecord,
+  FullCombinator,
+  FullField,
+  FullOperator,
+  FullOptionMap,
   GetOptionIdentifierType,
-  Operator,
+  GetRuleTypeFromGroupWithFieldAndOperator,
   Path,
   QueryActions,
   QueryBuilderProps,
   QueryValidator,
   RuleGroupProps,
-  RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   Schema,
-  ToFlexibleOption,
-  ToFullOption,
   UpdateableProperties,
   ValidationMap,
   ValueSources,
@@ -67,15 +63,15 @@ const defaultOnLog = (...params: any[]) => {
  */
 export function useQueryBuilderSchema<
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
 ) {
-  type R = RG extends RuleGroupType<infer RT> | RuleGroupTypeIC<infer RT> ? RT : never;
-  type Setup = ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
+  type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
+
   const {
     query: queryProp,
     defaultQuery: defaultQueryProp,
@@ -120,11 +116,11 @@ export function useQueryBuilderSchema<
     getInputTypeMain,
     createRule,
     createRuleGroup,
-  } = setup as Setup;
+  } = setup;
 
   const {
     controlClassnames,
-    controlElements,
+    controlElements: controls,
     debugMode,
     enableDragAndDrop,
     enableMountQueryChange,
@@ -162,9 +158,9 @@ export function useQueryBuilderSchema<
   // been prepared. If `candidateQuery === query`, the user is probably just
   // passing back the parameter from the `onQueryChange` callback.
   const candidateQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
-  const rootGroup = !candidateQuery.id
-    ? prepareRuleGroup(candidateQuery, { idGenerator })
-    : candidateQuery;
+  const rootGroup = (
+    !candidateQuery.id ? prepareRuleGroup(candidateQuery, { idGenerator }) : candidateQuery
+  ) as RuleGroupTypeAny<R>;
 
   // If a new `query` prop is passed in that doesn't match the query in the store,
   // update the store to match the prop _without_ calling `onQueryChange`.
@@ -428,23 +424,20 @@ export function useQueryBuilderSchema<
   }, [rootGroup, validator]);
 
   const schema = useMemo(
-    (): Schema<ToFullOption<F>, GetOptionIdentifierType<O>> => ({
+    (): Schema<F, GetOptionIdentifierType<O>> => ({
       addRuleToNewGroups,
       accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
       classNames: controlClassnames,
       combinators,
-      controls: controlElements as unknown as Controls<ToFullOption<F>, GetOptionIdentifierType<O>>,
+      controls,
       createRule,
       createRuleGroup,
       disabledPaths,
       enableDragAndDrop,
-      fieldMap: fieldMap as unknown as FullOptionRecord<
-        ToFullOption<F>,
-        GetOptionIdentifierType<F>
-      >,
-      fields: fields as unknown as FullOptionList<ToFullOption<F>>,
+      fieldMap: fieldMap as FullOptionMap<F>,
+      fields,
       dispatchQuery,
       getQuery,
       getInputType: getInputTypeMain,
@@ -473,7 +466,7 @@ export function useQueryBuilderSchema<
       autoSelectOperator,
       combinators,
       controlClassnames,
-      controlElements,
+      controls,
       createRule,
       createRuleGroup,
       disabledPaths,

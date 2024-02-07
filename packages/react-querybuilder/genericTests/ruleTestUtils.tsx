@@ -11,7 +11,7 @@ import type {
   Classnames,
   Controls,
   DragHandleProps,
-  Field,
+  FullField,
   FieldSelectorProps,
   FullOption,
   OperatorSelectorProps,
@@ -19,19 +19,18 @@ import type {
   RuleProps,
   Schema,
   ShiftActionsProps,
-  ToFullOption,
   ValueEditorProps,
 } from '../src/types';
 import { toFullOption } from '../src/utils';
 import { UNUSED } from './utils';
 
-export const getFieldMapFromArray = (fieldArray: Field[]) =>
+export const getFieldMapFromArray = (fieldArray: FullField[]) =>
   Object.fromEntries(fieldArray.map(f => [f.name, toFullOption(f)]));
 
 export const ruleDefaultFields = [
   { name: 'field1', label: 'Field 1' },
   { name: 'field2', label: 'Field 2' },
-].map(toFullOption) satisfies ToFullOption<Field>[];
+].map(toFullOption) satisfies FullField[];
 
 export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
 
@@ -45,7 +44,7 @@ export const ruleControls = {
   cloneRuleAction: (props: ActionProps) => (
     <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
-  fieldSelector: (props: FieldSelectorProps) => (
+  fieldSelector: (props: FieldSelectorProps<FullField>) => (
     <select
       data-testid={TestID.fields}
       className={props.className}
@@ -85,7 +84,7 @@ export const ruleControls = {
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
     </div>
   ),
-} satisfies Partial<Controls<Field, string>>;
+} satisfies Partial<Controls<FullField, string>>;
 
 export const ruleClassnames = {
   cloneRule: 'custom-cloneRule-class',

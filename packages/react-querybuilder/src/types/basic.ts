@@ -1,4 +1,5 @@
-import type { FlexibleOptionList, Option } from './options';
+import type { SetOptional } from 'type-fest';
+import type { FlexibleOptionList, FullOption, Option } from './options';
 import type { RuleValidator } from './validation';
 
 /**
@@ -72,17 +73,22 @@ export type InputType =
   | (string & {});
 
 /**
- * Field definition used in the `fields` prop of {@link QueryBuilder}.
- * The `name`, `operators`, and `values` properties can be narrowed
- * with generics.
+ * Full field definition used in the `fields` prop of {@link QueryBuilder}.
+ * This type requires both `name` and `value`, but the `fields` prop itself
+ * can use a {@link FlexibleOption} where only one of `name` or `value` is
+ * required (along with `label`), or {@link Field} where only `name` and
+ * `label` are required.
+ *
+ * The `name`/`value`, `operators`, and `values` properties of this interface
+ * can be narrowed with generics.
  */
-export interface Field<
+export interface FullField<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
   ValueObj extends Option = Option<ValueName>,
-> extends Option<FieldName>,
+> extends FullOption<FieldName>,
     HasOptionalClassName {
   id?: string;
   operators?: FlexibleOptionList<OperatorObj>;
@@ -94,8 +100,23 @@ export interface Field<
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
-  comparator?: string | ((f: Field, operator: string) => boolean);
+  comparator?: string | ((f: FullField, operator: string) => boolean);
 }
+
+/**
+ * Field definition used in the `fields` prop of {@link QueryBuilder}.
+ * This type is an extension of {@link FullField} where only `name` and
+ * `label` are required.
+ *
+ * The `name`/`value`, `operators`, and `values` properties of this interface
+ * can be narrowed with generics.
+ */
+export type Field<
+  FieldName extends string = string,
+  OperatorName extends string = string,
+  ValueName extends string = string,
+  OperatorObj extends Option = Option<OperatorName>,
+> = SetOptional<FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
 
 /**
  * Utility type to make one or more properties required.
@@ -103,24 +124,55 @@ export interface Field<
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 /**
- * Allowed values of the {@link Operator} property `arity`. A value of `"unary"` or
+ * Allowed values of the {@link FullOperator} property `arity`. A value of `"unary"` or
  * a number less than two will cause the default {@link ValueEditor} to render `null`.
  */
 export type Arity = number | 'unary' | 'binary' | 'ternary';
 
 /**
- * Operator definition used in the `operators`/`getOperators` props of {@link QueryBuilder}.
- * The `name` property can be narrowed with a generic.
+ * Full operator definition used in the `operators`/`getOperators` props of
+ * {@link QueryBuilder}. This type requires both `name` and `value`, but the
+ * `operators`/`getOperators` props themselves can use a {@link FlexibleOption}
+ * where only one of `name` or `value` is required, or {@link FullOperator} where
+ * only `name` is required.
+ *
+ * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export interface Operator<N extends string = string> extends Option<N>, HasOptionalClassName {
+export interface FullOperator<N extends string = string>
+  extends FullOption<N>,
+    HasOptionalClassName {
   arity?: Arity;
 }
 
 /**
- * Combinator definition used in the `combinators` prop of {@link QueryBuilder}.
- * The `name` property can be narrowed with a generic.
+ * Operator definition used in the `operators`/`getOperators` props of
+ * {@link QueryBuilder}. This type is an extension of {@link FullOperator}
+ * where only `name` and `label` are required.
+ *
+ * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export interface Combinator<N extends string = string> extends Option<N>, HasOptionalClassName {}
+export type Operator<N extends string = string> = SetOptional<FullOperator<N>, 'value'>;
+
+/**
+ * Full combinator definition used in the `combinators` prop of {@link QueryBuilder}.
+ * This type requires both `name` and `value`, but the `combinators` prop itself
+ * can use a {@link FlexibleOption} where only one of `name` or `value` is required,
+ * or {@link Combinator} where only `name` is required.
+ *
+ * The `name`/`value` properties of this interface can be narrowed with generics.
+ */
+export interface FullCombinator<N extends string = string>
+  extends FullOption<N>,
+    HasOptionalClassName {}
+
+/**
+ * Combinator definition used in the `combinators` prop of {@link QueryBuilder}.
+ * This type is an extension of {@link FullCombinator} where only `name` and
+ * `label` are required.
+ *
+ * The `name`/`value` properties of this interface can be narrowed with generics.
+ */
+export type Combinator<N extends string = string> = SetOptional<FullCombinator<N>, 'value'>;
 
 /**
  * Methods used by {@link parseNumbers}.

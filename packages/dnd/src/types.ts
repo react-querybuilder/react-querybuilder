@@ -2,14 +2,13 @@ import type { ReactElement } from 'react';
 import type {
   Controls,
   DraggedItem,
-  Field,
+  FullField,
   InlineCombinatorProps,
   Path,
   QueryActions,
   QueryBuilderContextProviderProps,
   RuleGroupProps,
   RuleProps,
-  ToFlexibleOption,
 } from 'react-querybuilder';
 
 /**
@@ -85,9 +84,6 @@ export type QueryBuilderDndContextProps = {
   useDrag?: (typeof import('react-dnd'))['useDrag'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop?: (typeof import('react-dnd'))['useDrop'];
-  baseControls: Pick<
-    Controls<ToFlexibleOption<Field>, string>,
-    'rule' | 'ruleGroup' | 'combinatorSelector'
-  >;
+  baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
   canDrop?(params: CustomCanDropParams): boolean;
 };

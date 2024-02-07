@@ -7,5 +7,6 @@
     "noEmit": true,
     "resolveJsonModule": true
   },
-  "include": ["./*/src"]
+  "exclude": ["./next/app/layout.tsx"],
+  "include": ["./*/src", "./next/app"]
 }

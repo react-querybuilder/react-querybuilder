@@ -13,11 +13,11 @@ import type {
   CombinatorSelectorProps,
   Controls,
   DragHandleProps,
-  Field,
+  FullField,
   FieldSelectorProps,
   FullOption,
   NotToggleProps,
-  Operator,
+  FullOperator,
   OperatorSelectorProps,
   QueryActions,
   RuleGroupProps,
@@ -83,13 +83,13 @@ export const ruleGroupControls = {
       {translations.notToggle.label}
     </label>
   ),
-  fieldSelector: (props: FieldSelectorProps) => (
+  fieldSelector: (props: FieldSelectorProps<FullField>) => (
     <select
       data-testid={TestID.fields}
       className={props.className}
       value={props.value}
       onChange={e => props.handleOnChange(e.target.value)}>
-      <option value={(props.options[0] as Field).name}>{props.options[0].label}</option>
+      <option value={(props.options[0] as FullField).name}>{props.options[0].label}</option>
     </select>
   ),
   operatorSelector: (props: OperatorSelectorProps) => (
@@ -98,7 +98,7 @@ export const ruleGroupControls = {
       className={props.className}
       value={props.value}
       onChange={e => props.handleOnChange(e.target.value)}>
-      <option value={(props.options[0] as Operator).name}>{props.options[0].label}</option>
+      <option value={(props.options[0] as FullOperator).name}>{props.options[0].label}</option>
     </select>
   ),
   valueEditor: (props: ValueEditorProps) => (
@@ -120,7 +120,7 @@ export const ruleGroupControls = {
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
     </div>
   ),
-} satisfies Partial<Controls<Field, string>>;
+} satisfies Partial<Controls<FullField, string>>;
 
 export const ruleGroupClassnames = {
   header: 'custom-header-class',

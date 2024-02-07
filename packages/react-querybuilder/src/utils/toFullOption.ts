@@ -19,11 +19,11 @@ const isOptionWithValue = (opt: FlexibleOption): opt is ValueOption =>
   isPojo(opt) && 'value' in opt && typeof opt.value === 'string';
 
 /**
- * Converts an {@link Option} or {@link FlexibleOption} into a {@link FullOption}.
- * Full options are left unchanged.
+ * Converts an {@link Option} or {@link ValueOption} (i.e., {@link FlexibleOption})
+ * into a {@link FullOption}. Full options are left unchanged.
  */
 function toFullOption<N extends string>(opt: FlexibleOption<N>): FullOption<N> {
-  const recipe: (o: FlexibleOption) => FullOption<N> = produce(draft => {
+  const recipe: (o: FlexibleOption<N>) => FullOption<N> = produce(draft => {
     if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
       draft.value = draft.name;
     } else if (!isOptionWithName(draft) && isOptionWithValue(draft)) {
@@ -44,13 +44,13 @@ function toFullOptionList<Opt extends FlexibleOption, OptList extends FlexibleOp
     return [] as unknown as FullOptionList<Opt>;
   }
 
-  const recipe: (ol: FlexibleOptionList<FlexibleOption>) => FullOptionList<Opt> = produce(draft => {
+  const recipe: (ol: FlexibleOptionList<Opt>) => FullOptionList<Opt> = produce(draft => {
     if (isFlexibleOptionGroupArray(draft)) {
       for (const optGroup of draft) {
         optGroup.options.forEach((opt, idx) => (optGroup.options[idx] = toFullOption(opt)));
       }
     } else {
-      draft.forEach((opt, idx) => (draft[idx] = toFullOption(opt)));
+      (draft as Opt[]).forEach((opt, idx) => (draft[idx] = toFullOption(opt)));
     }
   });
 
@@ -69,7 +69,7 @@ function toFullOptionMap<OptMap extends FlexibleOptionMap<FlexibleOption>>(
 
   return Object.fromEntries(
     (Object.entries(optMap) as [K, V][]).map(([k, v]) => [k, toFullOption(v)])
-  ) as unknown as OptMap extends FlexibleOptionMap<infer V, infer K>
+  ) as OptMap extends FlexibleOptionMap<infer V, infer K>
     ? FullOptionMap<ToFullOption<V>, K>
     : never;
 }

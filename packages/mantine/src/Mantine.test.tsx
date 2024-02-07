@@ -172,7 +172,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     field: 'f1',
     operator: '=',
     valueSource: 'value',
-    fieldData: { name: 'f1', label: 'Field 1' },
+    fieldData: toFullOption({ name: 'f1', label: 'Field 1' }),
     value: 'opt1',
     inputType: 'text',
     type: 'text',
