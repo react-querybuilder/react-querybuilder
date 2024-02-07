@@ -12,8 +12,6 @@ import type {
   FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
-  OptionGroup,
-  OptionList,
   QueryBuilderProps,
   RuleGroupTypeAny,
   RuleType,
@@ -124,7 +122,7 @@ export const useQueryBuilderSetup = <
     [defaultField, fieldsPropOriginal]
   );
 
-  const fields = useMemo((): OptionList<F> => {
+  const fields = useMemo((): FullOptionList<F> => {
     const flds = (
       Array.isArray(fieldsProp)
         ? toFullOptionList(fieldsProp)
@@ -134,7 +132,7 @@ export const useQueryBuilderSetup = <
     ) as FullOptionList<F>;
     if (isFlexibleOptionGroupArray(flds)) {
       if (autoSelectField) {
-        return uniqOptGroups(flds) as OptionGroup<F>[];
+        return uniqOptGroups(flds) as FullOptionList<F>;
       } else {
         return uniqOptGroups([
           {
@@ -142,13 +140,13 @@ export const useQueryBuilderSetup = <
             options: [defaultField],
           },
           ...flds,
-        ]) as OptionGroup<F>[];
+        ]) as FullOptionList<F>;
       }
     } else {
       if (autoSelectField) {
-        return uniqByIdentifier(flds as F[]);
+        return uniqByIdentifier(flds as F[]) as FullOptionList<F>;
       } else {
-        return uniqByIdentifier([defaultField, ...(flds as F[])]) as F[];
+        return uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>;
       }
     }
   }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
