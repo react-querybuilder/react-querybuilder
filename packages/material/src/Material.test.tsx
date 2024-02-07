@@ -239,7 +239,7 @@ describe('value editor', () => {
           valueSource="value"
           field="f1"
           operator="="
-          fieldData={{ name: 'f1', label: 'Field 1' }}
+          fieldData={toFullOption({ name: 'f1', label: 'Field 1' })}
           schema={basicSchema}
           rule={{ field: '', operator: '', value: '' }}
         />

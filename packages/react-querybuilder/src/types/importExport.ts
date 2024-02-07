@@ -1,6 +1,6 @@
 import type { Field, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from './json-logic-js';
-import type { FlexibleOptionList, OptionList, ToFullOption } from './options';
+import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
 import type { QueryValidator } from './validation';
@@ -134,7 +134,7 @@ export type ValueProcessorOptions = Pick<
    * The full field object, if `fields` was provided in the
    * {@link formatQuery} options parameter.
    */
-  fieldData?: ToFullOption<Field>;
+  fieldData?: Field;
 };
 
 /**

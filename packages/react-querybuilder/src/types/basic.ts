@@ -1,4 +1,5 @@
-import type { FlexibleOptionList, Option } from './options';
+import type { SetOptional } from 'type-fest';
+import type { FlexibleOptionList, FullOption, Option } from './options';
 import type { RuleValidator } from './validation';
 
 /**
@@ -82,7 +83,7 @@ export interface Field<
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
   ValueObj extends Option = Option<ValueName>,
-> extends Option<FieldName>,
+> extends FullOption<FieldName>,
     HasOptionalClassName {
   id?: string;
   operators?: FlexibleOptionList<OperatorObj>;
@@ -96,6 +97,13 @@ export interface Field<
   validator?: RuleValidator;
   comparator?: string | ((f: Field, operator: string) => boolean);
 }
+
+export type FieldLegacy<
+  FieldName extends string = string,
+  OperatorName extends string = string,
+  ValueName extends string = string,
+  OperatorObj extends Option = Option<OperatorName>,
+> = SetOptional<Field<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
 
 /**
  * Utility type to make one or more properties required.
@@ -112,7 +120,7 @@ export type Arity = number | 'unary' | 'binary' | 'ternary';
  * Operator definition used in the `operators`/`getOperators` props of {@link QueryBuilder}.
  * The `name` property can be narrowed with a generic.
  */
-export interface Operator<N extends string = string> extends Option<N>, HasOptionalClassName {
+export interface Operator<N extends string = string> extends FullOption<N>, HasOptionalClassName {
   arity?: Arity;
 }
 
@@ -120,7 +128,9 @@ export interface Operator<N extends string = string> extends Option<N>, HasOptio
  * Combinator definition used in the `combinators` prop of {@link QueryBuilder}.
  * The `name` property can be narrowed with a generic.
  */
-export interface Combinator<N extends string = string> extends Option<N>, HasOptionalClassName {}
+export interface Combinator<N extends string = string>
+  extends FullOption<N>,
+    HasOptionalClassName {}
 
 /**
  * Methods used by {@link parseNumbers}.

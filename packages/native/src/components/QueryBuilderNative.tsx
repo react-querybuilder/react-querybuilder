@@ -10,9 +10,6 @@ import type {
   QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
-  Schema,
-  ToFlexibleOption,
-  ToFullOption,
 } from 'react-querybuilder';
 import {
   QueryBuilderContext as _QBC,
@@ -29,9 +26,9 @@ const rootPath = [] satisfies Path;
 
 const QueryBuilderNativeInternal = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends Field,
+  O extends Operator,
+  C extends Combinator,
 >({
   props,
   setup,
@@ -54,7 +51,7 @@ const QueryBuilderNativeInternal = <
         {...qb.combinatorPropObject}
         path={rootPath}
         translations={qb.translations}
-        schema={qb.schema as Schema<ToFullOption<ToFullOption<F>>, GetOptionIdentifierType<O>>}
+        schema={qb.schema}
         actions={qb.actions}
         id={qb.rootGroup.id}
         disabled={qb.rootGroupDisabled}
@@ -67,9 +64,9 @@ const QueryBuilderNativeInternal = <
 
 export const QueryBuilderNative = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends Field,
+  O extends Operator,
+  C extends Combinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
 ) => {

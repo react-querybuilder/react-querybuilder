@@ -14,6 +14,7 @@ import type {
   Controls,
   Field,
   FullOptionList,
+  FullOptionMap,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
   Operator,
@@ -26,8 +27,6 @@ import type {
   RuleGroupTypeIC,
   RuleType,
   Schema,
-  ToFlexibleOption,
-  ToFullOption,
   UpdateableProperties,
   ValidationMap,
   ValueSources,
@@ -66,9 +65,9 @@ const defaultOnLog = (...params: any[]) => {
  */
 export function useQueryBuilderSchema<
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends Field,
+  O extends Operator,
+  C extends Combinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
@@ -427,20 +426,20 @@ export function useQueryBuilderSchema<
   }, [rootGroup, validator]);
 
   const schema = useMemo(
-    (): Schema<ToFullOption<F>, GetOptionIdentifierType<O>> => ({
+    (): Schema<F, GetOptionIdentifierType<O>> => ({
       addRuleToNewGroups,
       accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
       classNames: controlClassnames,
       combinators,
-      controls: controlElements as unknown as Controls<ToFullOption<F>, GetOptionIdentifierType<O>>,
+      controls: controlElements as Controls<F, GetOptionIdentifierType<O>>,
       createRule,
       createRuleGroup,
       disabledPaths,
       enableDragAndDrop,
-      fieldMap,
-      fields: fields as unknown as FullOptionList<ToFullOption<F>>,
+      fieldMap: fieldMap as FullOptionMap<F>,
+      fields: fields as FullOptionList<F>,
       dispatchQuery,
       getQuery,
       getInputType: getInputTypeMain,

@@ -38,7 +38,8 @@ export const filterFieldsByComparator = (
 ) => {
   if (!field.comparator) {
     const filterOutSameField = (f: FlexibleField) =>
-      (f.value ?? f.name) !== (field.value ?? field.name);
+      (f.value ?? /* istanbul ignore next */ f.name) !==
+      (field.value ?? /* istanbul ignore next */ field.name);
     if (isFlexibleOptionGroupArray(fields)) {
       return fields.map(og => ({
         ...og,

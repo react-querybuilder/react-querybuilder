@@ -2,7 +2,7 @@ import { teal } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { useState } from 'react';
-import type { Field, RuleGroupType } from 'react-querybuilder';
+import type { FieldLegacy, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
 import './styles.scss';
 
@@ -14,7 +14,7 @@ const muiTheme = createTheme({
   },
 });
 
-const fields: Field[] = [
+const fields: FieldLegacy[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

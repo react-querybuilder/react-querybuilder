@@ -55,7 +55,7 @@ const defaultValueSelectorProps: ValueSelectorProps = {
 
 const valueEditorAsSelectProps: ValueEditorProps = {
   field: 'TEST',
-  fieldData: { name: 'TEST', label: 'Test' },
+  fieldData: toFullOption({ name: 'TEST', label: 'Test' }),
   operator: '=',
   handleOnChange: () => {},
   level: 0,

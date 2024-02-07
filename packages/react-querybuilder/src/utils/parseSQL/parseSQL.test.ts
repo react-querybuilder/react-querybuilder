@@ -6,6 +6,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
+import { toFullOption } from '../toFullOption';
 import { parseSQL } from './parseSQL';
 import { isWildcardsOnly } from './utils';
 
@@ -318,10 +319,10 @@ describe('options', () => {
       { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
       { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
       { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
-      { name: 'f9', label: 'f9', comparator: f => f.name === 'f1' },
-      { name: 'f10', label: 'f10', comparator: f => f.group === 'g2' },
-    ];
-    const optionGroups: OptionGroup[] = [{ label: 'Option Group1', options: fields }];
+      { name: 'f9', label: 'f9', comparator: (f: Field) => f.name === 'f1' },
+      { name: 'f10', label: 'f10', comparator: (f: Field) => f.group === 'g2' },
+    ].map(toFullOption);
+    const optionGroups: OptionGroup<Field>[] = [{ label: 'Option Group1', options: fields }];
     const getValueSources = (): ValueSources => ['field'];
 
     it('sets the valueSource when fields are valid', () => {

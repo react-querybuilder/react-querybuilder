@@ -1,7 +1,7 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import { useState } from 'react';
-import type { Field, RuleGroupType } from 'react-querybuilder';
+import type { FieldLegacy, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.scss';
 
@@ -12,7 +12,7 @@ const chakraTheme = extendTheme({
   },
 });
 
-const fields: Field[] = [
+const fields: FieldLegacy[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];

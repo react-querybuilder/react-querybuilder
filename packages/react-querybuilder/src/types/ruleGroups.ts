@@ -1,5 +1,4 @@
 import type { Combinator, Operator, Path, ValueSource } from './basic';
-import type { ToFullOption } from './options';
 
 /**
  * Properties common to both rules and groups.
@@ -119,14 +118,14 @@ export type DefaultOperatorName =
 /**
  * A {@link Combinator} definition with a {@link DefaultCombinatorName} `name` property.
  */
-export type DefaultCombinator = ToFullOption<Combinator<DefaultCombinatorName>>;
+export type DefaultCombinator = Combinator<DefaultCombinatorName>;
 
 /**
  * A {@link Combinator} definition with a {@link DefaultCombinatorNameExtended} `name` property.
  */
-export type DefaultCombinatorExtended = ToFullOption<Combinator<DefaultCombinatorNameExtended>>;
+export type DefaultCombinatorExtended = Combinator<DefaultCombinatorNameExtended>;
 
 /**
  * An {@link Operator} definition with a {@link DefaultOperatorName} `name` property.
  */
-export type DefaultOperator = ToFullOption<Operator<DefaultOperatorName>>;
+export type DefaultOperator = Operator<DefaultOperatorName>;

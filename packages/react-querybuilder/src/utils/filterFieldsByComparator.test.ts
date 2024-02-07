@@ -1,5 +1,6 @@
 import type { Field, OptionGroup } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
+import { toFullOption } from './toFullOption';
 
 const fields: Field[] = [
   { name: 'f0', label: 'f0' },
@@ -10,9 +11,9 @@ const fields: Field[] = [
   { name: 'f5', label: 'f5', comparator: 'group', group: 'g1' },
   { name: 'f6', label: 'f6', comparator: 'group', group: 'g2' },
   { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
-  { name: 'f8', label: 'f8', comparator: f => f.name === 'f1' },
-  { name: 'f9', label: 'f9', comparator: f => f.group === 'g2' },
-];
+  { name: 'f8', label: 'f8', comparator: (f: Field) => f.name === 'f1' },
+  { name: 'f9', label: 'f9', comparator: (f: Field) => f.group === 'g2' },
+].map(toFullOption);
 const optionGroups: OptionGroup[] = [{ label: 'Option Group1', options: fields }];
 
 it('filters fields by comparator', () => {

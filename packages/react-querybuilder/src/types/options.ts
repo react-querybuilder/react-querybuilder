@@ -19,7 +19,7 @@ export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
  * Do not use this type directly. Use {@link Option}, {@link ValueOption},
  * {@link FullOption}, or {@link FlexibleOption} instead.
  */
-export interface BaseOption<N extends string> {
+export interface BaseOption<N extends string = string> {
   name?: N;
   value?: N;
   label: string;
@@ -52,16 +52,7 @@ export type FlexibleOption<N extends string = string> = RequireAtLeastOne<
 /**
  * Utility type to turn an {@link Option} into a {@link FlexibleOption}.
  */
-export type ToFlexibleOption<Opt extends FlexibleOption> = RequireAtLeastOne<
-  ToFullOption<Opt>,
-  'name' | 'value'
->;
-// Old way:
-// export type ToFlexibleOption<Opt extends Option | ValueOption> = Opt extends
-//   | Option<infer NameType>
-//   | ValueOption<infer NameType>
-//   ? Omit<Opt, 'name' | 'value'> & { [x: string]: any } & FlexibleOption<NameType>
-//   : never;
+export type ToFlexibleOption<Opt extends BaseOption> = RequireAtLeastOne<Opt, 'name' | 'value'>;
 
 /**
  * A generic {@link Option} requiring `name` _and_ `value` properties.
@@ -76,9 +67,7 @@ export interface FullOption<N extends string = string>
  * Utility type to turn an {@link Option}, {@link ValueOption} or
  * {@link FlexibleOption} into a {@link FullOption}.
  */
-// TODO: Use SetRequired?
-// export type ToFullOption<Opt extends FlexibleOption> = SetRequired<Opt, 'name' | 'value'>;
-export type ToFullOption<Opt extends FlexibleOption> = Opt extends FullOption
+export type ToFullOption<Opt extends BaseOption> = Opt extends FullOption
   ? Opt
   : Opt extends FlexibleOption<infer IdentifierType>
     ? Opt & FullOption<IdentifierType>
@@ -100,9 +89,9 @@ export type OptionGroup<Opt extends FlexibleOption = Option> = {
 /**
  * A {@link FlexibleOption} group within a {@link FlexibleOptionList}.
  */
-export type FlexibleOptionGroup<Opt extends FlexibleOption = FlexibleOption> = {
+export type FlexibleOptionGroup<Opt extends BaseOption = FlexibleOption> = {
   label: string;
-  options: Opt[];
+  options: (Opt extends FlexibleOption ? Opt : ToFlexibleOption<Opt>)[];
 };
 
 /**
@@ -114,16 +103,16 @@ export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[]
  * An array of options or option groups, like {@link OptionList}, but each member may
  * use either `name` or `value` as the primary identifier.
  */
-export type FlexibleOptionList<Opt extends FlexibleOption> = Opt extends FlexibleOption
-  ? ToFlexibleOption<Opt>[] | FlexibleOptionGroup<ToFlexibleOption<Opt>>[]
-  : never;
+export type FlexibleOptionList<Opt extends BaseOption> =
+  | ToFlexibleOption<Opt>[]
+  | FlexibleOptionGroup<ToFlexibleOption<Opt>>[];
 
 /**
  * An array of options or option groups, like {@link OptionList}, but using
  * {@link FullOption} instead of {@link Option}. This means that every member is
  * guaranteed to have both `name` and `value`.
  */
-export type FullOptionList<Opt extends FlexibleOption> = Opt extends FullOption
+export type FullOptionList<Opt extends BaseOption> = Opt extends FullOption
   ? Opt[] | OptionGroup<Opt>[]
   : ToFullOption<Opt>[] | OptionGroup<ToFullOption<Opt>>[];
 
@@ -134,7 +123,7 @@ export type FlexibleOptionMap<
   V extends FlexibleOption,
   K extends string = GetOptionIdentifierType<V>,
 > = {
-  [k in K]?: V;
+  [k in K]?: ToFlexibleOption<V>;
 };
 
 /**

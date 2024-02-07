@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
+import type { FullOption } from 'react-querybuilder';
 import { TestID, joinWith, useValueSelector } from 'react-querybuilder';
 import { defaultNativeSelectStyles, defaultNativeStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 
-export const NativeValueSelector = ({
+export const NativeValueSelector = <Opt extends FullOption = FullOption>({
   handleOnChange,
   options: _options,
   value,
@@ -14,7 +15,7 @@ export const NativeValueSelector = ({
   listsAsArrays,
   schema,
   testID,
-}: ValueSelectorNativeProps) => {
+}: ValueSelectorNativeProps<Opt>) => {
   const styles = useMemo(() => {
     if (testID === TestID.combinators) {
       return {

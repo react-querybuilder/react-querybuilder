@@ -1,4 +1,4 @@
-import type { Controls, Field, ToFullOption } from '../types';
+import type { Controls, Field } from '../types';
 import { ActionElement } from './ActionElement';
 import { DragHandle } from './DragHandle';
 import { InlineCombinator } from './InlineCombinator';
@@ -34,4 +34,4 @@ export const defaultControlElements = {
   valueEditor: ValueEditor,
   valueSelector: ValueSelector,
   valueSourceSelector: ValueSelector,
-} satisfies Controls<ToFullOption<Field>, string>;
+} satisfies Controls<Field, string>;

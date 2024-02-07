@@ -4,6 +4,7 @@ import type {
   ActionProps,
   Combinator,
   Field,
+  FullOption,
   InlineCombinatorProps,
   NotToggleProps,
   Operator,
@@ -13,12 +14,9 @@ import type {
   RuleProps,
   Schema,
   ShiftActionsProps,
-  ToFlexibleOption,
-  ToFullOption,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
-
 export type WrapEachPropertyInStyleProp<K> = { [P in keyof K]?: StyleProp<Required<K>[P]> };
 
 interface WithOptionalStyles {
@@ -29,7 +27,7 @@ interface WithOptionalStyleSheets {
   styles?: QueryBuilderNativeStyleSheets;
 }
 
-export interface SchemaNative<F extends ToFullOption<Field>, O extends string>
+export interface SchemaNative<F extends Field, O extends string>
   extends Schema<F, O>,
     WithOptionalStyleSheets {}
 
@@ -77,7 +75,8 @@ export type ActionNativeProps = ActionProps & WithSchemaNative;
 
 export type ShiftActionsNativeProps = ShiftActionsProps & WithSchemaNative;
 
-export type ValueSelectorNativeProps = ValueSelectorProps & WithSchemaNative;
+export type ValueSelectorNativeProps<OptType extends FullOption = FullOption> =
+  ValueSelectorProps<OptType> & WithSchemaNative;
 
 export type ValueEditorNativeProps = ValueEditorProps &
   WithSchemaNative & {
@@ -86,7 +85,7 @@ export type ValueEditorNativeProps = ValueEditorProps &
 
 export type QueryBuilderNativeProps<
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends Field,
+  O extends Operator,
+  C extends Combinator,
 > = QueryBuilderProps<RG, F, O, C> & WithOptionalStyles;

@@ -5,6 +5,7 @@ import type {
   RQBJsonLogic,
   ValueSources,
 } from '../../types/index.noReact';
+import { toFullOption } from '../toFullOption';
 import { parseJsonLogic } from './parseJsonLogic';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
@@ -324,7 +325,7 @@ it('validates fields', () => {
     { name: 'f2', label: 'Field 2', c: '1or2', comparator: 'c' },
     { name: 'f3', label: 'Field 3', c: '3', comparator: 'c' },
     { name: 'f4', label: 'Field 4', c: '4', comparator: 'c' },
-  ];
+  ].map(toFullOption);
   const fieldsAsOptGroup: OptionGroup<Field>[] = [{ label: 'OptGroup', options: fields }];
   const fieldsAsObject: Record<string, Field> = {};
   for (const f of fields) {

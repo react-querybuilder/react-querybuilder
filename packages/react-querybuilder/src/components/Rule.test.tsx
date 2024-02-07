@@ -248,23 +248,21 @@ describe('locked rule', () => {
 
 describe('valueSource', () => {
   const valueSources: ValueSources = ['value', 'field'];
-  const fields = (
-    [
-      {
-        name: 'fvsa',
-        label: 'Field w/ valueSources array',
-        valueSources,
-        comparator: f => f.label.includes('comparator'),
-      },
-      {
-        name: 'fvsf',
-        label: 'Field w/ valueSources function',
-        valueSources: () => valueSources,
-      },
-      { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
-      { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
-    ] satisfies Field[]
-  ).map(toFullOption);
+  const fields = [
+    {
+      name: 'fvsa',
+      label: 'Field w/ valueSources array',
+      valueSources,
+      comparator: (f: Field) => f.label.includes('comparator'),
+    },
+    {
+      name: 'fvsf',
+      label: 'Field w/ valueSources function',
+      valueSources: () => valueSources,
+    },
+    { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
+    { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
+  ].map(toFullOption) satisfies Field[];
   const fieldMap = getFieldMapFromArray(fields);
   const getValueSources = (): ValueSources => valueSources;
 

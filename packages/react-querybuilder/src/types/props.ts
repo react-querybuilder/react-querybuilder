@@ -1,5 +1,5 @@
 import type { Classname, Combinator, Field, Operator, Path, ValueSource } from './basic';
-import type { FullOption, FullOptionList, Option, ToFlexibleOption, ToFullOption } from './options';
+import type { FullOption, FullOptionList, Option, ToFullOption } from './options';
 import type { Schema, TranslationWithLabel } from './propsUsingReact';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleOrGroupArray } from './ruleGroupsIC';
@@ -8,10 +8,7 @@ import type { ValidationResult } from './validation';
 /**
  * Base interface for all subcomponents.
  */
-export interface CommonSubComponentProps<
-  F extends FullOption = ToFullOption<Field>,
-  O extends string = string,
-> {
+export interface CommonSubComponentProps<F extends FullOption = Field, O extends string = string> {
   /**
    * CSS classNames to be applied.
    *
@@ -57,10 +54,8 @@ export interface CommonSubComponentProps<
 /**
  * Base interface for selectors and editors.
  */
-export interface SelectorOrEditorProps<
-  F extends FullOption = ToFullOption<Field>,
-  O extends string = string,
-> extends CommonSubComponentProps<F, O> {
+export interface SelectorOrEditorProps<F extends FullOption = Field, O extends string = string>
+  extends CommonSubComponentProps<F, O> {
   value?: string;
   handleOnChange(value: any): void;
 }
@@ -99,8 +94,8 @@ export interface CombinatorSelectorProps extends BaseSelectorProps<Combinator> {
 /**
  * Props for `fieldSelector` components.
  */
-export interface FieldSelectorProps<F extends ToFlexibleOption<Field> = Field>
-  extends BaseSelectorProps<ToFullOption<F>>,
+export interface FieldSelectorProps<F extends Field = Field>
+  extends BaseSelectorProps<F>,
     CommonRuleSubComponentProps {
   operator?: F extends Field<string, infer OperatorName> ? OperatorName : string;
 }
@@ -119,7 +114,7 @@ export interface OperatorSelectorProps
  * Props for `valueSourceSelector` components.
  */
 export interface ValueSourceSelectorProps
-  extends BaseSelectorProps<Option<ValueSource>>,
+  extends BaseSelectorProps<FullOption<ValueSource>>,
     CommonRuleSubComponentProps {
   field: string;
   fieldData: Field;

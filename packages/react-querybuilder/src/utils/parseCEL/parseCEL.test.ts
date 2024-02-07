@@ -7,6 +7,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
+import { toFullOption } from '../toFullOption';
 import { parseCEL } from './parseCEL';
 
 const wrapRule = (
@@ -307,10 +308,10 @@ describe('fields and getValueSources', () => {
     { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
     { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
     { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
-    { name: 'f9', label: 'f9', comparator: f => f.name === 'f1' },
-    { name: 'f10', label: 'f10', comparator: f => f.group === 'g2' },
-  ];
-  const optionGroups: OptionGroup[] = [{ label: 'Option Group1', options: fields }];
+    { name: 'f9', label: 'f9', comparator: (f: Field) => f.name === 'f1' },
+    { name: 'f10', label: 'f10', comparator: (f: Field) => f.group === 'g2' },
+  ].map(toFullOption);
+  const optionGroups: OptionGroup<Field>[] = [{ label: 'Option Group1', options: fields }];
   const fieldsObject: Record<string, Field> = {};
   for (const f of fields) {
     fieldsObject[f.name] = f;
@@ -438,7 +439,7 @@ describe('fields and getValueSources', () => {
     const fieldsForIC: Field[] = [
       { name: 'f1', label: 'Field 1' },
       { name: 'f3', label: 'Field 3', valueSources: ['field'] },
-    ];
+    ].map(toFullOption);
     testParseCELic(
       parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', {
         fields: fieldsForIC,

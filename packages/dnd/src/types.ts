@@ -9,7 +9,6 @@ import type {
   QueryBuilderContextProviderProps,
   RuleGroupProps,
   RuleProps,
-  ToFlexibleOption,
 } from 'react-querybuilder';
 
 /**
@@ -85,9 +84,6 @@ export type QueryBuilderDndContextProps = {
   useDrag?: (typeof import('react-dnd'))['useDrag'];
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop?: (typeof import('react-dnd'))['useDrop'];
-  baseControls: Pick<
-    Controls<ToFlexibleOption<Field>, string>,
-    'rule' | 'ruleGroup' | 'combinatorSelector'
-  >;
+  baseControls: Pick<Controls<Field, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
   canDrop?(params: CustomCanDropParams): boolean;
 };

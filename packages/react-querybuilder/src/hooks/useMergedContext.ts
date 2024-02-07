@@ -8,7 +8,6 @@ import type {
   FieldSelectorProps,
   OperatorSelectorProps,
   QueryBuilderContextProps,
-  ToFlexibleOption,
   TranslationsFull,
   ValueSourceSelectorProps,
 } from '../types';
@@ -16,17 +15,14 @@ import { mergeClassnames, mergeTranslations } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextProps<
-  F extends ToFlexibleOption<Field> = Field,
+  F extends Field = Field,
   O extends string = string,
 > = QueryBuilderContextProps<F, O>;
 
 /**
  * Merges inherited context values with props, giving precedence to props.
  */
-export const useMergedContext = <
-  F extends ToFlexibleOption<Field> = Field,
-  O extends string = string,
->(
+export const useMergedContext = <F extends Field = Field, O extends string = string>(
   props: UseMergedContextProps<F, O>
 ) => {
   const rqbContext = useContext(QueryBuilderContext) as QueryBuilderContextProps<F, O>;

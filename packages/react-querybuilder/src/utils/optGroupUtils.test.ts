@@ -1,4 +1,4 @@
-import type { FlexibleOption } from '../types';
+import type { FullOption } from '../types';
 import {
   getFirstOption,
   isFlexibleOptionGroupArray,
@@ -6,6 +6,7 @@ import {
   isOptionGroupArray,
   toFlatOptionArray,
 } from './optGroupUtils';
+import { toFullOption } from './toFullOption';
 
 it('identifies option group arrays', () => {
   expect(isOptionGroupArray([])).toBe(false);
@@ -60,11 +61,11 @@ it('identifies full option group arrays', () => {
 });
 
 describe('toFlatOptionArray', () => {
-  const arr: FlexibleOption[] = [
+  const arr: FullOption[] = [
     { name: 'test1', label: 'Test1' },
     { name: 'test2', label: 'Test2' },
     { name: 'test2', label: 'Test3' },
-  ];
+  ].map(toFullOption);
 
   it('returns option arrays as is instead of flattening', () => {
     expect(toFlatOptionArray(arr)).toEqual(arr.slice(0, 2));

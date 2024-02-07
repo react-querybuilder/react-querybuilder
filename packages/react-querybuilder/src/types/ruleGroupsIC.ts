@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type { FlexibleOption, GetOptionIdentifierType } from './options';
 import type {
   DefaultCombinatorName,
@@ -14,7 +15,7 @@ import type { MappedTuple } from './ruleGroupsIC.utils';
  * The main rule group type when using independent combinators. This type is used
  * for query definitions as well as all sub-groups of queries.
  */
-export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = Omit<
+export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = Except<
   RuleGroupType<R, C>,
   'combinator' | 'rules'
 > & {

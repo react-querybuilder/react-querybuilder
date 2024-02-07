@@ -44,13 +44,13 @@ function toFullOptionList<Opt extends FlexibleOption, OptList extends FlexibleOp
     return [] as unknown as FullOptionList<Opt>;
   }
 
-  const recipe: (ol: FlexibleOptionList<FlexibleOption>) => FullOptionList<Opt> = produce(draft => {
+  const recipe: (ol: FlexibleOptionList<Opt>) => FullOptionList<Opt> = produce(draft => {
     if (isFlexibleOptionGroupArray(draft)) {
       for (const optGroup of draft) {
         optGroup.options.forEach((opt, idx) => (optGroup.options[idx] = toFullOption(opt)));
       }
     } else {
-      draft.forEach((opt, idx) => (draft[idx] = toFullOption(opt)));
+      (draft as Opt[]).forEach((opt, idx) => (draft[idx] = toFullOption(opt)));
     }
   });
 

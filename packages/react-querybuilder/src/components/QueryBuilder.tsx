@@ -11,9 +11,6 @@ import type {
   QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
-  Schema,
-  ToFlexibleOption,
-  ToFullOption,
 } from '../types';
 import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
 
@@ -33,9 +30,9 @@ export const QueryBuilderStateProvider = ({ children }: { children: React.ReactN
 
 const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends Field,
+  O extends Operator,
+  C extends Combinator,
 >({
   setup,
   props,
@@ -64,15 +61,7 @@ const QueryBuilderInternal = <
           rules={qb.rootGroup.rules}
           {...qb.combinatorPropObject}
           not={!!qb.rootGroup.not}
-          // TODO: Next line should be:
-          // schema={qb.schema}
-          // ...but "Type 'ToFullOption<F>' is not assignable to type 'ToFullOption<ToFullOption<F>>'."
-          schema={
-            qb.schema as unknown as Schema<
-              ToFullOption<ToFullOption<F>>,
-              GetOptionIdentifierType<O>
-            >
-          }
+          schema={qb.schema}
           actions={qb.actions}
           id={qb.rootGroup.id}
           path={rootPath}
@@ -94,9 +83,9 @@ const QueryBuilderInternal = <
  */
 export const QueryBuilder = <
   RG extends RuleGroupTypeAny,
-  F extends ToFlexibleOption<Field>,
-  O extends ToFlexibleOption<Operator>,
-  C extends ToFlexibleOption<Combinator>,
+  F extends Field,
+  O extends Operator,
+  C extends Combinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
 ) => {

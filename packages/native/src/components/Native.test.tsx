@@ -319,7 +319,7 @@ describe('NativeValueEditor', () => {
     field: 'f1',
     operator: '=',
     valueSource: 'value',
-    fieldData: { name: 'f1', label: 'f1', placeholder: TestID.valueEditor },
+    fieldData: toFullOption({ name: 'f1', label: 'f1', placeholder: TestID.valueEditor }),
     handleOnChange,
     path: [],
     level: 0,

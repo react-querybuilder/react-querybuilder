@@ -1,3 +1,4 @@
+import type { RequireAtLeastOne } from 'type-fest';
 import type {
   FlexibleOption,
   FlexibleOptionGroup,
@@ -22,7 +23,7 @@ export const uniqByName = <
  * on the identifying property (`value` or `name`)
  */
 export const uniqByIdentifier = <
-  T extends { name: string; value?: string } | { name?: string; value: string },
+  T extends RequireAtLeastOne<{ name: string; value: string }, 'name' | 'value'>,
 >(
   originalArray: T[]
 ): T[] => {

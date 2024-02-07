@@ -1,10 +1,4 @@
-import type {
-  DefaultOperatorName,
-  Field,
-  OptionList,
-  ToFlexibleOption,
-  ValueSources,
-} from '../types/index.noReact';
+import type { DefaultOperatorName, Field, OptionList, ValueSources } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFlatOptionArray } from './optGroupUtils';
@@ -28,7 +22,7 @@ export function fieldIsValidUtil({
   subordinateFieldName,
   getValueSources,
 }: {
-  fieldsFlat: ToFlexibleOption<Field>[];
+  fieldsFlat: Field[];
   getValueSources?: (field: string, operator: string) => ValueSources;
   fieldName: string;
   operator: DefaultOperatorName;

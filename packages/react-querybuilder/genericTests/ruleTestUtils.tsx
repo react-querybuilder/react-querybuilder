@@ -19,7 +19,6 @@ import type {
   RuleProps,
   Schema,
   ShiftActionsProps,
-  ToFullOption,
   ValueEditorProps,
 } from '../src/types';
 import { toFullOption } from '../src/utils';
@@ -31,7 +30,7 @@ export const getFieldMapFromArray = (fieldArray: Field[]) =>
 export const ruleDefaultFields = [
   { name: 'field1', label: 'Field 1' },
   { name: 'field2', label: 'Field 2' },
-].map(toFullOption) satisfies ToFullOption<Field>[];
+].map(toFullOption) satisfies Field[];
 
 export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
 
