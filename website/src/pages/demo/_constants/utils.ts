@@ -15,7 +15,6 @@ import * as parserTypeScript from 'prettier/plugins/typescript.mjs';
 import * as prettierStandalone from 'prettier/standalone.mjs';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { compileString } from 'sass';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
@@ -230,20 +229,21 @@ export const App = () => {
   });
 };
 
-const compiledCSS = compileString(extraStylesSCSS).css;
-
-export const extraStyles = Promise.all([
-  prettier.format(compiledCSS, {
-    filepath: 'styles.css',
-    plugins: [parserPostCSS],
-    printWidth: 100,
-  }),
-  prettier.format(extraStylesSCSS, {
-    filepath: 'styles.scss',
-    plugins: [parserPostCSS],
-    printWidth: 100,
-  }),
-]).then(([css, scss]) => ({ css, scss }));
+export const extraStyles = (async () => {
+  const { compileString } = await import('sass');
+  return Promise.all([
+    prettier.format(compileString(extraStylesSCSS).css, {
+      filepath: 'styles.css',
+      plugins: [parserPostCSS],
+      printWidth: 100,
+    }),
+    prettier.format(extraStylesSCSS, {
+      filepath: 'styles.scss',
+      plugins: [parserPostCSS],
+      printWidth: 100,
+    }),
+  ]).then(([css, scss]) => ({ css, scss }));
+})();
 
 export const fieldsTsString = prettier.format(fieldsCode, {
   filepath: 'fields.ts',
