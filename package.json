@@ -33,7 +33,7 @@
     "build:rqb": "cd packages/react-querybuilder && bun run build",
     "build:tremor": "cd packages/tremor && bun run build",
     "codesandbox-ci": "bash .codesandbox/ci.sh",
-    "checkall": "concurrently --names pretty,rqb --prefix-colors \"green,#82a7dd\" bun:pretty-check bun:build && concurrently --timings --prefix-colors \"#3178c6,#4B32C3,green\" --names typecheck,lint,test bun:typecheck bun:lint bun:test && bun run website:build",
+    "checkall": "bun install --frozen-lockfile && concurrently --names pretty,rqb --prefix-colors \"green,#82a7dd\" bun:pretty-check bun:build && concurrently --timings --prefix-colors \"#3178c6,#4B32C3,green\" --names typecheck,lint,test bun:typecheck bun:lint bun:test && bun run website:build",
     "lint": "eslint 'packages/*/src/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
     "test": "bun test sqlite && jest",
     "test:watch": "jest --watch",
@@ -55,8 +55,8 @@
     "pretty-check": "prettier --config prettier.config.mjs --check *.{mj,t}s packages/*/{src,dev,genericTests}/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**",
     "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
-    "outdated": "yarn upgrade-interactive",
-    "version": "bun ./version.ts && yarn && concurrently --timings --names examples,packages --prefix-colors green,blue bun:generate-examples bun:build && concurrently \"git add examples packages yarn.lock\"",
+    "outdated": "bunx npm-check-updates --interactive --format=group --workspaces --root --install=always",
+    "version": "bun ./version.ts && bun install --frozen-lockfile && concurrently --timings --names examples,packages --prefix-colors green,blue bun:generate-examples bun:build && concurrently \"git add examples packages bun.lockb\"",
     "web": "cd website && bun run start",
     "website:clearrun": "cd website && bun run clear && bun run start",
     "website:build": "cd website && bun run clear && bun run build",
@@ -109,13 +109,5 @@
     "tsup": "^8.0.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.12"
-  },
-  "packageManager": "yarn@4.0.2",
-  "resolutions": {
-    "nx": "npm:nx@16.5.3",
-    "typedoc-plugin-markdown@^3.16.0": "patch:typedoc-plugin-markdown@npm%3A3.16.0#./.yarn/patches/typedoc-plugin-markdown-npm-3.16.0-db041bab98.patch",
-    "typedoc-plugin-markdown@next": "patch:typedoc-plugin-markdown@npm%3A4.0.0-next.23#./.yarn/patches/typedoc-plugin-markdown-npm-4.0.0-next.23-8fb54301d6.patch",
-    "docusaurus-plugin-typedoc@next": "patch:docusaurus-plugin-typedoc@npm%3A1.0.0-next.17#./.yarn/patches/docusaurus-plugin-typedoc-npm-1.0.0-next.17-f81e7646bc.patch",
-    "sass@1.69.4": "patch:sass@npm%3A1.69.4#./.yarn/patches/sass-npm-1.69.4-bea57e4b30.patch"
   }
 }

@@ -20,11 +20,7 @@ jobs:
         with:
           bun-version: latest
       - name: Install dependencies
-        # Can't use bun install until it respects yarn.lock package versions
-        # run: bun install
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
+        run: bun install --frozen-lockfile
       - name: Check prettification
         run: |
           bun run pretty-check || \

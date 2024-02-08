@@ -229,7 +229,7 @@ export const App = () => {
   });
 };
 
-export const extraStyles = (async () => {
+export const extraStyles = async () => {
   const { compileString } = await import('sass');
   return Promise.all([
     prettier.format(compileString(extraStylesSCSS).css, {
@@ -243,7 +243,7 @@ export const extraStyles = (async () => {
       printWidth: 100,
     }),
   ]).then(([css, scss]) => ({ css, scss }));
-})();
+};
 
 export const fieldsTsString = prettier.format(fieldsCode, {
   filepath: 'fields.ts',
