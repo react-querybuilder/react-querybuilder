@@ -39,6 +39,8 @@ jobs:
         run: bun ./website/update-yarn.lock.ts
       - name: Upgrade to Yarn berry
         run: yarn set version berry
+      - name: Allow changes to yarn.lock
+        run: yarn config set enableImmutableInstalls false
       - name: Install dependencies with Yarn
         uses: bahmutov/npm-install@v1
         with:
