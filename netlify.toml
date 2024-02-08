@@ -1,5 +1,5 @@
 [build]
-command = "bun ./website/update-yarn.lock.ts && yarn set version berry && yarn && bun run build && bun website:build"
+command = "bun ./website/update-yarn.lock.ts && yarn set version berry && yarn config set enableImmutableInstalls false && yarn && bun run build && bun website:build"
 publish = "website/build"
 BUN_FLAGS = "--yarn --dry-run"
 
