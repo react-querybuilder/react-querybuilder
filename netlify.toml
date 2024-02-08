@@ -5,15 +5,19 @@ publish = "website/build"
 [context.production.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--frozen-lockfile"
 
 [context.deploy-preview.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--frozen-lockfile"
 
 [context.branch-deploy.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--frozen-lockfile"
 
 [context.dev.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--frozen-lockfile"
