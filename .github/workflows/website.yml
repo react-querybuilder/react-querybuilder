@@ -14,25 +14,25 @@ env:
   NODE_OPTIONS: --max-old-space-size=4096
 
 jobs:
-  # Netlify builds the website for PRs, so this job is just here for reference.
-  # build_only:
-  #   if: github.event_name != 'push' && github.event_name != 'workflow_dispatch'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '20'
-  #     - name: Setup Bun
-  #       uses: oven-sh/setup-bun@v1
-  #       with:
-  #         bun-version: latest
-  #     - name: Install dependencies
-  #       run: bun install --frozen-lockfile
-  #     - name: Build packages
-  #       run: bun run build
-  #     - name: Build website
-  #       run: bun run website:build
+  # Netlify builds the website for PRs, so this job is probably unnecessary.
+  build_only:
+    if: github.event_name != 'push' && github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build packages
+        run: bun run build
+      - name: Build website
+        run: bun run website:build
 
   build_and_publish:
     if: github.event_name != 'pull_request'
