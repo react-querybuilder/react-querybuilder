@@ -1,5 +1,5 @@
 [build]
-command = "yarn --frozen-lockfile && bun run build && bun run website:build"
+command = "yarn --frozen-lockfile && bun run build && yarn workspace website run clear && yarn workspace website run build"
 publish = "website/build"
 
 [context.production.environment]
