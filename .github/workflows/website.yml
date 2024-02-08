@@ -25,23 +25,27 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: Install dependencies with Bun
-        # Generate yarn.lock during dry-run Bun install
-        run: bun install --frozen-lockfile --yarn --dry-run
-      - name: Reset dependencies with Yarn
-        # Use Yarn to re-install because of
+      - name: Use Bun to generate yarn.lock
+        # We use Yarn to install dependencies because of
         # https://github.com/oven-sh/bun/issues/2257
+        # When this is fixed, we can just do `bun install`, perhaps with `--frozen-lockfile`
+        run: bun install --yarn --dry-run
+      - name: Prepare yarn.lock for Yarn berry upgrade
+        run: bun ./website/update-yarn.lock.ts
+      - name: Upgrade to Yarn berry
+        run: yarn set version berry
+      - name: Install dependencies with Yarn
         uses: bahmutov/npm-install@v1
         with:
-          install-command: yarn --frozen-lockfile
+          install-command: yarn
       - name: Build packages
         run: bun run build
       - name: Build website
-        run: yarn workspace website run build
+        run: bun website:build
 
   # Netlify builds the website for PRs, so this job is probably unnecessary.
   build_only:
-    if: github.event_name == 'pull_request'
+    if: github.event_name != 'push' || github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: build_setup
 
