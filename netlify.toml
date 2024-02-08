@@ -1,23 +1,23 @@
 [build]
-command = "bun run build && bun run website:build"
+command = "yarn --frozen-lockfile && bun run build && bun run website:build"
 publish = "website/build"
 
 [context.production.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
-BUN_FLAGS = "--frozen-lockfile"
+BUN_FLAGS = "--frozen-lockfile --dry-run"
 
 [context.deploy-preview.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
-BUN_FLAGS = "--frozen-lockfile"
+BUN_FLAGS = "--frozen-lockfile --dry-run"
 
 [context.branch-deploy.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
-BUN_FLAGS = "--frozen-lockfile"
+BUN_FLAGS = "--frozen-lockfile --dry-run"
 
 [context.dev.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
-BUN_FLAGS = "--frozen-lockfile"
+BUN_FLAGS = "--frozen-lockfile --dry-run"
