@@ -7,8 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  prettier:
-    name: Prettier
+  Prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

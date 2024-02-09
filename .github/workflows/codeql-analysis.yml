@@ -7,8 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  analyze:
-    name: Analyze
+  Analyze:
     runs-on: ubuntu-latest
     permissions:
       actions: read
