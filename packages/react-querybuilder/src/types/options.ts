@@ -1,9 +1,9 @@
-import type { RequireAtLeastOne, SetRequired } from 'type-fest';
+import type { RequireAtLeastOne, SetOptional } from 'type-fest';
 
 /**
  * Extracts the {@link Option} type from a {@link FlexibleOptionList}.
  */
-export type GetOptionType<OL extends FlexibleOptionList<FlexibleOption>> =
+export type GetOptionType<OL extends FlexibleOptionList<FullOption>> =
   OL extends FlexibleOptionList<infer Opt> ? Opt : never;
 
 /**
@@ -21,24 +21,19 @@ export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
  * option lists, you can use {@link FullField}, {@link FullOperator}, or
  * {@link FullCombinator}, all of which extend {@link FullOption}.
  */
-export interface BaseOption<N extends string = string> {
-  name?: N;
-  value?: N;
-  label: string;
-  [x: string]: any;
-}
+export type BaseOption<N extends string = string> = SetOptional<FullOption<N>, 'name' | 'value'>;
 
 /**
  * A generic option. Used directly in {@link OptionList} or
  * as the child element of an {@link OptionGroup}.
  */
-export interface Option<N extends string = string> extends SetRequired<BaseOption<N>, 'name'> {}
+export interface Option<N extends string = string> extends SetOptional<FullOption<N>, 'value'> {}
 
 /**
  * Like {@link Option} but requiring `value` instead of `name`.
  */
 export interface ValueOption<N extends string = string>
-  extends SetRequired<BaseOption<N>, 'value'> {}
+  extends SetOptional<FullOption<N>, 'name'> {}
 
 /**
  * A generic {@link Option} with either a `name` or `value` as its primary identifier.
@@ -47,7 +42,7 @@ export interface ValueOption<N extends string = string>
  * to {@link FullOption} first.
  */
 export type FlexibleOption<N extends string = string> = RequireAtLeastOne<
-  BaseOption<N>,
+  FullOption<N>,
   'name' | 'value'
 >;
 
@@ -62,8 +57,12 @@ export type ToFlexibleOption<Opt extends BaseOption> = RequireAtLeastOne<Opt, 'n
  * corresponding props sent to subcomponents will always be translated to this
  * type first to ensure both `name` and `value` are available.
  */
-export interface FullOption<N extends string = string>
-  extends SetRequired<BaseOption<N>, 'name' | 'value'> {}
+export interface FullOption<N extends string = string> {
+  name: N;
+  value: N;
+  label: string;
+  [x: string]: any;
+}
 
 /**
  * Utility type to turn an {@link Option}, {@link ValueOption} or
