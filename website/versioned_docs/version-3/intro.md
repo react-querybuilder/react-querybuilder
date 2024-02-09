@@ -596,7 +596,7 @@ function defaultValidator(query: RuleGroupType): {
 };
 ```
 
-Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](#demo) -- empty groups will have bold text on the "+Rule" button.
+Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](/demo) -- empty groups will have bold text on the "+Rule" button.
 
 ### `findPath`
 
@@ -604,7 +604,7 @@ Pass `validator={defaultValidator}` to automatically validate groups (rules will
 function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
 ```
 
-`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onAddRule) and [`onAddGroup`](#onAddGroup) functions.
+`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onaddrule) and [`onAddGroup`](#onaddgroup) functions.
 
 ### `formatQuery`
 
