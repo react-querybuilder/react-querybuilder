@@ -20,7 +20,7 @@ env:
   YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
 jobs:
-  Build website:
+  Build_website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

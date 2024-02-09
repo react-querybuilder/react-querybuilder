@@ -12,7 +12,7 @@ on:
       - 'packages/**'
 
 jobs:
-  Build and test:
+  Build_and_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
