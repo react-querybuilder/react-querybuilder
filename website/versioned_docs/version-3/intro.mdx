@@ -37,7 +37,7 @@ The default export of this library is the `QueryBuilder` React component, which 
 
 `{ id?: string; combinator: string; rules: ({ field: string; operator: string; value: any; } | { combinator: string; rules: ...[]; })[]; }`
 
-The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange-optional) callback). `id` is optional.
+The initial query, in JSON form (follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback). `id` is optional.
 
 ### `fields`
 
@@ -55,11 +55,11 @@ interface Field {
   defaultOperator?: string; // Default operator for this field (if not provided, then `getDefaultOperator()` will be used)
   defaultValue?: any; // Default value for this field (if not provided, then `getDefaultValue()` will be used)
   placeholder?: string; // Value to be displayed in the placeholder of the text field
-  validator?(): boolean | ValidationResult; // Called when a rule specifies this field (see the [main validator prop](#validator-optional) for more information)
+  validator?(): boolean | ValidationResult; // Called when a rule specifies this field (see the [main validator prop](#validator) for more information)
 }
 ```
 
-Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements-optional)).
+Field objects can also contain other data. Each field object will be passed to the appropriate `OperatorSelector` and `ValueEditor` components as `fieldData` (see the section on [`controlElements`](#controlelements)).
 
 ### `context`
 
@@ -578,7 +578,7 @@ Pass `true` to automatically add a rule to new groups. If a `query` prop is not 
 
 `boolean`
 
-Pass `true` to insert an independent combinator (and/or) selector between each rule/group in a rule group. (The combinator selector at the group level will not be available.) This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules-optional) option, except that each combinator selector is independent. You may find that users take to this configuration more naturally, as it allows them to express queries more like they would in their own language.
+Pass `true` to insert an independent combinator (and/or) selector between each rule/group in a rule group. (The combinator selector at the group level will not be available.) This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independent. You may find that users take to this configuration more naturally, as it allows them to express queries more like they would in their own language.
 
 ### `validator`
 
@@ -604,7 +604,7 @@ Pass `validator={defaultValidator}` to automatically validate groups (rules will
 function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
 ```
 
-`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onAddRule-optional) and [`onAddGroup`](#onAddGroup-optional) functions.
+`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onAddRule) and [`onAddGroup`](#onAddGroup) functions.
 
 ### `formatQuery`
 
@@ -651,7 +651,7 @@ interface FormatQueryOptions {
   format?: 'sql' | 'json' | 'json_without_ids' | 'parameterized'; // same as passing a `format` string instead of an options object
   valueProcessor?: (field: string, operator: string, value: any) => string; // see below for an example
   quoteFieldNamesWith?: string; // e.g. "`" to quote field names with backticks (useful if your field names have spaces)
-  validator?: QueryValidator; // function to validate the entire query (see [validator](#validator-optional))
+  validator?: QueryValidator; // function to validate the entire query (see [validator](#validator))
   fields?: { name: string; validator?: RuleValidator; [k: string]: any }[]; // This can be the same Field[] passed to <QueryBuilder />, but really all you need to provide is the name and validator for each field
   fallbackExpression?: string; // this string will be inserted in place of invalid groups for "sql", "parameterized", "parameterized_named", and "mongodb" formats (defaults to '(1 = 1)' for "sql"/"parameterized"/"parameterized_named", '$and:[{$expr:true}]' for "mongodb")
   paramPrefix?: string; // this string will be placed in front of named parameters (aka bind variables) when using the "parameterized_named" format. Default is ":".

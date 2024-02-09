@@ -518,7 +518,7 @@ formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
 // Returns: "(instrument in ('Guitar','Vocals') and lastName = 'Vai')"
 ```
 
-Versions of the default value processors using the newer `fn(rule, options)` signature as well as the legacy signature are available for all query language formats except "jsonlogic" ([use `ruleProcessor` instead](#ruleprocessor)).
+Versions of the default value processors using the newer `fn(rule, options)` signature as well as the legacy signature are available for all query language formats except "jsonlogic" ([use `ruleProcessor` instead](#rule-processor)).
 
 - Current signature (recommended):
   - `defaultValueProcessorByRule` (for all SQL-based formats)

@@ -1,19 +1,24 @@
 [build]
-command = "npm i -g bun && bun run build && bun run website:build"
+command = "bun ./website/update-yarn.lock.ts && yarn set version berry && yarn config set enableImmutableInstalls false && yarn install && bun run build && bun website:build"
 publish = "website/build"
+BUN_FLAGS = "--yarn --dry-run"
 
 [context.production.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--yarn --dry-run"
 
 [context.deploy-preview.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--yarn --dry-run"
 
 [context.branch-deploy.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--yarn --dry-run"
 
 [context.dev.environment]
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+BUN_FLAGS = "--yarn --dry-run"

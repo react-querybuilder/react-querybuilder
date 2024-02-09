@@ -6,11 +6,11 @@ _**First contribution?** Learn [how to contribute to an open source project on G
 
 ## Project setup
 
-[Yarn][yarn] and [Bun][bun] are required to set up this repository. Both can be npm-installed globally with `npm i -g yarn bun`.
+[Bun][bun] is required to set up this repository.
 
 1. Fork and clone this repository.
-2. Run `yarn` to install dependencies.
-3. Build the main package with `bun build:rqb` to bootstrap type checking in the other packages.
+2. Run `bun install` to install dependencies.
+3. Build the main package with `bun run build:rqb` to bootstrap type checking in the other packages.
 4. Create a branch for your PR with `git checkout -b your-branch-name`
 
 To serve a hot-reloading demo page locally, run `bun start`.
@@ -81,7 +81,6 @@ The dependency versions and Prettier configs of other [examples](./examples) wil
 [new-discussion]: https://github.com/react-querybuilder/react-querybuilder/discussions/new
 [discord]: https://react-querybuilder.js.org/discord
 [egghead]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
-[yarn]: https://yarnpkg.com/
 [bun]: https://bun.sh/
 [prettier]: https://prettier.io/
 [codesandbox]: https://codesandbox.io

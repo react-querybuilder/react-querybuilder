@@ -210,11 +210,13 @@ export default function Demo({
   }, [permalinkHash, updateOptionsFromHash]);
 
   useEffect(() => {
-    Promise.all([extraStyles, fieldsTsString, musicalInstrumentsTsString]).then(([es, fs, ms]) => {
-      setExtraStylesState(es);
-      setFieldsTsStringState(fs);
-      setMusicalInstrumentsTsStringState(ms);
-    });
+    Promise.all([extraStyles(), fieldsTsString, musicalInstrumentsTsString]).then(
+      ([es, fs, ms]) => {
+        setExtraStylesState(es);
+        setFieldsTsStringState(fs);
+        setMusicalInstrumentsTsStringState(ms);
+      }
+    );
   }, []);
 
   useEffect(() => {
