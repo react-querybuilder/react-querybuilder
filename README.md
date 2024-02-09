@@ -42,15 +42,15 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, [c
 
 ## Compatibility packages
 
-[![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign)](https://www.npmjs.com/package/@react-querybuilder/antd)
-[![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
-[![Bulma](https://img.shields.io/badge/RQB-for_Bulma-blue?logo=bulma)](https://www.npmjs.com/package/@react-querybuilder/bulma)
-[![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui)](https://www.npmjs.com/package/@react-querybuilder/chakra)<br />
-[![Fluent UI](https://img.shields.io/badge/RQB-for_Fluent%20UI-blue?logo=fluentui)](https://www.npmjs.com/package/@react-querybuilder/fluent)
-[![Mantine](https://img.shields.io/badge/RQB-for_Mantine-blue?logo=mantine)](https://www.npmjs.com/package/@react-querybuilder/mantine)
-[![MUI](https://img.shields.io/badge/RQB-for_MUI-blue?logo=mui)](https://www.npmjs.com/package/@react-querybuilder/material)
-[![React Native](https://img.shields.io/badge/RQB-for_React_Native-blue?logo=react)](https://www.npmjs.com/package/@react-querybuilder/native)
-[![Tremor](https://img.shields.io/badge/RQB-for_Tremor-blue?logo=tremor)](https://www.npmjs.com/package/@react-querybuilder/tremor)
+[![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign&color=f62b3b)](https://www.npmjs.com/package/@react-querybuilder/antd)
+[![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap&color=712cf9)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
+[![Bulma](https://img.shields.io/badge/RQB-for_Bulma-blue?logo=bulma&color=00d1b2)](https://www.npmjs.com/package/@react-querybuilder/bulma)
+[![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui&color=81e6d9)](https://www.npmjs.com/package/@react-querybuilder/chakra)<br />
+[![Fluent UI](https://img.shields.io/badge/RQB-for_Fluent%20UI-blue?logo=fluentui&color=7fba00)](https://www.npmjs.com/package/@react-querybuilder/fluent)
+[![Mantine](https://img.shields.io/badge/RQB-for_Mantine-blue?logo=mantine&color=339af0)](https://www.npmjs.com/package/@react-querybuilder/mantine)
+[![MUI](https://img.shields.io/badge/RQB-for_MUI-blue?logo=mui&color=007FFF)](https://www.npmjs.com/package/@react-querybuilder/material)
+[![React Native](https://img.shields.io/badge/RQB-for_React_Native-blue?logo=react&color=61dafb)](https://www.npmjs.com/package/@react-querybuilder/native)
+[![Tremor](https://img.shields.io/badge/RQB-for_Tremor-blue?logo=tremor&color=60a5fa)](https://www.npmjs.com/package/@react-querybuilder/tremor)
 
 In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), [Fluent UI](https://www.npmjs.com/package/@react-querybuilder/fluent), [Mantine](https://www.npmjs.com/package/@react-querybuilder/mantine), [MUI](https://www.npmjs.com/package/@react-querybuilder/material), and [Tremor](https://www.npmjs.com/package/@react-querybuilder/tremor). A functionally equivalent [React Native-compatible component](https://www.npmjs.com/package/@react-querybuilder/native) is also available.
 
