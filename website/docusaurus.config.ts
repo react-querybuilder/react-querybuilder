@@ -54,6 +54,13 @@ const config: Config = {
       },
     }),
     () => ({
+      // Avoid warning about require not being statically analyzable
+      name: 'rqb-avoid-require-warning',
+      configureWebpack: () => ({
+        module: { unknownContextCritical: false },
+      }),
+    }),
+    () => ({
       // This is not actually used, only here just in case
       name: 'rqb-wp5-raw-loader',
       configureWebpack: () => ({
