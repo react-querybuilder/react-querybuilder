@@ -9,6 +9,7 @@ const lernaJson = Bun.file(pathJoin(import.meta.dir, '../lerna.json'));
 const { version } = await lernaJson.json();
 
 const yarnLock = await Bun.file(pathJoin(import.meta.dir, '../yarn.lock')).text();
+const websitePkgJson = await Bun.file(pathJoin(import.meta.dir, '../website/package.json')).text();
 
 const newYarnLock = yarnLock
   .replace(
@@ -24,6 +25,10 @@ const newYarnLock = yarnLock
     `resolved "https://registry.yarnpkg.com/@react-querybuilder/$2/-/$2-${version}.tgz"`
   )
   .replace(/version "workspace:website"/, `version "1.0.0"`)
-  .replace(/version "workspace:packages\/.*"/g, `version "${version}"`);
+  .replace(/version "workspace:packages\/.*"/g, `version "${version}"`)
+  .replace(/(["@])file:/g, `$1link:`);
+
+const newWebsitePkgJson = websitePkgJson.replace(/(["@])file:/g, `$1link:`);
 
 await Bun.write(pathJoin(import.meta.dir, '../yarn.lock'), newYarnLock);
+await Bun.write(pathJoin(import.meta.dir, '../website/package.json'), newWebsitePkgJson);

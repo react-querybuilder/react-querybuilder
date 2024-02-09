@@ -48,7 +48,7 @@ jobs:
       - name: Build packages
         run: bun run build
       - name: Build website
-        run: bun website:build
+        run: bun run website:build
 
   build_and_publish:
     if: github.event_name != 'pull_request'
