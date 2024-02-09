@@ -16,21 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Lint
-        run: bun run lint
-      - name: Build base packages
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
         # Only rqb needs to be built before testing everything
-        run: bun run build:rqb
-      - name: Test all packages
-        run: bun run test
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+      - run: bun run build:rqb
+      - run: bun run test
+      - uses: codecov/codecov-action@v4

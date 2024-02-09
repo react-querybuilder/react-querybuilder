@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
@@ -34,16 +34,14 @@ jobs:
       - run: bun install --yarn --dry-run
       - run: bun ./website/update-yarn.lock.ts
       - run: yarn set version berry
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+      - uses: bahmutov/npm-install@v1
         with:
           install-command: yarn
       - run: bun run build
       - run: bun run website:build
         # The following deployment steps only run when pushing to the `main` branch
-      - name: Setup SSH
+      - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ github.event_name != 'pull_request' }}
-        uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_WEBSITE_DEPLOY }}
       - name: Deploy website to GitHub Pages

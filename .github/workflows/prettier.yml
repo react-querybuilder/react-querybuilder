@@ -11,16 +11,11 @@ jobs:
     name: Prettier
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
       - name: Check prettification
         run: |
           bun run pretty-check || \
