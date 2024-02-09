@@ -17,49 +17,37 @@ on:
 
 env:
   NODE_OPTIONS: --max-old-space-size=4096
+  YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
 jobs:
-  build_setup:
+  build_website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      - name: Use Bun to generate yarn.lock
-        # We use Yarn to install dependencies because of
-        # https://github.com/oven-sh/bun/issues/2257
-        # When this is fixed, we can just do `bun install`, perhaps with `--frozen-lockfile`
-        run: bun install --yarn --dry-run
-      - name: Prepare yarn.lock for Yarn berry upgrade
-        run: bun ./website/update-yarn.lock.ts
-      - name: Upgrade to Yarn berry
-        run: yarn set version berry
-      - name: Allow changes to yarn.lock
-        run: yarn config set enableImmutableInstalls false
-      - name: Install dependencies with Yarn
+      - uses: oven-sh/setup-bun@v1
+        # We use Yarn to install dependencies because of https://github.com/oven-sh/bun/issues/2257.
+        # When that's fixed, we can just do `bun install` here (perhaps with `--frozen-lockfile`)
+        # and remove the subsequent three Yarn-related steps.
+      - run: bun install --yarn --dry-run
+      - run: bun ./website/update-yarn.lock.ts
+      - run: yarn set version berry
+      - name: Install dependencies
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn
-      - name: Build packages
-        run: bun run build
-      - name: Build website
-        run: bun run website:build
-
-  build_and_publish:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    needs: build_setup
-    steps:
+      - run: bun run build
+      - run: bun run website:build
+        # The following deployment steps only run when pushing to the `main` branch
       - name: Setup SSH
+        if: github.event_name != 'pull_request'
         uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_WEBSITE_DEPLOY }}
       - name: Deploy website to GitHub Pages
+        if: github.event_name != 'pull_request'
         env:
           USE_SSH: true
           GIT_USER: git
