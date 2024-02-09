@@ -42,12 +42,12 @@ jobs:
       - run: bun run website:build
         # The following deployment steps only run when pushing to the `main` branch
       - name: Setup SSH
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' }}
         uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_WEBSITE_DEPLOY }}
       - name: Deploy website to GitHub Pages
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' }}
         env:
           USE_SSH: true
           GIT_USER: git
