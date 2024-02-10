@@ -1,5 +1,5 @@
 import type {
-  FlexibleOption,
+  BaseOption,
   FlexibleOptionGroup,
   FullOption,
   FullOptionList,
@@ -14,7 +14,7 @@ import { uniqByIdentifier } from './uniq';
 /**
  * Determines if an {@link OptionList} is an {@link OptionGroup} array.
  */
-export const isOptionGroupArray = (arr: any): arr is OptionGroup[] =>
+export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =>
   Array.isArray(arr) && arr.length > 0 && isPojo(arr[0]) && 'options' in arr[0];
 
 /**
@@ -55,9 +55,7 @@ export const getOption = <OptType extends Option = Option>(
 /**
  * Gets the first option from an {@link OptionList}.
  */
-export const getFirstOption = <Opt extends FlexibleOption>(
-  arr?: FlexibleOptionGroup<Opt>[] | Opt[]
-) =>
+export const getFirstOption = <Opt extends BaseOption>(arr?: FlexibleOptionGroup<Opt>[] | Opt[]) =>
   (!Array.isArray(arr) || arr.length === 0
     ? null
     : isFlexibleOptionGroupArray(arr)
@@ -65,7 +63,7 @@ export const getFirstOption = <Opt extends FlexibleOption>(
       : arr[0].value ?? arr[0].name) as GetOptionIdentifierType<Opt>;
 
 /**
- * Flattens {@link FlexibleOptionGroup} arrays into {@link FlexibleOption} arrays.
+ * Flattens {@link FlexibleOptionGroup} arrays into {@link BaseOption} arrays.
  * If the array is already flat, it is returned as is.
  */
 export const toFlatOptionArray = <T extends FullOption, OL extends FullOptionList<T>>(arr: OL) =>

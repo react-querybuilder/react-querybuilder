@@ -1,5 +1,5 @@
 import type { Except } from 'type-fest';
-import type { FlexibleOption, GetOptionIdentifierType } from './options';
+import type { BaseOption, GetOptionIdentifierType } from './options';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupArray,
@@ -12,20 +12,18 @@ import type {
 import type { MappedTuple } from './ruleGroupsIC.utils';
 
 /**
- * The main rule group type when using independent combinators. This type is used
+ * The main rule group interface when using independent combinators. This type is used
  * for query definitions as well as all sub-groups of queries.
  */
-export type RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string> = Except<
-  RuleGroupType<R, C>,
-  'combinator' | 'rules'
-> & {
+export interface RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string>
+  extends Except<RuleGroupType<R, C>, 'combinator' | 'rules'> {
   combinator?: undefined;
   rules: RuleGroupICArray<RuleGroupTypeIC<R, C>, R, C>;
   /**
    * Only used when adding a rule to a query that uses independent combinators
    */
   combinatorPreceding?: C;
-};
+}
 
 /**
  * Shorthand for "either {@link RuleGroupType} or {@link RuleGroupTypeIC}".
@@ -98,24 +96,21 @@ export type GetRuleGroupType<RG> = RG extends { combinator: string }
  */
 export type GetRuleTypeFromGroupWithFieldAndOperator<
   RG extends RuleGroupTypeAny,
-  F extends FlexibleOption,
-  O extends FlexibleOption,
+  F extends BaseOption,
+  O extends BaseOption,
 > = RG extends RuleGroupType<infer RT> | RuleGroupTypeIC<infer RT>
   ? RT extends RuleType<
       infer RuleFieldName,
-      infer _RuleOperatorName,
+      infer RuleOperatorName,
       infer RuleValueName,
       infer RuleCombinatorName
     >
     ? RuleFieldName extends GetOptionIdentifierType<F>
-      ? // Old way:
-        // ? RuleType<RuleFieldName, GetOptionIdentifierType<O>, RuleValueName, RuleCombinatorName>
-        // : RuleType<GetOptionIdentifierType<F>, GetOptionIdentifierType<O>, RuleValueName, RuleCombinatorName>
-        _RuleOperatorName extends GetOptionIdentifierType<O>
-        ? RuleType<RuleFieldName, _RuleOperatorName, RuleValueName, RuleCombinatorName>
+      ? RuleOperatorName extends GetOptionIdentifierType<O>
+        ? RuleType<RuleFieldName, RuleOperatorName, RuleValueName, RuleCombinatorName>
         : RuleType<RuleFieldName, GetOptionIdentifierType<O>, RuleValueName, RuleCombinatorName>
-      : _RuleOperatorName extends GetOptionIdentifierType<O>
-        ? RuleType<GetOptionIdentifierType<F>, _RuleOperatorName, RuleValueName, RuleCombinatorName>
+      : RuleOperatorName extends GetOptionIdentifierType<O>
+        ? RuleType<GetOptionIdentifierType<F>, RuleOperatorName, RuleValueName, RuleCombinatorName>
         : RuleType<
             GetOptionIdentifierType<F>,
             GetOptionIdentifierType<O>,

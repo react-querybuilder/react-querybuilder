@@ -2,6 +2,7 @@ import type {
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Field,
   FullField,
   OptionGroup,
   ValueSources,
@@ -310,18 +311,20 @@ describe('options', () => {
   });
 
   describe('fields and getValueSources', () => {
-    const fields: FullField[] = [
-      { name: 'f1', label: 'f1' },
-      { name: 'f2', label: 'f2', valueSources: ['value'] },
-      { name: 'f3', label: 'f3', valueSources: ['field'] },
-      { name: 'f4', label: 'f4', valueSources: () => ['value', 'field'] },
-      { name: 'f5', label: 'f5', comparator: 'group', group: 'g1' },
-      { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
-      { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
-      { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
-      { name: 'f9', label: 'f9', comparator: (f: FullField) => f.name === 'f1' },
-      { name: 'f10', label: 'f10', comparator: (f: FullField) => f.group === 'g2' },
-    ].map(toFullOption);
+    const fields = (
+      [
+        { name: 'f1', label: 'f1' },
+        { name: 'f2', label: 'f2', valueSources: ['value'] },
+        { name: 'f3', label: 'f3', valueSources: ['field'] },
+        { name: 'f4', label: 'f4', valueSources: () => ['value', 'field'] },
+        { name: 'f5', label: 'f5', comparator: 'group', group: 'g1' },
+        { name: 'f6', label: 'f6', comparator: 'group', group: 'g1' },
+        { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
+        { name: 'f8', label: 'f8', comparator: 'group', group: 'g2' },
+        { name: 'f9', label: 'f9', comparator: (f: FullField) => f.name === 'f1' },
+        { name: 'f10', label: 'f10', comparator: (f: FullField) => f.group === 'g2' },
+      ] satisfies Field[]
+    ).map(toFullOption);
     const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
     const getValueSources = (): ValueSources => ['field'];
 

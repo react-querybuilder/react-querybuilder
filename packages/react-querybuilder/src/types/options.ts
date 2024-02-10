@@ -7,9 +7,9 @@ export type GetOptionType<OL extends FlexibleOptionList<FullOption>> =
   OL extends FlexibleOptionList<infer Opt> ? Opt : never;
 
 /**
- * Extracts the type of the identifying property from a {@link FlexibleOption}.
+ * Extracts the type of the identifying property from a {@link BaseOption}.
  */
-export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
+export type GetOptionIdentifierType<Opt extends BaseOption> = Opt extends
   | Option<infer NameType>
   | ValueOption<infer NameType>
   ? NameType
@@ -17,11 +17,12 @@ export type GetOptionIdentifierType<Opt extends FlexibleOption> = Opt extends
 
 /**
  * Do not use this type directly. Use {@link Option}, {@link ValueOption},
- * {@link FullOption}, or {@link FlexibleOption} instead. For specific
+ * {@link FullOption}, or {@link BaseOption} instead. For specific
  * option lists, you can use {@link FullField}, {@link FullOperator}, or
  * {@link FullCombinator}, all of which extend {@link FullOption}.
  */
-export type BaseOption<N extends string = string> = SetOptional<FullOption<N>, 'name' | 'value'>;
+export interface BaseOption<N extends string = string>
+  extends SetOptional<FullOption<N>, 'name' | 'value'> {}
 
 /**
  * A generic option. Used directly in {@link OptionList} or
@@ -47,13 +48,13 @@ export type FlexibleOption<N extends string = string> = RequireAtLeastOne<
 >;
 
 /**
- * Utility type to turn an {@link Option} into a {@link FlexibleOption}.
+ * Utility type to turn an {@link Option} into a {@link BaseOption}.
  */
 export type ToFlexibleOption<Opt extends BaseOption> = RequireAtLeastOne<Opt, 'name' | 'value'>;
 
 /**
  * A generic {@link Option} requiring `name` _and_ `value` properties.
- * Props that extend {@link OptionList} accept {@link FlexibleOption}, but
+ * Props that extend {@link OptionList} accept {@link BaseOption}, but
  * corresponding props sent to subcomponents will always be translated to this
  * type first to ensure both `name` and `value` are available.
  */
@@ -61,38 +62,39 @@ export interface FullOption<N extends string = string> {
   name: N;
   value: N;
   label: string;
-  [x: string]: any;
+  disabled?: boolean;
+  [key: string]: unknown;
 }
 
 /**
  * Utility type to turn an {@link Option}, {@link ValueOption} or
- * {@link FlexibleOption} into a {@link FullOption}.
+ * {@link BaseOption} into a {@link FullOption}.
  */
 export type ToFullOption<Opt extends BaseOption> = Opt extends FullOption
   ? Opt
-  : Opt extends FlexibleOption<infer IdentifierType>
+  : Opt extends BaseOption<infer IdentifierType>
     ? Opt & FullOption<IdentifierType>
     : never;
 
 /**
  * @deprecated Renamed to `Option`.
  */
-export type NameLabelPair<N extends string = string> = Option<N>;
+export interface NameLabelPair<N extends string = string> extends Option<N> {}
 
 /**
  * An {@link Option} group within an {@link OptionList}.
  */
-export type OptionGroup<Opt extends FlexibleOption = Option> = {
+export interface OptionGroup<Opt extends BaseOption = FlexibleOption> {
   label: string;
   options: Opt[];
-};
+}
 
 /**
- * A {@link FlexibleOption} group within a {@link FlexibleOptionList}.
+ * A {@link BaseOption} group within a {@link FlexibleOptionList}.
  */
-export type FlexibleOptionGroup<Opt extends BaseOption = FlexibleOption> = {
+export type FlexibleOptionGroup<Opt extends BaseOption = BaseOption> = {
   label: string;
-  options: (Opt extends FlexibleOption ? Opt : ToFlexibleOption<Opt>)[];
+  options: (Opt extends FullOption ? Opt : ToFlexibleOption<Opt>)[];
 };
 
 /**
@@ -120,8 +122,8 @@ export type FullOptionList<Opt extends BaseOption> = Opt extends FullOption
 /**
  * Map of option identifiers to their respective {@link Option}.
  */
-export type FlexibleOptionMap<
-  V extends FlexibleOption,
+export type BaseOptionMap<
+  V extends BaseOption = BaseOption,
   K extends string = GetOptionIdentifierType<V>,
 > = {
   [k in K]?: ToFlexibleOption<V>;

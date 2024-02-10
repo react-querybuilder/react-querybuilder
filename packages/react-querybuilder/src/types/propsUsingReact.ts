@@ -22,7 +22,7 @@ import type {
 import type { DropEffect } from './dnd';
 import type {
   FlexibleOptionList,
-  FlexibleOptionMap,
+  BaseOptionMap,
   FullOption,
   FullOptionList,
   GetOptionIdentifierType,
@@ -517,7 +517,7 @@ export type QueryBuilderProps<
        *
        * @default []
        */
-      fields?: FlexibleOptionList<F> | FlexibleOptionMap<F, GetOptionIdentifierType<F>>;
+      fields?: FlexibleOptionList<F> | BaseOptionMap<F, GetOptionIdentifierType<F>>;
       /**
        * List of valid {@link FullOperator}s.
        *

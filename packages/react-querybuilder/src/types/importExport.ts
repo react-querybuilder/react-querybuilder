@@ -125,17 +125,15 @@ export interface FormatQueryOptions {
 /**
  * Options object for {@link ValueProcessorByRule} functions.
  */
-export type ValueProcessorOptions = Pick<
-  FormatQueryOptions,
-  'parseNumbers' | 'quoteFieldNamesWith'
-> & {
+export interface ValueProcessorOptions
+  extends Pick<FormatQueryOptions, 'parseNumbers' | 'quoteFieldNamesWith'> {
   escapeQuotes?: boolean;
   /**
    * The full field object, if `fields` was provided in the
    * {@link formatQuery} options parameter.
    */
   fieldData?: FullField;
-};
+}
 
 /**
  * Function that produces a processed value for a given {@link RuleType}.
