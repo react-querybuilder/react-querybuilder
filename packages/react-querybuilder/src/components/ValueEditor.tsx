@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { standardClassnames } from '../defaults';
 import { useValueEditor } from '../hooks';
-import type { ValueEditorProps } from '../types';
+import type { FullField, Schema, ValueEditorProps } from '../types';
 import { getFirstOption, parseNumber } from '../utils';
 
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
  */
-export const ValueEditor = (allProps: ValueEditorProps) => {
+export const ValueEditor = <F extends FullField>(allProps: ValueEditorProps<F>) => {
   const {
     operator,
     value,
@@ -57,6 +57,7 @@ export const ValueEditor = (allProps: ValueEditorProps) => {
       return (
         <SelectorComponent
           {...props}
+          schema={allProps.schema as unknown as Schema<FullField, string>}
           key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
@@ -83,6 +84,7 @@ export const ValueEditor = (allProps: ValueEditorProps) => {
       return (
         <SelectorComponent
           {...props}
+          schema={allProps.schema as unknown as Schema<FullField, string>}
           testID={testID}
           className={className}
           title={title}

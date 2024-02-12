@@ -178,6 +178,7 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
    * in a parent/ancestor component. See usage in the compatibility packages.
    */
   skipHook?: boolean;
+  schema: Schema<F, O>;
 }
 
 /**

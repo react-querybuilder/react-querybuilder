@@ -1,5 +1,11 @@
 import type { SetOptional } from 'type-fest';
-import type { FlexibleOptionList, FullOption, Option } from './options';
+import type {
+  BaseFullOption,
+  FlexibleOptionList,
+  FullOption,
+  Option,
+  WithUnknownIndex,
+} from './options';
 import type { RuleValidator } from './validation';
 
 /**
@@ -194,7 +200,12 @@ export interface FullOperator<N extends string = string>
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export type Operator<N extends string = string> = SetOptional<FullOperator<N>, 'value'>;
+export type Operator<N extends string = string> = WithUnknownIndex<
+  SetOptional<BaseFullOption<N>, 'value'> &
+    HasOptionalClassName & {
+      arity?: Arity;
+    }
+>;
 
 /**
  * Full combinator definition used in the `combinators` prop of {@link QueryBuilder}.
@@ -215,7 +226,9 @@ export interface FullCombinator<N extends string = string>
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export type Combinator<N extends string = string> = SetOptional<FullCombinator<N>, 'value'>;
+export type Combinator<N extends string = string> = WithUnknownIndex<
+  SetOptional<BaseFullOption<N>, 'value'> & HasOptionalClassName
+>;
 
 /**
  * Methods used by {@link parseNumbers}.
@@ -226,4 +239,8 @@ export type Combinator<N extends string = string> = SetOptional<FullCombinator<N
  */
 export type ParseNumbersMethod = boolean | 'enhanced' | 'native' | 'strict';
 
+/**
+ * Signature of `accessibleDescriptionGenerator` prop, used by {@link QueryBuilder} to generate
+ * accessible descriptions for each {@link RuleGroup}.
+ */
 export type AccessibleDescriptionGenerator = (props: { path: Path; qbId: string }) => string;
