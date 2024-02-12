@@ -13,6 +13,7 @@ import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../mes
 import type {
   FullField,
   FullOperator,
+  Operator,
   RuleType,
   ValidationResult,
   ValueSelectorProps,
@@ -393,7 +394,11 @@ describe('arity property', () => {
       <Rule
         {...getProps({
           getOperators: () => [
-            toFullOption({ name: 'unary_op', label: 'Unary Operator', arity: 'unary' }),
+            toFullOption({
+              name: 'unary_op',
+              label: 'Unary Operator',
+              arity: 'unary',
+            } satisfies Operator),
           ],
         })}
         rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}

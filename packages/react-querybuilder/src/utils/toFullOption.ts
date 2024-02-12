@@ -1,11 +1,9 @@
 import { produce } from 'immer';
 import type {
-  FlexibleOption,
+  BaseOption,
+  BaseOptionMap,
   FlexibleOptionList,
-  FlexibleOptionMap,
-  FullOption,
   FullOptionList,
-  FullOptionMap,
   Option,
   ToFullOption,
   ValueOption,
@@ -13,17 +11,17 @@ import type {
 import { isPojo } from './misc';
 import { isFlexibleOptionGroupArray } from './optGroupUtils';
 
-const isOptionWithName = (opt: FlexibleOption): opt is Option =>
+const isOptionWithName = (opt: BaseOption): opt is Option =>
   isPojo(opt) && 'name' in opt && typeof opt.name === 'string';
-const isOptionWithValue = (opt: FlexibleOption): opt is ValueOption =>
+const isOptionWithValue = (opt: BaseOption): opt is ValueOption =>
   isPojo(opt) && 'value' in opt && typeof opt.value === 'string';
 
 /**
- * Converts an {@link Option} or {@link ValueOption} (i.e., {@link FlexibleOption})
+ * Converts an {@link Option} or {@link ValueOption} (i.e., {@link BaseOption})
  * into a {@link FullOption}. Full options are left unchanged.
  */
-function toFullOption<N extends string>(opt: FlexibleOption<N>): FullOption<N> {
-  const recipe: (o: FlexibleOption<N>) => FullOption<N> = produce(draft => {
+function toFullOption<Opt extends BaseOption>(opt: Opt): ToFullOption<Opt> {
+  const recipe: (o: Opt) => ToFullOption<Opt> = produce(draft => {
     if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
       draft.value = draft.name;
     } else if (!isOptionWithName(draft) && isOptionWithValue(draft)) {
@@ -37,7 +35,7 @@ function toFullOption<N extends string>(opt: FlexibleOption<N>): FullOption<N> {
  * Converts an {@link OptionList} or {@link FlexibleOptionList} into a {@link FullOptionList}.
  * Lists of full options are left unchanged.
  */
-function toFullOptionList<Opt extends FlexibleOption, OptList extends FlexibleOptionList<Opt>>(
+function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOptionList<Opt>>(
   optList: OptList
 ): FullOptionList<Opt> {
   if (!Array.isArray(optList)) {
@@ -61,17 +59,17 @@ function toFullOptionList<Opt extends FlexibleOption, OptList extends FlexibleOp
  * Converts a {@link FlexibleOptionList} into a {@link FullOptionList}.
  * Lists of full options are left unchanged.
  */
-function toFullOptionMap<OptMap extends FlexibleOptionMap<FlexibleOption>>(
+function toFullOptionMap<OptMap extends BaseOptionMap>(
   optMap: OptMap
-): OptMap extends FlexibleOptionMap<infer V, infer K> ? FullOptionMap<ToFullOption<V>, K> : never {
-  type K = OptMap extends FlexibleOptionMap<any, infer KT> ? KT : never;
-  type V = OptMap extends FlexibleOptionMap<infer VT> ? VT : never;
+): OptMap extends BaseOptionMap<infer V, infer K> ? Partial<Record<K, ToFullOption<V>>> : never {
+  type FullOptMapType =
+    OptMap extends BaseOptionMap<infer VT, infer KT>
+      ? Partial<Record<KT, ToFullOption<VT>>>
+      : never;
 
   return Object.fromEntries(
-    (Object.entries(optMap) as [K, V][]).map(([k, v]) => [k, toFullOption(v)])
-  ) as OptMap extends FlexibleOptionMap<infer V, infer K>
-    ? FullOptionMap<ToFullOption<V>, K>
-    : never;
+    Object.entries(optMap).map(([k, v]: [string, any]) => [k, toFullOption(v)])
+  ) as FullOptMapType;
 }
 
 export { toFullOption, toFullOptionList, toFullOptionMap };

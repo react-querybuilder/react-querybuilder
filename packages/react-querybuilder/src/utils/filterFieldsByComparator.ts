@@ -11,7 +11,7 @@ const filterByComparator = (field: FullField, operator: string, fieldToCompare: 
   if (typeof fullField.comparator === 'string') {
     return fullField[fullField.comparator] === fullFieldToCompare[fullField.comparator];
   }
-  return fullField.comparator!(fullFieldToCompare, operator);
+  return fullField.comparator?.(fullFieldToCompare, operator) ?? /* istanbul ignore next */ false;
 };
 
 /**

@@ -1,6 +1,6 @@
 import type { RequireAtLeastOne } from 'type-fest';
 import type {
-  FlexibleOption,
+  BaseOption,
   FlexibleOptionGroup,
   FlexibleOptionList,
   OptionGroup,
@@ -42,10 +42,10 @@ export const uniqByIdentifier = <
  * Generates a new {@link OptionGroup} array with duplicates
  * removed based on the identifying property (`value` or `name`).
  */
-export const uniqOptGroups = <T extends FlexibleOption>(
+export const uniqOptGroups = <T extends BaseOption>(
   originalArray: FlexibleOptionGroup<T>[]
 ): OptionGroup<ToFullOption<T>>[] => {
-  type K = T extends FlexibleOption<infer KT> ? KT : never;
+  type K = T extends BaseOption<infer KT> ? KT : never;
   const labels = new Set<string>();
   const names = new Set<K>();
   const newArray: OptionGroup<ToFullOption<T>>[] = [];
@@ -69,9 +69,9 @@ export const uniqOptGroups = <T extends FlexibleOption>(
  * Generates a new {@link Option} or {@link OptionGroup} array with duplicates
  * removed based on the identifier property (`value` or `name`).
  */
-export const uniqOptList = <T extends FlexibleOption>(originalArray: FlexibleOptionList<T>) => {
+export const uniqOptList = <T extends BaseOption>(originalArray: FlexibleOptionList<T>) => {
   if (isFlexibleOptionGroupArray(originalArray)) {
-    return uniqOptGroups(originalArray);
+    return uniqOptGroups(originalArray) as OptionGroup<ToFullOption<T>>[];
   }
-  return uniqByIdentifier((originalArray as FlexibleOption[]).map(toFullOption));
+  return uniqByIdentifier((originalArray as BaseOption[]).map(toFullOption));
 };

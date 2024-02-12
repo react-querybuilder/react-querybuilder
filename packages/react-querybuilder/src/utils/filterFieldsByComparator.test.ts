@@ -1,19 +1,21 @@
-import type { FullField, OptionGroup } from '../types/index.noReact';
+import type { Field, FullField, OptionGroup } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { toFullOption } from './toFullOption';
 
-const fields: FullField[] = [
-  { name: 'f0', label: 'f0' },
-  { name: 'f1', label: 'f1', valueSources: ['value'] },
-  { name: 'f2', label: 'f2', valueSources: ['field'] },
-  { name: 'f3', label: 'f3', valueSources: () => ['value', 'field'] },
-  { name: 'f4', label: 'f4', comparator: 'group', group: 'g1' },
-  { name: 'f5', label: 'f5', comparator: 'group', group: 'g1' },
-  { name: 'f6', label: 'f6', comparator: 'group', group: 'g2' },
-  { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
-  { name: 'f8', label: 'f8', comparator: (f: FullField) => f.name === 'f1' },
-  { name: 'f9', label: 'f9', comparator: (f: FullField) => f.group === 'g2' },
-].map(toFullOption);
+const fields = (
+  [
+    { name: 'f0', label: 'f0' },
+    { name: 'f1', label: 'f1', valueSources: ['value'] },
+    { name: 'f2', label: 'f2', valueSources: ['field'] },
+    { name: 'f3', label: 'f3', valueSources: () => ['value', 'field'] },
+    { name: 'f4', label: 'f4', comparator: 'group', group: 'g1' },
+    { name: 'f5', label: 'f5', comparator: 'group', group: 'g1' },
+    { name: 'f6', label: 'f6', comparator: 'group', group: 'g2' },
+    { name: 'f7', label: 'f7', comparator: 'group', group: 'g2' },
+    { name: 'f8', label: 'f8', comparator: (f: FullField) => f.name === 'f1' },
+    { name: 'f9', label: 'f9', comparator: (f: FullField) => f.group === 'g2' },
+  ] satisfies Field[]
+).map(toFullOption);
 const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
 
 it('filters fields by comparator', () => {

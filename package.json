@@ -77,12 +77,12 @@
     "@types/bun": "^1.0.5",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.16",
+    "@types/node": "^20.11.17",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
-    "@types/web": "^0.0.138",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@types/web": "^0.0.139",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
     "all-contributors-cli": "^6.26.1",
     "concurrently": "^8.2.2",
     "esbuild-analyzer": "^0.2.0",
@@ -105,8 +105,8 @@
     "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.14.1",
     "swc-loader": "^0.2.6",
-    "tsup": "^8.0.1",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "^5.1.1"
   }
 }

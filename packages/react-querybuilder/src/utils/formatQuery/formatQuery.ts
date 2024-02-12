@@ -213,7 +213,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   }
 
   const validatorMap: Record<string, RuleValidator> = {};
-  const uniqueFields = toFlatOptionArray(fields);
+  const uniqueFields = toFlatOptionArray(fields) satisfies FullField[];
   uniqueFields.forEach(f => {
     // istanbul ignore else
     if (typeof f.validator === 'function') {

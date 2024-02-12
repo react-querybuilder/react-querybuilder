@@ -13,12 +13,12 @@ export interface CommonRuleAndGroupProperties {
  * The main rule type. The `field`, `operator`, and `value` properties
  * can be narrowed with generics.
  */
-export type RuleType<
+export interface RuleType<
   F extends string = string,
   O extends string = string,
   V = any,
   C extends string = string,
-> = CommonRuleAndGroupProperties & {
+> extends CommonRuleAndGroupProperties {
   field: F;
   operator: O;
   value: V;
@@ -27,20 +27,18 @@ export type RuleType<
    * Only used when adding a rule to a query that uses independent combinators.
    */
   combinatorPreceding?: C;
-};
+}
 
 /**
  * The main rule group type. This type is used for query definitions as well as
  * all sub-groups of queries.
  */
-export type RuleGroupType<
-  R extends RuleType = RuleType,
-  C extends string = string,
-> = CommonRuleAndGroupProperties & {
+export interface RuleGroupType<R extends RuleType = RuleType, C extends string = string>
+  extends CommonRuleAndGroupProperties {
   combinator: C;
   rules: RuleGroupArray<RuleGroupType<R, C>, R>;
   not?: boolean;
-};
+}
 
 /**
  * The type of the `rules` array in a {@link RuleGroupType}.

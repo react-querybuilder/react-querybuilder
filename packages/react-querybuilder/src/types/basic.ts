@@ -1,5 +1,11 @@
 import type { SetOptional } from 'type-fest';
-import type { FlexibleOptionList, FullOption, Option } from './options';
+import type {
+  BaseFullOption,
+  FlexibleOptionList,
+  FullOption,
+  Option,
+  WithUnknownIndex,
+} from './options';
 import type { RuleValidator } from './validation';
 
 /**
@@ -116,7 +122,50 @@ export type Field<
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
-> = SetOptional<FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
+> = { value?: FieldName } & Pick<
+  FullField<FieldName, OperatorName, ValueName, OperatorObj>,
+  // **DEV NOTE**: Keep this list up to date with the explicitly-named
+  // properties in the `FullField` definition and all the interfaces
+  // it extends _except_ `value` from `FullOption`.
+  // Properties from `FullOption`
+  | 'name'
+  | 'id'
+  | 'label'
+  | 'disabled'
+  // Properties from `HasOptionalClassName`
+  | 'className'
+  // Properties from `FullField`
+  | 'operators'
+  | 'valueEditorType'
+  | 'valueSources'
+  | 'inputType'
+  | 'values'
+  | 'defaultOperator'
+  | 'defaultValue'
+  | 'placeholder'
+  | 'validator'
+  | 'comparator'
+> & { [key: string]: unknown };
+
+// TODO: Dynamically generate the list of explicitly-named properties.
+// The code below is a non-working attempt.
+// export type Field<
+//   FieldName extends string = string,
+//   OperatorName extends string = string,
+//   ValueName extends string = string,
+//   OperatorObj extends Option = Option<OperatorName>,
+// > = { value?: FieldName } & Pick<
+//   FullField<FieldName, OperatorName, ValueName, OperatorObj>,
+//   Exclude<keyof FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>
+// > & { [key: string]: unknown };
+
+// Another non-working way of defining `Field`:
+// export type Field<
+//   FieldName extends string = string,
+//   OperatorName extends string = string,
+//   ValueName extends string = string,
+//   OperatorObj extends Option = Option<OperatorName>,
+// > = SetOptional<FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
 
 /**
  * Utility type to make one or more properties required.
@@ -151,7 +200,12 @@ export interface FullOperator<N extends string = string>
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export type Operator<N extends string = string> = SetOptional<FullOperator<N>, 'value'>;
+export type Operator<N extends string = string> = WithUnknownIndex<
+  SetOptional<BaseFullOption<N>, 'value'> &
+    HasOptionalClassName & {
+      arity?: Arity;
+    }
+>;
 
 /**
  * Full combinator definition used in the `combinators` prop of {@link QueryBuilder}.
@@ -172,7 +226,9 @@ export interface FullCombinator<N extends string = string>
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export type Combinator<N extends string = string> = SetOptional<FullCombinator<N>, 'value'>;
+export type Combinator<N extends string = string> = WithUnknownIndex<
+  SetOptional<BaseFullOption<N>, 'value'> & HasOptionalClassName
+>;
 
 /**
  * Methods used by {@link parseNumbers}.
@@ -183,4 +239,8 @@ export type Combinator<N extends string = string> = SetOptional<FullCombinator<N
  */
 export type ParseNumbersMethod = boolean | 'enhanced' | 'native' | 'strict';
 
+/**
+ * Signature of `accessibleDescriptionGenerator` prop, used by {@link QueryBuilder} to generate
+ * accessible descriptions for each {@link RuleGroup}.
+ */
 export type AccessibleDescriptionGenerator = (props: { path: Path; qbId: string }) => string;
