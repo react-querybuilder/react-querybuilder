@@ -86,7 +86,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/hoist-non-react-statics": "^3.3.5",
     "@types/jscodeshift": "^0.11.11",
-    "@types/node": "^20.11.16",
+    "@types/node": "^20.11.17",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react-swc": "^3.6.0",
@@ -102,7 +102,7 @@
     "sass": "1.70.0",
     "type-fest": "^4.10.2",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "^5.1.1"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.1.0",
