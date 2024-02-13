@@ -150,6 +150,10 @@ JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not
 
 ## New features
 
+### Standalone layout stylesheet
+
+Default structural styles (flex direction, alignment, spacing, etc.) are now available in a standalone stylesheet `query-builder-layout.css`/`query-builder-layout.scss`. The default stylesheet, `query-builder.css`/`query-builder.scss`, still contains structural styles but also includes more aesthetic styles like colors and border styles. The effective styles of the default stylesheet have not changed from version 6.
+
 ### Performance improvements
 
 In version 7, internal state is managed in a custom Redux context. Props, components, and derived values are aggressively memoized using `React.memo`, `useMemo`, and `useCallback`. These changes can noticeably improve rendering performance for large queries, especially when using certain style libraries. To take advantage of this change, _every_ prop except `query` must be memoized or have a stable reference.
