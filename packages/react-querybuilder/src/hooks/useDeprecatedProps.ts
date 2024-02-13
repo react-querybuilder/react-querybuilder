@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import {
-  errorInvalidIndependentCombinatorsProp,
-  errorUnnecessaryIndependentCombinatorsProp,
   errorDeprecatedRuleGroupProps,
   errorDeprecatedRuleProps,
+  errorInvalidIndependentCombinatorsProp,
+  errorUnnecessaryIndependentCombinatorsProp,
 } from '../messages';
 
 let didWarnUsingInvalidIndependentCombinatorsProp = false;
@@ -30,30 +29,28 @@ function useDeprecatedProps(
   logWarning: boolean,
   otherParams?: 'invalid' | 'unnecessary'
 ) {
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production' && logWarning) {
-      if (type === 'independentCombinators') {
-        if (!didWarnUsingInvalidIndependentCombinatorsProp && otherParams === 'invalid') {
-          console.error(errorInvalidIndependentCombinatorsProp);
-          didWarnUsingInvalidIndependentCombinatorsProp = true;
-        }
-        if (!didWarnUsingUnnecessaryIndependentCombinatorsProp && otherParams === 'unnecessary') {
-          console.error(errorUnnecessaryIndependentCombinatorsProp);
-          didWarnUsingUnnecessaryIndependentCombinatorsProp = true;
-        }
+  if (process.env.NODE_ENV !== 'production' && logWarning) {
+    if (type === 'independentCombinators') {
+      if (!didWarnUsingInvalidIndependentCombinatorsProp && otherParams === 'invalid') {
+        console.error(errorInvalidIndependentCombinatorsProp);
+        didWarnUsingInvalidIndependentCombinatorsProp = true;
       }
-
-      if (type === 'rule' && !didWarnUsingDeprecatedRuleProps) {
-        console.error(errorDeprecatedRuleProps);
-        didWarnUsingDeprecatedRuleProps = true;
-      }
-
-      if (type === 'ruleGroup' && !didWarnUsingDeprecatedRuleGroupProps) {
-        console.error(errorDeprecatedRuleGroupProps);
-        didWarnUsingDeprecatedRuleGroupProps = true;
+      if (!didWarnUsingUnnecessaryIndependentCombinatorsProp && otherParams === 'unnecessary') {
+        console.error(errorUnnecessaryIndependentCombinatorsProp);
+        didWarnUsingUnnecessaryIndependentCombinatorsProp = true;
       }
     }
-  }, [logWarning, otherParams, type]);
+
+    if (type === 'rule' && !didWarnUsingDeprecatedRuleProps) {
+      console.error(errorDeprecatedRuleProps);
+      didWarnUsingDeprecatedRuleProps = true;
+    }
+
+    if (type === 'ruleGroup' && !didWarnUsingDeprecatedRuleGroupProps) {
+      console.error(errorDeprecatedRuleGroupProps);
+      didWarnUsingDeprecatedRuleGroupProps = true;
+    }
+  }
 }
 
 export { useDeprecatedProps };

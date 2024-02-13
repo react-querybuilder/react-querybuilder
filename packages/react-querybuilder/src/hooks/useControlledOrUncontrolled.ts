@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import {
   errorBothQueryDefaultQuery,
   errorControlledToUncontrolled,
@@ -26,29 +25,27 @@ export const useControlledOrUncontrolled = ({
 }: UseControlledOrUncontrolledParams) => {
   const prevQueryPresent = usePrevious(!!queryProp);
 
-  useEffect(() => {
-    // istanbul ignore else
-    if (process.env.NODE_ENV !== 'production') {
-      if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
-        console.error(errorBothQueryDefaultQuery);
-        didWarnBothQueryDefaultQuery = true;
-      } else if (
-        prevQueryPresent === true &&
-        !queryProp &&
-        !!defaultQuery &&
-        !didWarnControlledToUncontrolled
-      ) {
-        console.error(errorControlledToUncontrolled);
-        didWarnControlledToUncontrolled = true;
-      } else if (
-        prevQueryPresent === false &&
-        !!queryProp &&
-        !defaultQuery &&
-        !didWarnUncontrolledToControlled
-      ) {
-        console.error(errorUncontrolledToControlled);
-        didWarnUncontrolledToControlled = true;
-      }
+  // istanbul ignore else
+  if (process.env.NODE_ENV !== 'production') {
+    if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
+      console.error(errorBothQueryDefaultQuery);
+      didWarnBothQueryDefaultQuery = true;
+    } else if (
+      prevQueryPresent === true &&
+      !queryProp &&
+      !!defaultQuery &&
+      !didWarnControlledToUncontrolled
+    ) {
+      console.error(errorControlledToUncontrolled);
+      didWarnControlledToUncontrolled = true;
+    } else if (
+      prevQueryPresent === false &&
+      !!queryProp &&
+      !defaultQuery &&
+      !didWarnUncontrolledToControlled
+    ) {
+      console.error(errorUncontrolledToControlled);
+      didWarnUncontrolledToControlled = true;
     }
-  }, [defaultQuery, prevQueryPresent, queryProp]);
+  }
 };
