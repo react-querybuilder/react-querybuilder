@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#589] The `disabled` prop has been un-deprecated. Disabling the entire query with the prop and setting `disabled: true` as a property of the root group now produce different behaviors. Specifically, the root group's lock/unlock button will always be enabled if the `disabled` prop is not `true`.
 - [#555] Value editors for compatibility packages that render components specific to their respective library now accept an `extraProps` prop that will be passed directly to the library component, spread like `{...extraProps}`. The type of `extraProps` is `any` because each value editor can render one of several library components that accept different props.
 - [#637] The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output, leaving all other properties unchanged. Previously this format would only include specific properties which had the effect of removing any non-standard properties.
+- The first generic argument of `ValueEditorProps`, `ValueSelectorProps`, and `FieldSelectorProps` must extend the new `FullOption` interface instead of `Option`.
 
 <details>
 

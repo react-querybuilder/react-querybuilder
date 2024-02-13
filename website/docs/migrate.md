@@ -22,25 +22,54 @@ Or, if you named the default export something other than `QueryBuilder`, like `R
 +import { QueryBuilder as ReactQueryBuilder } from "react-querybuilder";
 ```
 
-### `QueryBuilder` prop types
+### TypeScript updates
 
-The props themselves for the main component haven't changed much from version 6, but the TypeScript interface has been overhauled. Also, the minimum TypeScript version is now 5.1.
+- The minimum TypeScript version is now 5.1.
+- The component props themselves haven't changed much from version 6, but their TypeScript interfaces have been overhauled.
+- If you haven't specified generics on the prop interfaces for your custom subcomponents, you may not need to make any TypeScript-related changes.
 
-Notable changes:
+#### `QueryBuilder` props
 
-- The query type, extending either `RuleGroupType` or `RuleGroupTypeIC`, will be automatically inferred instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](./components/querybuilder#independent-combinators).
-- The `QueryBuilderProps` type now requires four generic arguments.
+- The query type (extending `RuleGroupType` or `RuleGroupTypeIC`) will be automatically inferred from the `query` or `defaultQuery` prop instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](./components/querybuilder#independent-combinators).
+- `QueryBuilderProps` now requires four generic arguments.
+
   - This shouldn't affect JSX which renders a `<QueryBuilder />` component since the generic types can almost always be inferred from the props.
   - While all props are technically still optional, TypeScript may have problems inferring the generics if `fields` and `query`/`defaultQuery` are not provided.
-  - When manually creating an object of type `QueryBuilderProps`, all four generics must be provided. In order, they represent the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type (extending `Field`), the operator type (extending `Operator`), and the combinator type (extending `Combinator`).
+  - The four generic arguments of `QueryBuilderProps` represent, respectively, the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type, the operator type, and the combinator type. The latter three must extend `FullOption`, or if you want to be more specific and expressive, `FullField`, `FullOperator`, and `FullCombinator`.
+
   ```tsx
   // Valid in version 6:
   const qbp6: QueryBuilderProps = {};
+
   // Version 7 with the defaults (equivalent to the "version 6" line above):
-  const qbp7: QueryBuilderProps<RuleGroupType, Field, Operator, Combinator> = {};
-  // Also valid in version 7 (since Field, Operator, and Combinator all extend Option):
-  const qbp7a: QueryBuilderProps<RuleGroupType, Option, Option, Option> = {};
+  const qbp7: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator> = {};
+
+  // Also valid in version 7 (since FullField, FullOperator, and FullCombinator all extend FullOption):
+  const qbp7a: QueryBuilderProps<RuleGroupType, FullOption, FullOption, FullOption> = {};
   ```
+
+#### `Option`-type props
+
+- Custom subcomponents must now accept any option-type props (fields, operators, combinators, etc.) as an extension of `FullOption` instead of `Option`.
+  - `Full*` types are identical to their version 6 counterparts except for the `value` property, which is required and must be the same type as the `name` property.
+  - Relevant interfaces include the following:
+    <!-- prettier-ignore -->
+    | Interface    | "Full" counterpart |
+    | ------------ | ------------------ |
+    | `Field`      | `FullField`        |
+    | `Operator`   | `FullOperator`     |
+    | `Combinator` | `FullCombinator`   |
+- The first generic argument of `ValueEditorProps`, `ValueSelectorProps`, and `FieldSelectorProps` must extend `FullOption` instead of `Option` as in version 6.
+  - In the case of `ValueEditorProps` and `FieldSelectorProps`, prefer `FullField` over `FullOption`.
+  - Where editor/selector prop type generics have been used, upgrading to version 7 should only require a minor update similar to this:
+    ```diff
+     type MyFieldNames = "firstName" | "lastName" | "birthdate";
+    -const MyValueEditor = (props: ValueEditorProps<Field<MyFieldNames>>) => {
+    +const MyValueEditor = (props: ValueEditorProps<FullField<MyFieldNames>>) => {
+       //                                           ^ Field -> FullField
+       return <ValueEditor {...props} />
+    }
+    ```
 
 ### Parser functions removed from main bundle
 
