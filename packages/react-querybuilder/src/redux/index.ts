@@ -72,7 +72,7 @@ export const getQuerySelectorById = (qbId: string) => (state: RqbState) =>
 
 // Misc exports
 export const {
-  actions: { removeQueryState, setQueryState },
+  actions: { setQueryState },
 } = queriesSlice;
 
 // Thunks
