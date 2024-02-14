@@ -1,5 +1,5 @@
 import { produce } from 'immer';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { ValueEditorProps } from '../types';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 
@@ -55,15 +55,17 @@ export const useValueEditor = ({
   type,
   skipHook,
 }: UseValueEditorParams) => {
-  if (
-    !skipHook &&
-    type !== 'multiselect' &&
-    !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-    (Array.isArray(value) ||
-      (inputType === 'number' && typeof value === 'string' && value.includes(',')))
-  ) {
-    handleOnChange(toArray(value)[0] ?? '');
-  }
+  useEffect(() => {
+    if (
+      !skipHook &&
+      type !== 'multiselect' &&
+      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
+      (Array.isArray(value) ||
+        (inputType === 'number' && typeof value === 'string' && value.includes(',')))
+    ) {
+      handleOnChange(toArray(value)[0] ?? '');
+    }
+  }, [handleOnChange, inputType, operator, skipHook, type, value]);
 
   const valueAsArray = useMemo(() => toArray(value), [value]);
 

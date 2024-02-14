@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { LogType, standardClassnames } from '../defaults';
 import {
   dispatchThunk,
@@ -163,11 +163,13 @@ export function useQueryBuilderSchema<
 
   // If a new `query` prop is passed in that doesn't match the query in the store,
   // update the store to match the prop _without_ calling `onQueryChange`.
-  if (!!queryProp && queryProp !== storeQuery) {
-    queryBuilderDispatch(
-      dispatchThunk({ payload: { qbId, query: queryProp }, onQueryChange: undefined })
-    );
-  }
+  useEffect(() => {
+    if (!!queryProp && queryProp !== storeQuery) {
+      queryBuilderDispatch(
+        dispatchThunk({ payload: { qbId, query: queryProp }, onQueryChange: undefined })
+      );
+    }
+  }, [queryProp, qbId, storeQuery, queryBuilderDispatch]);
 
   const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootGroup), [rootGroup]);
   const invalidIC = !!props.independentCombinators && !independentCombinators;
@@ -178,9 +180,8 @@ export function useQueryBuilderSchema<
     // 'invalid'
   );
 
-  // This condition only runs at the beginning of the component lifecycle.
-  const [hasCalledOqcOnMount, setHasCalledOqcOnMount] = useState(false);
-  if (!hasCalledOqcOnMount) {
+  // This effect only runs once, at the beginning of the component lifecycle.
+  useEffect(() => {
     queryBuilderDispatch(
       dispatchThunk({
         payload: { qbId, query: rootGroup },
@@ -189,8 +190,8 @@ export function useQueryBuilderSchema<
           enableMountQueryChange && typeof onQueryChange === 'function' ? onQueryChange : undefined,
       })
     );
-    setHasCalledOqcOnMount(true);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Updates the redux-based query, then calls `onQueryChange` with the updated
