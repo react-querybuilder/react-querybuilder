@@ -173,7 +173,7 @@ This hook is _not_ used in the `Rule` and `RuleGroup` components used/exported b
 
 React Query Builder uses a custom React context for its Redux implementation, so it shouldn't interfere with existing Redux stores.
 
-### useQueryBuilderDispatch
+### `useQueryBuilderDispatch`
 
 Gets the `dispatch` function from the React Query Builder Redux store.
 
@@ -181,7 +181,7 @@ Gets the `dispatch` function from the React Query Builder Redux store.
 function useQueryBuilderDispatch(): ThunkDispatch<RqbState> & Dispatch;
 ```
 
-### useQueryBuilderSelector
+### `useQueryBuilderSelector`
 
 Passes the current state from the React Query Builder Redux store to a selector that retrieves the query from the state object. To generate such a selector, call `getQuerySelectorById` from any custom component, passing it the `qbId` from the `schema` prop.
 
@@ -198,7 +198,7 @@ const CustomValueEditor = (props: ValueEditorProps) => {
 };
 ```
 
-### useQueryBuilderStore
+### `useQueryBuilderStore`
 
 Gets the full React Query Builder Redux store. Not recommended for general use.
 
