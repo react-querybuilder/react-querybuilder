@@ -6,22 +6,6 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 ## Breaking changes
 
-### No default export
-
-`react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead:
-
-```diff
--import QueryBuilder from "react-querybuilder";
-+import { QueryBuilder } from "react-querybuilder";
-```
-
-Or, if you named the default export something other than `QueryBuilder`, like `ReactQueryBuilder`:
-
-```diff
--import ReactQueryBuilder from "react-querybuilder";
-+import { QueryBuilder as ReactQueryBuilder } from "react-querybuilder";
-```
-
 ### TypeScript updates
 
 - The minimum TypeScript version is now 5.1.

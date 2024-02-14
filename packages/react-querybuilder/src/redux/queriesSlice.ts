@@ -15,11 +15,8 @@ export const queriesSlice = createSlice({
   name: 'queries',
   initialState,
   reducers: {
-    setQueryState(state, { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>) {
+    setQueryState: (state, { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>) => {
       state[qbId] = query;
-    },
-    removeQueryState(state, { payload: qbId }: PayloadAction<string>) {
-      delete state[qbId];
     },
   },
   selectors: {

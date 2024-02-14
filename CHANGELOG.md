@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#646] `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead.
 - [#654] The minimum TypeScript version is now 5.1.
 - [#595] The parser functions have been removed from the main export, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
   <!-- prettier-ignore -->
@@ -99,6 +98,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#619] The package.json#types location has been corrected for all packages. This (probably) only affected legacy build systems that don't support/respect package.json#exports.
 - [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious` and a ref that tracked "first render" from `useQueryBuilderSchema`.
 - [#625] A default value will not be selected unnecessarily when `valueEditorType` evaluates to `"multiselect"`.
+- Refactored custom hooks to avoid unnecessary `useEffect` calls.
 
 ## [v6.5.5] - 2024-01-15
 

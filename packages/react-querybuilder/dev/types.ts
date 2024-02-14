@@ -28,8 +28,6 @@ export type DemoOption =
 
 export type DemoOptions = Record<DemoOption, boolean>;
 
-export type DemoOptionsHash = Partial<Record<DemoOption, 'true' | 'false'>>;
-
 export type CommonRQBProps = Pick<
   QueryBuilderProps<RuleGroupTypeAny, FullField, FullOperator, FullCombinator>,
   | 'fields'

@@ -2,10 +2,10 @@ import clsx from 'clsx';
 import queryString from 'query-string';
 import type { ComponentType } from 'react';
 import * as React from 'react';
-import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { Fragment, useCallback, useMemo, useReducer, useState } from 'react';
 import type {
-  FullField,
   FormatQueryOptions,
+  FullField,
   QueryBuilderContextProps,
   RuleGroupType,
   RuleGroupTypeIC,
@@ -22,18 +22,22 @@ import {
   optionOrder,
 } from './constants';
 import './styles.scss';
-import type { CommonRQBProps, DemoOptions, DemoOptionsHash } from './types';
+import type { CommonRQBProps, DemoOptions } from './types';
 import { getFormatQueryString, optionsReducer } from './utils';
 
 const { defaultValidator, QueryBuilder, standardClassnames } = RQB;
 
 Object.defineProperty(globalThis, 'RQB', { value: RQB });
 
-const getOptionsFromHash = (hash: DemoOptionsHash): Partial<DemoOptions> =>
-  Object.fromEntries(Object.entries(hash).map(([opt, val]) => [opt, val === 'true']));
+const getOptionsFromHash = () =>
+  Object.fromEntries(
+    Object.entries(queryString.parse(location.hash)).map(([opt, val]) => [opt, val === 'true'])
+  );
 
 // Initialize options from URL hash
-const initialOptionsFromHash = getOptionsFromHash(queryString.parse(location.hash));
+const initialOptionsFromHash = getOptionsFromHash();
+
+const generatePermalinkHash = (optVals: DemoOptions) => `#${queryString.stringify(optVals)}`;
 
 export const App = ({
   controlClassnames,
@@ -48,26 +52,6 @@ export const App = ({
     ...initialProps,
     ...initialOptionsFromHash,
   });
-
-  const permalinkHash = useMemo(() => `#${queryString.stringify(optVals)}`, [optVals]);
-
-  const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
-    const optionsFromHash = getOptionsFromHash(
-      queryString.parse(
-        queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
-      )
-    );
-    const payload = { ...defaultOptions, ...optionsFromHash };
-
-    updateOptions({ type: 'replace', payload });
-  }, []);
-
-  useEffect(() => {
-    history.pushState(null, '', permalinkHash);
-    window.addEventListener('hashchange', updateOptionsFromHash);
-
-    return () => window.removeEventListener('hashchange', updateOptionsFromHash);
-  }, [permalinkHash, updateOptionsFromHash]);
 
   const commonRQBProps = useMemo((): CommonRQBProps => {
     const { independentCombinators: _ic, ...opts } = optVals;
@@ -98,8 +82,28 @@ export const App = ({
   const actions = useMemo(
     () =>
       [
-        ['Default options', () => updateOptions({ type: 'reset' })],
-        ['All options', () => updateOptions({ type: 'all' })],
+        [
+          'Default options',
+          () => {
+            history.pushState(
+              null,
+              '',
+              generatePermalinkHash(optionsReducer(optVals, { type: 'reset' }))
+            );
+            updateOptions({ type: 'reset' });
+          },
+        ],
+        [
+          'All options',
+          () => {
+            history.pushState(
+              null,
+              '',
+              generatePermalinkHash(optionsReducer(optVals, { type: 'all' }))
+            );
+            updateOptions({ type: 'all' });
+          },
+        ],
         [
           'Clear query',
           () => {
@@ -115,7 +119,7 @@ export const App = ({
           },
         ],
       ] as const,
-    []
+    [optVals]
   );
 
   const onQueryChange = useCallback((q: RuleGroupType) => setQuery(q), []);
@@ -129,12 +133,22 @@ export const App = ({
             <input
               type="checkbox"
               checked={optVals[opt]}
-              onChange={e =>
+              onChange={e => {
+                history.pushState(
+                  null,
+                  '',
+                  generatePermalinkHash(
+                    optionsReducer(optVals, {
+                      type: 'update',
+                      payload: { optionName: opt, value: e.target.checked },
+                    })
+                  )
+                );
                 updateOptions({
                   type: 'update',
                   payload: { optionName: opt, value: e.target.checked },
-                })
-              }
+                });
+              }}
             />
             <code>{opt}</code>
           </label>
