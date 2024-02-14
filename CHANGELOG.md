@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- [#646] `react-querybuilder` no longer has a default export. Use `import { QueryBuilder } from "react-querybuilder"` instead.
 - [#654] The minimum TypeScript version is now 5.1.
 - [#595] The parser functions have been removed from the main export, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
   <!-- prettier-ignore -->
