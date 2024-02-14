@@ -24,8 +24,6 @@ You can see each alternate component package in action by clicking the correspon
 
 ## Usage
 
-For the `@react-querybuilder/native` package, render `<QueryBuilderNative />` instead of `<QueryBuilder />`. They accept the same props.
-
 The recommended way to apply one of the other compatibility packages to `<QueryBuilder />` is to wrap it in the appropriate `QueryBuilder*` context provider.
 
 This example uses the Ant Design library:
@@ -46,7 +44,7 @@ export function App() {
 }
 ```
 
-Each compatibility package exports its own context provider.
+Each compatibility package exports its own context provider except for `@react-querybuilder/native`. For that package, render `<QueryBuilderNative />` instead of `<QueryBuilder />`. They accept the same props.
 
 | Compatibility package           | Context provider        |
 | ------------------------------- | ----------------------- |
@@ -57,7 +55,6 @@ Each compatibility package exports its own context provider.
 | `@react-querybuilder/fluent`    | `QueryBuilderFluent`    |
 | `@react-querybuilder/mantine`   | `QueryBuilderMantine`   |
 | `@react-querybuilder/material`  | `QueryBuilderMaterial`  |
-| `@react-querybuilder/native`    | `QueryBuilderNative`    |
 | `@react-querybuilder/tremor`    | `QueryBuilderTremor`    |
 
 :::tip
