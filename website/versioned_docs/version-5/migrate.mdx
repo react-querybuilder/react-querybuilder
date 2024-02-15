@@ -5,7 +5,7 @@ hide_table_of_contents: true
 
 The transition from v4 to v5 should be fairly seemless. Core functionality has not been affected much since v4, other than a few bug fixes (see [changelog](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#v500---2022-10-22)). Significant code changes will only be necessary if you set the [`enableDragAndDrop` prop to `true`](#drag-and-drop) and/or you use one of the [compatibility packages](#compatibility-packages).
 
-### Drag-and-drop
+## Drag-and-drop
 
 To enable drag-and-drop in v5, you'll need to make two changes.
 
@@ -51,7 +51,7 @@ export function App() {
 
 More information is available in the [full API documentation](./api/querybuilder#enabledraganddrop).
 
-### Compatibility packages
+## Compatibility packages
 
 The recommended implementation of [compatibility packages](./compat) has been simplified in v5. Instead of explicitly passing the replacement components in to the `controlElements` prop, you can wrap the `<QueryBuilder />` element in the appropriate `<QueryBuilder* />` context provider that will automatically apply the correct `controlElements`, `controlClassnames`, and any other relevant props (now or in the future!). The example below uses the [Bootstrap-compatible package](https://www.npmjs.com/package/@react-querybuilder/bootstrap).
 
@@ -84,4 +84,6 @@ See the [compatibility package documentation](./compat) for more information abo
 
 :::
 
-Instructions on migrating from v3 to v4 are [here](/docs/4/migrate).
+## Migrating from older versions
+
+- [Version 3 to version 4](/docs/4/migrate)
