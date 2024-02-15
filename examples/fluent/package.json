@@ -1,10 +1,10 @@
 {
   "dependencies": {
     "@fluentui/react-components": "^9",
-    "@react-querybuilder/fluent": "^7.0.0-beta.4",
+    "@react-querybuilder/fluent": "^7.0.0-beta.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-beta.4"
+    "react-querybuilder": "^7.0.0-beta.5"
   },
   "description": "React Query Builder Fluent UI Example",
   "devDependencies": {
