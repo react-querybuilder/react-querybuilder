@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "types": ["@testing-library/jest-dom", "node", "web"]
+    "types": ["@testing-library/jest-dom", "node", "web", "bun"]
   },
-  "include": ["./*.ts"]
+  "include": ["./*.ts", "scripts/*.ts"]
 }

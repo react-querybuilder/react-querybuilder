@@ -1,15 +1,14 @@
 import type { ReactElement } from 'react';
 import type {
   Controls,
+  DraggedItem,
   FullField,
   InlineCombinatorProps,
   Path,
   QueryActions,
   QueryBuilderContextProviderProps,
   RuleGroupProps,
-  RuleGroupTypeAny,
   RuleProps,
-  RuleType,
 } from 'react-querybuilder';
 
 /**
@@ -61,8 +60,8 @@ export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-
  * Parameters passed to custom `canDrop` functions.
  */
 export interface CustomCanDropParams {
-  dragging: RuleType | RuleGroupTypeAny;
-  hovering: RuleType | RuleGroupTypeAny;
+  dragging: DraggedItem;
+  hovering: DraggedItem;
 }
 
 /**
@@ -86,5 +85,5 @@ export interface QueryBuilderDndContextProps {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop?: (typeof import('react-dnd'))['useDrop'];
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
-  canDrop?(params: CustomCanDropParams): boolean;
+  canDrop?: (params: CustomCanDropParams) => boolean;
 }

@@ -1,10 +1,8 @@
-/// <reference types="bun" />
-
 import { readdir } from 'node:fs/promises';
 
 const { version } = await Bun.file('./lerna.json').json();
 
-const packagesDir = `${import.meta.dir}/packages`;
+const packagesDir = `${import.meta.dir}/../packages`;
 
 const packages = (await readdir(packagesDir, { withFileTypes: true })).filter(
   p => p.isDirectory() && p.name !== 'react-querybuilder'

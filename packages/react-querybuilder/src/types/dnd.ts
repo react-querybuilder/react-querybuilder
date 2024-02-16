@@ -4,9 +4,7 @@ import type { RuleGroupTypeAny } from './ruleGroupsIC';
 
 export type DndDropTargetType = 'rule' | 'ruleGroup' | 'inlineCombinator';
 
-export type DraggedItem = (RuleType | RuleGroupTypeAny) & {
-  path: Path;
-};
+export type DraggedItem = (RuleType & { path: Path }) | (RuleGroupTypeAny & { path: Path });
 
 export type DropEffect = 'move' | 'copy';
 

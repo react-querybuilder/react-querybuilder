@@ -34,19 +34,19 @@ export const useInlineCombinatorDnD = ({
   const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
-      canDrop: (item: DraggedItem) => {
+      canDrop: ({ path: itemPath }) => {
         const parentHoverPath = getParentPath(path);
-        const parentItemPath = getParentPath(item.path);
+        const parentItemPath = getParentPath(itemPath);
         const hoverIndex = path[path.length - 1];
-        const itemIndex = item.path[item.path.length - 1];
+        const itemIndex = itemPath[itemPath.length - 1];
 
         // Don't allow drop if 1) item is ancestor of drop target,
         // 2) item is hovered over itself (this should never happen since
         // combinators don't have drag handles), or 3) combinators are
         // independent and the drop target is just above the hovering item.
         return !(
-          isAncestor(item.path, path) ||
-          pathsAreEqual(item.path, path) ||
+          isAncestor(itemPath, path) ||
+          pathsAreEqual(itemPath, path) ||
           (pathsAreEqual(parentHoverPath, parentItemPath) && hoverIndex - 1 === itemIndex) ||
           (independentCombinators &&
             pathsAreEqual(parentHoverPath, parentItemPath) &&
