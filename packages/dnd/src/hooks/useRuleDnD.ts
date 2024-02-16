@@ -4,40 +4,41 @@ import type {
   DraggedItem,
   DropCollection,
   DropResult,
-  Path,
-  QueryActions,
+  RuleProps,
   UseRuleDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 import type { QueryBuilderDndContextProps } from '../types';
 import { useDragCommon } from './useDragCommon';
 
-type UseRuleDndParams = {
-  path: Path;
-  disabled?: boolean;
-  independentCombinators?: boolean;
-} & Pick<QueryActions, 'moveRule'> &
+type UseRuleDndParams = RuleProps &
   Pick<QueryBuilderDndContextProps, 'canDrop'> &
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
-export const useRuleDnD = ({
-  path,
-  disabled,
-  independentCombinators,
-  moveRule,
-  useDrag,
-  useDrop,
-  canDrop,
-}: UseRuleDndParams): UseRuleDnD => {
+export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
+  const {
+    path,
+    rule,
+    disabled,
+    schema: { independentCombinators },
+    actions: { moveRule },
+    useDrag,
+    useDrop,
+    canDrop,
+    rule: hoveringItem,
+  } = params;
+
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
+  // const query = useQueryBuilderSelector(getQuerySelectorById(qbId));
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'rule',
     path,
+    ruleOrGroup: rule,
     disabled,
     independentCombinators,
     moveRule,
@@ -51,19 +52,24 @@ export const useRuleDnD = ({
   >(
     () => ({
       accept,
-      canDrop: item => {
-        if (typeof canDrop === 'function' && !canDrop({ item, path })) {
+      canDrop: dragging => {
+        // const dragging = findPath(dragging.path, query);
+        if (
+          dragging &&
+          typeof canDrop === 'function' &&
+          !canDrop({ dragging, hovering: { ...hoveringItem, path } })
+        ) {
           return false;
         }
         const parentHoverPath = getParentPath(path);
-        const parentItemPath = getParentPath(item.path);
+        const parentItemPath = getParentPath(dragging.path);
         const hoverIndex = path[path.length - 1];
-        const itemIndex = item.path[item.path.length - 1];
+        const itemIndex = dragging.path[dragging.path.length - 1];
 
         // Don't allow drop if 1) item is ancestor of drop target,
         // or 2) item is hovered over itself or the previous item
         return !(
-          isAncestor(item.path, path) ||
+          isAncestor(dragging.path, path) ||
           (pathsAreEqual(parentHoverPath, parentItemPath) &&
             (hoverIndex === itemIndex ||
               hoverIndex === itemIndex - 1 ||

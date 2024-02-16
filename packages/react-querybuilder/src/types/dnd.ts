@@ -1,10 +1,12 @@
 import type { Path } from './basic';
+import type { RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny } from './ruleGroupsIC';
 
 export type DndDropTargetType = 'rule' | 'ruleGroup' | 'inlineCombinator';
 
-export interface DraggedItem {
+export type DraggedItem = (RuleType | RuleGroupTypeAny) & {
   path: Path;
-}
+};
 
 export type DropEffect = 'move' | 'copy';
 

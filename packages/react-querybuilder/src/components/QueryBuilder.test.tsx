@@ -19,38 +19,27 @@ import {
 import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
+  Field,
   FullCombinator,
   FullField,
-  Field,
   FullOperator,
   Option,
   OptionGroup,
   QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
-  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleProps,
   RuleType,
   ValidationMap,
   ValueSelectorProps,
 } from '../types';
-import {
-  defaultValidator,
-  findPath,
-  formatQuery,
-  generateID,
-  numericRegex,
-  toFullOption,
-} from '../utils';
+import { defaultValidator, findPath, generateID, numericRegex, toFullOption } from '../utils';
 import { QueryBuilder } from './QueryBuilder';
 import { QueryBuilderContext } from './QueryBuilderContext';
 import { defaultControlElements } from './defaults';
 
 const user = userEvent.setup();
-
-export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
-  JSON.parse(formatQuery(query, 'json_without_ids'));
 
 const { consoleError } = consoleMocks();
 

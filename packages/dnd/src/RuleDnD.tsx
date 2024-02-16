@@ -8,21 +8,12 @@ export const RuleDnD = (props: RuleProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
   const { canDrop, useDrag, useDrop } = rqbDndContext;
-  const {
-    path,
-    disabled: disabledProp,
-    parentDisabled,
-    actions: { moveRule },
-    schema: { independentCombinators },
-  } = props;
 
-  const disabled = !!parentDisabled || !!disabledProp;
+  const disabled = !!props.parentDisabled || !!props.disabled;
 
   const dndRefs = useRuleDnD({
-    path,
+    ...props,
     disabled,
-    independentCombinators,
-    moveRule,
     useDrag: useDrag!,
     useDrop: useDrop!,
     canDrop,

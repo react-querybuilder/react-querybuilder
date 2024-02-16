@@ -240,7 +240,7 @@ Accessibility is improved with the addition of a `title` attribute to the outerm
 
 ### Drag-and-drop `canDrop` callback
 
-`<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` function prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing the dragged `item` (type `{ path: Path }`) and the `path` of the rule/group over which the dragged item is hovering. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. If `canDrop` returns `true`, the normal rules will apply.
+`<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` callback prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing `dragging` and `hovering` properties, representing the rule/group being dragged and the rule/group over which it is hovered, respectively. The objects will also contain the `path` of each item. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. Otherwise the normal drag-and-drop rules will apply.
 
 ### Enhanced `parseNumber` behavior
 

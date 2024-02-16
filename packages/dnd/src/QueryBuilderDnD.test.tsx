@@ -13,13 +13,11 @@ import type {
   FullOperator,
   QueryBuilderProps,
   RuleGroupType,
-  RuleGroupTypeAny,
   RuleGroupTypeIC,
 } from 'react-querybuilder';
 import {
   QueryBuilder,
   TestID,
-  formatQuery,
   getCompatContextProvider,
   standardClassnames,
 } from 'react-querybuilder';
@@ -28,9 +26,6 @@ import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderD
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
-
-export const stripQueryIds = (query: RuleGroupTypeAny): RuleGroupTypeAny =>
-  JSON.parse(formatQuery(query, 'json_without_ids'));
 
 consoleMocks();
 
