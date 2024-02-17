@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@react-querybuilder/tremor": "^7.0.0-beta.5",
+    "@react-querybuilder/tremor": "^7.0.0-rc.0",
     "@tremor/react": "^3",
     "dayjs": ">=1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-beta.5"
+    "react-querybuilder": "^7.0.0-rc.0"
   },
   "description": "React Query Builder Tremor Example",
   "devDependencies": {
