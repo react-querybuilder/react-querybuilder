@@ -19,9 +19,9 @@ const fields: Field[] = [
   { name: 'price', label: 'Price', inputType: 'number' },
 ];
 
-const ruleProcessor = (r: RuleType): RuleType & { inputType?: string } => ({
+const ruleProcessor: RuleProcessor = (r, { fieldData }): RuleType & { inputType?: string } => ({
   ...r,
-  inputType: fields.find(f => f.name === r.field)?.inputType,
+  inputType: fieldData?.inputType,
 });
 
 const result = transformQuery(query, { ruleProcessor });

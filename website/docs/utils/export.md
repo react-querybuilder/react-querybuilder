@@ -366,10 +366,10 @@ formatQuery(
 To customize the format of exported rules, use the `ruleProcessor` configuration option. Rules will only be passed to the provided processor function if they first pass [validation](#validation). The function will be called like this:
 
 ```ts
-ruleProcessor(rule, { parseNumbers, escapeQuotes });
+ruleProcessor(rule, { parseNumbers, escapeQuotes, fieldData });
 ```
 
-The first argument is the `RuleType` object from the query. The second argument is a `ValueProcessorOptions` object. `parseNumbers` is copied directly from the `formatQuery` options (default `false`), and `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise, as when values represent field names).
+The first argument is the `RuleType` object from the query. The second argument is a `ValueProcessorOptions` object. `parseNumbers` is copied directly from the `formatQuery` options (default `false`), and `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise, as when values represent field names). `fieldData` is the corresponding `Field` object from the `fields` array, if one was passed to `formatQuery`.
 
 The default rule processors for each format are available as exports from `react-querybuilder`:
 

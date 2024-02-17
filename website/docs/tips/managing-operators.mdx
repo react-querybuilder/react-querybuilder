@@ -71,9 +71,9 @@ export default () => <QueryBuilder fields={fields} defaultQuery={defaultQuery} /
 
 ## `getOperators` prop
 
-The `operators` field property is useful when individual fields deviate from the default operator list, but the `getOperators` function prop allows you to put all operator lists and logic in one place.
+The field `operators` property is useful when individual fields deviate from the default operator list, but the `getOperators` function prop allows you to put all operator lists and logic in one place.
 
-`getOperators` is passed a single argument, the `field` name. Based on that, you can gather information from the same array provided to the `fields` prop (or any other data source) and return a list of operator names and labels.
+`getOperators` is passed two arguments: the `field` identifier and a "meta" object with a `fieldData` property containing the full field definition. Based on that, you can gather information from the same array provided to the `fields` prop (or any other data source) and return a list of operator names and labels.
 
 The example below takes advantage of the ability to add arbitrary properties to field definitions. A non-standard `datatype` property on each field is used to determine which operators are displayed and how they are labeled. The `defaultOperators` export is utilized where appropriate. It also shows how, if present, a field's `operators` property will take precedence over the result of the `getOperators` function (see the fourth rule, where the field selection of "Favorite Movie" limits the operator list to "is" even though its `datatype` is "text").
 
@@ -95,10 +95,8 @@ const fields: Field[] = [
   },
 ];
 
-const getOperators = (fieldName: string) => {
-  const field = fields.find(fld => fld.name === fieldName);
-
-  switch (field.datatype) {
+const getOperators = (fieldName: string, { fieldData }: { fieldData: Field }) => {
+  switch (fieldData.datatype) {
     case 'text':
       return [
         { name: '=', label: 'is' },
