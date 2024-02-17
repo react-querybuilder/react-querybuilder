@@ -6,14 +6,14 @@ import './SandpackRQB.scss';
 
 interface SandpackRQBProps extends SandpackProps {
   children: React.ReactNode;
-  rqbVersion?: 4 | 5 | 6;
+  rqbVersion?: 4 | 5 | 6 | 7;
 }
 
 export const SandpackRQB = ({
   children,
   customSetup,
   options,
-  rqbVersion = 6,
+  rqbVersion = 7,
 }: SandpackRQBProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
   const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
@@ -91,16 +91,12 @@ h1, h2, h3, h4, h5, h6 {
 
   const rqbDependencies =
     rqbVersion === 4
-      ? { 'react-querybuilder': '^4.5.3' }
+      ? { 'react-querybuilder': '^4' }
       : rqbVersion === 5
-        ? {
-            '@react-querybuilder/dnd': '^5.4.1',
-            'react-querybuilder': '^5.4.1',
-          }
-        : {
-            '@react-querybuilder/dnd': '^6.0.7',
-            'react-querybuilder': '^6.0.7',
-          };
+        ? { '@react-querybuilder/dnd': '^5', 'react-querybuilder': '^5' }
+        : rqbVersion === 6
+          ? { '@react-querybuilder/dnd': '^6', 'react-querybuilder': '^6' }
+          : { '@react-querybuilder/dnd': '^7', 'react-querybuilder': '^7' };
 
   const setup = {
     ...customSetup,
