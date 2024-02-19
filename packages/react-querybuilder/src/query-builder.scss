@@ -8,22 +8,28 @@
 
 @import 'query-builder-layout.scss';
 
-// Basic
+// DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
+// to generate code snippets in the documentation.
+
+// #region Basic
 $rqb-background-color: rgba(0, 75, 183, 0.2) !default;
 $rqb-border-color: #8081a2 !default;
 $rqb-border-style: solid !default;
 $rqb-border-radius: 0.25rem !default;
+// #endregion
 
-// Drag-and-drop
+// #region Drag-and-drop
 $rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
 $rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
 $rqb-dnd-hover-border-bottom-style: dashed !default;
 $rqb-dnd-hover-border-bottom-width: 2px !default;
+// #endregion
 
-// Branches
+// #region Branches
 $rqb-branch-color: $rqb-border-color !default;
 $rqb-branch-radius: $rqb-border-radius !default;
 $rqb-branch-style: $rqb-border-style !default;
+// #endregion
 
 // Default styles
 .ruleGroup {

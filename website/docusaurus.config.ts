@@ -163,6 +163,9 @@ const config: Config = {
             6: {
               label: 'v6.x',
             },
+            7: {
+              label: 'v7.x',
+            },
             current: {
               label: 'Next',
             },

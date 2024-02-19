@@ -5,13 +5,18 @@
  * import query-builder.scss instead.
  */
 
-// Basic
+// DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
+// to generate code snippets in the documentation.
+
+// #region Basic
 $rqb-spacing: 0.5rem !default;
 $rqb-border-width: 1px !default;
+// #endregion
 
-// Branches
+// #region Branches
 $rqb-branch-indent: $rqb-spacing !default;
 $rqb-branch-width: $rqb-border-width !default;
+// #endregion
 
 // Default styles
 .ruleGroup {
