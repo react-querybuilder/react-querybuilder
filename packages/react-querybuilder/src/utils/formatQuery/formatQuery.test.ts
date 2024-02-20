@@ -651,6 +651,21 @@ it('formats JSONLogic correctly', () => {
       'jsonlogic'
     )
   ).toEqual({ '<=': [12, { var: 'f' }, 14] });
+  expect(
+    formatQuery(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f', operator: 'between', value: [14, 12] },
+          {
+            combinator: 'or',
+            rules: [{ field: 'f', operator: '=', value: '26' }],
+          },
+        ],
+      },
+      'jsonlogic'
+    )
+  ).toEqual({ and: [{ '<=': [12, { var: 'f' }, 14] }, { or: [{ '==': [{ var: 'f' }, '26'] }] }] });
 });
 
 it('formats ElasticSearch correctly', () => {

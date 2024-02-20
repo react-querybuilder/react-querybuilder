@@ -600,7 +600,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (format === 'jsonlogic') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
-    const processRuleGroup = (rg: RuleGroupType): RQBJsonLogic => {
+    const processRuleGroup = (
+      rg: RuleGroupType,
+      { outermost }: { outermost: boolean } = { outermost: false }
+    ): RQBJsonLogic => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return false;
       }
@@ -631,7 +634,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
 
       const jsonRuleGroup: RQBJsonLogic =
-        processedRules.length === 1
+        processedRules.length === 1 && outermost
           ? processedRules[0]
           : ({
               [rg.combinator]: processedRules,
@@ -642,7 +645,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return rg.not ? { '!': jsonRuleGroup } : jsonRuleGroup;
     };
 
-    return processRuleGroup(query);
+    return processRuleGroup(query, { outermost: true });
   }
 
   /**
