@@ -315,13 +315,14 @@ export const useQueryBuilderSetup = <
           value = '';
         }
       } else if (values.length) {
-        if (
-          getValueEditorTypeMain(r.field as FieldName, r.operator as OperatorName, {
-            fieldData,
-          }) === 'multiselect'
-        ) {
+        const editorType = getValueEditorTypeMain(
+          r.field as FieldName,
+          r.operator as OperatorName,
+          { fieldData }
+        );
+        if (editorType === 'multiselect') {
           value = listsAsArrays ? [] : '';
-        } else {
+        } else if (editorType === 'select' || editorType === 'radio') {
           value = getFirstOptionsFrom(values, r, listsAsArrays);
         }
       } else {

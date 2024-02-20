@@ -514,6 +514,7 @@ describe('actions', () => {
   const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
+    { name: 'field3', label: 'Field 3', valueEditorType: 'select' },
   ];
 
   const setup = () => {
@@ -601,7 +602,7 @@ describe('actions', () => {
         fields={fields}
         onQueryChange={onQueryChange}
         getValues={(field: string) => {
-          if (field === 'field1') {
+          if (field === 'field1' || field === 'field3') {
             return [
               { name: 'value1', label: 'Value 1' },
               { name: 'value2', label: 'Value 2' },
@@ -616,35 +617,43 @@ describe('actions', () => {
 
     await user.click(selectors.getByTestId(TestID.addRule));
     expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.anything()] })
-    );
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'value1' })] })
+      expect.objectContaining({ rules: [expect.objectContaining({ value: '' })] })
     );
 
     await user.selectOptions(selectors.getByTestId(TestID.fields), 'field2');
     expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ field: 'field2' })] })
-    );
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: false })] })
-    );
-
-    selectors.rerender(
-      <QueryBuilder
-        fields={fields.slice(1)}
-        onQueryChange={onQueryChange}
-        getValueEditorType={f => (f === 'field2' ? 'checkbox' : 'text')}
-      />
+      expect.objectContaining({
+        rules: [expect.objectContaining({ field: 'field2', value: false })],
+      })
     );
 
-    await user.click(selectors.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.anything(), expect.anything()] })
-    );
+    await user.selectOptions(selectors.getByTestId(TestID.fields), 'field3');
     expect(onQueryChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        rules: [expect.objectContaining({ value: false }), expect.anything()],
+        rules: [expect.objectContaining({ field: 'field3', value: 'value1' })],
+      })
+    );
+  });
+
+  it('sets default value for a "radio" rule', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const fs: Field[] = [
+      {
+        name: 'f',
+        label: 'F',
+        valueEditorType: 'radio',
+        values: [
+          { name: 'value1', label: 'Value 1' },
+          { name: 'value2', label: 'Value 2' },
+        ],
+      },
+    ];
+    render(<QueryBuilder fields={fs} onQueryChange={onQueryChange} />);
+
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        rules: [expect.objectContaining({ value: 'value1' })],
       })
     );
   });
@@ -714,6 +723,14 @@ describe('resetOnOperatorChange prop', () => {
   const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
+    {
+      name: 'field3',
+      label: 'Field 3',
+      values: [
+        { name: 'value1', label: 'Value 1' },
+        { name: 'value2', label: 'Value 2' },
+      ],
+    },
   ];
 
   it('resets the value when true', async () => {
@@ -740,6 +757,15 @@ describe('resetOnOperatorChange prop', () => {
     await user.selectOptions(screen.getByTestId(TestID.operators), '=');
     expect(onQueryChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ rules: [expect.objectContaining({ operator: '=', value: '' })] })
+    );
+
+    // Does not choose a value from the values list when the operator changes
+    await user.selectOptions(screen.getByTestId(TestID.fields), 'field3');
+    await user.selectOptions(screen.getByTestId(TestID.operators), 'beginsWith');
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        rules: [expect.objectContaining({ operator: 'beginsWith', value: '' })],
+      })
     );
   });
 
