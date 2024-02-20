@@ -57,7 +57,7 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 ### Parser functions removed from main bundle
 
-Since the parser functions are used less frequently than other utility functions—and not generally alongside each other—they have been removed from the main export. Although available as separate exports since version 6 (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. This change reduced the main bundle size by almost 50%.
+Since the [parser functions](./utils/import) are used less frequently than other utility functions—and not generally alongside each other—they have been removed from the main export. Although available as separate exports since version 6 (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. This change reduced the main bundle size by almost 50%.
 
 ```diff
  // Version 6 only
@@ -102,35 +102,56 @@ Props, components, and derived values are aggressively memoized in version 7 wit
 You can avoid unstable references by moving unchanging props, including object, array, and function definitions, outside the component rendering function. This commonly includes the `fields` array and `onQueryChange` callback. For props that _must_ be defined inside the component, memoize them with `useMemo` or `useCallback`. Particularly avoid defining props inline in the JSX.
 
 ```tsx
-// BAD
+/**
+ * BAD:
+ */
 function App() {
+  const { t } = useTranslation(); // (<-- third-party i18n library)
   const [query, setQuery] = useState();
+
+  // This function gets recreated on each render
+  const getOperators = (field: Field) => t(defaultOperators);
+
   return (
     <QueryBuilder
-      // Inline function definition
+      // Avoid inline function definitions
       onQueryChange={q => setQuery(q)}
-      // Inline array definition
+      // Avoid inline array definitions
       fields={[
         { name: 'firstName', label: 'First Name' },
         { name: 'lastName', label: 'Last Name' },
       ]}
+      // See above
+      getOperators={getOperators}
     />
   );
 }
 
-// GOOD
+/**
+ * GOOD:
+ */
+// Fields array never changes, so it can be defined outside the component
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
 function App() {
+  const { t } = useTranslation(); // (<-- third-party i18n library)
   const [query, setQuery] = useState();
+
+  // Memoize functions with useCallback. Since `t` (probably) has a
+  // stable reference, this function will rarely be recreated, if ever
+  const getOperators = useCallback((field: Field) => t(defaultOperators), [t]);
+
   return (
     <QueryBuilder
-      // useState/useReducer setters have stable references
+      // React useState/useReducer setters always have stable references,
+      // even when defined within the render method
       onQueryChange={setQuery}
-      // Defined outside component
+      // See above
       fields={fields}
+      // See above
+      getOperators={getOperators}
     />
   );
 }
