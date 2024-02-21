@@ -76,6 +76,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'elasticsearch' | (Omit<FormatQueryOptions, 'format'> & { format: 'elasticsearch' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -311,7 +312,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
    */
   if (format === 'parameterized' || format === 'parameterized_named') {
     const parameterized = format === 'parameterized';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params_named: Record<string, any> = {};
     const fieldParamIndexes: Record<string, number> = {};
 
@@ -654,6 +657,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (format === 'elasticsearch') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return false;

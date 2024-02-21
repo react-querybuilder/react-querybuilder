@@ -7,7 +7,9 @@ import { useCallback } from 'react';
  * returned function accepts and forwards a second `context` argument.
  */
 export const useStopEventPropagation = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   method: (event?: MouseEvent, context?: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): ((event?: MouseEvent, context?: any) => void) => {
   return useCallback(
     (event, context) => {

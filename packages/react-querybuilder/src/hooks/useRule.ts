@@ -98,6 +98,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const generateOnChangeHandler = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, _context?: any) => {
       if (!disabled) {
         onPropChange(prop, value, path);
@@ -107,6 +108,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const cloneRule = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       if (!disabled) {
         const newPath = [...getParentPath(path), path[path.length - 1] + 1];
@@ -117,6 +119,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const toggleLockRule = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       onPropChange('disabled', !disabled, path);
     },
@@ -124,6 +127,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const removeRule = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       if (!disabled) {
         onRuleRemove(path);
@@ -133,6 +137,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const shiftRuleUp = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftUpDisabled) {
         moveRule(path, 'up', event?.altKey);
@@ -142,6 +147,7 @@ export const useRule = (props: RuleProps) => {
   );
 
   const shiftRuleDown = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftDownDisabled) {
         moveRule(path, 'down', event?.altKey);

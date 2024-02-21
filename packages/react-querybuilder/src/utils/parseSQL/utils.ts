@@ -31,6 +31,7 @@ export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
 export const isWildcardsOnly = (sqlExpr: SQLExpression) =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^['"]?%+['"]?$/.test(sqlExpr.value);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getParamString = (param: any) => {
   switch (typeof param) {
     case 'number':

@@ -9,7 +9,7 @@ export const optionListToComboboxData = (list: FullOptionList<FullOption>): Comb
     : uniqList.map(opt => ({ name: opt.name, value: opt.name, label: opt.label }));
 };
 
-export const toNumberInputValue = (val: any) => {
+export const toNumberInputValue = (val: number | string) => {
   if (typeof val === 'number') return val;
   const valParseFloat = parseFloat(val);
   if (!isNaN(valParseFloat)) return valParseFloat;

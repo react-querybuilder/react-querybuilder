@@ -62,7 +62,7 @@ export const celCombinatorMap = {
 export const jsonLogicAdditionalOperators = {
   startsWith: (a: string, b: string) => typeof a === 'string' && a.startsWith(b),
   endsWith: (a: string, b: string) => typeof a === 'string' && a.endsWith(b),
-} satisfies Record<'startsWith' | 'endsWith', (...args: any[]) => boolean>;
+} satisfies Record<'startsWith' | 'endsWith', (a: string, b: string) => boolean>;
 
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
@@ -86,11 +86,13 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   }),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isValidValue = (v: any) =>
   (typeof v === 'string' && v.length > 0) ||
   (typeof v === 'number' && !isNaN(v)) ||
   (typeof v !== 'string' && typeof v !== 'number');
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
   parseNumbers &&
   (typeof v === 'number' ||

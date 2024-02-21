@@ -4,6 +4,7 @@ import type {
   FullCombinator,
   FullField,
   FullOperator,
+  GetOptionIdentifierType,
   QueryBuilderProps,
   RuleGroupTypeAny,
   useQueryBuilderSetup,
@@ -22,7 +23,7 @@ export const useQueryBuilderSchemaNative = <
 ) => {
   const qb = useQueryBuilderSchema<RG, F, O, C>(props as QueryBuilderProps<RG, F, O, C>, setup);
 
-  (qb as WithSchemaNative).schema.styles = useMemo(
+  (qb as WithSchemaNative<F, GetOptionIdentifierType<O>>).schema.styles = useMemo(
     () => StyleSheet.create(props.styles ?? {}),
     [props.styles]
   );

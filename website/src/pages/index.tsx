@@ -37,6 +37,7 @@ const initialDatePickerQuery: RuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'birthdate', operator: '=', value: new Date() }],
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DateButton = forwardRef<HTMLButtonElement>(({ value, onClick }: any, ref) => (
   <button onClick={onClick} ref={ref}>
     {value} 📅

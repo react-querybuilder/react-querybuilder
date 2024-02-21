@@ -77,7 +77,7 @@ jest.mock('@mui/material/FormControl', () => {
   const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
     <div className={className} title={title}>
       {mockIsValidElement(children)
-        ? mockCloneElement(children as ReactElement<any>, { disabled })
+        ? mockCloneElement(children as ReactElement, { disabled })
         : children}
     </div>
   );
@@ -127,6 +127,7 @@ const muiComponents = {
   TextareaAutosize,
 };
 const theme = createTheme();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>

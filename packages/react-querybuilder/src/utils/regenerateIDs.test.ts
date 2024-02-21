@@ -74,12 +74,14 @@ it('should generate different IDs for independent combinators', () => {
 });
 
 it('should generate different IDs for any POJO', () => {
-  const newObject = regenerateIDs({ test: 'this' } as any);
+  // @ts-expect-error testing invalid input
+  const newObject = regenerateIDs({ test: 'this' });
   expect(newObject.id).toMatch(uuidV4regex);
   expect(newObject).toHaveProperty('test', 'this');
 });
 
 it('should return the first param if not POJO', () => {
-  const newObject = regenerateIDs('test' as any);
+  // @ts-expect-error testing invalid input
+  const newObject = regenerateIDs('test');
   expect(newObject).toBe('test');
 });

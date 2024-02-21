@@ -6,8 +6,10 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : `${clause}`);
 
-const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`);
+const escapeSingleQuotes = (
+  v: string | number | boolean | object | null,
+  escapeQuotes?: boolean
+) => (typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`));
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.

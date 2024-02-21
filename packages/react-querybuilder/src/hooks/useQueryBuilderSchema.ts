@@ -49,9 +49,11 @@ const defaultGetValueEditorSeparator = () => null;
 const defaultGetRuleClassname = () => '';
 const defaultGetRuleGroupClassname = () => '';
 const defaultOnAddRule = (r: RuleType) => r;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultOnAddGroup = (rg: any) => rg;
 const defaultOnRemove = () => true;
 // istanbul ignore next
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultOnLog = (...params: any[]) => {
   console.log(...params);
 };
@@ -216,6 +218,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleAdd = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (rule: R, parentPath: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -258,6 +261,7 @@ export function useQueryBuilderSchema<
   );
 
   const onGroupAdd = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ruleGroup: RG, parentPath: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -305,6 +309,7 @@ export function useQueryBuilderSchema<
   );
 
   const onPropChange = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (prop: UpdateableProperties, value: any, path: Path) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
       // istanbul ignore if
@@ -343,6 +348,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleOrGroupRemove = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (path: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if

@@ -48,7 +48,8 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-const generateWrapper = (RQBComponent: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <MantineProvider>
       <RQBComponent {...props} />
@@ -90,7 +91,7 @@ const defaultDateTimePickerLabelValueFormat = 'DD/MM/YYYY HH:mm:ss';
 const toDateTimePickerLabel = (s: string) => dayjs(s).format(defaultDateTimePickerLabelValueFormat);
 
 describe('MantineValueSelector', () => {
-  (window as any).ResizeObserver = ResizeObserver;
+  window.ResizeObserver = ResizeObserver;
   const props: VersatileSelectorProps = {
     testID: TestID.fields,
     options,

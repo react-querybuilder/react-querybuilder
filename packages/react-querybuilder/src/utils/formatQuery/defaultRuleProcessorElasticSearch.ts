@@ -11,6 +11,7 @@ type RangeRule = (
 ) & { [k in RangeOperator]?: string | number };
 type ElasticSearchRule =
   | { range: Record<string, RangeRule> }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { term: Record<string, any> }
   | { exists: { field: string } }
   | { regexp: { [k: string]: { value: string } } };
@@ -52,6 +53,10 @@ const getTextScript = (f: string, o: string, v: string) => {
   const script = `doc['${f}'].${textFunctionMap[o] ?? o}(doc['${v}'])`;
   return o.startsWith('d') ? `!${script}` : script;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const valueRenderer = (v: any, parseNumbers?: boolean) =>
+  typeof v === 'boolean' ? v : shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
 
 /**
  * Default rule processor used by {@link formatQuery} for "elasticsearch" format.
@@ -136,9 +141,6 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
     }
   }
 
-  const valueRenderer = (v: any) =>
-    typeof value === 'boolean' ? value : shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
-
   switch (operator) {
     case '<':
     case '<=':
@@ -147,16 +149,16 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       return {
         range: {
           [field]: {
-            [rangeOperatorMap[operator]]: valueRenderer(value),
+            [rangeOperatorMap[operator]]: valueRenderer(value, parseNumbers),
           } as RangeRule,
         },
       };
 
     case '=':
-      return { term: { [field]: valueRenderer(value) } };
+      return { term: { [field]: valueRenderer(value, parseNumbers) } };
 
     case '!=':
-      return { bool: { must_not: { term: { [field]: valueRenderer(value) } } } };
+      return { bool: { must_not: { term: { [field]: valueRenderer(value, parseNumbers) } } } };
 
     case 'null':
       return { bool: { must_not: { exists: { field } } } };
@@ -166,9 +168,9 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
 
     case 'in':
     case 'notIn': {
-      const valueAsArray = toArray(value).map(valueRenderer);
+      const valueAsArray = toArray(value).map(v => valueRenderer(v, parseNumbers));
       if (valueAsArray.length > 0) {
-        const arr = valueAsArray.map(v => ({ term: { [field]: valueRenderer(v) } }));
+        const arr = valueAsArray.map(v => ({ term: { [field]: valueRenderer(v, parseNumbers) } }));
         return { bool: operator === 'in' ? { should: arr } : { must_not: arr } };
       }
       return false;

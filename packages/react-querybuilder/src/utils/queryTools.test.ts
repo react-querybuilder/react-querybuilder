@@ -99,7 +99,8 @@ describe('add', () => {
         })),
       }),
       {
-        rules: [r1, `custom-${and}` as any, r2],
+        // @ts-expect-error custom combinator
+        rules: [r1, `custom-${and}`, r2],
       }
     );
     testQT(
@@ -596,5 +597,6 @@ describe('shift', () => {
     });
   });
 
-  testQT('does not alter query for invalid direction', move(rg3, [0], 'x' as any), rg3, true);
+  // @ts-expect-error 'x' is not assignable to 'up' | 'down'
+  testQT('does not alter query for invalid direction', move(rg3, [0], 'x'), rg3, true);
 });

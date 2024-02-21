@@ -41,7 +41,7 @@ it('getFieldName', () => {
 });
 
 it('evalSQLLiteralValue', () => {
-  const value: any = 'Test';
+  const value = 'Test';
   const sqlStringValue: SQLStringValue = { type: 'String', value };
   const sqlStringValueSQ: SQLStringValue = { type: 'String', value: `'${value}'` };
   const sqlStringValueDQ: SQLStringValue = { type: 'String', value: `"${value}"` };

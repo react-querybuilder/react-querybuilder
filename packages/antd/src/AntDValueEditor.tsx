@@ -7,6 +7,7 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
 import dayjsGenerateConfig from './dayjs';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 const DatePicker = generatePicker(dayjsGenerateConfig);

@@ -194,6 +194,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       }
     } else if (isCELRelation(expr)) {
       let field: string | null = null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any = undefined;
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;

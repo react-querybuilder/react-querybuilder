@@ -2,7 +2,7 @@ import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
-const escapeDoubleQuotes = (v: any) =>
+const escapeDoubleQuotes = (v: string | number | boolean | object | null) =>
   typeof v !== 'string' ? v : v.replaceAll('\\', '\\\\').replaceAll(`"`, `\\"`);
 
 /**

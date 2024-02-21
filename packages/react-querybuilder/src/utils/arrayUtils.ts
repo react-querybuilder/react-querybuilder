@@ -39,18 +39,21 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
  * // would return
  * 'this\\,\\,that,,the other,,,\\,'
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const joinWith = (strArr: any[], joinChar = defaultJoinChar) =>
   strArr.map(str => `${str ?? ''}`.replaceAll(joinChar, `\\${joinChar}`)).join(joinChar);
 
 /**
  * Trims the value if it is a string. Otherwise returns the value as is.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const trimIfString = (val: any) => (typeof val === 'string' ? val.trim() : val);
 
 /**
  * Splits a string by comma then trims each element. Arrays are returned as is except
  * any string elements are trimmed.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toArray = (v: any) =>
   Array.isArray(v)
     ? v.map(trimIfString)

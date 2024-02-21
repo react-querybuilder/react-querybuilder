@@ -70,6 +70,7 @@ export const useValueEditor = ({
   const valueAsArray = useMemo(() => toArray(value), [value]);
 
   const multiValueHandler = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (v: any, i: number) => {
       const val = produce(valueAsArray, va => {
         va[i] = parseNumber(v, { parseNumbers });

@@ -7,6 +7,7 @@ import { toSelectItems } from './utils';
 
 export type TremorValueSelectorProps = VersatileSelectorProps &
   Omit<SelectProps & MultiSelectProps, 'children' | 'value'> & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value?: any;
   };
 

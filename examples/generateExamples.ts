@@ -14,6 +14,7 @@ type ESLintExtendsIsArray = ESLint.ConfigData & { extends: string[] };
 // Seems like this should be unnecessary...
 declare module 'bun' {
   interface BunFile {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     json(): Promise<any>;
   }
 }

@@ -20,13 +20,13 @@ export type MergeInsertions<T> = T extends object ? { [K in keyof T]: MergeInser
 export type Alike<X, Y> = Equal<MergeInsertions<X>, MergeInsertions<Y>>;
 
 export type ExpectExtends<VALUE, EXPECTED> = EXPECTED extends VALUE ? true : false;
-export type ExpectValidArgs<FUNC extends (...args: any[]) => any, ARGS extends any[]> =
+export type ExpectValidArgs<FUNC extends (...args: unknown[]) => unknown, ARGS extends unknown[]> =
   ARGS extends Parameters<FUNC> ? true : false;
 
-export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+export type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (
   k: infer I
 ) => void
   ? I
   : never;
 
-export const doNotExecute = (_func: () => any) => {};
+export const doNotExecute = (_func: () => unknown) => {};

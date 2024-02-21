@@ -11,7 +11,7 @@ export const NativeBaseActionElement = ({
   <Button
     aria-label={title}
     disabled={disabled && !disabledTranslation}
-    onPress={(e: any) => handleOnClick(e)}>
+    onPress={_e => handleOnClick()}>
     {disabledTranslation && disabled
       ? disabledTranslation.label ?? ''
       : label ?? ''}

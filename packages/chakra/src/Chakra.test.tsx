@@ -21,7 +21,8 @@ import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 import { QueryBuilderChakra } from './index';
 
-const generateWrapper = (RQBComponent: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
       <RQBComponent {...props} />

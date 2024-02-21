@@ -25,7 +25,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
-  const fieldOrNumberRenderer = (v: any) =>
+  const fieldOrNumberRenderer = (v: string) =>
     valueIsField ? { var: `${v}` } : shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
 
   switch (operator) {

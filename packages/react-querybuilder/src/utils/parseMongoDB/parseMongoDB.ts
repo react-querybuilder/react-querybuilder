@@ -22,6 +22,7 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
  * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link DefaultRuleGroupType}).
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGroupType;
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
@@ -29,6 +30,7 @@ function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGr
  * ({@link DefaultRuleGroupType}).
  */
 function parseMongoDB(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mongoDbRules: string | Record<string, any>,
   options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators?: false;
@@ -40,12 +42,14 @@ function parseMongoDB(
  * ({@link DefaultRuleGroupTypeIC}).
  */
 function parseMongoDB(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mongoDbRules: string | Record<string, any>,
   options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;
 function parseMongoDB(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mongoDbRules: string | Record<string, any>,
   options: ParseMongoDbOptions = {}
 ): DefaultRuleGroupTypeAny {
@@ -72,9 +76,11 @@ function parseMongoDB(
   function processMongoDbQueryBooleanOperator(
     field: string,
     mdbOperator: MongoDbSupportedOperators,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     keyValue: any
   ): DefaultRuleType | false {
     let operator: DefaultOperatorName = '=';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let value: any = '';
 
     // istanbul ignore else
@@ -145,6 +151,7 @@ function parseMongoDB(
 
   function processMongoDbQueryObjectKey(
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     keyValue: any
   ): DefaultRuleType | DefaultRuleGroupType | false {
     let field = '';
@@ -364,6 +371,7 @@ function parseMongoDB(
   }
 
   function processMongoDbQueryObject(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mongoDbQueryObject: Record<string, any>
   ): DefaultRuleGroupType | DefaultRuleType | false {
     const rules = objectKeys(mongoDbQueryObject)
@@ -386,6 +394,7 @@ function parseMongoDB(
     return emptyRuleGroup;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result = processMongoDbQueryObject(mongoDbPOJO as Record<string, any>);
   const finalQuery: DefaultRuleGroupType = result
     ? isRuleGroupType(result)

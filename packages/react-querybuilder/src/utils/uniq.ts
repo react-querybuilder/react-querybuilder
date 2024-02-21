@@ -28,7 +28,7 @@ export const uniqByIdentifier = <
   originalArray: T[]
 ): T[] => {
   const names = new Set<string>();
-  const newArray: any[] = [];
+  const newArray: T[] = [];
   originalArray.forEach(el => {
     if (!names.has((el.value ?? el.name)!)) {
       names.add((el.value ?? el.name)!);

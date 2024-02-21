@@ -18,6 +18,7 @@ export type Path = number[];
  * keys are classnames and those with truthy values will be included.
  * Suitable for passing to the `clsx` package.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Classname = string | string[] | Record<string, any>;
 
 /**
@@ -103,6 +104,7 @@ export interface FullField<
   inputType?: InputType | null;
   values?: FlexibleOptionList<ValueObj>;
   defaultOperator?: OperatorName;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;

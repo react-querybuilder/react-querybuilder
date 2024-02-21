@@ -2,8 +2,10 @@ import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
 
-const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
-  escapeQuotes && typeof v === 'string' ? v.replaceAll(`'`, `''`) : v;
+const escapeSingleQuotes = (
+  v: string | number | boolean | object | null,
+  escapeQuotes?: boolean
+) => (escapeQuotes && typeof v === 'string' ? v.replaceAll(`'`, `''`) : v);
 
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
@@ -17,7 +19,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const [qfnwPre, qfnwPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
   const operatorLowerCase = operator.toLowerCase();
 
-  const wrapFieldName = (f: any) => `${qfnwPre}${f}${qfnwPost}`;
+  const wrapFieldName = (f: string) => `${qfnwPre}${f}${qfnwPost}`;
 
   switch (operatorLowerCase) {
     case 'null':

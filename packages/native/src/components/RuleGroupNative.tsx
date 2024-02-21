@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
+import type { FullField, RuleGroupProps } from 'react-querybuilder';
 import {
   RuleGroupBodyComponents,
   RuleGroupHeaderComponents,
@@ -12,7 +13,7 @@ import type { RuleGroupNativeProps, SchemaNative } from '../types';
 
 export const RuleGroupNative = (props: RuleGroupNativeProps) => {
   const rg = useRuleGroup(props);
-  const schema = rg.schema as SchemaNative<any, string>;
+  const schema = rg.schema as SchemaNative<FullField, string>;
 
   const styles = useMemo(
     () => ({
@@ -32,10 +33,10 @@ export const RuleGroupNative = (props: RuleGroupNativeProps) => {
   return (
     <View style={styles.ruleGroup} testID={TestID.ruleGroup}>
       <View style={styles.ruleGroupHeader}>
-        <RuleGroupHeaderComponents {...(rg as any)} />
+        <RuleGroupHeaderComponents {...(rg as RuleGroupProps & ReturnType<typeof useRuleGroup>)} />
       </View>
       <View style={styles.ruleGroupBody}>
-        <RuleGroupBodyComponents {...(rg as any)} />
+        <RuleGroupBodyComponents {...(rg as RuleGroupProps & ReturnType<typeof useRuleGroup>)} />
       </View>
     </View>
   );

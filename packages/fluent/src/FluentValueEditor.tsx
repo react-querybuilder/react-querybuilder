@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 export const FluentValueEditor = (allProps: FluentValueEditorProps) => {

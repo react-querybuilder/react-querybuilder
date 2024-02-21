@@ -31,8 +31,8 @@ export interface SchemaNative<F extends FullField, O extends string>
   extends Schema<F, O>,
     WithOptionalStyleSheets {}
 
-export interface WithSchemaNative {
-  schema: SchemaNative<any, any>;
+export interface WithSchemaNative<F extends FullField = FullField, O extends string = string> {
+  schema: SchemaNative<F, O>;
 }
 
 export type QueryBuilderNativeStyles = {

@@ -23,6 +23,7 @@ export const FluentActionElement = ({
 }: FluentActionProps) => (
   <Button
     // TODO: Find a way to do better than "as any" here
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     {...(otherProps as any)}
     data-testid={testID}
     type="button"

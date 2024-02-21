@@ -6,6 +6,7 @@ import type { RuleGroupTypeAny } from './ruleGroupsIC';
  */
 export interface ValidationResult {
   valid: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   reasons?: any[];
 }
 
