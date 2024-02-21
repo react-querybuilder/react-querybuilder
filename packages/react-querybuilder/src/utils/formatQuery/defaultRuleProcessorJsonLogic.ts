@@ -5,6 +5,7 @@ import type {
   RuleType,
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { parseNumber } from '../parseNumber';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
@@ -26,7 +27,11 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
   const fieldOrNumberRenderer = (v: string) =>
-    valueIsField ? { var: `${v}` } : shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
+    valueIsField
+      ? { var: `${v}` }
+      : shouldRenderAsNumber(v, parseNumbers)
+        ? parseNumber(v, { parseNumbers })
+        : v;
 
   switch (operator) {
     case '<':
@@ -71,8 +76,8 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
           shouldRenderAsNumber(first, true) &&
           shouldRenderAsNumber(second, true)
         ) {
-          const firstNum = parseFloat(first);
-          const secondNum = parseFloat(second);
+          const firstNum = parseNumber(first, { parseNumbers: true });
+          const secondNum = parseNumber(second, { parseNumbers: true });
           if (secondNum < firstNum) {
             const tempNum = secondNum;
             second = firstNum;

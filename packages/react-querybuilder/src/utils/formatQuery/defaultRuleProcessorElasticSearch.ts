@@ -1,5 +1,6 @@
 import type { RuleProcessor, RuleType } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { parseNumber } from '../parseNumber';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
 type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte';
@@ -56,7 +57,11 @@ const getTextScript = (f: string, o: string, v: string) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const valueRenderer = (v: any, parseNumbers?: boolean) =>
-  typeof v === 'boolean' ? v : shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
+  typeof v === 'boolean'
+    ? v
+    : shouldRenderAsNumber(v, parseNumbers)
+      ? parseNumber(v, { parseNumbers })
+      : v;
 
 /**
  * Default rule processor used by {@link formatQuery} for "elasticsearch" format.
@@ -186,8 +191,8 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       ) {
         let [first, second] = valueAsArray;
         if (shouldRenderAsNumber(first, true) && shouldRenderAsNumber(second, true)) {
-          const firstNum = parseFloat(first);
-          const secondNum = parseFloat(second);
+          const firstNum = parseNumber(first, { parseNumbers: true });
+          const secondNum = parseNumber(second, { parseNumbers: true });
           if (secondNum < firstNum) {
             const tempNum = secondNum;
             second = firstNum;

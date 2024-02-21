@@ -22,6 +22,7 @@ import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption, toFlatOptionArray } from '../optGroupUtils';
+import { parseNumber } from '../parseNumber';
 import { toFullOptionList } from '../toFullOption';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
@@ -345,7 +346,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             const splitValue = toArray(rule.value);
             if (parameterized) {
               splitValue.forEach(v =>
-                params.push(shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v)
+                params.push(
+                  shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v
+                )
               );
               return `${quoteFieldNamesWith[0]}${rule.field}${
                 quoteFieldNamesWith[1]
@@ -356,7 +359,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               const thisParamName = getNextNamedParam(rule.field);
               inParams.push(`${paramPrefix}${thisParamName}`);
               params_named[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] =
-                shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
+                shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v;
             });
             return `${quoteFieldNamesWith[0]}${rule.field}${
               quoteFieldNamesWith[1]
@@ -372,7 +375,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             const valueAsArray = toArray(rule.value);
             const [first, second] = valueAsArray
               .slice(0, 2)
-              .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v));
+              .map(v =>
+                shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v
+              );
             if (parameterized) {
               params.push(first);
               params.push(second);
@@ -390,7 +395,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         let paramValue = rule.value;
         if (typeof rule.value === 'string') {
           if (shouldRenderAsNumber(rule.value, parseNumbers)) {
-            paramValue = parseFloat(rule.value);
+            paramValue = parseNumber(rule.value, { parseNumbers });
           } else {
             // Note that we're using `value` here, which has been processed through
             // a `valueProcessor`, as opposed to `rule.value` which has not

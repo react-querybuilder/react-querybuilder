@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { parseNumber } from '../parseNumber';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
 const escapeDoubleQuotes = (v: string | number | boolean | object | null) =>
@@ -104,8 +105,12 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
-        const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
+        const firstNum = shouldRenderAsNumber(first, true)
+          ? parseNumber(first, { parseNumbers: true })
+          : NaN;
+        const secondNum = shouldRenderAsNumber(second, true)
+          ? parseNumber(second, { parseNumbers: true })
+          : NaN;
         const firstValue =
           valueIsField || !isNaN(firstNum) ? `${first}` : `"${escapeDoubleQuotes(first)}"`;
         const secondValue =
