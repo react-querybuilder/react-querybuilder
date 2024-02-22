@@ -2,17 +2,17 @@
   "setupTasks": [
     {
       "name": "Install Dependencies",
-      "command": "bun run install"
+      "command": "yarn install"
     }
   ],
   "tasks": {
     "build": {
       "name": "build",
-      "command": "bun run build"
+      "command": "yarn build"
     },
     "dev": {
       "name": "dev",
-      "command": "bun run dev",
+      "command": "yarn dev",
       "runAtStart": true,
       "preview": {
         "port": 5173
@@ -20,7 +20,7 @@
     },
     "preview": {
       "name": "preview",
-      "command": "bun run preview"
+      "command": "yarn preview"
     }
   }
 }

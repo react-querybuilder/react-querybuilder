@@ -11,7 +11,7 @@
   "tasks": {
     "dev": {
       "name": "Start Dev Server",
-      "command": "bun run dev",
+      "command": "yarn dev",
       "runAtStart": true,
       "preview": {
         "port": 3000
@@ -22,17 +22,17 @@
     },
     "build": {
       "name": "Build",
-      "command": "bun run build",
+      "command": "yarn build",
       "runAtStart": false
     },
     "start": {
       "name": "Start Server",
-      "command": "bun run start",
+      "command": "yarn start",
       "runAtStart": false
     },
     "lint": {
       "name": "Lint",
-      "command": "bun run lint",
+      "command": "yarn lint",
       "runAtStart": false
     },
     "install": {
