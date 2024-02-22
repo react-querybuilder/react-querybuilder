@@ -11,7 +11,7 @@ export default {
   arrowParens: "avoid",
   overrides: [
     {
-      files: "src/**/*.{s,}css",
+      files: "app/**/*.{s,}css",
       options: {
         printWidth: 100,
       },
