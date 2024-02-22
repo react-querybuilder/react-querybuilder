@@ -2,7 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Ant Design](https://ant.design/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/antd) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/antd).
+To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/antd) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/antd).
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 

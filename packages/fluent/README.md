@@ -2,7 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Fluent UI](https://github.com/microsoft/fluentui).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/fluent) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/fluent).
+To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/fluent) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/fluent).
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 

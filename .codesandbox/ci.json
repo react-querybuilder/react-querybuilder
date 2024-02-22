@@ -3,6 +3,8 @@
   "packages": ["packages/*"],
   "sandboxes": [
     "/examples/ci",
+    "/examples/basic",
+    "/examples/basic-ts",
     "/examples/dnd",
     "/examples/antd",
     "/examples/bootstrap",

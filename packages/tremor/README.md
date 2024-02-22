@@ -2,7 +2,7 @@
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Tremor](https://www.tremor.so/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/tremor) or [load the example in CodeSandbox](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/tremor).
+To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/tremor) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/tremor).
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 
