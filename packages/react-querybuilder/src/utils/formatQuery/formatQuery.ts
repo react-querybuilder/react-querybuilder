@@ -283,6 +283,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             escapeQuotes,
             quoteFieldNamesWith,
             fieldData,
+            format,
           });
         }
         // ...otherwise use default rule processor and pass in the value
@@ -293,6 +294,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           valueProcessor: valueProcessorInternal,
           quoteFieldNamesWith,
           fieldData,
+          format,
         });
       });
 
@@ -335,7 +337,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
 
       const fieldData = getOption(fields, rule.field);
-      const value = valueProcessorInternal(rule, { parseNumbers, quoteFieldNamesWith, fieldData });
+      const value = valueProcessorInternal(rule, {
+        parseNumbers,
+        quoteFieldNamesWith,
+        fieldData,
+        format,
+      });
       const operator = mapSQLOperator(rule.operator);
 
       if ((rule.valueSource ?? 'value') === 'value') {
@@ -496,6 +503,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             fieldData,
+            format,
           });
         })
         .filter(Boolean);
@@ -542,6 +550,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parseNumbers,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
+            format,
           });
         })
         .filter(Boolean)
@@ -589,6 +598,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parseNumbers,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
+            format,
           });
         })
         .filter(Boolean)
@@ -633,6 +643,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             fieldData,
+            format,
           });
         })
         .filter(Boolean);
@@ -685,6 +696,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             fieldData,
+            format,
           });
         })
         .filter(Boolean);

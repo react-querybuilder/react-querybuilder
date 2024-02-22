@@ -127,6 +127,7 @@ export interface FormatQueryOptions {
  */
 export interface ValueProcessorOptions
   extends Pick<FormatQueryOptions, 'parseNumbers' | 'quoteFieldNamesWith'> {
+  format?: ExportFormat;
   escapeQuotes?: boolean;
   /**
    * The full field object, if `fields` was provided in the
