@@ -5,6 +5,15 @@
 # (we may want to add `--frozen-lockfile` in BUN_FLAGS).
 command = "bun ./website/update-yarn.lock.ts && yarn set version berry && yarn config set enableImmutableInstalls false && yarn install && bun run build && bun website:build"
 publish = "website/build"
-NODE_OPTIONS = "--max-old-space-size=4096"
-NODE_VERSION = "20.10.0"
+
+[context.production.environment]
+BUN_FLAGS = "--yarn --dry-run"
+
+[context.deploy-preview.environment]
+BUN_FLAGS = "--yarn --dry-run"
+
+[context.branch-deploy.environment]
+BUN_FLAGS = "--yarn --dry-run"
+
+[context.dev.environment]
 BUN_FLAGS = "--yarn --dry-run"
