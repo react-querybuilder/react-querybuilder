@@ -27,9 +27,12 @@ const initialQuery: RuleGroupType = {
   ],
 };
 
-// NOTE: This works without the `ClientOnly` wrapper as long as each object in the query
-// hierarchy (including the query object itself) has a unique `id` property at the time of
-// server rendering.
+/**
+ * NOTE: This can work without the `ClientOnly` wrapper as long as each object in
+ * the query hierarchy (including the query object itself) already has a unique
+ * `id` property at the time of server rendering. You can use the `prepareRuleGroup`
+ * function to add `id`s automatically.
+ */
 export const NextQueryBuilder = () => {
   const [query, setQuery] = useState(initialQuery);
 
@@ -46,12 +49,13 @@ export const NextQueryBuilder = () => {
   );
 };
 
-// If the query doesn't have `id`s, the component must be lazy-loaded without SSR
-// to avoid conflicting props during hydration.
-// See https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#skipping-ssr
-
-// Uncomment the following lines, remove the existing export, and rename the component `QB` to enable
-// SSR-less lazy-loading:
+/**
+ * If the query doesn't have `id`s and you don't want to use `ClientOnly`, the component must
+ * be lazy-loaded without SSR to avoid hydration errors. See
+ * https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#skipping-ssr.
+ * To enable SSR-less lazy-loading, uncomment the following lines, remove the existing export
+ * declaration, and rename the function component `QB`:
+ */
 // import dynamic from 'next/dynamic';
 // export const NextQueryBuilder = dynamic(() => Promise.resolve(QB), {
 //   ssr: false,
