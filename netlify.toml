@@ -7,13 +7,21 @@ command = "bun ./website/update-yarn.lock.ts && yarn set version berry && yarn c
 publish = "website/build"
 
 [context.production.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
 
 [context.deploy-preview.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
 
 [context.branch-deploy.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
 
 [context.dev.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
