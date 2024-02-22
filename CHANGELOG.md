@@ -89,6 +89,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#606] New compatibility package for [Tremor](https://www.tremor.so/), `@react-querybuilder/tremor`.
 - [#537] New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in modern IDEs.
 - [#638] Value selectors now respect the `disabled` property of individual options in option lists.
+- [#663] The `format` option set during a call to `formatQuery` will be passed to custom rule processors as a property of the options object in the second parameter.
 
 ### Fixed
 
