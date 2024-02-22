@@ -80,22 +80,15 @@ export type InputType =
   | (string & {});
 
 /**
- * Full field definition used in the `fields` prop of {@link QueryBuilder}.
- * This type requires both `name` and `value`, but the `fields` prop itself
- * can use a {@link FlexibleOption} where only one of `name` or `value` is
- * required (along with `label`), or {@link Field} where only `name` and
- * `label` are required.
- *
- * The `name`/`value`, `operators`, and `values` properties of this interface
- * can be narrowed with generics.
+ * Base for all Field types/interfaces.
  */
-export interface FullField<
+interface BaseFullField<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
   ValueObj extends Option = Option<ValueName>,
-> extends FullOption<FieldName>,
+> extends BaseFullOption<FieldName>,
     HasOptionalClassName {
   id?: string;
   operators?: FlexibleOptionList<OperatorObj>;
@@ -112,6 +105,25 @@ export interface FullField<
 }
 
 /**
+ * Full field definition used in the `fields` prop of {@link QueryBuilder}.
+ * This type requires both `name` and `value`, but the `fields` prop itself
+ * can use a {@link FlexibleOption} where only one of `name` or `value` is
+ * required (along with `label`), or {@link Field} where only `name` and
+ * `label` are required.
+ *
+ * The `name`/`value`, `operators`, and `values` properties of this interface
+ * can be narrowed with generics.
+ */
+export interface FullField<
+  FieldName extends string = string,
+  OperatorName extends string = string,
+  ValueName extends string = string,
+  OperatorObj extends Option = Option<OperatorName>,
+  ValueObj extends Option = Option<ValueName>,
+> extends FullOption<FieldName>,
+    BaseFullField<FieldName, OperatorName, ValueName, OperatorObj, ValueObj> {}
+
+/**
  * Field definition used in the `fields` prop of {@link QueryBuilder}.
  * This type is an extension of {@link FullField} where only `name` and
  * `label` are required.
@@ -124,30 +136,12 @@ export type Field<
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
-> = { value?: FieldName } & Pick<
-  FullField<FieldName, OperatorName, ValueName, OperatorObj>,
-  // **DEV NOTE**: Keep this list up to date with the explicitly-named
-  // properties in the `FullField` definition and all the interfaces
-  // it extends _except_ `value` from `FullOption`.
-  // Properties from `FullOption`
-  | 'name'
-  | 'id'
-  | 'label'
-  | 'disabled'
-  // Properties from `HasOptionalClassName`
-  | 'className'
-  // Properties from `FullField`
-  | 'operators'
-  | 'valueEditorType'
-  | 'valueSources'
-  | 'inputType'
-  | 'values'
-  | 'defaultOperator'
-  | 'defaultValue'
-  | 'placeholder'
-  | 'validator'
-  | 'comparator'
-> & { [key: string]: unknown };
+> = WithUnknownIndex<
+  { value?: FieldName } & Pick<
+    BaseFullField<FieldName, OperatorName, ValueName, OperatorObj>,
+    Exclude<keyof BaseFullField, 'value'>
+  >
+>;
 
 // TODO: Dynamically generate the list of explicitly-named properties.
 // The code below is a non-working attempt.
