@@ -2,7 +2,7 @@
 title: Migrating to v7
 ---
 
-Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-lists-can-use-value-as-identifiers-instead-of-name) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
+Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-list-value-identifiers) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
 
 ## Breaking changes
 
