@@ -94,6 +94,7 @@
     "concurrently": "^8.2.2",
     "copyfiles": "^2.4.1",
     "jscodeshift": "^0.15.2",
+    "@electric-sql/pglite": "^0.0.1-alpha.2",
     "query-string": "^8.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
