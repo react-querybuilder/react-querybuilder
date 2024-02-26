@@ -4,5 +4,5 @@ import common from '../../jest.common.mjs';
 export default {
   ...common,
   displayName: 'rqb',
-  testPathIgnorePatterns: ['sqlite'],
+  testPathIgnorePatterns: ['sqlite', 'postgres'],
 };
