@@ -1,8 +1,15 @@
-import type { RuleGroupType, RuleGroupTypeIC, RuleProcessor } from '../../types/index.noReact';
+import type { RuleGroupType, RuleProcessor } from '../../types/index.noReact';
 import { add } from '../queryTools';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { formatQuery } from './formatQuery';
-import { query, queryWithValueSourceField } from './formatQueryTestUtils';
+import {
+  getValidationTestData,
+  query,
+  queryForNumberParsing,
+  queryIC,
+  queryWithValueSourceField,
+  testQueryDQ,
+} from './formatQueryTestUtils';
 import { defaultCELValueProcessor } from './index';
 
 const celString =
@@ -29,27 +36,12 @@ it('formats CEL correctly', () => {
 });
 
 describe('escapes quotes when appropriate', () => {
-  const testQueryDQ: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
-  };
-
   it(`escapes double quotes (if appropriate) for "cel" export`, () => {
     expect(formatQuery(testQueryDQ, 'cel')).toEqual(`f1 == "Te\\"st"`);
   });
 });
 
 describe('independent combinators', () => {
-  const queryIC: RuleGroupTypeIC = {
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { field: 'middleName', operator: '=', value: 'Test' },
-      'or',
-      { field: 'lastName', operator: '=', value: 'Test' },
-    ],
-  };
-
   it('handles independent combinators for cel', () => {
     expect(formatQuery(queryIC, 'cel')).toBe(
       `firstName == "Test" && middleName == "Test" || lastName == "Test"`
@@ -59,72 +51,23 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   describe('cel', () => {
-    it('should invalidate a cel query', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'cel', validator: () => false }
-        )
-      ).toBe('1 == 1');
-    });
+    const validationResults: Record<string, string> = {
+      'should invalidate cel': '1 == 1',
+      'should invalidate cel even if fields are valid': '1 == 1',
+      'should invalidate cel rule by validator function': `field2 == ""`,
+      'should invalidate cel rule specified by validationMap': `field2 == ""`,
+      'should invalidate cel outermost group': '1 == 1',
+      'should invalidate cel inner group': '1 == 1',
+      'should convert cel inner group with no rules to fallbackExpression': 'field == "" && 1 == 1',
+    };
 
-    it('should invalidate a cel rule', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'otherfield', operator: '=', value: '' },
-            ],
-          },
-          { format: 'cel', fields: [{ name: 'field', label: 'field', validator: () => false }] }
-        )
-      ).toBe('otherfield == ""');
-    });
-
-    it('should invalidate cel even if fields are valid', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ field: 'field', operator: '=', value: '' }],
-          },
-          {
-            format: 'cel',
-            validator: () => false,
-            fields: [{ name: 'field', label: 'field', validator: () => true }],
-          }
-        )
-      ).toBe('1 == 1');
-    });
-
-    it('should invalidate cel outermost group', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'cel', validator: () => ({ root: false }) }
-        )
-      ).toBe('1 == 1');
-    });
-
-    it('should invalidate cel inner group', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-          },
-          {
-            format: 'cel',
-            validator: () => ({ inner: false }),
-          }
-        )
-      ).toBe('1 == 1');
-    });
+    for (const vtd of getValidationTestData('cel')) {
+      if (typeof validationResults[vtd.title] !== 'undefined') {
+        it(vtd.title, () => {
+          expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+        });
+      }
+    }
   });
 });
 
@@ -150,33 +93,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  const queryForNumberParsing: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f', operator: '>', value: 'NaN' },
-      { field: 'f', operator: '=', value: '0' },
-      { field: 'f', operator: '=', value: '    0    ' },
-      { field: 'f', operator: '=', value: 0 },
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'f', operator: '<', value: '1.5' },
-          { field: 'f', operator: '>', value: 1.5 },
-        ],
-      },
-      { field: 'f', operator: 'in', value: '0, 1, 2' },
-      { field: 'f', operator: 'in', value: [0, 1, 2] },
-      { field: 'f', operator: 'in', value: '0, abc, 2' },
-      { field: 'f', operator: 'between', value: '0, 1' },
-      { field: 'f', operator: 'between', value: [0, 1] },
-      { field: 'f', operator: 'between', value: '0, abc' },
-      { field: 'f', operator: 'between', value: '1' },
-      { field: 'f', operator: 'between', value: 1 },
-      { field: 'f', operator: 'between', value: [1] },
-      { field: 'f', operator: 'between', value: [{}, {}] },
-    ],
-  };
-
   it('parses numbers for cel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'cel', parseNumbers: true })).toBe(
       'f > "NaN" && f == 0 && f == 0 && f == 0 && (f < 1.5 || f > 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'

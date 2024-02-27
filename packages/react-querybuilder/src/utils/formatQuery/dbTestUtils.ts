@@ -1,7 +1,9 @@
-import type { DefaultRuleGroupTypeAny, FormatQueryOptions } from '../../types';
+import type { DefaultRuleGroupType, FormatQueryOptions } from '../../types';
+
+type DbPlatform = 'postgres' | 'sqlite';
 
 export interface TestSQLParams {
-  query: DefaultRuleGroupTypeAny;
+  query: DefaultRuleGroupType;
   expectedResult: SuperUser[];
   fqOptions?: FormatQueryOptions;
 }
@@ -14,53 +16,81 @@ export interface SuperUser {
   powerUpAge: number | null;
 }
 
-export const superUsers = (platform?: 'postgres' | 'sqlite') => {
-  const [t, f] = platform === 'sqlite' ? ([1, 0] as const) : [true, false];
+const platformBoolean: Record<DbPlatform, (1 | 0)[] | boolean[]> = {
+  sqlite: [1, 0],
+  postgres: [true, false],
+};
+
+export const superUsers = (dbPlatform: DbPlatform) => {
+  const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
+
   return [
     {
       firstName: 'Peter',
       lastName: 'Parker',
-      enhanced: t,
+      enhanced: isEnhanced,
       madeUpName: 'Spider-Man',
       powerUpAge: 15,
     },
-    { firstName: 'Clark', lastName: 'Kent', enhanced: t, madeUpName: 'Superman', powerUpAge: 0 },
+    {
+      firstName: 'Clark',
+      lastName: 'Kent',
+      enhanced: isEnhanced,
+      madeUpName: 'Superman',
+      powerUpAge: 0,
+    },
     {
       firstName: 'Steve',
       lastName: 'Rogers',
-      enhanced: t,
+      enhanced: isEnhanced,
       madeUpName: 'Captain America',
       powerUpAge: 20,
     },
-    { firstName: 'Bruce', lastName: 'Wayne', enhanced: f, madeUpName: 'Batman', powerUpAge: null },
+    {
+      firstName: 'Bruce',
+      lastName: 'Wayne',
+      enhanced: isNotEnhanced,
+      madeUpName: 'Batman',
+      powerUpAge: null,
+    },
   ] satisfies SuperUser[];
 };
 
-export const CREATE_TABLE = (platform?: 'postgres' | 'sqlite') => `CREATE TABLE users (
+const enhancedColumnType: Record<DbPlatform, string> = {
+  sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
+  postgres: 'BOOLEAN',
+};
+
+export const CREATE_TABLE = (dbPlatform: DbPlatform) => `CREATE TABLE superusers (
   "firstName" TEXT NOT NULL,
   "lastName" TEXT NOT NULL,
-  "enhanced" ${platform === 'sqlite' ? 'INT CHECK (enhanced = 0 OR enhanced = 1)' : 'BOOLEAN'},
+  "enhanced" ${enhancedColumnType[dbPlatform]} NOT NULL,
   "madeUpName" TEXT NOT NULL,
   "powerUpAge" INT NULL
   )`;
 
-export const CREATE_INDEX = `CREATE UNIQUE INDEX ndx ON users("firstName", "lastName")`;
+export const CREATE_INDEX = `CREATE UNIQUE INDEX ndx ON superusers("firstName", "lastName")`;
 
-// TODO: Make this parameterized once PGlite supports it
-export const INSERT_INTO = (
-  user: SuperUser,
-  platform?: 'postgres' | 'sqlite'
-) => `INSERT INTO users ("firstName", "lastName", "enhanced", "madeUpName", "powerUpAge")
-VALUES ('${user.firstName}', '${user.lastName}', ${platform === 'sqlite' ? (user.enhanced ? 1 : 0) : user.enhanced}, '${user.madeUpName}', ${typeof user.powerUpAge === 'number' ? `'${user.powerUpAge}'` : 'NULL'})`;
+// TODO: Make this parameterized once PGlite supports it:
+// https://github.com/electric-sql/pglite/issues/17
+export const INSERT_INTO = (user: SuperUser, dbPlatform: DbPlatform) => `
+INSERT INTO superusers (
+  "firstName",
+  "lastName",
+  "enhanced",
+  "madeUpName",
+  "powerUpAge"
+) VALUES (
+  '${user.firstName}',
+  '${user.lastName}',
+  ${platformBoolean[dbPlatform][user.enhanced ? 0 : 1]},
+  '${user.madeUpName}',
+  ${typeof user.powerUpAge === 'number' ? user.powerUpAge : 'NULL'}
+)`;
 
-export const sqlBase = `SELECT * FROM users WHERE ` as const;
+export const sqlBase = `SELECT * FROM superusers WHERE `;
 
-interface SqlTest {
-  query: DefaultRuleGroupTypeAny;
-  expectedResult: SuperUser[];
-}
-
-export const dbTests = (superUsers: SuperUser[]): Record<string, SqlTest> => ({
+export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> => ({
   'and/or': {
     query: {
       combinator: 'or',

@@ -2,10 +2,18 @@ import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
 } from '../../defaults';
-import type { RuleGroupType, RuleGroupTypeIC, RuleProcessor } from '../../types/index.noReact';
+import type { RQBJsonLogic, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
 import { add } from '../queryTools';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { formatQuery } from './formatQuery';
+import {
+  getValidationTestData,
+  queryForNumberParsing,
+  queryForRuleProcessor,
+  queryForXor,
+  queryIC,
+  testQuerySQ,
+} from './formatQueryTestUtils';
 import { jsonLogicAdditionalOperators } from './utils';
 
 const query: RuleGroupType = {
@@ -221,11 +229,6 @@ it('formats JSONLogic correctly', () => {
 });
 
 describe('escapes quotes when appropriate', () => {
-  const testQuerySQ: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `Te'st` }],
-  };
-
   for (const attempt of [
     { fmt: 'sql', result: `(f1 = 'Te''st')` },
     { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
@@ -254,16 +257,6 @@ describe('escapes quotes when appropriate', () => {
 });
 
 describe('independent combinators', () => {
-  const queryIC: RuleGroupTypeIC = {
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { field: 'middleName', operator: '=', value: 'Test' },
-      'or',
-      { field: 'lastName', operator: '=', value: 'Test' },
-    ],
-  };
-
   it('handles independent combinators for jsonlogic', () => {
     expect(formatQuery(queryIC, 'jsonlogic')).toEqual({
       or: [
@@ -281,87 +274,33 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   describe('jsonlogic', () => {
-    it('should invalidate a jsonlogic query', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'jsonlogic', validator: () => false }
-        )
-      ).toBe(false);
-    });
+    const validationResults: Record<string, RQBJsonLogic> = {
+      'should invalidate jsonlogic': false,
+      'should invalidate jsonlogic even if fields are valid': false,
+      'should invalidate jsonlogic rule by validator function': {
+        '==': [{ var: 'field2' }, ''],
+      },
+      'should invalidate jsonlogic rule specified by validationMap': {
+        '==': [{ var: 'field2' }, ''],
+      },
+      'should invalidate jsonlogic outermost group': false,
+      'should invalidate jsonlogic inner group': false,
+      'should convert jsonlogic inner group with no rules to fallbackExpression': {
+        '==': [{ var: 'field' }, ''],
+      },
+    };
 
-    it('should invalidate a jsonlogic rule', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'otherfield', operator: '=', value: '' },
-            ],
-          },
-          {
-            format: 'jsonlogic',
-            fields: [{ name: 'field', label: 'field', validator: () => false }],
-          }
-        )
-      ).toEqual({ '==': [{ var: 'otherfield' }, ''] });
-    });
-
-    it('should invalidate jsonlogic even if fields are valid', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ field: 'field', operator: '=', value: '' }],
-          },
-          {
-            format: 'jsonlogic',
-            validator: () => false,
-            fields: [{ name: 'field', label: 'field', validator: () => true }],
-          }
-        )
-      ).toBe(false);
-    });
-
-    it('should invalidate jsonlogic outermost group', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'jsonlogic', validator: () => ({ root: false }) }
-        )
-      ).toBe(false);
-    });
-
-    it('should invalidate jsonlogic inner group', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-          },
-          {
-            format: 'jsonlogic',
-            validator: () => ({ inner: false }),
-          }
-        )
-      ).toBe(false);
-    });
+    for (const vtd of getValidationTestData('jsonlogic')) {
+      if (typeof validationResults[vtd.title] !== 'undefined') {
+        it(vtd.title, () => {
+          expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
+        });
+      }
+    }
   });
 });
 
 describe('ruleProcessor', () => {
-  const queryForRuleProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: 'custom_operator', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles custom JsonLogic rule processor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator'
@@ -379,33 +318,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  const queryForNumberParsing: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f', operator: '>', value: 'NaN' },
-      { field: 'f', operator: '=', value: '0' },
-      { field: 'f', operator: '=', value: '    0    ' },
-      { field: 'f', operator: '=', value: 0 },
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'f', operator: '<', value: '1.5' },
-          { field: 'f', operator: '>', value: 1.5 },
-        ],
-      },
-      { field: 'f', operator: 'in', value: '0, 1, 2' },
-      { field: 'f', operator: 'in', value: [0, 1, 2] },
-      { field: 'f', operator: 'in', value: '0, abc, 2' },
-      { field: 'f', operator: 'between', value: '0, 1' },
-      { field: 'f', operator: 'between', value: [0, 1] },
-      { field: 'f', operator: 'between', value: '0, abc' },
-      { field: 'f', operator: 'between', value: '1' },
-      { field: 'f', operator: 'between', value: 1 },
-      { field: 'f', operator: 'between', value: [1] },
-      { field: 'f', operator: 'between', value: [{}, {}] },
-    ],
-  };
-
   it('parses numbers for jsonlogic', () => {
     expect(
       formatQuery(queryForNumberParsing, {
@@ -432,14 +344,6 @@ describe('parseNumbers', () => {
 });
 
 describe('non-standard combinators', () => {
-  const queryForXor: RuleGroupType = {
-    combinator: 'xor',
-    rules: [
-      { field: 'f1', operator: '=', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles XOR operator', () => {
     expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
   });

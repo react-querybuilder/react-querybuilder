@@ -17,11 +17,13 @@ const superUsersSQLite = superUsers('sqlite');
 beforeAll(() => {
   db.run(CREATE_TABLE('sqlite'));
   db.run(CREATE_INDEX);
+
+  // TODO: Return to transactional method below once PGlite also
+  // supports it: https://github.com/electric-sql/pglite/issues/17
   for (const user of superUsersSQLite) {
     db.run(INSERT_INTO(user, 'sqlite'));
   }
 
-  // TODO: Return to transactional method if/when PGlite supports it?
   //   const insertUser = db.prepare(`
   // INSERT INTO users (firstName, lastName, enhanced, madeUpName, powerUpAge)
   // VALUES ($firstName, $lastName, $enhanced, $madeUpName, $powerUpAge)`);

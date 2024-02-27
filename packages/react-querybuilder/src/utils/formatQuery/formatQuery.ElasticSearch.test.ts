@@ -1,7 +1,14 @@
-import type { RuleGroupType, RuleGroupTypeIC, RuleProcessor } from '../../types/index.noReact';
+import type { RuleProcessor } from '../../types/index.noReact';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { formatQuery } from './formatQuery';
-import { query, queryWithValueSourceField } from './formatQueryTestUtils';
+import {
+  getValidationTestData,
+  query,
+  queryForNumberParsing,
+  queryForRuleProcessor,
+  queryIC,
+  queryWithValueSourceField,
+} from './formatQueryTestUtils';
 
 const elasticSearchQueryObject = {
   bool: {
@@ -178,16 +185,6 @@ it('formats ElasticSearch correctly', () => {
 });
 
 describe('independent combinators', () => {
-  const queryIC: RuleGroupTypeIC = {
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { field: 'middleName', operator: '=', value: 'Test' },
-      'or',
-      { field: 'lastName', operator: '=', value: 'Test' },
-    ],
-  };
-
   it('handles independent combinators for elasticsearch', () => {
     expect(formatQuery(queryIC, 'elasticsearch')).toEqual({
       bool: {
@@ -206,80 +203,33 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   describe('elasticsearch', () => {
-    it('should invalidate a elasticsearch query', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'elasticsearch', validator: () => false }
-        )
-      ).toEqual({});
-    });
+    const validationResults: Record<string, object> = {
+      'should invalidate elasticsearch': {},
+      'should invalidate elasticsearch even if fields are valid': {},
+      'should invalidate elasticsearch rule by validator function': {
+        bool: { must: [{ term: { field2: '' } }] },
+      },
+      'should invalidate elasticsearch rule specified by validationMap': {
+        bool: { must: [{ term: { field2: '' } }] },
+      },
+      'should invalidate elasticsearch outermost group': {},
+      'should invalidate elasticsearch inner group': {},
+      'should convert elasticsearch inner group with no rules to fallbackExpression': {
+        bool: { must: [{ term: { field: '' } }] },
+      },
+    };
 
-    it('should invalidate a elasticsearch rule', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'otherfield', operator: '=', value: '' },
-            ],
-          },
-          {
-            format: 'elasticsearch',
-            fields: [{ name: 'field', label: 'field', validator: () => false }],
-          }
-        )
-      ).toEqual({ bool: { must: [{ term: { otherfield: '' } }] } });
-    });
-
-    it('should invalidate elasticsearch even if fields are valid', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ field: 'field', operator: '=', value: '' }],
-          },
-          {
-            format: 'elasticsearch',
-            validator: () => false,
-            fields: [{ name: 'field', label: 'field', validator: () => true }],
-          }
-        )
-      ).toEqual({});
-    });
-
-    it('should invalidate elasticsearch outermost group', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'elasticsearch', validator: () => ({ root: false }) }
-        )
-      ).toEqual({});
-    });
-
-    it('should invalidate elasticsearch inner group', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [{ id: 'inner', combinator: 'and', rules: [] }] },
-          { format: 'elasticsearch', validator: () => ({ inner: false }) }
-        )
-      ).toEqual({});
-    });
+    for (const vtd of getValidationTestData('elasticsearch')) {
+      if (typeof validationResults[vtd.title] !== 'undefined') {
+        it(vtd.title, () => {
+          expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
+        });
+      }
+    }
   });
 });
 
 describe('ruleProcessor', () => {
-  const queryForRuleProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: 'custom_operator', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles custom ElasticSearch rule processor', () => {
     const customResult = { bool: { must: [{ term: { custom: 'custom' } }] } };
     const ruleProcessor: RuleProcessor = r =>
@@ -296,33 +246,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  const queryForNumberParsing: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f', operator: '>', value: 'NaN' },
-      { field: 'f', operator: '=', value: '0' },
-      { field: 'f', operator: '=', value: '    0    ' },
-      { field: 'f', operator: '=', value: 0 },
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'f', operator: '<', value: '1.5' },
-          { field: 'f', operator: '>', value: 1.5 },
-        ],
-      },
-      { field: 'f', operator: 'in', value: '0, 1, 2' },
-      { field: 'f', operator: 'in', value: [0, 1, 2] },
-      { field: 'f', operator: 'in', value: '0, abc, 2' },
-      { field: 'f', operator: 'between', value: '0, 1' },
-      { field: 'f', operator: 'between', value: [0, 1] },
-      { field: 'f', operator: 'between', value: '0, abc' },
-      { field: 'f', operator: 'between', value: '1' },
-      { field: 'f', operator: 'between', value: 1 },
-      { field: 'f', operator: 'between', value: [1] },
-      { field: 'f', operator: 'between', value: [{}, {}] },
-    ],
-  };
-
   it('parses numbers for elasticsearch', () => {
     expect(
       formatQuery(queryForNumberParsing, {

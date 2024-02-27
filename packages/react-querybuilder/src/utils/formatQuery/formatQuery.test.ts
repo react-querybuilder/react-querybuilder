@@ -4,7 +4,6 @@ import {
 } from '../../defaults';
 import type {
   RuleGroupType,
-  RuleGroupTypeIC,
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -14,17 +13,75 @@ import { prepareRuleGroup } from '../prepareQueryObjects';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { formatQuery } from './formatQuery';
 import {
-  parameterizedNamedSQLString,
-  parameterizedSQLString,
-  params,
-  params_named,
+  getValidationTestData,
   query,
+  queryForNumberParsing,
+  queryForRuleProcessor,
+  queryForXor,
+  queryIC,
   queryWithValueSourceField,
-  sqlString,
-  sqlStringForValueSourceField,
 } from './formatQueryTestUtils';
 import { defaultValueProcessor, defaultValueProcessorByRule } from './index';
 import { quoteFieldNamesWithArray } from './utils';
+
+export const sqlString =
+  "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and isLucky = FALSE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
+export const sqlStringForValueSourceField =
+  "(firstName is null and lastName is not null and firstName in (middleName, lastName) and lastName not in (middleName, lastName) and firstName between middleName and lastName and firstName between middleName and lastName and lastName not between middleName and lastName and age = iq and isMusician = isCreative and NOT (gender = someLetter or job != isBetweenJobs or email like '%' || atSign || '%') and (lastName not like '%' || firstName || '%' or job like jobPrefix || '%' or email like '%' || dotCom or job not like hasNoJob || '%' or email not like '%' || isInvalid))";
+export const parameterizedSQLString =
+  '(firstName is null and lastName is not null and firstName in (?, ?) and lastName not in (?, ?) and firstName between ? and ? and firstName between ? and ? and lastName not between ? and ? and age between ? and ? and age = ? and isMusician = ? and isLucky = ? and NOT (gender = ? or job != ? or email like ?) and (lastName not like ? or job like ? or email like ? or job not like ? or email not like ?))';
+export const parameterizedNamedSQLString =
+  '(firstName is null and lastName is not null and firstName in (:firstName_1, :firstName_2) and lastName not in (:lastName_1, :lastName_2) and firstName between :firstName_3 and :firstName_4 and firstName between :firstName_5 and :firstName_6 and lastName not between :lastName_3 and :lastName_4 and age between :age_1 and :age_2 and age = :age_3 and isMusician = :isMusician_1 and isLucky = :isLucky_1 and NOT (gender = :gender_1 or job != :job_1 or email like :email_1) and (lastName not like :lastName_5 or job like :job_2 or email like :email_2 or job not like :job_3 or email not like :email_3))';
+export const params = [
+  'Test',
+  'This',
+  'Test',
+  'This',
+  'Test',
+  'This',
+  'Test',
+  'This',
+  'Test',
+  'This',
+  '12',
+  '14',
+  '26',
+  true,
+  false,
+  'M',
+  'Programmer',
+  '%@%',
+  '%ab%',
+  'Prog%',
+  '%com',
+  'Man%',
+  '%fr',
+];
+export const params_named = {
+  firstName_1: 'Test',
+  firstName_2: 'This',
+  lastName_1: 'Test',
+  lastName_2: 'This',
+  firstName_3: 'Test',
+  firstName_4: 'This',
+  firstName_5: 'Test',
+  firstName_6: 'This',
+  lastName_3: 'Test',
+  lastName_4: 'This',
+  age_1: '12',
+  age_2: '14',
+  age_3: '26',
+  isMusician_1: true,
+  isLucky_1: false,
+  gender_1: 'M',
+  job_1: 'Programmer',
+  email_1: '%@%',
+  lastName_5: '%ab%',
+  job_2: 'Prog%',
+  email_2: '%com',
+  job_3: 'Man%',
+  email_3: '%fr',
+};
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -245,16 +302,6 @@ describe('escapes quotes when appropriate', () => {
 });
 
 describe('independent combinators', () => {
-  const queryIC: RuleGroupTypeIC = {
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { field: 'middleName', operator: '=', value: 'Test' },
-      'or',
-      { field: 'lastName', operator: '=', value: 'Test' },
-    ],
-  };
-
   it('handles independent combinators for sql', () => {
     expect(formatQuery(queryIC, 'sql')).toBe(
       `(firstName = 'Test' and middleName = 'Test' or lastName = 'Test')`
@@ -278,111 +325,21 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   describe('sql', () => {
-    it('should invalidate sql', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'sql', validator: () => false }
-        )
-      ).toBe('(1 = 1)');
-    });
+    const validationResults: Record<string, string> = {
+      'should invalidate sql': '(1 = 1)',
+      'should invalidate sql even if fields are valid': '(1 = 1)',
+      'should invalidate sql rule by validator function': `(field2 = '')`,
+      'should invalidate sql rule specified by validationMap': `(field2 = '')`,
+      'should invalidate sql outermost group': '(1 = 1)',
+      'should invalidate sql inner group': '()',
+      'should convert sql inner group with no rules to fallbackExpression': `(field = '' and (1 = 1))`,
+    };
 
-    it('should invalidate sql even if fields are valid', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ field: 'field', operator: '=', value: '' }],
-          },
-          {
-            format: 'sql',
-            validator: () => false,
-            fields: [{ name: 'field', label: 'field', validator: () => true }],
-          }
-        )
-      ).toBe('(1 = 1)');
-    });
-
-    it('should invalidate sql rule by validator function', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'field2', operator: '=', value: '' },
-            ],
-          },
-          {
-            format: 'sql',
-            fields: [
-              { name: 'field', label: 'field', validator: () => false },
-              { name: 'field3', label: 'field3', validator: () => false },
-            ],
-          }
-        )
-      ).toBe(`(field2 = '')`);
-    });
-
-    it('should invalidate sql rule specified by validationMap', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { id: 'f1', field: 'field', operator: '=', value: '' },
-              { id: 'f2', field: 'field2', operator: '=', value: '' },
-            ],
-          },
-          { format: 'sql', validator: () => ({ f1: false }) }
-        )
-      ).toBe(`(field2 = '')`);
-    });
-
-    it('should invalidate sql outermost group', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [],
-          },
-          { format: 'sql', validator: () => ({ root: false }) }
-        )
-      ).toBe('(1 = 1)');
-    });
-
-    it('should invalidate sql inner group', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-          },
-          { format: 'sql', validator: () => ({ inner: false }) }
-        )
-      ).toBe('()');
-    });
-
-    it('should convert sql inner group with no rules to (1 = 1)', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { id: 'inner', combinator: 'and', rules: [] },
-            ],
-          },
-          'sql'
-        )
-      ).toBe(`(field = '' and (1 = 1))`);
-    });
+    for (const vtd of getValidationTestData('sql')) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+      });
+    }
   });
 
   describe('parameterized', () => {
@@ -444,14 +401,6 @@ describe('validation', () => {
 });
 
 describe('ruleProcessor', () => {
-  const queryForRuleProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: 'custom_operator', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles custom SQL rule processor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSQL(r);
@@ -462,33 +411,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  const queryForNumberParsing: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f', operator: '>', value: 'NaN' },
-      { field: 'f', operator: '=', value: '0' },
-      { field: 'f', operator: '=', value: '    0    ' },
-      { field: 'f', operator: '=', value: 0 },
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'f', operator: '<', value: '1.5' },
-          { field: 'f', operator: '>', value: 1.5 },
-        ],
-      },
-      { field: 'f', operator: 'in', value: '0, 1, 2' },
-      { field: 'f', operator: 'in', value: [0, 1, 2] },
-      { field: 'f', operator: 'in', value: '0, abc, 2' },
-      { field: 'f', operator: 'between', value: '0, 1' },
-      { field: 'f', operator: 'between', value: [0, 1] },
-      { field: 'f', operator: 'between', value: '0, abc' },
-      { field: 'f', operator: 'between', value: '1' },
-      { field: 'f', operator: 'between', value: 1 },
-      { field: 'f', operator: 'between', value: [1] },
-      { field: 'f', operator: 'between', value: [{}, {}] },
-    ],
-  };
-
   it('parses numbers for json', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'json', parseNumbers: true })).toBe(
       `{
@@ -719,14 +641,6 @@ describe('placeholder names', () => {
 });
 
 describe('non-standard combinators', () => {
-  const queryForXor: RuleGroupType = {
-    combinator: 'xor',
-    rules: [
-      { field: 'f1', operator: '=', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles XOR operator', () => {
     expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
   });

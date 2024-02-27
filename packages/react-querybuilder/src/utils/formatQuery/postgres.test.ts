@@ -18,7 +18,7 @@ beforeAll(async () => {
   await db.query(CREATE_TABLE('postgres'));
   await db.query(CREATE_INDEX);
   // TODO: Use transactional method if/when PGlite supports it?
-  await Promise.all(superUsersPostgres.map(user => db.query(INSERT_INTO(user))));
+  await Promise.all(superUsersPostgres.map(user => db.query(INSERT_INTO(user, 'postgres'))));
 });
 
 afterAll(async () => {
@@ -28,7 +28,8 @@ afterAll(async () => {
 /**
  * Tests all three SQL variations.
  */
-// TODO: Enable parameterized tests once PGlite supports them
+// TODO: Enable parameterized tests once PGlite supports them:
+// https://github.com/electric-sql/pglite/issues/17
 const testSQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   test('sql', async () => {
     const sql = formatQuery(query, { format: 'sql', quoteFieldNamesWith: '"', ...fqOptions });
@@ -59,7 +60,7 @@ for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
   });
 }
 
-// PGlite-specific tests
+// Postgres-specific tests
 describe('unquoted field names', async () => {
   const unquotedDb = new PGlite();
 
@@ -70,7 +71,9 @@ describe('unquoted field names', async () => {
     await unquotedDb.query(removeQuotes(CREATE_TABLE('postgres')));
     await unquotedDb.query(removeQuotes(CREATE_INDEX));
     await Promise.all(
-      superUsersPostgres.map(async user => unquotedDb.query(removeQuotes(INSERT_INTO(user))))
+      superUsersPostgres.map(async user =>
+        unquotedDb.query(removeQuotes(INSERT_INTO(user, 'postgres')))
+      )
     );
   });
 

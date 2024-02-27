@@ -1,6 +1,5 @@
 import type {
   RuleGroupType,
-  RuleGroupTypeIC,
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -9,7 +8,15 @@ import { prepareRuleGroup } from '../prepareQueryObjects';
 import { add } from '../queryTools';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { formatQuery } from './formatQuery';
-import { query, queryWithValueSourceField } from './formatQueryTestUtils';
+import {
+  getValidationTestData,
+  query,
+  queryForNumberParsing,
+  queryForRuleProcessor,
+  queryIC,
+  queryWithValueSourceField,
+  testQuerySQ,
+} from './formatQueryTestUtils';
 import { defaultSpELValueProcessor, defaultValueProcessorByRule } from './index';
 
 const spelString =
@@ -191,27 +198,12 @@ it('uses paramPrefix correctly', () => {
 });
 
 describe('escapes quotes when appropriate', () => {
-  const testQuerySQ: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `Te'st` }],
-  };
-
   it(`escapes single quotes (if appropriate) for spel export`, () => {
     expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te\\'st'`);
   });
 });
 
 describe('independent combinators', () => {
-  const queryIC: RuleGroupTypeIC = {
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { field: 'middleName', operator: '=', value: 'Test' },
-      'or',
-      { field: 'lastName', operator: '=', value: 'Test' },
-    ],
-  };
-
   it('handles independent combinators for spel', () => {
     expect(formatQuery(queryIC, 'spel')).toBe(
       `firstName == 'Test' and middleName == 'Test' or lastName == 'Test'`
@@ -221,87 +213,27 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   describe('spel', () => {
-    it('should invalidate a spel query', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'spel', validator: () => false }
-        )
-      ).toBe('1 == 1');
-    });
+    const validationResults: Record<string, string> = {
+      'should invalidate spel': '1 == 1',
+      'should invalidate spel even if fields are valid': '1 == 1',
+      'should invalidate spel rule by validator function': `field2 == ''`,
+      'should invalidate spel rule specified by validationMap': `field2 == ''`,
+      'should invalidate spel outermost group': '1 == 1',
+      'should invalidate spel inner group': '1 == 1',
+      'should convert spel inner group with no rules to fallbackExpression': `field == '' and 1 == 1`,
+    };
 
-    it('should invalidate a spel rule', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'otherfield', operator: '=', value: '' },
-            ],
-          },
-          {
-            format: 'spel',
-            fields: [{ name: 'field', label: 'field', validator: () => false }],
-          }
-        )
-      ).toBe("otherfield == ''");
-    });
-
-    it('should invalidate spel even if fields are valid', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ field: 'field', operator: '=', value: '' }],
-          },
-          {
-            format: 'spel',
-            validator: () => false,
-            fields: [{ name: 'field', label: 'field', validator: () => true }],
-          }
-        )
-      ).toBe('1 == 1');
-    });
-
-    it('should invalidate spel outermost group', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'spel', validator: () => ({ root: false }) }
-        )
-      ).toBe('1 == 1');
-    });
-
-    it('should invalidate spel inner group', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-          },
-          {
-            format: 'spel',
-            validator: () => ({ inner: false }),
-          }
-        )
-      ).toBe('1 == 1');
-    });
+    for (const vtd of getValidationTestData('spel')) {
+      if (typeof validationResults[vtd.title] !== 'undefined') {
+        it(vtd.title, () => {
+          expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+        });
+      }
+    }
   });
 });
 
 describe('ruleProcessor', () => {
-  const queryForRuleProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: 'custom_operator', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles custom SpEL rule processor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSpEL(r);
@@ -315,33 +247,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  const queryForNumberParsing: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f', operator: '>', value: 'NaN' },
-      { field: 'f', operator: '=', value: '0' },
-      { field: 'f', operator: '=', value: '    0    ' },
-      { field: 'f', operator: '=', value: 0 },
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'f', operator: '<', value: '1.5' },
-          { field: 'f', operator: '>', value: 1.5 },
-        ],
-      },
-      { field: 'f', operator: 'in', value: '0, 1, 2' },
-      { field: 'f', operator: 'in', value: [0, 1, 2] },
-      { field: 'f', operator: 'in', value: '0, abc, 2' },
-      { field: 'f', operator: 'between', value: '0, 1' },
-      { field: 'f', operator: 'between', value: [0, 1] },
-      { field: 'f', operator: 'between', value: '0, abc' },
-      { field: 'f', operator: 'between', value: '1' },
-      { field: 'f', operator: 'between', value: 1 },
-      { field: 'f', operator: 'between', value: [1] },
-      { field: 'f', operator: 'between', value: [{}, {}] },
-    ],
-  };
-
   it('parses numbers for spel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
       "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"

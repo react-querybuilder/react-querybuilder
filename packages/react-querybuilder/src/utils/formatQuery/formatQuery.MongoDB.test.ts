@@ -1,6 +1,5 @@
 import type {
   RuleGroupType,
-  RuleGroupTypeIC,
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -8,6 +7,13 @@ import type {
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { formatQuery } from './formatQuery';
+import {
+  getValidationTestData,
+  queryForNumberParsing,
+  queryForRuleProcessor,
+  queryIC,
+  testQueryDQ,
+} from './formatQueryTestUtils';
 import { defaultMongoDBValueProcessor, defaultValueProcessorByRule } from './index';
 
 const mongoQuery: RuleGroupType = {
@@ -317,27 +323,12 @@ it('uses paramPrefix correctly', () => {
 });
 
 describe('escapes quotes when appropriate', () => {
-  const testQueryDQ: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
-  };
-
   it('escapes double quotes (if appropriate) for mongodb', () => {
     expect(formatQuery(testQueryDQ, 'mongodb')).toEqual(`{"f1":"Te\\"st"}`);
   });
 });
 
 describe('independent combinators', () => {
-  const queryIC: RuleGroupTypeIC = {
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { field: 'middleName', operator: '=', value: 'Test' },
-      'or',
-      { field: 'lastName', operator: '=', value: 'Test' },
-    ],
-  };
-
   it('handles independent combinators for mongodb', () => {
     expect(formatQuery(queryIC, 'mongodb')).toBe(
       '{"$or":[{"$and":[{"firstName":"Test"},{"middleName":"Test"}]},{"lastName":"Test"}]}'
@@ -347,87 +338,28 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   describe('mongodb', () => {
-    it('should invalidate a mongodb query', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'mongodb', validator: () => false }
-        )
-      ).toBe('{"$and":[{"$expr":true}]}');
-    });
+    const validationResults: Record<string, string> = {
+      'should invalidate mongodb': '{"$and":[{"$expr":true}]}',
+      'should invalidate mongodb even if fields are valid': '{"$and":[{"$expr":true}]}',
+      'should invalidate mongodb rule by validator function': '{"field2":""}',
+      'should invalidate mongodb rule specified by validationMap': '{"field2":""}',
+      'should invalidate mongodb outermost group': '{"$and":[{"$expr":true}]}',
+      'should invalidate mongodb inner group': '{"$and":[{"$expr":true}]}',
+      'should convert mongodb inner group with no rules to fallbackExpression':
+        '{"$and":[{"field":""},{"$and":[{"$expr":true}]}]}',
+    };
 
-    it('should invalidate a mongodb rule', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [
-              { field: 'field', operator: '=', value: '' },
-              { field: 'otherfield', operator: '=', value: '' },
-            ],
-          },
-          {
-            format: 'mongodb',
-            fields: [{ name: 'field', label: 'field', validator: () => false }],
-          }
-        )
-      ).toBe('{"otherfield":""}');
-    });
-
-    it('should invalidate mongodb even if fields are valid', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ field: 'field', operator: '=', value: '' }],
-          },
-          {
-            format: 'mongodb',
-            validator: () => false,
-            fields: [{ name: 'field', label: 'field', validator: () => true }],
-          }
-        )
-      ).toBe('{"$and":[{"$expr":true}]}');
-    });
-
-    it('should invalidate mongodb outermost group', () => {
-      expect(
-        formatQuery(
-          { id: 'root', combinator: 'and', rules: [] },
-          { format: 'mongodb', validator: () => ({ root: false }) }
-        )
-      ).toBe('{"$and":[{"$expr":true}]}');
-    });
-
-    it('should invalidate mongodb inner group', () => {
-      expect(
-        formatQuery(
-          {
-            id: 'root',
-            combinator: 'and',
-            rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-          },
-          {
-            format: 'mongodb',
-            validator: () => ({ inner: false }),
-          }
-        )
-      ).toBe('{"$and":[{"$expr":true}]}');
-    });
+    for (const vtd of getValidationTestData('mongodb')) {
+      if (typeof validationResults[vtd.title] !== 'undefined') {
+        it(vtd.title, () => {
+          expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
+        });
+      }
+    }
   });
 });
 
 describe('ruleProcessor', () => {
-  const queryForRuleProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: 'custom_operator', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
   it('handles custom MongoDB rule processor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorMongoDB(r);
@@ -441,33 +373,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  const queryForNumberParsing: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f', operator: '>', value: 'NaN' },
-      { field: 'f', operator: '=', value: '0' },
-      { field: 'f', operator: '=', value: '    0    ' },
-      { field: 'f', operator: '=', value: 0 },
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'f', operator: '<', value: '1.5' },
-          { field: 'f', operator: '>', value: 1.5 },
-        ],
-      },
-      { field: 'f', operator: 'in', value: '0, 1, 2' },
-      { field: 'f', operator: 'in', value: [0, 1, 2] },
-      { field: 'f', operator: 'in', value: '0, abc, 2' },
-      { field: 'f', operator: 'between', value: '0, 1' },
-      { field: 'f', operator: 'between', value: [0, 1] },
-      { field: 'f', operator: 'between', value: '0, abc' },
-      { field: 'f', operator: 'between', value: '1' },
-      { field: 'f', operator: 'between', value: 1 },
-      { field: 'f', operator: 'between', value: [1] },
-      { field: 'f', operator: 'between', value: [{}, {}] },
-    ],
-  };
-
   it('parses numbers for mongodb', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'mongodb', parseNumbers: true })).toBe(
       '{"$and":[{"f":{"$gt":"NaN"}},{"f":0},{"f":0},{"f":0},{"$or":[{"f":{"$lt":1.5}},{"f":{"$gt":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":"abc"}},{"f":{"$gte":"[object Object]","$lte":"[object Object]"}}]}'
