@@ -102,6 +102,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Refactored custom hooks to avoid unnecessary `useEffect` calls.
 - [#663] `formatQuery` for "jsonlogic" will no longer collapse subgroups that only contain one rule into a single JsonLogic rule. Full query objects that contain only one rule will still be collapsed.
 - [#663] When a `values` list is defined for a field, and the value is reset due to `resetOnFieldChange` or `resetOnOperatorChange` being `true`, the rule `value` will no longer be set to the first value in the list unless the `valueEditorType` evaluates to "select" or "radio".
+- [#663] `formatQuery` now renders the fallback expression for subgroups where all rules are invalid. Previously this could result in `"()"`, which is invalid SQL.
 
 ## [v6.5.5] - 2024-01-15
 

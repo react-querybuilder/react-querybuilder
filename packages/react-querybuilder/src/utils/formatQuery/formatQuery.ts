@@ -246,9 +246,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
    * SQL
    */
   if (format === 'sql') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
+        // TODO: test for the last case and remove "ignore" comment
+        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
       const processedRules = rg.rules.map(rule => {
@@ -259,7 +260,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         // Groups
         if (isRuleGroup(rule)) {
-          return processRuleGroup(rule);
+          return processRuleGroup(rule, rg.rules.length === 1);
         }
 
         // Basic rule validation
@@ -436,9 +437,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${value}`.trim();
     };
 
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
+        // TODO: test for the last case and remove "ignore" comment
+        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
       const processedRules = rg.rules.map(rule => {
@@ -446,7 +448,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return rule;
         }
         if (isRuleGroup(rule)) {
-          return processRuleGroup(rule);
+          return processRuleGroup(rule, rg.rules.length === 1);
         }
         return processRule(rule);
       });

@@ -3,6 +3,8 @@ import {
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
 } from '../../defaults';
 import type {
+  ParameterizedNamedSQL,
+  ParameterizedSQL,
   RuleGroupType,
   RuleProcessor,
   ValueProcessorByRule,
@@ -331,7 +333,7 @@ describe('validation', () => {
       'should invalidate sql rule by validator function': `(field2 = '')`,
       'should invalidate sql rule specified by validationMap': `(field2 = '')`,
       'should invalidate sql outermost group': '(1 = 1)',
-      'should invalidate sql inner group': '()',
+      'should invalidate sql inner group': '((1 = 1))',
       'should convert sql inner group with no rules to fallbackExpression': `(field = '' and (1 = 1))`,
     };
 
@@ -343,60 +345,60 @@ describe('validation', () => {
   });
 
   describe('parameterized', () => {
-    it('should invalidate parameterized rule', () => {
-      const queryToTest: RuleGroupType = {
-        id: 'root',
-        combinator: 'and',
-        rules: [
-          { id: 'r1', field: 'field', operator: '=', value: '' },
-          { id: 'r2', field: 'field2', operator: '=', value: '' },
-        ],
-      };
-      const fields = [{ name: 'field', label: 'field', validator: () => false }];
-      expect(formatQuery(queryToTest, { format: 'parameterized', fields })).toEqual({
-        sql: `(field2 = ?)`,
+    const validationResults: Record<string, ParameterizedSQL> = {
+      'should invalidate parameterized': { sql: '(1 = 1)', params: [] },
+      'should invalidate parameterized even if fields are valid': { sql: '(1 = 1)', params: [] },
+      'should invalidate parameterized rule by validator function': {
+        sql: '(field2 = ?)',
         params: [''],
+      },
+      'should invalidate parameterized rule specified by validationMap': {
+        sql: '(field2 = ?)',
+        params: [''],
+      },
+      'should invalidate parameterized outermost group': { sql: '(1 = 1)', params: [] },
+      'should invalidate parameterized inner group': { sql: '((1 = 1))', params: [] },
+      'should convert parameterized inner group with no rules to fallbackExpression': {
+        sql: '(field = ? and (1 = 1))',
+        params: [''],
+      },
+    };
+
+    for (const vtd of getValidationTestData('parameterized')) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
       });
-      expect(formatQuery(queryToTest, { format: 'parameterized_named', fields })).toEqual({
+    }
+  });
+
+  describe('parameterized_named', () => {
+    const validationResults: Record<string, ParameterizedNamedSQL> = {
+      'should invalidate parameterized_named': { sql: '(1 = 1)', params: {} },
+      'should invalidate parameterized_named even if fields are valid': {
+        sql: '(1 = 1)',
+        params: {},
+      },
+      'should invalidate parameterized_named rule by validator function': {
         sql: '(field2 = :field2_1)',
         params: { field2_1: '' },
-      });
-    });
+      },
+      'should invalidate parameterized_named rule specified by validationMap': {
+        sql: '(field2 = :field2_1)',
+        params: { field2_1: '' },
+      },
+      'should invalidate parameterized_named outermost group': { sql: '(1 = 1)', params: {} },
+      'should invalidate parameterized_named inner group': { sql: '((1 = 1))', params: {} },
+      'should convert parameterized_named inner group with no rules to fallbackExpression': {
+        sql: '(field = :field_1 and (1 = 1))',
+        params: { field_1: '' },
+      },
+    };
 
-    it('should invalidate parameterized', () => {
-      const queryToTest: RuleGroupType = { id: 'root', combinator: 'and', rules: [] };
-      expect(formatQuery(queryToTest, { format: 'parameterized' })).toEqual({
-        sql: '(1 = 1)',
-        params: [],
+    for (const vtd of getValidationTestData('parameterized_named')) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
       });
-      expect(
-        formatQuery(
-          {
-            ...queryToTest,
-            rules: [
-              { field: 'f1', operator: '=', value: 'v1' },
-              { ...queryToTest, id: 'not_root' },
-            ],
-          },
-          { format: 'parameterized', validator: () => ({ not_root: false }) }
-        )
-      ).toEqual({ sql: '(f1 = ?)', params: ['v1'] });
-      expect(formatQuery(queryToTest, { format: 'parameterized', validator: () => false })).toEqual(
-        {
-          sql: '(1 = 1)',
-          params: [],
-        }
-      );
-      expect(
-        formatQuery(queryToTest, { format: 'parameterized', validator: () => ({ root: false }) })
-      ).toEqual({
-        sql: '(1 = 1)',
-        params: [],
-      });
-      expect(
-        formatQuery(queryToTest, { format: 'parameterized_named', validator: () => false })
-      ).toEqual({ sql: '(1 = 1)', params: {} });
-    });
+    }
   });
 });
 
