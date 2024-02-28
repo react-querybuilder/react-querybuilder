@@ -1,6 +1,6 @@
-import type { RuleProcessor } from '../../types/index.noReact';
-import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
-import { formatQuery } from './formatQuery';
+import type { RuleProcessor } from '../../../types/index.noReact';
+import { defaultRuleProcessorElasticSearch } from '../defaultRuleProcessorElasticSearch';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,

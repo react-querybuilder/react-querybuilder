@@ -1,11 +1,11 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
   coveragePathIgnorePatterns: [
-    'genericTests',
-    'dist',
-    '(cel|sql)Parser.js',
-    'formatQueryTestUtils.ts',
-    'redux/Subscription.ts',
+    '/genericTests/',
+    '/dist/',
+    '/(cel|sql)Parser.js',
+    '/\\w*TestUtils.ts',
+    '/redux/Subscription.ts',
   ],
   globals: { __RQB_DEV__: true },
   // This path is relative to the /packages/* folders

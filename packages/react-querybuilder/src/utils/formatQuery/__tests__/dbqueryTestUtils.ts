@@ -1,6 +1,6 @@
-import type { DefaultRuleGroupType, FormatQueryOptions } from '../../types';
+import type { DefaultRuleGroupType, FormatQueryOptions } from '../../../types';
 
-type DbPlatform = 'postgres' | 'sqlite';
+type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic';
 
 export interface TestSQLParams {
   query: DefaultRuleGroupType;
@@ -16,9 +16,10 @@ export interface SuperUser {
   powerUpAge: number | null;
 }
 
-const platformBoolean: Record<DbPlatform, (1 | 0)[] | boolean[]> = {
-  sqlite: [1, 0],
+const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
+  jsonlogic: [true, false],
   postgres: [true, false],
+  sqlite: [1, 0],
 };
 
 export const superUsers = (dbPlatform: DbPlatform) => {
@@ -57,8 +58,9 @@ export const superUsers = (dbPlatform: DbPlatform) => {
 };
 
 const enhancedColumnType: Record<DbPlatform, string> = {
-  sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
+  jsonlogic: 'N/A',
   postgres: 'BOOLEAN',
+  sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
 };
 
 export const CREATE_TABLE = (dbPlatform: DbPlatform) => `CREATE TABLE superusers (

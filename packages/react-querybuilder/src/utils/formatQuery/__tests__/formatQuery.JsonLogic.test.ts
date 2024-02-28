@@ -1,11 +1,11 @@
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
-} from '../../defaults';
-import type { RQBJsonLogic, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
-import { add } from '../queryTools';
-import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
-import { formatQuery } from './formatQuery';
+} from '../../../defaults';
+import type { RQBJsonLogic, RuleGroupType, RuleProcessor } from '../../../types/index.noReact';
+import { add } from '../../queryTools';
+import { defaultRuleProcessorJsonLogic } from '../defaultRuleProcessorJsonLogic';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   queryForNumberParsing,
@@ -14,7 +14,7 @@ import {
   queryIC,
   testQuerySQ,
 } from './formatQueryTestUtils';
-import { jsonLogicAdditionalOperators } from './utils';
+import { jsonLogicAdditionalOperators } from '../utils';
 
 const query: RuleGroupType = {
   id: 'g-root',

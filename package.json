@@ -35,7 +35,7 @@
     "codesandbox-ci": "bash .codesandbox/ci.sh",
     "checkall": "bun install --frozen-lockfile && concurrently --names pretty,lint,build --prefix-colors \"green,#4b32c3,#82a7dd\" bun:pretty-check bun:lint bun:build && concurrently --timings --prefix-colors \"#3178c6,green,gray\" --names typecheck,test,website bun:typecheck bun:test bun:website:build",
     "lint": "eslint 'packages/*/src/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
-    "test": "concurrently --timings --names sqlite,postgres,jest \"bun test sqlite\" \"bun test postgres\" jest",
+    "test": "concurrently --timings --names sqlite,postgres,jest \"bun test dbquery.sqlite dbquery.jsonlogic\" \"bun test postgres\" jest",
     "test:watch": "jest --watch",
     "typecheck": "concurrently --timings --max-processes 14 --prefix-colors \"#f62b3b,#712cf9,#00d1b2,#81e6d9,#4078c0,#7fba00,#339af0,#007fff,#61dafb,#82a7dd,#60a5fa,gray,blue\" --names antd,bootstrap,bulma,chakra,dnd,fluent,mantine,material,native,rqb,tremor,examples,website bun:typecheck:antd bun:typecheck:bootstrap bun:typecheck:bulma bun:typecheck:chakra bun:typecheck:dnd bun:typecheck:fluent bun:typecheck:mantine bun:typecheck:material bun:typecheck:native bun:typecheck:rqb bun:typecheck:tremor bun:typecheck:examples bun:typecheck:website",
     "typecheck:antd": "tsc -p packages/antd",

@@ -1,6 +1,6 @@
 import { PGlite } from '@electric-sql/pglite';
-import { formatQuery } from './formatQuery';
-import type { SuperUser, TestSQLParams } from './dbTestUtils';
+import { formatQuery } from '../formatQuery';
+import type { SuperUser, TestSQLParams } from './dbqueryTestUtils';
 import {
   CREATE_INDEX,
   CREATE_TABLE,
@@ -8,7 +8,7 @@ import {
   sqlBase,
   superUsers,
   dbTests,
-} from './dbTestUtils';
+} from './dbqueryTestUtils';
 
 const db = new PGlite();
 

@@ -1,6 +1,6 @@
 import { Database } from 'bun:sqlite';
-import { formatQuery } from './formatQuery';
-import type { TestSQLParams } from './dbTestUtils';
+import { formatQuery } from '../formatQuery';
+import type { TestSQLParams } from './dbqueryTestUtils';
 import {
   CREATE_INDEX,
   CREATE_TABLE,
@@ -8,7 +8,7 @@ import {
   sqlBase,
   superUsers,
   dbTests,
-} from './dbTestUtils';
+} from './dbqueryTestUtils';
 
 const db = new Database();
 

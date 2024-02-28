@@ -9,7 +9,7 @@ export default {
   coveragePathIgnorePatterns,
   displayName: 'native',
   globals,
-  setupFilesAfterEnv: [...testingLibraryReactNativeJestPreset.setupFiles, './jestSetup.ts'],
+  setupFilesAfterEnv: [...(testingLibraryReactNativeJestPreset.setupFiles ?? []), './jestSetup.ts'],
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|react-redux|@react-native(-community|-picker)?)/)',
   ],

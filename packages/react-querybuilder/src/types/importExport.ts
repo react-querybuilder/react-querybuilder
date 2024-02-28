@@ -1,5 +1,5 @@
 import type { FullField, ValueSource, ValueSources } from './basic';
-import type { RulesLogic } from './json-logic-js';
+import type { RulesLogic } from 'json-logic-js';
 import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';

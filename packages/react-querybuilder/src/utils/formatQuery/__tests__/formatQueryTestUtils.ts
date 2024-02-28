@@ -1,14 +1,14 @@
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
-} from '../../defaults';
+} from '../../../defaults';
 import type {
   ExportFormat,
   FormatQueryOptions,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-} from '../../types';
+} from '../../../types';
 
 export const query: RuleGroupType = {
   id: 'g-root',
