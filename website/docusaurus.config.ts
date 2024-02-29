@@ -151,24 +151,12 @@ const config: Config = {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
           versions: {
-            3: {
-              label: 'v3.x',
-            },
-            4: {
-              label: 'v4.x',
-            },
-            5: {
-              label: 'v5.x',
-            },
-            6: {
-              label: 'v6.x',
-            },
-            7: {
-              label: 'v7.x',
-            },
-            current: {
-              label: 'Next',
-            },
+            3: { label: 'v3' },
+            4: { label: 'v4' },
+            5: { label: 'v5' },
+            6: { label: 'v6' },
+            7: { label: 'v7' },
+            current: { label: 'Next' },
           },
         },
         // blog: {

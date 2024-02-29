@@ -20,6 +20,7 @@ import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
   Field,
+  FieldByValue,
   FullCombinator,
   FullField,
   FullOperator,
@@ -473,8 +474,8 @@ describe('get* callbacks', () => {
       expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
     });
 
-    it('invokes custom getValues function returning value options', () => {
-      const getValues = jest.fn(() => [{ value: 'test', label: 'Test' }]);
+    it('invokes custom getValues function returning value-based options', () => {
+      const getValues = jest.fn((): FieldByValue[] => [{ value: 'test', label: 'Test' }]);
       render(
         <QueryBuilder
           query={query}

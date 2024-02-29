@@ -143,6 +143,26 @@ export type Field<
   >
 >;
 
+/**
+ * Field definition used in the `fields` prop of {@link QueryBuilder}.
+ * This type is an extension of {@link FullField} where only `value` and
+ * `label` are required.
+ *
+ * The `name`/`value`, `operators`, and `values` properties of this interface
+ * can be narrowed with generics.
+ */
+export type FieldByValue<
+  FieldName extends string = string,
+  OperatorName extends string = string,
+  ValueName extends string = string,
+  OperatorObj extends Option = Option<OperatorName>,
+> = WithUnknownIndex<
+  { name?: FieldName } & Pick<
+    BaseFullField<FieldName, OperatorName, ValueName, OperatorObj>,
+    Exclude<keyof BaseFullField, 'name'>
+  >
+>;
+
 // TODO: Dynamically generate the list of explicitly-named properties.
 // The code below is a non-working attempt.
 // export type Field<
@@ -204,6 +224,20 @@ export type Operator<N extends string = string> = WithUnknownIndex<
 >;
 
 /**
+ * Operator definition used in the `operators`/`getOperators` props of
+ * {@link QueryBuilder}. This type is an extension of {@link FullOperator}
+ * where only `value` and `label` are required.
+ *
+ * The `name`/`value` properties of this interface can be narrowed with generics.
+ */
+export type OperatorByValue<N extends string = string> = WithUnknownIndex<
+  SetOptional<BaseFullOption<N>, 'name'> &
+    HasOptionalClassName & {
+      arity?: Arity;
+    }
+>;
+
+/**
  * Full combinator definition used in the `combinators` prop of {@link QueryBuilder}.
  * This type requires both `name` and `value`, but the `combinators` prop itself
  * can use a {@link FlexibleOption} where only one of `name` or `value` is required,
@@ -224,6 +258,17 @@ export interface FullCombinator<N extends string = string>
  */
 export type Combinator<N extends string = string> = WithUnknownIndex<
   SetOptional<BaseFullOption<N>, 'value'> & HasOptionalClassName
+>;
+
+/**
+ * Combinator definition used in the `combinators` prop of {@link QueryBuilder}.
+ * This type is an extension of {@link FullCombinator} where only `value` and
+ * `label` are required.
+ *
+ * The `name`/`value` properties of this interface can be narrowed with generics.
+ */
+export type CombinatorByValue<N extends string = string> = WithUnknownIndex<
+  SetOptional<BaseFullOption<N>, 'name'> & HasOptionalClassName
 >;
 
 /**

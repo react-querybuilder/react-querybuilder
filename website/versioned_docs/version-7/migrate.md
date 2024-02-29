@@ -4,6 +4,8 @@ title: Migrating to v7
 
 Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-list-value-identifiers) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
 
+> _Previous migration instructions: [v5 to v6](/docs/6/migrate) / [v4 to v5](/docs/5/migrate) / [v3 to v4](/docs/4/migrate)._
+
 ## Breaking changes
 
 ### TypeScript updates
@@ -19,7 +21,7 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
   - This shouldn't affect JSX which renders a `<QueryBuilder />` component since the generic types can almost always be inferred from the props.
   - While all props are technically still optional, TypeScript may have problems inferring the generics if `fields` and `query`/`defaultQuery` are not provided.
-  - The four generic arguments of `QueryBuilderProps` represent, respectively, the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type, the operator type, and the combinator type. The latter three must extend `FullOption`, or if you want to be more specific and expressive, `FullField`, `FullOperator`, and `FullCombinator`.
+  - The four generic arguments of `QueryBuilderProps` represent, respectively, the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type, the operator type, and the combinator type. The latter three must extend `FullOption` or the more specific and expressive `FullField`/`FullOperator`/`FullCombinator`.
 
   ```tsx
   // Valid in version 6:
@@ -34,15 +36,16 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 #### `Option`-type props
 
-- Custom subcomponents must now accept any option-type props (fields, operators, combinators, etc.) as an extension of `FullOption` instead of `Option`.
+- Custom subcomponents must now accept any option-type props (fields, operators, values, etc.) as an extension of `FullOption` instead of `Option`.
   - `Full*` types are identical to their version 6 counterparts except for the `value` property, which is required and must be the same type as the `name` property.
+  - `*ByValue` types are identical to their `Full*` counterparts except that the `name` property is optional.
   - Relevant interfaces include the following:
     <!-- prettier-ignore -->
-    | Interface    | "Full" counterpart |
-    | ------------ | ------------------ |
-    | `Field`      | `FullField`        |
-    | `Operator`   | `FullOperator`     |
-    | `Combinator` | `FullCombinator`   |
+    | Interface    | "Full*" counterpart | "*ByValue" counterpart |
+    | ------------ | ------------------- | ---------------------- |
+    | `Field`      | `FullField`         | `FieldByValue`         |
+    | `Operator`   | `FullOperator`      | `OperatorByValue`      |
+    | `Combinator` | `FullCombinator`    | `CombinatorByValue`    |
 - The first generic argument of `ValueEditorProps`, `ValueSelectorProps`, and `FieldSelectorProps` must extend `FullOption` instead of `Option` as in version 6.
   - In the case of `ValueEditorProps` and `FieldSelectorProps`, prefer `FullField` over `FullOption`.
   - Where editor/selector prop type generics have been used, upgrading to version 7 should only require a minor update similar to this:
@@ -57,7 +60,7 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 ### Parser functions removed from main bundle
 
-Since the [parser functions](./utils/import) are used less frequently than other utility functions—and not generally alongside each other—they have been removed from the main export. Although available as separate exports since version 6 (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. This change reduced the main bundle size by almost 50%.
+Since the [parser functions](./utils/import) are used less frequently than other utility functions—and not generally alongside each other—they have been removed from the main export. Although these functions have been available as separate exports since version 6 (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. (This change reduced the main bundle size by almost 50%.)
 
 ```diff
  // Version 6 only
@@ -375,9 +378,3 @@ Icon package: [`@mui/icons-material`](https://npmjs.com/package/@mui/icons-mater
 | `translations.lockRuleDisabled.label`  | `<Lock />`        |
 | `translations.shiftActionDown.label`   | `<ShiftDown />`   |
 | `translations.shiftActionUp.label`     | `<ShiftUp />`     |
-
-## Migrating from older versions
-
-- [Version 5 to version 6](/docs/6/migrate)
-- [Version 4 to version 5](/docs/5/migrate)
-- [Version 3 to version 4](/docs/4/migrate)
