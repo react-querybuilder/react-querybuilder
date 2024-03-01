@@ -42,7 +42,7 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, [c
 
 ## Compatibility packages
 
-[![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign&color=f62b3b)](https://www.npmjs.com/package/@react-querybuilder/antd)
+[![Ant Design](https://img.shields.io/badge/RQB-for_Ant%20Design-blue?logo=antdesign&color=0958d9)](https://www.npmjs.com/package/@react-querybuilder/antd)
 [![Bootstrap](https://img.shields.io/badge/RQB-for_Bootstrap-blue?logo=bootstrap&color=712cf9)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
 [![Bulma](https://img.shields.io/badge/RQB-for_Bulma-blue?logo=bulma&color=00d1b2)](https://www.npmjs.com/package/@react-querybuilder/bulma)
 [![Chakra UI](https://img.shields.io/badge/RQB-for_Chakra%20UI-blue?logo=chakraui&color=81e6d9)](https://www.npmjs.com/package/@react-querybuilder/chakra)<br />
