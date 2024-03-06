@@ -152,7 +152,7 @@ export const configs: Record<string, ExampleConfig> = {
   mantine: {
     name: 'Mantine',
     dependencyKeys: ['@mantine/core', '@mantine/dates', '@mantine/hooks', 'dayjs'],
-    scssPre: [],
+    scssPre: [`@import '@mantine/core/styles.css';`],
     scssPost: [],
     tsxImports: [
       `import { MantineProvider } from '@mantine/core';`,
