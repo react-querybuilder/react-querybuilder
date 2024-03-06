@@ -34,6 +34,7 @@ export const MaterialValueSelector = ({
   fieldData,
   schema,
   muiComponents: muiComponentsProp,
+  defaultValue: _defaultValue,
   ...otherProps
 }: MaterialValueSelectorProps) => {
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
@@ -81,12 +82,7 @@ export const MaterialValueSelector = ({
       className={className}
       title={title}
       disabled={disabled}>
-      <Select
-        value={val}
-        // @ts-expect-error onChange cannot accept string[]
-        onChange={muiSelectChangeHandler}
-        multiple={multiple}
-        {...otherProps}>
+      <Select value={val} onChange={muiSelectChangeHandler} multiple={multiple} {...otherProps}>
         {toOptions(options ?? /* istanbul ignore next */ [], {
           ListSubheader,
           MenuItem,

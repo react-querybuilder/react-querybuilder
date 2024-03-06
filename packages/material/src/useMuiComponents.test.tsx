@@ -3,16 +3,10 @@ import { act, render, renderHook } from '@testing-library/react';
 import * as React from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import { QueryBuilderMaterial } from './index';
-import type { MuiComponentName, RQBMaterialComponents } from './types';
+import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 jest.setTimeout(60_000);
-
-interface MuiMockComponent {
-  (): React.ReactElement;
-  muiName: string;
-  $$typeof: symbol;
-}
 
 const componentMocks = {
   Button: () => <>Button</>,
@@ -34,7 +28,7 @@ const componentMocks = {
   TextareaAutosize: () => <>TextareaAutosize</>,
   KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
   KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
-} as unknown as Record<MuiComponentName, MuiMockComponent>;
+} as unknown as RQBMaterialComponents;
 
 // We don't *actually* need to load the components, just test that
 // an attempt to load them can be successful.
