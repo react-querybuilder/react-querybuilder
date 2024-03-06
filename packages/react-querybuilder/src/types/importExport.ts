@@ -231,6 +231,12 @@ export interface ParseSQLOptions extends ParserCommonOptions {
 export interface ParseCELOptions extends ParserCommonOptions {}
 
 /**
+ * Options object for {@link parseSpEL}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ParseSpELOptions extends ParserCommonOptions {}
+
+/**
  * Options object for {@link parseJsonLogic}.
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {

@@ -164,14 +164,12 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           if (Array.isArray(exp)) {
             return {
               combinator: 'and',
-              rules: exp
-                .map(e => processCELExpression(e))
-                .filter(r => !!r) as DefaultRuleGroupArray,
+              rules: exp.map(e => processCELExpression(e)).filter(Boolean) as DefaultRuleGroupArray,
             };
           }
           return processCELExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
-        .filter(r => !!r) as DefaultRuleGroupArray;
+        .filter(Boolean) as DefaultRuleGroupArray;
       /* istanbul ignore else */
       if (rules.length > 0) {
         return { combinator, rules };

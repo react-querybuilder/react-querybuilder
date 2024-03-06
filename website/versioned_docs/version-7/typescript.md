@@ -176,6 +176,8 @@ interface ParseSQLOptions extends ParserCommonOptions {
 
 type ParseCELOptions = ParserCommonOptions;
 
+type ParseSpELOptions = ParserCommonOptions;
+
 type ParseJsonLogicOptions = ParserCommonOptions;
 
 interface ParseMongoDbOptions extends ParserCommonOptions {

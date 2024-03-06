@@ -74,6 +74,8 @@ Since the [parser functions](./utils/import) are used less frequently than other
 +import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"
 +import { parseMongoDB } from "react-querybuilder/parseMongoDB"
 +import { parseSQL } from "react-querybuilder/parseSQL"
+ // (New in version 7)
++import { parseSpEL } from "react-querybuilder/parseSpEL"
 ```
 
 ### Miscellaneous
@@ -274,6 +276,10 @@ Accessibility is improved with the addition of a `title` attribute to the outerm
 ### Enhanced `parseNumber` behavior
 
 The `parseNumber` function now delegates parsing to [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity), which is essentially an enhanced version of `parseFloat`. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., the "abc" in "123abc"). This matches the behavior of the "native" option, which uses `parseFloat` directly, except it returns the original string when parsing fails instead of `NaN`.
+
+### SpEL parser
+
+The new `parseSpEL` function converts [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) expressions to React Query Builder query objects.
 
 ## Updated default labels
 

@@ -175,42 +175,6 @@ Valid MongoDB query strings may not strictly conform to the JSON specification. 
 
 :::
 
-## Common Expression Language (CEL)
-
-```ts
-function parseCEL(celQuery: string, options?: ParseCELOptions): RuleGroupTypeAny;
-```
-
-`parseCEL` takes a [CEL](https://github.com/google/cel-spec) string.
-
-Click the "Import CEL" button in [the demo](/demo) to try it out.
-
-### Usage
-
-```ts
-parseCEL(`firstName == "Steve" && lastName == "Vai"`);
-```
-
-Output (`RuleGroupType`):
-
-```json
-{
-  "combinator": "and",
-  "rules": [
-    {
-      "field": "firstName",
-      "operator": "=",
-      "value": "Steve"
-    },
-    {
-      "field": "lastName",
-      "operator": "=",
-      "value": "Vai"
-    }
-  ]
-}
-```
-
 ## JsonLogic
 
 ```ts
@@ -291,6 +255,78 @@ Output (`RuleGroupType`):
       "field": "firstName",
       "operator": "contains",
       "value": "^Stev"
+    }
+  ]
+}
+```
+
+## Spring Expression Language (SpEL)
+
+```ts
+function parseSpEL(spelQuery: string, options?: ParseSpELOptions): RuleGroupTypeAny;
+```
+
+`parseSpEL` takes a [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) string.
+
+Click the "Import SpEL" button in [the demo](/demo) to try it out.
+
+### Usage
+
+```ts
+parseSpEL(`firstName == "Steve" && lastName == "Vai"`);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
+    }
+  ]
+}
+```
+
+## Common Expression Language (CEL)
+
+```ts
+function parseCEL(celQuery: string, options?: ParseCELOptions): RuleGroupTypeAny;
+```
+
+`parseCEL` takes a [CEL](https://github.com/google/cel-spec) string.
+
+Click the "Import CEL" button in [the demo](/demo) to try it out.
+
+### Usage
+
+```ts
+parseCEL(`firstName == "Steve" && lastName == "Vai"`);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "=",
+      "value": "Vai"
     }
   ]
 }

@@ -35,6 +35,10 @@
       "types": "./dist/parseMongoDB.d.ts",
       "default": "./dist/parseMongoDB.js"
     },
+    "./parseSpEL": {
+      "types": "./dist/parseSpEL.d.ts",
+      "default": "./dist/parseSpEL.js"
+    },
     "./parseSQL": {
       "types": "./dist/parseSQL.d.ts",
       "default": "./dist/parseSQL.js"
@@ -103,6 +107,7 @@
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "1.71.1",
+    "spel2js": "^0.2.8",
     "type-fest": "^4.10.3",
     "typescript": "^5.3.3",
     "vite": "^5.1.4"
