@@ -96,8 +96,7 @@ h1, h2, h3, h4, h5, h6 {
         ? { '@react-querybuilder/dnd': '^5', 'react-querybuilder': '^5' }
         : rqbVersion === 6
           ? { '@react-querybuilder/dnd': '^6', 'react-querybuilder': '^6' }
-          : // TODO: Update this to '7.0.0' once it's released
-            { '@react-querybuilder/dnd': '7.0.0-rc.0', 'react-querybuilder': '7.0.0-rc.0' };
+          : { '@react-querybuilder/dnd': '^7', 'react-querybuilder': '^7' };
 
   const setup = {
     ...customSetup,
