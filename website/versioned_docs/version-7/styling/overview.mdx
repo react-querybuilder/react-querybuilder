@@ -4,7 +4,10 @@ description: How to tweak or overhaul the default styles
 ---
 
 import { BrowserWindow } from '@site/src/components/BrowserWindow';
+import { DemoLink } from '@site/src/components/DemoLink';
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 React Query Builder has a [flexible structure with specific classes assigned](./classnames) to each element in the component hierarchy, enabling a wide range of styling possibilities.
 
@@ -92,6 +95,78 @@ You can also assign styles to the following classes.
 - `dndCopy`: Assigned to a drop target when the cursor hovers over it while the modifier key is pressed (`Alt` on Windows/Linux, `Option`/`⌥` on Mac)
 
 ## Miscellaneous tips
+
+### Justified layout
+
+These CSS rules will push any "clone", "lock", or "remove" buttons to the right edge, giving the query builder a more "justified" appearance. <DemoLink option="justifiedLayout" />.
+
+<Tabs>
+  <TabItem value="SCSS" label="SCSS">
+
+```scss
+.queryBuilder {
+  .ruleGroup-addGroup {
+    & + button.ruleGroup-cloneGroup,
+    & + button.ruleGroup-lock,
+    & + button.ruleGroup-remove {
+      margin-left: auto !important;
+    }
+  }
+  .rule-operators,
+  .rule-value {
+    & + button.rule-cloneRule,
+    & + button.rule-lock,
+    & + button.rule-remove {
+      margin-left: auto !important;
+    }
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="CSS" label="CSS">
+
+```css
+.queryBuilder .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
+.queryBuilder .ruleGroup-addGroup + button.ruleGroup-lock,
+.queryBuilder .ruleGroup-addGroup + button.ruleGroup-remove,
+.queryBuilder .rule-operators + button.rule-cloneRule,
+.queryBuilder .rule-operators + button.rule-lock,
+.queryBuilder .rule-operators + button.rule-remove,
+.queryBuilder .rule-value + button.rule-cloneRule,
+.queryBuilder .rule-value + button.rule-lock,
+.queryBuilder .rule-value + button.rule-remove {
+  margin-left: auto !important;
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<BrowserWindow>
+  <div className="justifiedLayout">
+    <QueryBuilderEmbed
+      fields={fields}
+      showLockButtons
+      showCloneButtons
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+          {
+            combinator: 'or',
+            rules: [
+              { field: 'lastName', operator: '=', value: 'Vai' },
+              { field: 'lastName', operator: '=', value: 'Vaughan' },
+              { field: 'lastName', operator: '=', value: 'Martin' },
+            ],
+          },
+          { field: 'firstName', operator: 'null', value: null },
+        ],
+      }}
+    />
+  </div>
+</BrowserWindow>
 
 ### Inline independent combinators
 

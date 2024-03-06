@@ -54,27 +54,3 @@ html[data-theme='dark'] {
     }
   }
 }
-
-// Styles for when "Justified layout" option is selected
-.justifiedLayout {
-  .queryBuilder {
-    // Push the clone, lock, and remove buttons to the right edge
-    .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
-    .ruleGroup-addGroup + button.ruleGroup-lock,
-    .ruleGroup-addGroup + button.ruleGroup-remove,
-    .rule-operators + button.rule-cloneRule,
-    .rule-operators + button.rule-lock,
-    .rule-operators + button.rule-remove,
-    .rule-value + button.rule-cloneRule,
-    .rule-value + button.rule-lock,
-    .rule-value + button.rule-remove,
-    .control + button.rule-cloneRule,
-    .control + button.rule-lock,
-    .control + button.rule-remove,
-    .chakra-select__wrapper + button.rule-cloneRule,
-    .chakra-select__wrapper + button.rule-lock,
-    .chakra-select__wrapper + button.rule-remove {
-      margin-left: auto !important;
-    }
-  }
-}
