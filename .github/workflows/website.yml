@@ -39,12 +39,15 @@ jobs:
           install-command: yarn
       - run: bun run build
       - run: bun run website:build
-        # The following deployment steps only run when pushing to the `main` branch
+        # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes
+        if: ${{ github.event_name == 'pull_request' }}
       - uses: webfactory/ssh-agent@v0.9.0
+        # Only run when pushing to the `main` branch
         if: ${{ github.event_name != 'pull_request' }}
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_WEBSITE_DEPLOY }}
       - name: Deploy website to GitHub Pages
+        # Only run when pushing to the `main` branch
         if: ${{ github.event_name != 'pull_request' }}
         env:
           USE_SSH: true
