@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v7.0.0] - 2024-03-06
+
 ### Changed
 
 - [#654] The minimum TypeScript version is now 5.1.
@@ -1539,7 +1543,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.5...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.0...HEAD
+[v7.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.5...v7.0.0
 [v6.5.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.4...v6.5.5
 [v6.5.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.3...v6.5.4
 [v6.5.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.2...v6.5.3
