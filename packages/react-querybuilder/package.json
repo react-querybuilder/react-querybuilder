@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "7.0.0-rc.1",
+  "version": "7.0.0",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -86,6 +86,7 @@
     "@babel/preset-env": "^7.24.0",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
+    "@electric-sql/pglite": "^0.0.2",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/hoist-non-react-statics": "^3.3.5",
@@ -100,7 +101,6 @@
     "copyfiles": "^2.4.1",
     "jscodeshift": "^0.15.2",
     "json-logic-js": "^2.0.2",
-    "@electric-sql/pglite": "^0.0.2",
     "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
