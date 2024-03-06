@@ -24,9 +24,10 @@ export * from './toFullOption';
 export * from './toOptions';
 export * from './transformQuery';
 export * from './uniq';
-// In v7+, these are only available as separate exports
-// to reduce bundle size.
+// To reduce bundle size, these are only available as
+// separate exports as of v7.
 // export * from './parseCEL';
 // export * from './parseJsonLogic';
 // export * from './parseMongoDB';
+// export * from './parseSpEL';
 // export * from './parseSQL';

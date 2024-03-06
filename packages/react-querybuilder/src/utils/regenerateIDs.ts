@@ -34,7 +34,7 @@ export const regenerateIDs = (
   if (!isPojo(ruleOrGroup)) return ruleOrGroup;
 
   if (!isRuleGroup(ruleOrGroup)) {
-    return JSON.parse(JSON.stringify({ ...(ruleOrGroup as any), id: idGenerator() }));
+    return JSON.parse(JSON.stringify({ ...(ruleOrGroup as RuleType), id: idGenerator() }));
   }
 
   if (isRuleGroupType(ruleOrGroup)) {

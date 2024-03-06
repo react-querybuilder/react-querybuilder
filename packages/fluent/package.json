@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/fluent",
   "description": "Custom Fluent UI components for react-querybuilder",
-  "version": "7.0.0-rc.0",
+  "version": "7.0.0-rc.1",
   "publishConfig": {
     "access": "public"
   },
@@ -38,24 +38,24 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.46.4",
+    "@fluentui/react-components": "^9.46.7",
     "@fluentui/react-icons-mdl2": "^1.3.57",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.2.63",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-rc.0",
+    "react-querybuilder": "^7.0.0-rc.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
-    "vite": "^5.1.3"
+    "vite": "^5.1.5"
   },
   "peerDependencies": {
     "@fluentui/react-components": "^9",
     "@fluentui/react-icons-mdl2": "^1",
     "dayjs": ">=1",
     "react": ">=16.8.0",
-    "react-querybuilder": "^7.0.0-rc.0"
+    "react-querybuilder": "^7.0.0-rc.1"
   }
 }

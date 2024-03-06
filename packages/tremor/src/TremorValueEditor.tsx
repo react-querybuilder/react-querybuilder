@@ -18,6 +18,7 @@ import {
 } from 'react-querybuilder';
 import { TremorValueSelector } from './TremorValueSelector';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 const dateFormat = 'YYYY-MM-DD';

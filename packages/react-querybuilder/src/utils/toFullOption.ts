@@ -2,6 +2,7 @@ import { produce } from 'immer';
 import type {
   BaseOption,
   BaseOptionMap,
+  FlexibleOption,
   FlexibleOptionList,
   FullOptionList,
   Option,
@@ -68,7 +69,7 @@ function toFullOptionMap<OptMap extends BaseOptionMap>(
       : never;
 
   return Object.fromEntries(
-    Object.entries(optMap).map(([k, v]: [string, any]) => [k, toFullOption(v)])
+    (Object.entries(optMap) as [string, FlexibleOption][]).map(([k, v]) => [k, toFullOption(v)])
   ) as FullOptMapType;
 }
 

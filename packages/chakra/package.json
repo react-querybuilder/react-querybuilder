@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/chakra",
   "description": "Custom Chakra UI components for react-querybuilder",
-  "version": "7.0.0-rc.0",
+  "version": "7.0.0-rc.1",
   "publishConfig": {
     "access": "public"
   },
@@ -41,18 +41,18 @@
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
     "@chakra-ui/system": "^2.6.2",
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.2.63",
     "@vitejs/plugin-react-swc": "^3.6.0",
-    "framer-motion": "^11.0.5",
+    "framer-motion": "^11.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-rc.0",
+    "react-querybuilder": "^7.0.0-rc.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
-    "vite": "^5.1.3"
+    "vite": "^5.1.5"
   },
   "peerDependencies": {
     "@chakra-ui/icons": ">=1.0.0",
@@ -62,6 +62,6 @@
     "@emotion/styled": "^11",
     "framer-motion": "^6.3.3",
     "react": ">=18.1.0",
-    "react-querybuilder": "^7.0.0-rc.0"
+    "react-querybuilder": "^7.0.0-rc.1"
   }
 }

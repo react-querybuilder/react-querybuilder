@@ -22,6 +22,7 @@ import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption, toFlatOptionArray } from '../optGroupUtils';
+import { parseNumber } from '../parseNumber';
 import { toFullOptionList } from '../toFullOption';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
@@ -76,6 +77,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'elasticsearch' | (Omit<FormatQueryOptions, 'format'> & { format: 'elasticsearch' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -244,9 +246,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
    * SQL
    */
   if (format === 'sql') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
+        // TODO: test for the last case and remove "ignore" comment
+        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
       const processedRules = rg.rules.map(rule => {
@@ -257,7 +260,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         // Groups
         if (isRuleGroup(rule)) {
-          return processRuleGroup(rule);
+          return processRuleGroup(rule, rg.rules.length === 1);
         }
 
         // Basic rule validation
@@ -281,6 +284,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             escapeQuotes,
             quoteFieldNamesWith,
             fieldData,
+            format,
           });
         }
         // ...otherwise use default rule processor and pass in the value
@@ -291,6 +295,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           valueProcessor: valueProcessorInternal,
           quoteFieldNamesWith,
           fieldData,
+          format,
         });
       });
 
@@ -311,7 +316,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
    */
   if (format === 'parameterized' || format === 'parameterized_named') {
     const parameterized = format === 'parameterized';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params_named: Record<string, any> = {};
     const fieldParamIndexes: Record<string, number> = {};
 
@@ -331,7 +338,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
 
       const fieldData = getOption(fields, rule.field);
-      const value = valueProcessorInternal(rule, { parseNumbers, quoteFieldNamesWith, fieldData });
+      const value = valueProcessorInternal(rule, {
+        parseNumbers,
+        quoteFieldNamesWith,
+        fieldData,
+        format,
+      });
       const operator = mapSQLOperator(rule.operator);
 
       if ((rule.valueSource ?? 'value') === 'value') {
@@ -342,7 +354,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             const splitValue = toArray(rule.value);
             if (parameterized) {
               splitValue.forEach(v =>
-                params.push(shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v)
+                params.push(
+                  shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v
+                )
               );
               return `${quoteFieldNamesWith[0]}${rule.field}${
                 quoteFieldNamesWith[1]
@@ -353,7 +367,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               const thisParamName = getNextNamedParam(rule.field);
               inParams.push(`${paramPrefix}${thisParamName}`);
               params_named[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] =
-                shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v;
+                shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v;
             });
             return `${quoteFieldNamesWith[0]}${rule.field}${
               quoteFieldNamesWith[1]
@@ -369,7 +383,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             const valueAsArray = toArray(rule.value);
             const [first, second] = valueAsArray
               .slice(0, 2)
-              .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseFloat(v) : v));
+              .map(v =>
+                shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v
+              );
             if (parameterized) {
               params.push(first);
               params.push(second);
@@ -387,7 +403,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         let paramValue = rule.value;
         if (typeof rule.value === 'string') {
           if (shouldRenderAsNumber(rule.value, parseNumbers)) {
-            paramValue = parseFloat(rule.value);
+            paramValue = parseNumber(rule.value, { parseNumbers });
           } else {
             // Note that we're using `value` here, which has been processed through
             // a `valueProcessor`, as opposed to `rule.value` which has not
@@ -421,9 +437,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${value}`.trim();
     };
 
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
+        // TODO: test for the last case and remove "ignore" comment
+        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
       const processedRules = rg.rules.map(rule => {
@@ -431,7 +448,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return rule;
         }
         if (isRuleGroup(rule)) {
-          return processRuleGroup(rule);
+          return processRuleGroup(rule, rg.rules.length === 1);
         }
         return processRule(rule);
       });
@@ -488,6 +505,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             fieldData,
+            format,
           });
         })
         .filter(Boolean);
@@ -534,6 +552,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parseNumbers,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
+            format,
           });
         })
         .filter(Boolean)
@@ -581,6 +600,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parseNumbers,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
+            format,
           });
         })
         .filter(Boolean)
@@ -600,7 +620,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (format === 'jsonlogic') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
-    const processRuleGroup = (rg: RuleGroupType): RQBJsonLogic => {
+    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): RQBJsonLogic => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return false;
       }
@@ -622,6 +642,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             fieldData,
+            format,
           });
         })
         .filter(Boolean);
@@ -631,7 +652,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
 
       const jsonRuleGroup: RQBJsonLogic =
-        processedRules.length === 1
+        processedRules.length === 1 && outermost
           ? processedRules[0]
           : ({
               [rg.combinator]: processedRules,
@@ -642,7 +663,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return rg.not ? { '!': jsonRuleGroup } : jsonRuleGroup;
     };
 
-    return processRuleGroup(query);
+    return processRuleGroup(query, true);
   }
 
   /**
@@ -651,6 +672,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (format === 'elasticsearch') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return false;
@@ -673,6 +695,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
             parseNumbers,
             fieldData,
+            format,
           });
         })
         .filter(Boolean);

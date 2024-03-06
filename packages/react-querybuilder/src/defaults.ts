@@ -7,6 +7,9 @@ import type {
   TranslationsFull,
 } from './types/index.noReact';
 
+// DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
+// to generate code snippets in the documentation.
+
 const placeholderName = '~';
 const placeholderLabel = '------';
 /**

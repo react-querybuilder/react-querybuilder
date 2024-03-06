@@ -23,6 +23,7 @@ export const defaultValidator: QueryValidator = query => {
   };
 
   const validateGroup = (rg: RuleGroupTypeAny) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const reasons: any[] = [];
     if (rg.rules.length === 0) {
       reasons.push(groupInvalidReasons.empty);

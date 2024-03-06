@@ -1,0 +1,17 @@
+{
+  "title": "React Query Builder Next.js Template",
+  "description": "React Query Builder Next.js template",
+  "iconUrl": "https://react-querybuilder.js.org/img/react-querybuilder-64.png",
+  "tags": [
+    "react",
+    "query",
+    "builder",
+    "operators",
+    "ui",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
+  "published": true
+}

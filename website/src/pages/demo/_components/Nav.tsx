@@ -40,7 +40,7 @@ export default function Nav({ variant, compressedState }: NavProps) {
     <div className={styles.demoNav}>
       <div className={styles.demoNavPackageLinks}>
         <a
-          href={`https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/${
+          href={`https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/${
             variant === 'default' ? 'basic-ts' : variant
           }?file=/src/App.tsx`}
           className="svg-font-color"

@@ -14,6 +14,7 @@ type ESLintExtendsIsArray = ESLint.ConfigData & { extends: string[] };
 // Seems like this should be unnecessary...
 declare module 'bun' {
   interface BunFile {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     json(): Promise<any>;
   }
 }
@@ -49,8 +50,8 @@ const noTypeScriptESLint = (s: string) => !/@typescript-eslint/.test(s);
 const packagesPath = pathJoin(import.meta.dir, '../packages');
 const templatePath = pathJoin(import.meta.dir, '_template');
 const templateDotCS = pathJoin(templatePath, '.codesandbox');
-const templateDotDC = pathJoin(templatePath, '.devcontainer');
 const templateSrc = pathJoin(templatePath, 'src');
+const templateDotCSTemplateJSON = await Bun.file(pathJoin(templateDotCS, 'template.json')).json();
 const templateIndexHTML = await Bun.file(pathJoin(templatePath, 'index.html')).text();
 const templateIndexTSX = await Bun.file(pathJoin(templateSrc, 'index.tsx')).text();
 const templateAppTSX = await Bun.file(pathJoin(templateSrc, 'App.tsx')).text();
@@ -67,12 +68,13 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(import.meta.dir, exampleID);
   const exampleDotCS = pathJoin(examplePath, '.codesandbox');
-  const exampleDotDC = pathJoin(examplePath, '.devcontainer');
   const exampleSrc = pathJoin(examplePath, 'src');
-  const exampleTitle = `React Query Builder ${exampleConfig.name} Example`;
+  const exampleBaseTitle = `React Query Builder ${exampleConfig.name}`;
+  const exampleTitle = `${exampleBaseTitle} Example`;
+  const exampleTemplateName = `${exampleBaseTitle} Template`;
   await rm(examplePath, { recursive: true, force: true });
   await mkdir(examplePath);
-  await Promise.all([mkdir(exampleDotCS), mkdir(exampleDotDC), mkdir(exampleSrc)]);
+  await Promise.all([mkdir(exampleDotCS), mkdir(exampleSrc)]);
 
   await Bun.write(
     pathJoin(examplePath, 'prettier.config.mjs'),
@@ -114,14 +116,6 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     Bun.write(
       pathJoin(exampleDotCS, 'workspace.json'),
       Bun.file(pathJoin(templateDotCS, 'workspace.json'))
-    ),
-    Bun.write(
-      pathJoin(exampleDotDC, 'devcontainer.json'),
-      Bun.file(pathJoin(templateDotDC, 'devcontainer.json'))
-    ),
-    Bun.write(
-      pathJoin(exampleDotDC, 'Dockerfile'),
-      Bun.file(pathJoin(templateDotDC, 'Dockerfile'))
     ),
     Bun.write(pathJoin(examplePath, '.gitignore'), Bun.file(pathJoin(templatePath, '.gitignore'))),
     Bun.write(
@@ -246,6 +240,20 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   }
   toWrite.push(
     formatAndWrite(pathJoin(examplePath, '.eslintrc.json'), stableStringify(exampleESLintRC))
+  );
+  // #endregion
+
+  // #region .codesandbox/template.json
+  const exampleDotCSTemplateJSON = {
+    ...templateDotCSTemplateJSON,
+    title: exampleTemplateName,
+    description: exampleTemplateName,
+  };
+  toWrite.push(
+    formatAndWrite(
+      pathJoin(exampleDotCS, 'template.json'),
+      stableStringify(exampleDotCSTemplateJSON)
+    )
   );
   // #endregion
 

@@ -32,6 +32,7 @@ import {
   uniqOptList,
 } from '../utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
   const firstOption = getFirstOption(opts);
 
@@ -301,7 +302,7 @@ export const useQueryBuilderSetup = <
         return getDefaultValue(r, { fieldData });
       }
 
-      let value: any = '';
+      let value: string | string[] | boolean = '';
 
       const values = getValuesMain(r.field as FieldName, r.operator as OperatorName, {
         fieldData,
@@ -315,13 +316,14 @@ export const useQueryBuilderSetup = <
           value = '';
         }
       } else if (values.length) {
-        if (
-          getValueEditorTypeMain(r.field as FieldName, r.operator as OperatorName, {
-            fieldData,
-          }) === 'multiselect'
-        ) {
+        const editorType = getValueEditorTypeMain(
+          r.field as FieldName,
+          r.operator as OperatorName,
+          { fieldData }
+        );
+        if (editorType === 'multiselect') {
           value = listsAsArrays ? [] : '';
-        } else {
+        } else if (editorType === 'select' || editorType === 'radio') {
           value = getFirstOptionsFrom(values, r, listsAsArrays);
         }
       } else {
@@ -355,7 +357,7 @@ export const useQueryBuilderSetup = <
 
   // #region Rule/group creators
   const createRule = useCallback((): R => {
-    let field: FieldName = '' as any;
+    let field = '' as FieldName;
     const flds = fields as FullOptionList<F>;
     /* istanbul ignore else */
     if (flds?.length > 0 && flds[0]) {

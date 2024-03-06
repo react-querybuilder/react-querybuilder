@@ -1,13 +1,16 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { parseNumber } from '../parseNumber';
 import { shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : `${clause}`);
 
-const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`);
+const escapeSingleQuotes = (
+  v: string | number | boolean | object | null,
+  escapeQuotes?: boolean
+) => (typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`));
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.
@@ -100,8 +103,12 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
       const valueAsArray = toArray(value);
       if (valueAsArray.length >= 2 && !!valueAsArray[0] && !!valueAsArray[1]) {
         const [first, second] = valueAsArray;
-        const firstNum = shouldRenderAsNumber(first, true) ? parseFloat(first) : NaN;
-        const secondNum = shouldRenderAsNumber(second, true) ? parseFloat(second) : NaN;
+        const firstNum = shouldRenderAsNumber(first, true)
+          ? parseNumber(first, { parseNumbers: true })
+          : NaN;
+        const secondNum = shouldRenderAsNumber(second, true)
+          ? parseNumber(second, { parseNumbers: true })
+          : NaN;
         let firstValue = isNaN(firstNum)
           ? valueIsField
             ? `${first}`

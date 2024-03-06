@@ -164,14 +164,12 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           if (Array.isArray(exp)) {
             return {
               combinator: 'and',
-              rules: exp
-                .map(e => processCELExpression(e))
-                .filter(r => !!r) as DefaultRuleGroupArray,
+              rules: exp.map(e => processCELExpression(e)).filter(Boolean) as DefaultRuleGroupArray,
             };
           }
           return processCELExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
-        .filter(r => !!r) as DefaultRuleGroupArray;
+        .filter(Boolean) as DefaultRuleGroupArray;
       /* istanbul ignore else */
       if (rules.length > 0) {
         return { combinator, rules };
@@ -194,6 +192,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       }
     } else if (isCELRelation(expr)) {
       let field: string | null = null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any = undefined;
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;

@@ -3,6 +3,8 @@ import type {
   PayloadAction,
   ThunkAction,
   ThunkDispatch,
+  ThunkMiddleware,
+  Tuple,
   UnknownAction,
 } from '@reduxjs/toolkit';
 import { applyMiddleware, combineReducers, configureStore, createStore } from '@reduxjs/toolkit';
@@ -18,7 +20,7 @@ const rootReducer = combineReducers({ queries: queriesSlice.reducer });
 
 // Next two lines are needed to get the default middleware since the standalone
 // `getDefaultMiddleware` function was removed from RTK in v2.
-let defaultMiddleware: any[] = [];
+let defaultMiddleware = [] as unknown as Tuple<[ThunkMiddleware<void, UnknownAction>]>;
 configureStore({
   reducer: () => {},
   middleware: gdm =>
@@ -78,7 +80,9 @@ export const {
 // Thunks
 interface DispatchThunkParams {
   payload: SetQueryStateParams;
-  onQueryChange?: (query: any /* RuleGroupTypeAny */) => void;
+  // TODO: Why doesn't `(query: RuleGroupTypeAny) => void` work here?
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onQueryChange?: (query: any) => void;
 }
 type QueryBuilderThunk = ThunkAction<void, RqbState, unknown, PayloadAction<SetQueryStateParams>>;
 export const dispatchThunk =

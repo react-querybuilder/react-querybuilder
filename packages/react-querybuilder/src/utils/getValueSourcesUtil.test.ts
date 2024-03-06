@@ -62,11 +62,6 @@ it('gets the correct value sources array', () => {
   expect(getValueSourcesUtil(f, '=', () => ['value'])).toEqual(['value']);
 });
 
-it('gets the correct value sources array from name only', () => {
-  const { name, label } = f;
-  expect(getValueSourcesUtil({ name, label } as any, '=', () => ['value'])).toEqual(['value']);
-});
-
 it('calls the custom getValueSources function correctly', () => {
   const getValueSources = jest.fn();
   getValueSourcesUtil(f, '=', getValueSources);

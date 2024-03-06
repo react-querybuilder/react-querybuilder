@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
-  "version": "7.0.0-rc.0",
+  "version": "7.0.0-rc.1",
   "publishConfig": {
     "access": "public"
   },
@@ -38,27 +38,27 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.3.0",
+    "@ant-design/icons": "^5.3.1",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.2.63",
     "@vitejs/plugin-react-swc": "^3.6.0",
-    "antd": "^5.14.1",
+    "antd": "^5.15.1",
     "dayjs": "^1.11.10",
-    "rc-picker": "^4.1.1",
-    "rc-select": "^14.11.0",
-    "rc-util": "^5.38.1",
+    "rc-picker": "^4.2.0",
+    "rc-select": "^14.12.0",
+    "rc-util": "^5.39.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-rc.0",
+    "react-querybuilder": "^7.0.0-rc.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
-    "vite": "^5.1.3"
+    "vite": "^5.1.5"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=4.7.0",
     "antd": ">=4.10.0",
     "dayjs": ">=1",
     "react": ">=16.8.0",
-    "react-querybuilder": "^7.0.0-rc.0"
+    "react-querybuilder": "^7.0.0-rc.1"
   }
 }

@@ -14,12 +14,14 @@ import { uniqByIdentifier } from './uniq';
 /**
  * Determines if an {@link OptionList} is an {@link OptionGroup} array.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =>
   Array.isArray(arr) && arr.length > 0 && isPojo(arr[0]) && 'options' in arr[0];
 
 /**
  * Determines if a {@link FlexibleOptionList} is a {@link FlexibleOptionGroup} array.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isFlexibleOptionGroupArray = (arr: any): arr is FlexibleOptionGroup[] =>
   Array.isArray(arr) &&
   arr.length > 0 &&
@@ -32,6 +34,7 @@ export const isFlexibleOptionGroupArray = (arr: any): arr is FlexibleOptionGroup
  * Determines if a {@link FlexibleOptionList} is a {@link OptionGroup} array of
  * {@link FullOption}.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isFullOptionGroupArray = (arr: any): arr is OptionGroup<FullOption>[] =>
   Array.isArray(arr) &&
   arr.length > 0 &&

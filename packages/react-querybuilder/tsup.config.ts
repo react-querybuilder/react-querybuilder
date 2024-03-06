@@ -90,6 +90,7 @@ if (process.env.NODE_ENV === 'production') {
         parseCEL: 'src/utils/parseCEL/index.ts',
         parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
         parseMongoDB: 'src/utils/parseMongoDB/index.ts',
+        parseSpEL: 'src/utils/parseSpEL/index.ts',
         parseSQL: 'src/utils/parseSQL/index.ts',
         transformQuery: 'src/utils/transformQuery.ts',
       },

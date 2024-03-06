@@ -1,5 +1,5 @@
 import type { FullField, ValueSource, ValueSources } from './basic';
-import type { RulesLogic } from './json-logic-js';
+import type { RulesLogic } from 'json-logic-js';
 import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
@@ -127,6 +127,7 @@ export interface FormatQueryOptions {
  */
 export interface ValueProcessorOptions
   extends Pick<FormatQueryOptions, 'parseNumbers' | 'quoteFieldNamesWith'> {
+  format?: ExportFormat;
   escapeQuotes?: boolean;
   /**
    * The full field object, if `fields` was provided in the
@@ -147,6 +148,7 @@ export type ValueProcessorByRule = (rule: RuleType, options?: ValueProcessorOpti
 export type ValueProcessorLegacy = (
   field: string,
   operator: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   valueSource?: ValueSource
 ) => string;
@@ -158,6 +160,7 @@ export type ValueProcessor = ValueProcessorLegacy;
  * {@link RuleType} object.
  */
 // TODO: narrow the return type based on options.format? (must add format to options first)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
 
 /**
@@ -170,6 +173,7 @@ export interface ParameterizedSQL {
    * Parameter values in the same order their respective placeholders
    * appear in the `sql` string.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: any[];
 }
 
@@ -182,6 +186,7 @@ export interface ParameterizedNamedSQL {
   /**
    * Map of bind variable names from the `sql` string to the associated values.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: Record<string, any>;
 }
 
@@ -215,6 +220,7 @@ interface ParserCommonOptions {
  */
 export interface ParseSQLOptions extends ParserCommonOptions {
   paramPrefix?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: any[] | Record<string, any>;
 }
 
@@ -225,9 +231,16 @@ export interface ParseSQLOptions extends ParserCommonOptions {
 export interface ParseCELOptions extends ParserCommonOptions {}
 
 /**
+ * Options object for {@link parseSpEL}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ParseSpELOptions extends ParserCommonOptions {}
+
+/**
  * Options object for {@link parseJsonLogic}.
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny>;
 }
 
@@ -283,6 +296,7 @@ export interface ParseMongoDbOptions extends ParserCommonOptions {
     (
       field: string,
       operator: string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       value: any,
       options: ParserCommonOptions
     ) => RuleType | RuleGroupType

@@ -1,0 +1,17 @@
+{
+  "description": "React Query Builder Drag-and-drop Template",
+  "iconUrl": "https://react-querybuilder.js.org/img/react-querybuilder-64.png",
+  "published": true,
+  "tags": [
+    "react",
+    "query",
+    "builder",
+    "operators",
+    "ui",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
+  "title": "React Query Builder Drag-and-drop Template"
+}

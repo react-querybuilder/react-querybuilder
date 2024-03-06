@@ -12,7 +12,7 @@ const processRuleOrStringOrRuleGroupIC = (r: string | RuleType | RuleGroupTypeIC
 
 const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): RuleGroupTypeIC => {
   const returnArray: RuleGroupICArray = [];
-  const push = (r: any) =>
+  const push = (r: string | RuleType | RuleGroupTypeIC) =>
     returnArray.push(processRuleOrStringOrRuleGroupIC(r) as RuleType | RuleGroupTypeIC);
   let startIndex = 0;
   for (let i = 0; i < rg.rules.length; i += 2) {
@@ -26,8 +26,7 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
         j += 2;
       }
       returnArray.push({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error TS can't keep track of odd/even indexes here
+        // @ts-expect-error Too complicated to keep track of odd/even indexes in TS
         rules: rg.rules.slice(startIndex, i + 1).map(processRuleOrStringOrRuleGroupIC),
       });
       i -= 2;

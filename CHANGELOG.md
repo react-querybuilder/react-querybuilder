@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#537] The `useStopEventPropagation` hook now takes a single function as its parameter instead of an object map of functions, so it must be run for each wrapped function individually.
 - [#537] Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - [#537] The `RuleGroupTypeIC` type now includes `combinator?: undefined` to ensure that query objects intended for use in query builders where `independentCombinators` is enabled do not contain `combinator` properties.
-- `parseNumbers` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., "abc" in "123abc") just like the native `parseFloat` method, with the only difference being it won't return `NaN` when parsing fails. Additionally, the `numericRegex` export is now adapted from (but largely identical to) the export of the same name from `numeric-quantity`.
+- [#663] Whereever the native `parseFloat` was used internally, `parseNumber` is now used. `parseNumber` now delegates parsing to the more versatile `numeric-quantity` package. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., "abc" in "123abc") just like the native `parseFloat` method, with the only difference being it won't return `NaN` when parsing fails. Additionally, the `numericRegex` export is now adapted from (but largely identical to) the export of the same name from `numeric-quantity`.
 - The logic to prefer a field's `valueEditorType` over the `getValueEditorType` prop has moved from the `useRule` hook to the `useQueryBuilderSetup` hook.
 
 </details>
@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Default structural styles (flex direction, alignment, spacing, etc.) are now available in a standalone stylesheet `query-builder-layout.css`/`query-builder-layout.scss`. The default stylesheet, `query-builder.css`/`query-builder.scss`, still contains structural styles but also includes more aesthetic styles like colors and border styles. The effective styles of the default stylesheet have not changed from version 6.
 - [#586] Options in list-type props can now use `value` as the identifier property in lieu of `name`. Additionally, all `Option`s within `OptionList`s passed down to subcomponents (`fields`, `fieldData`, `combinators`, `operators`, `values`, etc.) are guaranteed to have both `name` and `value`. This makes it easier to use libraries like `react-select` that expect a list of type `{ value: string; label: string; }[]` and not `{ name: string; label: string; }[]`.
   - [#654] Relatedly, field identifier types (`name`/`value` properties) will now be inferred from the `fields` prop if they have been narrowed from `string`. These narrowed types will be applied to subcomponents and other props that take fields or field identifiers as arguments/props.
+  - [#663] The `Field`, `Operator`, and `Combinator` interfaces each have corresponding `Full*` and `*ByValue` counterparts. Both `name` and `value` are required in the `Full*` interfaces; only `value` is required in the `*ByValue` interfaces.
 - [#595] Two "bulk override" properties have been added to the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` (as long as that component is not explicitly overridden in the `controlElements` prop). Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor` in cases where it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
   <!-- prettier-ignore -->
   | `controlElements` property | Sets default for                                                                                                                                       |
@@ -89,6 +90,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#606] New compatibility package for [Tremor](https://www.tremor.so/), `@react-querybuilder/tremor`.
 - [#537] New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in modern IDEs.
 - [#638] Value selectors now respect the `disabled` property of individual options in option lists.
+- [#663] The `format` option set during a call to `formatQuery` will be passed to custom rule processors as a property of the options object in the second parameter.
+- [#663] `parseSpEL` method for importing [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) expressions.
 
 ### Fixed
 
@@ -99,6 +102,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#623] Fixed an issue where Next triggered the "uncontrolled to controlled" warning unnecessarily. Removed a `useEffect` call from `usePrevious` and a ref that tracked "first render" from `useQueryBuilderSchema`.
 - [#625] A default value will not be selected unnecessarily when `valueEditorType` evaluates to `"multiselect"`.
 - Refactored custom hooks to avoid unnecessary `useEffect` calls.
+- [#663] `formatQuery` for "jsonlogic" will no longer collapse subgroups that only contain one rule into a single JsonLogic rule. Full query objects that contain only one rule will still be collapsed.
+- [#663] When a `values` list is defined for a field, and the value is reset due to `resetOnFieldChange` or `resetOnOperatorChange` being `true`, the rule `value` will no longer be set to the first value in the list unless the `valueEditorType` evaluates to "select" or "radio".
+- [#663] `formatQuery` now renders the fallback expression for subgroups where all rules are invalid. Previously this could result in `"()"`, which is invalid SQL.
 
 ## [v6.5.5] - 2024-01-15
 
@@ -1529,6 +1535,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#646]: https://github.com/react-querybuilder/react-querybuilder/pull/646
 [#653]: https://github.com/react-querybuilder/react-querybuilder/pull/653
 [#654]: https://github.com/react-querybuilder/react-querybuilder/pull/654
+[#663]: https://github.com/react-querybuilder/react-querybuilder/pull/663
 
 <!-- Release comparison links -->
 

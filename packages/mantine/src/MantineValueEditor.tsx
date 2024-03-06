@@ -7,6 +7,7 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
 import { toNumberInputValue } from './utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MantineValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 const dateFormat = 'YYYY-MM-DD';

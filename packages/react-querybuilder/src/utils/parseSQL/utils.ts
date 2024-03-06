@@ -1,4 +1,5 @@
 import type { DefaultCombinatorNameExtended, DefaultOperatorName } from '../../types/index.noReact';
+import { parseNumber } from '../parseNumber';
 import type {
   AndOperator,
   ComparisonOperator,
@@ -31,6 +32,7 @@ export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
 export const isWildcardsOnly = (sqlExpr: SQLExpression) =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^['"]?%+['"]?$/.test(sqlExpr.value);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getParamString = (param: any) => {
   switch (typeof param) {
     case 'number':
@@ -86,9 +88,9 @@ export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberV
   } else if (valueObj.type === 'Boolean') {
     return valueObj.value.toLowerCase() === 'true';
   } else if (isSQLSignedNumber(valueObj)) {
-    return parseFloat(`${valueObj.prefix}${valueObj.value.value}`);
+    return parseNumber(`${valueObj.prefix}${valueObj.value.value}`, { parseNumbers: true });
   }
-  return parseFloat(valueObj.value);
+  return parseNumber(valueObj.value, { parseNumbers: true });
 };
 
 export const generateFlatAndOrList = (

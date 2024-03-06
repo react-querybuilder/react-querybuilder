@@ -1,6 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import extraStylesSCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.scss';
+import demoStylesSCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.scss';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import justifiedStylesSCSS from '!!raw-loader!@site/src/css/justified.scss';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
@@ -20,6 +23,8 @@ import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } f
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 const prettier = prettierStandalone as typeof import('prettier');
+
+const extraStylesSCSS = `${demoStylesSCSS}\n\n${justifiedStylesSCSS}`;
 
 type OptionsAction =
   | { type: 'all' }
@@ -140,6 +145,20 @@ const muiTheme = createTheme();
 `,
         '<ThemeProvider theme={muiTheme}>\n<QueryBuilderMaterial>',
         '</QueryBuilderMaterial>\n</ThemeProvider>',
+      ];
+    case 'mantine':
+      return [
+        `import { MantineProvider } from '@mantine/core';
+import { QueryBuilderMantine } from '@react-querybuilder/material';
+import '@mantine/core/styles.css';`,
+        '<MantineProvider>\n<QueryBuilderMantine>',
+        '</QueryBuilderMantine>\n</MantineProvider>',
+      ];
+    case 'tremor':
+      return [
+        `import { QueryBuilderTremor } from '@react-querybuilder/tremor';`,
+        '<QueryBuilderTremor>',
+        '</QueryBuilderTremor>',
       ];
   }
   return ['', '', ''];

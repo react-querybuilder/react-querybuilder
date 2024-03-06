@@ -8,6 +8,7 @@ import {
   useValueEditor,
 } from 'react-querybuilder';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 export const ChakraValueEditor = (allProps: ChakraValueEditorProps) => {

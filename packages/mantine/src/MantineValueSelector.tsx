@@ -42,7 +42,7 @@ export const MantineValueSelector = ({
       className={className}
       data={data}
       disabled={disabled}
-      value={val as any[]}
+      value={val as string[]}
       onChange={changeHandler}
     />
   ) : (

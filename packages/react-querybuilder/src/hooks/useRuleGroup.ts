@@ -112,6 +112,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const onCombinatorChange = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (value: any, _context?: any) => {
       if (!disabled) {
         onPropChange('combinator', value, path);
@@ -121,6 +122,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const onIndependentCombinatorChange = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (value: any, index: number, _context?: any) => {
       if (!disabled) {
         onPropChange('combinator', value, path.concat([index]));
@@ -130,6 +132,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const onNotToggleChange = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (checked: boolean, _context?: any) => {
       if (!disabled) {
         onPropChange('not', checked, path);
@@ -139,6 +142,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const addRule = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, context?: any) => {
       if (!disabled) {
         const newRule = createRule();
@@ -149,6 +153,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const addGroup = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, context?: any) => {
       if (!disabled) {
         const newGroup = createRuleGroup(independentCombinators);
@@ -159,6 +164,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const cloneGroup = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       if (!disabled) {
         const newPath = [...getParentPath(path), path[path.length - 1] + 1];
@@ -169,6 +175,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const shiftGroupUp = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftUpDisabled) {
         moveRule(path, 'up', event?.altKey);
@@ -178,6 +185,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const shiftGroupDown = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftDownDisabled) {
         moveRule(path, 'down', event?.altKey);
@@ -187,6 +195,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const toggleLockGroup = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       onPropChange('disabled', !disabled, path);
     },
@@ -194,6 +203,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
   );
 
   const removeGroup = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       if (!disabled) {
         onGroupRemove(path);

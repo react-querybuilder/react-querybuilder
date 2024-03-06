@@ -3,12 +3,12 @@ import { act, render, renderHook } from '@testing-library/react';
 import * as React from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import { QueryBuilderMaterial } from './index';
-import type { MuiComponentName, RQBMaterialComponents } from './types';
+import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 jest.setTimeout(60_000);
 
-const componentMocks: Record<MuiComponentName, any> = {
+const componentMocks = {
   Button: () => <>Button</>,
   Checkbox: () => <>Checkbox</>,
   CloseIcon: () => <>CloseIcon</>,
@@ -28,7 +28,7 @@ const componentMocks: Record<MuiComponentName, any> = {
   TextareaAutosize: () => <>TextareaAutosize</>,
   KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
   KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
-};
+} as unknown as RQBMaterialComponents;
 
 // We don't *actually* need to load the components, just test that
 // an attempt to load them can be successful.
@@ -53,7 +53,7 @@ it('returns the MUI components', async () => {
 it('renders with preloaded components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {
-    hookResult = renderHook(() => useMuiComponents(componentMocks as RQBMaterialComponents));
+    hookResult = renderHook(() => useMuiComponents(componentMocks));
   });
   Object.keys(componentMocks).forEach(name =>
     expect(hookResult!.result.current).toHaveProperty(name)
@@ -63,7 +63,7 @@ it('renders with preloaded components', async () => {
 it('renders with context components', async () => {
   await act(async () => {
     render(
-      <RQBMaterialContext.Provider value={componentMocks as RQBMaterialComponents}>
+      <RQBMaterialContext.Provider value={componentMocks}>
         <QueryBuilderMaterial>
           <div>material</div>
         </QueryBuilderMaterial>
@@ -75,7 +75,7 @@ it('renders with context components', async () => {
 it('renders with context AND preloaded components', async () => {
   await act(async () => {
     render(
-      <RQBMaterialContext.Provider value={componentMocks as RQBMaterialComponents}>
+      <RQBMaterialContext.Provider value={componentMocks}>
         <QueryBuilderMaterial muiComponents={componentMocks}>
           <div>material</div>
         </QueryBuilderMaterial>

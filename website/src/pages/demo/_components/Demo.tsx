@@ -21,6 +21,7 @@ import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
 import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+import { parseSpEL } from 'react-querybuilder/parseSpEL';
 import { parseSQL } from 'react-querybuilder/parseSQL';
 import {
   initialQuery as defaultInitialQuery,
@@ -75,6 +76,7 @@ const initialMongoDB = JSON.stringify(
   null,
   2
 );
+const initialSpEL = `firstName matches "^Stev" && age > 28`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
@@ -103,6 +105,7 @@ const notesMongoDB = (
     before submitting them here or passing them to <code>parseMongoDB</code>.
   </em>
 );
+const notesSpEL = '';
 const notesCEL = '';
 const notesJsonLogic = (
   <em>
@@ -169,12 +172,15 @@ export default function Demo({
   const [isMongoDbInputVisible, setIsMongoDbInputVisible] = useState(false);
   const [mongoDB, setMongoDB] = useState(initialMongoDB);
   const [mongoDbParseError, setMongoDbParseError] = useState('');
-  const [isCELInputVisible, setIsCELInputVisible] = useState(false);
-  const [cel, setCEL] = useState(initialCEL);
-  const [celParseError, setCELParseError] = useState('');
   const [isJsonLogicInputVisible, setIsJsonLogicInputVisible] = useState(false);
   const [jsonLogic, setJsonLogic] = useState(initialJsonLogic);
   const [jsonLogicParseError, setJsonLogicParseError] = useState('');
+  const [isSpELInputVisible, setIsSpELInputVisible] = useState(false);
+  const [spel, setSpEL] = useState(initialSpEL);
+  const [spelParseError, setSpELParseError] = useState('');
+  const [isCELInputVisible, setIsCELInputVisible] = useState(false);
+  const [cel, setCEL] = useState(initialCEL);
+  const [celParseError, setCELParseError] = useState('');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
   const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
@@ -350,19 +356,6 @@ export default function Demo({
       setMongoDbParseError((err as Error).message);
     }
   };
-  const loadFromCEL = () => {
-    try {
-      const q = parseCEL(cel);
-      const qIC = parseCEL(cel, { independentCombinators: true });
-      setQuery(q);
-      setQueryIC(qIC);
-      setIsCELInputVisible(false);
-      setCELParseError('');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err) {
-      setCELParseError((err as Error).message);
-    }
-  };
   const loadFromJsonLogic = () => {
     try {
       const q = parseJsonLogic(jsonLogic);
@@ -374,6 +367,32 @@ export default function Demo({
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
+    }
+  };
+  const loadFromSpEL = () => {
+    try {
+      const q = parseSpEL(spel);
+      const qIC = parseSpEL(spel, { independentCombinators: true });
+      setQuery(q);
+      setQueryIC(qIC);
+      setIsSpELInputVisible(false);
+      setSpELParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setSpELParseError((err as Error).message);
+    }
+  };
+  const loadFromCEL = () => {
+    try {
+      const q = parseCEL(cel);
+      const qIC = parseCEL(cel, { independentCombinators: true });
+      setQuery(q);
+      setQueryIC(qIC);
+      setIsCELInputVisible(false);
+      setCELParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setCELParseError((err as Error).message);
     }
   };
 
@@ -502,11 +521,14 @@ export default function Demo({
           <button type="button" onClick={() => setIsMongoDbInputVisible(true)}>
             Import MongoDB
           </button>
-          <button type="button" onClick={() => setIsCELInputVisible(true)}>
-            Import CEL
-          </button>
           <button type="button" onClick={() => setIsJsonLogicInputVisible(true)}>
             Import JsonLogic
+          </button>
+          <button type="button" onClick={() => setIsSpELInputVisible(true)}>
+            Import SpEL
+          </button>
+          <button type="button" onClick={() => setIsCELInputVisible(true)}>
+            Import CEL
           </button>
           <div>
             <code style={{ fontSize: '8pt', marginBottom: 'var(--ifm-global-spacing)' }}>
@@ -729,16 +751,6 @@ export default function Demo({
         notes={notesMongoDB}
       />
       <ImportModal
-        heading="Import CEL"
-        isOpen={isCELInputVisible}
-        setIsOpen={setIsCELInputVisible}
-        code={cel}
-        setCode={setCEL}
-        error={celParseError}
-        loadQueryFromCode={loadFromCEL}
-        notes={notesCEL}
-      />
-      <ImportModal
         heading="Import JsonLogic"
         isOpen={isJsonLogicInputVisible}
         setIsOpen={setIsJsonLogicInputVisible}
@@ -747,6 +759,26 @@ export default function Demo({
         error={jsonLogicParseError}
         loadQueryFromCode={loadFromJsonLogic}
         notes={notesJsonLogic}
+      />
+      <ImportModal
+        heading="Import SpEL"
+        isOpen={isSpELInputVisible}
+        setIsOpen={setIsSpELInputVisible}
+        code={spel}
+        setCode={setSpEL}
+        error={spelParseError}
+        loadQueryFromCode={loadFromSpEL}
+        notes={notesSpEL}
+      />
+      <ImportModal
+        heading="Import CEL"
+        isOpen={isCELInputVisible}
+        setIsOpen={setIsCELInputVisible}
+        code={cel}
+        setCode={setCEL}
+        error={celParseError}
+        loadQueryFromCode={loadFromCEL}
+        notes={notesCEL}
       />
     </div>
   );

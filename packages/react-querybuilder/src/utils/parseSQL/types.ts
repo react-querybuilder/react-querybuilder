@@ -83,6 +83,7 @@ export interface SQLIdentifier extends SQLWhereObject {
   value: string;
 }
 export interface SQLWhereObjectAny extends SQLWhereObject {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [k: string]: any;
 }
 export interface SQLStringValue extends SQLWhereObject {
@@ -255,24 +256,24 @@ export interface ParsedSQL {
   value: {
     type: 'Select';
     distinctOpt: string | null;
-    highPriorityOpt: any;
-    maxStateMentTimeOpt: any;
-    straightJoinOpt: any;
-    sqlSmallResultOpt: any;
-    sqlBigResultOpt: any;
-    sqlBufferResultOpt: any;
-    sqlCacheOpt: any;
-    sqlCalcFoundRowsOpt: any;
+    highPriorityOpt: unknown;
+    maxStateMentTimeOpt: unknown;
+    straightJoinOpt: unknown;
+    sqlSmallResultOpt: unknown;
+    sqlBigResultOpt: unknown;
+    sqlBufferResultOpt: unknown;
+    sqlCacheOpt: unknown;
+    sqlCalcFoundRowsOpt: unknown;
     selectItems: SQLWhereObjectAny;
     from: SQLWhereObjectAny;
-    partition: any;
+    partition: unknown;
     where: SQLExpression;
     groupBy: SQLWhereObjectAny | null;
     having: SQLWhereObjectAny | null;
     orderBy: SQLWhereObjectAny | null;
     limit: SQLWhereObjectAny | null;
     procedure: SQLWhereObjectAny | null;
-    updateLockMode: any;
+    updateLockMode: unknown;
   };
   hasSemicolon: boolean;
 }

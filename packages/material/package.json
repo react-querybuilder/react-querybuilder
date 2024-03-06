@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/material",
   "description": "Custom MUI (Material Design) components for react-querybuilder",
-  "version": "7.0.0-rc.0",
+  "version": "7.0.0-rc.1",
   "publishConfig": {
     "access": "public"
   },
@@ -38,20 +38,20 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.10",
-    "@mui/material": "^5.15.10",
+    "@mui/icons-material": "^5.15.12",
+    "@mui/material": "^5.15.12",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.2.63",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-querybuilder": "^7.0.0-rc.0",
+    "react-querybuilder": "^7.0.0-rc.1",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.3.3",
-    "vite": "^5.1.3"
+    "vite": "^5.1.5"
   },
   "peerDependencies": {
     "@emotion/react": "^11",
@@ -59,6 +59,6 @@
     "@mui/icons-material": ">=5.0.0",
     "@mui/material": ">=5.0.0",
     "react": ">=16.8.0",
-    "react-querybuilder": "^7.0.0-rc.0"
+    "react-querybuilder": "^7.0.0-rc.1"
   }
 }

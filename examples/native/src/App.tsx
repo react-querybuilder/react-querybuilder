@@ -59,6 +59,7 @@ const LibSelector = ({ libSetter }: { libSetter: (lib: UILib) => void }) => {
       handleOnChange={v => libSetter(v)}
       path={[]}
       level={0}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       schema={{} as any}
     />
   );

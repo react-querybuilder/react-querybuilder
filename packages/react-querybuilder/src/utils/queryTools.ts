@@ -99,6 +99,7 @@ export interface UpdateOptions {
   /**
    * Gets the default value for a given rule, in case the value needs to be reset.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getRuleDefaultValue?: (rule: RuleType) => any;
 }
 /**
@@ -111,6 +112,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   /** The name of the property to update. */
   prop: UpdateableProperties,
   /** The new value of the property. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   /** The path of the rule or group to update. */
   path: Path,
@@ -378,6 +380,7 @@ export const move = <RG extends RuleGroupTypeAny>(
      * This function 1) glosses over the need for type assertions to splice directly
      * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const insertRuleOrGroup = (...args: any[]) =>
       parentToInsertInto.rules.splice(newIndex, 0, ...args);
 

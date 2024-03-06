@@ -5,6 +5,7 @@ const emptyArray = [] as const;
 
 it('no-ops when parseNumbers is false', () => {
   for (const v of [emptyObject, emptyArray, '', '0', '1', '1abc', 0]) {
+    expect(parseNumber(v)).toBe(v);
     expect(parseNumber(v, { parseNumbers: false })).toBe(v);
   }
 });

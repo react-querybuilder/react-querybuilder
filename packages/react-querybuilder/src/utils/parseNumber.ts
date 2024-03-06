@@ -14,7 +14,8 @@ export interface ParseNumberOptions {
  * If that returns `NaN`, the string is returned unchanged. Numeric values are returned
  * as-is regardless of the `parseNumbers` option.
  */
-export const parseNumber = (v: any, { parseNumbers }: ParseNumberOptions) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseNumber = (v: any, { parseNumbers }: ParseNumberOptions = {}) => {
   if (!parseNumbers || typeof v === 'bigint' || typeof v === 'number') {
     return v;
   }

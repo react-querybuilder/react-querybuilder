@@ -16,6 +16,7 @@ export interface CommonRuleAndGroupProperties {
 export interface RuleType<
   F extends string = string,
   O extends string = string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   V = any,
   C extends string = string,
 > extends CommonRuleAndGroupProperties {

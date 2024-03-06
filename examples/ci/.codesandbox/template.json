@@ -1,0 +1,17 @@
+{
+  "title": "React Query Builder CI Template",
+  "description": "React Query Builder CI template",
+  "iconUrl": "https://react-querybuilder.js.org/img/react-querybuilder-64.png",
+  "tags": [
+    "react",
+    "query",
+    "builder",
+    "operators",
+    "ui",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
+  "published": true
+}

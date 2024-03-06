@@ -20,6 +20,7 @@ export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean) =
  * For given default, prop, and context values, return the first provided of prop,
  * context, and default, in that order.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any) =>
   useMemo(
     () =>

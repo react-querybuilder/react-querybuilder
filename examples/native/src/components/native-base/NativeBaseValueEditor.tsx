@@ -1,6 +1,7 @@
 import type { ValueEditorNativeProps } from '@react-querybuilder/native';
 import { defaultNativeStyles } from '@react-querybuilder/native';
 import { Input, Radio, Switch, TextArea } from 'native-base';
+import type { BaseSyntheticEvent } from 'react';
 import { useMemo } from 'react';
 import type { KeyboardType } from 'react-native';
 import { StyleSheet, View } from 'react-native';
@@ -140,7 +141,9 @@ export const NativeBaseValueEditor = ({
           placeholder={placeHolderText}
           value={value}
           onChangeText={v => handleOnChange(v)}
-          onChange={e => handleOnChange((e.currentTarget as any).value)}
+          onChange={e =>
+            handleOnChange((e as BaseSyntheticEvent).currentTarget.value)
+          }
           autoCompleteType=""
         />
       );

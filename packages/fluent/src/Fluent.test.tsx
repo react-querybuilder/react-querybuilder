@@ -61,6 +61,7 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
 const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: any
 ) => {
   const testValues: Option[] = props.values ?? props.options;

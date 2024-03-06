@@ -155,6 +155,7 @@ function parseJsonLogic(
     let rule: DefaultRuleType | false = false;
     let field = '';
     let operator: DefaultOperatorName = '=';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let value: any = '';
     let valueSource: ValueSource | undefined = undefined;
 

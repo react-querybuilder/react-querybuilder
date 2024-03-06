@@ -23,6 +23,15 @@ To set up CodeSandbox using one of the examples as a template:
 
 You will be forwarded to [codesandbox.io](https://codesandbox.io) with the example project preloaded.
 
+### StackBlitz
+
+To set up StackBlitz using one of the examples as a template:
+
+1. Navigate to the example folder (e.g. [basic-ts](./basic-ts/)) on GitHub.
+2. In the browser address bar, change `https://github.com/` to `https://stackblitz.com/github/` and press Enter/Return.
+
+[stackblitz.com](https://stackblitz.com) will load with the example project preloaded.
+
 ## Development
 
-To update the examples, modify the [`_template` example](./_template/) and/or [exampleConfigs.ts](./exampleConfigs.ts) and then run `bun generate-examples` from the repo root directory (requires [Bun](https://bun.sh)). The examples configured in [exampleConfigs.ts](./exampleConfigs.ts) will be completely regenerated.
+To update the examples, modify the [`_template` example](./_template/) and/or [exampleConfigs.ts](./exampleConfigs.ts) and then run `bun generate-examples` from the repo root directory (requires [Bun](https://bun.sh)). The examples configured in [exampleConfigs.ts](./exampleConfigs.ts) will be deleted and regenerated.

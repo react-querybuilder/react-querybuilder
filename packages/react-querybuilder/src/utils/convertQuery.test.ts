@@ -1,4 +1,4 @@
-import type { RuleType } from '../types/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types/index.noReact';
 import { convertFromIC, convertQuery, convertToIC } from './convertQuery';
 
 const [rule1, rule2, rule3, rule4]: RuleType[] = [
@@ -210,18 +210,21 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
 
 describe('directed conversions are idempotent', () => {
   it('RuleGroupType', () => {
-    const rg1: any = { combinator: 'and', rules: [] };
+    const rg1: RuleGroupType = { combinator: 'and', rules: [] };
+    // @ts-expect-error expects RuleGroupTypeIC
     expect(convertFromIC(rg1)).toBe(rg1);
-    const rg2: any = {
+    const rg2: RuleGroupType = {
       combinator: 'and',
       rules: [rule1, { combinator: 'or', rules: [rule2, rule3] }, rule4],
     };
+    // @ts-expect-error expects RuleGroupTypeIC
     expect(convertFromIC(rg2)).toBe(rg2);
   });
   it('RuleGroupTypeIC', () => {
-    const rgic1: any = { rules: [] };
+    const rgic1: RuleGroupTypeIC = { rules: [] };
+    // @ts-expect-error expects RuleGroupType
     expect(convertToIC(rgic1)).toBe(rgic1);
-    const rgic2: any = {
+    const rgic2: RuleGroupTypeIC = {
       rules: [
         { field: 'firstName', operator: '=', value: 'Steve' },
         'or',
@@ -234,6 +237,7 @@ describe('directed conversions are idempotent', () => {
         { field: 'fieldName', operator: '=', value: 'Test' },
       ],
     };
+    // @ts-expect-error expects RuleGroupType
     expect(convertToIC(rgic2)).toBe(rgic2);
   });
 });

@@ -1,24 +1,27 @@
 [build]
+# We use Yarn to install dependencies because of https://github.com/oven-sh/bun/issues/2257.
+# When that's fixed, we can remove the Yarn-related commands in the `command` step and just
+# run `bun run build && bun website:build`. Netlify will automatically run `bun install` first
+# (we may want to add `--frozen-lockfile` in BUN_FLAGS).
 command = "bun ./website/update-yarn.lock.ts && yarn set version berry && yarn config set enableImmutableInstalls false && yarn install && bun run build && bun website:build"
 publish = "website/build"
-BUN_FLAGS = "--yarn --dry-run"
 
 [context.production.environment]
-NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
 
 [context.deploy-preview.environment]
-NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
 
 [context.branch-deploy.environment]
-NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"
 
 [context.dev.environment]
-NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
 BUN_FLAGS = "--yarn --dry-run"

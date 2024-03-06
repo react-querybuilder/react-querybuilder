@@ -1,10 +1,6 @@
 ## React Query Builder Basic Example
 
-[![Open in CodeSandbox](https://img.shields.io/badge/Open_in-CodeSandbox-000000?logo=codesandbox)](https://codesandbox.io/s/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=/src/App.jsx)
-
-[![Open in CodeSandbox (Cloud)](https://img.shields.io/badge/Open_in-CodeSandbox_%28Cloud%29-000000?logo=codesandbox)](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=/src/App.jsx)
-
-[![Open in StackBlitz](https://img.shields.io/badge/Open_in-StackBlitz-1269D3?logo=stackblitz)](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=src/App.jsx)
+[![Open in CodeSandbox](https://img.shields.io/badge/Open_in-CodeSandbox-000000?logo=codesandbox)](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=/src/App.jsx) [![Open in StackBlitz](https://img.shields.io/badge/Open_in-StackBlitz-1269D3?logo=stackblitz)](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/basic?file=src/App.jsx)
 
 Click one of the links above to open this example as an online, editable demo, or clone it locally with [degit](https://www.npmjs.com/package/degit):
 
