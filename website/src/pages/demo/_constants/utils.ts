@@ -141,6 +141,20 @@ const muiTheme = createTheme();
         '<ThemeProvider theme={muiTheme}>\n<QueryBuilderMaterial>',
         '</QueryBuilderMaterial>\n</ThemeProvider>',
       ];
+    case 'mantine':
+      return [
+        `import { MantineProvider } from '@mantine/core';
+import { QueryBuilderMantine } from '@react-querybuilder/material';
+import '@mantine/core/styles.css';`,
+        '<MantineProvider>\n<QueryBuilderMantine>',
+        '</QueryBuilderMantine>\n</MantineProvider>',
+      ];
+    case 'tremor':
+      return [
+        `import { QueryBuilderTremor } from '@react-querybuilder/tremor';`,
+        '<QueryBuilderTremor>',
+        '</QueryBuilderTremor>',
+      ];
   }
   return ['', '', ''];
 };
