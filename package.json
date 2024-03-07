@@ -69,7 +69,7 @@
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
     "outdated": "rm -rf ./packages/*/node_modules ./website/node_modules && bunx npm-check-updates --interactive --format=group --workspaces --root",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lockb && bun install",
-    "version": "bun version.ts && bun install --frozen-lockfile && concurrently --timings --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages bun.lockb\"",
+    "version": "bun version.ts && bun install --frozen-lockfile && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages bun.lockb\"",
     "web": "cd website && bun run start",
     "website:clearrun": "cd website && bun run clear && bun run start",
     "website:build": "cd website && bun run clear && bun run build",
