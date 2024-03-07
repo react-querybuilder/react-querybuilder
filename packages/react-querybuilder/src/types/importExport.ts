@@ -159,7 +159,6 @@ export type ValueProcessor = ValueProcessorLegacy;
  * Function to produce a result that {@link formatQuery} uses when processing a
  * {@link RuleType} object.
  */
-// TODO: narrow the return type based on options.format? (must add format to options first)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
 
