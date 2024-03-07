@@ -17,13 +17,18 @@ const getSourceLink = (filePath: string, start?: number, end?: number) => {
     type: 'paragraph',
     children: [
       {
-        type: 'emphasis',
+        type: 'blockquote',
         children: [
-          { type: 'text', value: 'Source: ' },
           {
-            type: 'link',
-            url: `https://github.com/react-querybuilder/react-querybuilder/blob/main${restOfUrl}`,
-            children: [{ type: 'text', value: restOfUrl }],
+            type: 'emphasis',
+            children: [
+              { type: 'text', value: 'Source: ' },
+              {
+                type: 'link',
+                url: `https://github.com/react-querybuilder/react-querybuilder/blob/main${restOfUrl}`,
+                children: [{ type: 'text', value: restOfUrl }],
+              },
+            ],
           },
         ],
       },
