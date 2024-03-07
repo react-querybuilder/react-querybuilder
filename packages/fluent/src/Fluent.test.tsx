@@ -11,7 +11,7 @@ import {
   testValueEditor,
   testValueSelector,
   userEventSetup,
-} from 'react-querybuilder/genericTests';
+} from 'react-querybuilder/genericTests/index';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';

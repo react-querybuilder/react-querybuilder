@@ -6,7 +6,7 @@ import {
   testNotToggle,
   testValueEditor,
   testValueSelector,
-} from 'react-querybuilder/genericTests';
+} from 'react-querybuilder/genericTests/index';
 import { BulmaActionElement } from './BulmaActionElement';
 import { BulmaNotToggle } from './BulmaNotToggle';
 import { BulmaValueEditor } from './BulmaValueEditor';

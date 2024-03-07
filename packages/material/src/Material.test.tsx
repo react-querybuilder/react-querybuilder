@@ -54,7 +54,7 @@ import {
   testShiftActions,
   testValueEditor,
   testValueSelector,
-} from 'react-querybuilder/genericTests';
+} from 'react-querybuilder/genericTests/index';
 import 'regenerator-runtime/runtime';
 import { QueryBuilderMaterial } from '.';
 import type { MaterialActionProps } from './MaterialActionElement';

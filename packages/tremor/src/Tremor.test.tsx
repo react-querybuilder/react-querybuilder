@@ -19,7 +19,7 @@ import {
   testShiftActions,
   testValueEditor,
   userEventSetup,
-} from 'react-querybuilder/genericTests';
+} from 'react-querybuilder/genericTests/index';
 import { TremorActionElement } from './TremorActionElement';
 import { TremorNotToggle } from './TremorNotToggle';
 import { TremorShiftActions } from './TremorShiftActions';

@@ -1,6 +1,6 @@
 import type { RenderHookResult } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react';
-import { consoleMocks } from 'react-querybuilder/genericTests';
+import { consoleMocks } from 'react-querybuilder/genericTests/index';
 import type { UseReactDnD } from '../types';
 import { useReactDnD } from './useReactDnD';
 

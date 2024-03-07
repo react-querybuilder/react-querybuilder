@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { QueryBuilder, TestID } from 'react-querybuilder';
-import { testNotToggle, testValueEditor } from 'react-querybuilder/genericTests';
+import { testNotToggle, testValueEditor } from 'react-querybuilder/genericTests/index';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
 import { QueryBuilderBootstrap } from './index';

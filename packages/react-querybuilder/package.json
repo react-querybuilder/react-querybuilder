@@ -16,9 +16,9 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./dev": "./dev/index.ts",
+    "./dev/*": "./dev/*",
     "./dist/*": "./dist/*",
-    "./genericTests": "./genericTests/index.ts",
+    "./genericTests/*": "./genericTests/*",
     "./formatQuery": {
       "types": "./dist/formatQuery.d.ts",
       "default": "./dist/formatQuery.js"
@@ -56,6 +56,7 @@
     "parseCEL",
     "parseJsonLogic",
     "parseMongoDB",
+    "parseSpEL",
     "parseSQL",
     "transformQuery"
   ],
