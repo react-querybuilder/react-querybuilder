@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [v7.0.1] - 2024-03-07
 
-- Fixed node10/node16 module resolution for `react-querybuilder/parseSpEL`.
+### Fixed
+
+- Corrected node10/node16 module resolution for `react-querybuilder/parseSpEL`.
 
 ## [v7.0.0] - 2024-03-06
 
