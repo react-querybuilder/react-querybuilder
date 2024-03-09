@@ -1,3 +1,4 @@
+import queryString from 'query-string';
 import type { FormatQueryOptions, RuleGroupTypeAny } from '../src';
 import { formatQuery } from '../src';
 import { defaultOptions, optionOrder } from './constants';
@@ -48,3 +49,5 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
   }
   return formatQueryResult;
 };
+
+export const generatePermalinkHash = (optVals: DemoOptions) => `#${queryString.stringify(optVals)}`;

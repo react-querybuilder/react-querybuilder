@@ -125,7 +125,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "start": "vite",
+    "start": "bunx --bun vite",
     "build": "tsup && bun run build:css",
     "build:css": "copyfiles --flat src/*.scss dist && bun x sass dist/query-builder-layout.scss dist/query-builder-layout.css && bun x sass dist/query-builder.scss dist/query-builder.css",
     "typecheck": "tsc --noEmit",
