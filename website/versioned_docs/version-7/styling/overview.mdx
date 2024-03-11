@@ -170,20 +170,72 @@ These CSS rules will push any "clone", "lock", or "remove" buttons to the right 
 
 ### Inline independent combinators
 
-Position each combinator to the right of the rule before it with this CSS:
+Position each combinator to the right of the preceding rule with this CSS:
 
-```css
+````css
 .ruleGroup-body {
-  display: grid;
+  /* Default is display: flex, so must override */
+  display: grid !important;
+  /* Allow the first column (the rule/subgroup) to expand as needed */
   grid-template-columns: 1fr auto;
-  align-items: center;
-}
-```
+  /* Keep the combinator aligned with the bottom of the rule/subgroup. */
+  /* This is especially helpful for subgroups. */
+  align-items: end;
+}```
 
 <BrowserWindow>
   <QueryBuilderEmbed
     fields={fields}
     controlClassnames={{ body: 'inline-indycomb' }}
+    defaultQuery={{
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        'and',
+        {
+          rules: [
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            'or',
+            { field: 'lastName', operator: '=', value: 'Vaughan' },
+            'or',
+            { field: 'lastName', operator: '=', value: 'Martin' },
+          ],
+        },
+        'or',
+        { field: 'firstName', operator: 'null', value: null },
+      ],
+    }}
+  />
+</BrowserWindow>
+
+Alternatively, position each combinator to the left of the following rule:
+
+```css
+.ruleGroup-body {
+  /* Default is display: flex, so must override */
+  display: grid !important;
+  /* Allow the second column (the rule/subgroup) to expand as needed */
+  grid-template-columns: auto 1fr;
+  /* Keep the combinator aligned with the top of the rule/subgroup. */
+  /* This is especially helpful for subgroups. */
+  align-items: start;
+}
+
+/* Indent the first rule/subgroup since it has no preceding combinator */
+.ruleGroup-body > .rule:first-child,
+.ruleGroup-body > .ruleGroup:first-child {
+  grid-column-start: 2;
+}
+
+/* Keep the combinator selector narrow */
+.betweenRules {
+  width: 100px;
+}
+````
+
+<BrowserWindow>
+  <QueryBuilderEmbed
+    fields={fields}
+    controlClassnames={{ body: 'inline-indycomb-left' }}
     defaultQuery={{
       rules: [
         { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
