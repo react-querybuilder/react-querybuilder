@@ -5,6 +5,7 @@ import type {
   FlexibleOptionList,
   OptionGroup,
   ToFullOption,
+  WithUnknownIndex,
 } from '../types/index.noReact';
 import { isFlexibleOptionGroupArray } from './optGroupUtils';
 import { toFullOption } from './toFullOption';
@@ -52,11 +53,11 @@ export const uniqOptGroups = <T extends BaseOption>(
   originalArray.forEach(el => {
     if (!labels.has(el.label)) {
       labels.add(el.label);
-      const optionsForThisGroup: ToFullOption<T>[] = [];
+      const optionsForThisGroup: WithUnknownIndex<ToFullOption<T>>[] = [];
       el.options.forEach(opt => {
         if (!names.has((opt.value ?? opt.name) as K)) {
           names.add((opt.value ?? opt.name) as K);
-          optionsForThisGroup.push(toFullOption(opt) as ToFullOption<T>);
+          optionsForThisGroup.push(toFullOption(opt) as WithUnknownIndex<ToFullOption<T>>);
         }
       });
       newArray.push({ ...el, options: optionsForThisGroup });
