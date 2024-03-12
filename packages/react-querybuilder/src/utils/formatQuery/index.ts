@@ -38,6 +38,7 @@ export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
 export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export { jsonLogicAdditionalOperators } from './utils';
