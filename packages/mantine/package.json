@@ -42,15 +42,15 @@
     "@mantine/dates": "7.5.1",
     "@mantine/hooks": "7.5.1",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.63",
+    "@types/react": "^18.2.64",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-querybuilder": "^7.0.1",
     "rollup-plugin-visualizer": "^5.12.0",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.5"
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6"
   },
   "peerDependencies": {
     "@mantine/core": ">=7",
