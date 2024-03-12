@@ -40,7 +40,7 @@
   "devDependencies": {
     "@popperjs/core": "^2.11.8",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.64",
+    "@types/react": "^18.2.65",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

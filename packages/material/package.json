@@ -43,7 +43,7 @@
     "@mui/icons-material": "^5.15.12",
     "@mui/material": "^5.15.12",
     "@testing-library/react": "^14.2.1",
-    "@types/react": "^18.2.64",
+    "@types/react": "^18.2.65",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
