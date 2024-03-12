@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- `formatQuery` now respects the `ruleProcessor` option for "parameterized" and "parameterized_named" export formats.
+- [#671] `formatQuery` now respects the `ruleProcessor` option for "parameterized" and "parameterized_named" export formats.
 
 ### Fixed
 
@@ -1557,6 +1557,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#653]: https://github.com/react-querybuilder/react-querybuilder/pull/653
 [#654]: https://github.com/react-querybuilder/react-querybuilder/pull/654
 [#663]: https://github.com/react-querybuilder/react-querybuilder/pull/663
+[#671]: https://github.com/react-querybuilder/react-querybuilder/pull/671
 
 <!-- Release comparison links -->
 
