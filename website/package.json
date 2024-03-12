@@ -42,7 +42,7 @@
     "@react-querybuilder/mantine": "file:../packages/mantine",
     "@react-querybuilder/material": "file:../packages/material",
     "@react-querybuilder/tremor": "file:../packages/tremor",
-    "@tremor/react": "^3.14.0",
+    "@tremor/react": "3.13.3",
     "antd": "^5.15.1",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
