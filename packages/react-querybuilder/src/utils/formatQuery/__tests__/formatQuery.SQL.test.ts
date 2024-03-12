@@ -22,6 +22,7 @@ import {
   queryWithValueSourceField,
 } from './formatQueryTestUtils';
 import { defaultValueProcessor, defaultValueProcessorByRule } from '../index';
+import { defaultRuleProcessorParameterized } from '../defaultRuleProcessorParameterized';
 
 export const sqlString =
   "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and isLucky = FALSE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
@@ -364,12 +365,58 @@ describe('validation', () => {
 });
 
 describe('ruleProcessor', () => {
-  it('handles custom SQL rule processor', () => {
-    const ruleProcessor: RuleProcessor = r =>
-      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSQL(r);
-    expect(formatQuery(queryForRuleProcessor, { format: 'sql', ruleProcessor })).toBe(
-      "(custom_operator and f2 = 'v2')"
-    );
+  describe('sql', () => {
+    it('handles custom rule processor', () => {
+      const ruleProcessor: RuleProcessor = r =>
+        r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSQL(r);
+      expect(formatQuery(queryForRuleProcessor, { format: 'sql', ruleProcessor })).toBe(
+        "(custom_operator and f2 = 'v2')"
+      );
+    });
+  });
+
+  describe('parameterized', () => {
+    it('handles custom rule processor', () => {
+      const ruleProcessor: RuleProcessor = (r, opts) =>
+        r.operator === 'custom_operator'
+          ? { sql: r.operator, params: [] }
+          : defaultRuleProcessorParameterized(r, opts);
+      expect(
+        formatQuery(queryForRuleProcessor, { format: 'parameterized', ruleProcessor })
+      ).toEqual({ sql: '(custom_operator and f2 = ?)', params: ['v2'] });
+    });
+
+    it('handles invalid custom rule processor', () => {
+      const ruleProcessor: RuleProcessor = () => 'invalid';
+      expect(
+        formatQuery(queryForRuleProcessor, { format: 'parameterized', ruleProcessor })
+      ).toEqual({ sql: '()', params: [] }); // Is '()' right/acceptable?
+    });
+  });
+
+  describe('parameterized_named', () => {
+    it('handles custom rule processor with custom param names', () => {
+      const ruleProcessor: RuleProcessor = (r, opts) =>
+        r.operator === 'custom_operator'
+          ? {
+              sql: `test ${r.operator} = ${opts?.paramPrefix}custom_param`,
+              params: { custom_param: 'v2' },
+            }
+          : defaultRuleProcessorParameterized(r, opts);
+      expect(
+        formatQuery(queryForRuleProcessor, { format: 'parameterized_named', ruleProcessor })
+      ).toEqual({
+        sql: '(test custom_operator = :custom_param and f2 = :f2_1)',
+        params: { custom_param: 'v2', f2_1: 'v2' },
+      });
+    });
+
+    it('handles invalid custom rule processor', () => {
+      const ruleProcessor: RuleProcessor = () => 'invalid';
+      expect(
+        formatQuery(queryForRuleProcessor, { format: 'parameterized_named', ruleProcessor })
+      ).toEqual({ sql: '()', params: {} }); // Is '()' right/acceptable?
+    });
   });
 });
 

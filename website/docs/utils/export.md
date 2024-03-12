@@ -366,24 +366,22 @@ formatQuery(
 To customize the format of exported rules, use the `ruleProcessor` configuration option. Rules will only be passed to the provided processor function if they first pass [validation](#validation). The function will be called like this:
 
 ```ts
-ruleProcessor(rule, { parseNumbers, escapeQuotes, fieldData });
+ruleProcessor(rule, { escapeQuotes, fieldData, ...otherOptions });
 ```
 
-The first argument is the `RuleType` object from the query. The second argument is a `ValueProcessorOptions` object. `parseNumbers` is copied directly from the `formatQuery` options (default `false`), and `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise, as when values represent field names). `fieldData` is the corresponding `Field` object from the `fields` array, if one was passed to `formatQuery`.
+The first argument is the `RuleType` object from the query. The second argument is a `ValueProcessorOptions` object. `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise, as when values represent field names). `fieldData` is the corresponding `Field` object from the `fields` array, if one was passed to `formatQuery`. Other options are copied directly from the `formatQuery` options, or the default value if not specified.
 
 The default rule processors for each format are available as exports from `react-querybuilder`:
 
 - `defaultRuleProcessorCEL`
+- `defaultRuleProcessorElasticSearch`
 - `defaultRuleProcessorJsonLogic`
 - `defaultRuleProcessorMongoDB`
 - `defaultRuleProcessorSpEL`
 - `defaultRuleProcessorSQL`
+- `defaultRuleProcessorParameterized`
 
-:::info
-
-`ruleProcessor` does not apply to the "parameterized" or "parameterized_named" formats (yet), but `valueProcessor` is available.
-
-:::
+Refer to the source code for each to determine the appropriate return type for a custom rule processor.
 
 You can use the appropriate default rule processor as a fallback so your custom rule processor doesn't have to cover all cases, as shown below.
 
@@ -441,6 +439,34 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 formatQuery(query, { format: 'sql', ruleProcessor: customRuleProcessor });
 // Returns: "(UPPER(firstName) LIKE UPPER('%S%') and lastName = 'Vai')"
 //            ^------------custom--------------^ ^------default-----^
+```
+
+The "parameterized" and "parameterized_named" formats require rule processors to return an object that closely resembles the return type of `formatQuery` itself for these formats. A utility function `getNextNamedParam` is provided to help generate unique parameter names. The example below is effectively the same as the Oracle SQL example above, but using the "parameterized_named" format.
+
+```ts
+const customRuleProcessor: RuleProcessor = (rule, options) => {
+  if (rule.operator === 'has') {
+    // TIP: `getNextNamedParam` can be called multiple times in case your SQL
+    // requires multiple unique parameters. Each call will generate a new name.
+    const paramName = options.getNextNamedParam!(rule.field);
+    return {
+      sql: `UPPER(${rule.field}) LIKE UPPER('%' || ${options.paramPrefix}${paramName} || '%')`,
+      params: { [paramName]: rule.value },
+    };
+  }
+
+  return defaultRuleProcessorSQLParameterized(rule, options);
+};
+
+formatQuery(query, { format: 'sql', ruleProcessor: customRuleProcessor });
+// Returns:
+// {
+//   sql: "(UPPER(firstName) LIKE UPPER('%' || :firstName_1 || '%') and lastName = :lastName_1)",
+//   params: {
+//     firstName_1: "S",
+//     lastName_1: "Vai"
+//   }
+// }
 ```
 
 ### Value processor

@@ -1,9 +1,4 @@
-import type {
-  JsonLogicVar,
-  RQBJsonLogic,
-  RuleProcessor,
-  RuleType,
-} from '../../types/index.noReact';
+import type { JsonLogicVar, RQBJsonLogic, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, shouldRenderAsNumber } from './utils';
@@ -21,7 +16,7 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  * Default rule processor used by {@link formatQuery} for "jsonlogic" format.
  */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
-  { field, operator, value, valueSource }: RuleType,
+  { field, operator, value, valueSource },
   { parseNumbers } = {}
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';

@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+### Changed
+
+- `@react-querybuilder/antd` uses AntD's `InputNumber` in `AntDValueEditor` when `valueEditorType === "number"`.
+
+### Added
+
+- `formatQuery` now respects the `ruleProcessor` option for "parameterized" and "parameterized_named" export formats.
+
+### Fixed
+
+- Mantine and Tremor versions are no longer pinned.
+- `start:*` scripts for compatibility packages now correctly load their particular dependencies (does not affect execution).
 
 ## [v7.0.1] - 2024-03-07
 

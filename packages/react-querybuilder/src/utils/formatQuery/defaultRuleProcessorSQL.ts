@@ -1,28 +1,17 @@
-import type {
-  RuleType,
-  ValueProcessorByRule,
-  ValueProcessorOptions,
-} from '../../types/index.noReact';
+import type { RuleProcessor } from '../../types/index.noReact';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { mapSQLOperator, quoteFieldNamesWithArray } from './utils';
-
-export type DefaultRuleProcessorSqlParams = ValueProcessorOptions & {
-  valueProcessor?: ValueProcessorByRule;
-  quoteFieldNamesWith?: string | [string, string];
-};
 
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
  */
-export const defaultRuleProcessorSQL = (
-  rule: RuleType,
-  {
+export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts) => {
+  const {
     parseNumbers,
     escapeQuotes,
-    quoteFieldNamesWith = ['', ''],
+    quoteFieldNamesWith = ['', ''] as [string, string],
     valueProcessor = defaultValueProcessorByRule,
-  }: DefaultRuleProcessorSqlParams = {}
-) => {
+  } = opts ?? {};
   const value = valueProcessor(rule, { parseNumbers, escapeQuotes, quoteFieldNamesWith });
   const operator = mapSQLOperator(rule.operator);
 
@@ -37,7 +26,7 @@ export const defaultRuleProcessorSQL = (
     return '';
   }
 
-  const [qFNWpre, qFNWpost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
+  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
 
-  return `${qFNWpre}${rule.field}${qFNWpost} ${operator} ${value}`.trim();
+  return `${qPre}${rule.field}${qPost} ${operator} ${value}`.trim();
 };

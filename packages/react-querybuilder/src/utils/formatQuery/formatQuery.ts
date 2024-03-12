@@ -2,8 +2,8 @@ import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../
 import type {
   DefaultCombinatorName,
   ExportFormat,
-  FullField,
   FormatQueryOptions,
+  FullField,
   FullOptionList,
   ParameterizedNamedSQL,
   ParameterizedSQL,
@@ -17,27 +17,25 @@ import type {
   ValidationMap,
   ValidationResult,
 } from '../../types/index.noReact';
-import { toArray } from '../arrayUtils';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { isPojo } from '../misc';
 import { getOption, toFlatOptionArray } from '../optGroupUtils';
-import { parseNumber } from '../parseNumber';
 import { toFullOptionList } from '../toFullOption';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import {
   celCombinatorMap,
   isValueProcessorLegacy,
-  mapSQLOperator,
   numerifyValues,
   quoteFieldNamesWithArray,
-  shouldRenderAsNumber,
 } from './utils';
 
 /**
@@ -127,6 +125,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     format = options.toLowerCase() as ExportFormat;
     if (format === 'mongodb') {
       ruleProcessorInternal = defaultRuleProcessorMongoDB;
+    } else if (format === 'parameterized') {
+      ruleProcessorInternal = defaultRuleProcessorParameterized;
+    } else if (format === 'parameterized_named') {
+      ruleProcessorInternal = defaultRuleProcessorParameterized;
     } else if (format === 'cel') {
       ruleProcessorInternal = defaultRuleProcessorCEL;
     } else if (format === 'spel') {
@@ -319,12 +321,16 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any[] = [];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const params_named: Record<string, any> = {};
-    const fieldParamIndexes: Record<string, number> = {};
+    const paramsNamed: Record<string, any> = {};
+    const fieldParams: Map<string, Set<string>> = new Map();
 
     const getNextNamedParam = (field: string) => {
-      fieldParamIndexes[field] = (fieldParamIndexes[field] ?? 0) + 1;
-      return `${field}_${fieldParamIndexes[field]}`;
+      if (!fieldParams.has(field)) {
+        fieldParams.set(field, new Set());
+      }
+      const nextNamedParam = `${field}_${fieldParams.get(field)!.size + 1}`;
+      fieldParams.get(field)!.add(nextNamedParam);
+      return nextNamedParam;
     };
 
     const processRule = (rule: RuleType) => {
@@ -338,103 +344,57 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       }
 
       const fieldData = getOption(fields, rule.field);
-      const value = valueProcessorInternal(rule, {
+
+      const fieldParamNames = Object.fromEntries(
+        (Array.from(fieldParams.entries()) as [string, Set<string>][]).map(([f, s]) => [
+          f,
+          Array.from(s),
+        ])
+      );
+
+      const processedRule = (
+        typeof ruleProcessorInternal === 'function'
+          ? ruleProcessorInternal
+          : defaultRuleProcessorParameterized
+      )(rule, {
+        getNextNamedParam,
+        fieldParamNames,
         parseNumbers,
         quoteFieldNamesWith,
         fieldData,
         format,
+        paramPrefix,
+        paramsKeepPrefix,
+        fallbackExpression,
+        valueProcessor: valueProcessorInternal,
+        fields,
+        placeholderFieldName,
+        placeholderOperatorName,
+        validator,
       });
-      const operator = mapSQLOperator(rule.operator);
 
-      if ((rule.valueSource ?? 'value') === 'value') {
-        if (operator.toLowerCase() === 'is null' || operator.toLowerCase() === 'is not null') {
-          return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator}`;
-        } else if (operator.toLowerCase() === 'in' || operator.toLowerCase() === 'not in') {
-          if (value) {
-            const splitValue = toArray(rule.value);
-            if (parameterized) {
-              splitValue.forEach(v =>
-                params.push(
-                  shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v
-                )
-              );
-              return `${quoteFieldNamesWith[0]}${rule.field}${
-                quoteFieldNamesWith[1]
-              } ${operator} (${splitValue.map(() => '?').join(', ')})`;
-            }
-            const inParams: string[] = [];
-            splitValue.forEach(v => {
-              const thisParamName = getNextNamedParam(rule.field);
-              inParams.push(`${paramPrefix}${thisParamName}`);
-              params_named[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] =
-                shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v;
-            });
-            return `${quoteFieldNamesWith[0]}${rule.field}${
-              quoteFieldNamesWith[1]
-            } ${operator} (${inParams.join(', ')})`;
-          } else {
-            return '';
-          }
-        } else if (
-          operator.toLowerCase() === 'between' ||
-          operator.toLowerCase() === 'not between'
-        ) {
-          if (value) {
-            const valueAsArray = toArray(rule.value);
-            const [first, second] = valueAsArray
-              .slice(0, 2)
-              .map(v =>
-                shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v
-              );
-            if (parameterized) {
-              params.push(first);
-              params.push(second);
-              return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ? and ?`;
-            }
-            const firstParamName = getNextNamedParam(rule.field);
-            const secondParamName = getNextNamedParam(rule.field);
-            params_named[`${paramsKeepPrefix ? paramPrefix : ''}${firstParamName}`] = first;
-            params_named[`${paramsKeepPrefix ? paramPrefix : ''}${secondParamName}`] = second;
-            return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`;
-          } else {
-            return '';
-          }
-        }
-        let paramValue = rule.value;
-        if (typeof rule.value === 'string') {
-          if (shouldRenderAsNumber(rule.value, parseNumbers)) {
-            paramValue = parseNumber(rule.value, { parseNumbers });
-          } else {
-            // Note that we're using `value` here, which has been processed through
-            // a `valueProcessor`, as opposed to `rule.value` which has not
-            paramValue = /^'.*'$/g.test(value)
-              ? value.replace(/(^'|'$)/g, '')
-              : /* istanbul ignore next */ value;
-          }
-        }
-        let paramName = '';
-        if (parameterized) {
-          params.push(paramValue);
-        } else {
-          paramName = getNextNamedParam(rule.field);
-          params_named[`${paramsKeepPrefix ? paramPrefix : ''}${paramName}`] = paramValue;
-        }
-        return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${
-          parameterized ? '?' : `${paramPrefix}${paramName}`
-        }`.trim();
-      } else {
-        const operatorLowerCase = operator.toLowerCase();
-        if (
-          (operatorLowerCase === 'in' ||
-            operatorLowerCase === 'not in' ||
-            operatorLowerCase === 'between' ||
-            operatorLowerCase === 'not between') &&
-          !value
-        ) {
-          return '';
-        }
+      if (!isPojo(processedRule)) {
+        return '';
       }
-      return `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${operator} ${value}`.trim();
+
+      const { sql, params: customParams } = processedRule;
+
+      if (typeof sql !== 'string' || !sql) {
+        return '';
+      }
+
+      // istanbul ignore else
+      if (format === 'parameterized' && Array.isArray(customParams)) {
+        params.push(...customParams);
+      } else if (format === 'parameterized_named' && isPojo(customParams)) {
+        Object.assign(paramsNamed, customParams);
+        // `getNextNamedParam` already adds new params to the list, but a custom
+        // rule processor might not call it so we need to make sure we add
+        // any new params here.
+        Object.keys(customParams).forEach(p => fieldParams.get(rule.field)?.add(p));
+      }
+
+      return sql;
     };
 
     const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
@@ -465,7 +425,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     if (parameterized) {
       return { sql: processRuleGroup(ruleGroup, true), params };
     }
-    return { sql: processRuleGroup(ruleGroup, true), params: params_named };
+    return { sql: processRuleGroup(ruleGroup, true), params: paramsNamed };
   }
 
   /**

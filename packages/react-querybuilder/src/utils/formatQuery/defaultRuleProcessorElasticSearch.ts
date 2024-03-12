@@ -1,4 +1,4 @@
-import type { RuleProcessor, RuleType } from '../../types/index.noReact';
+import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, shouldRenderAsNumber } from './utils';
@@ -67,7 +67,7 @@ const valueRenderer = (v: any, parseNumbers?: boolean) =>
  * Default rule processor used by {@link formatQuery} for "elasticsearch" format.
  */
 export const defaultRuleProcessorElasticSearch: RuleProcessor = (
-  { field, operator, value, valueSource }: RuleType,
+  { field, operator, value, valueSource },
   { parseNumbers } = {}
 ): ElasticSearchQuery | ElasticSearchRule | false => {
   if (valueSource === 'field') {
