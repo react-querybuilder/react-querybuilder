@@ -29,6 +29,13 @@ import { QueryBuilderTremor } from './index';
 
 const user = userEventSetup();
 
+const getAllByText = (text: string) =>
+  screen.getAllByText(text).filter(el => !hasOrInheritsClass(el, 'hidden'));
+const getAllByRole = (text: string) =>
+  screen
+    .getAllByRole(text)
+    .filter(el => !hasOrInheritsClass(el, 'hidden') && !el.classList.contains('opacity-0'));
+
 testActionElement(TremorActionElement);
 testShiftActions(TremorShiftActions);
 testValueEditor(TremorValueEditor, {
@@ -77,8 +84,9 @@ const testSelect = (
     it('renders the correct number of options', async () => {
       render(<Component {...props} />);
       await user.click(screen.getByRole('button'));
-      expect(screen.getByRole('listbox').querySelectorAll('li')).toHaveLength(testValues.length);
-      expect(screen.getAllByRole('option')).toHaveLength(testValues.length);
+      expect(getAllByRole('listbox')).toHaveLength(1);
+      expect(getAllByRole('listbox')[0].querySelectorAll('li')).toHaveLength(testValues.length);
+      expect(getAllByRole('option')).toHaveLength(testValues.length);
     });
 
     it('flattens optgroups', async () => {
@@ -89,9 +97,11 @@ const testSelect = (
         'values' in props ? { ...props, values: optGroups } : { ...props, options: optGroups };
       render(<Component {...newProps} />);
       await user.click(screen.getByRole('button'));
+      // TODO: is this really necessary?
       expect(() => screen.getByRole('group')).toThrow();
-      expect(screen.getByRole('listbox').querySelectorAll('li')).toHaveLength(testValues.length);
-      expect(screen.getAllByRole('option')).toHaveLength(testValues.length);
+      expect(getAllByRole('listbox')).toHaveLength(1);
+      expect(getAllByRole('listbox')[0].querySelectorAll('li')).toHaveLength(testValues.length);
+      expect(getAllByRole('option')).toHaveLength(testValues.length);
     });
 
     // Test as multiselect for <TremorValueEditor type="multiselect" /> and <ValueSelector />
@@ -104,10 +114,11 @@ const testSelect = (
           <Component {...props} value={value} {...multiselectProps} handleOnChange={onChange} />
         );
         for (const { label } of testValues) {
-          expect(screen.getByText(label)).toBeInTheDocument();
+          expect(getAllByText(label)).toHaveLength(1);
+          expect(getAllByText(label)[0]).toBeInTheDocument();
         }
-        await user.click(screen.getAllByRole('button')[0]);
-        for (const opt of screen.getAllByRole('option')) {
+        await user.click(getAllByRole('button')[0]);
+        for (const opt of getAllByRole('option')) {
           expect(opt.querySelector('input')).toBeChecked();
         }
       });
@@ -145,7 +156,8 @@ const testSelect = (
           />
         );
         await user.click(screen.getAllByRole('button')[0]);
-        await user.click(screen.getByText(testVal.label));
+        expect(getAllByText(testVal.label)).toHaveLength(1);
+        await user.click(getAllByText(testVal.label)[0]);
         expect(onChange).toHaveBeenCalledWith([testVal.name]);
       });
     }
@@ -154,7 +166,8 @@ const testSelect = (
     if (('values' in props && props.type !== 'multiselect') || 'options' in props) {
       it('has the value passed into the <select />', async () => {
         render(<Component {...props} value={testVal.name} />);
-        expect(screen.getByText(testVal.label)).toBeInTheDocument();
+        expect(getAllByText(testVal.label)).toHaveLength(1);
+        expect(getAllByText(testVal.label)[0]).toBeInTheDocument();
       });
     }
 
@@ -167,7 +180,8 @@ const testSelect = (
       const onChange = jest.fn();
       render(<Component {...props} handleOnChange={onChange} />);
       await user.click(screen.getByRole('button'));
-      await user.click(screen.getByText(testVal.label));
+      expect(getAllByText(testVal.label)).toHaveLength(1);
+      await user.click(getAllByText(testVal.label)[0]);
       expect(onChange).toHaveBeenCalledWith(testVal.name);
     });
 
@@ -176,7 +190,7 @@ const testSelect = (
       render(<Component {...props} handleOnChange={onChange} disabled />);
       expect(screen.getByRole('button')).toBeDisabled();
       await user.click(screen.getByRole('button'));
-      expect(() => screen.getByText(testVal.label)).toThrow();
+      expect(getAllByText(testVal.label)).toHaveLength(0);
       expect(onChange).not.toHaveBeenCalled();
     });
   });
@@ -271,9 +285,9 @@ describe('TremorValueEditor as "between" select', () => {
     ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[0]);
+    await user.click(getAllByText(betweenSelectProps.values[1].label)[0]);
     await user.click(betweenSelects[1]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[0].label)[1]);
+    await user.click(getAllByText(betweenSelectProps.values[0].label)[1]);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test2');
     expect(handleOnChange).toHaveBeenNthCalledWith(2, 'test1,test1');
   });
@@ -292,7 +306,7 @@ describe('TremorValueEditor as "between" select', () => {
     ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[0]);
+    await user.click(getAllByText(betweenSelectProps.values[1].label)[0]);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test1');
   });
 
@@ -306,9 +320,9 @@ describe('TremorValueEditor as "between" select', () => {
     ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[1].label)[0]);
+    await user.click(getAllByText(betweenSelectProps.values[1].label)[0]);
     await user.click(betweenSelects[1]);
-    await user.click(screen.getAllByText(betweenSelectProps.values[0].label)[1]);
+    await user.click(getAllByText(betweenSelectProps.values[0].label)[1]);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, ['test2', 'test2']);
     expect(handleOnChange).toHaveBeenNthCalledWith(2, ['test1', 'test1']);
   });
@@ -440,8 +454,8 @@ describe('TremorValueEditor as date picker', () => {
 });
 
 testSelect('TremorValueSelector', TremorValueSelector, defaultValueSelectorProps);
-testSelect('TremorValueEditor', TremorValueEditor, valueEditorAsSelectProps);
-testSelect('TremorValueEditor', TremorValueEditor, {
+testSelect('TremorValueEditor as select', TremorValueEditor, valueEditorAsSelectProps);
+testSelect('TremorValueEditor as multiselect', TremorValueEditor, {
   ...valueEditorAsSelectProps,
   type: 'multiselect',
 });

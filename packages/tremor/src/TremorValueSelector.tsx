@@ -36,9 +36,11 @@ export const TremorValueSelector = ({
 
   const optionElements = React.useMemo(() => toSelectItems(options, multiple), [multiple, options]);
 
+  const { enableClear: _ec, ...multiSelectOtherProps } = otherProps;
+
   return multiple ? (
     <MultiSelect
-      {...otherProps}
+      {...multiSelectOtherProps}
       data-testid={testID}
       title={title}
       className={className}
