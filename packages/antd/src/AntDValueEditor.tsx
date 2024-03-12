@@ -1,4 +1,4 @@
-import { Checkbox, Input, Radio, Switch } from 'antd';
+import { Checkbox, Input, InputNumber, Radio, Switch } from 'antd';
 import generatePicker from 'antd/es/date-picker/generatePicker/index.js';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -70,6 +70,19 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps) => {
               disabled={disabled}
               placeholder={placeHolderText}
               onChange={d => multiValueHandler(d?.format('HH:mm:ss') ?? '', i)}
+              {...extraProps}
+            />
+          );
+        } else if (inputTypeCoerced === 'number') {
+          return (
+            <InputNumber
+              key={key}
+              type={inputTypeCoerced}
+              value={valueAsArray[i] ?? ''}
+              className={standardClassnames.valueListItem}
+              disabled={disabled}
+              placeholder={placeHolderText}
+              onChange={v => multiValueHandler(v, i)}
               {...extraProps}
             />
           );
@@ -236,6 +249,21 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps) => {
           disabled={disabled}
           placeholder={placeHolderText}
           onChange={d => handleOnChange(d?.format('HH:mm:ss') ?? '')}
+          {...extraProps}
+        />
+      );
+    }
+
+    case 'number': {
+      return (
+        <InputNumber
+          type={inputTypeCoerced}
+          value={value}
+          title={title}
+          className={className}
+          disabled={disabled}
+          placeholder={placeHolderText}
+          onChange={handleOnChange}
           {...extraProps}
         />
       );
