@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- N/A
+
+## [v7.0.2] - 2024-03-12
+
 ### Changed
 
 - `@react-querybuilder/antd` uses AntD's `InputNumber` in `AntDValueEditor` when `valueEditorType === "number"`.
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Mantine and Tremor versions are no longer pinned.
+- Mantine and Tremor versions are no longer pinned to a specific patch version.
 - `start:*` scripts for compatibility packages now correctly load their particular dependencies (does not affect execution).
 
 ## [v7.0.1] - 2024-03-07
@@ -1561,7 +1565,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.2...HEAD
+[v7.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.1...v7.0.2
 [v7.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.0...v7.0.1
 [v7.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.5...v7.0.0
 [v6.5.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.4...v6.5.5
