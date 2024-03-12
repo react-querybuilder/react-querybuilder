@@ -177,16 +177,16 @@ export type ValueProcessor = ValueProcessorLegacy;
  * {@link RuleType} object.
  *
  * See the default rule processor for each format to know what type to return.
- * | Format                | Default rule processor                         |
- * | --------------------- | ---------------------------------------------- |
- * | `sql`                 | {@link defaultRuleProcessorSQL}                |
- * | `parameterized`       | {@link defaultRuleProcessorParameterized}      |
- * | `parameterized_named` | {@link defaultRuleProcessorParameterizedNamed} |
- * | `mongodb`             | {@link defaultRuleProcessorMongoDB}            |
- * | `cel`                 | {@link defaultRuleProcessorCEL}                |
- * | `spel`                | {@link defaultRuleProcessorSpEL}               |
- * | `jsonlogic`           | {@link defaultRuleProcessorJsonLogic}          |
- * | `elasticsearch`       | {@link defaultRuleProcessorElasticSearch}      |
+ * | Format                | Default rule processor                    |
+ * | --------------------- | ----------------------------------------- |
+ * | `sql`                 | {@link defaultRuleProcessorSQL}           |
+ * | `parameterized`       | {@link defaultRuleProcessorParameterized} |
+ * | `parameterized_named` | {@link defaultRuleProcessorParameterized} |
+ * | `mongodb`             | {@link defaultRuleProcessorMongoDB}       |
+ * | `cel`                 | {@link defaultRuleProcessorCEL}           |
+ * | `spel`                | {@link defaultRuleProcessorSpEL}          |
+ * | `jsonlogic`           | {@link defaultRuleProcessorJsonLogic}     |
+ * | `elasticsearch`       | {@link defaultRuleProcessorElasticSearch} |
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
