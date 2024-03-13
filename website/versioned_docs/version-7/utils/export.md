@@ -458,7 +458,7 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
   return defaultRuleProcessorSQLParameterized(rule, options);
 };
 
-formatQuery(query, { format: 'sql', ruleProcessor: customRuleProcessor });
+formatQuery(query, { format: 'parameterized_named', ruleProcessor: customRuleProcessor });
 // Returns:
 // {
 //   sql: "(UPPER(firstName) LIKE UPPER('%' || :firstName_1 || '%') and lastName = :lastName_1)",
