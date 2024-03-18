@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo } from 'react';
 import { LogType, standardClassnames } from '../defaults';
+import { _RQB_INTERNAL_dispatchThunk } from '../redux/_internal';
 import {
-  dispatchThunk,
   getQuerySelectorById,
   useQueryBuilderDispatch,
   useQueryBuilderSelector,
@@ -168,7 +168,10 @@ export function useQueryBuilderSchema<
   useEffect(() => {
     if (!!queryProp && queryProp !== storeQuery) {
       queryBuilderDispatch(
-        dispatchThunk({ payload: { qbId, query: queryProp }, onQueryChange: undefined })
+        _RQB_INTERNAL_dispatchThunk({
+          payload: { qbId, query: queryProp },
+          onQueryChange: undefined,
+        })
       );
     }
   }, [queryProp, qbId, storeQuery, queryBuilderDispatch]);
@@ -185,7 +188,7 @@ export function useQueryBuilderSchema<
   // This effect only runs once, at the beginning of the component lifecycle.
   useEffect(() => {
     queryBuilderDispatch(
-      dispatchThunk({
+      _RQB_INTERNAL_dispatchThunk({
         payload: { qbId, query: rootGroup },
         onQueryChange:
           // Leave `onQueryChange` undefined if `enableMountQueryChange` is disabled
@@ -203,7 +206,9 @@ export function useQueryBuilderSchema<
    */
   const dispatchQuery = useCallback(
     (newQuery: RuleGroupTypeAny) => {
-      queryBuilderDispatch(dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange }));
+      queryBuilderDispatch(
+        _RQB_INTERNAL_dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange })
+      );
     },
     [onQueryChange, qbId, queryBuilderDispatch]
   );

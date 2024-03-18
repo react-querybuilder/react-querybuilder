@@ -1,50 +1,33 @@
-import type {
-  Dispatch,
-  PayloadAction,
-  ThunkAction,
-  ThunkDispatch,
-  ThunkMiddleware,
-  Tuple,
-  UnknownAction,
-} from '@reduxjs/toolkit';
-import { applyMiddleware, combineReducers, configureStore, createStore } from '@reduxjs/toolkit';
+import type { Dispatch, ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import * as React from 'react';
 import type { ReactReduxContextValue, TypedUseSelectorHook } from 'react-redux';
 import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
-import type { QueriesSliceState, SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
 
-export type RqbState = { queries: QueriesSliceState };
+export type RqbState = { queries: ReturnType<typeof queriesSlice.getInitialState> };
+const preloadedState = { queries: queriesSlice.getInitialState() } satisfies RqbState;
 
-const rootReducer = combineReducers({ queries: queriesSlice.reducer });
-
-// Next two lines are needed to get the default middleware since the standalone
-// `getDefaultMiddleware` function was removed from RTK in v2.
-let defaultMiddleware = [] as unknown as Tuple<[ThunkMiddleware<void, UnknownAction>]>;
-configureStore({
-  reducer: () => {},
-  middleware: gdm =>
-    (defaultMiddleware = gdm({
+export const queryBuilderStore = configureStore({
+  reducer: { queries: queriesSlice.reducer },
+  preloadedState,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
       // Ignore non-serializable values in setQueryState actions and rule `value`s
       // https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
       serializableCheck: {
         ignoredActions: ['queries/setQueryState'],
         ignoredPaths: [/^queries\b.*\.rules\.\d+\.value$/],
       },
-    })),
+    }),
 });
 
-export const queryBuilderStore = createStore(
-  rootReducer,
-  { queries: queriesSlice.getInitialState() },
-  applyMiddleware(...defaultMiddleware)
-);
 export const QueryBuilderStateContext = React.createContext<ReactReduxContextValue<
   RqbState,
   UnknownAction
 > | null>(null);
 
-// Hooks
+// #region Hooks
 /**
  * Gets the full RQB Redux store.
  */
@@ -63,33 +46,13 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownA
  */
 export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> =
   createSelectorHook(QueryBuilderStateContext);
+// #endregion
 
-// Selectors
+// #region Selectors
 /**
  * Given a `qbId` (provided as part of the `schema` prop), returns
  * a selector for use with `useQueryBuilderSelector`.
  */
 export const getQuerySelectorById = (qbId: string) => (state: RqbState) =>
   queriesSlice.selectors.getQuerySelectorById(state, qbId);
-
-// Misc exports
-export const {
-  actions: { setQueryState },
-} = queriesSlice;
-
-// Thunks
-interface DispatchThunkParams {
-  payload: SetQueryStateParams;
-  // TODO: Why doesn't `(query: RuleGroupTypeAny) => void` work here?
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onQueryChange?: (query: any) => void;
-}
-type QueryBuilderThunk = ThunkAction<void, RqbState, unknown, PayloadAction<SetQueryStateParams>>;
-export const dispatchThunk =
-  ({ payload, onQueryChange }: DispatchThunkParams): QueryBuilderThunk =>
-  dispatch => {
-    dispatch(setQueryState(payload));
-    if (typeof onQueryChange === 'function') {
-      onQueryChange(payload.query);
-    }
-  };
+// #endregion
