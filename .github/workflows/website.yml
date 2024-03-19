@@ -37,6 +37,7 @@ jobs:
       - uses: bahmutov/npm-install@v1
         with:
           install-command: yarn
+      - run: bun install --global copyfiles
       - run: bun run build
       - run: bun run website:build
         # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes
