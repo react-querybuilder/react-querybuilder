@@ -11,5 +11,6 @@
 npm_config_user_agent="npm/? node/?" npm install --global bun
 
 # Now we can get on with business...
+bun install --global copyfiles
 bun install --frozen-lockfile
 bun run build
