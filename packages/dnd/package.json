@@ -55,7 +55,7 @@
     "vite": "^5.1.6"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
+    "react": ">=18",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
     "react-querybuilder": "^7.0.2"

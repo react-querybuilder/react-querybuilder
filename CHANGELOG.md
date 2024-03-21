@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- The minimum React version is now 18, due to the new `react-redux` v9 dependency.
 - [#654] The minimum TypeScript version is now 5.1.
 - [#595] The parser functions have been removed from the main export, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
   <!-- prettier-ignore -->

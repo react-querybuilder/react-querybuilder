@@ -55,7 +55,7 @@
     "@ant-design/icons": ">=4.7.0",
     "antd": ">=5",
     "dayjs": ">=1",
-    "react": ">=16.8.0",
+    "react": ">=18",
     "react-querybuilder": "^7.0.2"
   }
 }

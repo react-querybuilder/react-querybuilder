@@ -8,6 +8,10 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 ## Breaking changes
 
+### React 18
+
+- The minimum React version is now 18. (This is due to the new `react-redux` v9 dependency, but we're investigating ways to support React 16.8 and 17.)
+
 ### TypeScript updates
 
 - The minimum TypeScript version is now 5.1.
