@@ -67,7 +67,7 @@
     "pretty-check": "prettier --config prettier.config.mjs --check *.{mj,t}s packages/*/{src,dev,genericTests}/** website/*.js website/{docs,src,versioned_docs,versioned_sidebars}/**",
     "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
-    "outdated": "rm -rf ./packages/*/node_modules ./website/node_modules && bunx npm-check-updates --interactive --format=group --workspaces --root",
+    "outdated": "yarn update-interactive",
     "version": "bun version.ts && yarn install --frozen-lockfile && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages bun.lockb\"",
     "web": "cd website && bun run start",
     "website:clearrun": "cd website && bun run clear && bun run start",
