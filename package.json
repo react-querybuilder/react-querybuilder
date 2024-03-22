@@ -31,6 +31,8 @@
     "build:material": "cd packages/material && bun run build",
     "build:native": "cd packages/native && bun run build",
     "build:rqb": "cd packages/react-querybuilder && bun run build",
+    "build:rqb:main": "cd packages/react-querybuilder && bun run build:main",
+    "build:rqb:css": "cd packages/react-querybuilder && bun run build:css",
     "build:tremor": "cd packages/tremor && bun run build",
     "codesandbox-ci": "bash .codesandbox/ci.sh",
     "checkall": "yarn install --frozen-lockfile && concurrently --group --names pretty,lint,build --prefix-colors \"green,#4b32c3,#82a7dd\" bun:pretty-check bun:lint bun:build && concurrently --group --timings --prefix-colors \"#663399,#3178c6,green,gray\" --names attw,typecheck,test,website bun:are-the-types-wrong bun:typecheck bun:test bun:website:build",
