@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- N/A
+- To avoid confusion, the `useQueryBuilderDispatch` and `useQueryBuilderStore` hooks are no longer exported.
 
 ## [v7.0.2] - 2024-03-12
 

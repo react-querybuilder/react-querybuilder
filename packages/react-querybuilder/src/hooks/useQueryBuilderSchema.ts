@@ -1,13 +1,12 @@
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo } from 'react';
 import { LogType, standardClassnames } from '../defaults';
-import { _RQB_INTERNAL_dispatchThunk } from '../redux/_internal';
 import {
-  getQuerySelectorById,
-  useQueryBuilderDispatch,
-  useQueryBuilderSelector,
-  useQueryBuilderStore,
-} from '../redux';
+  _RQB_INTERNAL_dispatchThunk,
+  useRQB_INTERNAL_QueryBuilderDispatch,
+  useRQB_INTERNAL_QueryBuilderStore,
+} from '../redux/_internal';
+import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import type {
   FullCombinator,
   FullField,
@@ -143,8 +142,8 @@ export function useQueryBuilderSchema<
   // #endregion
 
   // #region Handle controlled mode vs uncontrolled mode
-  const queryBuilderStore = useQueryBuilderStore();
-  const queryBuilderDispatch = useQueryBuilderDispatch();
+  const queryBuilderStore = useRQB_INTERNAL_QueryBuilderStore();
+  const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
   const querySelector = useMemo(() => getQuerySelectorById(setup.qbId), [setup.qbId]);
   const storeQuery = useQueryBuilderSelector(querySelector);

@@ -1,8 +1,8 @@
-import type { Dispatch, ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
+import type { UnknownAction } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import * as React from 'react';
 import type { ReactReduxContextValue, TypedUseSelectorHook } from 'react-redux';
-import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
+import { createSelectorHook } from 'react-redux';
 import { queriesSlice } from './queriesSlice';
 
 export type RqbState = { queries: ReturnType<typeof queriesSlice.getInitialState> };
@@ -28,19 +28,6 @@ export const QueryBuilderStateContext = React.createContext<ReactReduxContextVal
 > | null>(null);
 
 // #region Hooks
-/**
- * Gets the full RQB Redux store.
- */
-export const useQueryBuilderStore = createStoreHook(QueryBuilderStateContext);
-
-/**
- * Gets the `dispatch` function for the RQB Redux store.
- */
-export const useQueryBuilderDispatch: UseQueryBuilderDispatch =
-  createDispatchHook(QueryBuilderStateContext);
-type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownAction> &
-  Dispatch<UnknownAction>;
-
 /**
  * A `useSelector` hook for the RQB Redux store.
  */

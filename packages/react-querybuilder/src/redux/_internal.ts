@@ -1,7 +1,14 @@
-import type { PayloadAction, ThunkAction } from '@reduxjs/toolkit';
+import type {
+  Dispatch,
+  PayloadAction,
+  ThunkAction,
+  ThunkDispatch,
+  UnknownAction,
+} from '@reduxjs/toolkit';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
-import type { RqbState } from '.';
+import { QueryBuilderStateContext, type RqbState } from '.';
+import { createDispatchHook, createStoreHook } from 'react-redux';
 
 export const _RQB_INTERNAL_dispatchThunk =
   ({
@@ -19,3 +26,16 @@ export const _RQB_INTERNAL_dispatchThunk =
       onQueryChange(payload.query);
     }
   };
+
+/**
+ * Gets the `dispatch` function for the RQB Redux store.
+ */
+export const useRQB_INTERNAL_QueryBuilderDispatch: UseQueryBuilderDispatch =
+  createDispatchHook(QueryBuilderStateContext);
+type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownAction> &
+  Dispatch<UnknownAction>;
+
+/**
+ * Gets the full RQB Redux store.
+ */
+export const useRQB_INTERNAL_QueryBuilderStore = createStoreHook(QueryBuilderStateContext);
