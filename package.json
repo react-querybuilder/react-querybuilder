@@ -33,7 +33,7 @@
     "build:rqb": "cd packages/react-querybuilder && bun run build",
     "build:tremor": "cd packages/tremor && bun run build",
     "codesandbox-ci": "bash .codesandbox/ci.sh",
-    "checkall": "bun install --frozen-lockfile && concurrently --group --names pretty,lint,build --prefix-colors \"green,#4b32c3,#82a7dd\" bun:pretty-check bun:lint bun:build && concurrently --group --timings --prefix-colors \"#663399,#3178c6,green,gray\" --names attw,typecheck,test,website bun:are-the-types-wrong bun:typecheck bun:test bun:website:build",
+    "checkall": "yarn install --frozen-lockfile && concurrently --group --names pretty,lint,build --prefix-colors \"green,#4b32c3,#82a7dd\" bun:pretty-check bun:lint bun:build && concurrently --group --timings --prefix-colors \"#663399,#3178c6,green,gray\" --names attw,typecheck,test,website bun:are-the-types-wrong bun:typecheck bun:test bun:website:build",
     "lint": "eslint 'packages/*/src/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
     "test": "concurrently --group --timings --names sqlite,jsonlogic,postgres,jest \"bun test dbquery.sqlite\" \"bun test dbquery.jsonlogic\" \"bun test dbquery.postgres\" jest",
     "test:watch": "jest --watch",
@@ -68,8 +68,7 @@
     "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
     "outdated": "rm -rf ./packages/*/node_modules ./website/node_modules && bunx npm-check-updates --interactive --format=group --workspaces --root",
-    "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lockb && bun install",
-    "version": "bun version.ts && bun install --frozen-lockfile && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages bun.lockb\"",
+    "version": "bun version.ts && yarn install --frozen-lockfile && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages bun.lockb\"",
     "web": "cd website && bun run start",
     "website:clearrun": "cd website && bun run clear && bun run start",
     "website:build": "cd website && bun run clear && bun run build",
@@ -121,5 +120,6 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.2",
     "vite": "^5.1.6"
-  }
+  },
+  "packageManager": "yarn@4.1.1"
 }

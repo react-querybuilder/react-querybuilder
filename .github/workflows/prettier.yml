@@ -14,7 +14,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - uses: oven-sh/setup-bun@v1
-      - run: bun install --frozen-lockfile
+      - uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
       - name: Check prettification
         run: |
           bun run pretty-check || \

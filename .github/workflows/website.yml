@@ -17,7 +17,6 @@ on:
 
 env:
   NODE_OPTIONS: --max-old-space-size=4096
-  YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
 jobs:
   Build_website:
@@ -28,15 +27,9 @@ jobs:
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
-        # We use Yarn to install dependencies because of https://github.com/oven-sh/bun/issues/2257.
-        # When that's fixed, we can just do `bun install` here (perhaps with `--frozen-lockfile`)
-        # and remove the subsequent three Yarn-related steps.
-      - run: bun install --yarn --dry-run
-      - run: bun ./website/update-yarn.lock.ts
-      - run: yarn set version berry
       - uses: bahmutov/npm-install@v1
         with:
-          install-command: yarn
+          install-command: yarn --immutable
       - run: bun run build
       - run: bun run website:build
         # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes

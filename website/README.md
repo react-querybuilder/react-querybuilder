@@ -6,22 +6,22 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 
 ### Installation
 
-```
-$ bun install
+```sh
+yarn install
 ```
 
 ### Local Development
 
 First build the packages.
 
-```
-$ bun run build
+```sh
+bun run build
 ```
 
 Then start the website dev server.
 
-```
-$ bun web
+```sh
+bun web
 ```
 
 If the API docs have already been generated, you can skip that step of the build by running
@@ -34,8 +34,8 @@ This command starts a local development server and opens up a browser window. Mo
 
 ### Build
 
-```
-$ bun website:build
+```sh
+bun website:build
 ```
 
 This command generates static content into the `build` directory and can be served using any static content hosting service.
