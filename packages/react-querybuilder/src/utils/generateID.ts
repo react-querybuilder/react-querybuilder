@@ -27,27 +27,26 @@ if (cryptoModule) {
     // `generateID` doesn't need to be cryptographically secure, it only needs a
     // very low chance of collisions. We can fall back to the always-available
     // `getRandomValues` to build a v4 UUID when `randomUUID` is not available.
-    /** `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` */
-    const template = [
-      ''.padEnd(8, 'x'),
-      ''.padEnd(4, 'x'),
-      // third section starts with the UUID version
-      '4'.padEnd(4, 'x'),
-      // First character of fourth section is limited to four specific characters
-      'y'.padEnd(4, 'x'),
-      ''.padEnd(12, 'x'),
-    ].join('-');
-    const position19vals = ['8', '9', 'a', 'b'];
-    const re = /[xy]/g;
+    const position19vals = '89ab';
     const container = new Uint32Array(32);
 
     generateID = () => {
       cryptoModule.getRandomValues(container);
-      let i = -1;
-      return template.replaceAll(re, char => {
-        i++;
-        return char === 'y' ? position19vals[container[i] % 4] : (container[i] % 16).toString(16);
-      });
+      let id = (container[0] % 16).toString(16);
+      for (let i = 1; i < 32; i++) {
+        if (i === 12) {
+          id = `${id}${'4'}`;
+        } else if (i === 16) {
+          id = `${id}${position19vals[container[17] % 4]}`;
+        } else {
+          id = `${id}${(container[i] % 16).toString(16)}`;
+        }
+
+        if (i === 7 || i === 11 || i === 15 || i === 19) {
+          id = `${id}${'-'}`;
+        }
+      }
+      return id;
     };
   }
 }
