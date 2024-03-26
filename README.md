@@ -116,6 +116,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://victorarowo.com"><img src="https://avatars.githubusercontent.com/u/25545108?v=4?s=100" width="100px;" alt="Victor Arowo"/><br /><sub><b>Victor Arowo</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=VictorArowo" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/eknkc"><img src="https://avatars.githubusercontent.com/u/1248453?v=4?s=100" width="100px;" alt="Ekin Koc"/><br /><sub><b>Ekin Koc</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=eknkc" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/zach-blume/"><img src="https://avatars.githubusercontent.com/u/21265331?v=4?s=100" width="100px;" alt="Zach Blume"/><br /><sub><b>Zach Blume</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=zachblume" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.wangheng.me/"><img src="https://avatars.githubusercontent.com/u/17524858?v=4?s=100" width="100px;" alt="王恒"/><br /><sub><b>王恒</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=eastack" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
@@ -129,7 +130,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-32-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-33-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
