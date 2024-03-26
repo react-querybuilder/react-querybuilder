@@ -149,7 +149,7 @@ const muiTheme = createTheme();
     case 'mantine':
       return [
         `import { MantineProvider } from '@mantine/core';
-import { QueryBuilderMantine } from '@react-querybuilder/material';
+import { QueryBuilderMantine } from '@react-querybuilder/mantine';
 import '@mantine/core/styles.css';`,
         '<MantineProvider>\n<QueryBuilderMantine>',
         '</QueryBuilderMantine>\n</MantineProvider>',
