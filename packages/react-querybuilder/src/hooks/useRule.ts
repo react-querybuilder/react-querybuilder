@@ -76,21 +76,43 @@ export const useRule = (props: RuleProps) => {
     () => ({
       shiftActions: clsx(standardClassnames.shiftActions, classNamesProp.shiftActions),
       dragHandle: clsx(standardClassnames.dragHandle, classNamesProp.dragHandle),
-      fields: clsx(standardClassnames.fields, classNamesProp.fields),
-      operators: clsx(standardClassnames.operators, classNamesProp.operators),
-      valueSource: clsx(standardClassnames.valueSource, classNamesProp.valueSource),
+      fields: clsx(standardClassnames.fields, classNamesProp.valueSelector, classNamesProp.fields),
+      operators: clsx(
+        standardClassnames.operators,
+        classNamesProp.valueSelector,
+        classNamesProp.operators
+      ),
+      valueSource: clsx(
+        standardClassnames.valueSource,
+        classNamesProp.valueSelector,
+        classNamesProp.valueSource
+      ),
       value: clsx(standardClassnames.value, classNamesProp.value),
-      cloneRule: clsx(standardClassnames.cloneRule, classNamesProp.cloneRule),
-      lockRule: clsx(standardClassnames.lockRule, classNamesProp.lockRule),
-      removeRule: clsx(standardClassnames.removeRule, classNamesProp.removeRule),
+      cloneRule: clsx(
+        standardClassnames.cloneRule,
+        classNamesProp.actionElement,
+        classNamesProp.cloneRule
+      ),
+      lockRule: clsx(
+        standardClassnames.lockRule,
+        classNamesProp.actionElement,
+        classNamesProp.lockRule
+      ),
+      removeRule: clsx(
+        standardClassnames.removeRule,
+        classNamesProp.actionElement,
+        classNamesProp.removeRule
+      ),
     }),
     [
       classNamesProp.shiftActions,
       classNamesProp.dragHandle,
+      classNamesProp.valueSelector,
       classNamesProp.fields,
       classNamesProp.operators,
       classNamesProp.valueSource,
       classNamesProp.value,
+      classNamesProp.actionElement,
       classNamesProp.cloneRule,
       classNamesProp.lockRule,
       classNamesProp.removeRule,

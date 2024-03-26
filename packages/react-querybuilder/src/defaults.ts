@@ -258,6 +258,8 @@ export const defaultControlClassnames = {
   lockRule: '',
   lockGroup: '',
   valueSource: '',
+  actionElement: '',
+  valueSelector: '',
 } satisfies Classnames;
 
 /**

@@ -13,19 +13,17 @@ export const bootstrapControlElements = {
 } satisfies Partial<Controls<FullField, string>>;
 
 export const bootstrapControlClassnames = {
-  addGroup: 'btn btn-secondary btn-sm',
-  addRule: 'btn btn-primary btn-sm',
-  cloneGroup: 'btn btn-secondary btn-sm',
-  cloneRule: 'btn btn-secondary btn-sm',
-  lockGroup: 'btn btn-secondary btn-sm',
-  lockRule: 'btn btn-secondary btn-sm',
-  removeGroup: 'btn btn-danger btn-sm',
-  removeRule: 'btn btn-danger btn-sm',
-  combinators: 'form-select form-select-sm',
-  fields: 'form-select form-select-sm',
-  operators: 'form-select form-select-sm',
+  actionElement: 'btn btn-sm',
+  addGroup: 'btn-secondary',
+  addRule: 'btn-primary',
+  cloneGroup: 'btn-secondary',
+  cloneRule: 'btn-secondary',
+  lockGroup: 'btn-secondary',
+  lockRule: 'btn-secondary',
+  removeGroup: 'btn-danger',
+  removeRule: 'btn-danger',
   value: 'form-control form-control-sm',
-  valueSource: 'form-select form-select-sm',
+  valueSelector: 'form-select form-select-sm',
 } satisfies Partial<Classnames>;
 
 export const bootstrapTranslations = {

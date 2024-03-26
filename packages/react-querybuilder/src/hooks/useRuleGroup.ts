@@ -86,27 +86,53 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       }),
       shiftActions: clsx(standardClassnames.shiftActions, classNamesProp.shiftActions),
       dragHandle: clsx(standardClassnames.dragHandle, classNamesProp.dragHandle),
-      combinators: clsx(standardClassnames.combinators, classNamesProp.combinators),
+      combinators: clsx(
+        standardClassnames.combinators,
+        classNamesProp.valueSelector,
+        classNamesProp.combinators
+      ),
       notToggle: clsx(standardClassnames.notToggle, classNamesProp.notToggle),
-      addRule: clsx(standardClassnames.addRule, classNamesProp.addRule),
-      addGroup: clsx(standardClassnames.addGroup, classNamesProp.addGroup),
-      cloneGroup: clsx(standardClassnames.cloneGroup, classNamesProp.cloneGroup),
-      lockGroup: clsx(standardClassnames.lockGroup, classNamesProp.lockGroup),
-      removeGroup: clsx(standardClassnames.removeGroup, classNamesProp.removeGroup),
+      addRule: clsx(
+        standardClassnames.addRule,
+        classNamesProp.actionElement,
+        classNamesProp.addRule
+      ),
+      addGroup: clsx(
+        standardClassnames.addGroup,
+        classNamesProp.actionElement,
+        classNamesProp.addGroup
+      ),
+      cloneGroup: clsx(
+        standardClassnames.cloneGroup,
+        classNamesProp.actionElement,
+        classNamesProp.cloneGroup
+      ),
+      lockGroup: clsx(
+        standardClassnames.lockGroup,
+        classNamesProp.actionElement,
+        classNamesProp.lockGroup
+      ),
+      removeGroup: clsx(
+        standardClassnames.removeGroup,
+        classNamesProp.actionElement,
+        classNamesProp.removeGroup
+      ),
       body: clsx(standardClassnames.body, classNamesProp.body),
     }),
     [
+      classNamesProp.actionElement,
       classNamesProp.addGroup,
       classNamesProp.addRule,
       classNamesProp.body,
       classNamesProp.cloneGroup,
       classNamesProp.combinators,
-      classNamesProp.shiftActions,
       classNamesProp.dragHandle,
       classNamesProp.header,
       classNamesProp.lockGroup,
       classNamesProp.notToggle,
       classNamesProp.removeGroup,
+      classNamesProp.shiftActions,
+      classNamesProp.valueSelector,
       isOver,
     ]
   );

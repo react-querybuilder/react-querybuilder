@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - To avoid confusion, the `useQueryBuilderDispatch` and `useQueryBuilderStore` hooks are no longer exported.
 
+### Added
+
+- New `controlClassnames` properties:
+  - `actionElement`: Applied to all action elements like `addRuleAction`, `addGroupAction`, etc.
+  - `valueSelector`: Applied to all selection elements like `combinatorSelector`, `fieldSelector`, etc.
+
 ### Fixed
 
 - Improved performance of `generateID` when `crypto.randomUUID` is not available. This led to performance improvements in initial `<QueryBuilder />` rendering and query update functions.

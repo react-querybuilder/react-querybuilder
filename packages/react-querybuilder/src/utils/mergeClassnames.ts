@@ -29,5 +29,7 @@ export const mergeClassnames = (...args: (Partial<Classnames> | undefined)[]): C
     lockRule: joinClassnamesByName('lockRule'),
     lockGroup: joinClassnamesByName('lockGroup'),
     valueSource: joinClassnamesByName('valueSource'),
+    actionElement: joinClassnamesByName('actionElement'),
+    valueSelector: joinClassnamesByName('valueSelector'),
   };
 };

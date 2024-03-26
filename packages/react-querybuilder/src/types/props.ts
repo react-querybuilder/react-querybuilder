@@ -149,89 +149,97 @@ export type VersatileSelectorProps = ValueSelectorProps &
  */
 export interface Classnames {
   /**
-   * Root `<div>` element.
+   * Classnames applied to the root `<div>` element.
    */
   queryBuilder: Classname;
   /**
-   * `<div>` containing the RuleGroup.
+   * Classnames applied to the `<div>` containing the RuleGroup.
    */
   ruleGroup: Classname;
   /**
-   * `<div>` containing the RuleGroup header controls.
+   * Classnames applied to the `<div>` containing the RuleGroup header controls.
    */
   header: Classname;
   /**
-   * `<div>` containing the RuleGroup child rules/groups.
+   * Classnames applied to the `<div>` containing the RuleGroup child rules/groups.
    */
   body: Classname;
   /**
-   * `<select>` control for combinators.
+   * Classnames applied to the `<select>` control for combinators.
    */
   combinators: Classname;
   /**
-   * `<button>` to add a Rule.
+   * Classnames applied to the `<button>` to add a Rule.
    */
   addRule: Classname;
   /**
-   * `<button>` to add a RuleGroup.
+   * Classnames applied to the `<button>` to add a RuleGroup.
    */
   addGroup: Classname;
   /**
-   * `<button>` to clone a Rule.
+   * Classnames applied to the `<button>` to clone a Rule.
    */
   cloneRule: Classname;
   /**
-   * `<button>` to clone a RuleGroup.
+   * Classnames applied to the `<button>` to clone a RuleGroup.
    */
   cloneGroup: Classname;
   /**
-   * `<button>` to remove a RuleGroup.
+   * Classnames applied to the `<button>` to remove a RuleGroup.
    */
   removeGroup: Classname;
   /**
-   * `<div>` containing the Rule.
+   * Classnames applied to the `<div>` containing the Rule.
    */
   rule: Classname;
   /**
-   * `<select>` control for fields.
+   * Classnames applied to the `<select>` control for fields.
    */
   fields: Classname;
   /**
-   * `<select>` control for operators.
+   * Classnames applied to the `<select>` control for operators.
    */
   operators: Classname;
   /**
-   * `<input>` for the field value.
+   * Classnames applied to the `<input>` for the rule value.
    */
   value: Classname;
   /**
-   * `<button>` to remove a Rule.
+   * Classnames applied to the `<button>` to remove a Rule.
    */
   removeRule: Classname;
   /**
-   * `<label>` on the "not" toggle.
+   * Classnames applied to the `<label>` on the "not" toggle.
    */
   notToggle: Classname;
   /**
-   * `<span>` handle for dragging rules/groups.
+   * Classnames applied to the `<span>` handle for dragging rules/groups.
    */
   shiftActions: Classname;
   /**
-   * `<span>` handle for dragging rules/groups.
+   * Classnames applied to the `<span>` handle for dragging rules/groups.
    */
   dragHandle: Classname;
   /**
-   * `<button>` to lock (i.e. disable) a Rule.
+   * Classnames applied to the `<button>` to lock/disable a Rule.
    */
   lockRule: Classname;
   /**
-   * `<button>` to lock (i.e. disable) a RuleGroup.
+   * Classnames applied to the `<button>` to lock/disable a RuleGroup.
    */
   lockGroup: Classname;
   /**
-   * `<select>` control for value sources.
+   * Classnames applied to the `<select>` control for value sources.
    */
   valueSource: Classname;
+  /**
+   * Classnames applied to all action elements.
+   */
+  actionElement: Classname;
+  /**
+   * Classnames applied to all select elements.
+   */
+  valueSelector: Classname;
 }
 
 /**
