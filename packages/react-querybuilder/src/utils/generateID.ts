@@ -1,12 +1,13 @@
 const cryptoModule = globalThis.crypto;
 
 /**
- * Default `id` generator. Generates a valid v4 UUID using `crypto.randomUUID()`
- * when available. Result guaranteed to match this regex:
+ * Default `id` generator. Generates a valid v4 UUID. Uses `crypto.randomUUID()`
+ * when available, otherwise uses an alternate method based on `getRandomValues`.
+ * The returned string is guaranteed to match this regex:
  * ```
- * /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+ * /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
  * ```
- * @returns Valid v4 UUID.
+ * @returns Valid v4 UUID
  */
 // Default implementation adapted from https://stackoverflow.com/a/68141099/217579
 // istanbul ignore next
@@ -22,11 +23,12 @@ if (cryptoModule) {
   if (typeof cryptoModule.randomUUID === 'function') {
     generateID = () => cryptoModule.randomUUID();
   } else if (typeof cryptoModule.getRandomValues === 'function') {
-    // `randomUUID` is much simpler and [faster](https://jsbench.me/krlcjfxscp/1),
-    // but it's only guaranteed to be available in secure contexts (https, etc.).
-    // `generateID` doesn't need to be cryptographically secure, it only needs a
-    // very low chance of collisions. We can fall back to the always-available
-    // `getRandomValues` to build a v4 UUID when `randomUUID` is not available.
+    // `randomUUID` is much simpler and faster, but it's only guaranteed to be
+    // available in secure contexts (server-side, https, etc.). `generateID`
+    // doesn't really need to be cryptographically secure, it only needs a
+    // fairly low chance of collisions. We fall back to the always-available
+    // `getRandomValues` here (while still generating a valid v4 UUID) when
+    // `randomUUID` is not available.
     const position19vals = '89ab';
     const container = new Uint32Array(32);
 
