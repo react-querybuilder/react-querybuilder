@@ -11199,12 +11199,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/bun@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "@types/bun@npm:1.0.10"
+"@types/bun@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "@types/bun@npm:1.0.11"
   dependencies:
-    bun-types: "npm:1.0.33"
-  checksum: 10c0/9e5d222c0efc350aaba59cb0ba4216a4bfc731517c959e041afbe69f120ad67d3f98d02e1aa0b60eec258af4e215aa65899a0c37d84c087279b56dae47475d67
+    bun-types: "npm:1.0.35"
+  checksum: 10c0/487ef055b25ee2a188a83f06da9c4776ee80f0f0c23c20467686986122fcc8f42777dcea2e7dce9b5f252a6b110bd665910f553441ea5ad93a2ddc3c510195d2
   languageName: node
   linkType: hard
 
@@ -13677,13 +13677,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bun-types@npm:1.0.33":
-  version: 1.0.33
-  resolution: "bun-types@npm:1.0.33"
+"bun-types@npm:1.0.35":
+  version: 1.0.35
+  resolution: "bun-types@npm:1.0.35"
   dependencies:
     "@types/node": "npm:~20.11.3"
     "@types/ws": "npm:~8.5.10"
-  checksum: 10c0/8e855386000e50ee2a8571ced6d76bfab3be14a6e539c9eb5ec5ec83442a0802494ce503ed7929c802c27271724ec6cbb110e1ae3732b9bf37eb5e6a85a3c3c8
+  checksum: 10c0/49f6a1760668f87c413aee83ee00cbaeaaf568928cd7c0053690b1bb42bf461bf9a5e0fef5686b5d0f90f72fdb360533d914e29e58dec5067c77171cf1217f22
   languageName: node
   linkType: hard
 
@@ -26140,7 +26140,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.2"
     "@testing-library/user-event": "npm:^14.5.2"
-    "@types/bun": "npm:^1.0.10"
+    "@types/bun": "npm:^1.0.11"
     "@types/glob": "npm:^8.1.0"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.11.30"
@@ -26215,7 +26215,7 @@ __metadata:
     react-redux: "npm:^9.1.0"
     regenerator-runtime: "npm:^0.14.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
-    sass: "npm:1.71.1"
+    sass: "npm:1.72.0"
     spel2js: "npm:^0.2.8"
     type-fest: "npm:^4.14.0"
     typescript: "npm:^5.4.3"
@@ -27473,16 +27473,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:1.71.1":
-  version: 1.71.1
-  resolution: "sass@npm:1.71.1"
+"sass@npm:1.72.0":
+  version: 1.72.0
+  resolution: "sass@npm:1.72.0"
   dependencies:
     chokidar: "npm:>=3.0.0 <4.0.0"
     immutable: "npm:^4.0.0"
     source-map-js: "npm:>=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 10c0/59d79a6e106747746792b0c71908ae0aecdaf9b794d5724ee64e5249412f0d8ebe7ee2bf12946618848f14f949c4f6b530d82da3e62ab31c71198c6f73002130
+  checksum: 10c0/7df1bb470648edc4b528976b1b165c78d4c6731f680afac7cdc8324142f1ef4304598d317d98dac747a2ae8eee17271d760def90bba072021a8b19b459336ccd
   languageName: node
   linkType: hard
 
@@ -30411,7 +30411,7 @@ __metadata:
     react-querybuilder: "link:../packages/react-querybuilder"
     react-select: "npm:^5.8.0"
     react-slider: "npm:^2.0.6"
-    sass: "npm:1.71.1"
+    sass: "npm:1.72.0"
     stream-browserify: "npm:^3.0.0"
     stylis-plugin-extra-scope: "npm:^0.3.0"
     tailwindcss: "npm:^3.4.1"

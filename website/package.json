@@ -63,7 +63,7 @@
     "react-querybuilder": "link:../packages/react-querybuilder",
     "react-select": "^5.8.0",
     "react-slider": "^2.0.6",
-    "sass": "1.71.1"
+    "sass": "^1.72.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.1.1",

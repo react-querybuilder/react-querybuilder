@@ -88,7 +88,7 @@
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
     "@testing-library/user-event": "^14.5.2",
-    "@types/bun": "^1.0.10",
+    "@types/bun": "^1.0.11",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.30",

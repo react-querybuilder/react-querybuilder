@@ -22,7 +22,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3",
-    "sass": "1.69.4",
+    "sass": "^1.72.0",
     "typescript": "^5.2.2",
     "vite": "^4.5.0"
   },
