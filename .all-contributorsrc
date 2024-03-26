@@ -318,6 +318,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "eastack",
+      "name": "王恒",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17524858?v=4",
+      "profile": "https://www.wangheng.me/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
