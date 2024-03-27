@@ -26215,7 +26215,7 @@ __metadata:
     react-redux: "npm:^9.1.0"
     regenerator-runtime: "npm:^0.14.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
-    sass: "npm:1.72.0"
+    sass: "npm:^1.72.0"
     spel2js: "npm:^0.2.8"
     type-fest: "npm:^4.14.0"
     typescript: "npm:^5.4.3"
@@ -27473,7 +27473,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:1.72.0":
+"sass@npm:^1.72.0":
   version: 1.72.0
   resolution: "sass@npm:1.72.0"
   dependencies:
@@ -30411,7 +30411,7 @@ __metadata:
     react-querybuilder: "link:../packages/react-querybuilder"
     react-select: "npm:^5.8.0"
     react-slider: "npm:^2.0.6"
-    sass: "npm:1.72.0"
+    sass: "npm:^1.72.0"
     stream-browserify: "npm:^3.0.0"
     stylis-plugin-extra-scope: "npm:^0.3.0"
     tailwindcss: "npm:^3.4.1"
