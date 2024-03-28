@@ -306,7 +306,6 @@ interface NotToggleProps {
 ```ts
 interface RuleGroupProps {
   id?: string; // Unique identifier for this rule group
-  path: number[]; // path of indexes through a rule group hierarchy
   combinator: string; // Combinator for this group, e.g. "and" / "or"
   rules: (RuleType | RuleGroupType)[]; // List of rules and/or sub-groups for this group
   translations: Translations; // The full translations object
@@ -321,7 +320,6 @@ interface RuleGroupProps {
 ```ts
 interface RuleProps {
   id?: string; // Unique identifier for this rule
-  path: number[]; // path of indexes through a rule group hierarchy
   field: string; // Field name for this rule
   operator: string; // Operator name for this rule
   value: any; // Value for this rule
@@ -341,25 +339,23 @@ interface Schema {
   combinators: { name: string; label: string }[];
   controls: Controls;
   createRule(): RuleType;
-  createRuleGroup(): RuleGroupTypeAny;
+  createRuleGroup(): RuleGroupType;
   getOperators(field: string): { name: string; label: string }[];
   getValueEditorType(field: string, operator: string): ValueEditorType;
   getInputType(field: string, operator: string): string | null;
   getValues(field: string, operator: string): { name: string; label: string }[];
-  isRuleGroup(ruleOrGroup: RuleType | RuleGroupTypeAny): ruleOrGroup is RuleGroupTypeAny;
-  onGroupAdd(group: RuleGroupTypeAny, parentPath: number[]): void;
-  onGroupRemove(path: number[]): void;
-  onPropChange(prop: string, value: any, path: number[]): void;
-  onRuleAdd(rule: RuleType, parentPath: number[]): void;
-  onRuleRemove(path: number[]): void;
-  updateIndependentCombinator(value: string, path: number[]): void;
+  isRuleGroup(ruleOrGroup: RuleType | RuleGroupType): ruleOrGroup is RuleGroupType;
+  onGroupAdd(group: RuleGroupType, parentId: string): void;
+  onGroupRemove(id: string, parentId: string): void;
+  onPropChange(prop: string, value: any, ruleId: string): void;
+  onRuleAdd(rule: RuleType, parentId: string): void;
+  onRuleRemove(id: string, parentId: string): void;
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showCloneButtons: boolean;
   autoSelectField: boolean;
   addRuleToNewGroups: boolean;
   validationMap: ValidationMap;
-  independentCombinators: boolean;
 }
 ```
 
@@ -407,13 +403,13 @@ This function returns the default value for new rules.
 
 ### `onAddRule`
 
-`(rule: RuleType, parentPath: number[], query: RuleGroupType) => RuleType | false`
+`(rule: RuleType, parentId: string, query: RuleGroupType) => RuleType | false`
 
 This callback is invoked before a new rule is added. The function should either manipulate the rule and return it, or return `false` to cancel the addition of the rule. _(To completely prevent the addition of new rules, pass `controlElements={{ addRuleAction: () => null }}` which will hide the "+Rule" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new rule will be added among the entire query hierarchy.
 
 ### `onAddGroup`
 
-`(ruleGroup: RuleGroupType, parentPath: number[], query: RuleGroupType) => RuleGroupType | false`
+`(ruleGroup: RuleGroupType, parentId: string, query: RuleGroupType) => RuleGroupType | false`
 
 This callback is invoked before a new group is added. The function should either manipulate the group and return it, or return `false` to cancel the addition of the group. _(To completely prevent the addition of new groups, pass `controlElements={{ addGroupAction: () => null }}` which will hide the "+Group" button.)_ You can use `findRule(parentId, query)` to locate the parent group to which the new group will be added among the entire query hierarchy.
 
@@ -574,37 +570,15 @@ Pass `false` to add an empty option (`"------"`) to the `fields` array as the fi
 
 Pass `true` to automatically add a rule to new groups. If a `query` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query` prop is passed in with an empty `rules` array, no rule will be added automatically.
 
-### `independentCombinators`
-
-`boolean`
-
-Pass `true` to insert an independent combinator (and/or) selector between each rule/group in a rule group. (The combinator selector at the group level will not be available.) This is similar to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator selector is independent. You may find that users take to this configuration more naturally, as it allows them to express queries more like they would in their own language.
-
-### `validator`
-
-`(query: RuleGroupType) => boolean | { [id: string]: boolean | { valid: boolean; reasons?: any[] } }`
-
-This is a callback function that is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each rule and group in the query tree. If such an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the rule's or group's `id`.
-
 ## Other exports
 
-### `defaultValidator`
+### `findRule`
 
 ```ts
-function defaultValidator(query: RuleGroupType): {
-  [id: string]: { valid: boolean; reasons: string[] };
-};
+function findRule(id: string, query: RuleGroupType): RuleType | RuleGroupType;
 ```
 
-Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either 1) it has no child rules or groups (`rules.length === 0`), or 2) it has a missing/invalid `combinator` and more than one child rule or group (`rules.length >= 2`). You can see an example of the default validator in action in the [demo](/demo) -- empty groups will have bold text on the "+Rule" button.
-
-### `findPath`
-
-```ts
-function findPath(path: number[], query: RuleGroupType): RuleType | RuleGroupType;
-```
-
-`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](#onaddrule) and [`onAddGroup`](#onaddgroup) functions.
+`findRule` is a utility function for finding the rule or group within the query hierarchy that has a given `id`. Useful in custom [`onAddRule`](#onaddrule) and [`onAddGroup`](#onaddgroup) functions.
 
 ### `formatQuery`
 
@@ -769,7 +743,6 @@ The optional second parameter to `parseSQL` is an options object that configures
 
 ```ts
 interface ParseSQLOptions {
-  independentCombinators?: boolean;
   paramPrefix?: string;
   params?: any[] | { [p: string]: any };
 }
@@ -804,33 +777,6 @@ console.log(JSON.stringify(paramsObject$, null, 2));
       "operator": "=",
       "value": "Steve"
     },
-    {
-      "field": "lastName",
-      "operator": "=",
-      "value": "Vai"
-    }
-  ]
-}
-*/
-```
-
-When the `independentCombinators` option is `true`, `parseSQL` will output a query with combinator identifiers between each rule/group.
-
-```ts
-const standardSQLinlineCombinators = parseSQL(
-  `SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`,
-  { independentCombinators: true }
-);
-console.log(JSON.stringify(standardSQLinlineCombinators, null, 2));
-/*
-{
-  "rules": [
-    {
-      "field": "firstName",
-      "operator": "=",
-      "value": "Steve"
-    },
-    "and",
     {
       "field": "lastName",
       "operator": "=",
