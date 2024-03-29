@@ -22,8 +22,10 @@ The following examples demonstrate the extensive customization capability of Rea
 
 These CSS rules will push any "clone", "lock", or "remove" buttons to the right edge, giving the query builder a more "justified" appearance. <DemoLink option="justifiedLayout" text="The demo has an option to enable this technique" />.
 
+<details>
+  <summary>SCSS</summary>
+
 ```scss
-// SCSS
 .queryBuilder {
   .ruleGroup-addGroup {
     & + button.ruleGroup-cloneGroup,
@@ -43,8 +45,10 @@ These CSS rules will push any "clone", "lock", or "remove" buttons to the right 
 }
 ```
 
+</details>
+
 <details>
-  <summary>CSS</summary>
+  <summary>CSS (compiled from SCSS)</summary>
 
 ```css
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
@@ -97,6 +101,9 @@ The examples in this section implement [independent combinators](../components/q
 
 :::
 
+<details>
+  <summary>CSS</summary>
+
 ```css
 .ruleGroup-body {
   /* Override the default flex layout */
@@ -104,10 +111,12 @@ The examples in this section implement [independent combinators](../components/q
   /* Allow the left-hand column (the rule/subgroup) to expand as needed */
   /* Collapse the right-hand column (the combinator) to the width of the content */
   grid-template-columns: auto min-content;
-  /* Keep the combinator aligned with the bottom of the rule/subgroup. */
+  /* Keep the combinator aligned with the bottom of the rule/subgroup */
   align-items: end;
 }
 ```
+
+</details>
 
 <BrowserWindow>
   <QueryBuilderEmbed
@@ -135,6 +144,9 @@ The examples in this section implement [independent combinators](../components/q
 
 Alternatively, position each combinator to the left of the following rule or group:
 
+<details>
+  <summary>CSS</summary>
+
 ```css
 .ruleGroup-body {
   /* Override the default flex layout */
@@ -142,7 +154,7 @@ Alternatively, position each combinator to the left of the following rule or gro
   /* Allow the right-hand column (the rule/subgroup) to expand as needed */
   /* Collapse the left-hand column (the combinator) to the width of the content */
   grid-template-columns: min-content auto;
-  /* Keep the combinator aligned with the top of the rule/subgroup. */
+  /* Keep the combinator aligned with the top of the rule/subgroup */
   align-items: start;
 }
 
@@ -151,12 +163,9 @@ Alternatively, position each combinator to the left of the following rule or gro
 .ruleGroup-body > .ruleGroup:first-child:not(:only-child) {
   grid-column-start: 2;
 }
-
-/* Keep the combinator selector narrow */
-.betweenRules {
-  width: 100px;
-}
 ```
+
+</details>
 
 <BrowserWindow>
   <QueryBuilderEmbed
@@ -204,7 +213,7 @@ This example also uses some techniques which are described in more detail in the
 
 :::
 
-> _Note: You may want to hide the left-hand sidebar (click `<<` at the bottom) to have a wider view of this example._
+> _You may want to hide the left-hand sidebar (click `<<` at the bottom) to have a wider view of this example._
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
 

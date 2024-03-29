@@ -101,22 +101,22 @@ html[data-theme='dark'] .header-discord-link:before {
 }
 
 .ruleGroup-body.inline-indycomb {
-  // Default is display: flex, so must override
+  // Override the default flex layout
   display: grid !important;
-  // Allow the first column (the rule/subgroup) to expand as needed
+  // Allow the left-hand column (the rule/subgroup) to expand as needed
+  // Collapse the right-hand column (the combinator) to the width of the content
   grid-template-columns: auto min-content;
-  // Keep the combinator aligned with the bottom of the rule/subgroup.
-  // This is especially helpful for subgroups.
+  // Keep the combinator aligned with the bottom of the rule/subgroup
   align-items: end;
 }
 
 .ruleGroup-body.inline-indycomb-left {
-  // Default is display: flex, so must override
+  // Override the default flex layout
   display: grid !important;
-  // Allow the second column (the rule/subgroup) to expand as needed
+  // Allow the right-hand column (the rule/subgroup) to expand as needed
+  // Collapse the left-hand column (the combinator) to the width of the content
   grid-template-columns: min-content auto;
-  // Keep the combinator aligned with the top of the rule/subgroup.
-  // This is especially helpful for subgroups.
+  // Keep the combinator aligned with the top of the rule/subgroup
   align-items: start;
 
   // Indent the first rule/subgroup since it has no preceding combinator
