@@ -183,6 +183,11 @@ const config: Config = {
       // contextualSearch: true,
       // searchParameters: {},
     },
+    docs: {
+      sidebar: {
+        hideable: true,
+      },
+    },
     navbar: {
       title: 'React Query Builder',
       logo: {

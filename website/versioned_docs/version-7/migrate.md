@@ -247,7 +247,7 @@ Notes:
 
 ### Standalone layout stylesheet
 
-Default layout styles (flex direction, alignment, spacing, etc.) are now available as a standalone stylesheet `query-builder-layout.css`/`.scss`. The default stylesheet, `query-builder.css`/`.scss`, contains the layout styles along with the more aesthetic styles like colors and border styles. The effective styles—both layout and aesthetic—of the default stylesheet have not changed from version 6.
+Default layout styles (flex direction, alignment, spacing, etc.) are now available as a standalone stylesheet `query-builder-layout.css`/`.scss`. The default stylesheet, `query-builder.css`/`.scss`, contains the layout styles along with the more decorative styles like colors and border styles. The effective styles—both layout and decorative—of the default stylesheet have not changed from version 6.
 
 ### Field data passed to `get*` callbacks
 

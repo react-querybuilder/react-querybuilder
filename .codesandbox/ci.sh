@@ -11,5 +11,5 @@
 npm_config_user_agent="npm/? node/?" npm install --global bun
 
 # Now we can get on with business...
-yarn install --frozen-lockfile
+yarn install --immutable
 bun run build

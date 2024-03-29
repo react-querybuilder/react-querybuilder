@@ -89,17 +89,24 @@ h1, h2, h3, h4, h5, h6 {
     hidden: hideStylesCSS,
   };
 
+  // files['/styles.scss'] = {
+  //   code: files['/styles.scss']?.code ?? '',
+  //   hidden: hideStylesCSS,
+  // };
+
   const rqbDependencies =
     rqbVersion === 4
       ? { 'react-querybuilder': '^4' }
-      : rqbVersion === 5
-        ? { '@react-querybuilder/dnd': '^5', 'react-querybuilder': '^5' }
-        : rqbVersion === 6
-          ? { '@react-querybuilder/dnd': '^6', 'react-querybuilder': '^6' }
-          : { '@react-querybuilder/dnd': '^7', 'react-querybuilder': '^7' };
+      : {
+          '@react-querybuilder/dnd': `^${rqbVersion || '7'}`,
+          'react-querybuilder': `^${rqbVersion || '7'}`,
+          'react-dnd': '>=14',
+          'react-dnd-html5-backend': '>=14',
+        };
 
   const setup = {
     ...customSetup,
+    // dependencies: { sass: '*', ...customSetup?.dependencies, ...rqbDependencies },
     dependencies: { ...customSetup?.dependencies, ...rqbDependencies },
   };
 
