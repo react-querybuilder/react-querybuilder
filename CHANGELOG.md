@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+N/A
+
+## [v7.1.0] - 2024-04-01
+
 ### Changed
 
 - To avoid confusion with the recommended query selector and update methods (`useQueryBuilderSelector`, `props.schema.getQuery()`, and `props.schema.dispatchQuery()`), the hooks `useQueryBuilderDispatch` and `useQueryBuilderStore` are no longer exported.
@@ -1580,7 +1584,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.1.0...HEAD
+[v7.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.2...v7.1.0
 [v7.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.1...v7.0.2
 [v7.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.0...v7.0.1
 [v7.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v6.5.5...v7.0.0
