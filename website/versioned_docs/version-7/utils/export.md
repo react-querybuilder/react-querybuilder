@@ -588,7 +588,7 @@ const p = formatQuery(query, {
 
 ### Numbered parameters
 
-For the "parameterized" format, all parameter placeholders in the generated SQL are "?" by default. When the `numberedParams` option is `true`, placeholders will instead be a numbered index beginning with `1`, incrementing by 1 from left to right. Each placeholder number will be prefixed by the configured `paramPrefix` string (default ":").
+For the "parameterized" format, all parameter placeholders in the generated SQL are "?" by default. When the `numberedParams` option is `true`, placeholders will instead be a numbered index beginning with `1`, incrementing by 1 from left to right. Each placeholder number will be prefixed with the configured `paramPrefix` string (default ":").
 
 :::tip
 
@@ -604,6 +604,8 @@ const p = formatQuery(query, {
 });
 // p.sql === "(firstName = $1 and lastName = $2)"
 ```
+
+Previously, some [manual post-processing](../tips/custom-bind-variables) was necessary to achieve the same effect.
 
 ### Fallback expression
 
